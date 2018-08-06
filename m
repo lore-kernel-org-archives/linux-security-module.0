@@ -1,158 +1,86 @@
-From: tadeusz.struk@intel.com (Tadeusz Struk)
-Date: Mon, 06 Aug 2018 14:14:13 -0700
-Subject: [PATCH v3 RESEND 1/2] tpm: add ptr to the tpm_space struct to
-	file_priv
-In-Reply-To: <153358975874.26901.16081444242758666628.stgit@tstruk-mobl1.jf.intel.com>
+From: James.Bottomley@HansenPartnership.com (James Bottomley)
+Date: Mon, 06 Aug 2018 16:05:48 -0700
+Subject: [PATCH v3 RESEND 2/2] tpm: add support for nonblocking operation
+In-Reply-To: <153359005823.27531.1050952672299708433.stgit@tstruk-mobl1.jf.intel.com>
 References: <153358975874.26901.16081444242758666628.stgit@tstruk-mobl1.jf.intel.com>
-Message-ID: <153359005317.27531.15255632733483519651.stgit@tstruk-mobl1.jf.intel.com>
+	<153359005823.27531.1050952672299708433.stgit@tstruk-mobl1.jf.intel.com>
+Message-ID: <1533596748.3159.19.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add a ptr to struct tpm_space to the file_priv to have an easy
-access to it in the async job without the need to allocate memory.
-This also allows to consolidate of the write operations for
-the two interfaces.
+On Mon, 2018-08-06 at 14:14 -0700, Tadeusz Struk wrote:
+[...]
+> +static void tpm_async_work(struct work_struct *work)
+> +{
+> +	struct file_priv *priv =
+> +			container_of(work, struct file_priv,
+> async_work);
+> +	ssize_t ret;
+> +
+> +	ret = tpm_transmit(priv->chip, priv->space, priv-
+> >data_buffer,
+> +			???sizeof(priv->data_buffer), 0);
 
-Tested-by: Philip Tricca <philip.b.tricca@intel.com>
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
----
- drivers/char/tpm/tpm-dev-common.c |    8 +++++---
- drivers/char/tpm/tpm-dev.c        |   10 ++--------
- drivers/char/tpm/tpm-dev.h        |    5 +++--
- drivers/char/tpm/tpmrm-dev.c      |   14 ++------------
- 4 files changed, 12 insertions(+), 25 deletions(-)
+Here' you assume the buffer_mutex was taken in write, which is done
+(see below).  However, here, since there was no change to tpm_transmit,
+you'll sleep in the context of the worker queue waiting for the command
+to complete and return.
 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index e4a04b2d3c32..f0c033b69b62 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -43,9 +43,11 @@ static void timeout_work(struct work_struct *work)
- }
- 
- void tpm_common_open(struct file *file, struct tpm_chip *chip,
--		     struct file_priv *priv)
-+		     struct file_priv *priv, struct tpm_space *space)
- {
- 	priv->chip = chip;
-+	priv->space = space;
-+
- 	mutex_init(&priv->buffer_mutex);
- 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
- 	INIT_WORK(&priv->work, timeout_work);
-@@ -79,7 +81,7 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
- }
- 
- ssize_t tpm_common_write(struct file *file, const char __user *buf,
--			 size_t size, loff_t *off, struct tpm_space *space)
-+			 size_t size, loff_t *off)
- {
- 	struct file_priv *priv = file->private_data;
- 	size_t in_size = size;
-@@ -119,7 +121,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 		mutex_unlock(&priv->buffer_mutex);
- 		return -EPIPE;
- 	}
--	out_size = tpm_transmit(priv->chip, space, priv->data_buffer,
-+	out_size = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
- 				sizeof(priv->data_buffer), 0);
- 
- 	tpm_put_ops(priv->chip);
-diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-index ebd74ab5abef..98b9630c3a36 100644
---- a/drivers/char/tpm/tpm-dev.c
-+++ b/drivers/char/tpm/tpm-dev.c
-@@ -39,7 +39,7 @@ static int tpm_open(struct inode *inode, struct file *file)
- 	if (priv == NULL)
- 		goto out;
- 
--	tpm_common_open(file, chip, priv);
-+	tpm_common_open(file, chip, priv, NULL);
- 
- 	return 0;
- 
-@@ -48,12 +48,6 @@ static int tpm_open(struct inode *inode, struct file *file)
- 	return -ENOMEM;
- }
- 
--static ssize_t tpm_write(struct file *file, const char __user *buf,
--			 size_t size, loff_t *off)
--{
--	return tpm_common_write(file, buf, size, off, NULL);
--}
--
- /*
-  * Called on file close
-  */
-@@ -73,6 +67,6 @@ const struct file_operations tpm_fops = {
- 	.llseek = no_llseek,
- 	.open = tpm_open,
- 	.read = tpm_common_read,
--	.write = tpm_write,
-+	.write = tpm_common_write,
- 	.release = tpm_release,
- };
-diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-index b24cfb4d3ee1..4048677bbd78 100644
---- a/drivers/char/tpm/tpm-dev.h
-+++ b/drivers/char/tpm/tpm-dev.h
-@@ -6,6 +6,7 @@
- 
- struct file_priv {
- 	struct tpm_chip *chip;
-+	struct tpm_space *space;
- 
- 	/* Data passed to and from the tpm via the read/write calls */
- 	size_t data_pending;
-@@ -18,11 +19,11 @@ struct file_priv {
- };
- 
- void tpm_common_open(struct file *file, struct tpm_chip *chip,
--		     struct file_priv *priv);
-+		     struct file_priv *priv, struct tpm_space *space);
- ssize_t tpm_common_read(struct file *file, char __user *buf,
- 			size_t size, loff_t *off);
- ssize_t tpm_common_write(struct file *file, const char __user *buf,
--			 size_t size, loff_t *off, struct tpm_space *space);
-+			 size_t size, loff_t *off);
- void tpm_common_release(struct file *file, struct file_priv *priv);
- 
- #endif
-diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
-index 1a0e97a5da5a..96006c6b9696 100644
---- a/drivers/char/tpm/tpmrm-dev.c
-+++ b/drivers/char/tpm/tpmrm-dev.c
-@@ -28,7 +28,7 @@ static int tpmrm_open(struct inode *inode, struct file *file)
- 		return -ENOMEM;
- 	}
- 
--	tpm_common_open(file, chip, &priv->priv);
-+	tpm_common_open(file, chip, &priv->priv, &priv->space);
- 
- 	return 0;
- }
-@@ -45,21 +45,11 @@ static int tpmrm_release(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
--static ssize_t tpmrm_write(struct file *file, const char __user *buf,
--		   size_t size, loff_t *off)
--{
--	struct file_priv *fpriv = file->private_data;
--	struct tpmrm_priv *priv = container_of(fpriv, struct tpmrm_priv, priv);
--
--	return tpm_common_write(file, buf, size, off, &priv->space);
--}
--
- const struct file_operations tpmrm_fops = {
- 	.owner = THIS_MODULE,
- 	.llseek = no_llseek,
- 	.open = tpmrm_open,
- 	.read = tpm_common_read,
--	.write = tpmrm_write,
-+	.write = tpm_common_write,
- 	.release = tpmrm_release,
- };
--
+> +	tpm_put_ops(priv->chip);
+> +	if (ret > 0) {
+> +		priv->data_pending = ret;
+> +		mod_timer(&priv->user_read_timer, jiffies + (120 *
+> HZ));
+> +	}
+> +	mutex_unlock(&priv->buffer_mutex);
+
+But you don't release buffer_mutex here until the tpm command has
+completed.
+
+> +	wake_up_interruptible(&priv->async_wait);
+> +}
+> +
+
+[...]
+> @@ -118,25 +155,48 @@ ssize_t tpm_common_write(struct file *file,
+> const char __user *buf,
+> ?	?* the char dev is held open.
+> ?	?*/
+> ?	if (tpm_try_get_ops(priv->chip)) {
+> -		mutex_unlock(&priv->buffer_mutex);
+> -		return -EPIPE;
+> +		ret = -EPIPE;
+> +		goto out;
+> ?	}
+> -	out_size = tpm_transmit(priv->chip, priv->space, priv-
+> >data_buffer,
+> -				sizeof(priv->data_buffer), 0);
+> ?
+> -	tpm_put_ops(priv->chip);
+> -	if (out_size < 0) {
+> -		mutex_unlock(&priv->buffer_mutex);
+> -		return out_size;
+> +	/*
+> +	?* If in nonblocking mode schedule an async job to send
+> +	?* the command return the size.
+> +	?* In case of error the err code will be returned in
+> +	?* the subsequent read call.
+> +	?*/
+> +	if (file->f_flags & O_NONBLOCK) {
+> +		queue_work(tpm_dev_wq, &priv->async_work);
+> +		return size;
+
+Here you return holding the buffer_mutex, waiting for tpm_async_work to
+release it.
+
+But now I've written my tpm work item and got it queued, I can't write
+another one without blocking on the buffer_mutex at the top of
+tpm_common_write(), and since that doesn't get released until the
+previous command completed, I can only queue one command before I
+block.  For an async interface, shouldn't I be able to queue an
+arbitrary number of commands without blocking?
+
+James
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
