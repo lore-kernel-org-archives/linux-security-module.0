@@ -1,121 +1,54 @@
-From: nixiaoming@huawei.com (nixiaoming)
-Date: Sun, 5 Aug 2018 17:10:36 +0800
-Subject: [PATCH] selinuxfs: Fix the resource leak in the failed branch of
-	sel_make_inode
-Message-ID: <20180805091036.30035-1-nixiaoming@huawei.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Mon, 6 Aug 2018 08:58:47 -0400
+Subject: [PATCH] selinux: stricter parsing in mls_context_to_sid()
+In-Reply-To: <20180803093604.38254-1-jannh@google.com>
+References: <20180803093604.38254-1-jannh@google.com>
+Message-ID: <a4c0b0a6-3331-1abc-266c-7e6589a04208@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-If the resource requested by d_alloc_name is not added to the linked
-list through d_add, then dput needs to be called to release the
-subsequent abnormal branch to avoid resource leakage.
+On 08/03/2018 05:36 AM, Jann Horn wrote:
+> mls_context_to_sid incorrectly accepted MLS context strings that are
+> followed by a dash and trailing garbage.
+> 
+> Before this change, the following command works:
+> 
+> # mount -t tmpfs -o 'context=system_u:object_r:tmp_t:s0-s0:c0-BLAH' \
+> none mount
+> 
+> After this change, it fails with the following error message in dmesg:
+> 
+> SELinux: security_context_str_to_sid(system_u:object_r:tmp_t:s0-s0:c0-BLAH)
+> failed for (dev tmpfs, type tmpfs) errno=-22
+> 
+> This is not an important bug; but it is a small quirk that was useful for
+> exploiting a vulnerability in fusermount.
+> 
+> This patch does not change the behavior when the policy does not have MLS
+> enabled.
+> 
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-Add missing dput to selinuxfs.c
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 
-Signed-off-by: nixiaoming <nixiaoming@huawei.com>
----
- security/selinux/selinuxfs.c | 33 +++++++++++++++++++++++++--------
- 1 file changed, 25 insertions(+), 8 deletions(-)
-
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 79d3709..0b66d728 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -1365,13 +1365,18 @@ static int sel_make_bools(struct selinux_fs_info *fsi)
- 
- 		ret = -ENOMEM;
- 		inode = sel_make_inode(dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
--		if (!inode)
-+		if (!inode) {
-+			dput(dentry);
- 			goto out;
-+		}
- 
- 		ret = -ENAMETOOLONG;
- 		len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
--		if (len >= PAGE_SIZE)
-+		if (len >= PAGE_SIZE) {
-+			dput(dentry);
-+			iput(inode);
- 			goto out;
-+		}
- 
- 		isec = (struct inode_security_struct *)inode->i_security;
- 		ret = security_genfs_sid(fsi->state, "selinuxfs", page,
-@@ -1586,8 +1591,10 @@ static int sel_make_avc_files(struct dentry *dir)
- 			return -ENOMEM;
- 
- 		inode = sel_make_inode(dir->d_sb, S_IFREG|files[i].mode);
--		if (!inode)
-+		if (!inode) {
-+			dput(dentry);
- 			return -ENOMEM;
-+		}
- 
- 		inode->i_fop = files[i].ops;
- 		inode->i_ino = ++fsi->last_ino;
-@@ -1632,8 +1639,10 @@ static int sel_make_initcon_files(struct dentry *dir)
- 			return -ENOMEM;
- 
- 		inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
--		if (!inode)
-+		if (!inode) {
-+			dput(dentry);
- 			return -ENOMEM;
-+		}
- 
- 		inode->i_fop = &sel_initcon_ops;
- 		inode->i_ino = i|SEL_INITCON_INO_OFFSET;
-@@ -1733,8 +1742,10 @@ static int sel_make_perm_files(char *objclass, int classvalue,
- 
- 		rc = -ENOMEM;
- 		inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
--		if (!inode)
-+		if (!inode) {
-+			dput(dentry);
- 			goto out;
-+		}
- 
- 		inode->i_fop = &sel_perm_ops;
- 		/* i+1 since perm values are 1-indexed */
-@@ -1763,8 +1774,10 @@ static int sel_make_class_dir_entries(char *classname, int index,
- 		return -ENOMEM;
- 
- 	inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
--	if (!inode)
-+	if (!inode) {
-+		dput(dentry);
- 		return -ENOMEM;
-+	}
- 
- 	inode->i_fop = &sel_class_ops;
- 	inode->i_ino = sel_class_to_ino(index);
-@@ -1838,8 +1851,10 @@ static int sel_make_policycap(struct selinux_fs_info *fsi)
- 			return -ENOMEM;
- 
- 		inode = sel_make_inode(fsi->sb, S_IFREG | 0444);
--		if (inode == NULL)
-+		if (inode == NULL) {
-+			dput(dentry);
- 			return -ENOMEM;
-+		}
- 
- 		inode->i_fop = &sel_policycap_ops;
- 		inode->i_ino = iter | SEL_POLICYCAP_INO_OFFSET;
-@@ -1932,8 +1947,10 @@ static int sel_fill_super(struct super_block *sb, void *data, int silent)
- 
- 	ret = -ENOMEM;
- 	inode = sel_make_inode(sb, S_IFCHR | S_IRUGO | S_IWUGO);
--	if (!inode)
-+	if (!inode) {
-+		dput(dentry);
- 		goto err;
-+	}
- 
- 	inode->i_ino = ++fsi->last_ino;
- 	isec = (struct inode_security_struct *)inode->i_security;
--- 
-2.10.1
+> ---
+>   security/selinux/ss/mls.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
+> index 39475fb455bc..2c73d612d2ee 100644
+> --- a/security/selinux/ss/mls.c
+> +++ b/security/selinux/ss/mls.c
+> @@ -344,7 +344,7 @@ int mls_context_to_sid(struct policydb *pol,
+>   					break;
+>   			}
+>   		}
+> -		if (delim == '-') {
+> +		if (delim == '-' && l == 0) {
+>   			/* Extract high sensitivity. */
+>   			scontextp = p;
+>   			while (*p && *p != ':')
+> 
 
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
