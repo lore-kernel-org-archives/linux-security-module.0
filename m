@@ -1,96 +1,77 @@
-From: jannh@google.com (Jann Horn)
-Date: Mon, 6 Aug 2018 21:47:02 +0200
-Subject: [PATCH] selinux: stricter parsing in mls_context_to_sid()
-In-Reply-To: <CAHC9VhT83LuwuGB4ndVpkqtfLZ2Se1Qqhw57CTEZ-5bzPATiag@mail.gmail.com>
-References: <20180803093604.38254-1-jannh@google.com>
-	<CAHC9VhT83LuwuGB4ndVpkqtfLZ2Se1Qqhw57CTEZ-5bzPATiag@mail.gmail.com>
-Message-ID: <CAG48ez0UPrDQ1t=3gWB3ahj3ksc1_FAC0T6-y2ngi6tLTpUUxg@mail.gmail.com>
+From: tadeusz.struk@intel.com (Tadeusz Struk)
+Date: Mon, 06 Aug 2018 14:09:18 -0700
+Subject: [PATCH v3 RESEND 0/2] tpm: add support for nonblocking operation
+Message-ID: <153358975874.26901.16081444242758666628.stgit@tstruk-mobl1.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Aug 4, 2018 at 2:01 AM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Fri, Aug 3, 2018 at 5:36 AM Jann Horn <jannh@google.com> wrote:
-> >
-> > mls_context_to_sid incorrectly accepted MLS context strings that are
-> > followed by a dash and trailing garbage.
-> >
-> > Before this change, the following command works:
-> >
-> > # mount -t tmpfs -o 'context=system_u:object_r:tmp_t:s0-s0:c0-BLAH' \
-> > none mount
-> >
-> > After this change, it fails with the following error message in dmesg:
-> >
-> > SELinux: security_context_str_to_sid(system_u:object_r:tmp_t:s0-s0:c0-BLAH)
-> > failed for (dev tmpfs, type tmpfs) errno=-22
-> >
-> > This is not an important bug; but it is a small quirk that was useful for
-> > exploiting a vulnerability in fusermount.
-> >
-> > This patch does not change the behavior when the policy does not have MLS
-> > enabled.
-> >
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > ---
-> >  security/selinux/ss/mls.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> Ooof.  mls_context_to_sid() isn't exactly the most elegant function is
-> it?  I suppose some of that is due to the label format, but it still
-> seems like we can do better.  However, before I jump into that let me
-> say that speaking strictly about your patch, yes, it does look correct
-> to me.
->
-> What I'm wonder is if we rework/reorder some of the parser to remove
-> some of the ordering specific (e.g. "l == 0") and reduce some
-> redundancy ... be patient with me for a moment ...
->
-> The while loops immediately following the "Extract low sensitivity"
-> and "Extract high sensitivity" comments are basically the same,
-> including NULL'ing the delimiter if necessary, the only difference is
-> the additional '-' delimiter in the low sensitivity search.
->
-> The only *legal* place for a '-' in the MLS portion of the label is to
-> separate the low/high portions.
->
-> What if we were to do a quick search for the low/high separator before
-> extracting the low sensitivity and stored low/high pointers for later
-> use?  e.g.
->
->   rangep[0] = *scontext;
->   rangep[1] = strchr(rangep[0], '-');
->   if (rangep[1])
->     rangep[1]++ = '\0';
->
-> ... we could then move the "Extract X sensitivity" into the main for
-> loop as well remove all of the '-' special case parsing checks, e.g.
->
->   for (l = 0; l < 2; l++) {
->
->     scontextp = rangep[l];
->     if (!scontextp)
->       break;
->
->     while (*p && *p != ':')
->       p++;
->     delim = *p;
->     if (delim != '\0')
->       *p++ = '\0';
->
->     /* extract the level (use existing code) */
->
->     /* extract the category set, if present (use existing code) */
->
->     /* no need to worry about the '-' delimiter */
->
->   }
->
-> I *believe* that should work.  I think.  Does that make sense?
+The TCG SAPI specification [1] defines a set of functions, which allow
+applications to use the TPM device in either blocking or non-blocking fashion.
+Each command defined by the specification has a corresponding
+Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+mode of operation. Currently the TPM driver supports only blocking calls,
+which doesn't allow asynchronous IO operations.
+This patch changes it and adds support for nonblocking write and a new poll
+function to enable applications, which want to take advantage of this feature.
+The new functionality can be tested using standard TPM tools implemented
+in [2], together with modified TCTI from [3], and an example application
+by Philip Tricca [4]. Here is a short description from Philip:
 
-I'm fiddling with the code a bit now - your suggestion sounds good to
-me, and I think there are a couple other small tweaks that can make
-the code more readable. I hope I'll have a patch ready soon.
+"The example application `glib-tss2-event` uses a glib main event loop
+to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
+using a glib timer event to time the operation. A GSource object is
+used to generate an event when the FD underlying the tss2 function
+call has data ready. While the application waits for an event indicating
+that the CreatePrimary operation is complete, it counts timer events
+that occur every 100ms. Once the CreatePrimary operation completes the
+number of timer events that occurred is used to make a rough calculation
+of the elapsed time. This value is then printed to the console.
+This takes ~300 lines of C code and requires no management or
+synchronization of threads. The glib GMainContext is "just a poll()
+loop" according to the glib documentation here:
+
+https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
+
+and so supporting 'poll' is the easiest way to integrate with glib /
+gtk+. This is true of any other event system that relies on 'poll'
+instead of worker threads."
+
+[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+[2] https://github.com/tpm2-software/tpm2-tools
+[3] https://github.com/tstruk/tpm2-tss/tree/async
+[4] https://github.com/flihp/glib-tss2-async-example
+
+---
+Changes in v3:
+- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
+  It complained because there is a module_exit() in another file already.
+- Added info on example application from Philip
+
+Changes in v2:
+- Split the change into two separate patches. First patch adds a pointer
+  to the space to the struct file_priv to have access to it from the async job.
+  This is to avoid memory allocations on every write call. Now everything
+  what's needed is in the file_priv struct.
+- Renamed the 'work' member of the timer to avoid confusion.
+  Now there are 'timeout_work' and 'async_work'.
+- Removed the global wait queue and moved it to file_priv.
+- Only creating the work queue when the first file is opened.
+
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
+
+ drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |   22 +++--
+ drivers/char/tpm/tpm-dev.h        |   19 +++--
+ drivers/char/tpm/tpm-interface.c  |    1 
+ drivers/char/tpm/tpm.h            |    1 
+ drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+ 6 files changed, 152 insertions(+), 72 deletions(-)
+
+--
+TS
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
