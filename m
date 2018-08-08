@@ -1,139 +1,145 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Tue, 7 Aug 2018 17:35:06 -0400
-Subject: [PATCH] selinuxfs: Fix the resource leak in the failed branch of
-	sel_make_inode
-In-Reply-To: <20180805091036.30035-1-nixiaoming@huawei.com>
-References: <20180805091036.30035-1-nixiaoming@huawei.com>
-Message-ID: <CAHC9VhQKBphcPi3Oya58f4-tfK6GYkufotstduhkTaQw8NTw2Q@mail.gmail.com>
+From: amir73il@gmail.com (Amir Goldstein)
+Date: Wed, 8 Aug 2018 17:14:38 +0200
+Subject: Fwd: [PATCH v3] cap_inode_getsecurity: use d_find_any_alias() instead
+	of d_find_alias()
+In-Reply-To: <1532071800.19245.5.camel@mtkswgap22>
+References: <1532071800.19245.5.camel@mtkswgap22>
+Message-ID: <CAOQ4uxg=Mf0OCXHnJzXen3L8UJw2gzQ2CzYq=YGBstoGY936_w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Aug 5, 2018 at 5:48 AM nixiaoming <nixiaoming@huawei.com> wrote:
-> If the resource requested by d_alloc_name is not added to the linked
-> list through d_add, then dput needs to be called to release the
-> subsequent abnormal branch to avoid resource leakage.
->
-> Add missing dput to selinuxfs.c
->
-> Signed-off-by: nixiaoming <nixiaoming@huawei.com>
-> ---
->  security/selinux/selinuxfs.c | 33 +++++++++++++++++++++++++--------
->  1 file changed, 25 insertions(+), 8 deletions(-)
+Hi Eric,
 
-Thanks for the quick follow-up on this patch.  It looks okay to me,
-assuming my test kernel works correctly (it's building now) I'll merge
-this into selinux/next.
+Seems like you have been AFK for a while.
+Will you be able to queue this v4.14 regression fix for 4.19?
 
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 79d3709..0b66d728 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -1365,13 +1365,18 @@ static int sel_make_bools(struct selinux_fs_info *fsi)
->
->                 ret = -ENOMEM;
->                 inode = sel_make_inode(dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
-> -               if (!inode)
-> +               if (!inode) {
-> +                       dput(dentry);
->                         goto out;
-> +               }
->
->                 ret = -ENAMETOOLONG;
->                 len = snprintf(page, PAGE_SIZE, "/%s/%s", BOOL_DIR_NAME, names[i]);
-> -               if (len >= PAGE_SIZE)
-> +               if (len >= PAGE_SIZE) {
-> +                       dput(dentry);
-> +                       iput(inode);
->                         goto out;
-> +               }
->
->                 isec = (struct inode_security_struct *)inode->i_security;
->                 ret = security_genfs_sid(fsi->state, "selinuxfs", page,
-> @@ -1586,8 +1591,10 @@ static int sel_make_avc_files(struct dentry *dir)
->                         return -ENOMEM;
->
->                 inode = sel_make_inode(dir->d_sb, S_IFREG|files[i].mode);
-> -               if (!inode)
-> +               if (!inode) {
-> +                       dput(dentry);
->                         return -ENOMEM;
-> +               }
->
->                 inode->i_fop = files[i].ops;
->                 inode->i_ino = ++fsi->last_ino;
-> @@ -1632,8 +1639,10 @@ static int sel_make_initcon_files(struct dentry *dir)
->                         return -ENOMEM;
->
->                 inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
-> -               if (!inode)
-> +               if (!inode) {
-> +                       dput(dentry);
->                         return -ENOMEM;
-> +               }
->
->                 inode->i_fop = &sel_initcon_ops;
->                 inode->i_ino = i|SEL_INITCON_INO_OFFSET;
-> @@ -1733,8 +1742,10 @@ static int sel_make_perm_files(char *objclass, int classvalue,
->
->                 rc = -ENOMEM;
->                 inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
-> -               if (!inode)
-> +               if (!inode) {
-> +                       dput(dentry);
->                         goto out;
-> +               }
->
->                 inode->i_fop = &sel_perm_ops;
->                 /* i+1 since perm values are 1-indexed */
-> @@ -1763,8 +1774,10 @@ static int sel_make_class_dir_entries(char *classname, int index,
->                 return -ENOMEM;
->
->         inode = sel_make_inode(dir->d_sb, S_IFREG|S_IRUGO);
-> -       if (!inode)
-> +       if (!inode) {
-> +               dput(dentry);
->                 return -ENOMEM;
-> +       }
->
->         inode->i_fop = &sel_class_ops;
->         inode->i_ino = sel_class_to_ino(index);
-> @@ -1838,8 +1851,10 @@ static int sel_make_policycap(struct selinux_fs_info *fsi)
->                         return -ENOMEM;
->
->                 inode = sel_make_inode(fsi->sb, S_IFREG | 0444);
-> -               if (inode == NULL)
-> +               if (inode == NULL) {
-> +                       dput(dentry);
->                         return -ENOMEM;
-> +               }
->
->                 inode->i_fop = &sel_policycap_ops;
->                 inode->i_ino = iter | SEL_POLICYCAP_INO_OFFSET;
-> @@ -1932,8 +1947,10 @@ static int sel_fill_super(struct super_block *sb, void *data, int silent)
->
->         ret = -ENOMEM;
->         inode = sel_make_inode(sb, S_IFCHR | S_IRUGO | S_IWUGO);
-> -       if (!inode)
-> +       if (!inode) {
-> +               dput(dentry);
->                 goto err;
-> +       }
->
->         inode->i_ino = ++fsi->last_ino;
->         isec = (struct inode_security_struct *)inode->i_security;
-> --
-> 2.10.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo at vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Eddie is already working on upstreaming an LTP test for the regression.
+
+The fix has been ACKed by Serge and myself.
+
+Andrew,
+
+If Eric fails to respond timely, could you pick up this fix via -mm?
+
+Thanks,
+Amir.
+
+
+---------- Forwarded message ----------
+From: Eddie.Horng <eddie.horng@mediatek.com>
+Date: Fri, Jul 20, 2018 at 9:30 AM
+Subject: [PATCH v3] cap_inode_getsecurity: use d_find_any_alias()
+instead of d_find_alias()
+To: LSM List <linux-security-module@vger.kernel.org>
+Cc: stable at vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, "Eric
+W. Biederman" <ebiederm@xmission.com>, "Serge E. Hallyn"
+<serge@hallyn.com>, Eddie Horng <eddiehorng.tw@gmail.com>
 
 
 
--- 
-paul moore
-www.paul-moore.com
+The code in cap_inode_getsecurity(), introduced by commit 8db6c34f1dbc
+("Introduce v3 namespaced file capabilities"), should use
+d_find_any_alias() instead of d_find_alias() do handle unhashed dentry
+correctly. This is needed, for example, if execveat() is called with an
+open but unlinked overlayfs file, because overlayfs unhashes dentry on
+unlink.
+This is a regression of real life application, first reported at
+https://www.spinics.net/lists/linux-unionfs/msg05363.html
+
+Below reproducer and setup can reproduce the case.
+  const char* exec="echo";
+  const char *newargv[] = { "echo", "hello", NULL};
+  const char *newenviron[] = { NULL };
+  int fd, err;
+
+  fd = open(exec, O_PATH);
+  unlink(exec);
+  err = syscall(322/*SYS_execveat*/, fd, "", newargv, newenviron,
+AT_EMPTY_PATH);
+  if(err<0)
+    fprintf(stderr, "execveat: %s\n", strerror(errno));
+
+gcc compile into ~/test/a.out
+mount -t overlay -orw,lowerdir=/mnt/l,upperdir=/mnt/u,workdir=/mnt/w
+none /mnt/m
+cd /mnt/m
+cp /bin/echo .
+~/test/a.out
+
+Expected result:
+hello
+Actually result:
+execveat: Invalid argument
+dmesg:
+Invalid argument reading file caps for /dev/fd/3
+
+The 2nd reproducer and setup emulates similar case but for
+regular filesystem:
+  const char* exec="echo";
+  int fd, err;
+  char buf[256];
+
+  fd = open(exec, O_RDONLY);
+  unlink(exec);
+  err = fgetxattr(fd, "security.capability", buf, 256);
+  if(err<0)
+    fprintf(stderr, "fgetxattr: %s\n", strerror(errno));
+
+gcc compile into ~/test_fgetxattr
+
+cd /tmp
+cp /bin/echo .
+~/test_fgetxattr
+
+Result:
+fgetxattr: Invalid argument
+
+On regular filesystem, for example, ext4 read xattr from
+disk and return to execveat(), will not trigger this issue, however,
+the overlay attr handler pass real dentry to vfs_getxattr() will.
+This reproducer calls fgetxattr() with an unlinked fd, involkes
+vfs_getxattr() then reproduced the case that d_find_alias() in
+cap_inode_getsecurity() can't find the unlinked dentry.
+
+
+Suggested-by: Amir Goldstein <amir73il@gmail.com>
+Acked-by: Amir Goldstein <amir73il@gmail.com>
+Acked-by: Serge E. Hallyn <serge@hallyn.com>
+Fixes: 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
+Cc: <stable@vger.kernel.org> # v4.14
+Signed-off-by: Eddie Horng <eddie.horng@mediatek.com>
+---
+Changes in v2:
+ - fix commit message wrapped at 74 chars
+ - added previous acked-by
+
+---
+Changes in v3:
+ - added original case report link
+ - added 2nd reproducer for regular filesystems
+ - added acked-by Serge E. Hallyn
+ - add Cc
+
+---
+ security/commoncap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 1ce701fcb3f3..147f6131842a 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -388,7 +388,7 @@ int cap_inode_getsecurity(struct inode *inode, const
+char *name, void **buffer,
+        if (strcmp(name, "capability") != 0)
+                return -EOPNOTSUPP;
+
+-       dentry = d_find_alias(inode);
++       dentry = d_find_any_alias(inode);
+        if (!dentry)
+                return -EINVAL;
+
+--
+2.12.5
 --
 To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
 the body of a message to majordomo at vger.kernel.org
