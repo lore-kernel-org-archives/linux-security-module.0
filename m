@@ -1,64 +1,71 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 11 Aug 2018 00:44:48 +0300
-Subject: Fwd: PROBLEM: tpm_cpg can't request region with AMD/Dell fTPM
-In-Reply-To: <20180810165735.GT4692@linux.intel.com>
-References: <CAO-sURTngN_mnpJp9rvutpDfz80Nq4K8JOH4fnZG2NaTafkx+g@mail.gmail.com>
-	<CAO-sURTs1dc_5iY+b34Jqj4hxZFdUj9LZxTWhDdvqM8AbEqMAw@mail.gmail.com>
-	<20180810165735.GT4692@linux.intel.com>
-Message-ID: <20180810214433.GA15044@linux.intel.com>
+From: darrick.wong@oracle.com (Darrick J. Wong)
+Date: Fri, 10 Aug 2018 15:12:34 -0700
+Subject: BUG: Mount ignores mount options
+In-Reply-To: <20180810204639.GI627@thunk.org>
+References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
+	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+	<22361.1533913891@warthog.procyon.org.uk>
+	<28045.1533916438@warthog.procyon.org.uk>
+	<20180810161400.GA627@thunk.org>
+	<CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+	<20180810204639.GI627@thunk.org>
+Message-ID: <20180810221234.GC4211@magnolia>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Aug 10, 2018 at 07:57:35PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 07, 2018 at 02:43:10PM -0400, Harlan Lieberman-Berg wrote:
-> > (Resending as it seems to have been spamfiltered out from the ml;
-> > sorry Peter, Jarkko for the duplicate)
+On Fri, Aug 10, 2018 at 04:46:39PM -0400, Theodore Y. Ts'o wrote:
+> On Fri, Aug 10, 2018 at 01:06:54PM -0700, Andy Lutomirski wrote:
+> > If the same block device is visible, with rw access, in two different
+> > containers, I don't see any anything good can happen.
 > 
-> I came on Monday from four week leave and have been basically been
-> catching up with my emails :-) I'll look into this next week with
-> time.
+> It's worse than that.  I've fixed a lot of bugs which cause the kernel
+> to crash, and a few that might be levered into a privilege escalationh
+> attack, when you mount a maliciously corrupted file system using ext4.
+> I'm told told the security researcher filed similar reports with the
+> XFS community, and he was told, "that's what metadata checksums are
+> for; go away".
 
-The error message is saying that someone else has reserved the resource
-(-EBUSY).
+Hey now, there was a little more nuance to it than that[1][2].  The
+complaint in the first instance had much more to do with breaking
+existing V4 filesystems by adding format requirements that mkfs didn't
+know about when the filesystem was created.  Yes, you can create V4
+filesystems that will hang the system if the log was totally unformatted
+and metadata updates are made, but OTOH it's fairly obvious when that
+happens, you have to be root to mount a disk filesystem, and we try to
+avoid breaking existing users.
 
-This looks odd:
+XFS developers have been and will continue to examine security problems
+when they are brought to our attention and strengthen validation as
+needed to minimize the risk of incorrect behaviors, but filesystems are
+complex machines, complex machinery is risky, and we arbitrate some of
+that risk by requiring administrators to elect to mount an XFS.
 
-e78bf000-e7bbefff : ACPI Non-volatile Storage
-  e7bb6000-e7bb9fff : MSFT0101:00
-  e7bba000-e7bbdfff : MSFT0101:00
+> Given how much time it takes to work with these security researchers,
+> I don't blame them.
+> 
+> But in light of that, I'd make a somewhat stronger statement.  If you
+> let an untrusted container mount arbitrary block devices where they
+> have rw acccess to the underlying block device, nothing good can
+> happen.  Period.  :-)
+> 
+> Which is why I don't think the lack of being able to reject
+> "conflicting mount options" is really all that important.  It
+> certainly shouldn't block the fsopen patch series.  #1, it's a problem
+> we have today, and #2, I'm really not all sure supporting bind mounts
+> via specifying block device was ever a good idea to begin with.  And
+> #3, while I've been fixing ext4 against security issues caused by
+> maliciously corrupted file system images, I'm still sure that allowing
+> untrusted containers access to mount *any* file system via a block
+> device for which they have r/w access is a Really Bad Idea.
+> 
+> > It seems to me that the current approach mostly involves crossing our fingers.
+> 
+> Agreed!
 
-Why would be TPM registers mapped inside ACPI NV?
+Crossing our fingers and demanding administrator intentionality when
+mounting filesystems off some piece of storage.
 
-I would *guess* that what is happening is that perhaps drivers/acpi/nvs.c
-maps the address space. This looks like a firmware bug, and such that we
-cannot do anything about it.
+--D
 
-I'm having a weird issue with the ACPI tables:
-
-$ acpixtract acpidump.txt
-
-Intel ACPI Component Architecture
-ACPI Binary Table Extraction Utility version 20180105
-Copyright (c) 2000 - 2018 Intel Corporation
-
-  DSDT -   31048 bytes written (0x00007948) - dsdt.dat
-  SSDT -     349 bytes written (0x0000015D) - ssdt1.dat
-  SSDT -   18086 bytes written (0x000046A6) - ssdt2.dat
-  SSDT -    5225 bytes written (0x00001469) - ssdt3.dat
-  SSDT -    1082 bytes written (0x0000043A) - ssdt4.dat
-  SSDT -    1017 bytes written (0x000003F9) - ssdt5.dat
-  SSDT -    5369 bytes written (0x000014F9) - ssdt6.dat
-
-$ iasl -d *.dat   
-
-Intel ACPI Component Architecture
-ASL+ Optimizing Compiler/Disassembler version 20180105
-Copyright (c) 2000 - 2018 Intel Corporation
-
-Input file dsdt.dat, Length 0x7948 (31048) bytes
-Table [DSDT] is too long for file - needs: 0x815D, remaining in file: 0x7948
-Could not get ACPI tables from dsdt.dat, AE_BAD_HEADER
-
-This has not happened to me before.
-
-/Jarkko
+[1] https://lkml.org/lkml/2018/5/21/649
+[2] https://lkml.org/lkml/2018/4/2/572
