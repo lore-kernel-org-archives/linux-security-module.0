@@ -1,45 +1,48 @@
-From: tadeusz.struk@intel.com (Tadeusz Struk)
-Date: Fri, 10 Aug 2018 12:14:32 -0700
-Subject: [PATCH v4 2/2] tpm: add support for nonblocking operation
-In-Reply-To: <1533927647.3143.7.camel@HansenPartnership.com>
-References: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
-	<153367366969.18015.14742040525393494830.stgit@tstruk-mobl1.jf.intel.com>
-	<20180810174320.GV4692@linux.intel.com>
-	<ad02d89f-31d3-7d9f-4580-daf759c8d837@intel.com>
-	<1533926908.3143.6.camel@HansenPartnership.com>
-	<f49367fa-5af0-695e-342f-03a4bdcf35f2@intel.com>
-	<1533927647.3143.7.camel@HansenPartnership.com>
-Message-ID: <468c5651-6883-b6f1-64a4-6c6c2cade6de@intel.com>
+From: luto@kernel.org (Andy Lutomirski)
+Date: Fri, 10 Aug 2018 13:06:54 -0700
+Subject: BUG: Mount ignores mount options
+In-Reply-To: <20180810161400.GA627@thunk.org>
+References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
+	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+	<22361.1533913891@warthog.procyon.org.uk>
+	<28045.1533916438@warthog.procyon.org.uk>
+	<20180810161400.GA627@thunk.org>
+Message-ID: <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 08/10/2018 12:00 PM, James Bottomley wrote:
-> On Fri, 2018-08-10 at 11:56 -0700, Tadeusz Struk wrote:
->> On 08/10/2018 11:48 AM, James Bottomley wrote:
->>> On Fri, 2018-08-10 at 11:21 -0700, Tadeusz Struk wrote:
->>>> and the feedback I got from Jason was:
->>>>
->>>> "I wonder if it is worth creating this when the first file is
->>>> opened.. Lots of systems have TPMs but few use the userspace.."
->>>>
->>>> so I changed this to allocate the WQ on first open. I think it
->>>> makes sense, but I leave it to you to decide.
->>>
->>> If the reason is to not create a wq unless it's needed, shouldn't
->>> the condition actually be first open with flag O_NONBLOCK?
->>>
->>
->> Not really because one can do:
->>
->> int fd = open("/dev/tpm0", O_RDWR);
->> fcntl(fd, F_SETFL, O_NONBLOCK);
-> 
-> so move the condition to first need to queue ...
-> 
+On Fri, Aug 10, 2018 at 9:14 AM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> And I'm not really sure it helps the container use
+> case, since the whole point is they want their "guest" to be able to
+> blithely run "mount /dev/sda1 -o noxattr /mnt" and not worry about the
+> fact that in some other container, someone had run "mount /dev/sda1 -o
+> xattr /mnt".  But having the second mount fail because of conflicting
+> mount option breaks the illusion that containers are functionally as
+> rich as VM's.
 
-That would work, even though this is not how this is usually done.
-The first open looks like the sweet spot between module init
-and first need to queue.
-Thanks,
--- 
-Tadeusz
+If the same block device is visible, with rw access, in two different
+containers, I don't see any anything good can happen.  Sure, with the
+current somewhat erratic semantics of mount(2), something kind of sort
+of reasonable happens if they both mount it.  But if one or both of
+them try to use, say, tune2fs or fsck, it's not going to go well.  And
+a situation where they mount with different options and the result
+depends on the order of the mounts is just plain bad.
+
+I see four sane ways to deal with this:
+
+1. Don't put the block device in the container at all.  The container
+manager mounts it.
+
+2. Use seccomp or a similar mechanism to intercept and emulate the
+mount request.
+
+3. Teach the filesystem driver to do something sensible.  This will
+inherently be per-fs, and probably involves some serious magic or
+allowing filesystem-specific vfsmount options.
+
+4. Introduce a concept of a special kind of fake block device that
+refers to an existing superblock, doesn't allow direct read or write,
+and does the right thing when mounted.  Not obviously worth the
+effort.
+
+It seems to me that the current approach mostly involves crossing our fingers.
