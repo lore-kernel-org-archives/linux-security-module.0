@@ -1,38 +1,67 @@
 From: christian@brauner.io (Christian Brauner)
-Date: Fri, 10 Aug 2018 18:13:30 +0200
-Subject: [PATCH 4/9] cap_file: add new rootid argument
+Date: Fri, 10 Aug 2018 18:13:32 +0200
+Subject: [PATCH 6/9] capability: add cap_get_nsowner()
 In-Reply-To: <20180810161335.27036-1-christian@brauner.io>
 References: <20180810161335.27036-1-christian@brauner.io>
-Message-ID: <20180810161335.27036-5-christian@brauner.io>
+Message-ID: <20180810161335.27036-7-christian@brauner.io>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Newer kernels support setting file capabilities in user namespaces. In
-addition to directly setting file capabilites in a user namespaces they
-can also be set in lieu of another user namespace by passing a uid down
-to the kernel which will convert it to an appropriate kuid_t
-representation.
-This commit adds a new rootid argument to the internal struct
-_cap_struct so that we can store the rootid when the kernel supports
-VFS_CAP_REVISION_3 and returns a struct vfs_ns_cap_data.
+cap_get_nsowner() allows to retrieve the rootid of the file capability sets
+in the current user namespace.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
 ---
- libcap/libcap.h | 1 +
- 1 file changed, 1 insertion(+)
+ libcap/cap_file.c               | 16 ++++++++++++++++
+ libcap/include/sys/capability.h |  1 +
+ 2 files changed, 17 insertions(+)
 
-diff --git a/libcap/libcap.h b/libcap/libcap.h
-index 2596c11..9abe4a2 100644
---- a/libcap/libcap.h
-+++ b/libcap/libcap.h
-@@ -118,6 +118,7 @@ struct _cap_struct {
- 	struct __user_cap_data_struct set;
- 	__u32 flat[NUMBER_OF_CAP_SETS];
-     } u[_LIBCAP_CAPABILITY_U32S];
-+    uid_t rootid;
- };
+diff --git a/libcap/cap_file.c b/libcap/cap_file.c
+index eb98bf7..7acd60c 100644
+--- a/libcap/cap_file.c
++++ b/libcap/cap_file.c
+@@ -277,6 +277,16 @@ cap_t cap_get_file(const char *filename)
+     return result;
+ }
  
- /* the maximum bits supportable */
++/*
++ * Get rootid as seen in the current user namespace for the file capability
++ * sets.
++ */
++
++uid_t cap_get_nsowner(cap_t cap_d)
++{
++	return cap_d->rootid;
++}
++
+ /*
+  * Set the capabilities of an open file, as specified by its file
+  * descriptor.
+@@ -363,6 +373,12 @@ cap_t cap_get_file(const char *filename)
+     return NULL;
+ }
+ 
++uid_t cap_get_nsowner(cap_t cap_d)
++{
++    errno = EINVAL;
++    return -1;
++}
++
+ int cap_set_fd(int fildes, cap_t cap_d)
+ {
+     errno = EINVAL;
+diff --git a/libcap/include/sys/capability.h b/libcap/include/sys/capability.h
+index 0976fa7..42d8154 100644
+--- a/libcap/include/sys/capability.h
++++ b/libcap/include/sys/capability.h
+@@ -82,6 +82,7 @@ extern int     cap_clear_flag(cap_t, cap_flag_t);
+ /* libcap/cap_file.c */
+ extern cap_t   cap_get_fd(int);
+ extern cap_t   cap_get_file(const char *);
++extern uid_t   cap_get_nsowner(cap_t);
+ extern int     cap_set_fd(int, cap_t);
+ extern int     cap_set_file(const char *, cap_t);
+ 
 -- 
 2.17.1
