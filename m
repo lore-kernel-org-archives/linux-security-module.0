@@ -1,52 +1,33 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Fri, 10 Aug 2018 13:00:22 -0500
-Subject: BUG: Mount ignores mount options
-In-Reply-To: <20180810153902.GH21087@thunk.org> (Theodore Y. Ts'o's message of
-	"Fri, 10 Aug 2018 11:39:02 -0400")
-References: <87d0uqpba5.fsf@xmission.com>
-	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<22361.1533913891@warthog.procyon.org.uk>
-	<20180810153902.GH21087@thunk.org>
-Message-ID: <87mutunlu1.fsf@xmission.com>
+From: tadeusz.struk@intel.com (Tadeusz Struk)
+Date: Fri, 10 Aug 2018 11:05:17 -0700
+Subject: [PATCH v4 1/2] tpm: add ptr to the tpm_space struct to file_priv
+In-Reply-To: <20180810172700.GU4692@linux.intel.com>
+References: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
+	<153367366462.18015.12915462188877575543.stgit@tstruk-mobl1.jf.intel.com>
+	<20180810172700.GU4692@linux.intel.com>
+Message-ID: <2bacb3d8-3897-e147-252f-c49de9e7806b@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-"Theodore Y. Ts'o" <tytso@mit.edu> writes:
+On 08/10/2018 10:27 AM, Jarkko Sakkinen wrote:
+> On Tue, Aug 07, 2018 at 01:27:44PM -0700, Tadeusz Struk wrote:
+>> Add a ptr to struct tpm_space to the file_priv to have an easy
+>> access to it in the async job without the need to allocate memory.
+>> This also allows to consolidate of the write operations for
+>> the two interfaces.
+> 
+> I think the 2nd premise should be the priority and the first premise should
+> be removed as it is not needed in any possible way to justify the
+> change.
 
-> On Fri, Aug 10, 2018 at 04:11:31PM +0100, David Howells wrote:
->> 
->> Yes.  Since you *absolutely* *insist* on this being fixed *right* *now* *or*
->> *else*, I'm working up a set of additional patches to give userspace the
->> option of whether they want no sharing; sharing, but only with exactly the
->> same parameters; or to ignore the parameter differences and just accept
->> sharing of what's already already mounted (ie. the current behaviour).
->
-> But there's no way to support "no sharing", at least not in the
-> general case.  A file system can only be mounted once, and without
-> file system support, there's no way for a file system to be mounted
-> with the bsddf or minixdf mount simultaneously.
->
-> Even *with* file system support, there's no way today for the VFS to
-> keep track of whether a pathname resolution came through one
-> mountpoint or another, so I can't do something like this:
->
-> 	mount /dev/sdXX -o casefold /android-data
-> 	mount /dev/sdXX -o nocasefold /android-data-2
->
-> Which is a pity, since if we could we could much more easily get rid
-> of the horror which is Android's wrapfs...
->
-> So if the file system has been mounted with one set of mount options,
-> and you want to try to mount it with a conflicting set of mount
-> options and you don't want it to silently ignore the mount options,
-> the *only* thing we can today is to refuse the mount and return an
-> error.  
->
-> I'm not sure Eric would really consider that an improvement for the
-> container use case....
-
-I think I would consider it an improvement.  I keep running into cases
-where the mount options differed and something was done silently and
-that causes problems.
-
-Eric
+Jarkko,
+The main reason why the pointer to tpm_space struct was added to the
+file_priv was to have access to space in the async job when it is enqueued
+via the /dev/tpm<N> interface. Currently it is only available in tpmrm_priv.
+Otherwise I would need to introduce yet another struct what would consist of
+a ptr file_priv and a ptr to tpm_space and allocate it on every enqueue.
+Much easier was to to it this way. The consolidation was only a side effect
+of this so I think the description is correct.
+Thanks,
+-- 
+Tadeusz
