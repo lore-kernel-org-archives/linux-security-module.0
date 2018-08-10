@@ -1,54 +1,21 @@
-From: tytso@mit.edu (Theodore Y. Ts'o)
-Date: Fri, 10 Aug 2018 12:14:00 -0400
-Subject: BUG: Mount ignores mount options
-In-Reply-To: <28045.1533916438@warthog.procyon.org.uk>
-References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
-	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<22361.1533913891@warthog.procyon.org.uk>
-	<28045.1533916438@warthog.procyon.org.uk>
-Message-ID: <20180810161400.GA627@thunk.org>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Fri, 10 Aug 2018 20:27:00 +0300
+Subject: [PATCH v4 1/2] tpm: add ptr to the tpm_space struct to file_priv
+In-Reply-To: <153367366462.18015.12915462188877575543.stgit@tstruk-mobl1.jf.intel.com>
+References: <153367365951.18015.11320230309813817454.stgit@tstruk-mobl1.jf.intel.com>
+	<153367366462.18015.12915462188877575543.stgit@tstruk-mobl1.jf.intel.com>
+Message-ID: <20180810172700.GU4692@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Aug 10, 2018 at 04:53:58PM +0100, David Howells wrote:
-> Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> 
-> > Even *with* file system support, there's no way today for the VFS to
-> > keep track of whether a pathname resolution came through one
-> > mountpoint or another, so I can't do something like this:
-> 
-> Ummm...  Isn't that encoded in the vfsmount pointer in struct path?
+On Tue, Aug 07, 2018 at 01:27:44PM -0700, Tadeusz Struk wrote:
+> Add a ptr to struct tpm_space to the file_priv to have an easy
+> access to it in the async job without the need to allocate memory.
+> This also allows to consolidate of the write operations for
+> the two interfaces.
 
-Well, yes, and we do use this as a hack to make read-only bind mounts
-work.  But that's done as a special case, and it's for permissions
-checking only.
+I think the 2nd premise should be the priority and the first premise should
+be removed as it is not needed in any possible way to justify the
+change.
 
-The big problem is that there is single dentry cache object regardless
-of which mount point was used to access it.  So that makes it
-impossible to support case folding as a mount-pointism.
-
-> 
-> However, the case folding stuff - is that a superblockism of a mountpointism?
-
-It's a superblock-ism.  As far as I know the *only* thing that we can
-support as a mount-pointism is the ro flag, and that's handled as a
-special case, and only if the original superblock was mounted
-read/write.  ey That was my point; aside from the ro flag, we can't
-support any other mount options as a per-mount point thing, so the
-only thing we can do is to fail the mount if there are conflicting
-mount options.  And I'm not really sure it helps the container use
-case, since the whole point is they want their "guest" to be able to
-blithely run "mount /dev/sda1 -o noxattr /mnt" and not worry about the
-fact that in some other container, someone had run "mount /dev/sda1 -o
-xattr /mnt".  But having the second mount fail because of conflicting
-mount option breaks the illusion that containers are functionally as
-rich as VM's.
-
-So before you put in lots of work to support rejecting the attmpted
-mount if the mount options conflict, are we sure people will actually
-find this to be useful?  Because it's not only fsopen() work for you,
-but each file system is going to have to implement new functions to
-answer the question "are these mount options conflicting or not?".
-Are we sure it's worth the effort?
-
-					- Ted
+/Jarkko
