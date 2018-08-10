@@ -1,67 +1,62 @@
 From: christian@brauner.io (Christian Brauner)
-Date: Fri, 10 Aug 2018 18:13:35 +0200
-Subject: [PATCH 9/9] capability: add cap_set_nsowner()
+Date: Fri, 10 Aug 2018 18:13:31 +0200
+Subject: [PATCH 5/9] cap_file: initialize rootid in _fcaps_load()
 In-Reply-To: <20180810161335.27036-1-christian@brauner.io>
 References: <20180810161335.27036-1-christian@brauner.io>
-Message-ID: <20180810161335.27036-10-christian@brauner.io>
+Message-ID: <20180810161335.27036-6-christian@brauner.io>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-cap_set_nsowner() allows to set the rootid of file capability sets. It can
-be used to set the rootid of a target user namespace as seen in the
-current user namespace. This allows a user namespace to set file
-capabilities in lieu of another user namespace.
+When the kernel supports namespaced file capabilites (VFS_REVISION_3) it
+will return a struct vfs_ns_cap_data that will contain an additional
+rootid field recording the rootid of the file capability sets in the
+current user namespace.
+
+When libcap has been compiled on a kernel that supports
+VFS_CAP_REVISION_3 but is used on a kernel that does not support
+VFS_CAP_REVISION_3 we need to initialize the root id of struct
+vfs_ns_cap_data to zero so that no invalid data is passed along when a
+VFS_REVISION_2 fcap was set on the file.
 
 Signed-off-by: Christian Brauner <christian@brauner.io>
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
 ---
- libcap/cap_file.c               | 16 ++++++++++++++++
- libcap/include/sys/capability.h |  1 +
- 2 files changed, 17 insertions(+)
+ libcap/cap_file.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/libcap/cap_file.c b/libcap/cap_file.c
-index a1f3891..9a1643c 100644
+index 9b8f11e..eb98bf7 100644
 --- a/libcap/cap_file.c
 +++ b/libcap/cap_file.c
-@@ -384,6 +384,16 @@ int cap_set_file(const char *filename, cap_t cap_d)
-     return setxattr(filename, XATTR_NAME_CAPS, &rawvfscap, sizeofcaps, 0);
+@@ -103,6 +103,13 @@ static cap_t _fcaps_load(struct vfs_cap_data *rawvfscap, cap_t result, int bytes
+ 	i++;
+     }
+ 
++#ifdef VFS_CAP_REVISION_3
++    /* The kernel returns the rootid as a _le32. In case we're on a big endian
++     * machine we need to fix this up.
++     */
++    result->rootid = FIXUP_32BITS(rawvfscap->rootid);
++#endif
++
+     return result;
  }
  
-+/*
-+ * Set rootid for the file capability sets.
-+ */
-+
-+int cap_set_nsowner(cap_t cap_d, uid_t rootid)
-+{
-+	cap_d->rootid = rootid;
-+	return 0;
-+}
-+
- #else /* ie. ndef VFS_CAP_U32 */
+@@ -221,6 +228,7 @@ cap_t cap_get_fd(int fildes)
+ 	_cap_debug("getting fildes capabilities");
  
- cap_t cap_get_fd(int fildes)
-@@ -416,4 +426,10 @@ int cap_set_file(const char *filename, cap_t cap_d)
-     return -1;
- }
+ 	/* fill the capability sets via a system call */
++	rawvfscap.rootid = 0;
+ 	sizeofcaps = fgetxattr(fildes, XATTR_NAME_CAPS,
+ 			       &rawvfscap, sizeof(rawvfscap));
+ 	if (sizeofcaps < ssizeof(rawvfscap.magic_etc)) {
+@@ -255,6 +263,7 @@ cap_t cap_get_file(const char *filename)
+ 	_cap_debug("getting filename capabilities");
  
-+void cap_set_nsowner(cap_t cap_d, uid_t rootid)
-+{
-+	errno = EINVAL;
-+	return -1;
-+}
-+
- #endif /* def VFS_CAP_U32 */
-diff --git a/libcap/include/sys/capability.h b/libcap/include/sys/capability.h
-index 42d8154..a9515b6 100644
---- a/libcap/include/sys/capability.h
-+++ b/libcap/include/sys/capability.h
-@@ -85,6 +85,7 @@ extern cap_t   cap_get_file(const char *);
- extern uid_t   cap_get_nsowner(cap_t);
- extern int     cap_set_fd(int, cap_t);
- extern int     cap_set_file(const char *, cap_t);
-+extern int     cap_set_nsowner(cap_t, uid_t);
- 
- /* libcap/cap_proc.c */
- extern cap_t   cap_get_proc(void);
+ 	/* fill the capability sets via a system call */
++	rawvfscap.rootid = 0;
+ 	sizeofcaps = getxattr(filename, XATTR_NAME_CAPS,
+ 			      &rawvfscap, sizeof(rawvfscap));
+ 	if (sizeofcaps < ssizeof(rawvfscap.magic_etc)) {
 -- 
 2.17.1
