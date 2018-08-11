@@ -1,36 +1,30 @@
-From: viro@ZenIV.linux.org.uk (Al Viro)
-Date: Sat, 11 Aug 2018 17:51:24 +0100
-Subject: BUG: Mount ignores mount options
-In-Reply-To: <9B6E2781-484B-4C42-95F5-F900EA36CEA5@amacapital.net>
-References: <87pnyphf8i.fsf@xmission.com> <87d0uqpba5.fsf@xmission.com>
-	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<22361.1533913891@warthog.procyon.org.uk>
-	<30365.1533972586@warthog.procyon.org.uk>
-	<9B6E2781-484B-4C42-95F5-F900EA36CEA5@amacapital.net>
-Message-ID: <20180811165123.GH6515@ZenIV.linux.org.uk>
+From: harlan@dds.mil (Harlan Lieberman-Berg)
+Date: Sat, 11 Aug 2018 14:29:41 -0400
+Subject: Fwd: PROBLEM: tpm_cpg can't request region with AMD/Dell fTPM
+In-Reply-To: <CA+i0qc5Z95QD4Pb8XYGnj+=gVfGJWARqrRN8zej0zDUrcDYW5w@mail.gmail.com>
+References: <CAO-sURTngN_mnpJp9rvutpDfz80Nq4K8JOH4fnZG2NaTafkx+g@mail.gmail.com>
+	<CAO-sURTs1dc_5iY+b34Jqj4hxZFdUj9LZxTWhDdvqM8AbEqMAw@mail.gmail.com>
+	<20180810165735.GT4692@linux.intel.com>
+	<20180810214433.GA15044@linux.intel.com>
+	<CA+i0qc5Z95QD4Pb8XYGnj+=gVfGJWARqrRN8zej0zDUrcDYW5w@mail.gmail.com>
+Message-ID: <CAO-sURRBXW77tk-Vq4vZr5q3GJt643o80jC35PpjUx649L=+cg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Aug 11, 2018 at 09:31:29AM -0700, Andy Lutomirski wrote:
+On Sat, Aug 11, 2018 at 5:42 AM, Tomas Winkler <tomasw@gmail.com> wrote:
+> What platform is this? This is not regular 0xfed40000 address space. I
+> guess this is BYT or CHT.  It's better to get dmideoce dump as well.
 
-> I don?t see why we need all this fancy ?do the options match? stuff.  For the handful of filesystems (like NFS) that do something intelligent when multiple non-bind mount requests against the same underlying storage happen,  we can keep that behavior in the new API. For other filesystems that don?t have this feature, we should simply fail the request.
+Hello Tomas, Jarkko, all,
 
-> IOW I see so compelling reason to call sget() at all from the new API.  The only sort-of-legit use case I can think of is mounting more than one btrfs subvolume. But even that should probably not be done by asking the kernel to separately instantiate the filesystem.
+I'm not sure what's up with that.  I've updated the firmware to the
+latest version (with no fix, sadly), and re-dumped the ACPI tables.
+They now process correctly through isl v20180629.  I've also saved the
+output of dmidecode for you.
 
+https://gist.github.com/hlieberman-gov/83fa708d41051bafccc553cf0147db4f
 
-May I politely suggest the esteemed participants of that conversation
-to RTFS?  Yes, I know that it's less fun that talking about your
-rather vague ideas of how the things (surely) work, but it just might
-avoid the feats of idiocy like the above.
-
-Andy, I don't know how to put it more plainly: read the fucking source.
-Even grep would do.  The same NFS you've granted (among the "handful"
-of filesystems) an exception, *DOES* *CALL* *THE* *FUCKING* sget().
-
-Yes, really.  And in some obscure[1] cases (including the one mentioned
-upthread) it does reuse a pre-existing superblock.  For a very good
-reason.
-
-[1] such as, oh, mounting two filesystems from the same server with
-default options - who would've ever thought of doing something so
-perverted?
+Sincerely,
+-- 
+Harlan Lieberman-Berg
+Defense Digital Service
