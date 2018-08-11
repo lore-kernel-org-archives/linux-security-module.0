@@ -1,47 +1,43 @@
 From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Fri, 10 Aug 2018 20:19:25 -0500
+Date: Fri, 10 Aug 2018 20:32:04 -0500
 Subject: BUG: Mount ignores mount options
-In-Reply-To: <22361.1533913891@warthog.procyon.org.uk> (David Howells's
-	message of "Fri, 10 Aug 2018 16:11:31 +0100")
-References: <87d0uqpba5.fsf@xmission.com>
+In-Reply-To: <20180811003852.GA10463@magnolia> (Darrick J. Wong's message of
+	"Fri, 10 Aug 2018 17:38:52 -0700")
+References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
 	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
 	<22361.1533913891@warthog.procyon.org.uk>
-Message-ID: <87pnyphf8i.fsf@xmission.com>
+	<28045.1533916438@warthog.procyon.org.uk>
+	<20180810161400.GA627@thunk.org>
+	<CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+	<20180810204639.GI627@thunk.org> <20180810221234.GC4211@magnolia>
+	<20180810235447.GK627@thunk.org> <20180811003852.GA10463@magnolia>
+Message-ID: <87zhxtg02z.fsf@xmission.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+"Darrick J. Wong" <darrick.wong@oracle.com> writes:
 
-> Eric W. Biederman <ebiederm@xmission.com> wrote:
->
->> There is a serious problem with mount options today that fsopen does not
->> address.  The problem is that mount options are ignored for block based
->> filesystems, and any other type of filesystem that follows the same
->> pattern.
->
-> Yes.  Since you *absolutely* *insist* on this being fixed *right* *now* *or*
-> *else*, I'm working up a set of additional patches to give userspace the
-> option of whether they want no sharing; sharing, but only with exactly the
-> same parameters; or to ignore the parameter differences and just accept
-> sharing of what's already already mounted (ie. the current behaviour).
->
-> The second option, however, is not trivial as it needs to compare the fs
-> contexts, including the LSM parameters.  To make that work, I really need to
-> remove the old security_mnt_opts stuff - which means I need to port btrfs to
-> the new context stuff.
->
-> We discussed this yesterday, and I proposed a solution, and I'm working on it.
+> On Fri, Aug 10, 2018 at 07:54:47PM -0400, Theodore Y. Ts'o wrote:
 
-I repeated this because after some comments from Al on IRC yesterday
-and Miklos's email replay. It appeared clear that I had not specified
-why my issue was clearly enough for people reading the thread to
-understand the problem that I see.
+>> The reason why I bring this up here is that in container land, there
+>> are those who believe that "container root" should be able to mount
+>> file systems, and if the "container root" isn't trusted, the fact that
+>> the "container root" can crash the host kernel, or worse, corrupt the
+>> host kernel and break out of the container as a result, that would be
+>> sad.
+>> 
+>> I was pretty sure most file system developers are on the same page
+>> that allowing untrusted "container roots" the ability to mount
+>> arbitrary block device file systems is insanity.
+>
+> Agreed.
 
-> Yes, I agree it would be nice to have, but it *doesn't* really need supporting
-> right this minute, since what I have now oughtn't to break the current
-> behaviour.
+For me I am happy with fuse.  That is sufficient to cover any container
+use cases people have.   If anyone comes bugging you for more I will be
+happy to push back.
 
-I am really reluctant to endorse anything that propagates the issues of
-the current interface in the new mount interface.
+The only thing that containers have to do with this is I wind up
+touching a lot of the kernel/user boundary so I get to see a lot of it
+and sometimes see weird things.
 
 Eric
