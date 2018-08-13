@@ -1,18 +1,159 @@
-From: jmorris@namei.org (James Morris)
-Date: Tue, 14 Aug 2018 08:56:17 +1000 (AEST)
-Subject: [GIT PULL] security subsystem: general update for v4.19
-In-Reply-To: <alpine.LRH.2.21.1808140835030.2526@namei.org>
-References: <alpine.LRH.2.21.1808140835030.2526@namei.org>
-Message-ID: <alpine.LRH.2.21.1808140855520.3087@namei.org>
+From: paul@paul-moore.com (Paul Moore)
+Date: Mon, 13 Aug 2018 19:38:40 -0400
+Subject: [PATCH] selinux: refactor mls_context_to_sid() and make it
+	stricter
+In-Reply-To: <CAG48ez1QS6e4cBsunh=V0fx6Gj-VENGeuakz2XK9eQoHU6Uh6Q@mail.gmail.com>
+References: <20180806211932.198488-1-jannh@google.com>
+	<CAHC9VhR5S6jGsHVwrGXemGobB1O=tADHBHWZMRP5BuRMGqDrOQ@mail.gmail.com>
+	<CAGH-Kgvn5=BT0GQU2qHBwJos8Ev=VgasicXeqQEG166Mi8fc6w@mail.gmail.com>
+	<CAG48ez1QS6e4cBsunh=V0fx6Gj-VENGeuakz2XK9eQoHU6Uh6Q@mail.gmail.com>
+Message-ID: <CAHC9VhSkr1dtU=ai-ss8xPLiSvb5_L839+7ytTY1ya=h_yk5sg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 14 Aug 2018, James Morris wrote:
+On Fri, Aug 10, 2018 at 7:01 PM Jann Horn <jannh@google.com> wrote:
+> On Thu, Aug 9, 2018 at 4:07 AM Paul Moore <pmoore@redhat.com> wrote:
+> > On Wed, Aug 8, 2018 at 9:56 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Mon, Aug 6, 2018 at 5:19 PM Jann Horn <jannh@google.com> wrote:
+> > > >
+> > > > The intended behavior change for this patch is to reject any MLS strings
+> > > > that contain (trailing) garbage if p->mls_enabled is true.
+> > > >
+> > > > As suggested by Paul Moore, change mls_context_to_sid() so that the two
+> > > > parts of the range are extracted before the rest of the parsing. Because
+> > > > now we don't have to scan for two different separators simultaneously
+> > > > everywhere, we can actually switch to strchr() everywhere instead of the
+> > > > open-coded loops that scan for two separators at once.
+> > > >
+> > > > mls_context_to_sid() used to signal how much of the input string was parsed
+> > > > by updating `*scontext`. However, there is actually no case in which
+> > > > mls_context_to_sid() only parses a subset of the input and still returns
+> > > > a success (other than the buggy case with a second '-' in which it
+> > > > incorrectly claims to have consumed the entire string). Turn `scontext`
+> > > > into a simple pointer argument and stop redundantly checking whether the
+> > > > entire input was consumed in string_to_context_struct(). This also lets us
+> > > > remove the `scontext_len` argument from `string_to_context_struct()`.
+> > > >
+> > > > Signed-off-by: Jann Horn <jannh@google.com>
+> > > > ---
+> > > > Refactored version of
+> > > > "[PATCH] selinux: stricter parsing in mls_context_to_sid()" based on
+> > > > Paul's comments. WDYT?
+> > > > I've thrown some inputs at it, and it seems to work.
+> > > >
+> > > >  security/selinux/ss/mls.c      | 178 ++++++++++++++-------------------
+> > > >  security/selinux/ss/mls.h      |   2 +-
+> > > >  security/selinux/ss/services.c |  12 +--
+> > > >  3 files changed, 82 insertions(+), 110 deletions(-)
+> > >
+> > > Thanks for the rework, this looks much better than what we currently
+> > > have.  I have some comments/questions below ...
+> > >
+> > > > diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
+> > > > index 39475fb455bc..2fe459df3c85 100644
+> > > > --- a/security/selinux/ss/mls.c
+> > > > +++ b/security/selinux/ss/mls.c
+> > > > @@ -218,9 +218,7 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
+> > > >  /*
+> > > >   * Set the MLS fields in the security context structure
+> > > >   * `context' based on the string representation in
+> > > > - * the string `*scontext'.  Update `*scontext' to
+> > > > - * point to the end of the string representation of
+> > > > - * the MLS fields.
+> > > > + * the string `scontext'.
+> > > >   *
+> > > >   * This function modifies the string in place, inserting
+> > > >   * NULL characters to terminate the MLS fields.
+> > > > @@ -235,22 +233,21 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
+> > > >   */
+> > > >  int mls_context_to_sid(struct policydb *pol,
+> > > >                        char oldc,
+> > > > -                      char **scontext,
+> > > > +                      char *scontext,
+> > > >                        struct context *context,
+> > > >                        struct sidtab *s,
+> > > >                        u32 def_sid)
+> > > >  {
+> > > > -
+> > > > -       char delim;
+> > > > -       char *scontextp, *p, *rngptr;
+> > > > +       char *sensitivity, *cur_cat, *next_cat, *rngptr;
+> > > >         struct level_datum *levdatum;
+> > > >         struct cat_datum *catdatum, *rngdatum;
+> > > > -       int l, rc = -EINVAL;
+> > > > +       int l, rc, i;
+> > > > +       char *rangep[2];
+> > > >
+> > > >         if (!pol->mls_enabled) {
+> > > > -               if (def_sid != SECSID_NULL && oldc)
+> > > > -                       *scontext += strlen(*scontext) + 1;
+> > > > -               return 0;
+> > > > +               if ((def_sid != SECSID_NULL && oldc) || (*scontext) == '\0')
+> > > > +                       return 0;
+> > > > +               return -EINVAL;
+> > >
+> > > Why are we simply not always return 0 in the case where MLS is not
+> > > enabled in the policy?  The mls_context_to_sid() is pretty much a
+> > > no-op in this case (even more so with your pat regardless of input and
+> > > I worry that returning EINVAL here is a deviation from current
+> > > behavior which could cause problems.
+> >
+> > Sorry, I was rephrasing the text above when I accidentally hit send.
+> > While my emails are generally a good source of typos, the above is
+> > pretty bad, so let me try again ...
+> >
+> > Why are we simply not always returning 0 in the case where MLS is not
+> > enabled in the policy?  The mls_context_to_sid() function is pretty
+> > much a no-op in this case regardless of input and I worry that
+> > returning EINVAL here is a deviation from current behavior which could
+> > cause problems.
+>
+> Reverse call graph of mls_context_to_sid():
+>
+> mls_context_to_sid()
+>     mls_from_string()
+>         selinux_audit_rule_init()
+>             [...]
+>     string_to_context_struct()
+>         security_context_to_sid_core()
+>             [...]
+>         convert_context()
+>             [...]
+>
+> string_to_context_struct() currently has the following code:
+>
+>         rc = mls_context_to_sid(pol, oldc, &p, ctx, sidtabp, def_sid);
+>         if (rc)
+>                 goto out;
+>
+>         rc = -EINVAL;
+>         if ((p - scontext) < scontext_len)
+>                 goto out;
+>
+> In my patch, I tried to preserve the behavior of
+> string_to_context_struct(), at the expense of slightly changing the
+> behavior of selinux_audit_rule_init().
+>
+> But if you think that's a bad idea or unnecessary, say so and I'll change it.
 
-> I'll followup with updates for Smack and TPM once this is merged.
+I'll be honest and mention that I kinda spaced on the change you made
+to string_to_context_struct() while I was looking over the
+mls_context_to_sid() changes.  As you point out, I believe
+string_to_context_struct() will continue to work as expected for
+callers so that should be okay.
 
-As well as an update for the Integrity subsystem.
+The selinux_audit_rule_init() function is a little different, but
+looking at some of the callers, and thinking about it a bit more, it
+probably isn't a bad thing to return EINVAL as in your patch.  The
+label isn't valid given that the system isn't in MLS mode and letting
+admins know that should be okay.  So I guess we can leave this section
+of the patch as-is, but understand that we might need to tweak this if
+we end up breaking something important.
+
+As an aside, I believe my other comments on this patch still stand.
+It's a nice improvement but I think there are some other small things
+that need to be addressed.
 
 -- 
-James Morris
-<jmorris@namei.org>
+paul moore
+www.paul-moore.com
