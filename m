@@ -1,54 +1,82 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Mon, 13 Aug 2018 12:20:14 -0700
-Subject: BUG: Mount ignores mount options
-In-Reply-To: <alpine.LRH.2.21.1808140458040.23296@namei.org>
-References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
-	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<22361.1533913891@warthog.procyon.org.uk>
-	<28045.1533916438@warthog.procyon.org.uk>
-	<20180810161400.GA627@thunk.org>
-	<CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
-	<20180813173502.1a7a1d9c@alans-desktop>
-	<CALCETrXvtSLjwx0swXo5g-vU3PmF-_6J6j1a_2pAba7bhzO9QQ@mail.gmail.com>
-	<20180813172947.GS6515@ZenIV.linux.org.uk>
-	<alpine.LRH.2.21.1808140458040.23296@namei.org>
-Message-ID: <48e443ba-51b5-cf10-3342-cdeabb91b224@schaufler-ca.com>
+From: tadeusz.struk@intel.com (Tadeusz Struk)
+Date: Mon, 13 Aug 2018 13:32:48 -0700
+Subject: [PATCH v5 0/2] tpm: add support for nonblocking operation
+Message-ID: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 8/13/2018 12:00 PM, James Morris wrote:
-> On Mon, 13 Aug 2018, Al Viro wrote:
->
->> On Mon, Aug 13, 2018 at 09:48:53AM -0700, Andy Lutomirski wrote:
->>> Are there cases I'm missing?  It sounds like the API could be improved
->>> to fully model the last case, and everything will work nicely.
->> 	You know, that's starting to remind of this little gem of Borges:
->> http://www.alamut.com/subj/artiface/language/johnWilkins.html
->> Especially the delightful (fake) quote contained in there:
->> [...] it is written that the animals are divided into:
->> 	(a) belonging to the emperor,
->> 	(b) embalmed,
->> 	(c) tame,
->> 	(d) sucking pigs,
->> 	(e) sirens,
->> 	(f) fabulous,
->> 	(g) stray dogs,
->> 	(h) included in the present classification,
->> 	(i) frenzied,
->> 	(j) innumerable,
->> 	(k) drawn with a very fine camelhair brush,
->> 	(l) et cetera,
->> 	(m) having just broken the water pitcher,
->> 	(n) that from a long way off look like flies.
->
-> Coincidentally, this was also the model for Linux capabilities.
+The TCG SAPI specification [1] defines a set of functions, which allow
+applications to use the TPM device in either blocking or non-blocking fashion.
+Each command defined by the specification has a corresponding
+Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+mode of operation. Currently the TPM driver supports only blocking calls,
+which doesn't allow asynchronous IO operations.
+This patch changes it and adds support for nonblocking write and a new poll
+function to enable applications, which want to take advantage of this feature.
+The new functionality can be tested using standard TPM tools implemented
+in [2], together with modified TCTI from [3], and an example application
+by Philip Tricca [4]. Here is a short description from Philip:
 
-Linux capabilities are POSIX capabilities which are modeled closely
-to accommodate the historical behavior manifest in the P1003.1 specification.
-So except for (c), (f) and (k) you can use this characterization. 
+"The example application `glib-tss2-event` uses a glib main event loop
+to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
+using a glib timer event to time the operation. A GSource object is
+used to generate an event when the FD underlying the tss2 function
+call has data ready. While the application waits for an event indicating
+that the CreatePrimary operation is complete, it counts timer events
+that occur every 100ms. Once the CreatePrimary operation completes the
+number of timer events that occurred is used to make a rough calculation
+of the elapsed time. This value is then printed to the console.
+This takes ~300 lines of C code and requires no management or
+synchronization of threads. The glib GMainContext is "just a poll()
+loop" according to the glib documentation here:
 
-On a slightly more serious note, there's a lot of Linux, mount semantics
-included, that have grow organically and that aren't quite up to the
-usage models they are being applied to. I applaud David's work in part
-because it may make it possible to accommodate more of those cases going
-forward.
+https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
+
+and so supporting 'poll' is the easiest way to integrate with glib /
+gtk+. This is true of any other event system that relies on 'poll'
+instead of worker threads."
+
+[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+[2] https://github.com/tpm2-software/tpm2-tools
+[3] https://github.com/tstruk/tpm2-tss/tree/async
+[4] https://github.com/flihp/glib-tss2-async-example
+
+---
+Changes in v5:
+- Changed the workqueue allocation time back from the first user interface
+  open to module init.
+
+Changes in v4:
+- Changed the way buffer_mutex is handled in nonblocking mode so that
+  it is not held when write() returns to user space.
+
+Changes in v3:
+- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
+  It complained because there is a module_exit() in another file already.
+- Added info on example application from Philip
+
+Changes in v2:
+- Split the change into two separate patches. First patch adds a pointer
+  to the space to the struct file_priv to have access to it from the async job.
+  This is to avoid memory allocations on every write call. Now everything
+  what's needed is in the file_priv struct.
+- Renamed the 'work' member of the timer to avoid confusion.
+  Now there are 'timeout_work' and 'async_work'.
+- Removed the global wait queue and moved it to file_priv.
+- Only creating the work queue when the first file is opened.
+
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
+
+ drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |   22 +++--
+ drivers/char/tpm/tpm-dev.h        |   19 +++--
+ drivers/char/tpm/tpm-interface.c  |    1 
+ drivers/char/tpm/tpm.h            |    1 
+ drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+ 6 files changed, 152 insertions(+), 72 deletions(-)
+
+--
+TS
