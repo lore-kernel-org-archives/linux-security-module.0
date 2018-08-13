@@ -1,154 +1,82 @@
-From: tadeusz.struk@intel.com (Tadeusz Struk)
-Date: Mon, 13 Aug 2018 13:32:53 -0700
-Subject: [PATCH v5 1/2] tpm: add ptr to the tpm_space struct to file_priv
-In-Reply-To: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
-References: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
-Message-ID: <153419237378.8189.17192381683473461307.stgit@tstruk-mobl1.jf.intel.com>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 14 Aug 2018 08:51:52 +1000 (AEST)
+Subject: [GIT PULL] security subsystem: general update for v4.19
+Message-ID: <alpine.LRH.2.21.1808140835030.2526@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add a ptr to struct tpm_space to the file_priv to have an easy
-access to it in the async job without the need to allocate memory.
-This also allows to consolidate of the write operations for
-the two interfaces.
+Please pull these general updates for v4.19.
 
-Tested-by: Philip Tricca <philip.b.tricca@intel.com>
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+Summary:
+
+- kstrdup() return value fix from Eric Biggers
+
+- Add new security_load_data hook to differentiate security checking of 
+kernel-loaded binaries in the case of there being no associated file 
+descriptor, from Mimi Zohar.
+
+- Add ability to IMA to specify a policy at build-time, rather than just 
+via command line params or by loading a custom policy, from Mimi.
+
+- Allow IMA and LSMs to prevent sysfs firmware load fallback (e.g. if 
+using signed firmware), from Mimi.
+
+- Allow IMA to deny loading of kexec kernel images, as they cannot be 
+measured by IMA, from Mimi.
+
+
+I'll followup with updates for Smack and TPM once this is merged.
+
+
 ---
- drivers/char/tpm/tpm-dev-common.c |    8 +++++---
- drivers/char/tpm/tpm-dev.c        |   10 ++--------
- drivers/char/tpm/tpm-dev.h        |    5 +++--
- drivers/char/tpm/tpmrm-dev.c      |   14 ++------------
- 4 files changed, 12 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index e4a04b2d3c32..f0c033b69b62 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -43,9 +43,11 @@ static void timeout_work(struct work_struct *work)
- }
- 
- void tpm_common_open(struct file *file, struct tpm_chip *chip,
--		     struct file_priv *priv)
-+		     struct file_priv *priv, struct tpm_space *space)
- {
- 	priv->chip = chip;
-+	priv->space = space;
-+
- 	mutex_init(&priv->buffer_mutex);
- 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
- 	INIT_WORK(&priv->work, timeout_work);
-@@ -79,7 +81,7 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
- }
- 
- ssize_t tpm_common_write(struct file *file, const char __user *buf,
--			 size_t size, loff_t *off, struct tpm_space *space)
-+			 size_t size, loff_t *off)
- {
- 	struct file_priv *priv = file->private_data;
- 	size_t in_size = size;
-@@ -119,7 +121,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 		mutex_unlock(&priv->buffer_mutex);
- 		return -EPIPE;
- 	}
--	out_size = tpm_transmit(priv->chip, space, priv->data_buffer,
-+	out_size = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
- 				sizeof(priv->data_buffer), 0);
- 
- 	tpm_put_ops(priv->chip);
-diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-index ebd74ab5abef..98b9630c3a36 100644
---- a/drivers/char/tpm/tpm-dev.c
-+++ b/drivers/char/tpm/tpm-dev.c
-@@ -39,7 +39,7 @@ static int tpm_open(struct inode *inode, struct file *file)
- 	if (priv == NULL)
- 		goto out;
- 
--	tpm_common_open(file, chip, priv);
-+	tpm_common_open(file, chip, priv, NULL);
- 
- 	return 0;
- 
-@@ -48,12 +48,6 @@ static int tpm_open(struct inode *inode, struct file *file)
- 	return -ENOMEM;
- }
- 
--static ssize_t tpm_write(struct file *file, const char __user *buf,
--			 size_t size, loff_t *off)
--{
--	return tpm_common_write(file, buf, size, off, NULL);
--}
--
- /*
-  * Called on file close
-  */
-@@ -73,6 +67,6 @@ const struct file_operations tpm_fops = {
- 	.llseek = no_llseek,
- 	.open = tpm_open,
- 	.read = tpm_common_read,
--	.write = tpm_write,
-+	.write = tpm_common_write,
- 	.release = tpm_release,
- };
-diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-index b24cfb4d3ee1..4048677bbd78 100644
---- a/drivers/char/tpm/tpm-dev.h
-+++ b/drivers/char/tpm/tpm-dev.h
-@@ -6,6 +6,7 @@
- 
- struct file_priv {
- 	struct tpm_chip *chip;
-+	struct tpm_space *space;
- 
- 	/* Data passed to and from the tpm via the read/write calls */
- 	size_t data_pending;
-@@ -18,11 +19,11 @@ struct file_priv {
- };
- 
- void tpm_common_open(struct file *file, struct tpm_chip *chip,
--		     struct file_priv *priv);
-+		     struct file_priv *priv, struct tpm_space *space);
- ssize_t tpm_common_read(struct file *file, char __user *buf,
- 			size_t size, loff_t *off);
- ssize_t tpm_common_write(struct file *file, const char __user *buf,
--			 size_t size, loff_t *off, struct tpm_space *space);
-+			 size_t size, loff_t *off);
- void tpm_common_release(struct file *file, struct file_priv *priv);
- 
- #endif
-diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
-index 1a0e97a5da5a..96006c6b9696 100644
---- a/drivers/char/tpm/tpmrm-dev.c
-+++ b/drivers/char/tpm/tpmrm-dev.c
-@@ -28,7 +28,7 @@ static int tpmrm_open(struct inode *inode, struct file *file)
- 		return -ENOMEM;
- 	}
- 
--	tpm_common_open(file, chip, &priv->priv);
-+	tpm_common_open(file, chip, &priv->priv, &priv->space);
- 
- 	return 0;
- }
-@@ -45,21 +45,11 @@ static int tpmrm_release(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
--static ssize_t tpmrm_write(struct file *file, const char __user *buf,
--		   size_t size, loff_t *off)
--{
--	struct file_priv *fpriv = file->private_data;
--	struct tpmrm_priv *priv = container_of(fpriv, struct tpmrm_priv, priv);
--
--	return tpm_common_write(file, buf, size, off, &priv->space);
--}
--
- const struct file_operations tpmrm_fops = {
- 	.owner = THIS_MODULE,
- 	.llseek = no_llseek,
- 	.open = tpmrm_open,
- 	.read = tpm_common_read,
--	.write = tpmrm_write,
-+	.write = tpm_common_write,
- 	.release = tpmrm_release,
- };
--
+The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
+
+  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+
+for you to fetch changes up to 87ea58433208d17295e200d56be5e2a4fe4ce7d6:
+
+  security: check for kstrdup() failure in lsm_append() (2018-07-17 21:27:06 -0700)
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      security: export security_kernel_load_data function
+
+Eric Biggers (1):
+      security: check for kstrdup() failure in lsm_append()
+
+James Morris (1):
+      Merge tag 'v4.18-rc2' into next-general
+
+Mimi Zohar (8):
+      security: define new LSM hook named security_kernel_load_data
+      kexec: add call to LSM hook in original kexec_load syscall
+      ima: based on policy require signed kexec kernel images
+      firmware: add call to LSM hook before firmware sysfs fallback
+      ima: based on policy require signed firmware (sysfs fallback)
+      ima: add build time policy
+      module: replace the existing LSM hook in init_module
+      ima: based on policy warn about loading firmware (pre-allocated buffer)
+
+Paul Moore (1):
+      MAINTAINERS: remove the outdated "LINUX SECURITY MODULE (LSM) FRAMEWORK" entry
+
+ MAINTAINERS                             |  5 ---
+ drivers/base/firmware_loader/fallback.c |  7 ++++
+ include/linux/ima.h                     |  7 ++++
+ include/linux/lsm_hooks.h               |  6 +++
+ include/linux/security.h                | 27 +++++++++++++
+ kernel/kexec.c                          |  8 ++++
+ kernel/module.c                         |  2 +-
+ security/integrity/ima/Kconfig          | 58 ++++++++++++++++++++++++++++
+ security/integrity/ima/ima.h            |  1 +
+ security/integrity/ima/ima_main.c       | 68 ++++++++++++++++++++++++++-------
+ security/integrity/ima/ima_policy.c     | 48 +++++++++++++++++++++--
+ security/loadpin/loadpin.c              |  6 +++
+ security/security.c                     | 13 +++++++
+ security/selinux/hooks.c                | 15 ++++++++
+ 14 files changed, 248 insertions(+), 23 deletions(-)
