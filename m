@@ -1,7 +1,7 @@
-From: viro@ZenIV.linux.org.uk (Al Viro)
-Date: Mon, 13 Aug 2018 18:29:47 +0100
+From: jmorris@namei.org (James Morris)
+Date: Tue, 14 Aug 2018 05:00:41 +1000 (AEST)
 Subject: BUG: Mount ignores mount options
-In-Reply-To: <CALCETrXvtSLjwx0swXo5g-vU3PmF-_6J6j1a_2pAba7bhzO9QQ@mail.gmail.com>
+In-Reply-To: <20180813172947.GS6515@ZenIV.linux.org.uk>
 References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
 	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
 	<22361.1533913891@warthog.procyon.org.uk>
@@ -10,58 +10,41 @@ References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
 	<CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
 	<20180813173502.1a7a1d9c@alans-desktop>
 	<CALCETrXvtSLjwx0swXo5g-vU3PmF-_6J6j1a_2pAba7bhzO9QQ@mail.gmail.com>
-Message-ID: <20180813172947.GS6515@ZenIV.linux.org.uk>
+	<20180813172947.GS6515@ZenIV.linux.org.uk>
+Message-ID: <alpine.LRH.2.21.1808140458040.23296@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Aug 13, 2018 at 09:48:53AM -0700, Andy Lutomirski wrote:
+On Mon, 13 Aug 2018, Al Viro wrote:
 
-> I would consider the GFS2 case to be essentially equivalent to the NFS
-> case.  I think we can probably divide all the filesystems into three
-> or four types:
-> 
-> pseudo file systems: Multiple instantiations of the same fs driver
-> pointing at the same backing store give separate filesystems.  (Same
-> backing store includes the case where there isn't any backing store.)
-> tmpfs is an example.  This isn't particularly interesting.
-> 
-> network-like file systems: Multiple instantiations of the same fs
-> driver pointing at the same backing store are expected.  This includes
-> NFS, GFS2, AFS, CIFS, etc.  This is only really interesting to the
-> extent that, if the fs driver internally wants to share state between
-> multiple instantiations, it should be smart enough to make sure the
-> options are compatible or that it can otherwise handle mismatched
-> options correctly.  NFS does this right.
-> 
-> non-network-like filesystems: There are complicated ones like btrfs
-> and ZFS and simple ones like ext4.  In either case, multiple totally
-> separate instantiations of the driver sharing the backing store will
-> lead to corruption.  In cases like ext4, we seem to support it for
-> legacy reasons, because we're afraid that there are scripts that try
-> to mount the same block device more than once, and I think the new API
-> has no need to support this.  In cases like btrfs, we also seem to
-> support multiple user requests for "mounts" with the same underlying
-> block devices because we need it for full functionality.  But I think
-> this is because our API is wrong.
-> 
-> Are there cases I'm missing?  It sounds like the API could be improved
-> to fully model the last case, and everything will work nicely.
+> On Mon, Aug 13, 2018 at 09:48:53AM -0700, Andy Lutomirski wrote:
 
-	You know, that's starting to remind of this little gem of Borges:
-http://www.alamut.com/subj/artiface/language/johnWilkins.html
-Especially the delightful (fake) quote contained in there:
-[...] it is written that the animals are divided into:
-	(a) belonging to the emperor,
-	(b) embalmed,
-	(c) tame,
-	(d) sucking pigs,
-	(e) sirens,
-	(f) fabulous,
-	(g) stray dogs,
-	(h) included in the present classification,
-	(i) frenzied,
-	(j) innumerable,
-	(k) drawn with a very fine camelhair brush,
-	(l) et cetera,
-	(m) having just broken the water pitcher,
-	(n) that from a long way off look like flies.
+> > Are there cases I'm missing?  It sounds like the API could be improved
+> > to fully model the last case, and everything will work nicely.
+> 
+> 	You know, that's starting to remind of this little gem of Borges:
+> http://www.alamut.com/subj/artiface/language/johnWilkins.html
+> Especially the delightful (fake) quote contained in there:
+> [...] it is written that the animals are divided into:
+> 	(a) belonging to the emperor,
+> 	(b) embalmed,
+> 	(c) tame,
+> 	(d) sucking pigs,
+> 	(e) sirens,
+> 	(f) fabulous,
+> 	(g) stray dogs,
+> 	(h) included in the present classification,
+> 	(i) frenzied,
+> 	(j) innumerable,
+> 	(k) drawn with a very fine camelhair brush,
+> 	(l) et cetera,
+> 	(m) having just broken the water pitcher,
+> 	(n) that from a long way off look like flies.
+
+
+Coincidentally, this was also the model for Linux capabilities.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
