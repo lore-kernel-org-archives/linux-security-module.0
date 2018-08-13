@@ -1,65 +1,26 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Mon, 13 Aug 2018 11:11:11 -0500
-Subject: [PATCH 1/9] cap_file: use v3 xattr macros
-In-Reply-To: <20180810161335.27036-2-christian@brauner.io>
-References: <20180810161335.27036-1-christian@brauner.io>
-	<20180810161335.27036-2-christian@brauner.io>
-Message-ID: <20180813161111.GA26763@mail.hallyn.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Mon, 13 Aug 2018 17:35:02 +0100
+Subject: BUG: Mount ignores mount options
+In-Reply-To: <CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+References: <20180810153902.GH21087@thunk.org> <87d0uqpba5.fsf@xmission.com>
+	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+	<22361.1533913891@warthog.procyon.org.uk>
+	<28045.1533916438@warthog.procyon.org.uk>
+	<20180810161400.GA627@thunk.org>
+	<CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+Message-ID: <20180813173502.1a7a1d9c@alans-desktop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting Christian Brauner (christian at brauner.io):
-> On kernels supporting VFS_CAP_REVISION_3 we should make use the new
-> macros.
-> 
-> Signed-off-by: Christian Brauner <christian@brauner.io>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> If the same block device is visible, with rw access, in two different
+> containers, I don't see any anything good can happen.  Sure, with the
 
-Hi Andrew,
+At the raw level there are lots of use cases involving high performance
+data capture, media streaming and the like.
 
-are you open to taking this patchset (or one like it) in
-libcap2?
+At the file system layer you can use GFS2 for example.
 
-thanks,
--serge
+So there are cases where it's possible. There are even cases where it's
+actually useful at the filesystem level although not many I agree.
 
-> ---
->  libcap/cap_file.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/libcap/cap_file.c b/libcap/cap_file.c
-> index 76aac8c..228d806 100644
-> --- a/libcap/cap_file.c
-> +++ b/libcap/cap_file.c
-> @@ -59,6 +59,13 @@ static cap_t _fcaps_load(struct vfs_cap_data *rawvfscap, cap_t result,
->  	break;
->  #endif
->  
-> +#ifdef VFS_CAP_REVISION_3
-> +    case VFS_CAP_REVISION_3:
-> +	tocopy = VFS_CAP_U32_3;
-> +	bytes -= XATTR_CAPS_SZ_3;
-> +	break;
-> +#endif
-> +
->      default:
->  	cap_free(result);
->  	result = NULL;
-> @@ -125,9 +132,15 @@ static int _fcaps_save(struct vfs_cap_data *rawvfscap, cap_t cap_d,
->  
->  #ifdef _LINUX_CAPABILITY_VERSION_3
->      case _LINUX_CAPABILITY_VERSION_3:
-> +#ifdef VFS_CAP_REVISION_3
-> +	magic = VFS_CAP_REVISION_3;
-> +	tocopy = VFS_CAP_U32_3;
-> +	*bytes_p = XATTR_CAPS_SZ_3;
-> +#else
->  	magic = VFS_CAP_REVISION_2;
->  	tocopy = VFS_CAP_U32_2;
->  	*bytes_p = XATTR_CAPS_SZ_2;
-> +#endif
->  	break;
->  #endif
->  
-> -- 
-> 2.17.1
+Alan
