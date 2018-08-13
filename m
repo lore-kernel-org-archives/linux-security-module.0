@@ -1,41 +1,65 @@
-From: miklos@szeredi.hu (Miklos Szeredi)
-Date: Mon, 13 Aug 2018 14:54:02 +0200
-Subject: BUG: Mount ignores mount options
-In-Reply-To: <20180811015815.GD6515@ZenIV.linux.org.uk>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<87d0uqpba5.fsf@xmission.com>
-	<20180810151606.GA6515@ZenIV.linux.org.uk>
-	<87pnypiufr.fsf@xmission.com>
-	<20180811015815.GD6515@ZenIV.linux.org.uk>
-Message-ID: <CAJfpegtuf7=sEMJhaiQj8e31uvFzckRSHH4Bf9nTNn4gxV10Ow@mail.gmail.com>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Mon, 13 Aug 2018 11:11:11 -0500
+Subject: [PATCH 1/9] cap_file: use v3 xattr macros
+In-Reply-To: <20180810161335.27036-2-christian@brauner.io>
+References: <20180810161335.27036-1-christian@brauner.io>
+	<20180810161335.27036-2-christian@brauner.io>
+Message-ID: <20180813161111.GA26763@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Aug 11, 2018 at 3:58 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+Quoting Christian Brauner (christian at brauner.io):
+> On kernels supporting VFS_CAP_REVISION_3 we should make use the new
+> macros.
+> 
+> Signed-off-by: Christian Brauner <christian@brauner.io>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
->  What I'm saying is that the entire superblock-creating
-> machinery - all of it - is nothing but library helpers.  With the
-> decision of when/how/if they are to be used being down to filesystem
-> driver.  Your "first mount"/"additional mount" simply do not map
-> to anything universally applicable.
+Hi Andrew,
 
-Why so?   (Note: using the "mount" terminology here is fundamentally
-broken to start with, mounts have nothing to do with this...
-Filesystem instance is better word.)
+are you open to taking this patchset (or one like it) in
+libcap2?
 
-You bring up NFS as an example, but creating and/or reusing an nfs
-client instance connected to a certain server is certainly a clear and
-well defined concept.
+thanks,
+-serge
 
-The question becomes:  does it make  sense to generalize this concept
-and export it to userspace with the new API?
-
-You know the Plan 9 fs interface much better, but to me it looks like
-there's a separate namespace for filesystem instances, and the mount
-command just refers to such an instance.  So there's no comparing of
-options or any such horror, just the need to explicitly instantiate a
-new instance when necessary.  Doesn't sound very difficult to
-implement in the new API.
-
-Thanks,
-Miklos
+> ---
+>  libcap/cap_file.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/libcap/cap_file.c b/libcap/cap_file.c
+> index 76aac8c..228d806 100644
+> --- a/libcap/cap_file.c
+> +++ b/libcap/cap_file.c
+> @@ -59,6 +59,13 @@ static cap_t _fcaps_load(struct vfs_cap_data *rawvfscap, cap_t result,
+>  	break;
+>  #endif
+>  
+> +#ifdef VFS_CAP_REVISION_3
+> +    case VFS_CAP_REVISION_3:
+> +	tocopy = VFS_CAP_U32_3;
+> +	bytes -= XATTR_CAPS_SZ_3;
+> +	break;
+> +#endif
+> +
+>      default:
+>  	cap_free(result);
+>  	result = NULL;
+> @@ -125,9 +132,15 @@ static int _fcaps_save(struct vfs_cap_data *rawvfscap, cap_t cap_d,
+>  
+>  #ifdef _LINUX_CAPABILITY_VERSION_3
+>      case _LINUX_CAPABILITY_VERSION_3:
+> +#ifdef VFS_CAP_REVISION_3
+> +	magic = VFS_CAP_REVISION_3;
+> +	tocopy = VFS_CAP_U32_3;
+> +	*bytes_p = XATTR_CAPS_SZ_3;
+> +#else
+>  	magic = VFS_CAP_REVISION_2;
+>  	tocopy = VFS_CAP_U32_2;
+>  	*bytes_p = XATTR_CAPS_SZ_2;
+> +#endif
+>  	break;
+>  #endif
+>  
+> -- 
+> 2.17.1
