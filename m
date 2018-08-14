@@ -1,159 +1,141 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Mon, 13 Aug 2018 19:38:40 -0400
-Subject: [PATCH] selinux: refactor mls_context_to_sid() and make it
-	stricter
-In-Reply-To: <CAG48ez1QS6e4cBsunh=V0fx6Gj-VENGeuakz2XK9eQoHU6Uh6Q@mail.gmail.com>
-References: <20180806211932.198488-1-jannh@google.com>
-	<CAHC9VhR5S6jGsHVwrGXemGobB1O=tADHBHWZMRP5BuRMGqDrOQ@mail.gmail.com>
-	<CAGH-Kgvn5=BT0GQU2qHBwJos8Ev=VgasicXeqQEG166Mi8fc6w@mail.gmail.com>
-	<CAG48ez1QS6e4cBsunh=V0fx6Gj-VENGeuakz2XK9eQoHU6Uh6Q@mail.gmail.com>
-Message-ID: <CAHC9VhSkr1dtU=ai-ss8xPLiSvb5_L839+7ytTY1ya=h_yk5sg@mail.gmail.com>
+From: alison.schofield@intel.com (Alison Schofield)
+Date: Mon, 13 Aug 2018 19:05:38 -0700
+Subject: [RFC] KEYS: inject an MKTME specific safety check in the keyctl
+	revoke path
+Message-ID: <20180814020538.GA18424@alison-desk.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Aug 10, 2018 at 7:01 PM Jann Horn <jannh@google.com> wrote:
-> On Thu, Aug 9, 2018 at 4:07 AM Paul Moore <pmoore@redhat.com> wrote:
-> > On Wed, Aug 8, 2018 at 9:56 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Mon, Aug 6, 2018 at 5:19 PM Jann Horn <jannh@google.com> wrote:
-> > > >
-> > > > The intended behavior change for this patch is to reject any MLS strings
-> > > > that contain (trailing) garbage if p->mls_enabled is true.
-> > > >
-> > > > As suggested by Paul Moore, change mls_context_to_sid() so that the two
-> > > > parts of the range are extracted before the rest of the parsing. Because
-> > > > now we don't have to scan for two different separators simultaneously
-> > > > everywhere, we can actually switch to strchr() everywhere instead of the
-> > > > open-coded loops that scan for two separators at once.
-> > > >
-> > > > mls_context_to_sid() used to signal how much of the input string was parsed
-> > > > by updating `*scontext`. However, there is actually no case in which
-> > > > mls_context_to_sid() only parses a subset of the input and still returns
-> > > > a success (other than the buggy case with a second '-' in which it
-> > > > incorrectly claims to have consumed the entire string). Turn `scontext`
-> > > > into a simple pointer argument and stop redundantly checking whether the
-> > > > entire input was consumed in string_to_context_struct(). This also lets us
-> > > > remove the `scontext_len` argument from `string_to_context_struct()`.
-> > > >
-> > > > Signed-off-by: Jann Horn <jannh@google.com>
-> > > > ---
-> > > > Refactored version of
-> > > > "[PATCH] selinux: stricter parsing in mls_context_to_sid()" based on
-> > > > Paul's comments. WDYT?
-> > > > I've thrown some inputs at it, and it seems to work.
-> > > >
-> > > >  security/selinux/ss/mls.c      | 178 ++++++++++++++-------------------
-> > > >  security/selinux/ss/mls.h      |   2 +-
-> > > >  security/selinux/ss/services.c |  12 +--
-> > > >  3 files changed, 82 insertions(+), 110 deletions(-)
-> > >
-> > > Thanks for the rework, this looks much better than what we currently
-> > > have.  I have some comments/questions below ...
-> > >
-> > > > diff --git a/security/selinux/ss/mls.c b/security/selinux/ss/mls.c
-> > > > index 39475fb455bc..2fe459df3c85 100644
-> > > > --- a/security/selinux/ss/mls.c
-> > > > +++ b/security/selinux/ss/mls.c
-> > > > @@ -218,9 +218,7 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
-> > > >  /*
-> > > >   * Set the MLS fields in the security context structure
-> > > >   * `context' based on the string representation in
-> > > > - * the string `*scontext'.  Update `*scontext' to
-> > > > - * point to the end of the string representation of
-> > > > - * the MLS fields.
-> > > > + * the string `scontext'.
-> > > >   *
-> > > >   * This function modifies the string in place, inserting
-> > > >   * NULL characters to terminate the MLS fields.
-> > > > @@ -235,22 +233,21 @@ int mls_context_isvalid(struct policydb *p, struct context *c)
-> > > >   */
-> > > >  int mls_context_to_sid(struct policydb *pol,
-> > > >                        char oldc,
-> > > > -                      char **scontext,
-> > > > +                      char *scontext,
-> > > >                        struct context *context,
-> > > >                        struct sidtab *s,
-> > > >                        u32 def_sid)
-> > > >  {
-> > > > -
-> > > > -       char delim;
-> > > > -       char *scontextp, *p, *rngptr;
-> > > > +       char *sensitivity, *cur_cat, *next_cat, *rngptr;
-> > > >         struct level_datum *levdatum;
-> > > >         struct cat_datum *catdatum, *rngdatum;
-> > > > -       int l, rc = -EINVAL;
-> > > > +       int l, rc, i;
-> > > > +       char *rangep[2];
-> > > >
-> > > >         if (!pol->mls_enabled) {
-> > > > -               if (def_sid != SECSID_NULL && oldc)
-> > > > -                       *scontext += strlen(*scontext) + 1;
-> > > > -               return 0;
-> > > > +               if ((def_sid != SECSID_NULL && oldc) || (*scontext) == '\0')
-> > > > +                       return 0;
-> > > > +               return -EINVAL;
-> > >
-> > > Why are we simply not always return 0 in the case where MLS is not
-> > > enabled in the policy?  The mls_context_to_sid() is pretty much a
-> > > no-op in this case (even more so with your pat regardless of input and
-> > > I worry that returning EINVAL here is a deviation from current
-> > > behavior which could cause problems.
-> >
-> > Sorry, I was rephrasing the text above when I accidentally hit send.
-> > While my emails are generally a good source of typos, the above is
-> > pretty bad, so let me try again ...
-> >
-> > Why are we simply not always returning 0 in the case where MLS is not
-> > enabled in the policy?  The mls_context_to_sid() function is pretty
-> > much a no-op in this case regardless of input and I worry that
-> > returning EINVAL here is a deviation from current behavior which could
-> > cause problems.
->
-> Reverse call graph of mls_context_to_sid():
->
-> mls_context_to_sid()
->     mls_from_string()
->         selinux_audit_rule_init()
->             [...]
->     string_to_context_struct()
->         security_context_to_sid_core()
->             [...]
->         convert_context()
->             [...]
->
-> string_to_context_struct() currently has the following code:
->
->         rc = mls_context_to_sid(pol, oldc, &p, ctx, sidtabp, def_sid);
->         if (rc)
->                 goto out;
->
->         rc = -EINVAL;
->         if ((p - scontext) < scontext_len)
->                 goto out;
->
-> In my patch, I tried to preserve the behavior of
-> string_to_context_struct(), at the expense of slightly changing the
-> behavior of selinux_audit_rule_init().
->
-> But if you think that's a bad idea or unnecessary, say so and I'll change it.
+This RFC is asking for feedback on a problem I'm running into using
+the Kernel Key Service for MKTME (MultiKey Total Memory Encryption).
 
-I'll be honest and mention that I kinda spaced on the change you made
-to string_to_context_struct() while I was looking over the
-mls_context_to_sid() changes.  As you point out, I believe
-string_to_context_struct() will continue to work as expected for
-callers so that should be okay.
+I previously posted an RFC with the proposal to create a new key type
+"mktme" to support MKTME (Multi-Key Total Memory Encryption).
+https://www.spinics.net/lists/keyrings/msg03702.html
 
-The selinux_audit_rule_init() function is a little different, but
-looking at some of the callers, and thinking about it a bit more, it
-probably isn't a bad thing to return EINVAL as in your patch.  The
-label isn't valid given that the system isn't in MLS mode and letting
-admins know that should be okay.  So I guess we can leave this section
-of the patch as-is, but understand that we might need to tweak this if
-we end up breaking something important.
+The MKTME key service maps userspace keys to hardware keyids. Those
+keys are used in a new system call that encrypts memory. The keys
+need to be tightly controlled. One example is that userspace keys
+should not be revoked while the hardware keyid slot is still in use.
 
-As an aside, I believe my other comments on this patch still stand.
-It's a nice improvement but I think there are some other small things
-that need to be addressed.
+The KEY_FLAG_KEEP bit offers good control. The mktme service uses that
+bit to prevent userspace keys from disappearing without the service
+being notified.
 
+Problem is that we need a safe and synchronous way to revoke keys. The
+way .revoke methods function now, the key service type is called late
+in the revoke process. The mktme key service has no means to reject the
+request. So, even if the mktme service sanity checks the request in its
+.revoke method, it's too late to do anything about it.
+
+This proposal inserts an MKTME specific check earlier into the existing
+keyctl <revoke> path. If it is safe to revoke the key, mktme key service
+will turn off KEY_FLAG_KEEP and let the revoke continue (and succeed).
+Otherwise, not safe, KEY_FLAG_KEEP stays on, and the revoke continues
+(and fails).
+
+I considered proposing a new keyctl <option> just for this mktme 'safe
+revoke' request. I wonder if that might be the preferred method for
+inserting this type specific behavior?
+
+Hoping that from this description and the diff you can understand the
+issue and suggest alternative solutions if needed. Thanks for looking!
+
+Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+---
+ security/keys/internal.h   |  6 ++++++
+ security/keys/keyctl.c     | 14 ++++++++++++++
+ security/keys/mktme_keys.c | 34 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 54 insertions(+)
+
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index 9f8208dc0e55..1b6425d0d1ab 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -316,4 +316,10 @@ static inline void key_check(const struct key *key)
+ 
+ #endif
+ 
++#ifdef CONFIG_MKTME_KEYS
++extern int mktme_safe_revoke(struct key *key);
++#else
++static inline int mktme_safe_revoke(struct key *key) { return 0; }
++#endif /* CONFIG_MKTME_KEYS */
++
+ #endif /* _INTERNAL_H */
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 1ffe60bb2845..7b5f98af1d54 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -387,6 +387,20 @@ long keyctl_revoke_key(key_serial_t id)
+ 
+ 	key = key_ref_to_ptr(key_ref);
+ 	ret = 0;
++
++	/*
++	 * MKTME (Multi-Key Total Memory Encryption) Keys require a
++	 * sanity check before allowing a revoke. If the sanity check
++	 * passes, the mktme key service will clear KEY_FLAG_KEEP bit
++	 * and the revoke will proceed.
++	 */
++	if (strcmp(key->type->name, "mktme") == 0)  {
++		if (mktme_safe_revoke(key)) {
++			ret = -EINVAL;
++			goto error;
++		}
++	}
++
+ 	if (test_bit(KEY_FLAG_KEEP, &key->flags))
+ 		ret = -EPERM;
+ 	else
+diff --git a/security/keys/mktme_keys.c b/security/keys/mktme_keys.c
+index b937bbe6bcdb..887b483d7b38 100644
+--- a/security/keys/mktme_keys.c
++++ b/security/keys/mktme_keys.c
+@@ -67,6 +67,39 @@ static int mktme_clear_programmed_key(int keyid)
+ 	return ret;
+ }
+ 
++/*
++ * mktme_safe_revoke() is called during the revoke process to
++ * determine if it is safe to revoke a key. If this check passes,
++ * the revoke proceeds, otherwise an error is returned to userspace.
++ * The important error case here is outstanding memory mappings using
++ * the corresponding hardware keyid.
++ */
++int mktme_safe_revoke(struct key *key)
++{
++	int keyid, vma_count;
++	int ret = -1;
++
++	mktme_map_lock();
++	keyid = mktme_map_keyid_from_serial(key->serial);
++	if (keyid <= 0)
++		goto out;
++
++	vma_count = vma_read_encrypt_ref(keyid);
++	if (vma_count > 0) {
++		pr_debug("mktme not freeing keyid[%d] encrypt_count[%d]\n",
++			 keyid, vma_count);
++		goto out;
++	}
++	mktme_clear_programmed_key(keyid);
++	/* Clearing KEY_FLAG_KEEP flag allows the revoke to proceed */
++	clear_bit(KEY_FLAG_KEEP, &key->flags);
++	ret = 0;
++out:
++	mktme_map_unlock();
++	return ret;
++}
++
++
+@@ -315,6 +348,7 @@ int mktme_instantiate(struct key *key, struct key_preparsed_payload *prep)
+ 
+ 	mktme_map_lock();
+ 	ret = mktme_program_key(key->serial, kprog);
++	set_bit(KEY_FLAG_KEEP, &key->flags);
+ 	mktme_map_unlock();
+ out:
+ 	kzfree(datablob);
 -- 
-paul moore
-www.paul-moore.com
+2.14.1
