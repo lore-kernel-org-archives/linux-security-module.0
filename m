@@ -1,49 +1,34 @@
-From: serge@hallyn.com (Serge E. Hallyn)
-Date: Wed, 15 Aug 2018 18:29:51 -0500
-Subject: BUG: Mount ignores mount options
-In-Reply-To: <alpine.LRH.2.21.1808140458040.23296@namei.org>
-References: <87d0uqpba5.fsf@xmission.com>
-	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<22361.1533913891@warthog.procyon.org.uk>
-	<28045.1533916438@warthog.procyon.org.uk>
-	<20180810161400.GA627@thunk.org>
-	<CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
-	<20180813173502.1a7a1d9c@alans-desktop>
-	<CALCETrXvtSLjwx0swXo5g-vU3PmF-_6J6j1a_2pAba7bhzO9QQ@mail.gmail.com>
-	<20180813172947.GS6515@ZenIV.linux.org.uk>
-	<alpine.LRH.2.21.1808140458040.23296@namei.org>
-Message-ID: <20180815232951.GA6891@mail.hallyn.com>
+From: casey.schaufler@intel.com (Casey Schaufler)
+Date: Wed, 15 Aug 2018 16:53:50 -0700
+Subject: [PATCH RFC 0/5] LSM: Add and use a hook for side-channel safety checks
+Message-ID: <20180815235355.14908-1-casey.schaufler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Quoting James Morris (jmorris at namei.org):
-> On Mon, 13 Aug 2018, Al Viro wrote:
-> 
-> > On Mon, Aug 13, 2018 at 09:48:53AM -0700, Andy Lutomirski wrote:
-> 
-> > > Are there cases I'm missing?  It sounds like the API could be improved
-> > > to fully model the last case, and everything will work nicely.
-> > 
-> > 	You know, that's starting to remind of this little gem of Borges:
-> > http://www.alamut.com/subj/artiface/language/johnWilkins.html
-> > Especially the delightful (fake) quote contained in there:
-> > [...] it is written that the animals are divided into:
-> > 	(a) belonging to the emperor,
-> > 	(b) embalmed,
-> > 	(c) tame,
-> > 	(d) sucking pigs,
-> > 	(e) sirens,
-> > 	(f) fabulous,
-> > 	(g) stray dogs,
-> > 	(h) included in the present classification,
-> > 	(i) frenzied,
-> > 	(j) innumerable,
-> > 	(k) drawn with a very fine camelhair brush,
-> > 	(l) et cetera,
-> > 	(m) having just broken the water pitcher,
-> > 	(n) that from a long way off look like flies.
-> 
-> 
-> Coincidentally, this was also the model for Linux capabilities.
+This patchset provide a mechanism by which a security module
+can advise the system about potential side-channel vulnerabilities.
+If security_task_safe_sidechannel() returns 0 the security modules do
+not know of any data that would be subject to a side-channel
+attack. If the security module maintains data that it believes
+may be susceptible to a side-channel attack it will return -EACCES.
 
-But maybe we want to split the stray dogs up by breed.
+Simple hooks are provided for SELinux and Smack. A new security
+module is provided to make determinations regarding traditional
+task attributes, including user IDs, capability sets and namespaces.
+
+Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+
+---
+ MAINTAINERS                        |   6 ++
+ arch/x86/mm/tlb.c                  |  12 ++-
+ include/linux/lsm_hooks.h          |  12 +++
+ include/linux/security.h           |   1 +
+ security/Kconfig                   |   1 +
+ security/Makefile                  |   2 +
+ security/security.c                |   6 ++
+ security/selinux/hooks.c           |   9 +++
+ security/sidechannel/Kconfig       |  60 ++++++++++++++
+ security/sidechannel/Makefile      |   1 +
+ security/sidechannel/sidechannel.c | 156 +++++++++++++++++++++++++++++++++++++
+ security/smack/smack_lsm.c         |  18 +++++
+ 12 files changed, 280 insertions(+), 4 deletions(-)
