@@ -1,60 +1,105 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Tue, 14 Aug 2018 22:19:22 -0700
-Subject: [PATCH v1 00/22] LSM: Full security module stacking
-In-Reply-To: <8e2bdc10-3142-9e8d-ff05-70fa4d862dd5@schaufler-ca.com>
-References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
-	<CAMp4zn94SzqK_Q=de2E+Fpv5yeAhYv62XW-KU3=ghRma9d7Jvw@mail.gmail.com>
-	<a287800e-bd4d-2b99-8c4c-bd61ba87fab1@schaufler-ca.com>
-	<kubjHWMWfFDu8Rk19x79iMDKVbewTUMWwSjOA7vFGIbYsWYcGb50jb-Z-PSXxmcby3ZFMZWi0HCeuFgo3F8BRskxo_JUdSHFhdIsIlBxHyQ=@protonmail.ch>
-	<8e2bdc10-3142-9e8d-ff05-70fa4d862dd5@schaufler-ca.com>
-Message-ID: <CAGXu5jJ6Ngv8A=3TV5z5+x5kCkkXwjYtDfSQjUQgscP4hv_xYg@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 15 Aug 2018 17:31:25 +0100
+Subject: Should we split the network filesystem setup into two phases?
+In-Reply-To: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+Message-ID: <17763.1534350685@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Aug 14, 2018 at 4:50 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 8/14/2018 4:22 PM, Jordan Glover wrote:
->> On August 14, 2018 8:28 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>
->>>
->>>>> The blob management part (through "LSM: Sharing of security blobs")
->>>>> is ready for prime-time. These changes move the management of
->>>>> security blobs out of the security modules and into the security
->>>>> module infrastructure. With this change the proposed S.A.R.A,
->>>>> LandLock and PTAGS security modules could co-exist with any of
->>>>> the existing "major" security modules. The changes reduce some
->>>>> code duplication.
->>>>> Beyond the blob management there's a bit of clean-up.
->>>>> Mounting filesystems had to be changed so that options
->>>>> a security module doesn't recognize won't be considered
->>>>> a fatal error. The mount infrastructure is somewhat
->>>>> more complex than one might assume.
->>>> Casey,
->>>> Do you think you can break out 1 into its own patch? It seems like
->>>> that'd be valuable to everyone.
->>> Yes, I think that is a good idea. Landlock, S.A.R.A. and a couple
->>> other security modules could be added upstream if this part of the
->>> work was available. It would not provide everything needed to stack
->>> all the existing modules. I believe there is concern that if this
->>> much went upstream the work on finishing what's required to make
->>> everything work might be abandoned.
->>>
->> On the other hand there is concern that those security modules might
->> be abandoned if they have to wait until everything is finished :)
->
-> There is some truth to that. If we can get commitment from the developers
-> of those security module to push for getting upstream, a statement of
-> intent to support additional modules (e.g. Landlock, S.A.R.A.) from a
-> significant distribution (e.g. Fedora, Ubuntu, SuSE) and ACKs from the
-> maintainers of the existing modules we should be able to breeze right in.
->
-> Yeah, I think that's about all it would take.
+Having just re-ported NFS on top of the new mount API stuff, I find that I
+don't really like the idea of superblocks being separated by communication
+parameters - especially when it might seem reasonable to be able to adjust
+those parameters.
 
-I would strongly recommend Landlock and SARA for every distro. They're
-opt-in, and provide much-needed missing userspace defenses (and attack
-surface reduction).
+Does it make sense to abstract out the remote peer and allow (a) that to be
+configured separately from any superblocks using it and (b) that to be used to
+create superblocks?
 
--Kees
+Note that what a 'remote peer' is would be different for different
+filesystems:
 
--- 
-Kees Cook
-Pixel Security
+ (*) For NFS, it would probably be a named server, with address(es) attached
+     to the name.  In lieu of actually having a name, the initial IP address
+     could be used.
+
+ (*) For CIFS, it would probably be a named server.  I'm not sure if CIFS
+     allows an abstraction for a share that can move about inside a domain.
+
+ (*) For AFS, it would be a cell, I think, where the actual fileserver(s) used
+     are a matter of direction from the Volume Location server.
+
+ (*) For 9P and Ceph, I don't really know.
+
+What could be configured?  Well, addresses, ports, timeouts.  Maybe protocol
+level negotiation - though not being able to explicitly specify, say, the
+particular version and minorversion on an NFS share would be problematic for
+backward compatibility.
+
+One advantage it could give us is that it might make it easier if someone asks
+for server X to query userspace in some way for the default parameters for X
+are.
+
+What might this look like in terms of userspace?  Well, we could overload the
+new mount API:
+
+	peer1 = fsopen("nfs", FSOPEN_CREATE_PEER);
+	fsconfig(peer1, FSCONFIG_SET_NS, "net", NULL, netns_fd);
+	fsconfig(peer1, FSCONFIG_SET_STRING, "peer_name", "server.home");
+	fsconfig(peer1, FSCONFIG_SET_STRING, "vers", "4.2");
+	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.1");
+	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.2");
+	fsconfig(peer1, FSCONFIG_SET_STRING, "timeo", "122");
+	fsconfig(peer1, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+
+	peer2 = fsopen("nfs", FSOPEN_CREATE_PEER);
+	fsconfig(peer2, FSCONFIG_SET_NS, "net", NULL, netns_fd);
+	fsconfig(peer2, FSCONFIG_SET_STRING, "peer_name", "server2.home");
+	fsconfig(peer2, FSCONFIG_SET_STRING, "vers", "3");
+	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.3");
+	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "udp:192.168.1.4+6001");
+	fsconfig(peer2, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+
+	fs = fsopen("nfs", 0);
+	fsconfig(fs, FSCONFIG_SET_PEER, "peer.1", NULL, peer1);
+	fsconfig(fs, FSCONFIG_SET_PEER, "peer.2", NULL, peer2);
+	fsconfig(fs, FSCONFIG_SET_STRING, "source", "/home/dhowells", 0);
+	m = fsmount(fs, 0, 0);
+
+[Note that Eric's oft-repeated point about the 'creation' operation altering
+ established parameters still stands here.]
+
+You could also then reopen it for configuration, maybe by:
+
+	peer = fspick(AT_FDCWD, "/mnt", FSPICK_PEER);
+
+or:
+
+	peer = fspick(AT_FDCWD, "nfs:server.home", FSPICK_PEER_BY_NAME);
+
+though it might be better to give it its own syscall:
+
+	peer = fspeer("nfs", "server.home", O_CLOEXEC);
+	fsconfig(peer, FSCONFIG_SET_NS, "net", NULL, netns_fd);
+	...
+	fsconfig(peer, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+
+In terms of alternative interfaces, I'm not sure how easy it would be to make
+it like cgroups where you go and create a dir in a special filesystem, say,
+"/sys/peers/nfs", because the peers records and names would have to be network
+namespaced.  Also, it might make it more difficult to use to create a root fs.
+
+On the other hand, being able to adjust the peer configuration by:
+
+	echo 71 >/sys/peers/nfs/server.home/timeo
+
+does have a certain appeal.
+
+Also, netlink might be the right option, but I'm not sure how you'd pin the
+resultant object whilst you make use of it.
+
+A further thought is that is it worth making this idea more general and
+encompassing non-network devices also?  This would run into issues of some
+logical sources being visible across namespaces and but not others.
+
+David
