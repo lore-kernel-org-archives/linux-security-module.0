@@ -1,65 +1,49 @@
-From: jmorris@namei.org (James Morris)
-Date: Thu, 16 Aug 2018 08:48:59 +1000 (AEST)
-Subject: [GIT PULL] security subsystem: Integrity updates for v4.19
-Message-ID: <alpine.LRH.2.21.1808160842350.19586@namei.org>
+From: serge@hallyn.com (Serge E. Hallyn)
+Date: Wed, 15 Aug 2018 18:29:51 -0500
+Subject: BUG: Mount ignores mount options
+In-Reply-To: <alpine.LRH.2.21.1808140458040.23296@namei.org>
+References: <87d0uqpba5.fsf@xmission.com>
+	<153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+	<22361.1533913891@warthog.procyon.org.uk>
+	<28045.1533916438@warthog.procyon.org.uk>
+	<20180810161400.GA627@thunk.org>
+	<CALCETrXC8Z-q+PzzqMC-McA7UdmFubVcs2dVsT0Dt+GbSqjF5A@mail.gmail.com>
+	<20180813173502.1a7a1d9c@alans-desktop>
+	<CALCETrXvtSLjwx0swXo5g-vU3PmF-_6J6j1a_2pAba7bhzO9QQ@mail.gmail.com>
+	<20180813172947.GS6515@ZenIV.linux.org.uk>
+	<alpine.LRH.2.21.1808140458040.23296@namei.org>
+Message-ID: <20180815232951.GA6891@mail.hallyn.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
->From Mimi Zohar:
+Quoting James Morris (jmorris at namei.org):
+> On Mon, 13 Aug 2018, Al Viro wrote:
+> 
+> > On Mon, Aug 13, 2018 at 09:48:53AM -0700, Andy Lutomirski wrote:
+> 
+> > > Are there cases I'm missing?  It sounds like the API could be improved
+> > > to fully model the last case, and everything will work nicely.
+> > 
+> > 	You know, that's starting to remind of this little gem of Borges:
+> > http://www.alamut.com/subj/artiface/language/johnWilkins.html
+> > Especially the delightful (fake) quote contained in there:
+> > [...] it is written that the animals are divided into:
+> > 	(a) belonging to the emperor,
+> > 	(b) embalmed,
+> > 	(c) tame,
+> > 	(d) sucking pigs,
+> > 	(e) sirens,
+> > 	(f) fabulous,
+> > 	(g) stray dogs,
+> > 	(h) included in the present classification,
+> > 	(i) frenzied,
+> > 	(j) innumerable,
+> > 	(k) drawn with a very fine camelhair brush,
+> > 	(l) et cetera,
+> > 	(m) having just broken the water pitcher,
+> > 	(n) that from a long way off look like flies.
+> 
+> 
+> Coincidentally, this was also the model for Linux capabilities.
 
-"This pull request adds support for EVM signatures based on larger
-digests, contains a new audit record AUDIT_INTEGRITY_POLICY_RULE to
-differentiate the IMA policy rules from the IMA-audit messages,
-addresses two deadlocks due to either loading or searching for crypto
-algorithms, and cleans up the audit messages."
-
-
-The following changes since commit 87ea58433208d17295e200d56be5e2a4fe4ce7d6:
-
-  security: check for kstrdup() failure in lsm_append() (2018-07-17 21:27:06 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
-
-for you to fetch changes up to 3dd0f18c70d94ca2432c78c5735744429f071b0b:
-
-  EVM: fix return value check in evm_write_xattrs() (2018-07-22 14:49:11 -0400)
-
-----------------------------------------------------------------
-Matthew Garrett (2):
-      evm: Don't deadlock if a crypto algorithm is unavailable
-      evm: Allow non-SHA1 digital signatures
-
-Mikhail Kurinnoi (1):
-      integrity: prevent deadlock during digsig verification.
-
-Stefan Berger (4):
-      ima: Call audit_log_string() rather than logging it untrusted
-      ima: Use audit_log_format() rather than audit_log_string()
-      ima: Do not audit if CONFIG_INTEGRITY_AUDIT is not set
-      ima: Differentiate auditing policy rules from "audit" actions
-
-Sudeep Holla (1):
-      integrity: silence warning when CONFIG_SECURITYFS is not enabled
-
-Wei Yongjun (1):
-      EVM: fix return value check in evm_write_xattrs()
-
- crypto/api.c                           |  2 +-
- include/linux/crypto.h                 |  5 ++++
- include/linux/integrity.h              | 13 +++++++++
- include/uapi/linux/audit.h             |  1 +
- security/integrity/digsig_asymmetric.c | 23 ++++++++++++++++
- security/integrity/evm/Kconfig         |  1 +
- security/integrity/evm/evm.h           | 10 +++++--
- security/integrity/evm/evm_crypto.c    | 50 ++++++++++++++++++----------------
- security/integrity/evm/evm_main.c      | 19 ++++++++-----
- security/integrity/evm/evm_secfs.c     |  4 +--
- security/integrity/iint.c              |  9 ++++--
- security/integrity/ima/Kconfig         |  1 +
- security/integrity/ima/ima_policy.c    |  9 ++++--
- security/integrity/integrity.h         | 15 ++++++++++
- security/integrity/integrity_audit.c   |  6 +---
- security/security.c                    |  7 ++++-
- 16 files changed, 128 insertions(+), 47 deletions(-)
+But maybe we want to split the stray dogs up by breed.
