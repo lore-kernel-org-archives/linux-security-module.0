@@ -1,105 +1,66 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 15 Aug 2018 17:31:25 +0100
+From: luto@amacapital.net (Andy Lutomirski)
+Date: Wed, 15 Aug 2018 09:51:36 -0700
 Subject: Should we split the network filesystem setup into two phases?
-In-Reply-To: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+In-Reply-To: <17763.1534350685@warthog.procyon.org.uk>
 References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-Message-ID: <17763.1534350685@warthog.procyon.org.uk>
+	<17763.1534350685@warthog.procyon.org.uk>
+Message-ID: <DCE0E619-68F8-4906-8062-68D63DDED665@amacapital.net>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Having just re-ported NFS on top of the new mount API stuff, I find that I
-don't really like the idea of superblocks being separated by communication
-parameters - especially when it might seem reasonable to be able to adjust
-those parameters.
 
-Does it make sense to abstract out the remote peer and allow (a) that to be
-configured separately from any superblocks using it and (b) that to be used to
-create superblocks?
 
-Note that what a 'remote peer' is would be different for different
-filesystems:
+> On Aug 15, 2018, at 9:31 AM, David Howells <dhowells@redhat.com> wrote:
+> 
+> Having just re-ported NFS on top of the new mount API stuff, I find that I
+> don't really like the idea of superblocks being separated by communication
+> parameters - especially when it might seem reasonable to be able to adjust
+> those parameters.
+> 
+> Does it make sense to abstract out the remote peer and allow (a) that to be
+> configured separately from any superblocks using it and (b) that to be used to
+> create superblocks?
+> 
+> Note that what a 'remote peer' is would be different for different
+> filesystems:
 
- (*) For NFS, it would probably be a named server, with address(es) attached
-     to the name.  In lieu of actually having a name, the initial IP address
-     could be used.
+...
 
- (*) For CIFS, it would probably be a named server.  I'm not sure if CIFS
-     allows an abstraction for a share that can move about inside a domain.
+I think this looks rather nice.  But maybe you should generalize the concept of ?peer? so that it works for btrfs too. In the case where you mount two different subvolumes, you?re creating a *something*, and you?re then creating a filesystem that references it. It?s almost the same thing.
 
- (*) For AFS, it would be a cell, I think, where the actual fileserver(s) used
-     are a matter of direction from the Volume Location server.
+> 
+> 
 
- (*) For 9P and Ceph, I don't really know.
 
-What could be configured?  Well, addresses, ports, timeouts.  Maybe protocol
-level negotiation - though not being able to explicitly specify, say, the
-particular version and minorversion on an NFS share would be problematic for
-backward compatibility.
+> 
+>    fs = fsopen("nfs", 0);
+>    fsconfig(fs, FSCONFIG_SET_PEER, "peer.1", NULL, peer1);
 
-One advantage it could give us is that it might make it easier if someone asks
-for server X to query userspace in some way for the default parameters for X
-are.
+As you mention below, this seems like it might have namespacing issues.
 
-What might this look like in terms of userspace?  Well, we could overload the
-new mount API:
+>     
 
-	peer1 = fsopen("nfs", FSOPEN_CREATE_PEER);
-	fsconfig(peer1, FSCONFIG_SET_NS, "net", NULL, netns_fd);
-	fsconfig(peer1, FSCONFIG_SET_STRING, "peer_name", "server.home");
-	fsconfig(peer1, FSCONFIG_SET_STRING, "vers", "4.2");
-	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.1");
-	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.2");
-	fsconfig(peer1, FSCONFIG_SET_STRING, "timeo", "122");
-	fsconfig(peer1, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+> In terms of alternative interfaces, I'm not sure how easy it would be to make
+> it like cgroups where you go and create a dir in a special filesystem, say,
+> "/sys/peers/nfs", because the peers records and names would have to be network
+> namespaced.  Also, it might make it more difficult to use to create a root fs.
+> 
+> On the other hand, being able to adjust the peer configuration by:
+> 
+>    echo 71 >/sys/peers/nfs/server.home/timeo
+> 
+> does have a certain appeal.
+> 
+> Also, netlink might be the right option, but I'm not sure how you'd pin the
+> resultant object whilst you make use of it.
+> 
 
-	peer2 = fsopen("nfs", FSOPEN_CREATE_PEER);
-	fsconfig(peer2, FSCONFIG_SET_NS, "net", NULL, netns_fd);
-	fsconfig(peer2, FSCONFIG_SET_STRING, "peer_name", "server2.home");
-	fsconfig(peer2, FSCONFIG_SET_STRING, "vers", "3");
-	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.3");
-	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "udp:192.168.1.4+6001");
-	fsconfig(peer2, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
+My suggestion would be to avoid giving these things names at all. I think that referring to them by fd should be sufficient, especially if you allow them to be reopened based on a mount that uses them and allow them to get bind-mounted somewhere a la namespaces to make them permanent if needed.
 
-	fs = fsopen("nfs", 0);
-	fsconfig(fs, FSCONFIG_SET_PEER, "peer.1", NULL, peer1);
-	fsconfig(fs, FSCONFIG_SET_PEER, "peer.2", NULL, peer2);
-	fsconfig(fs, FSCONFIG_SET_STRING, "source", "/home/dhowells", 0);
-	m = fsmount(fs, 0, 0);
+> A further thought is that is it worth making this idea more general and
+> encompassing non-network devices also?  This would run into issues of some
+> logical sources being visible across namespaces and but not others.
 
-[Note that Eric's oft-repeated point about the 'creation' operation altering
- established parameters still stands here.]
+Indeed :)
 
-You could also then reopen it for configuration, maybe by:
-
-	peer = fspick(AT_FDCWD, "/mnt", FSPICK_PEER);
-
-or:
-
-	peer = fspick(AT_FDCWD, "nfs:server.home", FSPICK_PEER_BY_NAME);
-
-though it might be better to give it its own syscall:
-
-	peer = fspeer("nfs", "server.home", O_CLOEXEC);
-	fsconfig(peer, FSCONFIG_SET_NS, "net", NULL, netns_fd);
-	...
-	fsconfig(peer, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
-
-In terms of alternative interfaces, I'm not sure how easy it would be to make
-it like cgroups where you go and create a dir in a special filesystem, say,
-"/sys/peers/nfs", because the peers records and names would have to be network
-namespaced.  Also, it might make it more difficult to use to create a root fs.
-
-On the other hand, being able to adjust the peer configuration by:
-
-	echo 71 >/sys/peers/nfs/server.home/timeo
-
-does have a certain appeal.
-
-Also, netlink might be the right option, but I'm not sure how you'd pin the
-resultant object whilst you make use of it.
-
-A further thought is that is it worth making this idea more general and
-encompassing non-network devices also?  This would run into issues of some
-logical sources being visible across namespaces and but not others.
-
-David
+It probably pays to rope a btrfs person into this discussion.
