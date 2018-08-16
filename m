@@ -1,66 +1,56 @@
-From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
-Date: Thu, 16 Aug 2018 18:05:46 +0200
-Subject: [PATCH v1 00/22] LSM: Full security module stacking
-In-Reply-To: <CAGXu5jJ6Ngv8A=3TV5z5+x5kCkkXwjYtDfSQjUQgscP4hv_xYg@mail.gmail.com>
-References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
-	<CAMp4zn94SzqK_Q=de2E+Fpv5yeAhYv62XW-KU3=ghRma9d7Jvw@mail.gmail.com>
-	<a287800e-bd4d-2b99-8c4c-bd61ba87fab1@schaufler-ca.com>
-	<kubjHWMWfFDu8Rk19x79iMDKVbewTUMWwSjOA7vFGIbYsWYcGb50jb-Z-PSXxmcby3ZFMZWi0HCeuFgo3F8BRskxo_JUdSHFhdIsIlBxHyQ=@protonmail.ch>
-	<8e2bdc10-3142-9e8d-ff05-70fa4d862dd5@schaufler-ca.com>
-	<CAGXu5jJ6Ngv8A=3TV5z5+x5kCkkXwjYtDfSQjUQgscP4hv_xYg@mail.gmail.com>
-Message-ID: <CAJHCu1+Je_eTdvmobUU3ZqeeWDqH5v8gGUTqEF0XWVP4TyxbFg@mail.gmail.com>
+From: smfrench@gmail.com (Steve French)
+Date: Thu, 16 Aug 2018 11:24:56 -0500
+Subject: Should we split the network filesystem setup into two phases?
+In-Reply-To: <87pnyiew8x.fsf@xmission.com>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+	<17763.1534350685@warthog.procyon.org.uk> <87pnyiew8x.fsf@xmission.com>
+Message-ID: <CAH2r5muKOWBe9zMM8duNJ3rp1bzQh-mUj5zYoARO5pmc4de_+A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-2018-08-15 7:19 GMT+02:00 Kees Cook <keescook@chromium.org>:
-> On Tue, Aug 14, 2018 at 4:50 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 8/14/2018 4:22 PM, Jordan Glover wrote:
->>> On August 14, 2018 8:28 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>
->>>>
->>>>>> The blob management part (through "LSM: Sharing of security blobs")
->>>>>> is ready for prime-time. These changes move the management of
->>>>>> security blobs out of the security modules and into the security
->>>>>> module infrastructure. With this change the proposed S.A.R.A,
->>>>>> LandLock and PTAGS security modules could co-exist with any of
->>>>>> the existing "major" security modules. The changes reduce some
->>>>>> code duplication.
->>>>>> Beyond the blob management there's a bit of clean-up.
->>>>>> Mounting filesystems had to be changed so that options
->>>>>> a security module doesn't recognize won't be considered
->>>>>> a fatal error. The mount infrastructure is somewhat
->>>>>> more complex than one might assume.
->>>>> Casey,
->>>>> Do you think you can break out 1 into its own patch? It seems like
->>>>> that'd be valuable to everyone.
->>>> Yes, I think that is a good idea. Landlock, S.A.R.A. and a couple
->>>> other security modules could be added upstream if this part of the
->>>> work was available. It would not provide everything needed to stack
->>>> all the existing modules. I believe there is concern that if this
->>>> much went upstream the work on finishing what's required to make
->>>> everything work might be abandoned.
->>>>
->>> On the other hand there is concern that those security modules might
->>> be abandoned if they have to wait until everything is finished :)
->>
->> There is some truth to that. If we can get commitment from the developers
->> of those security module to push for getting upstream, a statement of
->> intent to support additional modules (e.g. Landlock, S.A.R.A.) from a
-
-I'm the developer of S.A.R.A. I'm working on it in my free time, that
-is not so much,
-but I can confirm that my goal is to get it upstream as soon as possible.
-Not that I want to rush anyone.
-
->> significant distribution (e.g. Fedora, Ubuntu, SuSE) and ACKs from the
->> maintainers of the existing modules we should be able to breeze right in.
->>
->> Yeah, I think that's about all it would take.
+On Thu, Aug 16, 2018 at 2:56 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
 >
-> I would strongly recommend Landlock and SARA for every distro. They're
-> opt-in, and provide much-needed missing userspace defenses (and attack
-> surface reduction).
+> David Howells <dhowells@redhat.com> writes:
+>
+> > Having just re-ported NFS on top of the new mount API stuff, I find that I
+> > don't really like the idea of superblocks being separated by communication
+> > parameters - especially when it might seem reasonable to be able to adjust
+> > those parameters.
+> >
+> > Does it make sense to abstract out the remote peer and allow (a) that to be
+> > configured separately from any superblocks using it and (b) that to be used to
+> > create superblocks?
+<snip>
+> At least for devpts we always create a new filesystem instance every
+> time mount(2) is called.  NFS seems to have the option to create a new
+> filesystem instance every time mount(2) is called as well, (even if the
+> filesystem parameters are the same).  And depending on the case I can
+> see the attraction for other filesystems as well.
+>
+> So I don't think we can completely abandon the option for filesystems
+> to always create a new filesystem instance when mount(8) is called.
 
-Thank you very much for your support!
+In cifs we attempt to match new mounts to existing tree connections
+(instances of connections to a \\server\share) from other mount(s)
+based first on whether security settings match (e.g. are both
+Kerberos) and then on whether encryption is on/off and whether this is
+a snapshot mount (smb3 previous versions feature).  If neither is
+mounted with a snaphsot and the encryption settings match then
+we will use the same tree id to talk with the server as the other
+mounts use.  Interesting idea to allow mount to force a new
+tree id.
 
-Salvatore
+What was the NFS mount option you were talking about?
+Looking at the nfs man page the only one that looked similar
+was "nosharecache"
+
+> I most definitely support thinking this through and figuring out how it
+> best make sense for the new filesystem API to create new filesystem
+> instances or fail to create new filesystems instances.
+
+Yes - it is an interesting question.
+
+-- 
+Thanks,
+
+Steve
