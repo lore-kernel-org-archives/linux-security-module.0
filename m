@@ -1,147 +1,75 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Thu, 16 Aug 2018 00:06:06 -0500
-Subject: Should we split the network filesystem setup into two phases?
-In-Reply-To: <17763.1534350685@warthog.procyon.org.uk> (David Howells's
-	message of "Wed, 15 Aug 2018 17:31:25 +0100")
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<17763.1534350685@warthog.procyon.org.uk>
-Message-ID: <87pnyiew8x.fsf@xmission.com>
+From: dhowells@redhat.com (David Howells)
+Date: Thu, 16 Aug 2018 14:05:10 +0100
+Subject: [PATCH 1/2] Replace magic for trusting the secondary keyring with
+	#define
+Message-ID: <153442471049.17751.3835342719465644394.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-David Howells <dhowells@redhat.com> writes:
+From: Yannik Sembritzki <yannik@sembritzki.me>
 
-> Having just re-ported NFS on top of the new mount API stuff, I find that I
-> don't really like the idea of superblocks being separated by communication
-> parameters - especially when it might seem reasonable to be able to adjust
-> those parameters.
->
-> Does it make sense to abstract out the remote peer and allow (a) that to be
-> configured separately from any superblocks using it and (b) that to be used to
-> create superblocks?
->
-> Note that what a 'remote peer' is would be different for different
-> filesystems:
->
->  (*) For NFS, it would probably be a named server, with address(es) attached
->      to the name.  In lieu of actually having a name, the initial IP address
->      could be used.
->
->  (*) For CIFS, it would probably be a named server.  I'm not sure if CIFS
->      allows an abstraction for a share that can move about inside a domain.
->
->  (*) For AFS, it would be a cell, I think, where the actual fileserver(s) used
->      are a matter of direction from the Volume Location server.
->
->  (*) For 9P and Ceph, I don't really know.
->
-> What could be configured?  Well, addresses, ports, timeouts.  Maybe protocol
-> level negotiation - though not being able to explicitly specify, say, the
-> particular version and minorversion on an NFS share would be problematic for
-> backward compatibility.
->
-> One advantage it could give us is that it might make it easier if someone asks
-> for server X to query userspace in some way for the default parameters for X
-> are.
->
-> What might this look like in terms of userspace?  Well, we could overload the
-> new mount API:
->
-> 	peer1 = fsopen("nfs", FSOPEN_CREATE_PEER);
-> 	fsconfig(peer1, FSCONFIG_SET_NS, "net", NULL, netns_fd);
-> 	fsconfig(peer1, FSCONFIG_SET_STRING, "peer_name", "server.home");
-> 	fsconfig(peer1, FSCONFIG_SET_STRING, "vers", "4.2");
-> 	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.1");
-> 	fsconfig(peer1, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.2");
-> 	fsconfig(peer1, FSCONFIG_SET_STRING, "timeo", "122");
-> 	fsconfig(peer1, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
->
-> 	peer2 = fsopen("nfs", FSOPEN_CREATE_PEER);
-> 	fsconfig(peer2, FSCONFIG_SET_NS, "net", NULL, netns_fd);
-> 	fsconfig(peer2, FSCONFIG_SET_STRING, "peer_name", "server2.home");
-> 	fsconfig(peer2, FSCONFIG_SET_STRING, "vers", "3");
-> 	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "tcp:192.168.1.3");
-> 	fsconfig(peer2, FSCONFIG_SET_STRING, "address", "udp:192.168.1.4+6001");
-> 	fsconfig(peer2, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
->
-> 	fs = fsopen("nfs", 0);
-> 	fsconfig(fs, FSCONFIG_SET_PEER, "peer.1", NULL, peer1);
-> 	fsconfig(fs, FSCONFIG_SET_PEER, "peer.2", NULL, peer2);
-> 	fsconfig(fs, FSCONFIG_SET_STRING, "source", "/home/dhowells", 0);
-> 	m = fsmount(fs, 0, 0);
->
-> [Note that Eric's oft-repeated point about the 'creation' operation altering
->  established parameters still stands here.]
->
-> You could also then reopen it for configuration, maybe by:
->
-> 	peer = fspick(AT_FDCWD, "/mnt", FSPICK_PEER);
->
-> or:
->
-> 	peer = fspick(AT_FDCWD, "nfs:server.home", FSPICK_PEER_BY_NAME);
->
-> though it might be better to give it its own syscall:
->
-> 	peer = fspeer("nfs", "server.home", O_CLOEXEC);
-> 	fsconfig(peer, FSCONFIG_SET_NS, "net", NULL, netns_fd);
-> 	...
-> 	fsconfig(peer, FSCONFIG_CMD_SET_UP_PEER, NULL, NULL, 0);
->
-> In terms of alternative interfaces, I'm not sure how easy it would be to make
-> it like cgroups where you go and create a dir in a special filesystem, say,
-> "/sys/peers/nfs", because the peers records and names would have to be network
-> namespaced.  Also, it might make it more difficult to use to create a root fs.
->
-> On the other hand, being able to adjust the peer configuration by:
->
-> 	echo 71 >/sys/peers/nfs/server.home/timeo
->
-> does have a certain appeal.
->
-> Also, netlink might be the right option, but I'm not sure how you'd pin the
-> resultant object whilst you make use of it.
->
-> A further thought is that is it worth making this idea more general and
-> encompassing non-network devices also?  This would run into issues of some
-> logical sources being visible across namespaces and but not others.
+Replace the use of a magic number that indicates that verify_*_signature()
+should use the secondary keyring with a symbol.
 
-Even network filesystems are going to have challenges of filesystems
-being visible in some network namespaces and not others.  As some
-filesystems will be visible on the internet and some filesystems will
-only be visible on the appropriate local network.  Network namespaces
-are sometimes used to deal with the case of local networks with
-overlapping ip addresses.
+Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: keyrings at vger.kernel.org
+cc: linux-security-module at vger.kernel.org
+---
 
-I think you are proposing a model for network filesystems that is
-essentially the same situation where we are with most block devices
-filesystems today.  Where some parameters identitify the local
-filesystem instance and some parameters identify how the kernel
-interacts with that filesystem instance.
+ certs/system_keyring.c                  |    3 ++-
+ crypto/asymmetric_keys/pkcs7_key_type.c |    2 +-
+ include/linux/verification.h            |    6 ++++++
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
-
-For system efficiency there is a strong argument for having the fewest
-number of filesystem instances we can.  Otherwise we will be caching the
-same data twice and wasting space in RAM etc.
-
-
-So I like the idea.
-
-
-At least for devpts we always create a new filesystem instance every
-time mount(2) is called.  NFS seems to have the option to create a new
-filesystem instance every time mount(2) is called as well, (even if the
-filesystem parameters are the same).  And depending on the case I can
-see the attraction for other filesystems as well.
-
-So I don't think we can completely abandon the option for filesystems
-to always create a new filesystem instance when mount(8) is called.
-
-
-
-I most definitely support thinking this through and figuring out how it
-best make sense for the new filesystem API to create new filesystem
-instances or fail to create new filesystems instances.
-
-
-Eric
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 6251d1b27f0c..81728717523d 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -15,6 +15,7 @@
+ #include <linux/cred.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
++#include <linux/verification.h>
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include <crypto/pkcs7.h>
+@@ -230,7 +231,7 @@ int verify_pkcs7_signature(const void *data, size_t len,
+ 
+ 	if (!trusted_keys) {
+ 		trusted_keys = builtin_trusted_keys;
+-	} else if (trusted_keys == (void *)1UL) {
++	} else if (trusted_keys == VERIFY_USE_SECONDARY_KEYRING) {
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+ 		trusted_keys = secondary_trusted_keys;
+ #else
+diff --git a/crypto/asymmetric_keys/pkcs7_key_type.c b/crypto/asymmetric_keys/pkcs7_key_type.c
+index e284d9cb9237..5b2f6a2b5585 100644
+--- a/crypto/asymmetric_keys/pkcs7_key_type.c
++++ b/crypto/asymmetric_keys/pkcs7_key_type.c
+@@ -63,7 +63,7 @@ static int pkcs7_preparse(struct key_preparsed_payload *prep)
+ 
+ 	return verify_pkcs7_signature(NULL, 0,
+ 				      prep->data, prep->datalen,
+-				      (void *)1UL, usage,
++				      VERIFY_USE_SECONDARY_KEYRING, usage,
+ 				      pkcs7_view_content, prep);
+ }
+ 
+diff --git a/include/linux/verification.h b/include/linux/verification.h
+index a10549a6c7cd..cfa4730d607a 100644
+--- a/include/linux/verification.h
++++ b/include/linux/verification.h
+@@ -12,6 +12,12 @@
+ #ifndef _LINUX_VERIFICATION_H
+ #define _LINUX_VERIFICATION_H
+ 
++/*
++ * Indicate that both builtin trusted keys and secondary trusted keys
++ * should be used.
++ */
++#define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
++
+ /*
+  * The use to which an asymmetric key is being put.
+  */
