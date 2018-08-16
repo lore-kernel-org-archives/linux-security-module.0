@@ -1,88 +1,66 @@
-From: casey.schaufler@intel.com (Casey Schaufler)
-Date: Wed, 15 Aug 2018 16:53:51 -0700
-Subject: [PATCH RFC 1/5] LSM: Introduce a hook for side-channel danger
-In-Reply-To: <20180815235355.14908-1-casey.schaufler@intel.com>
-References: <20180815235355.14908-1-casey.schaufler@intel.com>
-Message-ID: <20180815235355.14908-2-casey.schaufler@intel.com>
+From: smfrench@gmail.com (Steve French)
+Date: Wed, 15 Aug 2018 22:51:45 -0500
+Subject: Should we split the network filesystem setup into two phases?
+In-Reply-To: <17763.1534350685@warthog.procyon.org.uk>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+	<17763.1534350685@warthog.procyon.org.uk>
+Message-ID: <CAH2r5msjAYbXdnmC4Hb5TO155BC2vcMLq7XJ1H37TBiQTcsO7w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Casey Schaufler <cschaufler@localhost.localdomain>
+This is worth further detailed discussion re:SMB3 as there are some fascinating
+protocol features that might help here, but my first thought is just the obvious
+one - this could help 'DFS' (the global name space feature almost all modern
+CIFS/SMB3 implement) work a little better in the client.  A share can
+be represented by an array of \\server\share\path targets although typically
+only one except in the DFS case  (and server can be an ipv4 or
+ipv6 address or host name (which could have multiple addresses).
+It could be over RDMA, TCP, and even other protocols (as the transport).
 
-There may be cases where the data maintained for
-security controls is more sensitive than general
-process information and that may be subjected to
-side-channel attacks. An LSM hook is provided so
-that this can be check for where the system would
-take action should the current task have potential
-access to the passed task.
+There are various examples of DFS referrals in
+https://msdn.microsoft.com/en-us/library/cc227066.aspx section 4.
 
-Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
----
- include/linux/lsm_hooks.h | 7 +++++++
- include/linux/security.h  | 1 +
- security/security.c       | 5 +++++
- 3 files changed, 13 insertions(+)
+But since SMB3 also supports transparent failover, and "share move"
+and "server move" features, as well as multichannel - I would like
+to better understand the patch set to see if it helps/hurts.
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index a08bc2587b96..fd2a7e6beb01 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -698,6 +698,11 @@
-  *	security attributes, e.g. for /proc/pid inodes.
-  *	@p contains the task_struct for the task.
-  *	@inode contains the inode structure for the inode.
-+ * @task_safe_sidechannel:
-+ *	Check if a side channel attack is harmless for the current task and @p.
-+ *	The caller may have determined that no attack is possible, in which
-+ *	case this hook won't get called.
-+ *	@p contains the task_struct for the task.
-  *
-  * Security hooks for Netlink messaging.
-  *
-@@ -1611,6 +1616,7 @@ union security_list_options {
- 	int (*task_prctl)(int option, unsigned long arg2, unsigned long arg3,
- 				unsigned long arg4, unsigned long arg5);
- 	void (*task_to_inode)(struct task_struct *p, struct inode *inode);
-+	int (*task_safe_sidechannel)(struct task_struct *p);
- 
- 	int (*ipc_permission)(struct kern_ipc_perm *ipcp, short flag);
- 	void (*ipc_getsecid)(struct kern_ipc_perm *ipcp, u32 *secid);
-@@ -1897,6 +1903,7 @@ struct security_hook_heads {
- 	struct hlist_head task_kill;
- 	struct hlist_head task_prctl;
- 	struct hlist_head task_to_inode;
-+	struct hlist_head task_safe_sidechannel;
- 	struct hlist_head ipc_permission;
- 	struct hlist_head ipc_getsecid;
- 	struct hlist_head msg_msg_alloc_security;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 3410acfe139c..69a5526f789f 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -366,6 +366,7 @@ int security_task_kill(struct task_struct *p, struct siginfo *info,
- int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			unsigned long arg4, unsigned long arg5);
- void security_task_to_inode(struct task_struct *p, struct inode *inode);
-+int security_task_safe_sidechannel(struct task_struct *p);
- int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
- void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
- int security_msg_msg_alloc(struct msg_msg *msg);
-diff --git a/security/security.c b/security/security.c
-index 4927e7cc7d96..353b711e635a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1165,6 +1165,11 @@ void security_task_to_inode(struct task_struct *p, struct inode *inode)
- 	call_void_hook(task_to_inode, p, inode);
- }
- 
-+int security_task_safe_sidechannel(struct task_struct *p)
-+{
-+	return call_int_hook(task_safe_sidechannel, 0, p);
-+}
-+
- int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
- {
- 	return call_int_hook(ipc_permission, 0, ipcp, flag);
+But until I dive into the patch set more and try it, hard for me to speculate.
+Has anyone looked at the CIFS/SMB3 changes needed?
+
+On Wed, Aug 15, 2018 at 11:32 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Having just re-ported NFS on top of the new mount API stuff, I find that I
+> don't really like the idea of superblocks being separated by communication
+> parameters - especially when it might seem reasonable to be able to adjust
+> those parameters.
+>
+> Does it make sense to abstract out the remote peer and allow (a) that to be
+> configured separately from any superblocks using it and (b) that to be used to
+> create superblocks?
+>
+> Note that what a 'remote peer' is would be different for different
+> filesystems:
+>
+>  (*) For NFS, it would probably be a named server, with address(es) attached
+>      to the name.  In lieu of actually having a name, the initial IP address
+>      could be used.
+>
+>  (*) For CIFS, it would probably be a named server.  I'm not sure if CIFS
+>      allows an abstraction for a share that can move about inside a domain.
+
+CIFS/SMB3 has fairly mature support (in the protocol) for various types
+of share redirection (not just 'DFS' that is supported by most every
+NAS server, and Macs, Windows, Linux clients etc).  There are also
+very interesting features introduced with SMB 3.1.1 allowing 'tree
+connect contexts"
+which some important servers in the last few years implement.
+
+This is worth more discussion - SMB3 (in particular the SMB3.1.1 dialect) has
+a lot of interesting features here.
+
+
+
 -- 
-2.17.1
+Thanks,
+
+Steve
