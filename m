@@ -1,47 +1,30 @@
-From: jannh@google.com (Jann Horn)
-Date: Thu, 16 Aug 2018 16:22:08 +0200
-Subject: [PATCH RFC 5/5] SELinux: Support SELinux determination of
-	side-channel vulnerability
-In-Reply-To: <20180815235355.14908-6-casey.schaufler@intel.com>
-References: <20180815235355.14908-1-casey.schaufler@intel.com>
-	<20180815235355.14908-6-casey.schaufler@intel.com>
-Message-ID: <CAG48ez0OAFqzak1=OEF5V8cZR_-dYUiXnUVp=mgnikexjQkELA@mail.gmail.com>
+From: gregkh@linuxfoundation.org (Greg KH)
+Date: Thu, 16 Aug 2018 17:12:52 +0200
+Subject: [PATCH 1/2] Replace magic for trusting the secondary keyring
+	with #define
+In-Reply-To: <07e17009-18bb-df72-3408-7e8c0c11e16f@sembritzki.me>
+References: <153442471049.17751.3835342719465644394.stgit@warthog.procyon.org.uk>
+	<18610.1534425319@warthog.procyon.org.uk>
+	<07e17009-18bb-df72-3408-7e8c0c11e16f@sembritzki.me>
+Message-ID: <20180816151252.GD10648@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Aug 16, 2018 at 11:52 AM Casey Schaufler
-<casey.schaufler@intel.com> wrote:
->
-> SELinux considers tasks to be side-channel safe if they
-> have PROCESS_SHARE access.
->
-> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-> ---
->  security/selinux/hooks.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index a8bf324130f5..7fbd7d7ac1cb 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -4219,6 +4219,14 @@ static void selinux_task_to_inode(struct task_struct *p,
->         spin_unlock(&isec->lock);
->  }
->
-> +static int selinux_task_safe_sidechannel(struct task_struct *p)
-> +{
-> +       struct av_decision avd;
-> +
-> +       return avc_has_perm_noaudit(&selinux_state, current_sid(), task_sid(p),
-> +                                   SECCLASS_PROCESS, PROCESS__SHARE, 0, &avd);
-> +}
+On Thu, Aug 16, 2018 at 03:17:47PM +0200, Yannik Sembritzki wrote:
+> On 16.08.2018 15:15, David Howells wrote:
+> > I would suggest something like that.  I've switched the patches over as has
+> > been suggested.  I think it makes more sense to create the constant first and
+> > then use that.
+> >
+> > I've also fleshed out the patch description a bit and added cc and Fixes
+> > fields as appropriate.
+> 
+> Thanks, that looks good to me.
+> I see that you only cc'd stable@ in the (now) second patch. I'm curious,
+> will this automatically apply the first patch to stable?
 
-current_sid() -> current_security() -> current_cred_xxx() ->
-current_cred() accesses current->cred, the subjective credentials
-associated with the current syscall context, affected by
-override_creds(). You probably want to look at objective credentials
-here, since what you're interested in is not the security context of
-the current syscall, but the security context of the userspace code
-running in the current address space.
+No, but I'll try to remember to do it in order to get it right :)
 
-task_sid() does the right thing and looks at the objective creds.
+thanks,
+
+greg k-h
