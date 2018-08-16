@@ -1,24 +1,62 @@
-From: yannik@sembritzki.me (Yannik Sembritzki)
-Date: Thu, 16 Aug 2018 15:17:47 +0200
-Subject: [PATCH 1/2] Replace magic for trusting the secondary keyring with
-	#define
-In-Reply-To: <18610.1534425319@warthog.procyon.org.uk>
-References: <153442471049.17751.3835342719465644394.stgit@warthog.procyon.org.uk>
-	<18610.1534425319@warthog.procyon.org.uk>
-Message-ID: <07e17009-18bb-df72-3408-7e8c0c11e16f@sembritzki.me>
+From: jannh@google.com (Jann Horn)
+Date: Thu, 16 Aug 2018 16:09:31 +0200
+Subject: [PATCH RFC 2/5] X86: Support LSM determination of side-channel
+	vulnerability
+In-Reply-To: <20180815235355.14908-3-casey.schaufler@intel.com>
+References: <20180815235355.14908-1-casey.schaufler@intel.com>
+	<20180815235355.14908-3-casey.schaufler@intel.com>
+Message-ID: <CAG48ez0=RSok9mAo9QHsho+Qnm_ZDqkH68Amfzj9A_jWmOZaOA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 16.08.2018 15:15, David Howells wrote:
-> I would suggest something like that.  I've switched the patches over as has
-> been suggested.  I think it makes more sense to create the constant first and
-> then use that.
+On Thu, Aug 16, 2018 at 11:51 AM Casey Schaufler
+<casey.schaufler@intel.com> wrote:
 >
-> I've also fleshed out the patch description a bit and added cc and Fixes
-> fields as appropriate.
+> From: Casey Schaufler <cschaufler@localhost.localdomain>
+>
+> When switching between tasks it may be necessary
+> to set an indirect branch prediction barrier if the
+> tasks are potentially vulnerable to side-channel
+> attacks. This adds a call to security_task_safe_sidechannel
+> so that security modules can weigh in on the decision.
+>
+> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+> ---
+>  arch/x86/mm/tlb.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index 6eb1f34c3c85..8714d4af06aa 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/export.h>
+>  #include <linux/cpu.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/security.h>
+>
+>  #include <asm/tlbflush.h>
+>  #include <asm/mmu_context.h>
+> @@ -270,11 +271,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+>                  * threads. It will also not flush if we switch to idle
+>                  * thread and back to the same process. It will flush if we
+>                  * switch to a different non-dumpable process.
+> +                * If a security module thinks that the transition
+> +                * is unsafe do the flush.
+>                  */
+> -               if (tsk && tsk->mm &&
+> -                   tsk->mm->context.ctx_id != last_ctx_id &&
+> -                   get_dumpable(tsk->mm) != SUID_DUMP_USER)
+> -                       indirect_branch_prediction_barrier();
+> +               if (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id) {
+> +                       if (get_dumpable(tsk->mm) != SUID_DUMP_USER ||
+> +                           security_task_safe_sidechannel(tsk) != 0)
+> +                               indirect_branch_prediction_barrier();
+> +               }
 
-Thanks, that looks good to me.
-I see that you only cc'd stable@ in the (now) second patch. I'm curious,
-will this automatically apply the first patch to stable?
-
-Yannik
+Does this enforce transitivity? What happens if we first switch from
+an attacker task to a task without ->mm, and immediately afterwards
+from the task without ->mm to a victim task? In that case, whether a
+flush happens between the attacker task and the victim task depends on
+whether the LSM thinks that the mm-less task should have access to the
+victim task, right?
