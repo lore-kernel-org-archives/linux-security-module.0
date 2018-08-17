@@ -1,56 +1,51 @@
-From: casey.schaufler@intel.com (Casey Schaufler)
-Date: Fri, 17 Aug 2018 15:16:21 -0700
-Subject: [PATCH RFC v2 2/5] X86: Support LSM determination of side-channel
-	vulnerability
-In-Reply-To: <20180817221624.10232-1-casey.schaufler@intel.com>
-References: <20180817221624.10232-1-casey.schaufler@intel.com>
-Message-ID: <20180817221624.10232-3-casey.schaufler@intel.com>
+From: viro@ZenIV.linux.org.uk (Al Viro)
+Date: Sat, 18 Aug 2018 00:11:31 +0100
+Subject: Should we split the network filesystem setup into two phases?
+In-Reply-To: <87pnyiew8x.fsf@xmission.com>
+References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
+	<17763.1534350685@warthog.procyon.org.uk>
+	<87pnyiew8x.fsf@xmission.com>
+Message-ID: <20180817231131.GI6515@ZenIV.linux.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Casey Schaufler <cschaufler@localhost.localdomain>
+On Thu, Aug 16, 2018 at 12:06:06AM -0500, Eric W. Biederman wrote:
 
-When switching between tasks it may be necessary
-to set an indirect branch prediction barrier if the
-tasks are potentially vulnerable to side-channel
-attacks. This adds a call to security_task_safe_sidechannel
-so that security modules can weigh in on the decision.
+> So I don't think we can completely abandon the option for filesystems
+> to always create a new filesystem instance when mount(8) is called.
 
-Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
----
- arch/x86/mm/tlb.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+Huh?  If filesystem wants to create a new instance on each ->mount(),
+it can bloody well do so.  Quite a few do - if that fs can handle
+that, more power to it.
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 6eb1f34c3c85..8714d4af06aa 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -7,6 +7,7 @@
- #include <linux/export.h>
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
-+#include <linux/security.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-@@ -270,11 +271,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 		 * threads. It will also not flush if we switch to idle
- 		 * thread and back to the same process. It will flush if we
- 		 * switch to a different non-dumpable process.
-+		 * If a security module thinks that the transition
-+		 * is unsafe do the flush.
- 		 */
--		if (tsk && tsk->mm &&
--		    tsk->mm->context.ctx_id != last_ctx_id &&
--		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
--			indirect_branch_prediction_barrier();
-+		if (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id) {
-+			if (get_dumpable(tsk->mm) != SUID_DUMP_USER ||
-+			    security_task_safe_sidechannel(tsk) != 0)
-+				indirect_branch_prediction_barrier();
-+		}
- 
- 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
- 			/*
--- 
-2.17.1
+The problem is what to do with filesystems that *can't* do that.
+You really, really can't have two ext4 (or xfs, etc.) instances over
+the same device at the same time.  Cache coherency, locking, etc.
+will kill you.
+
+And that's not to mention the joy of defining the semantics of
+having the same ext4 mounted with two logs at the same time ;-)
+
+I've seen "reject unless the options are compatible/identical/whatever",
+but that ignores the real problem with existing policy.  It's *NOT*
+"I've mounted this and got an existing instance with non-matching
+options".  That's a minor annoyance (and back when that decision
+had been made, mount(2) was very definitly root-only).  The real
+problem is different and much worse - it's remount.
+
+I have asked to mount something and it had already been mounted,
+with identical options.  OK, so what happens if I do mount -o remount
+on my instance?  *IF* we are operating in the "only sysadmin can
+mount new filesystems", it's not a big deal - there are already
+lots of ways you can shoot yourself in the foot and mount(2) is
+certainly a powerful one.  But if we get to "Joe R. Luser can do
+it in his container", we have a big problem.
+
+Decision back then had been mostly for usability reasons - it was
+back in 2001 (well before the containermania, userns or anything
+of that sort) and it was more about "how many hoops does one have
+to jump through to get something mounted, assuming the sanity of
+sysadmin doing that?".  If *anything* like userns had been a concern
+back then, it probably would've been different.  However, it's
+17 years too late and if anyone has a functional TARDIS, I can
+easily think of better uses for it...
