@@ -1,50 +1,165 @@
-From: smfrench@gmail.com (Steve French)
-Date: Thu, 16 Aug 2018 13:36:13 -0500
-Subject: Should we split the network filesystem setup into two phases?
-In-Reply-To: <87tvnuz0ms.fsf@suse.com>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<17763.1534350685@warthog.procyon.org.uk> <87pnyiew8x.fsf@xmission.com>
-	<CAH2r5muKOWBe9zMM8duNJ3rp1bzQh-mUj5zYoARO5pmc4de_+A@mail.gmail.com>
-	<87tvnuz0ms.fsf@suse.com>
-Message-ID: <CAH2r5mvLSf2Cqdi9LwVre2MyiSh+7ZxGgRp_Am3D_090oFDCzw@mail.gmail.com>
+From: kai.huang@intel.com (Huang, Kai)
+Date: Fri, 17 Aug 2018 02:49:11 +0000
+Subject: [RFC] KEYS: inject an MKTME specific safety check in the keyctl
+	revoke path
+In-Reply-To: <20180814020538.GA18424@alison-desk.jf.intel.com>
+References: <20180814020538.GA18424@alison-desk.jf.intel.com>
+Message-ID: <1534474145.2908.4.camel@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Aug 16, 2018 at 12:23 PM Aur?lien Aptel <aaptel@suse.com> wrote:
->
-> Steve French <smfrench@gmail.com> writes:
-> > In cifs we attempt to match new mounts to existing tree connections
-> > (instances of connections to a \\server\share) from other mount(s)
-> > based first on whether security settings match (e.g. are both
-> > Kerberos) and then on whether encryption is on/off and whether this is
-> > a snapshot mount (smb3 previous versions feature).  If neither is
-> > mounted with a snaphsot and the encryption settings match then
-> > we will use the same tree id to talk with the server as the other
-> > mounts use.  Interesting idea to allow mount to force a new
-> > tree id.
->
-> We actually already have this mount option in cifs.ko, it's "nosharesock".
+On Mon, 2018-08-13 at 19:05 -0700, Alison Schofield wrote:
+> This RFC is asking for feedback on a problem I'm running into using
+> the Kernel Key Service for MKTME (MultiKey Total Memory Encryption).
+> 
+> I previously posted an RFC with the proposal to create a new key type
+> "mktme" to support MKTME (Multi-Key Total Memory Encryption).
+> https://www.spinics.net/lists/keyrings/msg03702.html
+> 
+> The MKTME key service maps userspace keys to hardware keyids. Those
+> keys are used in a new system call that encrypts memory. The keys
+> need to be tightly controlled. One example is that userspace keys
+> should not be revoked while the hardware keyid slot is still in use.
+> 
+> The KEY_FLAG_KEEP bit offers good control. The mktme service uses
+> that
+> bit to prevent userspace keys from disappearing without the service
+> being notified.
+> 
+> Problem is that we need a safe and synchronous way to revoke keys.
+> The
+> way .revoke methods function now, the key service type is called late
+> in the revoke process. The mktme key service has no means to reject
+> the
+> request. So, even if the mktme service sanity checks the request in
+> its
+> .revoke method, it's too late to do anything about it.
+> 
+> This proposal inserts an MKTME specific check earlier into the
+> existing
+> keyctl <revoke> path. If it is safe to revoke the key, mktme key
+> service
+> will turn off KEY_FLAG_KEEP and let the revoke continue (and
+> succeed).
+> Otherwise, not safe, KEY_FLAG_KEEP stays on, and the revoke continues
+> (and fails).
+> 
+> I considered proposing a new keyctl <option> just for this mktme
+> 'safe
+> revoke' request. I wonder if that might be the preferred method for
+> inserting this type specific behavior?
+> 
+> Hoping that from this description and the diff you can understand the
+> issue and suggest alternative solutions if needed. Thanks for
+> looking!
 
-Yes - good point.  It is very easy to do on cifs.  I mainly use that to simulate
-multiple clients for testing servers (so each mount to the same server
-whether or not the share matched, looks like a different client, coming
-from a different socket and thus with different session ids and tree
-ids as well).
+I am not expert, but maybe we can also consider making key_revoke()
+return error code, rather than void?
 
-It is very useful when trying to simulate multiple clients running to the same
-server while using only one client machine (or VM).
-
-> > What was the NFS mount option you were talking about?
-> > Looking at the nfs man page the only one that looked similar
-> > was "nosharecache"
-
-The nfs man page apparently discourages its use:
-
-"As of kernel 2.6.18, the behavior specified by nosharecache is legacy
-caching behavior. This is  considered  a  data risk"
-
-
--- 
 Thanks,
+-Kai
 
-Steve
+> 
+> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+> ---
+>  security/keys/internal.h   |  6 ++++++
+>  security/keys/keyctl.c     | 14 ++++++++++++++
+>  security/keys/mktme_keys.c | 34 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 54 insertions(+)
+> 
+> diff --git a/security/keys/internal.h b/security/keys/internal.h
+> index 9f8208dc0e55..1b6425d0d1ab 100644
+> --- a/security/keys/internal.h
+> +++ b/security/keys/internal.h
+> @@ -316,4 +316,10 @@ static inline void key_check(const struct key
+> *key)
+>  
+>  #endif
+>  
+> +#ifdef CONFIG_MKTME_KEYS
+> +extern int mktme_safe_revoke(struct key *key);
+> +#else
+> +static inline int mktme_safe_revoke(struct key *key) { return 0; }
+> +#endif /* CONFIG_MKTME_KEYS */
+> +
+>  #endif /* _INTERNAL_H */
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index 1ffe60bb2845..7b5f98af1d54 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -387,6 +387,20 @@ long keyctl_revoke_key(key_serial_t id)
+>  
+>  	key = key_ref_to_ptr(key_ref);
+>  	ret = 0;
+> +
+> +	/*
+> +	 * MKTME (Multi-Key Total Memory Encryption) Keys require a
+> +	 * sanity check before allowing a revoke. If the sanity
+> check
+> +	 * passes, the mktme key service will clear KEY_FLAG_KEEP
+> bit
+> +	 * and the revoke will proceed.
+> +	 */
+> +	if (strcmp(key->type->name, "mktme") == 0)  {
+> +		if (mktme_safe_revoke(key)) {
+> +			ret = -EINVAL;
+> +			goto error;
+> +		}
+> +	}
+> +
+>  	if (test_bit(KEY_FLAG_KEEP, &key->flags))
+>  		ret = -EPERM;
+>  	else
+> diff --git a/security/keys/mktme_keys.c b/security/keys/mktme_keys.c
+> index b937bbe6bcdb..887b483d7b38 100644
+> --- a/security/keys/mktme_keys.c
+> +++ b/security/keys/mktme_keys.c
+> @@ -67,6 +67,39 @@ static int mktme_clear_programmed_key(int keyid)
+>  	return ret;
+>  }
+>  
+> +/*
+> + * mktme_safe_revoke() is called during the revoke process to
+> + * determine if it is safe to revoke a key. If this check passes,
+> + * the revoke proceeds, otherwise an error is returned to userspace.
+> + * The important error case here is outstanding memory mappings
+> using
+> + * the corresponding hardware keyid.
+> + */
+> +int mktme_safe_revoke(struct key *key)
+> +{
+> +	int keyid, vma_count;
+> +	int ret = -1;
+> +
+> +	mktme_map_lock();
+> +	keyid = mktme_map_keyid_from_serial(key->serial);
+> +	if (keyid <= 0)
+> +		goto out;
+> +
+> +	vma_count = vma_read_encrypt_ref(keyid);
+> +	if (vma_count > 0) {
+> +		pr_debug("mktme not freeing keyid[%d]
+> encrypt_count[%d]\n",
+> +			 keyid, vma_count);
+> +		goto out;
+> +	}
+> +	mktme_clear_programmed_key(keyid);
+> +	/* Clearing KEY_FLAG_KEEP flag allows the revoke to proceed
+> */
+> +	clear_bit(KEY_FLAG_KEEP, &key->flags);
+> +	ret = 0;
+> +out:
+> +	mktme_map_unlock();
+> +	return ret;
+> +}
+> +
+> +
+> @@ -315,6 +348,7 @@ int mktme_instantiate(struct key *key, struct
+> key_preparsed_payload *prep)
+>  
+>  	mktme_map_lock();
+>  	ret = mktme_program_key(key->serial, kprog);
+> +	set_bit(KEY_FLAG_KEEP, &key->flags);
+>  	mktme_map_unlock();
+>  out:
+>  	kzfree(datablob);
