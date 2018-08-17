@@ -1,51 +1,50 @@
-From: viro@ZenIV.linux.org.uk (Al Viro)
-Date: Sat, 18 Aug 2018 00:11:31 +0100
-Subject: Should we split the network filesystem setup into two phases?
-In-Reply-To: <87pnyiew8x.fsf@xmission.com>
-References: <153313703562.13253.5766498657900728120.stgit@warthog.procyon.org.uk>
-	<17763.1534350685@warthog.procyon.org.uk>
-	<87pnyiew8x.fsf@xmission.com>
-Message-ID: <20180817231131.GI6515@ZenIV.linux.org.uk>
+From: jannh@google.com (Jann Horn)
+Date: Sat, 18 Aug 2018 01:52:30 +0200
+Subject: [PATCH RFC v2 3/5] LSM: Security module checking for side-channel
+	dangers
+In-Reply-To: <20180817221624.10232-4-casey.schaufler@intel.com>
+References: <20180817221624.10232-1-casey.schaufler@intel.com>
+	<20180817221624.10232-4-casey.schaufler@intel.com>
+Message-ID: <CAG48ez3aB5X9=hqepovG6L4vQYZjzHZ6fWqdd4Vtzh92u2J5fQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Aug 16, 2018 at 12:06:06AM -0500, Eric W. Biederman wrote:
+On Sat, Aug 18, 2018 at 12:17 AM Casey Schaufler
+<casey.schaufler@intel.com> wrote:
+>
+> From: Casey Schaufler <cschaufler@localhost.localdomain>
+>
+> The sidechannel LSM checks for cases where a side-channel
+> attack may be dangerous based on security attributes of tasks.
+> This includes:
+>         Effective UID of the tasks is different
+>         Capablity sets are different
+>         Tasks are in different namespaces
+> An option is also provided to assert that task are never
+> to be considered safe. This is high paranoia, and expensive
+> as well.
+>
+> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+[...]
+> +#ifdef CONFIG_SECURITY_SIDECHANNEL_UIDS
+> +static int safe_by_uid(struct task_struct *p)
+> +{
+> +       const struct cred *ccred = current_real_cred();
+> +       const struct cred *pcred = get_task_cred(p);
+> +
+> +       /*
+> +        * Credential checks. Considered safe if:
+> +        *      UIDs are the same
+> +        */
+> +       if (ccred != pcred && ccred->euid.val != pcred->euid.val)
+> +               return -EACCES;
+> +       return 0;
+> +}
 
-> So I don't think we can completely abandon the option for filesystems
-> to always create a new filesystem instance when mount(8) is called.
+This function looks bogus. get_task_cred() bumps the refcount on the
+returned cred struct pointer, but you don't drop it. You probably want
+to use something that doesn't fiddle with the refcount at all here to
+avoid cacheline bouncing - possibly a raw rcu_dereference_protected()
+if there are no better helpers.
 
-Huh?  If filesystem wants to create a new instance on each ->mount(),
-it can bloody well do so.  Quite a few do - if that fs can handle
-that, more power to it.
-
-The problem is what to do with filesystems that *can't* do that.
-You really, really can't have two ext4 (or xfs, etc.) instances over
-the same device at the same time.  Cache coherency, locking, etc.
-will kill you.
-
-And that's not to mention the joy of defining the semantics of
-having the same ext4 mounted with two logs at the same time ;-)
-
-I've seen "reject unless the options are compatible/identical/whatever",
-but that ignores the real problem with existing policy.  It's *NOT*
-"I've mounted this and got an existing instance with non-matching
-options".  That's a minor annoyance (and back when that decision
-had been made, mount(2) was very definitly root-only).  The real
-problem is different and much worse - it's remount.
-
-I have asked to mount something and it had already been mounted,
-with identical options.  OK, so what happens if I do mount -o remount
-on my instance?  *IF* we are operating in the "only sysadmin can
-mount new filesystems", it's not a big deal - there are already
-lots of ways you can shoot yourself in the foot and mount(2) is
-certainly a powerful one.  But if we get to "Joe R. Luser can do
-it in his container", we have a big problem.
-
-Decision back then had been mostly for usability reasons - it was
-back in 2001 (well before the containermania, userns or anything
-of that sort) and it was more about "how many hoops does one have
-to jump through to get something mounted, assuming the sanity of
-sysadmin doing that?".  If *anything* like userns had been a concern
-back then, it probably would've been different.  However, it's
-17 years too late and if anyone has a functional TARDIS, I can
-easily think of better uses for it...
+Same thing for the other get_task_cred() calls further down in the patch.
