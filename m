@@ -1,23 +1,31 @@
-From: crixas@oabgo.org.br (Larry)
-Date: Sun, 19 Aug 2018 07:13:08 -0300 (BRT)
-Subject: Hi, pretty
-Message-ID: <468383.13217867.1534673588428.JavaMail.zimbra@oabgo.org.br>
+From: christian@brauner.io (Christian Brauner)
+Date: Sun, 19 Aug 2018 20:44:03 +0200
+Subject: [PATCH] security/capabilities: remove check for -EINVAL
+Message-ID: <20180819184403.5343-1-christian@brauner.io>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hallo sch?n, ich bin Larry aus den Vereinigten Staaten, ich hoffe, dass diese Nachricht gut zu dir gelangt? .. Ich bin ein einzelner Mann, ich war noch nie
+bprm_caps_from_vfs_caps() does not return -EINVAL anymore so remove the rc
+== -EINVAL check.
 
-verheiratet, bevor ich dich wirklich besser kennenlernen will, ich bin ein unbek?mmerter mann, und ich suche gerade nach einem ernsten
+Signed-off-by: Christian Brauner <christian@brauner.io>
+---
+ security/commoncap.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Beziehung, in der ich mich geliebt und sicher f?hle.
-
-Ich w?rde lieben, dich besser als ein Freund zu kennen, ich w?rde auch wissen wollen, was du magst und Dinge, die du nicht magst, dein
-
-Interesse auch ...... ich verspreche, gut zu Ihnen zu sein und Sie zu respektieren, wenn mein Wunsch gew?hrt wird.
-
-Ich hoffe, du kannst mir mehr ?ber dich, deine Beziehung und deine Vergangenheit erz?hlen.
-
-
-Hoffe bald von dir zu h?ren.
-
-Larry.
+diff --git a/security/commoncap.c b/security/commoncap.c
+index f4c33abd9959..6012f0cd8157 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -684,9 +684,6 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_f
+ 	}
+ 
+ 	rc = bprm_caps_from_vfs_caps(&vcaps, bprm, effective, has_fcap);
+-	if (rc == -EINVAL)
+-		printk(KERN_NOTICE "%s: cap_from_disk returned %d for %s\n",
+-		       __func__, rc, bprm->filename);
+ 
+ out:
+ 	if (rc)
+-- 
+2.17.1
