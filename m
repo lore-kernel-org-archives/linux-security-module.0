@@ -1,26 +1,27 @@
 From: jgg@ziepe.ca (Jason Gunthorpe)
-Date: Tue, 21 Aug 2018 12:30:04 -0600
-Subject: [PATCH 01/23] TPM: Add new TPMs to the tail of the list to
-	prevent inadvertent change of dev
-In-Reply-To: <153486701644.13066.13372706238885253812.stgit@warthog.procyon.org.uk>
+Date: Tue, 21 Aug 2018 12:31:08 -0600
+Subject: [PATCH 04/23] TPM: Expose struct tpm_chip and related find_get
+	and put functions
+In-Reply-To: <153486703636.13066.16209594327379341518.stgit@warthog.procyon.org.uk>
 References: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
-	<153486701644.13066.13372706238885253812.stgit@warthog.procyon.org.uk>
-Message-ID: <20180821183004.GB25543@ziepe.ca>
+	<153486703636.13066.16209594327379341518.stgit@warthog.procyon.org.uk>
+Message-ID: <20180821183108.GC25543@ziepe.ca>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Aug 21, 2018 at 04:56:56PM +0100, David Howells wrote:
-> Add newly registered TPMs to the tail of the list, not the beginning, so that
-> things that are specifying TPM_ANY_NUM don't find that the device they're
-> using has inadvertently changed.  Adding a second device would break IMA, for
-> instance.
+On Tue, Aug 21, 2018 at 04:57:16PM +0100, David Howells wrote:
+> Expose struct tpm_chip and related find_get and put functions so that
+> TPM-using code can make sure it uses the same TPM for any related set of
+> operations.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
-> cc: stable at vger.kernel.org
 > ---
 
-We really should apply this patch...
+>  drivers/char/tpm/tpm-interface.c |   19 ++++++++++++++++---
+>  drivers/char/tpm/tpm.h           |    5 -----
+>  include/linux/tpm.h              |   10 ++++++++++
+>  3 files changed, 26 insertions(+), 8 deletions(-)
+
+I think this is already in the kernel .. Stephen did it.
 
 Jason
