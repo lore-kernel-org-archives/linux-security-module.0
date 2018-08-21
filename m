@@ -1,387 +1,151 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 21 Aug 2018 16:59:25 +0100
-Subject: [PATCH 23/23] TPM: Add an asymmetric key subtype for handling
-	TPM-based keys
-In-Reply-To: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
-References: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
-Message-ID: <153486716525.13066.18042327896429419884.stgit@warthog.procyon.org.uk>
+From: casey.schaufler@intel.com (Schaufler, Casey)
+Date: Tue, 21 Aug 2018 16:37:19 +0000
+Subject: [PATCH RFC v2 2/5] X86: Support LSM determination of
+	side-channel vulnerability
+In-Reply-To: <CAG48ez1LHOHvB4ud+8asOjKARVLQJGV4ocdKVDJtvTXTfeMa9w@mail.gmail.com>
+References: <20180817221624.10232-1-casey.schaufler@intel.com>
+	<20180817221624.10232-3-casey.schaufler@intel.com>
+	<CAG48ez23G+wcnkCMNZV_mxYMS=h+pZkpx1451Wz5GB9_tcDv3Q@mail.gmail.com>
+	<99FC4B6EFCEFD44486C35F4C281DC6732143F769@ORSMSX107.amr.corp.intel.com>
+	<CAG48ez1LHOHvB4ud+8asOjKARVLQJGV4ocdKVDJtvTXTfeMa9w@mail.gmail.com>
+Message-ID: <99FC4B6EFCEFD44486C35F4C281DC67321440056@ORSMSX107.amr.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add an asymmetric key subtype for handling keys that have to be loaded into
-the TPM to be used.
+> -----Original Message-----
+> From: Jann Horn [mailto:jannh at google.com]
+> Sent: Tuesday, August 21, 2018 3:20 AM
+> To: Schaufler, Casey <casey.schaufler@intel.com>
+> Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>; kernel list
+> <linux-kernel@vger.kernel.org>; linux-security-module <linux-security-
+> module at vger.kernel.org>; selinux at tycho.nsa.gov; Hansen, Dave
+> <dave.hansen@intel.com>; Dock, Deneen T <deneen.t.dock@intel.com>;
+> kristen at linux.intel.com; Arjan van de Ven <arjan@linux.intel.com>
+> Subject: Re: [PATCH RFC v2 2/5] X86: Support LSM determination of side-
+> channel vulnerability
+> 
+> On Mon, Aug 20, 2018 at 4:45 PM Schaufler, Casey
+> <casey.schaufler@intel.com> wrote:
+> >
+> > > -----Original Message-----
+> > > From: Jann Horn [mailto:jannh at google.com]
+> > > Sent: Friday, August 17, 2018 4:55 PM
+> > > To: Schaufler, Casey <casey.schaufler@intel.com>
+> > > Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>; kernel list
+> > > <linux-kernel@vger.kernel.org>; linux-security-module <linux-security-
+> > > module at vger.kernel.org>; selinux at tycho.nsa.gov; Hansen, Dave
+> > > <dave.hansen@intel.com>; Dock, Deneen T <deneen.t.dock@intel.com>;
+> > > kristen at linux.intel.com; Arjan van de Ven <arjan@linux.intel.com>
+> > > Subject: Re: [PATCH RFC v2 2/5] X86: Support LSM determination of side-
+> > > channel vulnerability
+> > >
+> > > On Sat, Aug 18, 2018 at 12:17 AM Casey Schaufler
+> > > <casey.schaufler@intel.com> wrote:
+> > > >
+> > > > From: Casey Schaufler <cschaufler@localhost.localdomain>
+> > > >
+> > > > When switching between tasks it may be necessary
+> > > > to set an indirect branch prediction barrier if the
+> > > > tasks are potentially vulnerable to side-channel
+> > > > attacks. This adds a call to security_task_safe_sidechannel
+> > > > so that security modules can weigh in on the decision.
+> > > >
+> > > > Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+> > > > ---
+> > > >  arch/x86/mm/tlb.c | 12 ++++++++----
+> > > >  1 file changed, 8 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> > > > index 6eb1f34c3c85..8714d4af06aa 100644
+> > > > --- a/arch/x86/mm/tlb.c
+> > > > +++ b/arch/x86/mm/tlb.c
+> > > > @@ -7,6 +7,7 @@
+> > > >  #include <linux/export.h>
+> > > >  #include <linux/cpu.h>
+> > > >  #include <linux/debugfs.h>
+> > > > +#include <linux/security.h>
+> > > >
+> > > >  #include <asm/tlbflush.h>
+> > > >  #include <asm/mmu_context.h>
+> > > > @@ -270,11 +271,14 @@ void switch_mm_irqs_off(struct mm_struct
+> *prev,
+> > > struct mm_struct *next,
+> > > >                  * threads. It will also not flush if we switch to idle
+> > > >                  * thread and back to the same process. It will flush if we
+> > > >                  * switch to a different non-dumpable process.
+> > > > +                * If a security module thinks that the transition
+> > > > +                * is unsafe do the flush.
+> > > >                  */
+> > > > -               if (tsk && tsk->mm &&
+> > > > -                   tsk->mm->context.ctx_id != last_ctx_id &&
+> > > > -                   get_dumpable(tsk->mm) != SUID_DUMP_USER)
+> > > > -                       indirect_branch_prediction_barrier();
+> > > > +               if (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id)
+> {
+> > > > +                       if (get_dumpable(tsk->mm) != SUID_DUMP_USER ||
+> > > > +                           security_task_safe_sidechannel(tsk) != 0)
+> > > > +                               indirect_branch_prediction_barrier();
+> > > > +               }
+> > >
+> > > When you posted v1 of this series, I asked:
+> > >
+> > > | Does this enforce transitivity? What happens if we first switch from
+> > > | an attacker task to a task without ->mm, and immediately afterwards
+> > > | from the task without ->mm to a victim task? In that case, whether a
+> > > | flush happens between the attacker task and the victim task depends on
+> > > | whether the LSM thinks that the mm-less task should have access to the
+> > > | victim task, right?
+> > >
+> > > Have you addressed that? I don't see it...
+> >
+> > Nope. That's going to require maintaining state about all the
+> > tasks in the chain that might still have cache involvement.
+> >
+> >         A -> B -> C -> D
+> 
+> Really?
 
-A key can be created by something like:
+I am willing to be educated otherwise. My understanding
+of Modern Processor Technology will never be so deep that
+I won't listen to reason.
 
-	keyctl add asymmetric "a" "tpm_create parent=40000000,095c2a76085f6aa9327c62f72a3d1348f62b99db keyauth=095c2a76085f6aa9327c62f72a3d1348f62b99db" @s
+> 
+> From what I can tell, it'd be enough to:
+> 
+>  - ensure that the LSM-based access checks behave approximately transitively
+>    (which I think they already do, mostly)
 
-where "parent=<parent_key_handle>,<parent_key_secret>" and
-"keyauth=<new_key_secret>".
+Smack rules are explicitly and intentionally not transitive.
 
-The above will ask the TPM to create a key and return the TPM_KEY struct as a
-blob with the private key encrypted by the parent key (in the above case, the
-SRK).
+A reads B, B reads C does *not* imply A reads C.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+>  - keep a copy of the metadata of the last non-kernel task on the CPU
 
- crypto/asymmetric_keys/Kconfig          |    7 +
- crypto/asymmetric_keys/Makefile         |    1 
- crypto/asymmetric_keys/tpm_key.c        |   73 +++++++++++
- crypto/asymmetric_keys/tpm_key.h        |   19 +++
- crypto/asymmetric_keys/tpm_key_parser.c |  212 +++++++++++++++++++++++++++++++
- 5 files changed, 312 insertions(+)
- create mode 100644 crypto/asymmetric_keys/tpm_key.c
- create mode 100644 crypto/asymmetric_keys/tpm_key.h
- create mode 100644 crypto/asymmetric_keys/tpm_key_parser.c
+Do you have a suggestion of how one might do that?
+I'm willing to believe the information could be available,
+but I have yet to come up with a mechanism for getting it.
 
-diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-index 4870f28403f5..97d1bb714617 100644
---- a/crypto/asymmetric_keys/Kconfig
-+++ b/crypto/asymmetric_keys/Kconfig
-@@ -67,4 +67,11 @@ config SIGNED_PE_FILE_VERIFICATION
- 	  This option provides support for verifying the signature(s) on a
- 	  signed PE binary.
- 
-+config ASYMMETRIC_TPM_KEY_SUBTYPE
-+	tristate "Asymmetric TPM-based public-key crypto algorithm subtype"
-+	depends on TCG_TPM
-+	help
-+	  This option provides support for TPM hardware-based asymmetric public
-+	  key type handling.
-+
- endif # ASYMMETRIC_KEY_TYPE
-diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
-index e47fcd9ac5e8..690c16a517a9 100644
---- a/crypto/asymmetric_keys/Makefile
-+++ b/crypto/asymmetric_keys/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_ASYMMETRIC_KEY_TYPE) += asymmetric_keys.o
- asymmetric_keys-y := asymmetric_type.o signature.o
- 
- obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) += public_key.o
-+obj-$(CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE) += tpm_key.o tpm_key_parser.o
- obj-$(CONFIG_PUBLIC_KEY_ALGO_RSA) += rsa.o
- 
- #
-diff --git a/crypto/asymmetric_keys/tpm_key.c b/crypto/asymmetric_keys/tpm_key.c
-new file mode 100644
-index 000000000000..bfddedc9db32
---- /dev/null
-+++ b/crypto/asymmetric_keys/tpm_key.c
-@@ -0,0 +1,73 @@
-+/* In-TPM asymmetric public-key crypto subtype
-+ *
-+ * Copyright (C) 2014 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells at redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#define pr_fmt(fmt) "TPK: "fmt
-+#include <linux/module.h>
-+#include <linux/export.h>
-+#include <linux/kernel.h>
-+#include <linux/slab.h>
-+#include <linux/seq_file.h>
-+#include <linux/tpm.h>
-+#include <keys/asymmetric-subtype.h>
-+#include "tpm_key.h"
-+
-+MODULE_LICENSE("GPL");
-+
-+/*
-+ * Provide a part of a description of the key for /proc/keys.
-+ */
-+static void tpm_key_describe(const struct key *asymmetric_key,
-+			     struct seq_file *m)
-+{
-+	struct tpm_asymmetric_key *key = asymmetric_key->payload.data;
-+	struct tpm_wrapped_key *wrap;
-+
-+	if (key && key->wrapped_key) {
-+		wrap = key->wrapped_key;
-+		seq_printf(m, "TPM.RSA %*phN",
-+			   wrap->pubkey_len, wrap->data + wrap->pubkey_offset);
-+	}
-+}
-+
-+/*
-+ * Destroy a TPM-based key.
-+ */
-+static void tpm_key_destroy(void *payload)
-+{
-+	struct tpm_asymmetric_key *key = payload;
-+
-+	if (key) {
-+		kfree(key->wrapped_key);
-+		kfree(key);
-+		tpm_library_unuse();
-+	}
-+}
-+
-+/*
-+ * Verify a signature using a TPM-based key.
-+ */
-+static int tpm_key_verify_signature(const struct key *key,
-+				    const struct public_key_signature *sig)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+/*
-+ * Public key algorithm asymmetric key subtype
-+ */
-+struct asymmetric_key_subtype tpm_key_subtype = {
-+	.owner			= THIS_MODULE,
-+	.name			= "tpm_key",
-+	.describe		= tpm_key_describe,
-+	.destroy		= tpm_key_destroy,
-+	.verify_signature	= tpm_key_verify_signature,
-+};
-+EXPORT_SYMBOL_GPL(tpm_key_subtype);
-diff --git a/crypto/asymmetric_keys/tpm_key.h b/crypto/asymmetric_keys/tpm_key.h
-new file mode 100644
-index 000000000000..712221fee874
---- /dev/null
-+++ b/crypto/asymmetric_keys/tpm_key.h
-@@ -0,0 +1,19 @@
-+/* TPM-based public key algorithm internals
-+ *
-+ * Copyright (C) 2014 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells at redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+struct tpm_asymmetric_key {
-+	struct tpm_wrapped_key *wrapped_key;
-+	u32	parent_tpm_handle;
-+	u8	parent_authdata[TPM_DIGEST_SIZE];
-+	u8	key_authdata[TPM_DIGEST_SIZE];
-+};
-+
-+extern struct asymmetric_key_subtype tpm_key_subtype;
-diff --git a/crypto/asymmetric_keys/tpm_key_parser.c b/crypto/asymmetric_keys/tpm_key_parser.c
-new file mode 100644
-index 000000000000..efb53172b43d
---- /dev/null
-+++ b/crypto/asymmetric_keys/tpm_key_parser.c
-@@ -0,0 +1,212 @@
-+/* Instantiate a TPM key.
-+ *
-+ * Copyright (C) 2014 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells at redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+#define DEBUG
-+#define pr_fmt(fmt) "TPKP: "fmt
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/slab.h>
-+#include <linux/err.h>
-+#include <linux/tpm.h>
-+#include <linux/parser.h>
-+#include <keys/asymmetric-subtype.h>
-+#include <keys/asymmetric-parser.h>
-+#include "asymmetric_keys.h"
-+#include "tpm_key.h"
-+
-+
-+enum tpm_key_create_token {
-+	opt_crt_err = -1,
-+	opt_crt_parent,
-+	opt_crt_keyauth,
-+};
-+
-+static const match_table_t tpm_key_create_tokens = {
-+	{ opt_crt_parent,	"parent=%x,%s"},
-+	{ opt_crt_keyauth,	"keyauth=%s"},
-+	{ opt_crt_err,		NULL}
-+};
-+
-+/*
-+ * Attempt to parse a key creation request.
-+ */
-+static int tpm_key_create(struct tpm_asymmetric_key *key, char *data)
-+{
-+	enum tpm_key_create_token token;
-+	struct tpm_chip *chip;
-+	unsigned long tmp, got = 0;
-+	substring_t args[MAX_OPT_ARGS];
-+	uint32_t key_handle;
-+	char *p;
-+	int ret;
-+
-+	pr_devel("==>%s(,%s)\n", __func__, data);
-+
-+	while ((p = strsep(&data, " \t"))) {
-+		if (*p == '\0' || *p == ' ' || *p == '\t')
-+			continue;
-+		token = match_token(p, tpm_key_create_tokens, args);
-+		switch (token) {
-+		case opt_crt_parent:
-+			pr_devel("parent %ld %ld\n",
-+				 args[0].to - args[0].from,
-+				 args[1].to - args[1].from);
-+			*args[0].to = 0;
-+			ret = kstrtoul(args[0].from, 16, &tmp);
-+			if (ret < 0) {
-+				pr_devel("bad parent handle\n");
-+				return -EINVAL;
-+			}
-+			key->parent_tpm_handle = tmp;
-+			if (args[1].to - args[1].from != TPM_DIGEST_SIZE * 2) {
-+				pr_devel("parent auth wrong size\n");
-+				return -EINVAL;
-+			}
-+			if (hex2bin(key->parent_authdata, args[1].from,
-+				    TPM_DIGEST_SIZE) < 0) {
-+				pr_devel("parent auth bad hex\n");
-+				return -EINVAL;
-+			}
-+			break;
-+
-+		case opt_crt_keyauth:
-+			pr_devel("keyauth\n");
-+			if (args[1].to - args[1].from != TPM_DIGEST_SIZE * 2)
-+				return -EINVAL;
-+			if (hex2bin(key->parent_authdata, args[1].from,
-+				    TPM_DIGEST_SIZE) < 0)
-+				return -EINVAL;
-+			break;
-+
-+		case opt_crt_err:
-+			pr_devel("Unknown token %s\n", p);
-+			return -EINVAL;
-+		}
-+		got |= 1 << token;
-+	}
-+
-+	if ((got & 3) != 3) {
-+		pr_devel("Missing mandatory args\n");
-+		return -EINVAL;
-+	}
-+
-+	chip = tpm_chip_find_get(TPM_ANY_NUM);
-+	if (!chip)
-+		return -ENODEV;
-+
-+	/* Create a key and retrieve the partially encrypted blob. */
-+	ret = tpm_create_wrap_key(chip, TPM_ET_SRK, key->parent_tpm_handle,
-+				  key->parent_authdata,
-+				  key->key_authdata,
-+				  NULL,
-+				  &key->wrapped_key);
-+	if (ret == -EBADMSG)
-+		ret = -EIO;
-+
-+	/* Attempt to load the key back as a check */
-+	ret = tpm_load_key2(chip, TPM_ET_SRK, key->parent_tpm_handle,
-+			    key->parent_authdata, key->wrapped_key,
-+			    &key_handle);
-+	if (ret != 0) {
-+		pr_devel("Couldn't load key back\n");
-+		goto out;
-+	}
-+
-+	ret = tpm_flush_specific(chip, key_handle, TPM_RT_KEY);
-+	if (ret != 0)
-+		pr_devel("Couldn't flush key handle\n");
-+
-+out:
-+	tpm_chip_put(chip);
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
-+}
-+
-+/*
-+ * Attempt to parse a data blob for a key as a TPM key specification.
-+ *
-+ * We expect one of the following in the prep data:
-+ *
-+ *	tpm_create parent=<key>,<auth> keyauth=<hex> [options...]
-+ *	tpm_load parent=<key>,<auth> data=<hex> [options...]
-+ */
-+static int tpm_key_preparse(struct key_preparsed_payload *prep)
-+{
-+	struct tpm_asymmetric_key *key;
-+	char *data;
-+	int ret;
-+
-+	pr_devel("==>%s()\n", __func__);
-+
-+	ret = tpm_library_use();
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = -ENOMEM;
-+	key = kzalloc(sizeof(*key), GFP_KERNEL);
-+	if (!key)
-+		goto out_free_tpmlib;
-+	data = kmalloc(prep->datalen + 1, GFP_KERNEL);
-+	if (!data)
-+		goto out_free_key;
-+
-+	memcpy(data, prep->data, prep->datalen);
-+	data[prep->datalen] = 0;
-+	if (memcmp(data, "tpm_create ", 11) == 0) {
-+		ret = tpm_key_create(key, data + 11);
-+	} else {
-+		ret = -EBADMSG;
-+		goto out_free_data;
-+	}
-+
-+	/* We're pinning the module by being linked against it */
-+	__module_get(tpm_key_subtype.owner);
-+	prep->type_data[0] = &tpm_key_subtype;
-+	//prep->type_data[1] = kids;
-+	prep->payload[0] = key;
-+	//prep->description = desc;
-+	prep->quotalen = 100;
-+	key = NULL;
-+	tpm_library_use();
-+
-+out_free_data:
-+	kfree(data);
-+out_free_key:
-+	kfree(key);
-+out_free_tpmlib:
-+	tpm_library_unuse();
-+out:
-+	return ret;
-+}
-+
-+static struct asymmetric_key_parser tpm_key_parser = {
-+	.owner	= THIS_MODULE,
-+	.name	= "tpm",
-+	.parse	= tpm_key_preparse,
-+};
-+
-+/*
-+ * Module stuff
-+ */
-+static int __init tpm_key_init(void)
-+{
-+	return register_asymmetric_key_parser(&tpm_key_parser);
-+}
-+
-+static void __exit tpm_key_exit(void)
-+{
-+	unregister_asymmetric_key_parser(&tpm_key_parser);
-+}
-+
-+module_init(tpm_key_init);
-+module_exit(tpm_key_exit);
-+
-+MODULE_DESCRIPTION("TPM key parser");
-+MODULE_LICENSE("GPL");
+> 
+> > If B and C don't do anything cacheworthy D could conceivably attack A.
+> > The amount of state required to detect this case would be prohibitive.
+> > I think that if you're sufficiently concerned about this case you should just
+> > go ahead and set the barrier. I'm willing to learn something that says I'm
+> > wrong.
+> 
+> That means that an attacker who can e.g. get a CPU to first switch
+> from an attacker task to a softirqd (e.g. for network packet
+> processing or whatever), then switch from the softirqd to a root-owned
+> victim task would be able to bypass the check, right? That doesn't
+> sound like a very complicated attack...
+
+Maybe my brain is still stuck in the 1980's, but that sounds pretty
+complicated to me! Of course, the fact that it's beyond where I would
+go doesn't mean it's implausible.
+
+> 
+> I very much dislike the idea of adding a mitigation with a known
+> bypass technique to the kernel.
+
+That's fair. I'll look more closely at getting previous_cred_this_cpu().
+
+Thank!
