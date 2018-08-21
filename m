@@ -1,98 +1,53 @@
-From: casey.schaufler@intel.com (Schaufler, Casey)
-Date: Mon, 20 Aug 2018 19:30:57 +0000
-Subject: [PATCH RFC v2 5/5] SELinux: Support SELinux determination of
-	side-channel vulnerability
-In-Reply-To: <f74a5824-c80a-bdb9-2d4a-e83d19ae07e8@tycho.nsa.gov>
-References: <20180817221624.10232-1-casey.schaufler@intel.com>
-	<20180817221624.10232-6-casey.schaufler@intel.com>
-	<6e70b7c7-d932-91c8-35d1-70bd6cef16a5@tycho.nsa.gov>
-	<99FC4B6EFCEFD44486C35F4C281DC6732143F80E@ORSMSX107.amr.corp.intel.com>
-	<f74a5824-c80a-bdb9-2d4a-e83d19ae07e8@tycho.nsa.gov>
-Message-ID: <99FC4B6EFCEFD44486C35F4C281DC6732143F8DB@ORSMSX107.amr.corp.intel.com>
+From: casey.schaufler@intel.com (Casey Schaufler)
+Date: Mon, 20 Aug 2018 17:04:41 -0700
+Subject: [PATCH v3 2/5] X86: Support LSM determination of side-channel
+In-Reply-To: <20180821000444.7004-1-casey.schaufler@intel.com>
+References: <20180821000444.7004-1-casey.schaufler@intel.com>
+Message-ID: <20180821000444.7004-3-casey.schaufler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> -----Original Message-----
-> From: Stephen Smalley [mailto:sds at tycho.nsa.gov]
-> Sent: Monday, August 20, 2018 10:44 AM
-> To: Schaufler, Casey <casey.schaufler@intel.com>; kernel-
-> hardening at lists.openwall.com; linux-kernel at vger.kernel.org; linux-security-
-> module at vger.kernel.org; selinux at tycho.nsa.gov; Hansen, Dave
-> <dave.hansen@intel.com>; Dock, Deneen T <deneen.t.dock@intel.com>;
-> kristen at linux.intel.com; arjan at linux.intel.com
-> Subject: Re: [PATCH RFC v2 5/5] SELinux: Support SELinux determination of
-> side-channel vulnerability
-> 
-> On 08/20/2018 12:59 PM, Schaufler, Casey wrote:
-> >> -----Original Message-----
-> >> From: Stephen Smalley [mailto:sds at tycho.nsa.gov]
-> >> Sent: Monday, August 20, 2018 9:03 AM
-> >> To: Schaufler, Casey <casey.schaufler@intel.com>; kernel-
-> >> hardening at lists.openwall.com; linux-kernel at vger.kernel.org; linux-security-
-> >> module at vger.kernel.org; selinux at tycho.nsa.gov; Hansen, Dave
-> >> <dave.hansen@intel.com>; Dock, Deneen T <deneen.t.dock@intel.com>;
-> >> kristen at linux.intel.com; arjan at linux.intel.com
-> >> Subject: Re: [PATCH RFC v2 5/5] SELinux: Support SELinux determination of
-> >> side-channel vulnerability
-> >>
-> >> On 08/17/2018 06:16 PM, Casey Schaufler wrote:
-> >>> SELinux considers tasks to be side-channel safe if they
-> >>> have PROCESS_SHARE access.
-> >>
-> >> Now the description and the code no longer match.
-> >
-> > You're right.
-> >
-> >>>
-> >>> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-> >>> ---
-> >>>    security/selinux/hooks.c | 9 +++++++++
-> >>>    1 file changed, 9 insertions(+)
-> >>>
-> >>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> >>> index a8bf324130f5..7fbd7d7ac1cb 100644
-> >>> --- a/security/selinux/hooks.c
-> >>> +++ b/security/selinux/hooks.c
-> >>> @@ -4219,6 +4219,14 @@ static void selinux_task_to_inode(struct
-> >> task_struct *p,
-> >>>    	spin_unlock(&isec->lock);
-> >>>    }
-> >>>
-> >>> +static int selinux_task_safe_sidechannel(struct task_struct *p)
-> >>> +{
-> >>> +	struct av_decision avd;
-> >>> +
-> >>> +	return avc_has_perm_noaudit(&selinux_state, current_sid(),
-> >> task_sid(p),
-> >>> +				    SECCLASS_FILE, FILE__READ, 0, &avd);
-> >>> +}
-> >>
-> >> And my question from before still stands:  why do we need a new hook and
-> >> new security module instead of just using ptrace_may_access()?
-> >
-> > Locking. The SELinux check, for example, will lock up solid while trying
-> > to generate an audit record. There is no good reason aside from coding
-> > convenience to assume that the same restrictions will apply for side-channel
-> > as apply to ptrace. I'm actually a touch surprised you're not suggesting a
-> > separate SECCLASS or access mode for the SELinux hook.
-> 
-> The PTRACE_MODE_NOAUDIT flag to ptrace_may_access() would address the
-> locking concern.
+When switching between tasks it may be necessary
+to set an indirect branch prediction barrier if the
+tasks are potentially vulnerable to side-channel
+attacks. This adds a call to security_task_safe_sidechannel
+so that security modules can weigh in on the decision.
 
-OK ...
+Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+---
+ arch/x86/mm/tlb.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-> Duplicating the ptrace access checking logic seems
-> prone to errors and inconsistencies.
-
-That's true only if the ptrace logic and the safe-sidechannel logic
-are identical. I don't believe that is a safe assumption. It would sure
-be convenient. But I would hate to see a change made for either
-ptrace or safe_sidechannel that interfered with the correct behavior
-of the other.
-
-> I can't imagine policy writers
-> understanding what "safe sidechannel" means, much less deciding when to
-> allow it.
-
-I can't argue with that. But then, I have always had trouble with the
-SELinux policy scheme.
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 6eb1f34c3c85..8714d4af06aa 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -7,6 +7,7 @@
+ #include <linux/export.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
++#include <linux/security.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -270,11 +271,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		 * threads. It will also not flush if we switch to idle
+ 		 * thread and back to the same process. It will flush if we
+ 		 * switch to a different non-dumpable process.
++		 * If a security module thinks that the transition
++		 * is unsafe do the flush.
+ 		 */
+-		if (tsk && tsk->mm &&
+-		    tsk->mm->context.ctx_id != last_ctx_id &&
+-		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
+-			indirect_branch_prediction_barrier();
++		if (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id) {
++			if (get_dumpable(tsk->mm) != SUID_DUMP_USER ||
++			    security_task_safe_sidechannel(tsk) != 0)
++				indirect_branch_prediction_barrier();
++		}
+ 
+ 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+ 			/*
+-- 
+2.17.1
