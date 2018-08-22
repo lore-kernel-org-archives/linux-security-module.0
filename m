@@ -1,34 +1,36 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 22 Aug 2018 19:59:19 +1000 (AEST)
-Subject: [PATCH v1 00/22] LSM: Full security module stacking
-In-Reply-To: <8e2bdc10-3142-9e8d-ff05-70fa4d862dd5@schaufler-ca.com>
-References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
-	<CAMp4zn94SzqK_Q=de2E+Fpv5yeAhYv62XW-KU3=ghRma9d7Jvw@mail.gmail.com>
-	<a287800e-bd4d-2b99-8c4c-bd61ba87fab1@schaufler-ca.com>
-	<kubjHWMWfFDu8Rk19x79iMDKVbewTUMWwSjOA7vFGIbYsWYcGb50jb-Z-PSXxmcby3ZFMZWi0HCeuFgo3F8BRskxo_JUdSHFhdIsIlBxHyQ=@protonmail.ch>
-	<8e2bdc10-3142-9e8d-ff05-70fa4d862dd5@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1808221958170.29682@namei.org>
+From: christian@brauner.io (Christian Brauner)
+Date: Wed, 22 Aug 2018 13:52:40 +0200
+Subject: [PATCH v1] security/capabilities: remove check for -EINVAL
+Message-ID: <20180822115240.18196-1-christian@brauner.io>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 14 Aug 2018, Casey Schaufler wrote:
+bprm_caps_from_vfs_caps() never returned -EINVAL so remove the
+rc == -EINVAL check.
 
-> On 8/14/2018 4:22 PM, Jordan Glover wrote:
-> > On August 14, 2018 8:28 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> > On the other hand there is concern that those security modules might
-> > be abandoned if they have to wait until everything is finished :)
-> 
-> There is some truth to that. If we can get commitment from the developers
-> of those security module to push for getting upstream, a statement of
-> intent to support additional modules (e.g. Landlock, S.A.R.A.) from a
-> significant distribution (e.g. Fedora, Ubuntu, SuSE) and ACKs from the
-> maintainers of the existing modules we should be able to breeze right in.
-> 
+Signed-off-by: Christian Brauner <christian@brauner.io>
+---
+v0 -> v1
+- non-functional changes:
+  adapt commit message to reflect the fact that
+  bprm_caps_from_vfs_caps() never actuall returned -EINVAL.
+---
+ security/commoncap.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Sounds reasonable. Please focus on what's needed for Landlock and SARA.
-
-
+diff --git a/security/commoncap.c b/security/commoncap.c
+index f4c33abd9959..6012f0cd8157 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -684,9 +684,6 @@ static int get_file_caps(struct linux_binprm *bprm, bool *effective, bool *has_f
+ 	}
+ 
+ 	rc = bprm_caps_from_vfs_caps(&vcaps, bprm, effective, has_fcap);
+-	if (rc == -EINVAL)
+-		printk(KERN_NOTICE "%s: cap_from_disk returned %d for %s\n",
+-		       __func__, rc, bprm->filename);
+ 
+ out:
+ 	if (rc)
 -- 
-James Morris
-<jmorris@namei.org>
+2.17.1
