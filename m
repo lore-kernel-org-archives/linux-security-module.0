@@ -1,28 +1,42 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 24 Aug 2018 02:48:39 +1000 (AEST)
-Subject: [PATCH v1] security/capabilities: remove check for -EINVAL
-In-Reply-To: <20180822135825.GA7223@mail.hallyn.com>
-References: <20180822115240.18196-1-christian@brauner.io>
-	<20180822135825.GA7223@mail.hallyn.com>
-Message-ID: <alpine.LRH.2.21.1808240248180.17440@namei.org>
+From: john.johansen@canonical.com (John Johansen)
+Date: Thu, 23 Aug 2018 11:21:20 -0700
+Subject: [PATCH] apparmor: remove dead code
+In-Reply-To: <20180823134255.GA12128@embeddedor.com>
+References: <20180823134255.GA12128@embeddedor.com>
+Message-ID: <715ebd74-d147-df40-436b-79fe26dee606@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 22 Aug 2018, Serge E. Hallyn wrote:
+On 08/23/2018 06:42 AM, Gustavo A. R. Silva wrote:
 
-> Quoting Christian Brauner (christian at brauner.io):
-> > bprm_caps_from_vfs_caps() never returned -EINVAL so remove the
-> > rc == -EINVAL check.
-> > 
-> > Signed-off-by: Christian Brauner <christian@brauner.io>
+thank you for the patch, but a fix for this issue was pushed to apparmor-next yesterday
+
+> Due to commit fb5841091f28 ("apparmor: remove no-op permission check
+> in policy_unpack"), there is some leftover code.
 > 
-> Thanks.
+> Coverity reports this issue as Structurally dead code. Fix this by
+> removing such code.
 > 
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-
-Thanks, I'll queue this for post -rc1 next-general.
-
-
--- 
-James Morris
-<jmorris@namei.org>
+> Addresses-Coverity-ID: 1472998 ("Structurally dead code")
+> Fixes: fb5841091f28 ("apparmor: remove no-op permission check in policy_unpack")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  security/apparmor/policy_unpack.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+> index 3647b58..21cb384 100644
+> --- a/security/apparmor/policy_unpack.c
+> +++ b/security/apparmor/policy_unpack.c
+> @@ -422,10 +422,6 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
+>  	}
+>  
+>  	return dfa;
+> -
+> -fail:
+> -	aa_put_dfa(dfa);
+> -	return ERR_PTR(-EPROTO);
+>  }
+>  
+>  /**
+> 
