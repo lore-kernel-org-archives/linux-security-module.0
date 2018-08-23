@@ -1,43 +1,28 @@
-From: bauerman@linux.ibm.com (Thiago Jung Bauermann)
-Date: Thu, 23 Aug 2018 11:41:36 -0300
-Subject: [PATCH] apparmor: remove unused label
-In-Reply-To: <20180823140917.3060915-1-arnd@arndb.de>
-References: <20180823140917.3060915-1-arnd@arndb.de>
-Message-ID: <87zhxdrvq7.fsf@morokweng.localdomain>
+From: jmorris@namei.org (James Morris)
+Date: Fri, 24 Aug 2018 02:48:39 +1000 (AEST)
+Subject: [PATCH v1] security/capabilities: remove check for -EINVAL
+In-Reply-To: <20180822135825.GA7223@mail.hallyn.com>
+References: <20180822115240.18196-1-christian@brauner.io>
+	<20180822135825.GA7223@mail.hallyn.com>
+Message-ID: <alpine.LRH.2.21.1808240248180.17440@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Wed, 22 Aug 2018, Serge E. Hallyn wrote:
 
-Arnd Bergmann <arnd@arndb.de> writes:
+> Quoting Christian Brauner (christian at brauner.io):
+> > bprm_caps_from_vfs_caps() never returned -EINVAL so remove the
+> > rc == -EINVAL check.
+> > 
+> > Signed-off-by: Christian Brauner <christian@brauner.io>
+> 
+> Thanks.
+> 
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-> After the corresponding 'goto' was removed, we get a warning
-> for the 'fail' label:
->
-> security/apparmor/policy_unpack.c: In function 'unpack_dfa':
-> security/apparmor/policy_unpack.c:426:1: error: label 'fail' defined but not used [-Werror=unused-label]
->
-> Fixes: fb5841091f28 ("apparmor: remove no-op permission check in policy_unpack")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  security/apparmor/policy_unpack.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-> index 3647b5834ace..96d8cf68ce65 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -423,7 +423,6 @@ static struct aa_dfa *unpack_dfa(struct aa_ext *e)
->
->  	return dfa;
->
-> -fail:
->  	aa_put_dfa(dfa);
->  	return ERR_PTR(-EPROTO);
->  }
+Thanks, I'll queue this for post -rc1 next-general.
 
-Shouldn't the two lines after the label be removed as well? IIUC they're
-unreachable now.
 
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+-- 
+James Morris
+<jmorris@namei.org>
