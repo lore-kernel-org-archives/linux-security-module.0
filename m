@@ -1,36 +1,60 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 24 Aug 2018 09:25:57 +0300
-Subject: [PATCH 01/23] TPM: Add new TPMs to the tail of the list to
-	prevent inadvertent change of dev
-In-Reply-To: <20180824062434.GB3584@linux.intel.com>
+Date: Fri, 24 Aug 2018 09:29:14 +0300
+Subject: [PATCH 02/23] TPM: Provide a facility for a userspace TPM emulator
+In-Reply-To: <20180821183140.GD25543@ziepe.ca>
 References: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
-	<153486701644.13066.13372706238885253812.stgit@warthog.procyon.org.uk>
-	<20180821183004.GB25543@ziepe.ca>
-	<20180824062434.GB3584@linux.intel.com>
-Message-ID: <20180824062557.GC3584@linux.intel.com>
+	<153486702302.13066.15889029286852815542.stgit@warthog.procyon.org.uk>
+	<20180821183140.GD25543@ziepe.ca>
+Message-ID: <20180824062914.GD3584@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Aug 24, 2018 at 09:24:34AM +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 21, 2018 at 12:30:04PM -0600, Jason Gunthorpe wrote:
-> > On Tue, Aug 21, 2018 at 04:56:56PM +0100, David Howells wrote:
-> > > Add newly registered TPMs to the tail of the list, not the beginning, so that
-> > > things that are specifying TPM_ANY_NUM don't find that the device they're
-> > > using has inadvertently changed.  Adding a second device would break IMA, for
-> > > instance.
-> > > 
-> > > Signed-off-by: David Howells <dhowells@redhat.com>
-> > > Reviewed-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
-> > > Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
-> > > cc: stable at vger.kernel.org
-> > > ---
+On Tue, Aug 21, 2018 at 12:31:40PM -0600, Jason Gunthorpe wrote:
+> On Tue, Aug 21, 2018 at 04:57:03PM +0100, David Howells wrote:
+> > Provide a misc device file (/dev/tpm_emul) by which a userspace TPM emulator
+> > can set up a virtual TPM device under the control of the TPM frontend.  The
+> > way this works is:
 > > 
-> > We really should apply this patch...
+> >  (1) The emulator opens /dev/tpm_emul which is provided by the tpm_user
+> >      driver.
 > > 
-> > Jason
+> >  (2) tpm_user registers a TPM device and the tpm driver creates a /dev/tpmN
+> >      misc device for the trousers package and suchlike to access.
+> > 
+> >  (3) The emulator sits in read() on the emulator device waiting for a command
+> >      to come through.
+> > 
+> >  (4) tpm_user passes requests from /dev/tpmN to the emulator's read() call.
+> > 
+> >  (5) The emulator processes the request.
+> > 
+> >  (6) The emulator either write()'s the reply or calls ioctl(fd,0,0) to cancel
+> >      the command.
+> > 
+> >  (7) The emulator goes back to read() to wait for the next command.
+> > 
+> >  (8) tpm_user passes the reply back to the tpm driver which passes it back to
+> >      /dev/tpmN.
+> > 
+> > When the emulator closes /dev/tpm_emul, the TPM driver is unregistered and the
+> > /dev/tpmN misc device is then removed.  Any outstanding requests are aborted
+> > and -EIO will be returned from then on.  Multiple TPMs can be registered.
+> > 
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > ---
+> > 
+> >  drivers/char/tpm/Kconfig         |   13 +
+> >  drivers/char/tpm/Makefile        |    1 
+> >  drivers/char/tpm/tpm_user_emul.c |  672 ++++++++++++++++++++++++++++++++++++++
+> >  include/linux/wait.h             |   11 +
+> >  4 files changed, 697 insertions(+)
+> >  create mode 100644 drivers/char/tpm/tpm_user_emul.c
 > 
-> This is the first time I remember seeing it.
+> This looks to duplicate the vtpm stuff...
 
-At least in the sense that I should review it.
+Yeah, this is a duplicate to tpm_vtpm_proxy.
 
-/Jarkkko
+> 
+> Jason
+
+/Jarkko
