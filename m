@@ -1,27 +1,33 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Fri, 24 Aug 2018 09:30:15 +0300
-Subject: [PATCH 03/23] TPM: Provide a platform driver for the user
-	emulator driver
-In-Reply-To: <153486702979.13066.16900998092976336647.stgit@warthog.procyon.org.uk>
+Date: Fri, 24 Aug 2018 10:42:21 +0300
+Subject: [PATCH 05/23] TPM: Use struct tpm_chip rather than chip number
+	as interface parameter
+In-Reply-To: <153486704294.13066.8818198038331415342.stgit@warthog.procyon.org.uk>
 References: <153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
-	<153486702979.13066.16900998092976336647.stgit@warthog.procyon.org.uk>
-Message-ID: <20180824063015.GE3584@linux.intel.com>
+	<153486704294.13066.8818198038331415342.stgit@warthog.procyon.org.uk>
+Message-ID: <20180824074221.GF3584@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Aug 21, 2018 at 04:57:09PM +0100, David Howells wrote:
-> Provide a platform driver for the user emulator driver.  This seems to be
-> necessary to stop tpm_chip_find_get() from blowing up because it assumes
-> unconditionally that any device will have a driver attached:
-> 
-> 		if (try_module_get(pos->dev->driver->owner)) {
-> 
-> However, this doesn't then work right because if I remove the TPM device and
-> re-add it, the tpm ID isn't recycled (ie, /dev/tpm0 becomes unavailable and
-> the new TPM is /dev/tpm1).
+On Tue, Aug 21, 2018 at 04:57:22PM +0100, David Howells wrote:
+> Use struct tpm_chip rather than chip number as interface parameter for most
+> interface functions.  This allows the client to be sure about the consistency
+> of what device it uses.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+> 
+>  drivers/char/tpm/tpm-interface.c    |   76 ++++++++-------------------------
+>  drivers/char/tpm/tpm-sysfs.c        |    2 -
+>  include/linux/tpm.h                 |   16 ++++---
+>  security/integrity/ima/ima.h        |    2 -
+>  security/integrity/ima/ima_crypto.c |    4 +-
+>  security/integrity/ima/ima_init.c   |   19 +++++---
+>  security/integrity/ima/ima_queue.c  |    4 +-
+>  security/keys/trusted.c             |   80 ++++++++++++++++++++++-------------
+>  8 files changed, 96 insertions(+), 107 deletions(-)
 
-Again, a duplicate.
+Should be split at least to three patches and TPM side is
+already in the upstream.
 
 /Jarkko
