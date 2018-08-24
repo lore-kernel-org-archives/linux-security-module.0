@@ -1,41 +1,46 @@
 From: casey.schaufler@intel.com (Casey Schaufler)
-Date: Fri, 24 Aug 2018 15:41:12 -0700
-Subject: [PATCH v4 0/5] LSM: Add and use a hook for side-channel safety checks
-Message-ID: <20180824224117.3356-1-casey.schaufler@intel.com>
+Date: Fri, 24 Aug 2018 15:41:17 -0700
+Subject: [PATCH v4 5/5] SELinux: Support SELinux determination of side-channel
+In-Reply-To: <20180824224117.3356-1-casey.schaufler@intel.com>
+References: <20180824224117.3356-1-casey.schaufler@intel.com>
+Message-ID: <20180824224117.3356-6-casey.schaufler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-v4: select namespace checks if user namespaces are enabled
-    and credential checks are request.
-v3: get_task_cred wasn't a good choice due to refcounts.
-    Use lower level protection instead
-v2: SELinux access policy corrected.
-    Use real_cred instead of cred.
-
-This patchset provide a mechanism by which a security module
-can advise the system about potential side-channel vulnerabilities.
-If security_safe_sidechannel() returns 0 the security modules do
-not know of any data that would be subject to a side-channel
-attack. If the security module maintains data that it believes
-may be susceptible to a side-channel attack it will return -EACCES.
-
-Simple hooks are provided for SELinux and Smack. A new security
-module is provided to make determinations regarding traditional
-task attributes, including user IDs, capability sets and namespaces.
+SELinux considers tasks to be side-channel safe if they
+have FILE__READ access.
 
 Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-
 ---
- MAINTAINERS                        |   6 ++
- arch/x86/mm/tlb.c                  |  12 ++-
- include/linux/lsm_hooks.h          |  12 +++
- include/linux/security.h           |   1 +
- security/Kconfig                   |   1 +
- security/Makefile                  |   2 +
- security/security.c                |   6 ++
- security/selinux/hooks.c           |   9 ++
- security/sidechannel/Kconfig       |  65 +++++++++++++
- security/sidechannel/Makefile      |   1 +
- security/sidechannel/sidechannel.c | 184 +++++++++++++++++++++++++++++++++++++
- security/smack/smack_lsm.c         |  18 ++++
- 12 files changed, 313 insertions(+), 4 deletions(-)
+ security/selinux/hooks.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index a8bf324130f5..992f2402edaa 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4219,6 +4219,14 @@ static void selinux_task_to_inode(struct task_struct *p,
+ 	spin_unlock(&isec->lock);
+ }
+ 
++static int selinux_task_safe_sidechannel(struct task_struct *p)
++{
++	struct av_decision avd;
++
++	return avc_has_perm_noaudit(&selinux_state, current_sid(), task_sid(p),
++				    SECCLASS_FILE, FILE__READ, 0, &avd);
++}
++
+ /* Returns error only if unable to parse addresses */
+ static int selinux_parse_skb_ipv4(struct sk_buff *skb,
+ 			struct common_audit_data *ad, u8 *proto)
+@@ -7002,6 +7010,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(task_movememory, selinux_task_movememory),
+ 	LSM_HOOK_INIT(task_kill, selinux_task_kill),
+ 	LSM_HOOK_INIT(task_to_inode, selinux_task_to_inode),
++	LSM_HOOK_INIT(task_safe_sidechannel, selinux_task_safe_sidechannel),
+ 
+ 	LSM_HOOK_INIT(ipc_permission, selinux_ipc_permission),
+ 	LSM_HOOK_INIT(ipc_getsecid, selinux_ipc_getsecid),
+-- 
+2.17.1
