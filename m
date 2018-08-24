@@ -1,55 +1,53 @@
 From: casey.schaufler@intel.com (Casey Schaufler)
-Date: Fri, 24 Aug 2018 15:41:16 -0700
-Subject: [PATCH v4 4/5] Smack: Support determination of side-channel
+Date: Fri, 24 Aug 2018 15:41:14 -0700
+Subject: [PATCH v4 2/5] X86: Support LSM determination of side-channel
 In-Reply-To: <20180824224117.3356-1-casey.schaufler@intel.com>
 References: <20180824224117.3356-1-casey.schaufler@intel.com>
-Message-ID: <20180824224117.3356-5-casey.schaufler@intel.com>
+Message-ID: <20180824224117.3356-3-casey.schaufler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Smack considers its private task data safe if the current task
-has read access to the passed task.
+When switching between tasks it may be necessary
+to set an indirect branch prediction barrier if the
+tasks are potentially vulnerable to side-channel
+attacks. This adds a call to security_task_safe_sidechannel
+so that security modules can weigh in on the decision.
 
 Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
 ---
- security/smack/smack_lsm.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/x86/mm/tlb.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 91750205a5de..85dc053e610c 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2299,6 +2299,23 @@ static void smack_task_to_inode(struct task_struct *p, struct inode *inode)
- 	isp->smk_inode = skp;
- }
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 6eb1f34c3c85..8714d4af06aa 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -7,6 +7,7 @@
+ #include <linux/export.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
++#include <linux/security.h>
  
-+/**
-+ * smack_task_safe_sidechannel - Are the task and current sidechannel safe?
-+ * @p: task to check on
-+ *
-+ * A crude value for sidechannel safety is that the current task is
-+ * already allowed to read from the other.
-+ *
-+ * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
-+ */
-+static int smack_task_safe_sidechannel(struct task_struct *p)
-+{
-+	struct smack_known *skp = smk_of_task_struct(p);
-+	struct smack_known *ckp = smk_of_task_struct(current);
-+
-+	return smk_access(ckp, skp, MAY_READ, NULL);
-+}
-+
- /*
-  * Socket hooks.
-  */
-@@ -4718,6 +4735,7 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(task_movememory, smack_task_movememory),
- 	LSM_HOOK_INIT(task_kill, smack_task_kill),
- 	LSM_HOOK_INIT(task_to_inode, smack_task_to_inode),
-+	LSM_HOOK_INIT(task_safe_sidechannel, smack_task_safe_sidechannel),
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -270,11 +271,14 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		 * threads. It will also not flush if we switch to idle
+ 		 * thread and back to the same process. It will flush if we
+ 		 * switch to a different non-dumpable process.
++		 * If a security module thinks that the transition
++		 * is unsafe do the flush.
+ 		 */
+-		if (tsk && tsk->mm &&
+-		    tsk->mm->context.ctx_id != last_ctx_id &&
+-		    get_dumpable(tsk->mm) != SUID_DUMP_USER)
+-			indirect_branch_prediction_barrier();
++		if (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id) {
++			if (get_dumpable(tsk->mm) != SUID_DUMP_USER ||
++			    security_task_safe_sidechannel(tsk) != 0)
++				indirect_branch_prediction_barrier();
++		}
  
- 	LSM_HOOK_INIT(ipc_permission, smack_ipc_permission),
- 	LSM_HOOK_INIT(ipc_getsecid, smack_ipc_getsecid),
+ 		if (IS_ENABLED(CONFIG_VMAP_STACK)) {
+ 			/*
 -- 
 2.17.1
