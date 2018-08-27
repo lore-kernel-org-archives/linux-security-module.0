@@ -1,34 +1,33 @@
-From: kellyalan@servicescourrier.club (KELLY ALAN)
-Date: Sat, 25 Aug 2018 13:25:25 +0200
-Subject: TRADING  ACCOUNT
-Message-ID: <b76522d9dba80c59af7eacc58317dcc6@servicescourrier.club>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Mon, 27 Aug 2018 11:25:01 +0300
+Subject: [PATCH 08/23] TPMLIB: Break TPM bits out of
+	security/keys/trusted.c
+In-Reply-To: <25340.1535103190@warthog.procyon.org.uk>
+References: <20180824084930.GA10266@linux.intel.com>
+	<153486700916.13066.12870860668352070081.stgit@warthog.procyon.org.uk>
+	<153486706322.13066.3105842100625841410.stgit@warthog.procyon.org.uk>
+	<20180824075227.GG3584@linux.intel.com>
+	<25340.1535103190@warthog.procyon.org.uk>
+Message-ID: <298a03a72bdded62290ce2db3a7a5219ccc5d8d2.camel@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Fri, 2018-08-24 at 10:33 +0100, David Howells wrote:
+> Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> 
+> > I could rebase them and make a patch set out of them when I have time.
+> 
+> Thanks.  I'm not going to do anything further with this until after the merge
+> window anyway.
+> 
+> And thanks for taking the time to look through the patches.  I just dumped the
+> entire patchset on you rather than weeding out the duplicate/obsolete patches
+> as I don't have time just now to port them to linus/master.
 
-Dear sir ,
+Are you coming to Edinburgh in late Oct? Could discuss there about TPM
+and keyring "intersections" (not only this patch set but also trusted
+keys etc.).
 
-I KELLY ALAN  purchasing and sales manager of CFM INTERNATIONAL .Our 
-Company specialised in Supplying computer hardware and Electronic .We 
-want to extend our supplier list because of concurrency in prices on the 
-international market. We are seeking a supplier with whom we can to have 
-  partnered long-term in order to have competitive prices . we are 
-interested to buy the products you sell and want to place an order with 
-you in big quantities.
-Can you give us payment facilities ( 14 , 30 or 60 days payment terms ) 
-?
-What is the procedure for our account opening  and credit line 
-application ?
+> David
 
-Cordially
-
-  KELLY ALAN
-
-CFM INTERNATIONAL
-2 BOULEVARD DU GAL MARTIAL VALIN
-75015 PARIS
-REG N? 302 527 700
-VAT N? FR90 302527700
-TEL +33171025367
-FAX +33177759149
-https://www.cfmaeroengines.com
+/Jarkko
