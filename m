@@ -1,165 +1,53 @@
-From: alison.schofield@intel.com (Alison Schofield)
-Date: Tue, 28 Aug 2018 17:36:59 -0700
-Subject: [RFC] KEYS: inject an MKTME specific safety check in the keyctl
-	revoke path
-In-Reply-To: <20180814020538.GA18424@alison-desk.jf.intel.com>
-References: <20180814020538.GA18424@alison-desk.jf.intel.com>
-Message-ID: <20180829003659.GB18344@alison-desk.jf.intel.com>
+From: gregkh@linuxfoundation.org (Greg KH)
+Date: Tue, 28 Aug 2018 19:42:24 -0700
+Subject: [PATCH resend] uapi/linux/keyctl.h: don't use C++ reserved
+	keyword as a struct member name
+In-Reply-To: <0db6c314-1ef4-9bfa-1baa-7214dd2ee061@infradead.org>
+References: <0db6c314-1ef4-9bfa-1baa-7214dd2ee061@infradead.org>
+Message-ID: <20180829024224.GA6083@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Aug 13, 2018 at 07:05:38PM -0700, Alison Schofield wrote:
-> This RFC is asking for feedback on a problem I'm running into using
-> the Kernel Key Service for MKTME (MultiKey Total Memory Encryption).
+On Tue, Aug 28, 2018 at 04:34:04PM -0700, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> I previously posted an RFC with the proposal to create a new key type
-> "mktme" to support MKTME (Multi-Key Total Memory Encryption).
-> https://www.spinics.net/lists/keyrings/msg03702.html
+> Since this header is in "include/uapi/linux/", apparently people
+> want to use it in userspace programs -- even in C++ ones.
+> However, the header uses a C++ reserved keyword ("private"),
+> so change that to "dh_private" instead to allow the header file
+> to be used in C++ userspace.
 > 
-> The MKTME key service maps userspace keys to hardware keyids. Those
-> keys are used in a new system call that encrypts memory. The keys
-> need to be tightly controlled. One example is that userspace keys
-> should not be revoked while the hardware keyid slot is still in use.
+> Fixes https://bugzilla.kernel.org/show_bug.cgi?id=191051
+> Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
 > 
-> The KEY_FLAG_KEEP bit offers good control. The mktme service uses that
-> bit to prevent userspace keys from disappearing without the service
-> being notified.
-> 
-> Problem is that we need a safe and synchronous way to revoke keys. The
-> way .revoke methods function now, the key service type is called late
-> in the revoke process. The mktme key service has no means to reject the
-> request. So, even if the mktme service sanity checks the request in its
-> .revoke method, it's too late to do anything about it.
-> 
-> This proposal inserts an MKTME specific check earlier into the existing
-> keyctl <revoke> path. If it is safe to revoke the key, mktme key service
-> will turn off KEY_FLAG_KEEP and let the revoke continue (and succeed).
-> Otherwise, not safe, KEY_FLAG_KEEP stays on, and the revoke continues
-> (and fails).
-> 
-> I considered proposing a new keyctl <option> just for this mktme 'safe
-> revoke' request. I wonder if that might be the preferred method for
-> inserting this type specific behavior?
-> 
-> Hoping that from this description and the diff you can understand the
-> issue and suggest alternative solutions if needed. Thanks for looking!
-
-David,
-
-I get that this mktme inject proposal is probably too type specific.
-Do either of these options make sense:
-
-Add a new keyctl command <revoke_mktme> where the special checks are
-done before doing actual revoke.
-- or -
-Add an optional call out to key_type ".revoke_ext" that would basically
-replace the 'if type = mktme" that I suggested in this patch.  If a
-.revoke_ext existed, execute that, before proceeding with revoke. It
-seems like this would add the least redundant code, but wonder how keen
-you are about adding new (optional) fields to key_type?
-
-Thoughts? 
-
-Thanks,
-Alison
-
-> 
-> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: keyrings at vger.kernel.org
+> Cc: linux-security-module at vger.kernel.org
+> Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+> Cc: stable at vger.kernel.org
 > ---
->  security/keys/internal.h   |  6 ++++++
->  security/keys/keyctl.c     | 14 ++++++++++++++
->  security/keys/mktme_keys.c | 34 ++++++++++++++++++++++++++++++++++
->  3 files changed, 54 insertions(+)
+>  include/uapi/linux/keyctl.h |    2 +-
+>  security/keys/dh.c          |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/security/keys/internal.h b/security/keys/internal.h
-> index 9f8208dc0e55..1b6425d0d1ab 100644
-> --- a/security/keys/internal.h
-> +++ b/security/keys/internal.h
-> @@ -316,4 +316,10 @@ static inline void key_check(const struct key *key)
+> --- lnx-416.orig/include/uapi/linux/keyctl.h
+> +++ lnx-416/include/uapi/linux/keyctl.h
+> @@ -65,7 +65,7 @@
 >  
->  #endif
->  
-> +#ifdef CONFIG_MKTME_KEYS
-> +extern int mktme_safe_revoke(struct key *key);
-> +#else
-> +static inline int mktme_safe_revoke(struct key *key) { return 0; }
-> +#endif /* CONFIG_MKTME_KEYS */
-> +
->  #endif /* _INTERNAL_H */
-> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-> index 1ffe60bb2845..7b5f98af1d54 100644
-> --- a/security/keys/keyctl.c
-> +++ b/security/keys/keyctl.c
-> @@ -387,6 +387,20 @@ long keyctl_revoke_key(key_serial_t id)
->  
->  	key = key_ref_to_ptr(key_ref);
->  	ret = 0;
-> +
-> +	/*
-> +	 * MKTME (Multi-Key Total Memory Encryption) Keys require a
-> +	 * sanity check before allowing a revoke. If the sanity check
-> +	 * passes, the mktme key service will clear KEY_FLAG_KEEP bit
-> +	 * and the revoke will proceed.
-> +	 */
-> +	if (strcmp(key->type->name, "mktme") == 0)  {
-> +		if (mktme_safe_revoke(key)) {
-> +			ret = -EINVAL;
-> +			goto error;
-> +		}
-> +	}
-> +
->  	if (test_bit(KEY_FLAG_KEEP, &key->flags))
->  		ret = -EPERM;
->  	else
-> diff --git a/security/keys/mktme_keys.c b/security/keys/mktme_keys.c
-> index b937bbe6bcdb..887b483d7b38 100644
-> --- a/security/keys/mktme_keys.c
-> +++ b/security/keys/mktme_keys.c
-> @@ -67,6 +67,39 @@ static int mktme_clear_programmed_key(int keyid)
->  	return ret;
->  }
->  
-> +/*
-> + * mktme_safe_revoke() is called during the revoke process to
-> + * determine if it is safe to revoke a key. If this check passes,
-> + * the revoke proceeds, otherwise an error is returned to userspace.
-> + * The important error case here is outstanding memory mappings using
-> + * the corresponding hardware keyid.
-> + */
-> +int mktme_safe_revoke(struct key *key)
-> +{
-> +	int keyid, vma_count;
-> +	int ret = -1;
-> +
-> +	mktme_map_lock();
-> +	keyid = mktme_map_keyid_from_serial(key->serial);
-> +	if (keyid <= 0)
-> +		goto out;
-> +
-> +	vma_count = vma_read_encrypt_ref(keyid);
-> +	if (vma_count > 0) {
-> +		pr_debug("mktme not freeing keyid[%d] encrypt_count[%d]\n",
-> +			 keyid, vma_count);
-> +		goto out;
-> +	}
-> +	mktme_clear_programmed_key(keyid);
-> +	/* Clearing KEY_FLAG_KEEP flag allows the revoke to proceed */
-> +	clear_bit(KEY_FLAG_KEEP, &key->flags);
-> +	ret = 0;
-> +out:
-> +	mktme_map_unlock();
-> +	return ret;
-> +}
-> +
-> +
-> @@ -315,6 +348,7 @@ int mktme_instantiate(struct key *key, struct key_preparsed_payload *prep)
->  
->  	mktme_map_lock();
->  	ret = mktme_program_key(key->serial, kprog);
-> +	set_bit(KEY_FLAG_KEEP, &key->flags);
->  	mktme_map_unlock();
->  out:
->  	kzfree(datablob);
-> -- 
-> 2.14.1
-> 
+>  /* keyctl structures */
+>  struct keyctl_dh_params {
+> -	__s32 private;
+> +	__s32 dh_private;
+
+Ick ick ick, why not just put the C "namespace" on all uapi files if you
+are including them from c++ code?  I'm sure this isn't the only problem
+that has this problem, right?
+
+This is valid C, no need to start worrying about C++ reserved names.
+
+thanks,
+
+greg "'struct class' is your friend" k-h
