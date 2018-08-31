@@ -1,216 +1,134 @@
-From: jannh@google.com (Jann Horn)
-Date: Fri, 31 Aug 2018 17:46:33 +0200
-Subject: [PATCH] selinux: refactor mls_context_to_sid() and make it
-	stricter
-In-Reply-To: <CAHC9VhR5S6jGsHVwrGXemGobB1O=tADHBHWZMRP5BuRMGqDrOQ@mail.gmail.com>
-References: <20180806211932.198488-1-jannh@google.com>
-	<CAHC9VhR5S6jGsHVwrGXemGobB1O=tADHBHWZMRP5BuRMGqDrOQ@mail.gmail.com>
-Message-ID: <CAG48ez1VMp=NXWb2eSEZsnszs-g5NVUhCVLXrjnMcHZYBJus8w@mail.gmail.com>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Fri, 31 Aug 2018 12:03:35 -0400
+Subject: WARNING in apparmor_secid_to_secctx
+In-Reply-To: <CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
+References: <000000000000c178e305749daba4@google.com>
+	<CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
+Message-ID: <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Aug 9, 2018 at 3:56 AM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Mon, Aug 6, 2018 at 5:19 PM Jann Horn <jannh@google.com> wrote:
-> >
-> > The intended behavior change for this patch is to reject any MLS strings
-> > that contain (trailing) garbage if p->mls_enabled is true.
-> >
-> > As suggested by Paul Moore, change mls_context_to_sid() so that the two
-> > parts of the range are extracted before the rest of the parsing. Because
-> > now we don't have to scan for two different separators simultaneously
-> > everywhere, we can actually switch to strchr() everywhere instead of the
-> > open-coded loops that scan for two separators at once.
-> >
-> > mls_context_to_sid() used to signal how much of the input string was parsed
-> > by updating `*scontext`. However, there is actually no case in which
-> > mls_context_to_sid() only parses a subset of the input and still returns
-> > a success (other than the buggy case with a second '-' in which it
-> > incorrectly claims to have consumed the entire string). Turn `scontext`
-> > into a simple pointer argument and stop redundantly checking whether the
-> > entire input was consumed in string_to_context_struct(). This also lets us
-> > remove the `scontext_len` argument from `string_to_context_struct()`.
-[...]
-> > -       /* Extract low sensitivity. */
-> > -       scontextp = p = *scontext;
-> > -       while (*p && *p != ':' && *p != '-')
-> > -               p++;
-> > -
-> > -       delim = *p;
-> > -       if (delim != '\0')
-> > -               *p++ = '\0';
-> > +       /*
-> > +        * If we're dealing with a range, figure out where the two parts
-> > +        * of the range begin.
-> > +        */
-> > +       rangep[0] = scontext;
-> > +       rangep[1] = strchr(scontext, '-');
-> > +       if (rangep[1]) {
-> > +               rangep[1][0] = '\0';
-> > +               rangep[1]++;
-> > +       }
-> >
-> > +       /* For each part of the range: */
-> >         for (l = 0; l < 2; l++) {
-> > -               levdatum = hashtab_search(pol->p_levels.table, scontextp);
-> > -               if (!levdatum) {
-> > -                       rc = -EINVAL;
-> > -                       goto out;
-> > -               }
-> > +               /* Split sensitivity and category set. */
-> > +               sensitivity = rangep[l];
-> > +               if (sensitivity == NULL)
-> > +                       break;
-> > +               next_cat = strchr(sensitivity, ':');
-> > +               if (next_cat)
-> > +                       *(next_cat++) = '\0';
-> >
-> > +               /* Parse sensitivity. */
-> > +               levdatum = hashtab_search(pol->p_levels.table, sensitivity);
-> > +               if (!levdatum)
-> > +                       return -EINVAL;
-> >                 context->range.level[l].sens = levdatum->level->sens;
-> >
-> > -               if (delim == ':') {
-> > -                       /* Extract category set. */
-> > -                       while (1) {
-> > -                               scontextp = p;
-> > -                               while (*p && *p != ',' && *p != '-')
-> > -                                       p++;
-> > -                               delim = *p;
-> > -                               if (delim != '\0')
-> > -                                       *p++ = '\0';
-> > -
-> > -                               /* Separate into range if exists */
-> > -                               rngptr = strchr(scontextp, '.');
-> > -                               if (rngptr != NULL) {
-> > -                                       /* Remove '.' */
-> > -                                       *rngptr++ = '\0';
-> > -                               }
-> > +               /* Extract category set. */
-> > +               while (next_cat != NULL) {
-> > +                       cur_cat = next_cat;
-> > +                       next_cat = strchr(next_cat, ',');
-> > +                       if (next_cat != NULL)
-> > +                               *(next_cat++) = '\0';
-> > +
-> > +                       /* Separate into range if exists */
-> > +                       rngptr = strchr(cur_cat, '.');
-> > +                       if (rngptr != NULL) {
-> > +                               /* Remove '.' */
->
-> On the chance you need to respin this patch, you can probably get rid
-> of the above comment and the if-body braces; we don't have "Remove X"
-> comments in other similar places in this function.
+On 08/29/2018 10:21 PM, Dmitry Vyukov wrote:
+> On Wed, Aug 29, 2018 at 7:17 PM, syzbot
+> <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    817e60a7a2bb Merge branch 'nfp-add-NFP5000-support'
+>> git tree:       net-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1536d296400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=21016130b0580a9de3b5
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+21016130b0580a9de3b5 at syzkaller.appspotmail.com
+> 
+> Hi John, Tyler,
+> 
+> I've switched syzbot from selinux to apparmor as we discussed on lss:
+> https://github.com/google/syzkaller/commit/2c6cb254ae6c06f61e3aba21bb89ffb05b5db946
 
-I'll amend that.
+Sorry, does this mean that you are no longer testing selinux via syzbot? 
+  That seems unfortunate.  SELinux is default-enabled and used in 
+Fedora, RHEL and all derivatives (e.g. CentOS), and mandatory in Android 
+(and seemingly getting some use in ChromeOS now as well, at least for 
+the Android container and possibly wider), so it seems unwise to drop it 
+from your testing altogether.  I was under the impression that you were 
+just going to add apparmor to your testing matrix, not drop selinux 
+altogether.
 
-> > +                               *rngptr++ = '\0';
-> > +                       }
-> >
-> > -                               catdatum = hashtab_search(pol->p_cats.table,
-> > -                                                         scontextp);
-> > -                               if (!catdatum) {
-> > -                                       rc = -EINVAL;
-> > -                                       goto out;
-> > -                               }
-> > +                       catdatum = hashtab_search(pol->p_cats.table, cur_cat);
-> > +                       if (!catdatum)
-> > +                               return -EINVAL;
-> >
-> > -                               rc = ebitmap_set_bit(&context->range.level[l].cat,
-> > -                                                    catdatum->value - 1, 1);
-> > -                               if (rc)
-> > -                                       goto out;
-> > -
-> > -                               /* If range, set all categories in range */
-> > -                               if (rngptr) {
-> > -                                       int i;
-> > -
-> > -                                       rngdatum = hashtab_search(pol->p_cats.table, rngptr);
-> > -                                       if (!rngdatum) {
-> > -                                               rc = -EINVAL;
-> > -                                               goto out;
-> > -                                       }
-> > -
-> > -                                       if (catdatum->value >= rngdatum->value) {
-> > -                                               rc = -EINVAL;
-> > -                                               goto out;
-> > -                                       }
-> > -
-> > -                                       for (i = catdatum->value; i < rngdatum->value; i++) {
-> > -                                               rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
-> > -                                               if (rc)
-> > -                                                       goto out;
-> > -                                       }
-> > -                               }
-> > +                       rc = ebitmap_set_bit(&context->range.level[l].cat,
-> > +                                            catdatum->value - 1, 1);
-> > +                       if (rc)
-> > +                               return rc;
-> > +
-> > +                       /* If range, set all categories in range */
-> > +                       if (rngptr == NULL)
-> > +                               continue;
-> > +
-> > +                       rngdatum = hashtab_search(pol->p_cats.table, rngptr);
-> > +                       if (!rngdatum)
-> > +                               return -EINVAL;
-> > +
-> > +                       if (catdatum->value >= rngdatum->value)
-> > +                               return -EINVAL;
-> >
-> > -                               if (delim != ',')
-> > -                                       break;
-> > +                       for (i = catdatum->value; i < rngdatum->value; i++) {
-> > +                               rc = ebitmap_set_bit(&context->range.level[l].cat, i, 1);
-> > +                               if (rc)
-> > +                                       return rc;
-> >                         }
-> >                 }
-> > -               if (delim == '-') {
-> > -                       /* Extract high sensitivity. */
-> > -                       scontextp = p;
-> > -                       while (*p && *p != ':')
-> > -                               p++;
-> > -
-> > -                       delim = *p;
-> > -                       if (delim != '\0')
-> > -                               *p++ = '\0';
-> > -               } else
-> > -                       break;
-> >         }
-> >
-> > -       if (l == 0) {
-> > +       /* If we didn't see a '-', the range start is also the range end. */
-> > +       if (rangep[1] == NULL) {
-> >                 context->range.level[1].sens = context->range.level[0].sens;
-> >                 rc = ebitmap_cpy(&context->range.level[1].cat,
-> >                                  &context->range.level[0].cat);
-> >                 if (rc)
-> > -                       goto out;
-> > +                       return rc;
-> >         }
-> > -       *scontext = ++p;
-> > -       rc = 0;
-> > -out:
-> > -       return rc;
-> > +
-> > +       return 0;
->
-> In the case where we have a MLS policy loaded (pol->mls_enabled != 0)
-> and scontext is empty (scontext[0] = '\0'), we could end up returning
-> 0 couldn't we?  It seems like we might want a quick check for this
-> before we parse the low/high portions of the field into the rangep
-> array.
-
-I don't think so. In the first loop iteration, `sensitivity` will be
-an empty string, and so the hashtab_search() should return NULL,
-leading to -EINVAL. Am I missing something?
-
-> As an aside, I believe my other comments on this patch still stand.
-> It's a nice improvement but I think there are some other small things
-> that need to be addressed.
-
-Is there anything I need to fix apart from the overly verbose comment
-and the unnecessary curly braces?
+> 
+> As expedited fix for this as possible would be nice to get, because we
+> are currently getting 1 machine crash/minute on this bug:
+> https://syzkaller.appspot.com/bug?extid=ab1882df6ecbb06d59be
+> 
+> 
+>> ------------[ cut here ]------------
+>> AppArmor WARN apparmor_secid_to_secctx: ((!secdata)):
+>> WARNING: CPU: 0 PID: 14826 at security/apparmor/secid.c:82
+>> apparmor_secid_to_secctx+0x2b5/0x2f0 security/apparmor/secid.c:82
+>> Kernel panic - not syncing: panic_on_warn set ...
+>>
+>> CPU: 0 PID: 14826 Comm: syz-executor1 Not tainted 4.19.0-rc1+ #193
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+>> Google 01/01/2011
+>> Call Trace:
+>>   __dump_stack lib/dump_stack.c:77 [inline]
+>>   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+>>   panic+0x238/0x4e7 kernel/panic.c:184
+>>   __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+>>   report_bug+0x252/0x2d0 lib/bug.c:186
+>>   fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>>   do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+>>   do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+>>   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+>> RIP: 0010:apparmor_secid_to_secctx+0x2b5/0x2f0 security/apparmor/secid.c:82
+>> Code: c7 c7 40 66 58 87 e8 6a 6d 0f fe 0f 0b e9 6c fe ff ff e8 3e aa 44 fe
+>> 48 c7 c6 80 67 58 87 48 c7 c7 a0 65 58 87 e8 4b 6d 0f fe <0f> 0b e9 3f fe ff
+>> ff 48 89 df e8 fc a7 83 fe e9 ed fe ff ff bb f4
+>> RSP: 0018:ffff8801ba1bed10 EFLAGS: 00010286
+>> RAX: 0000000000000000 RBX: ffff8801ba1beed0 RCX: ffffc9000227e000
+>> RDX: 0000000000018482 RSI: ffffffff8163ac01 RDI: 0000000000000001
+>> RBP: ffff8801ba1bed30 R08: ffff8801b80ec080 R09: ffffed003b603eca
+>> R10: ffffed003b603eca R11: ffff8801db01f657 R12: 0000000000000001
+>> R13: 0000000000000000 R14: 0000000000000000 R15: ffff8801ba1beed0
+>>   security_secid_to_secctx+0x63/0xc0 security/security.c:1314
+>>   ctnetlink_secctx_size net/netfilter/nf_conntrack_netlink.c:621 [inline]
+>>   ctnetlink_nlmsg_size net/netfilter/nf_conntrack_netlink.c:659 [inline]
+>>   ctnetlink_conntrack_event+0x303/0x1470
+>> net/netfilter/nf_conntrack_netlink.c:706
+>>   nf_conntrack_eventmask_report+0x55f/0x930
+>> net/netfilter/nf_conntrack_ecache.c:151
+>>   nf_conntrack_event_report include/net/netfilter/nf_conntrack_ecache.h:112
+>> [inline]
+>>   nf_ct_delete+0x33c/0x5d0 net/netfilter/nf_conntrack_core.c:601
+>>   nf_ct_iterate_cleanup+0x48c/0x5e0 net/netfilter/nf_conntrack_core.c:1892
+>>   nf_ct_iterate_cleanup_net+0x23c/0x2d0
+>> net/netfilter/nf_conntrack_core.c:1974
+>>   ctnetlink_flush_conntrack net/netfilter/nf_conntrack_netlink.c:1226
+>> [inline]
+>>   ctnetlink_del_conntrack+0x66c/0x850
+>> net/netfilter/nf_conntrack_netlink.c:1258
+>>   nfnetlink_rcv_msg+0xd88/0x1070 net/netfilter/nfnetlink.c:228
+>>   netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2454
+>>   nfnetlink_rcv+0x1c0/0x4d0 net/netfilter/nfnetlink.c:560
+>>   netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+>>   netlink_unicast+0x5a0/0x760 net/netlink/af_netlink.c:1343
+>>   netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1908
+>>   sock_sendmsg_nosec net/socket.c:621 [inline]
+>>   sock_sendmsg+0xd5/0x120 net/socket.c:631
+>>   ___sys_sendmsg+0x7fd/0x930 net/socket.c:2114
+>>   __sys_sendmsg+0x11d/0x290 net/socket.c:2152
+>>   __do_sys_sendmsg net/socket.c:2161 [inline]
+>>   __se_sys_sendmsg net/socket.c:2159 [inline]
+>>   __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
+>>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>> RIP: 0033:0x457089
+>> Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+>> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+>> 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+>> RSP: 002b:00007f7bc6e03c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+>> RAX: ffffffffffffffda RBX: 00007f7bc6e046d4 RCX: 0000000000457089
+>> RDX: 0000000000000000 RSI: 0000000020d65000 RDI: 0000000000000003
+>> RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+>> R13: 00000000004d4588 R14: 00000000004c8d5c R15: 0000000000000000
+>> Dumping ftrace buffer:
+>>     (ftrace buffer empty)
+>> Kernel Offset: disabled
+>> Rebooting in 86400 seconds..
+>>
+>>
+>> ---
+>> This bug is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller at googlegroups.com.
+>>
+>> syzbot will keep track of this bug report. See:
+>> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+>> syzbot.
