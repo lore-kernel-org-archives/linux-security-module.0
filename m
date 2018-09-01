@@ -1,44 +1,30 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Sun, 30 Sep 2018 18:01:29 -0700
-Subject: [PATCH security-next v3 04/29] LSM: Remove initcall tracing
-In-Reply-To: <20180930192526.4480231c@vmware.local.home>
-References: <20180925001832.18322-1-keescook@chromium.org>
-	<20180925001832.18322-5-keescook@chromium.org>
-	<20180926123522.4080d9eb@vmware.local.home>
-	<CAGXu5jJyL7FuLRj1XxujpGs9=wUQgS4dRfeGB+HUBqy4mkEBhQ@mail.gmail.com>
-	<20180930192526.4480231c@vmware.local.home>
-Message-ID: <CAGXu5jJsVv9bMh831yx1y8KjhgA204hkpOEVpWzvifATw-w0cw@mail.gmail.com>
+From: john.johansen@canonical.com (John Johansen)
+Date: Sat, 1 Sep 2018 02:18:23 -0700
+Subject: WARNING in apparmor_secid_to_secctx
+In-Reply-To: <000000000000c178e305749daba4@google.com>
+References: <000000000000c178e305749daba4@google.com>
+Message-ID: <45dda774-fd57-3e60-fb67-ad855f2360c9@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Sep 30, 2018 at 4:25 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> On Wed, 26 Sep 2018 11:35:21 -0700
-> Kees Cook <keescook@chromium.org> wrote:
->
->> On Wed, Sep 26, 2018 at 9:35 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
->> > On Mon, 24 Sep 2018 17:18:07 -0700
->> > Kees Cook <keescook@chromium.org> wrote:
->> >
->> >> This partially reverts commit 58eacfffc417 ("init, tracing: instrument
->> >> security and console initcall trace events") since security init calls
->> >> are about to no longer resemble regular init calls.
->> >
->> > I'm not against the change, but how much are they going to "no longer
->> > resemble regular init calls"?
->>
->> My take on "regular" init calls is that they're always run, link-time
->> ordered, etc. The changes proposed here will make it so not all
->> initialization are run depending on runtime configurations, ordering
->> will be flexible, etc.
->>
->
-> Will it still be a good idea to have a tracepoint for those calls?
-> Perhaps not an  initcall tracepoint but some other kind?
+On 08/29/2018 07:17 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:??? 817e60a7a2bb Merge branch 'nfp-add-NFP5000-support'
+> git tree:?????? net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1536d296400000
+> kernel config:? https://syzkaller.appspot.com/x/.config?x=531a917630d2a492
+> dashboard link: https://syzkaller.appspot.com/bug?extid=21016130b0580a9de3b5
+> compiler:?????? gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+21016130b0580a9de3b5 at syzkaller.appspotmail.com
+> 
 
-I'm not opposed. It could be a follow-up patch, I assume?
+<< snip >>
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Patch sent directly to syzbot for testing
