@@ -1,178 +1,131 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Sep 2018 22:55:30 +0100
-Subject: [PATCH 11/22] KEYS: asym_tpm: extract key size & public key
+Date: Wed, 05 Sep 2018 22:55:50 +0100
+Subject: [PATCH 14/22] KEYS: asym_tpm: Implement encryption operation
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <153618453075.7946.11830230385214262822.stgit@warthog.procyon.org.uk>
+Message-ID: <153618455041.7946.3760011164296173162.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Denis Kenzior <denkenz@gmail.com>
 
-The parsed BER/DER blob obtained from user space contains a TPM_Key
-structure.  This structure has some information about the key as well as
-the public key portion.
-
-This patch extracts this information for future use.
+This patch impelements the pkey_encrypt operation.  The public key
+portion extracted from the TPM key blob is used.  The operation is
+performed entirely in software using the crypto API.
 
 Signed-off-by: Denis Kenzior <denkenz@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/asym_tpm.c |  112 +++++++++++++++++++++++++++++++++++++
- include/crypto/asym_tpm_subtype.h |    3 +
- 2 files changed, 115 insertions(+)
+ crypto/asymmetric_keys/asym_tpm.c |   84 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
 
 diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index d0b2b97e8e54..308c51e055a4 100644
+index 837472d107d5..8edca3c4c193 100644
 --- a/crypto/asymmetric_keys/asym_tpm.c
 +++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -7,6 +7,7 @@
- #include <linux/seq_file.h>
- #include <linux/scatterlist.h>
- #include <linux/tpm.h>
-+#include <asm/unaligned.h>
- #include <keys/asymmetric-subtype.h>
- #include <crypto/asym_tpm_subtype.h>
+@@ -165,6 +165,8 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
+ 	info->max_enc_size = len;
+ 	info->max_dec_size = tk->key_len / 8;
  
-@@ -37,6 +38,110 @@ static void asym_tpm_destroy(void *payload0, void *payload3)
- 	kfree(tk);
++	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT;
++
+ 	ret = 0;
+ error_free_tfm:
+ 	crypto_free_akcipher(tfm);
+@@ -172,6 +174,87 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
+ 	return ret;
  }
  
 +/*
-+ * Parse enough information out of TPM_KEY structure:
-+ * TPM_STRUCT_VER -> 4 bytes
-+ * TPM_KEY_USAGE -> 2 bytes
-+ * TPM_KEY_FLAGS -> 4 bytes
-+ * TPM_AUTH_DATA_USAGE -> 1 byte
-+ * TPM_KEY_PARMS -> variable
-+ * UINT32 PCRInfoSize -> 4 bytes
-+ * BYTE* -> PCRInfoSize bytes
-+ * TPM_STORE_PUBKEY
-+ * UINT32 encDataSize;
-+ * BYTE* -> encDataSize;
-+ *
-+ * TPM_KEY_PARMS:
-+ * TPM_ALGORITHM_ID -> 4 bytes
-+ * TPM_ENC_SCHEME -> 2 bytes
-+ * TPM_SIG_SCHEME -> 2 bytes
-+ * UINT32 parmSize -> 4 bytes
-+ * BYTE* -> variable
++ * Encryption operation is performed with the public key.  Hence it is done
++ * in software
 + */
-+static int extract_key_parameters(struct tpm_key *tk)
++static int tpm_key_encrypt(struct tpm_key *tk,
++			   struct kernel_pkey_params *params,
++			   const void *in, void *out)
 +{
-+	const void *cur = tk->blob;
-+	uint32_t len = tk->blob_len;
-+	const void *pub_key;
-+	uint32_t sz;
-+	uint32_t key_len;
++	char alg_name[CRYPTO_MAX_ALG_NAME];
++	struct crypto_akcipher *tfm;
++	struct akcipher_request *req;
++	struct crypto_wait cwait;
++	struct scatterlist in_sg, out_sg;
++	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
++	uint32_t der_pub_key_len;
++	int ret;
 +
-+	if (len < 11)
-+		return -EBADMSG;
++	pr_devel("==>%s()\n", __func__);
 +
-+	/* Ensure this is a legacy key */
-+	if (get_unaligned_be16(cur + 4) != 0x0015)
-+		return -EBADMSG;
++	ret = determine_akcipher(params->encoding, params->hash_algo, alg_name);
++	if (ret < 0)
++		return ret;
 +
-+	/* Skip to TPM_KEY_PARMS */
-+	cur += 11;
-+	len -= 11;
++	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
++	if (IS_ERR(tfm))
++		return PTR_ERR(tfm);
 +
-+	if (len < 12)
-+		return -EBADMSG;
++	der_pub_key_len = derive_pub_key(tk->pub_key, tk->pub_key_len,
++					 der_pub_key);
 +
-+	/* Make sure this is an RSA key */
-+	if (get_unaligned_be32(cur) != 0x00000001)
-+		return -EBADMSG;
++	ret = crypto_akcipher_set_pub_key(tfm, der_pub_key, der_pub_key_len);
++	if (ret < 0)
++		goto error_free_tfm;
 +
-+	/* Make sure this is TPM_ES_RSAESPKCSv15 encoding scheme */
-+	if (get_unaligned_be16(cur + 4) != 0x0002)
-+		return -EBADMSG;
++	req = akcipher_request_alloc(tfm, GFP_KERNEL);
++	if (!req)
++		goto error_free_tfm;
 +
-+	/* Make sure this is TPM_SS_RSASSAPKCS1v15_DER signature scheme */
-+	if (get_unaligned_be16(cur + 6) != 0x0003)
-+		return -EBADMSG;
++	sg_init_one(&in_sg, in, params->in_len);
++	sg_init_one(&out_sg, out, params->out_len);
++	akcipher_request_set_crypt(req, &in_sg, &out_sg, params->in_len,
++				   params->out_len);
++	crypto_init_wait(&cwait);
++	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
++				      CRYPTO_TFM_REQ_MAY_SLEEP,
++				      crypto_req_done, &cwait);
 +
-+	sz = get_unaligned_be32(cur + 8);
-+	if (len < sz + 12)
-+		return -EBADMSG;
++	ret = crypto_akcipher_encrypt(req);
++	ret = crypto_wait_req(ret, &cwait);
 +
-+	/* Move to TPM_RSA_KEY_PARMS */
-+	len -= 12;
-+	cur += 12;
++	if (ret == 0)
++		ret = req->dst_len;
 +
-+	/* Grab the RSA key length */
-+	key_len = get_unaligned_be32(cur);
-+
-+	switch (key_len) {
-+	case 512:
-+	case 1024:
-+	case 1536:
-+	case 2048:
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	/* Move just past TPM_KEY_PARMS */
-+	cur += sz;
-+	len -= sz;
-+
-+	if (len < 4)
-+		return -EBADMSG;
-+
-+	sz = get_unaligned_be32(cur);
-+	if (len < 4 + sz)
-+		return -EBADMSG;
-+
-+	/* Move to TPM_STORE_PUBKEY */
-+	cur += 4 + sz;
-+	len -= 4 + sz;
-+
-+	/* Grab the size of the public key, it should jive with the key size */
-+	sz = get_unaligned_be32(cur);
-+	if (sz > 256)
-+		return -EINVAL;
-+
-+	pub_key = cur + 4;
-+
-+	tk->key_len = key_len;
-+	tk->pub_key = pub_key;
-+	tk->pub_key_len = sz;
-+
-+	return 0;
++	akcipher_request_free(req);
++error_free_tfm:
++	crypto_free_akcipher(tfm);
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	return ret;
 +}
 +
- /* Given the blob, parse it and load it into the TPM */
- struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len)
- {
-@@ -64,8 +169,15 @@ struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len)
- 
- 	tk->blob_len = blob_len;
- 
-+	r = extract_key_parameters(tk);
-+	if (r < 0)
-+		goto error_extract;
++/*
++ * Do encryption, decryption and signing ops.
++ */
++static int tpm_key_eds_op(struct kernel_pkey_params *params,
++			  const void *in, void *out)
++{
++	struct tpm_key *tk = params->key->payload.data[asym_crypto];
++	int ret = -EOPNOTSUPP;
 +
- 	return tk;
- 
-+error_extract:
-+	kfree(tk->blob);
-+	tk->blob_len = 0;
- error_memdup:
- 	kfree(tk);
- error:
-diff --git a/include/crypto/asym_tpm_subtype.h b/include/crypto/asym_tpm_subtype.h
-index 03550b850998..48198c36d6b9 100644
---- a/include/crypto/asym_tpm_subtype.h
-+++ b/include/crypto/asym_tpm_subtype.h
-@@ -7,6 +7,9 @@
- struct tpm_key {
- 	void *blob;
- 	u32 blob_len;
-+	uint16_t key_len; /* Size in bits of the key */
-+	const void *pub_key; /* pointer inside blob to the public key bytes */
-+	uint16_t pub_key_len; /* length of the public key */
++	/* Perform the encryption calculation. */
++	switch (params->op) {
++	case kernel_pkey_encrypt:
++		ret = tpm_key_encrypt(tk, params, in, out);
++		break;
++	default:
++		BUG();
++	}
++
++	return ret;
++}
++
+ /*
+  * Parse enough information out of TPM_KEY structure:
+  * TPM_STRUCT_VER -> 4 bytes
+@@ -329,6 +412,7 @@ struct asymmetric_key_subtype asym_tpm_subtype = {
+ 	.describe		= asym_tpm_describe,
+ 	.destroy		= asym_tpm_destroy,
+ 	.query			= tpm_key_query,
++	.eds_op			= tpm_key_eds_op,
  };
+ EXPORT_SYMBOL_GPL(asym_tpm_subtype);
  
- struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len);
