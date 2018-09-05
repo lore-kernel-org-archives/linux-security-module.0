@@ -1,81 +1,67 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Sep 2018 22:54:44 +0100
-Subject: [PATCH 04/22] KEYS: Make the X.509 and PKCS7 parsers supply the sig
-	encoding type
+Date: Wed, 05 Sep 2018 22:54:57 +0100
+Subject: [PATCH 06/22] KEYS: Allow the public_key struct to hold a private key
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <153618448451.7946.79126788153992612.stgit@warthog.procyon.org.uk>
+Message-ID: <153618449772.7946.7781296222641718446.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Make the X.509 and PKCS7 parsers fill in the signature encoding type field
-recently added to the public_key_signature struct.
+Put a flag in the public_key struct to indicate if the structure is holding
+a private key.  The private key must be held ASN.1 encoded in the format
+specified in RFC 3447 A.1.2.  This is the form required by crypto/rsa.c.
+
+The software encryption subtype's verification and query functions then
+need to select the appropriate crypto function to set the key.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/pkcs7_parser.c     |    1 +
- crypto/asymmetric_keys/x509_cert_parser.c |   21 +++++++++------------
- 2 files changed, 10 insertions(+), 12 deletions(-)
+ crypto/asymmetric_keys/public_key.c |   14 ++++++++++++--
+ include/crypto/public_key.h         |    1 +
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
-index 0f134162cef4..f0d56e1a8b7e 100644
---- a/crypto/asymmetric_keys/pkcs7_parser.c
-+++ b/crypto/asymmetric_keys/pkcs7_parser.c
-@@ -271,6 +271,7 @@ int pkcs7_sig_note_pkey_algo(void *context, size_t hdrlen,
- 	switch (ctx->last_oid) {
- 	case OID_rsaEncryption:
- 		ctx->sinfo->sig->pkey_algo = "rsa";
-+		ctx->sinfo->sig->encoding = "pkcs1";
- 		break;
- 	default:
- 		printk("Unsupported pkey algo: %u\n", ctx->last_oid);
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index b6cabac4b62b..991f4d735a4e 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -199,35 +199,32 @@ int x509_note_pkey_algo(void *context, size_t hdrlen,
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+index 761bfab352dc..f2dc27897319 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -115,7 +115,12 @@ static int software_key_query(const struct kernel_pkey_params *params,
+ 	if (IS_ERR(tfm))
+ 		return PTR_ERR(tfm);
  
- 	case OID_md4WithRSAEncryption:
- 		ctx->cert->sig->hash_algo = "md4";
--		ctx->cert->sig->pkey_algo = "rsa";
--		break;
-+		goto rsa_pkcs1;
+-	ret = crypto_akcipher_set_pub_key(tfm, pkey->key, pkey->keylen);
++	if (pkey->key_is_private)
++		ret = crypto_akcipher_set_priv_key(tfm,
++						   pkey->key, pkey->keylen);
++	else
++		ret = crypto_akcipher_set_pub_key(tfm,
++						  pkey->key, pkey->keylen);
+ 	if (ret < 0)
+ 		goto error_free_tfm;
  
- 	case OID_sha1WithRSAEncryption:
- 		ctx->cert->sig->hash_algo = "sha1";
--		ctx->cert->sig->pkey_algo = "rsa";
--		break;
-+		goto rsa_pkcs1;
+@@ -170,7 +175,12 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	if (!req)
+ 		goto error_free_tfm;
  
- 	case OID_sha256WithRSAEncryption:
- 		ctx->cert->sig->hash_algo = "sha256";
--		ctx->cert->sig->pkey_algo = "rsa";
--		break;
-+		goto rsa_pkcs1;
+-	ret = crypto_akcipher_set_pub_key(tfm, pkey->key, pkey->keylen);
++	if (pkey->key_is_private)
++		ret = crypto_akcipher_set_priv_key(tfm,
++						   pkey->key, pkey->keylen);
++	else
++		ret = crypto_akcipher_set_pub_key(tfm,
++						  pkey->key, pkey->keylen);
+ 	if (ret)
+ 		goto error_free_req;
  
- 	case OID_sha384WithRSAEncryption:
- 		ctx->cert->sig->hash_algo = "sha384";
--		ctx->cert->sig->pkey_algo = "rsa";
--		break;
-+		goto rsa_pkcs1;
- 
- 	case OID_sha512WithRSAEncryption:
- 		ctx->cert->sig->hash_algo = "sha512";
--		ctx->cert->sig->pkey_algo = "rsa";
--		break;
-+		goto rsa_pkcs1;
- 
- 	case OID_sha224WithRSAEncryption:
- 		ctx->cert->sig->hash_algo = "sha224";
--		ctx->cert->sig->pkey_algo = "rsa";
--		break;
-+		goto rsa_pkcs1;
- 	}
- 
-+rsa_pkcs1:
-+	ctx->cert->sig->pkey_algo = "rsa";
-+	ctx->cert->sig->encoding = "pkcs1";
- 	ctx->algo_oid = ctx->last_oid;
- 	return 0;
- }
+diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+index 3a1047a0195c..be626eac9113 100644
+--- a/include/crypto/public_key.h
++++ b/include/crypto/public_key.h
+@@ -25,6 +25,7 @@
+ struct public_key {
+ 	void *key;
+ 	u32 keylen;
++	bool key_is_private;
+ 	const char *id_type;
+ 	const char *pkey_algo;
+ };
