@@ -1,75 +1,82 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Sep 2018 22:54:51 +0100
-Subject: [PATCH 05/22] KEYS: Provide software public key query function
+Date: Wed, 05 Sep 2018 22:55:04 +0100
+Subject: [PATCH 07/22] KEYS: Implement encrypt,
+	decrypt and sign for software asymmetric key
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <153618449119.7946.11025480207548147086.stgit@warthog.procyon.org.uk>
+Message-ID: <153618450412.7946.3727422000233525983.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Provide a query function for the software public key implementation.  This
-permits information about such a key to be obtained using
-query_asymmetric_key() or KEYCTL_PKEY_QUERY.
+Implement the encrypt, decrypt and sign operations for the software
+asymmetric key subtype.  This mostly involves offloading the call to the
+crypto layer.
+
+Note that the decrypt and sign operations require a private key to be
+supplied.  Encrypt (and also verify) will work with either a public or a
+private key.  A public key can be supplied with an X.509 certificate and a
+private key can be supplied using a PKCS#8 blob:
+
+	# j=`openssl pkcs8 -in ~/pkcs7/firmwarekey2.priv -topk8 -nocrypt -outform DER | keyctl padd asymmetric foo @s`
+	# keyctl pkey_query $j - enc=pkcs1
+	key_size=4096
+	max_data_size=512
+	max_sig_size=512
+	max_enc_size=512
+	max_dec_size=512
+	encrypt=y
+	decrypt=y
+	sign=y
+	verify=y
+	# keyctl pkey_encrypt $j 0 data enc=pkcs1 >/tmp/enc
+	# keyctl pkey_decrypt $j 0 /tmp/enc enc=pkcs1 >/tmp/dec
+	# cmp data /tmp/dec
+	# keyctl pkey_sign $j 0 data enc=pkcs1 hash=sha1 >/tmp/sig
+	# keyctl pkey_verify $j 0 data /tmp/sig enc=pkcs1 hash=sha1
+	#
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/public_key.c |   99 +++++++++++++++++++++++++++++------
- 1 file changed, 82 insertions(+), 17 deletions(-)
+ crypto/asymmetric_keys/public_key.c |   82 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+), 1 deletion(-)
 
 diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index e929fe1e4106..761bfab352dc 100644
+index f2dc27897319..f5d85b47fcc6 100644
 --- a/crypto/asymmetric_keys/public_key.c
 +++ b/crypto/asymmetric_keys/public_key.c
-@@ -59,6 +59,81 @@ static void public_key_destroy(void *payload0, void *payload3)
- 	public_key_signature_free(payload3);
+@@ -130,7 +130,11 @@ static int software_key_query(const struct kernel_pkey_params *params,
+ 	info->max_sig_size = len;
+ 	info->max_enc_size = len;
+ 	info->max_dec_size = len;
+-	info->supported_ops = KEYCTL_SUPPORTS_VERIFY;
++	info->supported_ops = (KEYCTL_SUPPORTS_ENCRYPT |
++			       KEYCTL_SUPPORTS_VERIFY);
++	if (pkey->key_is_private)
++		info->supported_ops |= (KEYCTL_SUPPORTS_DECRYPT |
++					KEYCTL_SUPPORTS_SIGN);
+ 	ret = 0;
+ 
+ error_free_tfm:
+@@ -139,6 +143,81 @@ static int software_key_query(const struct kernel_pkey_params *params,
+ 	return ret;
  }
  
 +/*
-+ * Determine the crypto algorithm name.
++ * Do encryption, decryption and signing ops.
 + */
-+static
-+int software_key_determine_akcipher(const char *encoding,
-+				    const char *hash_algo,
-+				    const struct public_key *pkey,
-+				    char alg_name[CRYPTO_MAX_ALG_NAME])
++static int software_key_eds_op(struct kernel_pkey_params *params,
++			       const void *in, void *out)
 +{
-+	int n;
-+
-+	if (strcmp(encoding, "pkcs1") == 0) {
-+		/* The data wangled by the RSA algorithm is typically padded
-+		 * and encoded in some manner, such as EMSA-PKCS1-1_5 [RFC3447
-+		 * sec 8.2].
-+		 */
-+		if (!hash_algo)
-+			n = snprintf(alg_name, CRYPTO_MAX_ALG_NAME,
-+				     "pkcs1pad(%s)",
-+				     pkey->pkey_algo);
-+		else
-+			n = snprintf(alg_name, CRYPTO_MAX_ALG_NAME,
-+				     "pkcs1pad(%s,%s)",
-+				     pkey->pkey_algo, hash_algo);
-+		return n >= CRYPTO_MAX_ALG_NAME ? -EINVAL : 0;
-+	}
-+
-+	if (strcmp(encoding, "raw") == 0) {
-+		strcpy(alg_name, pkey->pkey_algo);
-+		return 0;
-+	}
-+
-+	return -ENOPKG;
-+}
-+
-+/*
-+ * Query information about a key.
-+ */
-+static int software_key_query(const struct kernel_pkey_params *params,
-+			      struct kernel_pkey_query *info)
-+{
++	const struct public_key *pkey = params->key->payload.data[asym_crypto];
++	struct akcipher_request *req;
 +	struct crypto_akcipher *tfm;
-+	struct public_key *pkey = params->key->payload.data[asym_crypto];
++	struct crypto_wait cwait;
++	struct scatterlist in_sg, out_sg;
 +	char alg_name[CRYPTO_MAX_ALG_NAME];
-+	int ret, len;
++	int ret;
++
++	pr_devel("==>%s()\n", __func__);
 +
 +	ret = software_key_determine_akcipher(params->encoding,
 +					      params->hash_algo,
@@ -81,19 +88,49 @@ index e929fe1e4106..761bfab352dc 100644
 +	if (IS_ERR(tfm))
 +		return PTR_ERR(tfm);
 +
-+	ret = crypto_akcipher_set_pub_key(tfm, pkey->key, pkey->keylen);
-+	if (ret < 0)
++	req = akcipher_request_alloc(tfm, GFP_KERNEL);
++	if (!req)
 +		goto error_free_tfm;
 +
-+	len = crypto_akcipher_maxsize(tfm);
-+	info->key_size = len * 8;
-+	info->max_data_size = len;
-+	info->max_sig_size = len;
-+	info->max_enc_size = len;
-+	info->max_dec_size = len;
-+	info->supported_ops = KEYCTL_SUPPORTS_VERIFY;
-+	ret = 0;
++	if (pkey->key_is_private)
++		ret = crypto_akcipher_set_priv_key(tfm,
++						   pkey->key, pkey->keylen);
++	else
++		ret = crypto_akcipher_set_pub_key(tfm,
++						  pkey->key, pkey->keylen);
++	if (ret)
++		goto error_free_req;
 +
++	sg_init_one(&in_sg, in, params->in_len);
++	sg_init_one(&out_sg, out, params->out_len);
++	akcipher_request_set_crypt(req, &in_sg, &out_sg, params->in_len,
++				   params->out_len);
++	crypto_init_wait(&cwait);
++	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
++				      CRYPTO_TFM_REQ_MAY_SLEEP,
++				      crypto_req_done, &cwait);
++
++	/* Perform the encryption calculation. */
++	switch (params->op) {
++	case kernel_pkey_encrypt:
++		ret = crypto_akcipher_encrypt(req);
++		break;
++	case kernel_pkey_decrypt:
++		ret = crypto_akcipher_decrypt(req);
++		break;
++	case kernel_pkey_sign:
++		ret = crypto_akcipher_sign(req);
++		break;
++	default:
++		BUG();
++	}
++
++	ret = crypto_wait_req(ret, &cwait);
++	if (ret == 0)
++		ret = req->dst_len;
++
++error_free_req:
++	akcipher_request_free(req);
 +error_free_tfm:
 +	crypto_free_akcipher(tfm);
 +	pr_devel("<==%s() = %d\n", __func__, ret);
@@ -103,48 +140,11 @@ index e929fe1e4106..761bfab352dc 100644
  /*
   * Verify a signature using a public key.
   */
-@@ -69,8 +144,7 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	struct crypto_akcipher *tfm;
- 	struct akcipher_request *req;
- 	struct scatterlist sig_sg, digest_sg;
--	const char *alg_name;
--	char alg_name_buf[CRYPTO_MAX_ALG_NAME];
-+	char alg_name[CRYPTO_MAX_ALG_NAME];
- 	void *output;
- 	unsigned int outlen;
- 	int ret;
-@@ -81,21 +155,11 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	BUG_ON(!sig);
- 	BUG_ON(!sig->s);
- 
--	if (!sig->digest)
--		return -ENOPKG;
--
--	alg_name = sig->pkey_algo;
--	if (strcmp(sig->pkey_algo, "rsa") == 0) {
--		/* The data wangled by the RSA algorithm is typically padded
--		 * and encoded in some manner, such as EMSA-PKCS1-1_5 [RFC3447
--		 * sec 8.2].
--		 */
--		if (snprintf(alg_name_buf, CRYPTO_MAX_ALG_NAME,
--			     "pkcs1pad(rsa,%s)", sig->hash_algo
--			     ) >= CRYPTO_MAX_ALG_NAME)
--			return -EINVAL;
--		alg_name = alg_name_buf;
--	}
-+	ret = software_key_determine_akcipher(sig->encoding,
-+					      sig->hash_algo,
-+					      pkey, alg_name);
-+	if (ret < 0)
-+		return ret;
- 
- 	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
- 	if (IS_ERR(tfm))
-@@ -167,6 +231,7 @@ struct asymmetric_key_subtype public_key_subtype = {
- 	.name_len		= sizeof("public_key") - 1,
+@@ -242,6 +321,7 @@ struct asymmetric_key_subtype public_key_subtype = {
  	.describe		= public_key_describe,
  	.destroy		= public_key_destroy,
-+	.query			= software_key_query,
+ 	.query			= software_key_query,
++	.eds_op			= software_key_eds_op,
  	.verify_signature	= public_key_verify_signature_2,
  };
  EXPORT_SYMBOL_GPL(public_key_subtype);
