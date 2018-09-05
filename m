@@ -1,131 +1,110 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Sep 2018 22:56:10 +0100
-Subject: [PATCH 17/22] KEYS: asym_tpm: Add loadkey2 and flushspecific
+Date: Wed, 05 Sep 2018 22:56:23 +0100
+Subject: [PATCH 19/22] KEYS: asym_tpm: Implement the decrypt operation
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <153618457002.7946.741829373041553399.stgit@warthog.procyon.org.uk>
+Message-ID: <153618458309.7946.14847260238913330761.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Denis Kenzior <denkenz@gmail.com>
 
-This commit adds TPM_LoadKey2 and TPM_FlushSpecific operations.
+This patch implements the pkey_decrypt operation using the private key
+blob.  The blob is first loaded into the TPM via tpm_loadkey2.  Once the
+handle is obtained, tpm_unbind operation is used to decrypt the data on
+the TPM and the result is returned.  The key loaded by tpm_loadkey2 is
+then evicted via tpm_flushspecific operation.
+
+This patch assumes that the SRK authorization is a well known 20-byte of
+zeros and the same holds for the key authorization of the provided key.
 
 Signed-off-by: Denis Kenzior <denkenz@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: James Morris <james.morris@microsoft.com>
 ---
 
- crypto/asymmetric_keys/asym_tpm.c |   94 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+ crypto/asymmetric_keys/asym_tpm.c |   58 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 57 insertions(+), 1 deletion(-)
 
 diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index 8edca3c4c193..6a2d33014ecc 100644
+index e893b5212222..6f5d5cf98910 100644
 --- a/crypto/asymmetric_keys/asym_tpm.c
 +++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -7,11 +7,105 @@
- #include <linux/seq_file.h>
- #include <linux/scatterlist.h>
- #include <linux/tpm.h>
-+#include <linux/tpm_command.h>
- #include <crypto/akcipher.h>
-+#include <crypto/hash.h>
-+#include <crypto/sha.h>
- #include <asm/unaligned.h>
- #include <keys/asymmetric-subtype.h>
-+#include <keys/trusted.h>
- #include <crypto/asym_tpm_subtype.h>
+@@ -341,7 +341,8 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
+ 	info->max_enc_size = len;
+ 	info->max_dec_size = tk->key_len / 8;
  
-+#define TPM_ORD_FLUSHSPECIFIC	186
-+#define TPM_ORD_LOADKEY2	65
-+#define TPM_LOADKEY2_SIZE		59
-+#define TPM_FLUSHSPECIFIC_SIZE		18
-+
-+#define TPM_RT_KEY                      0x00000001
-+
+-	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT;
++	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
++			      KEYCTL_SUPPORTS_DECRYPT;
+ 
+ 	ret = 0;
+ error_free_tfm:
+@@ -410,6 +411,58 @@ static int tpm_key_encrypt(struct tpm_key *tk,
+ 	return ret;
+ }
+ 
 +/*
-+ * Load a TPM key from the blob provided by userspace
++ * Decryption operation is performed with the private key in the TPM.
 + */
-+static int tpm_loadkey2(struct tpm_buf *tb,
-+			uint32_t keyhandle, unsigned char *keyauth,
-+			const unsigned char *keyblob, int keybloblen,
-+			uint32_t *newhandle)
++static int tpm_key_decrypt(struct tpm_key *tk,
++			   struct kernel_pkey_params *params,
++			   const void *in, void *out)
 +{
-+	unsigned char nonceodd[TPM_NONCE_SIZE];
-+	unsigned char enonce[TPM_NONCE_SIZE];
-+	unsigned char authdata[SHA1_DIGEST_SIZE];
-+	uint32_t authhandle = 0;
-+	unsigned char cont = 0;
-+	uint32_t ordinal;
-+	int ret;
++	struct tpm_buf *tb;
++	uint32_t keyhandle;
++	uint8_t srkauth[SHA1_DIGEST_SIZE];
++	uint8_t keyauth[SHA1_DIGEST_SIZE];
++	int r;
 +
-+	ordinal = htonl(TPM_ORD_LOADKEY2);
++	pr_devel("==>%s()\n", __func__);
 +
-+	/* session for loading the key */
-+	ret = oiap(tb, &authhandle, enonce);
-+	if (ret < 0) {
-+		pr_info("oiap failed (%d)\n", ret);
-+		return ret;
++	if (params->hash_algo)
++		return -ENOPKG;
++
++	if (strcmp(params->encoding, "pkcs1"))
++		return -ENOPKG;
++
++	tb = kzalloc(sizeof(*tb), GFP_KERNEL);
++	if (!tb)
++		return -ENOMEM;
++
++	/* TODO: Handle a non-all zero SRK authorization */
++	memset(srkauth, 0, sizeof(srkauth));
++
++	r = tpm_loadkey2(tb, SRKHANDLE, srkauth,
++				tk->blob, tk->blob_len, &keyhandle);
++	if (r < 0) {
++		pr_devel("loadkey2 failed (%d)\n", r);
++		goto error;
 +	}
 +
-+	/* generate odd nonce */
-+	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
-+	if (ret < 0) {
-+		pr_info("tpm_get_random failed (%d)\n", ret);
-+		return ret;
-+	}
++	/* TODO: Handle a non-all zero key authorization */
++	memset(keyauth, 0, sizeof(keyauth));
 +
-+	/* calculate authorization HMAC value */
-+	ret = TSS_authhmac(authdata, keyauth, SHA1_DIGEST_SIZE, enonce,
-+			   nonceodd, cont, sizeof(uint32_t), &ordinal,
-+			   keybloblen, keyblob, 0, 0);
-+	if (ret < 0)
-+		return ret;
++	r = tpm_unbind(tb, keyhandle, keyauth,
++		       in, params->in_len, out, params->out_len);
++	if (r < 0)
++		pr_devel("tpm_unbind failed (%d)\n", r);
 +
-+	/* build the request buffer */
-+	INIT_BUF(tb);
-+	store16(tb, TPM_TAG_RQU_AUTH1_COMMAND);
-+	store32(tb, TPM_LOADKEY2_SIZE + keybloblen);
-+	store32(tb, TPM_ORD_LOADKEY2);
-+	store32(tb, keyhandle);
-+	storebytes(tb, keyblob, keybloblen);
-+	store32(tb, authhandle);
-+	storebytes(tb, nonceodd, TPM_NONCE_SIZE);
-+	store8(tb, cont);
-+	storebytes(tb, authdata, SHA1_DIGEST_SIZE);
++	if (tpm_flushspecific(tb, keyhandle) < 0)
++		pr_devel("flushspecific failed (%d)\n", r);
 +
-+	ret = trusted_tpm_send(tb->data, MAX_BUF_SIZE);
-+	if (ret < 0) {
-+		pr_info("authhmac failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	ret = TSS_checkhmac1(tb->data, ordinal, nonceodd, keyauth,
-+			     SHA1_DIGEST_SIZE, 0, 0);
-+	if (ret < 0) {
-+		pr_info("TSS_checkhmac1 failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	*newhandle = LOAD32(tb->data, TPM_DATA_OFFSET);
-+	return 0;
-+}
-+
-+/*
-+ * Execute the FlushSpecific TPM command
-+ */
-+static int tpm_flushspecific(struct tpm_buf *tb, uint32_t handle)
-+{
-+	INIT_BUF(tb);
-+	store16(tb, TPM_TAG_RQU_COMMAND);
-+	store32(tb, TPM_FLUSHSPECIFIC_SIZE);
-+	store32(tb, TPM_ORD_FLUSHSPECIFIC);
-+	store32(tb, handle);
-+	store32(tb, TPM_RT_KEY);
-+
-+	return trusted_tpm_send(tb->data, MAX_BUF_SIZE);
++error:
++	kzfree(tb);
++	pr_devel("<==%s() = %d\n", __func__, r);
++	return r;
 +}
 +
  /*
-  * Maximum buffer size for the BER/DER encoded public key.  The public key
-  * is of the form SEQUENCE { INTEGER n, INTEGER e } where n is a maximum 2048
+  * Do encryption, decryption and signing ops.
+  */
+@@ -424,6 +477,9 @@ static int tpm_key_eds_op(struct kernel_pkey_params *params,
+ 	case kernel_pkey_encrypt:
+ 		ret = tpm_key_encrypt(tk, params, in, out);
+ 		break;
++	case kernel_pkey_decrypt:
++		ret = tpm_key_decrypt(tk, params, in, out);
++		break;
+ 	default:
+ 		BUG();
+ 	}
