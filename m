@@ -1,67 +1,150 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Sep 2018 22:54:57 +0100
-Subject: [PATCH 06/22] KEYS: Allow the public_key struct to hold a private key
+Date: Wed, 05 Sep 2018 22:54:51 +0100
+Subject: [PATCH 05/22] KEYS: Provide software public key query function
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <153618449772.7946.7781296222641718446.stgit@warthog.procyon.org.uk>
+Message-ID: <153618449119.7946.11025480207548147086.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Put a flag in the public_key struct to indicate if the structure is holding
-a private key.  The private key must be held ASN.1 encoded in the format
-specified in RFC 3447 A.1.2.  This is the form required by crypto/rsa.c.
-
-The software encryption subtype's verification and query functions then
-need to select the appropriate crypto function to set the key.
+Provide a query function for the software public key implementation.  This
+permits information about such a key to be obtained using
+query_asymmetric_key() or KEYCTL_PKEY_QUERY.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/public_key.c |   14 ++++++++++++--
- include/crypto/public_key.h         |    1 +
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ crypto/asymmetric_keys/public_key.c |   99 +++++++++++++++++++++++++++++------
+ 1 file changed, 82 insertions(+), 17 deletions(-)
 
 diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index 761bfab352dc..f2dc27897319 100644
+index e929fe1e4106..761bfab352dc 100644
 --- a/crypto/asymmetric_keys/public_key.c
 +++ b/crypto/asymmetric_keys/public_key.c
-@@ -115,7 +115,12 @@ static int software_key_query(const struct kernel_pkey_params *params,
+@@ -59,6 +59,81 @@ static void public_key_destroy(void *payload0, void *payload3)
+ 	public_key_signature_free(payload3);
+ }
+ 
++/*
++ * Determine the crypto algorithm name.
++ */
++static
++int software_key_determine_akcipher(const char *encoding,
++				    const char *hash_algo,
++				    const struct public_key *pkey,
++				    char alg_name[CRYPTO_MAX_ALG_NAME])
++{
++	int n;
++
++	if (strcmp(encoding, "pkcs1") == 0) {
++		/* The data wangled by the RSA algorithm is typically padded
++		 * and encoded in some manner, such as EMSA-PKCS1-1_5 [RFC3447
++		 * sec 8.2].
++		 */
++		if (!hash_algo)
++			n = snprintf(alg_name, CRYPTO_MAX_ALG_NAME,
++				     "pkcs1pad(%s)",
++				     pkey->pkey_algo);
++		else
++			n = snprintf(alg_name, CRYPTO_MAX_ALG_NAME,
++				     "pkcs1pad(%s,%s)",
++				     pkey->pkey_algo, hash_algo);
++		return n >= CRYPTO_MAX_ALG_NAME ? -EINVAL : 0;
++	}
++
++	if (strcmp(encoding, "raw") == 0) {
++		strcpy(alg_name, pkey->pkey_algo);
++		return 0;
++	}
++
++	return -ENOPKG;
++}
++
++/*
++ * Query information about a key.
++ */
++static int software_key_query(const struct kernel_pkey_params *params,
++			      struct kernel_pkey_query *info)
++{
++	struct crypto_akcipher *tfm;
++	struct public_key *pkey = params->key->payload.data[asym_crypto];
++	char alg_name[CRYPTO_MAX_ALG_NAME];
++	int ret, len;
++
++	ret = software_key_determine_akcipher(params->encoding,
++					      params->hash_algo,
++					      pkey, alg_name);
++	if (ret < 0)
++		return ret;
++
++	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
++	if (IS_ERR(tfm))
++		return PTR_ERR(tfm);
++
++	ret = crypto_akcipher_set_pub_key(tfm, pkey->key, pkey->keylen);
++	if (ret < 0)
++		goto error_free_tfm;
++
++	len = crypto_akcipher_maxsize(tfm);
++	info->key_size = len * 8;
++	info->max_data_size = len;
++	info->max_sig_size = len;
++	info->max_enc_size = len;
++	info->max_dec_size = len;
++	info->supported_ops = KEYCTL_SUPPORTS_VERIFY;
++	ret = 0;
++
++error_free_tfm:
++	crypto_free_akcipher(tfm);
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	return ret;
++}
++
+ /*
+  * Verify a signature using a public key.
+  */
+@@ -69,8 +144,7 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	struct crypto_akcipher *tfm;
+ 	struct akcipher_request *req;
+ 	struct scatterlist sig_sg, digest_sg;
+-	const char *alg_name;
+-	char alg_name_buf[CRYPTO_MAX_ALG_NAME];
++	char alg_name[CRYPTO_MAX_ALG_NAME];
+ 	void *output;
+ 	unsigned int outlen;
+ 	int ret;
+@@ -81,21 +155,11 @@ int public_key_verify_signature(const struct public_key *pkey,
+ 	BUG_ON(!sig);
+ 	BUG_ON(!sig->s);
+ 
+-	if (!sig->digest)
+-		return -ENOPKG;
+-
+-	alg_name = sig->pkey_algo;
+-	if (strcmp(sig->pkey_algo, "rsa") == 0) {
+-		/* The data wangled by the RSA algorithm is typically padded
+-		 * and encoded in some manner, such as EMSA-PKCS1-1_5 [RFC3447
+-		 * sec 8.2].
+-		 */
+-		if (snprintf(alg_name_buf, CRYPTO_MAX_ALG_NAME,
+-			     "pkcs1pad(rsa,%s)", sig->hash_algo
+-			     ) >= CRYPTO_MAX_ALG_NAME)
+-			return -EINVAL;
+-		alg_name = alg_name_buf;
+-	}
++	ret = software_key_determine_akcipher(sig->encoding,
++					      sig->hash_algo,
++					      pkey, alg_name);
++	if (ret < 0)
++		return ret;
+ 
+ 	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
  	if (IS_ERR(tfm))
- 		return PTR_ERR(tfm);
- 
--	ret = crypto_akcipher_set_pub_key(tfm, pkey->key, pkey->keylen);
-+	if (pkey->key_is_private)
-+		ret = crypto_akcipher_set_priv_key(tfm,
-+						   pkey->key, pkey->keylen);
-+	else
-+		ret = crypto_akcipher_set_pub_key(tfm,
-+						  pkey->key, pkey->keylen);
- 	if (ret < 0)
- 		goto error_free_tfm;
- 
-@@ -170,7 +175,12 @@ int public_key_verify_signature(const struct public_key *pkey,
- 	if (!req)
- 		goto error_free_tfm;
- 
--	ret = crypto_akcipher_set_pub_key(tfm, pkey->key, pkey->keylen);
-+	if (pkey->key_is_private)
-+		ret = crypto_akcipher_set_priv_key(tfm,
-+						   pkey->key, pkey->keylen);
-+	else
-+		ret = crypto_akcipher_set_pub_key(tfm,
-+						  pkey->key, pkey->keylen);
- 	if (ret)
- 		goto error_free_req;
- 
-diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
-index 3a1047a0195c..be626eac9113 100644
---- a/include/crypto/public_key.h
-+++ b/include/crypto/public_key.h
-@@ -25,6 +25,7 @@
- struct public_key {
- 	void *key;
- 	u32 keylen;
-+	bool key_is_private;
- 	const char *id_type;
- 	const char *pkey_algo;
+@@ -167,6 +231,7 @@ struct asymmetric_key_subtype public_key_subtype = {
+ 	.name_len		= sizeof("public_key") - 1,
+ 	.describe		= public_key_describe,
+ 	.destroy		= public_key_destroy,
++	.query			= software_key_query,
+ 	.verify_signature	= public_key_verify_signature_2,
  };
+ EXPORT_SYMBOL_GPL(public_key_subtype);
