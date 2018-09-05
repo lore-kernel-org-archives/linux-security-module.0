@@ -1,198 +1,194 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Sep 2018 22:55:43 +0100
-Subject: [PATCH 13/22] KEYS: asym_tpm: Implement pkey_query
+Date: Wed, 05 Sep 2018 22:55:37 +0100
+Subject: [PATCH 12/22] KEYS: Add parser for TPM-based keys
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <153618454385.7946.4740845674431042688.stgit@warthog.procyon.org.uk>
+Message-ID: <153618453731.7946.4588780807259491173.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Denis Kenzior <denkenz@gmail.com>
 
-This commit implements the pkey_query operation.  This is accomplished
-by utilizing the public key portion to obtain max encryption size
-information for the operations that utilize the public key (encrypt,
-verify).  The private key size extracted from the TPM_Key data structure
-is used to fill the information where the private key is used (decrypt,
-sign).
+For TPM based keys, the only standard seems to be described here:
+http://david.woodhou.se/draft-woodhouse-cert-best-practice.html#rfc.section.4.4
 
-The kernel uses a DER/BER format for public keys and does not support
-setting the key via the raw binary form.  To get around this a simple
-DER/BER formatter is implemented which stores the DER/BER formatted key
-and exponent in a temporary buffer for use by the crypto API.
+Quote from the relevant section:
+"Rather, a common form of storage for "wrapped" keys is to encode the
+binary TCPA_KEY structure in a single ASN.1 OCTET-STRING, and store the
+result in PEM format with the tag "-----BEGIN TSS KEY BLOB-----". "
 
-The only exponent supported currently is 65537.  This holds true for
-other Linux TPM tools such as 'create_tpm_key' and
-trousers-openssl_tpm_engine.
+This patch implements the above behavior.  It is assumed that the PEM
+encoding is stripped out by userspace and only the raw DER/BER format is
+provided.  This is similar to how PKCS7, PKCS8 and X.509 keys are
+handled.
 
 Signed-off-by: Denis Kenzior <denkenz@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/asym_tpm.c |  135 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 135 insertions(+)
+ crypto/asymmetric_keys/Kconfig      |    9 +++
+ crypto/asymmetric_keys/Makefile     |   11 ++++
+ crypto/asymmetric_keys/tpm.asn1     |    5 ++
+ crypto/asymmetric_keys/tpm_parser.c |  102 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 127 insertions(+)
+ create mode 100644 crypto/asymmetric_keys/tpm.asn1
+ create mode 100644 crypto/asymmetric_keys/tpm_parser.c
 
-diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index 308c51e055a4..837472d107d5 100644
---- a/crypto/asymmetric_keys/asym_tpm.c
-+++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -7,10 +7,24 @@
- #include <linux/seq_file.h>
- #include <linux/scatterlist.h>
- #include <linux/tpm.h>
-+#include <crypto/akcipher.h>
- #include <asm/unaligned.h>
- #include <keys/asymmetric-subtype.h>
- #include <crypto/asym_tpm_subtype.h>
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index b75555c7d8ae..88353a9ebc9b 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -52,6 +52,15 @@ config PKCS8_PRIVATE_KEY_PARSER
+ 	  private key data and provides the ability to instantiate a crypto key
+ 	  from that data.
  
-+/*
-+ * Maximum buffer size for the BER/DER encoded public key.  The public key
-+ * is of the form SEQUENCE { INTEGER n, INTEGER e } where n is a maximum 2048
-+ * bit key and e is usually 65537
-+ * The encoding overhead is:
-+ * - max 4 bytes for SEQUENCE
-+ *   - max 4 bytes for INTEGER n type/length
-+ *     - 257 bytes of n
-+ *   - max 2 bytes for INTEGER e type/length
-+ *     - 3 bytes of e
-+ */
-+#define PUB_KEY_BUF_SIZE (4 + 4 + 257 + 2 + 3)
++config TPM_KEY_PARSER
++	tristate "TPM private key parser"
++	depends on ASYMMETRIC_TPM_KEY_SUBTYPE
++	select ASN1
++	help
++	  This option provides support for parsing TPM format blobs for
++	  private key data and provides the ability to instantiate a crypto key
++	  from that data.
 +
- /*
-  * Provide a part of a description of the key for /proc/keys.
-  */
-@@ -38,6 +52,126 @@ static void asym_tpm_destroy(void *payload0, void *payload3)
- 	kfree(tk);
- }
+ config PKCS7_MESSAGE_PARSER
+ 	tristate "PKCS#7 message parser"
+ 	depends on X509_CERTIFICATE_PARSER
+diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+index 73fbe650ff1d..28b91adba2ae 100644
+--- a/crypto/asymmetric_keys/Makefile
++++ b/crypto/asymmetric_keys/Makefile
+@@ -75,3 +75,14 @@ verify_signed_pefile-y := \
  
-+/* How many bytes will it take to encode the length */
-+static inline uint32_t definite_length(uint32_t len)
+ $(obj)/mscode_parser.o: $(obj)/mscode.asn1.h $(obj)/mscode.asn1.h
+ $(obj)/mscode.asn1.o: $(obj)/mscode.asn1.c $(obj)/mscode.asn1.h
++
++#
++# TPM private key parsing
++#
++obj-$(CONFIG_TPM_KEY_PARSER) += tpm_key_parser.o
++tpm_key_parser-y := \
++	tpm.asn1.o \
++	tpm_parser.o
++
++$(obj)/tpm_parser.o: $(obj)/tpm.asn1.h
++$(obj)/tpm.asn1.o: $(obj)/tpm.asn1.c $(obj)/tpm.asn1.h
+diff --git a/crypto/asymmetric_keys/tpm.asn1 b/crypto/asymmetric_keys/tpm.asn1
+new file mode 100644
+index 000000000000..d7f194232f30
+--- /dev/null
++++ b/crypto/asymmetric_keys/tpm.asn1
+@@ -0,0 +1,5 @@
++--
++-- Unencryted TPM Blob.  For details of the format, see:
++-- http://david.woodhou.se/draft-woodhouse-cert-best-practice.html#I-D.mavrogiannopoulos-tpmuri
++--
++PrivateKeyInfo ::= OCTET STRING ({ tpm_note_key })
+diff --git a/crypto/asymmetric_keys/tpm_parser.c b/crypto/asymmetric_keys/tpm_parser.c
+new file mode 100644
+index 000000000000..96405d8dcd98
+--- /dev/null
++++ b/crypto/asymmetric_keys/tpm_parser.c
+@@ -0,0 +1,102 @@
++// SPDX-License-Identifier: GPL-2.0
++#define pr_fmt(fmt) "TPM-PARSER: "fmt
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/export.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <keys/asymmetric-subtype.h>
++#include <keys/asymmetric-parser.h>
++#include <crypto/asym_tpm_subtype.h>
++#include "tpm.asn1.h"
++
++struct tpm_parse_context {
++	const void	*blob;
++	u32		blob_len;
++};
++
++/*
++ * Note the key data of the ASN.1 blob.
++ */
++int tpm_note_key(void *context, size_t hdrlen,
++		   unsigned char tag,
++		   const void *value, size_t vlen)
 +{
-+	if (len <= 127)
-+		return 1;
-+	if (len <= 255)
-+		return 2;
-+	return 3;
-+}
++	struct tpm_parse_context *ctx = context;
 +
-+static inline uint8_t *encode_tag_length(uint8_t *buf, uint8_t tag,
-+					 uint32_t len)
-+{
-+	*buf++ = tag;
++	ctx->blob = value;
++	ctx->blob_len = vlen;
 +
-+	if (len <= 127) {
-+		buf[0] = len;
-+		return buf + 1;
-+	}
-+
-+	if (len <= 255) {
-+		buf[0] = 0x81;
-+		buf[1] = len;
-+		return buf + 2;
-+	}
-+
-+	buf[0] = 0x82;
-+	put_unaligned_be16(len, buf + 1);
-+	return buf + 3;
-+}
-+
-+static uint32_t derive_pub_key(const void *pub_key, uint32_t len, uint8_t *buf)
-+{
-+	uint8_t *cur = buf;
-+	uint32_t n_len = definite_length(len) + 1 + len + 1;
-+	uint32_t e_len = definite_length(3) + 1 + 3;
-+	uint8_t e[3] = { 0x01, 0x00, 0x01 };
-+
-+	/* SEQUENCE */
-+	cur = encode_tag_length(cur, 0x30, n_len + e_len);
-+	/* INTEGER n */
-+	cur = encode_tag_length(cur, 0x02, len + 1);
-+	cur[0] = 0x00;
-+	memcpy(cur + 1, pub_key, len);
-+	cur += len + 1;
-+	cur = encode_tag_length(cur, 0x02, sizeof(e));
-+	memcpy(cur, e, sizeof(e));
-+	cur += sizeof(e);
-+
-+	return cur - buf;
++	return 0;
 +}
 +
 +/*
-+ * Determine the crypto algorithm name.
++ * Parse a TPM-encrypted private key blob.
 + */
-+static int determine_akcipher(const char *encoding, const char *hash_algo,
-+			      char alg_name[CRYPTO_MAX_ALG_NAME])
++static struct tpm_key *tpm_parse(const void *data, size_t datalen)
 +{
-+	/* TODO: We don't support hashing yet */
-+	if (hash_algo)
-+		return -ENOPKG;
++	struct tpm_parse_context ctx;
++	long ret;
 +
-+	if (strcmp(encoding, "pkcs1") == 0) {
-+		strcpy(alg_name, "pkcs1pad(rsa)");
-+		return 0;
-+	}
++	memset(&ctx, 0, sizeof(ctx));
 +
-+	if (strcmp(encoding, "raw") == 0) {
-+		strcpy(alg_name, "rsa");
-+		return 0;
-+	}
-+
-+	return -ENOPKG;
-+}
-+
-+/*
-+ * Query information about a key.
-+ */
-+static int tpm_key_query(const struct kernel_pkey_params *params,
-+			 struct kernel_pkey_query *info)
-+{
-+	struct tpm_key *tk = params->key->payload.data[asym_crypto];
-+	int ret;
-+	char alg_name[CRYPTO_MAX_ALG_NAME];
-+	struct crypto_akcipher *tfm;
-+	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
-+	uint32_t der_pub_key_len;
-+	int len;
-+
-+	/* TPM only works on private keys, public keys still done in software */
-+	ret = determine_akcipher(params->encoding, params->hash_algo, alg_name);
++	/* Attempt to decode the private key */
++	ret = asn1_ber_decoder(&tpm_decoder, &ctx, data, datalen);
 +	if (ret < 0)
-+		return ret;
++		goto error;
 +
-+	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
-+	if (IS_ERR(tfm))
-+		return PTR_ERR(tfm);
++	return tpm_key_create(ctx.blob, ctx.blob_len);
 +
-+	der_pub_key_len = derive_pub_key(tk->pub_key, tk->pub_key_len,
-+					 der_pub_key);
++error:
++	return ERR_PTR(ret);
++}
++/*
++ * Attempt to parse a data blob for a key as a TPM private key blob.
++ */
++static int tpm_key_preparse(struct key_preparsed_payload *prep)
++{
++	struct tpm_key *tk;
 +
-+	ret = crypto_akcipher_set_pub_key(tfm, der_pub_key, der_pub_key_len);
-+	if (ret < 0)
-+		goto error_free_tfm;
++	/*
++	 * TPM 1.2 keys are max 2048 bits long, so assume the blob is no
++	 * more than 4x that
++	 */
++	if (prep->datalen > 256 * 4)
++		return -EMSGSIZE;
 +
-+	len = crypto_akcipher_maxsize(tfm);
++	tk = tpm_parse(prep->data, prep->datalen);
 +
-+	info->key_size = tk->key_len;
-+	info->max_data_size = tk->key_len / 8;
-+	info->max_sig_size = len;
-+	info->max_enc_size = len;
-+	info->max_dec_size = tk->key_len / 8;
++	if (IS_ERR(tk))
++		return PTR_ERR(tk);
 +
-+	ret = 0;
-+error_free_tfm:
-+	crypto_free_akcipher(tfm);
-+	pr_devel("<==%s() = %d\n", __func__, ret);
-+	return ret;
++	/* We're pinning the module by being linked against it */
++	__module_get(asym_tpm_subtype.owner);
++	prep->payload.data[asym_subtype] = &asym_tpm_subtype;
++	prep->payload.data[asym_key_ids] = NULL;
++	prep->payload.data[asym_crypto] = tk;
++	prep->payload.data[asym_auth] = NULL;
++	prep->quotalen = 100;
++	return 0;
 +}
 +
- /*
-  * Parse enough information out of TPM_KEY structure:
-  * TPM_STRUCT_VER -> 4 bytes
-@@ -194,6 +328,7 @@ struct asymmetric_key_subtype asym_tpm_subtype = {
- 	.name_len		= sizeof("asym_tpm") - 1,
- 	.describe		= asym_tpm_describe,
- 	.destroy		= asym_tpm_destroy,
-+	.query			= tpm_key_query,
- };
- EXPORT_SYMBOL_GPL(asym_tpm_subtype);
- 
++static struct asymmetric_key_parser tpm_key_parser = {
++	.owner	= THIS_MODULE,
++	.name	= "tpm_parser",
++	.parse	= tpm_key_preparse,
++};
++
++static int __init tpm_key_init(void)
++{
++	return register_asymmetric_key_parser(&tpm_key_parser);
++}
++
++static void __exit tpm_key_exit(void)
++{
++	unregister_asymmetric_key_parser(&tpm_key_parser);
++}
++
++module_init(tpm_key_init);
++module_exit(tpm_key_exit);
++
++MODULE_DESCRIPTION("TPM private key-blob parser");
++MODULE_LICENSE("GPL v2");
