@@ -1,194 +1,49 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Sep 2018 22:55:37 +0100
-Subject: [PATCH 12/22] KEYS: Add parser for TPM-based keys
-In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <153618453731.7946.4588780807259491173.stgit@warthog.procyon.org.uk>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 5 Sep 2018 18:16:46 -0400
+Subject: [PATCH] selinux: refactor mls_context_to_sid() and make it
+	stricter
+In-Reply-To: <CAG48ez1VMp=NXWb2eSEZsnszs-g5NVUhCVLXrjnMcHZYBJus8w@mail.gmail.com>
+References: <20180806211932.198488-1-jannh@google.com>
+	<CAHC9VhR5S6jGsHVwrGXemGobB1O=tADHBHWZMRP5BuRMGqDrOQ@mail.gmail.com>
+	<CAG48ez1VMp=NXWb2eSEZsnszs-g5NVUhCVLXrjnMcHZYBJus8w@mail.gmail.com>
+Message-ID: <CAHC9VhRrSYxsqQ==8anCKT+BEjBgD3wppMyeyGec_DMbowq=Tg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Denis Kenzior <denkenz@gmail.com>
+On Fri, Aug 31, 2018 at 11:47 AM Jann Horn <jannh@google.com> wrote:
+> On Thu, Aug 9, 2018 at 3:56 AM Paul Moore <paul@paul-moore.com> wrote:
+> > On Mon, Aug 6, 2018 at 5:19 PM Jann Horn <jannh@google.com> wrote:
 
-For TPM based keys, the only standard seems to be described here:
-http://david.woodhou.se/draft-woodhouse-cert-best-practice.html#rfc.section.4.4
+...
 
-Quote from the relevant section:
-"Rather, a common form of storage for "wrapped" keys is to encode the
-binary TCPA_KEY structure in a single ASN.1 OCTET-STRING, and store the
-result in PEM format with the tag "-----BEGIN TSS KEY BLOB-----". "
+> > In the case where we have a MLS policy loaded (pol->mls_enabled != 0)
+> > and scontext is empty (scontext[0] = '\0'), we could end up returning
+> > 0 couldn't we?  It seems like we might want a quick check for this
+> > before we parse the low/high portions of the field into the rangep
+> > array.
+>
+> I don't think so. In the first loop iteration, `sensitivity` will be
+> an empty string, and so the hashtab_search() should return NULL,
+> leading to -EINVAL. Am I missing something?
 
-This patch implements the above behavior.  It is assumed that the PEM
-encoding is stripped out by userspace and only the raw DER/BER format is
-provided.  This is similar to how PKCS7, PKCS8 and X.509 keys are
-handled.
+Looking at this again, no, I think you've got it right.  My guess is
+that I just mistook the NULL sensitivity check at the top of the loop
+as getting triggered in this case, which isn't the case here.  Sorry
+for the noise.
 
-Signed-off-by: Denis Kenzior <denkenz@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+> > As an aside, I believe my other comments on this patch still stand.
+> > It's a nice improvement but I think there are some other small things
+> > that need to be addressed.
+>
+> Is there anything I need to fix apart from the overly verbose comment
+> and the unnecessary curly braces?
 
- crypto/asymmetric_keys/Kconfig      |    9 +++
- crypto/asymmetric_keys/Makefile     |   11 ++++
- crypto/asymmetric_keys/tpm.asn1     |    5 ++
- crypto/asymmetric_keys/tpm_parser.c |  102 +++++++++++++++++++++++++++++++++++
- 4 files changed, 127 insertions(+)
- create mode 100644 crypto/asymmetric_keys/tpm.asn1
- create mode 100644 crypto/asymmetric_keys/tpm_parser.c
+Nope.  I wouldn't even bother with that brace/comment changes, those
+were minor nits and only worth changing if you needed to respin the
+patch for some other reason.
 
-diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-index b75555c7d8ae..88353a9ebc9b 100644
---- a/crypto/asymmetric_keys/Kconfig
-+++ b/crypto/asymmetric_keys/Kconfig
-@@ -52,6 +52,15 @@ config PKCS8_PRIVATE_KEY_PARSER
- 	  private key data and provides the ability to instantiate a crypto key
- 	  from that data.
- 
-+config TPM_KEY_PARSER
-+	tristate "TPM private key parser"
-+	depends on ASYMMETRIC_TPM_KEY_SUBTYPE
-+	select ASN1
-+	help
-+	  This option provides support for parsing TPM format blobs for
-+	  private key data and provides the ability to instantiate a crypto key
-+	  from that data.
-+
- config PKCS7_MESSAGE_PARSER
- 	tristate "PKCS#7 message parser"
- 	depends on X509_CERTIFICATE_PARSER
-diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
-index 73fbe650ff1d..28b91adba2ae 100644
---- a/crypto/asymmetric_keys/Makefile
-+++ b/crypto/asymmetric_keys/Makefile
-@@ -75,3 +75,14 @@ verify_signed_pefile-y := \
- 
- $(obj)/mscode_parser.o: $(obj)/mscode.asn1.h $(obj)/mscode.asn1.h
- $(obj)/mscode.asn1.o: $(obj)/mscode.asn1.c $(obj)/mscode.asn1.h
-+
-+#
-+# TPM private key parsing
-+#
-+obj-$(CONFIG_TPM_KEY_PARSER) += tpm_key_parser.o
-+tpm_key_parser-y := \
-+	tpm.asn1.o \
-+	tpm_parser.o
-+
-+$(obj)/tpm_parser.o: $(obj)/tpm.asn1.h
-+$(obj)/tpm.asn1.o: $(obj)/tpm.asn1.c $(obj)/tpm.asn1.h
-diff --git a/crypto/asymmetric_keys/tpm.asn1 b/crypto/asymmetric_keys/tpm.asn1
-new file mode 100644
-index 000000000000..d7f194232f30
---- /dev/null
-+++ b/crypto/asymmetric_keys/tpm.asn1
-@@ -0,0 +1,5 @@
-+--
-+-- Unencryted TPM Blob.  For details of the format, see:
-+-- http://david.woodhou.se/draft-woodhouse-cert-best-practice.html#I-D.mavrogiannopoulos-tpmuri
-+--
-+PrivateKeyInfo ::= OCTET STRING ({ tpm_note_key })
-diff --git a/crypto/asymmetric_keys/tpm_parser.c b/crypto/asymmetric_keys/tpm_parser.c
-new file mode 100644
-index 000000000000..96405d8dcd98
---- /dev/null
-+++ b/crypto/asymmetric_keys/tpm_parser.c
-@@ -0,0 +1,102 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define pr_fmt(fmt) "TPM-PARSER: "fmt
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/export.h>
-+#include <linux/slab.h>
-+#include <linux/err.h>
-+#include <keys/asymmetric-subtype.h>
-+#include <keys/asymmetric-parser.h>
-+#include <crypto/asym_tpm_subtype.h>
-+#include "tpm.asn1.h"
-+
-+struct tpm_parse_context {
-+	const void	*blob;
-+	u32		blob_len;
-+};
-+
-+/*
-+ * Note the key data of the ASN.1 blob.
-+ */
-+int tpm_note_key(void *context, size_t hdrlen,
-+		   unsigned char tag,
-+		   const void *value, size_t vlen)
-+{
-+	struct tpm_parse_context *ctx = context;
-+
-+	ctx->blob = value;
-+	ctx->blob_len = vlen;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Parse a TPM-encrypted private key blob.
-+ */
-+static struct tpm_key *tpm_parse(const void *data, size_t datalen)
-+{
-+	struct tpm_parse_context ctx;
-+	long ret;
-+
-+	memset(&ctx, 0, sizeof(ctx));
-+
-+	/* Attempt to decode the private key */
-+	ret = asn1_ber_decoder(&tpm_decoder, &ctx, data, datalen);
-+	if (ret < 0)
-+		goto error;
-+
-+	return tpm_key_create(ctx.blob, ctx.blob_len);
-+
-+error:
-+	return ERR_PTR(ret);
-+}
-+/*
-+ * Attempt to parse a data blob for a key as a TPM private key blob.
-+ */
-+static int tpm_key_preparse(struct key_preparsed_payload *prep)
-+{
-+	struct tpm_key *tk;
-+
-+	/*
-+	 * TPM 1.2 keys are max 2048 bits long, so assume the blob is no
-+	 * more than 4x that
-+	 */
-+	if (prep->datalen > 256 * 4)
-+		return -EMSGSIZE;
-+
-+	tk = tpm_parse(prep->data, prep->datalen);
-+
-+	if (IS_ERR(tk))
-+		return PTR_ERR(tk);
-+
-+	/* We're pinning the module by being linked against it */
-+	__module_get(asym_tpm_subtype.owner);
-+	prep->payload.data[asym_subtype] = &asym_tpm_subtype;
-+	prep->payload.data[asym_key_ids] = NULL;
-+	prep->payload.data[asym_crypto] = tk;
-+	prep->payload.data[asym_auth] = NULL;
-+	prep->quotalen = 100;
-+	return 0;
-+}
-+
-+static struct asymmetric_key_parser tpm_key_parser = {
-+	.owner	= THIS_MODULE,
-+	.name	= "tpm_parser",
-+	.parse	= tpm_key_preparse,
-+};
-+
-+static int __init tpm_key_init(void)
-+{
-+	return register_asymmetric_key_parser(&tpm_key_parser);
-+}
-+
-+static void __exit tpm_key_exit(void)
-+{
-+	unregister_asymmetric_key_parser(&tpm_key_parser);
-+}
-+
-+module_init(tpm_key_init);
-+module_exit(tpm_key_exit);
-+
-+MODULE_DESCRIPTION("TPM private key-blob parser");
-+MODULE_LICENSE("GPL v2");
+Consider the patch merged, thanks!
+
+--
+paul moore
+www.paul-moore.com
