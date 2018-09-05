@@ -1,110 +1,168 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Sep 2018 22:56:23 +0100
-Subject: [PATCH 19/22] KEYS: asym_tpm: Implement the decrypt operation
+Date: Wed, 05 Sep 2018 22:56:29 +0100
+Subject: [PATCH 20/22] KEYS: asym_tpm: Implement signature verification
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <153618458309.7946.14847260238913330761.stgit@warthog.procyon.org.uk>
+Message-ID: <153618458953.7946.5116691522328819991.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 From: Denis Kenzior <denkenz@gmail.com>
 
-This patch implements the pkey_decrypt operation using the private key
-blob.  The blob is first loaded into the TPM via tpm_loadkey2.  Once the
-handle is obtained, tpm_unbind operation is used to decrypt the data on
-the TPM and the result is returned.  The key loaded by tpm_loadkey2 is
-then evicted via tpm_flushspecific operation.
-
-This patch assumes that the SRK authorization is a well known 20-byte of
-zeros and the same holds for the key authorization of the provided key.
+This patch implements the verify_signature operation.  The public key
+portion extracted from the TPM key blob is used.  The operation is
+performed entirely in software using the crypto API.
 
 Signed-off-by: Denis Kenzior <denkenz@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- crypto/asymmetric_keys/asym_tpm.c |   58 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 57 insertions(+), 1 deletion(-)
+ crypto/asymmetric_keys/asym_tpm.c |  106 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 100 insertions(+), 6 deletions(-)
 
 diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index e893b5212222..6f5d5cf98910 100644
+index 6f5d5cf98910..a38ba375675e 100644
 --- a/crypto/asymmetric_keys/asym_tpm.c
 +++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -341,7 +341,8 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
- 	info->max_enc_size = len;
+@@ -15,6 +15,7 @@
+ #include <keys/asymmetric-subtype.h>
+ #include <keys/trusted.h>
+ #include <crypto/asym_tpm_subtype.h>
++#include <crypto/public_key.h>
+ 
+ #define TPM_ORD_FLUSHSPECIFIC	186
+ #define TPM_ORD_LOADKEY2	65
+@@ -286,12 +287,16 @@ static uint32_t derive_pub_key(const void *pub_key, uint32_t len, uint8_t *buf)
+ static int determine_akcipher(const char *encoding, const char *hash_algo,
+ 			      char alg_name[CRYPTO_MAX_ALG_NAME])
+ {
+-	/* TODO: We don't support hashing yet */
+-	if (hash_algo)
+-		return -ENOPKG;
+-
+ 	if (strcmp(encoding, "pkcs1") == 0) {
+-		strcpy(alg_name, "pkcs1pad(rsa)");
++		if (!hash_algo) {
++			strcpy(alg_name, "pkcs1pad(rsa)");
++			return 0;
++		}
++
++		if (snprintf(alg_name, CRYPTO_MAX_ALG_NAME, "pkcs1pad(rsa,%s)",
++			     hash_algo) >= CRYPTO_MAX_ALG_NAME)
++			return -EINVAL;
++
+ 		return 0;
+ 	}
+ 
+@@ -342,7 +347,8 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
  	info->max_dec_size = tk->key_len / 8;
  
--	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT;
-+	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
-+			      KEYCTL_SUPPORTS_DECRYPT;
+ 	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
+-			      KEYCTL_SUPPORTS_DECRYPT;
++			      KEYCTL_SUPPORTS_DECRYPT |
++			      KEYCTL_SUPPORTS_VERIFY;
  
  	ret = 0;
  error_free_tfm:
-@@ -410,6 +411,58 @@ static int tpm_key_encrypt(struct tpm_key *tk,
+@@ -487,6 +493,93 @@ static int tpm_key_eds_op(struct kernel_pkey_params *params,
  	return ret;
  }
  
 +/*
-+ * Decryption operation is performed with the private key in the TPM.
++ * Verify a signature using a public key.
 + */
-+static int tpm_key_decrypt(struct tpm_key *tk,
-+			   struct kernel_pkey_params *params,
-+			   const void *in, void *out)
++static int tpm_key_verify_signature(const struct key *key,
++				    const struct public_key_signature *sig)
 +{
-+	struct tpm_buf *tb;
-+	uint32_t keyhandle;
-+	uint8_t srkauth[SHA1_DIGEST_SIZE];
-+	uint8_t keyauth[SHA1_DIGEST_SIZE];
-+	int r;
++	const struct tpm_key *tk = key->payload.data[asym_crypto];
++	struct crypto_wait cwait;
++	struct crypto_akcipher *tfm;
++	struct akcipher_request *req;
++	struct scatterlist sig_sg, digest_sg;
++	char alg_name[CRYPTO_MAX_ALG_NAME];
++	uint8_t der_pub_key[PUB_KEY_BUF_SIZE];
++	uint32_t der_pub_key_len;
++	void *output;
++	unsigned int outlen;
++	int ret;
 +
 +	pr_devel("==>%s()\n", __func__);
 +
-+	if (params->hash_algo)
++	BUG_ON(!tk);
++	BUG_ON(!sig);
++	BUG_ON(!sig->s);
++
++	if (!sig->digest)
 +		return -ENOPKG;
 +
-+	if (strcmp(params->encoding, "pkcs1"))
-+		return -ENOPKG;
++	ret = determine_akcipher(sig->encoding, sig->hash_algo, alg_name);
++	if (ret < 0)
++		return ret;
 +
-+	tb = kzalloc(sizeof(*tb), GFP_KERNEL);
-+	if (!tb)
-+		return -ENOMEM;
++	tfm = crypto_alloc_akcipher(alg_name, 0, 0);
++	if (IS_ERR(tfm))
++		return PTR_ERR(tfm);
 +
-+	/* TODO: Handle a non-all zero SRK authorization */
-+	memset(srkauth, 0, sizeof(srkauth));
++	der_pub_key_len = derive_pub_key(tk->pub_key, tk->pub_key_len,
++					 der_pub_key);
 +
-+	r = tpm_loadkey2(tb, SRKHANDLE, srkauth,
-+				tk->blob, tk->blob_len, &keyhandle);
-+	if (r < 0) {
-+		pr_devel("loadkey2 failed (%d)\n", r);
-+		goto error;
-+	}
++	ret = crypto_akcipher_set_pub_key(tfm, der_pub_key, der_pub_key_len);
++	if (ret < 0)
++		goto error_free_tfm;
 +
-+	/* TODO: Handle a non-all zero key authorization */
-+	memset(keyauth, 0, sizeof(keyauth));
++	ret = -ENOMEM;
++	req = akcipher_request_alloc(tfm, GFP_KERNEL);
++	if (!req)
++		goto error_free_tfm;
 +
-+	r = tpm_unbind(tb, keyhandle, keyauth,
-+		       in, params->in_len, out, params->out_len);
-+	if (r < 0)
-+		pr_devel("tpm_unbind failed (%d)\n", r);
++	ret = -ENOMEM;
++	outlen = crypto_akcipher_maxsize(tfm);
++	output = kmalloc(outlen, GFP_KERNEL);
++	if (!output)
++		goto error_free_req;
 +
-+	if (tpm_flushspecific(tb, keyhandle) < 0)
-+		pr_devel("flushspecific failed (%d)\n", r);
++	sg_init_one(&sig_sg, sig->s, sig->s_size);
++	sg_init_one(&digest_sg, output, outlen);
++	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
++				   outlen);
++	crypto_init_wait(&cwait);
++	akcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG |
++				      CRYPTO_TFM_REQ_MAY_SLEEP,
++				      crypto_req_done, &cwait);
 +
-+error:
-+	kzfree(tb);
-+	pr_devel("<==%s() = %d\n", __func__, r);
-+	return r;
++	/* Perform the verification calculation.  This doesn't actually do the
++	 * verification, but rather calculates the hash expected by the
++	 * signature and returns that to us.
++	 */
++	ret = crypto_wait_req(crypto_akcipher_verify(req), &cwait);
++	if (ret)
++		goto out_free_output;
++
++	/* Do the actual verification step. */
++	if (req->dst_len != sig->digest_size ||
++	    memcmp(sig->digest, output, sig->digest_size) != 0)
++		ret = -EKEYREJECTED;
++
++out_free_output:
++	kfree(output);
++error_free_req:
++	akcipher_request_free(req);
++error_free_tfm:
++	crypto_free_akcipher(tfm);
++	pr_devel("<==%s() = %d\n", __func__, ret);
++	if (WARN_ON_ONCE(ret > 0))
++		ret = -EINVAL;
++	return ret;
 +}
 +
  /*
-  * Do encryption, decryption and signing ops.
-  */
-@@ -424,6 +477,9 @@ static int tpm_key_eds_op(struct kernel_pkey_params *params,
- 	case kernel_pkey_encrypt:
- 		ret = tpm_key_encrypt(tk, params, in, out);
- 		break;
-+	case kernel_pkey_decrypt:
-+		ret = tpm_key_decrypt(tk, params, in, out);
-+		break;
- 	default:
- 		BUG();
- 	}
+  * Parse enough information out of TPM_KEY structure:
+  * TPM_STRUCT_VER -> 4 bytes
+@@ -645,6 +738,7 @@ struct asymmetric_key_subtype asym_tpm_subtype = {
+ 	.destroy		= asym_tpm_destroy,
+ 	.query			= tpm_key_query,
+ 	.eds_op			= tpm_key_eds_op,
++	.verify_signature	= tpm_key_verify_signature,
+ };
+ EXPORT_SYMBOL_GPL(asym_tpm_subtype);
+ 
