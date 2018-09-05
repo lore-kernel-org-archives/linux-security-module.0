@@ -1,22 +1,45 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 5 Sep 2018 14:12:56 +0300
-Subject: [PATCH] tpm: fix response size validation in tpm_get_random()
-In-Reply-To: <20180903011004.12161-1-jarkko.sakkinen@linux.intel.com>
-References: <20180903011004.12161-1-jarkko.sakkinen@linux.intel.com>
-Message-ID: <20180905111256.GA9696@linux.intel.com>
+Date: Wed, 5 Sep 2018 14:28:47 +0300
+Subject: [PATCH] tpm: Make SECURITYFS a weak dependency
+In-Reply-To: <20180903195151.7576-1-peterhuewe@gmx.de>
+References: <20180903195151.7576-1-peterhuewe@gmx.de>
+Message-ID: <20180905112847.GC9696@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 03, 2018 at 04:10:04AM +0300, Jarkko Sakkinen wrote:
-> When checking whether the response is large enough to be able to contain
-> the received random bytes in tpm_get_random() and tpm2_get_random(),
-> they fail to take account the header size, which should be added to the
-> minimum size. This commit fixes this issue.
+On Mon, Sep 03, 2018 at 09:51:51PM +0200, Peter Huewe wrote:
+> While having SECURITYFS enabled for the tpm subsystem is beneficial in
+> most cases, it is not strictly necessary to have it enabled at all.
+> Especially on platforms without any boot firmware integration of the TPM
+> (e.g. raspberry pi) it does not add any value for the tpm subsystem,
+> as there is no eventlog present.
 > 
-> Cc: stable at vger.kernel.org
-> Fixes: c659af78eb7b ("tpm: Check size of response before accessing data")
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> By turning it from 'select' to 'imply' it still gets selected per
+> default, but enables users who want to save some kb of ram by turning
+> SECURITYFS off.
+> 
+> Signed-off-by: Peter Huewe <peterhuewe@gmx.de>
+> ---
+>  drivers/char/tpm/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> index 18c81cbe4704..536e55d3919f 100644
+> --- a/drivers/char/tpm/Kconfig
+> +++ b/drivers/char/tpm/Kconfig
+> @@ -5,7 +5,7 @@
+>  menuconfig TCG_TPM
+>  	tristate "TPM Hardware Support"
+>  	depends on HAS_IOMEM
+> -	select SECURITYFS
+> +	imply SECURITYFS
+>  	select CRYPTO
+>  	select CRYPTO_HASH_INFO
+>  	---help---
+> -- 
+> 2.16.4
+> 
 
-Stefan, you did the original commit. Does this look right to you?
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
