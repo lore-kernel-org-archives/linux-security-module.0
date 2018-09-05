@@ -1,308 +1,178 @@
 From: dhowells@redhat.com (David Howells)
-Date: Wed, 05 Sep 2018 22:55:10 +0100
-Subject: [PATCH 08/22] KEYS: Implement PKCS#8 RSA Private Key parser
+Date: Wed, 05 Sep 2018 22:55:24 +0100
+Subject: [PATCH 10/22] KEYS: asym_tpm: add skeleton for asym_tpm
 In-Reply-To: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
 References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <153618451081.7946.14700559590008741878.stgit@warthog.procyon.org.uk>
+Message-ID: <153618452424.7946.15617756404492598517.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Implement PKCS#8 RSA Private Key format [RFC 5208] parser for the
-asymmetric key type.  For the moment, this will only support unencrypted
-DER blobs.  PEM and decryption can be added later.
+From: Denis Kenzior <denkenz@gmail.com>
 
-PKCS#8 keys can be loaded like this:
+This patch adds the basic skeleton for the asym_tpm asymmetric key
+subtype.
 
-	openssl pkcs8 -in private_key.pem -topk8 -nocrypt -outform DER | \
-	  keyctl padd asymmetric foo @s
-
+Signed-off-by: Denis Kenzior <denkenz@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- Documentation/crypto/asymmetric-keys.txt |    2 
- crypto/asymmetric_keys/Kconfig           |   10 ++
- crypto/asymmetric_keys/Makefile          |   13 ++
- crypto/asymmetric_keys/pkcs8.asn1        |   24 ++++
- crypto/asymmetric_keys/pkcs8_parser.c    |  184 ++++++++++++++++++++++++++++++
- 5 files changed, 233 insertions(+)
- create mode 100644 crypto/asymmetric_keys/pkcs8.asn1
- create mode 100644 crypto/asymmetric_keys/pkcs8_parser.c
+ crypto/asymmetric_keys/Kconfig    |   11 +++++
+ crypto/asymmetric_keys/Makefile   |    1 
+ crypto/asymmetric_keys/asym_tpm.c |   90 +++++++++++++++++++++++++++++++++++++
+ include/crypto/asym_tpm_subtype.h |   16 +++++++
+ 4 files changed, 118 insertions(+)
+ create mode 100644 crypto/asymmetric_keys/asym_tpm.c
+ create mode 100644 include/crypto/asym_tpm_subtype.h
 
-diff --git a/Documentation/crypto/asymmetric-keys.txt b/Documentation/crypto/asymmetric-keys.txt
-index deb656ef008b..8763866b11cf 100644
---- a/Documentation/crypto/asymmetric-keys.txt
-+++ b/Documentation/crypto/asymmetric-keys.txt
-@@ -248,6 +248,8 @@ Examples of blob formats for which parsers could be implemented include:
-  - X.509 ASN.1 stream.
-  - Pointer to TPM key.
-  - Pointer to UEFI key.
-+ - PKCS#8 private key [RFC 5208].
-+ - PKCS#5 encrypted private key [RFC 2898].
- 
- During key instantiation each parser in the list is tried until one doesn't
- return -EBADMSG.
 diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-index f3702e533ff4..66a7dad7ed3d 100644
+index 66a7dad7ed3d..b75555c7d8ae 100644
 --- a/crypto/asymmetric_keys/Kconfig
 +++ b/crypto/asymmetric_keys/Kconfig
-@@ -31,6 +31,16 @@ config X509_CERTIFICATE_PARSER
- 	  data and provides the ability to instantiate a crypto key from a
- 	  public key packet found inside the certificate.
+@@ -21,6 +21,17 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+ 	  appropriate hash algorithms (such as SHA-1) must be available.
+ 	  ENOPKG will be reported if the requisite algorithm is unavailable.
  
-+config PKCS8_PRIVATE_KEY_PARSER
-+	tristate "PKCS#8 private key parser"
-+	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-+	select ASN1
-+	select OID_REGISTRY
++config ASYMMETRIC_TPM_KEY_SUBTYPE
++	tristate "Asymmetric TPM backed private key subtype"
++	depends on TCG_TPM
++	select CRYPTO_HMAC
++	select CRYPTO_SHA1
++	select CRYPTO_HASH_INFO
 +	help
-+	  This option provides support for parsing PKCS#8 format blobs for
-+	  private key data and provides the ability to instantiate a crypto key
-+	  from that data.
++	  This option provides support for TPM backed private key type handling.
++	  Operations such as sign, verify, encrypt, decrypt are performed by
++	  the TPM after the private key is loaded.
 +
- config PKCS7_MESSAGE_PARSER
- 	tristate "PKCS#7 message parser"
- 	depends on X509_CERTIFICATE_PARSER
+ config X509_CERTIFICATE_PARSER
+ 	tristate "X.509 certificate parser"
+ 	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE
 diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
-index d4b2e1b2dc65..c38424f55b08 100644
+index c38424f55b08..73fbe650ff1d 100644
 --- a/crypto/asymmetric_keys/Makefile
 +++ b/crypto/asymmetric_keys/Makefile
-@@ -29,6 +29,19 @@ $(obj)/x509_cert_parser.o: \
- $(obj)/x509.asn1.o: $(obj)/x509.asn1.c $(obj)/x509.asn1.h
- $(obj)/x509_akid.asn1.o: $(obj)/x509_akid.asn1.c $(obj)/x509_akid.asn1.h
+@@ -11,6 +11,7 @@ asymmetric_keys-y := \
+ 	signature.o
  
-+#
-+# PKCS#8 private key handling
-+#
-+obj-$(CONFIG_PKCS8_PRIVATE_KEY_PARSER) += pkcs8_key_parser.o
-+pkcs8_key_parser-y := \
-+	pkcs8.asn1.o \
-+	pkcs8_parser.o
-+
-+$(obj)/pkcs8_parser.o: $(obj)/pkcs8.asn1.h
-+$(obj)/pkcs8-asn1.o: $(obj)/pkcs8.asn1.c $(obj)/pkcs8.asn1.h
-+
-+clean-files	+= pkcs8.asn1.c pkcs8.asn1.h
-+
+ obj-$(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE) += public_key.o
++obj-$(CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE) += asym_tpm.o
+ 
  #
- # PKCS#7 message handling
- #
-diff --git a/crypto/asymmetric_keys/pkcs8.asn1 b/crypto/asymmetric_keys/pkcs8.asn1
+ # X.509 Certificate handling
+diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
 new file mode 100644
-index 000000000000..702c41a3c713
+index 000000000000..d0b2b97e8e54
 --- /dev/null
-+++ b/crypto/asymmetric_keys/pkcs8.asn1
-@@ -0,0 +1,24 @@
-+--
-+-- This is the unencrypted variant
-+--
-+PrivateKeyInfo ::= SEQUENCE {
-+	version			Version,
-+	privateKeyAlgorithm	PrivateKeyAlgorithmIdentifier,
-+	privateKey		PrivateKey,
-+	attributes		[0] IMPLICIT Attributes OPTIONAL
-+}
-+
-+Version ::= INTEGER  ({ pkcs8_note_version })
-+
-+PrivateKeyAlgorithmIdentifier ::= AlgorithmIdentifier ({ pkcs8_note_algo })
-+
-+PrivateKey ::= OCTET STRING ({ pkcs8_note_key })
-+
-+Attributes ::= SET OF Attribute
-+
-+Attribute ::= ANY
-+
-+AlgorithmIdentifier ::= SEQUENCE {
-+	algorithm   OBJECT IDENTIFIER ({ pkcs8_note_OID }),
-+	parameters  ANY OPTIONAL
-+}
-diff --git a/crypto/asymmetric_keys/pkcs8_parser.c b/crypto/asymmetric_keys/pkcs8_parser.c
-new file mode 100644
-index 000000000000..5f6a7ecc9765
---- /dev/null
-+++ b/crypto/asymmetric_keys/pkcs8_parser.c
-@@ -0,0 +1,184 @@
-+/* PKCS#8 Private Key parser [RFC 5208].
-+ *
-+ * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells at redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#define pr_fmt(fmt) "PKCS8: "fmt
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/export.h>
++++ b/crypto/asymmetric_keys/asym_tpm.c
+@@ -0,0 +1,90 @@
++// SPDX-License-Identifier: GPL-2.0
++#define pr_fmt(fmt) "ASYM-TPM: "fmt
 +#include <linux/slab.h>
-+#include <linux/err.h>
-+#include <linux/oid_registry.h>
++#include <linux/module.h>
++#include <linux/export.h>
++#include <linux/kernel.h>
++#include <linux/seq_file.h>
++#include <linux/scatterlist.h>
++#include <linux/tpm.h>
 +#include <keys/asymmetric-subtype.h>
-+#include <keys/asymmetric-parser.h>
-+#include <crypto/public_key.h>
-+#include "pkcs8.asn1.h"
-+
-+struct pkcs8_parse_context {
-+	struct public_key *pub;
-+	unsigned long	data;			/* Start of data */
-+	enum OID	last_oid;		/* Last OID encountered */
-+	enum OID	algo_oid;		/* Algorithm OID */
-+	u32		key_size;
-+	const void	*key;
-+};
++#include <crypto/asym_tpm_subtype.h>
 +
 +/*
-+ * Note an OID when we find one for later processing when we know how to
-+ * interpret it.
++ * Provide a part of a description of the key for /proc/keys.
 + */
-+int pkcs8_note_OID(void *context, size_t hdrlen,
-+		   unsigned char tag,
-+		   const void *value, size_t vlen)
++static void asym_tpm_describe(const struct key *asymmetric_key,
++			      struct seq_file *m)
 +{
-+	struct pkcs8_parse_context *ctx = context;
++	struct tpm_key *tk = asymmetric_key->payload.data[asym_crypto];
 +
-+	ctx->last_oid = look_up_OID(value, vlen);
-+	if (ctx->last_oid == OID__NR) {
-+		char buffer[50];
++	if (!tk)
++		return;
 +
-+		sprint_oid(value, vlen, buffer, sizeof(buffer));
-+		pr_info("Unknown OID: [%lu] %s\n",
-+			(unsigned long)value - ctx->data, buffer);
-+	}
-+	return 0;
++	seq_printf(m, "TPM1.2/Blob");
 +}
 +
-+/*
-+ * Note the version number of the ASN.1 blob.
-+ */
-+int pkcs8_note_version(void *context, size_t hdrlen,
-+		       unsigned char tag,
-+		       const void *value, size_t vlen)
++static void asym_tpm_destroy(void *payload0, void *payload3)
 +{
-+	if (vlen != 1 || ((const u8 *)value)[0] != 0) {
-+		pr_warn("Unsupported PKCS#8 version\n");
-+		return -EBADMSG;
-+	}
-+	return 0;
++	struct tpm_key *tk = payload0;
++
++	if (!tk)
++		return;
++
++	kfree(tk->blob);
++	tk->blob_len = 0;
++
++	kfree(tk);
 +}
 +
-+/*
-+ * Note the public algorithm.
-+ */
-+int pkcs8_note_algo(void *context, size_t hdrlen,
-+		    unsigned char tag,
-+		    const void *value, size_t vlen)
++/* Given the blob, parse it and load it into the TPM */
++struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len)
 +{
-+	struct pkcs8_parse_context *ctx = context;
++	int r;
++	struct tpm_key *tk;
 +
-+	if (ctx->last_oid != OID_rsaEncryption)
-+		return -ENOPKG;
-+
-+	ctx->pub->pkey_algo = "rsa";
-+	return 0;
-+}
-+
-+/*
-+ * Note the key data of the ASN.1 blob.
-+ */
-+int pkcs8_note_key(void *context, size_t hdrlen,
-+		   unsigned char tag,
-+		   const void *value, size_t vlen)
-+{
-+	struct pkcs8_parse_context *ctx = context;
-+
-+	ctx->key = value;
-+	ctx->key_size = vlen;
-+	return 0;
-+}
-+
-+/*
-+ * Parse a PKCS#8 private key blob.
-+ */
-+static struct public_key *pkcs8_parse(const void *data, size_t datalen)
-+{
-+	struct pkcs8_parse_context ctx;
-+	struct public_key *pub;
-+	long ret;
-+
-+	memset(&ctx, 0, sizeof(ctx));
-+
-+	ret = -ENOMEM;
-+	ctx.pub = kzalloc(sizeof(struct public_key), GFP_KERNEL);
-+	if (!ctx.pub)
++	r = tpm_is_tpm2(NULL);
++	if (r < 0)
 +		goto error;
 +
-+	ctx.data = (unsigned long)data;
++	/* We don't support TPM2 yet */
++	if (r > 0) {
++		r = -ENODEV;
++		goto error;
++	}
 +
-+	/* Attempt to decode the private key */
-+	ret = asn1_ber_decoder(&pkcs8_decoder, &ctx, data, datalen);
-+	if (ret < 0)
-+		goto error_decode;
++	r = -ENOMEM;
++	tk = kzalloc(sizeof(struct tpm_key), GFP_KERNEL);
++	if (!tk)
++		goto error;
 +
-+	ret = -ENOMEM;
-+	pub = ctx.pub;
-+	pub->key = kmemdup(ctx.key, ctx.key_size, GFP_KERNEL);
-+	if (!pub->key)
-+		goto error_decode;
++	tk->blob = kmemdup(blob, blob_len, GFP_KERNEL);
++	if (!tk->blob)
++		goto error_memdup;
 +
-+	pub->keylen = ctx.key_size;
-+	pub->key_is_private = true;
-+	return pub;
++	tk->blob_len = blob_len;
 +
-+error_decode:
-+	kfree(ctx.pub);
++	return tk;
++
++error_memdup:
++	kfree(tk);
 +error:
-+	return ERR_PTR(ret);
++	return ERR_PTR(r);
 +}
++EXPORT_SYMBOL_GPL(tpm_key_create);
 +
 +/*
-+ * Attempt to parse a data blob for a key as a PKCS#8 private key.
++ * TPM-based asymmetric key subtype
 + */
-+static int pkcs8_key_preparse(struct key_preparsed_payload *prep)
-+{
-+	struct public_key *pub;
++struct asymmetric_key_subtype asym_tpm_subtype = {
++	.owner			= THIS_MODULE,
++	.name			= "asym_tpm",
++	.name_len		= sizeof("asym_tpm") - 1,
++	.describe		= asym_tpm_describe,
++	.destroy		= asym_tpm_destroy,
++};
++EXPORT_SYMBOL_GPL(asym_tpm_subtype);
 +
-+	pub = pkcs8_parse(prep->data, prep->datalen);
-+	if (IS_ERR(pub))
-+		return PTR_ERR(pub);
++MODULE_DESCRIPTION("TPM based asymmetric key subtype");
++MODULE_AUTHOR("Intel Corporation");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/crypto/asym_tpm_subtype.h b/include/crypto/asym_tpm_subtype.h
+new file mode 100644
+index 000000000000..03550b850998
+--- /dev/null
++++ b/include/crypto/asym_tpm_subtype.h
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef _LINUX_ASYM_TPM_SUBTYPE_H
++#define _LINUX_ASYM_TPM_SUBTYPE_H
 +
-+	pr_devel("Cert Key Algo: %s\n", pub->pkey_algo);
-+	pub->id_type = "PKCS8";
++#include <linux/keyctl.h>
 +
-+	/* We're pinning the module by being linked against it */
-+	__module_get(public_key_subtype.owner);
-+	prep->payload.data[asym_subtype] = &public_key_subtype;
-+	prep->payload.data[asym_key_ids] = NULL;
-+	prep->payload.data[asym_crypto] = pub;
-+	prep->payload.data[asym_auth] = NULL;
-+	prep->quotalen = 100;
-+	return 0;
-+}
-+
-+static struct asymmetric_key_parser pkcs8_key_parser = {
-+	.owner	= THIS_MODULE,
-+	.name	= "pkcs8",
-+	.parse	= pkcs8_key_preparse,
++struct tpm_key {
++	void *blob;
++	u32 blob_len;
 +};
 +
-+/*
-+ * Module stuff
-+ */
-+static int __init pkcs8_key_init(void)
-+{
-+	return register_asymmetric_key_parser(&pkcs8_key_parser);
-+}
++struct tpm_key *tpm_key_create(const void *blob, uint32_t blob_len);
 +
-+static void __exit pkcs8_key_exit(void)
-+{
-+	unregister_asymmetric_key_parser(&pkcs8_key_parser);
-+}
++extern struct asymmetric_key_subtype asym_tpm_subtype;
 +
-+module_init(pkcs8_key_init);
-+module_exit(pkcs8_key_exit);
-+
-+MODULE_DESCRIPTION("PKCS#8 certificate parser");
-+MODULE_LICENSE("GPL");
++#endif /* _LINUX_ASYM_TPM_SUBTYPE_H */
