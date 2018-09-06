@@ -1,36 +1,28 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Thu, 6 Sep 2018 09:20:06 -0700
-Subject: [GIT PULL] apparmor fix for v4.19-rc3
-Message-ID: <4139cc4d-3402-aaaf-a43b-7804a983820a@canonical.com>
+From: jannh@google.com (Jann Horn)
+Date: Thu, 6 Sep 2018 20:22:35 +0200
+Subject: Smack: wrong-looking capable() check in smk_ptrace_rule_check()
+Message-ID: <CAG48ez0nCC0_on95q7x_8cwSyJ8ATReA0ysDnEr=CW2tkqE=7w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+Hi!
 
-Please pull this fix for an issue syzbot discovered last week
+I noticed the following check in smk_ptrace_rule_check():
 
-thanks
-- John
+                if (tracer_known->smk_known == tracee_known->smk_known)
+                        rc = 0;
+                else if (smack_ptrace_rule == SMACK_PTRACE_DRACONIAN)
+                        rc = -EACCES;
+                else if (capable(CAP_SYS_PTRACE))
+                        rc = 0;
+                else
+                        rc = -EACCES;
 
-
-The following changes since commit 57361846b52bc686112da6ca5368d11210796804:
-
-  Linux 4.19-rc2 (2018-09-02 14:37:30 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2018-09-06
-
-for you to fetch changes up to edf4e7b7b9104b58fddfcd073bd7dcc1585d5326:
-
-  apparmor: fix bad debug check in apparmor_secid_to_secctx() (2018-09-03 11:15:29 -0700)
-
-----------------------------------------------------------------
-- Fix for bad debug check when converting secids to secctx
-
-----------------------------------------------------------------
-John Johansen (1):
-      apparmor: fix bad debug check in apparmor_secid_to_secctx()
-
- security/apparmor/secid.c | 1 -
- 1 file changed, 1 deletion(-)
+Note that smk_ptrace_rule_check() can be called from not just
+smack_ptrace_access_check() and smack_ptrace_traceme(), but also
+smack_bprm_set_creds(). AFAICS this means that if a task executes with
+a smack privilege transition and smack_ptrace_rule is
+SMACK_PTRACE_EXACT, whether the execution is permitted depends on
+whether _the debugged task_ has CAP_SYS_PTRACE (and not on whether the
+debugger has that capability).
+This seems like it's probably unintentional?
