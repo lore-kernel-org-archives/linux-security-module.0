@@ -1,7 +1,7 @@
 From: dvyukov@google.com (Dmitry Vyukov)
-Date: Thu, 6 Sep 2018 12:59:32 +0200
+Date: Thu, 6 Sep 2018 13:19:31 +0200
 Subject: WARNING in apparmor_secid_to_secctx
-In-Reply-To: <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
+In-Reply-To: <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
 References: <000000000000c178e305749daba4@google.com>
 	<CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
 	<37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov>
@@ -17,21 +17,33 @@ References: <000000000000c178e305749daba4@google.com>
 	<CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
 	<CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
 	<e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
-Message-ID: <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+	<CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+Message-ID: <CACT4Y+a6Y1N1VbpLoJPyK5DFYyr8RGM_=mqpWwina=yTUEtUvg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 5, 2018 at 7:37 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 9/5/2018 4:08 AM, Dmitry Vyukov wrote:
->> Thanks! I've re-enabled selinux on syzbot:
->> https://github.com/google/syzkaller/commit/196410e4f5665d4d2bf6c818d06f1c8d03cfa8cc
->> Now we will have instances with apparmor and with selinux.
+On Thu, Sep 6, 2018 at 12:59 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Wed, Sep 5, 2018 at 7:37 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/5/2018 4:08 AM, Dmitry Vyukov wrote:
+>>> Thanks! I've re-enabled selinux on syzbot:
+>>> https://github.com/google/syzkaller/commit/196410e4f5665d4d2bf6c818d06f1c8d03cfa8cc
+>>> Now we will have instances with apparmor and with selinux.
+>>
+>> Any chance we could get a Smack instance as well?
 >
-> Any chance we could get a Smack instance as well?
+> Hi Casey,
+>
+> Sure!
+> Provided you want to fix bugs ;)
+> I've setup an instance with smack enabled:
+> https://github.com/google/syzkaller/commit/0bb7a7eb8e0958c6fbe2d69615b9fae4af88c8ee
 
-Hi Casey,
 
-Sure!
-Provided you want to fix bugs ;)
-I've setup an instance with smack enabled:
-https://github.com/google/syzkaller/commit/0bb7a7eb8e0958c6fbe2d69615b9fae4af88c8ee
+But just doing default things does not seem to find much. I guess
+common paths through the hooks are well exercised already.
+So perhaps if we do more non-trivial things, it can find more stuff.
+But what are they? Adding/changing/removing xattr's? Which? What are
+the values? Changing security contexts? How? What else?
+selinux has own filesystem and we should touch some files there:
+https://github.com/google/syzkaller/blob/master/sys/linux/selinux.txt
+But we don't anything similar for other modules.
