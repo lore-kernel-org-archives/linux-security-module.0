@@ -1,28 +1,55 @@
-From: jannh@google.com (Jann Horn)
-Date: Thu, 6 Sep 2018 20:22:35 +0200
-Subject: Smack: wrong-looking capable() check in smk_ptrace_rule_check()
-Message-ID: <CAG48ez0nCC0_on95q7x_8cwSyJ8ATReA0ysDnEr=CW2tkqE=7w@mail.gmail.com>
+From: dvyukov@google.com (Dmitry Vyukov)
+Date: Thu, 6 Sep 2018 21:35:58 +0200
+Subject: WARNING in apparmor_secid_to_secctx
+In-Reply-To: <CACT4Y+a6Y1N1VbpLoJPyK5DFYyr8RGM_=mqpWwina=yTUEtUvg@mail.gmail.com>
+References: <000000000000c178e305749daba4@google.com>
+	<CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
+	<37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov>
+	<CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
+	<9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov>
+	<4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
+	<CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
+	<1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+	<CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+	<b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
+	<CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+	<6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
+	<CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+	<CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
+	<e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
+	<CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+	<CACT4Y+a6Y1N1VbpLoJPyK5DFYyr8RGM_=mqpWwina=yTUEtUvg@mail.gmail.com>
+Message-ID: <CACT4Y+YiwOyM7P7jTYi5k7jeycKj=aW+yi0r+jvpqKJ4FjypLA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi!
+On Thu, Sep 6, 2018 at 1:19 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Thu, Sep 6, 2018 at 12:59 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+>> On Wed, Sep 5, 2018 at 7:37 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> On 9/5/2018 4:08 AM, Dmitry Vyukov wrote:
+>>>> Thanks! I've re-enabled selinux on syzbot:
+>>>> https://github.com/google/syzkaller/commit/196410e4f5665d4d2bf6c818d06f1c8d03cfa8cc
+>>>> Now we will have instances with apparmor and with selinux.
+>>>
+>>> Any chance we could get a Smack instance as well?
+>>
+>> Hi Casey,
+>>
+>> Sure!
+>> Provided you want to fix bugs ;)
+>> I've setup an instance with smack enabled:
+>> https://github.com/google/syzkaller/commit/0bb7a7eb8e0958c6fbe2d69615b9fae4af88c8ee
+>
+>
+> But just doing default things does not seem to find much. I guess
+> common paths through the hooks are well exercised already.
+> So perhaps if we do more non-trivial things, it can find more stuff.
+> But what are they? Adding/changing/removing xattr's? Which? What are
+> the values? Changing security contexts? How? What else?
+> selinux has own filesystem and we should touch some files there:
+> https://github.com/google/syzkaller/blob/master/sys/linux/selinux.txt
+> But we don't anything similar for other modules.
 
-I noticed the following check in smk_ptrace_rule_check():
 
-                if (tracer_known->smk_known == tracee_known->smk_known)
-                        rc = 0;
-                else if (smack_ptrace_rule == SMACK_PTRACE_DRACONIAN)
-                        rc = -EACCES;
-                else if (capable(CAP_SYS_PTRACE))
-                        rc = 0;
-                else
-                        rc = -EACCES;
-
-Note that smk_ptrace_rule_check() can be called from not just
-smack_ptrace_access_check() and smack_ptrace_traceme(), but also
-smack_bprm_set_creds(). AFAICS this means that if a task executes with
-a smack privilege transition and smack_ptrace_rule is
-SMACK_PTRACE_EXACT, whether the execution is permitted depends on
-whether _the debugged task_ has CAP_SYS_PTRACE (and not on whether the
-debugger has that capability).
-This seems like it's probably unintentional?
+First one that looks smack-specific:
+https://syzkaller.appspot.com/bug?id=9eda6092f146cb23cb9109f675a2e2cb743ee48b
