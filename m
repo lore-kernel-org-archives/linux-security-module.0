@@ -1,49 +1,136 @@
-From: dvyukov@google.com (Dmitry Vyukov)
-Date: Thu, 6 Sep 2018 13:19:31 +0200
-Subject: WARNING in apparmor_secid_to_secctx
-In-Reply-To: <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
-References: <000000000000c178e305749daba4@google.com>
-	<CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
-	<37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov>
-	<CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
-	<9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov>
-	<4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
-	<CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
-	<1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
-	<CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
-	<b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
-	<CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
-	<6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
-	<CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
-	<CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
-	<e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
-	<CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
-Message-ID: <CACT4Y+a6Y1N1VbpLoJPyK5DFYyr8RGM_=mqpWwina=yTUEtUvg@mail.gmail.com>
+From: jlayton@kernel.org (Jeff Layton)
+Date: Thu, 06 Sep 2018 11:08:39 -0400
+Subject: [PATCH 1/3] selinux: make dentry_init_security() return
+	security module name
+In-Reply-To: <20180626084306.27511-1-zyan@redhat.com>
+References: <20180626084306.27511-1-zyan@redhat.com>
+Message-ID: <356ec32809a222f457b4e04333bb695c32d49680.camel@kernel.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 6, 2018 at 12:59 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> On Wed, Sep 5, 2018 at 7:37 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 9/5/2018 4:08 AM, Dmitry Vyukov wrote:
->>> Thanks! I've re-enabled selinux on syzbot:
->>> https://github.com/google/syzkaller/commit/196410e4f5665d4d2bf6c818d06f1c8d03cfa8cc
->>> Now we will have instances with apparmor and with selinux.
->>
->> Any chance we could get a Smack instance as well?
->
-> Hi Casey,
->
-> Sure!
-> Provided you want to fix bugs ;)
-> I've setup an instance with smack enabled:
-> https://github.com/google/syzkaller/commit/0bb7a7eb8e0958c6fbe2d69615b9fae4af88c8ee
+On Tue, 2018-06-26 at 16:43 +0800, Yan, Zheng wrote:
+> This is preparation for CephFS security label. CephFS's implementation uses
+> dentry_init_security() to get security context before inode is created,
+> then sends open/mkdir/mknod request to MDS, together with security xattr
+> "security.<security module name>"
+> 
+> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+> ---
+>  fs/nfs/nfs4proc.c         | 3 ++-
+>  include/linux/lsm_hooks.h | 4 ++--
+>  include/linux/security.h  | 9 +++++----
+>  security/security.c       | 7 ++++---
+>  security/selinux/hooks.c  | 8 ++++++--
+>  5 files changed, 19 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index 6dd146885da9..d18a5fb7aec3 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -122,7 +122,8 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+>  		return NULL;
+>  
+>  	err = security_dentry_init_security(dentry, sattr->ia_mode,
+> -				&dentry->d_name, (void **)&label->label, &label->len);
+> +				&dentry->d_name,  NULL,
+> +				(void **)&label->label, &label->len);
+>  	if (err == 0)
+>  		return label;
+>  
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 8f1131c8dd54..e176c2032bdc 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1476,8 +1476,8 @@ union security_list_options {
+>  					unsigned long *set_kern_flags);
+>  	int (*sb_parse_opts_str)(char *options, struct security_mnt_opts *opts);
+>  	int (*dentry_init_security)(struct dentry *dentry, int mode,
+> -					const struct qstr *name, void **ctx,
+> -					u32 *ctxlen);
+> +					const struct qstr *name, const char **label,
+> +					void **ctx, u32 *ctxlen);
+>  	int (*dentry_create_files_as)(struct dentry *dentry, int mode,
+>  					struct qstr *name,
+>  					const struct cred *old,
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 63030c85ee19..df2d73998c64 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -246,8 +246,9 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+>  				unsigned long *set_kern_flags);
+>  int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts);
+>  int security_dentry_init_security(struct dentry *dentry, int mode,
+> -					const struct qstr *name, void **ctx,
+> -					u32 *ctxlen);
+> +					const struct qstr *name,
+> +					const char **label,
+> +					void **ctx, u32 *ctxlen);
+>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
+>  					struct qstr *name,
+>  					const struct cred *old,
+> @@ -609,8 +610,8 @@ static inline void security_inode_free(struct inode *inode)
+>  static inline int security_dentry_init_security(struct dentry *dentry,
+>  						 int mode,
+>  						 const struct qstr *name,
+> -						 void **ctx,
+> -						 u32 *ctxlen)
+> +						 const char **label,
+> +						 void **ctx, u32 *ctxlen)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> diff --git a/security/security.c b/security/security.c
+> index 68f46d849abe..69818d46aa28 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -450,11 +450,12 @@ void security_inode_free(struct inode *inode)
+>  }
+>  
+>  int security_dentry_init_security(struct dentry *dentry, int mode,
+> -					const struct qstr *name, void **ctx,
+> -					u32 *ctxlen)
+> +					const struct qstr *name,
+> +					const char **label,
+> +					void **ctx, u32 *ctxlen)
+>  {
+>  	return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
+> -				name, ctx, ctxlen);
+> +				name, label, ctx, ctxlen);
+>  }
+>  EXPORT_SYMBOL(security_dentry_init_security);
+>  
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 2b5ee5fbd652..eca3879d9357 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2985,8 +2985,9 @@ static void selinux_inode_free_security(struct inode *inode)
+>  }
+>  
+>  static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+> -					const struct qstr *name, void **ctx,
+> -					u32 *ctxlen)
+> +					const struct qstr *name,
+> +					const char **label,
+> +					void **ctx, u32 *ctxlen)
+>  {
+>  	u32 newsid;
+>  	int rc;
+> @@ -2998,6 +2999,9 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+>  	if (rc)
+>  		return rc;
+>  
+> +	if (label)
+> +		*label = XATTR_SELINUX_SUFFIX;
+> +
 
+nit: I'd probably call this "name" since that's what it's called in
+selinux_inode_init_security. "label" has a different connotation in this
+context.
 
-But just doing default things does not seem to find much. I guess
-common paths through the hooks are well exercised already.
-So perhaps if we do more non-trivial things, it can find more stuff.
-But what are they? Adding/changing/removing xattr's? Which? What are
-the values? Changing security contexts? How? What else?
-selinux has own filesystem and we should touch some files there:
-https://github.com/google/syzkaller/blob/master/sys/linux/selinux.txt
-But we don't anything similar for other modules.
+>  	return security_sid_to_context(&selinux_state, newsid, (char **)ctx,
+>  				       ctxlen);
+>  }
+
+Patch looks reasonable to me though.
+
+Acked-by: Jeff Layton <jlayton@kernel.org>
