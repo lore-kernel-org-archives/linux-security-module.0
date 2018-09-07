@@ -1,79 +1,72 @@
-From: gregkh@linuxfoundation.org (Greg Kroah-Hartman)
-Date: Fri,  7 Sep 2018 23:08:10 +0200
-Subject: [PATCH 4.18 024/145] Replace magic for trusting the secondary keyring
-	with #define
-In-Reply-To: <20180907210903.617721278@linuxfoundation.org>
-References: <20180907210903.617721278@linuxfoundation.org>
-Message-ID: <20180907210905.585422810@linuxfoundation.org>
+From: alison.schofield@intel.com (Alison Schofield)
+Date: Fri, 7 Sep 2018 15:23:24 -0700
+Subject: [RFC 00/12] Multi-Key Total Memory Encryption API (MKTME)
+Message-ID: <cover.1536356108.git.alison.schofield@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+Seeking comments on the APIs supporting MKTME on future Intel platforms.
 
-------------------
+MKTME (Multi-Key Total Memory Encryption) is a technology supporting
+memory encryption on upcoming Intel platforms. Whereas TME allows
+encryption of the entire system memory using a single key, MKTME
+allows mulitple encryption domains, each having their own key. While 
+the main use case for the feature is virtual machine isolation, the
+API needs the flexibility to work for a wide range of use cases.
 
-From: Yannik Sembritzki <yannik@sembritzki.me>
+This RFC presents the 2 API additions that enable userspace to:
+ 1) Create Encryption Keys: Kernel Key Service type "mktme"
+ 2) Use the Encryption Keys: system call encrypt_mprotect()
 
-commit 817aef260037f33ee0f44c17fe341323d3aebd6d upstream.
+In order to share between: the Kernel Key Service, the new system call,
+and the existing mm code, helper functions were created in arch/x86/mktme
 
-Replace the use of a magic number that indicates that verify_*_signature()
-should use the secondary keyring with a symbol.
+This patchset is built upon Kirill Shutemov's patchset for the core MKTME
+support. You can find that here:
+git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git mktme/wip
 
-Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Cc: keyrings at vger.kernel.org
-Cc: linux-security-module at vger.kernel.org
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- certs/system_keyring.c                  |    3 ++-
- crypto/asymmetric_keys/pkcs7_key_type.c |    2 +-
- include/linux/verification.h            |    6 ++++++
- 3 files changed, 9 insertions(+), 2 deletions(-)
+Alison Schofield (12):
+  docs/x86: Document the Multi-Key Total Memory Encryption API
+  mm: Generalize the mprotect implementation to support extensions
+  syscall/x86: Wire up a new system call for memory encryption keys
+  x86/mm: Add helper functions to manage memory encryption keys
+  x86/mm: Add a helper function to set keyid bits in encrypted VMA's
+  mm: Add the encrypt_mprotect() system call
+  x86/mm: Add helper functions to track encrypted VMA's
+  mm: Track VMA's in use for each memory encryption keyid
+  mm: Restrict memory encryption to anonymous VMA's
+  x86/pconfig: Program memory encryption keys on a system-wide basis
+  keys/mktme: Add a new key service type for memory encryption keys
+  keys/mktme: Do not revoke in use memory encryption keys
 
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -15,6 +15,7 @@
- #include <linux/cred.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-+#include <linux/verification.h>
- #include <keys/asymmetric-type.h>
- #include <keys/system_keyring.h>
- #include <crypto/pkcs7.h>
-@@ -230,7 +231,7 @@ int verify_pkcs7_signature(const void *d
- 
- 	if (!trusted_keys) {
- 		trusted_keys = builtin_trusted_keys;
--	} else if (trusted_keys == (void *)1UL) {
-+	} else if (trusted_keys == VERIFY_USE_SECONDARY_KEYRING) {
- #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
- 		trusted_keys = secondary_trusted_keys;
- #else
---- a/crypto/asymmetric_keys/pkcs7_key_type.c
-+++ b/crypto/asymmetric_keys/pkcs7_key_type.c
-@@ -63,7 +63,7 @@ static int pkcs7_preparse(struct key_pre
- 
- 	return verify_pkcs7_signature(NULL, 0,
- 				      prep->data, prep->datalen,
--				      (void *)1UL, usage,
-+				      VERIFY_USE_SECONDARY_KEYRING, usage,
- 				      pkcs7_view_content, prep);
- }
- 
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -13,6 +13,12 @@
- #define _LINUX_VERIFICATION_H
- 
- /*
-+ * Indicate that both builtin trusted keys and secondary trusted keys
-+ * should be used.
-+ */
-+#define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
-+
-+/*
-  * The use to which an asymmetric key is being put.
-  */
- enum key_being_used_for {
+ Documentation/x86/mktme-keys.txt       | 153 ++++++++++++++++
+ arch/x86/Kconfig                       |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+ arch/x86/include/asm/intel_pconfig.h   |  42 ++++-
+ arch/x86/include/asm/mktme.h           |  21 +++
+ arch/x86/mm/mktme.c                    | 141 ++++++++++++++
+ fs/exec.c                              |   4 +-
+ include/keys/mktme-type.h              |  28 +++
+ include/linux/key.h                    |   2 +
+ include/linux/mm.h                     |   9 +-
+ include/linux/syscalls.h               |   2 +
+ include/uapi/asm-generic/unistd.h      |   4 +-
+ kernel/fork.c                          |   2 +
+ kernel/sys_ni.c                        |   2 +
+ mm/mmap.c                              |  12 ++
+ mm/mprotect.c                          |  93 +++++++++-
+ mm/nommu.c                             |   4 +
+ security/keys/Kconfig                  |  11 ++
+ security/keys/Makefile                 |   1 +
+ security/keys/internal.h               |   6 +
+ security/keys/keyctl.c                 |   7 +
+ security/keys/mktme_keys.c             | 325 +++++++++++++++++++++++++++++++++
+ 23 files changed, 855 insertions(+), 17 deletions(-)
+ create mode 100644 Documentation/x86/mktme-keys.txt
+ create mode 100644 include/keys/mktme-type.h
+ create mode 100644 security/keys/mktme_keys.c
+
+-- 
+2.14.1
