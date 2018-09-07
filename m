@@ -1,14 +1,14 @@
 From: gregkh@linuxfoundation.org (Greg Kroah-Hartman)
-Date: Fri,  7 Sep 2018 23:10:13 +0200
-Subject: [PATCH 4.9 42/63] Fix kexec forbidding kernels signed with keys in
+Date: Fri,  7 Sep 2018 23:09:11 +0200
+Subject: [PATCH 4.14 17/89] Fix kexec forbidding kernels signed with keys in
 	the secondary keyring to boot
-In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
-References: <20180907211012.965501324@linuxfoundation.org>
-Message-ID: <20180907211015.278423823@linuxfoundation.org>
+In-Reply-To: <20180907210852.341064285@linuxfoundation.org>
+References: <20180907210852.341064285@linuxfoundation.org>
+Message-ID: <20180907210854.770395068@linuxfoundation.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -39,7 +39,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/arch/x86/kernel/kexec-bzimage64.c
 +++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -529,7 +529,7 @@ static int bzImage64_cleanup(void *loade
+@@ -532,7 +532,7 @@ static int bzImage64_cleanup(void *loade
  static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
  {
  	return verify_pefile_signature(kernel, kernel_len,
