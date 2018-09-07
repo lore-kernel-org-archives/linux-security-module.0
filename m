@@ -1,94 +1,617 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Fri, 7 Sep 2018 09:37:34 -0700
-Subject: [PATCH] apparmor: Fix network performance issue in
-	aa_label_sk_perm
-In-Reply-To: <20180907043357.4638-1-tonyj@suse.de>
-References: <20180907043357.4638-1-tonyj@suse.de>
-Message-ID: <c7676cd4-6ffe-0c6d-8d77-3fd20d692254@canonical.com>
+From: kent.overstreet@gmail.com (Kent Overstreet)
+Date: Fri,  7 Sep 2018 12:56:32 -0400
+Subject: [PATCH 3/6] selinux: convert to kvmalloc
+In-Reply-To: <20180907165635.8469-1-kent.overstreet@gmail.com>
+References: <20180907165635.8469-1-kent.overstreet@gmail.com>
+Message-ID: <20180907165635.8469-4-kent.overstreet@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 09/06/2018 09:33 PM, Tony Jones wrote:
-> The netperf benchmark shows a 5.73% reduction in throughput for 
-> small (64 byte) transfers by unconfined tasks.
-> 
-> DEFINE_AUDIT_SK() in aa_label_sk_perm() should not be performed 
-> unconditionally, rather only when the label is confined.
-> 
-> netperf-tcp
->                             56974a6fc^              56974a6fc
-> Min       64         563.48 (   0.00%)      531.17 (  -5.73%)
-> Min       128       1056.92 (   0.00%)      999.44 (  -5.44%)
-> Min       256       1945.95 (   0.00%)     1867.97 (  -4.01%)
-> Min       1024      6761.40 (   0.00%)     6364.23 (  -5.87%)
-> Min       2048     11110.53 (   0.00%)    10606.20 (  -4.54%)
-> Min       3312     13692.67 (   0.00%)    13158.41 (  -3.90%)
-> Min       4096     14926.29 (   0.00%)    14457.46 (  -3.14%)
-> Min       8192     18399.34 (   0.00%)    18091.65 (  -1.67%)
-> Min       16384    21384.13 (   0.00%)    21158.05 (  -1.06%)
-> Hmean     64         564.96 (   0.00%)      534.38 (  -5.41%)
-> Hmean     128       1064.42 (   0.00%)     1010.12 (  -5.10%)
-> Hmean     256       1965.85 (   0.00%)     1879.16 (  -4.41%)
-> Hmean     1024      6839.77 (   0.00%)     6478.70 (  -5.28%)
-> Hmean     2048     11154.80 (   0.00%)    10671.13 (  -4.34%)
-> Hmean     3312     13838.12 (   0.00%)    13249.01 (  -4.26%)
-> Hmean     4096     15009.99 (   0.00%)    14561.36 (  -2.99%)
-> Hmean     8192     18975.57 (   0.00%)    18326.54 (  -3.42%)
-> Hmean     16384    21440.44 (   0.00%)    21324.59 (  -0.54%)
-> Stddev    64           1.24 (   0.00%)        2.85 (-130.64%)
-> Stddev    128          4.51 (   0.00%)        6.53 ( -44.84%)
-> Stddev    256         11.67 (   0.00%)        8.50 (  27.16%)
-> Stddev    1024        48.33 (   0.00%)       75.07 ( -55.34%)
-> Stddev    2048        54.82 (   0.00%)       65.16 ( -18.86%)
-> Stddev    3312       153.57 (   0.00%)       56.29 (  63.35%)
-> Stddev    4096       100.25 (   0.00%)       88.50 (  11.72%)
-> Stddev    8192       358.13 (   0.00%)      169.99 (  52.54%)
-> Stddev    16384       43.99 (   0.00%)      141.82 (-222.39%)
-> 
-> Signed-off-by: Tony Jones <tonyj@suse.de>
-> Fixes: 56974a6fcfef ("apparmor: add base infastructure for socket
-> mediation")
+The flex arrays were being used for constant sized arrays, so there's no
+benefit to using flex_arrays over something simpler.
 
-hey Tony,
+Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+Cc: linux-security-module at vger.kernel.org
+---
+ security/selinux/ss/avtab.c       |  40 +++++-----
+ security/selinux/ss/avtab.h       |   4 +-
+ security/selinux/ss/conditional.c |   6 +-
+ security/selinux/ss/policydb.c    | 122 ++++++++----------------------
+ security/selinux/ss/policydb.h    |  12 +--
+ security/selinux/ss/services.c    |  22 ++----
+ 6 files changed, 62 insertions(+), 144 deletions(-)
 
-thanks for the patch, I am curious did you're investigation look
-into what parts of DEFINE_AUDIT_SK are causing the issue?
-
-regardless, I have pulled it into apparmor next
-
-> ---
->  security/apparmor/net.c | 15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-> index bb24cfa0a164..d5d72dd1ca1f 100644
-> --- a/security/apparmor/net.c
-> +++ b/security/apparmor/net.c
-> @@ -146,17 +146,20 @@ int aa_af_perm(struct aa_label *label, const char *op, u32 request, u16 family,
->  static int aa_label_sk_perm(struct aa_label *label, const char *op, u32 request,
->  			    struct sock *sk)
->  {
-> -	struct aa_profile *profile;
-> -	DEFINE_AUDIT_SK(sa, op, sk);
-> +	int error = 0;
->  
->  	AA_BUG(!label);
->  	AA_BUG(!sk);
->  
-> -	if (unconfined(label))
-> -		return 0;
-> +	if (!unconfined(label)) {
-> +		struct aa_profile *profile;
-> +		DEFINE_AUDIT_SK(sa, op, sk);
->  
-> -	return fn_for_each_confined(label, profile,
-> -			aa_profile_af_sk_perm(profile, &sa, request, sk));
-> +		error = fn_for_each_confined(label, profile,
-> +			    aa_profile_af_sk_perm(profile, &sa, request, sk));
-> +	}
-> +
-> +	return error;
->  }
->  
->  int aa_sk_perm(const char *op, u32 request, struct sock *sk)
-> 
+diff --git a/security/selinux/ss/avtab.c b/security/selinux/ss/avtab.c
+index a2c9148b06..5a7fd5f0b7 100644
+--- a/security/selinux/ss/avtab.c
++++ b/security/selinux/ss/avtab.c
+@@ -93,12 +93,10 @@ avtab_insert_node(struct avtab *h, int hvalue,
+ 		newnode->next = prev->next;
+ 		prev->next = newnode;
+ 	} else {
+-		newnode->next = flex_array_get_ptr(h->htable, hvalue);
+-		if (flex_array_put_ptr(h->htable, hvalue, newnode,
+-				       GFP_KERNEL|__GFP_ZERO)) {
+-			kmem_cache_free(avtab_node_cachep, newnode);
+-			return NULL;
+-		}
++		struct avtab_node **n = &h->htable[hvalue];
++
++		newnode->next = *n;
++		*n = newnode;
+ 	}
+ 
+ 	h->nel++;
+@@ -111,11 +109,11 @@ static int avtab_insert(struct avtab *h, struct avtab_key *key, struct avtab_dat
+ 	struct avtab_node *prev, *cur, *newnode;
+ 	u16 specified = key->specified & ~(AVTAB_ENABLED|AVTAB_ENABLED_OLD);
+ 
+-	if (!h || !h->htable)
++	if (!h)
+ 		return -EINVAL;
+ 
+ 	hvalue = avtab_hash(key, h->mask);
+-	for (prev = NULL, cur = flex_array_get_ptr(h->htable, hvalue);
++	for (prev = NULL, cur = h->htable[hvalue];
+ 	     cur;
+ 	     prev = cur, cur = cur->next) {
+ 		if (key->source_type == cur->key.source_type &&
+@@ -156,10 +154,10 @@ avtab_insert_nonunique(struct avtab *h, struct avtab_key *key, struct avtab_datu
+ 	struct avtab_node *prev, *cur;
+ 	u16 specified = key->specified & ~(AVTAB_ENABLED|AVTAB_ENABLED_OLD);
+ 
+-	if (!h || !h->htable)
++	if (!h)
+ 		return NULL;
+ 	hvalue = avtab_hash(key, h->mask);
+-	for (prev = NULL, cur = flex_array_get_ptr(h->htable, hvalue);
++	for (prev = NULL, cur = h->htable[hvalue];
+ 	     cur;
+ 	     prev = cur, cur = cur->next) {
+ 		if (key->source_type == cur->key.source_type &&
+@@ -186,11 +184,11 @@ struct avtab_datum *avtab_search(struct avtab *h, struct avtab_key *key)
+ 	struct avtab_node *cur;
+ 	u16 specified = key->specified & ~(AVTAB_ENABLED|AVTAB_ENABLED_OLD);
+ 
+-	if (!h || !h->htable)
++	if (!h)
+ 		return NULL;
+ 
+ 	hvalue = avtab_hash(key, h->mask);
+-	for (cur = flex_array_get_ptr(h->htable, hvalue); cur;
++	for (cur = h->htable[hvalue]; cur;
+ 	     cur = cur->next) {
+ 		if (key->source_type == cur->key.source_type &&
+ 		    key->target_type == cur->key.target_type &&
+@@ -222,11 +220,11 @@ avtab_search_node(struct avtab *h, struct avtab_key *key)
+ 	struct avtab_node *cur;
+ 	u16 specified = key->specified & ~(AVTAB_ENABLED|AVTAB_ENABLED_OLD);
+ 
+-	if (!h || !h->htable)
++	if (!h)
+ 		return NULL;
+ 
+ 	hvalue = avtab_hash(key, h->mask);
+-	for (cur = flex_array_get_ptr(h->htable, hvalue); cur;
++	for (cur = h->htable[hvalue]; cur;
+ 	     cur = cur->next) {
+ 		if (key->source_type == cur->key.source_type &&
+ 		    key->target_type == cur->key.target_type &&
+@@ -281,11 +279,11 @@ void avtab_destroy(struct avtab *h)
+ 	int i;
+ 	struct avtab_node *cur, *temp;
+ 
+-	if (!h || !h->htable)
++	if (!h)
+ 		return;
+ 
+ 	for (i = 0; i < h->nslot; i++) {
+-		cur = flex_array_get_ptr(h->htable, i);
++		cur = h->htable[i];
+ 		while (cur) {
+ 			temp = cur;
+ 			cur = cur->next;
+@@ -295,7 +293,7 @@ void avtab_destroy(struct avtab *h)
+ 			kmem_cache_free(avtab_node_cachep, temp);
+ 		}
+ 	}
+-	flex_array_free(h->htable);
++	kvfree(h->htable);
+ 	h->htable = NULL;
+ 	h->nslot = 0;
+ 	h->mask = 0;
+@@ -303,6 +301,7 @@ void avtab_destroy(struct avtab *h)
+ 
+ int avtab_init(struct avtab *h)
+ {
++	kvfree(h->htable);
+ 	h->htable = NULL;
+ 	h->nel = 0;
+ 	return 0;
+@@ -329,8 +328,7 @@ int avtab_alloc(struct avtab *h, u32 nrules)
+ 		nslot = MAX_AVTAB_HASH_BUCKETS;
+ 	mask = nslot - 1;
+ 
+-	h->htable = flex_array_alloc(sizeof(struct avtab_node *), nslot,
+-				     GFP_KERNEL | __GFP_ZERO);
++	h->htable = kvmalloc_array(nslot, sizeof(void *), GFP_KERNEL);
+ 	if (!h->htable)
+ 		return -ENOMEM;
+ 
+@@ -353,7 +351,7 @@ void avtab_hash_eval(struct avtab *h, char *tag)
+ 	max_chain_len = 0;
+ 	chain2_len_sum = 0;
+ 	for (i = 0; i < h->nslot; i++) {
+-		cur = flex_array_get_ptr(h->htable, i);
++		cur = h->htable[i];
+ 		if (cur) {
+ 			slots_used++;
+ 			chain_len = 0;
+@@ -645,7 +643,7 @@ int avtab_write(struct policydb *p, struct avtab *a, void *fp)
+ 		return rc;
+ 
+ 	for (i = 0; i < a->nslot; i++) {
+-		for (cur = flex_array_get_ptr(a->htable, i); cur;
++		for (cur = a->htable[i]; cur;
+ 		     cur = cur->next) {
+ 			rc = avtab_write_item(p, cur, fp);
+ 			if (rc)
+diff --git a/security/selinux/ss/avtab.h b/security/selinux/ss/avtab.h
+index 0d652fad53..de16673b23 100644
+--- a/security/selinux/ss/avtab.h
++++ b/security/selinux/ss/avtab.h
+@@ -24,7 +24,6 @@
+ #define _SS_AVTAB_H_
+ 
+ #include "security.h"
+-#include <linux/flex_array.h>
+ 
+ struct avtab_key {
+ 	u16 source_type;	/* source type */
+@@ -84,11 +83,10 @@ struct avtab_node {
+ };
+ 
+ struct avtab {
+-	struct flex_array *htable;
++	struct avtab_node **htable;
+ 	u32 nel;	/* number of elements */
+ 	u32 nslot;      /* number of hash slots */
+ 	u32 mask;       /* mask to compute hash func */
+-
+ };
+ 
+ int avtab_init(struct avtab *);
+diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+index c91543a617..c25a60b14f 100644
+--- a/security/selinux/ss/conditional.c
++++ b/security/selinux/ss/conditional.c
+@@ -195,7 +195,6 @@ int cond_index_bool(void *key, void *datum, void *datap)
+ {
+ 	struct policydb *p;
+ 	struct cond_bool_datum *booldatum;
+-	struct flex_array *fa;
+ 
+ 	booldatum = datum;
+ 	p = datap;
+@@ -203,10 +202,7 @@ int cond_index_bool(void *key, void *datum, void *datap)
+ 	if (!booldatum->value || booldatum->value > p->p_bools.nprim)
+ 		return -EINVAL;
+ 
+-	fa = p->sym_val_to_name[SYM_BOOLS];
+-	if (flex_array_put_ptr(fa, booldatum->value - 1, key,
+-			       GFP_KERNEL | __GFP_ZERO))
+-		BUG();
++	p->sym_val_to_name[SYM_BOOLS][booldatum->value - 1] = key;
+ 	p->bool_val_to_struct[booldatum->value - 1] = booldatum;
+ 
+ 	return 0;
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 6e8c8056d7..fd46411e97 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -36,7 +36,6 @@
+ #include <linux/string.h>
+ #include <linux/errno.h>
+ #include <linux/audit.h>
+-#include <linux/flex_array.h>
+ #include "security.h"
+ 
+ #include "policydb.h"
+@@ -341,17 +340,14 @@ static int common_index(void *key, void *datum, void *datap)
+ {
+ 	struct policydb *p;
+ 	struct common_datum *comdatum;
+-	struct flex_array *fa;
+ 
+ 	comdatum = datum;
+ 	p = datap;
+ 	if (!comdatum->value || comdatum->value > p->p_commons.nprim)
+ 		return -EINVAL;
+ 
+-	fa = p->sym_val_to_name[SYM_COMMONS];
+-	if (flex_array_put_ptr(fa, comdatum->value - 1, key,
+-			       GFP_KERNEL | __GFP_ZERO))
+-		BUG();
++	p->sym_val_to_name[SYM_COMMONS][comdatum->value - 1] = key;
++
+ 	return 0;
+ }
+ 
+@@ -359,16 +355,13 @@ static int class_index(void *key, void *datum, void *datap)
+ {
+ 	struct policydb *p;
+ 	struct class_datum *cladatum;
+-	struct flex_array *fa;
+ 
+ 	cladatum = datum;
+ 	p = datap;
+ 	if (!cladatum->value || cladatum->value > p->p_classes.nprim)
+ 		return -EINVAL;
+-	fa = p->sym_val_to_name[SYM_CLASSES];
+-	if (flex_array_put_ptr(fa, cladatum->value - 1, key,
+-			       GFP_KERNEL | __GFP_ZERO))
+-		BUG();
++
++	p->sym_val_to_name[SYM_CLASSES][cladatum->value - 1] = key;
+ 	p->class_val_to_struct[cladatum->value - 1] = cladatum;
+ 	return 0;
+ }
+@@ -377,7 +370,6 @@ static int role_index(void *key, void *datum, void *datap)
+ {
+ 	struct policydb *p;
+ 	struct role_datum *role;
+-	struct flex_array *fa;
+ 
+ 	role = datum;
+ 	p = datap;
+@@ -386,10 +378,7 @@ static int role_index(void *key, void *datum, void *datap)
+ 	    || role->bounds > p->p_roles.nprim)
+ 		return -EINVAL;
+ 
+-	fa = p->sym_val_to_name[SYM_ROLES];
+-	if (flex_array_put_ptr(fa, role->value - 1, key,
+-			       GFP_KERNEL | __GFP_ZERO))
+-		BUG();
++	p->sym_val_to_name[SYM_ROLES][role->value - 1] = key;
+ 	p->role_val_to_struct[role->value - 1] = role;
+ 	return 0;
+ }
+@@ -398,7 +387,6 @@ static int type_index(void *key, void *datum, void *datap)
+ {
+ 	struct policydb *p;
+ 	struct type_datum *typdatum;
+-	struct flex_array *fa;
+ 
+ 	typdatum = datum;
+ 	p = datap;
+@@ -408,15 +396,8 @@ static int type_index(void *key, void *datum, void *datap)
+ 		    || typdatum->value > p->p_types.nprim
+ 		    || typdatum->bounds > p->p_types.nprim)
+ 			return -EINVAL;
+-		fa = p->sym_val_to_name[SYM_TYPES];
+-		if (flex_array_put_ptr(fa, typdatum->value - 1, key,
+-				       GFP_KERNEL | __GFP_ZERO))
+-			BUG();
+-
+-		fa = p->type_val_to_struct_array;
+-		if (flex_array_put_ptr(fa, typdatum->value - 1, typdatum,
+-				       GFP_KERNEL | __GFP_ZERO))
+-			BUG();
++		p->sym_val_to_name[SYM_TYPES][typdatum->value - 1] = key;
++		p->type_val_to_struct_array[typdatum->value - 1] = typdatum;
+ 	}
+ 
+ 	return 0;
+@@ -426,7 +407,6 @@ static int user_index(void *key, void *datum, void *datap)
+ {
+ 	struct policydb *p;
+ 	struct user_datum *usrdatum;
+-	struct flex_array *fa;
+ 
+ 	usrdatum = datum;
+ 	p = datap;
+@@ -435,10 +415,7 @@ static int user_index(void *key, void *datum, void *datap)
+ 	    || usrdatum->bounds > p->p_users.nprim)
+ 		return -EINVAL;
+ 
+-	fa = p->sym_val_to_name[SYM_USERS];
+-	if (flex_array_put_ptr(fa, usrdatum->value - 1, key,
+-			       GFP_KERNEL | __GFP_ZERO))
+-		BUG();
++	p->sym_val_to_name[SYM_USERS][usrdatum->value - 1] = key;
+ 	p->user_val_to_struct[usrdatum->value - 1] = usrdatum;
+ 	return 0;
+ }
+@@ -447,7 +424,6 @@ static int sens_index(void *key, void *datum, void *datap)
+ {
+ 	struct policydb *p;
+ 	struct level_datum *levdatum;
+-	struct flex_array *fa;
+ 
+ 	levdatum = datum;
+ 	p = datap;
+@@ -456,10 +432,8 @@ static int sens_index(void *key, void *datum, void *datap)
+ 		if (!levdatum->level->sens ||
+ 		    levdatum->level->sens > p->p_levels.nprim)
+ 			return -EINVAL;
+-		fa = p->sym_val_to_name[SYM_LEVELS];
+-		if (flex_array_put_ptr(fa, levdatum->level->sens - 1, key,
+-				       GFP_KERNEL | __GFP_ZERO))
+-			BUG();
++
++		p->sym_val_to_name[SYM_LEVELS][levdatum->level->sens - 1] = key;
+ 	}
+ 
+ 	return 0;
+@@ -469,7 +443,6 @@ static int cat_index(void *key, void *datum, void *datap)
+ {
+ 	struct policydb *p;
+ 	struct cat_datum *catdatum;
+-	struct flex_array *fa;
+ 
+ 	catdatum = datum;
+ 	p = datap;
+@@ -477,10 +450,8 @@ static int cat_index(void *key, void *datum, void *datap)
+ 	if (!catdatum->isalias) {
+ 		if (!catdatum->value || catdatum->value > p->p_cats.nprim)
+ 			return -EINVAL;
+-		fa = p->sym_val_to_name[SYM_CATS];
+-		if (flex_array_put_ptr(fa, catdatum->value - 1, key,
+-				       GFP_KERNEL | __GFP_ZERO))
+-			BUG();
++
++		p->sym_val_to_name[SYM_CATS][catdatum->value - 1] = key;
+ 	}
+ 
+ 	return 0;
+@@ -566,35 +537,23 @@ static int policydb_index(struct policydb *p)
+ 	if (!p->user_val_to_struct)
+ 		return -ENOMEM;
+ 
+-	/* Yes, I want the sizeof the pointer, not the structure */
+-	p->type_val_to_struct_array = flex_array_alloc(sizeof(struct type_datum *),
+-						       p->p_types.nprim,
+-						       GFP_KERNEL | __GFP_ZERO);
++	p->type_val_to_struct_array = kvcalloc(p->p_types.nprim,
++					       sizeof(*p->type_val_to_struct_array),
++					       GFP_KERNEL);
+ 	if (!p->type_val_to_struct_array)
+ 		return -ENOMEM;
+ 
+-	rc = flex_array_prealloc(p->type_val_to_struct_array, 0,
+-				 p->p_types.nprim, GFP_KERNEL | __GFP_ZERO);
+-	if (rc)
+-		goto out;
+-
+ 	rc = cond_init_bool_indexes(p);
+ 	if (rc)
+ 		goto out;
+ 
+ 	for (i = 0; i < SYM_NUM; i++) {
+-		p->sym_val_to_name[i] = flex_array_alloc(sizeof(char *),
+-							 p->symtab[i].nprim,
+-							 GFP_KERNEL | __GFP_ZERO);
++		p->sym_val_to_name[i] = kvcalloc(p->symtab[i].nprim,
++						 sizeof(char *),
++						 GFP_KERNEL);
+ 		if (!p->sym_val_to_name[i])
+ 			return -ENOMEM;
+ 
+-		rc = flex_array_prealloc(p->sym_val_to_name[i],
+-					 0, p->symtab[i].nprim,
+-					 GFP_KERNEL | __GFP_ZERO);
+-		if (rc)
+-			goto out;
+-
+ 		rc = hashtab_map(p->symtab[i].table, index_f[i], p);
+ 		if (rc)
+ 			goto out;
+@@ -807,16 +766,13 @@ void policydb_destroy(struct policydb *p)
+ 		hashtab_destroy(p->symtab[i].table);
+ 	}
+ 
+-	for (i = 0; i < SYM_NUM; i++) {
+-		if (p->sym_val_to_name[i])
+-			flex_array_free(p->sym_val_to_name[i]);
+-	}
++	for (i = 0; i < SYM_NUM; i++)
++		kvfree(p->sym_val_to_name[i]);
+ 
+ 	kfree(p->class_val_to_struct);
+ 	kfree(p->role_val_to_struct);
+ 	kfree(p->user_val_to_struct);
+-	if (p->type_val_to_struct_array)
+-		flex_array_free(p->type_val_to_struct_array);
++	kvfree(p->type_val_to_struct_array);
+ 
+ 	avtab_destroy(&p->te_avtab);
+ 
+@@ -869,17 +825,9 @@ void policydb_destroy(struct policydb *p)
+ 	hashtab_map(p->range_tr, range_tr_destroy, NULL);
+ 	hashtab_destroy(p->range_tr);
+ 
+-	if (p->type_attr_map_array) {
+-		for (i = 0; i < p->p_types.nprim; i++) {
+-			struct ebitmap *e;
+-
+-			e = flex_array_get(p->type_attr_map_array, i);
+-			if (!e)
+-				continue;
+-			ebitmap_destroy(e);
+-		}
+-		flex_array_free(p->type_attr_map_array);
+-	}
++	for (i = 0; i < p->p_types.nprim; i++)
++		ebitmap_destroy(&p->type_attr_map_array[i]);
++	kvfree(p->type_attr_map_array);
+ 
+ 	ebitmap_destroy(&p->filename_trans_ttypes);
+ 	ebitmap_destroy(&p->policycaps);
+@@ -1760,8 +1708,7 @@ static int type_bounds_sanity_check(void *key, void *datum, void *datap)
+ 			return -EINVAL;
+ 		}
+ 
+-		upper = flex_array_get_ptr(p->type_val_to_struct_array,
+-					   upper->bounds - 1);
++		upper = p->type_val_to_struct_array[upper->bounds - 1];
+ 		BUG_ON(!upper);
+ 
+ 		if (upper->attribute) {
+@@ -2518,23 +2465,15 @@ int policydb_read(struct policydb *p, void *fp)
+ 	if (rc)
+ 		goto bad;
+ 
+-	rc = -ENOMEM;
+-	p->type_attr_map_array = flex_array_alloc(sizeof(struct ebitmap),
+-						  p->p_types.nprim,
+-						  GFP_KERNEL | __GFP_ZERO);
++	p->type_attr_map_array = kvcalloc(p->p_types.nprim,
++					  sizeof(*p->type_attr_map_array),
++					  GFP_KERNEL);
+ 	if (!p->type_attr_map_array)
+ 		goto bad;
+ 
+-	/* preallocate so we don't have to worry about the put ever failing */
+-	rc = flex_array_prealloc(p->type_attr_map_array, 0, p->p_types.nprim,
+-				 GFP_KERNEL | __GFP_ZERO);
+-	if (rc)
+-		goto bad;
+-
+ 	for (i = 0; i < p->p_types.nprim; i++) {
+-		struct ebitmap *e = flex_array_get(p->type_attr_map_array, i);
++		struct ebitmap *e = &p->type_attr_map_array[i];
+ 
+-		BUG_ON(!e);
+ 		ebitmap_init(e);
+ 		if (p->policyvers >= POLICYDB_VERSION_AVTAB) {
+ 			rc = ebitmap_read(e, fp);
+@@ -3523,9 +3462,8 @@ int policydb_write(struct policydb *p, void *fp)
+ 		return rc;
+ 
+ 	for (i = 0; i < p->p_types.nprim; i++) {
+-		struct ebitmap *e = flex_array_get(p->type_attr_map_array, i);
++		struct ebitmap *e = &p->type_attr_map_array[i];
+ 
+-		BUG_ON(!e);
+ 		rc = ebitmap_write(e, fp);
+ 		if (rc)
+ 			return rc;
+diff --git a/security/selinux/ss/policydb.h b/security/selinux/ss/policydb.h
+index 215f8f30ac..27039149ff 100644
+--- a/security/selinux/ss/policydb.h
++++ b/security/selinux/ss/policydb.h
+@@ -24,8 +24,6 @@
+ #ifndef _SS_POLICYDB_H_
+ #define _SS_POLICYDB_H_
+ 
+-#include <linux/flex_array.h>
+-
+ #include "symtab.h"
+ #include "avtab.h"
+ #include "sidtab.h"
+@@ -251,13 +249,13 @@ struct policydb {
+ #define p_cats symtab[SYM_CATS]
+ 
+ 	/* symbol names indexed by (value - 1) */
+-	struct flex_array *sym_val_to_name[SYM_NUM];
++	char		**sym_val_to_name[SYM_NUM];
+ 
+ 	/* class, role, and user attributes indexed by (value - 1) */
+ 	struct class_datum **class_val_to_struct;
+ 	struct role_datum **role_val_to_struct;
+ 	struct user_datum **user_val_to_struct;
+-	struct flex_array *type_val_to_struct_array;
++	struct type_datum **type_val_to_struct_array;
+ 
+ 	/* type enforcement access vectors and transitions */
+ 	struct avtab te_avtab;
+@@ -294,7 +292,7 @@ struct policydb {
+ 	struct hashtab *range_tr;
+ 
+ 	/* type -> attribute reverse mapping */
+-	struct flex_array *type_attr_map_array;
++	struct ebitmap *type_attr_map_array;
+ 
+ 	struct ebitmap policycaps;
+ 
+@@ -369,9 +367,7 @@ static inline int put_entry(const void *buf, size_t bytes, int num, struct polic
+ 
+ static inline char *sym_name(struct policydb *p, unsigned int sym_num, unsigned int element_nr)
+ {
+-	struct flex_array *fa = p->sym_val_to_name[sym_num];
+-
+-	return flex_array_get_ptr(fa, element_nr);
++	return p->sym_val_to_name[sym_num][element_nr];
+ }
+ 
+ extern u16 string_to_security_class(struct policydb *p, const char *name);
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index dd2ceec06f..16b0af5086 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -50,7 +50,6 @@
+ #include <linux/audit.h>
+ #include <linux/mutex.h>
+ #include <linux/selinux.h>
+-#include <linux/flex_array.h>
+ #include <linux/vmalloc.h>
+ #include <net/netlabel.h>
+ 
+@@ -548,15 +547,13 @@ static void type_attribute_bounds_av(struct policydb *policydb,
+ 	struct type_datum *target;
+ 	u32 masked = 0;
+ 
+-	source = flex_array_get_ptr(policydb->type_val_to_struct_array,
+-				    scontext->type - 1);
++	source = policydb->type_val_to_struct_array[scontext->type - 1];
+ 	BUG_ON(!source);
+ 
+ 	if (!source->bounds)
+ 		return;
+ 
+-	target = flex_array_get_ptr(policydb->type_val_to_struct_array,
+-				    tcontext->type - 1);
++	target = policydb->type_val_to_struct_array[tcontext->type - 1];
+ 	BUG_ON(!target);
+ 
+ 	memset(&lo_avd, 0, sizeof(lo_avd));
+@@ -656,11 +653,9 @@ static void context_struct_compute_av(struct policydb *policydb,
+ 	 */
+ 	avkey.target_class = tclass;
+ 	avkey.specified = AVTAB_AV | AVTAB_XPERMS;
+-	sattr = flex_array_get(policydb->type_attr_map_array,
+-			       scontext->type - 1);
++	sattr = &policydb->type_attr_map_array[scontext->type - 1];
+ 	BUG_ON(!sattr);
+-	tattr = flex_array_get(policydb->type_attr_map_array,
+-			       tcontext->type - 1);
++	tattr = &policydb->type_attr_map_array[tcontext->type - 1];
+ 	BUG_ON(!tattr);
+ 	ebitmap_for_each_positive_bit(sattr, snode, i) {
+ 		ebitmap_for_each_positive_bit(tattr, tnode, j) {
+@@ -903,8 +898,7 @@ int security_bounded_transition(struct selinux_state *state,
+ 
+ 	index = new_context->type;
+ 	while (true) {
+-		type = flex_array_get_ptr(policydb->type_val_to_struct_array,
+-					  index - 1);
++		type = policydb->type_val_to_struct_array[index - 1];
+ 		BUG_ON(!type);
+ 
+ 		/* not bounded anymore */
+@@ -1067,11 +1061,9 @@ void security_compute_xperms_decision(struct selinux_state *state,
+ 
+ 	avkey.target_class = tclass;
+ 	avkey.specified = AVTAB_XPERMS;
+-	sattr = flex_array_get(policydb->type_attr_map_array,
+-				scontext->type - 1);
++	sattr = &policydb->type_attr_map_array[scontext->type - 1];
+ 	BUG_ON(!sattr);
+-	tattr = flex_array_get(policydb->type_attr_map_array,
+-				tcontext->type - 1);
++	tattr = &policydb->type_attr_map_array[tcontext->type - 1];
+ 	BUG_ON(!tattr);
+ 	ebitmap_for_each_positive_bit(sattr, snode, i) {
+ 		ebitmap_for_each_positive_bit(tattr, tnode, j) {
+-- 
+2.19.0.rc2
