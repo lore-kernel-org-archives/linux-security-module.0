@@ -1,146 +1,151 @@
-From: alison.schofield@intel.com (Alison Schofield)
-Date: Fri, 7 Sep 2018 15:39:04 -0700
-Subject: [RFC 12/12] keys/mktme: Do not revoke in use memory encryption keys
-In-Reply-To: <cover.1536356108.git.alison.schofield@intel.com>
-References: <cover.1536356108.git.alison.schofield@intel.com>
-Message-ID: <e8f43039bf904d0547a9fdc1f6da515747305a59.1536356108.git.alison.schofield@intel.com>
+From: tonyj@suse.de (Tony Jones)
+Date: Fri, 7 Sep 2018 16:53:31 -0700
+Subject: [PATCH] apparmor: Fix network performance issue in
+	aa_label_sk_perm
+In-Reply-To: <c7676cd4-6ffe-0c6d-8d77-3fd20d692254@canonical.com>
+References: <20180907043357.4638-1-tonyj@suse.de>
+	<c7676cd4-6ffe-0c6d-8d77-3fd20d692254@canonical.com>
+Message-ID: <6d1908de-aa62-dc63-cc60-8883358d257c@suse.de>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The MKTME key service maps userspace keys to hardware keyids. Those
-keys are used in a new system call that encrypts memory. The keys
-need to be tightly controlled. One example is that userspace keys
-should not be revoked while the hardware keyid slot is still in use.
+On 09/07/2018 09:37 AM, John Johansen wrote:
 
-The KEY_FLAG_KEEP bit offers good control. The mktme service uses
-that flag to prevent userspace keys from going away without proper
-synchronization with the mktme service type.
+> hey Tony,
+> 
+> thanks for the patch, I am curious did you're investigation look
+> into what parts of DEFINE_AUDIT_SK are causing the issue?
 
-The problem is that we need a safe and synchronous way to revoke keys.
-The way .revoke methods function now, the key service type is called late
-in the revoke process for cleanup after the fact. The mktme key service
-has no means to consider and perhaps reject the revoke request.
+Hi JJ.
 
-This proposal inserts the MKTME revoke call earlier into the existing
-keyctl <revoke> path. If it is safe to revoke the key, MKTME key service
-will turn off KEY_FLAG_KEEP and let the revoke continue and succeed.
-Otherwise, not safe, KEY_FLAG_KEEP stays on, which causes the normal
-path of revoke to fail.
+Attached are the perf annotations for DEFINE_AUDIT_SK (percentages are relative to the fn).   
+Our kernel performance testing is carried out with default installs which means AppArmor 
+is enabled but the performance tests are unconfined. It was obvious that the overhead of 
+DEFINE_AUDIT_SK was significant for smaller packet sizes (typical of synthetic benchmarks) 
+and that it didn't need to execute for the unconfined case,  hence the patch.  I didn't 
+spend any time looking at the performance of confined tasks.  It may be worth your time to 
+look at this.
 
-For the MKTME Key Service, a revoke may be done safely when there are
-no outstanding memory mappings encrypted with the key being revoked.
+Comparing my current tip (2601dd392dd1) to tip+patch I'm seeing an increase of 3-6% in netperf
+throughput for packet sizes 64-1024.
 
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
----
- security/keys/internal.h   |  6 ++++++
- security/keys/keyctl.c     |  7 +++++++
- security/keys/mktme_keys.c | 47 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 60 insertions(+)
+HTH
 
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 9f8208dc0e55..9fb871522efe 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -316,4 +316,10 @@ static inline void key_check(const struct key *key)
- 
- #endif
- 
-+#ifdef CONFIG_MKTME_KEYS
-+extern void mktme_revoke_key(struct key *key);
-+#else
-+static inline void mktme_revoke_key(struct key *key) {}
-+#endif /* CONFIG_MKTME_KEYS */
-+
- #endif /* _INTERNAL_H */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 1ffe60bb2845..86d2596ff275 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -363,6 +363,9 @@ long keyctl_update_key(key_serial_t id,
-  * and any links to the key will be automatically garbage collected after a
-  * certain amount of time (/proc/sys/kernel/keys/gc_delay).
-  *
-+ * The MKTME key service type checks if a memory encryption key is in use
-+ * before allowing a revoke to proceed.
-+ *
-  * Keys with KEY_FLAG_KEEP set should not be revoked.
-  *
-  * If successful, 0 is returned.
-@@ -387,6 +390,10 @@ long keyctl_revoke_key(key_serial_t id)
- 
- 	key = key_ref_to_ptr(key_ref);
- 	ret = 0;
-+
-+	if (strcmp(key->type->name, "mktme") == 0)
-+		mktme_revoke_key(key);
-+
- 	if (test_bit(KEY_FLAG_KEEP, &key->flags))
- 		ret = -EPERM;
- 	else
-diff --git a/security/keys/mktme_keys.c b/security/keys/mktme_keys.c
-index dcbce7194647..c665be860538 100644
---- a/security/keys/mktme_keys.c
-+++ b/security/keys/mktme_keys.c
-@@ -31,6 +31,52 @@ static const char * const mktme_program_err[] = {
- 	"Failure to access key table",		/* 5 */
- };
- 
-+static int mktme_clear_programmed_key(int keyid)
-+{
-+	struct mktme_key_program *kprog = NULL;
-+	int ret;
-+
-+	kprog = kmem_cache_zalloc(mktme_prog_cache, GFP_KERNEL);
-+	if (!kprog)
-+		return -ENOMEM;
-+
-+	kprog->keyid = keyid;
-+	kprog->keyid_ctrl = MKTME_KEYID_CLEAR_KEY;
-+	ret = mktme_key_program(kprog, mktme_cpumask);
-+	if (ret == MKTME_PROG_SUCCESS)
-+		mktme_map_clear_keyid(keyid);
-+	else
-+		pr_debug("mktme: %s [%d]\n", mktme_program_err[ret], ret);
-+
-+	kmem_cache_free(mktme_prog_cache, kprog);
-+	return ret;
-+}
-+
-+/*
-+ * If the key is not in use, clear the hardware programming and
-+ * allow the revoke to continue by clearing KEY_FLAG_KEEP.
-+ */
-+void mktme_revoke_key(struct key *key)
-+{
-+	int keyid, vma_count;
-+
-+	mktme_map_lock();
-+	keyid = mktme_map_keyid_from_serial(key->serial);
-+	if (keyid <= 0)
-+		goto out;
-+
-+	vma_count = vma_read_encrypt_ref(keyid);
-+	if (vma_count > 0) {
-+		pr_debug("mktme not freeing keyid[%d] encrypt_count[%d]\n",
-+			 keyid, vma_count);
-+		goto out;
-+	}
-+	if (!mktme_clear_programmed_key(keyid))
-+		clear_bit(KEY_FLAG_KEEP, &key->flags);
-+out:
-+	mktme_map_unlock();
-+}
-+
- /* If a key is available, program and add the key to the software map. */
- static int mktme_program_key(key_serial_t serial,
- 			     struct mktme_key_program *kprog)
-@@ -193,6 +239,7 @@ int mktme_instantiate(struct key *key, struct key_preparsed_payload *prep)
- 
- 	mktme_map_lock();
- 	ret = mktme_program_key(key->serial, kprog);
-+	set_bit(KEY_FLAG_KEEP, &key->flags);
- 	mktme_map_unlock();
- out:
- 	kzfree(options);
--- 
-2.14.1
+Tony
+
+ Percent |	Source code & Disassembly of vmlinux for cycles:ppp (117 samples)
+---------------------------------------------------------------------------------
+         :
+         :
+         :
+         :                      Disassembly of section .text:
+         :
+         :                      ffffffff813fbec0 <aa_label_sk_perm>:
+         :                      aa_label_sk_perm():
+         :                                                                 type));
+         :                      }
+         :
+         :                      static int aa_label_sk_perm(struct aa_label *label, const char *op, u32 request,
+         :                                                  struct sock *sk)
+         :                      {
+    0.00 :   ffffffff813fbec0:       callq  ffffffff81a017f0 <__fentry__>
+    2.56 :   ffffffff813fbec5:       push   %r14
+    0.00 :   ffffffff813fbec7:       mov    %rcx,%r14
+         :                              struct aa_profile *profile;
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbeca:       mov    $0x7,%ecx
+         :                      {
+    0.00 :   ffffffff813fbecf:       push   %r13
+    3.42 :   ffffffff813fbed1:       mov    %edx,%r13d
+    0.00 :   ffffffff813fbed4:       push   %r12
+    0.00 :   ffffffff813fbed6:       push   %rbp
+    0.00 :   ffffffff813fbed7:       mov    %rdi,%rbp
+    5.13 :   ffffffff813fbeda:       push   %rbx
+    0.00 :   ffffffff813fbedb:       sub    $0xb8,%rsp
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbee2:       movzwl 0x10(%r14),%r9d
+         :                      {
+    1.71 :   ffffffff813fbee7:       mov    %gs:0x28,%rax
+    0.00 :   ffffffff813fbef0:       mov    %rax,0xb0(%rsp)
+    0.00 :   ffffffff813fbef8:       xor    %eax,%eax
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbefa:       lea    0x78(%rsp),%rdx
+    1.71 :   ffffffff813fbeff:       lea    0x20(%rsp),%r8
+    0.00 :   ffffffff813fbf04:       movq   $0x0,(%rsp)
+    0.00 :   ffffffff813fbf0c:       movq   $0x0,0x10(%rsp)
+    0.00 :   ffffffff813fbf15:       mov    %rdx,%rdi
+   14.53 :   ffffffff813fbf18:       rep stos %rax,%es:(%rdi)
+    1.71 :   ffffffff813fbf1b:       mov    $0xb,%ecx
+    0.00 :   ffffffff813fbf20:       mov    %r8,%rdi
+    0.00 :   ffffffff813fbf23:       mov    %r14,0x80(%rsp)
+   18.80 :   ffffffff813fbf2b:       rep stos %rax,%es:(%rdi)
+    0.00 :   ffffffff813fbf2e:       mov    %rsi,0x28(%rsp)
+    1.71 :   ffffffff813fbf33:       mov    %r9w,0x88(%rsp)
+    0.00 :   ffffffff813fbf3c:       cmp    $0x1,%r9w
+    0.00 :   ffffffff813fbf41:       je     ffffffff813fbfa1 <aa_label_sk_perm+0xe1>
+    0.00 :   ffffffff813fbf43:       mov    $0x2,%eax
+    0.00 :   ffffffff813fbf48:       test   %r14,%r14
+    0.00 :   ffffffff813fbf4b:       je     ffffffff813fbfa1 <aa_label_sk_perm+0xe1>
+   14.53 :   ffffffff813fbf4d:       mov    %al,(%rsp)
+    0.00 :   ffffffff813fbf50:       movzwl 0x1ea(%r14),%eax
+         :                              AA_BUG(!sk);
+         :
+         :                              if (unconfined(label))
+         :                                      return 0;
+         :
+         :                              return fn_for_each_confined(label, profile,
+    0.00 :   ffffffff813fbf58:       xor    %r12d,%r12d
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbf5b:       mov    %r8,0x18(%rsp)
+    8.55 :   ffffffff813fbf60:       mov    %eax,0x58(%rsp)
+    0.00 :   ffffffff813fbf64:       movzbl 0x1e9(%r14),%eax
+    0.00 :   ffffffff813fbf6c:       mov    %rdx,0x8(%rsp)
+    0.00 :   ffffffff813fbf71:       mov    %eax,0x5c(%rsp)
+         :                              if (unconfined(label))
+    8.55 :   ffffffff813fbf75:       testb  $0x2,0x40(%rbp)
+    0.00 :   ffffffff813fbf79:       je     ffffffff813fbfa8 <aa_label_sk_perm+0xe8>
+         :                                              aa_profile_af_sk_perm(profile, &sa, request, sk));
+         :                      }
+    0.00 :   ffffffff813fbf7b:       mov    0xb0(%rsp),%rdx
+    0.00 :   ffffffff813fbf83:       xor    %gs:0x28,%rdx
+    4.27 :   ffffffff813fbf8c:       mov    %r12d,%eax
+    0.00 :   ffffffff813fbf8f:       jne    ffffffff813fbfe5 <aa_label_sk_perm+0x125>
+    0.00 :   ffffffff813fbf91:       add    $0xb8,%rsp
+    0.00 :   ffffffff813fbf98:       pop    %rbx
+    5.13 :   ffffffff813fbf99:       pop    %rbp
+    0.00 :   ffffffff813fbf9a:       pop    %r12
+    0.00 :   ffffffff813fbf9c:       pop    %r13
+    0.00 :   ffffffff813fbf9e:       pop    %r14
+    7.69 :   ffffffff813fbfa0:       retq
+         :                              DEFINE_AUDIT_SK(sa, op, sk);
+    0.00 :   ffffffff813fbfa1:       mov    $0x7,%eax
+    0.00 :   ffffffff813fbfa6:       jmp    ffffffff813fbf4d <aa_label_sk_perm+0x8d>
+         :                              return fn_for_each_confined(label, profile,
+    0.00 :   ffffffff813fbfa8:       xor    %esi,%esi
+    0.00 :   ffffffff813fbfaa:       jmp    ffffffff813fbfcd <aa_label_sk_perm+0x10d>
+         :                      aa_profile_af_sk_perm():
+         :                      static inline int aa_profile_af_sk_perm(struct aa_profile *profile,
+         :                                                              struct common_audit_data *sa,
+         :                                                              u32 request,
+         :                                                              struct sock *sk)
+         :                      {
+         :                              return aa_profile_af_perm(profile, sa, request, sk->sk_family,
+    0.00 :   ffffffff813fbfac:       movzwl 0x10(%r14),%ecx
+    0.00 :   ffffffff813fbfb1:       movzwl 0x1ea(%r14),%r8d
+    0.00 :   ffffffff813fbfb9:       mov    %rsp,%rsi
+    0.00 :   ffffffff813fbfbc:       mov    %r13d,%edx
+    0.00 :   ffffffff813fbfbf:       callq  ffffffff813fbdf0 <aa_profile_af_perm>
+         :                      aa_label_sk_perm():
+    0.00 :   ffffffff813fbfc4:       lea    0x1(%rbx),%esi
+    0.00 :   ffffffff813fbfc7:       test   %eax,%eax
+    0.00 :   ffffffff813fbfc9:       cmovne %eax,%r12d
+    0.00 :   ffffffff813fbfcd:       mov    %rbp,%rdi
+    0.00 :   ffffffff813fbfd0:       callq  ffffffff813f7310 <aa_label_next_confined>
+    0.00 :   ffffffff813fbfd5:       mov    %eax,%ebx
+    0.00 :   ffffffff813fbfd7:       cltq
+    0.00 :   ffffffff813fbfd9:       mov    0x50(%rbp,%rax,8),%rdi
+    0.00 :   ffffffff813fbfde:       test   %rdi,%rdi
+    0.00 :   ffffffff813fbfe1:       jne    ffffffff813fbfac <aa_label_sk_perm+0xec>
+    0.00 :   ffffffff813fbfe3:       jmp    ffffffff813fbf7b <aa_label_sk_perm+0xbb>
+         :                      }
+    0.00 :   ffffffff813fbfe5:       callq  ffffffff81090d60 <__stack_chk_fail>
