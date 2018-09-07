@@ -1,23 +1,24 @@
-From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
-Date: Sat, 8 Sep 2018 02:08:03 +0900
-Subject: [PATCH 3/6] selinux: convert to kvmalloc
-In-Reply-To: <20180907165635.8469-4-kent.overstreet@gmail.com>
-References: <20180907165635.8469-1-kent.overstreet@gmail.com>
-	<20180907165635.8469-4-kent.overstreet@gmail.com>
-Message-ID: <89c167ff-91d3-7a27-78c6-82710bb11771@I-love.SAKURA.ne.jp>
+From: marcel@holtmann.org (Marcel Holtmann)
+Date: Fri, 7 Sep 2018 19:31:36 +0200
+Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
+In-Reply-To: <alpine.LRH.2.21.1809061007140.23269@namei.org>
+References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
+	<alpine.LRH.2.21.1809061007140.23269@namei.org>
+Message-ID: <25C89575-D4E9-48FB-BEC9-383B09F32E44@holtmann.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2018/09/08 1:56, Kent Overstreet wrote:
-> @@ -329,8 +328,7 @@ int avtab_alloc(struct avtab *h, u32 nrules)
->  		nslot = MAX_AVTAB_HASH_BUCKETS;
->  	mask = nslot - 1;
->  
-> -	h->htable = flex_array_alloc(sizeof(struct avtab_node *), nslot,
-> -				     GFP_KERNEL | __GFP_ZERO);
-> +	h->htable = kvmalloc_array(nslot, sizeof(void *), GFP_KERNEL);
->  	if (!h->htable)
->  		return -ENOMEM;
->  
+Hi James,
 
-kvmalloc_array() does not imply __GFP_ZERO.
+>> Here's a set of patches that does the following, if you could pull it please:
+> 
+> Thanks, it would be good to see more review / acks, though.
+
+so I have reviewed and tested this code. In addition, we have test cases for it in ELL (embedded linux library).
+
+Tested-by: Marcel Holtmann <marcel@holtmann.org>
+Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
+
+Regards
+
+Marcel
