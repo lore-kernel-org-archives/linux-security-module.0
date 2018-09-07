@@ -1,72 +1,68 @@
 From: alison.schofield@intel.com (Alison Schofield)
-Date: Fri, 7 Sep 2018 15:23:24 -0700
-Subject: [RFC 00/12] Multi-Key Total Memory Encryption API (MKTME)
-Message-ID: <cover.1536356108.git.alison.schofield@intel.com>
+Date: Fri, 7 Sep 2018 15:34:26 -0700
+Subject: [RFC 02/12] mm: Generalize the mprotect implementation to support
+	extensions
+In-Reply-To: <cover.1536356108.git.alison.schofield@intel.com>
+References: <cover.1536356108.git.alison.schofield@intel.com>
+Message-ID: <2dcbb08ed8804e02538a73ee05a4283c54180e36.1536356108.git.alison.schofield@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Seeking comments on the APIs supporting MKTME on future Intel platforms.
+Today mprotect is implemented to support legacy mprotect behavior
+plus an extension for memory protection keys. Make it more generic
+so that it can support additional extensions in the future.
 
-MKTME (Multi-Key Total Memory Encryption) is a technology supporting
-memory encryption on upcoming Intel platforms. Whereas TME allows
-encryption of the entire system memory using a single key, MKTME
-allows mulitple encryption domains, each having their own key. While 
-the main use case for the feature is virtual machine isolation, the
-API needs the flexibility to work for a wide range of use cases.
+This is done is preparation for adding a new system call for memory
+encyption keys. The intent is that the new encrypted mprotect will be
+another extension to legacy mprotect.
 
-This RFC presents the 2 API additions that enable userspace to:
- 1) Create Encryption Keys: Kernel Key Service type "mktme"
- 2) Use the Encryption Keys: system call encrypt_mprotect()
+Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+---
+ mm/mprotect.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-In order to share between: the Kernel Key Service, the new system call,
-and the existing mm code, helper functions were created in arch/x86/mktme
-
-This patchset is built upon Kirill Shutemov's patchset for the core MKTME
-support. You can find that here:
-git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git mktme/wip
-
-
-Alison Schofield (12):
-  docs/x86: Document the Multi-Key Total Memory Encryption API
-  mm: Generalize the mprotect implementation to support extensions
-  syscall/x86: Wire up a new system call for memory encryption keys
-  x86/mm: Add helper functions to manage memory encryption keys
-  x86/mm: Add a helper function to set keyid bits in encrypted VMA's
-  mm: Add the encrypt_mprotect() system call
-  x86/mm: Add helper functions to track encrypted VMA's
-  mm: Track VMA's in use for each memory encryption keyid
-  mm: Restrict memory encryption to anonymous VMA's
-  x86/pconfig: Program memory encryption keys on a system-wide basis
-  keys/mktme: Add a new key service type for memory encryption keys
-  keys/mktme: Do not revoke in use memory encryption keys
-
- Documentation/x86/mktme-keys.txt       | 153 ++++++++++++++++
- arch/x86/Kconfig                       |   1 +
- arch/x86/entry/syscalls/syscall_32.tbl |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl |   1 +
- arch/x86/include/asm/intel_pconfig.h   |  42 ++++-
- arch/x86/include/asm/mktme.h           |  21 +++
- arch/x86/mm/mktme.c                    | 141 ++++++++++++++
- fs/exec.c                              |   4 +-
- include/keys/mktme-type.h              |  28 +++
- include/linux/key.h                    |   2 +
- include/linux/mm.h                     |   9 +-
- include/linux/syscalls.h               |   2 +
- include/uapi/asm-generic/unistd.h      |   4 +-
- kernel/fork.c                          |   2 +
- kernel/sys_ni.c                        |   2 +
- mm/mmap.c                              |  12 ++
- mm/mprotect.c                          |  93 +++++++++-
- mm/nommu.c                             |   4 +
- security/keys/Kconfig                  |  11 ++
- security/keys/Makefile                 |   1 +
- security/keys/internal.h               |   6 +
- security/keys/keyctl.c                 |   7 +
- security/keys/mktme_keys.c             | 325 +++++++++++++++++++++++++++++++++
- 23 files changed, 855 insertions(+), 17 deletions(-)
- create mode 100644 Documentation/x86/mktme-keys.txt
- create mode 100644 include/keys/mktme-type.h
- create mode 100644 security/keys/mktme_keys.c
-
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index 68dc476310c0..56e64ef7931e 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -35,6 +35,8 @@
+ 
+ #include "internal.h"
+ 
++#define NO_PKEY  -1
++
+ static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 		unsigned long addr, unsigned long end, pgprot_t newprot,
+ 		int dirty_accountable, int prot_numa)
+@@ -402,9 +404,9 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+ }
+ 
+ /*
+- * pkey==-1 when doing a legacy mprotect()
++ * When pkey==NO_PKEY we get legacy mprotect behavior here.
+  */
+-static int do_mprotect_pkey(unsigned long start, size_t len,
++static int do_mprotect_ext(unsigned long start, size_t len,
+ 		unsigned long prot, int pkey)
+ {
+ 	unsigned long nstart, end, tmp, reqprot;
+@@ -528,7 +530,7 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
+ SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
+ 		unsigned long, prot)
+ {
+-	return do_mprotect_pkey(start, len, prot, -1);
++	return do_mprotect_ext(start, len, prot, NO_PKEY);
+ }
+ 
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+@@ -536,7 +538,7 @@ SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
+ SYSCALL_DEFINE4(pkey_mprotect, unsigned long, start, size_t, len,
+ 		unsigned long, prot, int, pkey)
+ {
+-	return do_mprotect_pkey(start, len, prot, pkey);
++	return do_mprotect_ext(start, len, prot, pkey);
+ }
+ 
+ SYSCALL_DEFINE2(pkey_alloc, unsigned long, flags, unsigned long, init_val)
 -- 
 2.14.1
