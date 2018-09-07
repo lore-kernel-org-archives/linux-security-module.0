@@ -1,29 +1,27 @@
-From: jmorris@namei.org (James Morris)
-Date: Sat, 8 Sep 2018 03:32:50 +1000 (AEST)
-Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
-In-Reply-To: <25C89575-D4E9-48FB-BEC9-383B09F32E44@holtmann.org>
-References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-	<alpine.LRH.2.21.1809061007140.23269@namei.org>
-	<25C89575-D4E9-48FB-BEC9-383B09F32E44@holtmann.org>
-Message-ID: <alpine.LRH.2.21.1809080332420.25924@namei.org>
+From: kent.overstreet@gmail.com (Kent Overstreet)
+Date: Fri, 7 Sep 2018 13:50:14 -0400
+Subject: [PATCH 3/6] selinux: convert to kvmalloc
+In-Reply-To: <89c167ff-91d3-7a27-78c6-82710bb11771@I-love.SAKURA.ne.jp>
+References: <20180907165635.8469-1-kent.overstreet@gmail.com>
+	<20180907165635.8469-4-kent.overstreet@gmail.com>
+	<89c167ff-91d3-7a27-78c6-82710bb11771@I-love.SAKURA.ne.jp>
+Message-ID: <20180907175014.GA29485@kmo-pixel>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 7 Sep 2018, Marcel Holtmann wrote:
-
-> Hi James,
+On Sat, Sep 08, 2018 at 02:08:03AM +0900, Tetsuo Handa wrote:
+> On 2018/09/08 1:56, Kent Overstreet wrote:
+> > @@ -329,8 +328,7 @@ int avtab_alloc(struct avtab *h, u32 nrules)
+> >  		nslot = MAX_AVTAB_HASH_BUCKETS;
+> >  	mask = nslot - 1;
+> >  
+> > -	h->htable = flex_array_alloc(sizeof(struct avtab_node *), nslot,
+> > -				     GFP_KERNEL | __GFP_ZERO);
+> > +	h->htable = kvmalloc_array(nslot, sizeof(void *), GFP_KERNEL);
+> >  	if (!h->htable)
+> >  		return -ENOMEM;
+> >  
 > 
-> >> Here's a set of patches that does the following, if you could pull it please:
-> > 
-> > Thanks, it would be good to see more review / acks, though.
-> 
-> so I have reviewed and tested this code. In addition, we have test cases for it in ELL (embedded linux library).
-> 
-> Tested-by: Marcel Holtmann <marcel@holtmann.org>
-> Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
+> kvmalloc_array() does not imply __GFP_ZERO.
 
-Thanks!
-
--- 
-James Morris
-<jmorris@namei.org>
+Thanks, fixed
