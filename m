@@ -1,10 +1,10 @@
 From: gregkh@linuxfoundation.org (Greg Kroah-Hartman)
-Date: Fri,  7 Sep 2018 23:10:12 +0200
-Subject: [PATCH 4.9 41/63] Replace magic for trusting the secondary keyring
-	with #define
+Date: Fri,  7 Sep 2018 23:10:13 +0200
+Subject: [PATCH 4.9 42/63] Fix kexec forbidding kernels signed with keys in
+	the secondary keyring to boot
 In-Reply-To: <20180907211012.965501324@linuxfoundation.org>
 References: <20180907211012.965501324@linuxfoundation.org>
-Message-ID: <20180907211015.234722958@linuxfoundation.org>
+Message-ID: <20180907211015.278423823@linuxfoundation.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
@@ -14,66 +14,37 @@ List-Id: linux-security-module.vger.kernel.org
 
 From: Yannik Sembritzki <yannik@sembritzki.me>
 
-commit 817aef260037f33ee0f44c17fe341323d3aebd6d upstream.
+commit ea93102f32244e3f45c8b26260be77ed0cc1d16c upstream.
 
-Replace the use of a magic number that indicates that verify_*_signature()
-should use the secondary keyring with a symbol.
+The split of .system_keyring into .builtin_trusted_keys and
+.secondary_trusted_keys broke kexec, thereby preventing kernels signed by
+keys which are now in the secondary keyring from being kexec'd.
 
+Fix this by passing VERIFY_USE_SECONDARY_KEYRING to
+verify_pefile_signature().
+
+Fixes: d3bfe84129f6 ("certs: Add a secondary system keyring that can be added to dynamically")
 Signed-off-by: Yannik Sembritzki <yannik@sembritzki.me>
 Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: kexec at lists.infradead.org
 Cc: keyrings at vger.kernel.org
 Cc: linux-security-module at vger.kernel.org
+Cc: stable at kernel.org
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- certs/system_keyring.c                  |    3 ++-
- crypto/asymmetric_keys/pkcs7_key_type.c |    2 +-
- include/linux/verification.h            |    6 ++++++
- 3 files changed, 9 insertions(+), 2 deletions(-)
+ arch/x86/kernel/kexec-bzimage64.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -14,6 +14,7 @@
- #include <linux/sched.h>
- #include <linux/cred.h>
- #include <linux/err.h>
-+#include <linux/verification.h>
- #include <keys/asymmetric-type.h>
- #include <keys/system_keyring.h>
- #include <crypto/pkcs7.h>
-@@ -207,7 +208,7 @@ int verify_pkcs7_signature(const void *d
- 
- 	if (!trusted_keys) {
- 		trusted_keys = builtin_trusted_keys;
--	} else if (trusted_keys == (void *)1UL) {
-+	} else if (trusted_keys == VERIFY_USE_SECONDARY_KEYRING) {
- #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
- 		trusted_keys = secondary_trusted_keys;
- #else
---- a/crypto/asymmetric_keys/pkcs7_key_type.c
-+++ b/crypto/asymmetric_keys/pkcs7_key_type.c
-@@ -62,7 +62,7 @@ static int pkcs7_preparse(struct key_pre
- 
- 	return verify_pkcs7_signature(NULL, 0,
- 				      prep->data, prep->datalen,
--				      (void *)1UL, usage,
-+				      VERIFY_USE_SECONDARY_KEYRING, usage,
- 				      pkcs7_view_content, prep);
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -529,7 +529,7 @@ static int bzImage64_cleanup(void *loade
+ static int bzImage64_verify_sig(const char *kernel, unsigned long kernel_len)
+ {
+ 	return verify_pefile_signature(kernel, kernel_len,
+-				       NULL,
++				       VERIFY_USE_SECONDARY_KEYRING,
+ 				       VERIFYING_KEXEC_PE_SIGNATURE);
  }
- 
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -13,6 +13,12 @@
- #define _LINUX_VERIFICATION_H
- 
- /*
-+ * Indicate that both builtin trusted keys and secondary trusted keys
-+ * should be used.
-+ */
-+#define VERIFY_USE_SECONDARY_KEYRING ((struct key *)1UL)
-+
-+/*
-  * The use to which an asymmetric key is being put.
-  */
- enum key_being_used_for {
+ #endif
