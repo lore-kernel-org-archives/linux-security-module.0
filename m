@@ -1,83 +1,167 @@
-From: tonyj@suse.de (Tony Jones)
-Date: Thu,  6 Sep 2018 21:33:57 -0700
-Subject: [PATCH] apparmor: Fix network performance issue in aa_label_sk_perm
-Message-ID: <20180907043357.4638-1-tonyj@suse.de>
+From: ukernel@gmail.com (Yan, Zheng)
+Date: Fri, 7 Sep 2018 16:31:21 +0800
+Subject: [PATCH 1/3] selinux: make dentry_init_security() return security
+	module name
+In-Reply-To: <70879e33-73cd-7185-06a4-cd3147b6a53f@schaufler-ca.com>
+References: <20180626084306.27511-1-zyan@redhat.com>
+	<356ec32809a222f457b4e04333bb695c32d49680.camel@kernel.org>
+	<70879e33-73cd-7185-06a4-cd3147b6a53f@schaufler-ca.com>
+Message-ID: <CAAM7YA=baUU1dMpPZMOMrGHJ2hguLNP2tFuHHjVqVjh37eA7kA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The netperf benchmark shows a 5.73% reduction in throughput for 
-small (64 byte) transfers by unconfined tasks.
+On Thu, Sep 6, 2018 at 11:42 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 9/6/2018 8:08 AM, Jeff Layton wrote:
+> > On Tue, 2018-06-26 at 16:43 +0800, Yan, Zheng wrote:
+> >> This is preparation for CephFS security label. CephFS's implementation uses
+> >> dentry_init_security() to get security context before inode is created,
+> >> then sends open/mkdir/mknod request to MDS, together with security xattr
+> >> "security.<security module name>"
+>
+> Please excuse my late entry into this review.
+>
+> First, *Do not prefix general LSM interface work with "selinux:"*
+> You should only use that prefix when you're dealing with the
+> internals of SELinux. Use "LSM:" if you are changing LSM interfaces.
+> If you are changing security.h or lsm_hooks.h you are almost
+> certainly changing LSM interfaces.
+>
+> Because you prefixed this work with "selinux:" I pretty much
+> ignored it. Please don't do that again.
+>
+> Why aren't you using security_inode_getsecctx, like kernfs and nfs?
+>
 
-DEFINE_AUDIT_SK() in aa_label_sk_perm() should not be performed 
-unconditionally, rather only when the label is confined.
+Sorry, I don't understand why you mention security_inode_getsecctx().
+The selinux_dentry_init_security is called for new inode, I don't how
+security_inode_getsecctx() can help.
 
-netperf-tcp
-                            56974a6fc^              56974a6fc
-Min       64         563.48 (   0.00%)      531.17 (  -5.73%)
-Min       128       1056.92 (   0.00%)      999.44 (  -5.44%)
-Min       256       1945.95 (   0.00%)     1867.97 (  -4.01%)
-Min       1024      6761.40 (   0.00%)     6364.23 (  -5.87%)
-Min       2048     11110.53 (   0.00%)    10606.20 (  -4.54%)
-Min       3312     13692.67 (   0.00%)    13158.41 (  -3.90%)
-Min       4096     14926.29 (   0.00%)    14457.46 (  -3.14%)
-Min       8192     18399.34 (   0.00%)    18091.65 (  -1.67%)
-Min       16384    21384.13 (   0.00%)    21158.05 (  -1.06%)
-Hmean     64         564.96 (   0.00%)      534.38 (  -5.41%)
-Hmean     128       1064.42 (   0.00%)     1010.12 (  -5.10%)
-Hmean     256       1965.85 (   0.00%)     1879.16 (  -4.41%)
-Hmean     1024      6839.77 (   0.00%)     6478.70 (  -5.28%)
-Hmean     2048     11154.80 (   0.00%)    10671.13 (  -4.34%)
-Hmean     3312     13838.12 (   0.00%)    13249.01 (  -4.26%)
-Hmean     4096     15009.99 (   0.00%)    14561.36 (  -2.99%)
-Hmean     8192     18975.57 (   0.00%)    18326.54 (  -3.42%)
-Hmean     16384    21440.44 (   0.00%)    21324.59 (  -0.54%)
-Stddev    64           1.24 (   0.00%)        2.85 (-130.64%)
-Stddev    128          4.51 (   0.00%)        6.53 ( -44.84%)
-Stddev    256         11.67 (   0.00%)        8.50 (  27.16%)
-Stddev    1024        48.33 (   0.00%)       75.07 ( -55.34%)
-Stddev    2048        54.82 (   0.00%)       65.16 ( -18.86%)
-Stddev    3312       153.57 (   0.00%)       56.29 (  63.35%)
-Stddev    4096       100.25 (   0.00%)       88.50 (  11.72%)
-Stddev    8192       358.13 (   0.00%)      169.99 (  52.54%)
-Stddev    16384       43.99 (   0.00%)      141.82 (-222.39%)
+Regards
+Yan, Zheng
 
-Signed-off-by: Tony Jones <tonyj@suse.de>
-Fixes: 56974a6fcfef ("apparmor: add base infastructure for socket
-mediation")
----
- security/apparmor/net.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-index bb24cfa0a164..d5d72dd1ca1f 100644
---- a/security/apparmor/net.c
-+++ b/security/apparmor/net.c
-@@ -146,17 +146,20 @@ int aa_af_perm(struct aa_label *label, const char *op, u32 request, u16 family,
- static int aa_label_sk_perm(struct aa_label *label, const char *op, u32 request,
- 			    struct sock *sk)
- {
--	struct aa_profile *profile;
--	DEFINE_AUDIT_SK(sa, op, sk);
-+	int error = 0;
- 
- 	AA_BUG(!label);
- 	AA_BUG(!sk);
- 
--	if (unconfined(label))
--		return 0;
-+	if (!unconfined(label)) {
-+		struct aa_profile *profile;
-+		DEFINE_AUDIT_SK(sa, op, sk);
- 
--	return fn_for_each_confined(label, profile,
--			aa_profile_af_sk_perm(profile, &sa, request, sk));
-+		error = fn_for_each_confined(label, profile,
-+			    aa_profile_af_sk_perm(profile, &sa, request, sk));
-+	}
-+
-+	return error;
- }
- 
- int aa_sk_perm(const char *op, u32 request, struct sock *sk)
--- 
-2.18.0
+
+>
+> >>
+> >> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+> >> ---
+> >>  fs/nfs/nfs4proc.c         | 3 ++-
+> >>  include/linux/lsm_hooks.h | 4 ++--
+> >>  include/linux/security.h  | 9 +++++----
+> >>  security/security.c       | 7 ++++---
+> >>  security/selinux/hooks.c  | 8 ++++++--
+> >>  5 files changed, 19 insertions(+), 12 deletions(-)
+> >>
+> >> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> >> index 6dd146885da9..d18a5fb7aec3 100644
+> >> --- a/fs/nfs/nfs4proc.c
+> >> +++ b/fs/nfs/nfs4proc.c
+> >> @@ -122,7 +122,8 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+> >>              return NULL;
+> >>
+> >>      err = security_dentry_init_security(dentry, sattr->ia_mode,
+> >> -                            &dentry->d_name, (void **)&label->label, &label->len);
+> >> +                            &dentry->d_name,  NULL,
+> >> +                            (void **)&label->label, &label->len);
+> >>      if (err == 0)
+> >>              return label;
+> >>
+> >> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> >> index 8f1131c8dd54..e176c2032bdc 100644
+> >> --- a/include/linux/lsm_hooks.h
+> >> +++ b/include/linux/lsm_hooks.h
+> >> @@ -1476,8 +1476,8 @@ union security_list_options {
+> >>                                      unsigned long *set_kern_flags);
+> >>      int (*sb_parse_opts_str)(char *options, struct security_mnt_opts *opts);
+> >>      int (*dentry_init_security)(struct dentry *dentry, int mode,
+> >> -                                    const struct qstr *name, void **ctx,
+> >> -                                    u32 *ctxlen);
+> >> +                                    const struct qstr *name, const char **label,
+> >> +                                    void **ctx, u32 *ctxlen);
+> >>      int (*dentry_create_files_as)(struct dentry *dentry, int mode,
+> >>                                      struct qstr *name,
+> >>                                      const struct cred *old,
+> >> diff --git a/include/linux/security.h b/include/linux/security.h
+> >> index 63030c85ee19..df2d73998c64 100644
+> >> --- a/include/linux/security.h
+> >> +++ b/include/linux/security.h
+> >> @@ -246,8 +246,9 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
+> >>                              unsigned long *set_kern_flags);
+> >>  int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts);
+> >>  int security_dentry_init_security(struct dentry *dentry, int mode,
+> >> -                                    const struct qstr *name, void **ctx,
+> >> -                                    u32 *ctxlen);
+> >> +                                    const struct qstr *name,
+> >> +                                    const char **label,
+> >> +                                    void **ctx, u32 *ctxlen);
+> >>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
+> >>                                      struct qstr *name,
+> >>                                      const struct cred *old,
+> >> @@ -609,8 +610,8 @@ static inline void security_inode_free(struct inode *inode)
+> >>  static inline int security_dentry_init_security(struct dentry *dentry,
+> >>                                               int mode,
+> >>                                               const struct qstr *name,
+> >> -                                             void **ctx,
+> >> -                                             u32 *ctxlen)
+> >> +                                             const char **label,
+> >> +                                             void **ctx, u32 *ctxlen)
+> >>  {
+> >>      return -EOPNOTSUPP;
+> >>  }
+> >> diff --git a/security/security.c b/security/security.c
+> >> index 68f46d849abe..69818d46aa28 100644
+> >> --- a/security/security.c
+> >> +++ b/security/security.c
+> >> @@ -450,11 +450,12 @@ void security_inode_free(struct inode *inode)
+> >>  }
+> >>
+> >>  int security_dentry_init_security(struct dentry *dentry, int mode,
+> >> -                                    const struct qstr *name, void **ctx,
+> >> -                                    u32 *ctxlen)
+> >> +                                    const struct qstr *name,
+> >> +                                    const char **label,
+> >> +                                    void **ctx, u32 *ctxlen)
+> >>  {
+> >>      return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
+> >> -                            name, ctx, ctxlen);
+> >> +                            name, label, ctx, ctxlen);
+> >>  }
+> >>  EXPORT_SYMBOL(security_dentry_init_security);
+> >>
+> >> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> >> index 2b5ee5fbd652..eca3879d9357 100644
+> >> --- a/security/selinux/hooks.c
+> >> +++ b/security/selinux/hooks.c
+> >> @@ -2985,8 +2985,9 @@ static void selinux_inode_free_security(struct inode *inode)
+> >>  }
+> >>
+> >>  static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+> >> -                                    const struct qstr *name, void **ctx,
+> >> -                                    u32 *ctxlen)
+> >> +                                    const struct qstr *name,
+> >> +                                    const char **label,
+> >> +                                    void **ctx, u32 *ctxlen)
+> >>  {
+> >>      u32 newsid;
+> >>      int rc;
+> >> @@ -2998,6 +2999,9 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
+> >>      if (rc)
+> >>              return rc;
+> >>
+> >> +    if (label)
+> >> +            *label = XATTR_SELINUX_SUFFIX;
+> >> +
+> > nit: I'd probably call this "name" since that's what it's called in
+> > selinux_inode_init_security. "label" has a different connotation in this
+> > context.
+> >
+> >>      return security_sid_to_context(&selinux_state, newsid, (char **)ctx,
+> >>                                     ctxlen);
+> >>  }
+> > Patch looks reasonable to me though.
+> >
+> > Acked-by: Jeff Layton <jlayton@kernel.org>
+> >
+> >
+>
