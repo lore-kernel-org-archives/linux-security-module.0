@@ -1,21 +1,37 @@
-From: dhowells@redhat.com (David Howells)
-Date: Sat, 08 Sep 2018 16:26:14 +0100
-Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
-In-Reply-To: <25C89575-D4E9-48FB-BEC9-383B09F32E44@holtmann.org>
-References: <25C89575-D4E9-48FB-BEC9-383B09F32E44@holtmann.org>
-	<153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-	<alpine.LRH.2.21.1809061007140.23269@namei.org>
-Message-ID: <12101.1536420374@warthog.procyon.org.uk>
+From: penguin-kernel@I-love.SAKURA.ne.jp (Tetsuo Handa)
+Date: Sun, 9 Sep 2018 00:58:43 +0900
+Subject: next-20180906 crashes during ubifs_mount (legacy fs_context)
+In-Reply-To: <20180908131312.eob2glzykvq5w7dd@viti.kaiser.cx>
+References: <20180908131312.eob2glzykvq5w7dd@viti.kaiser.cx>
+Message-ID: <d3fffb0f-5a7d-aa9c-cdfd-6cafc38f8cc6@I-love.SAKURA.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Marcel Holtmann <marcel@holtmann.org> wrote:
+Got response from David Howells to a mail I forwarded...
 
-> so I have reviewed and tested this code. In addition, we have test cases for
-> it in ELL (embedded linux library).
+-------- Forwarded Message --------
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <62a743d3-80af-8586-8719-e17a224de62f@I-love.SAKURA.ne.jp>
+References: <62a743d3-80af-8586-8719-e17a224de62f@I-love.SAKURA.ne.jp> <20180908131312.eob2glzykvq5w7dd@viti.kaiser.cx>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: dhowells at redhat.com, Martin Kaiser <lists@kaiser.cx>
+Subject: Re: Fwd: next-20180906 crashes during ubifs_mount (legacy fs_context)
+Date: Sat, 08 Sep 2018 16:19:08 +0100
+Message-ID: <10870.1536419948@warthog.procyon.org.uk>
 
-I wonder if there's any practical way to add a test for this to the keyutils
-test suite.  I'm guessing it's quite tricky, given the extra bits you need to
-emulate the TPM.
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+
+> I have CONFIG_SECURITY disabled. Enabling it does not change the behaviour.
+> 
+> Commenting out the -ENOPARAM check makes the mount work again.
+> 
+> I'm not sure how to fix this.  Is it ok for
+> security_fs_context_parse_param() to return 0 when CONFIG_SECURITY is turned
+> off? Shouldn't this be -ENOPARAM, meaning "not a parameter I care about"?
+
+Yes.  The default should be -ENOPARAM, both in security.c and security.h.
+
+I've fixed my tree and Al has pulled it, but it won't get into linux-next
+until Stephen next refreshes it.
 
 David
