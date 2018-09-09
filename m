@@ -1,213 +1,102 @@
-From: rdunlap@infradead.org (Randy Dunlap)
-Date: Sat, 8 Sep 2018 11:44:19 -0700
-Subject: [RFC 01/12] docs/x86: Document the Multi-Key Total Memory
-	Encryption API
-In-Reply-To: <b9c1e3805c700043d92117462bdb6018bb9f858a.1536356108.git.alison.schofield@intel.com>
-References: <cover.1536356108.git.alison.schofield@intel.com>
-	<b9c1e3805c700043d92117462bdb6018bb9f858a.1536356108.git.alison.schofield@intel.com>
-Message-ID: <b821cd4c-b061-3ea0-b0af-992d844ddad5@infradead.org>
+From: amir73il@gmail.com (Amir Goldstein)
+Date: Sun, 9 Sep 2018 09:31:02 +0300
+Subject: Overlayfs @ Containers and checkpoint/restart micro-conference at
+	LPC2018
+In-Reply-To: <20180909013108.6wjlx75ztqjipepg@mailbox.org>
+References: <20180813161015.GD18492@castiana> <20180908045935.GA9201@castiana>
+	<CAOQ4uxiQEpofdS97kxnii8LtVW2QiKAGvjjaH0Px-Bj3eHVCFA@mail.gmail.com>
+	<20180909013108.6wjlx75ztqjipepg@mailbox.org>
+Message-ID: <CAOQ4uxih7rPPLquJZFL9HtSbUFi-cCOR21qH4_-ORxxLKGsLXg@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 09/07/2018 03:34 PM, Alison Schofield wrote:
-> Document the API's used for MKTME on Intel platforms.
-> MKTME: Multi-KEY Total Memory Encryption
-> 
-> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+On Sun, Sep 9, 2018 at 4:31 AM Christian Brauner <christian@brauner.io> wrote:
+>
+...
+> > [cc: overlayfs developers]
+> >
+> > Hi St?phane!
+>
+> Hey Amir,
+>
+> I'm one of the co-organizers of the microconf.
+>
+> >
+> > I am not planing to travel to LPC this year, so this is more of an FYI than
+> > a CFP, but maybe another overlayfs developer can pick up this glove??
+>
+> Sure, that would be great.
+>
+> >
+> > For the past two years I have participated in the effort to fix overlayfs
+> > "non-standard" behavior:
+> > https://github.com/amir73il/overlayfs/wiki/Overlayfs-non-standard-behavior
+>
+> Yes, this is an issue that we were aware of for a long time and it
+> something that has made overlayfs somewhat more difficult to use than it
+> should be.
+>
+> >
+> > Allegedly, this effort went underway to improve the experience of overlayfs
+> > users, who are mostly applications running inside containers. For backward
+> > compatibility reasons, container runtimes will need to opt-in for fixing some
+> > of the legacy behavior.
+> >
+> > In reality, I have seen very little cross list interaction between linux-unionfs
+> > and containers mailing lists. The only interaction I recall in the
+> > past two years
+> > ended up in a fix in overlayfs to require opt-in for fixing yet another backward
+> > compatible bad behavior, although docker did follow up shortly after to fix
+> > bad practice in container runtime:
+> > https://github.com/moby/moby/issues/34672
+> >
+> > So the questions I would like to relay to the micro-conf participants w.r.t the
+> > new opt-in overlayfs behavior:
+> > 1. Did you know?
+>
+> I personally did not know about the new opt-in behavior. More reason to
+> give a talk! :)
+>
+> > 2. Do you care?
+>
+> Yes, we do care. However - speaking as LXC upstream now - we have
+> recently focused on getting shiftfs to work rather than overlayfs.
+>
 
-Hi,
-A few comments below...
+IMO, as I expressed it in the past, the fact that shiftfs development is not
+collaborated with overlayfs developers is a pitty.
+Yes shiftfs has a different purpose than overlayfs, but they have common
+use cases and common problems as well.
 
-> ---
->  Documentation/x86/mktme-keys.txt | 153 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 153 insertions(+)
->  create mode 100644 Documentation/x86/mktme-keys.txt
-> 
-> diff --git a/Documentation/x86/mktme-keys.txt b/Documentation/x86/mktme-keys.txt
-> new file mode 100644
-> index 000000000000..2dea7acd2a17
-> --- /dev/null
-> +++ b/Documentation/x86/mktme-keys.txt
-> @@ -0,0 +1,153 @@
-> +MKTME (Multi-Key Total Memory Encryption) is a technology that allows
-> +memory encryption on Intel platforms. Whereas TME (Total Memory Encryption)
-> +allows encryption of the entire system memory using a single key, MKTME
-> +allows multiple encryption domains, each having their own key. The main use
-> +case for the feature is virtual machine isolation. The API's introduced here
-> +are intended to offer flexibility to work in a wide range of uses.
-> +
-> +The externally available Intel Architecture Spec:
-> +https://software.intel.com/sites/default/files/managed/a5/16/Multi-Key-Total-Memory-Encryption-Spec.pdf
-> +
-> +============================  API Overview  ============================
-> +
-> +There are 2 MKTME specific API's that enable userspace to create and use
-> +the memory encryption keys:
-> +
-> +1) Kernel Key Service: MKTME Type
-> +
-> +   MKTME is a new key type added to the existing Kernel Key Services
-> +   to support the memory encryption keys. The MKTME service manages
-> +   the addition and removal of MKTME keys. It maps userspace keys
-> +   to hardware keyids and programs the hardware with user requested
-> +   encryption parameters.
-> +
-> +   o An understanding of the Kernel Key Service is required in order
-> +     to use the MKTME key type as it is a subset of that service.
+> We are more than happy to have a overlayfs talk at the microconf. If
+> someone were to talk about:
+> - What non-standard behavior has already been fixed?
+> - How has it been fixed?
 
-reference available?
+IMO, those questions are covered quite well by the wiki and overlayfs.txt
+documentation in kernel tree.
 
-> +
-> +   o MKTME keys are a limited resource. There is a single pool of
-> +     MKTME keys for a system and that pool can be from 3 to 63 keys.
-> +     With that in mind, userspace may take advantage of the kernel
-> +     key services sharing and permissions model for userspace keys.
-> +     One key can be shared as long as each user has the permission
-> +     of "KEY_NEED_VIEW" to use it.
-> +
-> +   o MKTME key type uses capabilities to restrict the allocation
-> +     of keys. It only requires CAP_SYS_RESOURCE, but will accept
-> +     the broader capability of CAP_SYS_ADMIN.  See capabilities(7).
-> +
-> +   o The MKTME key service blocks kernel key service commands that
-> +     could lead to reprogramming of in use keys, or loss of keys from
-> +     the pool. This means MKTME does not allow a key to be invalidated,
-> +     unlinked, or timed out. These operations are blocked by MKTME as
-> +     it creates all keys with the internal flag KEY_FLAG_KEEP.
-> +
-> +   o MKTME does not support the keyctl option of UPDATE. Userspace
-> +     may change the programming of a key by revoking it and adding
-> +     a new key with the updated encryption options (or vice-versa).
-> +
-> +2) System Call: encrypt_mprotect()
-> +
-> +   MKTME encryption is requested by calling encrypt_mprotect(). The
-> +   caller passes the serial number to a previously allocated and
-> +   programmed encryption key. That handle was created with the MKTME
-> +   Key Service.
-> +
-> +   o The caller must have KEY_NEED_VIEW permission on the key
+> - What non-standard behavior still needs to be fixed?
 
-                                                             key.
+There's the mmap MAP_SHARED case covered in the wiki
+and there may be other small stuff, but not sure if anyone cares
+about them, so the question should really be directed back to the audience...
 
-> +
-> +   o The range of memory that is to be protected must be mapped as
-> +     ANONYMOUS. If it is not, the entire encrypt_mprotect() request
-> +     fails with EINVAL.
-> +
-> +   o As an extension to the existing mprotect() system call,
-> +     encrypt_mprotect() supports the legacy mprotect behavior plus
-> +     the enabling of memory encryption. That means that in addition
-> +     to encrypting the memory, the protection flags will be updated
-> +     as requested in the call.
-> +
-> +   o Additional mprotect() calls to memory already protected with
-> +     MKTME will not alter the MKTME status.
-> +
-> +======================  Usage: MKTME Key Service  ======================
-> +
-> +MKTME is enabled on supported Intel platforms by selecting
-> +CONFIG_X86_INTEL_MKTME which selects CONFIG_MKTME_KEYS.
-> +
-> +Allocating MKTME Keys via command line or system call:
-> +    keyctl add mktme name "[options]" ring
-> +
-> +    key_serial_t add_key(const char *type, const char *description,
-> +                         const void *payload, size_t plen,
-> +                         key_serial_t keyring);
-> +
-> +Revoking MKTME Keys via command line or system call::
-> +   keyctl revoke <key>
-> +
-> +   long keyctl(KEYCTL_REVOKE, key_serial_t key);
-> +
-> +Options Field Definition:
-> +    userkey=      ASCII HEX value encryption key. Defaults to a CPU
-> +		  generated key if a userkey is not defined here.
-> +
-> +    algorithm=    Encryption algorithm name as a string.
-> +		  Valid algorithm: "aes-xts-128"
-> +
-> +    tweak=        ASCII HEX value tweak key. Tweak key will be added to the
-> +                  userkey...  (need to be clear here that this is being sent
-> +                  to the hardware - kernel not messing w it)
+> - Outstanding problems that either still need a solution or
+>   are solved but one would like feedback on the implementation. This way
+>   we can have a good discussion.
+>
 
-                                                          with it)
+I think one of the chsallange that distros and container runtime will need to
+deal with is managing format versions of overlay "images".
+The reason the new features require user or distro to opt-in is because
+the new features create overlayfs images that are not fully compatible with old
+kernels and existing container image tools (i.e. export/migrate image).
 
-> +
-> +    entropy=      ascii hex value entropy.
+The new overlayfs-progs project by Zhangyi is going to help in that respect:
+https://github.com/hisilicon/overlayfs-progs
+As well as Zhangyi's work on overlayfs feature set support:
+https://marc.info/?l=linux-unionfs&m=153302911328159&w=2
 
-                     ASCII
-
-> +                  This entropy will be used to generated the CPU key and
-
-                                               to generate the
-
-> +		  the tweak key when CPU generated key is requested.
-> +
-> +Algorithm Dependencies:
-> +    AES-XTS 128 is the only supported algorithm.
-> +    There are only 2 ways that AES-XTS 128 may be used:
-> +
-> +    1) User specified encryption key
-> +	- The user specified encryption key must be exactly
-> +	  16 ASCII Hex bytes (128 bits).
-> +	- A tweak key must be specified and it must be exactly
-> +	  16 ASCII Hex bytes (128 bits).
-> +	- No entropy field is accepted.
-> +
-> +    2) CPU generated encryption key
-> +	- When no user specified encryption key is provided, the
-> +	  default encryption key will be CPU generated.
-> +	- User must specify 16 ASCII Hex bytes of entropy. This 
-
-above line ends with a space.  Please drop it.
-
-> +	  entropy will be used by the CPU to generate both the
-> +	  encryption key and the tweak key.
-> +	- No entropy field is accepted.
-> +
-> +======================  Usage: encrypt_mprotect()  ======================
-> +
-> +System Call encrypt_mprotect()::
-> +
-> +    This system call is an extension of the existing mprotect() system
-> +    call. It requires the same parameters as legary mprotect() plus
-
-                                                legacy
-
-> +    one additional parameter, the keyid. Userspace must provide the
-> +    key serial number assigned through the kernel key service.
-> +
-> +    int encrypt_mprotect(void *addr, size_t len, int prot, int keyid);
-> +
-> +======================  Usage: Sample Roundtrip  ======================
-> +
-> +Sample usage of MKTME Key Service API with encrypt_mprotect() API:
-> +
-> +  Add a key:
-> +        key = add_key(mktme, name, options, strlen(option), keyring);
-
-                                               strlen(options),
-
-> +
-> +  Map memory:
-> +        ptr = mmap(NULL, size, prot, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
-> +
-> +  Protect memory:
-> +        ret = syscall(sys_encrypt_mprotect, ptr, size, prot, keyid);
-> +
-> +  Use protected memory:
-> +        ................
-> +
-> +  Free memory:
-> +        ret = munmap(ptr, size);
-> +
-> +  Revoke key:
-> +        ret = keyctl(KEYCTL_REVOKE, key);
-> +
-> 
-
-
--- 
-~Randy
+Thanks,
+Amir.
