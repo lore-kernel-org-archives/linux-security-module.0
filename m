@@ -1,21 +1,20 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 10 Sep 2018 21:46:08 +0300
-Subject: [PATCH v6 2/2] tpm: add support for nonblocking operation
-In-Reply-To: <153659991327.2284.12202285045326223123.stgit@tstruk-mobl1.jf.intel.com>
-References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
-	<153659991327.2284.12202285045326223123.stgit@tstruk-mobl1.jf.intel.com>
-Message-ID: <20180910184608.GE20225@linux.intel.com>
+From: dave.hansen@intel.com (Dave Hansen)
+Date: Mon, 10 Sep 2018 11:57:49 -0700
+Subject: [RFC 09/12] mm: Restrict memory encryption to anonymous VMA's
+In-Reply-To: <ae0288d5205a5c431e9a6bf0c9e68beded45e84b.camel@intel.com>
+References: <cover.1536356108.git.alison.schofield@intel.com>
+	<f69e3d4f96504185054d951c7c85075ebf63e47a.1536356108.git.alison.schofield@intel.com>
+	<ae0288d5205a5c431e9a6bf0c9e68beded45e84b.camel@intel.com>
+Message-ID: <84154fd2-7c27-0fd2-f339-15e144a5df49@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 10, 2018 at 10:18:33AM -0700, Tadeusz Struk wrote:
-> Currently the TPM driver only supports blocking calls, which doesn't allow
-> asynchronous IO operations to the TPM hardware.
-> This patch changes it and adds support for nonblocking write and a new poll
-> function to enable applications, which want to take advantage of this.
-> 
-> Tested-by: Philip Tricca <philip.b.tricca@intel.com>
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.om>
+On 09/10/2018 11:21 AM, Sakkinen, Jarkko wrote:
+>> +/*
+>> + * Encrypted mprotect is only supported on anonymous mappings.
+>> + * All VMA's in the requested range must be anonymous. If this
+>> + * test fails on any single VMA, the entire mprotect request fails.
+>> + */
+> kdoc
 
-/Jarkko
+kdoc what?  You want this comment in kdoc format?  Why?
