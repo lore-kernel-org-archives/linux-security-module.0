@@ -1,206 +1,71 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 10 Sep 2018 21:20:45 +0300
-Subject: [RFC 08/12] mm: Track VMA's in use for each memory encryption
-	keyid
-In-Reply-To: <3c891d076a376c8cff04403e90d04cf98b203960.1536356108.git.alison.schofield@intel.com>
+From: jarkko.sakkinen@intel.com (Sakkinen, Jarkko)
+Date: Mon, 10 Sep 2018 18:21:58 +0000
+Subject: [RFC 09/12] mm: Restrict memory encryption to anonymous VMA's
+In-Reply-To: <f69e3d4f96504185054d951c7c85075ebf63e47a.1536356108.git.alison.schofield@intel.com>
 References: <cover.1536356108.git.alison.schofield@intel.com>
-	<3c891d076a376c8cff04403e90d04cf98b203960.1536356108.git.alison.schofield@intel.com>
-Message-ID: <781e142c17199a6ab44bf0b5fbf07190093fe5dc.camel@linux.intel.com>
+	<f69e3d4f96504185054d951c7c85075ebf63e47a.1536356108.git.alison.schofield@intel.com>
+Message-ID: <ae0288d5205a5c431e9a6bf0c9e68beded45e84b.camel@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Fri, 2018-09-07 at 15:37 -0700, Alison Schofield wrote:
-> Keep track of the VMA's oustanding for each memory encryption keyid.
-> The count is used by the MKTME (Multi-Key Total Memory Encryption)
-> Key Service to determine when it is safe to reprogram a hardware
-> encryption key.
-
-Maybe a stupid question but why they are tracked and what do you 
-mean by tracking?
-
-/Jarkko
-
-> Approach here is to do gets and puts on the encryption reference
-> wherever kmem_cache_alloc/free's of vma_area_cachep's are executed.
-> A couple of these locations will not be hit until cgroup support is
-> added. One of these locations should never hit, so use a VM_WARN_ON.
+> Memory encryption is only supported for mappings that are ANONYMOUS.
+> Test the entire range of VMA's in an encrypt_mprotect() request to
+> make sure they all meet that requirement before encrypting any.
+> 
+> The encrypt_mprotect syscall will return -EINVAL and will not encrypt
+> any VMA's if this check fails.
 > 
 > Signed-off-by: Alison Schofield <alison.schofield@intel.com>
 > ---
->  arch/x86/mm/mktme.c |  2 ++
->  kernel/fork.c       |  2 ++
->  mm/mmap.c           | 12 ++++++++++++
->  mm/nommu.c          |  4 ++++
->  4 files changed, 20 insertions(+)
+>  mm/mprotect.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 > 
-> diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-> index 5690ef51a79a..8a7c326d4546 100644
-> --- a/arch/x86/mm/mktme.c
-> +++ b/arch/x86/mm/mktme.c
-> @@ -72,10 +72,12 @@ void mprotect_set_encrypt(struct vm_area_struct *vma, int
-> newkeyid)
->  	if (newkeyid == oldkeyid)
->  		return;
->  
-> +	vma_put_encrypt_ref(vma);
->  	newprot = pgprot_val(vma->vm_page_prot);
->  	newprot &= ~mktme_keyid_mask;
->  	newprot |= (unsigned long)newkeyid << mktme_keyid_shift;
->  	vma->vm_page_prot = __pgprot(newprot);
-> +	vma_get_encrypt_ref(vma);
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 6c2e1106525c..3384b755aad1 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -311,6 +311,24 @@ unsigned long change_protection(struct vm_area_struct
+> *vma, unsigned long start,
+>  	return pages;
 >  }
 >  
->  /*
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index e5e7a220a124..2d0e507bde7c 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -459,6 +459,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
->  		if (!tmp)
->  			goto fail_nomem;
->  		*tmp = *mpnt;
-> +		vma_get_encrypt_ref(tmp);	/* Track encrypted vma's */
->  		INIT_LIST_HEAD(&tmp->anon_vma_chain);
->  		retval = vma_dup_policy(mpnt, tmp);
->  		if (retval)
-> @@ -539,6 +540,7 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
->  fail_nomem_anon_vma_fork:
->  	mpol_put(vma_policy(tmp));
->  fail_nomem_policy:
-> +	vma_put_encrypt_ref(tmp);		/* Track encrypted vma's */
->  	kmem_cache_free(vm_area_cachep, tmp);
->  fail_nomem:
->  	retval = -ENOMEM;
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 4c604eb644b4..7390b8b69fd6 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -182,6 +182,7 @@ static struct vm_area_struct *remove_vma(struct
-> vm_area_struct *vma)
->  	if (vma->vm_file)
->  		fput(vma->vm_file);
->  	mpol_put(vma_policy(vma));
-> +	vma_put_encrypt_ref(vma);
->  	kmem_cache_free(vm_area_cachep, vma);
->  	return next;
->  }
-> @@ -913,6 +914,7 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long
-> start,
->  			anon_vma_merge(vma, next);
->  		mm->map_count--;
->  		mpol_put(vma_policy(next));
-> +		vma_put_encrypt_ref(next);
->  		kmem_cache_free(vm_area_cachep, next);
->  		/*
->  		 * In mprotect's case 6 (see comments on vma_merge),
-> @@ -1744,6 +1746,7 @@ unsigned long mmap_region(struct file *file, unsigned
-> long addr,
->  		goto unacct_error;
->  	}
->  
-> +	vma_get_encrypt_ref(vma);
->  	vma->vm_mm = mm;
->  	vma->vm_start = addr;
->  	vma->vm_end = addr + len;
-> @@ -1839,6 +1842,7 @@ unsigned long mmap_region(struct file *file, unsigned
-> long addr,
->  unmap_and_free_vma:
->  	vma->vm_file = NULL;
->  	fput(file);
-> +	vma_put_encrypt_ref(vma);
->  
->  	/* Undo any partial mapping done by a device driver. */
->  	unmap_region(mm, vma, prev, vma->vm_start, vma->vm_end);
-> @@ -2653,6 +2657,7 @@ int __split_vma(struct mm_struct *mm, struct
-> vm_area_struct *vma,
->  		new->vm_pgoff += ((addr - vma->vm_start) >> PAGE_SHIFT);
->  	}
->  
-> +	vma_get_encrypt_ref(new);
->  	err = vma_dup_policy(vma, new);
->  	if (err)
->  		goto out_free_vma;
-> @@ -2686,6 +2691,7 @@ int __split_vma(struct mm_struct *mm, struct
-> vm_area_struct *vma,
->   out_free_mpol:
->  	mpol_put(vma_policy(new));
->   out_free_vma:
-> +	vma_put_encrypt_ref(new);
->  	kmem_cache_free(vm_area_cachep, new);
->  	return err;
->  }
-> @@ -3007,6 +3013,7 @@ static int do_brk_flags(unsigned long addr, unsigned
-> long len, unsigned long fla
->  		return -ENOMEM;
->  	}
->  
-> +	vma_get_encrypt_ref(vma);
->  	INIT_LIST_HEAD(&vma->anon_vma_chain);
->  	vma->vm_mm = mm;
->  	vma->vm_ops = &anon_vm_ops;
-> @@ -3229,6 +3236,7 @@ struct vm_area_struct *copy_vma(struct vm_area_struct
-> **vmap,
->  		new_vma->vm_pgoff = pgoff;
->  		if (vma_dup_policy(vma, new_vma))
->  			goto out_free_vma;
-> +		vma_get_encrypt_ref(new_vma);
->  		INIT_LIST_HEAD(&new_vma->anon_vma_chain);
->  		if (anon_vma_clone(new_vma, vma))
->  			goto out_free_mempol;
-> @@ -3243,6 +3251,7 @@ struct vm_area_struct *copy_vma(struct vm_area_struct
-> **vmap,
->  
->  out_free_mempol:
->  	mpol_put(vma_policy(new_vma));
-> +	vma_put_encrypt_ref(new_vma);
->  out_free_vma:
->  	kmem_cache_free(vm_area_cachep, new_vma);
->  out:
-> @@ -3372,6 +3381,9 @@ static struct vm_area_struct *__install_special_mapping(
->  	if (unlikely(vma == NULL))
->  		return ERR_PTR(-ENOMEM);
->  
-> +	/* Do not expect a memory encrypted vma here */
-> +	VM_WARN_ON(vma_keyid(vma));
+> +/*
+> + * Encrypted mprotect is only supported on anonymous mappings.
+> + * All VMA's in the requested range must be anonymous. If this
+> + * test fails on any single VMA, the entire mprotect request fails.
+> + */
+
+kdoc
+
+> +bool mem_supports_encryption(struct vm_area_struct *vma, unsigned long end)
+> +{
+> +	struct vm_area_struct *test_vma = vma;
 > +
->  	INIT_LIST_HEAD(&vma->anon_vma_chain);
->  	vma->vm_mm = mm;
->  	vma->vm_start = addr;
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index 73f66e81cfb0..85f04c174638 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -769,6 +769,7 @@ static void delete_vma(struct mm_struct *mm, struct
-> vm_area_struct *vma)
->  	if (vma->vm_file)
->  		fput(vma->vm_file);
->  	put_nommu_region(vma->vm_region);
-> +	vma_put_encrypt_ref(vma);
->  	kmem_cache_free(vm_area_cachep, vma);
->  }
+> +	do {
+> +		if (!vma_is_anonymous(test_vma))
+> +			return false;
+> +
+> +		test_vma = test_vma->vm_next;
+> +	} while (test_vma && test_vma->vm_start < end);
+> +	return true;
+> +}
+> +
+>  int
+>  mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+>  	       unsigned long start, unsigned long end, unsigned long
+> newflags,
+> @@ -491,6 +509,10 @@ static int do_mprotect_ext(unsigned long start, size_t
+> len,
+>  				goto out;
+>  		}
+>  	}
+> +	if (keyid > 0 && !mem_supports_encryption(vma, end)) {
+> +		error = -EINVAL;
+> +		goto out;
+> +	}
+>  	if (start > vma->vm_start)
+>  		prev = vma;
 >  
-> @@ -1215,6 +1216,7 @@ unsigned long do_mmap(struct file *file,
->  	if (!vma)
->  		goto error_getting_vma;
->  
-> +	vma_get_encrypt_ref(vma);
->  	region->vm_usage = 1;
->  	region->vm_flags = vm_flags;
->  	region->vm_pgoff = pgoff;
-> @@ -1375,6 +1377,7 @@ unsigned long do_mmap(struct file *file,
->  	kmem_cache_free(vm_region_jar, region);
->  	if (vma->vm_file)
->  		fput(vma->vm_file);
-> +	vma_put_encrypt_ref(vma);
->  	kmem_cache_free(vm_area_cachep, vma);
->  	return ret;
->  
-> @@ -1486,6 +1489,7 @@ int split_vma(struct mm_struct *mm, struct
-> vm_area_struct *vma,
->  	*new = *vma;
->  	*region = *vma->vm_region;
->  	new->vm_region = region;
-> +	vma_get_encrypt_ref(new);
->  
->  	npages = (addr - vma->vm_start) >> PAGE_SHIFT;
->  
+
+/Jarkko
