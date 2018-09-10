@@ -1,22 +1,49 @@
-From: tadeusz.struk@intel.com (Tadeusz Struk)
-Date: Mon, 10 Sep 2018 10:23:14 -0700
-Subject: [PATCH v5 0/2] tpm: add support for nonblocking operation
-In-Reply-To: <20180831085825.GD12908@linux.intel.com>
-References: <153419236870.8189.15489652816512817246.stgit@tstruk-mobl1.jf.intel.com>
-	<20180831085711.GC12908@linux.intel.com>
-	<20180831085825.GD12908@linux.intel.com>
-Message-ID: <67bab063-e24d-461c-dacb-5c9458ef9784@intel.com>
+From: jarkko.sakkinen@intel.com (Sakkinen, Jarkko)
+Date: Mon, 10 Sep 2018 17:32:20 +0000
+Subject: [RFC 01/12] docs/x86: Document the Multi-Key Total Memory
+	Encryption API
+In-Reply-To: <b9c1e3805c700043d92117462bdb6018bb9f858a.1536356108.git.alison.schofield@intel.com>
+References: <cover.1536356108.git.alison.schofield@intel.com>
+	<b9c1e3805c700043d92117462bdb6018bb9f858a.1536356108.git.alison.schofield@intel.com>
+Message-ID: <437f79cf2512f3aef200f7d0bfba4c99a1834eff.camel@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 08/31/2018 01:58 AM, Jarkko Sakkinen wrote:
-> Just the change to the commit message. Mislooked patchwork, the typo was
-> in my response :-) I'll do recheck for 2/2. Check those comments before
-> v6 if there is anything else.
+On Fri, 2018-09-07 at 15:34 -0700, Alison Schofield wrote:
+> Document the API's used for MKTME on Intel platforms.
+> MKTME: Multi-KEY Total Memory Encryption
+> 
+> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+> ---
+>  Documentation/x86/mktme-keys.txt | 153
+> +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 153 insertions(+)
+>  create mode 100644 Documentation/x86/mktme-keys.txt
+> 
+> diff --git a/Documentation/x86/mktme-keys.txt b/Documentation/x86/mktme-
+> keys.txt
+> new file mode 100644
+> index 000000000000..2dea7acd2a17
+> --- /dev/null
+> +++ b/Documentation/x86/mktme-keys.txt
+> @@ -0,0 +1,153 @@
+> +MKTME (Multi-Key Total Memory Encryption) is a technology that allows
+> +memory encryption on Intel platforms. Whereas TME (Total Memory Encryption)
+> +allows encryption of the entire system memory using a single key, MKTME
+> +allows multiple encryption domains, each having their own key. The main use
+> +case for the feature is virtual machine isolation. The API's introduced here
+> +are intended to offer flexibility to work in a wide range of uses.
+> +
+> +The externally available Intel Architecture Spec:
+> +https://software.intel.com/sites/default/files/managed/a5/16/Multi-Key-Total-
+> Memory-Encryption-Spec.pdf
+> +
+> +============================  API Overview  ============================
+> +
+> +There are 2 MKTME specific API's that enable userspace to create and use
+> +the memory encryption keys:
 
-Hi,
-I have done the changes you requested and ran the "checkpatch.pl --strict"
-on it and it says that "no obvious style problems and is ready for submission".
-Thanks,
--- 
-Tadeusz
+This is like saying that they are different APIs to do semantically the
+same exact thing. Is that so?
+
+/Jarkko
