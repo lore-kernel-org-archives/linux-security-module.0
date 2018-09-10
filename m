@@ -1,202 +1,125 @@
-From: ukernel@gmail.com (Yan, Zheng)
-Date: Mon, 10 Sep 2018 11:06:23 +0800
-Subject: [PATCH 1/3] selinux: make dentry_init_security() return security
-	module name
-In-Reply-To: <d0acf4cd-bb79-e111-a0f0-524f8fc836fc@schaufler-ca.com>
-References: <20180626084306.27511-1-zyan@redhat.com>
-	<356ec32809a222f457b4e04333bb695c32d49680.camel@kernel.org>
-	<70879e33-73cd-7185-06a4-cd3147b6a53f@schaufler-ca.com>
-	<CAAM7YA=baUU1dMpPZMOMrGHJ2hguLNP2tFuHHjVqVjh37eA7kA@mail.gmail.com>
-	<d0acf4cd-bb79-e111-a0f0-524f8fc836fc@schaufler-ca.com>
-Message-ID: <CAAM7YA=Aq8NFB+CsDWhnzwG1N0Nzfby4UKy9gTTDkcp_aUxcnw@mail.gmail.com>
+From: kai.huang@intel.com (Huang, Kai)
+Date: Mon, 10 Sep 2018 03:17:52 +0000
+Subject: [RFC 07/12] x86/mm: Add helper functions to track encrypted VMA's
+In-Reply-To: <d98252fe105f2e948e2f585914a61b32c1902889.1536356108.git.alison.schofield@intel.com>
+References: <cover.1536356108.git.alison.schofield@intel.com>
+	<d98252fe105f2e948e2f585914a61b32c1902889.1536356108.git.alison.schofield@intel.com>
+Message-ID: <105F7BF4D0229846AF094488D65A098935424BDA@PGSMSX112.gar.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sat, Sep 8, 2018 at 4:31 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 9/7/2018 1:31 AM, Yan, Zheng wrote:
-> > On Thu, Sep 6, 2018 at 11:42 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> On 9/6/2018 8:08 AM, Jeff Layton wrote:
-> >>> On Tue, 2018-06-26 at 16:43 +0800, Yan, Zheng wrote:
-> >>>> This is preparation for CephFS security label. CephFS's implementation uses
-> >>>> dentry_init_security() to get security context before inode is created,
-> >>>> then sends open/mkdir/mknod request to MDS, together with security xattr
-> >>>> "security.<security module name>"
-> >> Please excuse my late entry into this review.
-> >>
-> >> First, *Do not prefix general LSM interface work with "selinux:"*
-> >> You should only use that prefix when you're dealing with the
-> >> internals of SELinux. Use "LSM:" if you are changing LSM interfaces.
-> >> If you are changing security.h or lsm_hooks.h you are almost
-> >> certainly changing LSM interfaces.
-> >>
-> >> Because you prefixed this work with "selinux:" I pretty much
-> >> ignored it. Please don't do that again.
-> >>
-> >> Why aren't you using security_inode_getsecctx, like kernfs and nfs?
-> >>
-> > Sorry, I don't understand why you mention security_inode_getsecctx().
-> > The selinux_dentry_init_security is called for new inode, I don't how
-> > security_inode_getsecctx() can help.
->
-> I didn't do a great job describing my issue. Let me try again.
->
-> There is no way you should need to know the name of the security
-> module (e.g. SELinux, Smack) in the CephFS code. Nor should you be
-> assuming that there is only one security attribute, nor that it is
-> named "security.<security module name>".  Sure, that's true for
-> SELinux, but SELinux isn't the only security module in town.
->
-> Other filesystems don't need anything like this. Why do you?
->
+> -----Original Message-----
+> From: keyrings-owner at vger.kernel.org [mailto:keyrings-
+> owner at vger.kernel.org] On Behalf Of Alison Schofield
+> Sent: Saturday, September 8, 2018 10:37 AM
+> To: dhowells at redhat.com; tglx at linutronix.de
+> Cc: Huang, Kai <kai.huang@intel.com>; Nakajima, Jun
+> <jun.nakajima@intel.com>; Shutemov, Kirill <kirill.shutemov@intel.com>;
+> Hansen, Dave <dave.hansen@intel.com>; Sakkinen, Jarkko
+> <jarkko.sakkinen@intel.com>; jmorris at namei.org; keyrings at vger.kernel.org;
+> linux-security-module at vger.kernel.org; mingo at redhat.com; hpa at zytor.com;
+> x86 at kernel.org; linux-mm at kvack.org
+> Subject: [RFC 07/12] x86/mm: Add helper functions to track encrypted VMA's
+> 
+> In order to safely manage the usage of memory encryption keys, VMA's using
+> each keyid need to be tracked. This tracking allows the Kernel Key Service to
+> know when the keyid resource is actually in use, or when it is idle and may be
+> considered for reuse.
+> 
+> Define a global atomic encrypt_count array to track the number of VMA's
+> oustanding for each encryption keyid.
+> 
+> Implement helper functions to manipulate this encrypt_count array.
+> 
+> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+> ---
+>  arch/x86/include/asm/mktme.h |  7 +++++++
+>  arch/x86/mm/mktme.c          | 39
+> +++++++++++++++++++++++++++++++++++++++
+>  include/linux/mm.h           |  2 ++
+>  3 files changed, 48 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
+> index b707f800b68f..5f3fa0c39c1c 100644
+> --- a/arch/x86/include/asm/mktme.h
+> +++ b/arch/x86/include/asm/mktme.h
+> @@ -16,6 +16,13 @@ extern int mktme_keyid_shift;
+>  /* Set the encryption keyid bits in a VMA */  extern void
+> mprotect_set_encrypt(struct vm_area_struct *vma, int newkeyid);
+> 
+> +/* Manage the references to outstanding VMA's per encryption key */
+> +extern int vma_alloc_encrypt_array(void); extern void
+> +vma_free_encrypt_array(void); extern int vma_read_encrypt_ref(int
+> +keyid); extern void vma_get_encrypt_ref(struct vm_area_struct *vma);
+> +extern void vma_put_encrypt_ref(struct vm_area_struct *vma);
+> +
+>  /* Manage mappings between hardware keyids and userspace keys */  extern
+> int mktme_map_alloc(void);  extern void mktme_map_free(void); diff --git
+> a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c index
+> 5ee7f37e9cd0..5690ef51a79a 100644
+> --- a/arch/x86/mm/mktme.c
+> +++ b/arch/x86/mm/mktme.c
+> @@ -163,6 +163,45 @@ int mktme_map_get_free_keyid(void)
+>  	return 0;
+>  }
+> 
+> +/*
+> + *  Helper functions manage the encrypt_count[] array that tracks the
+> + *  VMA's outstanding for each encryption keyid. The gets & puts are
+> + *  used in core mm code that allocates and free's VMA's. The alloc,
+> + *  free, and read functions are used by the MKTME key service to
+> + *  manage key allocation and programming.
+> + */
+> +atomic_t *encrypt_count;
+> +
+> +int vma_alloc_encrypt_array(void)
+> +{
+> +	encrypt_count = kcalloc(mktme_nr_keyids, sizeof(atomic_t),
+> GFP_KERNEL);
+> +	if (!encrypt_count)
+> +		return -ENOMEM;
+> +	return 0;
+> +}
+> +
+> +void vma_free_encrypt_array(void)
+> +{
+> +	kfree(encrypt_count);
+> +}
+> +
+> +int vma_read_encrypt_ref(int keyid)
+> +{
+> +	return atomic_read(&encrypt_count[keyid]);
+> +}
 
-What I want is a way to get security context before inode is created.
-The closest interface is security_dentry_init_security(). Currently
-the only NFS uses security_dentry_init_security() and only selinux has
-dentry_init_security callback. NFS store selinux context in its
-security label (NFS inode can only have one security label, security
-label can only store one security context). SO current NFS security
-label implementation can not support multiple security modules.
+I think it's better to move above to security/keys/mktme_keys.c w/ appropriate renaming.  
 
-I don't want to limit cephfs to single security module. So I make
-cephfs store security context in security.<security module name>
-xattr. When multiple security modules work is done in the future,
-cephfs can easily supports it. (introduce a new
-security_dentry_init_security() which return security contexts for all
-enabled security modules)
-
-Regards
-Yan, Zheng
-
-> I will leave the implications of having multiple security modules
-> with security attributes aside because support for that is a work
-> in progress. Leave it to say that other filesystem will have no
-> problem with it at all.
->
-> >
-> > Regards
-> > Yan, Zheng
-> >
-> >
-> >
-> >>>> Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-> >>>> ---
-> >>>>  fs/nfs/nfs4proc.c         | 3 ++-
-> >>>>  include/linux/lsm_hooks.h | 4 ++--
-> >>>>  include/linux/security.h  | 9 +++++----
-> >>>>  security/security.c       | 7 ++++---
-> >>>>  security/selinux/hooks.c  | 8 ++++++--
-> >>>>  5 files changed, 19 insertions(+), 12 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> >>>> index 6dd146885da9..d18a5fb7aec3 100644
-> >>>> --- a/fs/nfs/nfs4proc.c
-> >>>> +++ b/fs/nfs/nfs4proc.c
-> >>>> @@ -122,7 +122,8 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
-> >>>>              return NULL;
-> >>>>
-> >>>>      err = security_dentry_init_security(dentry, sattr->ia_mode,
-> >>>> -                            &dentry->d_name, (void **)&label->label, &label->len);
-> >>>> +                            &dentry->d_name,  NULL,
-> >>>> +                            (void **)&label->label, &label->len);
-> >>>>      if (err == 0)
-> >>>>              return label;
-> >>>>
-> >>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> >>>> index 8f1131c8dd54..e176c2032bdc 100644
-> >>>> --- a/include/linux/lsm_hooks.h
-> >>>> +++ b/include/linux/lsm_hooks.h
-> >>>> @@ -1476,8 +1476,8 @@ union security_list_options {
-> >>>>                                      unsigned long *set_kern_flags);
-> >>>>      int (*sb_parse_opts_str)(char *options, struct security_mnt_opts *opts);
-> >>>>      int (*dentry_init_security)(struct dentry *dentry, int mode,
-> >>>> -                                    const struct qstr *name, void **ctx,
-> >>>> -                                    u32 *ctxlen);
-> >>>> +                                    const struct qstr *name, const char **label,
-> >>>> +                                    void **ctx, u32 *ctxlen);
-> >>>>      int (*dentry_create_files_as)(struct dentry *dentry, int mode,
-> >>>>                                      struct qstr *name,
-> >>>>                                      const struct cred *old,
-> >>>> diff --git a/include/linux/security.h b/include/linux/security.h
-> >>>> index 63030c85ee19..df2d73998c64 100644
-> >>>> --- a/include/linux/security.h
-> >>>> +++ b/include/linux/security.h
-> >>>> @@ -246,8 +246,9 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
-> >>>>                              unsigned long *set_kern_flags);
-> >>>>  int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts);
-> >>>>  int security_dentry_init_security(struct dentry *dentry, int mode,
-> >>>> -                                    const struct qstr *name, void **ctx,
-> >>>> -                                    u32 *ctxlen);
-> >>>> +                                    const struct qstr *name,
-> >>>> +                                    const char **label,
-> >>>> +                                    void **ctx, u32 *ctxlen);
-> >>>>  int security_dentry_create_files_as(struct dentry *dentry, int mode,
-> >>>>                                      struct qstr *name,
-> >>>>                                      const struct cred *old,
-> >>>> @@ -609,8 +610,8 @@ static inline void security_inode_free(struct inode *inode)
-> >>>>  static inline int security_dentry_init_security(struct dentry *dentry,
-> >>>>                                               int mode,
-> >>>>                                               const struct qstr *name,
-> >>>> -                                             void **ctx,
-> >>>> -                                             u32 *ctxlen)
-> >>>> +                                             const char **label,
-> >>>> +                                             void **ctx, u32 *ctxlen)
-> >>>>  {
-> >>>>      return -EOPNOTSUPP;
-> >>>>  }
-> >>>> diff --git a/security/security.c b/security/security.c
-> >>>> index 68f46d849abe..69818d46aa28 100644
-> >>>> --- a/security/security.c
-> >>>> +++ b/security/security.c
-> >>>> @@ -450,11 +450,12 @@ void security_inode_free(struct inode *inode)
-> >>>>  }
-> >>>>
-> >>>>  int security_dentry_init_security(struct dentry *dentry, int mode,
-> >>>> -                                    const struct qstr *name, void **ctx,
-> >>>> -                                    u32 *ctxlen)
-> >>>> +                                    const struct qstr *name,
-> >>>> +                                    const char **label,
-> >>>> +                                    void **ctx, u32 *ctxlen)
-> >>>>  {
-> >>>>      return call_int_hook(dentry_init_security, -EOPNOTSUPP, dentry, mode,
-> >>>> -                            name, ctx, ctxlen);
-> >>>> +                            name, label, ctx, ctxlen);
-> >>>>  }
-> >>>>  EXPORT_SYMBOL(security_dentry_init_security);
-> >>>>
-> >>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> >>>> index 2b5ee5fbd652..eca3879d9357 100644
-> >>>> --- a/security/selinux/hooks.c
-> >>>> +++ b/security/selinux/hooks.c
-> >>>> @@ -2985,8 +2985,9 @@ static void selinux_inode_free_security(struct inode *inode)
-> >>>>  }
-> >>>>
-> >>>>  static int selinux_dentry_init_security(struct dentry *dentry, int mode,
-> >>>> -                                    const struct qstr *name, void **ctx,
-> >>>> -                                    u32 *ctxlen)
-> >>>> +                                    const struct qstr *name,
-> >>>> +                                    const char **label,
-> >>>> +                                    void **ctx, u32 *ctxlen)
-> >>>>  {
-> >>>>      u32 newsid;
-> >>>>      int rc;
-> >>>> @@ -2998,6 +2999,9 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
-> >>>>      if (rc)
-> >>>>              return rc;
-> >>>>
-> >>>> +    if (label)
-> >>>> +            *label = XATTR_SELINUX_SUFFIX;
-> >>>> +
-> >>> nit: I'd probably call this "name" since that's what it's called in
-> >>> selinux_inode_init_security. "label" has a different connotation in this
-> >>> context.
-> >>>
-> >>>>      return security_sid_to_context(&selinux_state, newsid, (char **)ctx,
-> >>>>                                     ctxlen);
-> >>>>  }
-> >>> Patch looks reasonable to me though.
-> >>>
-> >>> Acked-by: Jeff Layton <jlayton@kernel.org>
-> >>>
-> >>>
->
+Thanks,
+-Kai
+> +
+> +void vma_get_encrypt_ref(struct vm_area_struct *vma) {
+> +	if (vma_keyid(vma))
+> +		atomic_inc(&encrypt_count[vma_keyid(vma)]);
+> +}
+> +
+> +void vma_put_encrypt_ref(struct vm_area_struct *vma) {
+> +	if (vma_keyid(vma))
+> +		atomic_dec(&encrypt_count[vma_keyid(vma)]);
+> +}
+> +
+>  void prep_encrypted_page(struct page *page, int order, int keyid, bool zero)  {
+>  	int i;
+> diff --git a/include/linux/mm.h b/include/linux/mm.h index
+> 0f9422c7841e..b217c699dbab 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2803,6 +2803,8 @@ static inline void setup_nr_node_ids(void) {}  #ifndef
+> CONFIG_X86_INTEL_MKTME  static inline void mprotect_set_encrypt(struct
+> vm_area_struct *vma,
+>  					int newkeyid) {}
+> +static inline void vma_get_encrypt_ref(struct vm_area_struct *vma) {}
+> +static inline void vma_put_encrypt_ref(struct vm_area_struct *vma) {}
+>  #endif /* CONFIG_X86_INTEL_MKTME */
+>  #endif /* __KERNEL__ */
+>  #endif /* _LINUX_MM_H */
+> --
+> 2.14.1
