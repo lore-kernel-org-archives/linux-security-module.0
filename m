@@ -1,42 +1,86 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Mon, 10 Sep 2018 13:12:31 +0300
-Subject: [RFC 02/12] mm: Generalize the mprotect implementation to
-	support extensions
-In-Reply-To: <2dcbb08ed8804e02538a73ee05a4283c54180e36.1536356108.git.alison.schofield@intel.com>
-References: <cover.1536356108.git.alison.schofield@intel.com>
-	<2dcbb08ed8804e02538a73ee05a4283c54180e36.1536356108.git.alison.schofield@intel.com>
-Message-ID: <0663b867003511f1ca652cef6acce589a5184a4b.camel@linux.intel.com>
+From: tadeusz.struk@intel.com (Tadeusz Struk)
+Date: Mon, 10 Sep 2018 10:18:22 -0700
+Subject: [PATCH v6 0/2] tpm: add support for nonblocking operation
+Message-ID: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-09-07 at 15:34 -0700, Alison Schofield wrote:
-> Today mprotect is implemented to support legacy mprotect behavior
-> plus an extension for memory protection keys. Make it more generic
-> so that it can support additional extensions in the future.
-> 
-> This is done is preparation for adding a new system call for memory
-> encyption keys. The intent is that the new encrypted mprotect will be
-> another extension to legacy mprotect.
-> 
-> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-> ---
->  mm/mprotect.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index 68dc476310c0..56e64ef7931e 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -35,6 +35,8 @@
->  
->  #include "internal.h"
->  
-> +#define NO_PKEY  -1
+The TCG SAPI specification [1] defines a set of functions, which allow
+applications to use the TPM device in either blocking or non-blocking fashion.
+Each command defined by the specification has a corresponding
+Tss2_Sys_<COMMAND>_Prepare() and Tss2_Sys_<COMMAND>_Complete() call, which
+together with Tss2_Sys_ExecuteAsync() is designed to allow asynchronous
+mode of operation. Currently the TPM driver supports only blocking calls,
+which doesn't allow asynchronous IO operations.
+This patch changes it and adds support for nonblocking write and a new poll
+function to enable applications, which want to take advantage of this feature.
+The new functionality can be tested using standard TPM tools implemented
+in [2], together with modified TCTI from [3], and an example application
+by Philip Tricca [4]. Here is a short description from Philip:
 
-This commit does not make anything more generic but it does take
-away a magic number. The code change is senseful. The commit
-message is nonsense.
+"The example application `glib-tss2-event` uses a glib main event loop
+to create an RSA 2048 primary key in the TPM2 NULL hierarchy while
+using a glib timer event to time the operation. A GSource object is
+used to generate an event when the FD underlying the tss2 function
+call has data ready. While the application waits for an event indicating
+that the CreatePrimary operation is complete, it counts timer events
+that occur every 100ms. Once the CreatePrimary operation completes the
+number of timer events that occurred is used to make a rough calculation
+of the elapsed time. This value is then printed to the console.
+This takes ~300 lines of C code and requires no management or
+synchronization of threads. The glib GMainContext is "just a poll()
+loop" according to the glib documentation here:
 
-PS. Please use @linux.intel.com for LKML.
+https://developer.gnome.org/programming-guidelines/stable/main-contexts.html.en
 
-/Jarkko
+and so supporting 'poll' is the easiest way to integrate with glib /
+gtk+. This is true of any other event system that relies on 'poll'
+instead of worker threads."
+
+[1] https://trustedcomputinggroup.org/wp-content/uploads/TSS_SAPI_Version-1.1_Revision-22_review_030918.pdf
+[2] https://github.com/tpm2-software/tpm2-tools
+[3] https://github.com/tstruk/tpm2-tss/tree/async
+[4] https://github.com/flihp/glib-tss2-async-example
+
+---
+Changes in v6:
+- Changed commit message in the first patch to more specific.
+- Chenged labels names in tpm-interface.c
+
+Changes in v5:
+- Changed the workqueue allocation time back from the first user interface
+  open to module init.
+
+Changes in v4:
+- Changed the way buffer_mutex is handled in nonblocking mode so that
+  it is not held when write() returns to user space.
+
+Changes in v3:
+- Fixed problem reported by 0-dey kbuild test robot around __exitcall.
+  It complained because there is a module_exit() in another file already.
+- Added info on example application from Philip
+
+Changes in v2:
+- Split the change into two separate patches. First patch adds a pointer
+  to the space to the struct file_priv to have access to it from the async job.
+  This is to avoid memory allocations on every write call. Now everything
+  what's needed is in the file_priv struct.
+- Renamed the 'work' member of the timer to avoid confusion.
+  Now there are 'timeout_work' and 'async_work'.
+- Removed the global wait queue and moved it to file_priv.
+- Only creating the work queue when the first file is opened.
+
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
+
+ drivers/char/tpm/tpm-dev-common.c |  150 +++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |   22 +++--
+ drivers/char/tpm/tpm-dev.h        |   19 +++--
+ drivers/char/tpm/tpm-interface.c  |    1 
+ drivers/char/tpm/tpm.h            |    1 
+ drivers/char/tpm/tpmrm-dev.c      |   31 ++++----
+ 6 files changed, 152 insertions(+), 72 deletions(-)
+
+--
+TS
