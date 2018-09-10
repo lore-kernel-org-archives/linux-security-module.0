@@ -1,18 +1,17 @@
 From: kai.huang@intel.com (Huang, Kai)
-Date: Mon, 10 Sep 2018 01:46:20 +0000
-Subject: [RFC 10/12] x86/pconfig: Program memory encryption keys on a
-	system-wide basis
-In-Reply-To: <0947e4ad711e8b7c1f581a446e808f514620b49b.1536356108.git.alison.schofield@intel.com>
+Date: Mon, 10 Sep 2018 01:10:19 +0000
+Subject: [RFC 00/12] Multi-Key Total Memory Encryption API (MKTME)
+In-Reply-To: <cover.1536356108.git.alison.schofield@intel.com>
 References: <cover.1536356108.git.alison.schofield@intel.com>
-	<0947e4ad711e8b7c1f581a446e808f514620b49b.1536356108.git.alison.schofield@intel.com>
-Message-ID: <105F7BF4D0229846AF094488D65A0989354249D2@PGSMSX112.gar.corp.intel.com>
+Message-ID: <105F7BF4D0229846AF094488D65A098935424961@PGSMSX112.gar.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 
 > -----Original Message-----
-> From: Schofield, Alison
-> Sent: Saturday, September 8, 2018 10:38 AM
+> From: keyrings-owner at vger.kernel.org [mailto:keyrings-
+> owner at vger.kernel.org] On Behalf Of Alison Schofield
+> Sent: Saturday, September 8, 2018 10:23 AM
 > To: dhowells at redhat.com; tglx at linutronix.de
 > Cc: Huang, Kai <kai.huang@intel.com>; Nakajima, Jun
 > <jun.nakajima@intel.com>; Shutemov, Kirill <kirill.shutemov@intel.com>;
@@ -20,102 +19,80 @@ List-Id: linux-security-module.vger.kernel.org
 > <jarkko.sakkinen@intel.com>; jmorris at namei.org; keyrings at vger.kernel.org;
 > linux-security-module at vger.kernel.org; mingo at redhat.com; hpa at zytor.com;
 > x86 at kernel.org; linux-mm at kvack.org
-> Subject: [RFC 10/12] x86/pconfig: Program memory encryption keys on a
-> system-wide basis
+> Subject: [RFC 00/12] Multi-Key Total Memory Encryption API (MKTME)
 > 
-> The kernel manages the MKTME (Multi-Key Total Memory Encryption) Keys as a
-> system wide single pool of keys. The hardware, however, manages the keys on a
-> per physical package basis. Each physical package maintains a key table that all
-> CPU's in that package share.
+> Seeking comments on the APIs supporting MKTME on future Intel platforms.
 > 
-> In order to maintain the consistent, system wide view that the kernel requires,
-> program all physical packages during a key program request.
+> MKTME (Multi-Key Total Memory Encryption) is a technology supporting
+> memory encryption on upcoming Intel platforms. Whereas TME allows
+> encryption of the entire system memory using a single key, MKTME allows
+> mulitple encryption domains, each having their own key. While the main use
+> case for the feature is virtual machine isolation, the API needs the flexibility to
+> work for a wide range of use cases.
 > 
-> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-> ---
->  arch/x86/include/asm/intel_pconfig.h | 42
-> ++++++++++++++++++++++++++++++------
->  1 file changed, 36 insertions(+), 6 deletions(-)
+> This RFC presents the 2 API additions that enable userspace to:
+>  1) Create Encryption Keys: Kernel Key Service type "mktme"
+>  2) Use the Encryption Keys: system call encrypt_mprotect()
 > 
-> diff --git a/arch/x86/include/asm/intel_pconfig.h
-> b/arch/x86/include/asm/intel_pconfig.h
-> index 3cb002b1d0f9..d3bf0a297e89 100644
-> --- a/arch/x86/include/asm/intel_pconfig.h
-> +++ b/arch/x86/include/asm/intel_pconfig.h
-> @@ -3,6 +3,7 @@
-> 
->  #include <asm/asm.h>
->  #include <asm/processor.h>
-> +#include <linux/cpu.h>
-> 
->  enum pconfig_target {
->  	INVALID_TARGET	= 0,
-> @@ -47,19 +48,48 @@ struct mktme_key_program {
->  	u8 key_field_2[64];
->  } __packed __aligned(256);
-> 
-> -static inline int mktme_key_program(struct mktme_key_program
-> *key_program)
-> +struct mktme_key_program_info {
-> +	struct mktme_key_program *key_program;
-> +	unsigned long status;
-> +};
-> +
-> +static void mktme_package_program(void *key_program_info)
->  {
-> +	struct mktme_key_program_info *info = key_program_info;
->  	unsigned long rax = MKTME_KEY_PROGRAM;
-> 
-> +	asm volatile(PCONFIG
-> +		: "=a" (rax), "=b" (info->key_program)
+> In order to share between: the Kernel Key Service, the new system call, and the
+> existing mm code, helper functions were created in arch/x86/mktme
 
-Why do we need "=b" (info->key_program)? To me PCONFIG only reads from rbx, but won't write to it.
+IMHO, we can separate this series into 2 parts, as you did above, and send out them separately. The reason is, in general I think adding new MKTME type to key retention services is not that related to memory management code, namely the encrypt_mprotect() API part.
 
-> +		: "0" (rax), "1" (info->key_program)
-> +		: "memory", "cc");
-> +
-> +	if (rax != MKTME_PROG_SUCCESS)
-> +		WRITE_ONCE(info->status, rax);
-> +}
-> +
-> +/*
-> + * MKTME keys are managed as a system-wide single pool of keys.
-> + * In the hardware, each physical package maintains a separate key
-> + * table. Program all physical packages with the same key info to
-> + * maintain that system-wide kernel view.
-> + */
-> +static inline int mktme_key_program(struct mktme_key_program
-> *key_program,
-> +				    cpumask_var_t mktme_cpumask)
-> +{
-> +	struct mktme_key_program_info info = {
-> +		.key_program = key_program,
-> +		.status = MKTME_PROG_SUCCESS,
-> +	};
-> +
->  	if (!pconfig_target_supported(MKTME_TARGET))
->  		return -ENXIO;
-> 
-> -	asm volatile(PCONFIG
-> -		: "=a" (rax), "=b" (key_program)
-> -		: "0" (rax), "1" (key_program)
-> -		: "memory", "cc");
-> +	get_online_cpus();
-> +	on_each_cpu_mask(mktme_cpumask, mktme_package_program,
-> +			 &info, 1);
-> +	put_online_cpus();
+So if we split the two parts and send them out separately, the first part can be reviewed by keyring and security guys, without involving mm guys, and the encrypt_mprotect() part can be more reviewed more by mm guys. 
 
-What is the value of 'mktme_cpumask'? Does it only contain one core for each package? 
-
-Since we are using 'on_each_cpu_mask', I think  we should make sure only one core is set for each node in 'mktme_cpumask'. Otherwise we have to deal with 'DEVICE_BUSY' case, since if one core is already in middle of PCONFIG, the other PCONFIGs on the same node would get 'DEVICE_BUSY' error, but this doesn't mean PCONFIG has failed on that node.
+And since encrypt_mprotect() is a new syscall, you may need to add more lists for the review, ie, linux-api, and maybe linux-kernel as well.
 
 Thanks,
 -Kai
+
 > 
-> -	return rax;
-> +	return info.status;
->  }
+> This patchset is built upon Kirill Shutemov's patchset for the core MKTME
+> support. You can find that here:
+> git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git mktme/wip
 > 
->  #endif	/* _ASM_X86_INTEL_PCONFIG_H */
+> 
+> Alison Schofield (12):
+>   docs/x86: Document the Multi-Key Total Memory Encryption API
+>   mm: Generalize the mprotect implementation to support extensions
+>   syscall/x86: Wire up a new system call for memory encryption keys
+>   x86/mm: Add helper functions to manage memory encryption keys
+>   x86/mm: Add a helper function to set keyid bits in encrypted VMA's
+>   mm: Add the encrypt_mprotect() system call
+>   x86/mm: Add helper functions to track encrypted VMA's
+>   mm: Track VMA's in use for each memory encryption keyid
+>   mm: Restrict memory encryption to anonymous VMA's
+>   x86/pconfig: Program memory encryption keys on a system-wide basis
+>   keys/mktme: Add a new key service type for memory encryption keys
+>   keys/mktme: Do not revoke in use memory encryption keys
+> 
+>  Documentation/x86/mktme-keys.txt       | 153 ++++++++++++++++
+>  arch/x86/Kconfig                       |   1 +
+>  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+>  arch/x86/include/asm/intel_pconfig.h   |  42 ++++-
+>  arch/x86/include/asm/mktme.h           |  21 +++
+>  arch/x86/mm/mktme.c                    | 141 ++++++++++++++
+>  fs/exec.c                              |   4 +-
+>  include/keys/mktme-type.h              |  28 +++
+>  include/linux/key.h                    |   2 +
+>  include/linux/mm.h                     |   9 +-
+>  include/linux/syscalls.h               |   2 +
+>  include/uapi/asm-generic/unistd.h      |   4 +-
+>  kernel/fork.c                          |   2 +
+>  kernel/sys_ni.c                        |   2 +
+>  mm/mmap.c                              |  12 ++
+>  mm/mprotect.c                          |  93 +++++++++-
+>  mm/nommu.c                             |   4 +
+>  security/keys/Kconfig                  |  11 ++
+>  security/keys/Makefile                 |   1 +
+>  security/keys/internal.h               |   6 +
+>  security/keys/keyctl.c                 |   7 +
+>  security/keys/mktme_keys.c             | 325
+> +++++++++++++++++++++++++++++++++
+>  23 files changed, 855 insertions(+), 17 deletions(-)  create mode 100644
+> Documentation/x86/mktme-keys.txt  create mode 100644 include/keys/mktme-
+> type.h  create mode 100644 security/keys/mktme_keys.c
+> 
 > --
 > 2.14.1
