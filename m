@@ -1,71 +1,26 @@
 From: jarkko.sakkinen@intel.com (Sakkinen, Jarkko)
-Date: Mon, 10 Sep 2018 18:21:58 +0000
-Subject: [RFC 09/12] mm: Restrict memory encryption to anonymous VMA's
-In-Reply-To: <f69e3d4f96504185054d951c7c85075ebf63e47a.1536356108.git.alison.schofield@intel.com>
+Date: Mon, 10 Sep 2018 18:24:20 +0000
+Subject: [RFC 10/12] x86/pconfig: Program memory encryption keys on a
+	system-wide basis
+In-Reply-To: <0947e4ad711e8b7c1f581a446e808f514620b49b.1536356108.git.alison.schofield@intel.com>
 References: <cover.1536356108.git.alison.schofield@intel.com>
-	<f69e3d4f96504185054d951c7c85075ebf63e47a.1536356108.git.alison.schofield@intel.com>
-Message-ID: <ae0288d5205a5c431e9a6bf0c9e68beded45e84b.camel@intel.com>
+	<0947e4ad711e8b7c1f581a446e808f514620b49b.1536356108.git.alison.schofield@intel.com>
+Message-ID: <73c60d4f8a953476f1e29aaccbeb7f732c209190.camel@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-09-07 at 15:37 -0700, Alison Schofield wrote:
-> Memory encryption is only supported for mappings that are ANONYMOUS.
-> Test the entire range of VMA's in an encrypt_mprotect() request to
-> make sure they all meet that requirement before encrypting any.
+On Fri, 2018-09-07 at 15:38 -0700, Alison Schofield wrote:
+> The kernel manages the MKTME (Multi-Key Total Memory Encryption) Keys
+> as a system wide single pool of keys. The hardware, however, manages
+> the keys on a per physical package basis. Each physical package
+> maintains a key table that all CPU's in that package share.
 > 
-> The encrypt_mprotect syscall will return -EINVAL and will not encrypt
-> any VMA's if this check fails.
+> In order to maintain the consistent, system wide view that the kernel
+> requires, program all physical packages during a key program request.
 > 
 > Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-> ---
->  mm/mprotect.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/mm/mprotect.c b/mm/mprotect.c
-> index 6c2e1106525c..3384b755aad1 100644
-> --- a/mm/mprotect.c
-> +++ b/mm/mprotect.c
-> @@ -311,6 +311,24 @@ unsigned long change_protection(struct vm_area_struct
-> *vma, unsigned long start,
->  	return pages;
->  }
->  
-> +/*
-> + * Encrypted mprotect is only supported on anonymous mappings.
-> + * All VMA's in the requested range must be anonymous. If this
-> + * test fails on any single VMA, the entire mprotect request fails.
-> + */
 
-kdoc
-
-> +bool mem_supports_encryption(struct vm_area_struct *vma, unsigned long end)
-> +{
-> +	struct vm_area_struct *test_vma = vma;
-> +
-> +	do {
-> +		if (!vma_is_anonymous(test_vma))
-> +			return false;
-> +
-> +		test_vma = test_vma->vm_next;
-> +	} while (test_vma && test_vma->vm_start < end);
-> +	return true;
-> +}
-> +
->  int
->  mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
->  	       unsigned long start, unsigned long end, unsigned long
-> newflags,
-> @@ -491,6 +509,10 @@ static int do_mprotect_ext(unsigned long start, size_t
-> len,
->  				goto out;
->  		}
->  	}
-> +	if (keyid > 0 && !mem_supports_encryption(vma, end)) {
-> +		error = -EINVAL;
-> +		goto out;
-> +	}
->  	if (start > vma->vm_start)
->  		prev = vma;
->  
+Just kind of checking that are you talking about multiple cores in
+a single package or really multiple packages?
 
 /Jarkko
