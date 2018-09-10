@@ -1,23 +1,19 @@
 From: jarkko.sakkinen@intel.com (Sakkinen, Jarkko)
-Date: Mon, 10 Sep 2018 17:29:52 +0000
-Subject: [RFC 00/12] Multi-Key Total Memory Encryption API (MKTME)
-In-Reply-To: <cover.1536356108.git.alison.schofield@intel.com>
+Date: Mon, 10 Sep 2018 17:57:00 +0000
+Subject: [RFC 05/12] x86/mm: Add a helper function to set keyid bits in
+	encrypted VMA's
+In-Reply-To: <efec45aae8dab3f4db8a79d001ec65137748cdb1.1536356108.git.alison.schofield@intel.com>
 References: <cover.1536356108.git.alison.schofield@intel.com>
-Message-ID: <0952428c3fe91573e840247ca4e579e1b4ea63f3.camel@intel.com>
+	<efec45aae8dab3f4db8a79d001ec65137748cdb1.1536356108.git.alison.schofield@intel.com>
+Message-ID: <7d89c2ca26aee64d1e8d36332c770746a9462d13.camel@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-09-07 at 15:23 -0700, Alison Schofield wrote:
-> Seeking comments on the APIs supporting MKTME on future Intel platforms.
-> 
-> MKTME (Multi-Key Total Memory Encryption) is a technology supporting
-> memory encryption on upcoming Intel platforms. Whereas TME allows
-> encryption of the entire system memory using a single key, MKTME
-> allows mulitple encryption domains, each having their own key. While 
-> the main use case for the feature is virtual machine isolation, the
-> API needs the flexibility to work for a wide range of use cases.
+On Fri, 2018-09-07 at 15:36 -0700, Alison Schofield wrote:
+> Store the memory encryption keyid in the upper bits of vm_page_prot
+> that match position of keyid, bits 51:46, in a PTE.
 
-Is it a common knowledge what TME is? I kind of dropped out of the wagon
-in the 2nd sentence of this paragraph.
+Would not do bad to explain the context a bit here. At least I do not
+know why you ended up to this bit range.
 
 /Jarkko
