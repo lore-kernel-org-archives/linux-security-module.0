@@ -1,32 +1,121 @@
-From: smfrench@gmail.com (Steve French)
-Date: Sun, 9 Sep 2018 12:38:02 -0500
-Subject: Containers and checkpoint/restart micro-conference at LPC2018
-In-Reply-To: <1536507039.3192.5.camel@HansenPartnership.com>
-References: <20180813161015.GD18492@castiana>
-	<1536507039.3192.5.camel@HansenPartnership.com>
-Message-ID: <CAH2r5mv5=+CGpmO189Ne6sha0YXjLZWUOzMA6dDkntK8LqHF5A@mail.gmail.com>
+From: kai.huang@intel.com (Huang, Kai)
+Date: Mon, 10 Sep 2018 01:46:20 +0000
+Subject: [RFC 10/12] x86/pconfig: Program memory encryption keys on a
+	system-wide basis
+In-Reply-To: <0947e4ad711e8b7c1f581a446e808f514620b49b.1536356108.git.alison.schofield@intel.com>
+References: <cover.1536356108.git.alison.schofield@intel.com>
+	<0947e4ad711e8b7c1f581a446e808f514620b49b.1536356108.git.alison.schofield@intel.com>
+Message-ID: <105F7BF4D0229846AF094488D65A0989354249D2@PGSMSX112.gar.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Sep 9, 2018 at 10:32 AM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Mon, 2018-08-13 at 12:10 -0400, St?phane Graber wrote:
-> > Details can be found here:
-> >
-> >   https://discuss.linuxcontainers.org/t/containers-micro-conference-a
-> > t-linux-plumbers-2018/2417
->
-> This website was giving a 503 error when I looked.
->
-> However, if you want a discussion on the requirements for shiftfs (and
-> whether we still need it), I'm up for that.
 
-I also put in a proposal for a fs miniconference if we have any file
-system developers that will be at plumbers
+> -----Original Message-----
+> From: Schofield, Alison
+> Sent: Saturday, September 8, 2018 10:38 AM
+> To: dhowells at redhat.com; tglx at linutronix.de
+> Cc: Huang, Kai <kai.huang@intel.com>; Nakajima, Jun
+> <jun.nakajima@intel.com>; Shutemov, Kirill <kirill.shutemov@intel.com>;
+> Hansen, Dave <dave.hansen@intel.com>; Sakkinen, Jarkko
+> <jarkko.sakkinen@intel.com>; jmorris at namei.org; keyrings at vger.kernel.org;
+> linux-security-module at vger.kernel.org; mingo at redhat.com; hpa at zytor.com;
+> x86 at kernel.org; linux-mm at kvack.org
+> Subject: [RFC 10/12] x86/pconfig: Program memory encryption keys on a
+> system-wide basis
+> 
+> The kernel manages the MKTME (Multi-Key Total Memory Encryption) Keys as a
+> system wide single pool of keys. The hardware, however, manages the keys on a
+> per physical package basis. Each physical package maintains a key table that all
+> CPU's in that package share.
+> 
+> In order to maintain the consistent, system wide view that the kernel requires,
+> program all physical packages during a key program request.
+> 
+> Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+> ---
+>  arch/x86/include/asm/intel_pconfig.h | 42
+> ++++++++++++++++++++++++++++++------
+>  1 file changed, 36 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/intel_pconfig.h
+> b/arch/x86/include/asm/intel_pconfig.h
+> index 3cb002b1d0f9..d3bf0a297e89 100644
+> --- a/arch/x86/include/asm/intel_pconfig.h
+> +++ b/arch/x86/include/asm/intel_pconfig.h
+> @@ -3,6 +3,7 @@
+> 
+>  #include <asm/asm.h>
+>  #include <asm/processor.h>
+> +#include <linux/cpu.h>
+> 
+>  enum pconfig_target {
+>  	INVALID_TARGET	= 0,
+> @@ -47,19 +48,48 @@ struct mktme_key_program {
+>  	u8 key_field_2[64];
+>  } __packed __aligned(256);
+> 
+> -static inline int mktme_key_program(struct mktme_key_program
+> *key_program)
+> +struct mktme_key_program_info {
+> +	struct mktme_key_program *key_program;
+> +	unsigned long status;
+> +};
+> +
+> +static void mktme_package_program(void *key_program_info)
+>  {
+> +	struct mktme_key_program_info *info = key_program_info;
+>  	unsigned long rax = MKTME_KEY_PROGRAM;
+> 
+> +	asm volatile(PCONFIG
+> +		: "=a" (rax), "=b" (info->key_program)
 
+Why do we need "=b" (info->key_program)? To me PCONFIG only reads from rbx, but won't write to it.
 
--- 
+> +		: "0" (rax), "1" (info->key_program)
+> +		: "memory", "cc");
+> +
+> +	if (rax != MKTME_PROG_SUCCESS)
+> +		WRITE_ONCE(info->status, rax);
+> +}
+> +
+> +/*
+> + * MKTME keys are managed as a system-wide single pool of keys.
+> + * In the hardware, each physical package maintains a separate key
+> + * table. Program all physical packages with the same key info to
+> + * maintain that system-wide kernel view.
+> + */
+> +static inline int mktme_key_program(struct mktme_key_program
+> *key_program,
+> +				    cpumask_var_t mktme_cpumask)
+> +{
+> +	struct mktme_key_program_info info = {
+> +		.key_program = key_program,
+> +		.status = MKTME_PROG_SUCCESS,
+> +	};
+> +
+>  	if (!pconfig_target_supported(MKTME_TARGET))
+>  		return -ENXIO;
+> 
+> -	asm volatile(PCONFIG
+> -		: "=a" (rax), "=b" (key_program)
+> -		: "0" (rax), "1" (key_program)
+> -		: "memory", "cc");
+> +	get_online_cpus();
+> +	on_each_cpu_mask(mktme_cpumask, mktme_package_program,
+> +			 &info, 1);
+> +	put_online_cpus();
+
+What is the value of 'mktme_cpumask'? Does it only contain one core for each package? 
+
+Since we are using 'on_each_cpu_mask', I think  we should make sure only one core is set for each node in 'mktme_cpumask'. Otherwise we have to deal with 'DEVICE_BUSY' case, since if one core is already in middle of PCONFIG, the other PCONFIGs on the same node would get 'DEVICE_BUSY' error, but this doesn't mean PCONFIG has failed on that node.
+
 Thanks,
-
-Steve
+-Kai
+> 
+> -	return rax;
+> +	return info.status;
+>  }
+> 
+>  #endif	/* _ASM_X86_INTEL_PCONFIG_H */
+> --
+> 2.14.1
