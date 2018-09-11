@@ -1,234 +1,104 @@
-From: kai.huang@intel.com (Huang, Kai)
-Date: Tue, 11 Sep 2018 03:15:22 +0000
-Subject: [RFC 00/12] Multi-Key Total Memory Encryption API (MKTME)
-In-Reply-To: <20180910191059.GA26529@alison-desk.jf.intel.com>
-References: <cover.1536356108.git.alison.schofield@intel.com>
-	<105F7BF4D0229846AF094488D65A098935424961@PGSMSX112.gar.corp.intel.com>
-	<20180910191059.GA26529@alison-desk.jf.intel.com>
-Message-ID: <1536635716.5860.17.camel@intel.com>
+From: syzbot+0925ea3f5745e9005733@syzkaller.appspotmail.com (syzbot)
+Date: Mon, 10 Sep 2018 23:06:02 -0700
+Subject: INFO: rcu detected stall in pppol2tp_sendmsg
+Message-ID: <000000000000b8e87005759244ec@google.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-09-10 at 12:10 -0700, Alison Schofield wrote:
-> On Sun, Sep 09, 2018 at 06:10:19PM -0700, Huang, Kai wrote:
-> > 
-> > > -----Original Message-----
-> > > From: keyrings-owner at vger.kernel.org [mailto:keyrings-
-> > > owner at vger.kernel.org] On Behalf Of Alison Schofield
-> > > Sent: Saturday, September 8, 2018 10:23 AM
-> > > To: dhowells at redhat.com; tglx at linutronix.de
-> > > Cc: Huang, Kai <kai.huang@intel.com>; Nakajima, Jun
-> > > <jun.nakajima@intel.com>; Shutemov, Kirill <kirill.shutemov@intel
-> > > .com>;
-> > > Hansen, Dave <dave.hansen@intel.com>; Sakkinen, Jarkko
-> > > <jarkko.sakkinen@intel.com>; jmorris at namei.org; keyrings at vger.ker
-> > > nel.org;
-> > > linux-security-module at vger.kernel.org; mingo at redhat.com; hpa at zyto
-> > > r.com;
-> > > x86 at kernel.org; linux-mm at kvack.org
-> > > Subject: [RFC 00/12] Multi-Key Total Memory Encryption API
-> > > (MKTME)
-> > > 
-> > > Seeking comments on the APIs supporting MKTME on future Intel
-> > > platforms.
-> > > 
-> > > MKTME (Multi-Key Total Memory Encryption) is a technology
-> > > supporting
-> > > memory encryption on upcoming Intel platforms. Whereas TME allows
-> > > encryption of the entire system memory using a single key, MKTME
-> > > allows
-> > > mulitple encryption domains, each having their own key. While the
-> > > main use
-> > > case for the feature is virtual machine isolation, the API needs
-> > > the flexibility to
-> > > work for a wide range of use cases.
-> > > 
-> > > This RFC presents the 2 API additions that enable userspace to:
-> > >  1) Create Encryption Keys: Kernel Key Service type "mktme"
-> > >  2) Use the Encryption Keys: system call encrypt_mprotect()
-> > > 
-> > > In order to share between: the Kernel Key Service, the new system
-> > > call, and the
-> > > existing mm code, helper functions were created in arch/x86/mktme
-> > 
-> > IMHO, we can separate this series into 2 parts, as you did above,
-> > and send out them separately. The reason is, in general I think
-> > adding new MKTME type to key retention services is not that related
-> > to memory management code, namely the encrypt_mprotect() API part.
-> > 
-> > So if we split the two parts and send them out separately, the
-> > first part can be reviewed by keyring and security guys, without
-> > involving mm guys, and the encrypt_mprotect() part can be more
-> > reviewed more by mm guys. 
-> > 
-> 
-> Kai,
-> 
-> That was the direction I had in mind at the onset: the MKTME key
-> service
-> would be one patch(set) and the MKTME encrypt_mprotect() system call
-> would
-> be delivered in another patch(set).
-> 
-> That separation falls apart when the shared structures and functions
-> are
-> introduced. That 'mktme_map' (maps userspace keys to hardware keyid
-> slots),
-> and the 'encrypt_count' array (counts vma's outstanding for each key)
-> need
-> to be shared by both pieces. These mktme special shared structures
-> and the
-> functions that operate on them are all defined in
-> arch/x86/mm/mktme.h,.c.
-> From there they can be shared with the security/keys/mktme_keys.c
-> 
-> Once I made that separation, I stuck with it. Those structures, and
-> any
-> functions that manipulate those structures live in
-> arch/x86/mm/mktme.h,c
-> 
-> You noted that some of the functions that operate on the
-> encrypt_count
-> might not need to be over in arch/x86/mm/mktme.c because they are not
-> used
-> in the mm code. That is true.  
+Hello,
 
-Yes IMO this is better.
+syzbot found the following crash on:
 
-> But, then I'd be splitting up the definition
-> of the struct and the funcs that operate on it. So, I stuck with
-> keeping it
-> all together in the arch specific mktme files.
+HEAD commit:    11da3a7f84f1 Linux 4.19-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10577ada400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9917ff4b798e1a1e
+dashboard link: https://syzkaller.appspot.com/bug?extid=0925ea3f5745e9005733
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Definition can also be in include/keys/mktme-type.h, right?
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> 
-> Having said all the above, I do welcome other ideas on how to better
-> organize
-> the code. 
-> 
-> Back to your request- to split it into smaller patchsets might look
-> something
-> like:
-> 1) the MKTME API helpers
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+0925ea3f5745e9005733 at syzkaller.appspotmail.com
 
-Exactly what helpers?
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-....: (1 GPs behind) idle=142/1/0x4000000000000002  
+softirq=27118/27119 fqs=5247
+rcu: 	 (t=10500 jiffies g=38069 q=255)
+NMI backtrace for cpu 0
+CPU: 0 PID: 11502 Comm: syz-executor2 Not tainted 4.19.0-rc3+ #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.3+0x63/0xa2 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x1b3/0x1ed lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:162 [inline]
+  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1340
+  print_cpu_stall.cold.78+0x2d3/0x524 kernel/rcu/tree.c:1478
+  check_cpu_stall kernel/rcu/tree.c:1550 [inline]
+  __rcu_pending kernel/rcu/tree.c:3276 [inline]
+  rcu_pending kernel/rcu/tree.c:3319 [inline]
+  rcu_check_callbacks+0xfd9/0x1990 kernel/rcu/tree.c:2665
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1029 [inline]
+  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1054
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:864
+  </IRQ>
+RIP: 0010:security_xfrm_policy_lookup+0x58/0xd0 security/security.c:1675
+Code: 3b fe 41 0f b6 c5 49 bc 00 00 00 00 00 fc ff df 89 45 d4 e8 1a f2 3b  
+fe 48 8d 7b 18 48 89 f8 48 c1 e8 03 42 80 3c 20 00 75 58 <8b> 55 d4 44 89  
+fe 4c 89 f7 48 8b 43 18 e8 36 91 9d 04 31 ff 41 89
+RSP: 0018:ffff8801ba216ee0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 1ffffffff1317fd6 RBX: ffffffff898bfe98 RCX: ffffc90005017000
+RDX: 0000000000040000 RSI: ffffffff8342dea6 RDI: ffffffff898bfeb0
+RBP: ffff8801ba216f10 R08: ffff8801d2b54480 R09: 1ffffffff12b43d5
+R10: ffffed003b5c4732 R11: ffff8801dae23993 R12: dffffc0000000000
+R13: 0000000000000001 R14: 0000000000000000 R15: 00000000000000df
+  xfrm_sk_policy_lookup+0x32b/0x640 net/xfrm/xfrm_policy.c:1203
+  xfrm_lookup_with_ifid+0x2a1/0x2b80 net/xfrm/xfrm_policy.c:2063
+  xfrm_lookup net/xfrm/xfrm_policy.c:2200 [inline]
+  xfrm_lookup_route+0x3c/0x1f0 net/xfrm/xfrm_policy.c:2211
+  ip6_dst_lookup_flow+0x1c6/0x270 net/ipv6/ip6_output.c:1085
+  inet6_csk_route_socket+0x8bd/0x1020 net/ipv6/inet6_connection_sock.c:110
+  inet6_csk_xmit+0x118/0x630 net/ipv6/inet6_connection_sock.c:125
+  l2tp_xmit_core net/l2tp/l2tp_core.c:1030 [inline]
+  l2tp_xmit_skb+0x1465/0x1860 net/l2tp/l2tp_core.c:1132
+  pppol2tp_sendmsg+0x4b1/0x6c0 net/l2tp/l2tp_ppp.c:329
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  ___sys_sendmsg+0x51d/0x930 net/socket.c:2114
+  __sys_sendmmsg+0x246/0x6d0 net/socket.c:2209
+  __do_sys_sendmmsg net/socket.c:2238 [inline]
+  __se_sys_sendmmsg net/socket.c:2235 [inline]
+  __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2235
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4572a9
+Code: fd b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f7ab090fc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 00007f7ab09106d4 RCX: 00000000004572a9
+RDX: 0800000000000059 RSI: 0000000020005fc0 RDI: 0000000000000006
+RBP: 00000000009300a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004d4a20 R14: 00000000004c8fe5 R15: 0000000000000000
 
-> 2) the MKTME Key Service
-> 3) the MKTME syscall encrypt_mprotect()
-> 
-> I'm not clear that would make anyones review life easier, than
-> picking
-> the same pieces out of the greater patchset.
 
-Well, the reason I suggested we should split key retention services
-from other staff and get it reviewed first is I think the
-functionalities of MKTME key type has nothing to do w/ MM code. IMHO
-what MKTME key type should provide includes:
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller at googlegroups.com.
 
-1) Support add_key, keyctl (revoke, etc) obviously. THis also implies
-keyID allocation, so you will need some info from MM or x86 code to get
- info such as number of keyIDs, etc. In fact I think number of keyIDs
-is  the only info you need (0 keyIDs means MKTME is disabled).
-
-2) You need to provide some APIs to munipulate key reference count.
-Those functions can be declared in mktme-type.h, and implemented in
-mktme_keys.c. I think this is more reasonable, as logically reference
-count is part of MKTME key service.
-
-I don't think you need to do anything else in MKTME key type?
-
-I think you can even start upstreaming MKTME key type now w/o Kirill's
-core-MKTME support, since 1) adding MKTME key type doesn't do any harm
-w/o kirill's core-MKTME code; 2) logically MKTME key type has no true
-dependency on core-MKTME code.
-
-So IMHO, a better structure should be:
-
-1) Current upstream code (maybe with some early detction code change,
-ie, to disable MKTME for some SW reason, but I am not sure whether this
-is truely needed, since when MKTME key type gets initialized, that part
-should been done already).
-2) MKTME key type
-3) Kirill's core-MKTME
-4) new syscall
-
-And I think CONFIG_MKTME_KEYS doesn't really need to depend on
-CONFIG_INTEL_MKTME at this point, although we can add such if needed
-when kirill's core-MKTME code gets upstreamed.
-
-Thanks,
--Kai
-> 
-> Suggestions welcome,
-> Alison
-> 
-> > And since encrypt_mprotect() is a new syscall, you may need to add
-> > more lists for the review, ie, linux-api, and maybe linux-kernel as
-> > well.
-> 
-> Got it. Will include theses in v1.
-> 
-> > 
-> > Thanks,
-> > -Kai
-> > 
-> > > 
-> > > This patchset is built upon Kirill Shutemov's patchset for the
-> > > core MKTME
-> > > support. You can find that here:
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git
-> > > mktme/wip
-> > > 
-> > > 
-> > > Alison Schofield (12):
-> > >   docs/x86: Document the Multi-Key Total Memory Encryption API
-> > >   mm: Generalize the mprotect implementation to support
-> > > extensions
-> > >   syscall/x86: Wire up a new system call for memory encryption
-> > > keys
-> > >   x86/mm: Add helper functions to manage memory encryption keys
-> > >   x86/mm: Add a helper function to set keyid bits in encrypted
-> > > VMA's
-> > >   mm: Add the encrypt_mprotect() system call
-> > >   x86/mm: Add helper functions to track encrypted VMA's
-> > >   mm: Track VMA's in use for each memory encryption keyid
-> > >   mm: Restrict memory encryption to anonymous VMA's
-> > >   x86/pconfig: Program memory encryption keys on a system-wide
-> > > basis
-> > >   keys/mktme: Add a new key service type for memory encryption
-> > > keys
-> > >   keys/mktme: Do not revoke in use memory encryption keys
-> > > 
-> > >  Documentation/x86/mktme-keys.txt       | 153 ++++++++++++++++
-> > >  arch/x86/Kconfig                       |   1 +
-> > >  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
-> > >  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
-> > >  arch/x86/include/asm/intel_pconfig.h   |  42 ++++-
-> > >  arch/x86/include/asm/mktme.h           |  21 +++
-> > >  arch/x86/mm/mktme.c                    | 141 ++++++++++++++
-> > >  fs/exec.c                              |   4 +-
-> > >  include/keys/mktme-type.h              |  28 +++
-> > >  include/linux/key.h                    |   2 +
-> > >  include/linux/mm.h                     |   9 +-
-> > >  include/linux/syscalls.h               |   2 +
-> > >  include/uapi/asm-generic/unistd.h      |   4 +-
-> > >  kernel/fork.c                          |   2 +
-> > >  kernel/sys_ni.c                        |   2 +
-> > >  mm/mmap.c                              |  12 ++
-> > >  mm/mprotect.c                          |  93 +++++++++-
-> > >  mm/nommu.c                             |   4 +
-> > >  security/keys/Kconfig                  |  11 ++
-> > >  security/keys/Makefile                 |   1 +
-> > >  security/keys/internal.h               |   6 +
-> > >  security/keys/keyctl.c                 |   7 +
-> > >  security/keys/mktme_keys.c             | 325
-> > > +++++++++++++++++++++++++++++++++
-> > >  23 files changed, 855 insertions(+), 17 deletions(-)  create
-> > > mode 100644
-> > > Documentation/x86/mktme-keys.txt  create mode 100644
-> > > include/keys/mktme-
-> > > type.h  create mode 100644 security/keys/mktme_keys.c
-> > > 
-> > > --
-> > > 2.14.1
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
