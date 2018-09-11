@@ -1,32 +1,62 @@
-From: dhowells@redhat.com (David Howells)
-Date: Wed, 12 Sep 2018 00:01:51 +0100
-Subject: [RFC 11/12] keys/mktme: Add a new key service type for memory
-	encryption keys
-In-Reply-To: <20180911223933.GA2638@alison-desk.jf.intel.com>
-References: <20180911223933.GA2638@alison-desk.jf.intel.com>
-	<1a14a6feb02f968c5e6b98360f6f16106b633b58.1536356108.git.alison.schofield@intel.com>
-	<cover.1536356108.git.alison.schofield@intel.com>
-	<27768.1536703395@warthog.procyon.org.uk>
-Message-ID: <31294.1536706911@warthog.procyon.org.uk>
+From: darwish.07@gmail.com (Ahmed S. Darwish)
+Date: Tue, 11 Sep 2018 23:45:38 +0000
+Subject: [PATCH 01/10] procfs: add smack subdir to attrs
+In-Reply-To: <c43599b8-20f6-0cc6-28d7-abff4c0d0a0d@schaufler-ca.com>
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
+	<c43599b8-20f6-0cc6-28d7-abff4c0d0a0d@schaufler-ca.com>
+Message-ID: <20180911234538.GB12337@darwi-kernel>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Alison Schofield <alison.schofield@intel.com> wrote:
+On Tue, Sep 11, 2018 at 09:41:32AM -0700, Casey Schaufler wrote:
+> Back in 2007 I made what turned out to be a rather serious
+> mistake in the implementation of the Smack security module.
+> The SELinux module used an interface in /proc to manipulate
+> the security context on processes. Rather than use a similar
+> interface, I used the same interface. The AppArmor team did
+> likewise. Now /proc/.../attr/current will tell you the
+> security "context" of the process, but it will be different
+> depending on the security module you're using.
+>
+> This patch provides a subdirectory in /proc/.../attr for
+> Smack. Smack user space can use the "current" file in
+> this subdirectory and never have to worry about getting
+> SELinux attributes by mistake. Programs that use the
+> old interface will continue to work (or fail, as the case
+> may be) as before.
+>
 
-> If a preparse routine handles all the above, then if any of the
-> above failures occur, the key service has less backing out to do.
-> Is that the point?
+Did downstream distributions already merge the stacking patches on
+their own?
 
-Yes.  Ideally, ->instantiate() would never fail.
+Got a little-bit confused after reading the log above; I already see
+this in in Ubuntu 18.04.1 LTS, v4.15.0-33-generic:
 
-> How do I make the connection between the preparse and the instantiate? 
-> Do I just put what I need to remember about this key request in the
-> payload.data during preparse, so I can examine it again during
-> instantiate?
+    $ tree /proc/self/attr/
+    /proc/self/attr/
+    ??? apparmor
+    ??? ??? current
+    ??? ??? exec
+    ??? ??? prev
+    ??? current
+    ??? display_lsm
+    ??? exec
+    ??? fscreate
+    ??? keycreate
+    ??? prev
+    ??? selinux
+    ??? ??? current
+    ??? ??? exec
+    ??? ??? fscreate
+    ??? ??? keycreate
+    ??? ??? prev
+    ??? ??? sockcreate
+    ??? smack
+    ??? ??? current
+    ??? sockcreate
 
-Have a look at user_preparse().  It attaches the contribution to the supplied
-key_preparsed_payload struct, which is then passed to ->instantiate() and
-->update() as appropriate.  generic_key_instantiate() is used by the user key
-type.
+Thanks,
 
-David
+--
+Darwi
+http://darwish.chasingpointers.com
