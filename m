@@ -1,48 +1,40 @@
 From: alison.schofield@intel.com (Alison Schofield)
-Date: Mon, 10 Sep 2018 19:39:31 -0700
-Subject: [RFC 08/12] mm: Track VMA's in use for each memory encryption
-	keyid
-In-Reply-To: <781e142c17199a6ab44bf0b5fbf07190093fe5dc.camel@linux.intel.com>
+Date: Mon, 10 Sep 2018 19:46:57 -0700
+Subject: [RFC 10/12] x86/pconfig: Program memory encryption keys on a
+	system-wide basis
+In-Reply-To: <73c60d4f8a953476f1e29aaccbeb7f732c209190.camel@intel.com>
 References: <cover.1536356108.git.alison.schofield@intel.com>
-	<3c891d076a376c8cff04403e90d04cf98b203960.1536356108.git.alison.schofield@intel.com>
-	<781e142c17199a6ab44bf0b5fbf07190093fe5dc.camel@linux.intel.com>
-Message-ID: <20180911023931.GB1732@alison-desk.jf.intel.com>
+	<0947e4ad711e8b7c1f581a446e808f514620b49b.1536356108.git.alison.schofield@intel.com>
+	<73c60d4f8a953476f1e29aaccbeb7f732c209190.camel@intel.com>
+Message-ID: <20180911024657.GC1732@alison-desk.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 10, 2018 at 09:20:45PM +0300, Jarkko Sakkinen wrote:
-> On Fri, 2018-09-07 at 15:37 -0700, Alison Schofield wrote:
-> > Keep track of the VMA's oustanding for each memory encryption keyid.
-> > The count is used by the MKTME (Multi-Key Total Memory Encryption)
-> > Key Service to determine when it is safe to reprogram a hardware
-> > encryption key.
-> 
-> Maybe a stupid question but why they are tracked and what do you 
-> mean by tracking?
-> 
-> /Jarkko
-
-Perhaps 'Keep a count of' instead of 'Keep track of' will be clearer.
-
-Counting VMA's using each keyid prevents in use keys from being cleared
-and reused. The counting is done here, and the mtkme key service checks
-these counts to decide if it is OK to allow a userspace key to be revoked.
-A successful userspace key revoke will clear the hardware keyid slot and
-leave the key available to be reprogrammed.
-
-> 
-> > Approach here is to do gets and puts on the encryption reference
-> > wherever kmem_cache_alloc/free's of vma_area_cachep's are executed.
-> > A couple of these locations will not be hit until cgroup support is
-> > added. One of these locations should never hit, so use a VM_WARN_ON.
+On Mon, Sep 10, 2018 at 11:24:20AM -0700, Sakkinen, Jarkko wrote:
+> On Fri, 2018-09-07 at 15:38 -0700, Alison Schofield wrote:
+> > The kernel manages the MKTME (Multi-Key Total Memory Encryption) Keys
+> > as a system wide single pool of keys. The hardware, however, manages
+> > the keys on a per physical package basis. Each physical package
+> > maintains a key table that all CPU's in that package share.
+> > 
+> > In order to maintain the consistent, system wide view that the kernel
+> > requires, program all physical packages during a key program request.
 > > 
 > > Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-> > ---
-> >  arch/x86/mm/mktme.c |  2 ++
-> >  kernel/fork.c       |  2 ++
-> >  mm/mmap.c           | 12 ++++++++++++
-> >  mm/nommu.c          |  4 ++++
-> >  4 files changed, 20 insertions(+)
-> > 
+> 
+> Just kind of checking that are you talking about multiple cores in
+> a single package or really multiple packages?
 
-.... snip ....
+System wide pool.
+System has multiple packages.  
+Packages have multiple CPU's.
+
+The hardware KEY TABLE is per package. I need that per package KEY TABLE
+to be the same in every package across the system. So, I pick one 'lead'
+CPU in each package to program that packages KEY TABLE.
+
+(BTW - I'm going to look into Kai's suggestion to move the system wide view
+of this key programming into the key service. Not sure if that's a go.)
+
+> 
+> /Jarkko
