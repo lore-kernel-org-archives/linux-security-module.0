@@ -1,43 +1,66 @@
-From: jarkko.sakkinen@intel.com (Jarkko Sakkinen)
-Date: Tue, 11 Sep 2018 17:31:09 +0300
-Subject: [RFC 10/12] x86/pconfig: Program memory encryption keys on a
-	system-wide basis
-In-Reply-To: <20180911024657.GC1732@alison-desk.jf.intel.com>
-References: <cover.1536356108.git.alison.schofield@intel.com>
-	<0947e4ad711e8b7c1f581a446e808f514620b49b.1536356108.git.alison.schofield@intel.com>
-	<73c60d4f8a953476f1e29aaccbeb7f732c209190.camel@intel.com>
-	<20180911024657.GC1732@alison-desk.jf.intel.com>
-Message-ID: <20180911143108.GA9717@intel.com>
+From: James.Bottomley@HansenPartnership.com (James Bottomley)
+Date: Tue, 11 Sep 2018 08:13:40 -0700
+Subject: Overlayfs @ Containers and checkpoint/restart micro-conference
+	at LPC2018
+In-Reply-To: <20180911135259.GB27845@redhat.com>
+References: <CAOQ4uxih7rPPLquJZFL9HtSbUFi-cCOR21qH4_-ORxxLKGsLXg@mail.gmail.com>
+	<20180909091549.yekfuds633afhrgw@mailbox.org>
+	<20180911135259.GB27845@redhat.com>
+Message-ID: <1536678820.3174.11.camel@HansenPartnership.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 10, 2018 at 07:46:57PM -0700, Alison Schofield wrote:
-> On Mon, Sep 10, 2018 at 11:24:20AM -0700, Sakkinen, Jarkko wrote:
-> > On Fri, 2018-09-07 at 15:38 -0700, Alison Schofield wrote:
-> > > The kernel manages the MKTME (Multi-Key Total Memory Encryption) Keys
-> > > as a system wide single pool of keys. The hardware, however, manages
-> > > the keys on a per physical package basis. Each physical package
-> > > maintains a key table that all CPU's in that package share.
-> > > 
-> > > In order to maintain the consistent, system wide view that the kernel
-> > > requires, program all physical packages during a key program request.
-> > > 
-> > > Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-> > 
-> > Just kind of checking that are you talking about multiple cores in
-> > a single package or really multiple packages?
+On Tue, 2018-09-11 at 09:52 -0400, Vivek Goyal wrote:
+> On Sun, Sep 09, 2018 at 11:18:54AM +0200, Christian Brauner wrote:
+> [..]
+> > My team hast just started to be more involved with shifts
+> > development a few months back. Overlayfs is definitely an
+> > inspiration and we even once thought about making shifts an
+> > extension of overlayfs. Seth Forshee on my team is currently
+> > actively working on shifts and getting a POC ready.
+> > When he has a POC based on James' patchset there will be an RFC
+> > that will go to fsdevel and all parties of interest.
+> > There will also be an update on shifts development during the
+> > microconf. So even more reason for developers from overlayfs to
+> > stop by.
 > 
-> System wide pool.
-> System has multiple packages.  
-> Packages have multiple CPU's.
-> 
-> The hardware KEY TABLE is per package. I need that per package KEY TABLE
-> to be the same in every package across the system. So, I pick one 'lead'
-> CPU in each package to program that packages KEY TABLE.
-> 
-> (BTW - I'm going to look into Kai's suggestion to move the system wide view
-> of this key programming into the key service. Not sure if that's a go.)
+> So we need both shiftfs and overlayfs in container deployments,
+> right?
 
-Thanks. I think could be perhaps a fair addition to the documentation?
+Well, no; only docker style containers need some form of overlay graph
+driver, but even there it doesn't have to be the overlayfs one.  When I
+build unprivileged containers, I never use overlays so for me having to
+use it will be problematic as it would be even in docker for the non-
+overlayfs graph drivers.
 
-/Jarkko
+Perhaps we should consider this when we look at the use cases.
+
+> shiftfs to make sure each container can run in its own user namespace
+> and uid/gid mappings can be setup on the fly and overlayfs to provide
+> union of multiple layers and copy on write filesystem. I am assuming
+> that shiftfs is working on top of overlayfs here?
+> 
+> Doing shifting at VFS level using mount API was another idea
+> discussed at last plumbers. I saw David Howells was pushing all the
+> new mount API patches. Not sure if he ever got time to pursue
+> shifting at VFS level.
+
+I wasn't party to the conversation, but when I discussed it with Ted
+(who wants something similar for a feature changing bind mount) we need
+the entire VFS api to be struct path based instead of dentry/inode
+based.  That's the way it's going, but we'd need to get to the end
+point so we have a struct vfsmnt available for every VFS call.
+
+> BTW, now we have metadata only copy up patches in overlayfs as
+> well(4.19-rc). That speeds up chown operation with overlayfs,
+> needed for changing ownership of files in images for making sure
+> they work fine with user namespaces. In my simple testing in a VM,
+> a fedora image was taking around 30 seconds to chown. With metadata
+> only copy up that time drops to around 2-3 seconds. So till shiftfs
+> or shiting at VFS level gets merged, it can be used as a stop gap
+> solution.
+
+Most of the snapshot based filesystem (btrfs, xfs) do this without any
+need for overlayfs.
+
+James
