@@ -1,102 +1,48 @@
-From: ukernel@gmail.com (Yan, Zheng)
-Date: Wed, 12 Sep 2018 09:14:06 +0800
-Subject: [PATCH 1/3] selinux: make dentry_init_security() return security
-	module name
-In-Reply-To: <916bc4be-360a-a2a6-c46b-452d56b58839@schaufler-ca.com>
-References: <20180626084306.27511-1-zyan@redhat.com>
-	<356ec32809a222f457b4e04333bb695c32d49680.camel@kernel.org>
-	<70879e33-73cd-7185-06a4-cd3147b6a53f@schaufler-ca.com>
-	<CAAM7YA=baUU1dMpPZMOMrGHJ2hguLNP2tFuHHjVqVjh37eA7kA@mail.gmail.com>
-	<d0acf4cd-bb79-e111-a0f0-524f8fc836fc@schaufler-ca.com>
-	<CAAM7YA=Aq8NFB+CsDWhnzwG1N0Nzfby4UKy9gTTDkcp_aUxcnw@mail.gmail.com>
-	<916bc4be-360a-a2a6-c46b-452d56b58839@schaufler-ca.com>
-Message-ID: <CAAM7YAkBGZBgmRbmZryjmpwe=iPt4wSHEorm+Bo-QF908D1u3Q@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Wed, 12 Sep 2018 12:12:43 +0100
+Subject: [RFC 12/12] keys/mktme: Do not revoke in use memory encryption
+	keys
+In-Reply-To: <e8f43039bf904d0547a9fdc1f6da515747305a59.1536356108.git.alison.schofield@intel.com>
+References: <e8f43039bf904d0547a9fdc1f6da515747305a59.1536356108.git.alison.schofield@intel.com>
+	<cover.1536356108.git.alison.schofield@intel.com>
+Message-ID: <17536.1536750763@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 12, 2018 at 1:23 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 9/9/2018 8:06 PM, Yan, Zheng wrote:
-> > On Sat, Sep 8, 2018 at 4:31 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> On 9/7/2018 1:31 AM, Yan, Zheng wrote:
-> >>> On Thu, Sep 6, 2018 at 11:42 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >>>> On 9/6/2018 8:08 AM, Jeff Layton wrote:
-> >>>>> On Tue, 2018-06-26 at 16:43 +0800, Yan, Zheng wrote:
-> >>>>>> This is preparation for CephFS security label. CephFS's implementation uses
-> >>>>>> dentry_init_security() to get security context before inode is created,
-> >>>>>> then sends open/mkdir/mknod request to MDS, together with security xattr
-> >>>>>> "security.<security module name>"
-> >>>> Please excuse my late entry into this review.
-> >>>>
-> >>>> First, *Do not prefix general LSM interface work with "selinux:"*
-> >>>> You should only use that prefix when you're dealing with the
-> >>>> internals of SELinux. Use "LSM:" if you are changing LSM interfaces.
-> >>>> If you are changing security.h or lsm_hooks.h you are almost
-> >>>> certainly changing LSM interfaces.
-> >>>>
-> >>>> Because you prefixed this work with "selinux:" I pretty much
-> >>>> ignored it. Please don't do that again.
-> >>>>
-> >>>> Why aren't you using security_inode_getsecctx, like kernfs and nfs?
-> >>>>
-> >>> Sorry, I don't understand why you mention security_inode_getsecctx().
-> >>> The selinux_dentry_init_security is called for new inode, I don't how
-> >>> security_inode_getsecctx() can help.
-> >> I didn't do a great job describing my issue. Let me try again.
-> >>
-> >> There is no way you should need to know the name of the security
-> >> module (e.g. SELinux, Smack) in the CephFS code. Nor should you be
-> >> assuming that there is only one security attribute, nor that it is
-> >> named "security.<security module name>".  Sure, that's true for
-> >> SELinux, but SELinux isn't the only security module in town.
-> >>
-> >> Other filesystems don't need anything like this. Why do you?
-> >>
-> > What I want is a way to get security context before inode is created.
->
-> What are you doing differently from the other filesystems?
-> Why doesn't the security_d_instantiate mechanism work for you?
->
+Alison Schofield <alison.schofield@intel.com> wrote:
 
-Because I want to minimize overhead of setting security xattrs for new
-inode. When creating new file/dir, cephfs client sends one request to
-MDS. The request can carry xattrs. MDS can create new file/dir and
-setting xattrs at the same time. If cephfs follows other filesystems'
-code, cephfs client needs to send to two request to MDS for each new
-file/dir, one for create, one for setting security xattrs.
+> +
+> +	if (strcmp(key->type->name, "mktme") == 0)
+> +		mktme_revoke_key(key);
+> +
 
-> > The closest interface is security_dentry_init_security(). Currently
-> > the only NFS uses security_dentry_init_security() and only selinux has
-> > dentry_init_security callback. NFS store selinux context in its
-> > security label (NFS inode can only have one security label, security
-> > label can only store one security context). SO current NFS security
-> > label implementation can not support multiple security modules.
->
-> That's correct. The labeled NFS is a very specific mechanism. It
-> does not do anything except Mandatory Access Control labeling. It
-> cannot be used for any other attributes. I am not a fan of the
-> labeled NFS implementation, and was vocal about it at the time.
->
-> > I don't want to limit cephfs to single security module. So I make
-> > cephfs store security context in security.<security module name>
-> > xattr.
->
-> Please look at the mechanism used in kernfs.
->
+*Please* don't do that.
 
-kernfs' mechanism is simple. It just provides
-kernfs_trusted_xattr_handler.  It does not initialize security context
-for new file/dir. I don't see how to adapt its mechanism for cephfs.
+The core code shouldn't be making references to specific key types in this
+way.  The only reason this is necessary for encrypted and trusted keys is
+because they misused the ->update() hook and it took a while for this to be
+noticed.
 
-Regards
-Yan, Zheng
+> The KEY_FLAG_KEEP bit offers good control. The mktme service uses
+> that flag to prevent userspace keys from going away without proper
+> synchronization with the mktme service type.
 
-> > When multiple security modules work is done in the future,
-> > cephfs can easily supports it. (introduce a new
-> > security_dentry_init_security() which return security contexts for all
-> > enabled security modules)
->
-> That is easier said than done. I've proposed several mechanisms,
-> none of which are especially satisfactory. The best mechanism I see
-> is the one used in kernfs, which is why I suggest you use that.
->
+This is not the control you are looking for.  The point of KEY_FLAG_KEEP is to
+allow the system to pin a key.  It's not meant to be a flag for the key type
+to play with.
+
+You say this:
+
+	One example is that userspace keys should not be revoked while the
+	hardware keyid slot is still in use.
+
+but why not?  Revoking it causes accesses to return -EKEYREVOKED; it doesn't
+stop the kernel from using the key.
+
+Also, note that you don't *have* to provide a ->revoke() operation
+
+If you really want to suppress revocation, then I would suggest adding another
+type operation, say ->may_revoke(), that says whether you're allowed to do
+that.
+
+David
