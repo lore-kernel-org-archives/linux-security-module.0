@@ -1,102 +1,41 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Thu, 13 Sep 2018 09:16:39 -0400
-Subject: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-In-Reply-To: <CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
-References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
-	<99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
-	<CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
-Message-ID: <CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
+From: yuehaibing@huawei.com (YueHaibing)
+Date: Thu, 13 Sep 2018 21:18:11 +0800
+Subject: [PATCH -next] Smack: remove set but not used variable 'root_inode'
+Message-ID: <20180913131811.25432-1-yuehaibing@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 13, 2018 at 12:19 AM Kees Cook <keescook@chromium.org> wrote:
-> On Tue, Sep 11, 2018 at 9:42 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > Two proposed security modules require the ability to
-> > share security blobs with existing "major" security modules.
-> > These modules, S.A.R.A and LandLock, provide significantly
-> > different services than SELinux, Smack or AppArmor. Using
-> > either in conjunction with the existing modules is quite
-> > reasonable. S.A.R.A requires access to the cred blob, while
-> > LandLock uses the cred, file and inode blobs.
-> >
-> > The use of the cred, file and inode blobs has been
-> > abstracted in preceding patches in the series. This
-> > patch teaches the affected security modules how to access
-> > the part of the blob set aside for their use in the case
-> > where blobs are shared. The configuration option
-> > CONFIG_SECURITY_STACKING identifies systems where the
-> > blobs may be shared.
-> >
-> > The mechanism for selecting which security modules are
-> > active has been changed to allow non-conflicting "major"
-> > security modules to be used together. At this time the
-> > TOMOYO module can safely be used with any of the others.
-> > The two new modules would be non-conflicting as well.
-> >
-> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > ---
-> >  Documentation/admin-guide/LSM/index.rst | 14 +++--
-> >  include/linux/lsm_hooks.h               |  2 +-
-> >  security/Kconfig                        | 81 +++++++++++++++++++++++++
-> >  security/apparmor/include/cred.h        |  8 +++
-> >  security/apparmor/include/file.h        |  9 ++-
-> >  security/apparmor/include/lib.h         |  4 ++
-> >  security/apparmor/lsm.c                 |  8 ++-
-> >  security/security.c                     | 30 ++++++++-
-> >  security/selinux/hooks.c                |  3 +-
-> >  security/selinux/include/objsec.h       | 18 +++++-
-> >  security/smack/smack.h                  | 19 +++++-
-> >  security/smack/smack_lsm.c              | 17 +++---
-> >  security/tomoyo/common.h                | 12 +++-
-> >  security/tomoyo/tomoyo.c                |  3 +-
-> >  14 files changed, 200 insertions(+), 28 deletions(-)
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-...
+security/smack/smackfs.c: In function 'smk_fill_super':
+security/smack/smackfs.c:2856:16: warning:
+ variable 'root_inode' set but not used [-Wunused-but-set-variable]
 
-> > diff --git a/security/Kconfig b/security/Kconfig
-> > index 22f7664c4977..ed48025ae9e0 100644
-> > --- a/security/Kconfig
-> > +++ b/security/Kconfig
-> > @@ -36,6 +36,28 @@ config SECURITY_WRITABLE_HOOKS
-> >         bool
-> >         default n
-> >
-> > +config SECURITY_STACKING
-> > +       bool "Security module stacking"
-> > +       depends on SECURITY
-> > +       help
-> > +         Allows multiple major security modules to be stacked.
-> > +         Modules are invoked in the order registered with a
-> > +         "bail on fail" policy, in which the infrastructure
-> > +         will stop processing once a denial is detected. Not
-> > +         all modules can be stacked. SELinux, Smack and AppArmor are
-> > +         known to be incompatible. User space components may
-> > +         have trouble identifying the security module providing
-> > +         data in some cases.
-> > +
-> > +         If you select this option you will have to select which
-> > +         of the stackable modules you wish to be active. The
-> > +         "Default security module" will be ignored. The boot line
-> > +         "security=" option can be used to specify that one of
-> > +         the modules identifed for stacking should be used instead
-> > +         of the entire stack.
-> > +
-> > +         If you are unsure how to answer this question, answer N.
->
-> I don't see a good reason to make this a config. Why shouldn't this
-> always be enabled?
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ security/smack/smackfs.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-I do.  From a user perspective it is sometimes difficult to determine
-the reason behind a failed operation; its is a DAC based denial, the
-LSM, or some other failure?  Stacking additional LSMs has the
-potential to make this worse.  The boot time configuration adds to the
-complexity.
-
-I think we should leave this decision to the individual distros so
-that they can make their own decision on LSM stacking based on the
-savviness of their user base and the quality of their support
-infrastructure.
-
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index f4e91c5..8972da4 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -2855,7 +2855,6 @@ static int smk_fill_super(struct super_block *sb, void *data, size_t data_size,
+ 			  int silent)
+ {
+ 	int rc;
+-	struct inode *root_inode;
+ 
+ 	static const struct tree_descr smack_files[] = {
+ 		[SMK_LOAD] = {
+@@ -2919,8 +2918,6 @@ static int smk_fill_super(struct super_block *sb, void *data, size_t data_size,
+ 		return rc;
+ 	}
+ 
+-	root_inode = d_inode(sb->s_root);
+-
+ 	return 0;
+ }
+ 
 -- 
-paul moore
-www.paul-moore.com
+2.7.0
