@@ -1,41 +1,60 @@
-From: yuehaibing@huawei.com (YueHaibing)
-Date: Thu, 13 Sep 2018 21:18:11 +0800
-Subject: [PATCH -next] Smack: remove set but not used variable 'root_inode'
-Message-ID: <20180913131811.25432-1-yuehaibing@huawei.com>
+From: dhowells@redhat.com (David Howells)
+Date: Thu, 13 Sep 2018 15:08:37 +0100
+Subject: [PATCH 0/3] keyutils: request_key and DNS resolver changes
+Message-ID: <153684771698.10049.12488548190876920608.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
 
-security/smack/smackfs.c: In function 'smk_fill_super':
-security/smack/smackfs.c:2856:16: warning:
- variable 'root_inode' set but not used [-Wunused-but-set-variable]
+Here's a set of keyutils patches that makes it possible to override the DNS
+resolver (or any other upcall target).  This allows the kafs-utils package to
+override requests to the dns resolver and make use of static configuration in
+addition to DNS lookups.  This allows this function to be moved out of
+keyutils and allows the dependency on krb5 to be removed.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+The following changes are made:
+
+ (1) request-key now has better command-line option support for debugging the
+     configuration.
+
+ (2) request-key now reads all its config files and searches for the best
+     match rather than the first match.
+
+     'Best match' is defined as the match with the least number of characters
+     skipped by a wildcard, first in the left most column, then in the next
+     column and so on.
+
+     So in the following two config lines:
+
+    	create  dns_resolver *		*	/sbin/key.dns_resolver %k
+	create  dns_resolver afsdb:*	*	/sbin/dns_afsdb %k
+
+     For dns_resolver keys, the second line is preferred if the description
+     matches "afsdb:*" - no matter the order in which they're encountered -
+     but the first line will be used otherwise.
+
+ (3) The AFS cellservdb config file parsing is removed from key.dns_resolver
+     and the dependencies for the krb5 profile functions are dropped.
+    
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git
+
+on branch next (bottom 3 patches).
+
+Thanks,
+David
 ---
- security/smack/smackfs.c | 3 ---
- 1 file changed, 3 deletions(-)
+David Howells (3):
+      request-key: Provide a command line option to suppress execution
+      request-key: Find best match rather than first match
+      Remove the dependency on MIT Kerberos
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index f4e91c5..8972da4 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -2855,7 +2855,6 @@ static int smk_fill_super(struct super_block *sb, void *data, size_t data_size,
- 			  int silent)
- {
- 	int rc;
--	struct inode *root_inode;
- 
- 	static const struct tree_descr smack_files[] = {
- 		[SMK_LOAD] = {
-@@ -2919,8 +2918,6 @@ static int smk_fill_super(struct super_block *sb, void *data, size_t data_size,
- 		return rc;
- 	}
- 
--	root_inode = d_inode(sb->s_root);
--
- 	return 0;
- }
- 
--- 
-2.7.0
+
+ Makefile               |    2 
+ dns.afsdb.c            |  268 ++++---------------------------
+ keyutils.spec          |    2 
+ man/request-key.8      |   31 +++-
+ man/request-key.conf.5 |   36 ++--
+ request-key.c          |  419 +++++++++++++++++++++++++++++-------------------
+ 6 files changed, 336 insertions(+), 422 deletions(-)
