@@ -1,147 +1,103 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 13 Sep 2018 14:12:50 -0700
-Subject: [PATCH 04/10] LSM: Infrastructure management of the cred security
-	blob
-In-Reply-To: <5a17beeb-c83c-ce8e-162c-1fbeb74aaae8@schaufler-ca.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 13 Sep 2018 17:38:15 -0400
+Subject: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
+In-Reply-To: <CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
 References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
-	<d92f5457-c7b0-a768-2411-5a5528f88fc8@schaufler-ca.com>
-	<CAGXu5jLxnmyNzWV2VV0tq-ikAnMAPfebfqxSWvHPUVDZ_xYsyg@mail.gmail.com>
-	<5a17beeb-c83c-ce8e-162c-1fbeb74aaae8@schaufler-ca.com>
-Message-ID: <CAGXu5j+apDE-E-FM-55pE7hPQbuKV+x22XK0QrO4qyGnq-6T3A@mail.gmail.com>
+	<99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
+	<CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
+	<CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
+	<CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
+	<CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
+	<CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
+Message-ID: <CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 13, 2018 at 12:01 PM, Casey Schaufler
-<casey@schaufler-ca.com> wrote:
-> On 9/12/2018 4:53 PM, Kees Cook wrote:
->> On Tue, Sep 11, 2018 at 9:41 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> Move management of the cred security blob out of the
->>> security modules and into the security infrastructure.
->>> Instead of allocating and freeing space the security
->>> modules tell the infrastructure how much space they
->>> require.
->> There's a lot of changes here that I think deserve some longer
->> discussion in the changelog. Notably, now we run _two_ cycles of init
->> calls? That seems... odd. Notes below...
+On Thu, Sep 13, 2018 at 5:01 PM Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Sep 13, 2018 at 12:12 PM, Paul Moore <paul@paul-moore.com> wrote:
+> > None of the above deals with the user experience or support burden a
+> > distro would have by forcing stacking on.  If we make it an option the
 >
-> The first pass adds up the blob sizes. This has to be done because
-> some modules allocate blobs during the init phase. I have investigated
-> alternatives, including blobs that include information about what they
-> contain, but they're all significantly more complicated.
-
-Agreed: I liked the idea of not burdening each LSM with a state
-machine, but I guess it's not much. Note that "finished" then should
-be __initdata.
-
->>> -       if (selinux_is_enabled() && cred->security) {
->>> -               if ((unsigned long) cred->security < PAGE_SIZE)
->>> -                       return true;
->>> -               if ((*(u32 *)cred->security & 0xffffff00) ==
->>> -                   (POISON_FREE << 24 | POISON_FREE << 16 | POISON_FREE << 8))
->>> -                       return true;
->> These aren't unreasonable checks -- can we add them back in later?
->> (They don't need to be selinux specific, in fact: the LSM could do the
->> poison...)
+> Just to make sure we're clear here: this series does not provide
+> "extreme" stacking: SELinux, AppArmor, and SMACK remain boot-exclusive
+> no matter what the CONFIGs.
 >
-> I had asked the maintainers about the value of these checks, and
-> they said that they were primarily there for debugging during the
-> original cred breakout development. I'd have not problem making them
-> infrastructure managed if there's a strong desire to keep them.
-
-Since it was only SELinux doing this, and it was from old debugging,
-then I concur: drop it. It would be easy to restore (and for all LSMs)
-in the future.
-
->>> +static inline void set_cred_label(const struct cred *cred,
->>> +                                 struct aa_label *label)
->>> +{
->>> +       struct aa_label **blob = cred->security;
->>> +
->>> +       AA_BUG(!blob);
->>> +       *blob = label;
->>> +}
->> This feels like it should be a separate patch? Shouldn't AA not be
->> playing with cred->security directly before we get to this "sizing and
->> allocation" patch?
+> > distros can choose for themselves; picking a kernel build config is
+> > not something new to distros, and I think Casey's text adequately
+> > explains CONFIG_SECURITY_STACKING in terms that would be sufficient.
 >
-> You're correct. This is a harmless patch break-up mistake. The end
-> result of the set is correct, and the interim state works as intended,
-> albeit with unnecessary code.
-
-I much prefer lots of small easy-to-understand patches than trying to
-piece together many separate things. Let's please break out each LSM's
-changes and any refactoring into separate patches. Complexity is
-harder to review than quantity, IMO.
-
->>> + */
->>> +void lsm_early_cred(struct cred *cred)
->>> +{
->>> +       int rc;
->>> +
->>> +       if (cred == NULL)
->>> +               panic("%s: NULL cred.\n", __func__);
->> I have been given strongly worded advice to never BUG nor panic. I would:
->>
->> if (WARN_ON(!cred || !cred->security))
->>        return;
->>
->>> +       if (cred->security != NULL)
->>> +               return;
->>> +       rc = lsm_cred_alloc(cred, GFP_KERNEL);
->>> +       if (rc)
->>> +               panic("%s: Early cred alloc failed.\n", __func__);
->> And:
->>
->> WARN_ON(lsm_cred_alloc(cred, GFP_KERNEL));
+> I absolutely want stacking to be configurable, but I want to point out
+> that there is no operational difference between
+> CONFIG_SECURITY_STACKING=n and CONFIG_SECURITY_STACKING=y in the code
+> here:
 >
-> This duplicates the previous behavior from the SELinux and Smack code.
-> A WARN_ON will result in an immediate panic when the calling code tries
-> to dereference the blob.
-
-I guess what I'm trying to say is, if you have a patch that does:
-
-+ .... panic()
-
-or
-
-+ .... BUG()
-
-and it has "security" anywhere in the topic, you run an extremely high
-risk of Linus NAKing the entire series.
-
->>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->>> index 9d6cdd21acb6..9b49698754a7 100644
->>> --- a/security/selinux/hooks.c
->>> +++ b/security/selinux/hooks.c
->>> @@ -213,12 +213,9 @@ static void cred_init_security(void)
->>>         struct cred *cred = (struct cred *) current->real_cred;
->>>         struct task_security_struct *tsec;
->>>
->>> -       tsec = kzalloc(sizeof(struct task_security_struct), GFP_KERNEL);
->>> -       if (!tsec)
->>> -               panic("SELinux:  Failed to initialize initial task.\n");
->>> -
->>> +       lsm_early_cred(cred);
->>> +       tsec = selinux_cred(cred);
->> Perhaps leave the existing panic() as-is?
+> - all the new accessor and allocation code is exercised in both cases
 >
-> Moving the panic into lsm_early_cred() reduces the panic count
-> and avoids code duplication here and in the Smack equivalent.
-
-Agreed: but it means intentionally adding a machine-stop condition
-which Linus is very opposed to.
-
->> Shouldn't this Tomoyo cred handling get split out?
+> - with stacking enabled: selinux, apparmor, and smack have an offset
+> of 0 into blobs (and only one can be enabled at a time)
 >
-> Yeah. Again, it's the patch size/count balance.
+> - with stacking disabled: selinux, apparmor, and smack have an offset
+> of 0 into blobs (and only one can be enabled at a time)
+>
+> The only behavioral difference is TOMOYO:
+>
+> 1- with stacking disabled and TOMOYO as the only major LSM, it will
+> have a 0 offset into blobs (like above)
+>
+> 2- with stacking enabled and TOMOYO as the only major LSM, it will
+> have a 0 offset into blobs (like above)
+>
+> 3- with stacking disabled and another major LSM is enabled, TOMOYO
+> will be disabled (like always)
+>
+> 4- with stacking enabled and another major LSM is enabled, TOMOYO will
+> have a non-0 offset into blobs and will run after selinux or smack or
+> run before apparmor (based on link ordering defined by the Makefile).
 
-I really do like lots of little patches. SO much easier. The main
-brain-drain on large patches is that things end up out of order due to
-filename ordering, etc, so a lot more needs to be kept in your head as
-you're reading a long patch. Much prefer lots of small patches.
+Case #3/#4 is what I'm getting at, and I would argue demonstrates an
+operational difference that is user visible/configurable.
 
--Kees
+Unless something has changed and I missed it, you can currently build
+all of the LSMs into a single kernel image, and the admin/user can
+choose one at boot time.  CONFIG_SECURITY_STACKING=y enables the
+admin/user to stack LSMs (albeit with restrictions in the current
+iteration) and CONFIG_SECURITY_STACKING=n limits the admin/user to a
+single LSM (what we have now).  I understand that as of this moment we
+are talking only about TOMOYO and AppArmor/Smack/SELinux, but everyone
+knows that S.A.R.A/SARA and LandLock are going to follow shortly -
+that's the whole point of this latest spin, isn't it?
+
+> > I currently have a neutral stance on stacking, making it mandatory
+> > pushes me more towards a "no".
+>
+> This is why I'm trying to explain myself: the infrastructure proposed
+> here is always exercised, no matter the CONFIG. From that sense it is
+> "mandatory" no matter what the config is. There isn't a reality where
+> you could "turn off stacking", because it's not stacking until you
+> actually stack something, and that will be disabled by default as I've
+> proposed it.
+>
+> Let me put this another way: if we simply leave off patch 10, we can
+> take the other 9 patches (modulo feedback), and we only have to decide
+> how to expose "stacking"; all the infrastructure work for supporting
+> it is done.
+>
+> I'm arguing that "security=" is likely insufficient to describe what
+> we want, and instead we should focus on individual LSM enablement via
+> parameters ("tomoyo.enabled=1"). If _ordering_ becomes an issue, we
+> could either use parameter order, or use "security=" again maybe, but
+> for now, ordering is already defined by the Makefile (and
+> security/security.c).
+
+The infrastructure bits aren't really my concern; in fact I *like*
+that the infrastructure is always exercised, it makes
+testing/debugging easier.  I also like the ability to limit the
+user/admin to one LSM at boot time to make support easier; my goal is
+to allow a distro to build support for multiple LSMs without also
+requiring that distro to support *stacked* LSMs (see my earlier
+comments about the difficulty in determining the source of a failed
+operation).
 
 -- 
-Kees Cook
-Pixel Security
+paul moore
+www.paul-moore.com
