@@ -1,43 +1,102 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Fri, 14 Sep 2018 21:50:31 +0800
-Subject: [PATCH v2 6/6] x86/ima: define arch_get_ima_policy() for x86
-In-Reply-To: <20180914080005.6138-7-nayna@linux.vnet.ibm.com>
-References: <20180914080005.6138-7-nayna@linux.vnet.ibm.com>
-Message-ID: <201809142126.oa45Rj76%fengguang.wu@intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 14 Sep 2018 08:57:07 -0700
+Subject: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
+In-Reply-To: <CAGXu5jJ5__jdBM5X0vVyEU1TKnN4dpkXbj=10iak9RvD1DZk9g@mail.gmail.com>
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
+	<99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
+	<CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
+	<CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
+	<CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
+	<CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
+	<CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
+	<CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
+	<CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
+	<CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
+	<d1d12866-d557-8c15-6506-a54b9d927952@schaufler-ca.com>
+	<CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
+	<5b983bba-049c-795a-3354-a2e8ab33cecf@schaufler-ca.com>
+	<CAGXu5jJ5__jdBM5X0vVyEU1TKnN4dpkXbj=10iak9RvD1DZk9g@mail.gmail.com>
+Message-ID: <2bc5e4f5-8429-6843-f255-8fab6dacf39b@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Eric,
+On 9/13/2018 5:19 PM, Kees Cook wrote:
+> On Thu, Sep 13, 2018 at 5:08 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/13/2018 4:57 PM, Kees Cook wrote:
+>>> On Thu, Sep 13, 2018 at 4:51 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> On 9/13/2018 4:06 PM, Kees Cook wrote:
+>>>>> - what order should any stacking happen? Makefile? security=?
+>>>> Makefile by default.
+>>> Okay, if ordering is by Makefile and everyone dislikes my
+>>> $lsm.enabled=0/1 thing, then these mean the same thing:
+>>>
+>>> security=selinux,tomoyo
+>>> security=tomoyo,selinux
+>>>
+>>> i.e. order of security= is _ignored_ in favor of the Makefile ordering.
+>> No, I think that the two lines above should have a different
+>> execution order. If we really need to specify multiple modules
+>> at boot time that is what makes the most sense.
+>>
+>> It's a matter of mechanics and probably another pass during the
+>> init process, but it's doable. If we determine it's necessary for
+>> this stage it is just work.
+> We already have the minor LSMs that cannot change order.
 
-Thank you for the patch! Yet something to improve:
+Are you saying that we don't have a mechanism to change
+the order, or that they wouldn't work right in a different
+order? Well, there's the capability module that has to be
+first.
 
-[auto build test ERROR on integrity/next-integrity]
-[also build test ERROR on v4.19-rc3 next-20180913]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> They aren't
+> part of security= parsing either.
 
-url:    https://github.com/0day-ci/linux/commits/Nayna-Jain/Add-support-for-architecture-specific-IMA-policies/20180914-202254
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-config: i386-randconfig-s1-201836 (attached as .config)
-compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=i386 
+True, but there's no reason now that we couldn't change that.
+Except for capability. Hmm.
 
-All errors (new ones prefixed by >>):
+> To enable/disable LoadPin, you do
+> "loadpin.enabled=1/0" separate from "security=".
 
->> arch/x86//kernel/ima_arch.c:28:21: error: redefinition of 'arch_get_ima_policy'
-    const char * const *arch_get_ima_policy(void)
-                        ^~~~~~~~~~~~~~~~~~~
-   In file included from arch/x86//kernel/ima_arch.c:6:0:
-   include/linux/ima.h:45:35: note: previous definition of 'arch_get_ima_policy' was here
-    static inline const char * const *arch_get_ima_policy(void)
-                                      ^~~~~~~~~~~~~~~~~~~
+SELinux and AppArmor have the same.
 
-vim +/arch_get_ima_policy +28 arch/x86//kernel/ima_arch.c
+> Should "blob-sharing" LSMs be like major LSMs or minor LSMs?
 
-    27	
-  > 28	const char * const *arch_get_ima_policy(void)
+I like the idea of changing the minor modules to do the full
+registration process. That would make them all the same.
+Except for capability. In any case, the "blob-sharing" LSMs
+need to do the full registration process to account for their
+blobs sizes, and that brings the "major" behavior along with it.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> If someone is booting with "security=selinux,tomoyo" and then SARA
+> lands upstream, does that person have to explicitly add "sara" to
+> their boot args, since they're doing a non-default list of LSMs?
+
+Yes. security= is explicit.
+
+> (I actually prefer the answer being "yes" here, FWIW, I just want to
+> nail down the expectations.)
+
+For now let's leave the minor (capability, yama, loadpin) as they are,
+and require all new modules of any flavor to use full registration.
+
+We could consider something like
+
+security=$lsm		# Stack with $lsm at priority 2 - Existing behavior
+$lsm.stacked=N		# Add $lsm to the stack at priority N. Delete if N == 0
+
+It's OK to specify "selinux.stacked=2" and "sara.stacked=2". Which gets
+called first is left up to the system to decide. Whatever the behavior is
+gets documented. Capability will always be first and have priority 1.
+It's OK to specify "smack.stacked=1".
+
+The default stack is determined by CONFIG_SECURITY_$lsm_STACKED at
+build time. CONFIG_SECURITY_$lsm_STACKED changes from a boolean to
+an integer value to establish the default hook order.
+
+/sys/kernel/security/lsm reports the modules in hook call order.
+/sys/kernel/security/lsm-stack reports the list with the hook call priority
+
+	capability:1,yama:1,selinux:1,sara:5,landlack:17
+
+If stacking is not configured $lsm.stacked=0 is treated as security=none.
+For other values of N $lsm.stacked=N is treated as security=$lsm.
