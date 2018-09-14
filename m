@@ -1,5 +1,5 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 13 Sep 2018 16:57:54 -0700
+Date: Thu, 13 Sep 2018 17:03:12 -0700
 Subject: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
 In-Reply-To: <d1d12866-d557-8c15-6506-a54b9d927952@schaufler-ca.com>
 References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
@@ -13,25 +13,21 @@ References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
 	<CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
 	<CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
 	<d1d12866-d557-8c15-6506-a54b9d927952@schaufler-ca.com>
-Message-ID: <CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
+Message-ID: <CAGXu5jKpq3z5e+SE+oRsfatUB02cFb7SOwixueSJhXiDxrq31g@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
 On Thu, Sep 13, 2018 at 4:51 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
 > On 9/13/2018 4:06 PM, Kees Cook wrote:
->> - what order should any stacking happen? Makefile? security=?
-> Makefile by default.
+>> If security= is
+>> specified, all other major LSMs are disabled (i.e. it is not possible
+>> to switch between SELinux/AppArmor/SMACK without also disabling
+>> TOMOYO).
+>
+> Correct.
 
-Okay, if ordering is by Makefile and everyone dislikes my
-$lsm.enabled=0/1 thing, then these mean the same thing:
-
-security=selinux,tomoyo
-security=tomoyo,selinux
-
-i.e. order of security= is _ignored_ in favor of the Makefile ordering.
-
-That seems dangerous to accept input that is "out of order", though,
-if we ever DO want to make order definable.
+If we assume patch 10 is the way forward, how could we go about fixing
+this specific problem?
 
 -Kees
 
