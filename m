@@ -1,55 +1,86 @@
-From: paul@paul-moore.com (Paul Moore)
-Date: Thu, 13 Sep 2018 22:42:59 -0400
-Subject: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-In-Reply-To: <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
-References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
-	<99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
-	<CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
-	<CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
-	<CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
-	<CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
-	<CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
-	<CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
-	<CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
-Message-ID: <CAHC9VhRXOuGqSw9yu18QZeA1z+vYwLFixTqEJ1WyBBFCeLebuA@mail.gmail.com>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Fri, 14 Sep 2018 13:29:59 +0530
+Subject: [PATCH v2 0/6] Add support for architecture specific IMA policies 
+Message-ID: <20180914080005.6138-1-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 13, 2018 at 5:52 PM Kees Cook <keescook@chromium.org> wrote:
-> On Thu, Sep 13, 2018 at 2:38 PM, Paul Moore <paul@paul-moore.com> wrote:
-> > The infrastructure bits aren't really my concern; in fact I *like*
-> > that the infrastructure is always exercised, it makes
-> > testing/debugging easier.  I also like the ability to limit the
-> > user/admin to one LSM at boot time to make support easier; my goal is
-> > to allow a distro to build support for multiple LSMs without also
-> > requiring that distro to support *stacked* LSMs
->
-> I see your point, but as soon as SARA and Landlock appear, they'll have:
->
->     depends on SECURITY_STACKING
->
-> and then all distros will enable it and there will be no sensible
-> runtime way to manage it. If, instead, we make it entirely runtime
-> now, then a CONFIG can control the default state and we can provide
-> guidance to how SARA and Landlock should expose their "enable"ness.
+The architecture specific policy, introduced in this patch set, permits
+different architectures to define IMA policy rules based on kernel
+configuration and system runtime information.
 
-I question why SARA and LandLock require stacking.  While some LSMs
-may benefit from stacking, e.g. Yama, traditionally each LSM has been
-able to stand on its own.  I think this is a quality that should be
-preserved.
+For example, on x86, there are two methods of verifying the kexec'ed kernel
+image signature - CONFIG_KEXEC_VERIFY_SIG and IMA appraisal policy
+KEXEC_KERNEL_CHECK. CONFIG_KEXEC_VERIFY_SIG enforces the kexec_file_load
+syscall to verify file signatures, but does not prevent the kexec_load
+syscall. The IMA KEXEC_KERNEL_CHECK policy rule verifies the kexec'ed
+kernel image, loaded via the kexec_file_load syscall, is validly signed and
+prevents loading a kernel image via the kexec_load syscall. When secure
+boot is enabled, the kexec'ed kernel image needs to be signed and the
+signature verified. In this environment, either method of verifying the
+kexec'ed kernel image is acceptable, as long as the kexec_load syscall is
+disabled.
 
-> > (see my earlier
-> > comments about the difficulty in determining the source of a failed
-> > operation).
->
-> Agreed. I would hope that audit could help for that case. *stare at blue sky*
+The previous version of this patchset introduced a new IMA policy rule to
+disable the kexec_load syscall, when CONFIG_KEXEC_VERIFY_SIG was enabled,
+however that is removed from this version by introducing a different
+mechanism.
 
-*also staring at blue sky*
+The patchset defines an arch_ima_get_secureboot() function to retrieve the
+secureboot state of the system. If secureboot is enabled and
+CONFIG_KEXEC_VERIFY_SIG is configured, it denies permission to kexec_load
+syscall.
 
-Audit can help, but it is independent of the LSMs and not a hard
-requirement for all, and even when it is enabled the config might not
-be suitable to provide enough information to be helpful in this case.
+To support architecture specific policies, a new function
+arch_get_ima_policy() is defined. This patch set defines IMA
+KERNEL_KEXEC_POLICY rules for x86 only if CONFIG_KEXEC_VERIFY_SIG is
+disabled and secure boot is enabled.
+
+This patch set includes a patch, which refactors ima_init_policy() to
+remove code duplication.
+
+Changelog:
+
+v2:
+* ima: define arch_ima_get_secureboot
+	- New Patch - to retrieve secureboot state of the system
+* ima: prevent kexec_load syscall based on runtime secureboot flag
+	- New Patch - disables kexec_load if KEXEC_VERIFY_SIG is
+	  configured and secureboot is enabled
+* ima: refactor ima_init_policy()
+	- New Patch - cleans up the code duplication in
+	  ima_init_policy(), adds new function add_rules()
+* ima: add support for arch specific policies
+	- modified ima_init_arch_policy() and ima_init_policy() to
+	  use add_rules() from previous patch.
+* ima: add support for external setting of ima_appraise
+	- sets ima_appraise flag explicitly for arch_specific setting
+* ima: add support for KEXEC_ORIG_KERNEL_CHECK
+	- deleted the patch based on Seth's feedback
+* x86/ima: define arch_get_ima_policy() for x86
+	- removes the policy KEXEC_ORIG_KERNEL_CHECK based on
+	  Seth's feedback.
+
+Eric Richter (1):
+  x86/ima: define arch_get_ima_policy() for x86
+
+Nayna Jain (5):
+  ima: define arch_ima_get_secureboot
+  ima: prevent kexec_load syscall based on runtime secureboot flag
+  ima: refactor ima_init_policy()
+  ima: add support for arch specific policies
+  ima: add support for external setting of ima_appraise
+
+ arch/x86/kernel/Makefile              |   2 +
+ arch/x86/kernel/ima_arch.c            |  33 +++++++
+ include/linux/ima.h                   |  18 ++++
+ security/integrity/ima/Kconfig        |   8 ++
+ security/integrity/ima/ima.h          |   5 +
+ security/integrity/ima/ima_appraise.c |  11 ++-
+ security/integrity/ima/ima_main.c     |  17 ++--
+ security/integrity/ima/ima_policy.c   | 167 +++++++++++++++++++++++++---------
+ 8 files changed, 212 insertions(+), 49 deletions(-)
+ create mode 100644 arch/x86/kernel/ima_arch.c
 
 -- 
-paul moore
-www.paul-moore.com
+2.13.6
