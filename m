@@ -1,7 +1,7 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 13 Sep 2018 17:03:50 -0700
+From: keescook@chromium.org (Kees Cook)
+Date: Thu, 13 Sep 2018 17:06:16 -0700
 Subject: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-In-Reply-To: <CAGXu5jKZ7rquTux5fS+5tQ==0w_9rDTRaJWS_mS7C+Fy2dXRRQ@mail.gmail.com>
+In-Reply-To: <a2ffa6b7-5d05-39a1-11c3-d715566e4d51@schaufler-ca.com>
 References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
 	<99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
 	<CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
@@ -14,65 +14,29 @@ References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
 	<CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
 	<0eb75e66-ed50-4013-6440-38bc2f814c6f@canonical.com>
 	<CAGXu5jKZ7rquTux5fS+5tQ==0w_9rDTRaJWS_mS7C+Fy2dXRRQ@mail.gmail.com>
-Message-ID: <a2ffa6b7-5d05-39a1-11c3-d715566e4d51@schaufler-ca.com>
+	<a2ffa6b7-5d05-39a1-11c3-d715566e4d51@schaufler-ca.com>
+Message-ID: <CAGXu5j+PhwfRCg5PycrE-JReVxKMduGsoXStWZN6PfYB-NB1og@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/13/2018 4:51 PM, Kees Cook wrote:
-> On Thu, Sep 13, 2018 at 4:32 PM, John Johansen
-> <john.johansen@canonical.com> wrote:
->> On 09/13/2018 04:06 PM, Kees Cook wrote:
->>> - what order should any stacking happen? Makefile? security=?
->>>
->> Preferably not. For the single LSM we have the ability to choose the default LSM, ideally we let the distro decide in the Kconfig and the user with security=...
-> I can't find a non-crazy way to do this in Kconfig. Right now, if I
-> threw out all the _DEFAULT stuff, I could do:
+On Thu, Sep 13, 2018 at 5:03 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 9/13/2018 4:51 PM, Kees Cook wrote:
+>> So, before we can really make a decision, I think we have to decide:
+>> should ordering be arbitrary for even this level of stacking?
 >
-> config SECURITY_SELINUX_ENABLED
->         bool "SELinux LSM enabled at boot time"
->         depends on SECURITY_SELINUX
->         depends on !SECURITY_APPARMOR_ENABLED && !SECURITY_SMACK_ENABLED
->         default SECURITY_SELINUX
->
-> config SECURITY_SMACK_ENABLED
->         bool "SMACK LSM enabled at boot time"
->         depends on SECURITY_SMACK
->         depends on !SECURITY_APPARMOR_ENABLED && !SECURITY_SELINUX_ENABLED
->         default SECURITY_SMACK
->
-> config SECURITY_APPARMOR_ENABLED
->         bool "AppArmor LSM enabled at boot time"
->         depends on SECURITY_APPARMOR
->         depends on !SECURITY_SMACK_ENABLED && !SECURITY_SELINUX_ENABLED
->         default SECURITY_APPARMOR
->
-> config SECURITY_TOMOYO_ENABLED
->         bool "TOMOYO LSM enabled at boot time"
->         depends on SECURITY_TOMOYO
->         default y if !SECURITY_SELINUX_ENABLED &&
-> !SECURITY_SMACK_ENABLED && !SECURITY_APPARMOR_ENABLED
->
-> config DEFAULT_SECURITY
->         string
->         default "selinux" if SECURITY_SELINUX_ENABLED
->         default "smack" if SECURITY_SMACK_ENABLED
->         default "apparmor" if SECURITY_APPARMOR_ENABLED
->         default "tomoyo" if SECURITY_TOMOYO_ENABLED
->
-> (As before CONFIG_DEFAULT_SECURITY basically means the effective
-> "security=" contents. Reminder than Kconfig default are "first match",
-> so tomoyo would only happen if all others are not enabled by default.)
->
-> But this doesn't provide a way for Kconfig to declare the ordering of
-> TOMOYO followed by SELinux. If we just declare ordering is a function
-> of the Makefile, then the above would work as expected. The
-> "conflicting major LSM" could be specified on "security=" and stacked
-> could be enabled with $lsm.enable=1 (or disabled).
->
-> So, before we can really make a decision, I think we have to decide:
-> should ordering be arbitrary for even this level of stacking?
+> Do we have a case where it matters? I know that I could write a
+> module that would have issues if one hook got called and another
+> didn't because because a precursor module hook failed. I don't
+> think that any of the existing modules have this problem.
 
-Do we have a case where it matters? I know that I could write a
-module that would have issues if one hook got called and another
-didn't because because a precursor module hook failed. I don't
-think that any of the existing modules have this problem.
+FWIW, I prefer having explicit ordering that cannot be changed at
+runtime. I'm just concerned about painting ourselves (further) into a
+corner with security= suddenly gaining ordering semantics, but maybe I
+can just ignore this and we can point and laugh at anyone who gets
+burned by some future change to making it order-sensitive. :)
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
