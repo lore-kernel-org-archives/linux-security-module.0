@@ -1,7 +1,7 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 13 Sep 2018 17:19:04 -0700
+From: paul@paul-moore.com (Paul Moore)
+Date: Thu, 13 Sep 2018 22:42:59 -0400
 Subject: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-In-Reply-To: <5b983bba-049c-795a-3354-a2e8ab33cecf@schaufler-ca.com>
+In-Reply-To: <CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
 References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
 	<99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
 	<CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
@@ -11,51 +11,45 @@ References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
 	<CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
 	<CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
 	<CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
-	<CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
-	<d1d12866-d557-8c15-6506-a54b9d927952@schaufler-ca.com>
-	<CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
-	<5b983bba-049c-795a-3354-a2e8ab33cecf@schaufler-ca.com>
-Message-ID: <CAGXu5jJ5__jdBM5X0vVyEU1TKnN4dpkXbj=10iak9RvD1DZk9g@mail.gmail.com>
+Message-ID: <CAHC9VhRXOuGqSw9yu18QZeA1z+vYwLFixTqEJ1WyBBFCeLebuA@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 13, 2018 at 5:08 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 9/13/2018 4:57 PM, Kees Cook wrote:
->> On Thu, Sep 13, 2018 at 4:51 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> On 9/13/2018 4:06 PM, Kees Cook wrote:
->>>> - what order should any stacking happen? Makefile? security=?
->>> Makefile by default.
->> Okay, if ordering is by Makefile and everyone dislikes my
->> $lsm.enabled=0/1 thing, then these mean the same thing:
->>
->> security=selinux,tomoyo
->> security=tomoyo,selinux
->>
->> i.e. order of security= is _ignored_ in favor of the Makefile ordering.
+On Thu, Sep 13, 2018 at 5:52 PM Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Sep 13, 2018 at 2:38 PM, Paul Moore <paul@paul-moore.com> wrote:
+> > The infrastructure bits aren't really my concern; in fact I *like*
+> > that the infrastructure is always exercised, it makes
+> > testing/debugging easier.  I also like the ability to limit the
+> > user/admin to one LSM at boot time to make support easier; my goal is
+> > to allow a distro to build support for multiple LSMs without also
+> > requiring that distro to support *stacked* LSMs
 >
-> No, I think that the two lines above should have a different
-> execution order. If we really need to specify multiple modules
-> at boot time that is what makes the most sense.
+> I see your point, but as soon as SARA and Landlock appear, they'll have:
 >
-> It's a matter of mechanics and probably another pass during the
-> init process, but it's doable. If we determine it's necessary for
-> this stage it is just work.
+>     depends on SECURITY_STACKING
+>
+> and then all distros will enable it and there will be no sensible
+> runtime way to manage it. If, instead, we make it entirely runtime
+> now, then a CONFIG can control the default state and we can provide
+> guidance to how SARA and Landlock should expose their "enable"ness.
 
-We already have the minor LSMs that cannot change order. They aren't
-part of security= parsing either. To enable/disable LoadPin, you do
-"loadpin.enabled=1/0" separate from "security=".
+I question why SARA and LandLock require stacking.  While some LSMs
+may benefit from stacking, e.g. Yama, traditionally each LSM has been
+able to stand on its own.  I think this is a quality that should be
+preserved.
 
-Should "blob-sharing" LSMs be like major LSMs or minor LSMs?
+> > (see my earlier
+> > comments about the difficulty in determining the source of a failed
+> > operation).
+>
+> Agreed. I would hope that audit could help for that case. *stare at blue sky*
 
-If someone is booting with "security=selinux,tomoyo" and then SARA
-lands upstream, does that person have to explicitly add "sara" to
-their boot args, since they're doing a non-default list of LSMs?
+*also staring at blue sky*
 
-(I actually prefer the answer being "yes" here, FWIW, I just want to
-nail down the expectations.)
-
--Kees
+Audit can help, but it is independent of the LSMs and not a hard
+requirement for all, and even when it is enabled the config might not
+be suitable to provide enough information to be helpful in this case.
 
 -- 
-Kees Cook
-Pixel Security
+paul moore
+www.paul-moore.com
