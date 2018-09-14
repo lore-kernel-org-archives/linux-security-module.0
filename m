@@ -1,7 +1,7 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 13 Sep 2018 17:06:16 -0700
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 13 Sep 2018 17:08:41 -0700
 Subject: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-In-Reply-To: <a2ffa6b7-5d05-39a1-11c3-d715566e4d51@schaufler-ca.com>
+In-Reply-To: <CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
 References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
 	<99cb1ae7-8881-eb9a-a8cb-a787abe454e1@schaufler-ca.com>
 	<CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
@@ -12,31 +12,29 @@ References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
 	<CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
 	<CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
 	<CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
-	<0eb75e66-ed50-4013-6440-38bc2f814c6f@canonical.com>
-	<CAGXu5jKZ7rquTux5fS+5tQ==0w_9rDTRaJWS_mS7C+Fy2dXRRQ@mail.gmail.com>
-	<a2ffa6b7-5d05-39a1-11c3-d715566e4d51@schaufler-ca.com>
-Message-ID: <CAGXu5j+PhwfRCg5PycrE-JReVxKMduGsoXStWZN6PfYB-NB1og@mail.gmail.com>
+	<d1d12866-d557-8c15-6506-a54b9d927952@schaufler-ca.com>
+	<CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
+Message-ID: <5b983bba-049c-795a-3354-a2e8ab33cecf@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 13, 2018 at 5:03 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 9/13/2018 4:51 PM, Kees Cook wrote:
->> So, before we can really make a decision, I think we have to decide:
->> should ordering be arbitrary for even this level of stacking?
+On 9/13/2018 4:57 PM, Kees Cook wrote:
+> On Thu, Sep 13, 2018 at 4:51 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/13/2018 4:06 PM, Kees Cook wrote:
+>>> - what order should any stacking happen? Makefile? security=?
+>> Makefile by default.
+> Okay, if ordering is by Makefile and everyone dislikes my
+> $lsm.enabled=0/1 thing, then these mean the same thing:
 >
-> Do we have a case where it matters? I know that I could write a
-> module that would have issues if one hook got called and another
-> didn't because because a precursor module hook failed. I don't
-> think that any of the existing modules have this problem.
+> security=selinux,tomoyo
+> security=tomoyo,selinux
+>
+> i.e. order of security= is _ignored_ in favor of the Makefile ordering.
 
-FWIW, I prefer having explicit ordering that cannot be changed at
-runtime. I'm just concerned about painting ourselves (further) into a
-corner with security= suddenly gaining ordering semantics, but maybe I
-can just ignore this and we can point and laugh at anyone who gets
-burned by some future change to making it order-sensitive. :)
+No, I think that the two lines above should have a different
+execution order. If we really need to specify multiple modules
+at boot time that is what makes the most sense.
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+It's a matter of mechanics and probably another pass during the
+init process, but it's doable. If we determine it's necessary for
+this stage it is just work.
