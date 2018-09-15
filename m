@@ -1,97 +1,57 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 14 Sep 2018 13:47:55 -0700
-Subject: [PATCH 10/10] LSM: Blob sharing support for S.A.R.A and LandLock
-In-Reply-To: <CAGXu5jL2LjPhLsx2bQJQdj4GraTDakYTqb3fqUbWGrOfUsW8=w@mail.gmail.com>
-References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
-	<CAGXu5jLONSfPHYYYTLSma-+arVHSQKaEWb9JxpOn6TNKtyLNhw@mail.gmail.com>
-	<CAHC9VhQN0wq0zZS5BYU9jBomaWvCaJ_BqJjHF3AT7FG8Z0nLDQ@mail.gmail.com>
-	<CAGXu5jJs6kmd6Tjgwqb2Zx7e-jNbHqfJ57poZuyz4Qj=AKVfmQ@mail.gmail.com>
-	<CAHC9VhQ20tBAMwOJ9mg0tBHYUoxjh0Szr3d62HuPw2SyT4XDLw@mail.gmail.com>
-	<CAGXu5jKec1JTsoqwKGThcJoamdL618AHu4jfFbqqQiauz1kjyg@mail.gmail.com>
-	<CAHC9VhQwT4d3wC37cVrrX-hZq1L3e6=TEAse4m-YH9SiFnkieA@mail.gmail.com>
-	<CAGXu5jLapViSK-j08Tq8cCZodiZXFsXze71xFPg6MQhDWDHDAA@mail.gmail.com>
-	<CAGXu5j+j47FH5RF2vrJh95=YFX76oSBFo8O6GZqa0utcfE1AVA@mail.gmail.com>
-	<d1d12866-d557-8c15-6506-a54b9d927952@schaufler-ca.com>
-	<CAGXu5jJG=wk6e_RU=KYDY48kOc=RmL3OB79T+rHqCyzaDSn=zg@mail.gmail.com>
-	<5b983bba-049c-795a-3354-a2e8ab33cecf@schaufler-ca.com>
-	<CAGXu5jJ5__jdBM5X0vVyEU1TKnN4dpkXbj=10iak9RvD1DZk9g@mail.gmail.com>
-	<2bc5e4f5-8429-6843-f255-8fab6dacf39b@schaufler-ca.com>
-	<CAGXu5jL2LjPhLsx2bQJQdj4GraTDakYTqb3fqUbWGrOfUsW8=w@mail.gmail.com>
-Message-ID: <b5601e1a-2c29-55f1-63db-01421eeaa6ea@schaufler-ca.com>
+From: alison.schofield@intel.com (Alison Schofield)
+Date: Fri, 14 Sep 2018 17:06:39 -0700
+Subject: [RFC 11/12] keys/mktme: Add a new key service type for memory
+	encryption keys
+In-Reply-To: <105F7BF4D0229846AF094488D65A098935424C2D@PGSMSX112.gar.corp.intel.com>
+References: <cover.1536356108.git.alison.schofield@intel.com>
+	<1a14a6feb02f968c5e6b98360f6f16106b633b58.1536356108.git.alison.schofield@intel.com>
+	<105F7BF4D0229846AF094488D65A098935424C2D@PGSMSX112.gar.corp.intel.com>
+Message-ID: <20180915000639.GA28666@alison-desk.jf.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/14/2018 1:05 PM, Kees Cook wrote:
-> On Fri, Sep 14, 2018 at 8:57 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 9/13/2018 5:19 PM, Kees Cook wrote:
->>> We already have the minor LSMs that cannot change order.
->> Are you saying that we don't have a mechanism to change
->> the order, or that they wouldn't work right in a different
->> order? Well, there's the capability module that has to be
->> first.
-> I just meant their order is explicit in security.c.
->
->>> They aren't
->>> part of security= parsing either.
->> True, but there's no reason now that we couldn't change that.
->> Except for capability. Hmm.
-> Right, we have at least one that MUST be first (and must not be disabled).
->
->>> Should "blob-sharing" LSMs be like major LSMs or minor LSMs?
->> I like the idea of changing the minor modules to do the full
->> registration process. That would make them all the same.
->> Except for capability. In any case, the "blob-sharing" LSMs
->> need to do the full registration process to account for their
->> blobs sizes, and that brings the "major" behavior along with it.
-> I agree. I'm working on some clean-ups that I'll send out soon, though
-> I'm worried about some of the various boot-time options...
+On Sun, Sep 09, 2018 at 08:29:29PM -0700, Huang, Kai wrote:
+> > + */
+> > +static int mktme_build_cpumask(void)
+> > +{
+> > +	int online_cpu, mktme_cpu;
+> > +	int online_pkgid, mktme_pkgid = -1;
+> > +
+> > +	if (!zalloc_cpumask_var(&mktme_cpumask, GFP_KERNEL))
+> > +		return -ENOMEM;
+> > +
+> > +	for_each_online_cpu(online_cpu) {
+> > +		online_pkgid = topology_physical_package_id(online_cpu);
+> > +
+> > +		for_each_cpu(mktme_cpu, mktme_cpumask) {
+> > +			mktme_pkgid =
+> > topology_physical_package_id(mktme_cpu);
+> > +			if (mktme_pkgid == online_pkgid)
+> > +				break;
+> > +		}
+> > +		if (mktme_pkgid != online_pkgid)
+> > +			cpumask_set_cpu(online_cpu, mktme_cpumask);
+> > +	}
+> 
+> Could we use 'for_each_online_node', 'cpumask_first/next', etc to simplify the logic?
 
-Looking forward to seeing them.
+Kai, 
 
->>> If someone is booting with "security=selinux,tomoyo" and then SARA
->>> lands upstream, does that person have to explicitly add "sara" to
->>> their boot args, since they're doing a non-default list of LSMs?
->> Yes. security= is explicit.
->>
->>> (I actually prefer the answer being "yes" here, FWIW, I just want to
->>> nail down the expectations.)
->> For now let's leave the minor (capability, yama, loadpin) as they are,
->> and require all new modules of any flavor to use full registration.
-> I would even be fine to convert yama and loadpin.
+I tried to simplify it and came up with code that looked like this:
 
-That shouldn't be difficult.
+	int lead_cpu, node;
+	for_each_online_node(node) {
+		lead_cpu = cpumask_first(cpumask_of_node(node));
+		if (lead_cpu < nr_cpu_ids)
+			cpumask_set_cpu(lead_cpu, mktme_cpumask_NEW);
+	}
+When I test it on an SNC (Sub Numa Cluster) system it gives me too many
+CPU's. I get a CPU per Node (just like i asked for;) instead of per Socket.
+It has 2 sockets and 4 NUMA nodes. 
 
->> We could consider something like
->>
->> security=$lsm           # Stack with $lsm at priority 2 - Existing behavior
->> $lsm.stacked=N          # Add $lsm to the stack at priority N. Delete if N == 0
->>
->> It's OK to specify "selinux.stacked=2" and "sara.stacked=2". Which gets
->> called first is left up to the system to decide. Whatever the behavior is
->> gets documented. Capability will always be first and have priority 1.
->> It's OK to specify "smack.stacked=1".
-> I'm less excited about this kind of stacking priority, but, whatever
-> the case, I think my cleanups may help with whatever we decide.
+I kind of remember this when I originally coded it, hence the bottoms up
+approach using topology_physical_package_id()
 
-OK
+Any ideas?
 
->> The default stack is determined by CONFIG_SECURITY_$lsm_STACKED at
->> build time. CONFIG_SECURITY_$lsm_STACKED changes from a boolean to
->> an integer value to establish the default hook order.
->>
->> /sys/kernel/security/lsm reports the modules in hook call order.
-> Didn't I send a patch to new-line terminate this list? I always get
-> annoyed when I "cat" it. ;)
-
-SELinux set the precedence on that one. Not my fault!
-
->> /sys/kernel/security/lsm-stack reports the list with the hook call priority
->>
->>         capability:1,yama:1,selinux:1,sara:5,landlack:17
->>
->> If stacking is not configured $lsm.stacked=0 is treated as security=none.
->> For other values of N $lsm.stacked=N is treated as security=$lsm.
-> I feel like "order" is bad enough. Can we avoid adding "priority"?
-
-Sorry. I changed terminology (order and priority) halfway through the
-message. Yes, I like order better. We should stick with that.
+Alison
