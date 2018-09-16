@@ -1,57 +1,83 @@
-From: alison.schofield@intel.com (Alison Schofield)
-Date: Fri, 14 Sep 2018 17:06:39 -0700
-Subject: [RFC 11/12] keys/mktme: Add a new key service type for memory
-	encryption keys
-In-Reply-To: <105F7BF4D0229846AF094488D65A098935424C2D@PGSMSX112.gar.corp.intel.com>
-References: <cover.1536356108.git.alison.schofield@intel.com>
-	<1a14a6feb02f968c5e6b98360f6f16106b633b58.1536356108.git.alison.schofield@intel.com>
-	<105F7BF4D0229846AF094488D65A098935424C2D@PGSMSX112.gar.corp.intel.com>
-Message-ID: <20180915000639.GA28666@alison-desk.jf.intel.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Sat, 15 Sep 2018 17:30:43 -0700
+Subject: [PATCH 02/18] LSM: Rename .security_initcall section to .lsm_info
+In-Reply-To: <20180916003059.1046-1-keescook@chromium.org>
+References: <20180916003059.1046-1-keescook@chromium.org>
+Message-ID: <20180916003059.1046-3-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Sun, Sep 09, 2018 at 08:29:29PM -0700, Huang, Kai wrote:
-> > + */
-> > +static int mktme_build_cpumask(void)
-> > +{
-> > +	int online_cpu, mktme_cpu;
-> > +	int online_pkgid, mktme_pkgid = -1;
-> > +
-> > +	if (!zalloc_cpumask_var(&mktme_cpumask, GFP_KERNEL))
-> > +		return -ENOMEM;
-> > +
-> > +	for_each_online_cpu(online_cpu) {
-> > +		online_pkgid = topology_physical_package_id(online_cpu);
-> > +
-> > +		for_each_cpu(mktme_cpu, mktme_cpumask) {
-> > +			mktme_pkgid =
-> > topology_physical_package_id(mktme_cpu);
-> > +			if (mktme_pkgid == online_pkgid)
-> > +				break;
-> > +		}
-> > +		if (mktme_pkgid != online_pkgid)
-> > +			cpumask_set_cpu(online_cpu, mktme_cpumask);
-> > +	}
-> 
-> Could we use 'for_each_online_node', 'cpumask_first/next', etc to simplify the logic?
+In preparation for switching from initcall to just a regular set of
+pointers in a section, rename the internal section name.
 
-Kai, 
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/asm-generic/vmlinux.lds.h | 10 +++++-----
+ include/linux/init.h              |  4 ++--
+ security/security.c               |  4 ++--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-I tried to simplify it and came up with code that looked like this:
-
-	int lead_cpu, node;
-	for_each_online_node(node) {
-		lead_cpu = cpumask_first(cpumask_of_node(node));
-		if (lead_cpu < nr_cpu_ids)
-			cpumask_set_cpu(lead_cpu, mktme_cpumask_NEW);
-	}
-When I test it on an SNC (Sub Numa Cluster) system it gives me too many
-CPU's. I get a CPU per Node (just like i asked for;) instead of per Socket.
-It has 2 sockets and 4 NUMA nodes. 
-
-I kind of remember this when I originally coded it, hence the bottoms up
-approach using topology_physical_package_id()
-
-Any ideas?
-
-Alison
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 934a45395547..5079a969e612 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -787,14 +787,14 @@
+ 		__con_initcall_end = .;
+ 
+ #define SECURITY_INITCALL						\
+-		__security_initcall_start = .;				\
+-		KEEP(*(.security_initcall.init))			\
+-		__security_initcall_end = .;
++		__start_lsm_info = .;					\
++		KEEP(*(.lsm_info.init))					\
++		__end_lsm_info = .;
+ 
+ /* Older linker script style for security init. */
+ #define SECURITY_INIT							\
+-	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
+-		SECURITY_INITCALL					\
++	.lsm_info.init : AT(ADDR(.lsm_info.init) - LOAD_OFFSET) {	\
++		LSM_INFO						\
+ 	}
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
+diff --git a/include/linux/init.h b/include/linux/init.h
+index 2538d176dd1f..77636539e77c 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -133,7 +133,7 @@ static inline initcall_t initcall_from_entry(initcall_entry_t *entry)
+ #endif
+ 
+ extern initcall_entry_t __con_initcall_start[], __con_initcall_end[];
+-extern initcall_entry_t __security_initcall_start[], __security_initcall_end[];
++extern initcall_entry_t __start_lsm_info[], __end_lsm_info[];
+ 
+ /* Used for contructor calls. */
+ typedef void (*ctor_fn_t)(void);
+@@ -236,7 +236,7 @@ extern bool initcall_debug;
+ 	static exitcall_t __exitcall_##fn __exit_call = fn
+ 
+ #define console_initcall(fn)	___define_initcall(fn,, .con_initcall)
+-#define security_initcall(fn)	___define_initcall(fn,, .security_initcall)
++#define security_initcall(fn)	___define_initcall(fn,, .lsm_info)
+ 
+ struct obs_kernel_param {
+ 	const char *str;
+diff --git a/security/security.c b/security/security.c
+index 736e78da1ab9..d49d5ff8be4b 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -51,9 +51,9 @@ static void __init do_security_initcalls(void)
+ 	initcall_t call;
+ 	initcall_entry_t *ce;
+ 
+-	ce = __security_initcall_start;
++	ce = __start_lsm_info;
+ 	trace_initcall_level("security");
+-	while (ce < __security_initcall_end) {
++	while (ce < __end_lsm_info) {
+ 		call = initcall_from_entry(ce);
+ 		trace_initcall_start(call);
+ 		ret = call();
+-- 
+2.17.1
