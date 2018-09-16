@@ -1,17 +1,101 @@
-From: tstruk@gmail.com (Tadeusz Struk)
-Date: Sun, 16 Sep 2018 08:11:44 -0700
-Subject: [PATCH v6 0/2] tpm: add support for nonblocking operation
-In-Reply-To: <20180916120349.GB5040@linux.intel.com>
-References: <153659990230.2284.5511495299744743989.stgit@tstruk-mobl1.jf.intel.com>
-	<20180916120349.GB5040@linux.intel.com>
-Message-ID: <f86d6fe5-bafa-d392-5ed2-f5390b6b6e7e@gmail.com>
+From: s.mesoraca16@gmail.com (Salvatore Mesoraca)
+Date: Sun, 16 Sep 2018 18:54:09 +0200
+Subject: [PATCH v2 00/10] LSM: Module stacking in support of S.A.R.A and
+	Landlock
+In-Reply-To: <alpine.LRH.2.21.1809130727310.19741@namei.org>
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
+	<alpine.LRH.2.21.1809130727310.19741@namei.org>
+Message-ID: <CAJHCu1+Nja-XqfFKdxu2hDcUBzgvvjcf42yeGnUuVY3wsrZfSQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/16/18 5:03 AM, Jarkko Sakkinen wrote:
-> I tried to test this but I get 404 from https://github.com/tstruk/tpm2-tss/tree/async
+On Wed, 12 Sep 2018, James Morris <jmorris@namei.org> wrote:
+> Adding the SARA and LandLock authors for review & comment.
+>
+> Salvatore & Micka?l: does this patchset meet your needs for merging to
+> mainline?
 
-This has been already merged to tss upstream https://github.com/tpm2-software/tpm2-tss
-To enable it you need to configure tss with --enable-tcti-device-async=yes
-Thanks,
-Tadeusz
+Since the last time I submitted the patch to the ML, it grew a bit: now it needs
+inode's blob stacking (which is already included for Landlock) and
+kern_ipc_perm's
+blob stacking.
+The last one isn't implemented in this patchset, but it isn't
+absolutely necessary.
+I can merge a version of SARA that doesn't need it and than update it
+when possible.
+I can provide the same level of protection without using kern_ipc_perm
+blob, I'm using it
+just to minimize some potential side effects.
+
+>
+> On Tue, 11 Sep 2018, Casey Schaufler wrote:
+>
+> > LSM: Module stacking in support of S.A.R.A and Landlock
+> >
+> > v2: Reduce the patchset to what is required to support
+> >     the proposed S.A.R.A. and LandLock security modules
+> >
+> > The S.A.R.A. security module is intended to be used
+> > in conjunction with other security modules. It requires
+> > state to be maintained for the credential, which
+> > in turn requires a mechanism for sharing the credential
+> > security blob. The module also requires mechanism for
+> > user space manipulation of the credential information,
+> > hence an additional subdirectory in /proc/.../attr.
+> >
+> > The LandLock security module provides user configurable
+> > policy in the secmark mechanism. It requires data in
+> > the credential, file and inode security blobs. For this
+> > to be used along side the existing "major" security
+> > modules mechanism for sharing these blobs is provided.
+> >
+> > A side effect of providing sharing of the crendential
+> > security blob is that the TOMOYO module can be used at
+> > the same time as the other "major" modules.
+> >
+> > The mechanism for configuring which security modules are
+> > enabled has to change when stacking in enabled. Any
+> > module that uses just the security blobs that are shared
+> > can be selected. Additionally, one other "major" module
+> > can be selected.
+> >
+> > The security module stacking issues around networking and
+> > IPC are not addressed here as they are beyond what is
+> > required for TOMOYO, S.A.R.A and LandLock.
+> >
+> > git://github.com/cschaufler/lsm-stacking.git#stacking-4.19-rc2-saralock
+> >
+> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> > ---
+> >  Documentation/admin-guide/LSM/index.rst |  23 ++-
+> >  fs/proc/base.c                          |  64 ++++++-
+> >  fs/proc/internal.h                      |   1 +
+> >  include/linux/lsm_hooks.h               |  20 ++-
+> >  include/linux/security.h                |  15 +-
+> >  kernel/cred.c                           |  13 --
+> >  security/Kconfig                        |  92 ++++++++++
+> >  security/apparmor/domain.c              |   2 +-
+> >  security/apparmor/include/cred.h        |  24 ++-
+> >  security/apparmor/include/file.h        |   9 +-
+> >  security/apparmor/include/lib.h         |   4 +
+> >  security/apparmor/lsm.c                 |  53 ++++--
+> >  security/apparmor/task.c                |   6 +-
+> >  security/security.c                     | 293 ++++++++++++++++++++++++++++++--
+> >  security/selinux/hooks.c                | 215 ++++++++---------------
+> >  security/selinux/include/objsec.h       |  37 +++-
+> >  security/selinux/selinuxfs.c            |   5 +-
+> >  security/selinux/xfrm.c                 |   4 +-
+> >  security/smack/smack.h                  |  42 ++++-
+> >  security/smack/smack_access.c           |   4 +-
+> >  security/smack/smack_lsm.c              | 283 +++++++++++-------------------
+> >  security/smack/smackfs.c                |  18 +-
+> >  security/tomoyo/common.h                |  31 +++-
+> >  security/tomoyo/domain.c                |   4 +-
+> >  security/tomoyo/securityfs_if.c         |  15 +-
+> >  security/tomoyo/tomoyo.c                |  57 +++++--
+> >  26 files changed, 899 insertions(+), 435 deletions(-)
+> >
+>
+> --
+> James Morris
+> <jmorris@namei.org>
