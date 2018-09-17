@@ -1,44 +1,43 @@
-From: penguin-kernel@i-love.sakura.ne.jp (Tetsuo Handa)
-Date: Mon, 17 Sep 2018 09:46:58 +0900
-Subject: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
-In-Reply-To: <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
-References: <20180916003059.1046-1-keescook@chromium.org>
-	<20180916003059.1046-17-keescook@chromium.org>
-	<84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
-	<CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
-Message-ID: <e6e7521f-7810-a938-3f0e-daefb6579344@i-love.sakura.ne.jp>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Mon, 17 Sep 2018 11:38:17 +0200
+Subject: [PATCH v2,
+	RESEND 0/3] tpm: retrieve digest size of unknown algorithms from TPM
+Message-ID: <20180917093820.20500-1-roberto.sassu@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2018/09/17 8:00, Kees Cook wrote:
-> On Sun, Sep 16, 2018 at 11:49 AM, Casey Schaufler
-> <casey@schaufler-ca.com> wrote:
->> One solution is to leave security= as is, not affecting "minor"
->> modules and only allowing specification of one major module, and adding
-> 
-> I would much prefer this, yes.
-> 
-> A question remains: how do we map the existing "security=" selection
-> of a "major" LSM against what will be next "exclusive" plus tomoyo,
-> and in the extreme case, nothing?
-> 
-> Perhaps as part of deprecating "security=", we could just declare that
-> it is selecting between SELinux, AppArmor, Smack, and Tomoyo only?
-> 
->> another boot option security.stack= that overrides a security= option
->> and that takes the list as you've implemented here.
-> 
-> or "lsm.stack=" that overrides "security=" entirely?
+Resending to maintainer with correct mailing lists in CC.
 
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
 
-Yes, I think we can add new option.
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
 
-For example, introducing lsm= and obsoleting security= (because total length for
-kernel command line is limited while enumeration makes the parameter value longer).
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
 
-  security= works like current behavior.
+Roberto Sassu (3):
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: modify tpm_pcr_read() definition to pass TPM hash algorithms
+  tpm: retrieve digest size of unknown algorithms with PCR read
 
-  lsm= requires explicit enumeration of all modules (except capability which has to
-  be always enabled) which should be enabled at boot.
+ drivers/char/tpm/tpm-interface.c    | 24 ++++++++----
+ drivers/char/tpm/tpm.h              | 18 ++-------
+ drivers/char/tpm/tpm2-cmd.c         | 78 +++++++++++++++++++++++++------------
+ include/linux/tpm.h                 | 30 +++++++++++++-
+ include/linux/tpm_eventlog.h        |  9 +----
+ security/integrity/ima/ima_crypto.c | 10 ++---
+ 6 files changed, 109 insertions(+), 60 deletions(-)
 
-  security= is ignored if lsm= is specified.
+-- 
+2.14.1
