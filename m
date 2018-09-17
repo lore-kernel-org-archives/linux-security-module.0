@@ -1,238 +1,81 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Mon, 17 Sep 2018 12:02:56 +0200
-Subject: [PATCH v2 3/3] tpm: retrieve digest size of unknown algorithms
-	with PCR read
-In-Reply-To: <20180916123749.GF5040@linux.intel.com>
-References: <20180905114202.7757-1-roberto.sassu@huawei.com>
-	<20180905114202.7757-4-roberto.sassu@huawei.com>
-	<20180916123749.GF5040@linux.intel.com>
-Message-ID: <322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
+From: kai.huang@intel.com (Huang, Kai)
+Date: Mon, 17 Sep 2018 10:48:33 +0000
+Subject: [RFC 11/12] keys/mktme: Add a new key service type for memory
+	encryption keys
+In-Reply-To: <20180915000639.GA28666@alison-desk.jf.intel.com>
+References: <cover.1536356108.git.alison.schofield@intel.com>
+	<1a14a6feb02f968c5e6b98360f6f16106b633b58.1536356108.git.alison.schofield@intel.com>
+	<105F7BF4D0229846AF094488D65A098935424C2D@PGSMSX112.gar.corp.intel.com>
+	<20180915000639.GA28666@alison-desk.jf.intel.com>
+Message-ID: <105F7BF4D0229846AF094488D65A098935432E09@PGSMSX112.gar.corp.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/16/2018 2:37 PM, Jarkko Sakkinen wrote:
-> On Wed, Sep 05, 2018 at 01:42:02PM +0200, Roberto Sassu wrote:
->> Currently, the TPM driver retrieves the digest size from a table mapping
->> TPM algorithms identifiers to identifiers defined by the crypto subsystem.
->> If the algorithm is not defined by the latter, the digest size can be
->> retrieved from the output of the PCR read command.
->>
->> The patch retrieves at TPM startup the digest sizes for each PCR bank and
->> stores them in the new structure tpm_active_bank_info, member of tpm_chip,
->> so that the information can be passed to other kernel subsystems.
->>
->> tpm_active_bank_info contains: the TPM algorithm identifier, necessary to
->> generate the event log as defined by Trusted Computing Group (TCG); the
->> digest size, to pad/truncate a digest calculated with a different
->> algorithm; the crypto subsystem identifier, to calculate the digest of
->> event data.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>   drivers/char/tpm/tpm-interface.c | 11 +++++++---
->>   drivers/char/tpm/tpm.h           |  4 ++--
->>   drivers/char/tpm/tpm2-cmd.c      | 47 ++++++++++++++++++++++++++++++----------
->>   include/linux/tpm.h              |  6 +++++
->>   4 files changed, 51 insertions(+), 17 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->> index 81872880b5f1..02dcdcda5a3c 100644
->> --- a/drivers/char/tpm/tpm-interface.c
->> +++ b/drivers/char/tpm/tpm-interface.c
->> @@ -993,7 +993,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
->>   	if (!chip)
->>   		return -ENODEV;
->>   	if (chip->flags & TPM_CHIP_FLAG_TPM2)
->> -		rc = tpm2_pcr_read(chip, pcr_idx, count, digests);
->> +		rc = tpm2_pcr_read(chip, pcr_idx, count, digests, NULL);
->>   	else
->>   		rc = tpm_pcr_read_dev(chip, pcr_idx, digests[0].digest);
->>   	tpm_put_ops(chip);
->> @@ -1056,8 +1056,8 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
->>   		memset(digest_list, 0, sizeof(digest_list));
->>   
->>   		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
->> -			    chip->active_banks[i] != TPM_ALG_ERROR; i++) {
->> -			digest_list[i].alg_id = chip->active_banks[i];
->> +		     chip->active_banks[i].alg_id != TPM_ALG_ERROR; i++) {
->> +			digest_list[i].alg_id = chip->active_banks[i].alg_id;
+> -----Original Message-----
+> From: Schofield, Alison
+> Sent: Saturday, September 15, 2018 12:07 PM
+> To: Huang, Kai <kai.huang@intel.com>
+> Cc: dhowells at redhat.com; tglx at linutronix.de; Nakajima, Jun
+> <jun.nakajima@intel.com>; Shutemov, Kirill <kirill.shutemov@intel.com>;
+> Hansen, Dave <dave.hansen@intel.com>; Sakkinen, Jarkko
+> <jarkko.sakkinen@intel.com>; jmorris at namei.org; keyrings at vger.kernel.org;
+> linux-security-module at vger.kernel.org; mingo at redhat.com; hpa at zytor.com;
+> x86 at kernel.org; linux-mm at kvack.org
+> Subject: Re: [RFC 11/12] keys/mktme: Add a new key service type for memory
+> encryption keys
 > 
-> Why not just zero?
-
-Hi Jarkko
-
-sorry, I didn't understand this comment. Did you refer to the code
-below (chip->active_banks[0] ...)?
-
-
->>   			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
->>   			count++;
->>   		}
->> @@ -1158,6 +1158,11 @@ int tpm1_auto_startup(struct tpm_chip *chip)
->>   		goto out;
->>   	}
->>   
->> +	chip->active_banks[0].alg_id = TPM_ALG_SHA1;
->> +	chip->active_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
->> +	chip->active_banks[0].crypto_id = HASH_ALGO_SHA1;
->> +	chip->active_banks[1].alg_id = TPM_ALG_ERROR;
+> On Sun, Sep 09, 2018 at 08:29:29PM -0700, Huang, Kai wrote:
+> > > + */
+> > > +static int mktme_build_cpumask(void) {
+> > > +	int online_cpu, mktme_cpu;
+> > > +	int online_pkgid, mktme_pkgid = -1;
+> > > +
+> > > +	if (!zalloc_cpumask_var(&mktme_cpumask, GFP_KERNEL))
+> > > +		return -ENOMEM;
+> > > +
+> > > +	for_each_online_cpu(online_cpu) {
+> > > +		online_pkgid = topology_physical_package_id(online_cpu);
+> > > +
+> > > +		for_each_cpu(mktme_cpu, mktme_cpumask) {
+> > > +			mktme_pkgid =
+> > > topology_physical_package_id(mktme_cpu);
+> > > +			if (mktme_pkgid == online_pkgid)
+> > > +				break;
+> > > +		}
+> > > +		if (mktme_pkgid != online_pkgid)
+> > > +			cpumask_set_cpu(online_cpu, mktme_cpumask);
+> > > +	}
+> >
+> > Could we use 'for_each_online_node', 'cpumask_first/next', etc to simplify the
+> logic?
 > 
-> Then you could drop the last line here.
-
-This code has the same behavior of tpm2_get_pcr_allocation(). If some
-banks are not used, set the algorithm of the first unused to
-TPM_ALG_ERROR.
-
-
->> +
->>   	return rc;
->>   out:
->>   	if (rc > 0)
->> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
->> index 9479e1ae1b4c..385843b49c17 100644
->> --- a/drivers/char/tpm/tpm.h
->> +++ b/drivers/char/tpm/tpm.h
->> @@ -237,7 +237,7 @@ struct tpm_chip {
->>   	const struct attribute_group *groups[3];
->>   	unsigned int groups_cnt;
->>   
->> -	u16 active_banks[7];
->> +	struct tpm_active_bank_info active_banks[7];
->>   #ifdef CONFIG_ACPI
->>   	acpi_handle acpi_dev_handle;
->>   	char ppi_version[TPM_PPI_VERSION_LEN + 1];
->> @@ -565,7 +565,7 @@ static inline u32 tpm2_rc_value(u32 rc)
->>   }
->>   
->>   int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
->> -		  struct tpm_digest *digests);
->> +		  struct tpm_digest *digests, u16 *sizes);
->>   int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
->>   		    struct tpm_digest *digests);
->>   int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
->> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->> index 601d67c76c1e..51d2454c5329 100644
->> --- a/drivers/char/tpm/tpm2-cmd.c
->> +++ b/drivers/char/tpm/tpm2-cmd.c
->> @@ -181,11 +181,12 @@ struct tpm2_pcr_read_out {
->>    * @pcr_idx:	index of the PCR to read.
->>    * @count:	number of digests passed.
->>    * @digests:	list of pcr banks and buffers current PCR values are written to.
->> + * @sizes:	list of digest sizes.
->>    *
->>    * Return: Same as with tpm_transmit_cmd.
->>    */
->>   int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
->> -		  struct tpm_digest *digests)
->> +		  struct tpm_digest *digests, u16 *sizes)
->>   {
->>   	int rc;
->>   	struct tpm_buf buf;
->> @@ -215,6 +216,9 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
->>   		out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
->>   		memcpy(digests[0].digest, out->digest,
->>   		       be16_to_cpu(out->digest_size));
->> +
->> +		if (sizes)
->> +			sizes[0] = be16_to_cpu(out->digest_size);
->>   	}
->>   
->>   	tpm_buf_destroy(&buf);
->> @@ -245,7 +249,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
->>   	struct tpm2_null_auth_area auth_area;
->>   	int rc;
->>   	int i;
->> -	int j;
->>   
->>   	if (count > ARRAY_SIZE(chip->active_banks))
->>   		return -EINVAL;
->> @@ -267,14 +270,9 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
->>   	tpm_buf_append_u32(&buf, count);
->>   
->>   	for (i = 0; i < count; i++) {
->> -		for (j = 0; j < ARRAY_SIZE(tpm2_hash_map); j++) {
->> -			if (digests[i].alg_id != tpm2_hash_map[j].tpm_id)
->> -				continue;
->> -			tpm_buf_append_u16(&buf, digests[i].alg_id);
->> -			tpm_buf_append(&buf, (const unsigned char
->> -					      *)&digests[i].digest,
->> -			       hash_digest_size[tpm2_hash_map[j].crypto_id]);
->> -		}
->> +		tpm_buf_append_u16(&buf, digests[i].alg_id);
->> +		tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
->> +			       chip->active_banks[i].digest_size);
->>   	}
->>   
->>   	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
->> @@ -851,6 +849,26 @@ int tpm2_probe(struct tpm_chip *chip)
->>   }
->>   EXPORT_SYMBOL_GPL(tpm2_probe);
->>   
->> +static int tpm2_init_active_bank_info(struct tpm_chip *chip,
->> +				      struct tpm_active_bank_info *active_bank)
->> +{
->> +	struct tpm_digest digest = {.alg_id = active_bank->alg_id};
->> +	int i;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
->> +		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
->> +
->> +		if (active_bank->alg_id != tpm2_hash_map[i].tpm_id)
->> +			continue;
->> +
->> +		active_bank->digest_size = hash_digest_size[crypto_algo];
->> +		active_bank->crypto_id = crypto_algo;
->> +		return 0;
->> +	}
->> +
->> +	return tpm2_pcr_read(chip, 0, 1, &digest, &active_bank->digest_size);
->> +}
->> +
->>   struct tpm2_pcr_selection {
->>   	__be16  hash_alg;
->>   	u8  size_of_select;
->> @@ -905,7 +923,12 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->>   		}
->>   
->>   		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
->> -		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
->> +		chip->active_banks[i].alg_id =
->> +			be16_to_cpu(pcr_selection.hash_alg);
->> +		rc =  tpm2_init_active_bank_info(chip, &chip->active_banks[i]);
->> +		if (rc)
->> +			break;
->> +
->>   		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
->>   			sizeof(pcr_selection.size_of_select) +
->>   			pcr_selection.size_of_select;
->> @@ -914,7 +937,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->>   
->>   out:
->>   	if (i < ARRAY_SIZE(chip->active_banks))
->> -		chip->active_banks[i] = TPM_ALG_ERROR;
->> +		chip->active_banks[i].alg_id = TPM_ALG_ERROR;
->>   
->>   	tpm_buf_destroy(&buf);
->>   
->> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
->> index ac9fc47f4494..c8372ff582c3 100644
->> --- a/include/linux/tpm.h
->> +++ b/include/linux/tpm.h
->> @@ -46,6 +46,12 @@ struct tpm_digest {
->>   	u8 digest[SHA512_DIGEST_SIZE];
->>   } __packed;
->>   
->> +struct tpm_active_bank_info {
->> +	u16 alg_id;
->> +	u16 digest_size;
->> +	u16 crypto_id;
->> +};
+> Kai,
 > 
-> Why not just tpm_bank_info? Will there be also tpm_inactive_bank_info
-> at some point?
+> I tried to simplify it and came up with code that looked like this:
+> 
+> 	int lead_cpu, node;
+> 	for_each_online_node(node) {
+> 		lead_cpu = cpumask_first(cpumask_of_node(node));
+> 		if (lead_cpu < nr_cpu_ids)
+> 			cpumask_set_cpu(lead_cpu, mktme_cpumask_NEW);
+> 	}
+> When I test it on an SNC (Sub Numa Cluster) system it gives me too many CPU's.
+> I get a CPU per Node (just like i asked for;) instead of per Socket.
+> It has 2 sockets and 4 NUMA nodes.
+> 
+> I kind of remember this when I originally coded it, hence the bottoms up
+> approach using topology_physical_package_id()
+> 
+> Any ideas?
 
-It derived from chip->active_banks. I will rename the structure.
+Hmm.. I forgot the SNC case, sorry :(
 
-Thanks
+So in case of SNC, is PCONFIG per-package, or per-node? I am not quite sure about this.
 
-Roberto
+If PCONFIG is per-package, I don't have better idea than your original one. :)
+
+Thanks,
+-Kai
+> 
+> Alison
+> 
