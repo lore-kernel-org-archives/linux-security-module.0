@@ -1,81 +1,136 @@
-From: kai.huang@intel.com (Huang, Kai)
-Date: Mon, 17 Sep 2018 10:48:33 +0000
-Subject: [RFC 11/12] keys/mktme: Add a new key service type for memory
-	encryption keys
-In-Reply-To: <20180915000639.GA28666@alison-desk.jf.intel.com>
-References: <cover.1536356108.git.alison.schofield@intel.com>
-	<1a14a6feb02f968c5e6b98360f6f16106b633b58.1536356108.git.alison.schofield@intel.com>
-	<105F7BF4D0229846AF094488D65A098935424C2D@PGSMSX112.gar.corp.intel.com>
-	<20180915000639.GA28666@alison-desk.jf.intel.com>
-Message-ID: <105F7BF4D0229846AF094488D65A098935432E09@PGSMSX112.gar.corp.intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 17 Sep 2018 08:06:23 -0700
+Subject: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
+In-Reply-To: <CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
+References: <20180916003059.1046-1-keescook@chromium.org>
+	<20180916003059.1046-17-keescook@chromium.org>
+	<84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
+	<CAGXu5jK5CzXUii97q_yk3KzBTw0SOmoc=-zcm+3jAqEHe76AgQ@mail.gmail.com>
+Message-ID: <35b0af5b-e37e-e192-73b5-0d0b37d9e37f@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> -----Original Message-----
-> From: Schofield, Alison
-> Sent: Saturday, September 15, 2018 12:07 PM
-> To: Huang, Kai <kai.huang@intel.com>
-> Cc: dhowells at redhat.com; tglx at linutronix.de; Nakajima, Jun
-> <jun.nakajima@intel.com>; Shutemov, Kirill <kirill.shutemov@intel.com>;
-> Hansen, Dave <dave.hansen@intel.com>; Sakkinen, Jarkko
-> <jarkko.sakkinen@intel.com>; jmorris at namei.org; keyrings at vger.kernel.org;
-> linux-security-module at vger.kernel.org; mingo at redhat.com; hpa at zytor.com;
-> x86 at kernel.org; linux-mm at kvack.org
-> Subject: Re: [RFC 11/12] keys/mktme: Add a new key service type for memory
-> encryption keys
-> 
-> On Sun, Sep 09, 2018 at 08:29:29PM -0700, Huang, Kai wrote:
-> > > + */
-> > > +static int mktme_build_cpumask(void) {
-> > > +	int online_cpu, mktme_cpu;
-> > > +	int online_pkgid, mktme_pkgid = -1;
-> > > +
-> > > +	if (!zalloc_cpumask_var(&mktme_cpumask, GFP_KERNEL))
-> > > +		return -ENOMEM;
-> > > +
-> > > +	for_each_online_cpu(online_cpu) {
-> > > +		online_pkgid = topology_physical_package_id(online_cpu);
-> > > +
-> > > +		for_each_cpu(mktme_cpu, mktme_cpumask) {
-> > > +			mktme_pkgid =
-> > > topology_physical_package_id(mktme_cpu);
-> > > +			if (mktme_pkgid == online_pkgid)
-> > > +				break;
-> > > +		}
-> > > +		if (mktme_pkgid != online_pkgid)
-> > > +			cpumask_set_cpu(online_cpu, mktme_cpumask);
-> > > +	}
-> >
-> > Could we use 'for_each_online_node', 'cpumask_first/next', etc to simplify the
-> logic?
-> 
-> Kai,
-> 
-> I tried to simplify it and came up with code that looked like this:
-> 
-> 	int lead_cpu, node;
-> 	for_each_online_node(node) {
-> 		lead_cpu = cpumask_first(cpumask_of_node(node));
-> 		if (lead_cpu < nr_cpu_ids)
-> 			cpumask_set_cpu(lead_cpu, mktme_cpumask_NEW);
-> 	}
-> When I test it on an SNC (Sub Numa Cluster) system it gives me too many CPU's.
-> I get a CPU per Node (just like i asked for;) instead of per Socket.
-> It has 2 sockets and 4 NUMA nodes.
-> 
-> I kind of remember this when I originally coded it, hence the bottoms up
-> approach using topology_physical_package_id()
-> 
-> Any ideas?
+On 9/16/2018 4:00 PM, Kees Cook wrote:
+> On Sun, Sep 16, 2018 at 11:49 AM, Casey Schaufler
+> <casey@schaufler-ca.com> wrote:
+>> On 9/15/2018 5:30 PM, Kees Cook wrote:
+>>> To prepare for having a third type of LSM ("shared blob"), this implements
+>>> dynamic handling of LSM ordering. The visible change here is that the
+>>> "security=" boot commandline is now a comma-separated ordered list of
+>>> all LSMs, not just the single "exclusive" LSM. This means that the
+>>> "minor" LSMs can now be disabled at boot time by omitting them from the
+>>> commandline. Additionally LSM ordering becomes entirely mutable for LSMs
+>>> with LSM_ORDER_MUTABLE ("capability" is not mutable and is always enabled
+>>> first).
+>> Today if I have Yama enabled and use security=apparmor I get a
+>> module list of capability,yama,apparmor. With this change I would
+>> get a different result, capability,apparmor. I am personally OK with
+>> this, but I think others may see it as a violation of compatibility.
+> Correct. That is the problem I had asked about earlier: it means
+> people with existing security= for specifying the active major LSM
+> will _disable_ all the minor LSMs after this change. It makes me
+> uncomfortable.
+>
+>> One solution is to leave security= as is, not affecting "minor"
+>> modules and only allowing specification of one major module, and adding
+> I would much prefer this, yes.
+>
+> A question remains: how do we map the existing "security=" selection
+> of a "major" LSM against what will be next "exclusive" plus tomoyo,
+> and in the extreme case, nothing?
+>
+> Perhaps as part of deprecating "security=", we could just declare that
+> it is selecting between SELinux, AppArmor, Smack, and Tomoyo only?
 
-Hmm.. I forgot the SNC case, sorry :(
+I'd be happier keeping yama and loadpin as the special cases. Someone
+might want to say security=landlock and expect the existing "minor"
+module behavior.
 
-So in case of SNC, is PCONFIG per-package, or per-node? I am not quite sure about this.
+>> another boot option security.stack= that overrides a security= option
+>> and that takes the list as you've implemented here.
+> or "lsm.stack=" that overrides "security=" entirely?
 
-If PCONFIG is per-package, I don't have better idea than your original one. :)
+I thought about that. In some ways that would be most sane.
 
-Thanks,
--Kai
-> 
-> Alison
-> 
+>> An icky alternative would be to say that any security= specification
+>> with no commas in it retains the old behavior. So
+>>         security=apparmor
+>>         security=apparmor,
+>> would get you
+>>         capability,yama,apparmor
+>>         capability,apparmor
+>> respectively.
+>>
+>> Another option would be to require negation on the minor modules,
+>> such as
+>>         security=apparmor,-loadpin
+>>
+>> I can't honestly say which I like least or best.
+> The trailing comma thing gets us some compatibility, but we still have
+> to decide which things should be exclusive-via-"security=" since with
+> blob-sharing it already becomes possible to do selinux + tomoyo.
+>
+> The -$lsm style may make it hard to sensibly order any unspecified
+> LSMs. I guess it could just fall back to "follow builtin ordering of
+> unspecified LSMs" (unless someone had, maybe, "-all").
+
+That's why I'm not especially happy with either one.
+
+> so, if builtin ordering after blob-sharing is
+> capability,integrity,yama,loadpin,{selinux,apparmor,smack},tomoyo
+>
+> security=apparmor  is  capability,apparmor,integrity,yama,loadpin,tomoyo
+
+I would expect capability,integrity,yama,loadpin,apparmor to reflect
+today's behavior.
+
+> security=yama,smack,-all  is  capability,yama,smack
+
+Yes
+
+> security=loadpin,selinux,yama,-integrity  is
+> capability,loadpin,selinux,yama,tomoyo
+
+I think that the negation should only apply to
+integrity, yama and loadpin. All blob-using modules
+must be explicitly stated if you want to use them.
+
+> Whatever we design, it needs to handle both the blob-sharing
+> near-future, and have an eye towards "extreme stacking" in the
+> some-day future. In both cases, the idea of a "major" LSM starts to
+> get very very hazy.
+
+Long term the only distinction is "minor" and blob using. So long as
+there's a way to enforce incompatibility (i.e. not Smack and SELinux)
+in the sorter term we can adopt that mindset already.
+
+> As for how we classify things, based on hooks...
+>
+> now:
+>     always: capability
+>     major: selinux,apparmor,smack,tomoyo
+>     minor: yama,loadpin
+>     init-only: integrity
+>
+> blob-sharing:
+>     always: capability
+>     exclusive: selinux,apparmor,smack
+>     sharing: tomoyo,integrity,yama,loadpin
+>
+> extreme:
+>     always: capability
+>     sharing: selinux,apparmor,smack,tomoyo,integrity,yama,loadpin
+>
+> The most special are capability (unconditional, run first) and
+> integrity (init-only, no security_add_hooks() call).
+>
+> Can we classify things as MAC and non-MAC for "major" vs "minor"? SARA
+> and Landlock aren't MAC (and neither is integrity), or should we do
+> the "-$lsm" thing instead?
+
+I don't like using MAC because the use of the module isn't the issue,
+it's the interfaces used. As ugly as it is, I like the -$lsm better.
+
+>
+> -Kees
+>
