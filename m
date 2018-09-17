@@ -1,7 +1,7 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Mon, 17 Sep 2018 16:28:24 -0700
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 17 Sep 2018 16:30:54 -0700
 Subject: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
-In-Reply-To: <060150b2-4bb4-bdcb-760a-5aa5e1ade381@canonical.com>
+In-Reply-To: <CAGXu5jLfCNSDWDV-MX6Kyyz3AcMBwubH8YAzZ=28xe9kwNCw4g@mail.gmail.com>
 References: <20180916003059.1046-1-keescook@chromium.org>
 	<20180916003059.1046-17-keescook@chromium.org>
 	<84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
@@ -16,31 +16,23 @@ References: <20180916003059.1046-1-keescook@chromium.org>
 	<e9292d89-12bd-2c4a-9ca2-5758de790f2f@canonical.com>
 	<a51a4d34-7077-bfbe-5979-00e79680f514@digikod.net>
 	<CAGXu5jLfCNSDWDV-MX6Kyyz3AcMBwubH8YAzZ=28xe9kwNCw4g@mail.gmail.com>
-	<060150b2-4bb4-bdcb-760a-5aa5e1ade381@canonical.com>
-Message-ID: <CAGXu5j+haqMgKxkH12M3O358oBR-jU0uWTZSrCrm462mtgf26A@mail.gmail.com>
+Message-ID: <3a90fe88-d74a-2c2c-c949-cabcaad2e1da@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 17, 2018 at 4:26 PM, John Johansen
-<john.johansen@canonical.com> wrote:
-> On 09/17/2018 04:20 PM, Kees Cook wrote:
->> On Mon, Sep 17, 2018 at 4:10 PM, Micka?l Sala?n <mic@digikod.net> wrote:
->>> Landlock, because it target unprivileged users, should only be called
->>> after all other major (access-control) LSMs. The admin or distro must
->>> not be able to change that order in any way. This constraint doesn't
->>> apply to current LSMs, though.
->>
->> Good point! It will be easy to add LSM_ORDER_LAST, though, given the
->> machinery introduced in this series.
->>
+On 9/17/2018 4:20 PM, Kees Cook wrote:
+> On Mon, Sep 17, 2018 at 4:10 PM, Micka?l Sala?n <mic@digikod.net> wrote:
+>> Landlock, because it target unprivileged users, should only be called
+>> after all other major (access-control) LSMs. The admin or distro must
+>> not be able to change that order in any way. This constraint doesn't
+>> apply to current LSMs, though.
+
+What harm would it cause for Landlock to get called before SELinux?
+I certainly see why it seems like it ought to get called after, but
+would it really make a difference?
+
+> Good point! It will be easy to add LSM_ORDER_LAST, though, given the
+> machinery introduced in this series.
 >
-> And when we have two LSMs that want to use that?
-
-We'll cross that bridge when we come to it, but perhaps "last
-exclusive"? (lsm.enable/disable to choose)
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+> -Kees
+>
