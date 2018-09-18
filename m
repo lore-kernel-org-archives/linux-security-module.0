@@ -1,37 +1,37 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 18 Sep 2018 18:18:37 +0100
-Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
-In-Reply-To: <c33c759d-9243-8885-7c5f-667681b759c2@gmail.com>
-References: <c33c759d-9243-8885-7c5f-667681b759c2@gmail.com>
-	<14f91823-474e-1b46-d305-12229dac8967@gmail.com>
-	<0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
-	<fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
-	<153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-	<1537253993.20009.62.camel@infradead.org>
-	<14067.1537285833@warthog.procyon.org.uk>
-	<745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
-	<19247.1537288419@warthog.procyon.org.uk>
-	<23698.1537289705@warthog.procyon.org.uk>
-Message-ID: <20622.1537291117@warthog.procyon.org.uk>
+From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
+Date: Tue, 18 Sep 2018 21:54:33 +0300
+Subject: [PATCH v2 3/3] tpm: retrieve digest size of unknown algorithms
+	with PCR read
+In-Reply-To: <8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
+References: <20180905114202.7757-1-roberto.sassu@huawei.com>
+	<20180905114202.7757-4-roberto.sassu@huawei.com>
+	<20180916123749.GF5040@linux.intel.com>
+	<322eb81b-3f3e-e37e-5fb0-a37aad3d06d7@huawei.com>
+	<20180917211622.GC6716@linux.intel.com>
+	<8621eb6d-b252-4fb3-cb67-294f0aafb54c@huawei.com>
+Message-ID: <20180918185433.GA9177@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Denis Kenzior <denkenz@gmail.com> wrote:
-
-> > Yes.  It shouldn't be much code, either.  You still have to check for X.509
-> > DER since the kernel currently supports that.
+On Tue, Sep 18, 2018 at 09:14:43AM +0200, Roberto Sassu wrote:
+> On 9/17/2018 11:16 PM, Jarkko Sakkinen wrote:
+> > On Mon, Sep 17, 2018 at 12:02:56PM +0200, Roberto Sassu wrote:
+> > > This code has the same behavior of tpm2_get_pcr_allocation(). If some
+> > > banks are not used, set the algorithm of the first unused to
+> > > TPM_ALG_ERROR.
+> > 
+> > My point is that maybe it would sense to use zero for that in order
+> > to make code a bit simpler.
 > 
-> For reasons of backward compatibility, correct?  The kernel also has
-> mscode.asn1 which we would need to support as well.  Since we can't break
-> compatibility then perhaps this doesn't buy us a whole lot in the end.
+> Wouldn't be better to compare data with the same type? Since the alg_id
+> structure member stores an algorithm, it should be fine to compare its
+> value with an algorithm.
+> 
+> No problem to change that, but probably I should modify also
+> tpm_pcr_extend().
+> 
+> Roberto
 
-Don't worry about mscode - that's not an asymmetric key parser.  That's only
-ever used directly from verify_pefile_signature().
+Please do.
 
-Currently, we have to retain support for DER-encoded X.509.
-
-But there's no reason we can't have a PEM parser that decodes the PEM and
-selects X.509, PKCS#8 or TPM based on the ascii header in that.  PKCS#8 and
-TPM don't need to take DER directly.
-
-David
+/Jarkko
