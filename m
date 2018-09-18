@@ -1,69 +1,31 @@
-From: denkenz@gmail.com (Denis Kenzior)
-Date: Mon, 17 Sep 2018 23:34:45 -0500
-Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
-In-Reply-To: <1537253993.20009.62.camel@infradead.org>
-References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-	<1537253993.20009.62.camel@infradead.org>
-Message-ID: <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 18 Sep 2018 08:23:11 -0700
+Subject: [PATCH v2 00/10] LSM: Module stacking in support of S.A.R.A and
+	Landlock
+In-Reply-To: <d2ad1caf-4e81-f33d-f764-6f90f9d101c4@digikod.net>
+References: <cbf848ae-a1ac-c5ab-f23b-bc9217fceebe@schaufler-ca.com>
+	<alpine.LRH.2.21.1809130727310.19741@namei.org>
+	<d2ad1caf-4e81-f33d-f764-6f90f9d101c4@digikod.net>
+Message-ID: <6c678308-fae3-22b0-8750-20d1b70e1bc5@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi David,
-
-On 09/18/2018 01:59 AM, David Woodhouse wrote:
-> On Wed, 2018-09-05 at 22:54 +0100, David Howells wrote:
+On 9/18/2018 12:44 AM, Micka?l Sala?n wrote:
+> On 9/12/18 23:29, James Morris wrote:
+>> Adding the SARA and LandLock authors for review & comment.
 >>
->> Example usage for a PKCS#8 blob:
->>
->>  ????????j=`openssl pkcs8 -in private_key.pem -topk8 -nocrypt -outform DER | \
->>  ??????????? keyctl padd asymmetric foo @s`
+>> Salvatore & Micka?l: does this patchset meet your needs for merging to 
+>> mainline?
+> It almost does! For now, I need the task_struct, cred, inode and file
+> security blobs. Only the task_struct one is missing.
 
-The kernel expects a raw DER formatted PKCS8 certificate.  And as you 
-point out, keyctl doesn't grok PEM files.  So, that is why this is being 
-done via openssl.  The example above simply shows one how to import a 
-private key in PEM format into the kernel keys framework.
+I will add the task blob as well as the ipc blob needed by
+SARA for v3.
+?
 
->>
->> Example usage for a TPM wrapped blob:
->>
->>  ????????openssl genrsa -out /tmp/privkey.foo.pem 2048
->>  ????????create_tpm_key -s 2048 -w /tmp/privkey.foo.pem /tmp/privkey.foo.tpm
->>  ????????j=`openssl asn1parse -inform pem -in /tmp/privkey.foo.tpm -noout |
->>  ??????????? keyctl padd asymmetric foo @s`
-> 
-> Those examples aren't equivalent. For the PKCS#8 blob you are first
-> using openssl to convert from an encrypted PKCS#8 PEM to unencrypted
-> DER, presumably because you haven't added decryption support (or base64
-> decode) to keyctl yet.
+>
+> FYI, the capitalization of Landlock is not consistent in all commit
+> messages. :)
 
-To be pedantic, it converts an optionally encrypted PEM to unencrypted 
-DER.  But yes, correct.
-
-> 
-> For the TPM example though, you are also showing the *generation* of
-> the key, and importing it into the TPM. And then I'm confused by the
-> 'openssl asn1parse' line there... what is that actually doing? If I run
-> it on a '-----BEGIN TSS KEY BLOB-----' file I have lying around, I get
-> no output at all.
-> 
-
-Same thing applies as above.  The kernel has no PEM parser, so the raw 
-DER must be passed in.  openssl asn1parse line simply does that.  It 
-strips the PEM layer leaving the raw DER.
-
-However, now that you mention it, the actual command incantation is 
-wrong.  It seems openssl asn1parse acts slightly different from openssl 
-pkcs8 and so it needs to be modified to add an extra -out parameter.  So 
-the example incantation should be:
-
-   openssl genrsa -out /tmp/privkey.2048.pem 2048
-   create_tpm_key -s 2048 -w /tmp/privkey.2048.pem /tmp/privkey.2048.tpm
-   openssl asn1parse -inform pem -in /tmp/privkey.2048.tpm -noout \
-			-out /tmp/privkey.2048.der
-   j=`cat /tmp/privkey.2048.der | keyctl padd asymmetric tpm @u`
-   echo "TPM key serial is: $j"
-
-Sorry, I should have caught this earlier.
-
-Regards,
--Denis
+Sorry. I have been trying to get people to use Smack instead
+of SMACK for years. I will strive to use Landlock consistently.
