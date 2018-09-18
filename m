@@ -1,7 +1,7 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Mon, 17 Sep 2018 16:40:50 -0700
+From: keescook@chromium.org (Kees Cook)
+Date: Mon, 17 Sep 2018 17:00:25 -0700
 Subject: [PATCH 16/18] LSM: Allow arbitrary LSM ordering
-In-Reply-To: <CAGXu5j+haqMgKxkH12M3O358oBR-jU0uWTZSrCrm462mtgf26A@mail.gmail.com>
+In-Reply-To: <e9292d89-12bd-2c4a-9ca2-5758de790f2f@canonical.com>
 References: <20180916003059.1046-1-keescook@chromium.org>
 	<20180916003059.1046-17-keescook@chromium.org>
 	<84e1a5a8-8997-829f-cf09-1d29895a3f99@schaufler-ca.com>
@@ -14,35 +14,88 @@ References: <20180916003059.1046-1-keescook@chromium.org>
 	<7ecfffc3-d2a4-3ff7-4bf5-db3029d73c59@canonical.com>
 	<fbdc2a75-8364-c743-f9c3-9dcd2570c569@schaufler-ca.com>
 	<e9292d89-12bd-2c4a-9ca2-5758de790f2f@canonical.com>
-	<a51a4d34-7077-bfbe-5979-00e79680f514@digikod.net>
-	<CAGXu5jLfCNSDWDV-MX6Kyyz3AcMBwubH8YAzZ=28xe9kwNCw4g@mail.gmail.com>
-	<060150b2-4bb4-bdcb-760a-5aa5e1ade381@canonical.com>
-	<CAGXu5j+haqMgKxkH12M3O358oBR-jU0uWTZSrCrm462mtgf26A@mail.gmail.com>
-Message-ID: <ddb2a534-0845-55c1-329c-70adcc3847b8@schaufler-ca.com>
+Message-ID: <CAGXu5jKhZTcz_+uQpNRh6Mg34pP2+aNSo9cV=c8pC0r=oJBJog@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/17/2018 4:28 PM, Kees Cook wrote:
-> On Mon, Sep 17, 2018 at 4:26 PM, John Johansen
-> <john.johansen@canonical.com> wrote:
->> On 09/17/2018 04:20 PM, Kees Cook wrote:
->>> On Mon, Sep 17, 2018 at 4:10 PM, Micka?l Sala?n <mic@digikod.net> wrote:
->>>> Landlock, because it target unprivileged users, should only be called
->>>> after all other major (access-control) LSMs. The admin or distro must
->>>> not be able to change that order in any way. This constraint doesn't
->>>> apply to current LSMs, though.
->>> Good point! It will be easy to add LSM_ORDER_LAST, though, given the
->>> machinery introduced in this series.
->>>
->> And when we have two LSMs that want to use that?
-> We'll cross that bridge when we come to it, but perhaps "last
-> exclusive"? (lsm.enable/disable to choose)
+On Mon, Sep 17, 2018 at 3:36 PM, John Johansen
+<john.johansen@canonical.com> wrote:
+> On 09/17/2018 02:57 PM, Casey Schaufler wrote:
+>> Modules not listed may go anywhere there is a "*" in the order.
+>> An lsm.order= without a "*" is an error, and ignored.
+>> If a module is specified in lsm.order but not built in it is ignored.
+>> If a module is specified but disabled it is ignored.
+>> The capability module goes first regardless.
+>
+> I don't mind using lsm.order if we must but really do not like the '*'
+> idea. It makes this way more complicated than it needs to be
 
-If we define restrictions on use of LSM_ORDER_LAST like we have
-for LSM_ORDER_FIRST (only for capabilities) before anyone starts
-abusing it we may be OK. Since an LSM_ORDER_LAST has to know that
-it can't count on getting called (a non-last module may return -EACCES)
-I don't see any way that having multiple LSM_ORDER_LAST modules in
-any given order would be a real problem. Of course, a module could be
-doing state management that *really* requires it be last, but that
-would be a badly designed module and someone sensible would NAK it.
+Having the "*" means that _not_ having it in "lsm.order=" is an
+implicit form of LSM disabling. And I think we've gotten to the point
+where we agree on the enable/disable logic, so I don't want to mess
+that up again.
+
+For enable/disable, I think we're agreed on:
+
+    lsm.enable=$lsm
+    lsm.disable=$lsm
+
+lsm.disable takes precedent for disabling. (e.g. "lsm.disable=apparmor
+apparmor.enable=1" will leave apparmor disabled)
+lsm.enable will allow per-LSM enable/disable to operate. (e.g.
+"lsm.enable=apparmor apparmor.enable=0" will leave apparmor disabled)
+
+lsm.enable/disable ordering will be "last match": "lsm.disable=smack
+lsm.enable=smack" will leave smack enabled. The legacy per-LSM
+enable/disable ordering is the same, but ordering between
+lsm.enable/disable and the per-LSM options is NOT ordered. i.e. the
+precedent mentioned in the prior paragraph.
+
+To support "security=", we'll still have some kind of legacy
+LSM_FLAG_MAJOR to perform implicit disabling of the non-operational
+other "major" LSMs. This means "security=$foo" will be a short-hand
+for "lsm.disable=all-LSM_FLAG_MAJOR-who-are-not-$foo". This will
+exactly match current behavior (i.e. "security=smack" and if smack
+fails initialization, we do not then fall back to another major).
+
+
+I think we have to support runtime ordering for the reasons John
+specifies. Additionally, I have the sense that anything we can
+configure in Kconfig ultimately ends up being expressed at runtime
+too, so better to just make sure the design includes it now.
+
+What we have now:
+
+"first" then "order-doesn't-matter-minors" then "exclusive-major"
+
+- we can't change first.
+- exclusivity-ordering only matters in the face of enable/disable
+which we have solved now (?)
+
+so, ordering can be totally arbitrary after "first" (but before some
+future "last"). We must not allow a token for "everything else" since
+that overlaps with enable/disable, so "everything else" stay implicit
+(I would argue a trailing implicit ordering).
+
+The one complication I see with ordering, then, is that if we change
+the exclusivity over time, we change what may be present on the
+system. For example, right now tomoyo is exclusive. Once we have
+blob-sharing, it doesn't need to be.
+
+so: lsm.order=tomoyo  after this series means
+"capability,tomoyo,yama,loadpin,integrity", but when tomoyo becomes
+non-exclusive, suddenly we get
+"capability,tomoyo,yama,loadpin,{selinux,smack,apparmor},integrity".
+(i.e. if selinux is disabled then move on to trying smack, then
+apparmor, etc.)
+
+I would argue that this is a design feature (LSMs aren't left behind),
+and order of enabled exclusive LSMs "wins" the choice for the
+exclusivity (instead of operating "by name" the way "security="
+works).
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
