@@ -1,296 +1,154 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Tue, 18 Sep 2018 12:34:40 +0300
-Subject: [PATCH v3 01/20] tpm2: add new tpm2 commands according to TCG 1.36
+Date: Tue, 18 Sep 2018 12:34:43 +0300
+Subject: [PATCH v3 04/20] tpm: add tpm_calc_ordinal_duration wrapper
 In-Reply-To: <20180918093459.19165-1-tomas.winkler@intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
-Message-ID: <20180918093459.19165-2-tomas.winkler@intel.com>
+Message-ID: <20180918093459.19165-5-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-1. TPM2_CC_LAST has moved from 182 to 193
-2. Convert tpm2_ordinal_duration from an array into a switch statement,
-   as there are not so many commands that require special duration
-   relative to a number of commands.
+Add convenient wrapper for ordinal duration computation
+to remove boiler plate if else statement over TPM2.
+
+if (chip->flags & TPM_CHIP_FLAG_TPM2)
+	tpm2_calc_ordinal_duration(chip, ordinal);
+else
+	tpm1_calc_ordinal_duration(chip, ordinal);
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
-V2-V3: Rebase.
- drivers/char/tpm/tpm.h      |  41 +++++----
- drivers/char/tpm/tpm2-cmd.c | 196 +++++++++++++++-----------------------------
- 2 files changed, 93 insertions(+), 144 deletions(-)
+V2-V3: Rebase
+ drivers/char/tpm/st33zp24/st33zp24.c |  2 +-
+ drivers/char/tpm/tpm-interface.c     | 14 ++++++++++----
+ drivers/char/tpm/tpm.h               |  1 +
+ drivers/char/tpm/tpm1-cmd.c          |  1 -
+ drivers/char/tpm/tpm2-cmd.c          |  1 -
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
+ drivers/char/tpm/tpm_tis_core.c      |  6 +-----
+ drivers/char/tpm/xen-tpmfront.c      |  2 +-
+ 8 files changed, 15 insertions(+), 14 deletions(-)
 
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index 16be974955ea..abd675bec88c 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -430,7 +430,7 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
+ 		ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+ 
+ 		ret = wait_for_stat(chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID,
+-				tpm1_calc_ordinal_duration(chip, ordinal),
++				tpm_calc_ordinal_duration(chip, ordinal),
+ 				&tpm_dev->read_queue, false);
+ 		if (ret < 0)
+ 			goto out_err;
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index bb3eed907c72..7b460f646781 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -47,6 +47,15 @@ module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
+ MODULE_PARM_DESC(suspend_pcr,
+ 		 "PCR to use for dummy writes to facilitate flush on suspend.");
+ 
++unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
++{
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		return tpm2_calc_ordinal_duration(chip, ordinal);
++	else
++		return tpm1_calc_ordinal_duration(chip, ordinal);
++}
++EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
++
+ static int tpm_validate_command(struct tpm_chip *chip,
+ 				 struct tpm_space *space,
+ 				 const u8 *cmd,
+@@ -220,10 +229,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	if (chip->flags & TPM_CHIP_FLAG_IRQ)
+ 		goto out_recv;
+ 
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-		stop = jiffies + tpm2_calc_ordinal_duration(chip, ordinal);
+-	else
+-		stop = jiffies + tpm1_calc_ordinal_duration(chip, ordinal);
++	stop = jiffies + tpm_calc_ordinal_duration(chip, ordinal);
+ 	do {
+ 		u8 status = chip->ops->status(chip);
+ 		if ((status & chip->ops->req_complete_mask) ==
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f20dc8ece348..0f08518b525d 100644
+index c59d2c20c339..73511cd89bef 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -134,22 +134,31 @@ enum tpm2_algorithms {
- };
+@@ -547,6 +547,7 @@ int tpm_get_timeouts(struct tpm_chip *);
+ int tpm1_auto_startup(struct tpm_chip *chip);
+ int tpm_do_selftest(struct tpm_chip *chip);
+ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
++unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm_pm_suspend(struct device *dev);
+ int tpm_pm_resume(struct device *dev);
  
- enum tpm2_command_codes {
--	TPM2_CC_FIRST		= 0x011F,
--	TPM2_CC_CREATE_PRIMARY  = 0x0131,
--	TPM2_CC_SELF_TEST	= 0x0143,
--	TPM2_CC_STARTUP		= 0x0144,
--	TPM2_CC_SHUTDOWN	= 0x0145,
--	TPM2_CC_CREATE		= 0x0153,
--	TPM2_CC_LOAD		= 0x0157,
--	TPM2_CC_UNSEAL		= 0x015E,
--	TPM2_CC_CONTEXT_LOAD	= 0x0161,
--	TPM2_CC_CONTEXT_SAVE	= 0x0162,
--	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
--	TPM2_CC_GET_CAPABILITY	= 0x017A,
--	TPM2_CC_GET_RANDOM	= 0x017B,
--	TPM2_CC_PCR_READ	= 0x017E,
--	TPM2_CC_PCR_EXTEND	= 0x0182,
--	TPM2_CC_LAST		= 0x018F,
-+	TPM2_CC_FIRST		        = 0x011F,
-+	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
-+	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
-+	TPM2_CC_CREATE_PRIMARY          = 0x0131,
-+	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
-+	TPM2_CC_SELF_TEST	        = 0x0143,
-+	TPM2_CC_STARTUP		        = 0x0144,
-+	TPM2_CC_SHUTDOWN	        = 0x0145,
-+	TPM2_CC_NV_READ                 = 0x014E,
-+	TPM2_CC_CREATE		        = 0x0153,
-+	TPM2_CC_LOAD		        = 0x0157,
-+	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
-+	TPM2_CC_UNSEAL		        = 0x015E,
-+	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
-+	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
-+	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
-+	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
-+	TPM2_CC_GET_CAPABILITY	        = 0x017A,
-+	TPM2_CC_GET_RANDOM	        = 0x017B,
-+	TPM2_CC_PCR_READ	        = 0x017E,
-+	TPM2_CC_PCR_EXTEND	        = 0x0182,
-+	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
-+	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
-+	TPM2_CC_CREATE_LOADED           = 0x0191,
-+	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
- };
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index fa6ba8d3458c..7e7fa94c095c 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -306,5 +306,4 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ 	else
+ 		return duration;
+ }
+-EXPORT_SYMBOL_GPL(tpm1_calc_ordinal_duration);
  
- enum tpm2_permanent_handles {
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 3acf4fd4e5a5..9c3c5c0628d9 100644
+index 9c3c5c0628d9..f6c981f3ee12 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -41,128 +41,73 @@ static struct tpm2_hash tpm2_hash_map[] = {
- };
- 
- /*
-- * Array with one entry per ordinal defining the maximum amount
-+ * tpm2_ordinal_duration returns the maximum amount
-  * of time the chip could take to return the result. The values
-- * of the SHORT, MEDIUM, and LONG durations are taken from the
-- * PC Client Profile (PTP) specification.
-+ * of the MEDIUM, and LONG durations are taken from the
-+ * PC Client Profile (PTP) specification (750, 2000 msec)
-+ *
-  * LONG_LONG is for commands that generates keys which empirically
-  * takes longer time on some systems.
-  */
--static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
--	TPM_UNDEFINED,		/* 11F */
--	TPM_UNDEFINED,		/* 120 */
--	TPM_LONG,		/* 121 */
--	TPM_UNDEFINED,		/* 122 */
--	TPM_UNDEFINED,		/* 123 */
--	TPM_UNDEFINED,		/* 124 */
--	TPM_UNDEFINED,		/* 125 */
--	TPM_UNDEFINED,		/* 126 */
--	TPM_UNDEFINED,		/* 127 */
--	TPM_UNDEFINED,		/* 128 */
--	TPM_LONG,		/* 129 */
--	TPM_UNDEFINED,		/* 12a */
--	TPM_UNDEFINED,		/* 12b */
--	TPM_UNDEFINED,		/* 12c */
--	TPM_UNDEFINED,		/* 12d */
--	TPM_UNDEFINED,		/* 12e */
--	TPM_UNDEFINED,		/* 12f */
--	TPM_UNDEFINED,		/* 130 */
--	TPM_LONG_LONG,		/* 131 */
--	TPM_UNDEFINED,		/* 132 */
--	TPM_UNDEFINED,		/* 133 */
--	TPM_UNDEFINED,		/* 134 */
--	TPM_UNDEFINED,		/* 135 */
--	TPM_UNDEFINED,		/* 136 */
--	TPM_UNDEFINED,		/* 137 */
--	TPM_UNDEFINED,		/* 138 */
--	TPM_UNDEFINED,		/* 139 */
--	TPM_UNDEFINED,		/* 13a */
--	TPM_UNDEFINED,		/* 13b */
--	TPM_UNDEFINED,		/* 13c */
--	TPM_UNDEFINED,		/* 13d */
--	TPM_MEDIUM,		/* 13e */
--	TPM_UNDEFINED,		/* 13f */
--	TPM_UNDEFINED,		/* 140 */
--	TPM_UNDEFINED,		/* 141 */
--	TPM_UNDEFINED,		/* 142 */
--	TPM_LONG,		/* 143 */
--	TPM_MEDIUM,		/* 144 */
--	TPM_UNDEFINED,		/* 145 */
--	TPM_UNDEFINED,		/* 146 */
--	TPM_UNDEFINED,		/* 147 */
--	TPM_UNDEFINED,		/* 148 */
--	TPM_UNDEFINED,		/* 149 */
--	TPM_UNDEFINED,		/* 14a */
--	TPM_UNDEFINED,		/* 14b */
--	TPM_UNDEFINED,		/* 14c */
--	TPM_UNDEFINED,		/* 14d */
--	TPM_LONG,		/* 14e */
--	TPM_UNDEFINED,		/* 14f */
--	TPM_UNDEFINED,		/* 150 */
--	TPM_UNDEFINED,		/* 151 */
--	TPM_UNDEFINED,		/* 152 */
--	TPM_LONG_LONG,		/* 153 */
--	TPM_UNDEFINED,		/* 154 */
--	TPM_UNDEFINED,		/* 155 */
--	TPM_UNDEFINED,		/* 156 */
--	TPM_UNDEFINED,		/* 157 */
--	TPM_UNDEFINED,		/* 158 */
--	TPM_UNDEFINED,		/* 159 */
--	TPM_UNDEFINED,		/* 15a */
--	TPM_UNDEFINED,		/* 15b */
--	TPM_MEDIUM,		/* 15c */
--	TPM_UNDEFINED,		/* 15d */
--	TPM_UNDEFINED,		/* 15e */
--	TPM_UNDEFINED,		/* 15f */
--	TPM_UNDEFINED,		/* 160 */
--	TPM_UNDEFINED,		/* 161 */
--	TPM_UNDEFINED,		/* 162 */
--	TPM_UNDEFINED,		/* 163 */
--	TPM_UNDEFINED,		/* 164 */
--	TPM_UNDEFINED,		/* 165 */
--	TPM_UNDEFINED,		/* 166 */
--	TPM_UNDEFINED,		/* 167 */
--	TPM_UNDEFINED,		/* 168 */
--	TPM_UNDEFINED,		/* 169 */
--	TPM_UNDEFINED,		/* 16a */
--	TPM_UNDEFINED,		/* 16b */
--	TPM_UNDEFINED,		/* 16c */
--	TPM_UNDEFINED,		/* 16d */
--	TPM_UNDEFINED,		/* 16e */
--	TPM_UNDEFINED,		/* 16f */
--	TPM_UNDEFINED,		/* 170 */
--	TPM_UNDEFINED,		/* 171 */
--	TPM_UNDEFINED,		/* 172 */
--	TPM_UNDEFINED,		/* 173 */
--	TPM_UNDEFINED,		/* 174 */
--	TPM_UNDEFINED,		/* 175 */
--	TPM_UNDEFINED,		/* 176 */
--	TPM_LONG,		/* 177 */
--	TPM_UNDEFINED,		/* 178 */
--	TPM_UNDEFINED,		/* 179 */
--	TPM_MEDIUM,		/* 17a */
--	TPM_LONG,		/* 17b */
--	TPM_UNDEFINED,		/* 17c */
--	TPM_UNDEFINED,		/* 17d */
--	TPM_UNDEFINED,		/* 17e */
--	TPM_UNDEFINED,		/* 17f */
--	TPM_UNDEFINED,		/* 180 */
--	TPM_UNDEFINED,		/* 181 */
--	TPM_MEDIUM,		/* 182 */
--	TPM_UNDEFINED,		/* 183 */
--	TPM_UNDEFINED,		/* 184 */
--	TPM_MEDIUM,		/* 185 */
--	TPM_MEDIUM,		/* 186 */
--	TPM_UNDEFINED,		/* 187 */
--	TPM_UNDEFINED,		/* 188 */
--	TPM_UNDEFINED,		/* 189 */
--	TPM_UNDEFINED,		/* 18a */
--	TPM_UNDEFINED,		/* 18b */
--	TPM_UNDEFINED,		/* 18c */
--	TPM_UNDEFINED,		/* 18d */
--	TPM_UNDEFINED,		/* 18e */
--	TPM_UNDEFINED		/* 18f */
--};
-+static u8 tpm2_ordinal_duration(u32 ordinal)
-+{
-+	switch (ordinal) {
-+	/* Startup */
-+	case TPM2_CC_STARTUP:                 /* 144 */
-+		return TPM_MEDIUM;
-+
-+	/* Selftest */
-+	case TPM2_CC_SELF_TEST:               /* 143 */
-+		return TPM_LONG;
-+
-+	/* Random Number Generator */
-+	case TPM2_CC_GET_RANDOM:              /* 17B */
-+		return TPM_LONG;
-+
-+	/* Hash/HMAC/Event Sequences */
-+	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
-+		return TPM_MEDIUM;
-+	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
-+		return TPM_MEDIUM;
-+	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
-+		return TPM_MEDIUM;
-+	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
-+		return TPM_MEDIUM;
-+
-+	/* Signature Verification */
-+	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
-+		return TPM_LONG;
-+
-+	/* Integrity Collection (PCR) */
-+	case TPM2_CC_PCR_EXTEND:              /* 182 */
-+		return TPM_MEDIUM;
-+
-+	/* Hierarchy Commands */
-+	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
-+		return TPM_LONG;
-+	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
-+		return TPM_LONG;
-+
-+	/* Capability Commands */
-+	case TPM2_CC_GET_CAPABILITY:          /* 17A */
-+		return TPM_MEDIUM;
-+
-+	/* Non-volatile Storage */
-+	case TPM2_CC_NV_READ:                 /* 14E */
-+		return TPM_LONG;
-+
-+	/* Key generation (not in PTP) */
-+	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
-+		return TPM_LONG_LONG;
-+	case TPM2_CC_CREATE:                  /* 153 */
-+		return TPM_LONG_LONG;
-+	case TPM2_CC_CREATE_LOADED:           /* 191 */
-+		return TPM_LONG_LONG;
-+
-+	default:
-+		return TPM_UNDEFINED;
-+	}
-+}
- 
- struct tpm2_pcr_read_out {
- 	__be32	update_cnt;
-@@ -758,19 +703,14 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
-  */
- unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- {
--	int index = TPM_UNDEFINED;
--	int duration = 0;
-+	unsigned int index;
- 
--	if (ordinal >= TPM2_CC_FIRST && ordinal <= TPM2_CC_LAST)
--		index = tpm2_ordinal_duration[ordinal - TPM2_CC_FIRST];
-+	index = tpm2_ordinal_duration(ordinal);
- 
- 	if (index != TPM_UNDEFINED)
--		duration = chip->duration[index];
--
--	if (duration <= 0)
--		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
--
--	return duration;
-+		return chip->duration[index];
-+	else
-+		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+@@ -712,7 +712,6 @@ unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ 	else
+ 		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
  }
- EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+-EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
  
+ /**
+  * tpm2_do_selftest() - ensure that all self tests have passed
+diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
+index 5d20e98b844f..4146f822fba9 100644
+--- a/drivers/char/tpm/tpm_i2c_nuvoton.c
++++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+@@ -456,7 +456,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 		return rc;
+ 	}
+ 	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+-	duration = tpm1_calc_ordinal_duration(chip, ordinal);
++	duration = tpm_calc_ordinal_duration(chip, ordinal);
+ 	rc = i2c_nuvoton_wait_for_data_avail(chip, duration, &priv->read_queue);
+ 	if (rc) {
+ 		dev_err(dev, "%s() timeout command duration %ld\n",
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 14c332104de4..f9e73d0f9386 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -473,11 +473,7 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 	if (chip->flags & TPM_CHIP_FLAG_IRQ) {
+ 		ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+ 
+-		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-			dur = tpm2_calc_ordinal_duration(chip, ordinal);
+-		else
+-			dur = tpm1_calc_ordinal_duration(chip, ordinal);
+-
++		dur = tpm_calc_ordinal_duration(chip, ordinal);
+ 		if (wait_for_tpm_stat
+ 		    (chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID, dur,
+ 		     &priv->read_queue, false) < 0) {
+diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+index c7ded298617d..911475d36800 100644
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -164,7 +164,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	notify_remote_via_evtchn(priv->evtchn);
+ 
+ 	ordinal = be32_to_cpu(((struct tpm_input_header*)buf)->ordinal);
+-	duration = tpm1_calc_ordinal_duration(chip, ordinal);
++	duration = tpm_calc_ordinal_duration(chip, ordinal);
+ 
+ 	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
+ 			&priv->read_queue, true) < 0) {
 -- 
 2.14.4
