@@ -1,51 +1,69 @@
-From: dhowells@redhat.com (David Howells)
-Date: Tue, 18 Sep 2018 16:02:11 +0100
+From: denkenz@gmail.com (Denis Kenzior)
+Date: Mon, 17 Sep 2018 23:34:45 -0500
 Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
 In-Reply-To: <1537253993.20009.62.camel@infradead.org>
-References: <1537253993.20009.62.camel@infradead.org>
-	<153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-Message-ID: <20342.1537282931@warthog.procyon.org.uk>
+References: <153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
+	<1537253993.20009.62.camel@infradead.org>
+Message-ID: <fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-David Woodhouse <dwmw2@infradead.org> wrote:
+Hi David,
 
-> Those examples aren't equivalent
+On 09/18/2018 01:59 AM, David Woodhouse wrote:
+> On Wed, 2018-09-05 at 22:54 +0100, David Howells wrote:
+>>
+>> Example usage for a PKCS#8 blob:
+>>
+>>  ????????j=`openssl pkcs8 -in private_key.pem -topk8 -nocrypt -outform DER | \
+>>  ??????????? keyctl padd asymmetric foo @s`
 
-No one said that they are.
+The kernel expects a raw DER formatted PKCS8 certificate.  And as you 
+point out, keyctl doesn't grok PEM files.  So, that is why this is being 
+done via openssl.  The example above simply shows one how to import a 
+private key in PEM format into the kernel keys framework.
 
-But if you really can't figure it out, I can add:
+>>
+>> Example usage for a TPM wrapped blob:
+>>
+>>  ????????openssl genrsa -out /tmp/privkey.foo.pem 2048
+>>  ????????create_tpm_key -s 2048 -w /tmp/privkey.foo.pem /tmp/privkey.foo.tpm
+>>  ????????j=`openssl asn1parse -inform pem -in /tmp/privkey.foo.tpm -noout |
+>>  ??????????? keyctl padd asymmetric foo @s`
+> 
+> Those examples aren't equivalent. For the PKCS#8 blob you are first
+> using openssl to convert from an encrypted PKCS#8 PEM to unencrypted
+> DER, presumably because you haven't added decryption support (or base64
+> decode) to keyctl yet.
 
-	openssl genrsa -out private_key.pem 2048
+To be pedantic, it converts an optionally encrypted PEM to unencrypted 
+DER.  But yes, correct.
 
-at the front of the PKCS#8 example;-)
-
-I can even change the examples to have the same private key name.
-
-> For the PKCS#8 blob you are first using openssl to convert from an encrypted
-> PKCS#8 PEM to unencrypted DER, presumably because you haven't added
-> decryption support (or base64 decode) to keyctl yet.
-
-It would probably be done in the kernel rather than keyctl.  If it's done in
-userspace, there's no need to do it in keyctl.  The PKCS#8 parser is primarily
-a test port - especially as it doesn't need anything like a TPM.
-
-It's of limited real utility, I think, because even if the blob is encrypted
-and you can pass the decryption password to the kernel, the password still has
-to be present in userspace, however briefly.
-
+> 
 > For the TPM example though, you are also showing the *generation* of
 > the key, and importing it into the TPM. And then I'm confused by the
-> 'openssl asn1parse' line there... what is that actually doing?
+> 'openssl asn1parse' line there... what is that actually doing? If I run
+> it on a '-----BEGIN TSS KEY BLOB-----' file I have lying around, I get
+> no output at all.
+> 
 
-It's meant to be stripping off the PEM wrapper and outputting the DER, but see
-below.
+Same thing applies as above.  The kernel has no PEM parser, so the raw 
+DER must be passed in.  openssl asn1parse line simply does that.  It 
+strips the PEM layer leaving the raw DER.
 
-> If I run it on a '-----BEGIN TSS KEY BLOB-----' file I have lying around, I
-> get no output at all.
+However, now that you mention it, the actual command incantation is 
+wrong.  It seems openssl asn1parse acts slightly different from openssl 
+pkcs8 and so it needs to be modified to add an extra -out parameter.  So 
+the example incantation should be:
 
-I lost a bit from the cover note.  It needs "-out -" attaching.
+   openssl genrsa -out /tmp/privkey.2048.pem 2048
+   create_tpm_key -s 2048 -w /tmp/privkey.2048.pem /tmp/privkey.2048.tpm
+   openssl asn1parse -inform pem -in /tmp/privkey.2048.tpm -noout \
+			-out /tmp/privkey.2048.der
+   j=`cat /tmp/privkey.2048.der | keyctl padd asymmetric tpm @u`
+   echo "TPM key serial is: $j"
 
-	openssl asn1parse -inform pem -in modulekey1.priv -noout -out - | wc -c
+Sorry, I should have caught this earlier.
 
-David
+Regards,
+-Denis
