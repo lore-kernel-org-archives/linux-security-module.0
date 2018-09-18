@@ -1,49 +1,176 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Tue, 18 Sep 2018 12:34:41 +0300
-Subject: [PATCH v3 02/20] tpm: sort objects in the Makefile
+Date: Tue, 18 Sep 2018 12:34:49 +0300
+Subject: [PATCH v3 10/20] tpm: factor out tpm1 pm suspend flow into tpm1-cmd.c
 In-Reply-To: <20180918093459.19165-1-tomas.winkler@intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
-Message-ID: <20180918093459.19165-3-tomas.winkler@intel.com>
+Message-ID: <20180918093459.19165-11-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Make the tpm Makefile a bit more in order by putting
-objects in one column and group together tpm2 modules
+Factor out tpm1 suspend flow from tpm-interface.c into a new function
+tpm1_pm_suspend in tpm1-cmd.c
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 ---
-V2: 1. back to tpm-y notation
-    2. Partially sort files alphanumerically.
-V3: Rebase
+V2-V3: Rebase
+ drivers/char/tpm/tpm-interface.c | 55 ++++------------------------------------
+ drivers/char/tpm/tpm.h           |  1 +
+ drivers/char/tpm/tpm1-cmd.c      | 54 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 50 deletions(-)
 
- drivers/char/tpm/Makefile | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-index 4e9c33ca1f8f..efc785053627 100644
---- a/drivers/char/tpm/Makefile
-+++ b/drivers/char/tpm/Makefile
-@@ -3,9 +3,18 @@
- # Makefile for the kernel tpm device drivers.
- #
- obj-$(CONFIG_TCG_TPM) += tpm.o
--tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
--	 tpm-dev-common.o tpmrm-dev.o eventlog/common.o eventlog/tpm1.o \
--	 eventlog/tpm2.o tpm2-space.o
-+tpm-y := tpm-chip.o
-+tpm-y += tpm-dev-common.o
-+tpm-y += tpm-dev.o
-+tpm-y += tpm-interface.o
-+tpm-y += tpm2-cmd.o
-+tpm-y += tpmrm-dev.o
-+tpm-y += tpm2-space.o
-+tpm-y += tpm-sysfs.o
-+tpm-y += eventlog/common.o
-+tpm-y += eventlog/tpm1.o
-+tpm-y += eventlog/tpm2.o
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 8396cf6735ec..1ddf9d7e2069 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -575,15 +575,6 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+ }
+ EXPORT_SYMBOL_GPL(tpm_send);
+ 
+-#define TPM_ORD_SAVESTATE 152
+-#define SAVESTATE_RESULT_SIZE 10
+-
+-static const struct tpm_input_header savestate_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(10),
+-	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
+-};
+-
+ /*
+  * We are about to suspend. Save the TPM state
+  * so that it can be restored.
+@@ -591,54 +582,18 @@ static const struct tpm_input_header savestate_header = {
+ int tpm_pm_suspend(struct device *dev)
+ {
+ 	struct tpm_chip *chip = dev_get_drvdata(dev);
+-	struct tpm_cmd_t cmd;
+-	int rc, try;
+-
+-	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
++	int rc = 0;
+ 
+-	if (chip == NULL)
++	if (!chip)
+ 		return -ENODEV;
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
+ 		return 0;
+ 
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		tpm2_shutdown(chip, TPM2_SU_STATE);
+-		return 0;
+-	}
+-
+-	/* for buggy tpm, flush pcrs with extend to selected dummy */
+-	if (tpm_suspend_pcr)
+-		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
+-				     "extending dummy pcr before suspend");
+-
+-	/* now do the actual savestate */
+-	for (try = 0; try < TPM_RETRY; try++) {
+-		cmd.header.in = savestate_header;
+-		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
+-				      0, 0, NULL);
+-
+-		/*
+-		 * If the TPM indicates that it is too busy to respond to
+-		 * this command then retry before giving up.  It can take
+-		 * several seconds for this TPM to be ready.
+-		 *
+-		 * This can happen if the TPM has already been sent the
+-		 * SaveState command before the driver has loaded.  TCG 1.2
+-		 * specification states that any communication after SaveState
+-		 * may cause the TPM to invalidate previously saved state.
+-		 */
+-		if (rc != TPM_WARN_RETRY)
+-			break;
+-		tpm_msleep(TPM_TIMEOUT_RETRY);
+-	}
+-
+-	if (rc)
+-		dev_err(&chip->dev,
+-			"Error (%d) sending savestate before suspend\n", rc);
+-	else if (try > 0)
+-		dev_warn(&chip->dev, "TPM savestate took %dms\n",
+-			 try * TPM_TIMEOUT_RETRY);
++	else
++		rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
+ 
+ 	return rc;
+ }
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index fd945fc828b6..862c9262e037 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -543,6 +543,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ int tpm_startup(struct tpm_chip *chip);
+ int tpm_get_timeouts(struct tpm_chip *);
+ 
++int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
+ int tpm1_do_selftest(struct tpm_chip *chip);
+ int tpm1_auto_startup(struct tpm_chip *chip);
+ int tpm1_get_timeouts(struct tpm_chip *chip);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 3f561736f066..5fdc44feea0f 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -667,3 +667,57 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+ 		rc = -ENODEV;
+ 	return rc;
+ }
 +
- tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
- tpm-$(CONFIG_EFI) += eventlog/efi.o
- tpm-$(CONFIG_OF) += eventlog/of.o
++#define TPM_ORD_SAVESTATE 152
++#define SAVESTATE_RESULT_SIZE 10
++static const struct tpm_input_header savestate_header = {
++	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
++	.length = cpu_to_be32(10),
++	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
++};
++
++/*
++ * We are about to suspend. Save the TPM state
++ * so that it can be restored.
++ */
++int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
++{
++	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
++	struct tpm_cmd_t cmd;
++	int rc, try;
++
++	/* for buggy tpm, flush pcrs with extend to selected dummy */
++	if (tpm_suspend_pcr)
++		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
++				     "extending dummy pcr before suspend");
++
++	/* now do the actual savestate */
++	for (try = 0; try < TPM_RETRY; try++) {
++		cmd.header.in = savestate_header;
++		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
++				      0, 0, NULL);
++
++		/*
++		 * If the TPM indicates that it is too busy to respond to
++		 * this command then retry before giving up.  It can take
++		 * several seconds for this TPM to be ready.
++		 *
++		 * This can happen if the TPM has already been sent the
++		 * SaveState command before the driver has loaded.  TCG 1.2
++		 * specification states that any communication after SaveState
++		 * may cause the TPM to invalidate previously saved state.
++		 */
++		if (rc != TPM_WARN_RETRY)
++			break;
++		tpm_msleep(TPM_TIMEOUT_RETRY);
++	}
++
++	if (rc)
++		dev_err(&chip->dev,
++			"Error (%d) sending savestate before suspend\n", rc);
++	else if (try > 0)
++		dev_warn(&chip->dev, "TPM savestate took %dms\n",
++			 try * TPM_TIMEOUT_RETRY);
++
++	return rc;
++}
 -- 
 2.14.4
