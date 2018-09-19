@@ -1,48 +1,25 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 19 Sep 2018 17:00:02 +0300
-Subject: [PATCH v3 03/20] tpm: factor out tpm 1.x duration calculation to
-	tpm1-cmd.c
-In-Reply-To: <20180919135517.GC26571@linux.intel.com>
+Date: Wed, 19 Sep 2018 17:02:54 +0300
+Subject: [PATCH v3 04/20] tpm: add tpm_calc_ordinal_duration wrapper
+In-Reply-To: <20180918093459.19165-5-tomas.winkler@intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
-	<20180918093459.19165-4-tomas.winkler@intel.com>
-	<20180919135517.GC26571@linux.intel.com>
-Message-ID: <20180919140002.GF26571@linux.intel.com>
+	<20180918093459.19165-5-tomas.winkler@intel.com>
+Message-ID: <20180919140254.GG26571@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 19, 2018 at 04:55:17PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Sep 18, 2018 at 12:34:42PM +0300, Tomas Winkler wrote:
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2004 IBM Corporation
-> > + * Copyright (C) 2014 Intel Corporation
-> > + *
-> > + * Authors:
-> > + * Leendert van Doorn <leendert@watson.ibm.com>
-> > + * Dave Safford <safford@watson.ibm.com>
-> > + * Reiner Sailer <sailer@watson.ibm.com>
-> > + * Kylene Hall <kjhall@us.ibm.com>
+On Tue, Sep 18, 2018 at 12:34:43PM +0300, Tomas Winkler wrote:
+> Add convenient wrapper for ordinal duration computation
+> to remove boiler plate if else statement over TPM2.
 > 
-> > + *
-> > + * Device driver for TCG/TCPA TPM (trusted platform module).
-> > + * Specifications at www.trustedcomputinggroup.org
-> > + *
+> if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> 	tpm2_calc_ordinal_duration(chip, ordinal);
+> else
+> 	tpm1_calc_ordinal_duration(chip, ordinal);
 > 
-> This paragraph is not needed. No need to carry it to a new file.
-> 
-> > + * This program is free software; you can redistribute it and/or
-> > + * modify it under the terms of the GNU General Public License as
-> > + * published by the Free Software Foundation, version 2 of the
-> > + * License.
-> > + *
-> > + */
-> 
-> Cut this out as SPDX takes already care of this.
-> 
-> /Jarkko
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Forgot to add this:
-
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
