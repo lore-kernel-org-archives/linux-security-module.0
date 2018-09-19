@@ -1,26 +1,20 @@
 From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 19 Sep 2018 17:09:02 +0300
-Subject: [PATCH v3 07/20] tpm: move tpm_getcap to tpm1-cmd.c
-In-Reply-To: <20180918093459.19165-8-tomas.winkler@intel.com>
+Date: Wed, 19 Sep 2018 17:56:55 +0300
+Subject: [PATCH v3 08/20] tpm: factor out tpm1_get_random into tpm1-cmd.c
+In-Reply-To: <20180918093459.19165-9-tomas.winkler@intel.com>
 References: <20180918093459.19165-1-tomas.winkler@intel.com>
-	<20180918093459.19165-8-tomas.winkler@intel.com>
-Message-ID: <20180919140902.GB27854@linux.intel.com>
+	<20180918093459.19165-9-tomas.winkler@intel.com>
+Message-ID: <20180919145655.GA31076@linux.intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Sep 18, 2018 at 12:34:46PM +0300, Tomas Winkler wrote:
-> 1. Move tpm_getcap to tpm1-cmd. Rename the function to tpm1_getcap.
-> 2. Remove unused tpm_getcap_header with unused constant
-> as this functionality is already implemented using tpm_buf construct.
+On Tue, Sep 18, 2018 at 12:34:47PM +0300, Tomas Winkler wrote:
+> Factor out get random implementation from tpm-interface.c
+> into tpm1_get_random function in tpm1-cmd.c.
+> No functional changes.
 > 
-> Fixes warning:
-> drivers/char/tpm/tpm-interface.c:452:38: warning: ?tpm_getcap_header? defined but not used [-Wunused-const-variable=]
->  static const struct tpm_input_header tpm_getcap_header = {
->                                       ^~~~~~~~~~~~~~~~~
-> 3. Drop unused TPM_DIGEST_SIZE. It's already defined in
-> include/linux/tpm.h
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
 
 /Jarkko
