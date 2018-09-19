@@ -1,25 +1,16 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Wed, 19 Sep 2018 18:24:34 +0300
-Subject: [PATCH v3 20/20] tpm1: reimplement tpm1_continue_selftest()
-	using tpm_buf
-In-Reply-To: <20180918093459.19165-21-tomas.winkler@intel.com>
-References: <20180918093459.19165-1-tomas.winkler@intel.com>
-	<20180918093459.19165-21-tomas.winkler@intel.com>
-Message-ID: <20180919152434.GM31076@linux.intel.com>
+From: paul@paul-moore.com (Paul Moore)
+Date: Wed, 19 Sep 2018 11:55:24 -0400
+Subject: FYI: email change
+Message-ID: <CAHC9VhQoLQG3Y6FrQJai5HLoseK=Hco9=+gYsmSU6SNBFuMo=w@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Sep 18, 2018 at 12:34:59PM +0300, Tomas Winkler wrote:
-> Reimplement tpm1_continue_selftest() using tpm_buf structure.
-> This is the last command using the old tpm_cmd_t structure
-> and now the structure can be removed.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+A quick note that my @redhat.com email address is going to stop
+working in the next day or two, so if you are using my Red Hat email
+address to reach me please start using my @paul-moore.com address.
 
-Minor rant: the last sentence should state simply that as there
-are no other fields in tpm_cmd_t can be removed. The rationale
-is that the patch set ceases to exist after it is accepted. It
-is a temporary item, not something that should be referred in
-the commit log.
+Everything else, e.g. my community involvement, will remain unaffected.
 
-/Jarkko
+-- 
+paul moore
+www.paul-moore.com
