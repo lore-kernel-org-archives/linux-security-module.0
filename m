@@ -1,50 +1,69 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 09:23:14 -0700
-Subject: [PATCH security-next v2 02/26] vmlinux.lds.h: Avoid copy/paste of
-	security_init section
+Date: Thu, 20 Sep 2018 09:23:36 -0700
+Subject: [PATCH security-next v2 24/26] capability: Mark as LSM_ORDER_FIRST
 In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
 References: <20180920162338.21060-1-keescook@chromium.org>
-Message-ID: <20180920162338.21060-3-keescook@chromium.org>
+Message-ID: <20180920162338.21060-25-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Avoid copy/paste by defining SECURITY_INIT in terms of SECURITY_INITCALL.
+This converts capabilities to use the new LSM_ORDER_FIRST position.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/asm-generic/vmlinux.lds.h | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ include/linux/lsm_hooks.h | 2 --
+ security/commoncap.c      | 8 +++++++-
+ security/security.c       | 5 -----
+ 3 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 7b75ff6e2fce..934a45395547 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -473,13 +473,6 @@
- #define RODATA          RO_DATA_SECTION(4096)
- #define RO_DATA(align)  RO_DATA_SECTION(align)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index bf29851baf47..8e843eaacffb 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2098,6 +2098,4 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ #define __lsm_ro_after_init	__ro_after_init
+ #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
  
--#define SECURITY_INIT							\
--	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
--		__security_initcall_start = .;				\
--		KEEP(*(.security_initcall.init))			\
--		__security_initcall_end = .;				\
--	}
+-extern void __init capability_add_hooks(void);
 -
- /*
-  * .text section. Map to function alignment to avoid address changes
-  * during second ld run in second ld pass when generating System.map
-@@ -798,6 +791,12 @@
- 		KEEP(*(.security_initcall.init))			\
- 		__security_initcall_end = .;
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 2e489d6a3ac8..7a6abaec65de 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1366,10 +1366,16 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(vm_enough_memory, cap_vm_enough_memory),
+ };
  
-+/* Older linker script style for security init. */
-+#define SECURITY_INIT							\
-+	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
-+		SECURITY_INITCALL					\
-+	}
+-void __init capability_add_hooks(void)
++static int __init capability_init(void)
+ {
+ 	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+ 				"capability");
++	return 0;
+ }
+ 
++DEFINE_LSM(capability)
++	.order = LSM_ORDER_FIRST,
++	.init = capability_init,
++END_LSM;
 +
- #ifdef CONFIG_BLK_DEV_INITRD
- #define INIT_RAM_FS							\
- 	. = ALIGN(4);							\
+ #endif /* CONFIG_SECURITY */
+diff --git a/security/security.c b/security/security.c
+index d649e7dea4c4..a40e938db1b0 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -259,11 +259,6 @@ int __init security_init(void)
+ 		}
+ 	}
+ 
+-	/*
+-	 * Load minor LSMs, with the capability module always first.
+-	 */
+-	capability_add_hooks();
+-
+ 	/* Load LSMs in specified order. */
+ 	prepare_lsm_order();
+ 	ordered_lsm_init();
 -- 
 2.17.1
