@@ -1,101 +1,74 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 09:23:31 -0700
-Subject: [PATCH security-next v2 19/26] LSM: Introduce CONFIG_LSM_ORDER
+Date: Thu, 20 Sep 2018 09:23:25 -0700
+Subject: [PATCH security-next v2 13/26] LSM: Plumb visibility into optional
+	"enabled" state
 In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
 References: <20180920162338.21060-1-keescook@chromium.org>
-Message-ID: <20180920162338.21060-20-keescook@chromium.org>
+Message-ID: <20180920162338.21060-14-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This provides a way to declare LSM initialization order via Kconfig.
+In preparation for lifting the "is this LSM enabled?" logic out of the
+individual LSMs, pass in any special enabled state tracking (as needed
+for SELinux, AppArmor, and LoadPin). This must be an "int" to include
+handling cases where "enabled" is exposed via sysctl which has no "bool"
+type (i.e. LoadPin's use).
+
+LoadPin's "enabled" tracking will be added later when it gets added to
+the "ordered LSM" stack.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/Kconfig    | 11 +++++++++++
- security/security.c | 38 +++++++++++++++++++++++++++++++++++---
- 2 files changed, 46 insertions(+), 3 deletions(-)
+ include/linux/lsm_hooks.h | 1 +
+ security/apparmor/lsm.c   | 5 +++--
+ security/selinux/hooks.c  | 1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/security/Kconfig b/security/Kconfig
-index 27d8b2688f75..de8202886c1d 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -276,5 +276,16 @@ config DEFAULT_SECURITY
- 	default "apparmor" if DEFAULT_SECURITY_APPARMOR
- 	default "" if DEFAULT_SECURITY_DAC
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 38cbefabff71..118e12f678df 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2044,6 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ struct lsm_info {
+ 	const char *name;	/* Populated automatically. */
+ 	unsigned long flags;	/* Optional: flags describing LSM */
++	int *enabled;		/* Optional: NULL means enabled. */
+ 	int (*init)(void);
+ };
  
-+config LSM_ORDER
-+	string "Default initialization order of builtin LSMs"
-+	default "integrity"
-+	help
-+	  A comma-separated list of LSMs, in initialization order.
-+	  Any LSMs left off this list will be link-order initialized
-+	  after any listed LSMs. Any LSMs listed here but not built in
-+	  the kernel will be ignored.
-+
-+	  If unsure, leave this as the default.
-+
- endmenu
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 4c5f63e9aeba..d03133a267f2 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1303,8 +1303,8 @@ bool aa_g_paranoid_load = true;
+ module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
  
-diff --git a/security/security.c b/security/security.c
-index 2541a512a0f7..063ee2466e58 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -44,6 +44,8 @@ char *lsm_names;
- /* Boot-time LSM user choice */
- static __initdata const char *chosen_major_lsm;
+ /* Boot time disable flag */
+-static bool apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
+-module_param_named(enabled, apparmor_enabled, bool, S_IRUGO);
++static int apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
++module_param_named(enabled, apparmor_enabled, int, 0444);
  
-+static __initconst const char * const builtin_lsm_order = CONFIG_LSM_ORDER;
-+
- /* Ordered list of LSMs to initialize. */
- static __initdata struct lsm_info **ordered_lsms;
- 
-@@ -108,14 +110,44 @@ static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
- 		   (!lsm->enabled || *lsm->enabled) ? "en" : "dis");
- }
- 
--/* Populate ordered LSMs list from hard-coded list of LSMs. */
-+/* Populate ordered LSMs list from given string. */
-+static void __init parse_lsm_order(const char *order, const char *origin)
-+{
-+	struct lsm_info *lsm;
-+	char *sep, *name, *next;
-+
-+	sep = kstrdup(order, GFP_KERNEL);
-+	next = sep;
-+	/* Walk the list, looking for matching LSMs. */
-+	while ((name = strsep(&next, ",")) != NULL) {
-+		bool found = false;
-+
-+		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+			if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0 &&
-+			    strcmp(lsm->name, name) == 0) {
-+				append_ordered_lsm(lsm, origin);
-+				found = true;
-+			}
-+		}
-+
-+		if (!found)
-+			init_debug("%s ignored: %s\n", origin, name);
-+	}
-+	kfree(sep);
-+}
-+
-+/* Populate ordered LSMs list from builtin list of LSMs. */
- static void __init prepare_lsm_order(void)
+ static int __init apparmor_enabled_setup(char *str)
  {
- 	struct lsm_info *lsm;
+@@ -1608,5 +1608,6 @@ static int __init apparmor_init(void)
  
-+	/* Parse order from builtin list. */
-+	parse_lsm_order(builtin_lsm_order, "builtin");
-+
-+	/* Add any missing LSMs, in link order. */
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
--		if (strcmp(lsm->name, "integrity") == 0)
--			append_ordered_lsm(lsm, "builtin");
-+		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
-+			append_ordered_lsm(lsm, "link-time");
- 	}
- }
+ DEFINE_LSM(apparmor)
+ 	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.enabled = &apparmor_enabled,
+ 	.init = apparmor_init,
+ END_LSM;
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 615cf6498c0f..3f999ed98cfd 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7204,6 +7204,7 @@ void selinux_complete_init(void)
+    all processes and objects when they are created. */
+ DEFINE_LSM(selinux)
+ 	.flags = LSM_FLAG_LEGACY_MAJOR,
++	.enabled = &selinux_enabled,
+ 	.init = selinux_init,
+ END_LSM;
  
 -- 
 2.17.1
