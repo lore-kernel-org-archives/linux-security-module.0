@@ -1,46 +1,126 @@
-From: marcel@holtmann.org (Marcel Holtmann)
-Date: Thu, 20 Sep 2018 09:26:18 +0200
-Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
-In-Reply-To: <20622.1537291117@warthog.procyon.org.uk>
-References: <c33c759d-9243-8885-7c5f-667681b759c2@gmail.com>
-	<14f91823-474e-1b46-d305-12229dac8967@gmail.com>
-	<0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
-	<fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
-	<153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
-	<1537253993.20009.62.camel@infradead.org>
-	<14067.1537285833@warthog.procyon.org.uk>
-	<745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
-	<19247.1537288419@warthog.procyon.org.uk>
-	<23698.1537289705@warthog.procyon.org.uk>
-	<20622.1537291117@warthog.procyon.org.uk>
-Message-ID: <58F37819-78E2-45C8-8F04-4F21DDFB640E@holtmann.org>
+From: fw@strlen.de (Florian Westphal)
+Date: Thu, 20 Sep 2018 10:50:48 +0200
+Subject: [PATCH] netfilter: nf_tables: add SECMARK support
+In-Reply-To: <75b3fed9-e549-4ed0-c435-ec4795fc1e39@schaufler-ca.com>
+References: <20180919231402.4482-1-cgzones@googlemail.com>
+	<75b3fed9-e549-4ed0-c435-ec4795fc1e39@schaufler-ca.com>
+Message-ID: <20180920085048.tps2v4jkko7zjav4@breakpoint.cc>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi David,
-
->>> Yes.  It shouldn't be much code, either.  You still have to check for X.509
->>> DER since the kernel currently supports that.
->> 
->> For reasons of backward compatibility, correct?  The kernel also has
->> mscode.asn1 which we would need to support as well.  Since we can't break
->> compatibility then perhaps this doesn't buy us a whole lot in the end.
+Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 9/19/2018 4:14 PM, Christian G?ttsche wrote:
+> > Add the ability to set the security context of packets within the nf_tables framework.
+> > Add a nft_object for holding security contexts in the kernel and manipulating packets on the wire.
+> > The contexts are kept as strings and are evaluated to security identifiers at runtime (packet arrival),
+> > so that the nft_objects do not need to be refreshed after security changes.
+> > The maximum security context length is set to 256.
+> >
+> > Based on v4.18.6
+> >
+> > Signed-off-by: Christian G?ttsche <cgzones@googlemail.com>
 > 
-> Don't worry about mscode - that's not an asymmetric key parser.  That's only
-> ever used directly from verify_pefile_signature().
-> 
-> Currently, we have to retain support for DER-encoded X.509.
-> 
-> But there's no reason we can't have a PEM parser that decodes the PEM and
-> selects X.509, PKCS#8 or TPM based on the ascii header in that.  PKCS#8 and
-> TPM don't need to take DER directly.
+> I've only had a cursory look at your patch, but how is it
+> different from what's in xt_SECMARK.c ?
 
-since we have to support DER-encoded anyway, can we get the current patches merged (with fixes to the commit messages for the openssl examples if needed) and then work on PEM support inside the kernel. For me these seems to be two independent features. And in the current form the patches have been tested and used.
+this change is supposed to make secmark labeling accessible from
+nftables.
 
-Or let me ask this differently, are there any objections to merging these patches with just DER support?
+The advantage is that its now possible to use
+maps to assign secmarks from a single rule instead of using
+several rules:
 
-For example in ELL we have implemented the PEM to DER conversion before calling keyctl. This can be surely added to keyutils (if calling openssl is too much to ask) or even the kernel itself. However this doesn?t change the actual functionality of handling asymmetric key operations. And I would rather see that merged and established instead of worrying to much about the multitudes of possible encoding forms of keys.
+nft add rule meta secmark set tcp dport map { 22 : tag-ssh, 80 :
+	tag-http }
 
-Regards
+and so on.
 
-Marcel
+> > +	for (i = 0; i < ARRAY_SIZE(nft_basic_objects); i++) {
+> > +		err = nft_register_obj(nft_basic_objects[i]);
+> > +		if (err)
+> > +			goto err;
+> > +	}
+> >  
+> > -	for (i = 0; i < ARRAY_SIZE(nft_basic_types); i++) {
+> > -		err = nft_register_expr(nft_basic_types[i]);
+> > +	for (j = 0; j < ARRAY_SIZE(nft_basic_types); j++) {
+> > +		err = nft_register_expr(nft_basic_types[j]);
+> >  		if (err)
+> >  			goto err;
+> >  	}
+> > @@ -248,8 +260,12 @@ int __init nf_tables_core_module_init(void)
+> >  	return 0;
+> >  
+> >  err:
+> > +	while (j-- > 0)
+> > +		nft_unregister_expr(nft_basic_types[j]);
+> > +
+> >  	while (i-- > 0)
+> > -		nft_unregister_expr(nft_basic_types[i]);
+> > +		nft_unregister_obj(nft_basic_objects[i]);
+> > +
+> >  	return err;
+
+Do I read this right in that this is a error unroll bug fix?
+If so, could you please submit this as indepentent patch?
+
+Fixes should go into nf.git whereas feature goes to nf-next.git.
+
+> > +struct nft_secmark {
+> > +	char ctx[NFT_SECMARK_CTX_MAXLEN];
+> > +	int len;
+> > +};
+> > +
+> > +static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
+> > +	[NFTA_SECMARK_CTX]     = { .type = NLA_STRING, .len = NFT_SECMARK_CTX_MAXLEN },
+> > +};
+> > +
+> > +static void nft_secmark_obj_eval(struct nft_object *obj, struct nft_regs *regs, const struct nft_pktinfo *pkt)
+> > +{
+> > +	const struct nft_secmark *priv = nft_obj_data(obj);
+> > +	struct sk_buff *skb = pkt->skb;
+> > +	int err;
+> > +	u32 secid = 0;
+> > +
+> > +	/* skip if packet has already a secmark */
+> > +	if (skb->secmark)
+> > +		return;
+
+xt_SECMARK doesn't do this and will allow relabeling.
+What do the LSM experts think?
+
+> > +	err = security_secctx_to_secid(priv->ctx, priv->len, &secid);
+
+Could someone familiar with how LSMs work clarify if this has to be
+called per-packet?
+
+xt_SECMARK.c does this ctx -> secid mapping once, when the iptables rule
+gets added, whereas this patch does it once for each packet.
+
+Is the ctx -> secid mapping stable?
+
+If yes, the code above should be moved to the ->init() hook, otherwise
+we'll need to fix xt_SECMARK.c.
+
+> > +	if (err) {
+> > +		if (err == -EINVAL)
+> > +			pr_notice_ratelimited("invalid security context \'%s\'\n", priv->ctx);
+> > +		else
+> > +			pr_notice_ratelimited("unable to convert security context \'%s\': %d\n", priv->ctx, -err);
+> > +		return;
+> > +	}
+
+Please remove these printks(), they do not really help as user can't
+take any action anyway.
+
+> > +	err = security_secmark_relabel_packet(secid);
+
+Hmm, this function uses current() to check permissions of calling
+task, so this function canot be used in ->eval() path.
+
+Network stack causes random results of "current()", as network
+processing can "steal" cpu from some arbitrary task when
+softinterrupt kicks in.
+
+->init() is fine, as its in process context and current will be the task
+installing the nftables rule.
