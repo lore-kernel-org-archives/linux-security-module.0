@@ -1,86 +1,75 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 09:23:33 -0700
-Subject: [PATCH security-next v2 21/26] LoadPin: Initialize as ordered LSM
-In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
-References: <20180920162338.21060-1-keescook@chromium.org>
-Message-ID: <20180920162338.21060-22-keescook@chromium.org>
+From: denkenz@gmail.com (Denis Kenzior)
+Date: Thu, 20 Sep 2018 12:07:51 -0500
+Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops
+In-Reply-To: <219367882d33fda9705485aa4a40b2ef55f3992f.camel@infradead.org>
+References: <c33c759d-9243-8885-7c5f-667681b759c2@gmail.com>
+	<14f91823-474e-1b46-d305-12229dac8967@gmail.com>
+	<0d51fca9a29458a40121df0c5380af91e3429c08.camel@infradead.org>
+	<fdee179b-cfdf-7a2b-3193-e114f0084ecb@gmail.com>
+	<153618445730.7946.10001472635835806478.stgit@warthog.procyon.org.uk>
+	<1537253993.20009.62.camel@infradead.org>
+	<14067.1537285833@warthog.procyon.org.uk>
+	<745318a0-51bd-be8f-2251-44701ad75830@gmail.com>
+	<19247.1537288419@warthog.procyon.org.uk>
+	<23698.1537289705@warthog.procyon.org.uk>
+	<20622.1537291117@warthog.procyon.org.uk>
+	<58F37819-78E2-45C8-8F04-4F21DDFB640E@holtmann.org>
+	<219367882d33fda9705485aa4a40b2ef55f3992f.camel@infradead.org>
+Message-ID: <c8608829-2669-077f-b7d4-5a199f4bf4c8@gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This converts LoadPin from being a direct "minor" LSM into an ordered LSM.
+David,
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/lsm_hooks.h  |  5 -----
- security/Kconfig           |  2 +-
- security/loadpin/loadpin.c | 10 ++++++++--
- security/security.c        |  1 -
- 4 files changed, 9 insertions(+), 9 deletions(-)
+On 09/20/2018 11:45 AM, David Woodhouse wrote:
+> On Thu, 2018-09-20 at 09:26 +0200, Marcel Holtmann wrote:
+>> Hi David,
+>>
+>>>>> Yes.  It shouldn't be much code, either.  You still have to check for X.509
+>>>>> DER since the kernel currently supports that.
+>>>>
+>>>> For reasons of backward compatibility, correct?  The kernel also has
+>>>> mscode.asn1 which we would need to support as well.  Since we can't break
+>>>> compatibility then perhaps this doesn't buy us a whole lot in the end.
+>>>
+>>> Don't worry about mscode - that's not an asymmetric key parser.  That's only
+>>> ever used directly from verify_pefile_signature().
+>>>
+>>> Currently, we have to retain support for DER-encoded X.509.
+>>>
+>>> But there's no reason we can't have a PEM parser that decodes the PEM and
+>>> selects X.509, PKCS#8 or TPM based on the ascii header in that.  PKCS#8 and
+>>> TPM don't need to take DER directly.
+>>
+>> since we have to support DER-encoded anyway, can we get the current
+>> patches merged (with fixes to the commit messages for the openssl
+>> examples if needed) and then work on PEM support inside the kernel.
+>> For me these seems to be two independent features. And in the current
+>> form the patches have been tested and used.
+>>
+>> Or let me ask this differently, are there any objections to merging
+>> these patches with just DER support?
+> 
+> Let me rephrase that question slightly: Are we happy to have to make
+> inferences from the ASN.1 structure, and in particular that a bare
+> OCTET-STRING is a TPMv1 blob? I believe James ended up doing something
+> somewhat more sensible for the TPMv2 blob so that might end up being
+> OK...?
+> 
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index ec1c0a97dfe3..7a38ffdd690f 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2097,10 +2097,5 @@ extern void __init yama_add_hooks(void);
- #else
- static inline void __init yama_add_hooks(void) { }
- #endif
--#ifdef CONFIG_SECURITY_LOADPIN
--void __init loadpin_add_hooks(void);
--#else
--static inline void loadpin_add_hooks(void) { };
--#endif
- 
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/security/Kconfig b/security/Kconfig
-index de8202886c1d..f2003bd03ef6 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -278,7 +278,7 @@ config DEFAULT_SECURITY
- 
- config LSM_ORDER
- 	string "Default initialization order of builtin LSMs"
--	default "integrity"
-+	default "loadpin,integrity"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
- 	  Any LSMs left off this list will be link-order initialized
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index 0716af28808a..e638fba7363d 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -184,12 +184,18 @@ static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(kernel_load_data, loadpin_load_data),
- };
- 
--void __init loadpin_add_hooks(void)
-+static int __init loadpin_init(void)
- {
--	pr_info("ready to pin (currently %sabled)", enabled ? "en" : "dis");
-+	pr_info("ready to pin\n");
- 	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
-+	return 0;
- }
- 
-+DEFINE_LSM(loadpin)
-+	.enabled = &enabled,
-+	.init = loadpin_init,
-+END_LSM;
-+
- /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
- module_param(enabled, int, 0);
- MODULE_PARM_DESC(enabled, "Pin module/firmware loading (default: true)");
-diff --git a/security/security.c b/security/security.c
-index 4db194f81419..9ffb76b7655b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -246,7 +246,6 @@ int __init security_init(void)
- 	 */
- 	capability_add_hooks();
- 	yama_add_hooks();
--	loadpin_add_hooks();
- 
- 	/* Load LSMs in specified order. */
- 	prepare_lsm_order();
--- 
-2.17.1
+I think it should be OK.  It is highly unlikely that we get another 
+OCTET string type format, and even then we can actually peek inside and 
+try to parse the TPM structure carried in the DER if there is indeed a 
+conflict.
+
+Also, after refreshing my memory of how PEM format is actually 
+specified, I'm no longer convinced that having it in the kernel is such 
+a good idea.  It would probably be made to work, but the PEM file format 
+itself isn't that precise, at least compared to DER.
+
+James, is there a document / official place with your TPMKey ASN.1 
+format?  The only reference I can find is here:
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine/+/93b2f4f3f0f2260292f54de4e6333219063c77b1/tpm2-asn.h
+
+Regards,
+-Denis
