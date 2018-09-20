@@ -1,69 +1,79 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 09:23:36 -0700
-Subject: [PATCH security-next v2 24/26] capability: Mark as LSM_ORDER_FIRST
+Date: Thu, 20 Sep 2018 09:23:28 -0700
+Subject: [PATCH security-next v2 16/26] LSM: Prepare for reorganizing
+	"security=" logic
 In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
 References: <20180920162338.21060-1-keescook@chromium.org>
-Message-ID: <20180920162338.21060-25-keescook@chromium.org>
+Message-ID: <20180920162338.21060-17-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This converts capabilities to use the new LSM_ORDER_FIRST position.
+This moves the string handling for "security=" boot parameter into
+a stored pointer instead of a string duplicate. This will allow
+easier handling of the string when switching logic to use the coming
+enable/disable infrastructure.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h | 2 --
- security/commoncap.c      | 8 +++++++-
- security/security.c       | 5 -----
- 3 files changed, 7 insertions(+), 8 deletions(-)
+ security/security.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index bf29851baf47..8e843eaacffb 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2098,6 +2098,4 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
- #define __lsm_ro_after_init	__ro_after_init
- #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
- 
--extern void __init capability_add_hooks(void);
--
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 2e489d6a3ac8..7a6abaec65de 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1366,10 +1366,16 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(vm_enough_memory, cap_vm_enough_memory),
- };
- 
--void __init capability_add_hooks(void)
-+static int __init capability_init(void)
- {
- 	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
- 				"capability");
-+	return 0;
- }
- 
-+DEFINE_LSM(capability)
-+	.order = LSM_ORDER_FIRST,
-+	.init = capability_init,
-+END_LSM;
-+
- #endif /* CONFIG_SECURITY */
 diff --git a/security/security.c b/security/security.c
-index d649e7dea4c4..a40e938db1b0 100644
+index 72d1ef2fc4cc..5cacbcefbc32 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -259,11 +259,6 @@ int __init security_init(void)
- 		}
- 	}
+@@ -34,16 +34,12 @@
  
--	/*
--	 * Load minor LSMs, with the capability module always first.
--	 */
--	capability_add_hooks();
+ #define MAX_LSM_EVM_XATTR	2
+ 
+-/* Maximum number of letters for an LSM name string */
+-#define SECURITY_NAME_MAX	10
 -
- 	/* Load LSMs in specified order. */
- 	prepare_lsm_order();
- 	ordered_lsm_init();
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+ 
+ char *lsm_names;
+ /* Boot-time LSM user choice */
+-static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+-	CONFIG_DEFAULT_SECURITY;
++static __initdata const char *chosen_major_lsm;
+ 
+ static bool debug __initdata;
+ #define init_debug(...)						\
+@@ -90,7 +86,7 @@ static bool __init lsm_allowed(struct lsm_info *lsm)
+ 		return true;
+ 
+ 	/* Disabled if this LSM isn't the chosen one. */
+-	if (strcmp(lsm->name, chosen_lsm) != 0)
++	if (strcmp(lsm->name, chosen_major_lsm) != 0)
+ 		return false;
+ 
+ 	return true;
+@@ -154,6 +150,9 @@ int __init security_init(void)
+ 	     i++)
+ 		INIT_HLIST_HEAD(&list[i]);
+ 
++	if (!chosen_major_lsm)
++		chosen_major_lsm = CONFIG_DEFAULT_SECURITY;
++
+ 	/*
+ 	 * Load minor LSMs, with the capability module always first.
+ 	 */
+@@ -173,12 +172,12 @@ int __init security_init(void)
+ }
+ 
+ /* Save user chosen LSM */
+-static int __init choose_lsm(char *str)
++static int __init choose_major_lsm(char *str)
+ {
+-	strncpy(chosen_lsm, str, SECURITY_NAME_MAX);
++	chosen_major_lsm = str;
+ 	return 1;
+ }
+-__setup("security=", choose_lsm);
++__setup("security=", choose_major_lsm);
+ 
+ /* Enable LSM order debugging. */
+ static int __init enable_debug(char *str)
 -- 
 2.17.1
