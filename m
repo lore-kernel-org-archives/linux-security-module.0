@@ -1,252 +1,121 @@
 From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Wed, 19 Sep 2018 17:20:38 -0700
-Subject: [PATCH v3 07/16] TOMOYO: Abstract use of cred security blob
+Date: Wed, 19 Sep 2018 17:20:52 -0700
+Subject: [PATCH v3 09/16] SELinux: Abstract use of file security blob
 In-Reply-To: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
 References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
-Message-ID: <ea146829-594a-64a5-6e60-427d39aff4bc@schaufler-ca.com>
+Message-ID: <14db9a22-9f31-88fb-dbc1-8bc4ade74bf6@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-TOMOYO: Abstract use of cred security blob
+SELinux: Abstract use of file security blob
 
-Don't use the cred->security pointer directly.
-Provide helper functions that provide the security blob pointer.
+Don't use the file->f_security pointer directly.
+Provide a helper function that provides the security blob pointer.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/tomoyo/common.h        | 21 ++++++++++++++++--
- security/tomoyo/domain.c        |  4 +++-
- security/tomoyo/securityfs_if.c | 15 +++++++++----
- security/tomoyo/tomoyo.c        | 39 +++++++++++++++++++++++++--------
- 4 files changed, 63 insertions(+), 16 deletions(-)
+ security/selinux/hooks.c          | 18 +++++++++---------
+ security/selinux/include/objsec.h |  5 +++++
+ 2 files changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index 539bcdd30bb8..c9d8c49e3210 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -29,6 +29,7 @@
- #include <linux/in.h>
- #include <linux/in6.h>
- #include <linux/un.h>
-+#include <linux/lsm_hooks.h>
- #include <net/sock.h>
- #include <net/af_unix.h>
- #include <net/ip.h>
-@@ -1062,6 +1063,7 @@ void tomoyo_write_log2(struct tomoyo_request_info *r, int len, const char *fmt,
- /********** External variable definitions. **********/
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index b629cc302088..641a8ce726ff 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -396,7 +396,7 @@ static int file_alloc_security(struct file *file)
  
- extern bool tomoyo_policy_loaded;
-+extern bool tomoyo_enabled;
- extern const char * const tomoyo_condition_keyword
- [TOMOYO_MAX_CONDITION_KEYWORD];
- extern const char * const tomoyo_dif[TOMOYO_MAX_DOMAIN_INFO_FLAGS];
-@@ -1196,6 +1198,17 @@ static inline void tomoyo_put_group(struct tomoyo_group *group)
- 		atomic_dec(&group->head.users);
+ static void file_free_security(struct file *file)
+ {
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	file->f_security = NULL;
+ 	kmem_cache_free(file_security_cache, fsec);
+ }
+@@ -1879,7 +1879,7 @@ static int file_has_perm(const struct cred *cred,
+ 			 struct file *file,
+ 			 u32 av)
+ {
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	struct inode *inode = file_inode(file);
+ 	struct common_audit_data ad;
+ 	u32 sid = cred_sid(cred);
+@@ -2223,7 +2223,7 @@ static int selinux_binder_transfer_file(struct task_struct *from,
+ 					struct file *file)
+ {
+ 	u32 sid = task_sid(to);
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	struct dentry *dentry = file->f_path.dentry;
+ 	struct inode_security_struct *isec;
+ 	struct common_audit_data ad;
+@@ -3535,7 +3535,7 @@ static int selinux_revalidate_file_permission(struct file *file, int mask)
+ static int selinux_file_permission(struct file *file, int mask)
+ {
+ 	struct inode *inode = file_inode(file);
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	struct inode_security_struct *isec;
+ 	u32 sid = current_sid();
+ 
+@@ -3570,7 +3570,7 @@ static int ioctl_has_perm(const struct cred *cred, struct file *file,
+ 		u32 requested, u16 cmd)
+ {
+ 	struct common_audit_data ad;
+-	struct file_security_struct *fsec = file->f_security;
++	struct file_security_struct *fsec = selinux_file(file);
+ 	struct inode *inode = file_inode(file);
+ 	struct inode_security_struct *isec;
+ 	struct lsm_ioctlop_audit ioctl;
+@@ -3822,7 +3822,7 @@ static void selinux_file_set_fowner(struct file *file)
+ {
+ 	struct file_security_struct *fsec;
+ 
+-	fsec = file->f_security;
++	fsec = selinux_file(file);
+ 	fsec->fown_sid = current_sid();
  }
  
-+/**
-+ * tomoyo_cred - Get a pointer to the tomoyo cred security blob
-+ * @cred - the relevant cred
-+ *
-+ * Returns pointer to the tomoyo cred blob.
-+ */
-+static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
+@@ -3837,7 +3837,7 @@ static int selinux_file_send_sigiotask(struct task_struct *tsk,
+ 	/* struct fown_struct is never outside the context of a struct file */
+ 	file = container_of(fown, struct file, f_owner);
+ 
+-	fsec = file->f_security;
++	fsec = selinux_file(file);
+ 
+ 	if (!signum)
+ 		perm = signal_to_av(SIGIO); /* as per send_sigio_to_task */
+@@ -3861,7 +3861,7 @@ static int selinux_file_open(struct file *file)
+ 	struct file_security_struct *fsec;
+ 	struct inode_security_struct *isec;
+ 
+-	fsec = file->f_security;
++	fsec = selinux_file(file);
+ 	isec = inode_security(file_inode(file));
+ 	/*
+ 	 * Save inode label and policy sequence number
+@@ -4000,7 +4000,7 @@ static int selinux_kernel_module_from_file(struct file *file)
+ 	ad.type = LSM_AUDIT_DATA_FILE;
+ 	ad.u.file = file;
+ 
+-	fsec = file->f_security;
++	fsec = selinux_file(file);
+ 	if (sid != fsec->sid) {
+ 		rc = avc_has_perm(&selinux_state,
+ 				  sid, fsec->sid, SECCLASS_FD, FD__USE, &ad);
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index ad511c3d2eb7..cad8b765f6dd 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -165,4 +165,9 @@ static inline struct task_security_struct *selinux_cred(const struct cred *cred)
+ 	return cred->security;
+ }
+ 
++static inline struct file_security_struct *selinux_file(const struct file *file)
 +{
-+	return (struct tomoyo_domain_info **)&cred->security;
++	return file->f_security;
 +}
 +
- /**
-  * tomoyo_domain - Get "struct tomoyo_domain_info" for current thread.
-  *
-@@ -1203,7 +1216,9 @@ static inline void tomoyo_put_group(struct tomoyo_group *group)
-  */
- static inline struct tomoyo_domain_info *tomoyo_domain(void)
- {
--	return current_cred()->security;
-+	struct tomoyo_domain_info **blob = tomoyo_cred(current_cred());
-+
-+	return *blob;
- }
- 
- /**
-@@ -1216,7 +1231,9 @@ static inline struct tomoyo_domain_info *tomoyo_domain(void)
- static inline struct tomoyo_domain_info *tomoyo_real_domain(struct task_struct
- 							    *task)
- {
--	return task_cred_xxx(task, security);
-+	struct tomoyo_domain_info **blob = tomoyo_cred(get_task_cred(task));
-+
-+	return *blob;
- }
- 
- /**
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index f6758dad981f..b7469fdbff01 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -678,6 +678,7 @@ static int tomoyo_environ(struct tomoyo_execve *ee)
-  */
- int tomoyo_find_next_domain(struct linux_binprm *bprm)
- {
-+	struct tomoyo_domain_info **blob;
- 	struct tomoyo_domain_info *old_domain = tomoyo_domain();
- 	struct tomoyo_domain_info *domain = NULL;
- 	const char *original_name = bprm->filename;
-@@ -843,7 +844,8 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
- 		domain = old_domain;
- 	/* Update reference count on "struct tomoyo_domain_info". */
- 	atomic_inc(&domain->users);
--	bprm->cred->security = domain;
-+	blob = tomoyo_cred(bprm->cred);
-+	*blob = domain;
- 	kfree(exename.name);
- 	if (!retval) {
- 		ee->r.domain = domain;
-diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs_if.c
-index 1d3d7e7a1f05..768dff9608b1 100644
---- a/security/tomoyo/securityfs_if.c
-+++ b/security/tomoyo/securityfs_if.c
-@@ -71,9 +71,12 @@ static ssize_t tomoyo_write_self(struct file *file, const char __user *buf,
- 				if (!cred) {
- 					error = -ENOMEM;
- 				} else {
--					struct tomoyo_domain_info *old_domain =
--						cred->security;
--					cred->security = new_domain;
-+					struct tomoyo_domain_info **blob;
-+					struct tomoyo_domain_info *old_domain;
-+
-+					blob = tomoyo_cred(cred);
-+					old_domain = *blob;
-+					*blob = new_domain;
- 					atomic_inc(&new_domain->users);
- 					atomic_dec(&old_domain->users);
- 					commit_creds(cred);
-@@ -234,10 +237,14 @@ static void __init tomoyo_create_entry(const char *name, const umode_t mode,
-  */
- static int __init tomoyo_initerface_init(void)
- {
-+	struct tomoyo_domain_info *domain;
- 	struct dentry *tomoyo_dir;
- 
-+	if (!tomoyo_enabled)
-+		return 0;
-+	domain = tomoyo_domain();
- 	/* Don't create securityfs entries unless registered. */
--	if (current_cred()->security != &tomoyo_kernel_domain)
-+	if (domain != &tomoyo_kernel_domain)
- 		return 0;
- 
- 	tomoyo_dir = securityfs_create_dir("tomoyo", NULL);
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 9f932e2d6852..622ffa74a124 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -18,7 +18,9 @@
-  */
- static int tomoyo_cred_alloc_blank(struct cred *new, gfp_t gfp)
- {
--	new->security = NULL;
-+	struct tomoyo_domain_info **blob = tomoyo_cred(new);
-+
-+	*blob = NULL;
- 	return 0;
- }
- 
-@@ -34,8 +36,13 @@ static int tomoyo_cred_alloc_blank(struct cred *new, gfp_t gfp)
- static int tomoyo_cred_prepare(struct cred *new, const struct cred *old,
- 			       gfp_t gfp)
- {
--	struct tomoyo_domain_info *domain = old->security;
--	new->security = domain;
-+	struct tomoyo_domain_info **old_blob = tomoyo_cred(old);
-+	struct tomoyo_domain_info **new_blob = tomoyo_cred(new);
-+	struct tomoyo_domain_info *domain;
-+
-+	domain = *old_blob;
-+	*new_blob = domain;
-+
- 	if (domain)
- 		atomic_inc(&domain->users);
- 	return 0;
-@@ -59,7 +66,9 @@ static void tomoyo_cred_transfer(struct cred *new, const struct cred *old)
-  */
- static void tomoyo_cred_free(struct cred *cred)
- {
--	struct tomoyo_domain_info *domain = cred->security;
-+	struct tomoyo_domain_info **blob = tomoyo_cred(cred);
-+	struct tomoyo_domain_info *domain = *blob;
-+
- 	if (domain)
- 		atomic_dec(&domain->users);
- }
-@@ -73,6 +82,9 @@ static void tomoyo_cred_free(struct cred *cred)
-  */
- static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
- {
-+	struct tomoyo_domain_info **blob;
-+	struct tomoyo_domain_info *domain;
-+
- 	/*
- 	 * Do only if this function is called for the first time of an execve
- 	 * operation.
-@@ -93,13 +105,14 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
- 	 * stored inside "bprm->cred->security" will be acquired later inside
- 	 * tomoyo_find_next_domain().
- 	 */
--	atomic_dec(&((struct tomoyo_domain_info *)
--		     bprm->cred->security)->users);
-+	blob = tomoyo_cred(bprm->cred);
-+	domain = *blob;
-+	atomic_dec(&domain->users);
- 	/*
- 	 * Tell tomoyo_bprm_check_security() is called for the first time of an
- 	 * execve operation.
- 	 */
--	bprm->cred->security = NULL;
-+	*blob = NULL;
- 	return 0;
- }
- 
-@@ -112,8 +125,11 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
-  */
- static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
- {
--	struct tomoyo_domain_info *domain = bprm->cred->security;
-+	struct tomoyo_domain_info **blob;
-+	struct tomoyo_domain_info *domain;
- 
-+	blob = tomoyo_cred(bprm->cred);
-+	domain = *blob;
- 	/*
- 	 * Execute permission is checked against pathname passed to do_execve()
- 	 * using current domain.
-@@ -531,6 +547,8 @@ static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
- /* Lock for GC. */
- DEFINE_SRCU(tomoyo_ss);
- 
-+bool tomoyo_enabled;
-+
- /**
-  * tomoyo_init - Register TOMOYO Linux as a LSM module.
-  *
-@@ -539,13 +557,16 @@ DEFINE_SRCU(tomoyo_ss);
- static int __init tomoyo_init(void)
- {
- 	struct cred *cred = (struct cred *) current_cred();
-+	struct tomoyo_domain_info **blob;
- 
- 	if (!security_module_enable("tomoyo"))
- 		return 0;
-+
- 	/* register ourselves with the security framework */
- 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
- 	printk(KERN_INFO "TOMOYO Linux initialized\n");
--	cred->security = &tomoyo_kernel_domain;
-+	blob = tomoyo_cred(cred);
-+	*blob = &tomoyo_kernel_domain;
- 	tomoyo_mm_init();
- 	return 0;
- }
+ #endif /* _SELINUX_OBJSEC_H_ */
 -- 
 2.17.1
