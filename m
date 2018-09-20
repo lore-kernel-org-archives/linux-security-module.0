@@ -1,44 +1,82 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 09:23:20 -0700
-Subject: [PATCH security-next v2 08/26] LSM: Record LSM name in struct lsm_info
+Date: Thu, 20 Sep 2018 09:23:32 -0700
+Subject: [PATCH security-next v2 20/26] LSM: Introduce "lsm.order=" for
+	boottime ordering
 In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
 References: <20180920162338.21060-1-keescook@chromium.org>
-Message-ID: <20180920162338.21060-9-keescook@chromium.org>
+Message-ID: <20180920162338.21060-21-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In preparation for making LSM selections outside of the LSMs, include
-the name of LSMs in struct lsm_info.
+Provide a way to reorder LSM initialization using the new "lsm.order="
+comma-separated list of LSMs. Any LSMs not listed will be added in builtin
+order.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/admin-guide/kernel-parameters.txt |  5 +++++
+ security/security.c                             | 15 ++++++++++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 02ec717189f9..543636f18152 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2040,16 +2040,20 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 				char *lsm);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 32d323ee9218..5ac4c1056ffa 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2276,6 +2276,11 @@
  
- struct lsm_info {
-+	const char *name;	/* Populated automatically. */
- 	int (*init)(void);
- };
+ 	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
  
- extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
++	lsm.order=lsm1,...,lsmN
++			[SECURITY] Choose order of LSM initialization. Any
++			builtin LSMs not listed here will be implicitly
++			added to the list in builtin order.
++
+ 	machvec=	[IA-64] Force the use of a particular machine-vector
+ 			(machvec) in a generic kernel.
+ 			Example: machvec=hpzx1_swiotlb
+diff --git a/security/security.c b/security/security.c
+index 063ee2466e58..4db194f81419 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -43,6 +43,7 @@ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+ char *lsm_names;
+ /* Boot-time LSM user choice */
+ static __initdata const char *chosen_major_lsm;
++static __initdata const char *chosen_lsm_order;
  
- #define DEFINE_LSM(lsm)							\
-+	static const char __lsm_name_##lsm[] __initconst		\
-+		__aligned(1) = #lsm;					\
- 	static struct lsm_info __lsm_##lsm				\
- 		__used __section(.lsm_info.init)			\
- 		__aligned(sizeof(unsigned long))			\
- 		= {							\
-+			.name = __lsm_name_##lsm,			\
+ static __initconst const char * const builtin_lsm_order = CONFIG_LSM_ORDER;
  
- #define END_LSM	  }
+@@ -136,11 +137,15 @@ static void __init parse_lsm_order(const char *order, const char *origin)
+ 	kfree(sep);
+ }
  
+-/* Populate ordered LSMs list from builtin list of LSMs. */
++/* Populate ordered LSMs list from commandline and builtin list of LSMs. */
+ static void __init prepare_lsm_order(void)
+ {
+ 	struct lsm_info *lsm;
+ 
++	/* Parse order from commandline, if present. */
++	if (chosen_lsm_order)
++		parse_lsm_order(chosen_lsm_order, "cmdline");
++
+ 	/* Parse order from builtin list. */
+ 	parse_lsm_order(builtin_lsm_order, "builtin");
+ 
+@@ -264,6 +269,14 @@ static int __init choose_major_lsm(char *str)
+ }
+ __setup("security=", choose_major_lsm);
+ 
++/* Explicitly choose LSM initialization order. */
++static int __init choose_lsm_order(char *str)
++{
++	chosen_lsm_order = str;
++	return 1;
++}
++__setup("lsm.order=", choose_lsm_order);
++
+ /* Enable LSM order debugging. */
+ static int __init enable_debug(char *str)
+ {
 -- 
 2.17.1
