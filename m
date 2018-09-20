@@ -1,98 +1,134 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 09:23:35 -0700
-Subject: [PATCH security-next v2 23/26] LSM: Introduce enum lsm_order
+Date: Thu, 20 Sep 2018 09:23:30 -0700
+Subject: [PATCH security-next v2 18/26] LSM: Build ordered list of ordered
+	LSMs for init
 In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
 References: <20180920162338.21060-1-keescook@chromium.org>
-Message-ID: <20180920162338.21060-24-keescook@chromium.org>
+Message-ID: <20180920162338.21060-19-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In preparation for distinguishing the "capability" LSM from other LSMs,
-it must be ordered first. This introduces LSM_ORDER_MUTABLE for the
-general LSMs, LSM_ORDER_FIRST for capabilities, and LSM_ORDER_LAST for
-anything that must run last (e.g. Landlock may use this in the future).
+This constructs a list of ordered LSMs to initialize, using a hard-coded
+list of only "integrity": minor LSMs continue to have direct hook calls,
+and major LSMs continue to initialize separately.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h |  7 +++++++
- security/security.c       | 22 ++++++++++++++++++++--
- 2 files changed, 27 insertions(+), 2 deletions(-)
+ security/security.c | 59 +++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 52 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index d75a42eb3ddd..bf29851baf47 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2041,8 +2041,15 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 
- #define LSM_FLAG_LEGACY_MAJOR	(1 << 0)
- 
-+enum lsm_order {
-+	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
-+	LSM_ORDER_MUTABLE = 0,
-+	LSM_ORDER_LAST,
-+};
-+
- struct lsm_info {
- 	const char *name;	/* Populated automatically. */
-+	enum lsm_order order;	/* Optional: default is LSM_ORDER_MUTABLE */
- 	unsigned long flags;	/* Optional: flags describing LSM */
- 	int *enabled;		/* Optional: NULL means enabled. */
- 	int (*init)(void);
 diff --git a/security/security.c b/security/security.c
-index 3fba28de789b..d649e7dea4c4 100644
+index 25a019cc4a2b..2541a512a0f7 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -62,6 +62,10 @@ static int lsm_enabled_true __initdata = 1;
- static int lsm_enabled_false __initdata = 0;
- static void __init set_enabled(struct lsm_info *lsm, bool enabled)
- {
-+	/* First LSM cannot have enablement changed. */
-+	if (lsm->order == LSM_ORDER_FIRST)
-+		return;
+@@ -34,6 +34,9 @@
+ 
+ #define MAX_LSM_EVM_XATTR	2
+ 
++/* How many LSMs were built into the kernel? */
++#define LSM_COUNT (__end_lsm_info - __start_lsm_info)
 +
- 	if (!lsm->enabled) {
- 		/*
- 		 * If the LSM hasn't configured an enable flag, we
-@@ -124,7 +128,8 @@ static void __init parse_lsm_order(const char *order, const char *origin)
- 		bool found = false;
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
  
- 		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
--			if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0 &&
-+			if (lsm->order == LSM_ORDER_MUTABLE &&
-+			    (lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0 &&
- 			    strcmp(lsm->name, name) == 0) {
- 				append_ordered_lsm(lsm, origin);
- 				found = true;
-@@ -142,6 +147,12 @@ static void __init prepare_lsm_order(void)
- {
- 	struct lsm_info *lsm;
+@@ -41,6 +44,9 @@ char *lsm_names;
+ /* Boot-time LSM user choice */
+ static __initdata const char *chosen_major_lsm;
  
-+	/* LSM_ORDER_FIRST is always first. */
-+	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+		if (lsm->order == LSM_ORDER_FIRST)
-+			append_ordered_lsm(lsm, "first");
-+	}
++/* Ordered list of LSMs to initialize. */
++static __initdata struct lsm_info **ordered_lsms;
 +
- 	/* Parse order from commandline, if present. */
- 	if (chosen_lsm_order)
- 		parse_lsm_order(chosen_lsm_order, "cmdline");
-@@ -151,9 +162,16 @@ static void __init prepare_lsm_order(void)
- 
- 	/* Add any missing LSMs, in link order. */
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
--		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
-+		if (lsm->order == LSM_ORDER_MUTABLE &&
-+		    (lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
- 			append_ordered_lsm(lsm, "link-time");
+ static bool debug __initdata;
+ #define init_debug(...)						\
+ 	do {							\
+@@ -74,6 +80,45 @@ static void __init set_enabled(struct lsm_info *lsm, bool enabled)
  	}
-+
-+	/* LSM_ORDER_LAST is always last. */
-+	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+		if (lsm->order == LSM_ORDER_LAST)
-+			append_ordered_lsm(lsm, "last");
-+	}
  }
  
++/* Is an LSM already listed in the ordered LSMs list? */
++static bool __init exists_ordered_lsm(struct lsm_info *lsm)
++{
++	struct lsm_info **check;
++
++	for (check = ordered_lsms; *check; check++)
++		if (*check == lsm)
++			return true;
++
++	return false;
++}
++
++/* Append an LSM to the list of ordered LSMs to initialize. */
++static int last_lsm __initdata;
++static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
++{
++	/* Ignore duplicate selections. */
++	if (exists_ordered_lsm(lsm))
++		return;
++
++	if (WARN(last_lsm == LSM_COUNT, "%s: out of LSM slots!?\n", from))
++		return;
++
++	ordered_lsms[last_lsm++] = lsm;
++	init_debug("%s ordering: %s (%sabled)\n", from, lsm->name,
++		   (!lsm->enabled || *lsm->enabled) ? "en" : "dis");
++}
++
++/* Populate ordered LSMs list from hard-coded list of LSMs. */
++static void __init prepare_lsm_order(void)
++{
++	struct lsm_info *lsm;
++
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		if (strcmp(lsm->name, "integrity") == 0)
++			append_ordered_lsm(lsm, "builtin");
++	}
++}
++
  /* Is an LSM allowed to be enabled? */
+ static bool __init lsm_allowed(struct lsm_info *lsm)
+ {
+@@ -104,14 +149,10 @@ static void __init maybe_initialize_lsm(struct lsm_info *lsm)
+ 
+ static void __init ordered_lsm_init(void)
+ {
+-	struct lsm_info *lsm;
+-
+-	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+-		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
+-			continue;
++	struct lsm_info **lsm;
+ 
+-		maybe_initialize_lsm(lsm);
+-	}
++	for (lsm = ordered_lsms; *lsm; lsm++)
++		maybe_initialize_lsm(*lsm);
+ }
+ 
+ static void __init major_lsm_init(void)
+@@ -141,6 +182,8 @@ int __init security_init(void)
+ 	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
+ 	     i++)
+ 		INIT_HLIST_HEAD(&list[i]);
++	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
++				GFP_KERNEL);
+ 
+ 	/* Process "security=", if given. */
+ 	if (!chosen_major_lsm)
+@@ -169,6 +212,7 @@ int __init security_init(void)
+ 	loadpin_add_hooks();
+ 
+ 	/* Load LSMs in specified order. */
++	prepare_lsm_order();
+ 	ordered_lsm_init();
+ 
+ 	/*
+@@ -176,6 +220,7 @@ int __init security_init(void)
+ 	 */
+ 	major_lsm_init();
+ 
++	kfree(ordered_lsms);
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
