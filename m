@@ -1,74 +1,99 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 09:23:25 -0700
-Subject: [PATCH security-next v2 13/26] LSM: Plumb visibility into optional
-	"enabled" state
+Date: Thu, 20 Sep 2018 09:23:27 -0700
+Subject: [PATCH security-next v2 15/26] LSM: Introduce lsm.enable= and
+	lsm.disable=
 In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
 References: <20180920162338.21060-1-keescook@chromium.org>
-Message-ID: <20180920162338.21060-14-keescook@chromium.org>
+Message-ID: <20180920162338.21060-16-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In preparation for lifting the "is this LSM enabled?" logic out of the
-individual LSMs, pass in any special enabled state tracking (as needed
-for SELinux, AppArmor, and LoadPin). This must be an "int" to include
-handling cases where "enabled" is exposed via sysctl which has no "bool"
-type (i.e. LoadPin's use).
+This has identical functionality to the existing per-LSM enable handling,
+but provides a centralized place to perform it. If multiple instances
+of a parameter (either with the custom LSM-specific parameter or the
+"lsm.{enable,disable}" parameter) for a specific LSM are on the boot
+command line, the last one takes precedent.
 
-LoadPin's "enabled" tracking will be added later when it gets added to
-the "ordered LSM" stack.
+Disabling an LSM means it will not be considered when performing
+initializations. Enabling an LSM means either undoing a previous disabling
+or a undoing a default-disabled CONFIG setting.
+
+For example: "lsm.disable=apparmor apparmor.enabled=1" will leave
+AppArmor enabled. "selinux.enabled=0 lsm.enable=selinux" will leave
+SELinux enabled.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h | 1 +
- security/apparmor/lsm.c   | 5 +++--
- security/selinux/hooks.c  | 1 +
- 3 files changed, 5 insertions(+), 2 deletions(-)
+ security/security.c | 47 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 46 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 38cbefabff71..118e12f678df 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2044,6 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
- struct lsm_info {
- 	const char *name;	/* Populated automatically. */
- 	unsigned long flags;	/* Optional: flags describing LSM */
-+	int *enabled;		/* Optional: NULL means enabled. */
- 	int (*init)(void);
- };
+diff --git a/security/security.c b/security/security.c
+index 85533d4e534a..72d1ef2fc4cc 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -53,10 +53,29 @@ static bool debug __initdata;
+ 	} while (0)
  
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 4c5f63e9aeba..d03133a267f2 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1303,8 +1303,8 @@ bool aa_g_paranoid_load = true;
- module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
- 
- /* Boot time disable flag */
--static bool apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
--module_param_named(enabled, apparmor_enabled, bool, S_IRUGO);
-+static int apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
-+module_param_named(enabled, apparmor_enabled, int, 0444);
- 
- static int __init apparmor_enabled_setup(char *str)
+ /* Mark an LSM's enabled flag, if it exists. */
++static int lsm_enabled_true __initdata = 1;
++static int lsm_enabled_false __initdata = 0;
+ static void __init set_enabled(struct lsm_info *lsm, bool enabled)
  {
-@@ -1608,5 +1608,6 @@ static int __init apparmor_init(void)
+-	if (lsm->enabled)
++	if (!lsm->enabled) {
++		/*
++		 * If the LSM hasn't configured an enable flag, we
++		 * can use a hard-coded setting for storing the
++		 * state ourselves.
++		 */
++		if (enabled)
++			lsm->enabled = &lsm_enabled_true;
++		else
++			lsm->enabled = &lsm_enabled_false;
++	} else if (lsm->enabled == &lsm_enabled_true) {
++		if (!enabled)
++			lsm->enabled = &lsm_enabled_false;
++	} else if (lsm->enabled == &lsm_enabled_false) {
++		if (enabled)
++			lsm->enabled = &lsm_enabled_true;
++	} else {
+ 		*lsm->enabled = enabled;
++	}
+ }
  
- DEFINE_LSM(apparmor)
- 	.flags = LSM_FLAG_LEGACY_MAJOR,
-+	.enabled = &apparmor_enabled,
- 	.init = apparmor_init,
- END_LSM;
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 615cf6498c0f..3f999ed98cfd 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7204,6 +7204,7 @@ void selinux_complete_init(void)
-    all processes and objects when they are created. */
- DEFINE_LSM(selinux)
- 	.flags = LSM_FLAG_LEGACY_MAJOR,
-+	.enabled = &selinux_enabled,
- 	.init = selinux_init,
- END_LSM;
+ /* Is an LSM allowed to be enabled? */
+@@ -169,6 +188,32 @@ static int __init enable_debug(char *str)
+ }
+ __setup("lsm.debug", enable_debug);
  
++/* Explicitly enable an LSM */
++static int __init enable_lsm(char *str)
++{
++	struct lsm_info *lsm;
++
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		if (strcmp(str, lsm->name) == 0)
++			set_enabled(lsm, true);
++	}
++	return 1;
++}
++__setup("lsm.enable=", enable_lsm);
++
++/* Explicitly disable an LSM */
++static int __init disable_lsm(char *str)
++{
++	struct lsm_info *lsm;
++
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		if (strcmp(str, lsm->name) == 0)
++			set_enabled(lsm, false);
++	}
++	return 1;
++}
++__setup("lsm.disable=", disable_lsm);
++
+ static bool match_last_lsm(const char *list, const char *lsm)
+ {
+ 	const char *last;
 -- 
 2.17.1
