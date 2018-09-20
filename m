@@ -1,59 +1,41 @@
-From: fw@strlen.de (Florian Westphal)
-Date: Thu, 20 Sep 2018 11:44:58 +0200
-Subject: [PATCH] netfilter: nf_tables: add SECMARK support
-In-Reply-To: <CAJ2a_DfGCRXaH9BkBj=0R1Cr3jiHQHgq-pU2HGuWudvWCSKLQg@mail.gmail.com>
-References: <20180919231402.4482-1-cgzones@googlemail.com>
-	<75b3fed9-e549-4ed0-c435-ec4795fc1e39@schaufler-ca.com>
-	<20180920085048.tps2v4jkko7zjav4@breakpoint.cc>
-	<CAJ2a_DfGCRXaH9BkBj=0R1Cr3jiHQHgq-pU2HGuWudvWCSKLQg@mail.gmail.com>
-Message-ID: <20180920094458.6hwaw3vgfsxvcgb4@breakpoint.cc>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Thu, 20 Sep 2018 08:20:50 -0700
+Subject: [PATCH v3 09/16] SELinux: Abstract use of file security blob
+In-Reply-To: <124ae3859e8141deb35ed8355370b4ed@AcuMS.aculab.com>
+References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
+	<14db9a22-9f31-88fb-dbc1-8bc4ade74bf6@schaufler-ca.com>
+	<124ae3859e8141deb35ed8355370b4ed@AcuMS.aculab.com>
+Message-ID: <4db0c110-c1aa-aac8-901f-a9abf662b605@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Christian G?ttsche <cgzones@googlemail.com> wrote:
-> > Fixes should go into nf.git whereas feature goes to nf-next.git.
-> 
-> No, that should not be a unroll fix.
-> Currently there are no objects registered by the main nf_tables
-> module, so for nft_secmark_obj_type I had to introduce this new logic.
+On 9/20/2018 1:51 AM, David Laight wrote:
+> From: Casey Schaufler
+>> Sent: 20 September 2018 01:21
+>>
+>> SELinux: Abstract use of file security blob
+>>
+>> Don't use the file->f_security pointer directly.
+>> Provide a helper function that provides the security blob pointer.
+> ...
+>> +static inline struct file_security_struct *selinux_file(const struct file *file)
+>> +{
+>> +	return file->f_security;
+>> +}
+>> +
+> Why?
 
-I see, ok.
+In patch 16/16 this becomes:
 
-> > > > +   if (err) {
-> > > > +           if (err == -EINVAL)
-> > > > +                   pr_notice_ratelimited("invalid security context \'%s\'\n", priv->ctx);
-> > > > +           else
-> > > > +                   pr_notice_ratelimited("unable to convert security context \'%s\': %d\n", priv->ctx, -err);
-> > > > +           return;
-> > > > +   }
-> >
-> > Please remove these printks(), they do not really help as user can't
-> > take any action anyway.
-> 
-> Aren't they helpful?
-> "invalid security context" can pop up if someone supplies an invalid
-> SELinux context (nft add secmark inet filter sshtag
-> \"this_is_invalid\") and uses it
+ static inline struct file_security_struct *selinux_file(const struct file *file)
+ {
++#ifdef CONFIG_SECURITY_STACKING
++	return file->f_security + selinux_blob_sizes.lbs_file;
++#else
+ 	return file->f_security;
++#endif
+ }
 
-Can't that be caught at ->init() time?
-We can then reject this via plain -EINVAL.
-
-No need for printk because caller knows which expression/object caused
-the error.
-
-> "unable to convert security context" can pop up if no LSM is enabled
-
-Can that be done at ->init() time when we can still reject the (invalid)
-rule?
-
-> "unable to map security context" should never happen, but one never knows
-
-Ok, but what is user supposed to do?
-This just causes perpetual spew of warnings in the kernel ring buffer.
-
-> "unable to obtain relabeling permission" can pop up if e.g. the
-> SELinux permission "kernel_t ssh_server_packet:packet relabelto" is
-> missing
-
-Makes sense, but this will need to be a plain
-return -EPERM, this function can only be used in process context.
+You could hard code this bit everywhere it's used, but that
+would be prone to error. I'm not generally an abstractionist
+myself, but it these cases abstraction adds value.
