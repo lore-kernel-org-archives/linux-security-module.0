@@ -1,38 +1,50 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 09:23:13 -0700
-Subject: [PATCH security-next v2 01/26] LSM: Correctly announce start of LSM
-	initialization
+Date: Thu, 20 Sep 2018 09:23:14 -0700
+Subject: [PATCH security-next v2 02/26] vmlinux.lds.h: Avoid copy/paste of
+	security_init section
 In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
 References: <20180920162338.21060-1-keescook@chromium.org>
-Message-ID: <20180920162338.21060-2-keescook@chromium.org>
+Message-ID: <20180920162338.21060-3-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-For a while now, the LSM core has said it was "initializED", rather than
-"initializING". This adjust the report to be more accurate (i.e. before
-this was reported before any LSMs had been initialized.)
+Avoid copy/paste by defining SECURITY_INIT in terms of SECURITY_INITCALL.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/security.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/asm-generic/vmlinux.lds.h | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/security/security.c b/security/security.c
-index 736e78da1ab9..4cbcf244a965 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -72,10 +72,11 @@ int __init security_init(void)
- 	int i;
- 	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 7b75ff6e2fce..934a45395547 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -473,13 +473,6 @@
+ #define RODATA          RO_DATA_SECTION(4096)
+ #define RO_DATA(align)  RO_DATA_SECTION(align)
  
-+	pr_info("Security Framework initializing\n");
+-#define SECURITY_INIT							\
+-	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
+-		__security_initcall_start = .;				\
+-		KEEP(*(.security_initcall.init))			\
+-		__security_initcall_end = .;				\
+-	}
+-
+ /*
+  * .text section. Map to function alignment to avoid address changes
+  * during second ld run in second ld pass when generating System.map
+@@ -798,6 +791,12 @@
+ 		KEEP(*(.security_initcall.init))			\
+ 		__security_initcall_end = .;
+ 
++/* Older linker script style for security init. */
++#define SECURITY_INIT							\
++	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
++		SECURITY_INITCALL					\
++	}
 +
- 	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
- 	     i++)
- 		INIT_HLIST_HEAD(&list[i]);
--	pr_info("Security Framework initialized\n");
- 
- 	/*
- 	 * Load minor LSMs, with the capability module always first.
+ #ifdef CONFIG_BLK_DEV_INITRD
+ #define INIT_RAM_FS							\
+ 	. = ALIGN(4);							\
 -- 
 2.17.1
