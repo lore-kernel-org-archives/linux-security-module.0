@@ -1,35 +1,31 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 10:13:17 -0700
-Subject: [PATCH v3 07/16] TOMOYO: Abstract use of cred security blob
-In-Reply-To: <ea146829-594a-64a5-6e60-427d39aff4bc@schaufler-ca.com>
+Date: Thu, 20 Sep 2018 10:25:28 -0700
+Subject: [PATCH v3 10/16] LSM: Infrastructure management of the file
+	security blob
+In-Reply-To: <5b95b037-521f-3402-2097-c0f9c427d235@schaufler-ca.com>
 References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
-	<ea146829-594a-64a5-6e60-427d39aff4bc@schaufler-ca.com>
-Message-ID: <CAGXu5jJ0xB+Zh7oUAzk9kDMaFTOcNXFzOxL6mwqsw8KaQ0Ks-g@mail.gmail.com>
+	<5b95b037-521f-3402-2097-c0f9c427d235@schaufler-ca.com>
+Message-ID: <CAGXu5jKUfHAK-cFj0YtqqGXypFGigpWNitVOPJx9SubSbnfkzw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 19, 2018 at 5:20 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> @@ -539,13 +557,16 @@ DEFINE_SRCU(tomoyo_ss);
->  static int __init tomoyo_init(void)
->  {
->         struct cred *cred = (struct cred *) current_cred();
-> +       struct tomoyo_domain_info **blob;
->
->         if (!security_module_enable("tomoyo"))
->                 return 0;
-> +
->         /* register ourselves with the security framework */
->         security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
->         printk(KERN_INFO "TOMOYO Linux initialized\n");
-> -       cred->security = &tomoyo_kernel_domain;
-> +       blob = tomoyo_cred(cred);
-> +       *blob = &tomoyo_kernel_domain;
->         tomoyo_mm_init();
->         return 0;
+On Wed, Sep 19, 2018 at 5:21 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index 01a922856eba..62a22ad8ce92 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -361,6 +361,11 @@ static inline struct task_smack *smack_cred(const struct cred *cred)
+>         return cred->security;
 >  }
+>
+> +static inline struct smack_known **smack_file(const struct file *file)
+> +{
+> +       return file->f_security;
+> +}
+> +
 
-This is missing "tomoyo_enabled = true;" which is included in the next
-patch but should be here.
+This (and related) still needs splitting out into it's own refactoring
+patch for Smack.
 
 -Kees
 
