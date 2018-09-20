@@ -1,69 +1,130 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 10:56:30 -0700
-Subject: [PATCH v3 16/16] LSM: Blob sharing support for S.A.R.A and
-	LandLock
-In-Reply-To: <8ef63a94-c7b6-226d-2d60-a05f79406819@schaufler-ca.com>
-References: <748c61cb-b6fa-c36d-a7b3-2315ff6292af@schaufler-ca.com>
-	<8ef63a94-c7b6-226d-2d60-a05f79406819@schaufler-ca.com>
-Message-ID: <CAGXu5j+aWyiQ_aGCkeoyvYC7Aj2hfuvKei+SAOMrfOWyfpP8xw@mail.gmail.com>
+From: martin@lichtvoll.de (Martin Steigerwald)
+Date: Thu, 20 Sep 2018 22:14:46 +0200
+Subject: [PATCH security-next v2 00/26] LSM: Explict LSM ordering
+In-Reply-To: <20180920162338.21060-1-keescook@chromium.org>
+References: <20180920162338.21060-1-keescook@chromium.org>
+Message-ID: <1898403.NNy4ELVaME@merkaba>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 19, 2018 at 5:21 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 8f3b809d7c26..0156ffea7f8c 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -3475,18 +3475,16 @@ static int smack_getprocattr(struct task_struct *p, char *name, char **value)
->  {
->         struct smack_known *skp = smk_of_task_struct(p);
->         char *cp;
-> -       int slen;
->
-> -       if (strcmp(name, "current") != 0)
-> +       if (strcmp(name, "current") == 0) {
-> +               cp = kstrdup(skp->smk_known, GFP_KERNEL);
-> +               if (cp == NULL)
-> +                       return -ENOMEM;
-> +       } else
->                 return -EINVAL;
->
-> -       cp = kstrdup(skp->smk_known, GFP_KERNEL);
-> -       if (cp == NULL)
-> -               return -ENOMEM;
-> -
-> -       slen = strlen(cp);
->         *value = cp;
-> -       return slen;
-> +       return strlen(cp);
->  }
+Kees Cook - 20.09.18, 18:23:
+> v2:
+> - add "lsm.order=" and CONFIG_LSM_ORDER instead of overloading
+> "security=" - reorganize introduction of ordering logic code
+> 
+> Updated cover letter:
+> 
+> This refactors the LSM registration and initialization infrastructure
+> to more centrally support different LSM types. What was considered a
+> "major" LSM is kept for legacy use of the "security=" boot parameter,
+> and now overlaps with the new class of "exclusive" LSMs for the future
+> blob sharing (to be added later). The "minor" LSMs become more well
+> defined as a result of the refactoring.
+> 
+> Instead of continuing to (somewhat improperly) overload the kernel's
+> initcall system, this changes the LSM infrastructure to store a
+> registration structure (struct lsm_info) table instead, where metadata
+> about each LSM can be recorded (name, flags, order, enable flag, init
+> function). This can be extended in the future to include things like
+> required blob size for the coming "blob sharing" LSMs.
 
-This should be separate: it looks like unrelated refactoring? (I
-mentioned this before, I think?)
+I read the cover letter and still don?t know what this is about. Now I 
+am certainly not engaged deeply with LSM. I bet my main missing piece 
+is: What is a "blob sharing" LSM.
 
-> diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-> index 0110bebe86e2..f386f92c57c5 100644
-> --- a/security/tomoyo/common.h
-> +++ b/security/tomoyo/common.h
-> @@ -1216,8 +1221,13 @@ static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
->   */
->  static inline struct tomoyo_domain_info *tomoyo_domain(void)
->  {
-> -       struct tomoyo_domain_info **blob = tomoyo_cred(current_cred());
-> +       const struct cred *cred = current_cred();
-> +       struct tomoyo_domain_info **blob;
-> +
-> +       if (cred->security == NULL)
-> +               return NULL;
->
-> +       blob = tomoyo_cred(cred);
->         return *blob;
->  }
+I think it would improve the cover letter greatly if it explains briefly 
+what is a major LSM, what is a minor LSM and what is a "blob sharing" 
+LSM.
 
-I think this is another lost hunk?
+Why those are all needed? What is the actual security or end user 
+benefit of this work? The questions are not to question your work. I bet 
+it makes all perfect sense. I just did not understand its sense from 
+reading the cover letter.
 
--Kees
+> The "major" LSMs had to individually negotiate which of them should be
+> enabled. This didn't provide a way to negotiate combinations of other
+> LSMs (as will be needed for "blob sharing" LSMs). This is solved by
+> providing the LSM infrastructure with all the details needed to make
+> the choice (exposing the per-LSM "enabled" flag, if used, the LSM
+> characteristics, and ordering expectations).
+> 
+> As a result of the refactoring, the "minor" LSMs are able to remove
+> the open-coded security_add_hooks() calls for "capability", "yama",
+> and "loadpin", and to redefine "integrity" properly as a general LSM.
+> (Note that "integrity" actually defined _no_ hooks, but needs the
+> early initialization).
+> 
+> With all LSMs being proessed centrally, it was possible to implement
+> a new boot parameter "lsm.order=" to provide explicit ordering, which
+> is helpful for the future "blob sharing" LSMs. Matching this is the
+> new CONFIG_LSM_ORDER, which replaces CONFIG_DEFAULT_SECURITY, as it
+> provides a higher granularity of control.
+> 
+> To better show LSMs activation some debug reporting was added (enabled
+> with the "lsm.debug" boot commandline option).
+> 
+> Finally, I added a WARN() around LSM initialization failures, which
+> appear to have always been silently ignored. (Realistically any LSM
+> init failures would have only been due to catastrophic kernel issues
+> that would render a system unworkable anyway, but it'd be better to
+> expose the problem as early as possible.)
+> 
+> -Kees
+> 
+> Kees Cook (26):
+>   LSM: Correctly announce start of LSM initialization
+>   vmlinux.lds.h: Avoid copy/paste of security_init section
+>   LSM: Rename .security_initcall section to .lsm_info
+>   LSM: Remove initcall tracing
+>   LSM: Convert from initcall to struct lsm_info
+>   vmlinux.lds.h: Move LSM_TABLE into INIT_DATA
+>   LSM: Convert security_initcall() into DEFINE_LSM()
+>   LSM: Record LSM name in struct lsm_info
+>   LSM: Provide init debugging infrastructure
+>   LSM: Don't ignore initialization failures
+>   LSM: Introduce LSM_FLAG_LEGACY_MAJOR
+>   LSM: Provide separate ordered initialization
+>   LSM: Plumb visibility into optional "enabled" state
+>   LSM: Lift LSM selection out of individual LSMs
+>   LSM: Introduce lsm.enable= and lsm.disable=
+>   LSM: Prepare for reorganizing "security=" logic
+>   LSM: Refactor "security=" in terms of enable/disable
+>   LSM: Build ordered list of ordered LSMs for init
+>   LSM: Introduce CONFIG_LSM_ORDER
+>   LSM: Introduce "lsm.order=" for boottime ordering
+>   LoadPin: Initialize as ordered LSM
+>   Yama: Initialize as ordered LSM
+>   LSM: Introduce enum lsm_order
+>   capability: Mark as LSM_ORDER_FIRST
+>   LSM: Separate idea of "major" LSM from "exclusive" LSM
+>   LSM: Add all exclusive LSMs to ordered initialization
+> 
+>  .../admin-guide/kernel-parameters.txt         |   7 +
+>  arch/arc/kernel/vmlinux.lds.S                 |   1 -
+>  arch/arm/kernel/vmlinux-xip.lds.S             |   1 -
+>  arch/arm64/kernel/vmlinux.lds.S               |   1 -
+>  arch/h8300/kernel/vmlinux.lds.S               |   1 -
+>  arch/microblaze/kernel/vmlinux.lds.S          |   2 -
+>  arch/powerpc/kernel/vmlinux.lds.S             |   2 -
+>  arch/um/include/asm/common.lds.S              |   2 -
+>  arch/xtensa/kernel/vmlinux.lds.S              |   1 -
+>  include/asm-generic/vmlinux.lds.h             |  25 +-
+>  include/linux/init.h                          |   2 -
+>  include/linux/lsm_hooks.h                     |  43 ++-
+>  include/linux/module.h                        |   1 -
+>  security/Kconfig                              |  42 +--
+>  security/apparmor/lsm.c                       |  16 +-
+>  security/commoncap.c                          |   8 +-
+>  security/integrity/iint.c                     |   5 +-
+>  security/loadpin/loadpin.c                    |  10 +-
+>  security/security.c                           | 304
+> ++++++++++++++---- security/selinux/hooks.c                      | 
+> 16 +-
+>  security/smack/smack_lsm.c                    |   8 +-
+>  security/tomoyo/tomoyo.c                      |   7 +-
+>  security/yama/yama_lsm.c                      |   7 +-
+>  23 files changed, 348 insertions(+), 164 deletions(-)
+
 
 -- 
-Kees Cook
-Pixel Security
+Martin
