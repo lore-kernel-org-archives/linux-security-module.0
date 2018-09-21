@@ -1,102 +1,61 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Thu, 20 Sep 2018 20:02:01 -0700
-Subject: [PATCH security-next v2 26/26] LSM: Add all exclusive LSMs to
-	ordered initialization
-In-Reply-To: <74ecd4ec-491b-93d7-4e3f-46f92121130b@canonical.com>
-References: <20180920162338.21060-1-keescook@chromium.org>
-	<20180920162338.21060-27-keescook@chromium.org>
-	<a0165ce9-d15b-eaef-a5e8-2aeb6bdc69f6@schaufler-ca.com>
-	<CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
-	<7d2cc28b-aee5-ee91-9362-f92f8ca30adc@schaufler-ca.com>
-	<6c899d9e-45aa-8159-c402-b3c4d1936112@canonical.com>
-	<CAGXu5jKzqij5dY2FYm5rafPNPpF1Tx9BPmK+=FvG+=tpFxpscw@mail.gmail.com>
-	<74ecd4ec-491b-93d7-4e3f-46f92121130b@canonical.com>
-Message-ID: <CAGXu5j+QhU2HOicYKqfNo17n9k6DKgt1upa3O2p1b5Gvn6icbQ@mail.gmail.com>
+From: dan.carpenter@oracle.com (Dan Carpenter)
+Date: Fri, 21 Sep 2018 11:34:29 +0300
+Subject: [PATCH v3 3/6] ima: refactor ima_init_policy()
+In-Reply-To: <20180919075522.7684-4-nayna@linux.vnet.ibm.com>
+Message-ID: <20180921083429.c7sikis5bzxdifny@mwanda>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 20, 2018 at 7:14 PM, John Johansen
-<john.johansen@canonical.com> wrote:
-> On 09/20/2018 07:05 PM, Kees Cook wrote:
->> On Thu, Sep 20, 2018 at 6:39 PM, John Johansen
->> <john.johansen@canonical.com> wrote:
->>> On 09/20/2018 06:10 PM, Casey Schaufler wrote:
->>>> On 9/20/2018 5:45 PM, Kees Cook wrote:
->>>>> On Thu, Sep 20, 2018 at 5:25 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>>> On 9/20/2018 9:23 AM, Kees Cook wrote:
->>>>>>>  config LSM_ORDER
->>>>>>>       string "Default initialization order of builtin LSMs"
->>>>>>> -     default "yama,loadpin,integrity"
->>>>>>> +     default "yama,loadpin,integrity,selinux,smack,tomoyo,apparmor"
->>>>>> If I want to compile all the major modules into my kernel and use
->>>>>> AppArmor by default would I use
->>>>>>
->>>>>>         default "yama,loadpin,integrity,apparmor,selinux,smack,tomoyo"
->>>>>>
->>>>>> or
->>>>>>
->>>>>>         default "yama,loadpin,integrity,apparmor"
->>>>> I was expecting the former, but the latter will have the same result.
->>>
->>> t find having the two be equivalent violates expectations. At least
->>> when considering the end goal of full/extreme stacking, its trivially
->>> the same with current major lsms being exclusive
->>
->> This mixes "enablement" with "ordering", though, and I think the past
->> threads have shown this to be largely problematic.
->>
->> However, with CONFIG_LSM_ENABLED, we get the effect you're looking for, IIUC.
->
-> no, I was just stating in a world where we have full stacking those two
-> are not equivalent, as I would assume the order of any lsm not listed
-> may end up being different.
+Hi Nayna,
 
-Right, the ordering would be defined first by runtime (lsm.order=)
-followed any missing LSMs then ordered by their order in
-CONFIG_LSM_ORDER=, followed by any still missing LSMs then ordered by
-their order at link-time (which *may* be Makefile order, but could
-change with LTO, etc).
+Thank you for the patch! Perhaps something to improve:
 
->>>>>> When we have "blob-sharing" how could I compile in tomoyo,
->>>>>> but exclude it without a boot line option?
->>>>> Ooh, yes, this series has no way to do that. Perhaps
->>>>> CONFIG_LSM_DISABLE in the same form as CONFIG_LSM_ORDER? I would
->>>>> totally remove LoadPin's CONFIG for this in favor it.
->>>>
->>>> I would generally prefer an optional CONFIG_LSM_ENABLE to
->>>> CONFIG_LSM_DISABLE, but I understand the logic behind your
->>>> approach. I would be looking for something like
->>>>
->>> +1 on the CONFIG_LSM_ENABLE ove DISABLE
->>>
->>>> CONFIG LSM_ENABLE
->>>>       string "Default set of enabled LSMs"
->>>>       default ""
->>>>
->>>> as opposed to
->>>>
->>>> CONFIG LSM_DISABLE
->>>>       string "Default set of disabled LSMs"
->>>>       default ""
->>>>
->>>> where an empty string is interpreted as "use 'em all"
->>>> in either case.
->>
->> Yes, I like CONFIG_LSM_ENABLE if "empty" means "enable all". Should
->> CONFIG_LSM_ENABLE replace all the other CONFIG-based LSM
->> enabling/disabling?
->
-> I don't particularly like "empty" being "enable all". With that
-> how would I disable all builtin lsms so that I just boot with
-> capability.
->
-> An option of all or even * is more explicit and leaves the empty
-> set to mean disable everything
+url:    https://github.com/0day-ci/linux/commits/Nayna-Jain/Add-support-for-architecture-specific-IMA-policies/20180920-035110
 
-Okay, that works. I prefer "all" FWIW.
+smatch warnings:
+security/integrity/ima/ima_policy.c:489 add_rules() warn: should this be a bitwise op?
 
--Kees
+# https://github.com/0day-ci/linux/commit/84a2e186f940ebc6c34e6d276e55f665167a5bb8
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 84a2e186f940ebc6c34e6d276e55f665167a5bb8
+vim +489 security/integrity/ima/ima_policy.c
 
--- 
-Kees Cook
-Pixel Security
+6f0911a6 Mimi Zohar 2018-04-12  477  
+84a2e186 Nayna Jain 2018-09-19  478  static void add_rules(struct ima_rule_entry *entries, int count,
+84a2e186 Nayna Jain 2018-09-19  479  		      enum policy_rule_list file)
+84a2e186 Nayna Jain 2018-09-19  480  {
+84a2e186 Nayna Jain 2018-09-19  481  	int i = 0;
+84a2e186 Nayna Jain 2018-09-19  482  
+84a2e186 Nayna Jain 2018-09-19  483  	for (i = 0; i < count; i++) {
+84a2e186 Nayna Jain 2018-09-19  484  		struct ima_rule_entry *entry;
+84a2e186 Nayna Jain 2018-09-19  485  
+84a2e186 Nayna Jain 2018-09-19  486  		if (file && IMA_DEFAULT_POLICY)
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+84a2e186 Nayna Jain 2018-09-19  487  			list_add_tail(&entries[i].list, &ima_default_rules);
+84a2e186 Nayna Jain 2018-09-19  488  
+84a2e186 Nayna Jain 2018-09-19 @489  		if (file && IMA_CUSTOM_POLICY) {
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+It does look like it should be "if (file & IMA_CUSTOM_POLICY) {" but I
+haven't looked@the context besides what's here in this email.
+
+84a2e186 Nayna Jain 2018-09-19  490  			entry = kmemdup(&entries[i], sizeof(*entry),
+84a2e186 Nayna Jain 2018-09-19  491  					GFP_KERNEL);
+84a2e186 Nayna Jain 2018-09-19  492  			if (!entry)
+84a2e186 Nayna Jain 2018-09-19  493  				continue;
+84a2e186 Nayna Jain 2018-09-19  494  
+84a2e186 Nayna Jain 2018-09-19  495  			INIT_LIST_HEAD(&entry->list);
+84a2e186 Nayna Jain 2018-09-19  496  			list_add_tail(&entry->list, &ima_policy_rules);
+84a2e186 Nayna Jain 2018-09-19  497  		}
+84a2e186 Nayna Jain 2018-09-19  498  		if (entries[i].action == APPRAISE)
+84a2e186 Nayna Jain 2018-09-19  499  			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
+84a2e186 Nayna Jain 2018-09-19  500  		if (entries[i].func == POLICY_CHECK)
+84a2e186 Nayna Jain 2018-09-19  501  			temp_ima_appraise |= IMA_APPRAISE_POLICY;
+84a2e186 Nayna Jain 2018-09-19  502  	}
+84a2e186 Nayna Jain 2018-09-19  503  }
+84a2e186 Nayna Jain 2018-09-19  504  
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
