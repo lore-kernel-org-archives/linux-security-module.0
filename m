@@ -1,112 +1,43 @@
-From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Fri, 21 Sep 2018 16:58:05 +0300
-Subject: [PATCH v4 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-In-Reply-To: <20180921135820.20549-1-tomas.winkler@intel.com>
-References: <20180921135820.20549-1-tomas.winkler@intel.com>
-Message-ID: <20180921135820.20549-7-tomas.winkler@intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 21 Sep 2018 07:57:30 -0700
+Subject: [PATCH security-next v2 26/26] LSM: Add all exclusive LSMs to
+	ordered initialization
+In-Reply-To: <915ba7e5-0e10-87ef-f0a9-1d8db2e6de90@canonical.com>
+References: <20180920162338.21060-1-keescook@chromium.org>
+	<20180920162338.21060-27-keescook@chromium.org>
+	<a0165ce9-d15b-eaef-a5e8-2aeb6bdc69f6@schaufler-ca.com>
+	<CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
+	<7d2cc28b-aee5-ee91-9362-f92f8ca30adc@schaufler-ca.com>
+	<6c899d9e-45aa-8159-c402-b3c4d1936112@canonical.com>
+	<CAGXu5jKzqij5dY2FYm5rafPNPpF1Tx9BPmK+=FvG+=tpFxpscw@mail.gmail.com>
+	<74ecd4ec-491b-93d7-4e3f-46f92121130b@canonical.com>
+	<CAGXu5j+QhU2HOicYKqfNo17n9k6DKgt1upa3O2p1b5Gvn6icbQ@mail.gmail.com>
+	<915ba7e5-0e10-87ef-f0a9-1d8db2e6de90@canonical.com>
+Message-ID: <78fc6ba1-881a-9c82-ebc1-64311279050c@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Move tpm1_pcr_extend to tpm1-cmd.c and remove
-unused pcrextend_header structure and
-EXTEND_PCR_RESULT_SIZE and EXTEND_PCR_RESULT_BODY_SIZE
-defines.
+On 9/21/2018 6:19 AM, John Johansen wrote:
+> On 09/20/2018 08:02 PM, Kees Cook wrote:
+>> On Thu, Sep 20, 2018 at 7:14 PM, John Johansen
+>> <john.johansen@canonical.com> wrote:
+>>> On 09/20/2018 07:05 PM, Kees Cook wrote:
+>>>> On Thu, Sep 20, 2018 at 6:39 PM, John Johansen
+>>>> <john.johansen@canonical.com> wrote:
+>>>>
+>>>> Yes, I like CONFIG_LSM_ENABLE if "empty" means "enable all". Should
+>>>> CONFIG_LSM_ENABLE replace all the other CONFIG-based LSM
+>>>> enabling/disabling?
+>>> I don't particularly like "empty" being "enable all". With that
+>>> how would I disable all builtin lsms so that I just boot with
+>>> capability.
+>>>
+>>> An option of all or even * is more explicit and leaves the empty
+>>> set to mean disable everything
+>> Okay, that works. I prefer "all" FWIW.
+>>
+> me too, I was just trying to throw out options.
 
-Fixes warning:
-drivers/char/tpm/tpm-interface.c:609:38: warning: ?pcrextend_header? defined but not used [-Wunused-const-variable=]
- static const struct tpm_input_header pcrextend_header = {
-                                      ^~~~~~~~~~~~~~~~
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-V2-V3: Rebase
-V4: Remove defines.
-
- drivers/char/tpm/tpm-interface.c | 28 ----------------------------
- drivers/char/tpm/tpm.h           |  2 ++
- drivers/char/tpm/tpm1-cmd.c      | 21 +++++++++++++++++++++
- 3 files changed, 23 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index bd8942e56aa7..163c4da23320 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -614,34 +614,6 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- }
- EXPORT_SYMBOL_GPL(tpm_pcr_read);
- 
--#define TPM_ORD_PCR_EXTEND 20
--#define EXTEND_PCR_RESULT_SIZE 34
--#define EXTEND_PCR_RESULT_BODY_SIZE 20
--static const struct tpm_input_header pcrextend_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(34),
--	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
--};
--
--static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
--			   char *log_msg)
--{
--	struct tpm_buf buf;
--	int rc;
--
--	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
--	if (rc)
--		return rc;
--
--	tpm_buf_append_u32(&buf, pcr_idx);
--	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
--
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
--			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
--	tpm_buf_destroy(&buf);
--	return rc;
--}
--
- /**
-  * tpm_pcr_extend - extend a PCR value in SHA1 bank.
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index a97d72fcda5b..3fb268f43955 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -549,6 +549,8 @@ int tpm_do_selftest(struct tpm_chip *chip);
- int tpm1_auto_startup(struct tpm_chip *chip);
- int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg);
- unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 12974aa4ea3e..2cf13d92653c 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -414,3 +414,24 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
- 	return 0;
- }
-+
-+#define TPM_ORD_PCR_EXTEND 20
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, pcr_idx);
-+	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-+
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
-+			      TPM_DIGEST_SIZE, 0, log_msg);
-+
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
--- 
-2.14.4
+I'll buy that. "all" is fine by me, although it means we
+can't have an LSM named "all". :) We should also allow "none"
+to mean no LSMs. I know lots of people who love using security=none.
