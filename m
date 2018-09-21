@@ -1,261 +1,425 @@
 From: dhowells@redhat.com (David Howells)
-Date: Fri, 21 Sep 2018 17:31:12 +0100
-Subject: [PATCH 08/34] vfs: Add LSM hooks for the new mount API [ver #12]
+Date: Fri, 21 Sep 2018 17:31:36 +0100
+Subject: [PATCH 11/34] smack: Implement filesystem context security hooks
+	[ver #12]
 In-Reply-To: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
 References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
-Message-ID: <153754747294.17872.6507090218671594343.stgit@warthog.procyon.org.uk>
+Message-ID: <153754749629.17872.2838153843574587526.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add LSM hooks for use by the new mount API and filesystem context code.
-This includes:
+Implement filesystem context security hooks for the smack LSM.
 
- (1) Hooks to handle allocation, duplication and freeing of the security
-     record attached to a filesystem context.
-
- (2) A hook to snoop source specifications.  There may be multiple of these
-     if the filesystem supports it.  They will to be local files/devices if
-     fs_context::source_is_dev is true and will be something else, possibly
-     remote server specifications, if false.
-
- (3) A hook to snoop superblock configuration options in key[=val] form.
-     If the LSM decides it wants to handle it, it can suppress the option
-     being passed to the filesystem.  Note that 'val' may include commas
-     and binary data with the fsopen patch.
-
- (4) A hook to perform validation and allocation after the configuration
-     has been done but before the superblock is allocated and set up.
-
- (5) A hook to transfer the security from the context to a newly created
-     superblock.
-
- (6) A hook to rule on whether a path point can be used as a mountpoint.
-
-These are intended to replace:
-
-	security_sb_copy_data
-	security_sb_kern_mount
-	security_sb_mount
-	security_sb_set_mnt_opts
-	security_sb_clone_mnt_opts
-	security_sb_parse_opts_str
+Question: Should the ->fs_context_parse_source() hook be implemented to
+check the labels on any source devices specified?
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Casey Schaufler <casey@schaufler-ca.com>
 cc: linux-security-module at vger.kernel.org
 ---
 
- include/linux/lsm_hooks.h |   61 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/security.h  |   47 +++++++++++++++++++++++++++++++++++
- security/security.c       |   41 ++++++++++++++++++++++++++++++
- 3 files changed, 149 insertions(+)
+ security/smack/smack.h     |   21 +--
+ security/smack/smack_lsm.c |  332 +++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 338 insertions(+), 15 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index d052db1a1565..7e50bfa1aee0 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -76,6 +76,49 @@
-  *	changes on the process such as clearing out non-inheritable signal
-  *	state.  This is called immediately after commit_creds().
-  *
-+ * Security hooks for mount using fs_context.
-+ *	[See also Documentation/filesystems/mounting.txt]
-+ *
-+ * @fs_context_alloc:
-+ *	Allocate and attach a security structure to sc->security.  This pointer
-+ *	is initialised to NULL by the caller.
-+ *	@fc indicates the new filesystem context.
-+ *	@reference indicates the source dentry of a submount or start of reconfig.
-+ * @fs_context_dup:
-+ *	Allocate and attach a security structure to sc->security.  This pointer
-+ *	is initialised to NULL by the caller.
-+ *	@fc indicates the new filesystem context.
-+ *	@src_fc indicates the original filesystem context.
-+ * @fs_context_free:
-+ *	Clean up a filesystem context.
-+ *	@fc indicates the filesystem context.
-+ * @fs_context_parse_param:
-+ *	Userspace provided a parameter to configure a superblock.  The LSM may
-+ *	reject it with an error and may use it for itself, in which case it
-+ *	should return 0; otherwise it should return -ENOPARAM to pass it on to
-+ *	the filesystem.
-+ *	@fc indicates the filesystem context.
-+ *	@param The parameter
-+ * @fs_context_validate:
-+ *	Validate the filesystem context preparatory to applying it.  This is
-+ *	done after all the options have been parsed.
-+ *	@fc indicates the filesystem context.
-+ * @sb_get_tree:
-+ *	Assign the security to a newly created superblock.
-+ *	@fc indicates the filesystem context.
-+ *	@fc->root indicates the root that will be mounted.
-+ *	@fc->root->d_sb points to the superblock.
-+ * @sb_reconfigure:
-+ *	Apply reconfiguration to the security on a superblock.
-+ *	@fc indicates the filesystem context.
-+ *	@fc->root indicates a dentry in the mount.
-+ *	@fc->root->d_sb points to the superblock.
-+ * @sb_mountpoint:
-+ *	Equivalent of sb_mount, but with an fs_context.
-+ *	@fc indicates the filesystem context.
-+ *	@mountpoint indicates the path on which the mount will take place.
-+ *	@mnt_flags indicates the MNT_* flags specified.
-+ *
-  * Security hooks for filesystem operations.
-  *
-  * @sb_alloc_security:
-@@ -1466,6 +1509,16 @@ union security_list_options {
- 	void (*bprm_committing_creds)(struct linux_binprm *bprm);
- 	void (*bprm_committed_creds)(struct linux_binprm *bprm);
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index f7db791fb566..891a307a2029 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -195,21 +195,22 @@ struct smack_known_list_elem {
  
-+	int (*fs_context_alloc)(struct fs_context *fc, struct dentry *reference);
-+	int (*fs_context_dup)(struct fs_context *fc, struct fs_context *src_sc);
-+	void (*fs_context_free)(struct fs_context *fc);
-+	int (*fs_context_parse_param)(struct fs_context *fc, struct fs_parameter *param);
-+	int (*fs_context_validate)(struct fs_context *fc);
-+	int (*sb_get_tree)(struct fs_context *fc);
-+	void (*sb_reconfigure)(struct fs_context *fc);
-+	int (*sb_mountpoint)(struct fs_context *fc, struct path *mountpoint,
-+			     unsigned int mnt_flags);
-+
- 	int (*sb_alloc_security)(struct super_block *sb);
- 	void (*sb_free_security)(struct super_block *sb);
- 	int (*sb_copy_data)(char *orig, size_t orig_size, char *copy);
-@@ -1808,6 +1861,14 @@ struct security_hook_heads {
- 	struct hlist_head bprm_check_security;
- 	struct hlist_head bprm_committing_creds;
- 	struct hlist_head bprm_committed_creds;
-+	struct hlist_head fs_context_alloc;
-+	struct hlist_head fs_context_dup;
-+	struct hlist_head fs_context_free;
-+	struct hlist_head fs_context_parse_param;
-+	struct hlist_head fs_context_validate;
-+	struct hlist_head sb_get_tree;
-+	struct hlist_head sb_reconfigure;
-+	struct hlist_head sb_mountpoint;
- 	struct hlist_head sb_alloc_security;
- 	struct hlist_head sb_free_security;
- 	struct hlist_head sb_copy_data;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index a306061d2197..636215bf4c1b 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -53,6 +53,9 @@ struct msg_msg;
- struct xattr;
- struct xfrm_sec_ctx;
- struct mm_struct;
-+struct fs_context;
-+struct fs_parameter;
-+enum fs_value_type;
+ enum {
+ 	Opt_error = -1,
+-	Opt_fsdefault = 1,
+-	Opt_fsfloor = 2,
+-	Opt_fshat = 3,
+-	Opt_fsroot = 4,
+-	Opt_fstransmute = 5,
++	Opt_fsdefault = 0,
++	Opt_fsfloor = 1,
++	Opt_fshat = 2,
++	Opt_fsroot = 3,
++	Opt_fstransmute = 4,
++        nr__smack_params
+ };
  
- /* If capable should audit the security request */
- #define SECURITY_CAP_NOAUDIT 0
-@@ -246,6 +249,15 @@ int security_bprm_set_creds(struct linux_binprm *bprm);
- int security_bprm_check(struct linux_binprm *bprm);
- void security_bprm_committing_creds(struct linux_binprm *bprm);
- void security_bprm_committed_creds(struct linux_binprm *bprm);
-+int security_fs_context_alloc(struct fs_context *fc, struct dentry *reference);
-+int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
-+void security_fs_context_free(struct fs_context *fc);
-+int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
-+int security_fs_context_validate(struct fs_context *fc);
-+int security_sb_get_tree(struct fs_context *fc);
-+void security_sb_reconfigure(struct fs_context *fc);
-+int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
-+			   unsigned int mnt_flags);
- int security_sb_alloc(struct super_block *sb);
- void security_sb_free(struct super_block *sb);
- int security_sb_copy_data(char *orig, size_t orig_size, char *copy);
-@@ -548,6 +560,41 @@ static inline void security_bprm_committed_creds(struct linux_binprm *bprm)
- {
+ /*
+  * Mount options
+  */
+-#define SMK_FSDEFAULT	"smackfsdef="
+-#define SMK_FSFLOOR	"smackfsfloor="
+-#define SMK_FSHAT	"smackfshat="
+-#define SMK_FSROOT	"smackfsroot="
+-#define SMK_FSTRANS	"smackfstransmute="
++#define SMK_FSDEFAULT	"smackfsdef"
++#define SMK_FSFLOOR	"smackfsfloor"
++#define SMK_FSHAT	"smackfshat"
++#define SMK_FSROOT	"smackfsroot"
++#define SMK_FSTRANS	"smackfstransmute"
+ 
+ #define SMACK_DELETE_OPTION	"-DELETE"
+ #define SMACK_CIPSO_OPTION 	"-CIPSO"
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 03a2f0213d57..da7121d24bce 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -43,6 +43,8 @@
+ #include <linux/shm.h>
+ #include <linux/binfmts.h>
+ #include <linux/parser.h>
++#include <linux/fs_context.h>
++#include <linux/fs_parser.h>
+ #include "smack.h"
+ 
+ #define TRANS_TRUE	"TRUE"
+@@ -60,11 +62,11 @@ static struct kmem_cache *smack_inode_cache;
+ int smack_enabled;
+ 
+ static const match_table_t smk_mount_tokens = {
+-	{Opt_fsdefault, SMK_FSDEFAULT "%s"},
+-	{Opt_fsfloor, SMK_FSFLOOR "%s"},
+-	{Opt_fshat, SMK_FSHAT "%s"},
+-	{Opt_fsroot, SMK_FSROOT "%s"},
+-	{Opt_fstransmute, SMK_FSTRANS "%s"},
++	{Opt_fsdefault, SMK_FSDEFAULT "=%s"},
++	{Opt_fsfloor, SMK_FSFLOOR "=%s"},
++	{Opt_fshat, SMK_FSHAT "=%s"},
++	{Opt_fsroot, SMK_FSROOT "=%s"},
++	{Opt_fstransmute, SMK_FSTRANS "=%s"},
+ 	{Opt_error, NULL},
+ };
+ 
+@@ -522,6 +524,319 @@ static int smack_syslog(int typefrom_file)
+ 	return rc;
  }
  
-+static inline int security_fs_context_alloc(struct fs_context *fc,
-+					    struct dentry *reference)
++/*
++ * Mount context operations
++ */
++
++struct smack_fs_context {
++	union {
++		struct {
++			char		*fsdefault;
++			char		*fsfloor;
++			char		*fshat;
++			char		*fsroot;
++			char		*fstransmute;
++		};
++		char			*ptrs[5];
++
++	};
++	struct superblock_smack		*sbsp;
++	struct inode_smack		*isp;
++	bool				transmute;
++};
++
++/**
++ * smack_fs_context_free - Free the security data from a filesystem context
++ * @fc: The filesystem context to be cleaned up.
++ */
++static void smack_fs_context_free(struct fs_context *fc)
 +{
++	struct smack_fs_context *ctx = fc->security;
++	int i;
++
++	if (ctx) {
++		for (i = 0; i < ARRAY_SIZE(ctx->ptrs); i++)
++			kfree(ctx->ptrs[i]);
++		kfree(ctx->isp);
++		kfree(ctx->sbsp);
++		kfree(ctx);
++		fc->security = NULL;
++	}
++}
++
++/**
++ * smack_fs_context_alloc - Allocate security data for a filesystem context
++ * @fc: The filesystem context.
++ * @reference: Reference dentry (automount/reconfigure) or NULL
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_fs_context_alloc(struct fs_context *fc,
++				  struct dentry *reference)
++{
++	struct smack_fs_context *ctx;
++	struct superblock_smack *sbsp;
++	struct inode_smack *isp;
++	struct smack_known *skp;
++
++	ctx = kzalloc(sizeof(struct smack_fs_context), GFP_KERNEL);
++	if (!ctx)
++		goto nomem;
++	fc->security = ctx;
++
++	sbsp = kzalloc(sizeof(struct superblock_smack), GFP_KERNEL);
++	if (!sbsp)
++		goto nomem_free;
++	ctx->sbsp = sbsp;
++
++	isp = new_inode_smack(NULL);
++	if (!isp)
++		goto nomem_free;
++	ctx->isp = isp;
++
++	if (reference) {
++		if (reference->d_sb->s_security)
++			memcpy(sbsp, reference->d_sb->s_security, sizeof(*sbsp));
++	} else if (!smack_privileged(CAP_MAC_ADMIN)) {
++		/* Unprivileged mounts get root and default from the caller. */
++		skp = smk_of_current();
++		sbsp->smk_root = skp;
++		sbsp->smk_default = skp;
++	} else {
++		sbsp->smk_root = &smack_known_floor;
++		sbsp->smk_default = &smack_known_floor;
++		sbsp->smk_floor = &smack_known_floor;
++		sbsp->smk_hat = &smack_known_hat;
++		/* SMK_SB_INITIALIZED will be zero from kzalloc. */
++	}
++
 +	return 0;
++
++nomem_free:
++	smack_fs_context_free(fc);
++nomem:
++	return -ENOMEM;
 +}
-+static inline int security_fs_context_dup(struct fs_context *fc,
-+					  struct fs_context *src_fc)
++
++/**
++ * smack_fs_context_dup - Duplicate the security data on fs_context duplication
++ * @fc: The new filesystem context.
++ * @src_fc: The source filesystem context being duplicated.
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_fs_context_dup(struct fs_context *fc,
++				struct fs_context *src_fc)
 +{
++	struct smack_fs_context *dst, *src = src_fc->security;
++	int i;
++
++	dst = kzalloc(sizeof(struct smack_fs_context), GFP_KERNEL);
++	if (!dst)
++		goto nomem;
++	fc->security = dst;
++
++	dst->sbsp = kmemdup(src->sbsp, sizeof(struct superblock_smack),
++			    GFP_KERNEL);
++	if (!dst->sbsp)
++		goto nomem_free;
++
++	for (i = 0; i < ARRAY_SIZE(dst->ptrs); i++) {
++		if (src->ptrs[i]) {
++			dst->ptrs[i] = kstrdup(src->ptrs[i], GFP_KERNEL);
++			if (!dst->ptrs[i])
++				goto nomem_free;
++		}
++	}
++
 +	return 0;
++
++nomem_free:
++	smack_fs_context_free(fc);
++nomem:
++	return -ENOMEM;
 +}
-+static inline void security_fs_context_free(struct fs_context *fc)
++
++static const struct fs_parameter_spec smack_param_specs[nr__smack_params] = {
++	[Opt_fsdefault]		= { fs_param_is_string },
++	[Opt_fsfloor]		= { fs_param_is_string },
++	[Opt_fshat]		= { fs_param_is_string },
++	[Opt_fsroot]		= { fs_param_is_string },
++	[Opt_fstransmute]	= { fs_param_is_string },
++};
++
++static const char *const smack_param_keys[nr__smack_params] = {
++	[Opt_fsdefault]		= SMK_FSDEFAULT,
++	[Opt_fsfloor]		= SMK_FSFLOOR,
++	[Opt_fshat]		= SMK_FSHAT,
++	[Opt_fsroot]		= SMK_FSROOT,
++	[Opt_fstransmute]	= SMK_FSTRANS,
++};
++
++static const struct fs_parameter_description smack_fs_parameters = {
++	.name		= "smack",
++	.nr_params	= nr__smack_params,
++	.keys		= smack_param_keys,
++	.specs		= smack_param_specs,
++	.no_source	= true,
++};
++
++/**
++ * smack_fs_context_parse_param - Parse a single mount parameter
++ * @fc: The new filesystem context being constructed.
++ * @param: The parameter.
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_fs_context_parse_param(struct fs_context *fc,
++					struct fs_parameter *param)
 +{
-+}
-+static inline int security_fs_context_parse_param(struct fs_context *fc,
-+						  struct fs_parameter *param)
-+{
-+	return -ENOPARAM;
-+}
-+static inline int security_fs_context_validate(struct fs_context *fc)
-+{
++	struct smack_fs_context *ctx = fc->security;
++	struct fs_parse_result result;
++	int opt;
++
++	/* Unprivileged mounts don't get to specify Smack values. */
++	if (!smack_privileged(CAP_MAC_ADMIN))
++		return -EPERM;
++
++	opt = fs_parse(fc, &smack_fs_parameters, param, &result);
++	if (opt < 0)
++		return opt;
++
++	switch (opt) {
++	case Opt_fsdefault:
++		if (ctx->fsdefault)
++			goto error_dup;
++		ctx->fsdefault = param->string;
++		break;
++	case Opt_fsfloor:
++		if (ctx->fsfloor)
++			goto error_dup;
++		ctx->fsfloor = param->string;
++		break;
++	case Opt_fshat:
++		if (ctx->fshat)
++			goto error_dup;
++		ctx->fshat = param->string;
++		break;
++	case Opt_fsroot:
++		if (ctx->fsroot)
++			goto error_dup;
++		ctx->fsroot = param->string;
++		break;
++	case Opt_fstransmute:
++		if (ctx->fstransmute)
++			goto error_dup;
++		ctx->fstransmute = param->string;
++		break;
++	default:
++		return invalf(fc, "Smack:  unknown mount option\n");
++	}
++
++	param->string = NULL;
 +	return 0;
++
++error_dup:
++	return invalf(fc, "Smack: duplicate mount option\n");
 +}
-+static inline int security_sb_get_tree(struct fs_context *fc)
++
++/**
++ * smack_fs_context_validate - Validate the filesystem context security data
++ * @fc: The filesystem context.
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_fs_context_validate(struct fs_context *fc)
 +{
-+	return 0;
-+}
-+static inline void security_sb_reconfigure(struct fs_context *fc)
-+{
-+}
-+static inline int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
-+					 unsigned int mnt_flags)
-+{
++	struct smack_fs_context *ctx = fc->security;
++	struct superblock_smack *sbsp = ctx->sbsp;
++	struct inode_smack *isp = ctx->isp;
++	struct smack_known *skp;
++
++	if (ctx->fsdefault) {
++		skp = smk_import_entry(ctx->fsdefault, 0);
++		if (IS_ERR(skp))
++			return PTR_ERR(skp);
++		sbsp->smk_default = skp;
++	}
++
++	if (ctx->fsfloor) {
++		skp = smk_import_entry(ctx->fsfloor, 0);
++		if (IS_ERR(skp))
++			return PTR_ERR(skp);
++		sbsp->smk_floor = skp;
++	}
++
++	if (ctx->fshat) {
++		skp = smk_import_entry(ctx->fshat, 0);
++		if (IS_ERR(skp))
++			return PTR_ERR(skp);
++		sbsp->smk_hat = skp;
++	}
++
++	if (ctx->fsroot || ctx->fstransmute) {
++		skp = smk_import_entry(ctx->fstransmute ?: ctx->fsroot, 0);
++		if (IS_ERR(skp))
++			return PTR_ERR(skp);
++		sbsp->smk_root = skp;
++		ctx->transmute = !!ctx->fstransmute;
++	}
++
++	isp->smk_inode = sbsp->smk_root;
 +	return 0;
 +}
 +
- static inline int security_sb_alloc(struct super_block *sb)
- {
- 	return 0;
-diff --git a/security/security.c b/security/security.c
-index 96a061cecb39..64304d20aae1 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -363,6 +363,47 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
- 	call_void_hook(bprm_committed_creds, bprm);
- }
++/**
++ * smack_sb_get_tree - Assign the context to a newly created superblock
++ * @fc: The new filesystem context.
++ *
++ * Returns 0 on success or -ENOMEM on error.
++ */
++static int smack_sb_get_tree(struct fs_context *fc)
++{
++	struct smack_fs_context *ctx = fc->security;
++	struct superblock_smack *sbsp = ctx->sbsp;
++	struct dentry *root = fc->root;
++	struct inode *inode = d_backing_inode(root);
++	struct super_block *sb = root->d_sb;
++	struct inode_smack *isp;
++	bool transmute = ctx->transmute;
++
++	if (sb->s_security)
++		return 0;
++
++	if (!smack_privileged(CAP_MAC_ADMIN)) {
++		/*
++		 * For a handful of fs types with no user-controlled
++		 * backing store it's okay to trust security labels
++		 * in the filesystem. The rest are untrusted.
++		 */
++		if (fc->user_ns != &init_user_ns &&
++		    sb->s_magic != SYSFS_MAGIC && sb->s_magic != TMPFS_MAGIC &&
++		    sb->s_magic != RAMFS_MAGIC) {
++			transmute = true;
++			sbsp->smk_flags |= SMK_SB_UNTRUSTED;
++		}
++	}
++
++	sbsp->smk_flags |= SMK_SB_INITIALIZED;
++	sb->s_security = sbsp;
++	ctx->sbsp = NULL;
++
++	/* Initialize the root inode. */
++	isp = inode->i_security;
++	if (isp == NULL) {
++		isp = ctx->isp;
++		ctx->isp = NULL;
++		inode->i_security = isp;
++	} else
++		isp->smk_inode = sbsp->smk_root;
++
++	if (transmute)
++		isp->smk_flags |= SMK_INODE_TRANSMUTE;
++
++	return 0;
++}
  
-+int security_fs_context_alloc(struct fs_context *fc, struct dentry *reference)
-+{
-+	return call_int_hook(fs_context_alloc, 0, fc, reference);
-+}
+ /*
+  * Superblock Hooks.
+@@ -4660,6 +4975,13 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
+ 	LSM_HOOK_INIT(syslog, smack_syslog),
+ 
++	LSM_HOOK_INIT(fs_context_alloc, smack_fs_context_alloc),
++	LSM_HOOK_INIT(fs_context_dup, smack_fs_context_dup),
++	LSM_HOOK_INIT(fs_context_free, smack_fs_context_free),
++	LSM_HOOK_INIT(fs_context_parse_param, smack_fs_context_parse_param),
++	LSM_HOOK_INIT(fs_context_validate, smack_fs_context_validate),
++	LSM_HOOK_INIT(sb_get_tree, smack_sb_get_tree),
 +
-+int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
-+{
-+	return call_int_hook(fs_context_dup, 0, fc, src_fc);
-+}
-+
-+void security_fs_context_free(struct fs_context *fc)
-+{
-+	call_void_hook(fs_context_free, fc);
-+}
-+
-+int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+{
-+	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
-+}
-+
-+int security_fs_context_validate(struct fs_context *fc)
-+{
-+	return call_int_hook(fs_context_validate, 0, fc);
-+}
-+
-+int security_sb_get_tree(struct fs_context *fc)
-+{
-+	return call_int_hook(sb_get_tree, 0, fc);
-+}
-+
-+void security_sb_reconfigure(struct fs_context *fc)
-+{
-+	call_void_hook(sb_reconfigure, fc);
-+}
-+
-+int security_sb_mountpoint(struct fs_context *fc, struct path *mountpoint,
-+			   unsigned int mnt_flags)
-+{
-+	return call_int_hook(sb_mountpoint, 0, fc, mountpoint, mnt_flags);
-+}
-+
- int security_sb_alloc(struct super_block *sb)
- {
- 	return call_int_hook(sb_alloc_security, 0, sb);
+ 	LSM_HOOK_INIT(sb_alloc_security, smack_sb_alloc_security),
+ 	LSM_HOOK_INIT(sb_free_security, smack_sb_free_security),
+ 	LSM_HOOK_INIT(sb_copy_data, smack_sb_copy_data),
