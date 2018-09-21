@@ -1,185 +1,186 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Fri, 21 Sep 2018 16:58:09 +0300
-Subject: [PATCH v4 10/21] tpm: factor out tpm 1.x pm suspend flow into
-	tpm1-cmd.c
+Date: Fri, 21 Sep 2018 16:58:07 +0300
+Subject: [PATCH v4 08/21] tpm: factor out tpm1_get_random into tpm1-cmd.c
 In-Reply-To: <20180921135820.20549-1-tomas.winkler@intel.com>
 References: <20180921135820.20549-1-tomas.winkler@intel.com>
-Message-ID: <20180921135820.20549-11-tomas.winkler@intel.com>
+Message-ID: <20180921135820.20549-9-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Factor out TPM 1.x suspend flow from tpm-interface.c into a new function
-tpm1_pm_suspend() in tpm1-cmd.c
+Factor out get random implementation from tpm-interface.c
+into tpm1_get_random function in tpm1-cmd.c.
+No functional changes.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
 ---
 V2-V3: Rebase
-V4: 1. Add kdoc for tpm1_pm_suspend().
-    2. Fix commit message.
+V4: Resend
 
- drivers/char/tpm/tpm-interface.c | 55 ++++---------------------------------
+ drivers/char/tpm/tpm-interface.c | 58 +++++-----------------------------------
  drivers/char/tpm/tpm.h           |  1 +
- drivers/char/tpm/tpm1-cmd.c      | 59 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 65 insertions(+), 50 deletions(-)
+ drivers/char/tpm/tpm1-cmd.c      | 55 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 63 insertions(+), 51 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 7239ccc16e2f..dfa972bbdd81 100644
+index 153fee46bec0..4d5742d07e8d 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -585,15 +585,6 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+@@ -811,14 +811,6 @@ int tpm_pm_resume(struct device *dev)
  }
- EXPORT_SYMBOL_GPL(tpm_send);
+ EXPORT_SYMBOL_GPL(tpm_pm_resume);
  
--#define TPM_ORD_SAVESTATE 152
--#define SAVESTATE_RESULT_SIZE 10
--
--static const struct tpm_input_header savestate_header = {
+-#define TPM_ORD_GET_RANDOM 70
+-#define TPM_GETRANDOM_RESULT_SIZE	18
+-static const struct tpm_input_header tpm_getrandom_header = {
 -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(10),
--	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
+-	.length = cpu_to_be32(14),
+-	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
 -};
 -
- /*
-  * We are about to suspend. Save the TPM state
-  * so that it can be restored.
-@@ -601,54 +592,18 @@ static const struct tpm_input_header savestate_header = {
- int tpm_pm_suspend(struct device *dev)
+ /**
+  * tpm_get_random() - get random bytes from the TPM's RNG
+  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+@@ -829,58 +821,22 @@ static const struct tpm_input_header tpm_getrandom_header = {
+  */
+ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
  {
- 	struct tpm_chip *chip = dev_get_drvdata(dev);
--	struct tpm_cmd_t cmd;
--	int rc, try;
--
--	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
-+	int rc = 0;
+-	struct tpm_cmd_t tpm_cmd;
+-	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
+-	int err, total = 0, retries = 5;
+-	u8 *dest = out;
++	int rc;
  
--	if (chip == NULL)
-+	if (!chip)
+-	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
++	if (!out || max > TPM_MAX_RNG_DATA)
+ 		return -EINVAL;
+ 
+ 	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
  		return -ENODEV;
  
- 	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
- 		return 0;
- 
 -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		tpm2_shutdown(chip, TPM2_SU_STATE);
--		return 0;
+-		err = tpm2_get_random(chip, out, max);
+-		tpm_put_ops(chip);
+-		return err;
 -	}
 -
--	/* for buggy tpm, flush pcrs with extend to selected dummy */
--	if (tpm_suspend_pcr)
--		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
--				     "extending dummy pcr before suspend");
+-	do {
+-		tpm_cmd.header.in = tpm_getrandom_header;
+-		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
 -
--	/* now do the actual savestate */
--	for (try = 0; try < TPM_RETRY; try++) {
--		cmd.header.in = savestate_header;
--		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
--				      0, 0, NULL);
--
--		/*
--		 * If the TPM indicates that it is too busy to respond to
--		 * this command then retry before giving up.  It can take
--		 * several seconds for this TPM to be ready.
--		 *
--		 * This can happen if the TPM has already been sent the
--		 * SaveState command before the driver has loaded.  TCG 1.2
--		 * specification states that any communication after SaveState
--		 * may cause the TPM to invalidate previously saved state.
--		 */
--		if (rc != TPM_WARN_RETRY)
+-		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
+-				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
+-				       offsetof(struct tpm_getrandom_out,
+-						rng_data),
+-				       0, "attempting get random");
+-		if (err)
 -			break;
--		tpm_msleep(TPM_TIMEOUT_RETRY);
--	}
 -
--	if (rc)
--		dev_err(&chip->dev,
--			"Error (%d) sending savestate before suspend\n", rc);
--	else if (try > 0)
--		dev_warn(&chip->dev, "TPM savestate took %dms\n",
--			 try * TPM_TIMEOUT_RETRY);
+-		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
+-		if (recd > num_bytes) {
+-			total = -EFAULT;
+-			break;
+-		}
+-
+-		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+-		if (rlength < TPM_HEADER_SIZE +
+-			      offsetof(struct tpm_getrandom_out, rng_data) +
+-			      recd) {
+-			total = -EFAULT;
+-			break;
+-		}
+-		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+-
+-		dest += recd;
+-		total += recd;
+-		num_bytes -= recd;
+-	} while (retries-- && total < max);
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		rc = tpm2_get_random(chip, out, max);
 +	else
-+		rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
++		rc = tpm1_get_random(chip, out, max);
  
- 	return rc;
+ 	tpm_put_ops(chip);
+-	return total ? total : -EIO;
++	return rc;
  }
+ EXPORT_SYMBOL_GPL(tpm_get_random);
+ 
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index fd945fc828b6..862c9262e037 100644
+index 1c1980c79c30..496a56156e77 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -543,6 +543,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- int tpm_startup(struct tpm_chip *chip);
- int tpm_get_timeouts(struct tpm_chip *);
- 
-+int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
- int tpm1_do_selftest(struct tpm_chip *chip);
- int tpm1_auto_startup(struct tpm_chip *chip);
- int tpm1_get_timeouts(struct tpm_chip *chip);
+@@ -551,6 +551,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+ 		    const char *log_msg);
+ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 		    const char *desc, size_t min_cap_length);
++int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+ int tpm_pm_suspend(struct device *dev);
+ int tpm_pm_resume(struct device *dev);
 diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 8ecda2cd3734..d118adbcd2a7 100644
+index 7191bc155d2b..49e34168671c 100644
 --- a/drivers/char/tpm/tpm1-cmd.c
 +++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -667,3 +667,62 @@ int tpm1_auto_startup(struct tpm_chip *chip)
- 		rc = -ENODEV;
+@@ -470,3 +470,58 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
  	return rc;
  }
+ EXPORT_SYMBOL_GPL(tpm1_getcap);
 +
-+#define TPM_ORD_SAVESTATE 152
-+#define SAVESTATE_RESULT_SIZE 10
-+static const struct tpm_input_header savestate_header = {
++#define TPM_ORD_GET_RANDOM 70
++#define TPM_GETRANDOM_RESULT_SIZE	18
++static const struct tpm_input_header tpm_getrandom_header = {
 +	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-+	.length = cpu_to_be32(10),
-+	.ordinal = cpu_to_be32(TPM_ORD_SAVESTATE)
++	.length = cpu_to_be32(14),
++	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
 +};
 +
-+/**
-+ * tpm1_pm_suspend() - pm suspend handler
-+ *    The functions saves the TPM state to be restored on resume.
-+ *
-+ * @chip:    TPM chip to use.
-+ * @tpm_suspend_pcr: flush pcr for buggy TPM chips.
-+ *
-+ * Return: 0 on success, < 0 on error.
-+ */
-+int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
++int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
 +{
-+	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
-+	struct tpm_cmd_t cmd;
-+	int rc, try;
++	struct tpm_cmd_t tpm_cmd;
++	u32 recd;
++	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
++	u32 rlength;
++	int err, total = 0, retries = 5;
++	u8 *dest = out;
 +
-+	/* for buggy tpm, flush pcrs with extend to selected dummy */
-+	if (tpm_suspend_pcr)
-+		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
-+				     "extending dummy pcr before suspend");
++	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
++		return -EINVAL;
 +
-+	/* now do the actual savestate */
-+	for (try = 0; try < TPM_RETRY; try++) {
-+		cmd.header.in = savestate_header;
-+		rc = tpm_transmit_cmd(chip, NULL, &cmd, SAVESTATE_RESULT_SIZE,
-+				      0, 0, NULL);
++	do {
++		tpm_cmd.header.in = tpm_getrandom_header;
++		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
 +
-+		/*
-+		 * If the TPM indicates that it is too busy to respond to
-+		 * this command then retry before giving up.  It can take
-+		 * several seconds for this TPM to be ready.
-+		 *
-+		 * This can happen if the TPM has already been sent the
-+		 * SaveState command before the driver has loaded.  TCG 1.2
-+		 * specification states that any communication after SaveState
-+		 * may cause the TPM to invalidate previously saved state.
-+		 */
-+		if (rc != TPM_WARN_RETRY)
++		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
++				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
++				       offsetof(struct tpm_getrandom_out,
++						rng_data),
++				       0, "attempting get random");
++		if (err)
 +			break;
-+		tpm_msleep(TPM_TIMEOUT_RETRY);
-+	}
 +
-+	if (rc)
-+		dev_err(&chip->dev, "Error (%d) sending savestate before suspend\n",
-+			rc);
-+	else if (try > 0)
-+		dev_warn(&chip->dev, "TPM savestate took %dms\n",
-+			 try * TPM_TIMEOUT_RETRY);
++		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
++		if (recd > num_bytes) {
++			total = -EFAULT;
++			break;
++		}
 +
-+	return rc;
++		rlength = be32_to_cpu(tpm_cmd.header.out.length);
++		if (rlength < TPM_HEADER_SIZE +
++			      offsetof(struct tpm_getrandom_out, rng_data) +
++			      recd) {
++			total = -EFAULT;
++			break;
++		}
++		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
++
++		dest += recd;
++		total += recd;
++		num_bytes -= recd;
++	} while (retries-- && (size_t)total < max);
++
++	return total ? total : -EIO;
 +}
 -- 
 2.14.4
