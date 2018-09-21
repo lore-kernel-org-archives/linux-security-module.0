@@ -1,29 +1,86 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Sat, 22 Sep 2018 00:57:01 +0300
-Subject: [PATCH v2, RESEND 2/3] tpm: modify tpm_pcr_read() definition to
-	pass TPM hash algorithms
-In-Reply-To: <411432db-ea57-a537-05d3-0b53008bef27@huawei.com>
-References: <20180917093820.20500-1-roberto.sassu@huawei.com>
-	<20180917093820.20500-3-roberto.sassu@huawei.com>
-	<411432db-ea57-a537-05d3-0b53008bef27@huawei.com>
-Message-ID: <20180921215701.GA23799@linux.intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Fri, 21 Sep 2018 16:59:21 -0700
+Subject: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
+Message-ID: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Sep 21, 2018 at 12:24:15PM +0200, Roberto Sassu wrote:
-> On 9/17/2018 11:38 AM, Roberto Sassu wrote:
-> > Currently the TPM driver allows other kernel subsystems to read only the
-> > SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
-> > tpm2_pcr_read() to pass an array of tpm_digest structures, which contains
-> > the desired hash algorithms. Initially, the array size is limited to 1.
-> 
-> Jarkko, is this patch ok?
-> 
-> Mimi, I wait for your review of the IMA part.
-> 
-> Roberto
+v4: Finer granularity in the patches and other
+    cleanups suggested by Kees Cook.
+    Removed dead code created by the removal of SELinux
+    credential blob poisoning.
+v3: Add ipc blob for SARA and task blob for Landlock.
+    Removing the SELinux cred blob pointer poisoning
+    results selinux_is_enabled() being unused, so it and
+    all it's overhead has been removed.
+    Broke up the cred infrastructure patch.
+v2: Reduce the patchset to what is required to support
+    the proposed SARA and LandLock security modules
 
-Oops, just bumped into these. Have to check next week. Please add me to
-either to- or cc-field in the future.
+The SARA security module is intended to be used
+in conjunction with other security modules. It requires
+state to be maintained for the credential, which
+in turn requires a mechanism for sharing the credential
+security blob. It also uses the ipc security blob. The
+module also requires mechanism for user space manipulation
+of the credential information, hence an additional
+subdirectory in /proc/.../attr.
 
-/Jarkko
+The LandLock security module provides user configurable
+policy in the secmark mechanism. It requires data in
+the credential, file, inode and task security blobs. For
+this to be used along side the existing "major" security
+modules mechanism for sharing these blobs are provided.
+
+A side effect of providing sharing of the crendential
+security blob is that the TOMOYO module can be used at
+the same time as the other "major" modules.
+
+The mechanism for configuring which security modules are
+enabled has to change when stacking in enabled. Any
+module that uses just the security blobs that are shared
+can be selected. Additionally, one other "major" module
+can be selected.
+
+The security module stacking issues around networking and
+IPC are not addressed here as they are beyond what is
+required for TOMOYO, SARA and LandLock.
+
+git://github.com/cschaufler/lsm-stacking.git#stacking-4.19-rc2-saralock-v4
+
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ Documentation/admin-guide/LSM/index.rst |  23 +-
+ fs/proc/base.c                          |  64 ++++-
+ fs/proc/internal.h                      |   1 +
+ include/linux/cred.h                    |   1 -
+ include/linux/lsm_hooks.h               |  24 +-
+ include/linux/security.h                |  15 +-
+ include/linux/selinux.h                 |  35 ---
+ kernel/cred.c                           |  13 -
+ security/Kconfig                        |  92 +++++++
+ security/apparmor/domain.c              |   2 +-
+ security/apparmor/include/cred.h        |  24 +-
+ security/apparmor/include/file.h        |   9 +-
+ security/apparmor/include/lib.h         |   4 +
+ security/apparmor/include/task.h        |  18 +-
+ security/apparmor/lsm.c                 |  68 +++--
+ security/apparmor/task.c                |   6 +-
+ security/security.c                     | 438 ++++++++++++++++++++++++++++++--
+ security/selinux/Makefile               |   2 +-
+ security/selinux/exports.c              |  23 --
+ security/selinux/hooks.c                | 333 +++++++-----------------
+ security/selinux/include/audit.h        |   3 -
+ security/selinux/include/objsec.h       |  48 +++-
+ security/selinux/selinuxfs.c            |   4 +-
+ security/selinux/ss/services.c          |   1 -
+ security/selinux/xfrm.c                 |   4 +-
+ security/smack/smack.h                  |  55 +++-
+ security/smack/smack_access.c           |   4 +-
+ security/smack/smack_lsm.c              | 315 ++++++++---------------
+ security/smack/smackfs.c                |  18 +-
+ security/tomoyo/common.h                |  26 +-
+ security/tomoyo/domain.c                |   4 +-
+ security/tomoyo/securityfs_if.c         |  15 +-
+ security/tomoyo/tomoyo.c                |  57 ++++-
+ 33 files changed, 1098 insertions(+), 651 deletions(-)
