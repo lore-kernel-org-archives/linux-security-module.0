@@ -1,200 +1,100 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Fri, 21 Sep 2018 12:24:15 +0200
-Subject: [PATCH v2, RESEND 2/3] tpm: modify tpm_pcr_read() definition to
-	pass TPM hash algorithms
-In-Reply-To: <20180917093820.20500-3-roberto.sassu@huawei.com>
-References: <20180917093820.20500-1-roberto.sassu@huawei.com>
-	<20180917093820.20500-3-roberto.sassu@huawei.com>
-Message-ID: <411432db-ea57-a537-05d3-0b53008bef27@huawei.com>
+From: john.johansen@canonical.com (John Johansen)
+Date: Fri, 21 Sep 2018 06:19:56 -0700
+Subject: [PATCH security-next v2 26/26] LSM: Add all exclusive LSMs to
+	ordered initialization
+In-Reply-To: <CAGXu5j+QhU2HOicYKqfNo17n9k6DKgt1upa3O2p1b5Gvn6icbQ@mail.gmail.com>
+References: <20180920162338.21060-1-keescook@chromium.org>
+	<20180920162338.21060-27-keescook@chromium.org>
+	<a0165ce9-d15b-eaef-a5e8-2aeb6bdc69f6@schaufler-ca.com>
+	<CAGXu5j++wXMUXuqT7m5MZdeXqO=i7RgyKZoLwELfSTx6UPOVSA@mail.gmail.com>
+	<7d2cc28b-aee5-ee91-9362-f92f8ca30adc@schaufler-ca.com>
+	<6c899d9e-45aa-8159-c402-b3c4d1936112@canonical.com>
+	<CAGXu5jKzqij5dY2FYm5rafPNPpF1Tx9BPmK+=FvG+=tpFxpscw@mail.gmail.com>
+	<74ecd4ec-491b-93d7-4e3f-46f92121130b@canonical.com>
+	<CAGXu5j+QhU2HOicYKqfNo17n9k6DKgt1upa3O2p1b5Gvn6icbQ@mail.gmail.com>
+Message-ID: <915ba7e5-0e10-87ef-f0a9-1d8db2e6de90@canonical.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/17/2018 11:38 AM, Roberto Sassu wrote:
-> Currently the TPM driver allows other kernel subsystems to read only the
-> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
-> tpm2_pcr_read() to pass an array of tpm_digest structures, which contains
-> the desired hash algorithms. Initially, the array size is limited to 1.
-
-Jarkko, is this patch ok?
-
-Mimi, I wait for your review of the IMA part.
-
-Roberto
-
-
-> Due to the API change, IMA functions have been modified.
+On 09/20/2018 08:02 PM, Kees Cook wrote:
+> On Thu, Sep 20, 2018 at 7:14 PM, John Johansen
+> <john.johansen@canonical.com> wrote:
+>> On 09/20/2018 07:05 PM, Kees Cook wrote:
+>>> On Thu, Sep 20, 2018 at 6:39 PM, John Johansen
+>>> <john.johansen@canonical.com> wrote:
+>>>> On 09/20/2018 06:10 PM, Casey Schaufler wrote:
+>>>>> On 9/20/2018 5:45 PM, Kees Cook wrote:
+>>>>>> On Thu, Sep 20, 2018 at 5:25 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>>>> On 9/20/2018 9:23 AM, Kees Cook wrote:
+>>>>>>>>  config LSM_ORDER
+>>>>>>>>       string "Default initialization order of builtin LSMs"
+>>>>>>>> -     default "yama,loadpin,integrity"
+>>>>>>>> +     default "yama,loadpin,integrity,selinux,smack,tomoyo,apparmor"
+>>>>>>> If I want to compile all the major modules into my kernel and use
+>>>>>>> AppArmor by default would I use
+>>>>>>>
+>>>>>>>         default "yama,loadpin,integrity,apparmor,selinux,smack,tomoyo"
+>>>>>>>
+>>>>>>> or
+>>>>>>>
+>>>>>>>         default "yama,loadpin,integrity,apparmor"
+>>>>>> I was expecting the former, but the latter will have the same result.
+>>>>
+>>>> t find having the two be equivalent violates expectations. At least
+>>>> when considering the end goal of full/extreme stacking, its trivially
+>>>> the same with current major lsms being exclusive
+>>>
+>>> This mixes "enablement" with "ordering", though, and I think the past
+>>> threads have shown this to be largely problematic.
+>>>
+>>> However, with CONFIG_LSM_ENABLED, we get the effect you're looking for, IIUC.
+>>
+>> no, I was just stating in a world where we have full stacking those two
+>> are not equivalent, as I would assume the order of any lsm not listed
+>> may end up being different.
 > 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->   drivers/char/tpm/tpm-interface.c    | 13 +++++++++----
->   drivers/char/tpm/tpm.h              |  3 ++-
->   drivers/char/tpm/tpm2-cmd.c         | 17 +++++++++++------
->   include/linux/tpm.h                 |  6 ++++--
->   security/integrity/ima/ima_crypto.c | 10 +++++-----
->   5 files changed, 31 insertions(+), 18 deletions(-)
+> Right, the ordering would be defined first by runtime (lsm.order=)
+> followed any missing LSMs then ordered by their order in
+> CONFIG_LSM_ORDER=, followed by any still missing LSMs then ordered by
+> their order at link-time (which *may* be Makefile order, but could
+> change with LTO, etc).
 > 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 645c9aa7677a..81872880b5f1 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -976,21 +976,26 @@ EXPORT_SYMBOL_GPL(tpm_is_tpm2);
->    * tpm_pcr_read - read a PCR value from SHA1 bank
->    * @chip:	a &struct tpm_chip instance, %NULL for the default chip
->    * @pcr_idx:	the PCR to be retrieved
-> - * @res_buf:	the value of the PCR
-> + * @count:	number of digests passed
-> + * @digests:	list of pcr banks and buffers current PCR values are written to
->    *
->    * Return: same as with tpm_transmit_cmd()
->    */
-> -int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> +int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
-> +		 struct tpm_digest *digests)
->   {
->   	int rc;
->   
-> +	if (count != 1)
-> +		return -EINVAL;
-> +
->   	chip = tpm_find_get_ops(chip);
->   	if (!chip)
->   		return -ENODEV;
->   	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> -		rc = tpm2_pcr_read(chip, pcr_idx, res_buf);
-> +		rc = tpm2_pcr_read(chip, pcr_idx, count, digests);
->   	else
-> -		rc = tpm_pcr_read_dev(chip, pcr_idx, res_buf);
-> +		rc = tpm_pcr_read_dev(chip, pcr_idx, digests[0].digest);
->   	tpm_put_ops(chip);
->   	return rc;
->   }
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index b928ba44d864..9479e1ae1b4c 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -564,7 +564,8 @@ static inline u32 tpm2_rc_value(u32 rc)
->   	return (rc & BIT(7)) ? rc & 0xff : rc;
->   }
->   
-> -int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-> +int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
-> +		  struct tpm_digest *digests);
->   int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
->   		    struct tpm_digest *digests);
->   int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 2d7397b8a0d1..601d67c76c1e 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -179,11 +179,13 @@ struct tpm2_pcr_read_out {
->    * tpm2_pcr_read() - read a PCR value
->    * @chip:	TPM chip to use.
->    * @pcr_idx:	index of the PCR to read.
-> - * @res_buf:	buffer to store the resulting hash.
-> + * @count:	number of digests passed.
-> + * @digests:	list of pcr banks and buffers current PCR values are written to.
->    *
->    * Return: Same as with tpm_transmit_cmd.
->    */
-> -int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> +int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
-> +		  struct tpm_digest *digests)
->   {
->   	int rc;
->   	struct tpm_buf buf;
-> @@ -192,6 +194,8 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
->   
->   	if (pcr_idx >= TPM2_PLATFORM_PCR)
->   		return -EINVAL;
-> +	if (count > 1)
-> +		return -EINVAL;
->   
->   	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
->   	if (rc)
-> @@ -200,16 +204,17 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
->   	pcr_select[pcr_idx >> 3] = 1 << (pcr_idx & 0x7);
->   
->   	tpm_buf_append_u32(&buf, 1);
-> -	tpm_buf_append_u16(&buf, TPM_ALG_SHA1);
-> +	tpm_buf_append_u16(&buf, count ? digests[0].alg_id : TPM_ALG_SHA1);
->   	tpm_buf_append_u8(&buf, TPM2_PCR_SELECT_MIN);
->   	tpm_buf_append(&buf, (const unsigned char *)pcr_select,
->   		       sizeof(pcr_select));
->   
->   	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-> -			res_buf ? "attempting to read a pcr value" : NULL);
-> -	if (rc == 0 && res_buf) {
-> +			      count ? "attempting to read a pcr value" : NULL);
-> +	if (rc == 0 && count) {
->   		out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
-> -		memcpy(res_buf, out->digest, SHA1_DIGEST_SIZE);
-> +		memcpy(digests[0].digest, out->digest,
-> +		       be16_to_cpu(out->digest_size));
->   	}
->   
->   	tpm_buf_destroy(&buf);
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 71d7bbf5f690..ac9fc47f4494 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -71,7 +71,8 @@ struct tpm_class_ops {
->   #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
->   
->   extern int tpm_is_tpm2(struct tpm_chip *chip);
-> -extern int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-> +extern int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
-> +			struct tpm_digest *digests);
->   extern int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash);
->   extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
->   extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
-> @@ -87,7 +88,8 @@ static inline int tpm_is_tpm2(struct tpm_chip *chip)
->   {
->   	return -ENODEV;
->   }
-> -static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> +static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u32 count,
-> +			       struct tpm_digest *digests)
->   {
->   	return -ENODEV;
->   }
-> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-> index 7e7e7e7c250a..4c94cf810d15 100644
-> --- a/security/integrity/ima/ima_crypto.c
-> +++ b/security/integrity/ima/ima_crypto.c
-> @@ -629,12 +629,12 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
->   	return calc_buffer_shash(buf, len, hash);
->   }
->   
-> -static void __init ima_pcrread(int idx, u8 *pcr)
-> +static void __init ima_pcrread(int idx, struct tpm_digest *d)
->   {
->   	if (!ima_tpm_chip)
->   		return;
->   
-> -	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
-> +	if (tpm_pcr_read(ima_tpm_chip, idx, 1, d) != 0)
->   		pr_err("Error Communicating to TPM chip\n");
->   }
->   
-> @@ -644,7 +644,7 @@ static void __init ima_pcrread(int idx, u8 *pcr)
->   static int __init ima_calc_boot_aggregate_tfm(char *digest,
->   					      struct crypto_shash *tfm)
->   {
-> -	u8 pcr_i[TPM_DIGEST_SIZE];
-> +	struct tpm_digest d = {.alg_id = TPM_ALG_SHA1};
->   	int rc, i;
->   	SHASH_DESC_ON_STACK(shash, tfm);
->   
-> @@ -657,9 +657,9 @@ static int __init ima_calc_boot_aggregate_tfm(char *digest,
->   
->   	/* cumulative sha1 over tpm registers 0-7 */
->   	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
-> -		ima_pcrread(i, pcr_i);
-> +		ima_pcrread(i, &d);
->   		/* now accumulate with current aggregate */
-> -		rc = crypto_shash_update(shash, pcr_i, TPM_DIGEST_SIZE);
-> +		rc = crypto_shash_update(shash, d.digest, TPM_DIGEST_SIZE);
->   	}
->   	if (!rc)
->   		crypto_shash_final(shash, digest);
+>>>>>>> When we have "blob-sharing" how could I compile in tomoyo,
+>>>>>>> but exclude it without a boot line option?
+>>>>>> Ooh, yes, this series has no way to do that. Perhaps
+>>>>>> CONFIG_LSM_DISABLE in the same form as CONFIG_LSM_ORDER? I would
+>>>>>> totally remove LoadPin's CONFIG for this in favor it.
+>>>>>
+>>>>> I would generally prefer an optional CONFIG_LSM_ENABLE to
+>>>>> CONFIG_LSM_DISABLE, but I understand the logic behind your
+>>>>> approach. I would be looking for something like
+>>>>>
+>>>> +1 on the CONFIG_LSM_ENABLE ove DISABLE
+>>>>
+>>>>> CONFIG LSM_ENABLE
+>>>>>       string "Default set of enabled LSMs"
+>>>>>       default ""
+>>>>>
+>>>>> as opposed to
+>>>>>
+>>>>> CONFIG LSM_DISABLE
+>>>>>       string "Default set of disabled LSMs"
+>>>>>       default ""
+>>>>>
+>>>>> where an empty string is interpreted as "use 'em all"
+>>>>> in either case.
+>>>
+>>> Yes, I like CONFIG_LSM_ENABLE if "empty" means "enable all". Should
+>>> CONFIG_LSM_ENABLE replace all the other CONFIG-based LSM
+>>> enabling/disabling?
+>>
+>> I don't particularly like "empty" being "enable all". With that
+>> how would I disable all builtin lsms so that I just boot with
+>> capability.
+>>
+>> An option of all or even * is more explicit and leaves the empty
+>> set to mean disable everything
 > 
+> Okay, that works. I prefer "all" FWIW.
+> 
+me too, I was just trying to throw out options.
