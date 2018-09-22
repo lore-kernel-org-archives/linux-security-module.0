@@ -1,86 +1,21 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Fri, 21 Sep 2018 16:59:21 -0700
-Subject: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
-Message-ID: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
+From: dhowells@redhat.com (David Howells)
+Date: Sat, 22 Sep 2018 01:03:40 +0100
+Subject: [PATCH resend] uapi/linux/keyctl.h: don't use C++ reserved
+	keyword as a struct member name
+In-Reply-To: <20180910150903.249031442dd7fe43e01812cf@linux-foundation.org>
+References: <20180910150903.249031442dd7fe43e01812cf@linux-foundation.org>
+	<0db6c314-1ef4-9bfa-1baa-7214dd2ee061@infradead.org>
+	<20180909220018.GH13219@asgard.redhat.com>
+Message-ID: <19867.1537574620@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-v4: Finer granularity in the patches and other
-    cleanups suggested by Kees Cook.
-    Removed dead code created by the removal of SELinux
-    credential blob poisoning.
-v3: Add ipc blob for SARA and task blob for Landlock.
-    Removing the SELinux cred blob pointer poisoning
-    results selinux_is_enabled() being unused, so it and
-    all it's overhead has been removed.
-    Broke up the cred infrastructure patch.
-v2: Reduce the patchset to what is required to support
-    the proposed SARA and LandLock security modules
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-The SARA security module is intended to be used
-in conjunction with other security modules. It requires
-state to be maintained for the credential, which
-in turn requires a mechanism for sharing the credential
-security blob. It also uses the ipc security blob. The
-module also requires mechanism for user space manipulation
-of the credential information, hence an additional
-subdirectory in /proc/.../attr.
+> Are there such programs?  Do they reference the `private' field?
 
-The LandLock security module provides user configurable
-policy in the secmark mechanism. It requires data in
-the credential, file, inode and task security blobs. For
-this to be used along side the existing "major" security
-modules mechanism for sharing these blobs are provided.
+They would use the keyutils.h header from keyutils package probably.  There
+the field was named "priv" not "private".  The kernel's UAPI header should be
+amended again to match that.
 
-A side effect of providing sharing of the crendential
-security blob is that the TOMOYO module can be used at
-the same time as the other "major" modules.
-
-The mechanism for configuring which security modules are
-enabled has to change when stacking in enabled. Any
-module that uses just the security blobs that are shared
-can be selected. Additionally, one other "major" module
-can be selected.
-
-The security module stacking issues around networking and
-IPC are not addressed here as they are beyond what is
-required for TOMOYO, SARA and LandLock.
-
-git://github.com/cschaufler/lsm-stacking.git#stacking-4.19-rc2-saralock-v4
-
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- Documentation/admin-guide/LSM/index.rst |  23 +-
- fs/proc/base.c                          |  64 ++++-
- fs/proc/internal.h                      |   1 +
- include/linux/cred.h                    |   1 -
- include/linux/lsm_hooks.h               |  24 +-
- include/linux/security.h                |  15 +-
- include/linux/selinux.h                 |  35 ---
- kernel/cred.c                           |  13 -
- security/Kconfig                        |  92 +++++++
- security/apparmor/domain.c              |   2 +-
- security/apparmor/include/cred.h        |  24 +-
- security/apparmor/include/file.h        |   9 +-
- security/apparmor/include/lib.h         |   4 +
- security/apparmor/include/task.h        |  18 +-
- security/apparmor/lsm.c                 |  68 +++--
- security/apparmor/task.c                |   6 +-
- security/security.c                     | 438 ++++++++++++++++++++++++++++++--
- security/selinux/Makefile               |   2 +-
- security/selinux/exports.c              |  23 --
- security/selinux/hooks.c                | 333 +++++++-----------------
- security/selinux/include/audit.h        |   3 -
- security/selinux/include/objsec.h       |  48 +++-
- security/selinux/selinuxfs.c            |   4 +-
- security/selinux/ss/services.c          |   1 -
- security/selinux/xfrm.c                 |   4 +-
- security/smack/smack.h                  |  55 +++-
- security/smack/smack_access.c           |   4 +-
- security/smack/smack_lsm.c              | 315 ++++++++---------------
- security/smack/smackfs.c                |  18 +-
- security/tomoyo/common.h                |  26 +-
- security/tomoyo/domain.c                |   4 +-
- security/tomoyo/securityfs_if.c         |  15 +-
- security/tomoyo/tomoyo.c                |  57 ++++-
- 33 files changed, 1098 insertions(+), 651 deletions(-)
+David
