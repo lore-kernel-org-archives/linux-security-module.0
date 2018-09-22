@@ -1,10 +1,10 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Fri, 21 Sep 2018 19:56:55 -0700
-Subject: [PATCH v4 16/19] SELinux: Abstract use of ipc security blobs
-In-Reply-To: <383f1b1a-3d7c-46d2-a553-3a09f25bc1c4@schaufler-ca.com>
+Date: Fri, 21 Sep 2018 19:57:27 -0700
+Subject: [PATCH v4 17/19] Smack: Abstract use of ipc security blobs
+In-Reply-To: <f8d020ad-2e50-d541-3187-81f63557f667@schaufler-ca.com>
 References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
-	<383f1b1a-3d7c-46d2-a553-3a09f25bc1c4@schaufler-ca.com>
-Message-ID: <CAGXu5jJ1dNrxLetD=t=PX3pJNKigjdj+CSHMfNF6cePQmYYwag@mail.gmail.com>
+	<f8d020ad-2e50-d541-3187-81f63557f667@schaufler-ca.com>
+Message-ID: <CAGXu5jL6GAWmCAt1aXdVvr9HqdUUOynJ4Ma1VBGjjdTkyNb+qQ@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
