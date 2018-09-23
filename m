@@ -1,56 +1,31 @@
-From: fw@strlen.de (Florian Westphal)
-Date: Sun, 23 Sep 2018 15:55:55 +0200
+From: cgzones@googlemail.com (=?UTF-8?Q?Christian_G=C3=B6ttsche?=)
+Date: Sun, 23 Sep 2018 17:31:16 +0200
 Subject: [PATCH v2 1/2] netfilter: nf_tables: add SECMARK support
-In-Reply-To: <20180923091611.19815-1-cgzones@googlemail.com>
+In-Reply-To: <20180923135555.7kwa3kyachwcfy24@breakpoint.cc>
 References: <20180923091611.19815-1-cgzones@googlemail.com>
-Message-ID: <20180923135555.7kwa3kyachwcfy24@breakpoint.cc>
+	<20180923135555.7kwa3kyachwcfy24@breakpoint.cc>
+Message-ID: <CAJ2a_DfCmbFmpTngFnXzYy07gvEzN5UhAhrE8Cd8PowevrLUNw@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Christian G?ttsche <cgzones@googlemail.com> wrote:
-> Add the ability to set the security context of packets within the nf_tables framework.
-> Add a nft_object for holding security contexts in the kernel and manipulating packets on the wire.
-> 
-> Convert the security context strings at rule addition time to security identifiers.
-> This is the same behavior like in xt_SECMARK and offers better performance than computing it per packet.
-> 
-> Set the maximum security context length to 256.
+> > +struct nft_secmark {
+> > +     char ctx[NFT_SECMARK_CTX_MAXLEN];
+> > +     int len;
+> > +     u32 secid;
+> > +};
+>
+> Can you change this to:
+>
+> struct nft_secmark {
+>         u32 secid;
+>         char *ctx;
+> };
 
-Looks good, one minor suggestion.
+Does the nla_policy struct needs an update too? (regarding then .len member)
 
-> +#ifdef CONFIG_NETWORK_SECMARK
-> +
-> +struct nft_secmark {
-> +	char ctx[NFT_SECMARK_CTX_MAXLEN];
-> +	int len;
-> +	u32 secid;
-> +};
++static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
++        [NFTA_SECMARK_CTX] = { .type = NLA_STRING, .len =
+NFT_SECMARK_CTX_MAXLEN },
++}
 
-Can you change this to:
-
-struct nft_secmark {
-	u32 secid;
-	char *ctx;
-};
-
-?
-We don't need ctx in the packetpath, so better to keep
-the struct size small.
-
-> +	nla_strlcpy(priv->ctx, tb[NFTA_SECMARK_CTX], NFT_SECMARK_CTX_MAXLEN);
-
-You can change this to
-	priv->ctx = nla_strdup(tb[NFTA_SECMARK_CTX], GFP_KERNEL);
-	if (!priv->ctx)
-		return -ENOMEM;
-
-> +	err = nft_secmark_secconversion(priv);
-> +	if (err) {
-		kfree(priv->ctx);
-
-> +static void nft_secmark_obj_destroy(const struct nft_ctx *ctx, struct nft_object *obj)
-> +{
-	kfree(priv->ctx);
-
-But other than this i think this is ready to be applied,
-thanks a lot for making this happen.
+NFT_SECMARK_CTX_MAXLEN might be dropped then..
