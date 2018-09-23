@@ -1,31 +1,30 @@
-From: cgzones@googlemail.com (=?UTF-8?Q?Christian_G=C3=B6ttsche?=)
-Date: Sun, 23 Sep 2018 17:31:16 +0200
+From: fw@strlen.de (Florian Westphal)
+Date: Sun, 23 Sep 2018 17:41:29 +0200
 Subject: [PATCH v2 1/2] netfilter: nf_tables: add SECMARK support
-In-Reply-To: <20180923135555.7kwa3kyachwcfy24@breakpoint.cc>
+In-Reply-To: <CAJ2a_DfCmbFmpTngFnXzYy07gvEzN5UhAhrE8Cd8PowevrLUNw@mail.gmail.com>
 References: <20180923091611.19815-1-cgzones@googlemail.com>
 	<20180923135555.7kwa3kyachwcfy24@breakpoint.cc>
-Message-ID: <CAJ2a_DfCmbFmpTngFnXzYy07gvEzN5UhAhrE8Cd8PowevrLUNw@mail.gmail.com>
+	<CAJ2a_DfCmbFmpTngFnXzYy07gvEzN5UhAhrE8Cd8PowevrLUNw@mail.gmail.com>
+Message-ID: <20180923154129.ht55keytmgxcnl73@breakpoint.cc>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> > +struct nft_secmark {
-> > +     char ctx[NFT_SECMARK_CTX_MAXLEN];
-> > +     int len;
-> > +     u32 secid;
-> > +};
->
-> Can you change this to:
->
-> struct nft_secmark {
->         u32 secid;
->         char *ctx;
-> };
+Christian G?ttsche <cgzones@googlemail.com> wrote:
+> > Can you change this to:
+> >
+> > struct nft_secmark {
+> >         u32 secid;
+> >         char *ctx;
+> > };
+> 
+> Does the nla_policy struct needs an update too? (regarding then .len member)
+> 
+> +static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
+> +        [NFTA_SECMARK_CTX] = { .type = NLA_STRING, .len =
+> NFT_SECMARK_CTX_MAXLEN },
+> +}
+> 
+> NFT_SECMARK_CTX_MAXLEN might be dropped then..
 
-Does the nla_policy struct needs an update too? (regarding then .len member)
-
-+static const struct nla_policy nft_secmark_policy[NFTA_SECMARK_MAX + 1] = {
-+        [NFTA_SECMARK_CTX] = { .type = NLA_STRING, .len =
-NFT_SECMARK_CTX_MAXLEN },
-+}
-
-NFT_SECMARK_CTX_MAXLEN might be dropped then..
+Better keep it, we can always increase this later it if needed.
+Given the length matches what xtables uses it should be fine.
