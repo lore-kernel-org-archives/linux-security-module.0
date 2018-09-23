@@ -1,85 +1,17 @@
-From: cgzones@googlemail.com (=?UTF-8?q?Christian=20G=C3=B6ttsche?=)
-Date: Sun, 23 Sep 2018 11:16:11 +0200
-Subject: [PATCH 2/2] netfilter: nf_tables: add requirements for connsecmark
-	support
-In-Reply-To: <20180923091611.19815-1-cgzones@googlemail.com>
+From: fw@strlen.de (Florian Westphal)
+Date: Sun, 23 Sep 2018 15:51:30 +0200
+Subject: [PATCH 2/2] netfilter: nf_tables: add requirements for
+	connsecmark support
+In-Reply-To: <20180923091611.19815-2-cgzones@googlemail.com>
 References: <20180923091611.19815-1-cgzones@googlemail.com>
-Message-ID: <20180923091611.19815-2-cgzones@googlemail.com>
+	<20180923091611.19815-2-cgzones@googlemail.com>
+Message-ID: <20180923135130.evm36ouzsrdzb35l@breakpoint.cc>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Add ability to set the connection tracking secmark value.
+Christian G?ttsche <cgzones@googlemail.com> wrote:
+> Add ability to set the connection tracking secmark value.
+> Add ability to set the meta secmark value.
 
-Add ability to set the meta secmark value.
-
-Signed-off-by: Christian G?ttsche <cgzones@googlemail.com>
----
-
-Based on nf-next
-Tested with v4.18.8
-
- net/netfilter/nft_ct.c   | 15 +++++++++++++++
- net/netfilter/nft_meta.c |  8 ++++++++
- 2 files changed, 23 insertions(+)
-
-diff --git a/net/netfilter/nft_ct.c b/net/netfilter/nft_ct.c
-index d74afa707..dcc451c20 100644
---- a/net/netfilter/nft_ct.c
-+++ b/net/netfilter/nft_ct.c
-@@ -298,6 +298,14 @@ static void nft_ct_set_eval(const struct nft_expr *expr,
- 		}
- 		break;
- #endif
-+#ifdef CONFIG_NF_CONNTRACK_SECMARK
-+	case NFT_CT_SECMARK:
-+		if (ct->secmark != value) {
-+			ct->secmark = value;
-+			nf_conntrack_event_cache(IPCT_SECMARK, ct);
-+		}
-+		break;
-+#endif
- #ifdef CONFIG_NF_CONNTRACK_LABELS
- 	case NFT_CT_LABELS:
- 		nf_connlabels_replace(ct,
-@@ -564,6 +572,13 @@ static int nft_ct_set_init(const struct nft_ctx *ctx,
- 			return -EINVAL;
- 		len = sizeof(u32);
- 		break;
-+#endif
-+#ifdef CONFIG_NF_CONNTRACK_SECMARK
-+	case NFT_CT_SECMARK:
-+		if (tb[NFTA_CT_DIRECTION])
-+			return -EINVAL;
-+		len = sizeof(u32);
-+		break;
- #endif
- 	default:
- 		return -EOPNOTSUPP;
-diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
-index ac5df9508..555fcd66b 100644
---- a/net/netfilter/nft_meta.c
-+++ b/net/netfilter/nft_meta.c
-@@ -284,6 +284,11 @@ static void nft_meta_set_eval(const struct nft_expr *expr,
- 
- 		skb->nf_trace = !!value8;
- 		break;
-+#ifdef CONFIG_NETWORK_SECMARK
-+	case NFT_META_SECMARK:
-+		skb->secmark = value;
-+		break;
-+#endif
- 	default:
- 		WARN_ON(1);
- 	}
-@@ -436,6 +441,9 @@ static int nft_meta_set_init(const struct nft_ctx *ctx,
- 	switch (priv->key) {
- 	case NFT_META_MARK:
- 	case NFT_META_PRIORITY:
-+#ifdef CONFIG_NETWORK_SECMARK
-+	case NFT_META_SECMARK:
-+#endif
- 		len = sizeof(u32);
- 		break;
- 	case NFT_META_NFTRACE:
--- 
-2.19.0
+Looks good to me.
+Acked-by: Florian Westphal <fw@strlen.de>
