@@ -1,103 +1,96 @@
-From: lkp@intel.com (kbuild test robot)
-Date: Mon, 24 Sep 2018 01:13:08 +0800
-Subject: [PATCH 2/2] netfilter: nf_tables: add requirements for
-	connsecmark support
-In-Reply-To: <20180923091611.19815-2-cgzones@googlemail.com>
-References: <20180923091611.19815-2-cgzones@googlemail.com>
-Message-ID: <201809240105.0LTkaW1F%fengguang.wu@intel.com>
+From: cgzones@googlemail.com (=?UTF-8?q?Christian=20G=C3=B6ttsche?=)
+Date: Sun, 23 Sep 2018 20:26:16 +0200
+Subject: [PATCH v3 2/2] netfilter: nf_tables: add requirements for connsecmark
+	support
+In-Reply-To: <20180923182616.11398-1-cgzones@googlemail.com>
+References: <20180923182616.11398-1-cgzones@googlemail.com>
+Message-ID: <20180923182616.11398-2-cgzones@googlemail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Christian,
+Add ability to set the connection tracking secmark value.
 
-Thank you for the patch! Yet something to improve:
+Add ability to set the meta secmark value.
 
-[auto build test ERROR on nf-next/master]
-[also build test ERROR on v4.19-rc4 next-20180921]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Christian-G-ttsche/netfilter-nf_tables-add-SECMARK-support/20180923-213820
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git master
-config: x86_64-randconfig-s2-09240020 (attached as .config)
-compiler: gcc-6 (Debian 6.4.0-9) 6.4.0 20171026
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
-
-All errors (new ones prefixed by >>):
-
-   net/netfilter/nft_ct.c: In function 'nft_ct_set_eval':
->> net/netfilter/nft_ct.c:303:22: error: 'value' undeclared (first use in this function)
-      if (ct->secmark != value) {
-                         ^~~~~
-   net/netfilter/nft_ct.c:303:22: note: each undeclared identifier is reported only once for each function it appears in
-
-vim +/value +303 net/netfilter/nft_ct.c
-
-   275	
-   276	static void nft_ct_set_eval(const struct nft_expr *expr,
-   277				    struct nft_regs *regs,
-   278				    const struct nft_pktinfo *pkt)
-   279	{
-   280		const struct nft_ct *priv = nft_expr_priv(expr);
-   281		struct sk_buff *skb = pkt->skb;
-   282	#ifdef CONFIG_NF_CONNTRACK_MARK
-   283		u32 value = regs->data[priv->sreg];
-   284	#endif
-   285		enum ip_conntrack_info ctinfo;
-   286		struct nf_conn *ct;
-   287	
-   288		ct = nf_ct_get(skb, &ctinfo);
-   289		if (ct == NULL || nf_ct_is_template(ct))
-   290			return;
-   291	
-   292		switch (priv->key) {
-   293	#ifdef CONFIG_NF_CONNTRACK_MARK
-   294		case NFT_CT_MARK:
-   295			if (ct->mark != value) {
-   296				ct->mark = value;
-   297				nf_conntrack_event_cache(IPCT_MARK, ct);
-   298			}
-   299			break;
-   300	#endif
-   301	#ifdef CONFIG_NF_CONNTRACK_SECMARK
-   302		case NFT_CT_SECMARK:
- > 303			if (ct->secmark != value) {
-   304				ct->secmark = value;
-   305				nf_conntrack_event_cache(IPCT_SECMARK, ct);
-   306			}
-   307			break;
-   308	#endif
-   309	#ifdef CONFIG_NF_CONNTRACK_LABELS
-   310		case NFT_CT_LABELS:
-   311			nf_connlabels_replace(ct,
-   312					      &regs->data[priv->sreg],
-   313					      &regs->data[priv->sreg],
-   314					      NF_CT_LABELS_MAX_SIZE / sizeof(u32));
-   315			break;
-   316	#endif
-   317	#ifdef CONFIG_NF_CONNTRACK_EVENTS
-   318		case NFT_CT_EVENTMASK: {
-   319			struct nf_conntrack_ecache *e = nf_ct_ecache_find(ct);
-   320			u32 ctmask = regs->data[priv->sreg];
-   321	
-   322			if (e) {
-   323				if (e->ctmask != ctmask)
-   324					e->ctmask = ctmask;
-   325				break;
-   326			}
-   327	
-   328			if (ctmask && !nf_ct_is_confirmed(ct))
-   329				nf_ct_ecache_ext_add(ct, ctmask, 0, GFP_ATOMIC);
-   330			break;
-   331		}
-   332	#endif
-   333		default:
-   334			break;
-   335		}
-   336	}
-   337	
-
+Signed-off-by: Christian G?ttsche <cgzones@googlemail.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+v3: fix compile error when CONFIG_NF_CONNTRACK_MARK not defined
+
+Based on nf-next
+Tested with v4.18.8
+
+ net/netfilter/nft_ct.c   | 17 ++++++++++++++++-
+ net/netfilter/nft_meta.c |  8 ++++++++
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/net/netfilter/nft_ct.c b/net/netfilter/nft_ct.c
+index d74afa707..586627c36 100644
+--- a/net/netfilter/nft_ct.c
++++ b/net/netfilter/nft_ct.c
+@@ -279,7 +279,7 @@ static void nft_ct_set_eval(const struct nft_expr *expr,
+ {
+ 	const struct nft_ct *priv = nft_expr_priv(expr);
+ 	struct sk_buff *skb = pkt->skb;
+-#ifdef CONFIG_NF_CONNTRACK_MARK
++#if defined(CONFIG_NF_CONNTRACK_MARK) || defined(CONFIG_NF_CONNTRACK_SECMARK)
+ 	u32 value = regs->data[priv->sreg];
+ #endif
+ 	enum ip_conntrack_info ctinfo;
+@@ -298,6 +298,14 @@ static void nft_ct_set_eval(const struct nft_expr *expr,
+ 		}
+ 		break;
+ #endif
++#ifdef CONFIG_NF_CONNTRACK_SECMARK
++	case NFT_CT_SECMARK:
++		if (ct->secmark != value) {
++			ct->secmark = value;
++			nf_conntrack_event_cache(IPCT_SECMARK, ct);
++		}
++		break;
++#endif
+ #ifdef CONFIG_NF_CONNTRACK_LABELS
+ 	case NFT_CT_LABELS:
+ 		nf_connlabels_replace(ct,
+@@ -564,6 +572,13 @@ static int nft_ct_set_init(const struct nft_ctx *ctx,
+ 			return -EINVAL;
+ 		len = sizeof(u32);
+ 		break;
++#endif
++#ifdef CONFIG_NF_CONNTRACK_SECMARK
++	case NFT_CT_SECMARK:
++		if (tb[NFTA_CT_DIRECTION])
++			return -EINVAL;
++		len = sizeof(u32);
++		break;
+ #endif
+ 	default:
+ 		return -EOPNOTSUPP;
+diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
+index c8ac0ef4b..a6715c816 100644
+--- a/net/netfilter/nft_meta.c
++++ b/net/netfilter/nft_meta.c
+@@ -284,6 +284,11 @@ static void nft_meta_set_eval(const struct nft_expr *expr,
+ 
+ 		skb->nf_trace = !!value8;
+ 		break;
++#ifdef CONFIG_NETWORK_SECMARK
++	case NFT_META_SECMARK:
++		skb->secmark = value;
++		break;
++#endif
+ 	default:
+ 		WARN_ON(1);
+ 	}
+@@ -436,6 +441,9 @@ static int nft_meta_set_init(const struct nft_ctx *ctx,
+ 	switch (priv->key) {
+ 	case NFT_META_MARK:
+ 	case NFT_META_PRIORITY:
++#ifdef CONFIG_NETWORK_SECMARK
++	case NFT_META_SECMARK:
++#endif
+ 		len = sizeof(u32);
+ 		break;
+ 	case NFT_META_NFTRACE:
+-- 
+2.19.0
