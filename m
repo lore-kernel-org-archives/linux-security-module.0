@@ -1,84 +1,77 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Mon, 24 Sep 2018 13:33:51 -0700
-Subject: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
-In-Reply-To: <eb1525f6-a3f8-4386-778f-8758c42326e5@i-love.sakura.ne.jp>
-References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
-	<CAGXu5jK=+FuL+JiSxcHy0i9Ppha=BQYdJW5zvbm1Redbo12wmw@mail.gmail.com>
-	<680e6e16-0890-8304-0e8e-6c58966813b5@schaufler-ca.com>
-	<CAGXu5j+7FpFDNuOowdHzJ5RXgfETQMv=Fe-EU1gWo+nWK+goZA@mail.gmail.com>
-	<39457e79-3816-824b-6b4d-89d21b03f9ce@i-love.sakura.ne.jp>
-	<b209d4b8-81a5-30aa-f4d1-9372bbb1b842@schaufler-ca.com>
-	<da179a76-691e-32f5-9391-c432a72fe37e@i-love.sakura.ne.jp>
-	<3350edec-c233-9428-73b0-58d582d1e3b9@schaufler-ca.com>
-	<eb1525f6-a3f8-4386-778f-8758c42326e5@i-love.sakura.ne.jp>
-Message-ID: <28e4ca6d-e86c-ee1f-ead8-f03d1ccd7d54@schaufler-ca.com>
+From: jmorris@namei.org (James Morris)
+Date: Tue, 25 Sep 2018 07:40:06 +1000 (AEST)
+Subject: [GIT PULL] Keys: fix C++ reserved word issue
+Message-ID: <alpine.LRH.2.21.1809250738020.27047@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/24/2018 10:53 AM, Tetsuo Handa wrote:
-> On 2018/09/25 2:16, Casey Schaufler wrote:
->>> Not all of LKM-based LSMs use security blobs. And some of LKM-based LSMs
->>> might use security blobs for only a few objects. For example, AKARI uses
->>> inode security blob for remembering whether source address/port of an
->>> accept()ed socket was already checked, only during accept() operation and
->>> first socket operation on the accept()ed socket. Thus, there is no need
->>> to waste memory by assigning blobs for all inode objects.
->> The first question is why use an inode blob? Shouldn't you
->> be using a socket blob for this socket based information?
-> Indeed. AKARI can as well use security_sk_free() using address of
-> "struct sock" as a key.
->
->> If you only want information part of the time you can declare
->> a pointer sized blob and manage what hangs off that as you will.
->> I personally think that the added complexity of conditional
->> blob management is more pain than it's worth, but if you want
->> a really big blob, but only on occasion, I could see doing it.
-> LKM based LSMs are too late for updating blob_sizes.* fields.
+Please pull this revert and update, from David Howells:
 
-That is true with the code in this patch set. As I mentioned,
-changing the blob handling to include a header with real use
-information would be required.
+"Here's a pair of fixes that need to go upstream asap, please:
 
-> Even if they could, they after all have to somehow check whether
-> corresponding init hook was called. That's checking for NULL.
+ (1) Revert an incorrect fix to the keyrings UAPI for a C++ reserved word
+     used as a struct member name.  This change being reverted breaks
+     existing userspace code and is thus incorrect.
 
-Right.
+     Further, *neither* name is consistent with the one in the keyutils
+     package public header.
 
->>>>> @@ -1202,11 +1183,11 @@ void security_file_free(struct file *file)
->>>>>  {
->>>>>  	void *blob;
->>>>>  
->>>>> +	call_void_hook(file_free_security, file);
->>>>> +
->>>>>  	if (!lsm_file_cache)
->>>>>  		return;
->>>>>  
->>>>> -	call_void_hook(file_free_security, file);
->>>>> -
->>>> Why does this make sense? If the lsm_file_cache isn't
->>>> initialized you can't have allocated any file blobs,
->>>> no module can have initialized a file blob, hence there
->>>> can be nothing for the module to do.
->>>>
->>> For modules (not limited to LKM-based LSMs) which want to use
->>> file blobs for only a few objects and avoid wasting memory by
->>> allocating file blobs to all file objects.
->>>
->>> Infrastructure based blob management fits well for LSM modules
->>> which want to assign blobs to all objects (like SELinux). But
->>> forcing infrastructure based blob management can become a huge
->>> waste of memory for LSM modules which want to assign blobs to
->>> only a few objects. Unconditionally calling file_free_security
->>> hook (as with other hooks) preserves a room for allowing the
->>> latter type of LSM modules without using infrastructure based
->>> blob management.
->> There is a hypothetical issue here, but that would require abuse
->> of the infrastructure. Having a file_free_security hook that doesn't
->> free a security blob allocated by file_alloc_security may coincidentaly
->> be useful, but that's not the intent of the hook.
->>
-> The free hook might be used for freeing resources which were not allocated
-> by alloc hook. Yama is using task_free hook without task_alloc hook.
-> Someone might want to use file_free hook without file_alloc hook.
+ (2) Fix the problem by using a union to make the name from keyutils
+     available in parallel and make the 'private' name unavailable in C++
+     with cpp-conditionals."
 
-OK, you're correct. Checking for an initialized kmem_cache isn't appropriate.
+---
+The following changes since commit 02214bfc89c71bcc5167f653994cfa5c57f10ff1:
+
+  Merge tag 'media/v4.19-2' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media (2018-09-24 15:16:41 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v4.19-rc5
+
+for you to fetch changes up to cae081e4d49ac9be127c4e1b876bb685c2c04159:
+
+  keys: Fix the use of the C++ keyword "private" in uapi/linux/keyctl.h (2018-09-24 13:51:12 -0700)
+
+----------------------------------------------------------------
+David Howells (1):
+      keys: Fix the use of the C++ keyword "private" in uapi/linux/keyctl.h
+
+Lubomir Rintel (1):
+      Revert "uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name"
+
+ include/uapi/linux/keyctl.h | 7 ++++++-
+ security/keys/dh.c          | 2 +-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
+index 910cc4334b21..0f3cb13db8e9 100644
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -65,7 +65,12 @@
+ 
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 dh_private;
++	union {
++#ifndef __cplusplus
++		__s32 private;
++#endif
++		__s32 priv;
++	};
+ 	__s32 prime;
+ 	__s32 base;
+ };
+diff --git a/security/keys/dh.c b/security/keys/dh.c
+index 3b602a1e27fa..711e89d8c415 100644
+--- a/security/keys/dh.c
++++ b/security/keys/dh.c
+@@ -300,7 +300,7 @@ long __keyctl_dh_compute(struct keyctl_dh_params __user *params,
+ 	}
+ 	dh_inputs.g_size = dlen;
+ 
+-	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
++	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
+ 	if (dlen < 0) {
+ 		ret = dlen;
+ 		goto out2;
