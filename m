@@ -1,80 +1,135 @@
-From: mathew.j.martineau@linux.intel.com (Mat Martineau)
-Date: Mon, 24 Sep 2018 09:52:41 -0700 (PDT)
-Subject: [PATCH 2/2] keys: Fix the use of the C++ keyword "private" in
-	uapi/linux/keyctl.h
-In-Reply-To: <153779152340.28003.6461494237075964365.stgit@warthog.procyon.org.uk>
-References: <153779150602.28003.4692837431529288988.stgit@warthog.procyon.org.uk>
-	<153779152340.28003.6461494237075964365.stgit@warthog.procyon.org.uk>
-Message-ID: <alpine.OSX.2.21.1809240941550.2707@mjmartin-mac01.local>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Mon, 24 Sep 2018 10:16:52 -0700
+Subject: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
+In-Reply-To: <da179a76-691e-32f5-9391-c432a72fe37e@i-love.sakura.ne.jp>
+References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
+	<CAGXu5jK=+FuL+JiSxcHy0i9Ppha=BQYdJW5zvbm1Redbo12wmw@mail.gmail.com>
+	<680e6e16-0890-8304-0e8e-6c58966813b5@schaufler-ca.com>
+	<CAGXu5j+7FpFDNuOowdHzJ5RXgfETQMv=Fe-EU1gWo+nWK+goZA@mail.gmail.com>
+	<39457e79-3816-824b-6b4d-89d21b03f9ce@i-love.sakura.ne.jp>
+	<b209d4b8-81a5-30aa-f4d1-9372bbb1b842@schaufler-ca.com>
+	<da179a76-691e-32f5-9391-c432a72fe37e@i-love.sakura.ne.jp>
+Message-ID: <3350edec-c233-9428-73b0-58d582d1e3b9@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On 9/23/2018 6:53 PM, Tetsuo Handa wrote:
+> On 2018/09/24 2:09, Casey Schaufler wrote:
+>>>   Since all free hooks are called when one of init hooks failed, each
+>>>   free hook needs to check whether init hook was called. An example is
+>>>   inode_free_security() in security/selinux/hooks.c (but not addressed in
+>>>   this patch).
+>> I *think* that selinux_inode_free_security() is safe in this
+>> case because the blob will be zeroed, hence isec->list will
+>> be NULL.
+>>
+> OK.
+>
+>>>   This patchset might fatally prevent LKM-based LSM modules, for LKM-based
+>>>   LSMs cannot count on lsm_*_alloc() because size for lsm_*_alloc() cannot
+>>>   be updated upon loading LKM-based LSMs.
+>> LKM based security modules will require dynamically sized blobs.
+>> These can be added to the scheme used here. Each blob would get a
+>> header identifying the modules for which it contains data. When an
+>> LKM is registered if has to declare it's blob space requirements
+>> and gets back the offsets. All alloc operations have to put their
+>> marks in the header. All LKM blob users have to check that the blob
+>> they are looking at has the required data.
+>>
+>> module_cred(struct cred *cred) {
+>> 	return cred->security + module_blob_sizes.lbs_cred;
+>> }
+>>
+>> becomes
+>>
+>> module_cred(struct cred *cred) {
+>> 	if (blob_includes(module_id))
+>> 		return cred->security + module_blob_sizes.lbs_cred;
+>> 	return NULL;
+>> }
+>>
+>> and the calling code needs to accept a NULL return.
+> Not all of LKM-based LSMs use security blobs. And some of LKM-based LSMs
+> might use security blobs for only a few objects. For example, AKARI uses
+> inode security blob for remembering whether source address/port of an
+> accept()ed socket was already checked, only during accept() operation and
+> first socket operation on the accept()ed socket. Thus, there is no need
+> to waste memory by assigning blobs for all inode objects.
 
-On Mon, 24 Sep 2018, David Howells wrote:
+The first question is why use an inode blob? Shouldn't you
+be using a socket blob for this socket based information?
 
-> The keyctl_dh_params struct in uapi/linux/keyctl.h contains the symbol
-> "private" which means that the header file will cause compilation failure
-> if #included in to a C++ program.  Further, the patch that added the same
-> struct to the keyutils package named the symbol "priv", not "private".
->
-> The previous attempt to fix this (commit 8a2336e549d3) did so by simply
-> renaming the kernel's copy of the field to dh_private, but this then breaks
-> existing userspace and as such has to be reverted (which is done by the
-> preceding patch).
->
-> [And note, to those who think that wrapping the struct in extern "C" {}
-> will work: it won't; that only changes how symbol names are presented to
-> the assembler and linker.].
->
-> Instead, insert an anonymous union around the "private" member and add a
-> second member in there with the name "priv" to match the one in the
-> keyutils package.  The "private" member is then wrapped in !__cplusplus
-> cpp-conditionals to hide it from C++.
->
-> Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
-> Fixes: 8a2336e549d3 ("uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Randy Dunlap <rdunlap@infradead.org>
-> cc: Lubomir Rintel <lkundrak@v3.sk>
-> cc: James Morris <jmorris@namei.org>
-> cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-> cc: Stephan Mueller <smueller@chronox.de>
-> cc: Andrew Morton <akpm@linux-foundation.org>
-> cc: Linus Torvalds <torvalds@linux-foundation.org>
-> cc: stable at vger.kernel.org
-> ---
->
-> include/uapi/linux/keyctl.h |    7 ++++++-
-> 1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-> index 7b8c9e19bad1..0f3cb13db8e9 100644
-> --- a/include/uapi/linux/keyctl.h
-> +++ b/include/uapi/linux/keyctl.h
-> @@ -65,7 +65,12 @@
->
-> /* keyctl structures */
-> struct keyctl_dh_params {
-> -	__s32 private;
-> +	union {
-> +#ifndef __cplusplus
-> +		__s32 private;
-> +#endif
-> +		__s32 priv;
-> +	};
-> 	__s32 prime;
-> 	__s32 base;
-> };
->
->
+If you only want information part of the time you can declare
+a pointer sized blob and manage what hangs off that as you will.
+I personally think that the added complexity of conditional
+blob management is more pain than it's worth, but if you want
+a really big blob, but only on occasion, I could see doing it.
 
-Thanks David. This is an important fix for existing C userspace code, it 
-would create a headache now and in to the future if the keyctl.h change 
-introduced in v4.19-rc3 made it in to an official release. Please merge, 
-James!
+>> Blobs can never get smaller because readjusting the offsets
+>> isn't going to work, so unloading an LKM security module isn't
+>> going to be as complete as you might like. There may be a way
+>> around this if you unload all the LKM modules, but that's a
+>> special case and there may be dragon lurking in the mist.
+> If LKM-based LSMs who want to use security blobs have to check for
+> NULL return, they might choose "not using infrastructure managed
+> security blobs" and "using locally hashed blobs associated with
+> object's address" (like AKARI does).
 
-Reviewed-By: Mat Martineau <mathew.j.martineau@linux.intel.com>
+I can't see how a check for NULL could possibly be a bigger
+hassle than doing your own locally hashed blobs.
 
---
-Mat Martineau
-Intel OTC
+>
+>>>  If security_file_free() is called
+>>>   regardless of whether lsm_file_cache is defined, LKM-based LSMs can be
+>>>   loaded using current behavior (apart from the fact that legitimate
+>>>   interface for appending to security_hook_heads is currently missing).
+>>>   How do you plan to handle LKM-based LSMs?
+>> My position all along has been that I don't plan to handle LKM
+>> based LSMs, but that I won't do anything to prevent someone else
+>> from adding them later. I believe that I've done that. Several
+>> designs, including a separate list for dynamically loaded modules
+>> have been proposed. I think some of those would work.
+> Though AKARI is not using security_file_free(), some of LKM-based LSMs
+> might want to use it. If file_free_security hook is called unconditionally,
+> such LKM-based LSMs can be registered/unregistered, without worrying about
+> inability to shrink sizes for blobs.
+
+The infrastructure wouldn't call unregistered hooks, so any module
+that allocates additional memory attached to a blob is going to have
+to deal with freeing that when it unregisters. Aside from that unregistration
+should be a (not so) small matter of locking.
+
+>
+>>> @@ -1202,11 +1183,11 @@ void security_file_free(struct file *file)
+>>>  {
+>>>  	void *blob;
+>>>  
+>>> +	call_void_hook(file_free_security, file);
+>>> +
+>>>  	if (!lsm_file_cache)
+>>>  		return;
+>>>  
+>>> -	call_void_hook(file_free_security, file);
+>>> -
+>> Why does this make sense? If the lsm_file_cache isn't
+>> initialized you can't have allocated any file blobs,
+>> no module can have initialized a file blob, hence there
+>> can be nothing for the module to do.
+>>
+> For modules (not limited to LKM-based LSMs) which want to use
+> file blobs for only a few objects and avoid wasting memory by
+> allocating file blobs to all file objects.
+>
+> Infrastructure based blob management fits well for LSM modules
+> which want to assign blobs to all objects (like SELinux). But
+> forcing infrastructure based blob management can become a huge
+> waste of memory for LSM modules which want to assign blobs to
+> only a few objects. Unconditionally calling file_free_security
+> hook (as with other hooks) preserves a room for allowing the
+> latter type of LSM modules without using infrastructure based
+> blob management.
+
+There is a hypothetical issue here, but that would require abuse
+of the infrastructure. Having a file_free_security hook that doesn't
+free a security blob allocated by file_alloc_security may coincidentaly
+be useful, but that's not the intent of the hook.
