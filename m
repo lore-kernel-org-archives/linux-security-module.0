@@ -1,65 +1,35 @@
 From: dhowells@redhat.com (David Howells)
-Date: Mon, 24 Sep 2018 13:18:34 +0100
-Subject: [PATCH 1/2] Revert "uapi/linux/keyctl.h: don't use C++ reserved
-	keyword as a struct member name"
-In-Reply-To: <153779150602.28003.4692837431529288988.stgit@warthog.procyon.org.uk>
-References: <153779150602.28003.4692837431529288988.stgit@warthog.procyon.org.uk>
-Message-ID: <153779151491.28003.1935104275920340501.stgit@warthog.procyon.org.uk>
+Date: Mon, 24 Sep 2018 13:18:26 +0100
+Subject: [PATCH 0/2] KEYS: Revert and replace incorrect UAPI fix
+Message-ID: <153779150602.28003.4692837431529288988.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
 
-This changes UAPI, breaking iwd and libell:
+Hi James,
 
-  ell/key.c: In function 'kernel_dh_compute':
-  ell/key.c:205:38: error: 'struct keyctl_dh_params' has no member named 'private'; did you mean 'dh_private'?
-    struct keyctl_dh_params params = { .private = private,
-                                        ^~~~~~~
-                                        dh_private
+Here's a pair of fixes that need to go upstream asap, please:
 
-This reverts commit 8a2336e549d385bb0b46880435b411df8d8200e8.
+ (1) Revert an incorrect fix to the keyrings UAPI for a C++ reserved word
+     used as a struct member name.  This change being reverted breaks
+     existing userspace code and is thus incorrect.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Randy Dunlap <rdunlap@infradead.org>
-cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-cc: Stephan Mueller <smueller@chronox.de>
-cc: James Morris <jmorris@namei.org>
-cc: "Serge E. Hallyn" <serge@hallyn.com>
-cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-cc: Andrew Morton <akpm@linux-foundation.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: <stable@vger.kernel.org>
+     Further, *neither* name is consistent with the one in the keyutils
+     package public header.
+
+ (2) Fix the problem by using a union to make the name from keyutils
+     available in parallel and make the 'private' name unavailable in C++
+     with cpp-conditionals.
+
+David
 ---
+David Howells (1):
+      keys: Fix the use of the C++ keyword "private" in uapi/linux/keyctl.h
 
- include/uapi/linux/keyctl.h |    2 +-
+Lubomir Rintel (1):
+      Revert "uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name"
+
+
+ include/uapi/linux/keyctl.h |    7 ++++++-
  security/keys/dh.c          |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index 910cc4334b21..7b8c9e19bad1 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -65,7 +65,7 @@
- 
- /* keyctl structures */
- struct keyctl_dh_params {
--	__s32 dh_private;
-+	__s32 private;
- 	__s32 prime;
- 	__s32 base;
- };
-diff --git a/security/keys/dh.c b/security/keys/dh.c
-index 3b602a1e27fa..711e89d8c415 100644
---- a/security/keys/dh.c
-+++ b/security/keys/dh.c
-@@ -300,7 +300,7 @@ long __keyctl_dh_compute(struct keyctl_dh_params __user *params,
- 	}
- 	dh_inputs.g_size = dlen;
- 
--	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
-+	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
- 	if (dlen < 0) {
- 		ret = dlen;
- 		goto out2;
+ 2 files changed, 7 insertions(+), 2 deletions(-)
