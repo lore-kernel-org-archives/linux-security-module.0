@@ -1,89 +1,218 @@
-From: lkundrak@v3.sk (Lubomir Rintel)
-Date: Mon, 24 Sep 2018 14:26:19 +0200
-Subject: [PATCH 2/2] keys: Fix the use of the C++ keyword "private" in
-	uapi/linux/keyctl.h
-In-Reply-To: <153779152340.28003.6461494237075964365.stgit@warthog.procyon.org.uk>
-References: <153779150602.28003.4692837431529288988.stgit@warthog.procyon.org.uk>
-	<153779152340.28003.6461494237075964365.stgit@warthog.procyon.org.uk>
-Message-ID: <36648a680e0e7ebd4ce77f3a13056f38ac7ade36.camel@v3.sk>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Mon, 24 Sep 2018 20:21:10 +0530
+Subject: [PATCH v4 11/21] tpm: factor out tpm_startup function
+In-Reply-To: <20180921135820.20549-12-tomas.winkler@intel.com>
+References: <20180921135820.20549-1-tomas.winkler@intel.com>
+	<20180921135820.20549-12-tomas.winkler@intel.com>
+Message-ID: <060a3dc0-046e-198c-f476-8c490140e9d6@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-09-24 at 13:18 +0100, David Howells wrote:
-> The keyctl_dh_params struct in uapi/linux/keyctl.h contains the
-> symbol
-> "private" which means that the header file will cause compilation
-> failure
-> if #included in to a C++ program.  Further, the patch that added the
-> same
-> struct to the keyutils package named the symbol "priv", not
-> "private".
-> 
-> The previous attempt to fix this (commit 8a2336e549d3) did so by
-> simply
-> renaming the kernel's copy of the field to dh_private, but this then
-> breaks
-> existing userspace and as such has to be reverted (which is done by
-> the
-> preceding patch).
-> 
-> [And note, to those who think that wrapping the struct in extern "C"
-> {}
->  will work: it won't; that only changes how symbol names are
-> presented to
->  the assembler and linker.].
-> 
-> Instead, insert an anonymous union around the "private" member and
-> add a
-> second member in there with the name "priv" to match the one in the
-> keyutils package.  The "private" member is then wrapped in
-> !__cplusplus
-> cpp-conditionals to hide it from C++.
-> 
-> Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
-> Fixes: 8a2336e549d3 ("uapi/linux/keyctl.h: don't use C++ reserved
-> keyword as a struct member name")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Randy Dunlap <rdunlap@infradead.org>
-> cc: Lubomir Rintel <lkundrak@v3.sk>
-> cc: James Morris <jmorris@namei.org>
-> cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-> cc: Stephan Mueller <smueller@chronox.de>
-> cc: Andrew Morton <akpm@linux-foundation.org>
-> cc: Linus Torvalds <torvalds@linux-foundation.org>
-> cc: stable at vger.kernel.org
+
+
+On 09/21/2018 07:28 PM, Tomas Winkler wrote:
+> TPM manual startup is used only from within TPM 1.x or TPM 2.x
+> code, hence remove tpm_startup() function from tpm-interface.c
+> and add two static functions implementations tpm1_startup()
+> and tpm2_startup() into to tpm1-cmd.c and tpm2-cmd.c respectively.
+>
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Tested-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
+
+Typo in Jarkko's last name -? "Sakkinen"
+
+Thanks & Regards,
+ ??? - Nayna
+
 > ---
-> 
->  include/uapi/linux/keyctl.h |    7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/linux/keyctl.h
-> b/include/uapi/linux/keyctl.h
-> index 7b8c9e19bad1..0f3cb13db8e9 100644
-> --- a/include/uapi/linux/keyctl.h
-> +++ b/include/uapi/linux/keyctl.h
-> @@ -65,7 +65,12 @@
->  
->  /* keyctl structures */
->  struct keyctl_dh_params {
-> -	__s32 private;
-> +	union {
-> +#ifndef __cplusplus
-> +		__s32 private;
-> +#endif
-> +		__s32 priv;
-> +	};
->  	__s32 prime;
->  	__s32 base;
->  };
-> 
-
-Thank you, checked that this works fine for libell build.
-
-Tested-by: Lubomir Rintel <lkundrak@v3.sk>
-
-Perhaps you may want to call the C++ friendly field "dh_private",
-because there might be C++ users that utilize it already. (The chance
-might be negligible though.).
-
-Lubo
+> V2-V3: Resend.
+> V4: Fix the commit message.
+>
+>   drivers/char/tpm/tpm-interface.c | 41 ----------------------------------------
+>   drivers/char/tpm/tpm.h           |  1 -
+>   drivers/char/tpm/tpm1-cmd.c      | 37 +++++++++++++++++++++++++++++++++++-
+>   drivers/char/tpm/tpm2-cmd.c      | 34 +++++++++++++++++++++++++++++++--
+>   4 files changed, 68 insertions(+), 45 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index dfa972bbdd81..686b5316dad5 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -413,47 +413,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+>   }
+>   EXPORT_SYMBOL_GPL(tpm_transmit_cmd);
+>
+> -#define TPM_ORD_STARTUP 153
+> -#define TPM_ST_CLEAR 1
+> -
+> -/**
+> - * tpm_startup - turn on the TPM
+> - * @chip: TPM chip to use
+> - *
+> - * Normally the firmware should start the TPM. This function is provided as a
+> - * workaround if this does not happen. A legal case for this could be for
+> - * example when a TPM emulator is used.
+> - *
+> - * Return: same as tpm_transmit_cmd()
+> - */
+> -int tpm_startup(struct tpm_chip *chip)
+> -{
+> -	struct tpm_buf buf;
+> -	int rc;
+> -
+> -	dev_info(&chip->dev, "starting up the TPM manually\n");
+> -
+> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> -		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_STARTUP);
+> -		if (rc < 0)
+> -			return rc;
+> -
+> -		tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
+> -	} else {
+> -		rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_STARTUP);
+> -		if (rc < 0)
+> -			return rc;
+> -
+> -		tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
+> -	}
+> -
+> -	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
+> -			      "attempting to start the TPM");
+> -
+> -	tpm_buf_destroy(&buf);
+> -	return rc;
+> -}
+> -
+>   int tpm_get_timeouts(struct tpm_chip *chip)
+>   {
+>   	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 862c9262e037..fa88102a0cab 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -540,7 +540,6 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+>   			 void *buf, size_t bufsiz,
+>   			 size_t min_rsp_body_length, unsigned int flags,
+>   			 const char *desc);
+> -int tpm_startup(struct tpm_chip *chip);
+>   int tpm_get_timeouts(struct tpm_chip *);
+>
+>   int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
+> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> index d118adbcd2a7..6deae4595277 100644
+> --- a/drivers/char/tpm/tpm1-cmd.c
+> +++ b/drivers/char/tpm/tpm1-cmd.c
+> @@ -308,6 +308,40 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+>   		return duration;
+>   }
+>
+> +#define TPM_ORD_STARTUP 153
+> +#define TPM_ST_CLEAR 1
+> +
+> +/**
+> + * tpm_startup - turn on the TPM
+> + * @chip: TPM chip to use
+> + *
+> + * Normally the firmware should start the TPM. This function is provided as a
+> + * workaround if this does not happen. A legal case for this could be for
+> + * example when a TPM emulator is used.
+> + *
+> + * Return: same as tpm_transmit_cmd()
+> + */
+> +static int tpm1_startup(struct tpm_chip *chip)
+> +{
+> +	struct tpm_buf buf;
+> +	int rc;
+> +
+> +	dev_info(&chip->dev, "starting up the TPM manually\n");
+> +
+> +	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_STARTUP);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
+> +
+> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
+> +			      "attempting to start the TPM");
+> +
+> +	tpm_buf_destroy(&buf);
+> +
+> +	return rc;
+> +}
+> +
+>   int tpm1_get_timeouts(struct tpm_chip *chip)
+>   {
+>   	cap_t cap;
+> @@ -317,7 +351,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+>   	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
+>   			 sizeof(cap.timeout));
+>   	if (rc == TPM_ERR_INVALID_POSTINIT) {
+> -		if (tpm_startup(chip))
+> +		if (tpm1_startup(chip))
+>   			return rc;
+>
+>   		rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
+> @@ -726,3 +760,4 @@ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
+>
+>   	return rc;
+>   }
+> +
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 65ce463a6f92..8da5a16e7c8c 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -943,6 +943,36 @@ static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
+>   	return rc;
+>   }
+>
+> +/**
+> + * tpm2_startup - turn on the TPM
+> + * @chip: TPM chip to use
+> + *
+> + * Normally the firmware should start the TPM. This function is provided as a
+> + * workaround if this does not happen. A legal case for this could be for
+> + * example when a TPM emulator is used.
+> + *
+> + * Return: same as tpm_transmit_cmd()
+> + */
+> +
+> +static int tpm2_startup(struct tpm_chip *chip)
+> +{
+> +	struct tpm_buf buf;
+> +	int rc;
+> +
+> +	dev_info(&chip->dev, "starting up the TPM manually\n");
+> +
+> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_STARTUP);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
+> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
+> +			      "attempting to start the TPM");
+> +	tpm_buf_destroy(&buf);
+> +
+> +	return rc;
+> +}
+> +
+>   /**
+>    * tpm2_auto_startup - Perform the standard automatic TPM initialization
+>    *                     sequence
+> @@ -954,7 +984,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+>   {
+>   	int rc;
+>
+> -	rc = tpm_get_timeouts(chip);
+> +	rc = tpm2_get_timeouts(chip);
+>   	if (rc)
+>   		goto out;
+>
+> @@ -963,7 +993,7 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+>   		goto out;
+>
+>   	if (rc == TPM2_RC_INITIALIZE) {
+> -		rc = tpm_startup(chip);
+> +		rc = tpm2_startup(chip);
+>   		if (rc)
+>   			goto out;
+>
