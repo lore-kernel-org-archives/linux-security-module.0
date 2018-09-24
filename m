@@ -1,58 +1,72 @@
-From: lkundrak@v3.sk (Lubomir Rintel)
-Date: Mon, 24 Sep 2018 11:47:23 +0200
-Subject: [PATCH] Revert "uapi/linux/keyctl.h: don't use C++ reserved keyword
-	as a struct member name"
-Message-ID: <20180924094723.487697-1-lkundrak@v3.sk>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Mon, 24 Sep 2018 16:40:39 +0530
+Subject: [PATCH v3 3/6] ima: refactor ima_init_policy()
+In-Reply-To: <20180921083429.c7sikis5bzxdifny@mwanda>
+References: <20180921083429.c7sikis5bzxdifny@mwanda>
+Message-ID: <83d87b89-d1df-5e13-23d9-1ee2e8c9a75f@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This changes UAPI, breaking iwd and libell:
 
-  ell/key.c: In function 'kernel_dh_compute':
-  ell/key.c:205:38: error: 'struct keyctl_dh_params' has no member named 'private'; did you mean 'dh_private'?
-    struct keyctl_dh_params params = { .private = private,
-                                        ^~~~~~~
-                                        dh_private
 
-This reverts commit 8a2336e549d385bb0b46880435b411df8d8200e8.
+On 09/21/2018 02:04 PM, Dan Carpenter wrote:
+> Hi Nayna,
+>
+> Thank you for the patch! Perhaps something to improve:
+>
+> url:    https://github.com/0day-ci/linux/commits/Nayna-Jain/Add-support-for-architecture-specific-IMA-policies/20180920-035110
+>
+> smatch warnings:
+> security/integrity/ima/ima_policy.c:489 add_rules() warn: should this be a bitwise op?
+>
+> # https://github.com/0day-ci/linux/commit/84a2e186f940ebc6c34e6d276e55f665167a5bb8
+> git remote add linux-review https://github.com/0day-ci/linux
+> git remote update linux-review
+> git checkout 84a2e186f940ebc6c34e6d276e55f665167a5bb8
+> vim +489 security/integrity/ima/ima_policy.c
+>
+> 6f0911a6 Mimi Zohar 2018-04-12  477
+> 84a2e186 Nayna Jain 2018-09-19  478  static void add_rules(struct ima_rule_entry *entries, int count,
+> 84a2e186 Nayna Jain 2018-09-19  479  		      enum policy_rule_list file)
+> 84a2e186 Nayna Jain 2018-09-19  480  {
+> 84a2e186 Nayna Jain 2018-09-19  481  	int i = 0;
+> 84a2e186 Nayna Jain 2018-09-19  482
+> 84a2e186 Nayna Jain 2018-09-19  483  	for (i = 0; i < count; i++) {
+> 84a2e186 Nayna Jain 2018-09-19  484  		struct ima_rule_entry *entry;
+> 84a2e186 Nayna Jain 2018-09-19  485
+> 84a2e186 Nayna Jain 2018-09-19  486  		if (file && IMA_DEFAULT_POLICY)
+>                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84a2e186 Nayna Jain 2018-09-19  487  			list_add_tail(&entries[i].list, &ima_default_rules);
+> 84a2e186 Nayna Jain 2018-09-19  488
+> 84a2e186 Nayna Jain 2018-09-19 @489  		if (file && IMA_CUSTOM_POLICY) {
+>                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+>
+> It does look like it should be "if (file & IMA_CUSTOM_POLICY) {" but I
+> haven't looked at the context besides what's here in this email.
+Thanks Dan for noticing this. Yes, I will fix it and post the v4 version.
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: <stable@vger.kernel.org>
----
- include/uapi/linux/keyctl.h | 2 +-
- security/keys/dh.c          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Thanks & Regards,
+ ??? - Nayna
 
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index 910cc4334b21..7b8c9e19bad1 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -65,7 +65,7 @@
- 
- /* keyctl structures */
- struct keyctl_dh_params {
--	__s32 dh_private;
-+	__s32 private;
- 	__s32 prime;
- 	__s32 base;
- };
-diff --git a/security/keys/dh.c b/security/keys/dh.c
-index 3b602a1e27fa..711e89d8c415 100644
---- a/security/keys/dh.c
-+++ b/security/keys/dh.c
-@@ -300,7 +300,7 @@ long __keyctl_dh_compute(struct keyctl_dh_params __user *params,
- 	}
- 	dh_inputs.g_size = dlen;
- 
--	dlen = dh_data_from_key(pcopy.dh_private, &dh_inputs.key);
-+	dlen = dh_data_from_key(pcopy.private, &dh_inputs.key);
- 	if (dlen < 0) {
- 		ret = dlen;
- 		goto out2;
--- 
-2.19.0
+
+>
+> 84a2e186 Nayna Jain 2018-09-19  490  			entry = kmemdup(&entries[i], sizeof(*entry),
+> 84a2e186 Nayna Jain 2018-09-19  491  					GFP_KERNEL);
+> 84a2e186 Nayna Jain 2018-09-19  492  			if (!entry)
+> 84a2e186 Nayna Jain 2018-09-19  493  				continue;
+> 84a2e186 Nayna Jain 2018-09-19  494
+> 84a2e186 Nayna Jain 2018-09-19  495  			INIT_LIST_HEAD(&entry->list);
+> 84a2e186 Nayna Jain 2018-09-19  496  			list_add_tail(&entry->list, &ima_policy_rules);
+> 84a2e186 Nayna Jain 2018-09-19  497  		}
+> 84a2e186 Nayna Jain 2018-09-19  498  		if (entries[i].action == APPRAISE)
+> 84a2e186 Nayna Jain 2018-09-19  499  			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
+> 84a2e186 Nayna Jain 2018-09-19  500  		if (entries[i].func == POLICY_CHECK)
+> 84a2e186 Nayna Jain 2018-09-19  501  			temp_ima_appraise |= IMA_APPRAISE_POLICY;
+> 84a2e186 Nayna Jain 2018-09-19  502  	}
+> 84a2e186 Nayna Jain 2018-09-19  503  }
+> 84a2e186 Nayna Jain 2018-09-19  504
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>
