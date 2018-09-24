@@ -1,69 +1,80 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Mon, 24 Sep 2018 09:15:06 -0700
-Subject: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
-In-Reply-To: <a2858469-cf38-7706-52b5-1d5fd5ed43ad@tycho.nsa.gov>
-References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
-	<CAGXu5jK=+FuL+JiSxcHy0i9Ppha=BQYdJW5zvbm1Redbo12wmw@mail.gmail.com>
-	<680e6e16-0890-8304-0e8e-6c58966813b5@schaufler-ca.com>
-	<CAGXu5j+7FpFDNuOowdHzJ5RXgfETQMv=Fe-EU1gWo+nWK+goZA@mail.gmail.com>
-	<39457e79-3816-824b-6b4d-89d21b03f9ce@i-love.sakura.ne.jp>
-	<b209d4b8-81a5-30aa-f4d1-9372bbb1b842@schaufler-ca.com>
-	<a2858469-cf38-7706-52b5-1d5fd5ed43ad@tycho.nsa.gov>
-Message-ID: <2a1ceb8c-0288-47ff-a763-d620e904b5b2@schaufler-ca.com>
+From: mathew.j.martineau@linux.intel.com (Mat Martineau)
+Date: Mon, 24 Sep 2018 09:52:41 -0700 (PDT)
+Subject: [PATCH 2/2] keys: Fix the use of the C++ keyword "private" in
+	uapi/linux/keyctl.h
+In-Reply-To: <153779152340.28003.6461494237075964365.stgit@warthog.procyon.org.uk>
+References: <153779150602.28003.4692837431529288988.stgit@warthog.procyon.org.uk>
+	<153779152340.28003.6461494237075964365.stgit@warthog.procyon.org.uk>
+Message-ID: <alpine.OSX.2.21.1809240941550.2707@mjmartin-mac01.local>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/24/2018 8:01 AM, Stephen Smalley wrote:
-> On 09/23/2018 01:09 PM, Casey Schaufler wrote:
->> On 9/23/2018 8:59 AM, Tetsuo Handa wrote:
->>> On 2018/09/23 11:43, Kees Cook wrote:
->>>>>> I'm excited about getting this landed!
->>>>> Soon. Real soon. I hope. I would very much like for
->>>>> someone from the SELinux camp to chime in, especially on
->>>>> the selinux_is_enabled() removal.
->>>> Agreed.
->>>>
->>> This patchset from Casey lands before the patchset from Kees, doesn't it?
->>
->> That is up for negotiation. We may end up combining them.
->>
->>> OK, a few comments (if I didn't overlook something).
->>>
->>> ?? lsm_early_cred()/lsm_early_task() are called from only __init functions.
->>
->> True.
->>
->>> ?? lsm_cred_alloc()/lsm_file_alloc() are called from only security/security.c .
->>
->> Also true.
->>
->>> ?? lsm_early_inode() should be avoided because it is not appropriate to
->>> ?? call panic() when lsm_early_inode() is called after __init phase.
->>
->> You're correct. In fact, lsm_early_inode() isn't needed at all
->> until multiple inode using modules are supported.
->>
->>> ?? Since all free hooks are called when one of init hooks failed, each
->>> ?? free hook needs to check whether init hook was called. An example is
->>> ?? inode_free_security() in security/selinux/hooks.c (but not addressed in
->>> ?? this patch).
->>
->> I *think* that selinux_inode_free_security() is safe in this
->> case because the blob will be zeroed, hence isec->list will
->> be NULL.
+
+On Mon, 24 Sep 2018, David Howells wrote:
+
+> The keyctl_dh_params struct in uapi/linux/keyctl.h contains the symbol
+> "private" which means that the header file will cause compilation failure
+> if #included in to a C++ program.  Further, the patch that added the same
+> struct to the keyutils package named the symbol "priv", not "private".
 >
-> That's not safe - look more closely at what list_empty_careful() tests, and then think about what happens when list_del_init() gets called on that isec->list.? selinux_inode_free_security() presumes that selinux_inode_alloc_security() has been called already.? If you are breaking that assumption, you have to fix it.
+> The previous attempt to fix this (commit 8a2336e549d3) did so by simply
+> renaming the kernel's copy of the field to dh_private, but this then breaks
+> existing userspace and as such has to be reverted (which is done by the
+> preceding patch).
+>
+> [And note, to those who think that wrapping the struct in extern "C" {}
+> will work: it won't; that only changes how symbol names are presented to
+> the assembler and linker.].
+>
+> Instead, insert an anonymous union around the "private" member and add a
+> second member in there with the name "priv" to match the one in the
+> keyutils package.  The "private" member is then wrapped in !__cplusplus
+> cpp-conditionals to hide it from C++.
+>
+> Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
+> Fixes: 8a2336e549d3 ("uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Randy Dunlap <rdunlap@infradead.org>
+> cc: Lubomir Rintel <lkundrak@v3.sk>
+> cc: James Morris <jmorris@namei.org>
+> cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+> cc: Stephan Mueller <smueller@chronox.de>
+> cc: Andrew Morton <akpm@linux-foundation.org>
+> cc: Linus Torvalds <torvalds@linux-foundation.org>
+> cc: stable at vger.kernel.org
+> ---
+>
+> include/uapi/linux/keyctl.h |    7 ++++++-
+> 1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
+> index 7b8c9e19bad1..0f3cb13db8e9 100644
+> --- a/include/uapi/linux/keyctl.h
+> +++ b/include/uapi/linux/keyctl.h
+> @@ -65,7 +65,12 @@
+>
+> /* keyctl structures */
+> struct keyctl_dh_params {
+> -	__s32 private;
+> +	union {
+> +#ifndef __cplusplus
+> +		__s32 private;
+> +#endif
+> +		__s32 priv;
+> +	};
+> 	__s32 prime;
+> 	__s32 base;
+> };
+>
+>
 
-Yup. I misread the macro my first time around. Easy fix.
+Thanks David. This is an important fix for existing C userspace code, it 
+would create a headache now and in to the future if the keyctl.h change 
+introduced in v4.19-rc3 made it in to an official release. Please merge, 
+James!
 
-> Is there a reason you can't make inode_alloc_security() return void since you moved the allocation to the framework? 
+Reviewed-By: Mat Martineau <mathew.j.martineau@linux.intel.com>
 
-No reason with any of the existing modules, But I could see someone
-doing unnatural things during allocation that might result in a
-failure.
-
-> Unfortunate that inode_init_security name is already in use for another purpose since essentially you have reduced these hooks to initialization only.
-
-I considered that but decided that it makes more sense for the module hook names
-to match the infrastructure name. Having security_inode_alloc() call
-selinux_inode_setup_security() starts to get confusing.
+--
+Mat Martineau
+Intel OTC
