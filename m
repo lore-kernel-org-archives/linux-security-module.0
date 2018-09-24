@@ -1,119 +1,104 @@
-From: penguin-kernel@i-love.sakura.ne.jp (Tetsuo Handa)
-Date: Mon, 24 Sep 2018 10:53:50 +0900
-Subject: [PATCH v4 00/19] LSM: Module stacking for SARA and Landlock
-In-Reply-To: <b209d4b8-81a5-30aa-f4d1-9372bbb1b842@schaufler-ca.com>
-References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
-	<CAGXu5jK=+FuL+JiSxcHy0i9Ppha=BQYdJW5zvbm1Redbo12wmw@mail.gmail.com>
-	<680e6e16-0890-8304-0e8e-6c58966813b5@schaufler-ca.com>
-	<CAGXu5j+7FpFDNuOowdHzJ5RXgfETQMv=Fe-EU1gWo+nWK+goZA@mail.gmail.com>
-	<39457e79-3816-824b-6b4d-89d21b03f9ce@i-love.sakura.ne.jp>
-	<b209d4b8-81a5-30aa-f4d1-9372bbb1b842@schaufler-ca.com>
-Message-ID: <da179a76-691e-32f5-9391-c432a72fe37e@i-love.sakura.ne.jp>
+From: lkp@intel.com (kbuild test robot)
+Date: Mon, 24 Sep 2018 11:03:48 +0800
+Subject: [PATCH 2/2] netfilter: nf_tables: add requirements for
+	connsecmark support
+In-Reply-To: <20180923091611.19815-2-cgzones@googlemail.com>
+References: <20180923091611.19815-2-cgzones@googlemail.com>
+Message-ID: <201809241157.5rEcbeRM%fengguang.wu@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 2018/09/24 2:09, Casey Schaufler wrote:
->>   Since all free hooks are called when one of init hooks failed, each
->>   free hook needs to check whether init hook was called. An example is
->>   inode_free_security() in security/selinux/hooks.c (but not addressed in
->>   this patch).
-> 
-> I *think* that selinux_inode_free_security() is safe in this
-> case because the blob will be zeroed, hence isec->list will
-> be NULL.
-> 
+Hi Christian,
 
-OK.
+Thank you for the patch! Yet something to improve:
 
->>   This patchset might fatally prevent LKM-based LSM modules, for LKM-based
->>   LSMs cannot count on lsm_*_alloc() because size for lsm_*_alloc() cannot
->>   be updated upon loading LKM-based LSMs.
-> 
-> LKM based security modules will require dynamically sized blobs.
-> These can be added to the scheme used here. Each blob would get a
-> header identifying the modules for which it contains data. When an
-> LKM is registered if has to declare it's blob space requirements
-> and gets back the offsets. All alloc operations have to put their
-> marks in the header. All LKM blob users have to check that the blob
-> they are looking at has the required data.
-> 
-> module_cred(struct cred *cred) {
-> 	return cred->security + module_blob_sizes.lbs_cred;
-> }
-> 
-> becomes
-> 
-> module_cred(struct cred *cred) {
-> 	if (blob_includes(module_id))
-> 		return cred->security + module_blob_sizes.lbs_cred;
-> 	return NULL;
-> }
-> 
-> and the calling code needs to accept a NULL return.
+[auto build test ERROR on nf-next/master]
+[also build test ERROR on v4.19-rc5 next-20180921]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Not all of LKM-based LSMs use security blobs. And some of LKM-based LSMs
-might use security blobs for only a few objects. For example, AKARI uses
-inode security blob for remembering whether source address/port of an
-accept()ed socket was already checked, only during accept() operation and
-first socket operation on the accept()ed socket. Thus, there is no need
-to waste memory by assigning blobs for all inode objects.
+url:    https://github.com/0day-ci/linux/commits/Christian-G-ttsche/netfilter-nf_tables-add-SECMARK-support/20180923-213820
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git master
+config: x86_64-randconfig-s3-09241007 (attached as .config)
+compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+reproduce:
+        # save the attached .config to linux build tree
+        make ARCH=x86_64 
 
-> Blobs can never get smaller because readjusting the offsets
-> isn't going to work, so unloading an LKM security module isn't
-> going to be as complete as you might like. There may be a way
-> around this if you unload all the LKM modules, but that's a
-> special case and there may be dragon lurking in the mist.
+All errors (new ones prefixed by >>):
 
-If LKM-based LSMs who want to use security blobs have to check for
-NULL return, they might choose "not using infrastructure managed
-security blobs" and "using locally hashed blobs associated with
-object's address" (like AKARI does).
+   net//netfilter/nft_ct.c: In function 'nft_ct_set_eval':
+>> net//netfilter/nft_ct.c:303:22: error: 'value' undeclared (first use in this function); did you mean 'false'?
+      if (ct->secmark != value) {
+                         ^~~~~
+                         false
+   net//netfilter/nft_ct.c:303:22: note: each undeclared identifier is reported only once for each function it appears in
 
-> 
->>  If security_file_free() is called
->>   regardless of whether lsm_file_cache is defined, LKM-based LSMs can be
->>   loaded using current behavior (apart from the fact that legitimate
->>   interface for appending to security_hook_heads is currently missing).
->>   How do you plan to handle LKM-based LSMs?
-> 
-> My position all along has been that I don't plan to handle LKM
-> based LSMs, but that I won't do anything to prevent someone else
-> from adding them later. I believe that I've done that. Several
-> designs, including a separate list for dynamically loaded modules
-> have been proposed. I think some of those would work.
+vim +303 net//netfilter/nft_ct.c
 
-Though AKARI is not using security_file_free(), some of LKM-based LSMs
-might want to use it. If file_free_security hook is called unconditionally,
-such LKM-based LSMs can be registered/unregistered, without worrying about
-inability to shrink sizes for blobs.
+   275	
+   276	static void nft_ct_set_eval(const struct nft_expr *expr,
+   277				    struct nft_regs *regs,
+   278				    const struct nft_pktinfo *pkt)
+   279	{
+   280		const struct nft_ct *priv = nft_expr_priv(expr);
+   281		struct sk_buff *skb = pkt->skb;
+   282	#ifdef CONFIG_NF_CONNTRACK_MARK
+   283		u32 value = regs->data[priv->sreg];
+   284	#endif
+   285		enum ip_conntrack_info ctinfo;
+   286		struct nf_conn *ct;
+   287	
+   288		ct = nf_ct_get(skb, &ctinfo);
+   289		if (ct == NULL || nf_ct_is_template(ct))
+   290			return;
+   291	
+   292		switch (priv->key) {
+   293	#ifdef CONFIG_NF_CONNTRACK_MARK
+   294		case NFT_CT_MARK:
+   295			if (ct->mark != value) {
+   296				ct->mark = value;
+   297				nf_conntrack_event_cache(IPCT_MARK, ct);
+   298			}
+   299			break;
+   300	#endif
+   301	#ifdef CONFIG_NF_CONNTRACK_SECMARK
+   302		case NFT_CT_SECMARK:
+ > 303			if (ct->secmark != value) {
+   304				ct->secmark = value;
+   305				nf_conntrack_event_cache(IPCT_SECMARK, ct);
+   306			}
+   307			break;
+   308	#endif
+   309	#ifdef CONFIG_NF_CONNTRACK_LABELS
+   310		case NFT_CT_LABELS:
+   311			nf_connlabels_replace(ct,
+   312					      &regs->data[priv->sreg],
+   313					      &regs->data[priv->sreg],
+   314					      NF_CT_LABELS_MAX_SIZE / sizeof(u32));
+   315			break;
+   316	#endif
+   317	#ifdef CONFIG_NF_CONNTRACK_EVENTS
+   318		case NFT_CT_EVENTMASK: {
+   319			struct nf_conntrack_ecache *e = nf_ct_ecache_find(ct);
+   320			u32 ctmask = regs->data[priv->sreg];
+   321	
+   322			if (e) {
+   323				if (e->ctmask != ctmask)
+   324					e->ctmask = ctmask;
+   325				break;
+   326			}
+   327	
+   328			if (ctmask && !nf_ct_is_confirmed(ct))
+   329				nf_ct_ecache_ext_add(ct, ctmask, 0, GFP_ATOMIC);
+   330			break;
+   331		}
+   332	#endif
+   333		default:
+   334			break;
+   335		}
+   336	}
+   337	
 
->> @@ -1202,11 +1183,11 @@ void security_file_free(struct file *file)
->>  {
->>  	void *blob;
->>  
->> +	call_void_hook(file_free_security, file);
->> +
->>  	if (!lsm_file_cache)
->>  		return;
->>  
->> -	call_void_hook(file_free_security, file);
->> -
-> 
-> Why does this make sense? If the lsm_file_cache isn't
-> initialized you can't have allocated any file blobs,
-> no module can have initialized a file blob, hence there
-> can be nothing for the module to do.
-> 
-
-For modules (not limited to LKM-based LSMs) which want to use
-file blobs for only a few objects and avoid wasting memory by
-allocating file blobs to all file objects.
-
-Infrastructure based blob management fits well for LSM modules
-which want to assign blobs to all objects (like SELinux). But
-forcing infrastructure based blob management can become a huge
-waste of memory for LSM modules which want to assign blobs to
-only a few objects. Unconditionally calling file_free_security
-hook (as with other hooks) preserves a room for allowing the
-latter type of LSM modules without using infrastructure based
-blob management.
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
