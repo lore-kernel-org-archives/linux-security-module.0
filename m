@@ -1,71 +1,45 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:15 -0700
-Subject: [PATCH security-next v3 12/29] LSM: Provide separate ordered
-	initialization
+Date: Mon, 24 Sep 2018 17:18:11 -0700
+Subject: [PATCH security-next v3 08/29] LSM: Record LSM name in struct lsm_info
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-13-keescook@chromium.org>
+Message-ID: <20180925001832.18322-9-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This provides a place for ordered LSMs to be initialized, separate from
-the "major" LSMs. This is mainly a copy/paste from major_lsm_init() to
-ordered_lsm_init(), but it will change drastically in later patches.
+In preparation for making LSM selections outside of the LSMs, include
+the name of LSMs in struct lsm_info.
 
-What is not obvious in the patch is that this change moves the integrity
-LSM from major_lsm_init() into ordered_lsm_init(), since it is not marked
-with the LSM_FLAG_LEGACY_MAJOR. As it is the only LSM in the "ordered"
-list, there is no reordering yet created.
-
+Cc: James Morris <james.morris@microsoft.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/security.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ include/linux/lsm_hooks.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/security/security.c b/security/security.c
-index 1f055936a746..a886a978214a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -52,12 +52,30 @@ static bool debug __initdata;
- 			pr_info(__VA_ARGS__);			\
- 	} while (0)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 02ec717189f9..543636f18152 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2040,16 +2040,20 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ 				char *lsm);
  
-+static void __init ordered_lsm_init(void)
-+{
-+	struct lsm_info *lsm;
-+	int ret;
-+
-+	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
-+			continue;
-+
-+		init_debug("initializing %s\n", lsm->name);
-+		ret = lsm->init();
-+		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
-+	}
-+}
-+
- static void __init major_lsm_init(void)
- {
- 	struct lsm_info *lsm;
- 	int ret;
+ struct lsm_info {
++	const char *name;	/* Populated automatically. */
+ 	int (*init)(void);
+ };
  
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
-+			continue;
-+
- 		init_debug("initializing %s\n", lsm->name);
- 		ret = lsm->init();
- 		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
-@@ -87,6 +105,9 @@ int __init security_init(void)
- 	yama_add_hooks();
- 	loadpin_add_hooks();
+ extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
  
-+	/* Load LSMs in specified order. */
-+	ordered_lsm_init();
-+
- 	/*
- 	 * Load all the remaining security modules.
- 	 */
+ #define DEFINE_LSM(lsm)							\
++	static const char __lsm_name_##lsm[] __initconst		\
++		__aligned(1) = #lsm;					\
+ 	static struct lsm_info __lsm_##lsm				\
+ 		__used __section(.lsm_info.init)			\
+ 		__aligned(sizeof(unsigned long))			\
+ 		= {							\
++			.name = __lsm_name_##lsm,			\
+ 
+ #define END_LSM	  }
+ 
 -- 
 2.17.1
