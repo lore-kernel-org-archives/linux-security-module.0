@@ -1,85 +1,108 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:27 -0700
-Subject: [PATCH security-next v3 24/29] LoadPin: Initialize as ordered LSM
+Date: Mon, 24 Sep 2018 17:18:25 -0700
+Subject: [PATCH security-next v3 22/29] LSM: Introduce CONFIG_LSM_ORDER
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-25-keescook@chromium.org>
+Message-ID: <20180925001832.18322-23-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This converts LoadPin from being a direct "minor" LSM into an ordered LSM.
+This provides a way to declare LSM initialization order via Kconfig.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h  | 5 -----
- security/Kconfig           | 2 +-
- security/loadpin/loadpin.c | 7 ++++++-
- security/security.c        | 1 -
- 4 files changed, 7 insertions(+), 8 deletions(-)
+ security/Kconfig    | 16 ++++++++++++++++
+ security/security.c | 40 +++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 53 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index ab23f1bc6d77..9df08955f684 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2097,10 +2097,5 @@ extern void __init yama_add_hooks(void);
- #else
- static inline void __init yama_add_hooks(void) { }
- #endif
--#ifdef CONFIG_SECURITY_LOADPIN
--void __init loadpin_add_hooks(void);
--#else
--static inline void loadpin_add_hooks(void) { };
--#endif
- 
- #endif /* ! __LINUX_LSM_HOOKS_H */
 diff --git a/security/Kconfig b/security/Kconfig
-index 7ec86dbdb6b8..e20c2a3143e7 100644
+index 1a82a006cc62..7ec86dbdb6b8 100644
 --- a/security/Kconfig
 +++ b/security/Kconfig
-@@ -293,7 +293,7 @@ config LSM_ENABLE
+@@ -286,5 +286,21 @@ config LSM_ENABLE
+ 	  changed with the "lsm.enable=" and "lsm.disable=" boot
+ 	  parameters.
  
- config LSM_ORDER
- 	string "Default initialization order of builtin LSMs"
--	default "integrity"
-+	default "loadpin,integrity"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
- 	  Any LSMs left off this list will be link-order initialized
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index d8a68a6f6fef..7abdf4619b46 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -184,13 +184,18 @@ static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(kernel_load_data, loadpin_load_data),
- };
- 
--void __init loadpin_add_hooks(void)
-+static int __init loadpin_init(void)
- {
- 	pr_info("ready to pin (currently %senforcing)\n",
- 		enforcing ? "" : "not ");
- 	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
-+	return 0;
- }
- 
-+DEFINE_LSM(loadpin)
-+	.init = loadpin_init,
-+END_LSM;
++	  Note that any enabled exclusive LSM modules will be initialized
++	  based on LSM ordering, automatically disabling any following
++	  exclusive LSMs. See CONFIG_LSM_ORDER for more details on
++	  changing LSM initialization order.
 +
- /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
- module_param(enforcing, int, 0);
- MODULE_PARM_DESC(enforcing, "Enforce module/firmware pinning");
++config LSM_ORDER
++	string "Default initialization order of builtin LSMs"
++	default "integrity"
++	help
++	  A comma-separated list of LSMs, in initialization order.
++	  Any LSMs left off this list will be link-order initialized
++	  after any listed LSMs. Any LSMs listed here but not built in
++	  the kernel will be ignored.
++
++	  If unsure, leave this as the default.
++
+ endmenu
+ 
 diff --git a/security/security.c b/security/security.c
-index f1c3581d870f..cb25f321e044 100644
+index ef1ced0a3a50..e38df0314f5e 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -305,7 +305,6 @@ int __init security_init(void)
- 	 */
- 	capability_add_hooks();
- 	yama_add_hooks();
--	loadpin_add_hooks();
+@@ -47,6 +47,7 @@ static __initdata const char *chosen_lsm_disable;
+ static __initdata const char *chosen_major_lsm;
  
- 	/* Load LSMs in specified order. */
- 	prepare_lsm_order();
+ static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
++static __initconst const char * const builtin_lsm_order = CONFIG_LSM_ORDER;
+ 
+ /* Ordered list of LSMs to initialize. */
+ static __initdata struct lsm_info **ordered_lsms;
+@@ -130,14 +131,47 @@ static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
+ 		   is_enabled(lsm) ? "en" : "dis");
+ }
+ 
+-/* Populate ordered LSMs list from hard-coded list of LSMs. */
++/* Populate ordered LSMs list from given string. */
++static void __init parse_lsm_order(const char *order, const char *origin)
++{
++	struct lsm_info *lsm;
++	char *sep, *name, *next;
++
++	if (!order)
++		return;
++
++	sep = kstrdup(order, GFP_KERNEL);
++	next = sep;
++	/* Walk the list, looking for matching LSMs. */
++	while ((name = strsep(&next, ",")) != NULL) {
++		bool found = false;
++
++		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++			if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0 &&
++			    strcmp(lsm->name, name) == 0) {
++				append_ordered_lsm(lsm, origin);
++				found = true;
++			}
++		}
++
++		if (!found)
++			init_debug("%s ignored: %s\n", origin, name);
++	}
++	kfree(sep);
++}
++
++/* Populate ordered LSMs list from builtin list of LSMs. */
+ static void __init prepare_lsm_order(void)
+ {
+ 	struct lsm_info *lsm;
+ 
++	/* Parse order from builtin list. */
++	parse_lsm_order(builtin_lsm_order, "builtin");
++
++	/* Add any missing LSMs, in link order. */
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+-		if (strcmp(lsm->name, "integrity") == 0)
+-			append_ordered_lsm(lsm, "builtin");
++		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
++			append_ordered_lsm(lsm, "link-time");
+ 	}
+ }
+ 
 -- 
 2.17.1
