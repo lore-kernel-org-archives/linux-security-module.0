@@ -1,81 +1,51 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:28 -0700
-Subject: [PATCH security-next v3 25/29] Yama: Initialize as ordered LSM
-In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
-References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-26-keescook@chromium.org>
+From: gregkh@linuxfoundation.org (Greg KH)
+Date: Tue, 25 Sep 2018 11:41:47 +0200
+Subject: [GIT PULL] Keys: fix C++ reserved word issue
+In-Reply-To: <alpine.LRH.2.21.1809250738020.27047@namei.org>
+References: <alpine.LRH.2.21.1809250738020.27047@namei.org>
+Message-ID: <20180925094147.GC21972@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-This converts Yama from being a direct "minor" LSM into an ordered LSM.
+On Tue, Sep 25, 2018 at 07:40:06AM +1000, James Morris wrote:
+> Please pull this revert and update, from David Howells:
+> 
+> "Here's a pair of fixes that need to go upstream asap, please:
+> 
+>  (1) Revert an incorrect fix to the keyrings UAPI for a C++ reserved word
+>      used as a struct member name.  This change being reverted breaks
+>      existing userspace code and is thus incorrect.
+> 
+>      Further, *neither* name is consistent with the one in the keyutils
+>      package public header.
+> 
+>  (2) Fix the problem by using a union to make the name from keyutils
+>      available in parallel and make the 'private' name unavailable in C++
+>      with cpp-conditionals."
+> 
+> ---
+> The following changes since commit 02214bfc89c71bcc5167f653994cfa5c57f10ff1:
+> 
+>   Merge tag 'media/v4.19-2' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media (2018-09-24 15:16:41 +0200)
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/lsm_hooks.h | 5 -----
- security/Kconfig          | 2 +-
- security/security.c       | 1 -
- security/yama/yama_lsm.c  | 7 ++++++-
- 4 files changed, 7 insertions(+), 8 deletions(-)
+{sigh}
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 9df08955f684..5be95c6155b4 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2092,10 +2092,5 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
- #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
- 
- extern void __init capability_add_hooks(void);
--#ifdef CONFIG_SECURITY_YAMA
--extern void __init yama_add_hooks(void);
--#else
--static inline void __init yama_add_hooks(void) { }
--#endif
- 
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/security/Kconfig b/security/Kconfig
-index e20c2a3143e7..e37de9a44747 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -293,7 +293,7 @@ config LSM_ENABLE
- 
- config LSM_ORDER
- 	string "Default initialization order of builtin LSMs"
--	default "loadpin,integrity"
-+	default "yama,loadpin,integrity"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
- 	  Any LSMs left off this list will be link-order initialized
-diff --git a/security/security.c b/security/security.c
-index cb25f321e044..c4ba5832ef2f 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -304,7 +304,6 @@ int __init security_init(void)
- 	 * Load minor LSMs, with the capability module always first.
- 	 */
- 	capability_add_hooks();
--	yama_add_hooks();
- 
- 	/* Load LSMs in specified order. */
- 	prepare_lsm_order();
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index ffda91a4a1aa..f2b1f47f98e8 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -477,9 +477,14 @@ static void __init yama_init_sysctl(void)
- static inline void yama_init_sysctl(void) { }
- #endif /* CONFIG_SYSCTL */
- 
--void __init yama_add_hooks(void)
-+static int __init yama_init(void)
- {
- 	pr_info("Yama: becoming mindful.\n");
- 	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama");
- 	yama_init_sysctl();
-+	return 0;
- }
-+
-+DEFINE_LSM(yama)
-+	.init = yama_init,
-+END_LSM;
--- 
-2.17.1
+$ date --date="2018-09-25 07:40:06 +1000" +%s
+1537825206
+$ date --date="2018-09-24 15:16:41 +0200" +%s
+1537795001
+$ bc <<< "1537825206-1537795001"
+30205
+$ date -ud "@30205" +'%H hours %M minutes %S seconds'
+08 hours 23 minutes 25 seconds
+
+8.5 hours seems like a short amount of time for something to sit in a
+tree before asking for it to be merged.  Wait, it's actually less than
+that, I just took into account the longest possible time it could have
+been in your tree.
+
+I'll wait a few days on this one...
+
+thanks,
+
+greg k-h
