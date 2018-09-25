@@ -1,25 +1,39 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 25 Sep 2018 01:35:13 +0300
-Subject: [PATCH v4 11/21] tpm: factor out tpm_startup function
-In-Reply-To: <060a3dc0-046e-198c-f476-8c490140e9d6@linux.vnet.ibm.com>
-References: <20180921135820.20549-1-tomas.winkler@intel.com>
-	<20180921135820.20549-12-tomas.winkler@intel.com>
-	<060a3dc0-046e-198c-f476-8c490140e9d6@linux.vnet.ibm.com>
-Message-ID: <20180924223513.GB12088@linux.intel.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Mon, 24 Sep 2018 17:18:04 -0700
+Subject: [PATCH security-next v3 01/29] LSM: Correctly announce start of LSM
+	initialization
+In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
+References: <20180925001832.18322-1-keescook@chromium.org>
+Message-ID: <20180925001832.18322-2-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, Sep 24, 2018 at 08:21:10PM +0530, Nayna Jain wrote:
-> On 09/21/2018 07:28 PM, Tomas Winkler wrote:
-> > TPM manual startup is used only from within TPM 1.x or TPM 2.x
-> > code, hence remove tpm_startup() function from tpm-interface.c
-> > and add two static functions implementations tpm1_startup()
-> > and tpm2_startup() into to tpm1-cmd.c and tpm2-cmd.c respectively.
-> > 
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > Tested-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
+For a while now, the LSM core has said it was "initializED", rather than
+"initializING". This adjust the report to be more accurate (i.e. before
+this was reported before any LSMs had been initialized.)
 
-Probably my bad, had an unfortunate misconfiguration in my vim/git
-setup. Sorry.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ security/security.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-/Jarkko
+diff --git a/security/security.c b/security/security.c
+index 736e78da1ab9..4cbcf244a965 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -72,10 +72,11 @@ int __init security_init(void)
+ 	int i;
+ 	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
+ 
++	pr_info("Security Framework initializing\n");
++
+ 	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
+ 	     i++)
+ 		INIT_HLIST_HEAD(&list[i]);
+-	pr_info("Security Framework initialized\n");
+ 
+ 	/*
+ 	 * Load minor LSMs, with the capability module always first.
+-- 
+2.17.1
