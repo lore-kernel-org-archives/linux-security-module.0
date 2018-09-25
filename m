@@ -1,125 +1,81 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:31 -0700
-Subject: [PATCH security-next v3 28/29] LSM: Separate idea of "major" LSM from
-	"exclusive" LSM
+Date: Mon, 24 Sep 2018 17:18:30 -0700
+Subject: [PATCH security-next v3 27/29] capability: Initialize as
+	LSM_ORDER_FIRST
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-29-keescook@chromium.org>
+Message-ID: <20180925001832.18322-28-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In order to both support old "security=" Legacy Major LSM selection, and
-handling real exclusivity, this creates LSM_FLAG_EXCLUSIVE and updates
-the selection logic to handle them.
+This converts capabilities to use the new LSM_ORDER_FIRST position.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h  |  1 +
- security/apparmor/lsm.c    |  2 +-
- security/security.c        | 12 ++++++++++++
- security/selinux/hooks.c   |  2 +-
- security/smack/smack_lsm.c |  2 +-
- security/tomoyo/tomoyo.c   |  2 +-
- 6 files changed, 17 insertions(+), 4 deletions(-)
+ include/linux/lsm_hooks.h | 2 --
+ security/commoncap.c      | 8 +++++++-
+ security/security.c       | 9 ++++-----
+ 3 files changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 950042fb2385..0f5d44d0a9cc 100644
+index b38902ea0be5..950042fb2385 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -2040,6 +2040,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 				char *lsm);
+@@ -2098,6 +2098,4 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ #define __lsm_ro_after_init	__ro_after_init
+ #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
  
- #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
-+#define LSM_FLAG_EXCLUSIVE	BIT(1)
+-extern void __init capability_add_hooks(void);
+-
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 2e489d6a3ac8..7a6abaec65de 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1366,10 +1366,16 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(vm_enough_memory, cap_vm_enough_memory),
+ };
  
- enum lsm_order {
- 	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 5399c2f03536..d68bc931d388 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1601,7 +1601,7 @@ static int __init apparmor_init(void)
+-void __init capability_add_hooks(void)
++static int __init capability_init(void)
+ {
+ 	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
+ 				"capability");
++	return 0;
  }
  
- DEFINE_LSM(apparmor)
--	.flags = LSM_FLAG_LEGACY_MAJOR,
-+	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
- 	.enabled = &apparmor_enabled,
- 	.init = apparmor_init,
- END_LSM;
++DEFINE_LSM(capability)
++	.order = LSM_ORDER_FIRST,
++	.init = capability_init,
++END_LSM;
++
+ #endif /* CONFIG_SECURITY */
 diff --git a/security/security.c b/security/security.c
-index ade74b90b73c..5a3e19f1fe48 100644
+index 8b93afa75e3c..ade74b90b73c 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -52,6 +52,7 @@ static __initconst const char * const builtin_lsm_order = CONFIG_LSM_ORDER;
+@@ -62,6 +62,10 @@ static bool debug __initdata;
  
- /* Ordered list of LSMs to initialize. */
- static __initdata struct lsm_info **ordered_lsms;
-+static __initdata struct lsm_info *exclusive;
- 
- static bool debug __initdata;
- #define init_debug(...)						\
-@@ -204,6 +205,12 @@ static bool __init lsm_allowed(struct lsm_info *lsm)
- 	if (!is_enabled(lsm))
+ static bool __init is_enabled(struct lsm_info *lsm)
+ {
++	/* LSM_ORDER_FIRST is always enabled. */
++	if (lsm->order == LSM_ORDER_FIRST)
++		return true;
++
+ 	if (WARN_ON(!lsm->enabled))
  		return false;
  
-+	/* Not allowed if another exclusive LSM already initialized. */
-+	if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && exclusive) {
-+		init_debug("exclusive disabled: %s\n", lsm->name);
-+		return false;
-+	}
-+
- 	return true;
- }
+@@ -314,11 +318,6 @@ int __init security_init(void)
+ 	/* Figure out which LSMs are enabled and disabled. */
+ 	prepare_lsm_enable();
  
-@@ -219,6 +226,11 @@ static void __init maybe_initialize_lsm(struct lsm_info *lsm)
- 	if (enabled) {
- 		int ret;
- 
-+		if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
-+			exclusive = lsm;
-+			init_debug("exclusive: %s\n", lsm->name);
-+		}
-+
- 		init_debug("initializing %s\n", lsm->name);
- 		ret = lsm->init();
- 		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 409a9252aeb6..5461d54fcd99 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7193,7 +7193,7 @@ void selinux_complete_init(void)
- /* SELinux requires early initialization in order to label
-    all processes and objects when they are created. */
- DEFINE_LSM(selinux)
--	.flags = LSM_FLAG_LEGACY_MAJOR,
-+	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
- 	.enabled = &selinux_enabled,
- 	.init = selinux_init,
- END_LSM;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index e79fad43a8e3..e46c1ea8cf84 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4880,6 +4880,6 @@ static __init int smack_init(void)
-  * all processes and objects when they are created.
-  */
- DEFINE_LSM(smack)
--	.flags = LSM_FLAG_LEGACY_MAJOR,
-+	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
- 	.init = smack_init,
- END_LSM;
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 39bb994ebe09..cc39eb8df61a 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -549,6 +549,6 @@ static int __init tomoyo_init(void)
- }
- 
- DEFINE_LSM(tomoyo)
--	.flags = LSM_FLAG_LEGACY_MAJOR,
-+	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
- 	.init = tomoyo_init,
- END_LSM;
+-	/*
+-	 * Load minor LSMs, with the capability module always first.
+-	 */
+-	capability_add_hooks();
+-
+ 	/* Load LSMs in specified order. */
+ 	prepare_lsm_order();
+ 	ordered_lsm_init();
 -- 
 2.17.1
