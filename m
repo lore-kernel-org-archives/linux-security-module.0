@@ -1,66 +1,122 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:23 -0700
-Subject: [PATCH security-next v3 20/29] LSM: Refactor "security=" in terms of
-	enable/disable
+Date: Mon, 24 Sep 2018 17:18:21 -0700
+Subject: [PATCH security-next v3 18/29] LSM: Introduce lsm.enable= and
+	lsm.disable=
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-21-keescook@chromium.org>
+Message-ID: <20180925001832.18322-19-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-For what are marked as the Legacy Major LSMs, make them effectively
-exclusive when selected on the "security=" boot parameter, to handle
-the future case of when a previously major LSMs become non-exclusive
-(e.g. when TOMOYO starts blob-sharing).
+This introduces the "lsm.enable=..." and "lsm.disable=..." boot parameters
+which each can contain a comma-separated list of LSMs to enable or
+disable, respectively. The string "all" matches all LSMs.
+
+This has very similar functionality to the existing per-LSM enable
+handling ("apparmor.enabled=...", etc), but provides a centralized
+place to perform the changes. These parameters take precedent over any
+LSM-specific boot parameters.
+
+Disabling an LSM means it will not be considered when performing
+initializations. Enabling an LSM means either undoing a previous
+LSM-specific boot parameter disabling or a undoing a default-disabled
+CONFIG setting.
+
+For example: "lsm.disable=apparmor apparmor.enabled=1" will result in
+AppArmor being disabled. "selinux.enabled=0 lsm.enable=selinux" will
+result in SELinux being enabled.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/security.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ .../admin-guide/kernel-parameters.txt         | 12 ++++++++++
+ security/Kconfig                              |  4 +++-
+ security/security.c                           | 22 +++++++++++++++++++
+ 3 files changed, 37 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 32d323ee9218..67c90985d2b8 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2276,6 +2276,18 @@
+ 
+ 	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
+ 
++	lsm.disable=lsm1,...,lsmN
++			[SECURITY] Comma-separated list of LSMs to disable
++			at boot time. This overrides "lsm.enable=",
++			CONFIG_LSM_ENABLE, and any per-LSM CONFIGs and boot
++			parameters.
++
++	lsm.enable=lsm1,...,lsmN
++			[SECURITY] Comma-separated list of LSMs to enable
++			at boot time. This overrides any omissions from
++			CONFIG_LSM_ENABLE, and any per-LSM CONFIGs and
++			boot parameters.
++
+ 	machvec=	[IA-64] Force the use of a particular machine-vector
+ 			(machvec) in a generic kernel.
+ 			Example: machvec=hpzx1_swiotlb
+diff --git a/security/Kconfig b/security/Kconfig
+index 71306b046270..1a82a006cc62 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -282,7 +282,9 @@ config LSM_ENABLE
+ 	help
+ 	  A comma-separate list of LSMs to enable by default at boot. The
+ 	  default is "all", to enable all LSM modules at boot. Any LSMs
+-	  not listed here will be disabled by default.
++	  not listed here will be disabled by default. This can be
++	  changed with the "lsm.enable=" and "lsm.disable=" boot
++	  parameters.
+ 
+ endmenu
+ 
 diff --git a/security/security.c b/security/security.c
-index e325fcc41f00..a98549b334af 100644
+index 7ecb9879a863..456a3f73bc36 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -103,14 +103,6 @@ static bool __init lsm_allowed(struct lsm_info *lsm)
- 	if (!is_enabled(lsm))
- 		return false;
+@@ -44,6 +44,8 @@ char *lsm_names;
+ /* Boot-time LSM user choice */
+ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+ 	CONFIG_DEFAULT_SECURITY;
++static __initdata const char *chosen_lsm_enable;
++static __initdata const char *chosen_lsm_disable;
  
--	/* Skip major-specific checks if not a major LSM. */
--	if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
--		return true;
--
--	/* Disabled if this LSM isn't the chosen one. */
--	if (strcmp(lsm->name, chosen_major_lsm) != 0)
--		return false;
--
- 	return true;
- }
+ static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
  
-@@ -188,8 +180,24 @@ static void __init prepare_lsm_enable(void)
- 	parse_lsm_enable(chosen_lsm_enable, set_enabled, true);
- 	parse_lsm_enable(chosen_lsm_disable, set_enabled, false);
- 
-+	/* Process "security=", if given. */
- 	if (!chosen_major_lsm)
- 		chosen_major_lsm = CONFIG_DEFAULT_SECURITY;
-+	if (chosen_major_lsm) {
-+		struct lsm_info *lsm;
+@@ -185,6 +187,10 @@ static void __init prepare_lsm_enable(void)
+ {
+ 	/* Prepare defaults. */
+ 	parse_lsm_enable(builtin_lsm_enable, default_enabled, true);
 +
-+		/*
-+		 * To match the original "security=" behavior, this
-+		 * explicitly does NOT fallback to another Legacy Major
-+		 * if the selected one was separately disabled: disable
-+		 * all non-matching Legacy Major LSMs.
-+		 */
-+		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+			if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) &&
-+			    strcmp(lsm->name, chosen_major_lsm) != 0)
-+				set_enabled(lsm, false);
-+		}
-+	}
++	/* Process "lsm.enable=" and "lsm.disable=", if given. */
++	parse_lsm_enable(chosen_lsm_enable, set_enabled, true);
++	parse_lsm_enable(chosen_lsm_disable, set_enabled, false);
  }
  
  /**
+@@ -240,6 +246,22 @@ static int __init enable_debug(char *str)
+ }
+ __setup("lsm.debug", enable_debug);
+ 
++/* Explicitly enable a list of LSMs. */
++static int __init enable_lsm(char *str)
++{
++	chosen_lsm_enable = str;
++	return 1;
++}
++__setup("lsm.enable=", enable_lsm);
++
++/* Explicitly disable a list of LSMs. */
++static int __init disable_lsm(char *str)
++{
++	chosen_lsm_disable = str;
++	return 1;
++}
++__setup("lsm.disable=", disable_lsm);
++
+ static bool match_last_lsm(const char *list, const char *lsm)
+ {
+ 	const char *last;
 -- 
 2.17.1
