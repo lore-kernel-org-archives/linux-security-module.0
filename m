@@ -1,37 +1,17 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Tue, 25 Sep 2018 21:55:27 +0530
-Subject: [PATCH v3 06/20] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-In-Reply-To: <20180919140634.GA27854@linux.intel.com>
-References: <20180918093459.19165-1-tomas.winkler@intel.com>
-	<20180918093459.19165-7-tomas.winkler@intel.com>
-	<20180919140634.GA27854@linux.intel.com>
-Message-ID: <7af3302c-3c46-ebc7-bf9b-704c8eaaa6b7@linux.vnet.ibm.com>
+From: ztong@vt.edu (Tong Zhang)
+Date: Tue, 25 Sep 2018 13:27:08 -0400
+Subject: Leaking path for set_task_comm
+Message-ID: <F7DFF547-5267-4EF3-8BF3-70DAF6C2A53A@vt.edu>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+Kernel Version: 4.18.5
 
+Problem Description:
 
-On 09/19/2018 07:36 PM, Jarkko Sakkinen wrote:
-> On Tue, Sep 18, 2018 at 12:34:45PM +0300, Tomas Winkler wrote:
->> Move tpm1_pcr_extend to tpm1-cmd.c and remove
->> unused pcrextend_header structure.
->>
->> Fixes warning:
->> drivers/char/tpm/tpm-interface.c:609:38: warning: ?pcrextend_header? defined but not used [-Wunused-const-variable=]
->>   static const struct tpm_input_header pcrextend_header = {
->>                                        ^~~~~~~~~~~~~~~~
->> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
-> Can someone with a working IMA environment to test it? Don't have one
-> right now (should probably setup).
+When using prctl(PR_SET_NAME) to set the thread name, it is checked by security_task_prctl.
 
-I think I can try testing this patch sometime next week. I will test the 
-updated version.
+We discovered a leaking path that can also use method implemented in 
+fs/proc/base.c:1526 comm_write(), to do similar thing without asking LSM?s decision.
 
-Thanks & Regards,
- ??? - Nayna
-
->
-> /Jarkko
->
+- Tong
