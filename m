@@ -1,97 +1,26 @@
-From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Tue, 25 Sep 2018 15:53:59 +0530
-Subject: [PATCH v4 20/21] tpm1: reimplement tpm1_continue_selftest() using
-	tpm_buf
-In-Reply-To: <20180921135820.20549-21-tomas.winkler@intel.com>
-References: <20180921135820.20549-1-tomas.winkler@intel.com>
-	<20180921135820.20549-21-tomas.winkler@intel.com>
-Message-ID: <5f142a3b-15b8-368b-19e5-5926b20addfd@linux.vnet.ibm.com>
+From: gregkh@linuxfoundation.org (Greg KH)
+Date: Tue, 25 Sep 2018 13:30:26 +0200
+Subject: [GIT PULL] Keys: fix C++ reserved word issue
+In-Reply-To: <31929.1537870620@warthog.procyon.org.uk>
+References: <20180925094147.GC21972@kroah.com>
+	<alpine.LRH.2.21.1809250738020.27047@namei.org>
+	<31929.1537870620@warthog.procyon.org.uk>
+Message-ID: <20180925113026.GA1696@kroah.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
+On Tue, Sep 25, 2018 at 11:17:00AM +0100, David Howells wrote:
+> Greg KH <gregkh@linuxfoundation.org> wrote:
+> 
+> > I'll wait a few days on this one...
+> 
+> Can you at least apply the reversion patch?  UAPI is currently broken by the
+> change that needs reverting.
 
+Yes, as that's obviously correct.  I think you should wait for your
+patch 2 here until 4.20-rc1, as this isn't a "fix" that is required at
+this point in time.
 
-On 09/21/2018 07:28 PM, Tomas Winkler wrote:
-> Reimplement tpm1_continue_selftest() using tpm_buf structure.
-> This is the last command using the old tpm_cmd_t structure
-> and now the structure can be removed.
->
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> V3: New in the series.
-> V4: Resend.
->
->   drivers/char/tpm/tpm.h      |  9 ---------
->   drivers/char/tpm/tpm1-cmd.c | 21 ++++++++++-----------
->   2 files changed, 10 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 2f06740f993d..7ada00f067f1 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -377,15 +377,6 @@ enum tpm_sub_capabilities {
->   	TPM_CAP_PROP_TIS_DURATION = 0x120,
->   };
->
-> -typedef union {
-> -	struct	tpm_input_header in;
-> -	struct	tpm_output_header out;
-> -} tpm_cmd_header;
-> -
-> -struct tpm_cmd_t {
-> -	tpm_cmd_header	header;
-> -} __packed;
-> -
->
->   /* 128 bytes is an arbitrary cap. This could be as large as TPM_BUFSIZE - 18
->    * bytes, but 128 is still a relatively large number of random bytes and
-> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index cde9a01ad31f..6d7d70b0d130 100644
-> --- a/drivers/char/tpm/tpm1-cmd.c
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -604,15 +604,8 @@ int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
->   }
->
->   #define TPM_ORD_CONTINUE_SELFTEST 83
-> -#define CONTINUE_SELFTEST_RESULT_SIZE 10
-> -static const struct tpm_input_header continue_selftest_header = {
-> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-> -	.length = cpu_to_be32(10),
-> -	.ordinal = cpu_to_be32(TPM_ORD_CONTINUE_SELFTEST),
-> -};
-> -
->   /**
-> - * tpm_continue_selftest -- run TPM's selftest
-> + * tpm_continue_selftest() - run TPM's selftest
->    * @chip: TPM chip to use
->    *
->    * Returns 0 on success, < 0 in case of fatal error or a value > 0 representing
-> @@ -620,12 +613,18 @@ static const struct tpm_input_header continue_selftest_header = {
->    */
->   static int tpm1_continue_selftest(struct tpm_chip *chip)
->   {
-> +	struct tpm_buf buf;
->   	int rc;
-> -	struct tpm_cmd_t cmd;
->
-> -	cmd.header.in = continue_selftest_header;
-> -	rc = tpm_transmit_cmd(chip, NULL, &cmd, CONTINUE_SELFTEST_RESULT_SIZE,
-> +	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_CONTINUE_SELFTEST);
-> +	if (rc)
-> +		return rc;
-> +
-> +	rc = tpm_transmit_cmd(chip, NULL, &buf.data, PAGE_SIZE,
-I think this needs to buf.data instead of &buf.data
+I'll just go cherry-pick that one patch, thanks.
 
-Thanks & Regards,
- ???? - Nayna
-
->   			      0, 0, "continue selftest");
-> +
-> +	tpm_buf_destroy(&buf);
-> +
->   	return rc;
->   }
->
+greg k-h
