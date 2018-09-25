@@ -1,90 +1,85 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:06 -0700
-Subject: [PATCH security-next v3 03/29] LSM: Rename .security_initcall section
-	to .lsm_info
+Date: Mon, 24 Sep 2018 17:18:27 -0700
+Subject: [PATCH security-next v3 24/29] LoadPin: Initialize as ordered LSM
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-4-keescook@chromium.org>
+Message-ID: <20180925001832.18322-25-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In preparation for switching from initcall to just a regular set of
-pointers in a section, rename the internal section name.
+This converts LoadPin from being a direct "minor" LSM into an ordered LSM.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-arch at vger.kernel.org
-Cc: linux-security-module at vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/asm-generic/vmlinux.lds.h | 10 +++++-----
- include/linux/init.h              |  4 ++--
- security/security.c               |  4 ++--
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ include/linux/lsm_hooks.h  | 5 -----
+ security/Kconfig           | 2 +-
+ security/loadpin/loadpin.c | 7 ++++++-
+ security/security.c        | 1 -
+ 4 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 934a45395547..5079a969e612 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -787,14 +787,14 @@
- 		__con_initcall_end = .;
- 
- #define SECURITY_INITCALL						\
--		__security_initcall_start = .;				\
--		KEEP(*(.security_initcall.init))			\
--		__security_initcall_end = .;
-+		__start_lsm_info = .;					\
-+		KEEP(*(.lsm_info.init))					\
-+		__end_lsm_info = .;
- 
- /* Older linker script style for security init. */
- #define SECURITY_INIT							\
--	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
--		SECURITY_INITCALL					\
-+	.lsm_info.init : AT(ADDR(.lsm_info.init) - LOAD_OFFSET) {	\
-+		LSM_INFO						\
- 	}
- 
- #ifdef CONFIG_BLK_DEV_INITRD
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 2538d176dd1f..77636539e77c 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -133,7 +133,7 @@ static inline initcall_t initcall_from_entry(initcall_entry_t *entry)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index ab23f1bc6d77..9df08955f684 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2097,10 +2097,5 @@ extern void __init yama_add_hooks(void);
+ #else
+ static inline void __init yama_add_hooks(void) { }
  #endif
+-#ifdef CONFIG_SECURITY_LOADPIN
+-void __init loadpin_add_hooks(void);
+-#else
+-static inline void loadpin_add_hooks(void) { };
+-#endif
  
- extern initcall_entry_t __con_initcall_start[], __con_initcall_end[];
--extern initcall_entry_t __security_initcall_start[], __security_initcall_end[];
-+extern initcall_entry_t __start_lsm_info[], __end_lsm_info[];
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/Kconfig b/security/Kconfig
+index 7ec86dbdb6b8..e20c2a3143e7 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -293,7 +293,7 @@ config LSM_ENABLE
  
- /* Used for contructor calls. */
- typedef void (*ctor_fn_t)(void);
-@@ -236,7 +236,7 @@ extern bool initcall_debug;
- 	static exitcall_t __exitcall_##fn __exit_call = fn
+ config LSM_ORDER
+ 	string "Default initialization order of builtin LSMs"
+-	default "integrity"
++	default "loadpin,integrity"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list will be link-order initialized
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index d8a68a6f6fef..7abdf4619b46 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -184,13 +184,18 @@ static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(kernel_load_data, loadpin_load_data),
+ };
  
- #define console_initcall(fn)	___define_initcall(fn,, .con_initcall)
--#define security_initcall(fn)	___define_initcall(fn,, .security_initcall)
-+#define security_initcall(fn)	___define_initcall(fn,, .lsm_info)
+-void __init loadpin_add_hooks(void)
++static int __init loadpin_init(void)
+ {
+ 	pr_info("ready to pin (currently %senforcing)\n",
+ 		enforcing ? "" : "not ");
+ 	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
++	return 0;
+ }
  
- struct obs_kernel_param {
- 	const char *str;
++DEFINE_LSM(loadpin)
++	.init = loadpin_init,
++END_LSM;
++
+ /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
+ module_param(enforcing, int, 0);
+ MODULE_PARM_DESC(enforcing, "Enforce module/firmware pinning");
 diff --git a/security/security.c b/security/security.c
-index 4cbcf244a965..892fe6b691cf 100644
+index f1c3581d870f..cb25f321e044 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -51,9 +51,9 @@ static void __init do_security_initcalls(void)
- 	initcall_t call;
- 	initcall_entry_t *ce;
+@@ -305,7 +305,6 @@ int __init security_init(void)
+ 	 */
+ 	capability_add_hooks();
+ 	yama_add_hooks();
+-	loadpin_add_hooks();
  
--	ce = __security_initcall_start;
-+	ce = __start_lsm_info;
- 	trace_initcall_level("security");
--	while (ce < __security_initcall_end) {
-+	while (ce < __end_lsm_info) {
- 		call = initcall_from_entry(ce);
- 		trace_initcall_start(call);
- 		ret = call();
+ 	/* Load LSMs in specified order. */
+ 	prepare_lsm_order();
 -- 
 2.17.1
