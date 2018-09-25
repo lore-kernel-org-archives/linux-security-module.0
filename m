@@ -1,226 +1,134 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:18 -0700
-Subject: [PATCH security-next v3 15/29] LSM: Lift LSM selection out of
-	individual LSMs
+Date: Mon, 24 Sep 2018 17:18:24 -0700
+Subject: [PATCH security-next v3 21/29] LSM: Build ordered list of ordered
+	LSMs for init
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-16-keescook@chromium.org>
+Message-ID: <20180925001832.18322-22-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-As a prerequisite to adjusting LSM selection logic in the future, this
-moves the selection logic up out of the individual major LSMs, making
-their init functions only run when actually enabled. This considers all
-LSMs enabled by default unless they specified an external "enable"
-variable.
+This constructs a list of ordered LSMs to initialize, using a hard-coded
+list of only "integrity": minor LSMs continue to have direct hook calls,
+and major LSMs continue to initialize separately.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h  |  1 -
- security/apparmor/lsm.c    |  6 ---
- security/security.c        | 84 ++++++++++++++++++++++++--------------
- security/selinux/hooks.c   | 10 -----
- security/smack/smack_lsm.c |  3 --
- security/tomoyo/tomoyo.c   |  2 -
- 6 files changed, 53 insertions(+), 53 deletions(-)
+ security/security.c | 59 +++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 52 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 2a41e8e6f6e5..95798f212dbf 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2091,7 +2091,6 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
- #define __lsm_ro_after_init	__ro_after_init
- #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
- 
--extern int __init security_module_enable(const char *module);
- extern void __init capability_add_hooks(void);
- #ifdef CONFIG_SECURITY_YAMA
- extern void __init yama_add_hooks(void);
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index d03133a267f2..5399c2f03536 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1542,12 +1542,6 @@ static int __init apparmor_init(void)
- {
- 	int error;
- 
--	if (!apparmor_enabled || !security_module_enable("apparmor")) {
--		aa_info_message("AppArmor disabled by boot time parameter");
--		apparmor_enabled = false;
--		return 0;
--	}
--
- 	aa_secids_init();
- 
- 	error = aa_setup_dfa_engine();
 diff --git a/security/security.c b/security/security.c
-index a886a978214a..056b36cf6245 100644
+index a98549b334af..ef1ced0a3a50 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -52,33 +52,78 @@ static bool debug __initdata;
- 			pr_info(__VA_ARGS__);			\
- 	} while (0)
+@@ -34,6 +34,9 @@
  
-+static bool __init is_enabled(struct lsm_info *lsm)
+ #define MAX_LSM_EVM_XATTR	2
+ 
++/* How many LSMs were built into the kernel? */
++#define LSM_COUNT (__end_lsm_info - __start_lsm_info)
++
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+ 
+@@ -45,6 +48,9 @@ static __initdata const char *chosen_major_lsm;
+ 
+ static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
+ 
++/* Ordered list of LSMs to initialize. */
++static __initdata struct lsm_info **ordered_lsms;
++
+ static bool debug __initdata;
+ #define init_debug(...)						\
+ 	do {							\
+@@ -96,6 +102,45 @@ static void __init set_enabled(struct lsm_info *lsm, bool enabled)
+ 	}
+ }
+ 
++/* Is an LSM already listed in the ordered LSMs list? */
++static bool __init exists_ordered_lsm(struct lsm_info *lsm)
 +{
-+	if (!lsm->enabled || *lsm->enabled)
-+		return true;
++	struct lsm_info **check;
++
++	for (check = ordered_lsms; *check; check++)
++		if (*check == lsm)
++			return true;
 +
 +	return false;
 +}
 +
-+/* Mark an LSM's enabled flag, if it exists. */
-+static void __init set_enabled(struct lsm_info *lsm, bool enabled)
++/* Append an LSM to the list of ordered LSMs to initialize. */
++static int last_lsm __initdata;
++static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
 +{
-+	if (lsm->enabled)
-+		*lsm->enabled = enabled;
++	/* Ignore duplicate selections. */
++	if (exists_ordered_lsm(lsm))
++		return;
++
++	if (WARN(last_lsm == LSM_COUNT, "%s: out of LSM slots!?\n", from))
++		return;
++
++	ordered_lsms[last_lsm++] = lsm;
++	init_debug("%s ordering: %s (%sabled)\n", from, lsm->name,
++		   is_enabled(lsm) ? "en" : "dis");
 +}
 +
-+/* Is an LSM allowed to be initialized? */
-+static bool __init lsm_allowed(struct lsm_info *lsm)
++/* Populate ordered LSMs list from hard-coded list of LSMs. */
++static void __init prepare_lsm_order(void)
 +{
-+	/* Skip if the LSM is disabled. */
-+	if (!is_enabled(lsm))
-+		return false;
++	struct lsm_info *lsm;
 +
-+	/* Skip major-specific checks if not a major LSM. */
-+	if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
-+		return true;
-+
-+	/* Disabled if this LSM isn't the chosen one. */
-+	if (strcmp(lsm->name, chosen_lsm) != 0)
-+		return false;
-+
-+	return true;
-+}
-+
-+/* Check if LSM should be enabled. Mark any that are disabled. */
-+static void __init maybe_initialize_lsm(struct lsm_info *lsm)
-+{
-+	int enabled = lsm_allowed(lsm);
-+
-+	/* Record enablement. */
-+	set_enabled(lsm, enabled);
-+
-+	/* If selected, initialize the LSM. */
-+	if (enabled) {
-+		int ret;
-+
-+		init_debug("initializing %s\n", lsm->name);
-+		ret = lsm->init();
-+		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		if (strcmp(lsm->name, "integrity") == 0)
++			append_ordered_lsm(lsm, "builtin");
 +	}
 +}
 +
+ /* Is an LSM allowed to be initialized? */
+ static bool __init lsm_allowed(struct lsm_info *lsm)
+ {
+@@ -126,14 +171,10 @@ static void __init maybe_initialize_lsm(struct lsm_info *lsm)
+ 
  static void __init ordered_lsm_init(void)
  {
- 	struct lsm_info *lsm;
--	int ret;
+-	struct lsm_info *lsm;
+-
+-	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+-		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
+-			continue;
++	struct lsm_info **lsm;
  
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
- 		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
- 			continue;
- 
--		init_debug("initializing %s\n", lsm->name);
--		ret = lsm->init();
--		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
-+		maybe_initialize_lsm(lsm);
- 	}
+-		maybe_initialize_lsm(lsm);
+-	}
++	for (lsm = ordered_lsms; *lsm; lsm++)
++		maybe_initialize_lsm(*lsm);
  }
  
  static void __init major_lsm_init(void)
- {
- 	struct lsm_info *lsm;
--	int ret;
+@@ -215,6 +256,8 @@ int __init security_init(void)
+ 	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
+ 	     i++)
+ 		INIT_HLIST_HEAD(&list[i]);
++	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
++				GFP_KERNEL);
  
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
- 		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
- 			continue;
+ 	/* Figure out which LSMs are enabled and disabled. */
+ 	prepare_lsm_enable();
+@@ -227,6 +270,7 @@ int __init security_init(void)
+ 	loadpin_add_hooks();
  
--		init_debug("initializing %s\n", lsm->name);
--		ret = lsm->init();
--		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
-+		maybe_initialize_lsm(lsm);
- 	}
- }
+ 	/* Load LSMs in specified order. */
++	prepare_lsm_order();
+ 	ordered_lsm_init();
  
-@@ -168,29 +213,6 @@ static int lsm_append(char *new, char **result)
+ 	/*
+@@ -234,6 +278,7 @@ int __init security_init(void)
+ 	 */
+ 	major_lsm_init();
+ 
++	kfree(ordered_lsms);
  	return 0;
  }
  
--/**
-- * security_module_enable - Load given security module on boot ?
-- * @module: the name of the module
-- *
-- * Each LSM must pass this method before registering its own operations
-- * to avoid security registration races. This method may also be used
-- * to check if your LSM is currently loaded during kernel initialization.
-- *
-- * Returns:
-- *
-- * true if:
-- *
-- * - The passed LSM is the one chosen by user at boot time,
-- * - or the passed LSM is configured as the default and the user did not
-- *   choose an alternate LSM at boot time.
-- *
-- * Otherwise, return false.
-- */
--int __init security_module_enable(const char *module)
--{
--	return !strcmp(module, chosen_lsm);
--}
--
- /**
-  * security_add_hooks - Add a modules hooks to the hook lists.
-  * @hooks: the hooks to add
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 3f999ed98cfd..409a9252aeb6 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7133,16 +7133,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 
- static __init int selinux_init(void)
- {
--	if (!security_module_enable("selinux")) {
--		selinux_enabled = 0;
--		return 0;
--	}
--
--	if (!selinux_enabled) {
--		pr_info("SELinux:  Disabled at boot.\n");
--		return 0;
--	}
--
- 	pr_info("SELinux:  Initializing.\n");
- 
- 	memset(&selinux_state, 0, sizeof(selinux_state));
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 4aef844fc0e2..e79fad43a8e3 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4834,9 +4834,6 @@ static __init int smack_init(void)
- 	struct cred *cred;
- 	struct task_smack *tsp;
- 
--	if (!security_module_enable("smack"))
--		return 0;
--
- 	smack_inode_cache = KMEM_CACHE(inode_smack, 0);
- 	if (!smack_inode_cache)
- 		return -ENOMEM;
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 528b6244a648..39bb994ebe09 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -540,8 +540,6 @@ static int __init tomoyo_init(void)
- {
- 	struct cred *cred = (struct cred *) current_cred();
- 
--	if (!security_module_enable("tomoyo"))
--		return 0;
- 	/* register ourselves with the security framework */
- 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
- 	printk(KERN_INFO "TOMOYO Linux initialized\n");
 -- 
 2.17.1
