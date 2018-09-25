@@ -1,131 +1,226 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:08 -0700
-Subject: [PATCH security-next v3 05/29] LSM: Convert from initcall to struct
-	lsm_info
+Date: Mon, 24 Sep 2018 17:18:18 -0700
+Subject: [PATCH security-next v3 15/29] LSM: Lift LSM selection out of
+	individual LSMs
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-6-keescook@chromium.org>
+Message-ID: <20180925001832.18322-16-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-In preparation for doing more interesting LSM init probing, this converts
-the existing initcall system into an explicit call into a function pointer
-from a section-collected struct lsm_info array.
+As a prerequisite to adjusting LSM selection logic in the future, this
+moves the selection logic up out of the individual major LSMs, making
+their init functions only run when actually enabled. This considers all
+LSMs enabled by default unless they specified an external "enable"
+variable.
 
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module at vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/init.h      |  2 --
- include/linux/lsm_hooks.h | 12 ++++++++++++
- include/linux/module.h    |  1 -
- security/integrity/iint.c |  1 +
- security/security.c       | 14 +++++---------
- 5 files changed, 18 insertions(+), 12 deletions(-)
+ include/linux/lsm_hooks.h  |  1 -
+ security/apparmor/lsm.c    |  6 ---
+ security/security.c        | 84 ++++++++++++++++++++++++--------------
+ security/selinux/hooks.c   | 10 -----
+ security/smack/smack_lsm.c |  3 --
+ security/tomoyo/tomoyo.c   |  2 -
+ 6 files changed, 53 insertions(+), 53 deletions(-)
 
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 77636539e77c..9c2aba1dbabf 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -133,7 +133,6 @@ static inline initcall_t initcall_from_entry(initcall_entry_t *entry)
- #endif
- 
- extern initcall_entry_t __con_initcall_start[], __con_initcall_end[];
--extern initcall_entry_t __start_lsm_info[], __end_lsm_info[];
- 
- /* Used for contructor calls. */
- typedef void (*ctor_fn_t)(void);
-@@ -236,7 +235,6 @@ extern bool initcall_debug;
- 	static exitcall_t __exitcall_##fn __exit_call = fn
- 
- #define console_initcall(fn)	___define_initcall(fn,, .con_initcall)
--#define security_initcall(fn)	___define_initcall(fn,, .lsm_info)
- 
- struct obs_kernel_param {
- 	const char *str;
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 97a020c616ad..ad04761e5587 100644
+index 2a41e8e6f6e5..95798f212dbf 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -2039,6 +2039,18 @@ extern char *lsm_names;
- extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 				char *lsm);
+@@ -2091,7 +2091,6 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ #define __lsm_ro_after_init	__ro_after_init
+ #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
  
-+struct lsm_info {
-+	int (*init)(void);
-+};
-+
-+extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
-+
-+#define security_initcall(lsm)						\
-+	static struct lsm_info __lsm_##lsm				\
-+		__used __section(.lsm_info.init)			\
-+		__aligned(sizeof(unsigned long))			\
-+		= { .init = lsm, }
-+
- #ifdef CONFIG_SECURITY_SELINUX_DISABLE
- /*
-  * Assuring the safety of deleting a security module is up to
-diff --git a/include/linux/module.h b/include/linux/module.h
-index f807f15bebbe..264979283756 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -123,7 +123,6 @@ extern void cleanup_module(void);
- #define late_initcall_sync(fn)		module_init(fn)
+-extern int __init security_module_enable(const char *module);
+ extern void __init capability_add_hooks(void);
+ #ifdef CONFIG_SECURITY_YAMA
+ extern void __init yama_add_hooks(void);
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index d03133a267f2..5399c2f03536 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1542,12 +1542,6 @@ static int __init apparmor_init(void)
+ {
+ 	int error;
  
- #define console_initcall(fn)		module_init(fn)
--#define security_initcall(fn)		module_init(fn)
+-	if (!apparmor_enabled || !security_module_enable("apparmor")) {
+-		aa_info_message("AppArmor disabled by boot time parameter");
+-		apparmor_enabled = false;
+-		return 0;
+-	}
+-
+ 	aa_secids_init();
  
- /* Each module must use one module_init(). */
- #define module_init(initfn)					\
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 5a6810041e5c..70d21b566955 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -22,6 +22,7 @@
- #include <linux/file.h>
- #include <linux/uaccess.h>
- #include <linux/security.h>
-+#include <linux/lsm_hooks.h>
- #include "integrity.h"
- 
- static struct rb_root integrity_iint_tree = RB_ROOT;
+ 	error = aa_setup_dfa_engine();
 diff --git a/security/security.c b/security/security.c
-index 41a5da2c7faf..e74f46fba591 100644
+index a886a978214a..056b36cf6245 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -43,16 +43,12 @@ char *lsm_names;
- static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
- 	CONFIG_DEFAULT_SECURITY;
+@@ -52,33 +52,78 @@ static bool debug __initdata;
+ 			pr_info(__VA_ARGS__);			\
+ 	} while (0)
  
--static void __init do_security_initcalls(void)
-+static void __init major_lsm_init(void)
++static bool __init is_enabled(struct lsm_info *lsm)
++{
++	if (!lsm->enabled || *lsm->enabled)
++		return true;
++
++	return false;
++}
++
++/* Mark an LSM's enabled flag, if it exists. */
++static void __init set_enabled(struct lsm_info *lsm, bool enabled)
++{
++	if (lsm->enabled)
++		*lsm->enabled = enabled;
++}
++
++/* Is an LSM allowed to be initialized? */
++static bool __init lsm_allowed(struct lsm_info *lsm)
++{
++	/* Skip if the LSM is disabled. */
++	if (!is_enabled(lsm))
++		return false;
++
++	/* Skip major-specific checks if not a major LSM. */
++	if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
++		return true;
++
++	/* Disabled if this LSM isn't the chosen one. */
++	if (strcmp(lsm->name, chosen_lsm) != 0)
++		return false;
++
++	return true;
++}
++
++/* Check if LSM should be enabled. Mark any that are disabled. */
++static void __init maybe_initialize_lsm(struct lsm_info *lsm)
++{
++	int enabled = lsm_allowed(lsm);
++
++	/* Record enablement. */
++	set_enabled(lsm, enabled);
++
++	/* If selected, initialize the LSM. */
++	if (enabled) {
++		int ret;
++
++		init_debug("initializing %s\n", lsm->name);
++		ret = lsm->init();
++		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
++	}
++}
++
+ static void __init ordered_lsm_init(void)
  {
--	initcall_t call;
--	initcall_entry_t *ce;
-+	struct lsm_info *lsm;
+ 	struct lsm_info *lsm;
+-	int ret;
  
--	ce = __start_lsm_info;
--	while (ce < __end_lsm_info) {
--		call = initcall_from_entry(ce);
--		call();
--		ce++;
-+	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+		lsm->init();
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+ 		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
+ 			continue;
+ 
+-		init_debug("initializing %s\n", lsm->name);
+-		ret = lsm->init();
+-		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
++		maybe_initialize_lsm(lsm);
  	}
  }
  
-@@ -82,7 +78,7 @@ int __init security_init(void)
- 	/*
- 	 * Load all the remaining security modules.
- 	 */
--	do_security_initcalls();
-+	major_lsm_init();
+ static void __init major_lsm_init(void)
+ {
+ 	struct lsm_info *lsm;
+-	int ret;
  
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+ 		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
+ 			continue;
+ 
+-		init_debug("initializing %s\n", lsm->name);
+-		ret = lsm->init();
+-		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
++		maybe_initialize_lsm(lsm);
+ 	}
+ }
+ 
+@@ -168,29 +213,6 @@ static int lsm_append(char *new, char **result)
  	return 0;
  }
+ 
+-/**
+- * security_module_enable - Load given security module on boot ?
+- * @module: the name of the module
+- *
+- * Each LSM must pass this method before registering its own operations
+- * to avoid security registration races. This method may also be used
+- * to check if your LSM is currently loaded during kernel initialization.
+- *
+- * Returns:
+- *
+- * true if:
+- *
+- * - The passed LSM is the one chosen by user at boot time,
+- * - or the passed LSM is configured as the default and the user did not
+- *   choose an alternate LSM at boot time.
+- *
+- * Otherwise, return false.
+- */
+-int __init security_module_enable(const char *module)
+-{
+-	return !strcmp(module, chosen_lsm);
+-}
+-
+ /**
+  * security_add_hooks - Add a modules hooks to the hook lists.
+  * @hooks: the hooks to add
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3f999ed98cfd..409a9252aeb6 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7133,16 +7133,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 
+ static __init int selinux_init(void)
+ {
+-	if (!security_module_enable("selinux")) {
+-		selinux_enabled = 0;
+-		return 0;
+-	}
+-
+-	if (!selinux_enabled) {
+-		pr_info("SELinux:  Disabled at boot.\n");
+-		return 0;
+-	}
+-
+ 	pr_info("SELinux:  Initializing.\n");
+ 
+ 	memset(&selinux_state, 0, sizeof(selinux_state));
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 4aef844fc0e2..e79fad43a8e3 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4834,9 +4834,6 @@ static __init int smack_init(void)
+ 	struct cred *cred;
+ 	struct task_smack *tsp;
+ 
+-	if (!security_module_enable("smack"))
+-		return 0;
+-
+ 	smack_inode_cache = KMEM_CACHE(inode_smack, 0);
+ 	if (!smack_inode_cache)
+ 		return -ENOMEM;
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 528b6244a648..39bb994ebe09 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -540,8 +540,6 @@ static int __init tomoyo_init(void)
+ {
+ 	struct cred *cred = (struct cred *) current_cred();
+ 
+-	if (!security_module_enable("tomoyo"))
+-		return 0;
+ 	/* register ourselves with the security framework */
+ 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
+ 	printk(KERN_INFO "TOMOYO Linux initialized\n");
 -- 
 2.17.1
