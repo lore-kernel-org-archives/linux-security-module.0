@@ -1,27 +1,39 @@
-From: jarkko.sakkinen@linux.intel.com (Jarkko Sakkinen)
-Date: Tue, 25 Sep 2018 17:41:52 +0300
-Subject: [PATCH v4 21/21] tpm: use u32 instead of int for PCR index
-In-Reply-To: <20180921135820.20549-22-tomas.winkler@intel.com>
-References: <20180921135820.20549-1-tomas.winkler@intel.com>
-	<20180921135820.20549-22-tomas.winkler@intel.com>
-Message-ID: <c08ed1def2ba28c3a44291b0652dd7f8830de1f4.camel@linux.intel.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Tue, 25 Sep 2018 08:16:56 -0700
+Subject: [PULL] Smack: Changes for 4.20
+Message-ID: <ad8a0bbf-ce0c-3474-a52d-3ddf0fe4a107@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, 2018-09-21 at 16:58 +0300, Tomas Winkler wrote:
-> The TPM specs defines PCR index a positive number, there is
-> no reason to use a signed number and it's also a possible security
-> issue as currently no functions check for a negative index,
-> which my into a large number when converted to u32.
-> 
-> Adjust the API to use u32 instead of int in all PCR related
-> functions.
-> 
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+James, I know it's on the early side, but I have a holiday coming up
+so I figured better early than late. Here are three patches for Smack
+for 4.20. Two clean up warnings and one is a rarely encountered ptrace
+capability check.
 
-I think I barked something about this in prev version but after giving
-some thought. I think this a good change (more exact API).
+Thank you.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+The following changes since commit dbdb75bd087954aaf9b3248109cb85748b62c21d:
 
-/Jarkko
+  security: tomoyo: Fix obsolete function (2018-09-04 11:56:25 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/cschaufler/next-smack smack-for-4.20
+
+for you to fetch changes up to b1fed3edc82ae0d763d5c24769e4a0193da150c9:
+
+  Smack: Mark expected switch fall-through (2018-09-18 16:28:54 -0700)
+
+----------------------------------------------------------------
+Casey Schaufler (1):
+      Smack: ptrace capability use fixes
+
+Gustavo A. R. Silva (1):
+      Smack: Mark expected switch fall-through
+
+YueHaibing (1):
+      Smack: remove set but not used variable 'root_inode'
+
+ security/smack/smack_lsm.c | 15 +++++++++++----
+ security/smack/smackfs.c   |  3 ---
+ 2 files changed, 11 insertions(+), 7 deletions(-)
