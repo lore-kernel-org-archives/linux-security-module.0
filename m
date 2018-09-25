@@ -1,80 +1,81 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:20 -0700
-Subject: [PATCH security-next v3 17/29] LSM: Introduce CONFIG_LSM_ENABLE
+Date: Mon, 24 Sep 2018 17:18:22 -0700
+Subject: [PATCH security-next v3 19/29] LSM: Prepare for reorganizing
+	"security=" logic
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-18-keescook@chromium.org>
+Message-ID: <20180925001832.18322-20-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-To provide a set of default-enabled LSMs at boot, this introduces the
-new CONFIG_LSM_ENABLE. A value of "all" means all builtin LSMs are
-enabled by default. Any unlisted LSMs will be implicitly disabled
-(excepting those with LSM-specific CONFIGs for enabling/disabling).
-
-The behavior of the LSM-specific CONFIGs for SELinux are AppArmor
-unchanged: the default-enabled state for those LSMs remains controlled
-through their LSM-specific "enable" CONFIGs.
+This moves the string handling for "security=" boot parameter into
+a stored pointer instead of a string duplicate. This will allow
+easier handling of the string when switching logic to use the coming
+enable/disable infrastructure.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h | 2 +-
- security/Kconfig          | 8 ++++++++
- security/security.c       | 4 +++-
- 3 files changed, 12 insertions(+), 2 deletions(-)
+ security/security.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 95798f212dbf..ab23f1bc6d77 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2044,7 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
- struct lsm_info {
- 	const char *name;	/* Populated automatically. */
- 	unsigned long flags;	/* Optional: flags describing LSM */
--	int *enabled;		/* Optional: NULL means enabled. */
-+	int *enabled;		/* Optional: NULL checks CONFIG_LSM_ENABLE */
- 	int (*init)(void);
- };
- 
-diff --git a/security/Kconfig b/security/Kconfig
-index 27d8b2688f75..71306b046270 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -276,5 +276,13 @@ config DEFAULT_SECURITY
- 	default "apparmor" if DEFAULT_SECURITY_APPARMOR
- 	default "" if DEFAULT_SECURITY_DAC
- 
-+config LSM_ENABLE
-+	string "LSMs to enable at boot time"
-+	default "all"
-+	help
-+	  A comma-separate list of LSMs to enable by default at boot. The
-+	  default is "all", to enable all LSM modules at boot. Any LSMs
-+	  not listed here will be disabled by default.
-+
- endmenu
- 
 diff --git a/security/security.c b/security/security.c
-index a8107d54b3d3..7ecb9879a863 100644
+index 456a3f73bc36..e325fcc41f00 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -45,6 +45,8 @@ char *lsm_names;
- static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
- 	CONFIG_DEFAULT_SECURITY;
+@@ -34,18 +34,14 @@
  
-+static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
+ #define MAX_LSM_EVM_XATTR	2
+ 
+-/* Maximum number of letters for an LSM name string */
+-#define SECURITY_NAME_MAX	10
+-
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+ 
+ char *lsm_names;
+ /* Boot-time LSM user choice */
+-static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+-	CONFIG_DEFAULT_SECURITY;
+ static __initdata const char *chosen_lsm_enable;
+ static __initdata const char *chosen_lsm_disable;
++static __initdata const char *chosen_major_lsm;
+ 
+ static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
+ 
+@@ -112,7 +108,7 @@ static bool __init lsm_allowed(struct lsm_info *lsm)
+ 		return true;
+ 
+ 	/* Disabled if this LSM isn't the chosen one. */
+-	if (strcmp(lsm->name, chosen_lsm) != 0)
++	if (strcmp(lsm->name, chosen_major_lsm) != 0)
+ 		return false;
+ 
+ 	return true;
+@@ -191,6 +187,9 @@ static void __init prepare_lsm_enable(void)
+ 	/* Process "lsm.enable=" and "lsm.disable=", if given. */
+ 	parse_lsm_enable(chosen_lsm_enable, set_enabled, true);
+ 	parse_lsm_enable(chosen_lsm_disable, set_enabled, false);
 +
- static bool debug __initdata;
- #define init_debug(...)						\
- 	do {							\
-@@ -182,7 +184,7 @@ static void __init parse_lsm_enable(const char *str,
- static void __init prepare_lsm_enable(void)
- {
- 	/* Prepare defaults. */
--	parse_lsm_enable("all", default_enabled, true);
-+	parse_lsm_enable(builtin_lsm_enable, default_enabled, true);
++	if (!chosen_major_lsm)
++		chosen_major_lsm = CONFIG_DEFAULT_SECURITY;
  }
  
  /**
+@@ -231,12 +230,12 @@ int __init security_init(void)
+ }
+ 
+ /* Save user chosen LSM */
+-static int __init choose_lsm(char *str)
++static int __init choose_major_lsm(char *str)
+ {
+-	strncpy(chosen_lsm, str, SECURITY_NAME_MAX);
++	chosen_major_lsm = str;
+ 	return 1;
+ }
+-__setup("security=", choose_lsm);
++__setup("security=", choose_major_lsm);
+ 
+ /* Enable LSM order debugging. */
+ static int __init enable_debug(char *str)
 -- 
 2.17.1
