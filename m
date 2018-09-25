@@ -1,35 +1,45 @@
-From: jmorris@namei.org (James Morris)
-Date: Wed, 26 Sep 2018 04:42:22 +1000 (AEST)
-Subject: [PULL] Smack: Changes for 4.20
-In-Reply-To: <ad8a0bbf-ce0c-3474-a52d-3ddf0fe4a107@schaufler-ca.com>
-References: <ad8a0bbf-ce0c-3474-a52d-3ddf0fe4a107@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1809260442180.30493@namei.org>
+From: sds@tycho.nsa.gov (Stephen Smalley)
+Date: Tue, 25 Sep 2018 14:44:23 -0400
+Subject: Leaking path or inconsistency LSM checking observed in fs/net
+In-Reply-To: <8004D467-2F24-4E9F-A429-AA4EE5D2E366@vt.edu>
+References: <8004D467-2F24-4E9F-A429-AA4EE5D2E366@vt.edu>
+Message-ID: <e6ef53a8-187e-d030-9246-3de2a9a79265@tycho.nsa.gov>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, 25 Sep 2018, Casey Schaufler wrote:
-
-> James, I know it's on the early side, but I have a holiday coming up
-> so I figured better early than late. Here are three patches for Smack
-> for 4.20. Two clean up warnings and one is a rarely encountered ptrace
-> capability check.
+On 09/25/2018 01:27 PM, Tong Zhang wrote:
+> Kernel Version: 4.18.5
 > 
-> Thank you.
+> Problem Description:
 > 
-> The following changes since commit dbdb75bd087954aaf9b3248109cb85748b62c21d:
+> We found several leaking path or inconsistency LSM design issue in fs/net.
 > 
->   security: tomoyo: Fix obsolete function (2018-09-04 11:56:25 -0700)
+> Currently we can only observe sock creation from kernel and all bind/listen/connect are not sent to LSM.
+> So, we think that those net/socket related stuff should all go through LSM check and being audited
+> even it is not a user thread or process.
 > 
-> are available in the Git repository at:
 > 
->   https://github.com/cschaufler/next-smack smack-for-4.20
+> Here?s an example where we have a check:
+> in fs/ocfs2/cluster/tcp.c:2035 o2net_open_listening_sock() a sock is created using sock_create(),
+> where a LSM check security_socket_create is called(net/socket.c:1242)
+> 
+> 
+> And where we don?t have a check
+> 
+> fs/ocfs2/cluster/tcp.c:2052 bind
+> fs/ocfs2/cluster/tcp.c:2059 listen
+> 
+> fs/dlm/lowcomms.c:1264 bind
+> fs/dlm/lowcomms.c:1278 listen
+> fs/dlm/lowcomms.c:1354 listen
+> 
+> several places that use kernel_bind/kernel_listen/kernel_connect
+> 
+> net/socket.c:3231 kernel_bind
+> net/socket.c:3237 kernel_listen
+> net/socket.c:3286 kernel_connect
 
-Pulled to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-smack
-and next-testing
-
-
-
--- 
-James Morris
-<jmorris@namei.org>
+That's intentional.  LSM isn't trying to mediate kernel-internal 
+operations, and we do not want to apply permission checks against the 
+credentials of the current userspace process for such operations.  ocfs2 
+should likely be using sock_create_kern.
