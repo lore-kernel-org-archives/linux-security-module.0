@@ -1,52 +1,90 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:05 -0700
-Subject: [PATCH security-next v3 02/29] vmlinux.lds.h: Avoid copy/paste of
-	security_init section
+Date: Mon, 24 Sep 2018 17:18:06 -0700
+Subject: [PATCH security-next v3 03/29] LSM: Rename .security_initcall section
+	to .lsm_info
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-3-keescook@chromium.org>
+Message-ID: <20180925001832.18322-4-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Avoid copy/paste by defining SECURITY_INIT in terms of SECURITY_INITCALL.
+In preparation for switching from initcall to just a regular set of
+pointers in a section, rename the internal section name.
 
 Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: linux-arch at vger.kernel.org
+Cc: linux-security-module at vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/asm-generic/vmlinux.lds.h | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ include/asm-generic/vmlinux.lds.h | 10 +++++-----
+ include/linux/init.h              |  4 ++--
+ security/security.c               |  4 ++--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 7b75ff6e2fce..934a45395547 100644
+index 934a45395547..5079a969e612 100644
 --- a/include/asm-generic/vmlinux.lds.h
 +++ b/include/asm-generic/vmlinux.lds.h
-@@ -473,13 +473,6 @@
- #define RODATA          RO_DATA_SECTION(4096)
- #define RO_DATA(align)  RO_DATA_SECTION(align)
+@@ -787,14 +787,14 @@
+ 		__con_initcall_end = .;
  
--#define SECURITY_INIT							\
--	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
+ #define SECURITY_INITCALL						\
 -		__security_initcall_start = .;				\
 -		KEEP(*(.security_initcall.init))			\
--		__security_initcall_end = .;				\
--	}
--
- /*
-  * .text section. Map to function alignment to avoid address changes
-  * during second ld run in second ld pass when generating System.map
-@@ -798,6 +791,12 @@
- 		KEEP(*(.security_initcall.init))			\
- 		__security_initcall_end = .;
+-		__security_initcall_end = .;
++		__start_lsm_info = .;					\
++		KEEP(*(.lsm_info.init))					\
++		__end_lsm_info = .;
  
-+/* Older linker script style for security init. */
-+#define SECURITY_INIT							\
-+	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
-+		SECURITY_INITCALL					\
-+	}
-+
+ /* Older linker script style for security init. */
+ #define SECURITY_INIT							\
+-	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
+-		SECURITY_INITCALL					\
++	.lsm_info.init : AT(ADDR(.lsm_info.init) - LOAD_OFFSET) {	\
++		LSM_INFO						\
+ 	}
+ 
  #ifdef CONFIG_BLK_DEV_INITRD
- #define INIT_RAM_FS							\
- 	. = ALIGN(4);							\
+diff --git a/include/linux/init.h b/include/linux/init.h
+index 2538d176dd1f..77636539e77c 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -133,7 +133,7 @@ static inline initcall_t initcall_from_entry(initcall_entry_t *entry)
+ #endif
+ 
+ extern initcall_entry_t __con_initcall_start[], __con_initcall_end[];
+-extern initcall_entry_t __security_initcall_start[], __security_initcall_end[];
++extern initcall_entry_t __start_lsm_info[], __end_lsm_info[];
+ 
+ /* Used for contructor calls. */
+ typedef void (*ctor_fn_t)(void);
+@@ -236,7 +236,7 @@ extern bool initcall_debug;
+ 	static exitcall_t __exitcall_##fn __exit_call = fn
+ 
+ #define console_initcall(fn)	___define_initcall(fn,, .con_initcall)
+-#define security_initcall(fn)	___define_initcall(fn,, .security_initcall)
++#define security_initcall(fn)	___define_initcall(fn,, .lsm_info)
+ 
+ struct obs_kernel_param {
+ 	const char *str;
+diff --git a/security/security.c b/security/security.c
+index 4cbcf244a965..892fe6b691cf 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -51,9 +51,9 @@ static void __init do_security_initcalls(void)
+ 	initcall_t call;
+ 	initcall_entry_t *ce;
+ 
+-	ce = __security_initcall_start;
++	ce = __start_lsm_info;
+ 	trace_initcall_level("security");
+-	while (ce < __security_initcall_end) {
++	while (ce < __end_lsm_info) {
+ 		call = initcall_from_entry(ce);
+ 		trace_initcall_start(call);
+ 		ret = call();
 -- 
 2.17.1
