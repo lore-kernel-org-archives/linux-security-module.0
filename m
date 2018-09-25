@@ -1,127 +1,82 @@
 From: keescook@chromium.org (Kees Cook)
-Date: Mon, 24 Sep 2018 17:18:19 -0700
-Subject: [PATCH security-next v3 16/29] LSM: Prepare for arbitrary LSM enabling
+Date: Mon, 24 Sep 2018 17:18:26 -0700
+Subject: [PATCH security-next v3 23/29] LSM: Introduce "lsm.order=" for
+	boottime ordering
 In-Reply-To: <20180925001832.18322-1-keescook@chromium.org>
 References: <20180925001832.18322-1-keescook@chromium.org>
-Message-ID: <20180925001832.18322-17-keescook@chromium.org>
+Message-ID: <20180925001832.18322-24-keescook@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Before now, all the LSMs that did not specify an "enable" variable in their
-struct lsm_info were considered enabled by default. This prepares to make
-LSM enabling more explicit. For all LSMs without an explicit "enable"
-variable, a hard-coded storage location is chosen, and all LSMs without
-an external "enable" state have their state explicitly set to "enabled".
-
-This code appears more complex than it needs to be (comma-separated
-list parsing and "set" function parameter) because its use will be
-expanded on in the following patches to provide more explicit enabling.
+Provide a way to reorder LSM initialization using the new "lsm.order="
+comma-separated list of LSMs. Any LSMs not listed will be added in builtin
+order.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/security.c | 69 ++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 65 insertions(+), 4 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  6 ++++++
+ security/security.c                             | 14 +++++++++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 67c90985d2b8..c7c1a0d253ee 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2288,6 +2288,12 @@
+ 			CONFIG_LSM_ENABLE, and any per-LSM CONFIGs and
+ 			boot parameters.
+ 
++	lsm.order=lsm1,...,lsmN
++			[SECURITY] Choose order of enabled LSM
++			initialization. Any builtin LSMs not listed here
++			will be implicitly appended to the list in builtin
++			order.
++
+ 	machvec=	[IA-64] Force the use of a particular machine-vector
+ 			(machvec) in a generic kernel.
+ 			Example: machvec=hpzx1_swiotlb
 diff --git a/security/security.c b/security/security.c
-index 056b36cf6245..a8107d54b3d3 100644
+index e38df0314f5e..f1c3581d870f 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -54,17 +54,46 @@ static bool debug __initdata;
+@@ -44,6 +44,7 @@ char *lsm_names;
+ /* Boot-time LSM user choice */
+ static __initdata const char *chosen_lsm_enable;
+ static __initdata const char *chosen_lsm_disable;
++static __initdata const char *chosen_lsm_order;
+ static __initdata const char *chosen_major_lsm;
  
- static bool __init is_enabled(struct lsm_info *lsm)
+ static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
+@@ -160,11 +161,14 @@ static void __init parse_lsm_order(const char *order, const char *origin)
+ 	kfree(sep);
+ }
+ 
+-/* Populate ordered LSMs list from builtin list of LSMs. */
++/* Populate ordered LSMs list from commandline and builtin list of LSMs. */
+ static void __init prepare_lsm_order(void)
  {
--	if (!lsm->enabled || *lsm->enabled)
--		return true;
-+	if (WARN_ON(!lsm->enabled))
-+		return false;
+ 	struct lsm_info *lsm;
  
--	return false;
-+	return *lsm->enabled;
- }
- 
- /* Mark an LSM's enabled flag, if it exists. */
--static void __init set_enabled(struct lsm_info *lsm, bool enabled)
-+static int lsm_enabled_true __initdata = 1;
-+static int lsm_enabled_false __initdata = 0;
++	/* Parse order from commandline, if present. */
++	parse_lsm_order(chosen_lsm_order, "cmdline");
 +
-+static void __init default_enabled(struct lsm_info *lsm, bool enabled)
+ 	/* Parse order from builtin list. */
+ 	parse_lsm_order(builtin_lsm_order, "builtin");
+ 
+@@ -324,6 +328,14 @@ static int __init choose_major_lsm(char *str)
+ }
+ __setup("security=", choose_major_lsm);
+ 
++/* Explicitly choose LSM initialization order. */
++static int __init choose_lsm_order(char *str)
++{
++	chosen_lsm_order = str;
++	return 1;
++}
++__setup("lsm.order=", choose_lsm_order);
++
+ /* Enable LSM order debugging. */
+ static int __init enable_debug(char *str)
  {
-+	/* If storage location already set, skip this one. */
- 	if (lsm->enabled)
-+		return;
-+
-+	/*
-+	 * When an LSM hasn't configured an enable variable, we can use
-+	 * a hard-coded location for storing the default enabled state.
-+	 */
-+	if (enabled)
-+		lsm->enabled = &lsm_enabled_true;
-+	else
-+		lsm->enabled = &lsm_enabled_false;
-+}
-+
-+static void __init set_enabled(struct lsm_info *lsm, bool enabled)
-+{
-+	if (WARN_ON(!lsm->enabled))
-+		return;
-+
-+	if (lsm->enabled == &lsm_enabled_true) {
-+		if (!enabled)
-+			lsm->enabled = &lsm_enabled_false;
-+	} else if (lsm->enabled == &lsm_enabled_false) {
-+		if (enabled)
-+			lsm->enabled = &lsm_enabled_true;
-+	} else {
- 		*lsm->enabled = enabled;
-+	}
- }
- 
- /* Is an LSM allowed to be initialized? */
-@@ -127,6 +156,35 @@ static void __init major_lsm_init(void)
- 	}
- }
- 
-+static void __init parse_lsm_enable(const char *str,
-+				    void (*set)(struct lsm_info *, bool),
-+				    bool enabled)
-+{
-+	char *sep, *name, *next;
-+
-+	if (!str)
-+		return;
-+
-+	sep = kstrdup(str, GFP_KERNEL);
-+	next = sep;
-+	while ((name = strsep(&next, ",")) != NULL) {
-+		struct lsm_info *lsm;
-+
-+		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+			if (strcmp(name, "all") == 0 ||
-+			    strcmp(name, lsm->name) == 0)
-+				set(lsm, enabled);
-+		}
-+	}
-+	kfree(sep);
-+}
-+
-+static void __init prepare_lsm_enable(void)
-+{
-+	/* Prepare defaults. */
-+	parse_lsm_enable("all", default_enabled, true);
-+}
-+
- /**
-  * security_init - initializes the security framework
-  *
-@@ -143,6 +201,9 @@ int __init security_init(void)
- 	     i++)
- 		INIT_HLIST_HEAD(&list[i]);
- 
-+	/* Figure out which LSMs are enabled and disabled. */
-+	prepare_lsm_enable();
-+
- 	/*
- 	 * Load minor LSMs, with the capability module always first.
- 	 */
 -- 
 2.17.1
