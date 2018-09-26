@@ -1,31 +1,19 @@
 From: ztong@vt.edu (TongZhang)
-Date: Tue, 25 Sep 2018 20:44:39 -0400
-Subject: Leaking path for set_task_comm
-In-Reply-To: <20180925183953.GI15710@uranus>
-References: <F7DFF547-5267-4EF3-8BF3-70DAF6C2A53A@vt.edu>
-	<20180925183953.GI15710@uranus>
-Message-ID: <0CD63E6E-7512-4DD6-8858-4408416DC730@vt.edu>
+Date: Tue, 25 Sep 2018 20:47:54 -0400
+Subject: Naming confusion and code comments for
+	security_kernel_(post_)read_file
+Message-ID: <208C9D5E-E63B-4A89-BC91-E163CF52AD03@vt.edu>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Yes, this is exactly what I am saying.
-A process can change its own name using prctl or /proc/self/comm.
-prctl is protected by security_task_prctl, whereas /proc/self/comm is not protected by this LSM hook.
+When we were doing code review, we found and feel that the current name and 
+description of security_kernel_read_file and security_kernel_post_read_file, 
+and corresponding document/code comment in include/linux/lsm_hooks.h is
+confusing and kind of misleading as we discovered that security_kernel_(post_)read_file and kernel_read() do not always in appear in pair.
 
-A system admin may expect to use security_task_prctl to block all attempt to change process name, however, it can still change name using /proc/self/comm.
+security_kerne(post_)read_file is only interested in checking firmware/kernel module/policy file etc, however, kernel_read() are used in other places in which the parameters are also specified by userspace. For example, kernel_read() is used in https://elixir.bootlin.com/linux/latest/source/arch/x86/ia32/ia32_aout.c#L413
 
-> On Sep 25, 2018, at 2:39 PM, Cyrill Gorcunov <gorcunov@gmail.com> wrote:
-> 
-> On Tue, Sep 25, 2018 at 01:27:08PM -0400, Tong Zhang wrote:
->> Kernel Version: 4.18.5
->> 
->> Problem Description:
->> 
->> When using prctl(PR_SET_NAME) to set the thread name, it is checked by security_task_prctl.
->> 
->> We discovered a leaking path that can also use method implemented in 
->> fs/proc/base.c:1526 comm_write(), to do similar thing without asking LSM?s decision.
-> 
-> I don't understand how it is a problem. Could you please explain?
-> procfs/comm is created with S_IRUGO|S_IWUSR permissions. So
-> prctl and procfs are simply different interfaces.
+We suggest that it might be better to fixing the code comment as well as 
+the function naming and it may help clarify the purpose of this LSM hook function.
+
+- Tong
