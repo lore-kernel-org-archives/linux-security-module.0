@@ -1,36 +1,44 @@
-From: jannh@google.com (Jann Horn)
-Date: Wed, 26 Sep 2018 23:30:35 +0200
-Subject: [PATCH v5 2/5] Smack: Prepare for PTRACE_MODE_SCHED
-In-Reply-To: <20180926203446.2004-3-casey.schaufler@intel.com>
-References: <20180926203446.2004-1-casey.schaufler@intel.com>
-	<20180926203446.2004-3-casey.schaufler@intel.com>
-Message-ID: <CAG48ez3_XJYCURiCurDeCousGguGUdPego30j5+UF8FebWxUtA@mail.gmail.com>
+From: casey@schaufler-ca.com (Casey Schaufler)
+Date: Wed, 26 Sep 2018 14:57:03 -0700
+Subject: [PATCH v4 20/19] LSM: Correct file blob free empty blob check
+In-Reply-To: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
+References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
+Message-ID: <44210861-2830-2321-911d-8783f5f0b172@schaufler-ca.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 26, 2018 at 10:35 PM Casey Schaufler
-<casey.schaufler@intel.com> wrote:
-> A ptrace access check with mode PTRACE_MODE_SCHED gets called
-> from process switching code. This precludes the use of audit,
-> as the locking is incompatible. Don't do audit in the PTRACE_MODE_SCHED
-> case.
->
-> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-> ---
->  security/smack/smack_lsm.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 340fc30ad85d..ffa95bcab599 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -422,7 +422,8 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
->         struct task_smack *tsp;
->         struct smack_known *tracer_known;
->
-> -       if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
-> +       if ((mode & PTRACE_MODE_NOAUDIT) == 0 &&
-> +           (mode & PTRACE_MODE_SCHED) == 0) {
+Instead of checking if the kmem_cache for file blobs
+has been initialized check if the blob is NULL. This
+allows non-blob using modules to do other kinds of
+clean up in the security_file_free hooks.
 
-If you ORed PTRACE_MODE_NOAUDIT into the flags when calling the
-security hook, you could drop this patch, right?
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ security/security.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/security/security.c b/security/security.c
+index e7c8506041f1..76f7dc49b63c 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1202,14 +1202,13 @@ void security_file_free(struct file *file)
+ {
+ 	void *blob;
+ 
+-	if (!lsm_file_cache)
+-		return;
+-
+ 	call_void_hook(file_free_security, file);
+ 
+ 	blob = file->f_security;
+-	file->f_security = NULL;
+-	kmem_cache_free(lsm_file_cache, blob);
++	if (blob) {
++		file->f_security = NULL;
++		kmem_cache_free(lsm_file_cache, blob);
++	}
+ }
+ 
+ int security_file_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+-- 
+2.17.1
