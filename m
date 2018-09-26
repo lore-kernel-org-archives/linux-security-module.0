@@ -1,49 +1,47 @@
-From: sds@tycho.nsa.gov (Stephen Smalley)
-Date: Wed, 26 Sep 2018 09:23:03 -0400
-Subject: Leaking Path in XFS's ioctl interface(missing LSM check)
-In-Reply-To: <20180926013329.GD31060@dastard>
-References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
-	<20180926013329.GD31060@dastard>
-Message-ID: <dc3bf978-1b98-bebd-6f35-9b2795693ea7@tycho.nsa.gov>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Wed, 26 Sep 2018 16:39:04 +0200
+Subject: EXTERNAL: [PATCH v2 2/3] tpm: modify tpm_pcr_read() definition to
+	pass TPM hash algorithms
+In-Reply-To: <1537970986.4124.3.camel@linux.ibm.com>
+References: <20180905114202.7757-1-roberto.sassu@huawei.com>
+	<20180905114202.7757-3-roberto.sassu@huawei.com>
+	<F275EFAF-C940-4E44-8164-2819503DB334@nccgroup.trust>
+	<e1d77563-81fd-36f0-648f-3325969b05af@huawei.com>
+	<1537970986.4124.3.camel@linux.ibm.com>
+Message-ID: <9fdc397b-4eba-760c-38d4-fcab9f262698@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 09/25/2018 09:33 PM, Dave Chinner wrote:
-> On Tue, Sep 25, 2018 at 08:51:50PM -0400, TongZhang wrote:
->> Hi,
+On 9/26/2018 4:09 PM, Mimi Zohar wrote:
+> On Wed, 2018-09-05 at 17:03 +0200, Roberto Sassu wrote:
+>> On 9/5/2018 3:43 PM, Jeremy Boone wrote:
+>>> Some comments on tpm2_pcr_read below.
+>>>
+>>> The tpm2_pcr_read function uses TPM2_ST_NO_SESSIONS. This means
+>> that the response payload is not integrity protected with an HMAC.
+>> If there is a man-in-the-middle sitting on the serial bus that
+>> connects the TPM peripheral to the processor, they can tamper with
+>> the response parameters.
+>>>   
+>>> In your changes to tpm2_pcr_read, the memcpy is now become a
+>> variable-length operation, instead of just copying a fixed number of
+>> bytes. If the MITM modifies the response field out->digest_size
+>> before it is received by the driver, they can make it a very large
+>> value, forcing a buffer overflow of the out->digest array.
+>>>   
+>>> Adding a session to the PCR Read command seems like overkill in
+>> this case. I wouldn?t recommend that as a solution here.  So to fix
+>> this I would suggest simply checking the digest size before the
+>> memcpy.
 >>
->> I'm bringing up this issue again to let of LSM developers know the situation, and would like to know your thoughts.
->> Several weeks ago I sent an email to the security list to discuss the issue where
->> XFS's ioctl interface can do things like vfs_readlink without asking LSM's
->> permission, which we think is kind of weird and this kind of operation should be
->> audited by LSM.
+>> Hi Jeremy
+>>
+>> ok, thanks.
 > 
-> These aren't user interfaces. They are filesystem maintenance and
-> extension interfaces.  They are intended for low level filesystem
-> utilities that require complete, unrestricted access to the
-> underlying filesystem via holding CAP_SYSADMIN in the initns.
-> 
-> i.e.  they are used to perform filesystem maintenance and extension
-> operations that need to be completely invisible to users from
-> userspace. e.g.  online file defragmentation (xfs_fsr), data
-> migration (e.g. HSM products), efficient backup of data (xfsdump),
-> metadata and data scrubbing, online repair, etc.
-> 
-> IOWs, I really don't think these interfaces are something the LSMs
-> should be trying to intercept or audit, because they are essentially
-> internal filesystem interfaces used by trusted code and not general
-> user application facing APIs.
+> The hash digest size checking should be based on the size stored in
+> the active_bank_info, either in 3/3 or as a separate patch.
 
-If they are interfaces exposed to userspace, then they should be 
-mediated via LSM.  We only omit the LSM hook when the usage is purely 
-kernel-internal.  Security modules are often used to limit even 
-"trusted" applications to least privilege and protect them from 
-untrustworthy inputs, moving from binary trust notions to only trusting 
-them for what they must be trusted to do.  CAP_SYS_ADMIN doesn't 
-necessarily indicate that they are trusted to override any given MAC 
-policy restrictions.
+This can be done after the PCR read requested by
+tpm2_init_active_bank_info() to initialize the digest sizes.
 
-Wondering why we don't perform the security_inode_readlink() call inside 
-of vfs_readlink() currently.  The general pattern is that we do perform 
-security_inode_*() calls inside the other vfs_*() helpers, so 
-vfs_readlink() is an exception currently.
+Roberto
