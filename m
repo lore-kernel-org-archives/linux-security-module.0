@@ -1,96 +1,70 @@
 From: nayna@linux.vnet.ibm.com (Nayna Jain)
-Date: Wed, 26 Sep 2018 17:52:10 +0530
-Subject: [PATCH v4 6/6] x86/ima: define arch_get_ima_policy() for x86
+Date: Wed, 26 Sep 2018 17:52:06 +0530
+Subject: [PATCH v4 2/6] ima: prevent kexec_load syscall based on runtime
+	secureboot flag
 In-Reply-To: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
 References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
-Message-ID: <20180926122210.14642-7-nayna@linux.vnet.ibm.com>
+Message-ID: <20180926122210.14642-3-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-From: Eric Richter <erichte@linux.vnet.ibm.com>
+When CONFIG_KEXEC_VERIFY_SIG is enabled, the kexec_file_load syscall
+requires the kexec'd kernel image to be signed. Distros are concerned
+about totally disabling the kexec_load syscall. As a compromise, the
+kexec_load syscall will only be disabled when CONFIG_KEXEC_VERIFY_SIG
+is configured and the system is booted with secureboot enabled.
 
-This patch implements an example arch-specific IMA policy for x86 to
-enable measurement and appraisal of any kernel image loaded for kexec,
-when CONFIG_KEXEC_VERIFY_SIG is not enabled.
+This patch disables the kexec_load syscall only for systems booted with
+secureboot enabled.
 
-For systems with CONFIG_KEXEC_VERIFY_SIG enabled, only the measurement
-rule is enabled, not the IMA-appraisal rule.
-
-Signed-off-by: Eric Richter <erichte@linux.vnet.ibm.com>
-- Removed the policy KEXEC_ORIG_KERNEL_CHECK which was defined to
-  disable the kexec_load syscall.
-- arch_get_ima_policy() uses arch_ima_get_secureboot() to get secureboot
-  state
 Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
 ---
- arch/x86/kernel/ima_arch.c     | 18 ++++++++++++++++++
- include/linux/ima.h            |  4 ++++
- security/integrity/ima/Kconfig |  8 ++++++++
- 3 files changed, 30 insertions(+)
+ security/integrity/ima/ima_main.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-index bb5a88d2b271..245976e49a55 100644
---- a/arch/x86/kernel/ima_arch.c
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -15,3 +15,21 @@ bool arch_ima_get_secureboot(void)
- 	else
- 		return false;
- }
-+
-+/* arch rules for audit and user mode */
-+static const char * const sb_arch_rules[] = {
-+#ifndef CONFIG_KEXEC_VERIFY_SIG
-+	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-+#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+	"measure func=KEXEC_KERNEL_CHECK",
-+	NULL
-+};
-+
-+#ifdef CONFIG_IMA_ARCH_POLICY
-+const char * const *arch_get_ima_policy(void)
-+{
-+	if (arch_ima_get_secureboot())
-+		return sb_arch_rules;
-+	return NULL;
-+}
-+#endif
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 350fa957f8a6..dabd3abdf671 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -39,10 +39,14 @@ static inline bool arch_ima_get_secureboot(void)
- }
- #endif
- 
-+#if defined(CONFIG_X86) && defined(CONFIG_IMA_ARCH_POLICY)
-+extern const char * const *arch_get_ima_policy(void);
-+#else
- static inline const char * const *arch_get_ima_policy(void)
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index dce0a8a217bb..bdb6e5563d05 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -505,20 +505,24 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+  */
+ int ima_load_data(enum kernel_load_data_id id)
  {
- 	return NULL;
- }
+-	bool sig_enforce;
++	bool ima_enforce, sig_enforce;
+ 
+-	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
+-		return 0;
++	ima_enforce =
++		(ima_appraise & IMA_APPRAISE_ENFORCE) == IMA_APPRAISE_ENFORCE;
+ 
+ 	switch (id) {
+ 	case LOADING_KEXEC_IMAGE:
+-		if (ima_appraise & IMA_APPRAISE_KEXEC) {
++#ifdef CONFIG_KEXEC_VERIFY_SIG
++		if (arch_ima_get_secureboot())
++			return -EACCES;
 +#endif
++		if (ima_enforce && (ima_appraise & IMA_APPRAISE_KEXEC)) {
+ 			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
+ 		break;
+ 	case LOADING_FIRMWARE:
+-		if (ima_appraise & IMA_APPRAISE_FIRMWARE) {
++		if (ima_enforce && (ima_appraise & IMA_APPRAISE_FIRMWARE)) {
+ 			pr_err("Prevent firmware sysfs fallback loading.\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
+@@ -526,7 +530,8 @@ int ima_load_data(enum kernel_load_data_id id)
+ 	case LOADING_MODULE:
+ 		sig_enforce = is_module_sig_enforced();
  
- #else
- static inline int ima_bprm_check(struct linux_binprm *bprm)
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 13b446328dda..97609a76aa14 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -157,6 +157,14 @@ config IMA_APPRAISE
- 	  <http://linux-ima.sourceforge.net>
- 	  If unsure, say N.
- 
-+config IMA_ARCH_POLICY
-+        bool "Enable loading an IMA architecture specific policy"
-+        depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+        default n
-+        help
-+          This option enables loading an IMA architecture specific policy
-+          based on run time secure boot flags.
-+
- config IMA_APPRAISE_BUILD_POLICY
- 	bool "IMA build time configured policy rules"
- 	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
+-		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
++		if (ima_enforce && (!sig_enforce
++				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
+ 			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
+ 			return -EACCES;	/* INTEGRITY_UNKNOWN */
+ 		}
 -- 
 2.13.6
