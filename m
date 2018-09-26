@@ -1,33 +1,36 @@
 From: tytso@mit.edu (Theodore Y. Ts'o)
-Date: Tue, 25 Sep 2018 22:58:08 -0400
-Subject: leaking path in android binder: set_nice
-In-Reply-To: <d38229cb-eb38-19fa-f5d6-30e6389ade3b@tycho.nsa.gov>
-References: <56B089F7-3656-4335-BBD2-D8B3CFD70996@vt.edu>
-	<d38229cb-eb38-19fa-f5d6-30e6389ade3b@tycho.nsa.gov>
-Message-ID: <20180926025808.GA3321@thunk.org>
+Date: Tue, 25 Sep 2018 23:16:45 -0400
+Subject: Leaking path for set_task_comm
+In-Reply-To: <0CD63E6E-7512-4DD6-8858-4408416DC730@vt.edu>
+References: <F7DFF547-5267-4EF3-8BF3-70DAF6C2A53A@vt.edu>
+	<20180925183953.GI15710@uranus>
+	<0CD63E6E-7512-4DD6-8858-4408416DC730@vt.edu>
+Message-ID: <20180926031645.GB3321@thunk.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Tue, Sep 25, 2018 at 01:52:57PM -0400, Stephen Smalley wrote:
-> On 09/25/2018 01:27 PM, Tong Zhang wrote:
-> > Kernel Version: 4.18.5
-> > 
-> > Problem Description:
-> > 
-> > When setting nice value, it is checked by LSM function security_task_setnice().
-> > see kernel/sched/core.c:3972 SYSCALL_DEFINE1(nice, int, increment)
-> > 
-> > We discovered a leaking path in android binder which allows using binder?s interface to change
-> > a process?s nice value. This path is leaked from being monitored by LSM.
-> > see drivers/android/binder.c:1107 binder_set_nice.
+On Tue, Sep 25, 2018 at 08:44:39PM -0400, TongZhang wrote:
+> Yes, this is exactly what I am saying.
+> A process can change its own name using prctl or /proc/self/comm.
+> prctl is protected by security_task_prctl, whereas /proc/self/comm is not protected by this LSM hook.
 > 
-> Not sure you want to invoke the LSM hook (or at least the same hook) when
-> binder is performing priority inheritance.  There is a difference between a
-> userspace process switching its own priority and the kernel binder driver
-> performing it.  IIUC, the can_nice() check is more about honoring
-> RLIMIT_NICE than anything else.
+> A system admin may expect to use security_task_prctl to block all attempt to change process name, however, it can still change name using /proc/self/comm.
 
-I agree with Stephen; it doesn't make sense to subject the binder PI
-mechanism to the LSM hook.
+None of the in-tree LSM's try to affect PR_SET_NAME.  Looking at
+security/commoncap.c, it's clear what is of interest is to checking
+things relating to security sensitive things relating to capabilities, such as:
+
+       PR_SET_SECUREBITS
+       PR_CAPBSET_*
+       PR_*_SECUREBITS
+       PR_*_KEEPCAPS
+       PR_CAP_AMBIENT
+
+Trying to depend on task name for anything security sensitive is at
+_really_ bad idea, so it seems unlikely that a LSM would want to
+protect the process name.  (And if they did, the first thing I would
+ask is "Why?  What are you trying to do?  Do you realize how many
+*other* ways the process name can be spoofed or otherwise controlled
+by a potentially malicious user?")
 
 					- Ted
