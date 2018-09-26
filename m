@@ -1,28 +1,40 @@
-From: ztong@vt.edu (TongZhang)
-Date: Tue, 25 Sep 2018 20:51:50 -0400
+From: david@fromorbit.com (Dave Chinner)
+Date: Wed, 26 Sep 2018 11:33:29 +1000
 Subject: Leaking Path in XFS's ioctl interface(missing LSM check)
-Message-ID: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
+In-Reply-To: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
+References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
+Message-ID: <20180926013329.GD31060@dastard>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi,
+On Tue, Sep 25, 2018 at 08:51:50PM -0400, TongZhang wrote:
+> Hi,
+> 
+> I'm bringing up this issue again to let of LSM developers know the situation, and would like to know your thoughts.
+> Several weeks ago I sent an email to the security list to discuss the issue where
+> XFS's ioctl interface can do things like vfs_readlink without asking LSM's
+> permission, which we think is kind of weird and this kind of operation should be
+> audited by LSM.
 
-I'm bringing up this issue again to let of LSM developers know the situation, and would like to know your thoughts.
-Several weeks ago I sent an email to the security list to discuss the issue where
-XFS's ioctl interface can do things like vfs_readlink without asking LSM's
-permission, which we think is kind of weird and this kind of operation should be
-audited by LSM.
+These aren't user interfaces. They are filesystem maintenance and
+extension interfaces.  They are intended for low level filesystem
+utilities that require complete, unrestricted access to the
+underlying filesystem via holding CAP_SYSADMIN in the initns.
 
-see the original post below:
+i.e.  they are used to perform filesystem maintenance and extension
+operations that need to be completely invisible to users from
+userspace. e.g.  online file defragmentation (xfs_fsr), data
+migration (e.g. HSM products), efficient backup of data (xfsdump),
+metadata and data scrubbing, online repair, etc.
 
->We noticed a use of vfs_readlink() in xfs_file_ioctl(), which should have been checked by 
->security_inode_readlink().
->The callgraph is:
->	xfs_file_ioctl()->xfs_readlink_by_handle()->vfs_readlink()
->
->This path allows user to do things similar to SyS_readlinkat(), and the parameters
->are user controllable.
+IOWs, I really don't think these interfaces are something the LSMs
+should be trying to intercept or audit, because they are essentially
+internal filesystem interfaces used by trusted code and not general
+user application facing APIs.
 
-security_inode_readlink() is not used inside vfs_readlink()
+Cheers,
 
-- Tong
+Dave.
+-- 
+Dave Chinner
+david at fromorbit.com
