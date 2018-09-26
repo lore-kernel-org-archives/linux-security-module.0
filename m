@@ -1,133 +1,100 @@
-From: dvyukov@google.com (Dmitry Vyukov)
-Date: Wed, 26 Sep 2018 12:06:32 +0200
-Subject: KASAN: global-out-of-bounds Read in __aa_lookupn_ns
-In-Reply-To: <000000000000a7487d0576c18693@google.com>
-References: <000000000000a7487d0576c18693@google.com>
-Message-ID: <CACT4Y+YAbon-m=N-UcEVfGj8DxgRAySQz7qLYQWFxQZqv+3JhA@mail.gmail.com>
+From: nayna@linux.vnet.ibm.com (Nayna Jain)
+Date: Wed, 26 Sep 2018 17:52:04 +0530
+Subject: [PATCH v4 0/6] Add support for architecture specific IMA policies 
+Message-ID: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 26, 2018 at 9:54 AM, syzbot
-<syzbot+71b6643475f707f93fdc@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    02214bfc89c7 Merge tag 'media/v4.19-2' of git://git.kernel..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1456f8a1400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=22a62640793a83c9
-> dashboard link: https://syzkaller.appspot.com/bug?extid=71b6643475f707f93fdc
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
+The architecture specific policy, introduced in this patch set, permits
+different architectures to define IMA policy rules based on kernel
+configuration and system runtime information.
 
-Again misattributed to net. This misattribution should now be fixed by:
-https://github.com/google/syzkaller/commit/db716d6653d073b0abfb51186cd4ac2d5418c9c6
-Adding security/apparmor/policy_ns.c maintainers explicitly.
+For example, on x86, there are two methods of verifying the kexec'ed kernel
+image signature - CONFIG_KEXEC_VERIFY_SIG and IMA appraisal policy
+KEXEC_KERNEL_CHECK. CONFIG_KEXEC_VERIFY_SIG enforces the kexec_file_load
+syscall to verify file signatures, but does not prevent the kexec_load
+syscall. The IMA KEXEC_KERNEL_CHECK policy rule verifies the kexec'ed
+kernel image, loaded via the kexec_file_load syscall, is validly signed and
+prevents loading a kernel image via the kexec_load syscall. When secure
+boot is enabled, the kexec'ed kernel image needs to be signed and the
+signature verified. In this environment, either method of verifying the
+kexec'ed kernel image is acceptable, as long as the kexec_load syscall is
+disabled.
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+71b6643475f707f93fdc at syzkaller.appspotmail.com
->
->  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:3038
->  __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1902
->  __do_sys_setsockopt net/socket.c:1913 [inline]
->  __se_sys_setsockopt net/socket.c:1910 [inline]
->  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> ==================================================================
-> BUG: KASAN: global-out-of-bounds in memcmp+0xe3/0x160 lib/string.c:861
-> Read of size 1 at addr ffffffff88000008 by task syz-executor0/10914
->
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457579
-> Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f4c14533c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 00007f4c14533c90 RCX: 0000000000457579
-> RDX: 0000000000000040 RSI: 0000000000000000 RDI: 0000000000000003
-> RBP: 000000000072bf00 R08: 0000000000000004 R09: 0000000000000000
-> R10: 0000000020000080 R11: 0000000000000246 R12: 00007f4c145346d4
-> R13: 00000000004c3ed9 R14: 00000000004d6260 R15: 0000000000000004
-> CPU: 0 PID: 10914 Comm: syz-executor0 Not tainted 4.19.0-rc5+ #252
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->  print_address_description.cold.8+0x58/0x1ff mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
->  memcmp+0xe3/0x160 lib/string.c:861
->  strnstr+0x4b/0x70 lib/string.c:934
->  __aa_lookupn_ns+0xc1/0x570 security/apparmor/policy_ns.c:209
->  aa_lookupn_ns+0x88/0x1e0 security/apparmor/policy_ns.c:240
->  aa_fqlookupn_profile+0x1b9/0x1010 security/apparmor/policy.c:468
->  fqlookupn_profile+0x80/0xc0 security/apparmor/label.c:1844
->  aa_label_strn_parse+0xa3a/0x1230 security/apparmor/label.c:1908
->  aa_label_parse+0x42/0x50 security/apparmor/label.c:1943
->  aa_change_profile+0x513/0x3510 security/apparmor/domain.c:1362
->  apparmor_setprocattr+0xa8b/0x1150 security/apparmor/lsm.c:656
->  security_setprocattr+0x66/0xc0 security/security.c:1298
->  proc_pid_attr_write+0x301/0x540 fs/proc/base.c:2555
->  __vfs_write+0x119/0x9f0 fs/read_write.c:485
->  vfs_write+0x1fc/0x560 fs/read_write.c:549
->  ksys_write+0x101/0x260 fs/read_write.c:598
->  __do_sys_write fs/read_write.c:610 [inline]
->  __se_sys_write fs/read_write.c:607 [inline]
->  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
->  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457579
-> Code: 1d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> 0f 83 eb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f5a92ec2c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457579
-> RDX: 000000000000002c RSI: 00000000200000c0 RDI: 0000000000000004
-> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5a92ec36d4
-> R13: 00000000004c5454 R14: 00000000004d8c78 R15: 00000000ffffffff
->
-> CPU: 1 PID: 10921 Comm: syz-executor3 Not tainted 4.19.0-rc5+ #252
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> The buggy address belongs to the variable:
->  __start_rodata+0x8/0x1000
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->
-> Memory state around the buggy address:
->  ffffffff87ffff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffffffff87ffff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  fail_dump lib/fault-inject.c:51 [inline]
->  should_fail.cold.4+0xa/0x17 lib/fault-inject.c:149
->>
->> ffffffff88000000: 00 fa fa fa fa fa fa fa 00 01 fa fa fa fa fa fa
->
->                       ^
->  ffffffff88000080: 00 00 00 07 fa fa fa fa 00 04 fa fa fa fa fa fa
->  ffffffff88000100: 05 fa fa fa fa fa fa fa 00 00 00 00 05 fa fa fa
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller at googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe at googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000a7487d0576c18693%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+The previous version of this patchset introduced a new IMA policy rule to
+disable the kexec_load syscall, when CONFIG_KEXEC_VERIFY_SIG was enabled,
+however that is removed from this version by introducing a different
+mechanism.
+
+The patchset defines an arch_ima_get_secureboot() function to retrieve the
+secureboot state of the system. If secureboot is enabled and
+CONFIG_KEXEC_VERIFY_SIG is configured, it denies permission to kexec_load
+syscall.
+
+To support architecture specific policies, a new function
+arch_get_ima_policy() is defined. This patch set defines IMA
+KERNEL_KEXEC_POLICY rules for x86 only if CONFIG_KEXEC_VERIFY_SIG is
+disabled and secure boot is enabled.
+
+This patch set includes a patch, which refactors ima_init_policy() to
+remove code duplication.
+
+Changelog:
+
+v4:
+* ima: refactor ima_init_policy()
+	- Fixed the issue reported by Dan Carpenter. Replaced logical
+	operator (&&) with bitwise operator (&).
+
+v3:
+* x86/ima: define arch_ima_get_secureboot
+	- Edited subject line, added x86.
+
+* x86/ima: define arch_get_ima_policy() for x86
+	- Fixed the error reported by kbuild test robot. The error was
+	appearing when CONFIG_X86 is enabled, but CONFIG_IMA_ARCH_POLICY
+	is disabled.
+
+v2:
+* ima: define arch_ima_get_secureboot
+	- New Patch - to retrieve secureboot state of the system
+* ima: prevent kexec_load syscall based on runtime secureboot flag
+	- New Patch - disables kexec_load if KEXEC_VERIFY_SIG is
+	  configured and secureboot is enabled
+* ima: refactor ima_init_policy()
+	- New Patch - cleans up the code duplication in
+	  ima_init_policy(), adds new function add_rules()
+* ima: add support for arch specific policies
+	- modified ima_init_arch_policy() and ima_init_policy() to
+	  use add_rules() from previous patch.
+* ima: add support for external setting of ima_appraise
+	- sets ima_appraise flag explicitly for arch_specific setting
+* ima: add support for KEXEC_ORIG_KERNEL_CHECK
+	- deleted the patch based on Seth's feedback
+* x86/ima: define arch_get_ima_policy() for x86
+	- removes the policy KEXEC_ORIG_KERNEL_CHECK based on
+	  Seth's feedback.
+
+Eric Richter (1):
+  x86/ima: define arch_get_ima_policy() for x86
+
+Nayna Jain (5):
+  x86/ima: define arch_ima_get_secureboot
+  ima: prevent kexec_load syscall based on runtime secureboot flag
+  ima: refactor ima_init_policy()
+  ima: add support for arch specific policies
+  ima: add support for external setting of ima_appraise
+
+ arch/x86/kernel/Makefile              |   2 +
+ arch/x86/kernel/ima_arch.c            |  35 +++++++
+ include/linux/ima.h                   |  18 ++++
+ security/integrity/ima/Kconfig        |   8 ++
+ security/integrity/ima/ima.h          |   5 +
+ security/integrity/ima/ima_appraise.c |  11 ++-
+ security/integrity/ima/ima_main.c     |  17 ++--
+ security/integrity/ima/ima_policy.c   | 167 +++++++++++++++++++++++++---------
+ 8 files changed, 214 insertions(+), 49 deletions(-)
+ create mode 100644 arch/x86/kernel/ima_arch.c
+
+-- 
+2.13.6
