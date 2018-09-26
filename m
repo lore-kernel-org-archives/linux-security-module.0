@@ -1,47 +1,25 @@
-From: zohar@linux.ibm.com (Mimi Zohar)
-Date: Thu, 27 Sep 2018 20:51:38 -0400
-Subject: [PATCH v4 3/6] ima: refactor ima_init_policy()
-In-Reply-To: <20180926122210.14642-4-nayna@linux.vnet.ibm.com>
-References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
-	<20180926122210.14642-4-nayna@linux.vnet.ibm.com>
-Message-ID: <1538095898.3459.140.camel@linux.ibm.com>
+From: gnomes@lxorguk.ukuu.org.uk (Alan Cox)
+Date: Wed, 26 Sep 2018 23:39:03 +0100
+Subject: Leaking path for set_task_comm
+In-Reply-To: <20180926031645.GB3321@thunk.org>
+References: <F7DFF547-5267-4EF3-8BF3-70DAF6C2A53A@vt.edu>
+	<20180925183953.GI15710@uranus>
+	<0CD63E6E-7512-4DD6-8858-4408416DC730@vt.edu>
+	<20180926031645.GB3321@thunk.org>
+Message-ID: <20180926233903.38fb598a@alans-desktop>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Hi Nayna,
 
-On Wed, 2018-09-26 at 17:52 +0530, Nayna Jain wrote:
+> Trying to depend on task name for anything security sensitive is at
+> _really_ bad idea, so it seems unlikely that a LSM would want to
+> protect the process name.  (And if they did, the first thing I would
+> ask is "Why?  What are you trying to do?  Do you realize how many
+> *other* ways the process name can be spoofed or otherwise controlled
+> by a potentially malicious user?")
 
-> +static void add_rules(struct ima_rule_entry *entries, int count,
-> +		      enum policy_rule_list file)
+Two processes that should not be able to otherwise communicate can keep
+changing their name to a chunk of data, waiting for an ack flag name
+change back.
 
-Using "file" to refer to the policy_rule_list enumeration is unusual.
-?Please change the variable name to something more appropriate.
-
-Mimi
-
-> +{
-> +	int i = 0;
-> +
-> +	for (i = 0; i < count; i++) {
-> +		struct ima_rule_entry *entry;
-> +
-> +		if (file & IMA_DEFAULT_POLICY)
-> +			list_add_tail(&entries[i].list, &ima_default_rules);
-> +
-> +		if (file & IMA_CUSTOM_POLICY) {
-> +			entry = kmemdup(&entries[i], sizeof(*entry),
-> +					GFP_KERNEL);
-> +			if (!entry)
-> +				continue;
-> +
-> +			INIT_LIST_HEAD(&entry->list);
-> +			list_add_tail(&entry->list, &ima_policy_rules);
-> +		}
-> +		if (entries[i].action == APPRAISE)
-> +			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
-> +		if (entries[i].func == POLICY_CHECK)
-> +			temp_ima_appraise |= IMA_APPRAISE_POLICY;
-> +	}
-> +}
-> +
+Alan
