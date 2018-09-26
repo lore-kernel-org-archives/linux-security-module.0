@@ -1,39 +1,65 @@
-From: zohar@linux.ibm.com (Mimi Zohar)
-Date: Wed, 26 Sep 2018 10:40:40 -0400
-Subject: [PATCH v2, RESEND 0/3] tpm: retrieve digest size of unknown
-	algorithms from TPM
-In-Reply-To: <20180917093820.20500-1-roberto.sassu@huawei.com>
-References: <20180917093820.20500-1-roberto.sassu@huawei.com>
-Message-ID: <1537972840.3459.6.camel@linux.ibm.com>
+From: rostedt@goodmis.org (Steven Rostedt)
+Date: Wed, 26 Sep 2018 12:35:22 -0400
+Subject: [PATCH security-next v3 04/29] LSM: Remove initcall tracing
+In-Reply-To: <20180925001832.18322-5-keescook@chromium.org>
+References: <20180925001832.18322-1-keescook@chromium.org>
+	<20180925001832.18322-5-keescook@chromium.org>
+Message-ID: <20180926123522.4080d9eb@vmware.local.home>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Mon, 2018-09-17 at 11:38 +0200, Roberto Sassu wrote:
-> Resending to maintainer with correct mailing lists in CC.
+On Mon, 24 Sep 2018 17:18:07 -0700
+Kees Cook <keescook@chromium.org> wrote:
+
+> This partially reverts commit 58eacfffc417 ("init, tracing: instrument
+> security and console initcall trace events") since security init calls
+> are about to no longer resemble regular init calls.
+
+I'm not against the change, but how much are they going to "no longer
+resemble regular init calls"?
+
+-- Steve
+
 > 
-> The TPM driver currently relies on the crypto subsystem to determine the
-> digest size of supported TPM algorithms. In the future, TPM vendors might
-> implement new algorithms in their chips, and those algorithms might not
-> be supported by the crypto subsystem.
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
+> Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Cc: linux-security-module at vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  security/security.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
 > 
-> Usually, vendors provide patches for the new hardware, and likely
-> the crypto subsystem will be updated before the new algorithm is
-> introduced. However, old kernels might be updated later, after patches
-> are included in the mainline kernel. This would leave the opportunity
-> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
-> are not extended.
-> 
-> This patch set provides a long term solution for this issue. If a TPM
-> algorithm is not known by the crypto subsystem, the TPM driver retrieves
-> the digest size from the TPM with a PCR read. All the PCR banks are
-> extended, even if the algorithm is not yet supported by the crypto
-> subsystem.
-
-Other than checking the digest size before copying the pcrread buffer,
-the patches look good. ?Please add my Ack on all 3 patches.
-
-(New address) Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-
-Thanks!
-
-Mimi
+> diff --git a/security/security.c b/security/security.c
+> index 892fe6b691cf..41a5da2c7faf 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -30,8 +30,6 @@
+>  #include <linux/string.h>
+>  #include <net/flow.h>
+>  
+> -#include <trace/events/initcall.h>
+> -
+>  #define MAX_LSM_EVM_XATTR	2
+>  
+>  /* Maximum number of letters for an LSM name string */
+> @@ -47,17 +45,13 @@ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+>  
+>  static void __init do_security_initcalls(void)
+>  {
+> -	int ret;
+>  	initcall_t call;
+>  	initcall_entry_t *ce;
+>  
+>  	ce = __start_lsm_info;
+> -	trace_initcall_level("security");
+>  	while (ce < __end_lsm_info) {
+>  		call = initcall_from_entry(ce);
+> -		trace_initcall_start(call);
+> -		ret = call();
+> -		trace_initcall_finish(call, ret);
+> +		call();
+>  		ce++;
+>  	}
+>  }
