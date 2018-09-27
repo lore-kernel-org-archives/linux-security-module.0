@@ -1,39 +1,69 @@
-From: jmorris@namei.org (James Morris)
-Date: Fri, 28 Sep 2018 07:45:00 +1000 (AEST)
-Subject: [PATCH v5 5/5] sidechannel: Linux Security Module for sidechannel
-In-Reply-To: <20180926203446.2004-6-casey.schaufler@intel.com>
-References: <20180926203446.2004-1-casey.schaufler@intel.com>
-	<20180926203446.2004-6-casey.schaufler@intel.com>
-Message-ID: <alpine.LRH.2.21.1809280744560.8410@namei.org>
+From: zsm@chromium.org (Zubin Mithra)
+Date: Thu, 27 Sep 2018 14:49:17 -0700
+Subject: [PATCH] apparmor: Fix uninitialized value in aa_split_fqname
+Message-ID: <20180927214917.10486-1-zsm@chromium.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 26 Sep 2018, Casey Schaufler wrote:
+Syzkaller reported a OOB-read with the stacktrace below. This occurs
+inside __aa_lookupn_ns as `n` is not initialized. `n` is obtained from
+aa_splitn_fqname. In cases where `name` is invalid, aa_splitn_fqname
+returns without initializing `ns_name` and `ns_len`.
 
-> +	/*
-> +	 * Namespace checks. Considered safe if:
-> +	 *	cgroup namespace is the same
-> +	 *	User namespace is the same
-> +	 *	PID namespace is the same
-> +	 */
-> +	if (current->nsproxy)
-> +		ccgn = current->nsproxy->cgroup_ns;
-> +	if (p->nsproxy)
-> +		pcgn = p->nsproxy->cgroup_ns;
-> +	if (ccgn != pcgn)
-> +		return -EACCES;
-> +	if (current->cred->user_ns != p->cred->user_ns)
-> +		return -EACCES;
-> +	if (task_active_pid_ns(current) != task_active_pid_ns(p))
-> +		return -EACCES;
-> +	return 0;
+Fix this by always initializing `ns_name` and `ns_len`.
 
-I really don't like the idea of hard-coding namespace security semantics 
-in an LSM.  Also, I'm not sure if these semantics make any sense.
+	__dump_stack lib/dump_stack.c:77 [inline]
+	dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+	print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+	kasan_report_error mm/kasan/report.c:354 [inline]
+	kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+	__asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+	memcmp+0xe3/0x160 lib/string.c:861
+	strnstr+0x4b/0x70 lib/string.c:934
+	__aa_lookupn_ns+0xc1/0x570 security/apparmor/policy_ns.c:209
+	aa_lookupn_ns+0x88/0x1e0 security/apparmor/policy_ns.c:240
+	aa_fqlookupn_profile+0x1b9/0x1010 security/apparmor/policy.c:468
+	fqlookupn_profile+0x80/0xc0 security/apparmor/label.c:1844
+	aa_label_strn_parse+0xa3a/0x1230 security/apparmor/label.c:1908
+	aa_label_parse+0x42/0x50 security/apparmor/label.c:1943
+	aa_change_profile+0x513/0x3510 security/apparmor/domain.c:1362
+	apparmor_setprocattr+0xaa4/0x1150 security/apparmor/lsm.c:658
+	security_setprocattr+0x66/0xc0 security/security.c:1298
+	proc_pid_attr_write+0x301/0x540 fs/proc/base.c:2555
+	__vfs_write+0x119/0x9f0 fs/read_write.c:485
+	vfs_write+0x1fc/0x560 fs/read_write.c:549
+	ksys_write+0x101/0x260 fs/read_write.c:598
+	__do_sys_write fs/read_write.c:610 [inline]
+	__se_sys_write fs/read_write.c:607 [inline]
+	__x64_sys_write+0x73/0xb0 fs/read_write.c:607
+	do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+	entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-It least make it user configurable.
+Fixes: 3b0aaf5866bf ("apparmor: add lib fn to find the "split" for fqnames")
+Reported-by: syzbot+61e4b490d9d2da591b50 at syzkaller.appspotmail.com
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
+---
+ security/apparmor/lib.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
+diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+index 974affe50531..76491e7f4177 100644
+--- a/security/apparmor/lib.c
++++ b/security/apparmor/lib.c
+@@ -90,10 +90,12 @@ const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
+ 	const char *end = fqname + n;
+ 	const char *name = skipn_spaces(fqname, n);
+ 
+-	if (!name)
+-		return NULL;
+ 	*ns_name = NULL;
+ 	*ns_len = 0;
++
++	if (!name)
++		return NULL;
++
+ 	if (name[0] == ':') {
+ 		char *split = strnchr(&name[1], end - &name[1], ':');
+ 		*ns_name = skipn_spaces(&name[1], end - &name[1]);
 -- 
-James Morris
-<jmorris@namei.org>
+2.19.0.605.g01d371f741-goog
