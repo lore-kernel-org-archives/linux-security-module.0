@@ -1,46 +1,26 @@
-From: jannh@google.com (Jann Horn)
-Date: Thu, 27 Sep 2018 21:49:10 +0200
-Subject: [PATCH 6/5] capability: Repair sidechannel test in ptrace
-In-Reply-To: <20180927191720.9480-1-casey.schaufler@intel.com>
-References: <20180824224117.3356-1-casey.schaufler@intel.com>
-	<20180927191720.9480-1-casey.schaufler@intel.com>
-Message-ID: <CAG48ez1qZQqffLfB_JV=UB12QjFWmfHm2=PH2eiF+Z_yn9RhpA@mail.gmail.com>
+From: jmorris@namei.org (James Morris)
+Date: Fri, 28 Sep 2018 07:23:42 +1000 (AEST)
+Subject: Leaking Path in XFS's ioctl interface(missing LSM check)
+In-Reply-To: <20180927013812.GF31060@dastard>
+References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
+	<20180926013329.GD31060@dastard>
+	<20180926192426.472360ea@alans-desktop>
+	<20180927013812.GF31060@dastard>
+Message-ID: <alpine.LRH.2.21.1809280720330.8410@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Thu, Sep 27, 2018 at 9:17 PM Casey Schaufler
-<casey.schaufler@intel.com> wrote:
->
-> From: Casey Schaufler <casey@schaufler-ca.com>
->
-> The PTRACE_MODE_SCHED check erroniously returns 0 in
-> all cases. It should be returning -EPERM. This fixes
-> the logic to correct that error.
->
-> Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+On Thu, 27 Sep 2018, Dave Chinner wrote:
 
-Reviewed-by: Jann Horn <jannh@google.com>
+> Sure, but there are so many CAP_SYS_ADMIN-only ioctls in the kernel
+> that have no LSM coverage that this is not an isolated problem that
+> people setting up such systems have to deal with. 
 
-> ---
->  security/commoncap.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index e77457110d05..70a7e3d19c16 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -152,9 +152,8 @@ int cap_ptrace_access_check(struct task_struct *child, unsigned int mode)
->         if (cred->user_ns == child_cred->user_ns &&
->             cap_issubset(child_cred->cap_permitted, *caller_caps))
->                 goto out;
-> -       if (mode & PTRACE_MODE_SCHED)
-> -               goto out;
-> -       if (ns_capable(child_cred->user_ns, CAP_SYS_PTRACE))
-> +       if (!(mode & PTRACE_MODE_SCHED) &&
-> +           ns_capable(child_cred->user_ns, CAP_SYS_PTRACE))
->                 goto out;
->         ret = -EPERM;
->  out:
-> --
-> 2.17.1
->
+I could be missing something here, but all ioctls are mediated by LSM at a 
+high level (security_file_ioctl). Some problematic ones are singled out at 
+that point by LSMs for special handling.
+
+
+-- 
+James Morris
+<jmorris@namei.org>
