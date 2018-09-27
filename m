@@ -1,52 +1,88 @@
-From: roberto.sassu@huawei.com (Roberto Sassu)
-Date: Thu, 27 Sep 2018 08:50:14 +0200
-Subject: [PATCH v2, RESEND 0/3] tpm: retrieve digest size of unknown
-	algorithms from TPM
-In-Reply-To: <1537985014.3459.24.camel@linux.ibm.com>
-References: <20180917093820.20500-1-roberto.sassu@huawei.com>
-	<1537972840.3459.6.camel@linux.ibm.com>
-	<1537985014.3459.24.camel@linux.ibm.com>
-Message-ID: <8bbff5b1-f4ba-4e38-57fc-05d9ddabea5c@huawei.com>
+From: zohar@linux.ibm.com (Mimi Zohar)
+Date: Thu, 27 Sep 2018 07:33:01 -0400
+Subject: [PATCH v4 1/6] x86/ima: define arch_ima_get_secureboot
+In-Reply-To: <20180926122210.14642-2-nayna@linux.vnet.ibm.com>
+References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
+	<20180926122210.14642-2-nayna@linux.vnet.ibm.com>
+Message-ID: <1538047981.3459.74.camel@linux.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/26/2018 8:03 PM, Mimi Zohar wrote:
-> On Wed, 2018-09-26 at 10:40 -0400, Mimi Zohar wrote:
->> On Mon, 2018-09-17 at 11:38 +0200, Roberto Sassu wrote:
->>> Resending to maintainer with correct mailing lists in CC.
->>>
->>> The TPM driver currently relies on the crypto subsystem to determine the
->>> digest size of supported TPM algorithms. In the future, TPM vendors might
->>> implement new algorithms in their chips, and those algorithms might not
->>> be supported by the crypto subsystem.
->>>
->>> Usually, vendors provide patches for the new hardware, and likely
->>> the crypto subsystem will be updated before the new algorithm is
->>> introduced. However, old kernels might be updated later, after patches
->>> are included in the mainline kernel. This would leave the opportunity
->>> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
->>> are not extended.
->>>
->>> This patch set provides a long term solution for this issue. If a TPM
->>> algorithm is not known by the crypto subsystem, the TPM driver retrieves
->>> the digest size from the TPM with a PCR read. All the PCR banks are
->>> extended, even if the algorithm is not yet supported by the crypto
->>> subsystem.
->>
->> Other than checking the digest size before copying the pcrread buffer,
->> the patches look good. ?Please add my Ack on all 3 patches.
->>
->> (New address) Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> 
-> I've reviewed, and am currently running with these patches.
-> 
-> Even if the IMA changes were in a separate patch, we wouldn't be able
-> to break up the patch set anyway. ?Jarkko, I'd appreciate your
-> carrying the entire patch set.
-> 
-> Roberto, a similar change needs to be made for tpm_pcr_extend. ?Are
-> you planning on posting those changes as well?
+[Cc'ing the kexec mailing list, and Seth]
 
-Yes, I was planning to send the patch after this patch set is accepted.
+On Wed, 2018-09-26 at 17:52 +0530, Nayna Jain wrote:
+> Distros are concerned about totally disabling the kexec_load syscall.
+> As a compromise, the kexec_load syscall will only be disabled when
+> CONFIG_KEXEC_VERIFY_SIG is configured and the system is booted with
+> secureboot enabled.
+> 
+> This patch defines the new arch specific function called
+> arch_ima_get_secureboot() to retrieve the secureboot state of the system.
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> Suggested-by: Seth Forshee <seth.forshee@canonical.com>
 
-Roberto
+Nice!
+
+Mimi
+
+> ---
+>  arch/x86/kernel/Makefile   |  2 ++
+>  arch/x86/kernel/ima_arch.c | 17 +++++++++++++++++
+>  include/linux/ima.h        |  9 +++++++++
+>  3 files changed, 28 insertions(+)
+>  create mode 100644 arch/x86/kernel/ima_arch.c
+> 
+> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+> index 02d6f5cf4e70..f32406e51424 100644
+> --- a/arch/x86/kernel/Makefile
+> +++ b/arch/x86/kernel/Makefile
+> @@ -149,3 +149,5 @@ ifeq ($(CONFIG_X86_64),y)
+>  	obj-$(CONFIG_MMCONF_FAM10H)	+= mmconf-fam10h_64.o
+>  	obj-y				+= vsmp_64.o
+>  endif
+> +
+> +obj-$(CONFIG_IMA)			+= ima_arch.o
+> diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+> new file mode 100644
+> index 000000000000..bb5a88d2b271
+> --- /dev/null
+> +++ b/arch/x86/kernel/ima_arch.c
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Copyright (C) 2018 IBM Corporation
+> + */
+> +#include <linux/efi.h>
+> +#include <linux/ima.h>
+> +
+> +extern struct boot_params boot_params;
+> +
+> +bool arch_ima_get_secureboot(void)
+> +{
+> +	if (efi_enabled(EFI_BOOT) &&
+> +		(boot_params.secure_boot == efi_secureboot_mode_enabled))
+> +		return true;
+> +	else
+> +		return false;
+> +}
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 84806b54b50a..4852255aa4f4 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -30,6 +30,15 @@ extern void ima_post_path_mknod(struct dentry *dentry);
+>  extern void ima_add_kexec_buffer(struct kimage *image);
+>  #endif
+>  
+> +#ifdef CONFIG_X86
+> +extern bool arch_ima_get_secureboot(void);
+> +#else
+> +static inline bool arch_ima_get_secureboot(void)
+> +{
+> +	return false;
+> +}
+> +#endif
+> +
+>  #else
+>  static inline int ima_bprm_check(struct linux_binprm *bprm)
+>  {
