@@ -1,66 +1,60 @@
-From: jannh@google.com (Jann Horn)
-Date: Fri, 28 Sep 2018 01:47:39 +0200
-Subject: [PATCH v5 5/5] sidechannel: Linux Security Module for sidechannel
-In-Reply-To: <alpine.LRH.2.21.1809280936290.13517@namei.org>
-References: <20180926203446.2004-1-casey.schaufler@intel.com>
-	<20180926203446.2004-6-casey.schaufler@intel.com>
-	<alpine.LRH.2.21.1809280744560.8410@namei.org>
-	<025d4742-5947-545e-f603-502a0c5ee03f@schaufler-ca.com>
-	<alpine.LRH.2.21.1809280846280.8410@namei.org>
-	<99FC4B6EFCEFD44486C35F4C281DC67321463CE3@ORSMSX107.amr.corp.intel.com>
-	<alpine.LRH.2.21.1809280936290.13517@namei.org>
-Message-ID: <CAG48ez3Jnao-5z3O8s=RdoAx8=b68C_1pfKNKJSm+6R_HyU_fg@mail.gmail.com>
+From: dhowells@redhat.com (David Howells)
+Date: Fri, 28 Sep 2018 00:51:20 +0100
+Subject: [PATCH] keys: Fix the use of the C++ keyword "private" in
+	uapi/linux/keyctl.h
+Message-ID: <153809228025.23030.6619415372705612845.stgit@warthog.procyon.org.uk>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Sep 28, 2018 at 1:43 AM James Morris <jmorris@namei.org> wrote:
-> On Thu, 27 Sep 2018, Schaufler, Casey wrote:
-> > > > On 9/27/2018 2:45 PM, James Morris wrote:
-> > > > > On Wed, 26 Sep 2018, Casey Schaufler wrote:
-> > > > >
-> > > > >> +      /*
-> > > > >> +       * Namespace checks. Considered safe if:
-> > > > >> +       *      cgroup namespace is the same
-> > > > >> +       *      User namespace is the same
-> > > > >> +       *      PID namespace is the same
-> > > > >> +       */
-> > > > >> +      if (current->nsproxy)
-> > > > >> +              ccgn = current->nsproxy->cgroup_ns;
-> > > > >> +      if (p->nsproxy)
-> > > > >> +              pcgn = p->nsproxy->cgroup_ns;
-> > > > >> +      if (ccgn != pcgn)
-> > > > >> +              return -EACCES;
-> > > > >> +      if (current->cred->user_ns != p->cred->user_ns)
-> > > > >> +              return -EACCES;
-> > > > >> +      if (task_active_pid_ns(current) != task_active_pid_ns(p))
-> > > > >> +              return -EACCES;
-> > > > >> +      return 0;
-> > > > > I really don't like the idea of hard-coding namespace security semantics
-> > > > > in an LSM.  Also, I'm not sure if these semantics make any sense.
-> > > >
-> > > > Checks on namespaces where explicitly requested.
-> > >
-> > > By whom and what is the rationale?
-> >
-> > The rationale is to protect containers. Since those closest thing
-> > there is to a definition of containers is "uses namespaces" that
-> > becomes the focus. Separating them out does not make too much
-> > sense as I would expect someone concerned with one to be concerned
-> > with all.
->
-> A lot of people will not be using user namespaces due to security
-> concerns,
+The keyctl_dh_params struct in uapi/linux/keyctl.h contains the symbol
+"private" which means that the header file will cause compilation failure
+if #included in to a C++ program.  Further, the patch that added the same
+struct to the keyutils package named the symbol "priv", not "private".
 
-Ugh.
+The previous attempt to fix this (commit 8a2336e549d3) did so by simply
+renaming the kernel's copy of the field to dh_private, but this then breaks
+existing userspace and as such has been reverted (commit 8c0f9f5b309d).
 
-> so with this hard-coded logic, you are saying this case is
-> 'safe' in a sidechannel context.
->
-> Which hints at the deeper issue that containers are a userland
-> abstraction.  Protection of containers needs to be defined by userland
-> policy.
+[And note, to those who think that wrapping the struct in extern "C" {}
+ will work: it won't; that only changes how symbol names are presented to
+ the assembler and linker.].
 
-Or just compare mount namespaces additionally/instead. I think that
-containers will always use those, because AFAIK nobody uses chroot()
-for containers, given that the kernel makes absolutely no security
-guarantees about chroot().
+Instead, insert an anonymous union around the "private" member and add a
+second member in there with the name "priv" to match the one in the
+keyutils package.  The "private" member is then wrapped in !__cplusplus
+cpp-conditionals to hide it from C++.
+
+Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
+Fixes: 8a2336e549d3 ("uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Randy Dunlap <rdunlap@infradead.org>
+cc: Lubomir Rintel <lkundrak@v3.sk>
+cc: James Morris <jmorris@namei.org>
+cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
+cc: Stephan Mueller <smueller@chronox.de>
+cc: Andrew Morton <akpm@linux-foundation.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: stable at vger.kernel.org
+---
+
+ include/uapi/linux/keyctl.h |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
+index 7b8c9e19bad1..0f3cb13db8e9 100644
+--- a/include/uapi/linux/keyctl.h
++++ b/include/uapi/linux/keyctl.h
+@@ -65,7 +65,12 @@
+ 
+ /* keyctl structures */
+ struct keyctl_dh_params {
+-	__s32 private;
++	union {
++#ifndef __cplusplus
++		__s32 private;
++#endif
++		__s32 priv;
++	};
+ 	__s32 prime;
+ 	__s32 base;
+ };
