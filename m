@@ -1,60 +1,65 @@
-From: jannh@google.com (Jann Horn)
-Date: Thu, 27 Sep 2018 00:58:00 +0200
-Subject: [PATCH v5 2/5] Smack: Prepare for PTRACE_MODE_SCHED
-In-Reply-To: <99FC4B6EFCEFD44486C35F4C281DC673214625EA@ORSMSX107.amr.corp.intel.com>
-References: <20180926203446.2004-1-casey.schaufler@intel.com>
-	<20180926203446.2004-3-casey.schaufler@intel.com>
-	<CAG48ez3_XJYCURiCurDeCousGguGUdPego30j5+UF8FebWxUtA@mail.gmail.com>
-	<99FC4B6EFCEFD44486C35F4C281DC673214625EA@ORSMSX107.amr.corp.intel.com>
-Message-ID: <CAG48ez1+9Bfadu4y4TzPYJfFpLk+N8w7GdCE+xwNCM5TfQ8W8Q@mail.gmail.com>
+From: david@fromorbit.com (Dave Chinner)
+Date: Thu, 27 Sep 2018 11:38:12 +1000
+Subject: Leaking Path in XFS's ioctl interface(missing LSM check)
+In-Reply-To: <20180926192426.472360ea@alans-desktop>
+References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
+	<20180926013329.GD31060@dastard>
+	<20180926192426.472360ea@alans-desktop>
+Message-ID: <20180927013812.GF31060@dastard>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-+Jiri
+On Wed, Sep 26, 2018 at 07:24:26PM +0100, Alan Cox wrote:
+> On Wed, 26 Sep 2018 11:33:29 +1000
+> Dave Chinner <david@fromorbit.com> wrote:
+> 
+> > On Tue, Sep 25, 2018 at 08:51:50PM -0400, TongZhang wrote:
+> > > Hi,
+> > > 
+> > > I'm bringing up this issue again to let of LSM developers know the situation, and would like to know your thoughts.
+> > > Several weeks ago I sent an email to the security list to discuss the issue where
+> > > XFS's ioctl interface can do things like vfs_readlink without asking LSM's
+> > > permission, which we think is kind of weird and this kind of operation should be
+> > > audited by LSM.  
+> > 
+> > These aren't user interfaces. They are filesystem maintenance and
+> > extension interfaces.  They are intended for low level filesystem
+> > utilities that require complete, unrestricted access to the
+> > underlying filesystem via holding CAP_SYSADMIN in the initns.
+> 
+> CAP_SYS_ADMIN is meaningless in an environment using a strong LSM set up.
 
-On Thu, Sep 27, 2018 at 12:54 AM Schaufler, Casey
-<casey.schaufler@intel.com> wrote:
-> > -----Original Message-----
-> > From: Jann Horn [mailto:jannh at google.com]
-> > Sent: Wednesday, September 26, 2018 2:31 PM
-> > To: Schaufler, Casey <casey.schaufler@intel.com>
-> > Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>; kernel list
-> > <linux-kernel@vger.kernel.org>; linux-security-module <linux-security-
-> > module at vger.kernel.org>; selinux at tycho.nsa.gov; Hansen, Dave
-> > <dave.hansen@intel.com>; Dock, Deneen T <deneen.t.dock@intel.com>;
-> > kristen at linux.intel.com; Arjan van de Ven <arjan@linux.intel.com>
-> > Subject: Re: [PATCH v5 2/5] Smack: Prepare for PTRACE_MODE_SCHED
-> >
-> > On Wed, Sep 26, 2018 at 10:35 PM Casey Schaufler
-> > <casey.schaufler@intel.com> wrote:
-> > > A ptrace access check with mode PTRACE_MODE_SCHED gets called
-> > > from process switching code. This precludes the use of audit,
-> > > as the locking is incompatible. Don't do audit in the PTRACE_MODE_SCHED
-> > > case.
-> > >
-> > > Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
-> > > ---
-> > >  security/smack/smack_lsm.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> > > index 340fc30ad85d..ffa95bcab599 100644
-> > > --- a/security/smack/smack_lsm.c
-> > > +++ b/security/smack/smack_lsm.c
-> > > @@ -422,7 +422,8 @@ static int smk_ptrace_rule_check(struct task_struct
-> > *tracer,
-> > >         struct task_smack *tsp;
-> > >         struct smack_known *tracer_known;
-> > >
-> > > -       if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
-> > > +       if ((mode & PTRACE_MODE_NOAUDIT) == 0 &&
-> > > +           (mode & PTRACE_MODE_SCHED) == 0) {
-> >
-> > If you ORed PTRACE_MODE_NOAUDIT into the flags when calling the
-> > security hook, you could drop this patch, right?
->
-> Yes. Since the PTRACE_MODE_NOAUDIT was in PTRACE_MODE_IBPB
-> in Jiri's previous patch set and not in PTRACE_MODE_SCHED in this one
-> I assumed that there was a good reason for it.
+Sure, but there are so many CAP_SYS_ADMIN-only ioctls in the kernel
+that have no LSM coverage that this is not an isolated problem that
+people setting up such systems have to deal with. the LSM hooks are
+already complex enough without adding hundreds more hooks to control
+individual ioctl behaviour for every filesystem, device, etc.
 
-Jiri, was there a good reason for it, and if so, what was it?
+Unless you are going to add LSM hooks to all ioctls, I don't see
+much point in singling out one set of ioctls in a way that will
+break existing configurations. It's just a knee jerk reaction (like
+ariport security) because it doesn't meaningfully address the
+problem of all the other management ioctls in the kernel being
+completely unconstrainted by LSMs.
+
+> CAP_SYS_ADMIN is also a bit weird because low level access usually
+> implies you can bypass access controls so you should also check
+> CAP_SYS_DAC ?
+
+Do you mean CAP_DAC_READ_SEARCH as per the newer handle syscalls?
+But that only allows bypassing directory search operations, so maybe
+you mean CAP_DAC_OVERRIDE?
+
+Regardless, this horse bolted long before those syscalls were
+introduced.  The time to address this issue was when XFS was merged
+into linux all those years ago, back when the apps that run in
+highly secure restricted environments that use these interfaces were
+being ported to linux. We can't change this now without breaking
+userspace....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david at fromorbit.com
