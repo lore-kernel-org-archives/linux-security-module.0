@@ -1,46 +1,45 @@
-From: casey@schaufler-ca.com (Casey Schaufler)
-Date: Thu, 27 Sep 2018 15:39:54 -0700
+From: jmorris@namei.org (James Morris)
+Date: Fri, 28 Sep 2018 08:47:13 +1000 (AEST)
 Subject: [PATCH v5 5/5] sidechannel: Linux Security Module for sidechannel
-In-Reply-To: <alpine.LRH.2.21.1809280744560.8410@namei.org>
+In-Reply-To: <025d4742-5947-545e-f603-502a0c5ee03f@schaufler-ca.com>
 References: <20180926203446.2004-1-casey.schaufler@intel.com>
 	<20180926203446.2004-6-casey.schaufler@intel.com>
 	<alpine.LRH.2.21.1809280744560.8410@namei.org>
-Message-ID: <025d4742-5947-545e-f603-502a0c5ee03f@schaufler-ca.com>
+	<025d4742-5947-545e-f603-502a0c5ee03f@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1809280846280.8410@namei.org>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 9/27/2018 2:45 PM, James Morris wrote:
-> On Wed, 26 Sep 2018, Casey Schaufler wrote:
->
->> +	/*
->> +	 * Namespace checks. Considered safe if:
->> +	 *	cgroup namespace is the same
->> +	 *	User namespace is the same
->> +	 *	PID namespace is the same
->> +	 */
->> +	if (current->nsproxy)
->> +		ccgn = current->nsproxy->cgroup_ns;
->> +	if (p->nsproxy)
->> +		pcgn = p->nsproxy->cgroup_ns;
->> +	if (ccgn != pcgn)
->> +		return -EACCES;
->> +	if (current->cred->user_ns != p->cred->user_ns)
->> +		return -EACCES;
->> +	if (task_active_pid_ns(current) != task_active_pid_ns(p))
->> +		return -EACCES;
->> +	return 0;
-> I really don't like the idea of hard-coding namespace security semantics 
-> in an LSM.  Also, I'm not sure if these semantics make any sense.
+On Thu, 27 Sep 2018, Casey Schaufler wrote:
 
-Checks on namespaces where explicitly requested. I think
-these are the most sensible, but I'm willing to be educated.
-I was also requested to check on potential issues between containers,
-but as there is no kernel concept of containers this is the
-best I see we can do.
+> On 9/27/2018 2:45 PM, James Morris wrote:
+> > On Wed, 26 Sep 2018, Casey Schaufler wrote:
+> >
+> >> +	/*
+> >> +	 * Namespace checks. Considered safe if:
+> >> +	 *	cgroup namespace is the same
+> >> +	 *	User namespace is the same
+> >> +	 *	PID namespace is the same
+> >> +	 */
+> >> +	if (current->nsproxy)
+> >> +		ccgn = current->nsproxy->cgroup_ns;
+> >> +	if (p->nsproxy)
+> >> +		pcgn = p->nsproxy->cgroup_ns;
+> >> +	if (ccgn != pcgn)
+> >> +		return -EACCES;
+> >> +	if (current->cred->user_ns != p->cred->user_ns)
+> >> +		return -EACCES;
+> >> +	if (task_active_pid_ns(current) != task_active_pid_ns(p))
+> >> +		return -EACCES;
+> >> +	return 0;
+> > I really don't like the idea of hard-coding namespace security semantics 
+> > in an LSM.  Also, I'm not sure if these semantics make any sense.
+> 
+> Checks on namespaces where explicitly requested.
 
-> It least make it user configurable.
+By whom and what is the rationale?
 
-Would you have a suggested granularity? I could have a
-configuration option for each of cgroups, user and pid
-namespaces but that's getting to be a lot of knobs to
-twist.
+
+-- 
+James Morris
+<jmorris@namei.org>
