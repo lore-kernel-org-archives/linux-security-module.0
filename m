@@ -1,82 +1,52 @@
-From: david@fromorbit.com (Dave Chinner)
-Date: Thu, 27 Sep 2018 12:08:23 +1000
-Subject: Leaking Path in XFS's ioctl interface(missing LSM check)
-In-Reply-To: <dc3bf978-1b98-bebd-6f35-9b2795693ea7@tycho.nsa.gov>
-References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
-	<20180926013329.GD31060@dastard>
-	<dc3bf978-1b98-bebd-6f35-9b2795693ea7@tycho.nsa.gov>
-Message-ID: <20180927020822.GG31060@dastard>
+From: roberto.sassu@huawei.com (Roberto Sassu)
+Date: Thu, 27 Sep 2018 08:50:14 +0200
+Subject: [PATCH v2, RESEND 0/3] tpm: retrieve digest size of unknown
+	algorithms from TPM
+In-Reply-To: <1537985014.3459.24.camel@linux.ibm.com>
+References: <20180917093820.20500-1-roberto.sassu@huawei.com>
+	<1537972840.3459.6.camel@linux.ibm.com>
+	<1537985014.3459.24.camel@linux.ibm.com>
+Message-ID: <8bbff5b1-f4ba-4e38-57fc-05d9ddabea5c@huawei.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 26, 2018 at 09:23:03AM -0400, Stephen Smalley wrote:
-> On 09/25/2018 09:33 PM, Dave Chinner wrote:
-> >On Tue, Sep 25, 2018 at 08:51:50PM -0400, TongZhang wrote:
-> >>Hi,
-> >>
-> >>I'm bringing up this issue again to let of LSM developers know the situation, and would like to know your thoughts.
-> >>Several weeks ago I sent an email to the security list to discuss the issue where
-> >>XFS's ioctl interface can do things like vfs_readlink without asking LSM's
-> >>permission, which we think is kind of weird and this kind of operation should be
-> >>audited by LSM.
-> >
-> >These aren't user interfaces. They are filesystem maintenance and
-> >extension interfaces.  They are intended for low level filesystem
-> >utilities that require complete, unrestricted access to the
-> >underlying filesystem via holding CAP_SYSADMIN in the initns.
-> >
-> >i.e.  they are used to perform filesystem maintenance and extension
-> >operations that need to be completely invisible to users from
-> >userspace. e.g.  online file defragmentation (xfs_fsr), data
-> >migration (e.g. HSM products), efficient backup of data (xfsdump),
-> >metadata and data scrubbing, online repair, etc.
-> >
-> >IOWs, I really don't think these interfaces are something the LSMs
-> >should be trying to intercept or audit, because they are essentially
-> >internal filesystem interfaces used by trusted code and not general
-> >user application facing APIs.
+On 9/26/2018 8:03 PM, Mimi Zohar wrote:
+> On Wed, 2018-09-26 at 10:40 -0400, Mimi Zohar wrote:
+>> On Mon, 2018-09-17 at 11:38 +0200, Roberto Sassu wrote:
+>>> Resending to maintainer with correct mailing lists in CC.
+>>>
+>>> The TPM driver currently relies on the crypto subsystem to determine the
+>>> digest size of supported TPM algorithms. In the future, TPM vendors might
+>>> implement new algorithms in their chips, and those algorithms might not
+>>> be supported by the crypto subsystem.
+>>>
+>>> Usually, vendors provide patches for the new hardware, and likely
+>>> the crypto subsystem will be updated before the new algorithm is
+>>> introduced. However, old kernels might be updated later, after patches
+>>> are included in the mainline kernel. This would leave the opportunity
+>>> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+>>> are not extended.
+>>>
+>>> This patch set provides a long term solution for this issue. If a TPM
+>>> algorithm is not known by the crypto subsystem, the TPM driver retrieves
+>>> the digest size from the TPM with a PCR read. All the PCR banks are
+>>> extended, even if the algorithm is not yet supported by the crypto
+>>> subsystem.
+>>
+>> Other than checking the digest size before copying the pcrread buffer,
+>> the patches look good. ?Please add my Ack on all 3 patches.
+>>
+>> (New address) Acked-by: Mimi Zohar <zohar@linux.ibm.com>
 > 
-> If they are interfaces exposed to userspace, then they should be
-> mediated via LSM.  We only omit the LSM hook when the usage is
-> purely kernel-internal.
+> I've reviewed, and am currently running with these patches.
+> 
+> Even if the IMA changes were in a separate patch, we wouldn't be able
+> to break up the patch set anyway. ?Jarkko, I'd appreciate your
+> carrying the entire patch set.
+> 
+> Roberto, a similar change needs to be made for tpm_pcr_extend. ?Are
+> you planning on posting those changes as well?
 
-/me points to the mass of diverse management ioctls across the
-kernel that aren't mediated by LSM hooks.
+Yes, I was planning to send the patch after this patch set is accepted.
 
-> Security modules are often used to limit
-> even "trusted" applications to least privilege and protect them from
-> untrustworthy inputs, moving from binary trust notions to only
-> trusting them for what they must be trusted to do.  CAP_SYS_ADMIN
-> doesn't necessarily indicate that they are trusted to override any
-> given MAC policy restrictions.
-
-Applications that are tightly integrated into the filesystem to
-extend it's functionality effectively operate in the same trust
-space as the kernel filesystem implementation itself.  i.e. they
-interact with the filesystem at levels below the DAC/MAC checks that
-are performed on user filesystem accesses, and perform manipluation
-of the on-disk filesystem structure that is invisible to users
-accessing the filesystem.
-
-As such, there are very few trusted applications have "massive data
-loss" as a potential failure mode if an inappropriately configured
-LSM is loaded into the kernel. Breaking a HSM application's access
-to the filesystem unexpectedly because someone didn't set up a new
-security policy correctly brings a whole new level of risk to
-administrating sites that mix non-trivial storage solutions with
-LSM-based security.
-
-> Wondering why we don't perform the security_inode_readlink() call
-> inside of vfs_readlink() currently.  The general pattern is that we
-> do perform security_inode_*() calls inside the other vfs_*()
-> helpers, so vfs_readlink() is an exception currently.
-
-Pretty sure that was done to mitigate the risk of breaking existing
-userspace applications using the handle interfaces to read links.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david at fromorbit.com
+Roberto
