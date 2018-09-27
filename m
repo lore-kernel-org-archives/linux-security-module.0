@@ -1,61 +1,78 @@
 From: david@fromorbit.com (Dave Chinner)
-Date: Thu, 27 Sep 2018 11:38:12 +1000
+Date: Thu, 27 Sep 2018 12:08:23 +1000
 Subject: Leaking Path in XFS's ioctl interface(missing LSM check)
-In-Reply-To: <20180926192426.472360ea@alans-desktop>
+In-Reply-To: <dc3bf978-1b98-bebd-6f35-9b2795693ea7@tycho.nsa.gov>
 References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
 	<20180926013329.GD31060@dastard>
-	<20180926192426.472360ea@alans-desktop>
-Message-ID: <20180927013812.GF31060@dastard>
+	<dc3bf978-1b98-bebd-6f35-9b2795693ea7@tycho.nsa.gov>
+Message-ID: <20180927020822.GG31060@dastard>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, Sep 26, 2018 at 07:24:26PM +0100, Alan Cox wrote:
-> On Wed, 26 Sep 2018 11:33:29 +1000
-> Dave Chinner <david@fromorbit.com> wrote:
+On Wed, Sep 26, 2018 at 09:23:03AM -0400, Stephen Smalley wrote:
+> On 09/25/2018 09:33 PM, Dave Chinner wrote:
+> >On Tue, Sep 25, 2018 at 08:51:50PM -0400, TongZhang wrote:
+> >>Hi,
+> >>
+> >>I'm bringing up this issue again to let of LSM developers know the situation, and would like to know your thoughts.
+> >>Several weeks ago I sent an email to the security list to discuss the issue where
+> >>XFS's ioctl interface can do things like vfs_readlink without asking LSM's
+> >>permission, which we think is kind of weird and this kind of operation should be
+> >>audited by LSM.
+> >
+> >These aren't user interfaces. They are filesystem maintenance and
+> >extension interfaces.  They are intended for low level filesystem
+> >utilities that require complete, unrestricted access to the
+> >underlying filesystem via holding CAP_SYSADMIN in the initns.
+> >
+> >i.e.  they are used to perform filesystem maintenance and extension
+> >operations that need to be completely invisible to users from
+> >userspace. e.g.  online file defragmentation (xfs_fsr), data
+> >migration (e.g. HSM products), efficient backup of data (xfsdump),
+> >metadata and data scrubbing, online repair, etc.
+> >
+> >IOWs, I really don't think these interfaces are something the LSMs
+> >should be trying to intercept or audit, because they are essentially
+> >internal filesystem interfaces used by trusted code and not general
+> >user application facing APIs.
 > 
-> > On Tue, Sep 25, 2018 at 08:51:50PM -0400, TongZhang wrote:
-> > > Hi,
-> > > 
-> > > I'm bringing up this issue again to let of LSM developers know the situation, and would like to know your thoughts.
-> > > Several weeks ago I sent an email to the security list to discuss the issue where
-> > > XFS's ioctl interface can do things like vfs_readlink without asking LSM's
-> > > permission, which we think is kind of weird and this kind of operation should be
-> > > audited by LSM.  
-> > 
-> > These aren't user interfaces. They are filesystem maintenance and
-> > extension interfaces.  They are intended for low level filesystem
-> > utilities that require complete, unrestricted access to the
-> > underlying filesystem via holding CAP_SYSADMIN in the initns.
-> 
-> CAP_SYS_ADMIN is meaningless in an environment using a strong LSM set up.
+> If they are interfaces exposed to userspace, then they should be
+> mediated via LSM.  We only omit the LSM hook when the usage is
+> purely kernel-internal.
 
-Sure, but there are so many CAP_SYS_ADMIN-only ioctls in the kernel
-that have no LSM coverage that this is not an isolated problem that
-people setting up such systems have to deal with. the LSM hooks are
-already complex enough without adding hundreds more hooks to control
-individual ioctl behaviour for every filesystem, device, etc.
+/me points to the mass of diverse management ioctls across the
+kernel that aren't mediated by LSM hooks.
 
-Unless you are going to add LSM hooks to all ioctls, I don't see
-much point in singling out one set of ioctls in a way that will
-break existing configurations. It's just a knee jerk reaction (like
-ariport security) because it doesn't meaningfully address the
-problem of all the other management ioctls in the kernel being
-completely unconstrainted by LSMs.
+> Security modules are often used to limit
+> even "trusted" applications to least privilege and protect them from
+> untrustworthy inputs, moving from binary trust notions to only
+> trusting them for what they must be trusted to do.  CAP_SYS_ADMIN
+> doesn't necessarily indicate that they are trusted to override any
+> given MAC policy restrictions.
 
-> CAP_SYS_ADMIN is also a bit weird because low level access usually
-> implies you can bypass access controls so you should also check
-> CAP_SYS_DAC ?
+Applications that are tightly integrated into the filesystem to
+extend it's functionality effectively operate in the same trust
+space as the kernel filesystem implementation itself.  i.e. they
+interact with the filesystem at levels below the DAC/MAC checks that
+are performed on user filesystem accesses, and perform manipluation
+of the on-disk filesystem structure that is invisible to users
+accessing the filesystem.
 
-Do you mean CAP_DAC_READ_SEARCH as per the newer handle syscalls?
-But that only allows bypassing directory search operations, so maybe
-you mean CAP_DAC_OVERRIDE?
+As such, there are very few trusted applications have "massive data
+loss" as a potential failure mode if an inappropriately configured
+LSM is loaded into the kernel. Breaking a HSM application's access
+to the filesystem unexpectedly because someone didn't set up a new
+security policy correctly brings a whole new level of risk to
+administrating sites that mix non-trivial storage solutions with
+LSM-based security.
 
-Regardless, this horse bolted long before those syscalls were
-introduced.  The time to address this issue was when XFS was merged
-into linux all those years ago, back when the apps that run in
-highly secure restricted environments that use these interfaces were
-being ported to linux. We can't change this now without breaking
-userspace....
+> Wondering why we don't perform the security_inode_readlink() call
+> inside of vfs_readlink() currently.  The general pattern is that we
+> do perform security_inode_*() calls inside the other vfs_*()
+> helpers, so vfs_readlink() is an exception currently.
+
+Pretty sure that was done to mitigate the risk of breaking existing
+userspace applications using the handle interfaces to read links.
 
 Cheers,
 
