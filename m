@@ -1,70 +1,113 @@
-From: casey.schaufler@intel.com (Schaufler, Casey)
-Date: Fri, 28 Sep 2018 17:40:52 +0000
-Subject: [PATCH v5 5/5] sidechannel: Linux Security Module for sidechannel
-In-Reply-To: <alpine.LRH.2.21.1809290233130.15725@namei.org>
-References: <20180926203446.2004-1-casey.schaufler@intel.com>
-	<20180926203446.2004-6-casey.schaufler@intel.com>
-	<alpine.LRH.2.21.1809280744560.8410@namei.org>
-	<025d4742-5947-545e-f603-502a0c5ee03f@schaufler-ca.com>
-	<alpine.LRH.2.21.1809280846280.8410@namei.org>
-	<99FC4B6EFCEFD44486C35F4C281DC67321463CE3@ORSMSX107.amr.corp.intel.com>
-	<alpine.LRH.2.21.1809280936290.13517@namei.org>
-	<CAG48ez3Jnao-5z3O8s=RdoAx8=b68C_1pfKNKJSm+6R_HyU_fg@mail.gmail.com>
-	<alpine.LRH.2.21.1809290233130.15725@namei.org>
-Message-ID: <99FC4B6EFCEFD44486C35F4C281DC6732146466E@ORSMSX107.amr.corp.intel.com>
+From: keescook@chromium.org (Kees Cook)
+Date: Fri, 28 Sep 2018 13:01:30 -0700
+Subject: [PATCH security-next v3 00/29] LSM: Explict LSM ordering
+In-Reply-To: <e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
+References: <20180925001832.18322-1-keescook@chromium.org>
+	<e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
+Message-ID: <CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-> -----Original Message-----
-> From: James Morris [mailto:jmorris at namei.org]
-> Sent: Friday, September 28, 2018 9:33 AM
-> To: Jann Horn <jannh@google.com>
-> Cc: Schaufler, Casey <casey.schaufler@intel.com>; Casey Schaufler
-> <casey@schaufler-ca.com>; kristen at linux.intel.com; Kernel Hardening
-> <kernel-hardening@lists.openwall.com>; Dock, Deneen T
-> <deneen.t.dock@intel.com>; kernel list <linux-kernel@vger.kernel.org>;
-> Hansen, Dave <dave.hansen@intel.com>; linux-security-module <linux-security-
-> module at vger.kernel.org>; selinux at tycho.nsa.gov; Arjan van de Ven
-> <arjan@linux.intel.com>
-> Subject: Re: [PATCH v5 5/5] sidechannel: Linux Security Module for sidechannel
-> 
-> On Fri, 28 Sep 2018, Jann Horn wrote:
-> 
-> > > so with this hard-coded logic, you are saying this case is
-> > > 'safe' in a sidechannel context.
-> > >
-> > > Which hints at the deeper issue that containers are a userland
-> > > abstraction.  Protection of containers needs to be defined by userland
-> > > policy.
-> >
-> > Or just compare mount namespaces additionally/instead. I think that
-> > containers will always use those, because AFAIK nobody uses chroot()
-> > for containers, given that the kernel makes absolutely no security
-> > guarantees about chroot().
-> 
-> We can't define this in the kernel. It has no concept of containers.
-> 
-> People utilize some combination of namespaces and cgroups and call them
-> containers,
+On Fri, Sep 28, 2018 at 8:55 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 9/24/2018 5:18 PM, Kees Cook wrote:
+>> v3:
+>> - add CONFIG_LSM_ENABLE and refactor resulting logic
+>
+> Kees, you can add my
+>
+>         Reviewed-by:Casey Schaufler <casey@schaufler-ca.com>
+>
+> for this entire patch set. Thank you for taking this on, it's
+> a significant and important chunk of the LSM infrastructure
+> update.
 
-There is an amazing variety of things called containers out there.
-I cite them as a use case, not a requirement.
+Thanks!
 
-> but we can't make assumptions from the kernel on what any of
-> this means from a security point of view, and hard-code kernel policy
-> based on those assumptions.
+John, you'd looked at this a bit too -- do the results line up with
+your expectations?
 
-We can assume that namespaces are being used as a separation mechanism.
-That makes processes in different namespaces potentially vulnerable to
-side-channel attacks. That's true regardless of whether or not someone is
-using namespaces to implement containers. 
+Any thoughts from SELinux, TOMOYO, or IMA folks?
 
-> This is violating the principal of separating mechanism and policy, and
-> also imposing semantics across the kernel/user boundary. The latter
-> creates an ABI which we can then never break.
+-Kees
 
-The effects of the sidechannel security module are not API visible.
-The potential impact is on performance. This implementation of
-PTRACE_MODE_SCHED does not change what happens, but may affect
-when it happens. It is intended to aid in optimizing the use of expensive
-anti-side-channel countermeasures.
+>
+>
+>> ...
+>> Breakdown of patches:
+>>
+>> Infrastructure improvements (no logical changes):
+>>   LSM: Correctly announce start of LSM initialization
+>>   vmlinux.lds.h: Avoid copy/paste of security_init section
+>>   LSM: Rename .security_initcall section to .lsm_info
+>>   LSM: Remove initcall tracing
+>>   LSM: Convert from initcall to struct lsm_info
+>>   vmlinux.lds.h: Move LSM_TABLE into INIT_DATA
+>>   LSM: Convert security_initcall() into DEFINE_LSM()
+>>   LSM: Record LSM name in struct lsm_info
+>>   LSM: Provide init debugging infrastructure
+>>   LSM: Don't ignore initialization failures
+>>
+>> Split "integrity" out into "ordered initialization" (no logical changes):
+>>   LSM: Introduce LSM_FLAG_LEGACY_MAJOR
+>>   LSM: Provide separate ordered initialization
+>>
+>> Provide centralized LSM enable/disable infrastructure:
+>>   LoadPin: Rename "enable" to "enforce"
+>>   LSM: Plumb visibility into optional "enabled" state
+>>   LSM: Lift LSM selection out of individual LSMs
+>>   LSM: Prepare for arbitrary LSM enabling
+>>   LSM: Introduce CONFIG_LSM_ENABLE
+>>   LSM: Introduce lsm.enable= and lsm.disable=
+>>   LSM: Prepare for reorganizing "security=" logic
+>>   LSM: Refactor "security=" in terms of enable/disable
+>>
+>> Provide centralized LSM ordering infrastructure:
+>>   LSM: Build ordered list of ordered LSMs for init
+>>   LSM: Introduce CONFIG_LSM_ORDER
+>>   LSM: Introduce "lsm.order=" for boottime ordering
+>>
+>> Move minor LSMs into ordered LSM initialization:
+>>   LoadPin: Initialize as ordered LSM
+>>   Yama: Initialize as ordered LSM
+>>   LSM: Introduce enum lsm_order
+>>   capability: Initialize as LSM_ORDER_FIRST
+>>
+>> Move major LSMs into ordered LSM initialization:
+>>   LSM: Separate idea of "major" LSM from "exclusive" LSM
+>>   LSM: Add all exclusive LSMs to ordered initialization
+>>
+>> -Kees
+>>
+>>  .../admin-guide/kernel-parameters.txt         |  20 +
+>>  arch/arc/kernel/vmlinux.lds.S                 |   1 -
+>>  arch/arm/kernel/vmlinux-xip.lds.S             |   1 -
+>>  arch/arm64/kernel/vmlinux.lds.S               |   1 -
+>>  arch/h8300/kernel/vmlinux.lds.S               |   1 -
+>>  arch/microblaze/kernel/vmlinux.lds.S          |   2 -
+>>  arch/powerpc/kernel/vmlinux.lds.S             |   2 -
+>>  arch/um/include/asm/common.lds.S              |   2 -
+>>  arch/xtensa/kernel/vmlinux.lds.S              |   1 -
+>>  include/asm-generic/vmlinux.lds.h             |  25 +-
+>>  include/linux/init.h                          |   2 -
+>>  include/linux/lsm_hooks.h                     |  43 ++-
+>>  include/linux/module.h                        |   1 -
+>>  security/Kconfig                              |  61 ++-
+>>  security/apparmor/lsm.c                       |  16 +-
+>>  security/commoncap.c                          |   8 +-
+>>  security/integrity/iint.c                     |   5 +-
+>>  security/loadpin/Kconfig                      |   4 +-
+>>  security/loadpin/loadpin.c                    |  28 +-
+>>  security/security.c                           | 351 +++++++++++++++---
+>>  security/selinux/hooks.c                      |  16 +-
+>>  security/smack/smack_lsm.c                    |   8 +-
+>>  security/tomoyo/tomoyo.c                      |   7 +-
+>>  security/yama/yama_lsm.c                      |   7 +-
+>>  24 files changed, 438 insertions(+), 175 deletions(-)
+>>
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
