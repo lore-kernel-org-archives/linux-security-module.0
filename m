@@ -1,87 +1,178 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Sat, 29 Sep 2018 01:30:32 +0300
-Subject: [PATCH v5 18/21] tmp1: rename tpm1_pcr_read_dev to tpm1_pcr_read().
+Date: Sat, 29 Sep 2018 01:30:30 +0300
+Subject: [PATCH v5 16/21] tpm: tpm1: rewrite tpm1_get_random() using tpm_buf
+	structure
 In-Reply-To: <20180928223035.14471-1-tomas.winkler@intel.com>
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
-Message-ID: <20180928223035.14471-19-tomas.winkler@intel.com>
+Message-ID: <20180928223035.14471-17-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Rename tpm1_pcr_read_dev to tpm1_pcr_read() to match
-the counterpart tpm2_pcr_read().
+1. Use tpm_buf in tpm1_get_random()
+2. Fix comment in tpm_get_random() so it is clear that
+the function is expected to return number of random bytes.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-V4: New in the series
-V5: Resend.
+V3: New in the series.
+V4: Resend.
+V5: A small adjustment in the kdoc.
 
- drivers/char/tpm/tpm-interface.c | 2 +-
- drivers/char/tpm/tpm-sysfs.c     | 2 +-
- drivers/char/tpm/tpm.h           | 2 +-
- drivers/char/tpm/tpm1-cmd.c      | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/char/tpm/tpm-interface.c |  2 +-
+ drivers/char/tpm/tpm.h           | 11 ------
+ drivers/char/tpm/tpm1-cmd.c      | 84 +++++++++++++++++++++++-----------------
+ 3 files changed, 49 insertions(+), 48 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 0af71d53d129..3d80c5114fec 100644
+index 98f9a0bbeed9..0af71d53d129 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -465,7 +465,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		rc = tpm2_pcr_read(chip, pcr_idx, res_buf);
- 	else
--		rc = tpm1_pcr_read_dev(chip, pcr_idx, res_buf);
-+		rc = tpm1_pcr_read(chip, pcr_idx, res_buf);
- 
- 	tpm_put_ops(chip);
- 	return rc;
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index 861acafd8f29..96fc7433c57d 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -114,7 +114,7 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
- 
- 	num_pcrs = be32_to_cpu(cap.num_pcrs);
- 	for (i = 0; i < num_pcrs; i++) {
--		rc = tpm1_pcr_read_dev(chip, i, digest);
-+		rc = tpm1_pcr_read(chip, i, digest);
- 		if (rc)
- 			break;
- 		str += sprintf(str, "PCR-%02d: ", i);
+@@ -586,7 +586,7 @@ EXPORT_SYMBOL_GPL(tpm_pm_resume);
+  * @out:	destination buffer for the random bytes
+  * @max:	the max number of bytes to write to @out
+  *
+- * Return: same as with tpm_transmit_cmd()
++ * Return: number of random bytes read or a negative error value.
+  */
+ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ {
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index d0402aa122ec..2f06740f993d 100644
+index 4ccffbb56864..d6eca81a011a 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -525,7 +525,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
- 		    const char *log_msg);
--int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-+int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
- ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		    const char *desc, size_t min_cap_length);
- int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+@@ -396,20 +396,9 @@ struct tpm_pcrread_in {
+  * compiler warnings about stack frame size. */
+ #define TPM_MAX_RNG_DATA	128
+ 
+-struct tpm_getrandom_out {
+-	__be32 rng_data_len;
+-	u8     rng_data[TPM_MAX_RNG_DATA];
+-} __packed;
+-
+-struct tpm_getrandom_in {
+-	__be32 num_bytes;
+-} __packed;
+-
+ typedef union {
+ 	struct	tpm_pcrread_in	pcrread_in;
+ 	struct	tpm_pcrread_out	pcrread_out;
+-	struct	tpm_getrandom_in getrandom_in;
+-	struct	tpm_getrandom_out getrandom_out;
+ } tpm_cmd_params;
+ 
+ struct tpm_cmd_t {
 diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index d30f336518f6..05b772477bac 100644
+index 8a84db315676..b5c4fa158c30 100644
 --- a/drivers/char/tpm/tpm1-cmd.c
 +++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -572,7 +572,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- }
+@@ -505,58 +505,70 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ EXPORT_SYMBOL_GPL(tpm1_getcap);
  
- #define TPM_ORD_PCRREAD 21
--int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-+int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+ #define TPM_ORD_GET_RANDOM 70
+-#define TPM_GETRANDOM_RESULT_SIZE	18
+-static const struct tpm_input_header tpm_getrandom_header = {
+-	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+-	.length = cpu_to_be32(14),
+-	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
+-};
++struct tpm1_get_random_out {
++	__be32 rng_data_len;
++	u8 rng_data[TPM_MAX_RNG_DATA];
++} __packed;
+ 
+-int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
++/**
++ * tpm1_get_random() - get random bytes from the TPM's RNG
++ * @chip:	a &struct tpm_chip instance
++ * @dest:	destination buffer for the random bytes
++ * @max:	the maximum number of bytes to write to @dest
++ *
++ * Return:
++ * *  number of bytes read
++ * * -errno or a TPM return code otherwise
++ */
++int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
  {
- 	struct tpm_buf buf;
- 	int rc;
-@@ -660,7 +660,7 @@ int tpm1_do_selftest(struct tpm_chip *chip)
+-	struct tpm_cmd_t tpm_cmd;
++	struct tpm1_get_random_out *out;
++	u32 num_bytes =  min_t(u32, max, TPM_MAX_RNG_DATA);
++	struct tpm_buf buf;
++	u32 total = 0;
++	int retries = 5;
+ 	u32 recd;
+-	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
+-	u32 rlength;
+-	int err, total = 0, retries = 5;
+-	u8 *dest = out;
++	int rc;
+ 
+-	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
+-		return -EINVAL;
++	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_RANDOM);
++	if (rc)
++		return rc;
  
  	do {
- 		/* Attempt to read a PCR value */
--		rc = tpm1_pcr_read_dev(chip, 0, dummy);
-+		rc = tpm1_pcr_read(chip, 0, dummy);
+-		tpm_cmd.header.in = tpm_getrandom_header;
+-		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
+-
+-		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
+-				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
+-				       offsetof(struct tpm_getrandom_out,
+-						rng_data),
+-				       0, "attempting get random");
+-		if (err)
+-			break;
++		tpm_buf_append_u32(&buf, num_bytes);
++
++		rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
++				      sizeof(out->rng_data_len), 0,
++				      "attempting get random");
++		if (rc)
++			goto out;
  
- 		/* Some buggy TPMs will not respond to tpm_tis_ready() for
- 		 * around 300ms while the self test is ongoing, keep trying
+-		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
++		out = (struct tpm1_get_random_out *)&buf.data[TPM_HEADER_SIZE];
++
++		recd = be32_to_cpu(out->rng_data_len);
+ 		if (recd > num_bytes) {
+-			total = -EFAULT;
+-			break;
++			rc = -EFAULT;
++			goto out;
+ 		}
+ 
+-		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+-		if (rlength < TPM_HEADER_SIZE +
+-			      offsetof(struct tpm_getrandom_out, rng_data) +
+-			      recd) {
+-			total = -EFAULT;
+-			break;
++		if (tpm_buf_length(&buf) < TPM_HEADER_SIZE +
++					   sizeof(out->rng_data_len) + recd) {
++			rc = -EFAULT;
++			goto out;
+ 		}
+-		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
++		memcpy(dest, out->rng_data, recd);
+ 
+ 		dest += recd;
+ 		total += recd;
+ 		num_bytes -= recd;
+-	} while (retries-- && (size_t)total < max);
+ 
+-	return total ? total : -EIO;
++		tpm_buf_reset(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_GET_RANDOM);
++	} while (retries-- && total < max);
++
++	rc = total ? (int)total : -EIO;
++out:
++	tpm_buf_destroy(&buf);
++	return rc;
+ }
+ 
+ #define TPM_ORDINAL_PCRREAD 21
 -- 
 2.14.4
