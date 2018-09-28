@@ -1,65 +1,61 @@
-From: keescook@chromium.org (Kees Cook)
-Date: Fri, 28 Sep 2018 13:54:33 -0700
-Subject: [PATCH security-next v3 00/29] LSM: Explict LSM ordering
-In-Reply-To: <145fab48-969f-0aed-74e8-ac0a5bb1c79b@tycho.nsa.gov>
-References: <20180925001832.18322-1-keescook@chromium.org>
-	<e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
-	<CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com>
-	<cb49b4c4-a379-7a8e-41a6-6e6a4afb6fe5@tycho.nsa.gov>
-	<145fab48-969f-0aed-74e8-ac0a5bb1c79b@tycho.nsa.gov>
-Message-ID: <CAGXu5jKX9VCFqRrchr55_977kOA=1WzdB+YcEZq0y5CPcsp7Zw@mail.gmail.com>
+From: tomas.winkler@intel.com (Tomas Winkler)
+Date: Sat, 29 Sep 2018 01:30:14 +0300
+Subject: [PATCH v5 00/21] tpm: separate tpm 1.x and tpm 2.x commands
+Message-ID: <20180928223035.14471-1-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Fri, Sep 28, 2018 at 1:33 PM, Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 09/28/2018 04:25 PM, Stephen Smalley wrote:
->>
->> On 09/28/2018 04:01 PM, Kees Cook wrote:
->>>
->>> On Fri, Sep 28, 2018 at 8:55 AM, Casey Schaufler <casey@schaufler-ca.com>
->>> wrote:
->>>>
->>>> On 9/24/2018 5:18 PM, Kees Cook wrote:
->>>>>
->>>>> v3:
->>>>> - add CONFIG_LSM_ENABLE and refactor resulting logic
->>>>
->>>>
->>>> Kees, you can add my
->>>>
->>>>          Reviewed-by:Casey Schaufler <casey@schaufler-ca.com>
->>>>
->>>> for this entire patch set. Thank you for taking this on, it's
->>>> a significant and important chunk of the LSM infrastructure
->>>> update.
->>>
->>>
->>> Thanks!
->>>
->>> John, you'd looked at this a bit too -- do the results line up with
->>> your expectations?
->>>
->>> Any thoughts from SELinux, TOMOYO, or IMA folks?
->>
->>
->> What's it relative to?  First patch fails for me on current security/next.
->
-> Never mind - user error ;)
+This patch series provides initial separation of tpm 1.x and tpm 2.x
+commands, in foresight that the tpm 1.x chips will eventually phase out
+and can be compiled out for modern systems.
+ A new file is added tpm1-cmd.c that contains tpm 1.x specific commands.
+In addition, tpm 1.x commands are now implemented using tpm_buf
+structure and instead of tpm_cmd_t construct. The latter is now removed.
 
-FWIW, it's against v4.19-rc2.
+Note: my tpm 1.x HW availability is limited hence some more testing is needed.
 
->> Is there a branch in your repo that has the v3 patches?
->
-> But still wondered about this one.
+This series also contains two trivial cleanups and addition of new
+commands by TCG spec 1.36, now supported on new Intet's platforms.
 
-Oops! Sorry, I didn't push to kernel.org. Now pushed!
 
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=lsm/ordering-v3
+Tomas Winkler (21):
+  tpm2: add new tpm2 commands according to TCG 1.36
+  tpm: sort objects in the Makefile
+  tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c
+  tpm: add tpm_calc_ordinal_duration() wrapper
+  tpm: factor out tpm_get_timeouts()
+  tpm: move tpm1_pcr_extend to tpm1-cmd.c
+  tpm: move tpm_getcap to tpm1-cmd.c
+  tpm: factor out tpm1_get_random into tpm1-cmd.c
+  tpm: move tpm 1.x selftest code from tpm-interface.c tpm1-cmd.c
+  tpm: factor out tpm 1.x pm suspend flow into tpm1-cmd.c
+  tpm: factor out tpm_startup function
+  tpm: move pcr extend code to tpm2-cmd.c
+  tpm: add tpm_auto_startup() into tpm-interface.c
+  tpm: tpm-interface.c drop unused macros
+  tpm: tpm-space.c remove unneeded semicolon
+  tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure
+  tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
+  tmp1: rename tpm1_pcr_read_dev to tpm1_pcr_read().
+  tpm1: reimplement SAVESTATE using tpm_buf
+  tpm1: reimplement tpm1_continue_selftest() using tpm_buf
+  tpm: use u32 instead of int for PCR index
 
-(and "preview" v4 also with Reviewed-bys added and a cosmetic fix.)
-
--Kees
+ drivers/char/tpm/Makefile            |  16 +-
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-chip.c          |  11 +-
+ drivers/char/tpm/tpm-interface.c     | 841 +++--------------------------------
+ drivers/char/tpm/tpm-sysfs.c         |  52 +--
+ drivers/char/tpm/tpm.h               |  98 ++--
+ drivers/char/tpm/tpm1-cmd.c          | 781 ++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-cmd.c          | 344 +++++++-------
+ drivers/char/tpm/tpm2-space.c        |   2 +-
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  10 +-
+ drivers/char/tpm/tpm_tis_core.c      |  10 +-
+ include/linux/tpm.h                  |  11 +-
+ security/integrity/ima/ima_crypto.c  |   5 +-
+ 13 files changed, 1121 insertions(+), 1062 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm1-cmd.c
 
 -- 
-Kees Cook
-Pixel Security
+2.14.4
