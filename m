@@ -1,60 +1,47 @@
-From: dhowells@redhat.com (David Howells)
-Date: Fri, 28 Sep 2018 00:51:20 +0100
-Subject: [PATCH] keys: Fix the use of the C++ keyword "private" in
-	uapi/linux/keyctl.h
-Message-ID: <153809228025.23030.6619415372705612845.stgit@warthog.procyon.org.uk>
+From: zohar@linux.ibm.com (Mimi Zohar)
+Date: Thu, 27 Sep 2018 20:51:38 -0400
+Subject: [PATCH v4 3/6] ima: refactor ima_init_policy()
+In-Reply-To: <20180926122210.14642-4-nayna@linux.vnet.ibm.com>
+References: <20180926122210.14642-1-nayna@linux.vnet.ibm.com>
+	<20180926122210.14642-4-nayna@linux.vnet.ibm.com>
+Message-ID: <1538095898.3459.140.camel@linux.ibm.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The keyctl_dh_params struct in uapi/linux/keyctl.h contains the symbol
-"private" which means that the header file will cause compilation failure
-if #included in to a C++ program.  Further, the patch that added the same
-struct to the keyutils package named the symbol "priv", not "private".
+Hi Nayna,
 
-The previous attempt to fix this (commit 8a2336e549d3) did so by simply
-renaming the kernel's copy of the field to dh_private, but this then breaks
-existing userspace and as such has been reverted (commit 8c0f9f5b309d).
+On Wed, 2018-09-26 at 17:52 +0530, Nayna Jain wrote:
 
-[And note, to those who think that wrapping the struct in extern "C" {}
- will work: it won't; that only changes how symbol names are presented to
- the assembler and linker.].
+> +static void add_rules(struct ima_rule_entry *entries, int count,
+> +		      enum policy_rule_list file)
 
-Instead, insert an anonymous union around the "private" member and add a
-second member in there with the name "priv" to match the one in the
-keyutils package.  The "private" member is then wrapped in !__cplusplus
-cpp-conditionals to hide it from C++.
+Using "file" to refer to the policy_rule_list enumeration is unusual.
+?Please change the variable name to something more appropriate.
 
-Fixes: ddbb41148724 ("KEYS: Add KEYCTL_DH_COMPUTE command")
-Fixes: 8a2336e549d3 ("uapi/linux/keyctl.h: don't use C++ reserved keyword as a struct member name")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Randy Dunlap <rdunlap@infradead.org>
-cc: Lubomir Rintel <lkundrak@v3.sk>
-cc: James Morris <jmorris@namei.org>
-cc: Mat Martineau <mathew.j.martineau@linux.intel.com>
-cc: Stephan Mueller <smueller@chronox.de>
-cc: Andrew Morton <akpm@linux-foundation.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: stable at vger.kernel.org
----
+Mimi
 
- include/uapi/linux/keyctl.h |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index 7b8c9e19bad1..0f3cb13db8e9 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -65,7 +65,12 @@
- 
- /* keyctl structures */
- struct keyctl_dh_params {
--	__s32 private;
-+	union {
-+#ifndef __cplusplus
-+		__s32 private;
-+#endif
-+		__s32 priv;
-+	};
- 	__s32 prime;
- 	__s32 base;
- };
+> +{
+> +	int i = 0;
+> +
+> +	for (i = 0; i < count; i++) {
+> +		struct ima_rule_entry *entry;
+> +
+> +		if (file & IMA_DEFAULT_POLICY)
+> +			list_add_tail(&entries[i].list, &ima_default_rules);
+> +
+> +		if (file & IMA_CUSTOM_POLICY) {
+> +			entry = kmemdup(&entries[i], sizeof(*entry),
+> +					GFP_KERNEL);
+> +			if (!entry)
+> +				continue;
+> +
+> +			INIT_LIST_HEAD(&entry->list);
+> +			list_add_tail(&entry->list, &ima_policy_rules);
+> +		}
+> +		if (entries[i].action == APPRAISE)
+> +			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
+> +		if (entries[i].func == POLICY_CHECK)
+> +			temp_ima_appraise |= IMA_APPRAISE_POLICY;
+> +	}
+> +}
+> +
