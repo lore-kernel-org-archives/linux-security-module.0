@@ -1,47 +1,88 @@
 From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Sat, 29 Sep 2018 01:30:28 +0300
-Subject: [PATCH v5 14/21] tpm: tpm-interface.c drop unused macros
+Date: Sat, 29 Sep 2018 01:30:27 +0300
+Subject: [PATCH v5 13/21] tpm: add tpm_auto_startup() into tpm-interface.c
 In-Reply-To: <20180928223035.14471-1-tomas.winkler@intel.com>
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
-Message-ID: <20180928223035.14471-15-tomas.winkler@intel.com>
+Message-ID: <20180928223035.14471-14-tomas.winkler@intel.com>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-The commit:
-"tpm_tis: further simplify calculation of ordinal duration"
-left unused macros, we can drop them now.
+Add wrapper tpm_auto_startup() to tpm-interface.c
+instead of open coded decision between TPM 1.x and TPM 2.x
+in tpm-chip.c
 
-Fixes compilation warnings:
-tpm-interface.c:37:0: warning: macro "TPM_PROTECTED_COMMAND" is not used [-Wunused-macros]
-tpm-interface.c:36:0: warning: macro "TSC_MAX_ORDINAL" is not used [-Wunused-macros]
-tpm-interface.c:38:0: warning: macro "TPM_CONNECTION_COMMAND" is not used [-Wunused-macros]
-
-Fixes: f72864300139 ("tpm_tis: further simplify calculation of ordinal duration")
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
 
 V3: New in the series.
 V4: Fix the commit message.
 V5: Resend.
 
- drivers/char/tpm/tpm-interface.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/char/tpm/tpm-chip.c      | 11 +++--------
+ drivers/char/tpm/tpm-interface.c | 15 +++++++++++++++
+ drivers/char/tpm/tpm.h           |  1 +
+ 3 files changed, 19 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 46caadca916a..32db84683c40 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -451,14 +451,9 @@ int tpm_chip_register(struct tpm_chip *chip)
+ {
+ 	int rc;
+ 
+-	if (chip->ops->flags & TPM_OPS_AUTO_STARTUP) {
+-		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+-			rc = tpm2_auto_startup(chip);
+-		else
+-			rc = tpm1_auto_startup(chip);
+-		if (rc)
+-			return rc;
+-	}
++	rc = tpm_auto_startup(chip);
++	if (rc)
++		return rc;
+ 
+ 	tpm_sysfs_add_device(chip);
+ 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index fb142e229f95..98f9a0bbeed9 100644
+index 1ea83a3f1b02..fb142e229f95 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -33,10 +33,6 @@
+@@ -530,6 +530,21 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+ }
+ EXPORT_SYMBOL_GPL(tpm_send);
  
- #include "tpm.h"
- 
--#define TSC_MAX_ORDINAL 12
--#define TPM_PROTECTED_COMMAND 0x00
--#define TPM_CONNECTION_COMMAND 0x40
--
++int tpm_auto_startup(struct tpm_chip *chip)
++{
++	int rc;
++
++	if (!(chip->ops->flags & TPM_OPS_AUTO_STARTUP))
++		return 0;
++
++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
++		rc = tpm2_auto_startup(chip);
++	else
++		rc = tpm1_auto_startup(chip);
++
++	return rc;
++}
++
  /*
-  * Bug workaround - some TPM's don't flush the most
-  * recently changed pcr on suspend, so force the flush
+  * We are about to suspend. Save the TPM state
+  * so that it can be restored.
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index f0963a0a8acd..4ccffbb56864 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -541,6 +541,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ 			 size_t min_rsp_body_length, unsigned int flags,
+ 			 const char *desc);
+ int tpm_get_timeouts(struct tpm_chip *);
++int tpm_auto_startup(struct tpm_chip *chip);
+ 
+ int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
+ int tpm1_do_selftest(struct tpm_chip *chip);
 -- 
 2.14.4
