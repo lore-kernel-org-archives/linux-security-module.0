@@ -1,115 +1,63 @@
-From: tomas.winkler@intel.com (Tomas Winkler)
-Date: Sat, 29 Sep 2018 01:30:20 +0300
-Subject: [PATCH v5 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-In-Reply-To: <20180928223035.14471-1-tomas.winkler@intel.com>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
-Message-ID: <20180928223035.14471-7-tomas.winkler@intel.com>
+From: penguin-kernel@i-love.sakura.ne.jp (Tetsuo Handa)
+Date: Sat, 29 Sep 2018 19:48:23 +0900
+Subject: [PATCH security-next v3 00/29] LSM: Explict LSM ordering
+In-Reply-To: <CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com>
+References: <20180925001832.18322-1-keescook@chromium.org>
+	<e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
+	<CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com>
+Message-ID: <eda428eb-f6e1-f048-a394-251953c388b6@i-love.sakura.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-Move tpm1_pcr_extend to tpm1-cmd.c and remove
-unused pcrextend_header structure and
-EXTEND_PCR_RESULT_SIZE and EXTEND_PCR_RESULT_BODY_SIZE
-defines.
+On 2018/09/29 5:01, Kees Cook wrote:
+> On Fri, Sep 28, 2018 at 8:55 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/24/2018 5:18 PM, Kees Cook wrote:
+>>> v3:
+>>> - add CONFIG_LSM_ENABLE and refactor resulting logic
+>>
+>> Kees, you can add my
+>>
+>>         Reviewed-by:Casey Schaufler <casey@schaufler-ca.com>
+>>
+>> for this entire patch set. Thank you for taking this on, it's
+>> a significant and important chunk of the LSM infrastructure
+>> update.
+> 
+> Thanks!
+> 
+> John, you'd looked at this a bit too -- do the results line up with
+> your expectations?
+> 
+> Any thoughts from SELinux, TOMOYO, or IMA folks?
 
-Fixes warning:
-drivers/char/tpm/tpm-interface.c:609:38: warning: ?pcrextend_header? defined but not used [-Wunused-const-variable=]
- static const struct tpm_input_header pcrextend_header = {
-                                      ^~~~~~~~~~~~~~~~
+I'm OK with this approach. Thank you.
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
 
-V2-V3: Rebase
-V4: Remove defines.
-V5: Resend.
 
- drivers/char/tpm/tpm-interface.c | 28 ----------------------------
- drivers/char/tpm/tpm.h           |  2 ++
- drivers/char/tpm/tpm1-cmd.c      | 21 +++++++++++++++++++++
- 3 files changed, 23 insertions(+), 28 deletions(-)
+Just wondering what is "__lsm_name_##lsm" for...
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 1fa0300f3829..ac73e6ac3d83 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -614,34 +614,6 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- }
- EXPORT_SYMBOL_GPL(tpm_pcr_read);
- 
--#define TPM_ORD_PCR_EXTEND 20
--#define EXTEND_PCR_RESULT_SIZE 34
--#define EXTEND_PCR_RESULT_BODY_SIZE 20
--static const struct tpm_input_header pcrextend_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(34),
--	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
--};
--
--static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
--			   char *log_msg)
--{
--	struct tpm_buf buf;
--	int rc;
--
--	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
--	if (rc)
--		return rc;
--
--	tpm_buf_append_u32(&buf, pcr_idx);
--	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
--
--	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
--			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
--	tpm_buf_destroy(&buf);
--	return rc;
--}
--
- /**
-  * tpm_pcr_extend - extend a PCR value in SHA1 bank.
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index a97d72fcda5b..3fb268f43955 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -549,6 +549,8 @@ int tpm_do_selftest(struct tpm_chip *chip);
- int tpm1_auto_startup(struct tpm_chip *chip);
- int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg);
- unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm_pm_suspend(struct device *dev);
- int tpm_pm_resume(struct device *dev);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 978946748ea3..ec242397e6dc 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -413,3 +413,24 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
- 	return 0;
- }
++#define DEFINE_LSM(lsm)                                                        \
++       static const char __lsm_name_##lsm[] __initconst                \
++               __aligned(1) = #lsm;                                    \
++       static struct lsm_info __lsm_##lsm                              \
++               __used __section(.lsm_info.init)                        \
++               __aligned(sizeof(unsigned long))                        \
++               = {                                                     \
++                       .name = __lsm_name_##lsm,                       \
 +
-+#define TPM_ORD_PCR_EXTEND 20
-+int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-+		    const char *log_msg)
-+{
-+	struct tpm_buf buf;
-+	int rc;
-+
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, pcr_idx);
-+	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-+
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
-+			      TPM_DIGEST_SIZE, 0, log_msg);
-+
-+	tpm_buf_destroy(&buf);
-+	return rc;
-+}
--- 
-2.14.4
++#define END_LSM          }
+
+We could do something like below so that funny END_LSM is not required?
+I felt } like a typo error at the first glance. What we need is to
+gather into one section with appropriate alignment, isn't it?
+
+#define LSM_INFO                                                        \
+	static struct lsm_info __lsm_                                   \
+		__used __section(.lsm_info.init)                        \
+		__aligned(sizeof(unsigned long))                        \
+
+LSM_INFO = {
+	.name = "tomoyo",
+	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+	.init = tomoyo_init,
+};
