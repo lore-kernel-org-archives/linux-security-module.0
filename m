@@ -1,71 +1,38 @@
-From: john.johansen@canonical.com (John Johansen)
-Date: Sat, 29 Sep 2018 11:19:52 -0700
+From: penguin-kernel@i-love.sakura.ne.jp (Tetsuo Handa)
+Date: Sun, 30 Sep 2018 11:36:15 +0900
 Subject: [PATCH security-next v3 00/29] LSM: Explict LSM ordering
-In-Reply-To: <eda428eb-f6e1-f048-a394-251953c388b6@i-love.sakura.ne.jp>
+In-Reply-To: <CAGXu5jLUaFX_jPHoOq1abEAjJdLo29Hr2q=sk07yj4KytW6psQ@mail.gmail.com>
 References: <20180925001832.18322-1-keescook@chromium.org>
 	<e6122c7d-bd29-d081-3c1e-96b7c369d4fe@schaufler-ca.com>
 	<CAGXu5jKQVDW8Wp0ESv2raa0xJnHCCMNqFCzZ5jSVXQ=Dp7FF8A@mail.gmail.com>
 	<eda428eb-f6e1-f048-a394-251953c388b6@i-love.sakura.ne.jp>
-Message-ID: <a24ea200-5387-2e36-a70d-824d28a9758a@canonical.com>
+	<CAGXu5jLUaFX_jPHoOq1abEAjJdLo29Hr2q=sk07yj4KytW6psQ@mail.gmail.com>
+Message-ID: <67c14d95-10f6-37d5-ee8a-c1fb6a6d460a@i-love.sakura.ne.jp>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On 09/29/2018 03:48 AM, Tetsuo Handa wrote:
-> On 2018/09/29 5:01, Kees Cook wrote:
->> On Fri, Sep 28, 2018 at 8:55 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> On 9/24/2018 5:18 PM, Kees Cook wrote:
->>>> v3:
->>>> - add CONFIG_LSM_ENABLE and refactor resulting logic
->>>
->>> Kees, you can add my
->>>
->>>         Reviewed-by:Casey Schaufler <casey@schaufler-ca.com>
->>>
->>> for this entire patch set. Thank you for taking this on, it's
->>> a significant and important chunk of the LSM infrastructure
->>> update.
+On 2018/09/30 3:18, Kees Cook wrote:
+>> Just wondering what is "__lsm_name_##lsm" for...
 >>
->> Thanks!
->>
->> John, you'd looked at this a bit too -- do the results line up with
->> your expectations?
->>
->> Any thoughts from SELinux, TOMOYO, or IMA folks?
+>> +#define DEFINE_LSM(lsm)                                                        \
+>> +       static const char __lsm_name_##lsm[] __initconst                \
+>> +               __aligned(1) = #lsm;                                    \
+>> +       static struct lsm_info __lsm_##lsm                              \
+>> +               __used __section(.lsm_info.init)                        \
+>> +               __aligned(sizeof(unsigned long))                        \
+>> +               = {                                                     \
+>> +                       .name = __lsm_name_##lsm,                       \
+>> +
+>> +#define END_LSM          }
 > 
-> I'm OK with this approach. Thank you.
-> 
-> 
-> 
-> Just wondering what is "__lsm_name_##lsm" for...
-> 
-> +#define DEFINE_LSM(lsm)                                                        \
-> +       static const char __lsm_name_##lsm[] __initconst                \
-> +               __aligned(1) = #lsm;                                    \
-> +       static struct lsm_info __lsm_##lsm                              \
-> +               __used __section(.lsm_info.init)                        \
-> +               __aligned(sizeof(unsigned long))                        \
-> +               = {                                                     \
-> +                       .name = __lsm_name_##lsm,                       \
-> +
-> +#define END_LSM          }
-> 
-> We could do something like below so that funny END_LSM is not required?
-> I felt } like a typo error at the first glance. What we need is to
-> gather into one section with appropriate alignment, isn't it?
-> 
+> I wasn't super happy with the END_LSM thing, but I wanted to be able
+> to declare the name as __initconst, otherwise it needlessly stays in
+> memory after init. That said, it's not a huge deal, and maybe
+> readability trumps a tiny meory savings?
 
-well and Kees was trying to automagically set the name. This threw
-me off too at first and I am still trying to figure out if I would
-prefer something simpler, and more standard like below.
+The value of .name field is a few bytes string, and is not sensitive
+information. Keeping such string in non-__initdata section unlikely
+increases total memory pages required for that module.
 
-> #define LSM_INFO                                                        \
-> 	static struct lsm_info __lsm_                                   \
-> 		__used __section(.lsm_info.init)                        \
-> 		__aligned(sizeof(unsigned long))                        \
-> 
-> LSM_INFO = {
-> 	.name = "tomoyo",
-> 	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-> 	.init = tomoyo_init,
-> };
-> 
+Unless we need to generate unique address of such string for some reason,
+I think that this saving is pointless.
