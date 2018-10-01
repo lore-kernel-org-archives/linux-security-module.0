@@ -3,32 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39946C43143
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 21:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA9EC43143
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 21:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9B92089A
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 21:34:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9B92089A
+	by mail.kernel.org (Postfix) with ESMTP id 7EC4220666
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 21:47:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC4220666
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbeJBEOq (ORCPT
+        id S1726238AbeJBE0w (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Oct 2018 00:14:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51456 "EHLO
+        Tue, 2 Oct 2018 00:26:52 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51610 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726156AbeJBEOq (ORCPT
+        with ESMTP id S1726027AbeJBE0w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Oct 2018 00:14:46 -0400
+        Tue, 2 Oct 2018 00:26:52 -0400
 Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
         by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <john.johansen@canonical.com>)
-        id 1g75qC-0008Vr-4p; Mon, 01 Oct 2018 21:34:56 +0000
-Subject: Re: [PATCH security-next v3 17/29] LSM: Introduce CONFIG_LSM_ENABLE
+        id 1g761p-0000lq-RX; Mon, 01 Oct 2018 21:46:58 +0000
+Subject: Re: [PATCH security-next v3 18/29] LSM: Introduce lsm.enable= and
+ lsm.disable=
 To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
@@ -39,7 +40,7 @@ Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20180925001832.18322-1-keescook@chromium.org>
- <20180925001832.18322-18-keescook@chromium.org>
+ <20180925001832.18322-19-keescook@chromium.org>
 From:   John Johansen <john.johansen@canonical.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
@@ -85,12 +86,12 @@ Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
  qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
  IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
 Organization: Canonical
-Message-ID: <98805d7b-fa52-b4bb-bb66-3008b3d4d23f@canonical.com>
-Date:   Mon, 1 Oct 2018 14:34:52 -0700
+Message-ID: <68e4e323-3216-7e77-2807-c3207126ae68@canonical.com>
+Date:   Mon, 1 Oct 2018 14:46:54 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180925001832.18322-18-keescook@chromium.org>
+In-Reply-To: <20180925001832.18322-19-keescook@chromium.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -99,82 +100,134 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On 09/24/2018 05:18 PM, Kees Cook wrote:
-> To provide a set of default-enabled LSMs at boot, this introduces the
-> new CONFIG_LSM_ENABLE. A value of "all" means all builtin LSMs are
-> enabled by default. Any unlisted LSMs will be implicitly disabled
-> (excepting those with LSM-specific CONFIGs for enabling/disabling).
+> This introduces the "lsm.enable=..." and "lsm.disable=..." boot parameters
+> which each can contain a comma-separated list of LSMs to enable or
+> disable, respectively. The string "all" matches all LSMs.
 > 
-> The behavior of the LSM-specific CONFIGs for SELinux are AppArmor
-> unchanged: the default-enabled state for those LSMs remains controlled
-> through their LSM-specific "enable" CONFIGs.
+> This has very similar functionality to the existing per-LSM enable
+> handling ("apparmor.enabled=...", etc), but provides a centralized
+> place to perform the changes. These parameters take precedent over any
+> LSM-specific boot parameters.
+> 
+> Disabling an LSM means it will not be considered when performing
+> initializations. Enabling an LSM means either undoing a previous
+> LSM-specific boot parameter disabling or a undoing a default-disabled
+> CONFIG setting.
+> 
+> For example: "lsm.disable=apparmor apparmor.enabled=1" will result in
+> AppArmor being disabled. "selinux.enabled=0 lsm.enable=selinux" will
+> result in SELinux being enabled.
 > 
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 
-The patch is fine but I am not sure I like the behavior. I much prefer
-that its an explicit list and nothing is left to implicit. That is
-if there is a conflict between the list and the LSM-specific config
-the LSM is disabled.
+I don't like this. It brings about conflicting kernel params that are
+bound to confuse users. Its pretty easy for a user to understand that
+when they specify a parameter manually at boot, that  it overrides the
+build time default. But conflicting kernel parameters are a lot harder
+to deal with.
+
+I prefer a plain enabled= list being an override of the default build
+time value. Where conflicts with LSM-specific configs always result in
+the LSM being disabled with a complaint about the conflict.
+
+Though I have yet to be convinced its worth the cost, I do recognize
+it is sometimes convenient to disable a single LSM, instead of typing
+in a whole list of what to enable. If we have to have conflicting
+kernel parameters I would prefer that the conflict throw up a warning
+and leaving the LSM with the conflicting config disabled.
 
 
 
 > ---
->  include/linux/lsm_hooks.h | 2 +-
->  security/Kconfig          | 8 ++++++++
->  security/security.c       | 4 +++-
->  3 files changed, 12 insertions(+), 2 deletions(-)
+>  .../admin-guide/kernel-parameters.txt         | 12 ++++++++++
+>  security/Kconfig                              |  4 +++-
+>  security/security.c                           | 22 +++++++++++++++++++
+>  3 files changed, 37 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 95798f212dbf..ab23f1bc6d77 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -2044,7 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
->  struct lsm_info {
->  	const char *name;	/* Populated automatically. */
->  	unsigned long flags;	/* Optional: flags describing LSM */
-> -	int *enabled;		/* Optional: NULL means enabled. */
-> +	int *enabled;		/* Optional: NULL checks CONFIG_LSM_ENABLE */
->  	int (*init)(void);
->  };
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 32d323ee9218..67c90985d2b8 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2276,6 +2276,18 @@
 >  
+>  	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
+>  
+> +	lsm.disable=lsm1,...,lsmN
+> +			[SECURITY] Comma-separated list of LSMs to disable
+> +			at boot time. This overrides "lsm.enable=",
+> +			CONFIG_LSM_ENABLE, and any per-LSM CONFIGs and boot
+> +			parameters.
+> +
+> +	lsm.enable=lsm1,...,lsmN
+> +			[SECURITY] Comma-separated list of LSMs to enable
+> +			at boot time. This overrides any omissions from
+> +			CONFIG_LSM_ENABLE, and any per-LSM CONFIGs and
+> +			boot parameters.
+> +
+>  	machvec=	[IA-64] Force the use of a particular machine-vector
+>  			(machvec) in a generic kernel.
+>  			Example: machvec=hpzx1_swiotlb
 > diff --git a/security/Kconfig b/security/Kconfig
-> index 27d8b2688f75..71306b046270 100644
+> index 71306b046270..1a82a006cc62 100644
 > --- a/security/Kconfig
 > +++ b/security/Kconfig
-> @@ -276,5 +276,13 @@ config DEFAULT_SECURITY
->  	default "apparmor" if DEFAULT_SECURITY_APPARMOR
->  	default "" if DEFAULT_SECURITY_DAC
+> @@ -282,7 +282,9 @@ config LSM_ENABLE
+>  	help
+>  	  A comma-separate list of LSMs to enable by default at boot. The
+>  	  default is "all", to enable all LSM modules at boot. Any LSMs
+> -	  not listed here will be disabled by default.
+> +	  not listed here will be disabled by default. This can be
+> +	  changed with the "lsm.enable=" and "lsm.disable=" boot
+> +	  parameters.
 >  
-> +config LSM_ENABLE
-> +	string "LSMs to enable at boot time"
-> +	default "all"
-> +	help
-> +	  A comma-separate list of LSMs to enable by default at boot. The
-> +	  default is "all", to enable all LSM modules at boot. Any LSMs
-> +	  not listed here will be disabled by default.
-> +
 >  endmenu
 >  
 > diff --git a/security/security.c b/security/security.c
-> index a8107d54b3d3..7ecb9879a863 100644
+> index 7ecb9879a863..456a3f73bc36 100644
 > --- a/security/security.c
 > +++ b/security/security.c
-> @@ -45,6 +45,8 @@ char *lsm_names;
+> @@ -44,6 +44,8 @@ char *lsm_names;
+>  /* Boot-time LSM user choice */
 >  static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
 >  	CONFIG_DEFAULT_SECURITY;
+> +static __initdata const char *chosen_lsm_enable;
+> +static __initdata const char *chosen_lsm_disable;
 >  
-> +static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
-> +
->  static bool debug __initdata;
->  #define init_debug(...)						\
->  	do {							\
-> @@ -182,7 +184,7 @@ static void __init parse_lsm_enable(const char *str,
->  static void __init prepare_lsm_enable(void)
+>  static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
+>  
+> @@ -185,6 +187,10 @@ static void __init prepare_lsm_enable(void)
 >  {
 >  	/* Prepare defaults. */
-> -	parse_lsm_enable("all", default_enabled, true);
-> +	parse_lsm_enable(builtin_lsm_enable, default_enabled, true);
+>  	parse_lsm_enable(builtin_lsm_enable, default_enabled, true);
+> +
+> +	/* Process "lsm.enable=" and "lsm.disable=", if given. */
+> +	parse_lsm_enable(chosen_lsm_enable, set_enabled, true);
+> +	parse_lsm_enable(chosen_lsm_disable, set_enabled, false);
 >  }
 >  
 >  /**
+> @@ -240,6 +246,22 @@ static int __init enable_debug(char *str)
+>  }
+>  __setup("lsm.debug", enable_debug);
+>  
+> +/* Explicitly enable a list of LSMs. */
+> +static int __init enable_lsm(char *str)
+> +{
+> +	chosen_lsm_enable = str;
+> +	return 1;
+> +}
+> +__setup("lsm.enable=", enable_lsm);
+> +
+> +/* Explicitly disable a list of LSMs. */
+> +static int __init disable_lsm(char *str)
+> +{
+> +	chosen_lsm_disable = str;
+> +	return 1;
+> +}
+> +__setup("lsm.disable=", disable_lsm);
+> +
+>  static bool match_last_lsm(const char *list, const char *lsm)
+>  {
+>  	const char *last;
 > 
 
