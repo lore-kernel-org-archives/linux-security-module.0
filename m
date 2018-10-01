@@ -2,75 +2,74 @@ Return-Path: <SRS0=sHE6=MN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A19C43143
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 23:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB15EC43143
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 23:38:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88CE3208AE
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 23:30:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5702E213A2
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 23:38:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="isRL/7vH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88CE3208AE
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZHCJwBH0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5702E213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbeJBGK0 (ORCPT
+        id S1726354AbeJBGSh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Oct 2018 02:10:26 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:43609 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbeJBGK0 (ORCPT
+        Tue, 2 Oct 2018 02:18:37 -0400
+Received: from mail-yb1-f169.google.com ([209.85.219.169]:42961 "EHLO
+        mail-yb1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725936AbeJBGSh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Oct 2018 02:10:26 -0400
-Received: by mail-yw1-f66.google.com with SMTP id j75-v6so31093ywj.10
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 16:30:13 -0700 (PDT)
+        Tue, 2 Oct 2018 02:18:37 -0400
+Received: by mail-yb1-f169.google.com with SMTP id p74-v6so40806ybc.9
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 16:38:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=3Tle4jds1/Rt+dJnj1Rw/VGWW7CU/n0QQhRqzP0o83k=;
-        b=isRL/7vH0X9BuuhU530DkN4rz4LXjHO6pgDDSqhQPOmY0jqT8D3vBIZT9fpJIeHkir
-         MGy/Up8zM+DPNwluf1DK4jkW57puIDNu/zWJS1Uht0CpTumS868bRzvsbJHTLWNg0dXL
-         I9q8OoA3tVaOZ95b5td2ekep9e3oVAtx/G8EM=
+        bh=XlzRVP5lKWv4LNLVaxHuF+5oEpeGtFvtjkJPXnHwLmc=;
+        b=ZHCJwBH0NsNTCoJCYVEVIFVviLZE55GWjH3HNV/YNHhYqDhH43gR8E3SJSlHceYiJT
+         XqKpRcRXN/TJ5mgd5suFztHggkMW6BVtJugZ21BC0tMgFgN+eUTS66ldYbdWO5RV9Ow3
+         oQ82qOIY9CTedRLm9V2PAjd2h5n/bC7Cf0d54=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=3Tle4jds1/Rt+dJnj1Rw/VGWW7CU/n0QQhRqzP0o83k=;
-        b=rM8wQRfK5m8b+y4COa1liufzBGs/d8B1fNCDEfczYpqGuHBZMkVs653TWlyh9Oat8Z
-         J6rdgUZrtmtSiDkkOyNENw7SOt8zY/hhePdHhOODImkOzX9ogsE4Ll/nBX7TP7zC+78l
-         tmzGb0JeDTqikIgNUZmQsZfdseV2sWU+ca2ny7A4mCLEhZsnnnLNcITDeu4MRyGfuJOk
-         rOnRKbqBbdVv1Sol2CXfmiKdi2rTF5Xv9I0bD0skFIF2jn7p0hOkqhEZnUVYEEBSBoDa
-         8ky+RVaq+MSXijUU3krAcMlcI188Aro4ptNCImg6RS7xSGfY0brJ0Ut1eW9laZ0YPt7D
-         +q9g==
-X-Gm-Message-State: ABuFfog2MIFJ3WX7Ko2fNvEMLn6uBGSg8Ta1fj3BM7YzHYQsHsEjp+uN
-        DMQmAMrVfi5XbzSKSbMGzGLwjzY92f8=
-X-Google-Smtp-Source: ACcGV62wA1aERUi1gbCZWRV78h02LpzwBm9adO5MWJOGgja5P9QGniRyXFbZTUKWWgHZ1wkde4mK3w==
-X-Received: by 2002:a81:f00a:: with SMTP id p10-v6mr7256476ywm.511.1538436612213;
-        Mon, 01 Oct 2018 16:30:12 -0700 (PDT)
-Received: from mail-yw1-f50.google.com (mail-yw1-f50.google.com. [209.85.161.50])
-        by smtp.gmail.com with ESMTPSA id u8-v6sm7673360ywl.59.2018.10.01.16.30.10
+        bh=XlzRVP5lKWv4LNLVaxHuF+5oEpeGtFvtjkJPXnHwLmc=;
+        b=jbPmySXcFyiPJsqepxrtLDfwWNI+RW+PAbFEdoU2ZtKSj/Hx2eNE2OK25/MXGDLDvb
+         mnrZRTihgnHX2/UMT5hKmdcCwil9gZ1dEXaaXYS1+LOmuzp7oAsOfL6CVHtbQjtVZPTE
+         f4Wbclu0u/Ks66VG8+85jkvWakNKGxHG5IvGPFpXyV1BkSDhX0X6ToYqS6KWjPtdETV1
+         KXFgJGo1FjDwPLNQwfravJCLSgnDVFAVaVx9nTYL7QTWffalJ8xe9hPOb+Sm8vy6e0YO
+         608wtU89fdjXHxJP8PkCj8XBaJULGdYOW6B5hAz5Q5QWc15jk2xW7Lc+G03XEFD601lH
+         O2+Q==
+X-Gm-Message-State: ABuFfojuY9y0miQXF0/DtzqXRVuRnmKevwZAIgn4JDMpj8wv0mAxqpdQ
+        R/Sf68fJgwMb7yv+m1PK//Xv6feUfwY=
+X-Google-Smtp-Source: ACcGV63XwZtQy5YTMpbqWynRVTy+B/y/9DdkkPP1HYQpE5dwIDgE/DJWIUqXEikXD9/s+BJ7vcUOFw==
+X-Received: by 2002:a25:83cb:: with SMTP id v11-v6mr7225244ybm.477.1538437102624;
+        Mon, 01 Oct 2018 16:38:22 -0700 (PDT)
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
+        by smtp.gmail.com with ESMTPSA id p128-v6sm7383862ywp.65.2018.10.01.16.38.21
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 01 Oct 2018 16:30:10 -0700 (PDT)
-Received: by mail-yw1-f50.google.com with SMTP id m129-v6so47938ywc.1
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 16:30:10 -0700 (PDT)
-X-Received: by 2002:a81:2288:: with SMTP id i130-v6mr7354810ywi.288.1538436609855;
- Mon, 01 Oct 2018 16:30:09 -0700 (PDT)
+        Mon, 01 Oct 2018 16:38:21 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 5-v6so53079ybf.3
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 16:38:21 -0700 (PDT)
+X-Received: by 2002:a25:238d:: with SMTP id j135-v6mr7127848ybj.137.1538437100765;
+ Mon, 01 Oct 2018 16:38:20 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 16:30:08 -0700 (PDT)
-In-Reply-To: <9b3e1733-7cfa-5047-1422-0f9d92d88d39@canonical.com>
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 16:38:20 -0700 (PDT)
+In-Reply-To: <CAGXu5jJheexJgnJ+OWaDoRFraqm9yxj1Vr290tfZ7kELBPUpAw@mail.gmail.com>
 References: <20180925001832.18322-1-keescook@chromium.org> <20180925001832.18322-19-keescook@chromium.org>
  <68e4e323-3216-7e77-2807-c3207126ae68@canonical.com> <CAGXu5j+jzmFh-iuXDVHQTq7e=mftpfaqS-45TP_UR3B+qtGcLQ@mail.gmail.com>
- <9b3e1733-7cfa-5047-1422-0f9d92d88d39@canonical.com>
+ <9b3e1733-7cfa-5047-1422-0f9d92d88d39@canonical.com> <CAGXu5jJheexJgnJ+OWaDoRFraqm9yxj1Vr290tfZ7kELBPUpAw@mail.gmail.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 1 Oct 2018 16:30:08 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJheexJgnJ+OWaDoRFraqm9yxj1Vr290tfZ7kELBPUpAw@mail.gmail.com>
-Message-ID: <CAGXu5jJheexJgnJ+OWaDoRFraqm9yxj1Vr290tfZ7kELBPUpAw@mail.gmail.com>
+Date:   Mon, 1 Oct 2018 16:38:20 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJ6ZDs1hZTX9jS9w2MmecbcbMcn6iAmGuyCBbThyjv_iA@mail.gmail.com>
+Message-ID: <CAGXu5jJ6ZDs1hZTX9jS9w2MmecbcbMcn6iAmGuyCBbThyjv_iA@mail.gmail.com>
 Subject: Re: [PATCH security-next v3 18/29] LSM: Introduce lsm.enable= and lsm.disable=
 To:     John Johansen <john.johansen@canonical.com>
 Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
@@ -88,222 +87,23 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 1, 2018 at 3:48 PM, John Johansen
-<john.johansen@canonical.com> wrote:
-> On 10/01/2018 03:27 PM, Kees Cook wrote:
->> On Mon, Oct 1, 2018 at 2:46 PM, John Johansen
->> <john.johansen@canonical.com> wrote:
->>> On 09/24/2018 05:18 PM, Kees Cook wrote:
->>>> This introduces the "lsm.enable=..." and "lsm.disable=..." boot parameters
->>>> which each can contain a comma-separated list of LSMs to enable or
->>>> disable, respectively. The string "all" matches all LSMs.
->>>>
->>>> This has very similar functionality to the existing per-LSM enable
->>>> handling ("apparmor.enabled=...", etc), but provides a centralized
->>>> place to perform the changes. These parameters take precedent over any
->>>> LSM-specific boot parameters.
->>>>
->>>> Disabling an LSM means it will not be considered when performing
->>>> initializations. Enabling an LSM means either undoing a previous
->>>> LSM-specific boot parameter disabling or a undoing a default-disabled
->>>> CONFIG setting.
->>>>
->>>> For example: "lsm.disable=apparmor apparmor.enabled=1" will result in
->>>> AppArmor being disabled. "selinux.enabled=0 lsm.enable=selinux" will
->>>> result in SELinux being enabled.
->>>>
->>>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>>
->>> I don't like this. It brings about conflicting kernel params that are
->>> bound to confuse users. Its pretty easy for a user to understand that
->>> when they specify a parameter manually at boot, that  it overrides the
->>> build time default. But conflicting kernel parameters are a lot harder
->>> to deal with.
->>>
->>> I prefer a plain enabled= list being an override of the default build
->>> time value. Where conflicts with LSM-specific configs always result in
->>> the LSM being disabled with a complaint about the conflict.
->>>
->>> Though I have yet to be convinced its worth the cost, I do recognize
->>> it is sometimes convenient to disable a single LSM, instead of typing
->>> in a whole list of what to enable. If we have to have conflicting
->>> kernel parameters I would prefer that the conflict throw up a warning
->>> and leaving the LSM with the conflicting config disabled.
->>
->> Alright, let's drill down a bit more. I thought I had all the
->> requirements sorted out here. :)
->>
->> AppArmor and SELinux are "special" here in that they have both:
->>
->> - CONFIG for enable-ness
->> - boot param for enable-ness
->>
->> Now, the way this worked in the past was that combined with
->> CONFIG_DEFAULT_SECURITY and the link-time ordering, this resulted in a
->> way to get the LSM enabled, skipped, etc. But it was highly CONFIG
->> dependent.
->>
->> SELinux does:
->>
->> #ifdef CONFIG_SECURITY_SELINUX_BOOTPARAM
->> int selinux_enabled = CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE;
->>
->> static int __init selinux_enabled_setup(char *str)
->> {
->>         unsigned long enabled;
->>         if (!kstrtoul(str, 0, &enabled))
->>                 selinux_enabled = enabled ? 1 : 0;
->>         return 1;
->> }
->> __setup("selinux=", selinux_enabled_setup);
->> #else
->> int selinux_enabled = 1;
->> #endif
->> ...
->>         if (!security_module_enable("selinux")) {
->>                 selinux_enabled = 0;
->>                 return 0;
->>         }
->>
->>         if (!selinux_enabled) {
->>                 pr_info("SELinux:  Disabled at boot.\n");
->>                 return 0;
->>         }
->>
->>
->> AppArmor does:
->>
->> /* Boot time disable flag */
->> static bool apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
->> module_param_named(enabled, apparmor_enabled, bool, S_IRUGO);
->>
->> static int __init apparmor_enabled_setup(char *str)
->> {
->>         unsigned long enabled;
->>         int error = kstrtoul(str, 0, &enabled);
->>         if (!error)
->>                 apparmor_enabled = enabled ? 1 : 0;
->>         return 1;
->> }
->>
->> __setup("apparmor=", apparmor_enabled_setup);
->> ...
->>         if (!apparmor_enabled || !security_module_enable("apparmor")) {
->>                 aa_info_message("AppArmor disabled by boot time parameter");
->>                 apparmor_enabled = false;
->>                 return 0;
->>         }
->>
->>
->> Smack and TOMOYO each do:
->>
->>         if (!security_module_enable("smack"))
->>                 return 0;
->>
->>         if (!security_module_enable("tomoyo"))
->>                 return 0;
->>
->>
->> Capability, Integrity, Yama, and LoadPin always run init. (This series
->> fixes LoadPin to separate enable vs enforce, so we can ignore its
->> "enable" setting, which isn't an "am I active?" boolean -- its init
->> was always run.) With the enable logic is lifted out of the LSMs, we
->> want to have "implicit enable" for 6 of 8 of the LSMs. (Which is why I
->> had originally suggested CONFIG_LSM_DISABLE, since the normal state is
->> enabled.) But given your feedback, I made this "implicit disable" and
->> added CONFIG_LSM_ENABLE instead. (For which "CONFIG_LSM_ENABLE=all"
->> gets the same results.)
->>
->>
->> I think, then, the first question (mainly for you and Paul) is:
->>
->> Should we remove CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE and
->> CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE in favor of only
->> CONFIG_LSM_ENABLE?
->>
->
-> We can remove the Kconfig for the apparmor bootparam value. In fact I
-> will attach that patch below. I can't get rid of the parameter as it
-> is part of the userspace api. There are tools and applications
-> checking /sys/module/apparmor/parameters/enabled
->
-> but we can certainly default it to enabled and make it work only as a
-> runtime kernel parameter to disable apparmor which is how it has been
-> traditionally been used.
->
->> The answer will affect the next question: what should be done with the
->> boot parameters? AppArmor has two ways to change enablement:
->> apparmor=0/1 and apparmor.enabled=0/1. SELinux just has selinux=0/1.
->> Should those be removed in favor of "lsm.enable=..."? (And if they're
->> not removed, how do people imagine they should interact?)
->
-> I am not against removing the apparmor one, it does mean retraining
-> users but it is seldmon used so it may be worth dropping. If we keep
-> it, it should be a disable only flag that where the use of apparmor=0
-> or apparmor.enable=0 (same thing) means apparmor is disabled.
+On Mon, Oct 1, 2018 at 4:30 PM, Kees Cook <keescook@chromium.org> wrote:
+> If we keep it, "apparmor=0 lsm_enable=apparmor" would mean it's
+> enabled. Is that okay?
 
-If we keep it, "apparmor=0 lsm_enable=apparmor" would mean it's
-enabled. Is that okay?
+Actually, what the v3 series does right now is leaves AppArmor and
+SELinux alone -- whatever they configured for enable/disable is left
+alone.
 
-> ---
->
-> commit 367b8a47105c68fa170bdd14b0204555eb930476
-> Author: John Johansen <john.johansen@canonical.com>
-> Date:   Mon Oct 1 15:46:02 2018 -0700
->
->     apparmor: remove apparmor boot param config
->
->     The boot param value is only ever used as a means to disable apparmor.
->     Get rid of the Kconfig and a default the parameter to true.
->
->     Signed-off-by: John Johansen <john.johansen@canonical.com>
->
-> diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-> index b6b68a7750ce..3de21f46c82a 100644
-> --- a/security/apparmor/Kconfig
-> +++ b/security/apparmor/Kconfig
-> @@ -14,22 +14,6 @@ config SECURITY_APPARMOR
->
->           If you are unsure how to answer this question, answer N.
->
-> -config SECURITY_APPARMOR_BOOTPARAM_VALUE
-> -       int "AppArmor boot parameter default value"
-> -       depends on SECURITY_APPARMOR
-> -       range 0 1
-> -       default 1
-> -       help
-> -         This option sets the default value for the kernel parameter
-> -         'apparmor', which allows AppArmor to be enabled or disabled
-> -          at boot.  If this option is set to 0 (zero), the AppArmor
-> -         kernel parameter will default to 0, disabling AppArmor at
-> -         boot.  If this option is set to 1 (one), the AppArmor
-> -         kernel parameter will default to 1, enabling AppArmor at
-> -         boot.
-> -
-> -         If you are unsure how to answer this question, answer 1.
-> -
->  config SECURITY_APPARMOR_HASH
->         bool "Enable introspection of sha1 hashes for loaded profiles"
->         depends on SECURITY_APPARMOR
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index f09fea0b4db7..8e83ee52a0a3 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1303,7 +1303,7 @@ bool aa_g_paranoid_load = true;
->  module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
->
->  /* Boot time disable flag */
-> -static bool apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
-> +static bool apparmor_enabled = true;
+The problem I have is when processing CONFIG_LSM_ENABLE ... what do I
+do with the existing "enable" flag? It's set by both
+CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE and apparmor=0/1.
 
-In the new world, this wouldn't be "= true" since its state would be
-controlled by CONFIG_LSM_ENABLE (and lsm.enable=...). Is that okay?
+Right now I can't tell the difference between someone booting with
+apparmor=0 or CONFIG_LSM_ENABLE not including apparmor.
 
->  module_param_named(enabled, apparmor_enabled, bool, S_IRUGO);
->
->  static int __init apparmor_enabled_setup(char *str)
-
-I'll add this to the series, thanks!
+i.e. how do I mix CONFIG_LSM_ENABLE with apparmor=0/1? (assuming
+CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE has been removed)
 
 -Kees
 
