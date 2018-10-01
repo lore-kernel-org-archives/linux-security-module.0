@@ -1,36 +1,120 @@
-From: rostedt@goodmis.org (Steven Rostedt)
-Date: Sun, 30 Sep 2018 19:25:26 -0400
-Subject: [PATCH security-next v3 04/29] LSM: Remove initcall tracing
-In-Reply-To: <CAGXu5jJyL7FuLRj1XxujpGs9=wUQgS4dRfeGB+HUBqy4mkEBhQ@mail.gmail.com>
-References: <20180925001832.18322-1-keescook@chromium.org>
-	<20180925001832.18322-5-keescook@chromium.org>
-	<20180926123522.4080d9eb@vmware.local.home>
-	<CAGXu5jJyL7FuLRj1XxujpGs9=wUQgS4dRfeGB+HUBqy4mkEBhQ@mail.gmail.com>
-Message-ID: <20180930192526.4480231c@vmware.local.home>
+From: david@fromorbit.com (Dave Chinner)
+Date: Mon, 1 Oct 2018 10:25:21 +1000
+Subject: Leaking Path in XFS's ioctl interface(missing LSM check)
+In-Reply-To: <20180930151652.6975610c@alans-desktop>
+References: <5EF0D46A-C098-4B51-AD13-225FFCA35D4C@vt.edu>
+	<20180926013329.GD31060@dastard>
+	<20180926192426.472360ea@alans-desktop>
+	<20180927013812.GF31060@dastard>
+	<20180930151652.6975610c@alans-desktop>
+Message-ID: <20181001002521.GM31060@dastard>
 To: linux-security-module@vger.kernel.org
 List-Id: linux-security-module.vger.kernel.org
 
-On Wed, 26 Sep 2018 11:35:21 -0700
-Kees Cook <keescook@chromium.org> wrote:
-
-> On Wed, Sep 26, 2018 at 9:35 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > On Mon, 24 Sep 2018 17:18:07 -0700
-> > Kees Cook <keescook@chromium.org> wrote:
-> >  
-> >> This partially reverts commit 58eacfffc417 ("init, tracing: instrument
-> >> security and console initcall trace events") since security init calls
-> >> are about to no longer resemble regular init calls.  
-> >
-> > I'm not against the change, but how much are they going to "no longer
-> > resemble regular init calls"?  
+On Sun, Sep 30, 2018 at 03:16:52PM +0100, Alan Cox wrote:
+> > > CAP_SYS_ADMIN is also a bit weird because low level access usually
+> > > implies you can bypass access controls so you should also check
+> > > CAP_SYS_DAC ?  
+> > 
+> > Do you mean CAP_DAC_READ_SEARCH as per the newer handle syscalls?
+> > But that only allows bypassing directory search operations, so maybe
+> > you mean CAP_DAC_OVERRIDE?
 > 
-> My take on "regular" init calls is that they're always run, link-time
-> ordered, etc. The changes proposed here will make it so not all
-> initialization are run depending on runtime configurations, ordering
-> will be flexible, etc.
->
+> It depends what the ioctl allows you to do. If it allows me to bypass
+> DAC and manipulate the file system to move objects around then it's a
+> serious issue.
 
-Will it still be a good idea to have a tracepoint for those calls?
-Perhaps not an  initcall tracepoint but some other kind?
+These interfaces have always been allowed to do that. You can't do
+transparent online background defragmentation without bypassing DAC
+and moving objects around. You can't scrub metadata and data without
+bypassing DAC. You can't do dedupe without bypassing /some level/ of
+DAC to get access to the filesystem used space map and the raw block
+device to hash the data. But the really important access control for
+dedupe - avoiding deduping data across files at different security
+levels - isn't controlled at all.
 
--- Steve
+> The underlying problem is if CAP_SYS_ADMIN is able to move objects around
+> then I can move modules around.
+
+Yup, anything with direct access to block devices can do that. Many
+filesystem and storage utilities are given direct access to the
+block device, because that's what they need to work.
+
+e.g. in DM land, the control ioctls (ctl_ioctl()) are protected by:
+
+        /* only root can play with this */
+        if (!capable(CAP_SYS_ADMIN))
+                return -EACCES;
+
+Think about it - if DM control ioctls only require CAP_SYS_ADMIN,
+then if have that cap you can use DM to remap any block in a block
+device to any other block. You don't need to the filesystem to move
+stuff around, it can be moved around without the filesystem knowing
+anything about it.
+
+> We already have a problem with
+> CAP_DAC_OVERRIDE giving you CAP_SYS_RAWIO (ie totally owning the machine)
+> unless the modules are signed, if xfs allows ADMIN as well then
+> CAP_SYS_ADMIN is much easier to obtain and you'd get total system
+> ownership from it.
+
+Always been the case, and it's not isolated to XFS.
+
+$ git grep CAP_SYS_ADMIN fs/ |wc -l
+139
+$ git grep CAP_SYS_ADMIN block/ |wc -l
+16
+$ git grep CAP_SYS_ADMIN drivers/block/ drivers/scsi |wc -l
+88
+
+The "CAP_SYS_ADMIN for ioctls" trust model in the storage stack
+extends both above and below the filesystem. If you don't trust
+CAP_SYS_ADMIN, then you are basically saying that you cannot trust
+your storage management and maintenance utilities at any level.
+
+
+> Not good.
+> 
+> > Regardless, this horse bolted long before those syscalls were
+> > introduced.  The time to address this issue was when XFS was merged
+> > into linux all those years ago, back when the apps that run in
+> > highly secure restricted environments that use these interfaces were
+> > being ported to linux. We can't change this now without breaking
+> > userspace....
+> 
+> That's what people said about setuid shell scripts.
+
+Completely different. setuid shell scripts got abused as a hack for
+the lazy to avoid setting up permissions properly and hence were
+easily exploited.
+
+The storage stack is completely dependent on a simplisitic layered
+trust model and that root (CAP_SYS_ADMIN) is god. The storage trust
+model falls completely apart if we don't have a trusted root user to
+administer all layers of the storage stack.
+
+This isn't the first time I've raised this issue - I raised it
+back when the user namespace stuff was ram-roaded into the kernel,
+and was essentially ignored by the userns people. As a result, we
+end up with all the storage management ioctls restricted to the
+initns where we have trusted CAP_SYS_ADMIN users.
+
+I've also raised it more recently in the unprivileged mount
+discussions (so untrusted root in containers can mount filesystems)
+- no solution to the underlying trust model deficiencies was found
+in those discussions, either. Instead, filesystems that can
+be mounted by untrusted users (i.e. FUSE) have a special flag in
+their fstype definition to say this is allowed.
+
+Systems restricted by LSMs to the point where CAP_SYS_ADMIN is not
+trusted have exactly the same issues. i.e. there's nobody trusted by
+the kernel to administer the storage stack, and nobody has defined a
+workable security model that can prevent untrusted users from
+violating the existing storage trust model....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david at fromorbit.com
