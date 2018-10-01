@@ -2,84 +2,179 @@ Return-Path: <SRS0=sHE6=MN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C82C00449
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 21:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39946C43143
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 21:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F65B2145D
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 21:23:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F65B2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id DC9B92089A
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 21:34:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9B92089A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726156AbeJBEDD (ORCPT
+        id S1726174AbeJBEOq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Oct 2018 00:03:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725878AbeJBEDD (ORCPT
+        Tue, 2 Oct 2018 00:14:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51456 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbeJBEOq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Oct 2018 00:03:03 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8649B208AE;
-        Mon,  1 Oct 2018 21:23:16 +0000 (UTC)
-Date:   Mon, 1 Oct 2018 17:23:15 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        Tue, 2 Oct 2018 00:14:46 -0400
+Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1g75qC-0008Vr-4p; Mon, 01 Oct 2018 21:34:56 +0000
+Subject: Re: [PATCH security-next v3 17/29] LSM: Introduce CONFIG_LSM_ENABLE
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         "Schaufler, Casey" <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH security-next v3 04/29] LSM: Remove initcall tracing
-Message-ID: <20181001172315.225d18dc@gandalf.local.home>
-In-Reply-To: <b169724f-c6c2-f4c0-806b-c8e23819ea6a@canonical.com>
 References: <20180925001832.18322-1-keescook@chromium.org>
-        <20180925001832.18322-5-keescook@chromium.org>
-        <b169724f-c6c2-f4c0-806b-c8e23819ea6a@canonical.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+ <20180925001832.18322-18-keescook@chromium.org>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <98805d7b-fa52-b4bb-bb66-3008b3d4d23f@canonical.com>
+Date:   Mon, 1 Oct 2018 14:34:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180925001832.18322-18-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 1 Oct 2018 14:07:55 -0700
-John Johansen <john.johansen@canonical.com> wrote:
+On 09/24/2018 05:18 PM, Kees Cook wrote:
+> To provide a set of default-enabled LSMs at boot, this introduces the
+> new CONFIG_LSM_ENABLE. A value of "all" means all builtin LSMs are
+> enabled by default. Any unlisted LSMs will be implicitly disabled
+> (excepting those with LSM-specific CONFIGs for enabling/disabling).
+> 
+> The behavior of the LSM-specific CONFIGs for SELinux are AppArmor
+> unchanged: the default-enabled state for those LSMs remains controlled
+> through their LSM-specific "enable" CONFIGs.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-> On 09/24/2018 05:18 PM, Kees Cook wrote:
-> > This partially reverts commit 58eacfffc417 ("init, tracing: instrument
-> > security and console initcall trace events") since security init calls
-> > are about to no longer resemble regular init calls.
-> > 
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > Cc: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-> > Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > Cc: linux-security-module@vger.kernel.org
-> > Signed-off-by: Kees Cook <keescook@chromium.org>  
-> 
-> 
-> Reviewed-by: John Johansen <john.johansen@canonical.com>
-> 
-> though I do think it would be a good idea to add a new set
-> of trace points, but that can come as a separate patch
-> 
->
+The patch is fine but I am not sure I like the behavior. I much prefer
+that its an explicit list and nothing is left to implicit. That is
+if there is a conflict between the list and the LSM-specific config
+the LSM is disabled.
 
-Agreed.
 
--- Steve
+
+> ---
+>  include/linux/lsm_hooks.h | 2 +-
+>  security/Kconfig          | 8 ++++++++
+>  security/security.c       | 4 +++-
+>  3 files changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 95798f212dbf..ab23f1bc6d77 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -2044,7 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>  struct lsm_info {
+>  	const char *name;	/* Populated automatically. */
+>  	unsigned long flags;	/* Optional: flags describing LSM */
+> -	int *enabled;		/* Optional: NULL means enabled. */
+> +	int *enabled;		/* Optional: NULL checks CONFIG_LSM_ENABLE */
+>  	int (*init)(void);
+>  };
+>  
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 27d8b2688f75..71306b046270 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -276,5 +276,13 @@ config DEFAULT_SECURITY
+>  	default "apparmor" if DEFAULT_SECURITY_APPARMOR
+>  	default "" if DEFAULT_SECURITY_DAC
+>  
+> +config LSM_ENABLE
+> +	string "LSMs to enable at boot time"
+> +	default "all"
+> +	help
+> +	  A comma-separate list of LSMs to enable by default at boot. The
+> +	  default is "all", to enable all LSM modules at boot. Any LSMs
+> +	  not listed here will be disabled by default.
+> +
+>  endmenu
+>  
+> diff --git a/security/security.c b/security/security.c
+> index a8107d54b3d3..7ecb9879a863 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -45,6 +45,8 @@ char *lsm_names;
+>  static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
+>  	CONFIG_DEFAULT_SECURITY;
+>  
+> +static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
+> +
+>  static bool debug __initdata;
+>  #define init_debug(...)						\
+>  	do {							\
+> @@ -182,7 +184,7 @@ static void __init parse_lsm_enable(const char *str,
+>  static void __init prepare_lsm_enable(void)
+>  {
+>  	/* Prepare defaults. */
+> -	parse_lsm_enable("all", default_enabled, true);
+> +	parse_lsm_enable(builtin_lsm_enable, default_enabled, true);
+>  }
+>  
+>  /**
+> 
+
