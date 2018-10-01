@@ -2,194 +2,159 @@ Return-Path: <SRS0=sHE6=MN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02698C00449
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 20:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B294DC43143
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 20:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1EF5205C9
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 20:15:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1EF5205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id 715AA20666
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 20:25:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ru8JS84H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715AA20666
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbeJBCym (ORCPT
+        id S1726238AbeJBDEj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Oct 2018 22:54:42 -0400
-Received: from namei.org ([65.99.196.166]:34642 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbeJBCyl (ORCPT
+        Mon, 1 Oct 2018 23:04:39 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:34161 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbeJBDEg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Oct 2018 22:54:41 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w91KEkIi015853;
-        Mon, 1 Oct 2018 20:14:46 GMT
-Date:   Tue, 2 Oct 2018 06:14:46 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-cc:     Jann Horn <jannh@google.com>, cyphar@cyphar.com,
-        jlayton@kernel.org, Bruce Fields <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>, shuah@kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, christian@brauner.io,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, dev@opencontainers.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH 0/3] namei: implement various scoping AT_* flags
-In-Reply-To: <0ca12a6e-a86b-5d50-40b9-e76c1a4bc6a0@digikod.net>
-Message-ID: <alpine.LRH.2.21.1810020610290.14406@namei.org>
-References: <20180929103453.12025-1-cyphar@cyphar.com> <39d64180-73d5-6f27-e455-956143a5b5d3@digikod.net> <CAG48ez1CUHTKrpbwJxXkYoUKm5eYV15LuRRO+dXveo=MQvjJkA@mail.gmail.com> <0ca12a6e-a86b-5d50-40b9-e76c1a4bc6a0@digikod.net>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Mon, 1 Oct 2018 23:04:36 -0400
+Received: by mail-yw1-f67.google.com with SMTP id m129-v6so6100477ywc.1
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 13:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=hjY4lzU/sfNIL0UgF406c5hYxrb3YbgauVtL0B1K3fA=;
+        b=Ru8JS84HsxnScxcrZ9Vj6axAD6eiyCGQoJ4CKtP2ix9DYoJjVW5g1nVtWlTqqGh5V3
+         s6bmg++sG7WZY+mpLivWUK9D1mVTzaPsGQ+imgM2G7VQZ+dSfvG1Vzs1pwM4EG1OcoCj
+         JYq34mYgmZyql9PyoKCtHy5apFpo/vuRV7ejc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hjY4lzU/sfNIL0UgF406c5hYxrb3YbgauVtL0B1K3fA=;
+        b=QeSXWEcj8PX3DDcJ2PsA+J8/6BEnI//zDR2XeZyV1HXLEYRcnhPn13QMp1vKwjCMkx
+         SE4jy/zCIH3z5VP9irxrBAPCbrxsJcOx8e47s2sy5/EoToc6P5d1ZVh/O860OKkm/WaX
+         ows2XlkedMwuOtZ6Tfgpp03pz0G/C8y6Eh+kQ/RR2xKp/MX2V+FCzP2udvPWgPTLwv7b
+         t5Xi4A7Ey+9cdAaL3j2WwtKxRoyrj8MvzPqzvay6N+mM9NlLIB7dhtkv1NB6sKTd+r6A
+         oWBYN/5cpqI51BCtQtp6rQ7oxz0rOPzCS/gpHCqRY94ZBDV2Q5bN2R5a8EXxHFVFzymR
+         xnpA==
+X-Gm-Message-State: ABuFfojM7+8LKRDITGD/PgJc8DSyIz5VbLJQ3VQzI67/TQAolIJ5dgUl
+        IizyHgubrIHCuWdmv+sl0WFqf6mkksc=
+X-Google-Smtp-Source: ACcGV61riRKl5f2a9pdr5EgO7j234QZjkHY4b8fBodbhb/EQKrgwaPP0b94WYvN6O3yh2y9j3m+OJg==
+X-Received: by 2002:a81:3389:: with SMTP id z131-v6mr6803433ywz.398.1538425504860;
+        Mon, 01 Oct 2018 13:25:04 -0700 (PDT)
+Received: from mail-yw1-f45.google.com (mail-yw1-f45.google.com. [209.85.161.45])
+        by smtp.gmail.com with ESMTPSA id l30-v6sm13237914ywa.104.2018.10.01.13.25.03
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 13:25:03 -0700 (PDT)
+Received: by mail-yw1-f45.google.com with SMTP id e201-v6so6090127ywa.3
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 13:25:03 -0700 (PDT)
+X-Received: by 2002:a81:2288:: with SMTP id i130-v6mr7015532ywi.288.1538425502937;
+ Mon, 01 Oct 2018 13:25:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-1069902232-1538424886=:14406"
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 13:25:02 -0700 (PDT)
+In-Reply-To: <20180927214917.10486-1-zsm@chromium.org>
+References: <20180927214917.10486-1-zsm@chromium.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 1 Oct 2018 13:25:02 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+MftDkJXP-ufpCwKV=yXWXavwpfnauGXJqbZjeXrkY4A@mail.gmail.com>
+Message-ID: <CAGXu5j+MftDkJXP-ufpCwKV=yXWXavwpfnauGXJqbZjeXrkY4A@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: Fix uninitialized value in aa_split_fqname
+To:     John Johansen <john.johansen@canonical.com>,
+        Zubin Mithra <zsm@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, Sep 27, 2018 at 2:49 PM, Zubin Mithra <zsm@chromium.org> wrote:
+> Syzkaller reported a OOB-read with the stacktrace below. This occurs
+> inside __aa_lookupn_ns as `n` is not initialized. `n` is obtained from
+> aa_splitn_fqname. In cases where `name` is invalid, aa_splitn_fqname
+> returns without initializing `ns_name` and `ns_len`.
+>
+> Fix this by always initializing `ns_name` and `ns_len`.
+>
+>         __dump_stack lib/dump_stack.c:77 [inline]
+>         dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
+>         print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
+>         kasan_report_error mm/kasan/report.c:354 [inline]
+>         kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
+>         __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+>         memcmp+0xe3/0x160 lib/string.c:861
+>         strnstr+0x4b/0x70 lib/string.c:934
+>         __aa_lookupn_ns+0xc1/0x570 security/apparmor/policy_ns.c:209
+>         aa_lookupn_ns+0x88/0x1e0 security/apparmor/policy_ns.c:240
+>         aa_fqlookupn_profile+0x1b9/0x1010 security/apparmor/policy.c:468
+>         fqlookupn_profile+0x80/0xc0 security/apparmor/label.c:1844
+>         aa_label_strn_parse+0xa3a/0x1230 security/apparmor/label.c:1908
+>         aa_label_parse+0x42/0x50 security/apparmor/label.c:1943
+>         aa_change_profile+0x513/0x3510 security/apparmor/domain.c:1362
+>         apparmor_setprocattr+0xaa4/0x1150 security/apparmor/lsm.c:658
+>         security_setprocattr+0x66/0xc0 security/security.c:1298
+>         proc_pid_attr_write+0x301/0x540 fs/proc/base.c:2555
+>         __vfs_write+0x119/0x9f0 fs/read_write.c:485
+>         vfs_write+0x1fc/0x560 fs/read_write.c:549
+>         ksys_write+0x101/0x260 fs/read_write.c:598
+>         __do_sys_write fs/read_write.c:610 [inline]
+>         __se_sys_write fs/read_write.c:607 [inline]
+>         __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+>         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>         entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Fixes: 3b0aaf5866bf ("apparmor: add lib fn to find the "split" for fqnames")
+> Reported-by: syzbot+61e4b490d9d2da591b50@syzkaller.appspotmail.com
+> Signed-off-by: Zubin Mithra <zsm@chromium.org>
 
---1665246916-1069902232-1538424886=:14406
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-On Mon, 1 Oct 2018, Mickaël Salaün wrote:
-
-> Another way to apply a security policy could be to tied it to a file
-> descriptor, similarly to Capsicum, which could enable to create
-> programmable (real) capabilities. This way, it would be possible to
-> "wrap" a file descriptor with a Landlock program and use it with
-> FD-based syscalls or pass it to other processes. This would not require
-> changes to the FS subsystem, but only the Landlock LSM code. This isn't
-> done yet but I plan to add this new way to restrict operations on file
-> descriptors.
-
-Very interesting!
-
-This could possibly be an LSM which stacks/integrates with other LSMs to 
-enforce MAC of object capabilities.
+-Kees
 
 
+> ---
+>  security/apparmor/lib.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
+> index 974affe50531..76491e7f4177 100644
+> --- a/security/apparmor/lib.c
+> +++ b/security/apparmor/lib.c
+> @@ -90,10 +90,12 @@ const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
+>         const char *end = fqname + n;
+>         const char *name = skipn_spaces(fqname, n);
+>
+> -       if (!name)
+> -               return NULL;
+>         *ns_name = NULL;
+>         *ns_len = 0;
+> +
+> +       if (!name)
+> +               return NULL;
+> +
+>         if (name[0] == ':') {
+>                 char *split = strnchr(&name[1], end - &name[1], ':');
+>                 *ns_name = skipn_spaces(&name[1], end - &name[1]);
+> --
+> 2.19.0.605.g01d371f741-goog
+>
 
-> 
-> Anyway, for the use case you mentioned, the AT_BENEATH flag(s) should be
-> simple to use and enough for now. We must be careful of the hardcoded
-> policy though.
-> 
-> 
-> > 
-> >> On 9/29/18 12:34, Aleksa Sarai wrote:
-> >>> The need for some sort of control over VFS's path resolution (to avoid
-> >>> malicious paths resulting in inadvertent breakouts) has been a very
-> >>> long-standing desire of many userspace applications. This patchset is a
-> >>> revival of Al Viro's old AT_NO_JUMPS[1] patchset with a few additions.
-> >>>
-> >>> The most obvious change is that AT_NO_JUMPS has been split as dicussed
-> >>> in the original thread, along with a further split of AT_NO_PROCLINKS
-> >>> which means that each individual property of AT_NO_JUMPS is now a
-> >>> separate flag:
-> >>>
-> >>>   * Path-based escapes from the starting-point using "/" or ".." are
-> >>>     blocked by AT_BENEATH.
-> >>>   * Mountpoint crossings are blocked by AT_XDEV.
-> >>>   * /proc/$pid/fd/$fd resolution is blocked by AT_NO_PROCLINKS (more
-> >>>       correctly it actually blocks any user of nd_jump_link() because it
-> >>>       allows out-of-VFS path resolution manipulation).
-> >>>
-> >>> AT_NO_JUMPS is now effectively (AT_BENEATH|AT_XDEV|AT_NO_PROCLINKS). At
-> >>> Linus' suggestion in the original thread, I've also implemented
-> >>> AT_NO_SYMLINKS which just denies _all_ symlink resolution (including
-> >>> "proclink" resolution).
-> >>>
-> >>> An additional improvement was made to AT_XDEV. The original AT_NO_JUMPS
-> >>> path didn't consider "/tmp/.." as a mountpoint crossing -- this patch
-> >>> blocks this as well (feel free to ask me to remove it if you feel this
-> >>> is not sane).
-> >>>
-> >>> Currently I've only enabled these for openat(2) and the stat(2) family.
-> >>> I would hope we could enable it for basically every *at(2) syscall --
-> >>> but many of them appear to not have a @flags argument and thus we'll
-> >>> need to add several new syscalls to do this. I'm more than happy to send
-> >>> those patches, but I'd prefer to know that this preliminary work is
-> >>> acceptable before doing a bunch of copy-paste to add new sets of *at(2)
-> >>> syscalls.
-> >>>
-> >>> One additional feature I've implemented is AT_THIS_ROOT (I imagine this
-> >>> is probably going to be more contentious than the refresh of
-> >>> AT_NO_JUMPS, so I've included it in a separate patch). The patch itself
-> >>> describes my reasoning, but the shortened version of the premise is that
-> >>> continer runtimes need to have a way to resolve paths within a
-> >>> potentially malicious rootfs. Container runtimes currently do this in
-> >>> userspace[2] which has implicit race conditions that are not resolvable
-> >>> in userspace (or use fork+exec+chroot and SCM_RIGHTS passing which is
-> >>> inefficient). AT_THIS_ROOT allows for per-call chroot-like semantics for
-> >>> path resolution, which would be invaluable for us -- and the
-> >>> implementation is basically identical to AT_BENEATH (except that we
-> >>> don't return errors when someone actually hits the root).
-> >>>
-> >>> I've added some selftests for this, but it's not clear to me whether
-> >>> they should live here or in xfstests (as far as I can tell there are no
-> >>> other VFS tests in selftests, while there are some tests that look like
-> >>> generic VFS tests in xfstests). If you'd prefer them to be included in
-> >>> xfstests, let me know.
-> >>>
-> >>> [1]: https://lore.kernel.org/patchwork/patch/784221/
-> >>> [2]: https://github.com/cyphar/filepath-securejoin
-> >>>
-> >>> Aleksa Sarai (3):
-> >>>   namei: implement O_BENEATH-style AT_* flags
-> >>>   namei: implement AT_THIS_ROOT chroot-like path resolution
-> >>>   selftests: vfs: add AT_* path resolution tests
-> >>>
-> >>>  fs/fcntl.c                                    |   2 +-
-> >>>  fs/namei.c                                    | 158 ++++++++++++------
-> >>>  fs/open.c                                     |  10 ++
-> >>>  fs/stat.c                                     |  15 +-
-> >>>  include/linux/fcntl.h                         |   3 +-
-> >>>  include/linux/namei.h                         |   8 +
-> >>>  include/uapi/asm-generic/fcntl.h              |  20 +++
-> >>>  include/uapi/linux/fcntl.h                    |  10 ++
-> >>>  tools/testing/selftests/Makefile              |   1 +
-> >>>  tools/testing/selftests/vfs/.gitignore        |   1 +
-> >>>  tools/testing/selftests/vfs/Makefile          |  13 ++
-> >>>  tools/testing/selftests/vfs/at_flags.h        |  40 +++++
-> >>>  tools/testing/selftests/vfs/common.sh         |  37 ++++
-> >>>  .../selftests/vfs/tests/0001_at_beneath.sh    |  72 ++++++++
-> >>>  .../selftests/vfs/tests/0002_at_xdev.sh       |  54 ++++++
-> >>>  .../vfs/tests/0003_at_no_proclinks.sh         |  50 ++++++
-> >>>  .../vfs/tests/0004_at_no_symlinks.sh          |  49 ++++++
-> >>>  .../selftests/vfs/tests/0005_at_this_root.sh  |  66 ++++++++
-> >>>  tools/testing/selftests/vfs/vfs_helper.c      | 154 +++++++++++++++++
-> >>>  19 files changed, 707 insertions(+), 56 deletions(-)
-> >>>  create mode 100644 tools/testing/selftests/vfs/.gitignore
-> >>>  create mode 100644 tools/testing/selftests/vfs/Makefile
-> >>>  create mode 100644 tools/testing/selftests/vfs/at_flags.h
-> >>>  create mode 100644 tools/testing/selftests/vfs/common.sh
-> >>>  create mode 100755 tools/testing/selftests/vfs/tests/0001_at_beneath.sh
-> >>>  create mode 100755 tools/testing/selftests/vfs/tests/0002_at_xdev.sh
-> >>>  create mode 100755 tools/testing/selftests/vfs/tests/0003_at_no_proclinks.sh
-> >>>  create mode 100755 tools/testing/selftests/vfs/tests/0004_at_no_symlinks.sh
-> >>>  create mode 100755 tools/testing/selftests/vfs/tests/0005_at_this_root.sh
-> >>>  create mode 100644 tools/testing/selftests/vfs/vfs_helper.c
-> >>>
-> >>
-> > 
-> > 
-> 
-> 
+
 
 -- 
-James Morris
-<jmorris@namei.org>
-
---1665246916-1069902232-1538424886=:14406--
+Kees Cook
+Pixel Security
