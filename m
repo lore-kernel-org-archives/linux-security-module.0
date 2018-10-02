@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF12C43143
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 01:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A44C43143
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 01:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E853B20C0A
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 01:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14D24214AB
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 01:04:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WEfbzd0L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E853B20C0A
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oWMa/tn1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14D24214AB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbeJBHo5 (ORCPT
+        id S1726748AbeJBHpB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:44:57 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:39444 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbeJBHo5 (ORCPT
+        Tue, 2 Oct 2018 03:45:01 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:52637 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726471AbeJBHpA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:44:57 -0400
-Received: by mail-it1-f196.google.com with SMTP id w200-v6so1095216itc.4
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 18:04:26 -0700 (PDT)
+        Tue, 2 Oct 2018 03:45:00 -0400
+Received: by mail-it1-f195.google.com with SMTP id 134-v6so1016238itz.2
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 18:04:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0RYipdsIhsetP9y77Y83cY+AYnVXjoUOFr0d0L1Gup4=;
-        b=WEfbzd0L4U24y99D5LFveDvCDTC2jDhleO7GYaIn21f52QkqSxmL7zow5OZDB6DGLy
-         UcgA6UvB3ar3il1u9qh29ybZoPMhAWAhAtczzIcPWb19JAa5U/3mpQrhCKsLUPbIQZGJ
-         2YQahoVdMA460SQ0PtPTgn/N1srQmFlB322ss=
+        bh=sVOoGnQVVxtCQukk9qvIxsFMi2TMOCjgfBDPf6jS5YQ=;
+        b=oWMa/tn1rXNvp56NZzs7vYF4yF3oxT5MHoSS9c41PHjSgCp2ZUK64Iy0T9L3kshGCo
+         dpda/TnhyAjx43PVZ71axdb0UYPuvx3fIb80UKBkJwKcB1R3Lrz4r9+JSk4GFQ6BFA65
+         iCrps6usAwk6JEQL2Ap9vDKiNcqUyIn6NhLt8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=0RYipdsIhsetP9y77Y83cY+AYnVXjoUOFr0d0L1Gup4=;
-        b=XObr9b1bFxKZZPr4a56z1h8BpM5JOnXQh1s5nbBM4w2prycJwYI+Qkb1mIZ+jgfC5K
-         LrrHhPd6Uh1TxVqKms3TsaDszCUV6MrO9fPLRUvAdIzBiyZtzhhYm3nRE/eq8rLV+3pX
-         SbgxjRqwcqs1qfGDFZBleTVn7pywqsQ9ybHfmZ67CnPljjLXKztoUF6nyT3mSrcIRni2
-         ZFtQgLtoPP3tbdCFNYv6sVrtZHQQ9emAA/jtx+dkSj02g1Td5/qodvk2gXmce6qf2k5G
-         HzwOPNnexpMrrVDTaJ7Ef30RwS04WAdBccpmkW0oLIdYcRyso5ubyIvCXw2/PaAcYIjJ
-         PYCA==
-X-Gm-Message-State: ABuFfogU/d+9Hf+QKb8pBvCb3Zy/L6xXAEpWbU4RMPNnjAl6P4kQc2gk
-        mumjsBuo7ZfhzxuCJzUOoAH5bQ==
-X-Google-Smtp-Source: ACcGV60efYAt7b30NyxgEaD1regdxKPx79Oq12am8usQIO4dJRW8ygNRFu5Dhr1PSd0MwqicM9r/SQ==
-X-Received: by 2002:a63:6ec4:: with SMTP id j187-v6mr12395919pgc.3.1538442265802;
-        Mon, 01 Oct 2018 18:04:25 -0700 (PDT)
+        bh=sVOoGnQVVxtCQukk9qvIxsFMi2TMOCjgfBDPf6jS5YQ=;
+        b=fBHaxq/AqTGnWcefo1WPKAa5hHUIJEX5jcsZPjl6Pvls+h9XxlKfLOBTAeXeWDT/a4
+         oS7bxQZnPEKusGwmW28PEerxs7Galk2fZtCLTGWe4f2lCbOQGkIdwuzE5iKK2AM5zRGB
+         zbRXZL8ogdromyfC4YMJVyj9236dNT3k2GirLoUc78wqmCCaow19n0F0NlE/b8WryLaM
+         CK/7U8RGAS5jvv7Gtsp4lf+fMnuPpyYVbZl+gihXJYzJsr+LbFBtjSlwhkUyA6dvCSWH
+         SJD4lHDFKI3lBvrLHlxPGKSHZkmoj6PHFBuNK5oCy8CORzo0++HImfVUbS0gwjEa8U/g
+         OjZw==
+X-Gm-Message-State: ABuFfogJcZLtgMNAHy/MFWmmHxCU3WuLWTgZ1Yo0wMx6gqVatreIlXcW
+        yaNTYbJQCC271jCyb9G42ZvzJA==
+X-Google-Smtp-Source: ACcGV61gAfz3eq5nRwKSITgdokwgKGzhbAXBNqps58mayyW8EoJld4tsLx4//UvTSWttaRRr6tefNw==
+X-Received: by 2002:a63:a902:: with SMTP id u2-v6mr12305606pge.207.1538442269214;
+        Mon, 01 Oct 2018 18:04:29 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id c2-v6sm19748936pfo.107.2018.10.01.18.04.23
+        by smtp.gmail.com with ESMTPSA id v2-v6sm2793786pfe.6.2018.10.01.18.04.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Mon, 01 Oct 2018 18:04:24 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -67,9 +67,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v4 18/32] LSM: Introduce lsm.enable= and lsm.disable=
-Date:   Mon,  1 Oct 2018 17:54:51 -0700
-Message-Id: <20181002005505.6112-19-keescook@chromium.org>
+Subject: [PATCH security-next v4 17/32] LSM: Introduce CONFIG_LSM_ENABLE
+Date:   Mon,  1 Oct 2018 17:54:50 -0700
+Message-Id: <20181002005505.6112-18-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181002005505.6112-1-keescook@chromium.org>
 References: <20181002005505.6112-1-keescook@chromium.org>
@@ -77,117 +77,76 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This introduces the "lsm.enable=..." and "lsm.disable=..." boot parameters
-which each can contain a comma-separated list of LSMs to enable or
-disable, respectively. The string "all" matches all LSMs.
+To provide a set of default-enabled LSMs at boot, this introduces the
+new CONFIG_LSM_ENABLE. A value of "all" means all builtin LSMs are
+enabled by default. Any unlisted LSMs will be implicitly disabled
+(excepting those with LSM-specific CONFIGs for enabling/disabling).
 
-This has very similar functionality to the existing per-LSM enable
-handling ("apparmor.enabled=...", etc), but provides a centralized
-place to perform the changes. These parameters take precedent over any
-LSM-specific boot parameters.
-
-Disabling an LSM means it will not be considered when performing
-initializations. Enabling an LSM means either undoing a previous
-LSM-specific boot parameter disabling or a undoing a default-disabled
-CONFIG setting.
-
-For example: "lsm.disable=apparmor apparmor.enabled=1" will result in
-AppArmor being disabled. "selinux.enabled=0 lsm.enable=selinux" will
-result in SELinux being enabled.
+The behavior of the LSM-specific CONFIGs for SELinux are AppArmor
+unchanged: the default-enabled state for those LSMs remains controlled
+through their LSM-specific "enable" CONFIGs.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- .../admin-guide/kernel-parameters.txt         | 12 ++++++++++
- security/Kconfig                              |  4 +++-
- security/security.c                           | 22 +++++++++++++++++++
- 3 files changed, 37 insertions(+), 1 deletion(-)
+ include/linux/lsm_hooks.h | 2 +-
+ security/Kconfig          | 8 ++++++++
+ security/security.c       | 4 +++-
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 32d323ee9218..67c90985d2b8 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2276,6 +2276,18 @@
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 9ecb623fb39d..fd85637a1931 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2044,7 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ struct lsm_info {
+ 	const char *name;	/* Required. */
+ 	unsigned long flags;	/* Optional: flags describing LSM */
+-	int *enabled;		/* Optional: NULL means enabled. */
++	int *enabled;		/* Optional: NULL checks CONFIG_LSM_ENABLE */
+ 	int (*init)(void);	/* Required. */
+ };
  
- 	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
- 
-+	lsm.disable=lsm1,...,lsmN
-+			[SECURITY] Comma-separated list of LSMs to disable
-+			at boot time. This overrides "lsm.enable=",
-+			CONFIG_LSM_ENABLE, and any per-LSM CONFIGs and boot
-+			parameters.
-+
-+	lsm.enable=lsm1,...,lsmN
-+			[SECURITY] Comma-separated list of LSMs to enable
-+			at boot time. This overrides any omissions from
-+			CONFIG_LSM_ENABLE, and any per-LSM CONFIGs and
-+			boot parameters.
-+
- 	machvec=	[IA-64] Force the use of a particular machine-vector
- 			(machvec) in a generic kernel.
- 			Example: machvec=hpzx1_swiotlb
 diff --git a/security/Kconfig b/security/Kconfig
-index ac23feba584d..1e57619fd561 100644
+index 27d8b2688f75..ac23feba584d 100644
 --- a/security/Kconfig
 +++ b/security/Kconfig
-@@ -282,7 +282,9 @@ config LSM_ENABLE
- 	help
- 	  A comma-separated list of LSMs to enable by default at boot. The
- 	  default is "all", to enable all LSM modules at boot. Any LSMs
--	  not listed here will be disabled by default.
-+	  not listed here will be disabled by default. This can be
-+	  changed with the "lsm.enable=" and "lsm.disable=" boot
-+	  parameters.
+@@ -276,5 +276,13 @@ config DEFAULT_SECURITY
+ 	default "apparmor" if DEFAULT_SECURITY_APPARMOR
+ 	default "" if DEFAULT_SECURITY_DAC
  
++config LSM_ENABLE
++	string "LSMs to enable at boot time"
++	default "all"
++	help
++	  A comma-separated list of LSMs to enable by default at boot. The
++	  default is "all", to enable all LSM modules at boot. Any LSMs
++	  not listed here will be disabled by default.
++
  endmenu
  
 diff --git a/security/security.c b/security/security.c
-index 35601000176b..3fff2d1d1ec4 100644
+index 9459b4ee4fd9..35601000176b 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -44,6 +44,8 @@ char *lsm_names;
- /* Boot-time LSM user choice */
+@@ -45,6 +45,8 @@ char *lsm_names;
  static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
  	CONFIG_DEFAULT_SECURITY;
-+static __initdata const char *chosen_lsm_enable;
-+static __initdata const char *chosen_lsm_disable;
  
- static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
- 
-@@ -185,6 +187,10 @@ static void __init prepare_lsm_enable(void)
++static __initconst const char * const builtin_lsm_enable = CONFIG_LSM_ENABLE;
++
+ static __initdata bool debug;
+ #define init_debug(...)						\
+ 	do {							\
+@@ -182,7 +184,7 @@ static void __init parse_lsm_enable(const char *str,
+ static void __init prepare_lsm_enable(void)
  {
  	/* Prepare defaults. */
- 	parse_lsm_enable(builtin_lsm_enable, default_enabled, true);
-+
-+	/* Process "lsm.enable=" and "lsm.disable=", if given. */
-+	parse_lsm_enable(chosen_lsm_enable, set_enabled, true);
-+	parse_lsm_enable(chosen_lsm_disable, set_enabled, false);
+-	parse_lsm_enable("all", default_enabled, true);
++	parse_lsm_enable(builtin_lsm_enable, default_enabled, true);
  }
  
  /**
-@@ -240,6 +246,22 @@ static int __init enable_debug(char *str)
- }
- __setup("lsm.debug", enable_debug);
- 
-+/* Explicitly enable a list of LSMs. */
-+static int __init enable_lsm(char *str)
-+{
-+	chosen_lsm_enable = str;
-+	return 1;
-+}
-+__setup("lsm.enable=", enable_lsm);
-+
-+/* Explicitly disable a list of LSMs. */
-+static int __init disable_lsm(char *str)
-+{
-+	chosen_lsm_disable = str;
-+	return 1;
-+}
-+__setup("lsm.disable=", disable_lsm);
-+
- static bool match_last_lsm(const char *list, const char *lsm)
- {
- 	const char *last;
 -- 
 2.17.1
 
