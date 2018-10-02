@@ -1,141 +1,406 @@
-Return-Path: <SRS0=sHE6=MN=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=hMH8=MO=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30EF4C43143
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 23:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E31C43143
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE7AC2083F
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Oct 2018 23:58:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE7AC2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 36E2D2083F
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:39:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E2D2083F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbeJBGiQ (ORCPT
+        id S1726353AbeJBHUA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Oct 2018 02:38:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52920 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbeJBGiP (ORCPT
+        Tue, 2 Oct 2018 03:20:00 -0400
+Received: from mga12.intel.com ([192.55.52.136]:29985 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725936AbeJBHT7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Oct 2018 02:38:15 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1g784Y-0006cR-UX; Mon, 01 Oct 2018 23:57:55 +0000
-Subject: Re: [PATCH security-next v3 18/29] LSM: Introduce lsm.enable= and
- lsm.disable=
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180925001832.18322-1-keescook@chromium.org>
- <20180925001832.18322-19-keescook@chromium.org>
- <68e4e323-3216-7e77-2807-c3207126ae68@canonical.com>
- <CAGXu5j+jzmFh-iuXDVHQTq7e=mftpfaqS-45TP_UR3B+qtGcLQ@mail.gmail.com>
- <9b3e1733-7cfa-5047-1422-0f9d92d88d39@canonical.com>
- <CAGXu5jJheexJgnJ+OWaDoRFraqm9yxj1Vr290tfZ7kELBPUpAw@mail.gmail.com>
- <CAGXu5jJ6ZDs1hZTX9jS9w2MmecbcbMcn6iAmGuyCBbThyjv_iA@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <0b6c66ab-7cfe-da99-40e7-d36a81ac79ef@canonical.com>
-Date:   Mon, 1 Oct 2018 16:57:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 2 Oct 2018 03:19:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 17:38:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,329,1534834800"; 
+   d="scan'208";a="77695402"
+Received: from hubermic-mobl.ger.corp.intel.com (HELO localhost) ([10.252.54.31])
+  by orsmga007.jf.intel.com with ESMTP; 01 Oct 2018 17:38:13 -0700
+Date:   Tue, 2 Oct 2018 03:38:12 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tomas Winkler <tomas.winkler@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 01/21] tpm2: add new tpm2 commands according to TCG
+ 1.36
+Message-ID: <20181002003812.GA23753@linux.intel.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+ <20180928223035.14471-2-tomas.winkler@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJ6ZDs1hZTX9jS9w2MmecbcbMcn6iAmGuyCBbThyjv_iA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928223035.14471-2-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/01/2018 04:38 PM, Kees Cook wrote:
-> On Mon, Oct 1, 2018 at 4:30 PM, Kees Cook <keescook@chromium.org> wrote:
->> If we keep it, "apparmor=0 lsm_enable=apparmor" would mean it's
->> enabled. Is that okay?
-> 
-> Actually, what the v3 series does right now is leaves AppArmor and
-> SELinux alone -- whatever they configured for enable/disable is left
-> alone.
-> 
-> The problem I have is when processing CONFIG_LSM_ENABLE ... what do I
-> do with the existing "enable" flag? It's set by both
-> CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE and apparmor=0/1.
-> 
-> Right now I can't tell the difference between someone booting with
-> apparmor=0 or CONFIG_LSM_ENABLE not including apparmor.
-> 
-> i.e. how do I mix CONFIG_LSM_ENABLE with apparmor=0/1? (assuming
-> CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE has been removed)
-> 
-right, Its a mess and confusing not just us but for the user. I think
-it is worth considering removing the apparmor= and apparmor.enabled
-options so that we can clean this up.
+Looks good. Just some minor bits.
 
-If we do keep it, there are three options
-1. last option wins (above)
-2. add more states so we can track the different combination (more
-  complex and probably not worth it)
-3. we ignore any apparmor=1 (he default state) and only look at
-  whether apparmor.enabled has been toggled to 0 during setup. 
-  At which point it stays that way.
+On Sat, Sep 29, 2018 at 01:30:15AM +0300, Tomas Winkler wrote:
+> 1. TPM2_CC_LAST has moved from 182 to 193
+> 2. Convert tpm2_ordinal_duration from an array into a switch statement,
+>    as there are not so many commands that require special duration
+>    relative to a number of commands, the switch statement function
+>    is called tpm2_ordinal_duration_index().
+> 3. Fix kdoc comments for tpm2_calc_ordinal_duration().
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+> 
+> V2-V3: Rebase.
+> V4: 1. Fix kdoc
+>     2. Rename tpm2_ordinal_duration() to tpm2_ordinal_duration_index()
+>     3. Move the two functions close to each other in the file.
+> V5: Adjust the kdoc to the new standard.
+> 
+>  drivers/char/tpm/tpm.h      |  41 +++++---
+>  drivers/char/tpm/tpm2-cmd.c | 241 +++++++++++++++++---------------------------
+>  2 files changed, 118 insertions(+), 164 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index f20dc8ece348..0f08518b525d 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -134,22 +134,31 @@ enum tpm2_algorithms {
+>  };
+>  
+>  enum tpm2_command_codes {
+> -	TPM2_CC_FIRST		= 0x011F,
+> -	TPM2_CC_CREATE_PRIMARY  = 0x0131,
+> -	TPM2_CC_SELF_TEST	= 0x0143,
+> -	TPM2_CC_STARTUP		= 0x0144,
+> -	TPM2_CC_SHUTDOWN	= 0x0145,
+> -	TPM2_CC_CREATE		= 0x0153,
+> -	TPM2_CC_LOAD		= 0x0157,
+> -	TPM2_CC_UNSEAL		= 0x015E,
+> -	TPM2_CC_CONTEXT_LOAD	= 0x0161,
+> -	TPM2_CC_CONTEXT_SAVE	= 0x0162,
+> -	TPM2_CC_FLUSH_CONTEXT	= 0x0165,
+> -	TPM2_CC_GET_CAPABILITY	= 0x017A,
+> -	TPM2_CC_GET_RANDOM	= 0x017B,
+> -	TPM2_CC_PCR_READ	= 0x017E,
+> -	TPM2_CC_PCR_EXTEND	= 0x0182,
+> -	TPM2_CC_LAST		= 0x018F,
+> +	TPM2_CC_FIRST		        = 0x011F,
+> +	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
+> +	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
+> +	TPM2_CC_CREATE_PRIMARY          = 0x0131,
+> +	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
+> +	TPM2_CC_SELF_TEST	        = 0x0143,
+> +	TPM2_CC_STARTUP		        = 0x0144,
+> +	TPM2_CC_SHUTDOWN	        = 0x0145,
+> +	TPM2_CC_NV_READ                 = 0x014E,
+> +	TPM2_CC_CREATE		        = 0x0153,
+> +	TPM2_CC_LOAD		        = 0x0157,
+> +	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
+> +	TPM2_CC_UNSEAL		        = 0x015E,
+> +	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
+> +	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
+> +	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
+> +	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
+> +	TPM2_CC_GET_CAPABILITY	        = 0x017A,
+> +	TPM2_CC_GET_RANDOM	        = 0x017B,
+> +	TPM2_CC_PCR_READ	        = 0x017E,
+> +	TPM2_CC_PCR_EXTEND	        = 0x0182,
+> +	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
+> +	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
+> +	TPM2_CC_CREATE_LOADED           = 0x0191,
+> +	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
+>  };
+>  
+>  enum tpm2_permanent_handles {
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 3acf4fd4e5a5..f08478c78bf7 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -40,129 +40,100 @@ static struct tpm2_hash tpm2_hash_map[] = {
+>  	{HASH_ALGO_SM3_256, TPM2_ALG_SM3_256},
+>  };
+>  
+> -/*
+> - * Array with one entry per ordinal defining the maximum amount
+> - * of time the chip could take to return the result. The values
+> - * of the SHORT, MEDIUM, and LONG durations are taken from the
+> - * PC Client Profile (PTP) specification.
+> - * LONG_LONG is for commands that generates keys which empirically
+> - * takes longer time on some systems.
+> +/**
+> + * tpm2_ordinal_duration_index() - returns an index to the chip duration table
+> + * @ordinal: TPM command ordinal.
+> + *
+> + * The function returns an index to the chip duration table
+> + * (enum tpm_duration), that describes the maximum amount of
+> + * time the chip could take to return the result for a  particular ordinal.
+> + *
+> + * The values of the MEDIUM, and LONG durations are taken
+> + * from the PC Client Profile (PTP) specification (750, 2000 msec)
+> + *
+> + * LONG_LONG is for commands that generates keys which empirically takes
+> + * a longer time on some systems.
+> + *
+> + * Return:
+> + * * TPM_MEDIUM
 
-if we keep it, I think an explicit disable should win, so
-option 3, but I can live with 1.
+A semicolon missing.
+
+> + * * TPM_LONG,
+> + * * TPM_LONG_LONG
+
+A semicolon missing.
+
+> + * * TPM_UNDEFINED.
+>   */
+> -static const u8 tpm2_ordinal_duration[TPM2_CC_LAST - TPM2_CC_FIRST + 1] = {
+> -	TPM_UNDEFINED,		/* 11F */
+> -	TPM_UNDEFINED,		/* 120 */
+> -	TPM_LONG,		/* 121 */
+> -	TPM_UNDEFINED,		/* 122 */
+> -	TPM_UNDEFINED,		/* 123 */
+> -	TPM_UNDEFINED,		/* 124 */
+> -	TPM_UNDEFINED,		/* 125 */
+> -	TPM_UNDEFINED,		/* 126 */
+> -	TPM_UNDEFINED,		/* 127 */
+> -	TPM_UNDEFINED,		/* 128 */
+> -	TPM_LONG,		/* 129 */
+> -	TPM_UNDEFINED,		/* 12a */
+> -	TPM_UNDEFINED,		/* 12b */
+> -	TPM_UNDEFINED,		/* 12c */
+> -	TPM_UNDEFINED,		/* 12d */
+> -	TPM_UNDEFINED,		/* 12e */
+> -	TPM_UNDEFINED,		/* 12f */
+> -	TPM_UNDEFINED,		/* 130 */
+> -	TPM_LONG_LONG,		/* 131 */
+> -	TPM_UNDEFINED,		/* 132 */
+> -	TPM_UNDEFINED,		/* 133 */
+> -	TPM_UNDEFINED,		/* 134 */
+> -	TPM_UNDEFINED,		/* 135 */
+> -	TPM_UNDEFINED,		/* 136 */
+> -	TPM_UNDEFINED,		/* 137 */
+> -	TPM_UNDEFINED,		/* 138 */
+> -	TPM_UNDEFINED,		/* 139 */
+> -	TPM_UNDEFINED,		/* 13a */
+> -	TPM_UNDEFINED,		/* 13b */
+> -	TPM_UNDEFINED,		/* 13c */
+> -	TPM_UNDEFINED,		/* 13d */
+> -	TPM_MEDIUM,		/* 13e */
+> -	TPM_UNDEFINED,		/* 13f */
+> -	TPM_UNDEFINED,		/* 140 */
+> -	TPM_UNDEFINED,		/* 141 */
+> -	TPM_UNDEFINED,		/* 142 */
+> -	TPM_LONG,		/* 143 */
+> -	TPM_MEDIUM,		/* 144 */
+> -	TPM_UNDEFINED,		/* 145 */
+> -	TPM_UNDEFINED,		/* 146 */
+> -	TPM_UNDEFINED,		/* 147 */
+> -	TPM_UNDEFINED,		/* 148 */
+> -	TPM_UNDEFINED,		/* 149 */
+> -	TPM_UNDEFINED,		/* 14a */
+> -	TPM_UNDEFINED,		/* 14b */
+> -	TPM_UNDEFINED,		/* 14c */
+> -	TPM_UNDEFINED,		/* 14d */
+> -	TPM_LONG,		/* 14e */
+> -	TPM_UNDEFINED,		/* 14f */
+> -	TPM_UNDEFINED,		/* 150 */
+> -	TPM_UNDEFINED,		/* 151 */
+> -	TPM_UNDEFINED,		/* 152 */
+> -	TPM_LONG_LONG,		/* 153 */
+> -	TPM_UNDEFINED,		/* 154 */
+> -	TPM_UNDEFINED,		/* 155 */
+> -	TPM_UNDEFINED,		/* 156 */
+> -	TPM_UNDEFINED,		/* 157 */
+> -	TPM_UNDEFINED,		/* 158 */
+> -	TPM_UNDEFINED,		/* 159 */
+> -	TPM_UNDEFINED,		/* 15a */
+> -	TPM_UNDEFINED,		/* 15b */
+> -	TPM_MEDIUM,		/* 15c */
+> -	TPM_UNDEFINED,		/* 15d */
+> -	TPM_UNDEFINED,		/* 15e */
+> -	TPM_UNDEFINED,		/* 15f */
+> -	TPM_UNDEFINED,		/* 160 */
+> -	TPM_UNDEFINED,		/* 161 */
+> -	TPM_UNDEFINED,		/* 162 */
+> -	TPM_UNDEFINED,		/* 163 */
+> -	TPM_UNDEFINED,		/* 164 */
+> -	TPM_UNDEFINED,		/* 165 */
+> -	TPM_UNDEFINED,		/* 166 */
+> -	TPM_UNDEFINED,		/* 167 */
+> -	TPM_UNDEFINED,		/* 168 */
+> -	TPM_UNDEFINED,		/* 169 */
+> -	TPM_UNDEFINED,		/* 16a */
+> -	TPM_UNDEFINED,		/* 16b */
+> -	TPM_UNDEFINED,		/* 16c */
+> -	TPM_UNDEFINED,		/* 16d */
+> -	TPM_UNDEFINED,		/* 16e */
+> -	TPM_UNDEFINED,		/* 16f */
+> -	TPM_UNDEFINED,		/* 170 */
+> -	TPM_UNDEFINED,		/* 171 */
+> -	TPM_UNDEFINED,		/* 172 */
+> -	TPM_UNDEFINED,		/* 173 */
+> -	TPM_UNDEFINED,		/* 174 */
+> -	TPM_UNDEFINED,		/* 175 */
+> -	TPM_UNDEFINED,		/* 176 */
+> -	TPM_LONG,		/* 177 */
+> -	TPM_UNDEFINED,		/* 178 */
+> -	TPM_UNDEFINED,		/* 179 */
+> -	TPM_MEDIUM,		/* 17a */
+> -	TPM_LONG,		/* 17b */
+> -	TPM_UNDEFINED,		/* 17c */
+> -	TPM_UNDEFINED,		/* 17d */
+> -	TPM_UNDEFINED,		/* 17e */
+> -	TPM_UNDEFINED,		/* 17f */
+> -	TPM_UNDEFINED,		/* 180 */
+> -	TPM_UNDEFINED,		/* 181 */
+> -	TPM_MEDIUM,		/* 182 */
+> -	TPM_UNDEFINED,		/* 183 */
+> -	TPM_UNDEFINED,		/* 184 */
+> -	TPM_MEDIUM,		/* 185 */
+> -	TPM_MEDIUM,		/* 186 */
+> -	TPM_UNDEFINED,		/* 187 */
+> -	TPM_UNDEFINED,		/* 188 */
+> -	TPM_UNDEFINED,		/* 189 */
+> -	TPM_UNDEFINED,		/* 18a */
+> -	TPM_UNDEFINED,		/* 18b */
+> -	TPM_UNDEFINED,		/* 18c */
+> -	TPM_UNDEFINED,		/* 18d */
+> -	TPM_UNDEFINED,		/* 18e */
+> -	TPM_UNDEFINED		/* 18f */
+> -};
+> +static u8 tpm2_ordinal_duration_index(u32 ordinal)
+> +{
+> +	switch (ordinal) {
+> +	/* Startup */
+> +	case TPM2_CC_STARTUP:                 /* 144 */
+> +		return TPM_MEDIUM;
+> +
+> +	case TPM2_CC_SELF_TEST:               /* 143 */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_GET_RANDOM:              /* 17B */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_SEQUENCE_UPDATE:         /* 15C */
+> +		return TPM_MEDIUM;
+> +	case TPM2_CC_SEQUENCE_COMPLETE:       /* 13E */
+> +		return TPM_MEDIUM;
+> +	case TPM2_CC_EVENT_SEQUENCE_COMPLETE: /* 185 */
+> +		return TPM_MEDIUM;
+> +	case TPM2_CC_HASH_SEQUENCE_START:     /* 186 */
+> +		return TPM_MEDIUM;
+> +
+> +	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_PCR_EXTEND:              /* 182 */
+> +		return TPM_MEDIUM;
+> +
+> +	case TPM2_CC_HIERARCHY_CONTROL:       /* 121 */
+> +		return TPM_LONG;
+> +	case TPM2_CC_HIERARCHY_CHANGE_AUTH:   /* 129 */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_GET_CAPABILITY:          /* 17A */
+> +		return TPM_MEDIUM;
+> +
+> +	case TPM2_CC_NV_READ:                 /* 14E */
+> +		return TPM_LONG;
+> +
+> +	case TPM2_CC_CREATE_PRIMARY:          /* 131 */
+> +		return TPM_LONG_LONG;
+> +	case TPM2_CC_CREATE:                  /* 153 */
+> +		return TPM_LONG_LONG;
+> +	case TPM2_CC_CREATE_LOADED:           /* 191 */
+> +		return TPM_LONG_LONG;
+> +
+> +	default:
+> +		return TPM_UNDEFINED;
+> +	}
+> +}
+> +
+> +/**
+> + * tpm2_calc_ordinal_duration() - calculate the maximum command duration
+> + * @chip:    TPM chip to use.
+> + * @ordinal: TPM command ordinal.
+> + *
+> + * The function returns the maximum amount of time the chip could take
+> + * to return the result for a particular ordinal in jiffies.
+> + *
+> + * Return: A maximal duration time for an ordinal in jiffies.
+> + */
+> +unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+> +{
+> +	unsigned int index;
+> +
+> +	index = tpm2_ordinal_duration_index(ordinal);
+> +
+> +	if (index != TPM_UNDEFINED)
+> +		return chip->duration[index];
+> +	else
+> +		return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> +}
+> +EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+> +
+>  
+>  struct tpm2_pcr_read_out {
+>  	__be32	update_cnt;
+> @@ -748,32 +719,6 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+>  	tpm_buf_destroy(&buf);
+>  }
+>  
+> -/*
+> - * tpm2_calc_ordinal_duration() - maximum duration for a command
+> - *
+> - * @chip:	TPM chip to use.
+> - * @ordinal:	command code number.
+> - *
+> - * Return: maximum duration for a command
+> - */
+> -unsigned long tpm2_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+> -{
+> -	int index = TPM_UNDEFINED;
+> -	int duration = 0;
+> -
+> -	if (ordinal >= TPM2_CC_FIRST && ordinal <= TPM2_CC_LAST)
+> -		index = tpm2_ordinal_duration[ordinal - TPM2_CC_FIRST];
+> -
+> -	if (index != TPM_UNDEFINED)
+> -		duration = chip->duration[index];
+> -
+> -	if (duration <= 0)
+> -		duration = msecs_to_jiffies(TPM2_DURATION_DEFAULT);
+> -
+> -	return duration;
+> -}
+> -EXPORT_SYMBOL_GPL(tpm2_calc_ordinal_duration);
+> -
+>  /**
+>   * tpm2_do_selftest() - ensure that all self tests have passed
+>   *
+> -- 
+> 2.14.4
+> 
+
+/Jarkko
