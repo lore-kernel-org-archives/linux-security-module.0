@@ -2,57 +2,57 @@ Return-Path: <SRS0=hMH8=MO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BD4C00449
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CA2C00449
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9744221473
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DEAE21471
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:57:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GAcR6tP9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9744221473
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QGYZ4aBu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DEAE21471
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbeJBHhe (ORCPT
+        id S1726646AbeJBHfl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:37:34 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:56116 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725936AbeJBHfl (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 2 Oct 2018 03:35:41 -0400
-Received: by mail-it1-f196.google.com with SMTP id c23-v6so960818itd.5
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 17:55:12 -0700 (PDT)
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53223 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbeJBHfk (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Tue, 2 Oct 2018 03:35:40 -0400
+Received: by mail-it1-f194.google.com with SMTP id 134-v6so982308itz.2
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 17:55:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bDWn21iauCiQfJ3Cfx0b4/V/Z6uec1GQQMOYX0nkvvY=;
-        b=GAcR6tP9URv886m1xLxqEkbz7YdEIPtmlOXupq5g2EXLl32Y9kAajKKDmJnKpSlbBV
-         rLEBx20E5RrgQhPahPVvIDZNhfmaScUj9mX/sjntvnTzTNHuAHznGA7psqHqUnYdsXf9
-         7S4K20h9JonYDs+o+8wdIfvtkRVU8XCaqZInk=
+        bh=BNwJMOTTBg+xIR0Zs6W8eU/Z+0Zh4DQ+gRWYfOJdHJk=;
+        b=QGYZ4aBukEzkUbplpIyJcVFIRfuHhUExWt9u+/VhfugsKltmM+jOi13nMdW8aM+fnV
+         hW+6zqZKIKLx3MssgYOWd91KaIDaXHZzbkOJJYvDRvY92ByERskBXOFo9SjNrKykFNy3
+         cQ/EH6zN9Uw4GxBJKEaG3MmZ5DthqSto91x+0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bDWn21iauCiQfJ3Cfx0b4/V/Z6uec1GQQMOYX0nkvvY=;
-        b=YaOWjydvuzGY10svW2Bjy6jCvrC8qYb198qkaneshg80eIoFnQ9QWwzs3sKDNuB3Kk
-         HDfV3I3VgEsu0kR887wSVIxFFWHCKq/46SgJxXpFtFrn2BykKpob57AMWw30m3tXnCsP
-         c/SZkx2ROcBLxK0ZwHehBkwOD+ohwFy3ZYkF5TLHUXHhmM+9vGrVTF/3DvZSr6sqcUwZ
-         pxNX2QiZt0ShaPd6uYoFvth05HW8zmEC8L3jzMZHF0zMfsmL/nWyPfn3Y/t0Wfor2jG4
-         jv2FTV1Mm2VKItmBzo4UVnXhUHITw1+uTgbFJUe90lrM2xOYuy9jv82GysLxMaNxI++V
-         7Lig==
-X-Gm-Message-State: ABuFfoh3kQxK3zKhW79SGg6Vxxkm5Ee0awN9DjAKRkldwLN5Sc00lAbE
-        LxfCDjiBTiD1UJIQqBVwHIOtlA==
-X-Google-Smtp-Source: ACcGV61AqGxKtv9I9HjmCYv04cw6b4KEf5MttqybCinUm3ePWLIaBa+yoUlDm4hJymYZNebTGzkDIg==
-X-Received: by 2002:a63:9712:: with SMTP id n18-v6mr12323822pge.69.1538441712326;
-        Mon, 01 Oct 2018 17:55:12 -0700 (PDT)
+        bh=BNwJMOTTBg+xIR0Zs6W8eU/Z+0Zh4DQ+gRWYfOJdHJk=;
+        b=Y3PLr0BG4lH2egi2tVY7mdhnbhHHavFIC10lzAh9J9Iamen4xUn4a06neG3UNSZIoE
+         hh/t4b4Ty+7WukJTxo70eJED6gyUvgAK2PMWnuNtLmVatTuC/afcTOuYpUm0LzoCC4m3
+         1SZ5HLDyoa8Z8gvj/W4EgUOh4lTDiKrHNrSUugGF982fjWDHaUxzln69bCJiXS104XrU
+         ureY+Uci2yH+fr1vGBiwKSn0rbef312JEj/3zsO/fM27nN12vIGFHPSFuMjwat4gytYI
+         ISBqVeTcBB/FOgePBKdTwMhH+xM3JhVZPDYjvq3pwoJRjeiXov0uuX6+PvTyUfef22ro
+         3mMA==
+X-Gm-Message-State: ABuFfohAun//8oPBQZI1ApDMzqehJ1WFK+PpId0d3o51bL6vaPNXPkvJ
+        VaUxjfEbsaQskZXp71WUYgyIQg==
+X-Google-Smtp-Source: ACcGV60hsZXAm0a9TDrq7HKVx3o3uvo37XZN4cfDrGLtkfSQvQW8f2t4HrDeF27oZljz/fBg55Rquw==
+X-Received: by 2002:a63:10c:: with SMTP id 12-v6mr12224849pgb.62.1538441711433;
+        Mon, 01 Oct 2018 17:55:11 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id c79-v6sm12054717pfb.147.2018.10.01.17.55.07
+        by smtp.gmail.com with ESMTPSA id c79-v6sm16930363pfc.92.2018.10.01.17.55.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Mon, 01 Oct 2018 17:55:08 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -67,9 +67,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v4 02/32] vmlinux.lds.h: Avoid copy/paste of security_init section
-Date:   Mon,  1 Oct 2018 17:54:35 -0700
-Message-Id: <20181002005505.6112-3-keescook@chromium.org>
+Subject: [PATCH security-next v4 03/32] LSM: Rename .security_initcall section to .lsm_info
+Date:   Mon,  1 Oct 2018 17:54:36 -0700
+Message-Id: <20181002005505.6112-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181002005505.6112-1-keescook@chromium.org>
 References: <20181002005505.6112-1-keescook@chromium.org>
@@ -77,47 +77,81 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Avoid copy/paste by defining SECURITY_INIT in terms of SECURITY_INITCALL.
+In preparation for switching from initcall to just a regular set of
+pointers in a section, rename the internal section name.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: James Morris <james.morris@microsoft.com>
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 ---
- include/asm-generic/vmlinux.lds.h | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ include/asm-generic/vmlinux.lds.h | 10 +++++-----
+ include/linux/init.h              |  4 ++--
+ security/security.c               |  4 ++--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index 7b75ff6e2fce..934a45395547 100644
+index 934a45395547..5079a969e612 100644
 --- a/include/asm-generic/vmlinux.lds.h
 +++ b/include/asm-generic/vmlinux.lds.h
-@@ -473,13 +473,6 @@
- #define RODATA          RO_DATA_SECTION(4096)
- #define RO_DATA(align)  RO_DATA_SECTION(align)
+@@ -787,14 +787,14 @@
+ 		__con_initcall_end = .;
  
--#define SECURITY_INIT							\
--	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
+ #define SECURITY_INITCALL						\
 -		__security_initcall_start = .;				\
 -		KEEP(*(.security_initcall.init))			\
--		__security_initcall_end = .;				\
--	}
--
- /*
-  * .text section. Map to function alignment to avoid address changes
-  * during second ld run in second ld pass when generating System.map
-@@ -798,6 +791,12 @@
- 		KEEP(*(.security_initcall.init))			\
- 		__security_initcall_end = .;
+-		__security_initcall_end = .;
++		__start_lsm_info = .;					\
++		KEEP(*(.lsm_info.init))					\
++		__end_lsm_info = .;
  
-+/* Older linker script style for security init. */
-+#define SECURITY_INIT							\
-+	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
-+		SECURITY_INITCALL					\
-+	}
-+
+ /* Older linker script style for security init. */
+ #define SECURITY_INIT							\
+-	.security_initcall.init : AT(ADDR(.security_initcall.init) - LOAD_OFFSET) { \
+-		SECURITY_INITCALL					\
++	.lsm_info.init : AT(ADDR(.lsm_info.init) - LOAD_OFFSET) {	\
++		LSM_INFO						\
+ 	}
+ 
  #ifdef CONFIG_BLK_DEV_INITRD
- #define INIT_RAM_FS							\
- 	. = ALIGN(4);							\
+diff --git a/include/linux/init.h b/include/linux/init.h
+index 2538d176dd1f..77636539e77c 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -133,7 +133,7 @@ static inline initcall_t initcall_from_entry(initcall_entry_t *entry)
+ #endif
+ 
+ extern initcall_entry_t __con_initcall_start[], __con_initcall_end[];
+-extern initcall_entry_t __security_initcall_start[], __security_initcall_end[];
++extern initcall_entry_t __start_lsm_info[], __end_lsm_info[];
+ 
+ /* Used for contructor calls. */
+ typedef void (*ctor_fn_t)(void);
+@@ -236,7 +236,7 @@ extern bool initcall_debug;
+ 	static exitcall_t __exitcall_##fn __exit_call = fn
+ 
+ #define console_initcall(fn)	___define_initcall(fn,, .con_initcall)
+-#define security_initcall(fn)	___define_initcall(fn,, .security_initcall)
++#define security_initcall(fn)	___define_initcall(fn,, .lsm_info)
+ 
+ struct obs_kernel_param {
+ 	const char *str;
+diff --git a/security/security.c b/security/security.c
+index 4cbcf244a965..892fe6b691cf 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -51,9 +51,9 @@ static void __init do_security_initcalls(void)
+ 	initcall_t call;
+ 	initcall_entry_t *ce;
+ 
+-	ce = __security_initcall_start;
++	ce = __start_lsm_info;
+ 	trace_initcall_level("security");
+-	while (ce < __security_initcall_end) {
++	while (ce < __end_lsm_info) {
+ 		call = initcall_from_entry(ce);
+ 		trace_initcall_start(call);
+ 		ret = call();
 -- 
 2.17.1
 
