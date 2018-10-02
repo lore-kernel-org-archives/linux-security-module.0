@@ -6,102 +6,119 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8784C43143
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 05:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F656C43143
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 09:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A355F2083F
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 05:00:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A355F2083F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2163220878
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 09:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2163220878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbeJBLlm convert rfc822-to-8bit (ORCPT
+        id S1726321AbeJBQN0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Oct 2018 07:41:42 -0400
-Received: from mga14.intel.com ([192.55.52.115]:40244 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726303AbeJBLlm (ORCPT
+        Tue, 2 Oct 2018 12:13:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48708 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726747AbeJBQNZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Oct 2018 07:41:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 22:00:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,330,1534834800"; 
-   d="scan'208";a="96659275"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by orsmga002.jf.intel.com with ESMTP; 01 Oct 2018 21:58:29 -0700
-Received: from fmsmsx102.amr.corp.intel.com (10.18.124.200) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 1 Oct 2018 21:58:29 -0700
-Received: from hasmsx105.ger.corp.intel.com (10.184.198.19) by
- FMSMSX102.amr.corp.intel.com (10.18.124.200) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 1 Oct 2018 21:58:28 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- HASMSX105.ger.corp.intel.com ([169.254.1.191]) with mapi id 14.03.0319.002;
- Tue, 2 Oct 2018 07:58:26 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
-Subject: RE: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Thread-Topic: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Thread-Index: AQHUWeozFz0QOr+BiUiSikU4mA0ywaULXotQ
-Date:   Tue, 2 Oct 2018 04:58:25 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
+        Tue, 2 Oct 2018 12:13:25 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w929OMpO052966
+        for <linux-security-module@vger.kernel.org>; Tue, 2 Oct 2018 05:31:04 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2mv5xvrea3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Oct 2018 05:31:04 -0400
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Tue, 2 Oct 2018 03:31:03 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 2 Oct 2018 03:31:01 -0600
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w929V01q25755724
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 2 Oct 2018 02:31:00 -0700
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 54201136051;
+        Tue,  2 Oct 2018 03:31:00 -0600 (MDT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8013136053;
+        Tue,  2 Oct 2018 03:30:56 -0600 (MDT)
+Received: from [9.79.181.195] (unknown [9.79.181.195])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue,  2 Oct 2018 03:30:56 -0600 (MDT)
+Subject: Re: [PATCH v5 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-13-tomas.winkler@intel.com>
- <20181002005208.GH23753@linux.intel.com>
-In-Reply-To: <20181002005208.GH23753@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDZjMzZhZDYtOTE2ZC00MzJkLWE1NzctOWYzMjNlYTFkNjM2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUFNLeFNcL05mXC9XQWF1U0V5NUVPckkzMTR5dW1KdXhNN3FsdWc5SFpoNjRwSjdlTnNGSXN3QVh4RVdVQUlNMDlEIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.255.196.9]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+ <20180928223035.14471-7-tomas.winkler@intel.com>
+ <20181002004248.GC23753@linux.intel.com>
+From:   Nayna Jain <nayna@linux.vnet.ibm.com>
+Date:   Tue, 2 Oct 2018 14:58:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
+In-Reply-To: <20181002004248.GC23753@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18100209-0004-0000-0000-000014959CA7
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009808; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000267; SDB=6.01096720; UDB=6.00567117; IPR=6.00876762;
+ MB=3.00023585; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-02 09:31:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100209-0005-0000-0000-00008902B7B5
+Message-Id: <7e42b9c4-2299-a62d-ac79-0e147cb60573@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-02_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810020095
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
 
-> 
-> On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
-> > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature required
-> > by tpm-interface.c. It wraps the original open code implementation.
-> > The original original tpm2_pcr_extend() function is renamed to
-> > __tpm2_pcr_extend() and made static, it is called only from new
-> > tpm2_pcr_extend().
-> >
-> > Fix warnings in __tpm2_pcr_extend()
-> > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
-> > integer expressions [-Wsign-compare]
-> > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
-> > integer expressions [-Wsign-compare]
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> 
-> We do not want the signature change, especially because as we are working
-> on getting Roberto's changes in and also because it has absolutely a zero
-> gain. Who cares if those functions take different parameters? I don't.
+On 10/02/2018 06:12 AM, Jarkko Sakkinen wrote:
+> On Sat, Sep 29, 2018 at 01:30:20AM +0300, Tomas Winkler wrote:
+>> Move tpm1_pcr_extend to tpm1-cmd.c and remove
+>> unused pcrextend_header structure and
+>> EXTEND_PCR_RESULT_SIZE and EXTEND_PCR_RESULT_BODY_SIZE
+>> defines.
+>>
+>> Fixes warning:
+>> drivers/char/tpm/tpm-interface.c:609:38: warning: ‘pcrextend_header’ defined but not used [-Wunused-const-variable=]
+>>   static const struct tpm_input_header pcrextend_header = {
+>>                                        ^~~~~~~~~~~~~~~~
+>>
+>> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Would need help with this from someone with a working IMA setup
+> on testing.
 
-Yes, we do care this series tries to have a clean cut between 1.x  and 2.x specs. Please, let's finish one transformation and then move to another.
-I understand that Roberto will have to rebase anyhow, if this series goes in first, if this is hard I can do it myself, it's trivial.
 
-Tomas
+My test system is down for now.. I think it will be up later in this 
+week. I can test it then.
+
+Thanks & Regards,
+     - Nayna
+
+
+>
+> /Jarkko
+>
 
