@@ -2,116 +2,220 @@ Return-Path: <SRS0=hMH8=MO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8CBC43143
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 01:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1562C43143
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 04:47:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B52352083F
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 01:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 993F420684
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 04:47:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ql6Xco9D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B52352083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q4hUwcKU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 993F420684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726459AbeJBH7M (ORCPT
+        id S1726861AbeJBL3B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:59:12 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45160 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726304AbeJBH7L (ORCPT
+        Tue, 2 Oct 2018 07:29:01 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:36554 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726867AbeJBL27 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:59:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2+6QRyaExpmbMF1OBAJxYq0QCbbA9YE2015ccebeU44=; b=ql6Xco9DTNdBdtEXxiMYfDeh0s
-        5cNkCkiol8eatfF57PTyqPKWsON3d5iRF4qd0G9KzNxgHNVk9GrUKLn3EWZftTBhFK6wBtvCPXxpb
-        gHCm92zbjWxNeXrZmYHHOe/QmZ/n8UdSAJ1s5kFaUCdLbN6IAQ9EHxbHagiG9a9rHPlHpo9YU/rKy
-        Y9fcDgxTgvmq14aEuTjhUpxe7idlKJSf2vQFLljp3+8eeGeeHuY68G8XHSKKUCtOwncUtWOtIH50E
-        ErZj3/yc3lCKW1OKNwOFW8JLis4Kdxx6T1aFmnBDuxn6svNhs7bXFdRN9lGFq5+He0B2ldSovotHK
-        chqDUzQg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1g79Kb-00028Y-HK; Tue, 02 Oct 2018 01:18:34 +0000
-Subject: Re: [PATCH security-next v4 21/32] LSM: Finalize centralized LSM
- enabling logic
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Tue, 2 Oct 2018 07:28:59 -0400
+Received: by mail-yw1-f68.google.com with SMTP id e201-v6so273163ywa.3
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 21:47:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Cpxv9Irzh5aDs0QGpKP7cNXs2u6/amX9TqmHjX6gKyU=;
+        b=Q4hUwcKUWLe6OAegh5LekwopNJDP3KItLdEIlUooMI7FhelnmlTg0yAeXderwxn9Ru
+         rOas1qDRMp+cjcnuplYzNeWaliK98coqpeWFmaXZDjxrhSbI5nW+lPrVu78OcE9B+pfq
+         0EtjiyCbV8Ed5o7kYejZsaDides859g/5NDDQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Cpxv9Irzh5aDs0QGpKP7cNXs2u6/amX9TqmHjX6gKyU=;
+        b=KxlY+aJvoNxKQucLNhvdbrMcPNysT88U51lU2KG/YXyVtRThrMFQK6rXfYSpEcGlFp
+         cFAc34MwJlLV/z/PCBsBWPQTHooUxRg8hJp1+kHBfuxAvXQTbMBGde0pyQFbmA+JJ0q2
+         DT+FWy2R58R5dL4KzWYUWoFY0Qb+m0r9jEqr8MmyIFN8WWaW2pLrkP7ZvlaN7rpSnCVe
+         RdOHLUouyQQxlTRzSAnORlpV2ctYQYtfQoU2yK4jQT6I/dMJaANenqrc3YZOAnFljydJ
+         eA9lybZr3fc+hHkvKSgQ6KkWfXmmLwcReoM4pdVSbTHlJZVwY5QvG5BPkqk/fiBdS4xN
+         j5og==
+X-Gm-Message-State: ABuFfoiC/aEXs2WbzBt3E2t36roPjECAm46V8Z1bOID3J37YDZ2DyKaL
+        hGIft8M6agWmZZhQAcMx0w7vUcD9nW8=
+X-Google-Smtp-Source: ACcGV62i9ywHeyqq9+LgrmEEiBaB535ECJDjZbtqtTnVPRbiS7zWJTO1tUGE1nU2mMq7fvPoFv8/pw==
+X-Received: by 2002:a0d:f883:: with SMTP id i125-v6mr7273420ywf.43.1538455662862;
+        Mon, 01 Oct 2018 21:47:42 -0700 (PDT)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id n186-v6sm20611944ywn.16.2018.10.01.21.47.40
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 01 Oct 2018 21:47:41 -0700 (PDT)
+Received: by mail-yw1-f48.google.com with SMTP id m129-v6so277312ywc.1
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 21:47:40 -0700 (PDT)
+X-Received: by 2002:a0d:fec6:: with SMTP id o189-v6mr7732638ywf.237.1538455660237;
+ Mon, 01 Oct 2018 21:47:40 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 1 Oct 2018 21:47:39 -0700 (PDT)
+In-Reply-To: <0d76adea-93b9-9512-a57b-8605b7928bc2@infradead.org>
+References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-14-keescook@chromium.org>
+ <0d76adea-93b9-9512-a57b-8605b7928bc2@infradead.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 1 Oct 2018 21:47:39 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+SwjKEFURa2ijYNkUYNj4jVd15QWj-u6cfpU-jVrjoew@mail.gmail.com>
+Message-ID: <CAGXu5j+SwjKEFURa2ijYNkUYNj4jVd15QWj-u6cfpU-jVrjoew@mail.gmail.com>
+Subject: Re: [PATCH security-next v4 13/32] LoadPin: Rename "enable" to "enforce"
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         John Johansen <john.johansen@canonical.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         "Schaufler, Casey" <casey.schaufler@intel.com>,
         LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181002005505.6112-1-keescook@chromium.org>
- <20181002005505.6112-22-keescook@chromium.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ccfbe049-392d-4df5-5eb5-ea18576d4afd@infradead.org>
-Date:   Mon, 1 Oct 2018 18:18:31 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20181002005505.6112-22-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/1/18 5:54 PM, Kees Cook wrote:
-> Prior to this patch, default "enable" behavior was unchanged: SELinux
-> and AppArmor were controlled separately from the centralized control
-> defined by CONFIG_LSM_ENABLE and "lsm.enable=...". This changes the
-> logic to give all control over to the central logic.
-> 
-> Instead of allowing SELinux and AppArmor to override the central LSM
-> enabling logic, by having separate CONFIG and boot parameters, this
-> forces all "enable" variables to disabled, then enables any listed in
-> the CONFIG_LSM_ENABLE and "lsm.enable=..." settings, and finally disables
-> any listed in "lsm.disable=...".
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  6 ++--
->  include/linux/lsm_hooks.h                     |  2 +-
->  security/security.c                           | 32 +++++++------------
->  3 files changed, 15 insertions(+), 25 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 67c90985d2b8..f646cfab5613 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2279,14 +2279,12 @@
->  	lsm.disable=lsm1,...,lsmN
->  			[SECURITY] Comma-separated list of LSMs to disable
->  			at boot time. This overrides "lsm.enable=",
+On Mon, Oct 1, 2018 at 6:06 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 10/1/18 5:54 PM, Kees Cook wrote:
+>> LoadPin's "enable" setting is really about enforcement, not whether
+>> or not the LSM is using LSM hooks. Instead, split this out so that LSM
+>> enabling can be logically distinct from whether enforcement is happening
+>> (for example, the pinning happens when the LSM is enabled, but the pin
+>> is only checked when "enforce" is set). This allows LoadPin to continue
+>
+> ISTB:             when "enforcing" is set).  ??
 
-better:			              This overrides "lsm.enable=" and
+Whoops, thanks. And I need to do s/enable/enabled/ in the log. I'll fix this up.
 
-> -			CONFIG_LSM_ENABLE, and any per-LSM CONFIGs and boot
-> -			parameters.
-> +			CONFIG_LSM_ENABLE.
->  
->  	lsm.enable=lsm1,...,lsmN
->  			[SECURITY] Comma-separated list of LSMs to enable
->  			at boot time. This overrides any omissions from
-> -			CONFIG_LSM_ENABLE, and any per-LSM CONFIGs and
-> -			boot parameters.
-> +			CONFIG_LSM_ENABLE.
->  
->  	machvec=	[IA-64] Force the use of a particular machine-vector
->  			(machvec) in a generic kernel.
+-Kees
+
+>
+>> to operate sanely in test environments once LSM enable/disable is
+>> centrally handled (i.e. we want LoadPin to be enabled separately from
+>> its enforcement).
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+>> Reviewed-by: John Johansen <john.johansen@canonical.com>
+>> ---
+>>  security/loadpin/Kconfig   |  4 ++--
+>>  security/loadpin/loadpin.c | 21 +++++++++++----------
+>>  2 files changed, 13 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
+>> index dd01aa91e521..8653608a3693 100644
+>> --- a/security/loadpin/Kconfig
+>> +++ b/security/loadpin/Kconfig
+>> @@ -10,10 +10,10 @@ config SECURITY_LOADPIN
+>>         have a root filesystem backed by a read-only device such as
+>>         dm-verity or a CDROM.
+>>
+>> -config SECURITY_LOADPIN_ENABLED
+>> +config SECURITY_LOADPIN_ENFORCING
+>>       bool "Enforce LoadPin at boot"
+>>       depends on SECURITY_LOADPIN
+>>       help
+>>         If selected, LoadPin will enforce pinning at boot. If not
+>>         selected, it can be enabled at boot with the kernel parameter
+>> -       "loadpin.enabled=1".
+>> +       "loadpin.enforcing=1".
+>> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+>> index 0716af28808a..d8a68a6f6fef 100644
+>> --- a/security/loadpin/loadpin.c
+>> +++ b/security/loadpin/loadpin.c
+>> @@ -44,7 +44,7 @@ static void report_load(const char *origin, struct file *file, char *operation)
+>>       kfree(pathname);
+>>  }
+>>
+>> -static int enabled = IS_ENABLED(CONFIG_SECURITY_LOADPIN_ENABLED);
+>> +static int enforcing = IS_ENABLED(CONFIG_SECURITY_LOADPIN_ENFORCING);
+>>  static struct super_block *pinned_root;
+>>  static DEFINE_SPINLOCK(pinned_root_spinlock);
+>>
+>> @@ -60,8 +60,8 @@ static struct ctl_path loadpin_sysctl_path[] = {
+>>
+>>  static struct ctl_table loadpin_sysctl_table[] = {
+>>       {
+>> -             .procname       = "enabled",
+>> -             .data           = &enabled,
+>> +             .procname       = "enforcing",
+>> +             .data           = &enforcing,
+>>               .maxlen         = sizeof(int),
+>>               .mode           = 0644,
+>>               .proc_handler   = proc_dointvec_minmax,
+>> @@ -97,7 +97,7 @@ static void check_pinning_enforcement(struct super_block *mnt_sb)
+>>                                          loadpin_sysctl_table))
+>>                       pr_notice("sysctl registration failed!\n");
+>>               else
+>> -                     pr_info("load pinning can be disabled.\n");
+>> +                     pr_info("enforcement can be disabled.\n");
+>>       } else
+>>               pr_info("load pinning engaged.\n");
+>>  }
+>> @@ -128,7 +128,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
+>>
+>>       /* This handles the older init_module API that has a NULL file. */
+>>       if (!file) {
+>> -             if (!enabled) {
+>> +             if (!enforcing) {
+>>                       report_load(origin, NULL, "old-api-pinning-ignored");
+>>                       return 0;
+>>               }
+>> @@ -151,7 +151,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
+>>                * Unlock now since it's only pinned_root we care about.
+>>                * In the worst case, we will (correctly) report pinning
+>>                * failures before we have announced that pinning is
+>> -              * enabled. This would be purely cosmetic.
+>> +              * enforcing. This would be purely cosmetic.
+>>                */
+>>               spin_unlock(&pinned_root_spinlock);
+>>               check_pinning_enforcement(pinned_root);
+>> @@ -161,7 +161,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
+>>       }
+>>
+>>       if (IS_ERR_OR_NULL(pinned_root) || load_root != pinned_root) {
+>> -             if (unlikely(!enabled)) {
+>> +             if (unlikely(!enforcing)) {
+>>                       report_load(origin, file, "pinning-ignored");
+>>                       return 0;
+>>               }
+>> @@ -186,10 +186,11 @@ static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
+>>
+>>  void __init loadpin_add_hooks(void)
+>>  {
+>> -     pr_info("ready to pin (currently %sabled)", enabled ? "en" : "dis");
+>> +     pr_info("ready to pin (currently %senforcing)\n",
+>> +             enforcing ? "" : "not ");
+>>       security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
+>>  }
+>>
+>>  /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
+>> -module_param(enabled, int, 0);
+>> -MODULE_PARM_DESC(enabled, "Pin module/firmware loading (default: true)");
+>> +module_param(enforcing, int, 0);
+>> +MODULE_PARM_DESC(enforcing, "Enforce module/firmware pinning");
+>>
+>
+>
+> --
+> ~Randy
+
 
 
 -- 
-~Randy
+Kees Cook
+Pixel Security
