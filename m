@@ -2,215 +2,68 @@ Return-Path: <SRS0=hMH8=MO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F3CC43143
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C4F9C00449
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E628921471
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:56:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WsnlpMzi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E628921471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 49BD721471
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Oct 2018 00:56:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49BD721471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbeJBHfm (ORCPT
+        id S1726604AbeJBHhT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Oct 2018 03:35:42 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34160 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726715AbeJBHfm (ORCPT
+        Tue, 2 Oct 2018 03:37:19 -0400
+Received: from mga14.intel.com ([192.55.52.115]:15926 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726630AbeJBHhT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Oct 2018 03:35:42 -0400
-Received: by mail-io1-f68.google.com with SMTP id k19-v6so272214iom.1
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Oct 2018 17:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=ktt3JW7jGajBPkbbI86StPv6XdFH/coirzVsiU2QTCI=;
-        b=WsnlpMzijI+cNWStBdptmpOPjCjntMQWOfaJ7G9i5XCOtEWeQGJ1kkOABZQWNyu6vY
-         /cWurmB5WQzqL82Zc+62wsVK0lkBUTkLVPsu4jsVPd8y/OASeyExCtGSF2luoQY+FK9S
-         mx7usAq9lT2DTCSDVJtuTOwamo3bkFP9lvCRo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ktt3JW7jGajBPkbbI86StPv6XdFH/coirzVsiU2QTCI=;
-        b=fRm86gqHWwcZZB25KQ+nQo52jsQJfRISCXEQ1j48AILGht2vRyPhvFMUNJNYHmx5zs
-         Nzd9LPGArXN9mb5H4SEnjwoY6DKA9fzujcQG2+hlV+1dl59iTb4DLcbX8/j/BGLfTT8E
-         OJ+HRmfoNRZ3TAgC74IUNL4p4JnbDJDf4YBOreckz+RrwUQBlihex6d8z5nXniD497hX
-         brHqOjnQlF6FWLUSycti53IJqs8MRexEv+HjSr7A2Q0dyZNWldNhY4hSGIy9ZOpEcQaY
-         S5zjT3DccxOgRsMGwFW6xFN4PU9mix3ZGxRkFTjpiUfgJjLcKFIPGqzqtbSoqyOK2Qg5
-         2Lhw==
-X-Gm-Message-State: ABuFfogGx6AXJ0ndSAXjztt0pIJpxx+2hJ6DwMElOn+JjT21ueFcd9Za
-        ZufY5dt9qVxVvmhTnTtMqkq6PA==
-X-Google-Smtp-Source: ACcGV61WlLOZVFk1/m2qEStw++h04w6VcNpbkgAorONOYszqy4VpKm9PQbU14j5TJ9h8dPApWps6dA==
-X-Received: by 2002:a17:902:14d:: with SMTP id 71-v6mr13848665plb.146.1538441713455;
-        Mon, 01 Oct 2018 17:55:13 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id s14-v6sm15958720pgv.29.2018.10.01.17.55.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 01 Oct 2018 17:55:08 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     James Morris <jmorris@namei.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v4 00/32] LSM: Explict LSM ordering
-Date:   Mon,  1 Oct 2018 17:54:33 -0700
-Message-Id: <20181002005505.6112-1-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 2 Oct 2018 03:37:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Oct 2018 17:56:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,329,1534834800"; 
+   d="scan'208";a="267604233"
+Received: from hubermic-mobl.ger.corp.intel.com (HELO localhost) ([10.252.54.31])
+  by fmsmga005.fm.intel.com with ESMTP; 01 Oct 2018 17:56:36 -0700
+Date:   Tue, 2 Oct 2018 03:56:35 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tomas Winkler <tomas.winkler@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 13/21] tpm: add tpm_auto_startup() into tpm-interface.c
+Message-ID: <20181002005635.GI23753@linux.intel.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+ <20180928223035.14471-14-tomas.winkler@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180928223035.14471-14-tomas.winkler@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-v4:
-- add Reviewed-bys.
-- cosmetic tweaks.
-- New patches to fully centralize LSM "enable" decisions:
-    LSM: Finalize centralized LSM enabling logic
-    apparmor: Remove boot parameter
-    selinux: Remove boot parameter
+On Sat, Sep 29, 2018 at 01:30:27AM +0300, Tomas Winkler wrote:
+> Add wrapper tpm_auto_startup() to tpm-interface.c
+> instead of open coded decision between TPM 1.x and TPM 2.x
+> in tpm-chip.c
+> 
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-v3:
-- add CONFIG_LSM_ENABLE and refactor resulting logic
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-v2:
-- add "lsm.order=" and CONFIG_LSM_ORDER instead of overloading "security="
-- reorganize introduction of ordering logic code
-
-Overview:
-
-This refactors the LSM registration and initialization infrastructure to
-more centrally support different LSM types for more cleanly supporting the
-future expansion of LSM stacking via the "blob-sharing" patch series. What
-was considered a "major" LSM is kept for legacy use of the "security="
-boot parameter, and now overlaps with the new class of "exclusive" LSMs
-for the future blob sharing. The "minor" LSMs become more well defined
-as a result of the refactoring.
-
-Approach:
-
-To better show LSMs activation some debug reporting was added (enabled
-with the "lsm.debug" boot commandline option).
-
-I added a WARN() around LSM initialization failures, which appear to
-have always been silently ignored. (Realistically any LSM init failures
-would have only been due to catastrophic kernel issues that would render
-a system unworkable anyway, but it'd be better to expose the problem as
-early as possible.)
-
-Instead of continuing to (somewhat improperly) overload the kernel's
-initcall system, this changes the LSM infrastructure to store a
-registration structure (struct lsm_info) table instead, where metadata
-about each LSM can be recorded (name, flags, order, enable flag, init
-function). This can be extended in the future to include things like
-required blob size for the coming "blob sharing" LSMs.
-
-The "major" LSMs had to individually negotiate which of them should be
-enabled. This didn't provide a way to negotiate combinations of other
-LSMs (as will be needed for "blob sharing" LSMs). This is solved by
-providing the LSM infrastructure with all the details needed to make
-the choice (exposing the per-LSM "enabled" flag, if used, the LSM
-characteristics, and ordering expectations).
-
-As a result of the refactoring, the "minor" LSMs are able to remove
-the open-coded security_add_hooks() calls for "capability", "yama",
-and "loadpin", and to redefine "integrity" properly as a general LSM.
-(Note that "integrity" actually defined _no_ hooks, but needs the early
-initialization).
-
-With all LSMs being proessed centrally, it was possible to implement
-a new boot parameter "lsm.order=" to provide explicit ordering, which
-is helpful for the future "blob sharing" LSMs. Matching this is the
-new CONFIG_LSM_ORDER, which replaces CONFIG_DEFAULT_SECURITY, as it
-provides a higher granularity of control.
-
-Breakdown of patches:
-
-Infrastructure improvements (no logical changes):
-  LSM: Correctly announce start of LSM initialization
-  vmlinux.lds.h: Avoid copy/paste of security_init section
-  LSM: Rename .security_initcall section to .lsm_info
-  LSM: Remove initcall tracing
-  LSM: Convert from initcall to struct lsm_info
-  vmlinux.lds.h: Move LSM_TABLE into INIT_DATA
-  LSM: Convert security_initcall() into DEFINE_LSM()
-  LSM: Record LSM name in struct lsm_info
-  LSM: Provide init debugging infrastructure
-  LSM: Don't ignore initialization failures
-
-Split "integrity" out into "ordered initialization" (no logical changes):
-  LSM: Introduce LSM_FLAG_LEGACY_MAJOR
-  LSM: Provide separate ordered initialization
-
-Provide centralized LSM enable/disable infrastructure:
-  LoadPin: Rename "enable" to "enforce"
-  LSM: Plumb visibility into optional "enabled" state
-  LSM: Lift LSM selection out of individual LSMs
-  LSM: Prepare for arbitrary LSM enabling
-  LSM: Introduce CONFIG_LSM_ENABLE
-  LSM: Introduce lsm.enable= and lsm.disable=
-  LSM: Prepare for reorganizing "security=" logic
-  LSM: Refactor "security=" in terms of enable/disable
-  LSM: Finalize centralized LSM enabling logic
-  apparmor: Remove boot parameter
-  selinux: Remove boot parameter
-
-Provide centralized LSM ordering infrastructure:
-  LSM: Build ordered list of ordered LSMs for init
-  LSM: Introduce CONFIG_LSM_ORDER
-  LSM: Introduce "lsm.order=" for boottime ordering
-
-Move minor LSMs into ordered LSM initialization:
-  LoadPin: Initialize as ordered LSM
-  Yama: Initialize as ordered LSM
-  LSM: Introduce enum lsm_order
-  capability: Initialize as LSM_ORDER_FIRST
-
-Move major LSMs into ordered LSM initialization:
-  LSM: Separate idea of "major" LSM from "exclusive" LSM
-  LSM: Add all exclusive LSMs to ordered initialization
-
--Kees
-
- .../admin-guide/kernel-parameters.txt         |  34 +-
- arch/arc/kernel/vmlinux.lds.S                 |   1 -
- arch/arm/kernel/vmlinux-xip.lds.S             |   1 -
- arch/arm64/kernel/vmlinux.lds.S               |   1 -
- arch/h8300/kernel/vmlinux.lds.S               |   1 -
- arch/microblaze/kernel/vmlinux.lds.S          |   2 -
- arch/powerpc/kernel/vmlinux.lds.S             |   2 -
- arch/um/include/asm/common.lds.S              |   2 -
- arch/xtensa/kernel/vmlinux.lds.S              |   1 -
- include/asm-generic/vmlinux.lds.h             |  25 +-
- include/linux/init.h                          |   2 -
- include/linux/lsm_hooks.h                     |  37 +-
- include/linux/module.h                        |   1 -
- security/Kconfig                              |  61 ++--
- security/apparmor/Kconfig                     |  16 -
- security/apparmor/lsm.c                       |  22 +-
- security/commoncap.c                          |   9 +-
- security/integrity/iint.c                     |   6 +-
- security/loadpin/Kconfig                      |   4 +-
- security/loadpin/loadpin.c                    |  29 +-
- security/security.c                           | 343 +++++++++++++++---
- security/selinux/Kconfig                      |  29 --
- security/selinux/hooks.c                      |  32 +-
- security/smack/smack_lsm.c                    |   9 +-
- security/tomoyo/tomoyo.c                      |   8 +-
- security/yama/yama_lsm.c                      |   8 +-
- 26 files changed, 432 insertions(+), 254 deletions(-)
-
--- 
-2.17.1
-
+/Jarkko
