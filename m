@@ -3,49 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A66FC64EBC
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 18:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2754EC00449
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 18:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5154821470
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 18:13:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5154821470
+	by mail.kernel.org (Postfix) with ESMTP id E42562089F
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 18:17:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E42562089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbeJDBC5 (ORCPT
+        id S1727332AbeJDBHU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Oct 2018 21:02:57 -0400
-Received: from namei.org ([65.99.196.166]:35396 "EHLO namei.org"
+        Wed, 3 Oct 2018 21:07:20 -0400
+Received: from namei.org ([65.99.196.166]:35422 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726851AbeJDBC5 (ORCPT
+        id S1726851AbeJDBHU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Oct 2018 21:02:57 -0400
+        Wed, 3 Oct 2018 21:07:20 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w93ID8Ag015144;
-        Wed, 3 Oct 2018 18:13:08 GMT
-Date:   Thu, 4 Oct 2018 04:13:08 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id w93IHJ2b015270;
+        Wed, 3 Oct 2018 18:17:19 GMT
+Date:   Thu, 4 Oct 2018 04:17:19 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
-To:     Kees Cook <keescook@chromium.org>
-cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        LSM <linux-security-module@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
+To:     John Johansen <john.johansen@canonical.com>
+cc:     Kees Cook <keescook@chromium.org>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
         Stephen Smalley <sds@tycho.nsa.gov>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Subject: Re: [PATCH v4 14/19] LSM: Infrastructure management of the inode
- security
-In-Reply-To: <CAGXu5jL1Ek85Hky+PZ2pGQF09_cd_odn-LanYU=vVKgw24b8vg@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1810040409280.13517@namei.org>
-References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com> <f24ab6a2-aa1d-1c36-9e51-22c924ad37e5@schaufler-ca.com> <CAGXu5jL1Ek85Hky+PZ2pGQF09_cd_odn-LanYU=vVKgw24b8vg@mail.gmail.com>
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+In-Reply-To: <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com>
+Message-ID: <alpine.LRH.2.21.1810040416500.13517@namei.org>
+References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org> <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com> <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov>
+ <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com> <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com> <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com> <alpine.LRH.2.21.1810030758460.23596@namei.org>
+ <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com> <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -53,36 +54,47 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 21 Sep 2018, Kees Cook wrote:
+On Tue, 2 Oct 2018, John Johansen wrote:
 
-> On Fri, Sep 21, 2018 at 5:19 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> To me a list like
+>   lsm.enable=X,Y,Z
 
-> > + * lsm_early_inode - during initialization allocate a composite inode blob
-> > + * @inode: the inode that needs a blob
-> > + *
-> > + * Allocate the inode blob for all the modules if it's not already there
-> > + */
-> > +void lsm_early_inode(struct inode *inode)
-> > +{
-> > +       int rc;
-> > +
-> > +       if (inode == NULL)
-> > +               panic("%s: NULL inode.\n", __func__);
-> > +       if (inode->i_security != NULL)
-> > +               return;
-> > +       rc = lsm_inode_alloc(inode);
-> > +       if (rc)
-> > +               panic("%s: Early inode alloc failed.\n", __func__);
-> > +}
+What about even simpler:
+
+lsm=selinux,!apparmor,yama
+
 > 
-> I'm still advising against using panic(), but I'll leave it up to James.
+> is best as a single explicit enable list, and it would be best to avoid
+> lsm.disable as it just introduces confusion.
 > 
-
-Calling panic() is not appropriate here. Perhaps if it was during 
-boot-time initialization of LSM infrastructure, but not on the fly.
-
-Use a WARN_ONCE then propagate the error back and fail the operation.
-
+> I do think per-LSM bootparams looses the advantages of centralization,
+> and still requires the user to know some Kconfig info but it also gets
+> rid of the lsm.disable confusion.
+> 
+> With ordering separated out from being enabled there is a certain
+> cleanness to it. And perhaps most users are looking to enable/disable
+> a single lsm, instead of specifying exactly what security they want
+> on their system.
+> 
+> If we were to go this route I would rather drop the lsm. prefix
+> 
+> 
+> > I think the current proposal (in the other thread) is likely the
+> > sanest approach:
+> > 
+> > - Drop CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE
+> > - Drop CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE
+> > - All enabled LSMs are listed at build-time in CONFIG_LSM_ENABLE
+> 
+> Hrrmmm isn't this a Kconfig selectable list, with each built-in LSM
+> available to be enabled by default at boot.
+> 
+> > - Boot time enabling for selinux= and apparmor= remain
+> > - lsm.enable= is explicit: overrides above and omissions are disabled
+> wfm
+> 
+> > - maybe include lsm.disable= to disable anything
+> 
 
 -- 
 James Morris
