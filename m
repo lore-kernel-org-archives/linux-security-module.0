@@ -2,84 +2,34 @@ Return-Path: <SRS0=gg+Z=MP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A727C00449
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 20:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991D0C64EB8
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 21:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C32F213A2
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 20:36:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MOg30Bv7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C32F213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 671B721470
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 21:20:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 671B721470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726950AbeJDD0M (ORCPT
+        id S1726277AbeJDEKI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Oct 2018 23:26:12 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:36528 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbeJDD0L (ORCPT
+        Thu, 4 Oct 2018 00:10:08 -0400
+Received: from namei.org ([65.99.196.166]:35524 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725871AbeJDEKI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Oct 2018 23:26:11 -0400
-Received: by mail-yw1-f66.google.com with SMTP id e201-v6so2874092ywa.3
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Oct 2018 13:36:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=wpFr+Hx2NbVy/3EKUYPoL01zFPb1EwjCpAZhF1GQotc=;
-        b=MOg30Bv7tHPEVqfq4sdyfblhl/GzBPRza0X1/0VWWk5u1jUcBPuObp9VPmc0024Jx2
-         QQgmIFYAlJp4wO4HZV8dPKR+qTVyAK1gpTZg1ascP4mJtCxCBW9bcoWDqIxfOvE8Y/3i
-         YU4A3i/+iWIXQMce0nD1g4RP2hC+AbCnF/k2U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=wpFr+Hx2NbVy/3EKUYPoL01zFPb1EwjCpAZhF1GQotc=;
-        b=GyT4XS2qtv4/taRmUUcUZp90l7KCSqmtrznVWivom0z11RMAgs9KK5sgoTh3+kunNp
-         HG5ghpMp78MWsZlBue9Fv9cAokKlInOLdw10ppL9Xym93pgHmRV2lMgjlVZtnNVelEZj
-         Zfijs5/tadLzAdJyA9jDBlnXLXgerLr6akjHYUas2ngcXeqvOzik7IIxbyAkeqxzfJkF
-         KZxve3ysNxt9fzVUA8+8IhJyUekBjOKNCDJIyKrz2UgfRT4n+nOURISsh5y4dgXrLZ8C
-         roJEPOYCx7BL6iWulLaYEmwMlYlA9Gf+47YbGRZe9Ib6MNFYwRK+LuP/IQIMO5wqCQ9N
-         fEsQ==
-X-Gm-Message-State: ABuFfoha4XSPo5t+9XKuTfHrF11CaltyWsni/x+l/ppKc/f0u/53p0lf
-        H+MiRur1gG+8J3Kt2at59RSsoSfUV/I=
-X-Google-Smtp-Source: ACcGV60RYAMRXoYuNtAUjf+fu8BWcqBIYHoFm/sjdBqfXmnfs9dBnJoZBniOfY6CFcd7ppSukaO0xQ==
-X-Received: by 2002:a81:9c0e:: with SMTP id t14-v6mr1868740ywg.437.1538598972780;
-        Wed, 03 Oct 2018 13:36:12 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id t81-v6sm804402ywb.90.2018.10.03.13.36.10
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 03 Oct 2018 13:36:11 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id c4-v6so2973324ybl.6
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Oct 2018 13:36:10 -0700 (PDT)
-X-Received: by 2002:a25:2395:: with SMTP id j143-v6mr1934723ybj.137.1538598970262;
- Wed, 03 Oct 2018 13:36:10 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 13:36:09 -0700 (PDT)
-In-Reply-To: <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
-References: <20181002005505.6112-1-keescook@chromium.org> <20181002005505.6112-24-keescook@chromium.org>
- <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
- <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
- <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
- <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
- <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
- <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
- <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org>
- <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com>
- <alpine.LRH.2.21.1810040427550.13517@namei.org> <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 3 Oct 2018 13:36:09 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLBHN=YSs3Uh49bBJ1SRA1Km2UUD4j37GJJXiKhQq+KPA@mail.gmail.com>
-Message-ID: <CAGXu5jLBHN=YSs3Uh49bBJ1SRA1Km2UUD4j37GJJXiKhQq+KPA@mail.gmail.com>
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-To:     James Morris <jmorris@namei.org>
-Cc:     John Johansen <john.johansen@canonical.com>,
+        Thu, 4 Oct 2018 00:10:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id w93LJibv023350;
+        Wed, 3 Oct 2018 21:19:44 GMT
+Date:   Thu, 4 Oct 2018 07:19:44 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Kees Cook <keescook@chromium.org>
+cc:     John Johansen <john.johansen@canonical.com>,
         Jordan Glover <Golden_Miller83@protonmail.ch>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         Paul Moore <paul@paul-moore.com>,
@@ -91,85 +41,29 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         linux-arch <linux-arch@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+In-Reply-To: <CAGXu5jLBHN=YSs3Uh49bBJ1SRA1Km2UUD4j37GJJXiKhQq+KPA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1810040719060.16168@namei.org>
+References: <20181002005505.6112-1-keescook@chromium.org> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com> <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com> <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com> <alpine.LRH.2.21.1810030758460.23596@namei.org>
+ <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com> <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org> <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com>
+ <alpine.LRH.2.21.1810040427550.13517@namei.org> <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com> <CAGXu5jLBHN=YSs3Uh49bBJ1SRA1Km2UUD4j37GJJXiKhQq+KPA@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 3, 2018 at 1:10 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Wed, Oct 3, 2018 at 11:28 AM, James Morris <jmorris@namei.org> wrote:
->> On Wed, 3 Oct 2018, Kees Cook wrote:
->>
->>> On Wed, Oct 3, 2018 at 11:17 AM, James Morris <jmorris@namei.org> wrote:
->>> > On Tue, 2 Oct 2018, John Johansen wrote:
->>> >> To me a list like
->>> >>   lsm.enable=X,Y,Z
->>> >
->>> > What about even simpler:
->>> >
->>> > lsm=selinux,!apparmor,yama
->>>
->>> We're going to have lsm.order=, so I'd like to keep it with a dot
->>> separator (this makes it more like module parameters, too). You want
->>> to mix enable/disable in the same string? That implies you'd want
->>> implicit enabling (i.e. it complements the builtin enabling), which is
->>> opposite from what John wanted.
->>>
->>
->> Why can't this be the order as well?
->
-> That was covered extensively in the earlier threads. It boils down to
-> making sure we do not create a pattern of leaving LSMs disabled by
-> default when they are added to the kernel. The v1 series used
-> security= like this:
->
-> +       security=       [SECURITY] An ordered comma-separated list of
-> +                       security modules to attempt to enable at boot. If
-> +                       this boot parameter is not specified, only the
-> +                       security modules asking for initialization will be
-> +                       enabled (see CONFIG_DEFAULT_SECURITY). Duplicate
-> +                       or invalid security modules will be ignored. The
-> +                       capability module is always loaded first, without
-> +                       regard to this parameter.
->
-> This meant booting "security=apparmor" would disable all the other
-> LSMs, which wasn't friendly at all. So "security=" was left alone (to
-> leave it to only select the "major" LSM: all major LSMs not matching
-> "security=" would be disabled). So I proposed "lsm.order=" to specify
-> the order things were going to be initialized in, but to avoid kernels
-> booting with newly added LSMs forced-off due to not being listed in
-> "lsm.order=", it had to have implicit fall-back for unlisted LSMs.
-> (i.e. anything missing from lsm.order would then follow their order in
-> CONFIG_LSM_ORDER, and anything missing there would fall back to
-> link-time ordering.) However, then the objection was raised that this
-> didn't provide a way to explicitly disable an LSM. So I proposed
-> lsm.enable/disable, and John argued for CONFIG_LSM_ENABLE over
-> CONFIG_LSM_DISABLE.
+On Wed, 3 Oct 2018, Kees Cook wrote:
 
-I still think we should have all built LSMs enabled by default, with
-CONFIG_LSM_DISABLE available to turn stuff off. CONFIG_LSM_ORDER
-declares their order, "lsm.order=" works as mentioned, and
-"lsm.enable/disable=" make changes to what's enabled.
+> I should also note that I don't want to leave CONFIG_DEFAULT_SECURITY
+> in, since it's just a way to disable all the other majors.
 
-(This would be most like the v3 series, swapping CONFIG_LSM_ENABLE for
-CONFIG_LSM_DISABLE.)
+Right, default doesn't make sense anymore.
 
-It gives us centralized ordering and centralized disabling. Distros
-wanting specific LSMs are already building them, so _also_ adding them
-to CONFIG_LSM_ENABLE seems redundant to me. Distros wanting all the
-LSMs just want to declare the order of initialization, and maybe add
-some to CONFIG_LSM_DISABLE some day, so they use CONFIG_LSM_ORDER.
-
-I should also note that I don't want to leave CONFIG_DEFAULT_SECURITY
-in, since it's just a way to disable all the other majors. I don't
-like this because it will force LSMs to be disabled that don't need to
-be once blob-sharing lands. The whole point of this series is to get
-us away from fixed ordering and thinking about "major" vs "minor" and
-towards "exclusive" or not, where we can continue to slowly chip away
-at exclusivity without breaking anything.
-
--Kees
 
 -- 
-Kees Cook
-Pixel Security
+James Morris
+<jmorris@namei.org>
+
