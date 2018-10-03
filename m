@@ -2,135 +2,243 @@ Return-Path: <SRS0=gg+Z=MP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85901C64EB8
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 22:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D0BC00449
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 23:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52404213A2
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 22:26:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52404213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8AB5020856
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Oct 2018 23:55:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SoP3CLUy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB5020856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727422AbeJDFRO convert rfc822-to-8bit (ORCPT
+        id S1726270AbeJDGqM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Oct 2018 01:17:14 -0400
-Received: from mga18.intel.com ([134.134.136.126]:4900 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725723AbeJDFRO (ORCPT
+        Thu, 4 Oct 2018 02:46:12 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:33408 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726209AbeJDGqM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Oct 2018 01:17:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Oct 2018 15:26:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,337,1534834800"; 
-   d="scan'208";a="75207171"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Oct 2018 15:24:12 -0700
-Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 3 Oct 2018 15:24:12 -0700
-Received: from hasmsx108.ger.corp.intel.com (10.184.198.18) by
- fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 3 Oct 2018 15:24:11 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- hasmsx108.ger.corp.intel.com ([169.254.9.136]) with mapi id 14.03.0319.002;
- Thu, 4 Oct 2018 01:24:09 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
-Subject: RE: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Thread-Topic: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-Thread-Index: AQHUWeozFz0QOr+BiUiSikU4mA0ywaULXotQgAHdBoCAAN6dYA==
-Date:   Wed, 3 Oct 2018 22:24:09 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-13-tomas.winkler@intel.com>
- <20181002005208.GH23753@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
- <20181003120141.GA7969@linux.intel.com>
-In-Reply-To: <20181003120141.GA7969@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTJhN2FjNzctYTcwOC00ZmQ0LTkyNWEtMTkxNGEzZDg4NmU3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicmRHcG4zRmh1UFhZZXpPS2VGek00ZzJ4WGhMXC9cL3pDMDl1aTZ0bWVCTzhVZWYwMFRlTGxiemdqU3Y2MkU4d0ZDIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.191]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 4 Oct 2018 02:46:12 -0400
+Received: by mail-yb1-f194.google.com with SMTP id u88-v6so3192006ybi.0
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Oct 2018 16:55:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=seWoTMnikqM7uc4Yt+E9z8Znkj9oNEK1XiSxNN8pRao=;
+        b=SoP3CLUyJiPaEAj268HziXnv1xTfHBfQroZuZfukddAps/icC/QQv28+2dXGQQ3bMY
+         1Rtp0NLbT2J9677SX3Qv1pFt5U4w8nmdcycZ9IspjHhO6lkNgeP043XY12FZF6/FQ3qy
+         z78su/pzqz+fYNn0KFvZTJifGNAqoI6WUYHuw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=seWoTMnikqM7uc4Yt+E9z8Znkj9oNEK1XiSxNN8pRao=;
+        b=gNox60wZ6w7zV1ztNPQgbTRigIYPAxiFOWPuOX4Kw2VYjZ0iX355LuNH2Lj/UdDrVT
+         VMibVh0in624ERVwtjYN8euw4haCrYiPLr1byh5leH1luji0H6sjn1ZpKK5uZKnr+dAn
+         22Z9zGx9e1SEQsUh/ClpiKeM5Ow8ca+59CWLYY88UGWuymKSo82Swcl7L1mNnW5ERwvq
+         BaxWR+mMS6bws42wDK5yiwY35chcg8SNvVvLwu2icKzxZ6ztqY7yVBJpz7ZMC/ZynfEE
+         CmDpqK7dBUNYQJQgiR7PFUrL20wr1wgjoB7iluIYZznUIEokjuke5rIxxhEnGqzuOaPo
+         EAcA==
+X-Gm-Message-State: ABuFfohrLh+NiytZkIBOS3BKr8kTuVGiqDZblR5/wEKW0nr1ENpBLBeY
+        1NN1wDBThfJME4jGOhn1/zJ3soVdMFA=
+X-Google-Smtp-Source: ACcGV63r+5Z76CO+Uei/Vt46SyNVx4OnveF+xfaY594dq6T6JDXZp/8lHYNO2lTn53oCw6pjIMvqZw==
+X-Received: by 2002:a25:bf8e:: with SMTP id l14-v6mr2351287ybk.12.1538610934913;
+        Wed, 03 Oct 2018 16:55:34 -0700 (PDT)
+Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
+        by smtp.gmail.com with ESMTPSA id f194-v6sm3444870ywb.53.2018.10.03.16.55.33
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 03 Oct 2018 16:55:33 -0700 (PDT)
+Received: by mail-yw1-f46.google.com with SMTP id l79-v6so3058065ywc.7
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Oct 2018 16:55:33 -0700 (PDT)
+X-Received: by 2002:a81:98cb:: with SMTP id p194-v6mr2215171ywg.353.1538610932584;
+ Wed, 03 Oct 2018 16:55:32 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Wed, 3 Oct 2018 16:55:31 -0700 (PDT)
+In-Reply-To: <alpine.LRH.2.21.1810040723320.16168@namei.org>
+References: <20181002005505.6112-1-keescook@chromium.org> <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov>
+ <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
+ <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+ <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
+ <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
+ <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org>
+ <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com>
+ <alpine.LRH.2.21.1810040427550.13517@namei.org> <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
+ <alpine.LRH.2.21.1810040723320.16168@namei.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 3 Oct 2018 16:55:31 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJDBhFrdCBHH4MZVDmG88mMxSaSx0w9anCcyx24YHLO5w@mail.gmail.com>
+Message-ID: <CAGXu5jJDBhFrdCBHH4MZVDmG88mMxSaSx0w9anCcyx24YHLO5w@mail.gmail.com>
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+To:     James Morris <jmorris@namei.org>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Oct 3, 2018 at 2:34 PM, James Morris <jmorris@namei.org> wrote:
+> On Wed, 3 Oct 2018, Kees Cook wrote:
+>
+>> On Wed, Oct 3, 2018 at 11:28 AM, James Morris <jmorris@namei.org> wrote:
+>> > On Wed, 3 Oct 2018, Kees Cook wrote:
+>> >
+>> >> On Wed, Oct 3, 2018 at 11:17 AM, James Morris <jmorris@namei.org> wrote:
+>> >> > On Tue, 2 Oct 2018, John Johansen wrote:
+>> >> >> To me a list like
+>> >> >>   lsm.enable=X,Y,Z
+>> >> >
+>> >> > What about even simpler:
+>> >> >
+>> >> > lsm=selinux,!apparmor,yama
+>> >>
+>> >> We're going to have lsm.order=, so I'd like to keep it with a dot
+>> >> separator (this makes it more like module parameters, too). You want
+>> >> to mix enable/disable in the same string? That implies you'd want
+>> >> implicit enabling (i.e. it complements the builtin enabling), which is
+>> >> opposite from what John wanted.
+>> >>
+>> >
+>> > Why can't this be the order as well?
+>>
+>> That was covered extensively in the earlier threads. It boils down to
+>> making sure we do not create a pattern of leaving LSMs disabled by
+>> default when they are added to the kernel. The v1 series used
+>> security= like this:
+>>
+>> +       security=       [SECURITY] An ordered comma-separated list of
+>> +                       security modules to attempt to enable at boot. If
+>> +                       this boot parameter is not specified, only the
+>> +                       security modules asking for initialization will be
+>> +                       enabled (see CONFIG_DEFAULT_SECURITY). Duplicate
+>> +                       or invalid security modules will be ignored. The
+>> +                       capability module is always loaded first, without
+>> +                       regard to this parameter.
+>>
+>> This meant booting "security=apparmor" would disable all the other
+>> LSMs, which wasn't friendly at all. So "security=" was left alone (to
+>> leave it to only select the "major" LSM: all major LSMs not matching
+>> "security=" would be disabled). So I proposed "lsm.order=" to specify
+>> the order things were going to be initialized in, but to avoid kernels
+>> booting with newly added LSMs forced-off due to not being listed in
+>> "lsm.order=", it had to have implicit fall-back for unlisted LSMs.
+>> (i.e. anything missing from lsm.order would then follow their order in
+>> CONFIG_LSM_ORDER, and anything missing there would fall back to
+>> link-time ordering.) However, then the objection was raised that this
+>> didn't provide a way to explicitly disable an LSM. So I proposed
+>> lsm.enable/disable, and John argued for CONFIG_LSM_ENABLE over
+>> CONFIG_LSM_DISABLE.
+>
+> Ok, but it may end up being clearer, simpler, and thus more secure to just
+> have a single way to configure LSM.
+>
+> For example:
+>
+>   - All LSMs which are built are NOT enabled by default
+>
+>   - You specify enablement and order via a Kconfig:
+>
+>         CONFIG_LSM="selinux,yama"
+>
+>   - This can be entirely overridden by a boot param:
+>
+>         lsm="apparmor,landlock"
+
+This doesn't work with how SELinux and AppArmor do their bootparams,
+unfortunately. (And Paul and Stephen have expressed that the
+documented selinux on/off must continue to work.) For example, let's
+say you've built an Ubuntu kernel with:
+
+CONFIG_SELINUX=y
+...
+CONFIG_LSM="yama,apparmor"
+
+(i.e. you want SELinux available, but not enabled, so it's left out of
+CONFIG_LSM)
+
+Then someone boots the system with:
+
+selinux=1 security=selinux
+
+In what order does selinux get initialized relative to yama?
+(apparmor, flagged as a "legacy major", would have been disabled by
+the "security=" not matching it.)
 
 
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> Sent: Wednesday, October 03, 2018 15:02
-> To: Winkler, Tomas <tomas.winkler@intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
-> <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
-> <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
-> linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
-> linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
-> Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
-> 
-> On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
-> >
-> >
-> > >
-> > > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
-> > > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
-> > > > required by tpm-interface.c. It wraps the original open code
-> implementation.
-> > > > The original original tpm2_pcr_extend() function is renamed to
-> > > > __tpm2_pcr_extend() and made static, it is called only from new
-> > > > tpm2_pcr_extend().
-> > > >
-> > > > Fix warnings in __tpm2_pcr_extend()
-> > > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
-> > > > integer expressions [-Wsign-compare]
-> > > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
-> > > > integer expressions [-Wsign-compare]
-> > > >
-> > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > >
-> > > We do not want the signature change, especially because as we are
-> > > working on getting Roberto's changes in and also because it has
-> > > absolutely a zero gain. Who cares if those functions take different
-> parameters? I don't.
-> >
-> > Yes, we do care this series tries to have a clean cut between 1.x  and 2.x
-> specs. Please, let's finish one transformation and then move to another.
-> > I understand that Roberto will have to rebase anyhow, if this series goes in
-> first, if this is hard I can do it myself, it's trivial.
-> >
-> > Tomas
-> 
-> I'm happy to tune this minor stuff.
-What minor stuff?  This patch is just okay, let's change the API in next round.
+The LSM order needs to be defined externally to enablement because
+something may become enabled when not listed in the order.
 
- I'll wait for Nayna to test the one patch
-> and make those adjustments :-) Would not make sense to roll another series
-> for these changes.
-I agree 
-Tomas
+Now, maybe I misunderstood your earlier suggestion, and what you meant
+was to do something like:
 
+CONFIG_LSM="yama,apparmor,!selinux"
+
+to mean "put selinux here in the order, but don't enable it". Then the
+problem becomes what happens to an LSM that has been built in but not
+listed in CONFIG_LSM?
+
+Related to that, this means that when new LSMs are added, they will
+need to be added to any custom CONFIG_LSM= or lsm= parameters. If
+that's really how we have to go, I'll accept it, but I think it's a
+bit unfriendly. :P
+
+Another reason I don't like it is because it requires users to know
+about all the LSMs to make changes. One LSM can't be added/removed
+without specifying ALL of the LSMs. (i.e. there is no trivial way to
+enable/disable a single LSM without it growing its own enable/disable
+code as in SELinux/AppArmor. I'd hoped to make that easier for both
+users and developers.) Again, I can live with it, but I think it's
+unfriendly.
+
+I just want to have a direct I can go that meets all the requirements.
+:) I'm fine to ignore my sense of aesthetics if everyone can agree on
+the code.
+
+> And that's it.
+>
+> Of course, capabilities is always enabled and not be visible to kconfig or
+> boot params.
+
+Correct. I've made sure that's true in all the versions.
+
+BTW, there doesn't seem to be disagreement about the earlier part of
+the series, though (patches 1-10). Could these go into -next just so I
+don't have to keep sending them? :)
+
+LSM: Correctly announce start of LSM initialization
+vmlinux.lds.h: Avoid copy/paste of security_init section
+LSM: Rename .security_initcall section to .lsm_info
+LSM: Remove initcall tracing
+LSM: Convert from initcall to struct lsm_info
+vmlinux.lds.h: Move LSM_TABLE into INIT_DATA
+LSM: Convert security_initcall() into DEFINE_LSM()
+LSM: Record LSM name in struct lsm_info
+LSM: Provide init debugging infrastructure
+LSM: Don't ignore initialization failures
+
+Thanks!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
