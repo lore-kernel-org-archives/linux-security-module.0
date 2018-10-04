@@ -6,131 +6,119 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C67C64EBC
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 17:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC81C64EBC
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 18:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A04EE2083F
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 17:50:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A04EE2083F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A8DC2083F
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 18:37:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A8DC2083F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbeJEAoZ (ORCPT
+        id S1728206AbeJEBb7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Oct 2018 20:44:25 -0400
-Received: from namei.org ([65.99.196.166]:35682 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727458AbeJEAoZ (ORCPT
+        Thu, 4 Oct 2018 21:31:59 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:37166 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeJEBb7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Oct 2018 20:44:25 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w94HnEtf015791;
-        Thu, 4 Oct 2018 17:49:14 GMT
-Date:   Fri, 5 Oct 2018 03:49:14 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Kees Cook <keescook@chromium.org>
-cc:     John Johansen <john.johansen@canonical.com>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
+        Thu, 4 Oct 2018 21:31:59 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g88V3-0006ew-Gw; Thu, 04 Oct 2018 12:37:25 -0600
+Received: from [105.184.227.67] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1g88V2-0000lQ-Ck; Thu, 04 Oct 2018 12:37:25 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk,
+        John Johansen <john.johansen@canonical.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Eric W. Biederman" <ebiederm@redhat.com>, selinux@tycho.nsa.gov,
         Paul Moore <paul@paul-moore.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-In-Reply-To: <CAGXu5jJDBhFrdCBHH4MZVDmG88mMxSaSx0w9anCcyx24YHLO5w@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1810050338470.14095@namei.org>
-References: <20181002005505.6112-1-keescook@chromium.org> <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
- <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com> <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com> <alpine.LRH.2.21.1810030758460.23596@namei.org>
- <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com> <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <alpine.LRH.2.21.1810040416500.13517@namei.org> <CAGXu5j+oPR58oJ06-n7e96-Rmu+ywTW0hud5LhOZ_3UXG5s12w@mail.gmail.com>
- <alpine.LRH.2.21.1810040427550.13517@namei.org> <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com> <alpine.LRH.2.21.1810040723320.16168@namei.org> <CAGXu5jJDBhFrdCBHH4MZVDmG88mMxSaSx0w9anCcyx24YHLO5w@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Li Zefan <lizefan@huawei.com>, linux-api@vger.kernel.org,
+        apparmor@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>, fenghua.yu@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        tomoyo-dev-en@lists.sourceforge.jp, cgroups@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mszeredi@redhat.com
+References: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+Date:   Thu, 04 Oct 2018 20:37:09 +0200
+In-Reply-To: <153754740781.17872.7869536526927736855.stgit@warthog.procyon.org.uk>
+        (David Howells's message of "Fri, 21 Sep 2018 17:30:08 +0100")
+Message-ID: <87sh1ld0dm.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-XM-SPF: eid=1g88V2-0000lQ-Ck;;;mid=<87sh1ld0dm.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=105.184.227.67;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+Amy9+X87RMMZdxlLTh3md5UNJ0E9sHG4=
+X-SA-Exim-Connect-IP: 105.184.227.67
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 00/34] VFS: Introduce filesystem context [ver #12]
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 3 Oct 2018, Kees Cook wrote:
 
-> On Wed, Oct 3, 2018 at 2:34 PM, James Morris <jmorris@namei.org> wrote:
-> > On Wed, 3 Oct 2018, Kees Cook wrote:
-> >
-> >   - All LSMs which are built are NOT enabled by default
-> >
-> >   - You specify enablement and order via a Kconfig:
-> >
-> >         CONFIG_LSM="selinux,yama"
-> >
-> >   - This can be entirely overridden by a boot param:
-> >
-> >         lsm="apparmor,landlock"
-> 
-> This doesn't work with how SELinux and AppArmor do their bootparams,
-> unfortunately. (And Paul and Stephen have expressed that the
-> documented selinux on/off must continue to work.) For example, let's
-> say you've built an Ubuntu kernel with:
-> 
-> CONFIG_SELINUX=y
-> ...
-> CONFIG_LSM="yama,apparmor"
-> 
-> (i.e. you want SELinux available, but not enabled, so it's left out of
-> CONFIG_LSM)
-> 
-> Then someone boots the system with:
-> 
-> selinux=1 security=selinux
-> 
-> In what order does selinux get initialized relative to yama?
-> (apparmor, flagged as a "legacy major", would have been disabled by
-> the "security=" not matching it.)
+David,
 
-It doesn't, it needs to be specified in one place.
+I have been going through these and it is a wonderful proof of concept
+patchset.  There are a couple significant problems with it however.
 
-Distros will need to update boot parameter handling for this kernel 
-onwards.  Otherwise, we will need to carry this confusing mess forward 
-forever.
+- Many patches do more than one thing that could benefit from being
+  broken up into more patches so that there is only one logical change
+  per patch.  I have attempted a little of that and have found several
+  significant bugs.
 
-> The LSM order needs to be defined externally to enablement because 
-> something may become enabled when not listed in the order.
-> 
-> Now, maybe I misunderstood your earlier suggestion, and what you meant
-> was to do something like:
-> 
-> CONFIG_LSM="yama,apparmor,!selinux"
-> 
-> to mean "put selinux here in the order, but don't enable it". Then the
-> problem becomes what happens to an LSM that has been built in but not
-> listed in CONFIG_LSM?
+- There are many unnecessary changes in this patchset that just add
+  noise and make it difficult to review.
 
-In my most recent suggestion, there is no '!' disablement, just 
-enablement.  If an LSM is not listed in CONFIG_LSM="", it's not enabled.
+- There are many typos and thinkos in this patchset that while not hard
+  to correct keep this from being anywhere close to being ready for
+  prime time.
 
-> Related to that, this means that when new LSMs are added, they will
-> need to be added to any custom CONFIG_LSM= or lsm= parameters. If
-> that's really how we have to go, I'll accept it, but I think it's a
-> bit unfriendly. :P
+- Some of the bugs I have encountered.
+  * proc that isn't pid_ns_prepare_proc does not set fc->user_ns to
+    match the pid namespace.
+  * mqueue does not set fc->user_ns to match the ipc namespace.
+  * The cpuset filesystem always fails to mount
+  * Non-converted filesystems don't have the old security hooks
+    and only have a bit blob so don't call into the new security
+    hooks either.
+  * The changes to implement the new security hooks at least for
+    selinux are riddled with typos, and thinkos.
 
-If you want to enable them, yes.  How is this different to adding new 
-mount options as new fs features become available?
+I was hoping to get into the semantic questions but I can't get
+there until I get a good solid baseline patch to work with.
 
+I have been able to hoist the permission check out of sget_fc for
+converted filesystems.  So progress is being made.  That absolutely
+requires fc->user_ns to be set properly before vfs_get_tree.  Something
+that still needs to be fixed.
 
-> Another reason I don't like it is because it requires users to know
-> about all the LSMs to make changes. One LSM can't be added/removed
-> without specifying ALL of the LSMs. (i.e. there is no trivial way to
-> enable/disable a single LSM without it growing its own enable/disable
-> code as in SELinux/AppArmor. I'd hoped to make that easier for both
-> users and developers.) Again, I can live with it, but I think it's
-> unfriendly.
+I have also observed that by not allowing unconverted filesystems
+to mount using the new api.  The compatbitility code can be
+significantly simplified, and the who data_size problem goes away.
 
-This is only done via boot params or KConfig.
+I am going to be travelling for the next couple of days so I
+don't expect I will be able to answer questions in a timely manner.
+In the hopes that it might help below is my work in progress git
+tree where I have cleaned up some of these issues.
 
--- 
-James Morris
-<jmorris@namei.org>
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git new-mount-api-testing
+
+Eric
+
 
