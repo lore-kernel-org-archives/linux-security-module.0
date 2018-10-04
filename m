@@ -3,33 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8238C64EBC
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 06:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9DDC64EB8
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 06:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ADB221470
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 06:18:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ADB221470
+	by mail.kernel.org (Postfix) with ESMTP id 5AB2621470
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 06:22:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AB2621470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbeJDNJu (ORCPT
+        id S1727190AbeJDNOF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Oct 2018 09:09:50 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36471 "EHLO
+        Thu, 4 Oct 2018 09:14:05 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36522 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbeJDNJt (ORCPT
+        with ESMTP id S1726438AbeJDNOF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Oct 2018 09:09:49 -0400
+        Thu, 4 Oct 2018 09:14:05 -0400
 Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
         by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <john.johansen@canonical.com>)
-        id 1g7wxZ-0002Ih-Ds; Thu, 04 Oct 2018 06:18:05 +0000
+        id 1g7x1g-0002TQ-6X; Thu, 04 Oct 2018 06:22:20 +0000
 Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>
 Cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         Paul Moore <paul@paul-moore.com>,
@@ -42,7 +44,6 @@ Cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
         linux-arch <linux-arch@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
 References: <20181002005505.6112-1-keescook@chromium.org>
- <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov>
  <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
  <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
  <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com>
@@ -56,6 +57,7 @@ References: <20181002005505.6112-1-keescook@chromium.org>
  <CAGXu5jJmVR4Wsdti=aFaDhCBaxsVu1KTJOdsJOtFvZOV1ZhdvQ@mail.gmail.com>
  <alpine.LRH.2.21.1810040723320.16168@namei.org>
  <CAGXu5jJDBhFrdCBHH4MZVDmG88mMxSaSx0w9anCcyx24YHLO5w@mail.gmail.com>
+ <6037a1f0-7af1-9847-91f6-6444f04f5b21@infradead.org>
 From:   John Johansen <john.johansen@canonical.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
@@ -101,12 +103,12 @@ Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
  qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
  IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
 Organization: Canonical
-Message-ID: <88b0cc69-cd42-1798-6ce4-d3cfbbc79d83@canonical.com>
-Date:   Wed, 3 Oct 2018 23:18:01 -0700
+Message-ID: <9473fc3d-2737-aec3-d91a-fdd936872b7d@canonical.com>
+Date:   Wed, 3 Oct 2018 23:22:16 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJDBhFrdCBHH4MZVDmG88mMxSaSx0w9anCcyx24YHLO5w@mail.gmail.com>
+In-Reply-To: <6037a1f0-7af1-9847-91f6-6444f04f5b21@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -114,185 +116,137 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/03/2018 04:55 PM, Kees Cook wrote:
-> On Wed, Oct 3, 2018 at 2:34 PM, James Morris <jmorris@namei.org> wrote:
->> On Wed, 3 Oct 2018, Kees Cook wrote:
->>
->>> On Wed, Oct 3, 2018 at 11:28 AM, James Morris <jmorris@namei.org> wrote:
->>>> On Wed, 3 Oct 2018, Kees Cook wrote:
->>>>
->>>>> On Wed, Oct 3, 2018 at 11:17 AM, James Morris <jmorris@namei.org> wrote:
->>>>>> On Tue, 2 Oct 2018, John Johansen wrote:
->>>>>>> To me a list like
->>>>>>>   lsm.enable=X,Y,Z
->>>>>>
->>>>>> What about even simpler:
->>>>>>
->>>>>> lsm=selinux,!apparmor,yama
+On 10/03/2018 04:59 PM, Randy Dunlap wrote:
+> On 10/3/18 4:55 PM, Kees Cook wrote:
+>> On Wed, Oct 3, 2018 at 2:34 PM, James Morris <jmorris@namei.org> wrote:
+>>> On Wed, 3 Oct 2018, Kees Cook wrote:
+>>>
+>>>> On Wed, Oct 3, 2018 at 11:28 AM, James Morris <jmorris@namei.org> wrote:
+>>>>> On Wed, 3 Oct 2018, Kees Cook wrote:
 >>>>>
->>>>> We're going to have lsm.order=, so I'd like to keep it with a dot
->>>>> separator (this makes it more like module parameters, too). You want
->>>>> to mix enable/disable in the same string? That implies you'd want
->>>>> implicit enabling (i.e. it complements the builtin enabling), which is
->>>>> opposite from what John wanted.
+>>>>>> On Wed, Oct 3, 2018 at 11:17 AM, James Morris <jmorris@namei.org> wrote:
+>>>>>>> On Tue, 2 Oct 2018, John Johansen wrote:
+>>>>>>>> To me a list like
+>>>>>>>>   lsm.enable=X,Y,Z
+>>>>>>>
+>>>>>>> What about even simpler:
+>>>>>>>
+>>>>>>> lsm=selinux,!apparmor,yama
+>>>>>>
+>>>>>> We're going to have lsm.order=, so I'd like to keep it with a dot
+>>>>>> separator (this makes it more like module parameters, too). You want
+>>>>>> to mix enable/disable in the same string? That implies you'd want
+>>>>>> implicit enabling (i.e. it complements the builtin enabling), which is
+>>>>>> opposite from what John wanted.
+>>>>>>
 >>>>>
+>>>>> Why can't this be the order as well?
 >>>>
->>>> Why can't this be the order as well?
+>>>> That was covered extensively in the earlier threads. It boils down to
+>>>> making sure we do not create a pattern of leaving LSMs disabled by
+>>>> default when they are added to the kernel. The v1 series used
+>>>> security= like this:
+>>>>
+>>>> +       security=       [SECURITY] An ordered comma-separated list of
+>>>> +                       security modules to attempt to enable at boot. If
+>>>> +                       this boot parameter is not specified, only the
+>>>> +                       security modules asking for initialization will be
+>>>> +                       enabled (see CONFIG_DEFAULT_SECURITY). Duplicate
+>>>> +                       or invalid security modules will be ignored. The
+>>>> +                       capability module is always loaded first, without
+>>>> +                       regard to this parameter.
+>>>>
+>>>> This meant booting "security=apparmor" would disable all the other
+>>>> LSMs, which wasn't friendly at all. So "security=" was left alone (to
+>>>> leave it to only select the "major" LSM: all major LSMs not matching
+>>>> "security=" would be disabled). So I proposed "lsm.order=" to specify
+>>>> the order things were going to be initialized in, but to avoid kernels
+>>>> booting with newly added LSMs forced-off due to not being listed in
+>>>> "lsm.order=", it had to have implicit fall-back for unlisted LSMs.
+>>>> (i.e. anything missing from lsm.order would then follow their order in
+>>>> CONFIG_LSM_ORDER, and anything missing there would fall back to
+>>>> link-time ordering.) However, then the objection was raised that this
+>>>> didn't provide a way to explicitly disable an LSM. So I proposed
+>>>> lsm.enable/disable, and John argued for CONFIG_LSM_ENABLE over
+>>>> CONFIG_LSM_DISABLE.
 >>>
->>> That was covered extensively in the earlier threads. It boils down to
->>> making sure we do not create a pattern of leaving LSMs disabled by
->>> default when they are added to the kernel. The v1 series used
->>> security= like this:
+>>> Ok, but it may end up being clearer, simpler, and thus more secure to just
+>>> have a single way to configure LSM.
 >>>
->>> +       security=       [SECURITY] An ordered comma-separated list of
->>> +                       security modules to attempt to enable at boot. If
->>> +                       this boot parameter is not specified, only the
->>> +                       security modules asking for initialization will be
->>> +                       enabled (see CONFIG_DEFAULT_SECURITY). Duplicate
->>> +                       or invalid security modules will be ignored. The
->>> +                       capability module is always loaded first, without
->>> +                       regard to this parameter.
+>>> For example:
 >>>
->>> This meant booting "security=apparmor" would disable all the other
->>> LSMs, which wasn't friendly at all. So "security=" was left alone (to
->>> leave it to only select the "major" LSM: all major LSMs not matching
->>> "security=" would be disabled). So I proposed "lsm.order=" to specify
->>> the order things were going to be initialized in, but to avoid kernels
->>> booting with newly added LSMs forced-off due to not being listed in
->>> "lsm.order=", it had to have implicit fall-back for unlisted LSMs.
->>> (i.e. anything missing from lsm.order would then follow their order in
->>> CONFIG_LSM_ORDER, and anything missing there would fall back to
->>> link-time ordering.) However, then the objection was raised that this
->>> didn't provide a way to explicitly disable an LSM. So I proposed
->>> lsm.enable/disable, and John argued for CONFIG_LSM_ENABLE over
->>> CONFIG_LSM_DISABLE.
+>>>   - All LSMs which are built are NOT enabled by default
+>>>
+>>>   - You specify enablement and order via a Kconfig:
+>>>
+>>>         CONFIG_LSM="selinux,yama"
+>>>
+>>>   - This can be entirely overridden by a boot param:
+>>>
+>>>         lsm="apparmor,landlock"
 >>
->> Ok, but it may end up being clearer, simpler, and thus more secure to just
->> have a single way to configure LSM.
+>> This doesn't work with how SELinux and AppArmor do their bootparams,
+>> unfortunately. (And Paul and Stephen have expressed that the
+>> documented selinux on/off must continue to work.) For example, let's
+>> say you've built an Ubuntu kernel with:
 >>
->> For example:
+>> CONFIG_SELINUX=y
+>> ...
+>> CONFIG_LSM="yama,apparmor"
 >>
->>   - All LSMs which are built are NOT enabled by default
+>> (i.e. you want SELinux available, but not enabled, so it's left out of
+>> CONFIG_LSM)
 >>
->>   - You specify enablement and order via a Kconfig:
+>> Then someone boots the system with:
 >>
->>         CONFIG_LSM="selinux,yama"
+>> selinux=1 security=selinux
 >>
->>   - This can be entirely overridden by a boot param:
+>> In what order does selinux get initialized relative to yama?
+>> (apparmor, flagged as a "legacy major", would have been disabled by
+>> the "security=" not matching it.)
 >>
->>         lsm="apparmor,landlock"
 > 
-> This doesn't work with how SELinux and AppArmor do their bootparams,
-> unfortunately. (And Paul and Stephen have expressed that the
-> documented selinux on/off must continue to work.) For example, let's
-> say you've built an Ubuntu kernel with:
+> To me, "security=selinux" means SELinux and nothing else, so I think that
+> all of these params are inviting a lot of confusion.
 > 
-> CONFIG_SELINUX=y
-> ...
-> CONFIG_LSM="yama,apparmor"
-> 
-> (i.e. you want SELinux available, but not enabled, so it's left out of
-> CONFIG_LSM)
-> 
-> Then someone boots the system with:
-> 
-> selinux=1 security=selinux
-> 
-> In what order does selinux get initialized relative to yama?
-> (apparmor, flagged as a "legacy major", would have been disabled by
-> the "security=" not matching it.)
-> 
-> 
-> The LSM order needs to be defined externally to enablement because
-> something may become enabled when not listed in the order.
-> 
-it doesn't have to be that way. The only argument I can see for
-ordering being separate from enablement are
-- the order doesn't matter to some LSMs but other LSMs (like landlock)
-  need to be in a specific order.
-
-  Separating the ordering from enablement  means the user doesn't
-  have to take this into account when overriding a default enablement.
-
-> Now, maybe I misunderstood your earlier suggestion, and what you meant
-> was to do something like:
-> 
-> CONFIG_LSM="yama,apparmor,!selinux"
-> 
-> to mean "put selinux here in the order, but don't enable it". Then the
-> problem becomes what happens to an LSM that has been built in but not
-> listed in CONFIG_LSM?
-> 
-it should be disabled. I know that is not what we have today but
-does current behavior of splitting how minor and major LSM enablement
-is done was a mistake
-
-> Related to that, this means that when new LSMs are added, they will
-> need to be added to any custom CONFIG_LSM= or lsm= parameters. If
-> that's really how we have to go, I'll accept it, but I think it's a
-> bit unfriendly. :P
-> 
-That is exactly was will happen in at least some distros. Distros
-are committed to maintaining a certain configuration. If some new
-LSM comes along it shouldn't change the support config until the
-distro can evaluate any interaction will the current supported
-configuration.
-
-As a concrete example, the Ubuntu hwe kernels (newer kernels on
-LTS releases, are going to want to specify the hwe kernel config
-is the same as the release kernel except for few well vetted
-exceptions. 
-
-> Another reason I don't like it is because it requires users to know
-> about all the LSMs to make changes. One LSM can't be added/removed
-
-The don't have to know about all LSMs, but they do need to know
-what the distro has as default set.
-
-> without specifying ALL of the LSMs. (i.e. there is no trivial way to
-> enable/disable a single LSM without it growing its own enable/disable
-> code as in SELinux/AppArmor. I'd hoped to make that easier for both
-> users and developers.) Again, I can live with it, but I think it's
-> unfriendly.
+> Sorry, I don't have a good answer for this.
 > 
 
-well unfriendly to who, and define users :)
-- its probably unfriendly to the developer wanting to work with
-  a specific LSM.
-- a user messing with the different LSMs, yeah probably
-- a regular user, generally shouldn't have to know.
-- a distro trying to support a specific configuration, very much
-  wants to define what is enabled/supported. Whether through
-  individual LSM logic, or a centralized place
+Your not the only one. I have had users ask about why they are getting
+other security messures (yama in particular) when they specified a
+specific security=
 
-> I just want to have a direct I can go that meets all the requirements.
-> :) I'm fine to ignore my sense of aesthetics if everyone can agree on
-> the code.
-> 
->> And that's it.
+
+
 >>
->> Of course, capabilities is always enabled and not be visible to kconfig or
->> boot params.
+>> The LSM order needs to be defined externally to enablement because
+>> something may become enabled when not listed in the order.
+>>
+>> Now, maybe I misunderstood your earlier suggestion, and what you meant
+>> was to do something like:
+>>
+>> CONFIG_LSM="yama,apparmor,!selinux"
+>>
+>> to mean "put selinux here in the order, but don't enable it". Then the
+>> problem becomes what happens to an LSM that has been built in but not
+>> listed in CONFIG_LSM?
+>>
+>> Related to that, this means that when new LSMs are added, they will
+>> need to be added to any custom CONFIG_LSM= or lsm= parameters. If
+>> that's really how we have to go, I'll accept it, but I think it's a
+>> bit unfriendly. :P
+>>
+>> Another reason I don't like it is because it requires users to know
+>> about all the LSMs to make changes. One LSM can't be added/removed
+>> without specifying ALL of the LSMs. (i.e. there is no trivial way to
+>> enable/disable a single LSM without it growing its own enable/disable
+>> code as in SELinux/AppArmor. I'd hoped to make that easier for both
+>> users and developers.) Again, I can live with it, but I think it's
+>> unfriendly.
+>>
+>> I just want to have a direct I can go that meets all the requirements.
+>> :) I'm fine to ignore my sense of aesthetics if everyone can agree on
+>> the code.
 > 
-> Correct. I've made sure that's true in all the versions.
-> 
-> BTW, there doesn't seem to be disagreement about the earlier part of
-> the series, though (patches 1-10). Could these go into -next just so I
-> don't have to keep sending them? :)
-> 
-> LSM: Correctly announce start of LSM initialization
-> vmlinux.lds.h: Avoid copy/paste of security_init section
-> LSM: Rename .security_initcall section to .lsm_info
-> LSM: Remove initcall tracing
-> LSM: Convert from initcall to struct lsm_info
-> vmlinux.lds.h: Move LSM_TABLE into INIT_DATA
-> LSM: Convert security_initcall() into DEFINE_LSM()
-> LSM: Record LSM name in struct lsm_info
-> LSM: Provide init debugging infrastructure
-> LSM: Don't ignore initialization failures
-> 
-> Thanks!
-> 
-> -Kees
 > 
 
