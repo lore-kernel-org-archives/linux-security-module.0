@@ -2,73 +2,116 @@ Return-Path: <SRS0=kUy5=MQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7D5C64EB8
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 07:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 005C2C64EB8
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 11:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B3921470
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 07:47:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B3921470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id ACE0520877
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Oct 2018 11:35:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACE0520877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbeJDOjY (ORCPT
+        id S1727283AbeJDS2B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Oct 2018 10:39:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39084 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727287AbeJDOjX (ORCPT
+        Thu, 4 Oct 2018 14:28:01 -0400
+Received: from mga07.intel.com ([134.134.136.100]:21439 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727278AbeJDS2B (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Oct 2018 10:39:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 569FFAE0B;
-        Thu,  4 Oct 2018 07:47:26 +0000 (UTC)
-Date:   Thu, 4 Oct 2018 09:47:25 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Jann Horn <jannh@google.com>
-cc:     Casey Schaufler <casey.schaufler@intel.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
-        deneen.t.dock@intel.com, kristen@linux.intel.com,
-        Arjan van de Ven <arjan@linux.intel.com>
-Subject: Re: [PATCH v5 2/5] Smack: Prepare for PTRACE_MODE_SCHED
-In-Reply-To: <CAG48ez1+9Bfadu4y4TzPYJfFpLk+N8w7GdCE+xwNCM5TfQ8W8Q@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.1810040942110.14430@cbobk.fhfr.pm>
-References: <20180926203446.2004-1-casey.schaufler@intel.com> <20180926203446.2004-3-casey.schaufler@intel.com> <CAG48ez3_XJYCURiCurDeCousGguGUdPego30j5+UF8FebWxUtA@mail.gmail.com> <99FC4B6EFCEFD44486C35F4C281DC673214625EA@ORSMSX107.amr.corp.intel.com>
- <CAG48ez1+9Bfadu4y4TzPYJfFpLk+N8w7GdCE+xwNCM5TfQ8W8Q@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Thu, 4 Oct 2018 14:28:01 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2018 04:35:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,338,1534834800"; 
+   d="scan'208";a="269440867"
+Received: from ssemen1x-mobl.ccr.corp.intel.com (HELO localhost) ([10.252.37.241])
+  by fmsmga006.fm.intel.com with ESMTP; 04 Oct 2018 04:35:03 -0700
+Date:   Thu, 4 Oct 2018 14:35:02 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+Message-ID: <20181004113502.GA12498@linux.intel.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+ <20180928223035.14471-13-tomas.winkler@intel.com>
+ <20181002005208.GH23753@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9DFAA5@hasmsx109.ger.corp.intel.com>
+ <20181003120141.GA7969@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9E5343@hasmsx109.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 27 Sep 2018, Jann Horn wrote:
-
-> > Yes. Since the PTRACE_MODE_NOAUDIT was in PTRACE_MODE_IBPB in Jiri's 
-> > previous patch set and not in PTRACE_MODE_SCHED in this one I assumed 
-> > that there was a good reason for it.
+On Wed, Oct 03, 2018 at 10:24:09PM +0000, Winkler, Tomas wrote:
 > 
-> Jiri, was there a good reason for it, and if so, what was it?
+> 
+> > -----Original Message-----
+> > From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> > Sent: Wednesday, October 03, 2018 15:02
+> > To: Winkler, Tomas <tomas.winkler@intel.com>
+> > Cc: Jason Gunthorpe <jgg@ziepe.ca>; Nayna Jain
+> > <nayna@linux.vnet.ibm.com>; Usyskin, Alexander
+> > <alexander.usyskin@intel.com>; Struk, Tadeusz <tadeusz.struk@intel.com>;
+> > linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; roberto.sassu@huawei.com
+> > Subject: Re: [PATCH v5 12/21] tpm: move pcr extend code to tpm2-cmd.c
+> > 
+> > On Tue, Oct 02, 2018 at 04:58:25AM +0000, Winkler, Tomas wrote:
+> > >
+> > >
+> > > >
+> > > > On Sat, Sep 29, 2018 at 01:30:26AM +0300, Tomas Winkler wrote:
+> > > > > Add tpm2_pcr_extend() function to tpm2-cmd.c with signature
+> > > > > required by tpm-interface.c. It wraps the original open code
+> > implementation.
+> > > > > The original original tpm2_pcr_extend() function is renamed to
+> > > > > __tpm2_pcr_extend() and made static, it is called only from new
+> > > > > tpm2_pcr_extend().
+> > > > >
+> > > > > Fix warnings in __tpm2_pcr_extend()
+> > > > > tpm2-cmd.c:251:16: warning: comparison between signed and unsigned
+> > > > > integer expressions [-Wsign-compare]
+> > > > > tpm2-cmd.c:252:17: warning: comparison between signed and unsigned
+> > > > > integer expressions [-Wsign-compare]
+> > > > >
+> > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > >
+> > > > We do not want the signature change, especially because as we are
+> > > > working on getting Roberto's changes in and also because it has
+> > > > absolutely a zero gain. Who cares if those functions take different
+> > parameters? I don't.
+> > >
+> > > Yes, we do care this series tries to have a clean cut between 1.x  and 2.x
+> > specs. Please, let's finish one transformation and then move to another.
+> > > I understand that Roberto will have to rebase anyhow, if this series goes in
+> > first, if this is hard I can do it myself, it's trivial.
+> > >
+> > > Tomas
+> > 
+> > I'm happy to tune this minor stuff.
+> What minor stuff?  This patch is just okay, let's change the API in next round.
 
-[ FWIW PTRACE_MODE_NOAUDIT being in PTRACE_MODE_IBPB goes back to original 
-  Tim's pre-CRD patchset ]
+The patch is not okay because it does a completely unnecessary API
+change.
 
-Well, we can't really call out into audit from scheduler code, and the 
-previous versions of the patchsets didn't have PTRACE_MODE_SCHED, so it 
-had to be included in PTRACE_MODE_IBPB in order to make sure we're not 
-calling into audit from context switch code.
-
-Or did I misunderstand the question?
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+/Jarkko
