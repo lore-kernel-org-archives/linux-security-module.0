@@ -4,71 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0960C65BB0
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Oct 2018 17:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83789C00449
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Oct 2018 17:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4A52084D
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Oct 2018 17:43:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA4A52084D
+	by mail.kernel.org (Postfix) with ESMTP id 465802084D
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Oct 2018 17:44:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465802084D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729136AbeJFAnm (ORCPT
+        id S1729039AbeJFAn3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Oct 2018 20:43:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45312 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729123AbeJFAnl (ORCPT
+        Fri, 5 Oct 2018 20:43:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42106 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728986AbeJFAn3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Oct 2018 20:43:41 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95HdTZ1100502
-        for <linux-security-module@vger.kernel.org>; Fri, 5 Oct 2018 13:43:56 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2mxat7djqm-1
+        Fri, 5 Oct 2018 20:43:29 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w95HdNTN001860
+        for <linux-security-module@vger.kernel.org>; Fri, 5 Oct 2018 13:43:43 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2mxaevp57m-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Oct 2018 13:43:56 -0400
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Oct 2018 13:43:43 -0400
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Fri, 5 Oct 2018 18:43:53 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 5 Oct 2018 18:43:41 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 5 Oct 2018 18:43:50 +0100
+        Fri, 5 Oct 2018 18:43:38 +0100
 Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w95HhmZR61079676
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w95HhaSp48693462
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 5 Oct 2018 17:43:48 GMT
+        Fri, 5 Oct 2018 17:43:36 GMT
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 718D511C058;
-        Fri,  5 Oct 2018 20:43:24 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id A51C411C04A;
+        Fri,  5 Oct 2018 20:43:12 +0100 (BST)
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BA13911C04C;
-        Fri,  5 Oct 2018 20:43:20 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id C437C11C050;
+        Fri,  5 Oct 2018 20:43:09 +0100 (BST)
 Received: from swastik.in.ibm.com (unknown [9.124.221.60])
         by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  5 Oct 2018 20:43:20 +0100 (BST)
+        Fri,  5 Oct 2018 20:43:09 +0100 (BST)
 From:   Nayna Jain <nayna@linux.vnet.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
         linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
         dhowells@redhat.com, jforbes@redhat.com,
         seth.forshee@canonical.com, kexec@lists.infradead.org,
-        Eric Richter <erichte@linux.ibm.com>,
         Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v5 5/5] x86/ima: define arch_get_ima_policy() for x86
-Date:   Fri,  5 Oct 2018 23:10:15 +0530
+Subject: [PATCH v5 3/5] ima: refactor ima_init_policy()
+Date:   Fri,  5 Oct 2018 23:10:13 +0530
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
 References: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18100517-0008-0000-0000-0000027B88DD
+x-cbid: 18100517-0020-0000-0000-000002D018B9
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100517-0009-0000-0000-000021E4B4D4
-Message-Id: <20181005174015.21939-6-nayna@linux.vnet.ibm.com>
+x-cbparentid: 18100517-0021-0000-0000-0000211E701F
+Message-Id: <20181005174015.21939-4-nayna@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-05_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -80,108 +79,160 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Eric Richter <erichte@linux.ibm.com>
+From: Nayna Jain <nayna@linux.ibm.com>
 
-On x86, there are two methods of verifying a kexec'ed kernel image
-signature being loaded via the kexec_file_load syscall - an architecture
-specific implementaton or a IMA KEXEC_KERNEL_CHECK appraisal rule. Neither
-of these methods verify the kexec'ed kernel image signature being loaded
-via the kexec_load syscall.
+This patch removes the code duplication in ima_init_policy() by defining
+a new function named add_rules(). The new function adds the rules to the
+initial IMA policy, the custom policy or both based on the policy mask
+(IMA_DEFAULT_POLICY, IMA_CUSTOM_POLICY).
 
-Secure boot enabled systems require kexec images to be signed. Therefore,
-this patch loads an IMA KEXEC_KERNEL_CHECK policy rule on secure boot
-enabled systems not configured with CONFIG_KEXEC_VERIFY_SIG enabled.
-
-When IMA_APPRAISE_BOOTPARAM is configured, different IMA appraise modes
-(eg. fix, log) can be specified on the boot command line, allowing unsigned
-or invalidly signed kernel images to be kexec'ed. This patch permits
-enabling IMA_APPRAISE_BOOTPARAM or IMA_ARCH_POLICY, but not both.
-
-Signed-off-by: Eric Richter <erichte@linux.ibm.com>
-- Removed the policy KEXEC_ORIG_KERNEL_CHECK which was defined to
-  disable the kexec_load syscall.
-- arch_get_ima_policy() uses arch_ima_get_secureboot() to get secureboot
-  state
 Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 ---
- arch/x86/kernel/ima_arch.c     | 18 ++++++++++++++++++
- include/linux/ima.h            |  4 ++++
- security/integrity/ima/Kconfig | 10 +++++++++-
- 3 files changed, 31 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima_policy.c | 97 +++++++++++++++++++++----------------
+ 1 file changed, 56 insertions(+), 41 deletions(-)
 
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-index bb5a88d2b271..245976e49a55 100644
---- a/arch/x86/kernel/ima_arch.c
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -15,3 +15,21 @@ bool arch_ima_get_secureboot(void)
- 	else
- 		return false;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8c9499867c91..1e30d09a56db 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -58,6 +58,8 @@ enum lsm_rule_types { LSM_OBJ_USER, LSM_OBJ_ROLE, LSM_OBJ_TYPE,
+ 
+ enum policy_types { ORIGINAL_TCB = 1, DEFAULT_TCB };
+ 
++enum policy_rule_list { IMA_DEFAULT_POLICY = 1, IMA_CUSTOM_POLICY };
++
+ struct ima_rule_entry {
+ 	struct list_head list;
+ 	int action;
+@@ -473,6 +475,32 @@ static int ima_appraise_flag(enum ima_hooks func)
+ 	return 0;
  }
-+
-+/* arch rules for audit and user mode */
-+static const char * const sb_arch_rules[] = {
-+#ifndef CONFIG_KEXEC_VERIFY_SIG
-+	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-+#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+	"measure func=KEXEC_KERNEL_CHECK",
-+	NULL
-+};
-+
-+#ifdef CONFIG_IMA_ARCH_POLICY
-+const char * const *arch_get_ima_policy(void)
+ 
++static void add_rules(struct ima_rule_entry *entries, int count,
++		      enum policy_rule_list policy_rule)
 +{
-+	if (arch_ima_get_secureboot())
-+		return sb_arch_rules;
-+	return NULL;
-+}
-+#endif
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 350fa957f8a6..dabd3abdf671 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -39,10 +39,14 @@ static inline bool arch_ima_get_secureboot(void)
- }
- #endif
- 
-+#if defined(CONFIG_X86) && defined(CONFIG_IMA_ARCH_POLICY)
-+extern const char * const *arch_get_ima_policy(void);
-+#else
- static inline const char * const *arch_get_ima_policy(void)
- {
- 	return NULL;
- }
-+#endif
- 
- #else
- static inline int ima_bprm_check(struct linux_binprm *bprm)
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 13b446328dda..a18f8c6d13b5 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -157,6 +157,14 @@ config IMA_APPRAISE
- 	  <http://linux-ima.sourceforge.net>
- 	  If unsure, say N.
- 
-+config IMA_ARCH_POLICY
-+        bool "Enable loading an IMA architecture specific policy"
-+        depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+        default n
-+        help
-+          This option enables loading an IMA architecture specific policy
-+          based on run time secure boot flags.
++	int i = 0;
 +
- config IMA_APPRAISE_BUILD_POLICY
- 	bool "IMA build time configured policy rules"
- 	depends on IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-@@ -217,7 +225,7 @@ config IMA_APPRAISE_REQUIRE_POLICY_SIGS
++	for (i = 0; i < count; i++) {
++		struct ima_rule_entry *entry;
++
++		if (policy_rule & IMA_DEFAULT_POLICY)
++			list_add_tail(&entries[i].list, &ima_default_rules);
++
++		if (policy_rule & IMA_CUSTOM_POLICY) {
++			entry = kmemdup(&entries[i], sizeof(*entry),
++					GFP_KERNEL);
++			if (!entry)
++				continue;
++
++			list_add_tail(&entry->list, &ima_policy_rules);
++		}
++		if (entries[i].action == APPRAISE)
++			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
++		if (entries[i].func == POLICY_CHECK)
++			temp_ima_appraise |= IMA_APPRAISE_POLICY;
++	}
++}
++
+ /**
+  * ima_init_policy - initialize the default measure rules.
+  *
+@@ -481,28 +509,23 @@ static int ima_appraise_flag(enum ima_hooks func)
+  */
+ void __init ima_init_policy(void)
+ {
+-	int i, measure_entries, appraise_entries, secure_boot_entries;
+-
+-	/* if !ima_policy set entries = 0 so we load NO default rules */
+-	measure_entries = ima_policy ? ARRAY_SIZE(dont_measure_rules) : 0;
+-	appraise_entries = ima_use_appraise_tcb ?
+-			 ARRAY_SIZE(default_appraise_rules) : 0;
+-	secure_boot_entries = ima_use_secure_boot ?
+-			ARRAY_SIZE(secure_boot_rules) : 0;
++	int build_appraise_entries;
  
- config IMA_APPRAISE_BOOTPARAM
- 	bool "ima_appraise boot parameter"
--	depends on IMA_APPRAISE
-+	depends on IMA_APPRAISE && !IMA_ARCH_POLICY
- 	default y
- 	help
- 	  This option enables the different "ima_appraise=" modes
+-	for (i = 0; i < measure_entries; i++)
+-		list_add_tail(&dont_measure_rules[i].list, &ima_default_rules);
++	/* if !ima_policy, we load NO default rules */
++	if (ima_policy)
++		add_rules(dont_measure_rules, ARRAY_SIZE(dont_measure_rules),
++			  IMA_DEFAULT_POLICY);
+ 
+ 	switch (ima_policy) {
+ 	case ORIGINAL_TCB:
+-		for (i = 0; i < ARRAY_SIZE(original_measurement_rules); i++)
+-			list_add_tail(&original_measurement_rules[i].list,
+-				      &ima_default_rules);
++		add_rules(original_measurement_rules,
++			  ARRAY_SIZE(original_measurement_rules),
++			  IMA_DEFAULT_POLICY);
+ 		break;
+ 	case DEFAULT_TCB:
+-		for (i = 0; i < ARRAY_SIZE(default_measurement_rules); i++)
+-			list_add_tail(&default_measurement_rules[i].list,
+-				      &ima_default_rules);
++		add_rules(default_measurement_rules,
++			  ARRAY_SIZE(default_measurement_rules),
++			  IMA_DEFAULT_POLICY);
+ 	default:
+ 		break;
+ 	}
+@@ -511,38 +534,30 @@ void __init ima_init_policy(void)
+ 	 * Insert the builtin "secure_boot" policy rules requiring file
+ 	 * signatures, prior to any other appraise rules.
+ 	 */
+-	for (i = 0; i < secure_boot_entries; i++) {
+-		list_add_tail(&secure_boot_rules[i].list, &ima_default_rules);
+-		temp_ima_appraise |=
+-		    ima_appraise_flag(secure_boot_rules[i].func);
+-	}
++	if (ima_use_secure_boot)
++		add_rules(secure_boot_rules, ARRAY_SIZE(secure_boot_rules),
++			  IMA_DEFAULT_POLICY);
+ 
+ 	/*
+ 	 * Insert the build time appraise rules requiring file signatures
+ 	 * for both the initial and custom policies, prior to other appraise
+-	 * rules.
++	 * rules. As the secure boot rules includes all of the build time
++	 * rules, include either one or the other set of rules, but not both.
+ 	 */
+-	for (i = 0; i < ARRAY_SIZE(build_appraise_rules); i++) {
+-		struct ima_rule_entry *entry;
+-
+-		if (!secure_boot_entries)
+-			list_add_tail(&build_appraise_rules[i].list,
+-				      &ima_default_rules);
+-
+-		entry = kmemdup(&build_appraise_rules[i], sizeof(*entry),
+-				GFP_KERNEL);
+-		if (entry)
+-			list_add_tail(&entry->list, &ima_policy_rules);
+-		build_ima_appraise |=
+-			ima_appraise_flag(build_appraise_rules[i].func);
++	build_appraise_entries = ARRAY_SIZE(build_appraise_rules);
++	if (build_appraise_entries) {
++		if (ima_use_secure_boot)
++			add_rules(build_appraise_rules, build_appraise_entries,
++				  IMA_CUSTOM_POLICY);
++		else
++			add_rules(build_appraise_rules, build_appraise_entries,
++				  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
+ 	}
+ 
+-	for (i = 0; i < appraise_entries; i++) {
+-		list_add_tail(&default_appraise_rules[i].list,
+-			      &ima_default_rules);
+-		if (default_appraise_rules[i].func == POLICY_CHECK)
+-			temp_ima_appraise |= IMA_APPRAISE_POLICY;
+-	}
++	if (ima_use_appraise_tcb)
++		add_rules(default_appraise_rules,
++			  ARRAY_SIZE(default_appraise_rules),
++			  IMA_DEFAULT_POLICY);
+ 
+ 	ima_rules = &ima_default_rules;
+ 	ima_update_policy_flag();
 -- 
 2.13.6
 
