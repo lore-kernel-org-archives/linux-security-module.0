@@ -2,101 +2,245 @@ Return-Path: <SRS0=FYvn=MU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75542C65C20
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Oct 2018 14:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C05C65C20
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Oct 2018 16:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 363312075C
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Oct 2018 14:26:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1798B2089D
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Oct 2018 16:42:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="uqh2iraC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 363312075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jEVOvCz1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1798B2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbeJHViL (ORCPT
+        id S1726461AbeJHXzD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Oct 2018 17:38:11 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45550 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbeJHViL (ORCPT
+        Mon, 8 Oct 2018 19:55:03 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37749 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726291AbeJHXzD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Oct 2018 17:38:11 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j4-v6so14271150ljc.12
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Oct 2018 07:26:11 -0700 (PDT)
+        Mon, 8 Oct 2018 19:55:03 -0400
+Received: by mail-oi1-f196.google.com with SMTP id e17-v6so15995867oib.4
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Oct 2018 09:42:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=jaGjnXcdvN8daa/3PbDv9zHsmJ6YZMBAaIYodxABeZg=;
-        b=uqh2iraCt0Olc+gC5NC/t03L7F/umuyT2IM741pQqBesATvBmuepNM3wrcnenoxzA/
-         7pNa0HV1q1YRv5QVnarFOpfC413wHXghQG6Li+ZWq5gr1d3seb19dDrwhD2TS89hYJmt
-         xUoAHT/V3OS3LiGC4o+c/RIW9oxB2Zvz9eskdk3qpVsUIYSs3RrNSu3Wl3B9Ju1hk4qj
-         FpsnCpJ3mtt6Vy3sorpdknHREr4WBVINN5n84bS1uR/GXWU67Ev0r6FqKJbtVUIMpPBt
-         UyFscsOIuovyS9fieYFxCgRSSvb2JxwdU6mZdsy/tL1JJCkkr8eamW29kcaG1WQYaIA7
-         Rl3Q==
+        bh=jXgHaca1F6yYOCgQKTfufPbTF5DDCMQDOYNV8F3RtwY=;
+        b=jEVOvCz1wkxhiSWQbM5gXuVA628FHNNiXYcJJSH5YVF33go29Ln3IYvj8tXuho9/UA
+         2HULrKVFyPgD572cXR+OceaJlemavelyjZ2l/C5+K+atwygTQKURfUE+wUakKYmrxOGm
+         j8ipbPzAhi0tGthl4xYi+nA9yKlnc8toUUF39bpJDzTxb940DSoXRRqUdNuFBptP+Dkf
+         2J3DFeWv1qIaHFn7nJy63bSDqdhUCwBBF7wZmnf7TmxZe/Vou/afqO1MhFyr1V1z1WzQ
+         sQWvC5gmmk3BenNEHt8Zmvs+t05iKTMR0osOqtVFXzvYIcsLQFXP62Ghj2TYXnwAAdL0
+         jycQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=jaGjnXcdvN8daa/3PbDv9zHsmJ6YZMBAaIYodxABeZg=;
-        b=qOGGEwX524dGLZrSTV6ULo9CdVSsf0u0+9qnhoONsVu7eWrQSjs+O1u1Ch0u2gIkCc
-         T6y89tTgBJmT7n13NI0jVqicYRXtlG4kGmnARty/ZlYVuA6KvcTHxuTl+r6pAauYkzCc
-         ig43ijhy7eyBx9AKApACclor9GpLKYjSIjagHnmm6gOxoc/reGTxsRz9H2UtE5+EXIkF
-         0+kDP9F/UvUzG9B0G87sJsmCSY0FAGdBD/RLktJHzsNgspihVnlnT1lp2/rT9PsPX0Er
-         TLG86lTX7LixHSDydn/2BThGhMW4cXC2oL7fOOdPD31JBmURqI7B5RsXACL6rO5nHRLo
-         5DWQ==
-X-Gm-Message-State: ABuFfoiGuORpD2IJIKlbzOjpxHMYXrX3Ihn8Tn7oIzJE24uB10PC3CfU
-        4nOr5lFyZLC9/8n3+4E0fkpw1SNVgXNJaTmK6CLO
-X-Google-Smtp-Source: ACcGV63IKLlhzzOtrBPiqxN9Gnpm2JTqnuIHjDT/bABdFuvd0QgrNGWcrEMUbJOQPuYzxrVrNLkB1l960X7mZl2VZc4=
-X-Received: by 2002:a2e:2c15:: with SMTP id s21-v6mr14667075ljs.162.1539008770629;
- Mon, 08 Oct 2018 07:26:10 -0700 (PDT)
+        bh=jXgHaca1F6yYOCgQKTfufPbTF5DDCMQDOYNV8F3RtwY=;
+        b=MxEEXpL9KtZsOSwY1WpZFgThtRmplHs6Gsnk3h848BgYWStwNXtl6E5UeKiexjAQ3s
+         LwiWs1JxrBxYUgto1qukKrDlNLK/Lmyzwe9p80TTKLbs2Croeq3qGoEqJHbP8hG1ijJu
+         +r6AR7ybnGtPRmQwMqRHPS5Qjui0ISLnZUSJitkXyCzFuy/xMM7CpzRR8uqfjHTSKAYO
+         t2evj9DlPMyfbDLmf/oFF9/aMKJx7c8UQzfHElsc/nGYeyf8BG+x1HIdaj4/et1Sy6Km
+         I/UbtC0pwOYhlzIWajclUNwPAoyS8vu4pV0AaTbqk3oZdu8/a89tftj/j/p2FLbA1uix
+         V1kQ==
+X-Gm-Message-State: ABuFfoj1u/eo+MI1k/cV25XEtSn3fHTVcYa/nnOpHmztbUtU7kswjN21
+        V9ll1Cdrp7RmksdN5RDaxv4EA6tWcczE6NkyGnehFg==
+X-Google-Smtp-Source: ACcGV610S7Q0/x0jIUOwG1VHW5HR6C4sRROABbrz9m9M/TGO55zryWhfMXHiEaMw/nu+YAH2hcri0s+hbtGk3NyMR1A=
+X-Received: by 2002:aca:4d51:: with SMTP id a78-v6mr4763319oib.205.1539016947380;
+ Mon, 08 Oct 2018 09:42:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181002005505.6112-1-keescook@chromium.org> <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
- <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
- <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
- <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
- <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
- <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
- <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <CAGXu5jKqSZ5LhQ_HwbA9-_DAg3efNzWfLjpxO_rurBgUZ-nnAA@mail.gmail.com>
- <583a703e-18af-a1b2-dfc9-62a2a3384825@tycho.nsa.gov> <CAGXu5jLmQQd4e=B3YsiEoRVih2m889ia2tnzu5r8bqcms2sOqQ@mail.gmail.com>
- <638db305-cfef-4391-90bf-458f50c4612f@canonical.com>
-In-Reply-To: <638db305-cfef-4391-90bf-458f50c4612f@canonical.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 8 Oct 2018 10:25:59 -0400
-Message-ID: <CAHC9VhSgy2UXB4q0qLr-qeRwqiO=Zm9mpJdUDWdvtRM17JUhbg@mail.gmail.com>
-Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
-To:     john.johansen@canonical.com, keescook@chromium.org,
-        casey@schaufler-ca.com
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        Golden_Miller83@protonmail.ch, penguin-kernel@i-love.sakura.ne.jp,
-        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
-        corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-4-tycho@tycho.ws>
+ <20181008151629.hkgzzsluevwtuclw@brauner.io> <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
+ <20181008162147.ubfxxsv2425l2zsp@brauner.io>
+In-Reply-To: <20181008162147.ubfxxsv2425l2zsp@brauner.io>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 8 Oct 2018 18:42:00 +0200
+Message-ID: <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
+To:     christian@brauner.io
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 4, 2018 at 1:38 AM John Johansen
-<john.johansen@canonical.com> wrote:
-> On 10/03/2018 10:26 AM, Kees Cook wrote:
-
-...
-
-> > Either a distro builds a very specific subset of LSMs, or they build
-> > in all LSMs (for the user to choose from). In both cases, they set an
-> > explicit order, which defines which exclusive LSM get selected.
+On Mon, Oct 8, 2018 at 6:21 PM Christian Brauner <christian@brauner.io> wrote:
+> On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
+> > On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@brauner.io> wrote:
+> > >
+> > > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrote:
+> > > > As an alternative to SECCOMP_FILTER_FLAG_GET_LISTENER, perhaps a ptrace()
+> > > > version which can acquire filters is useful. There are at least two reasons
+> > > > this is preferable, even though it uses ptrace:
+> > > >
+> > > > 1. You can control tasks that aren't cooperating with you
+> > > > 2. You can control tasks whose filters block sendmsg() and socket(); if the
+> > > >    task installs a filter which blocks these calls, there's no way with
+> > > >    SECCOMP_FILTER_FLAG_GET_LISTENER to get the fd out to the privileged task.
+> > >
+> > > So for the slow of mind aka me:
+> > > I'm not sure I completely understand this problem. Can you outline how
+> > > sendmsg() and socket() are involved in this?
+> > >
+> > > I'm also not sure that this holds (but I might misunderstand the
+> > > problem) afaict, you could do try to get the fd out via CLONE_FILES and
+> > > other means so something like:
+> > >
+> > > // let's pretend the libc wrapper for clone actually has sane semantics
+> > > pid = clone(CLONE_FILES);
+> > > if (pid == 0) {
+> > >         fd = seccomp(SECCOMP_SET_MODE_FILTER, SECCOMP_FILTER_FLAG_NEW_LISTENER, &prog);
+> > >
+> > >         // Now this fd will be valid in both parent and child.
+> > >         // If you haven't blocked it you can inform the parent what
+> > >         // the fd number is via pipe2(). If you have blocked it you can
+> > >         // use dup2() and dup to a known fd number.
+> > > }
+> > >
+> > > >
+> > > > v2: fix a bug where listener mode was not unset when an unused fd was not
+> > > >     available
+> > > > v3: fix refcounting bug (Oleg)
+> > > > v4: * change the listener's fd flags to be 0
+> > > >     * rename GET_LISTENER to NEW_LISTENER (Matthew)
+> > > > v5: * add capable(CAP_SYS_ADMIN) requirement
+> > > > v7: * point the new listener at the right filter (Jann)
+> > > >
+> > > > Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> > > > CC: Kees Cook <keescook@chromium.org>
+> > > > CC: Andy Lutomirski <luto@amacapital.net>
+> > > > CC: Oleg Nesterov <oleg@redhat.com>
+> > > > CC: Eric W. Biederman <ebiederm@xmission.com>
+> > > > CC: "Serge E. Hallyn" <serge@hallyn.com>
+> > > > CC: Christian Brauner <christian.brauner@ubuntu.com>
+> > > > CC: Tyler Hicks <tyhicks@canonical.com>
+> > > > CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
+> > > > ---
+> > > >  include/linux/seccomp.h                       |  7 ++
+> > > >  include/uapi/linux/ptrace.h                   |  2 +
+> > > >  kernel/ptrace.c                               |  4 ++
+> > > >  kernel/seccomp.c                              | 31 +++++++++
+> > > >  tools/testing/selftests/seccomp/seccomp_bpf.c | 68 +++++++++++++++++++
+> > > >  5 files changed, 112 insertions(+)
+> > > >
+> > > > diff --git a/include/linux/seccomp.h b/include/linux/seccomp.h
+> > > > index 017444b5efed..234c61b37405 100644
+> > > > --- a/include/linux/seccomp.h
+> > > > +++ b/include/linux/seccomp.h
+> > > > @@ -83,6 +83,8 @@ static inline int seccomp_mode(struct seccomp *s)
+> > > >  #ifdef CONFIG_SECCOMP_FILTER
+> > > >  extern void put_seccomp_filter(struct task_struct *tsk);
+> > > >  extern void get_seccomp_filter(struct task_struct *tsk);
+> > > > +extern long seccomp_new_listener(struct task_struct *task,
+> > > > +                              unsigned long filter_off);
+> > > >  #else  /* CONFIG_SECCOMP_FILTER */
+> > > >  static inline void put_seccomp_filter(struct task_struct *tsk)
+> > > >  {
+> > > > @@ -92,6 +94,11 @@ static inline void get_seccomp_filter(struct task_struct *tsk)
+> > > >  {
+> > > >       return;
+> > > >  }
+> > > > +static inline long seccomp_new_listener(struct task_struct *task,
+> > > > +                                     unsigned long filter_off)
+> > > > +{
+> > > > +     return -EINVAL;
+> > > > +}
+> > > >  #endif /* CONFIG_SECCOMP_FILTER */
+> > > >
+> > > >  #if defined(CONFIG_SECCOMP_FILTER) && defined(CONFIG_CHECKPOINT_RESTORE)
+> > > > diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
+> > > > index d5a1b8a492b9..e80ecb1bd427 100644
+> > > > --- a/include/uapi/linux/ptrace.h
+> > > > +++ b/include/uapi/linux/ptrace.h
+> > > > @@ -73,6 +73,8 @@ struct seccomp_metadata {
+> > > >       __u64 flags;            /* Output: filter's flags */
+> > > >  };
+> > > >
+> > > > +#define PTRACE_SECCOMP_NEW_LISTENER  0x420e
+> > > > +
+> > > >  /* Read signals from a shared (process wide) queue */
+> > > >  #define PTRACE_PEEKSIGINFO_SHARED    (1 << 0)
+> > > >
+> > > > diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> > > > index 21fec73d45d4..289960ac181b 100644
+> > > > --- a/kernel/ptrace.c
+> > > > +++ b/kernel/ptrace.c
+> > > > @@ -1096,6 +1096,10 @@ int ptrace_request(struct task_struct *child, long request,
+> > > >               ret = seccomp_get_metadata(child, addr, datavp);
+> > > >               break;
+> > > >
+> > > > +     case PTRACE_SECCOMP_NEW_LISTENER:
+> > > > +             ret = seccomp_new_listener(child, addr);
+> > > > +             break;
+> > > > +
+> > > >       default:
+> > > >               break;
+> > > >       }
+> > > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > > > index 44a31ac8373a..17685803a2af 100644
+> > > > --- a/kernel/seccomp.c
+> > > > +++ b/kernel/seccomp.c
+> > > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
+> > > >
+> > > >       return ret;
+> > > >  }
+> > > > +
+> > > > +long seccomp_new_listener(struct task_struct *task,
+> > > > +                       unsigned long filter_off)
+> > > > +{
+> > > > +     struct seccomp_filter *filter;
+> > > > +     struct file *listener;
+> > > > +     int fd;
+> > > > +
+> > > > +     if (!capable(CAP_SYS_ADMIN))
+> > > > +             return -EACCES;
+> > >
+> > > I know this might have been discussed a while back but why exactly do we
+> > > require CAP_SYS_ADMIN in init_userns and not in the target userns? What
+> > > if I want to do a setns()fd, CLONE_NEWUSER) to the target process and
+> > > use ptrace from in there?
+> >
+> > See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
+> > . Basically, the problem is that this doesn't just give you capability
+> > over the target task, but also over every other task that has the same
+> > filter installed; you need some sort of "is the caller capable over
+> > the filter and anyone who uses it" check.
 >
-> and when lsm stacking lands, that exlusive LSM goes away.
+> Thanks.
+> But then this new ptrace feature as it stands is imho currently broken.
+> If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF if you
+> are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() itself
+> if you are ns_cpabable(CAP_SYS_ADMIN) then either the new ptrace() api
+> extension should be fixed to allow for this too or the seccomp() way of
+> retrieving the pid - which I really think we want - needs to be fixed to
+> require capable(CAP_SYS_ADMIN) too.
+> The solution where both require ns_capable(CAP_SYS_ADMIN) is - imho -
+> the preferred way to solve this.
+> Everything else will just be confusing.
 
-FWIW, I still believe in my earlier statements supporting explicitly
-enabling LSM stacking via Kconfig.
+First you say "broken", then you say "confusing". Which one do you mean?
 
--- 
-paul moore
-www.paul-moore.com
+Regarding requiring ns_capable() for ptrace: That means that you'll
+have to stash namespace information in the seccomp filter. You'd also
+potentially be eliding the LSM check that would normally have to occur
+between the tracer and the tracee; but I guess that's probably fine?
+CAP_SYS_ADMIN in the init namespace already has some abilities that
+LSMs can't observe; you could argue that CAP_SYS_ADMIN in another
+namespace should have similar semantics, but I'm not sure whether that
+matches what the LSM people want as semantics.
