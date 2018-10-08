@@ -2,129 +2,101 @@ Return-Path: <SRS0=FYvn=MU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 485C2C00449
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Oct 2018 11:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75542C65C20
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Oct 2018 14:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1915320841
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Oct 2018 11:20:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1915320841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 363312075C
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Oct 2018 14:26:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="uqh2iraC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 363312075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeJHScE (ORCPT
+        id S1726402AbeJHViL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Oct 2018 14:32:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34526 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726967AbeJHScE (ORCPT
+        Mon, 8 Oct 2018 17:38:11 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45550 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbeJHViL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Oct 2018 14:32:04 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w98BJPMP038784
-        for <linux-security-module@vger.kernel.org>; Mon, 8 Oct 2018 07:20:48 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n031r3a0n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Oct 2018 07:20:48 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 8 Oct 2018 12:20:41 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 8 Oct 2018 12:20:38 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w98BKbqn197054
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 8 Oct 2018 11:20:37 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AEBF8A4057;
-        Mon,  8 Oct 2018 14:20:11 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 80064A4053;
-        Mon,  8 Oct 2018 14:20:10 +0100 (BST)
-Received: from localhost.localdomain (unknown [9.80.101.74])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  8 Oct 2018 14:20:10 +0100 (BST)
-Subject: Re: [PATCH v5 0/6] Add support for architecture specific IMA
- policies
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jforbes@redhat.com, seth.forshee@canonical.com,
-        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
-Date:   Mon, 08 Oct 2018 07:20:25 -0400
-In-Reply-To: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
-References: <20181005174015.21939-1-nayna@linux.vnet.ibm.com>
+        Mon, 8 Oct 2018 17:38:11 -0400
+Received: by mail-lj1-f194.google.com with SMTP id j4-v6so14271150ljc.12
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Oct 2018 07:26:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jaGjnXcdvN8daa/3PbDv9zHsmJ6YZMBAaIYodxABeZg=;
+        b=uqh2iraCt0Olc+gC5NC/t03L7F/umuyT2IM741pQqBesATvBmuepNM3wrcnenoxzA/
+         7pNa0HV1q1YRv5QVnarFOpfC413wHXghQG6Li+ZWq5gr1d3seb19dDrwhD2TS89hYJmt
+         xUoAHT/V3OS3LiGC4o+c/RIW9oxB2Zvz9eskdk3qpVsUIYSs3RrNSu3Wl3B9Ju1hk4qj
+         FpsnCpJ3mtt6Vy3sorpdknHREr4WBVINN5n84bS1uR/GXWU67Ev0r6FqKJbtVUIMpPBt
+         UyFscsOIuovyS9fieYFxCgRSSvb2JxwdU6mZdsy/tL1JJCkkr8eamW29kcaG1WQYaIA7
+         Rl3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jaGjnXcdvN8daa/3PbDv9zHsmJ6YZMBAaIYodxABeZg=;
+        b=qOGGEwX524dGLZrSTV6ULo9CdVSsf0u0+9qnhoONsVu7eWrQSjs+O1u1Ch0u2gIkCc
+         T6y89tTgBJmT7n13NI0jVqicYRXtlG4kGmnARty/ZlYVuA6KvcTHxuTl+r6pAauYkzCc
+         ig43ijhy7eyBx9AKApACclor9GpLKYjSIjagHnmm6gOxoc/reGTxsRz9H2UtE5+EXIkF
+         0+kDP9F/UvUzG9B0G87sJsmCSY0FAGdBD/RLktJHzsNgspihVnlnT1lp2/rT9PsPX0Er
+         TLG86lTX7LixHSDydn/2BThGhMW4cXC2oL7fOOdPD31JBmURqI7B5RsXACL6rO5nHRLo
+         5DWQ==
+X-Gm-Message-State: ABuFfoiGuORpD2IJIKlbzOjpxHMYXrX3Ihn8Tn7oIzJE24uB10PC3CfU
+        4nOr5lFyZLC9/8n3+4E0fkpw1SNVgXNJaTmK6CLO
+X-Google-Smtp-Source: ACcGV63IKLlhzzOtrBPiqxN9Gnpm2JTqnuIHjDT/bABdFuvd0QgrNGWcrEMUbJOQPuYzxrVrNLkB1l960X7mZl2VZc4=
+X-Received: by 2002:a2e:2c15:: with SMTP id s21-v6mr14667075ljs.162.1539008770629;
+ Mon, 08 Oct 2018 07:26:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181002005505.6112-1-keescook@chromium.org> <CAHC9VhQjMfH6Q+Tif8nBknZojgxrb6x+oDz4vHRiZN8rb8MZ5Q@mail.gmail.com>
+ <785ef6a9-ae46-3533-0348-74bcf6f10928@tycho.nsa.gov> <CAGXu5jKNzG3rGUAV39D0w4txHRG3H2qU1Z1e_b+03OgycTaWqA@mail.gmail.com>
+ <809f1cfd-077b-ee58-51ba-b22daf46d12b@tycho.nsa.gov> <QpdcE4QSCQKJqDmB2QBEGBlnlioHuRHlM0g5HF8KbHjU1zIUAOjnQ2r9EIMu3m0S2OWNR3_M_TSp_M6CVDqkp6kKuFPUvegsyDPNw1AGju4=@protonmail.ch>
+ <CAGXu5jKqXNbEvPr1axQtGCCnWsGhDgjynW5u326mcx4vZ1oH8g@mail.gmail.com>
+ <abe03d09-4dcb-2b02-4102-5e108d617a42@canonical.com> <CAGXu5jJtC1gkJ0ZKDFroL8UzvjiPfmC+6EsrzyB0j0oETdSQQg@mail.gmail.com>
+ <alpine.LRH.2.21.1810030758460.23596@namei.org> <CAGXu5jLKgrdhah-5TtAXDL-odbLGeyAUH2=PkAU769AkEnZFfQ@mail.gmail.com>
+ <5955f5ce-b803-4f58-8b07-54c291e33da5@canonical.com> <CAGXu5jKqSZ5LhQ_HwbA9-_DAg3efNzWfLjpxO_rurBgUZ-nnAA@mail.gmail.com>
+ <583a703e-18af-a1b2-dfc9-62a2a3384825@tycho.nsa.gov> <CAGXu5jLmQQd4e=B3YsiEoRVih2m889ia2tnzu5r8bqcms2sOqQ@mail.gmail.com>
+ <638db305-cfef-4391-90bf-458f50c4612f@canonical.com>
+In-Reply-To: <638db305-cfef-4391-90bf-458f50c4612f@canonical.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 8 Oct 2018 10:25:59 -0400
+Message-ID: <CAHC9VhSgy2UXB4q0qLr-qeRwqiO=Zm9mpJdUDWdvtRM17JUhbg@mail.gmail.com>
+Subject: Re: [PATCH security-next v4 23/32] selinux: Remove boot parameter
+To:     john.johansen@canonical.com, keescook@chromium.org,
+        casey@schaufler-ca.com
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        James Morris <jmorris@namei.org>,
+        Golden_Miller83@protonmail.ch, penguin-kernel@i-love.sakura.ne.jp,
+        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18100811-0028-0000-0000-0000030402DC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18100811-0029-0000-0000-000023BE4EAD
-Message-Id: <1538997625.15382.87.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-08_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=896 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810080113
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2018-10-05 at 23:10 +0530, Nayna Jain wrote:
-> From: Nayna Jain <nayna@linux.ibm.com>
-> 
-> The architecture specific policy, introduced in this patch set, permits
-> different architectures to define IMA policy rules based on kernel
-> configuration and system runtime information.
-> 
-> For example, on x86, there are two methods of verifying the kexec'ed kernel
-> image signature - CONFIG_KEXEC_VERIFY_SIG and IMA appraisal policy
-> KEXEC_KERNEL_CHECK. CONFIG_KEXEC_VERIFY_SIG enforces the kexec_file_load
-> syscall to verify file signatures, but does not prevent the kexec_load
-> syscall. The IMA KEXEC_KERNEL_CHECK policy rule verifies the kexec'ed
-> kernel image, loaded via the kexec_file_load syscall, is validly signed and
-> prevents loading a kernel image via the kexec_load syscall. When secure
-> boot is enabled, the kexec'ed kernel image needs to be signed and the
-> signature verified. In this environment, either method of verifying the
-> kexec'ed kernel image is acceptable, as long as the kexec_load syscall is
-> disabled.
-> 
-> The previous version of this patchset introduced a new IMA policy rule to
-> disable the kexec_load syscall, when CONFIG_KEXEC_VERIFY_SIG was enabled,
-> however that is removed from this version by introducing a different
-> mechanism, as described below.
-> 
-> The patchset defines an arch_ima_get_secureboot() function to retrieve the
-> secureboot state of the system. If secureboot is enabled and
-> CONFIG_KEXEC_VERIFY_SIG is configured, it denies permission to kexec_load
-> syscall.
-> 
-> To support architecture specific policies, a new function
-> arch_get_ima_policy() is defined. This patch set defines IMA
-> KERNEL_KEXEC_POLICY rules for x86 *only* if CONFIG_KEXEC_VERIFY_SIG is
-> disabled and secure boot is enabled.
-> 
-> This patch set includes a patch, which refactors ima_init_policy() to
-> remove code duplication.
+On Thu, Oct 4, 2018 at 1:38 AM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 10/03/2018 10:26 AM, Kees Cook wrote:
 
-Other than a couple of #ifdef's in .c files, which should be converted
-to use IS_ENABLED(<config-option>), the patch set is looking really
-good.
+...
 
-thanks!
+> > Either a distro builds a very specific subset of LSMs, or they build
+> > in all LSMs (for the user to choose from). In both cases, they set an
+> > explicit order, which defines which exclusive LSM get selected.
+>
+> and when lsm stacking lands, that exlusive LSM goes away.
 
-Mimi
+FWIW, I still believe in my earlier statements supporting explicitly
+enabling LSM stacking via Kconfig.
 
+-- 
+paul moore
+www.paul-moore.com
