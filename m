@@ -2,125 +2,159 @@ Return-Path: <SRS0=78tV=MV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E64C6787A
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 01:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38C6C64EAD
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 12:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78DDA2075E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 01:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEEEE214C4
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 12:40:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cr7d8QAz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78DDA2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ha433zy1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEEEE214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbeJIIyo (ORCPT
+        id S1726718AbeJIT5H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Oct 2018 04:54:44 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:38200 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726476AbeJIIyl (ORCPT
+        Tue, 9 Oct 2018 15:57:07 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42527 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbeJIT5H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Oct 2018 04:54:41 -0400
-Received: by mail-yw1-f65.google.com with SMTP id d126-v6so8912099ywa.5
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Oct 2018 18:40:11 -0700 (PDT)
+        Tue, 9 Oct 2018 15:57:07 -0400
+Received: by mail-ot1-f65.google.com with SMTP id h26-v6so1412895otl.9
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Oct 2018 05:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7qA+dtOcdI9urqDaS/IIx7h3l7wueuGPmWbY8bS/3GU=;
-        b=Cr7d8QAz0kukYdX0iBqB5KVdL/yUDjRmOJyD2dc6Vca6WvhfsP421Td/pzu5oqOyHg
-         vWlxQnjXCC7v55mqc/rDdr5wc7MeIxqZ7muGiZA+v5x01nSspt/SnK8V1DwKWl6Gkwbm
-         uO8CQq0kdGPN3kyueDJcm9Vjm72pamEF8xH0g=
+        bh=UUh7DZePWQGubrujTdGMYRhGcavfDkqyiRLdHw9pBtM=;
+        b=ha433zy1NgQMlpuhkgWe4HK1wA/AA1KTB3ZKzt4+yir5gHg6v7AgyeTGffriqO2kRV
+         suVQJiFZiRY6dXYMIcZInxplnJWBKQqyupEYdsP/aXsDFQB3iV9/WdSOlCLoaJqnswh4
+         JFoPGvlCTZkCQIxpFRHF7SUABQGMHNveoCZV8BI4mUe+BBNnOJrV3eaKv5duYJ/LfC0J
+         9n1RvVBk7dWCgGo7VmdKKlxZKlWSkl0EButgX8TxuTaIg8GTOowUIYUrmrwiPtFcZfeQ
+         bYpgYpCG/8jAvgWQoN+CKHSu3TbWQzBN8T6y0OVm7gUg8zENhXbtv7eiuVr1POdfVqrz
+         xmhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7qA+dtOcdI9urqDaS/IIx7h3l7wueuGPmWbY8bS/3GU=;
-        b=hvVr83vx/xqpGXx31UoaHR8DQzGIoND7iH0HTiRtg7g0QSVFoF85dbKO+lDDh2kO+O
-         Fy0og42qUMgOCPbmKnA+XTB+X5BSMBY+idgTUmk99GzmUjC9ts16IyM9GFBtkiX8xCDC
-         XZu5xnqcfXC5gAq4Ea6xd7EBsUvqRtAtnix01wiK96W9aLZwhdLY+tLDTLsPUQwukM9A
-         vkTp0TAqTCRa5cySHftnayTz/YXAkXCRwnOaMqXTcok1XGEh9jHGNkyltRhZ0oajxpKL
-         hoVGpzU4qo0bPEvbtWY8jSDmf5uOZIqSiRtLbFWMQ/TTWM8ha15+9+yAI9T0OFbx/Lz4
-         GMdw==
-X-Gm-Message-State: ABuFfoiY3pHGNGcEyEZnEo0JVwHZx0GwBtxk9/WAjrWeu4ICNPBce6kG
-        LciM3QNIJGrL+TQfDANqayltZVn3JFw=
-X-Google-Smtp-Source: ACcGV62gGQqqIFaGWbns4Cistzf3k+SkJhMblV22OEESSp4mf05HYbdqYwDp3q7OF/yYObRBirVrug==
-X-Received: by 2002:a81:360b:: with SMTP id d11-v6mr14380398ywa.365.1539049210982;
-        Mon, 08 Oct 2018 18:40:10 -0700 (PDT)
-Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id l30-v6sm24348607ywa.104.2018.10.08.18.40.09
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Oct 2018 18:40:09 -0700 (PDT)
-Received: by mail-yw1-f43.google.com with SMTP id d126-v6so8912069ywa.5
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Oct 2018 18:40:09 -0700 (PDT)
-X-Received: by 2002:a81:98cb:: with SMTP id p194-v6mr14391598ywg.353.1539049208850;
- Mon, 08 Oct 2018 18:40:08 -0700 (PDT)
+        bh=UUh7DZePWQGubrujTdGMYRhGcavfDkqyiRLdHw9pBtM=;
+        b=RJEejmLS9byyEzF130RSpnxVDkqzfZEg9zlRXCVuHUm/VPgdhJl22V9MIZZmcwwJED
+         IUX67c3WHxv6oOd7KIwUV3uxL2MmvAwSFxIs1c55v0sePmCDS8fgDj5rP/BJxHdsLc96
+         +MTI8eBTjtVb8trAhai9NVY/yju41OHdsiE/5fhfe34DqSCjGavzVq9jif6TqcLM+zkX
+         3b8z1Qival6LrMxWbpqEbdodSC7z65M5uK03fnFgUzdb/auY+4eAZhQuKDoSoXEfcIeu
+         mThrlj4hjKupYunAV4OQsc+kxTeYZQYD3tCf+8r2N2o/YT2XpAjYD0f/0phynRt6LpF7
+         XUhg==
+X-Gm-Message-State: ABuFfoi/5/KHCwfU9nZlE3tpPoGbTRqpdBlKkxUWeTF/nkDJ4bUqh+bP
+        K6TUU2JlyUDFVzf37nM9OOFcXiDoWI4f38H3Cr9CoA==
+X-Google-Smtp-Source: ACcGV62CbDOKw4X0OO63JV+0x8ib6PwKGS5lHP8efeduwL6b0tYIbn/cIbLIn/E5LdA6EitdpFz1km/jb766MMhKCjE=
+X-Received: by 2002:a9d:4917:: with SMTP id e23mr14890956otf.73.1539088820572;
+ Tue, 09 Oct 2018 05:40:20 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Mon, 8 Oct 2018 18:40:08 -0700 (PDT)
-In-Reply-To: <c06eb47c-05d3-f51c-625b-9bfdd33a426a@infradead.org>
-References: <c06eb47c-05d3-f51c-625b-9bfdd33a426a@infradead.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 8 Oct 2018 18:40:08 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+B82dt9KvO0UVMBLoFxZEZF76xic4Sz41HtVfKHWpwWQ@mail.gmail.com>
-Message-ID: <CAGXu5j+B82dt9KvO0UVMBLoFxZEZF76xic4Sz41HtVfKHWpwWQ@mail.gmail.com>
-Subject: Re: [PATCH] security: fix LSM description location
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-4-tycho@tycho.ws>
+ <20181008151629.hkgzzsluevwtuclw@brauner.io> <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
+ <20181008162147.ubfxxsv2425l2zsp@brauner.io> <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
+ <20181008181815.pwnqxngj22mhm2vj@brauner.io>
+In-Reply-To: <20181008181815.pwnqxngj22mhm2vj@brauner.io>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 9 Oct 2018 14:39:53 +0200
+Message-ID: <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
+To:     christian@brauner.io
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 8, 2018 at 5:46 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
+On Mon, Oct 8, 2018 at 8:18 PM Christian Brauner <christian@brauner.io> wrote:
+> On Mon, Oct 08, 2018 at 06:42:00PM +0200, Jann Horn wrote:
+> > On Mon, Oct 8, 2018 at 6:21 PM Christian Brauner <christian@brauner.io> wrote:
+> > > On Mon, Oct 08, 2018 at 05:33:22PM +0200, Jann Horn wrote:
+> > > > On Mon, Oct 8, 2018 at 5:16 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > On Thu, Sep 27, 2018 at 09:11:16AM -0600, Tycho Andersen wrote:
+> > > > > > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> > > > > > index 44a31ac8373a..17685803a2af 100644
+> > > > > > --- a/kernel/seccomp.c
+> > > > > > +++ b/kernel/seccomp.c
+> > > > > > @@ -1777,4 +1777,35 @@ static struct file *init_listener(struct task_struct *task,
+> > > > > >
+> > > > > >       return ret;
+> > > > > >  }
+> > > > > > +
+> > > > > > +long seccomp_new_listener(struct task_struct *task,
+> > > > > > +                       unsigned long filter_off)
+> > > > > > +{
+> > > > > > +     struct seccomp_filter *filter;
+> > > > > > +     struct file *listener;
+> > > > > > +     int fd;
+> > > > > > +
+> > > > > > +     if (!capable(CAP_SYS_ADMIN))
+> > > > > > +             return -EACCES;
+> > > > >
+> > > > > I know this might have been discussed a while back but why exactly do we
+> > > > > require CAP_SYS_ADMIN in init_userns and not in the target userns? What
+> > > > > if I want to do a setns()fd, CLONE_NEWUSER) to the target process and
+> > > > > use ptrace from in there?
+> > > >
+> > > > See https://lore.kernel.org/lkml/CAG48ez3R+ZJ1vwGkDfGzKX2mz6f=jjJWsO5pCvnH68P+RKO8Ow@mail.gmail.com/
+> > > > . Basically, the problem is that this doesn't just give you capability
+> > > > over the target task, but also over every other task that has the same
+> > > > filter installed; you need some sort of "is the caller capable over
+> > > > the filter and anyone who uses it" check.
+> > >
+> > > Thanks.
+> > > But then this new ptrace feature as it stands is imho currently broken.
+> > > If you can install a seccomp filter with SECCOMP_RET_USER_NOTIF if you
+> > > are ns_cpabable(CAP_SYS_ADMIN) and also get an fd via seccomp() itself
+> > > if you are ns_cpabable(CAP_SYS_ADMIN)
+
+Actually, you don't need CAP_SYS_ADMIN for seccomp() at all as long as
+you enable the NNP flag, I think?
+
+> > > then either the new ptrace() api
+> > > extension should be fixed to allow for this too or the seccomp() way of
+> > > retrieving the pid - which I really think we want - needs to be fixed to
+> > > require capable(CAP_SYS_ADMIN) too.
+> > > The solution where both require ns_capable(CAP_SYS_ADMIN) is - imho -
+> > > the preferred way to solve this.
+> > > Everything else will just be confusing.
+> >
+> > First you say "broken", then you say "confusing". Which one do you mean?
 >
-> Fix Documentation location reference for where LSM descriptions should
-> be placed.
->
-> Suggested-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: linux-security-module@vger.kernel.org
+> Both. It's broken in so far as it places a seemingly unnecessary
+> restriction that could be fixed. You outlined one possible fix yourself
+> in the link you provided.
 
-Thanks!
+If by "possible fix" you mean "check whether the seccomp filter is
+only attached to a single task": That wouldn't fundamentally change
+the situation, it would only add an additional special case.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+> And it's confusing in so far as there is a way
+> via seccomp() to get the fd without said requirement.
 
-Jon, can you take this?
+I don't find it confusing at all. seccomp() and ptrace() are very
+different situations: When you use seccomp(), infrastructure is
+already in place for ensuring that your filter is only applied to
+processes over which you are capable, and propagation is limited by
+inheritance from your task down. When you use ptrace(), you need a
+pretty different sort of access check that checks whether you're
+privileged over ancestors, siblings and so on of the target task.
 
--Kees
-
-> ---
->  Documentation/security/LSM.rst |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> --- lnx-419-rc7.orig/Documentation/security/LSM.rst
-> +++ lnx-419-rc7/Documentation/security/LSM.rst
-> @@ -5,7 +5,7 @@ Linux Security Module Development
->  Based on https://lkml.org/lkml/2007/10/26/215,
->  a new LSM is accepted into the kernel when its intent (a description of
->  what it tries to protect against and in what cases one would expect to
-> -use it) has been appropriately documented in ``Documentation/security/LSM.rst``.
-> +use it) has been appropriately documented in ``Documentation/admin-guide/LSM/``.
->  This allows an LSM's code to be easily compared to its goals, and so
->  that end users and distros can make a more informed decision about which
->  LSMs suit their requirements.
->
->
-
-
-
--- 
-Kees Cook
-Pixel Security
+But thinking about it more, I think that CAP_SYS_ADMIN over the saved
+current->mm->user_ns of the task that installed the filter (stored as
+a "struct user_namespace *" in the filter) should be acceptable.
