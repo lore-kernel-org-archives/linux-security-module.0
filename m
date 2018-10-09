@@ -2,163 +2,183 @@ Return-Path: <SRS0=78tV=MV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F369CECDE46
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 16:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A49E5C64EB8
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 16:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFDF0214DC
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 16:27:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ezTuF0aA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFDF0214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DD482087D
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 16:46:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD482087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbeJIXpA (ORCPT
+        id S1726496AbeJJAEh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Oct 2018 19:45:00 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43426 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbeJIXo7 (ORCPT
+        Tue, 9 Oct 2018 20:04:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43428 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbeJJAEh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Oct 2018 19:44:59 -0400
-Received: by mail-ot1-f68.google.com with SMTP id k9so2256588otl.10
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Oct 2018 09:27:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=whg6ewkYniyV6HAKiVc8/3Z0EKakuoHttAUFhDfk8ZI=;
-        b=ezTuF0aAYVz+gybDq6QJGX+MpuCNJoJpqO/tuRPzVbK4cBQ/qyqECcQsJvmeZfX6kx
-         Y+6wGvnyToSSGHS4s2/Ku5jc13x+DVpQcAWaciMK3QFIq71lOyrNKpkf9DJTkjA79NGH
-         wG1yQ9240+Ol6AB4vJk44pjKt3XsVED8brNe/UJzLRayCrd4T5P/vDqkEOGJMyVNs4aF
-         ccA7qiBfNRptrz2xXeqDFrEY8wrs91NvCNfAJD/Xx4iQAvN+7dy62dwCshug4yjhpgst
-         vo5qVrfV2wQ4Xwgt8iH0Zf8PMiSJoED4HKcAH0zNYMmkXYMYBGeoTR8QeR3JhWOB+ts+
-         DspQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=whg6ewkYniyV6HAKiVc8/3Z0EKakuoHttAUFhDfk8ZI=;
-        b=faK/Vb1ACFkGQ27AxbmoY3e/32oaRvjgoGHCzwguWXJlc+g6R09OIZOJtcEB4OKJbk
-         Ekmyw0HajpVB38T6e3sV9C+dFjUTqrOkkzFHgmfrQgSrnYh2FVv7rkKTx5S/TmUEB3aJ
-         cfsjEUq/7ChS476l/2TcoA/3P8H/RhtMNoDzlhdOuKHwCggG0Wr0ZIOznR1jlcdrb/4z
-         mRCx0Br0cjUDSuG6QKwjv9CP/82ad0tNjiNpdX26xtOkr2RKloBPw5SbZdNy0pEjeyUS
-         fjBOvUGxHHioq82Ba1l1vm+Mk6ekCA1euc+iO0b8YW1hpR+DppLp5hafvUjqYVCcJGb2
-         l5Dw==
-X-Gm-Message-State: ABuFfojsKBkJX7PK8Wi7YchZc2sanRDk56BLvsAyOssqzcUalU2J+hva
-        o46OkGsacgSM7LKnd0ZeTmcCdzjn3oK4rK0+2qhlAg==
-X-Google-Smtp-Source: ACcGV61095dHsPiDP8asA/3AK/Le8YQaF7/H9V5hdrQRj0LFYCdO2L5CAgJ4CR7U2pqrQmsQK/qdcjxFX0+bTXwRo4A=
-X-Received: by 2002:a9d:4917:: with SMTP id e23mr15593210otf.73.1539102434276;
- Tue, 09 Oct 2018 09:27:14 -0700 (PDT)
+        Tue, 9 Oct 2018 20:04:37 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ABFA8356CB;
+        Tue,  9 Oct 2018 16:46:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C461A18524;
+        Tue,  9 Oct 2018 16:46:43 +0000 (UTC)
+Subject: [PATCH 00/22] KEYS: Support TPM-wrapped key and crypto ops [ver #2]
+From:   David Howells <dhowells@redhat.com>
+To:     jmorris@namei.org
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Denis Kenzior <denkenz@gmail.com>,
+        James Morris <james.morris@microsoft.com>, dhowells@redhat.com,
+        denkenz@gmail.com, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 09 Oct 2018 17:46:42 +0100
+Message-ID: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20181008162147.ubfxxsv2425l2zsp@brauner.io> <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
- <20181008181815.pwnqxngj22mhm2vj@brauner.io> <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
- <20181009132850.fp6yne2vgmfpi27k@brauner.io> <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
- <20181009134923.2fvf5roghqgaj5gq@brauner.io> <CAG48ez1hnKkm7mzXuZLP4n6x8K1JqmTwQb-e79oJguTaH1mkUw@mail.gmail.com>
- <20181009140932.e5w5lgbgucbl72kt@brauner.io> <CAG48ez12SYRUJTWRdzWhpvHBkQion4i8Gpef4r1L6epo9JF-ng@mail.gmail.com>
- <20181009162022.d7fd2wibyq6xi6sg@brauner.io>
-In-Reply-To: <20181009162022.d7fd2wibyq6xi6sg@brauner.io>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 9 Oct 2018 18:26:47 +0200
-Message-ID: <CAG48ez2ROhq4R1az2TXNmBvCXY=3UVxnmh6CeR05N0xVGrpwpA@mail.gmail.com>
-Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
-To:     christian@brauner.io
-Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
-        Oleg Nesterov <oleg@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 09 Oct 2018 16:46:47 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 9, 2018 at 6:20 PM Christian Brauner <christian@brauner.io> wrote:
-> On Tue, Oct 09, 2018 at 05:26:26PM +0200, Jann Horn wrote:
-> > On Tue, Oct 9, 2018 at 4:09 PM Christian Brauner <christian@brauner.io> wrote:
-> > > On Tue, Oct 09, 2018 at 03:50:53PM +0200, Jann Horn wrote:
-> > > > On Tue, Oct 9, 2018 at 3:49 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > On Tue, Oct 09, 2018 at 03:36:04PM +0200, Jann Horn wrote:
-> > > > > > On Tue, Oct 9, 2018 at 3:29 PM Christian Brauner <christian@brauner.io> wrote:
-> > > > > > > One more thing. Citing from [1]
-> > > > > > >
-> > > > > > > > I think there's a security problem here. Imagine the following scenario:
-> > > > > > > >
-> > > > > > > > 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
-> > > > > > > > 2. task A forks off a child B
-> > > > > > > > 3. task B uses setuid(1) to drop its privileges
-> > > > > > > > 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
-> > > > > > > > or via execve()
-> > > > > > > > 5. task C (the attacker, uid==1) attaches to task B via ptrace
-> > > > > > > > 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
-> > > > > > >
-> > > > > > > Sorry, to be late to the party but would this really pass
-> > > > > > > __ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to me
-> > > > > > > that it would... Doesn't look like it would get past:
-> > > > > > >
-> > > > > > >         tcred = __task_cred(task);
-> > > > > > >         if (uid_eq(caller_uid, tcred->euid) &&
-> > > > > > >             uid_eq(caller_uid, tcred->suid) &&
-> > > > > > >             uid_eq(caller_uid, tcred->uid)  &&
-> > > > > > >             gid_eq(caller_gid, tcred->egid) &&
-> > > > > > >             gid_eq(caller_gid, tcred->sgid) &&
-> > > > > > >             gid_eq(caller_gid, tcred->gid))
-> > > > > > >                 goto ok;
-> > > > > > >         if (ptrace_has_cap(tcred->user_ns, mode))
-> > > > > > >                 goto ok;
-> > > > > > >         rcu_read_unlock();
-> > > > > > >         return -EPERM;
-> > > > > > > ok:
-> > > > > > >         rcu_read_unlock();
-> > > > > > >         mm = task->mm;
-> > > > > > >         if (mm &&
-> > > > > > >             ((get_dumpable(mm) != SUID_DUMP_USER) &&
-> > > > > > >              !ptrace_has_cap(mm->user_ns, mode)))
-> > > > > > >             return -EPERM;
-> > > > > >
-> > > > > > Which specific check would prevent task C from attaching to task B? If
-> > > > > > the UIDs match, the first "goto ok" executes; and you're dumpable, so
-> > > > > > you don't trigger the second "return -EPERM".
-> > > > >
-> > > > > You'd also need CAP_SYS_PTRACE in the mm->user_ns which you shouldn't
-> > > > > have if you did a setuid to an unpriv user. (But I always find that code
-> > > > > confusing.)
-> > > >
-> > > > Only if the target hasn't gone through execve() since setuid().
-> > >
-> > > Sorry if I want to know this in excessive detail but I'd like to
-> > > understand this properly so bear with me :)
-> > > - If task B has setuid()ed and prctl(PR_SET_DUMPABLE, 1)ed but not
-> > >   execve()ed then C won't pass ptrace_has_cap(mm->user_ns, mode).
-> >
-> > Yeah.
-> >
-> > > - If task B has setuid()ed, exeved()ed it will get its dumpable flag set
-> > >   to /proc/sys/fs/suid_dumpable
-> >
-> > Not if you changed all UIDs (e.g. by calling setuid() as root). In
-> > that case, setup_new_exec() calls "set_dumpable(current->mm,
-> > SUID_DUMP_USER)".
->
-> Actually, looking at this when C is trying to PTRACE_ATTACH to B as an
-> unprivileged user even if B execve()ed and it is dumpable C still
-> wouldn't have CAP_SYS_PTRACE in the mm->user_ns unless it already is
-> privileged over mm->user_ns which means it must be in an ancestor
-> user_ns.
 
-Huh? Why would you need CAP_SYS_PTRACE for anything here? You can
-ptrace another process running under your UID just fine, no matter
-what the namespaces are. I'm not sure what you're saying.
+Hi James,
+
+Here's a set of patches that does the following, if you could pull it please:
+
+ (1) Adds keyctl() functions that permit an asymmetric-type key to be used
+     to encrypt, decrypt, sign and verify a small piece of data (typically
+     a session key or a hash) using the public and/or private key held in
+     the kernel.  A query function is also provided.
+
+ (2) Adds an asymmetric-key parser for PKCS#8 to allow RSA private keys to
+     be passed to the kernel.  Currently only DER-encoded and unencrypted
+     PKCS#8 is supported.
+
+ (3) Adds an asymmetric-key parser for TPM-wrapped key blobs.  The parser
+     gets the TPM to unpack the blob and then attaches it to a key from
+     which it can be used.  Currently only TPM-1.2 is supported.
+
+Example usage for a PKCS#8 blob:
+
+	openssl genrsa -out /tmp/privkey.foo.pem 2048
+	j=`openssl pkcs8 -in /tmp/privkey.foo.pem -topk8 -nocrypt -outform DER |
+	    keyctl padd asymmetric foo @s`
+
+Example usage for a TPM wrapped blob:
+
+	openssl genrsa -out /tmp/privkey.foo.pem 2048
+	create_tpm_key -s 2048 -w /tmp/privkey.foo.pem /tmp/privkey.foo.tpm
+	j=`openssl asn1parse -inform pem -in /tmp/privkey.foo.tpm -noout -out - |
+	    keyctl padd asymmetric foo @s`
+
+See http://david.woodhou.se/draft-woodhouse-cert-best-practice.html#rfc.section.4.4
+
+These keys can then be used thusly:
+
+	echo -n abcdefghijklmnopqrst >/tmp/data
+	keyctl pkey_encrypt $j /tmp/data enc=pkcs1 >/tmp/enc
+	keyctl pkey_decrypt $j /tmp/enc enc=pkcs1 >/tmp/dec
+	cmp /tmp/data /tmp/dec
+	keyctl pkey_sign $j /tmp/data enc=pkcs1 hash=sha1 >/tmp/sig
+	keyctl pkey_verify $j /tmp/data /tmp/sig enc=pkcs1 hash=sha1
+
+
+The kernel patches can be found tagged here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/tag/?h=keys-asym-keyctl-20181009
+
+and also on a branch here:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-asym-keyctl
+
+The keyutils changes needed can be found here:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/keyutils.git/log/?h=next
+
+Changes
+-------
+ v2: Updated the docs and a comment to indicate that the encoding should be a
+     pointer to a string "raw" to denote no encoding and not NULL.
+
+David
+---
+David Howells (8):
+      KEYS: Provide key type operations for asymmetric key ops
+      KEYS: Provide keyctls to drive the new key type ops for asymmetric keys
+      KEYS: Provide missing asymmetric key subops for new key type ops
+      KEYS: Make the X.509 and PKCS7 parsers supply the sig encoding type
+      KEYS: Provide software public key query function
+      KEYS: Allow the public_key struct to hold a private key
+      KEYS: Implement encrypt, decrypt and sign for software asymmetric key
+      KEYS: Implement PKCS#8 RSA Private Key parser
+
+Denis Kenzior (14):
+      crypto: rsa-pkcs1pad: Allow hash to be optional
+      KEYS: asym_tpm: add skeleton for asym_tpm
+      KEYS: asym_tpm: extract key size & public key
+      KEYS: Add parser for TPM-based keys
+      KEYS: asym_tpm: Implement pkey_query
+      KEYS: asym_tpm: Implement encryption operation
+      KEYS: trusted: Expose common functionality
+      KEYS: Move trusted.h to include/keys
+      KEYS: asym_tpm: Add loadkey2 and flushspecific
+      KEYS: asym_tpm: Implement tpm_unbind
+      KEYS: asym_tpm: Implement the decrypt operation
+      KEYS: asym_tpm: Implement signature verification
+      KEYS: asym_tpm: Implement tpm_sign
+      KEYS: asym_tpm: Add support for the sign operation
+
+
+ Documentation/crypto/asymmetric-keys.txt  |   26 +
+ Documentation/security/keys/core.rst      |  217 ++++++
+ crypto/asymmetric_keys/Kconfig            |   31 +
+ crypto/asymmetric_keys/Makefile           |   25 +
+ crypto/asymmetric_keys/asym_tpm.c         |  988 +++++++++++++++++++++++++++++
+ crypto/asymmetric_keys/asymmetric_keys.h  |    3 
+ crypto/asymmetric_keys/asymmetric_type.c  |   43 +
+ crypto/asymmetric_keys/pkcs7_parser.c     |    1 
+ crypto/asymmetric_keys/pkcs8.asn1         |   24 +
+ crypto/asymmetric_keys/pkcs8_parser.c     |  184 +++++
+ crypto/asymmetric_keys/public_key.c       |  191 +++++-
+ crypto/asymmetric_keys/signature.c        |   95 +++
+ crypto/asymmetric_keys/tpm.asn1           |    5 
+ crypto/asymmetric_keys/tpm_parser.c       |  102 +++
+ crypto/asymmetric_keys/x509_cert_parser.c |   21 -
+ crypto/rsa-pkcs1pad.c                     |   59 +-
+ include/crypto/asym_tpm_subtype.h         |   19 +
+ include/crypto/public_key.h               |   14 
+ include/keys/asymmetric-subtype.h         |    9 
+ include/keys/trusted.h                    |  136 ++++
+ include/linux/key-type.h                  |   11 
+ include/linux/keyctl.h                    |   46 +
+ include/uapi/linux/keyctl.h               |   30 +
+ security/keys/Makefile                    |    1 
+ security/keys/compat.c                    |   18 +
+ security/keys/internal.h                  |   39 +
+ security/keys/keyctl.c                    |   24 +
+ security/keys/keyctl_pkey.c               |  323 +++++++++
+ security/keys/trusted.c                   |   14 
+ security/keys/trusted.h                   |  124 ----
+ 30 files changed, 2639 insertions(+), 184 deletions(-)
+ create mode 100644 crypto/asymmetric_keys/asym_tpm.c
+ create mode 100644 crypto/asymmetric_keys/pkcs8.asn1
+ create mode 100644 crypto/asymmetric_keys/pkcs8_parser.c
+ create mode 100644 crypto/asymmetric_keys/tpm.asn1
+ create mode 100644 crypto/asymmetric_keys/tpm_parser.c
+ create mode 100644 include/crypto/asym_tpm_subtype.h
+ create mode 100644 include/keys/trusted.h
+ create mode 100644 include/linux/keyctl.h
+ create mode 100644 security/keys/keyctl_pkey.c
+ delete mode 100644 security/keys/trusted.h
+
