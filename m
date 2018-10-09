@@ -2,275 +2,191 @@ Return-Path: <SRS0=78tV=MV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 885CCC64EB8
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 16:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A805ECDE3A
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 17:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DF49206B2
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 16:49:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF49206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6488B214DC
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 17:34:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6488B214DC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbeJJAH3 (ORCPT
+        id S1727254AbeJJAwJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Oct 2018 20:07:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48418 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726827AbeJJAH2 (ORCPT
+        Tue, 9 Oct 2018 20:52:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36702 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726418AbeJJAwI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Oct 2018 20:07:28 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0EEB93082132;
-        Tue,  9 Oct 2018 16:49:38 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DF46105707B;
-        Tue,  9 Oct 2018 16:49:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 22/22] KEYS: asym_tpm: Add support for the sign operation
- [ver #2]
-From:   David Howells <dhowells@redhat.com>
-To:     jmorris@namei.org
-Cc:     Denis Kenzior <denkenz@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Marcel Holtmann <marcel@holtmann.org>, dhowells@redhat.com,
-        denkenz@gmail.com, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 09 Oct 2018 17:49:35 +0100
-Message-ID: <153910377563.12141.14769652909465225699.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
-References: <153910360263.12141.6032694262361399627.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 09 Oct 2018 16:49:38 +0000 (UTC)
+        Tue, 9 Oct 2018 20:52:08 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w99HTVap033934
+        for <linux-security-module@vger.kernel.org>; Tue, 9 Oct 2018 13:34:05 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2n0wvw0h5m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Oct 2018 13:34:04 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
+        Tue, 9 Oct 2018 18:33:58 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 9 Oct 2018 18:33:53 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w99HXpux8585618
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 9 Oct 2018 17:33:52 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9FD8B52051;
+        Tue,  9 Oct 2018 20:33:25 +0100 (BST)
+Received: from swastik.in.ibm.com (unknown [9.195.38.245])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 11EB552050;
+        Tue,  9 Oct 2018 20:33:19 +0100 (BST)
+From:   Nayna Jain <nayna@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, pjones@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, ebiederm@xmission.com,
+        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v6 0/6] Add support for architecture specific IMA policies 
+Date:   Tue,  9 Oct 2018 23:00:32 +0530
+X-Mailer: git-send-email 2.13.6
+X-TM-AS-GCONF: 00
+x-cbid: 18100917-0012-0000-0000-000002B4B414
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18100917-0013-0000-0000-000020E90810
+Message-Id: <20181009173037.32630-1-nayna@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-09_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=896 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810090169
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Denis Kenzior <denkenz@gmail.com>
+From: Nayna Jain <nayna@linux.ibm.com>
 
-The sign operation can operate in a non-hashed mode by running the RSA
-sign operation directly on the input.  This assumes that the input is
-less than key_size_in_bytes - 11.  Since the TPM performs its own PKCS1
-padding, it isn't possible to support 'raw' mode, only 'pkcs1'.
+The architecture specific policy, introduced in this patch set, permits
+different architectures to define IMA policy rules based on kernel
+configuration and system runtime information.
 
-Alternatively, a hashed version is also possible.  In this variant the
-input is hashed (by userspace) via the selected hash function first.
-Then this implementation takes care of converting the hash to ASN.1
-format and the sign operation is performed on the result.  This is
-similar to the implementation inside crypto/rsa-pkcs1pad.c.
+For example, on x86, there are two methods of verifying the kexec'ed kernel
+image signature - CONFIG_KEXEC_VERIFY_SIG and IMA appraisal policy
+KEXEC_KERNEL_CHECK. CONFIG_KEXEC_VERIFY_SIG enforces the kexec_file_load
+syscall to verify file signatures, but does not prevent the kexec_load
+syscall. The IMA KEXEC_KERNEL_CHECK policy rule verifies the kexec'ed
+kernel image, loaded via the kexec_file_load syscall, is validly signed and
+prevents loading a kernel image via the kexec_load syscall. When secure
+boot is enabled, the kexec'ed kernel image needs to be signed and the
+signature verified. In this environment, either method of verifying the
+kexec'ed kernel image is acceptable, as long as the kexec_load syscall is
+disabled.
 
-ASN1 templates were copied from crypto/rsa-pkcs1pad.c.  There seems to
-be no easy way to expose that functionality, but likely the templates
-should be shared somehow.
+The previous version of this patchset introduced a new IMA policy rule to
+disable the kexec_load syscall, when CONFIG_KEXEC_VERIFY_SIG was enabled,
+however that is removed from this version by introducing a different
+mechanism, as described below.
 
-The sign operation is implemented via TPM_Sign operation on the TPM.
-It is assumed that the TPM wrapped key provided uses
-TPM_SS_RSASSAPKCS1v15_DER signature scheme.  This allows the TPM_Sign
-operation to work on data up to key_len_in_bytes - 11 bytes long.
+The patchset defines an arch_ima_get_secureboot() function to retrieve the
+secureboot state of the system. If secureboot is enabled and
+CONFIG_KEXEC_VERIFY_SIG is configured, it denies permission to kexec_load
+syscall.
 
-In theory, we could also use TPM_Unbind instead of TPM_Sign, but we would
-have to manually pkcs1 pad the digest first.
+To support architecture specific policies, a new function
+arch_get_ima_policy() is defined. This patch set defines IMA
+KERNEL_KEXEC_POLICY rules for x86 *only* if CONFIG_KEXEC_VERIFY_SIG is
+disabled and secure boot is enabled.
 
-Signed-off-by: Denis Kenzior <denkenz@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: Marcel Holtmann <marcel@holtmann.org>
-Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
----
+This patch set includes a patch, which refactors ima_init_policy() to
+remove code duplication.
 
- crypto/asymmetric_keys/asym_tpm.c |  156 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 155 insertions(+), 1 deletion(-)
+Changelog:
 
-diff --git a/crypto/asymmetric_keys/asym_tpm.c b/crypto/asymmetric_keys/asym_tpm.c
-index a5a5f913a74f..5d4c270463f6 100644
---- a/crypto/asymmetric_keys/asym_tpm.c
-+++ b/crypto/asymmetric_keys/asym_tpm.c
-@@ -435,7 +435,8 @@ static int tpm_key_query(const struct kernel_pkey_params *params,
- 
- 	info->supported_ops = KEYCTL_SUPPORTS_ENCRYPT |
- 			      KEYCTL_SUPPORTS_DECRYPT |
--			      KEYCTL_SUPPORTS_VERIFY;
-+			      KEYCTL_SUPPORTS_VERIFY |
-+			      KEYCTL_SUPPORTS_SIGN;
- 
- 	ret = 0;
- error_free_tfm:
-@@ -556,6 +557,156 @@ static int tpm_key_decrypt(struct tpm_key *tk,
- 	return r;
- }
- 
-+/*
-+ * Hash algorithm OIDs plus ASN.1 DER wrappings [RFC4880 sec 5.2.2].
-+ */
-+static const u8 digest_info_md5[] = {
-+	0x30, 0x20, 0x30, 0x0c, 0x06, 0x08,
-+	0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x02, 0x05, /* OID */
-+	0x05, 0x00, 0x04, 0x10
-+};
-+
-+static const u8 digest_info_sha1[] = {
-+	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
-+	0x2b, 0x0e, 0x03, 0x02, 0x1a,
-+	0x05, 0x00, 0x04, 0x14
-+};
-+
-+static const u8 digest_info_rmd160[] = {
-+	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
-+	0x2b, 0x24, 0x03, 0x02, 0x01,
-+	0x05, 0x00, 0x04, 0x14
-+};
-+
-+static const u8 digest_info_sha224[] = {
-+	0x30, 0x2d, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04,
-+	0x05, 0x00, 0x04, 0x1c
-+};
-+
-+static const u8 digest_info_sha256[] = {
-+	0x30, 0x31, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01,
-+	0x05, 0x00, 0x04, 0x20
-+};
-+
-+static const u8 digest_info_sha384[] = {
-+	0x30, 0x41, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02,
-+	0x05, 0x00, 0x04, 0x30
-+};
-+
-+static const u8 digest_info_sha512[] = {
-+	0x30, 0x51, 0x30, 0x0d, 0x06, 0x09,
-+	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03,
-+	0x05, 0x00, 0x04, 0x40
-+};
-+
-+static const struct asn1_template {
-+	const char	*name;
-+	const u8	*data;
-+	size_t		size;
-+} asn1_templates[] = {
-+#define _(X) { #X, digest_info_##X, sizeof(digest_info_##X) }
-+	_(md5),
-+	_(sha1),
-+	_(rmd160),
-+	_(sha256),
-+	_(sha384),
-+	_(sha512),
-+	_(sha224),
-+	{ NULL }
-+#undef _
-+};
-+
-+static const struct asn1_template *lookup_asn1(const char *name)
-+{
-+	const struct asn1_template *p;
-+
-+	for (p = asn1_templates; p->name; p++)
-+		if (strcmp(name, p->name) == 0)
-+			return p;
-+	return NULL;
-+}
-+
-+/*
-+ * Sign operation is performed with the private key in the TPM.
-+ */
-+static int tpm_key_sign(struct tpm_key *tk,
-+			struct kernel_pkey_params *params,
-+			const void *in, void *out)
-+{
-+	struct tpm_buf *tb;
-+	uint32_t keyhandle;
-+	uint8_t srkauth[SHA1_DIGEST_SIZE];
-+	uint8_t keyauth[SHA1_DIGEST_SIZE];
-+	void *asn1_wrapped = NULL;
-+	uint32_t in_len = params->in_len;
-+	int r;
-+
-+	pr_devel("==>%s()\n", __func__);
-+
-+	if (strcmp(params->encoding, "pkcs1"))
-+		return -ENOPKG;
-+
-+	if (params->hash_algo) {
-+		const struct asn1_template *asn1 =
-+						lookup_asn1(params->hash_algo);
-+
-+		if (!asn1)
-+			return -ENOPKG;
-+
-+		/* request enough space for the ASN.1 template + input hash */
-+		asn1_wrapped = kzalloc(in_len + asn1->size, GFP_KERNEL);
-+		if (!asn1_wrapped)
-+			return -ENOMEM;
-+
-+		/* Copy ASN.1 template, then the input */
-+		memcpy(asn1_wrapped, asn1->data, asn1->size);
-+		memcpy(asn1_wrapped + asn1->size, in, in_len);
-+
-+		in = asn1_wrapped;
-+		in_len += asn1->size;
-+	}
-+
-+	if (in_len > tk->key_len / 8 - 11) {
-+		r = -EOVERFLOW;
-+		goto error_free_asn1_wrapped;
-+	}
-+
-+	r = -ENOMEM;
-+	tb = kzalloc(sizeof(*tb), GFP_KERNEL);
-+	if (!tb)
-+		goto error_free_asn1_wrapped;
-+
-+	/* TODO: Handle a non-all zero SRK authorization */
-+	memset(srkauth, 0, sizeof(srkauth));
-+
-+	r = tpm_loadkey2(tb, SRKHANDLE, srkauth,
-+			 tk->blob, tk->blob_len, &keyhandle);
-+	if (r < 0) {
-+		pr_devel("loadkey2 failed (%d)\n", r);
-+		goto error_free_tb;
-+	}
-+
-+	/* TODO: Handle a non-all zero key authorization */
-+	memset(keyauth, 0, sizeof(keyauth));
-+
-+	r = tpm_sign(tb, keyhandle, keyauth, in, in_len, out, params->out_len);
-+	if (r < 0)
-+		pr_devel("tpm_sign failed (%d)\n", r);
-+
-+	if (tpm_flushspecific(tb, keyhandle) < 0)
-+		pr_devel("flushspecific failed (%d)\n", r);
-+
-+error_free_tb:
-+	kzfree(tb);
-+error_free_asn1_wrapped:
-+	kfree(asn1_wrapped);
-+	pr_devel("<==%s() = %d\n", __func__, r);
-+	return r;
-+}
-+
- /*
-  * Do encryption, decryption and signing ops.
-  */
-@@ -573,6 +724,9 @@ static int tpm_key_eds_op(struct kernel_pkey_params *params,
- 	case kernel_pkey_decrypt:
- 		ret = tpm_key_decrypt(tk, params, in, out);
- 		break;
-+	case kernel_pkey_sign:
-+		ret = tpm_key_sign(tk, params, in, out);
-+		break;
- 	default:
- 		BUG();
- 	}
+v6:
+* ima: prevent kexec_load syscall based on runtime secureboot flag
+	- Includes Mimi's feedback - replace #ifdef with IS_ENABLED
+	in .c file
+* ima: add support for arch specific policies
+	- Fixed one line exceeding 80 character's warning
+* x86/ima: define arch_get_ima_policy() for x86
+	- Includes Mimi's feedback - replace #ifdef with IS_ENABLED
+	in .c file and fixed a comment
+
+v5:
+
+* ima: refactor ima_init_policy()
+	- Includes Mimi's feedback - updated patch description, and
+	code fixes. 
+* ima: add support for arch specific policies
+	- Includes Mimi's feedback - updated comment.
+* ima: add support for external setting of ima_appraise
+	- Includes Mimi's feedback - This patch is deleted. This is
+	handled by enabling IMA_APPRAISE_BOOTPARAM only if IMA_ARCH_POLICY
+	is not enabled. The change is done in the Patch 5/5.
+
+v4:
+* ima: refactor ima_init_policy()
+	- Fixed the issue reported by Dan Carpenter. Replaced logical
+	operator (&&) with bitwise operator (&).
+
+v3:
+* x86/ima: define arch_ima_get_secureboot
+	- Edited subject line, added x86.
+
+* x86/ima: define arch_get_ima_policy() for x86
+	- Fixed the error reported by kbuild test robot. The error was
+	appearing when CONFIG_X86 is enabled, but CONFIG_IMA_ARCH_POLICY
+	is disabled.
+
+v2:
+* ima: define arch_ima_get_secureboot
+	- New Patch - to retrieve secureboot state of the system
+* ima: prevent kexec_load syscall based on runtime secureboot flag
+	- New Patch - disables kexec_load if KEXEC_VERIFY_SIG is
+	  configured and secureboot is enabled
+* ima: refactor ima_init_policy()
+	- New Patch - cleans up the code duplication in
+	  ima_init_policy(), adds new function add_rules()
+* ima: add support for arch specific policies
+	- modified ima_init_arch_policy() and ima_init_policy() to
+	  use add_rules() from previous patch.
+* ima: add support for external setting of ima_appraise
+	- sets ima_appraise flag explicitly for arch_specific setting
+* ima: add support for KEXEC_ORIG_KERNEL_CHECK
+	- deleted the patch based on Seth's feedback
+* x86/ima: define arch_get_ima_policy() for x86
+	- removes the policy KEXEC_ORIG_KERNEL_CHECK based on
+	  Seth's feedback.
+
+Eric Richter (1):
+  x86/ima: define arch_get_ima_policy() for x86
+
+Nayna Jain (4):
+  x86/ima: define arch_ima_get_secureboot
+  ima: prevent kexec_load syscall based on runtime secureboot flag
+  ima: refactor ima_init_policy()
+  ima: add support for arch specific policies
+
+ arch/x86/kernel/Makefile            |   2 +
+ arch/x86/kernel/ima_arch.c          |  33 +++++++
+ include/linux/ima.h                 |  15 ++++
+ security/integrity/ima/Kconfig      |  10 ++-
+ security/integrity/ima/ima_main.c   |  17 ++--
+ security/integrity/ima/ima_policy.c | 167 +++++++++++++++++++++++++++---------
+ 6 files changed, 195 insertions(+), 49 deletions(-)
+ create mode 100644 arch/x86/kernel/ima_arch.c
+
+-- 
+2.13.6
 
