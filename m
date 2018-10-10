@@ -2,66 +2,66 @@ Return-Path: <SRS0=tN9D=MW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC51C43441
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 16:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6512C43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 17:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B3D92087D
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 16:55:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 751C42086D
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 17:15:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="jimTMOTN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B3D92087D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="VHAESBZz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751C42086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbeJKASD (ORCPT
+        id S1726781AbeJKAiR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Oct 2018 20:18:03 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41546 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbeJKASD (ORCPT
+        Wed, 10 Oct 2018 20:38:17 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43931 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbeJKAiQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Oct 2018 20:18:03 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c32so6042594otb.8
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 09:55:02 -0700 (PDT)
+        Wed, 10 Oct 2018 20:38:16 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n1-v6so6597672wrt.10
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 10:15:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        d=brauner.io; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=NXBnbT+4zx9IwFrqmamONNal5xOn+MriYyeH0v83R0c=;
-        b=jimTMOTNQ1m68+Ab/EeICBeCnCO+fW6mtWGNAMG7KfyH/ytdfpfIU9n1qTPeAdl9et
-         6bWOLUMgzXKdX0MviICKEK0spND0WhvrlGdsJzBL+rIjqd95tq4RMMsn61izjL+4pCr8
-         RHCh3FPMjKXTjuSM0UzIxIrVbG3RbfbHQEnIOKWWgId+XcSwneYjnKSL6AYHPrzL20By
-         ySC5iko4EyOoHewtV4A09/oxrWJR4AHf0B6oc+4Kqvyh6Wpht2QOARIoVUHmxv2ioBur
-         0WwBF3I2ZxSVsv7bTgUtQWp031I1YLipzNrr/BOMPQ9JMwIQ55QlbozrIAxA8KmJ2fYd
-         KK1g==
+        bh=e5wwHPZLBrLlcfGC9dC7ys7NYgaVOUJ0XC5z2JBAsdc=;
+        b=VHAESBZzTO967toSEhVvMIXopWJj0wfOW3gmCCL2dBSrVelOk222q26PmxIDTQMmrJ
+         rdvwYKvAbirQOdxTczzea69vjwcQhb1RmRXigf9trT6sqVe4cXfVi9xFy87Yh6liaQa1
+         1m24itMd+W/kUJPsZ59X5iizIt0VL5Txqh6hr0vygs7qp2ZlQ+FTquZ4SzgOEr3N87pb
+         6ElNMx/M/rEo9d2m2x+tsNvy99TNsQjFW28jzFys8Q2cikhPHk9S9ws/K4pkUdJy6/Jx
+         L5hJiBhbRmlw36SKeaNUCEnirREy20Mng/iPasgDpbZrH0e0T+MREHxvTqzhXK932vZ+
+         OLZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NXBnbT+4zx9IwFrqmamONNal5xOn+MriYyeH0v83R0c=;
-        b=Mt1tpMITdypt8KQBI7Jt9zKQG2ta4Hd3Dba+IUiNayyIefJLzMk8bGp8PoHViH23V+
-         l9FRbqbLLcDuJ5CQAIq4JbJER8X1ykbfjJtnRB7BieNo/U3xFdbsXVG510YsIOhJcR4w
-         YvRfnl+jYY1T/T6beWNtKSuc5+0bBaKW+hbIFQi1ExceMUQgYXwQPKagLAsNidNNEhB8
-         TMAnSeUczL0h/4ek/b+nxFdNt9YBA97FKkMEM4ETXIASbFt/DguPnRS225HuGc1PinTc
-         lDPClNtybg+9vQMmjVuUJ2RcjaUCXo5aO3rHe8lOjjA7ulxf3UoOxX9Wo9KQHo69+qQX
-         XV0g==
-X-Gm-Message-State: ABuFfojXNeg7wohlEpsamvhRcSmLUJgIn+QzGvAX100mA9EGX1VABLGQ
-        2wknLfYaO8S2zTD4ur0jkjZCpw==
-X-Google-Smtp-Source: ACcGV61/kJ2LH5LXGI6I1z/hk+jeY3iShJR2Q4y5i2YLIzmgZoJ6SwwkmEL344mvpfznJUaHvjWNSQ==
-X-Received: by 2002:a9d:d52:: with SMTP id 76mr21724977oti.326.1539190502056;
-        Wed, 10 Oct 2018 09:55:02 -0700 (PDT)
-Received: from cisco ([2001:420:28e:1260:c7c:88c5:50e7:459f])
-        by smtp.gmail.com with ESMTPSA id 31-v6sm8062145ota.23.2018.10.10.09.54.58
+        bh=e5wwHPZLBrLlcfGC9dC7ys7NYgaVOUJ0XC5z2JBAsdc=;
+        b=OtDYkKzFNo3DbHIVYwd1e/Wr4udoDvk9P7+reqIhsH8fs1izW8yOXM3emnjSEPgqfZ
+         S/uNXMR4NGbVISjtzPLIPi0xEg2Y1568rgo8fXVwZCAFI8ejjvnSj8vXKZG0ZWyyyEEq
+         3EFZ4SgPrkdDzZdyG15dJg+GMZvDWgvnaEoHk8CQayQrOY4hJ5g4Vq91aQKZutUb5wy3
+         Upq+Sk1vaBC60JTdL3/9pwR/nD/hfeG280QgwB2XvDoi+VsjmNpaTfBlK86iRqTiSn3T
+         VCYCuf+LBTl8xtn/YQJYOzemybmlh3vfkWAXJjjMeRLEvnj9VQQRNlXr3bQiCZpoRGzB
+         Qtiw==
+X-Gm-Message-State: ABuFfogNb0HPPUXsohPyqp09xKWXeiOIYBXxXZTPi4174VeIHm7jDAre
+        d8nTqUDpGVwCXH/KYZRRQAIY/A==
+X-Google-Smtp-Source: ACcGV60OnR5zymYrk1YHXNoJkXvb77V2D1tBN1X1kbEj4RO/MF67V50yATbQ8ayvCrf+C9KITpdT0g==
+X-Received: by 2002:adf:ef86:: with SMTP id d6-v6mr23135862wro.204.1539191709600;
+        Wed, 10 Oct 2018 10:15:09 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id r134-v6sm12110606wmg.9.2018.10.10.10.15.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 09:55:00 -0700 (PDT)
-Date:   Wed, 10 Oct 2018 09:54:58 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Christian Brauner <christian@brauner.io>
+        Wed, 10 Oct 2018 10:15:08 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 19:15:02 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Tycho Andersen <tycho@tycho.ws>
 Cc:     Jann Horn <jannh@google.com>, Paul Moore <paul@paul-moore.com>,
         Kees Cook <keescook@chromium.org>,
         Linux API <linux-api@vger.kernel.org>,
@@ -77,9 +77,8 @@ Cc:     Jann Horn <jannh@google.com>, Paul Moore <paul@paul-moore.com>,
         Eric Paris <eparis@parisplace.org>
 Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
  ptrace
-Message-ID: <20181010165458.GA5607@cisco>
-References: <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
- <20181008162147.ubfxxsv2425l2zsp@brauner.io>
+Message-ID: <20181010171500.wh4yygmh7u6ynqid@brauner.io>
+References: <20181008162147.ubfxxsv2425l2zsp@brauner.io>
  <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
  <20181008181815.pwnqxngj22mhm2vj@brauner.io>
  <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
@@ -88,51 +87,68 @@ References: <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
  <CAHC9VhQfzJgG3i=Q8C+pGY2Lpr+2MRTwxgUWec_heGOecd=xRg@mail.gmail.com>
  <CAG48ez2hTBFwmA65FXv0zJjc0_wpc1S-uOBn1t+X=0vPH25YvQ@mail.gmail.com>
  <20181010153956.zzlatxdlcwolbs6k@brauner.io>
+ <20181010165458.GA5607@cisco>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181010153956.zzlatxdlcwolbs6k@brauner.io>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181010165458.GA5607@cisco>
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 10, 2018 at 05:39:57PM +0200, Christian Brauner wrote:
-> On Wed, Oct 10, 2018 at 05:33:43PM +0200, Jann Horn wrote:
-> > On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
-> > > > +cc selinux people explicitly, since they probably have opinions on this
-> > >
-> > > I just spent about twenty minutes working my way through this thread,
-> > > and digging through the containers archive trying to get a good
-> > > understanding of what you guys are trying to do, and I'm not quite
-> > > sure I understand it all.  However, from what I have seen, this
-> > > approach looks very ptrace-y to me (I imagine to others as well based
-> > > on the comments) and because of this I think ensuring the usual ptrace
-> > > access controls are evaluated, including the ptrace LSM hooks, is the
-> > > right thing to do.
+On Wed, Oct 10, 2018 at 09:54:58AM -0700, Tycho Andersen wrote:
+> On Wed, Oct 10, 2018 at 05:39:57PM +0200, Christian Brauner wrote:
+> > On Wed, Oct 10, 2018 at 05:33:43PM +0200, Jann Horn wrote:
+> > > On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
+> > > > > +cc selinux people explicitly, since they probably have opinions on this
+> > > >
+> > > > I just spent about twenty minutes working my way through this thread,
+> > > > and digging through the containers archive trying to get a good
+> > > > understanding of what you guys are trying to do, and I'm not quite
+> > > > sure I understand it all.  However, from what I have seen, this
+> > > > approach looks very ptrace-y to me (I imagine to others as well based
+> > > > on the comments) and because of this I think ensuring the usual ptrace
+> > > > access controls are evaluated, including the ptrace LSM hooks, is the
+> > > > right thing to do.
+> > > 
+> > > Basically the problem is that this new ptrace() API does something
+> > > that doesn't just influence the target task, but also every other task
+> > > that has the same seccomp filter. So the classic ptrace check doesn't
+> > > work here.
 > > 
-> > Basically the problem is that this new ptrace() API does something
-> > that doesn't just influence the target task, but also every other task
-> > that has the same seccomp filter. So the classic ptrace check doesn't
-> > work here.
+> > Just to throw this into the mix: then maybe ptrace() isn't the right
+> > interface and we should just go with the native seccomp() approach for
+> > now.
 > 
-> Just to throw this into the mix: then maybe ptrace() isn't the right
-> interface and we should just go with the native seccomp() approach for
-> now.
+> Please no :).
+> 
+> I don't buy your arguments that 3-syscalls vs. one is better. If I'm
+> doing this setup with a new container, I have to do
+> clone(CLONE_FILES), do this seccomp thing, so that my parent can pick
+> it up again, then do another clone without CLONE_FILES, because in the
+> general case I don't want to share my fd table with the container,
+> wait on the middle task for errors, etc. So we're still doing a bunch
+> of setup, and it feels more awkward than ptrace, with at least as many
+> syscalls, and it only works for your children.
 
-Please no :).
+You're talking about the case where you already have shot yourself in
+the foot by blocking basically all other sensible ways of getting the fd
+out.
 
-I don't buy your arguments that 3-syscalls vs. one is better. If I'm
-doing this setup with a new container, I have to do
-clone(CLONE_FILES), do this seccomp thing, so that my parent can pick
-it up again, then do another clone without CLONE_FILES, because in the
-general case I don't want to share my fd table with the container,
-wait on the middle task for errors, etc. So we're still doing a bunch
-of setup, and it feels more awkward than ptrace, with at least as many
-syscalls, and it only works for your children.
+Also, this was meant to show that parts of your initial justification
+for implementing the ptrace() way of getting an fd doesn't really stand.
+And it doesn't really. Even with ptrace() you can get into situations
+where you're not able to get an fd. (see prior threads)
 
-I don't mind leaving capable(CAP_SYS_ADMIN) for the ptrace() part,
-though. So if that's ok, then I think we can agree :)
+> 
+> I don't mind leaving capable(CAP_SYS_ADMIN) for the ptrace() part,
 
-Tycho
+Again, (prior threads) ptrace() or no ptrace() is something I do not
+particularly care about as long as we have the
+non-capable(CAP_SYS_ADMIN) seccomp() way of getting an fd out.
+
+> though. So if that's ok, then I think we can agree :)
+> 
+> Tycho
