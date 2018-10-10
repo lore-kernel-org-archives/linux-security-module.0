@@ -2,117 +2,196 @@ Return-Path: <SRS0=tN9D=MW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAFBC43441
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 10:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1FEBC43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 12:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 567E4214DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 10:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6299A20870
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 12:54:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="x1OiYh7G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 567E4214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Ayl6kyH8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6299A20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbeJJSEM (ORCPT
+        id S1726562AbeJJUQh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Oct 2018 14:04:12 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58450 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeJJSEM (ORCPT
+        Wed, 10 Oct 2018 16:16:37 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36911 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbeJJUQg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Oct 2018 14:04:12 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9AAYNh1015095;
-        Wed, 10 Oct 2018 10:42:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=lpY8tD6bdFwnwtV8ZAE2TaUU6IywfzDUlCLJtEzmlPo=;
- b=x1OiYh7GJZ2ZuOSTwMuzKmRe/o8LTj1lZcAFfWj2JjY9XtpPl6dsXcfWpQFK6BQsN1ke
- As+XhLyt0cM1W3mO63da7ryuIcCg8ml8LNQ1FcgEK6hCX8+C9XOzAHn5jO/iKvuAgIgZ
- w12NOsR5bBLaZFLaW6munKsyXBSebMFA2wO7s6ySRKqFHud2qdNPF3mA2+YyK7UZpsza
- bfEFwypDKEntFbsImsOkeMR/yJEORPPlQN4cvlIY/IwNWpYt0x13jxNURMMqv3oa3kEt
- uQ1l5JhvmIqZ+DlMbH5cNfSTr4UtVaVVNpSgJ5XWB1owgosM/NbZS4QzilCfvpuiw4no dw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2mxmftu700-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 10 Oct 2018 10:42:35 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9AAgYua009839
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 10 Oct 2018 10:42:34 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9AAgYa1005583;
-        Wed, 10 Oct 2018 10:42:34 GMT
-Received: from mwanda (/197.232.248.111)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 10 Oct 2018 10:42:33 +0000
-Date:   Wed, 10 Oct 2018 13:42:28 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     mjg59@google.com
-Cc:     linux-security-module@vger.kernel.org
-Subject: [bug report] apparmor: Parse secmark policy
-Message-ID: <20181010104228.GA15360@mwanda>
+        Wed, 10 Oct 2018 16:16:36 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 185-v6so5652884wmt.2
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 05:54:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=o0QQLJyuUGQBkShWfur6HYVlqSi+2uf09NLluUqG41k=;
+        b=Ayl6kyH88HqPGMjfcmRfuOGkCYPMjBnoDdI7GCNNg9fj+qekPYSMwjuiNUOOzcEJTK
+         EodIOqkhIcPhiVOXG9Yb52gdh3cko1SXbSr6h2lXsBiqobKHfXpFWkFlpwU+hF2RH3Wp
+         kMqUPix3XBhM+twn4eEGs/+Tp5SJv+Iab8qLYjY3DfUUYzYleoXdz+OrhYf6oodeckQ4
+         cJY/gGrUkVJ6CQLOPcPP4DiXPwIhL2N8cBK+i/0DFJUbMUUrCHO2wHiSt6wVEj6DYa+y
+         92TghvF4YapmkXmf7910l7rU8G/PJGpwadWikKLMaVAS5InHv3b+5hTdxxozpbpdmKyQ
+         dR1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=o0QQLJyuUGQBkShWfur6HYVlqSi+2uf09NLluUqG41k=;
+        b=L1c7wOcyWeboQr+UwvtEi3x8zfCr4BrkhAZdZLp76qKJHUEZk6jKeEhwgSFcxCfU8/
+         NMZg2hdKDBfZt/BD6+TzBDkIJNdI4dRKjq1+TIxLBsn5Ycb/3DYr3ceS8dGy/K8ACQ2J
+         ZkjHBbk+rS335ksITqBb6zVc15AJ0XV6jNM/whYwQaHCogX/BMZOAJHCoRXC454xhy6g
+         FT8aX34D3uY1LdLSySxGZi3DLJmt20Bhp92ZXlpQDhMGhtkCe5pAFm0Lv5x6U1KmaU7A
+         7UcCSXQ3aRs2XNKS04dgAo2Tk9o1pBOVul5hTMHeQ5aaaD9vbtVNl+cAISD55WutUEUp
+         z48Q==
+X-Gm-Message-State: ABuFfogdfCXolzZmlOLHP/1ZyJeMfQixNQQ0VXg8ysL0vt/vtv/ZrBnw
+        BHOKR8Jsz8GGSwMoHky65hOVmA==
+X-Google-Smtp-Source: ACcGV60GE4e1CUOziycPH4qGJXghj2r264VUZyhU+JCvvzDFRzmBnvyM/pxPLDC+PtcrxJNOhUtMDg==
+X-Received: by 2002:a1c:3795:: with SMTP id e143-v6mr850432wma.9.1539176071111;
+        Wed, 10 Oct 2018 05:54:31 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:8197:8849:535a:4f00])
+        by smtp.gmail.com with ESMTPSA id x66-v6sm6110731wme.35.2018.10.10.05.54.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Oct 2018 05:54:30 -0700 (PDT)
+Date:   Wed, 10 Oct 2018 14:54:23 +0200
+From:   Christian Brauner <christian@brauner.io>
+To:     Jann Horn <jannh@google.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>, Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
+ ptrace
+Message-ID: <20181010125422.rouslofknxzvygzr@brauner.io>
+References: <20181008181815.pwnqxngj22mhm2vj@brauner.io>
+ <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+ <20181009132850.fp6yne2vgmfpi27k@brauner.io>
+ <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
+ <20181009134923.2fvf5roghqgaj5gq@brauner.io>
+ <CAG48ez1hnKkm7mzXuZLP4n6x8K1JqmTwQb-e79oJguTaH1mkUw@mail.gmail.com>
+ <20181009140932.e5w5lgbgucbl72kt@brauner.io>
+ <CAG48ez12SYRUJTWRdzWhpvHBkQion4i8Gpef4r1L6epo9JF-ng@mail.gmail.com>
+ <20181009162022.d7fd2wibyq6xi6sg@brauner.io>
+ <CAG48ez2ROhq4R1az2TXNmBvCXY=3UVxnmh6CeR05N0xVGrpwpA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9041 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=677
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810100109
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez2ROhq4R1az2TXNmBvCXY=3UVxnmh6CeR05N0xVGrpwpA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Matthew Garrett,
+On Tue, Oct 09, 2018 at 06:26:47PM +0200, Jann Horn wrote:
+> On Tue, Oct 9, 2018 at 6:20 PM Christian Brauner <christian@brauner.io> wrote:
+> > On Tue, Oct 09, 2018 at 05:26:26PM +0200, Jann Horn wrote:
+> > > On Tue, Oct 9, 2018 at 4:09 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > On Tue, Oct 09, 2018 at 03:50:53PM +0200, Jann Horn wrote:
+> > > > > On Tue, Oct 9, 2018 at 3:49 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > On Tue, Oct 09, 2018 at 03:36:04PM +0200, Jann Horn wrote:
+> > > > > > > On Tue, Oct 9, 2018 at 3:29 PM Christian Brauner <christian@brauner.io> wrote:
+> > > > > > > > One more thing. Citing from [1]
+> > > > > > > >
+> > > > > > > > > I think there's a security problem here. Imagine the following scenario:
+> > > > > > > > >
+> > > > > > > > > 1. task A (uid==0) sets up a seccomp filter that uses SECCOMP_RET_USER_NOTIF
+> > > > > > > > > 2. task A forks off a child B
+> > > > > > > > > 3. task B uses setuid(1) to drop its privileges
+> > > > > > > > > 4. task B becomes dumpable again, either via prctl(PR_SET_DUMPABLE, 1)
+> > > > > > > > > or via execve()
+> > > > > > > > > 5. task C (the attacker, uid==1) attaches to task B via ptrace
+> > > > > > > > > 6. task C uses PTRACE_SECCOMP_NEW_LISTENER on task B
+> > > > > > > >
+> > > > > > > > Sorry, to be late to the party but would this really pass
+> > > > > > > > __ptrace_may_access() in ptrace_attach()? It doesn't seem obvious to me
+> > > > > > > > that it would... Doesn't look like it would get past:
+> > > > > > > >
+> > > > > > > >         tcred = __task_cred(task);
+> > > > > > > >         if (uid_eq(caller_uid, tcred->euid) &&
+> > > > > > > >             uid_eq(caller_uid, tcred->suid) &&
+> > > > > > > >             uid_eq(caller_uid, tcred->uid)  &&
+> > > > > > > >             gid_eq(caller_gid, tcred->egid) &&
+> > > > > > > >             gid_eq(caller_gid, tcred->sgid) &&
+> > > > > > > >             gid_eq(caller_gid, tcred->gid))
+> > > > > > > >                 goto ok;
+> > > > > > > >         if (ptrace_has_cap(tcred->user_ns, mode))
+> > > > > > > >                 goto ok;
+> > > > > > > >         rcu_read_unlock();
+> > > > > > > >         return -EPERM;
+> > > > > > > > ok:
+> > > > > > > >         rcu_read_unlock();
+> > > > > > > >         mm = task->mm;
+> > > > > > > >         if (mm &&
+> > > > > > > >             ((get_dumpable(mm) != SUID_DUMP_USER) &&
+> > > > > > > >              !ptrace_has_cap(mm->user_ns, mode)))
+> > > > > > > >             return -EPERM;
+> > > > > > >
+> > > > > > > Which specific check would prevent task C from attaching to task B? If
+> > > > > > > the UIDs match, the first "goto ok" executes; and you're dumpable, so
+> > > > > > > you don't trigger the second "return -EPERM".
+> > > > > >
+> > > > > > You'd also need CAP_SYS_PTRACE in the mm->user_ns which you shouldn't
+> > > > > > have if you did a setuid to an unpriv user. (But I always find that code
+> > > > > > confusing.)
+> > > > >
+> > > > > Only if the target hasn't gone through execve() since setuid().
+> > > >
+> > > > Sorry if I want to know this in excessive detail but I'd like to
+> > > > understand this properly so bear with me :)
+> > > > - If task B has setuid()ed and prctl(PR_SET_DUMPABLE, 1)ed but not
+> > > >   execve()ed then C won't pass ptrace_has_cap(mm->user_ns, mode).
+> > >
+> > > Yeah.
+> > >
+> > > > - If task B has setuid()ed, exeved()ed it will get its dumpable flag set
+> > > >   to /proc/sys/fs/suid_dumpable
+> > >
+> > > Not if you changed all UIDs (e.g. by calling setuid() as root). In
+> > > that case, setup_new_exec() calls "set_dumpable(current->mm,
+> > > SUID_DUMP_USER)".
+> >
+> > Actually, looking at this when C is trying to PTRACE_ATTACH to B as an
+> > unprivileged user even if B execve()ed and it is dumpable C still
+> > wouldn't have CAP_SYS_PTRACE in the mm->user_ns unless it already is
+> > privileged over mm->user_ns which means it must be in an ancestor
+> > user_ns.
+> 
+> Huh? Why would you need CAP_SYS_PTRACE for anything here? You can
+> ptrace another process running under your UID just fine, no matter
+> what the namespaces are. I'm not sure what you're saying.
 
-The patch 9caafbe2b4cf: "apparmor: Parse secmark policy" from May 24,
-2018, leads to the following static checker warning:
+Sorry, I was out the door yesterday when answering this and was too
+brief. I forgot to mention: /proc/sys/kernel/yama/ptrace_scope. It
+should be enabled by default on nearly all distros and even if not -
+which is an administrators choice - you can usually easily enable it via
+sysctl.
 
-	security/apparmor/policy_unpack.c:580 unpack_secmark()
-	warn: should '(struct aa_profile)->secmark' be freed with kzfree()'
+1 ("restricted ptrace") [default value]
+When  performing an operation that requires a PTRACE_MODE_ATTACH check,
+the calling process must either have the CAP_SYS_PTRACE capability in
+the user namespace of the target process or it must have a prede‐ fined
+relationship with the target process.  By default, the predefined
+relationship is that the target process must be a descendant of the
+caller.
 
-security/apparmor/policy_unpack.c
-   558                  profile->secmark_count = size;
-   559  
-   560                  for (i = 0; i < size; i++) {
-   561                          if (!unpack_u8(e, &profile->secmark[i].audit, NULL))
-   562                                  goto fail;
-   563                          if (!unpack_u8(e, &profile->secmark[i].deny, NULL))
-   564                                  goto fail;
-   565                          if (!unpack_strdup(e, &profile->secmark[i].label, NULL))
-   566                                  goto fail;
-   567                  }
-   568                  if (!unpack_nameX(e, AA_ARRAYEND, NULL))
-   569                          goto fail;
-   570                  if (!unpack_nameX(e, AA_STRUCTEND, NULL))
-   571                          goto fail;
-   572          }
-   573  
-   574          return 1;
-   575  
-   576  fail:
-   577          if (profile->secmark) {
-   578                  for (i = 0; i < size; i++)
-   579                          kfree(profile->secmark[i].label);
-                                      ^^^^^^^^^^^^^^^^^^^^^^^^^
-   580                  kfree(profile->secmark);
-                              ^^^^^^^^^^^^^^^^
-Smatch thinks that these need to be zeroed for security.  I don't know
-the details though.
-
-   581                  profile->secmark_count = 0;
-   582          }
-   583  
-   584          e->pos = pos;
-   585          return 0;
-   586  }
-
-regards,
-dan carpenter
+If you don't have it set you're already susceptible to all kinds of
+other attacks and I'm still not convinced we need to bring out the big
+capable(CAP_SYS_ADMIN) gun here.
