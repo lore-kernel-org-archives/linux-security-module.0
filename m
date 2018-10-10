@@ -1,121 +1,118 @@
-Return-Path: <SRS0=78tV=MV=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=tN9D=MW=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0F8C64EB0
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 22:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAFBC43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 10:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 011BB214DC
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Oct 2018 22:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 567E4214DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Oct 2018 10:42:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qe4UXvTL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 011BB214DC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="x1OiYh7G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 567E4214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeJJFay (ORCPT
+        id S1726617AbeJJSEM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Oct 2018 01:30:54 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35117 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbeJJFay (ORCPT
+        Wed, 10 Oct 2018 14:04:12 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:58450 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbeJJSEM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Oct 2018 01:30:54 -0400
-Received: by mail-pf1-f195.google.com with SMTP id l17-v6so1556229pff.2
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Oct 2018 15:11:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=o4TYvoO88LvQpX4BrPrq3xfIUSnUOO0k84kAP8T/g20=;
-        b=qe4UXvTLt1Dovekp2e6sfCc1K4VMdymoZS9LBw7b3hQOsizdV4qLCWCaQfIfSbr9f+
-         S6qiVM3nF5+7NObXK0yOxvv5HUw8Ln+nRVqgCWS5oZmuq5hJsxbQxJi50u+2jSv4MrVk
-         W7pjSQSZjFn+smYqQe5M0AB1ZetG7EXR8JOYhczEHdBaeEJfrC23TQt3XEW4Up1PxfJc
-         ZhlJAh8XYOWF6yy5SFdYCREDRHE6xZ5OyGyO6qA13p8kUT+5Z+T6lRtYKzVDbdvyPGX4
-         kFQZc26y2vaMBRcfz4UELDxx9bpc/hVtUHhsqukOCrWDhC8SMgMsEGFIONeRjcI6Euin
-         D75A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=o4TYvoO88LvQpX4BrPrq3xfIUSnUOO0k84kAP8T/g20=;
-        b=gy3MA36m18zZy6jy1dZdMU7dBrvUy85vIsuKIZ1F5YidozbCuVO1vNeVQI6c/JewTC
-         kFx6ELEei5ogtpRCszakLRoXDuMLcS/rpEpwo/XxYFxbXHT4Y247ApuWMNhC21vY5FzO
-         no7TovYKhMMcWIcoDh6X6v7QjbOvampViclMoma4daXTNhx7zv0bu/3e5uqfP8kq9uOg
-         TE28QEWs7wKpnu/B/unH9WC+rhGYP8kmgLR0mkoXKOzLDMh1A2grG23/ubC4c4cuyIXu
-         P8FDjes5M9iqBThXXjfapY5sFSSrML3LjiF/S79PF8ObXEoSyJxHHgqkw5KlWQhGQz3D
-         pmnQ==
-X-Gm-Message-State: ABuFfoieMgm2OV5g+zd1haZDlsupH6CJ/ODlniYN6/+SZ1oVb8LVwlrE
-        LKaIstJfXHM/5ioG41C1zkhnuLY4R1ThxjiD8aXLYw==
-X-Google-Smtp-Source: ACcGV61g0otoB0IqtbkFEL0IJO7aE1ezg/qVx9CM+Eaj2ddvYVXaOc4nJcL4DQpJX/EaVDo4KyVTBnu0kQsfsHrPoQQ=
-X-Received: by 2002:a65:4882:: with SMTP id n2-v6mr26084917pgs.225.1539123110476;
- Tue, 09 Oct 2018 15:11:50 -0700 (PDT)
+        Wed, 10 Oct 2018 14:04:12 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9AAYNh1015095;
+        Wed, 10 Oct 2018 10:42:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=lpY8tD6bdFwnwtV8ZAE2TaUU6IywfzDUlCLJtEzmlPo=;
+ b=x1OiYh7GJZ2ZuOSTwMuzKmRe/o8LTj1lZcAFfWj2JjY9XtpPl6dsXcfWpQFK6BQsN1ke
+ As+XhLyt0cM1W3mO63da7ryuIcCg8ml8LNQ1FcgEK6hCX8+C9XOzAHn5jO/iKvuAgIgZ
+ w12NOsR5bBLaZFLaW6munKsyXBSebMFA2wO7s6ySRKqFHud2qdNPF3mA2+YyK7UZpsza
+ bfEFwypDKEntFbsImsOkeMR/yJEORPPlQN4cvlIY/IwNWpYt0x13jxNURMMqv3oa3kEt
+ uQ1l5JhvmIqZ+DlMbH5cNfSTr4UtVaVVNpSgJ5XWB1owgosM/NbZS4QzilCfvpuiw4no dw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2mxmftu700-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 10 Oct 2018 10:42:35 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9AAgYua009839
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 10 Oct 2018 10:42:34 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9AAgYa1005583;
+        Wed, 10 Oct 2018 10:42:34 GMT
+Received: from mwanda (/197.232.248.111)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 10 Oct 2018 10:42:33 +0000
+Date:   Wed, 10 Oct 2018 13:42:28 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     mjg59@google.com
+Cc:     linux-security-module@vger.kernel.org
+Subject: [bug report] apparmor: Parse secmark policy
+Message-ID: <20181010104228.GA15360@mwanda>
 MIME-Version: 1.0
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 9 Oct 2018 15:11:39 -0700
-Message-ID: <CAKwvOdkqtfAyDdxkac=NtfSiskiGyOhN1PPzkxBYpR_JEBTRbw@mail.gmail.com>
-Subject: undefined behavior (-Wvarargs) in security/keys/trusted.c#TSS_authhmac()
-To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        zohar@linux.vnet.ibm.com, dhowells@redhat.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9041 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=677
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810100109
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
-I noticed that compiling with
-CONFIG_TCG_TPM=y
-CONFIG_HW_RANDOM_TPM=y
-and Clang produced the warning:
+Hello Matthew Garrett,
 
-  CC      security/keys/trusted.o
-security/keys/trusted.c:146:17: warning: passing an object that
-undergoes default
-      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
-        va_start(argp, h3);
-                       ^
-security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-char' is declared here
-unsigned char *h2, unsigned char h3, ...)
-                               ^
+The patch 9caafbe2b4cf: "apparmor: Parse secmark policy" from May 24,
+2018, leads to the following static checker warning:
 
-Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-standards explicitly call this out as undefined behavior:
+	security/apparmor/policy_unpack.c:580 unpack_secmark()
+	warn: should '(struct aa_profile)->secmark' be freed with kzfree()'
 
-The parameter parmN is the identifier of the rightmost parameter in
-the variable parameter list in the function definition (the one just
-before the ...). If the parameter parmN is declared with ... or with a
-type that is not compatible with the type that results after
-application of the default argument promotions, the behavior is
-undefined.
+security/apparmor/policy_unpack.c
+   558                  profile->secmark_count = size;
+   559  
+   560                  for (i = 0; i < size; i++) {
+   561                          if (!unpack_u8(e, &profile->secmark[i].audit, NULL))
+   562                                  goto fail;
+   563                          if (!unpack_u8(e, &profile->secmark[i].deny, NULL))
+   564                                  goto fail;
+   565                          if (!unpack_strdup(e, &profile->secmark[i].label, NULL))
+   566                                  goto fail;
+   567                  }
+   568                  if (!unpack_nameX(e, AA_ARRAYEND, NULL))
+   569                          goto fail;
+   570                  if (!unpack_nameX(e, AA_STRUCTEND, NULL))
+   571                          goto fail;
+   572          }
+   573  
+   574          return 1;
+   575  
+   576  fail:
+   577          if (profile->secmark) {
+   578                  for (i = 0; i < size; i++)
+   579                          kfree(profile->secmark[i].label);
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^
+   580                  kfree(profile->secmark);
+                              ^^^^^^^^^^^^^^^^
+Smatch thinks that these need to be zeroed for security.  I don't know
+the details though.
 
-So if I understand my C promotion/conversion rules correctly, unsigned
-char would be promoted to int?
+   581                  profile->secmark_count = 0;
+   582          }
+   583  
+   584          e->pos = pos;
+   585          return 0;
+   586  }
 
-We had a few ideas for possible fixes in:
-https://github.com/ClangBuiltLinux/linux/issues/41
-
-Do the maintainers have feedback on these suggestions or a more appropriate fix?
-
-Note: https://www.gnu.org/software/libc/manual/html_node/Calling-Variadics.html
-and `man 3 va_start` mention more about promotions, but just for
-va_arg, not va_start. But the standard seems explicit about parmN
-which is passed to va_start.
-
-https://www.eskimo.com/~scs/cclass/int/sx11c.html is also an
-interesting read on the subject, which states: `Finally, for vaguely
-related reasons, the last fixed argument (the one whose name is passed
-as the second argument to the va_start() macro) should not be of type
-char, short int, or float, either.`
--- 
-Thanks,
-~Nick Desaulniers
+regards,
+dan carpenter
