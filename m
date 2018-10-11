@@ -2,37 +2,44 @@ Return-Path: <SRS0=pW3O=MX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC80FC67837
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 23:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4D4C28CF8
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 23:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 927AA2077C
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 23:48:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 927AA2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EB9D2085B
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 23:54:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="kBWsvDEA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EB9D2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbeJLHSC (ORCPT
+        id S1727281AbeJLHXf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 03:18:02 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58814 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbeJLHSC (ORCPT
+        Fri, 12 Oct 2018 03:23:35 -0400
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:48644 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbeJLHXf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 03:18:02 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1gAkgn-0002fR-UF; Thu, 11 Oct 2018 23:48:22 +0000
-Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
-To:     Kees Cook <keescook@chromium.org>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>
+        Fri, 12 Oct 2018 03:23:35 -0400
+Date:   Thu, 11 Oct 2018 23:53:50 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1539302035;
+        bh=lN2vmUpxuPGPGbURIafWIutb7qhAGlM0IS9B1QVUfCc=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=kBWsvDEApBaY2XPyP5/btJBNaOnqPj5qnQruYpvny0DGJgt1Q37emKq8nih/QYOwv
+         heXGIEfCAsTykVusrRpLs8+p3tEQBwFggXmSo33giPznd9PMGm2exNvqIf5U3HVSpU
+         CEz8sjcQdyVRP07xaoAwJr6Uc1nfNRAb1XAHoGYw=
+To:     Kees Cook <keescook@chromium.org>
+From:   Jordan Glover <Golden_Miller83@protonmail.ch>
 Cc:     James Morris <jmorris@namei.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         Paul Moore <paul@paul-moore.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
@@ -42,149 +49,79 @@ Cc:     James Morris <jmorris@namei.org>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         linux-arch <linux-arch@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
+Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+Message-ID: <37rRa7F7i2XcwVPiT6gLC8cX8p0732iDiT6mGjstlbBi3mcJsQCLA6A8HcDMNjR0SGheErloJl8z-Z5c57XxtJRBF9-LO_fUTUf41EcAGC4=@protonmail.ch>
+In-Reply-To: <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
 References: <20181011001846.30964-1-keescook@chromium.org>
  <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
  <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
  <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
- BQlceWg1yp/NwbR8ad+eSEO/uma/K+PqWvBptKC9SWD97FG4uB4/caomLEU97sLQMtnvGWdx
- rxVRGM4anzWYMgzz5TZmIiVTZ43Ou5VpaS1Vz1ZSxP3h/xKNZr/TcW5WQai8u3PWVnbkjhSZ
- PHv1BghN69qxEPomrJBm1gmtx3ZiVmFXluwTmTgJOkpFol7nbJ0ilnYHrA7SX3CtR1upeUpM
- a/WIanVO96WdTjHHIa43fbhmQube4txS3FcQLOJVqQsx6lE9B7qAppm9hQ10qPWwdfPy/+0W
- 6AWtNu5ASiGVCInWzl2HBqYd/Zll93zUq+NIoCn8sDAM9iH+wtaGDcJywIGIn+edKNtK72AM
- gChTg/j1ZoWH6ZeWPjuUfubVzZto1FMoGJ/SF4MmdQG1iQNtf4sFZbEgXuy9cGi2bomF0zvy
- BJSANpxlKNBDYKzN6Kz09HUAkjlFMNgomL/cjqgABtAx59L+dVIZfaF281pIcUZzwvh5+JoG
- eOW5uBSMbE7L38nszooykIJ5XrAchkJxNfz7k+FnQeKEkNzEd2LWc3QF4BQZYRT6PHHga3Rg
- ykW5+1wTMqJILdmtaPbXrF3FvnV0LRPcv4xKx7B3fGm7ygdoowARAQABzR1Kb2huIEpvaGFu
- c2VuIDxqb2huQGpqbXgubmV0PsLBegQTAQoAJAIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIX
- gAUCTo0YVwIZAQAKCRAFLzZwGNXD2LxJD/9TJZCpwlncTgYeraEMeDfkWv8c1IsM1j0AmE4V
- tL+fE780ZVP9gkjgkdYSxt7ecETPTKMaZSisrl1RwqU0oogXdXQSpxrGH01icu/2n0jcYSqY
- KggPxy78BGs2LZq4XPfJTZmHZGnXGq/eDr/mSnj0aavBJmMZ6jbiPz6yHtBYPZ9fdo8btczw
- P41YeWoIu26/8II6f0Xm3VC5oAa8v7Rd+RWZa8TMwlhzHExxel3jtI7IzzOsnmE9/8Dm0ARD
- 5iTLCXwR1cwI/J9BF/S1Xv8PN1huT3ItCNdatgp8zqoJkgPVjmvyL64Q3fEkYbfHOWsaba9/
- kAVtBNz9RTFh7IHDfECVaToujBd7BtPqr+qIjWFadJD3I5eLCVJvVrrolrCATlFtN3YkQs6J
- n1AiIVIU3bHR8Gjevgz5Ll6SCGHgRrkyRpnSYaU/uLgn37N6AYxi/QAL+by3CyEFLjzWAEvy
- Q8bq3Iucn7JEbhS/J//dUqLoeUf8tsGi00zmrITZYeFYARhQMtsfizIrVDtz1iPf/ZMp5gRB
- niyjpXn131cm3M3gv6HrQsAGnn8AJru8GDi5XJYIco/1+x/qEiN2nClaAOpbhzN2eUvPDY5W
- 0q3bA/Zp2mfG52vbRI+tQ0Br1Hd/vsntUHO903mMZep2NzN3BZ5qEvPvG4rW5Zq2DpybWc7B
- TQROZqz6ARAAoqw6kkBhWyM1fvgamAVjeZ6nKEfnRWbkC94L1EsJLup3Wb2X0ABNOHSkbSD4
- pAuC2tKF/EGBt5CP7QdVKRGcQzAd6b2c1Idy9RLw6w4gi+nn/d1Pm1kkYhkSi5zWaIg0m5RQ
- Uk+El8zkf5tcE/1N0Z5OK2JhjwFu5bX0a0l4cFGWVQEciVMDKRtxMjEtk3SxFalm6ZdQ2pp2
- 822clnq4zZ9mWu1d2waxiz+b5Ia4weDYa7n41URcBEUbJAgnicJkJtCTwyIxIW2KnVyOrjvk
- QzIBvaP0FdP2vvZoPMdlCIzOlIkPLgxE0IWueTXeBJhNs01pb8bLqmTIMlu4LvBELA/veiaj
- j5s8y542H/aHsfBf4MQUhHxO/BZV7h06KSUfIaY7OgAgKuGNB3UiaIUS5+a9gnEOQLDxKRy/
- a7Q1v9S+Nvx+7j8iH3jkQJhxT6ZBhZGRx0gkH3T+F0nNDm5NaJUsaswgJrqFZkUGd2Mrm1qn
- KwXiAt8SIcENdq33R0KKKRC80Xgwj8Jn30vXLSG+NO1GH0UMcAxMwy/pvk6LU5JGjZR73J5U
- LVhH4MLbDggD3mPaiG8+fotTrJUPqqhg9hyUEPpYG7sqt74Xn79+CEZcjLHzyl6vAFE2W0kx
- lLtQtUZUHO36afFv8qGpO3ZqPvjBUuatXF6tvUQCwf3H6XMAEQEAAcLBXwQYAQoACQUCTmas
- +gIbDAAKCRAFLzZwGNXD2D/XD/0ddM/4ai1b+Tl1jznKajX3kG+MeEYeI4f40vco3rOLrnRG
- FOcbyyfVF69MKepie4OwoI1jcTU0ADecnbWnDNHpr0SczxBMro3bnrLhsmvjunTYIvssBZtB
- 4aVJjuLILPUlnhFqa7fbVq0ZQjbiV/rt2jBENdm9pbJZ6GjnpYIcAbPCCa/ffL4/SQRSYHXo
- hGiiS4y5jBTmK5ltfewLOw02fkexH+IJFrrGBXDSg6n2Sgxnn++NF34fXcm9piaw3mKsICm+
- 0hdNh4afGZ6IWV8PG2teooVDp4dYih++xX/XS8zBCc1O9w4nzlP2gKzlqSWbhiWpifRJBFa4
- WtAeJTdXYd37j/BI4RWWhnyw7aAPNGj33ytGHNUf6Ro2/jtj4tF1y/QFXqjJG/wGjpdtRfbt
- UjqLHIsvfPNNJq/958p74ndACidlWSHzj+Op26KpbFnmwNO0psiUsnhvHFwPO/vAbl3RsR5+
- 0Ro+hvs2cEmQuv9r/bDlCfpzp2t3cK+rhxUqisOx8DZfz1BnkaoCRFbvvvk+7L/fomPntGPk
- qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
- IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
-Organization: Canonical
-Message-ID: <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
-Date:   Thu, 11 Oct 2018 16:48:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/11/2018 04:09 PM, Kees Cook wrote:
-> On Thu, Oct 11, 2018 at 3:58 PM, Jordan Glover
-> <Golden_Miller83@protonmail.ch> wrote:
->> On Thursday, October 11, 2018 7:57 PM, Kees Cook <keescook@chromium.org> wrote:
->>>     To switch to SELinux at boot time with
->>>     "CONFIG_LSM=yama,loadpin,integrity,apparmor", the old way continues to
->>>     work:
->>>
->>>     selinux=1 security=selinux
->>>
->>>     This will work still, since it will enable selinux (selinux=1) and
->>>     disable all other major LSMs (security=selinux).
->>>
->>>     The new way to enable selinux would be using
->>>     "lsm=yama,loadpin,integrity,selinux".
->>>
->>
->> It seems to me that legacy way is more user friendly than the new one.
->> AppArmor and SElinux are households names but the rest may be enigmatic
->> for most users and the need for explicit passing them all may be
->> troublesome. Especially when the new ones like sara,landlock or cows :)
->> will be incoming. Moreover to knew what you have to pass there, you need
->> to look at CONFIG_LSM in kernel config (which will vary across distros
->> and also mean copy-paste from the web source may won't work as expected)
->> which again most users don't do.
->>
->> I think there is risk that users will end up with "lsm=selinux" without
->> realizing that they may disable something along the way.
->>
->> I would prefer for "lsm=" to work as override to "CONFIG_LSM=" with
->> below assumptions:
->>
->> I. lsm="$lsm" will append "$lsm" at the end of string. Before extreme
->> stacking it will also remove the other major (explicit) lsm from it.
->>
->> II. lsm="!$lsm" will remove "$lsm" from the string.
->>
->> III. If "$lsm" already exist in the string, it's moved at the end of it
->> (this will cover ordering).
-> 
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Friday, October 12, 2018 1:09 AM, Kees Cook <keescook@chromium.org> wrot=
+e:
+
 > We've had things sort of like this proposed, but if you can convince
 > James and others, I'm all for it. I think the standing objection from
 > James and John about this is that the results of booting with
-> "lsm=something" ends up depending on CONFIG_LSM= for that distro. So
+> "lsm=3Dsomething" ends up depending on CONFIG_LSM=3D for that distro. So
 > you end up with different behaviors instead of a consistent behavior
 > across all distros.
-> 
+>
 
-Its certainly a point that could confuse the user. I do have concerns
-about it, but not something that is on a must haves list
+Ok, I'll try :)
 
-> Now, in the future blob and extreme stacking world, having the
-> explicit lsm= list shouldn't be too bad since LSMs will effectively
-> ALL be initialized -- but they'll be inactive since they have no
-> policy loaded.
-> 
+The final lsm string contains two parts: Kconfig "CONFIG_LSM=3D" and boot
+param "lsm=3D". Changing even only one of those parts also changes the
+final string.
 
-you are more optimistic about this than I am, but there will be at
-least some movement towards this.
+In case of distros, it's the "CONFIG_LSM=3D" which changes. Even when "lsm=
+=3D"
+stays constant, the behavior will be different, example:
 
-> But I still agree with you: I'd like a friendlier way to
-> disable/enable specific LSMs, but an explicit lsm= seems to be the
-> only way.
-> 
+Distro A has: CONFIG_LSM=3Dloadpin,integrity,selinux
+Distro B has CONFIG_LSM=3Dyama,loadpin,integrity,selinux
 
-Hrmmm, I don't know about the only way, but a way to provide the
-explicit list, and also set a specific set as the default in the
-Kconfig is a hard requirement.
+User on distro A wants to enable apparmor with:
 
-The initial lsm.ebable, lsm.disable had too many issues, and for
-various reasons I never managed to get back to kees' proposal
-for using +.
+lsm=3Dloadpin,integrity,apparmor
 
-That said, I do think the right approach for the initial pass is
-the explicit list. It moves the arguments to the side and allows
-this work to move forward.
+which they do and add it to howto on wiki.
 
->> It's possible that something lime this was discussed already
->> but without full examples it was hard to me for tracking things.
-> 
-> It's been a painful thread. ;)
-> 
+User on distro B want to enable apparmor, they found info on some wiki and =
+do:
 
-Indeed
+lsm=3Dloadpin,integrity,apparmor
+
+
+Puff, yama got disabled!
+
+Above example shows why I think "consistent behavior across all distros"
+argument for current approach is flawed -  because distros aren't
+consistent. In my proposition the user will just use "lsm=3Dapparmor" and
+it will consistently enable apparmor on all distros which is what they
+really wanted, but all pre-existing differences across distros will
+remain unchanged.
+
+The current approach requires that everyone who dares to touch "lsm=3D"
+knows about existence of all lsm, their enabled/disabled status on
+target distro and their order. I doubt there are many people other
+than recipients of this mail who fit for the above.
+
+I it's better to assume that average user has rather vague knowledge
+about lsm and don't delve deep into Kconfig's of their chosen distro.
+If they want to use "lsm=3D" their goal is to disable/enable on or more
+things. My proposition will work better for those. More advanced users
+still will may pass any "lsm=3D" string as they like, this having full
+control.
+
+Jordan
