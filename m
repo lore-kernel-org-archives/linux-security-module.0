@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D9CC46463
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D52AAC43441
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:20:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 608FE20841
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 874EC20841
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:20:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tfywul4y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 608FE20841
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DYvDVjc7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 874EC20841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeJKHor (ORCPT
+        id S1726750AbeJKHnc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:44:47 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45578 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726990AbeJKHnf (ORCPT
+        Thu, 11 Oct 2018 03:43:32 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43284 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbeJKHna (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:43:35 -0400
-Received: by mail-pf1-f193.google.com with SMTP id u12-v6so3425584pfn.12
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 17:19:01 -0700 (PDT)
+        Thu, 11 Oct 2018 03:43:30 -0400
+Received: by mail-pf1-f194.google.com with SMTP id p24-v6so3433050pff.10
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 17:18:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SVqtedufC5YNGveTdBgoJ/XYFtvod6rEynhSC1mAznA=;
-        b=Tfywul4y3Jb5yidWPPGYNAiurEwaGUe9aFxYHuEif8khyQl7SZCnhl9N8p1mFe/KvB
-         YJPwsn0uN8UXYM21nZPS5pky4MhMMbRBKHSqC7V7MEzrcoiMvUpVxabFOeXxnYtD7iVa
-         uzcrDnL/bQIgbI9bpl5+cmA0MFqvFt0aLJHzA=
+        bh=6eNmHSp4+Q45IaDkZQNXs6+kAcMRIeE3x4RWtQQ9mBQ=;
+        b=DYvDVjc7Xan2EP/iEUqXrj2yKnSYlFhkr34DGSQencgIOy831Os9HD8kGEcDUqRW2h
+         UOL8vxl7DRRzpkbIlRy98nY2vb37prMlBtAdV5CW1oBx4Fcq9fOA0MMLfYvLGRJNoexU
+         bCKXaqd5HJ3BxFRz5OUOZpuy6tl1f0EMKGnbw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SVqtedufC5YNGveTdBgoJ/XYFtvod6rEynhSC1mAznA=;
-        b=sLuNIzIp7tdjvqpgFfhMmSgBkBQIyzLH8zsprk17Y8SmeOOazoAljGnAngY6Kk3rHJ
-         wyU4miPfQ+JQQMwHXPBGeFI9m3lhfh8WiFhMIev0AWoDMKwUODCwpI3kwVkv0X6MUpds
-         Nc7ZMfsOhzjVFKTlQOxZoXTdul/KLsxNyXu+jgoqnWdNIIGbzTMGxdqvrQdQKifUjtuH
-         Wz7rXrWQp4lLgXxqPW+KV3qZuo65P97rUsqgDV1Frfk7yKpyo83K0wc4uz1eSLEdPGIs
-         /MHnoAUMd7TrDy4Z7xR8U9OuO6xLfYBwXhULFOvOf/K/1/phGTu+l5kFx/VNy9+sSLIV
-         l8hQ==
-X-Gm-Message-State: ABuFfojnZ2MJdUra9qFkqSDinnvTf3ubRjbSslwJekZERUmLNZ2EB4i/
-        xkaAGpHLTkHOAqfmXelZ5hThHA==
-X-Google-Smtp-Source: ACcGV618L5PGRFkI24cNpxITPpIoIIcqXUhzWYorSRWK7CReB4nFLMNQcDE47kdYCJCGY0tF3vhMsg==
-X-Received: by 2002:a63:e47:: with SMTP id 7-v6mr27888803pgo.320.1539217140928;
-        Wed, 10 Oct 2018 17:19:00 -0700 (PDT)
+        bh=6eNmHSp4+Q45IaDkZQNXs6+kAcMRIeE3x4RWtQQ9mBQ=;
+        b=khYEIgVBYkVag2vMPdMdc3mCQP8I2YqnwNd9l2ZWU+O/GCapTSXqf37hh0/Xg9CVwe
+         uPUylfNbgpg7BLYkfPRonTKPai+cESKvJG93zU9BdZ8n1I63X5lepyLHfAQlEBLgcrhK
+         lhz7DGJHayd+QCUyE3Q6MIlg8ArCZtZsLBSvjSavOrtCCGkBUb2ZtzaMAHilWP30PiDi
+         IWMMOqZDXQmPslkwA5wNUNVYl4rk+qHW0gfwD5sCsDF80Vheu64VlzE/M/3ylGlZL6ke
+         +nOtx7SKTF4PCpf6H9dxkAclJxhuey/szVrQQmLWgOSnYfeFS6AKT1yEy5UuJkEeMV6S
+         7cNg==
+X-Gm-Message-State: ABuFfohqCvHD7sa42Pe/1EhOZHNqFT99sr+6qQhiu/iQCINfCsYt1aUM
+        5gfWsXM6emcxEa9VUJ9SbrUIkQ==
+X-Google-Smtp-Source: ACcGV63dDeOHLSBcNV01IpVUAP0l7q9lWEPVHsR2O3jUsO5dLyP0b5mqaSyhlTir4maRP3nKsSTw+g==
+X-Received: by 2002:a63:5605:: with SMTP id k5-v6mr31688220pgb.189.1539217135713;
+        Wed, 10 Oct 2018 17:18:55 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id o62-v6sm32784578pfb.0.2018.10.10.17.18.55
+        by smtp.gmail.com with ESMTPSA id 72-v6sm49719749pfr.115.2018.10.10.17.18.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 10 Oct 2018 17:18:58 -0700 (PDT)
+        Wed, 10 Oct 2018 17:18:52 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     James Morris <jmorris@namei.org>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -69,9 +69,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v5 07/30] LSM: Convert security_initcall() into DEFINE_LSM()
-Date:   Wed, 10 Oct 2018 17:18:23 -0700
-Message-Id: <20181011001846.30964-8-keescook@chromium.org>
+Subject: [PATCH security-next v5 04/30] LSM: Remove initcall tracing
+Date:   Wed, 10 Oct 2018 17:18:20 -0700
+Message-Id: <20181011001846.30964-5-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011001846.30964-1-keescook@chromium.org>
 References: <20181011001846.30964-1-keescook@chromium.org>
@@ -79,106 +79,49 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Instead of using argument-based initializers, switch to defining the
-contents of struct lsm_info on a per-LSM basis. This also drops
-the final use of the now inaccurate "initcall" naming.
+This partially reverts commit 58eacfffc417 ("init, tracing: instrument
+security and console initcall trace events") since security init calls
+are about to no longer resemble regular init calls.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: James Morris <james.morris@microsoft.com>
 ---
- include/linux/lsm_hooks.h  | 5 ++---
- security/apparmor/lsm.c    | 4 +++-
- security/integrity/iint.c  | 4 +++-
- security/selinux/hooks.c   | 4 +++-
- security/smack/smack_lsm.c | 4 +++-
- security/tomoyo/tomoyo.c   | 4 +++-
- 6 files changed, 17 insertions(+), 8 deletions(-)
+ security/security.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index d13059feca09..9c6b4198ff5a 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2045,11 +2045,10 @@ struct lsm_info {
+diff --git a/security/security.c b/security/security.c
+index 892fe6b691cf..41a5da2c7faf 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -30,8 +30,6 @@
+ #include <linux/string.h>
+ #include <net/flow.h>
  
- extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
+-#include <trace/events/initcall.h>
+-
+ #define MAX_LSM_EVM_XATTR	2
  
--#define security_initcall(lsm)						\
-+#define DEFINE_LSM(lsm)							\
- 	static struct lsm_info __lsm_##lsm				\
- 		__used __section(.lsm_info.init)			\
--		__aligned(sizeof(unsigned long))			\
--		= { .init = lsm, }
-+		__aligned(sizeof(unsigned long))
+ /* Maximum number of letters for an LSM name string */
+@@ -47,17 +45,13 @@ static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
  
- #ifdef CONFIG_SECURITY_SELINUX_DISABLE
- /*
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 8b8b70620bbe..c4863956c832 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1606,4 +1606,6 @@ static int __init apparmor_init(void)
- 	return error;
+ static void __init do_security_initcalls(void)
+ {
+-	int ret;
+ 	initcall_t call;
+ 	initcall_entry_t *ce;
+ 
+ 	ce = __start_lsm_info;
+-	trace_initcall_level("security");
+ 	while (ce < __end_lsm_info) {
+ 		call = initcall_from_entry(ce);
+-		trace_initcall_start(call);
+-		ret = call();
+-		trace_initcall_finish(call, ret);
++		call();
+ 		ce++;
+ 	}
  }
- 
--security_initcall(apparmor_init);
-+DEFINE_LSM(apparmor) = {
-+	.init = apparmor_init,
-+};
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 70d21b566955..94e8e1820748 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -175,7 +175,9 @@ static int __init integrity_iintcache_init(void)
- 			      0, SLAB_PANIC, init_once);
- 	return 0;
- }
--security_initcall(integrity_iintcache_init);
-+DEFINE_LSM(integrity) = {
-+	.init = integrity_iintcache_init,
-+};
- 
- 
- /*
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index ad9a9b8e9979..6ca2e89ddbd6 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7202,7 +7202,9 @@ void selinux_complete_init(void)
- 
- /* SELinux requires early initialization in order to label
-    all processes and objects when they are created. */
--security_initcall(selinux_init);
-+DEFINE_LSM(selinux) = {
-+	.init = selinux_init,
-+};
- 
- #if defined(CONFIG_NETFILTER)
- 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 340fc30ad85d..c62e26939a69 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4882,4 +4882,6 @@ static __init int smack_init(void)
-  * Smack requires early initialization in order to label
-  * all processes and objects when they are created.
-  */
--security_initcall(smack_init);
-+DEFINE_LSM(smack) = {
-+	.init = smack_init,
-+};
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 9f932e2d6852..b2d833999910 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -550,4 +550,6 @@ static int __init tomoyo_init(void)
- 	return 0;
- }
- 
--security_initcall(tomoyo_init);
-+DEFINE_LSM(tomoyo) = {
-+	.init = tomoyo_init,
-+};
 -- 
 2.17.1
 
