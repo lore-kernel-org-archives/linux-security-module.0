@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA0BC43441
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 074F6C43441
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7B120841
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B083820841
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:19:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dg5iAQJM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7B120841
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="anZ9tL1P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B083820841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbeJKHnp (ORCPT
+        id S1727222AbeJKHno (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:43:45 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33802 "EHLO
+        Thu, 11 Oct 2018 03:43:44 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41822 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727332AbeJKHnp (ORCPT
+        with ESMTP id S1727329AbeJKHnn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:43:45 -0400
-Received: by mail-pf1-f196.google.com with SMTP id k19-v6so3453964pfi.1
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 17:19:10 -0700 (PDT)
+        Thu, 11 Oct 2018 03:43:43 -0400
+Received: by mail-pf1-f196.google.com with SMTP id m77-v6so3436773pfi.8
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 17:19:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=G3G6jZlpTaj7SjcMKQ9jlQ7SbDDXxzquRoJPLZTO5H4=;
-        b=dg5iAQJMWFrX83s5d3vVRoxp4uxA1LkCL2Ls9eFz3EhPVAYgtJqdqCUBoW7kmM2qRP
-         0RlmEaF6WL2y3vijfrmnitI7f2DhWhSIyfiiixNF/kNbwYcInJU/aa70mqHdKjCaODzh
-         U3c5Lvqb/1mN/nmP5GseZ37xccQyI9FqL/G+w=
+        bh=9oGsxFd1lYWYAorYyN9hIBrjHAPxot319f0edyopgaA=;
+        b=anZ9tL1PA/A7rUVRlnGvXfA1RrTh3Rl+L9f8RGaTp3W6wYeJEIdrEvUDt+++H9nwI5
+         +SSz/JUU3Fj6H3VQP4MEL83+vnQ4ISidqkmm6l19mIxm+FslYKv5SHX4K0daMZ7riVM/
+         8PrbhtZGbF/S8ELKZ8XiOBJqS1BJafhlmhcpQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=G3G6jZlpTaj7SjcMKQ9jlQ7SbDDXxzquRoJPLZTO5H4=;
-        b=R76Pa18XnT2N9QXEAtS07xr/7sdkaWhu2jnKDYD7DeYhCmqsWPAQkkRAm8IwxFZbLE
-         +sKk9XBcXJIGjxVn5HHcyJH/r4S9iQINvnPv0zCIpH1F2wIaQeZVduPGOoeMH804hHtC
-         hOyK6LxqjylXbxiKdb1JQlXSmDRx5WHg1c2Ah7Jkq4WJFALr9k9ym0zncs9Ii3/D5gXo
-         rFKGNLfIU8CxI8ShBhxwtxbseWQiPmIxzKcfj9XzNX+czYBsCapCJr0bOx+Pf+goA11A
-         3/d21T7+y/v8mAzKVRE9FkXb6ziTwROOTJG3eJwGfmMvvS7O3iVuyrXvfzQkrO+AfHP1
-         AZcg==
-X-Gm-Message-State: ABuFfoh8ptdJ+tQ+qu7rgcQ9CXajlXQRQuEM0V5wCm8ESbE6suTIG5nm
-        55zHQj+BKfK4wT7vT6ZSawN/wg==
-X-Google-Smtp-Source: ACcGV62IGmxCychjvc+FVpBPqxGWtVHKGNZVge9/GY5v7i7aAErhTB1fgphOUELGEsXhF3poGaP7mw==
-X-Received: by 2002:a63:2643:: with SMTP id m64-v6mr31224545pgm.435.1539217150604;
-        Wed, 10 Oct 2018 17:19:10 -0700 (PDT)
+        bh=9oGsxFd1lYWYAorYyN9hIBrjHAPxot319f0edyopgaA=;
+        b=eBv2faFxjoedMDsGS8OzTxKLnR/LGUaiUCzC9MI0T770mdnucSaswVD2gJh09ixz7n
+         LOvFAAVWi4M+XvE4l+ljFNZGTfgZug54AENr7A8Yk1e7PjOO2SgLHhFJqzEYQF7bHCBs
+         tx//7e+QjL71+gtlOaEnK45UKr3boz+3mzyg9+AHG3LAyxONQ2t5Y/HF3xw4H2Q3wL4l
+         nKFjrNQLh0Ax+YTVHbfnjTyRjnWQg4GB7PxBKvm1EtgwYjHwEi56uVX2foPRu017dmPZ
+         9ZGeCDheaJRAijk4rG1EC6rxtoxlUbxXGbrplQGlGT+0Y2KiExexBAEiCmc2dZnTUnPI
+         s5eQ==
+X-Gm-Message-State: ABuFfoipH3YH2U7BALMJ4D4hbfT6LYi29cy7qSC0gbHUhphY6DxKjppA
+        BjPbpXl84vCrXzgMylGWNFwGFQ==
+X-Google-Smtp-Source: ACcGV60LUQF72bP/Wa30XRftKl+C/LebjcC1hyRFYuci9cH0ZA+wlWrXoxfVnBxvygE5UPg+mAqHxQ==
+X-Received: by 2002:a62:c2c1:: with SMTP id w62-v6mr16418780pfk.35.1539217148718;
+        Wed, 10 Oct 2018 17:19:08 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id p4-v6sm25604331pfg.188.2018.10.10.17.18.59
+        by smtp.gmail.com with ESMTPSA id r65-v6sm35307981pfj.5.2018.10.10.17.18.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Wed, 10 Oct 2018 17:19:06 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -69,9 +69,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v5 16/30] LSM: Build ordered list of LSMs to initialize
-Date:   Wed, 10 Oct 2018 17:18:32 -0700
-Message-Id: <20181011001846.30964-17-keescook@chromium.org>
+Subject: [PATCH security-next v5 13/30] LoadPin: Rename boot param "enabled" to "enforce"
+Date:   Wed, 10 Oct 2018 17:18:29 -0700
+Message-Id: <20181011001846.30964-14-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011001846.30964-1-keescook@chromium.org>
 References: <20181011001846.30964-1-keescook@chromium.org>
@@ -79,113 +79,115 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This constructs an ordered list of LSMs to initialize, using a hard-coded
-list of only "integrity": minor LSMs continue to have direct hook calls,
-and major LSMs continue to initialize separately.
+LoadPin's "enabled" setting is really about enforcement, not whether
+or not the LSM is using LSM hooks. Instead, split this out so that LSM
+enabling can be logically distinct from whether enforcement is happening
+(for example, the pinning happens when the LSM is enabled, but the pin
+is only checked when "enforce" is set). This allows LoadPin to continue
+to operate sanely in test environments once LSM enable/disable is
+centrally handled (i.e. we want LoadPin to be enabled separately from
+its enforcement).
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
 ---
- security/security.c | 58 +++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 53 insertions(+), 5 deletions(-)
+ security/loadpin/Kconfig   |  4 ++--
+ security/loadpin/loadpin.c | 21 +++++++++++----------
+ 2 files changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/security/security.c b/security/security.c
-index 8968c98e0a0e..9bb15d697287 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -37,6 +37,9 @@
- /* Maximum number of letters for an LSM name string */
- #define SECURITY_NAME_MAX	10
+diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
+index dd01aa91e521..a0d70d82b98e 100644
+--- a/security/loadpin/Kconfig
++++ b/security/loadpin/Kconfig
+@@ -10,10 +10,10 @@ config SECURITY_LOADPIN
+ 	  have a root filesystem backed by a read-only device such as
+ 	  dm-verity or a CDROM.
  
-+/* How many LSMs were built into the kernel? */
-+#define LSM_COUNT (__end_lsm_info - __start_lsm_info)
-+
- struct security_hook_heads security_hook_heads __lsm_ro_after_init;
- static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
- 
-@@ -45,6 +48,9 @@ char *lsm_names;
- static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
- 	CONFIG_DEFAULT_SECURITY;
- 
-+/* Ordered list of LSMs to initialize. */
-+static __initdata struct lsm_info **ordered_lsms;
-+
- static __initdata bool debug;
- #define init_debug(...)						\
- 	do {							\
-@@ -85,6 +91,34 @@ static void __init set_enabled(struct lsm_info *lsm, bool enabled)
- 	}
+-config SECURITY_LOADPIN_ENABLED
++config SECURITY_LOADPIN_ENFORCE
+ 	bool "Enforce LoadPin at boot"
+ 	depends on SECURITY_LOADPIN
+ 	help
+ 	  If selected, LoadPin will enforce pinning at boot. If not
+ 	  selected, it can be enabled at boot with the kernel parameter
+-	  "loadpin.enabled=1".
++	  "loadpin.enforce=1".
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index 0716af28808a..a2dc146b6364 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -44,7 +44,7 @@ static void report_load(const char *origin, struct file *file, char *operation)
+ 	kfree(pathname);
  }
  
-+/* Is an LSM already listed in the ordered LSMs list? */
-+static bool __init exists_ordered_lsm(struct lsm_info *lsm)
-+{
-+	struct lsm_info **check;
-+
-+	for (check = ordered_lsms; *check; check++)
-+		if (*check == lsm)
-+			return true;
-+
-+	return false;
-+}
-+
-+/* Append an LSM to the list of ordered LSMs to initialize. */
-+static int last_lsm __initdata;
-+static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
-+{
-+	/* Ignore duplicate selections. */
-+	if (exists_ordered_lsm(lsm))
-+		return;
-+
-+	if (WARN(last_lsm == LSM_COUNT, "%s: out of LSM slots!?\n", from))
-+		return;
-+
-+	ordered_lsms[last_lsm++] = lsm;
-+	init_debug("%s ordering: %s (%sabled)\n", from, lsm->name,
-+		   is_enabled(lsm) ? "en" : "dis");
-+}
-+
- /* Is an LSM allowed to be initialized? */
- static bool __init lsm_allowed(struct lsm_info *lsm)
- {
-@@ -121,18 +155,32 @@ static void __init maybe_initialize_lsm(struct lsm_info *lsm)
+-static int enabled = IS_ENABLED(CONFIG_SECURITY_LOADPIN_ENABLED);
++static int enforce = IS_ENABLED(CONFIG_SECURITY_LOADPIN_ENFORCE);
+ static struct super_block *pinned_root;
+ static DEFINE_SPINLOCK(pinned_root_spinlock);
+ 
+@@ -60,8 +60,8 @@ static struct ctl_path loadpin_sysctl_path[] = {
+ 
+ static struct ctl_table loadpin_sysctl_table[] = {
+ 	{
+-		.procname       = "enabled",
+-		.data           = &enabled,
++		.procname       = "enforce",
++		.data           = &enforce,
+ 		.maxlen         = sizeof(int),
+ 		.mode           = 0644,
+ 		.proc_handler   = proc_dointvec_minmax,
+@@ -97,7 +97,7 @@ static void check_pinning_enforcement(struct super_block *mnt_sb)
+ 					   loadpin_sysctl_table))
+ 			pr_notice("sysctl registration failed!\n");
+ 		else
+-			pr_info("load pinning can be disabled.\n");
++			pr_info("enforcement can be disabled.\n");
+ 	} else
+ 		pr_info("load pinning engaged.\n");
+ }
+@@ -128,7 +128,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
+ 
+ 	/* This handles the older init_module API that has a NULL file. */
+ 	if (!file) {
+-		if (!enabled) {
++		if (!enforce) {
+ 			report_load(origin, NULL, "old-api-pinning-ignored");
+ 			return 0;
+ 		}
+@@ -151,7 +151,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
+ 		 * Unlock now since it's only pinned_root we care about.
+ 		 * In the worst case, we will (correctly) report pinning
+ 		 * failures before we have announced that pinning is
+-		 * enabled. This would be purely cosmetic.
++		 * enforcing. This would be purely cosmetic.
+ 		 */
+ 		spin_unlock(&pinned_root_spinlock);
+ 		check_pinning_enforcement(pinned_root);
+@@ -161,7 +161,7 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
  	}
+ 
+ 	if (IS_ERR_OR_NULL(pinned_root) || load_root != pinned_root) {
+-		if (unlikely(!enabled)) {
++		if (unlikely(!enforce)) {
+ 			report_load(origin, file, "pinning-ignored");
+ 			return 0;
+ 		}
+@@ -186,10 +186,11 @@ static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
+ 
+ void __init loadpin_add_hooks(void)
+ {
+-	pr_info("ready to pin (currently %sabled)", enabled ? "en" : "dis");
++	pr_info("ready to pin (currently %senforcing)\n",
++		enforce ? "" : "not ");
+ 	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
  }
  
--static void __init ordered_lsm_init(void)
-+/* Populate ordered LSMs list from single LSM name. */
-+static void __init ordered_lsm_parse(const char *order, const char *origin)
- {
- 	struct lsm_info *lsm;
- 
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
--		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
--			continue;
--
--		maybe_initialize_lsm(lsm);
-+		if (strcmp(lsm->name, order) == 0)
-+			append_ordered_lsm(lsm, origin);
- 	}
- }
- 
-+static void __init ordered_lsm_init(void)
-+{
-+	struct lsm_info **lsm;
-+
-+	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
-+				GFP_KERNEL);
-+
-+	ordered_lsm_parse("integrity", "builtin");
-+
-+	for (lsm = ordered_lsms; *lsm; lsm++)
-+		maybe_initialize_lsm(*lsm);
-+
-+	kfree(ordered_lsms);
-+}
-+
- static void __init major_lsm_init(void)
- {
- 	struct lsm_info *lsm;
+ /* Should not be mutable after boot, so not listed in sysfs (perm == 0). */
+-module_param(enabled, int, 0);
+-MODULE_PARM_DESC(enabled, "Pin module/firmware loading (default: true)");
++module_param(enforce, int, 0);
++MODULE_PARM_DESC(enforce, "Enforce module/firmware pinning");
 -- 
 2.17.1
 
