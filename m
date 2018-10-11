@@ -2,126 +2,91 @@ Return-Path: <SRS0=pW3O=MX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27520C677FC
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 19:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41A0C677FC
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 20:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FDC32075C
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 19:33:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDC32075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D4C12087D
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 20:18:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4C12087D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbeJLDCT (ORCPT
+        id S1726525AbeJLDqz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Oct 2018 23:02:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44082 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726647AbeJLDCT (ORCPT
+        Thu, 11 Oct 2018 23:46:55 -0400
+Received: from mga14.intel.com ([192.55.52.115]:45818 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726040AbeJLDqz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Oct 2018 23:02:19 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9BJTlmi132070
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 15:33:39 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2c769kn0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 15:33:38 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 11 Oct 2018 20:33:37 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 11 Oct 2018 20:33:34 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9BJXXmW5570992
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 11 Oct 2018 19:33:33 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F17545204E;
-        Thu, 11 Oct 2018 22:33:05 +0100 (BST)
-Received: from localhost.localdomain (unknown [9.80.86.29])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3E4435205A;
-        Thu, 11 Oct 2018 22:33:05 +0100 (BST)
-Subject: [GIT PULL] linux-integrity patches for Linux 4.20
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Thu, 11 Oct 2018 15:33:21 -0400
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18101119-0028-0000-0000-00000305DAAA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101119-0029-0000-0000-000023C039C5
-Message-Id: <1539286401.11939.110.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810110183
+        Thu, 11 Oct 2018 23:46:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Oct 2018 13:18:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,369,1534834800"; 
+   d="scan'208";a="87648430"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by FMSMGA003.fm.intel.com with ESMTP; 11 Oct 2018 13:16:37 -0700
+Received: from fmsmsx111.amr.corp.intel.com (10.18.116.5) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 11 Oct 2018 13:16:37 -0700
+Received: from lcsmsx154.ger.corp.intel.com (10.186.165.229) by
+ fmsmsx111.amr.corp.intel.com (10.18.116.5) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 11 Oct 2018 13:16:37 -0700
+Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
+ LCSMSX154.ger.corp.intel.com ([169.254.7.171]) with mapi id 14.03.0319.002;
+ Thu, 11 Oct 2018 23:16:35 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "nayna@linux.ibm.com" <nayna@linux.ibm.com>
+CC:     "nayna@linux.vnet.ibm.com" <nayna@linux.vnet.ibm.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 05/21] tpm: factor out tpm_get_timeouts()
+Thread-Topic: [PATCH v5 05/21] tpm: factor out tpm_get_timeouts()
+Thread-Index: AQHUYYSyyO4neXOPJkShTukQAENgj6UaSC8A
+Date:   Thu, 11 Oct 2018 20:16:34 +0000
+Message-ID: <1539288758.1669.15.camel@intel.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+         <20180928223035.14471-6-tomas.winkler@intel.com>
+         <b6b0fb96-e955-bf86-9bac-e6acee1e33e0@linux.ibm.com>
+In-Reply-To: <b6b0fb96-e955-bf86-9bac-e6acee1e33e0@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.12.91.48]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7170666EBE35A04F83AA91DFB1F6557A@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi James,
-
-Sorry for the delay.  This pull request contains a couple of bug
-fixes, including one for a recent problem with calculating file hashes
-on overlayfs, and some code cleanup.
-
-Mimi
-
-The following changes since commit
-e6123c524064a571616ec978b1317f1696eff0ae:
-
-  security: fix LSM description location (2018-10-09 12:18:38 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-
-integrity.git next-integrity
-
-for you to fetch changes up to
-34bccd61b139dbb452421aebf480e7af5f7a12ed:
-
-  MAINTAINERS: add Jarkko as maintainer for trusted keys (2018-10-11
-12:10:16 -0400)
-
-----------------------------------------------------------------
-Eric Biggers (4):
-      vfs: require i_size <= SIZE_MAX in kernel_read_file()
-      security/integrity: constify some read-only data
-      security/integrity: remove unnecessary 'init_keyring' variable
-      ima: fix showing large 'violations' or
-'runtime_measurements_count'
-
-Goldwyn Rodrigues (1):
-      ima: open a new file instance if no read permissions
-
-Mimi Zohar (1):
-      MAINTAINERS: add Jarkko as maintainer for trusted keys
-
- MAINTAINERS                           |  1 +
- fs/exec.c                             |  8 +++---
- security/integrity/digsig.c           | 10 ++-----
- security/integrity/evm/evm_crypto.c   |  4 +--
- security/integrity/ima/ima.h          |  2 +-
- security/integrity/ima/ima_api.c      |  3 +-
- security/integrity/ima/ima_crypto.c   | 54 ++++++++++++++++++++++--
------------
- security/integrity/ima/ima_fs.c       |  9 +++---
- security/integrity/ima/ima_init.c     |  2 +-
- security/integrity/ima/ima_main.c     |  2 +-
- security/integrity/ima/ima_template.c | 11 +++----
- 11 files changed, 59 insertions(+), 47 deletions(-)
-
+T24gVGh1LCAyMDE4LTEwLTExIGF0IDIyOjMwICswNTMwLCBOYXluYSBKYWluIHdyb3RlOg0KPiAN
+Cj4gT24gMDkvMjkvMjAxOCAwNDowMCBBTSwgVG9tYXMgV2lua2xlciB3cm90ZToNCj4gPiANCj4g
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jaGFyL3RwbS90cG0uaCBiL2RyaXZlcnMvY2hhci90cG0v
+dHBtLmgNCj4gPiBpbmRleCA3MzUxMWNkODliZWYuLmE5N2Q3MmZjZGE1YiAxMDA2NDQNCj4gPiAt
+LS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbS5oDQo+ID4gKysrIGIvZHJpdmVycy9jaGFyL3RwbS90
+cG0uaA0KPiA+IEBAIC01NDQsOCArNTQ0LDEwIEBAIGludCB0cG1fc3RhcnR1cChzdHJ1Y3QgdHBt
+X2NoaXAgKmNoaXApOw0KPiA+ICAgc3NpemVfdCB0cG1fZ2V0Y2FwKHN0cnVjdCB0cG1fY2hpcCAq
+Y2hpcCwgdTMyIHN1YmNhcF9pZCwgY2FwX3QgKmNhcCwNCj4gPiAgIAkJICAgY29uc3QgY2hhciAq
+ZGVzYywgc2l6ZV90IG1pbl9jYXBfbGVuZ3RoKTsNCj4gPiAgIGludCB0cG1fZ2V0X3RpbWVvdXRz
+KHN0cnVjdCB0cG1fY2hpcCAqKTsNCj4gPiAtaW50IHRwbTFfYXV0b19zdGFydHVwKHN0cnVjdCB0
+cG1fY2hpcCAqY2hpcCk7DQo+ID4gICBpbnQgdHBtX2RvX3NlbGZ0ZXN0KHN0cnVjdCB0cG1fY2hp
+cCAqY2hpcCk7DQo+ID4gKw0KPiA+ICtpbnQgdHBtMV9hdXRvX3N0YXJ0dXAoc3RydWN0IHRwbV9j
+aGlwICpjaGlwKTsNCj4gDQo+IFdoYXQgaXMgZGlmZmVyZW50IGluIHRoaXMgdHBtMV9hdXRvX3N0
+YXJ0dXAoLi4uKSBhbmQgdGhlIG9yaWdpbmFsIG9uZSA/DQo+IA0KPiBJcyB0aGlzIG5lZWRlZCA/
+DQpMb29rcyBsaWtlIGFuIGFtZW5kaW5nICBoaWNjdXAsIHdpbGwgZml4Lg0KVGhhbmtzDQpUb21h
+cw0K
