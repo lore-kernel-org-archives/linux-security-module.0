@@ -5,54 +5,54 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DCDC46462
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D77C43441
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E30220841
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:19:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B9DB20841
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:19:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kBFOoQet"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E30220841
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U67kSwyd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B9DB20841
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeJKHnp (ORCPT
+        id S1727460AbeJKHnr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:43:45 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41258 "EHLO
+        Thu, 11 Oct 2018 03:43:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39853 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeJKHno (ORCPT
+        with ESMTP id S1727419AbeJKHnq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:43:44 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 23-v6so3269360pgc.8
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 17:19:10 -0700 (PDT)
+        Thu, 11 Oct 2018 03:43:46 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r9-v6so3275053pgv.6
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 17:19:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ggiLtK2eVkrPN9cVnQ8nFfasYZlbOTQ2PdEkKAoFPYo=;
-        b=kBFOoQet2q2u/XISInQRvsegm4Dgd+yUhCYwmOdRzNXfQ3+T5dPxohU2Nb5jnXtm21
-         Gtqj7KTya3WKWGpHzOImIzLxXaURH1MHTn2hcDcingz3yfgZeCbRyhcgrNlYJah45Nql
-         YH5V3j+r3DkiDj10WOLOm9oESMUv4E/Xz+OQQ=
+        bh=B2MT6Hr/No4vpDLMQ0LP9i/w9/IFVSU+eSeH5iht8h0=;
+        b=U67kSwydciTfRVqGNMDeIqFUpcBJ162GM2d553kzz5RbZjIjzrSIO1iyYXPh2ZrTc6
+         gulfyHT5dGoFdrzUFQwLz4na5qDwo2SB/8TYoDVyIzWmruj7V4bdPJVfGjS7PPi3Uiyv
+         Y1m6ianmGcdPdRqoW8DaPRRPqT07RRQ0Yfb4o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ggiLtK2eVkrPN9cVnQ8nFfasYZlbOTQ2PdEkKAoFPYo=;
-        b=KF8Hyq170TAI9JXalobLf1uRfTHLw9rzEFLJANjZuG/iISUPz9QVAAgIBnbYaByb6J
-         FHwEX9Eqg0ah3e9wDPk9tJgG8KXfENlaakAW/G7RVxKxeBVQqGZj29lcipgiFfKTDkUN
-         B6F4aCtK+bhRh3RLvOcEwEiXo7jU5OkT/cl4O1K8r5KKjQM6iTyrsmexKl5VlxoJwAPs
-         Cxl7w0GOqwrPi+4I+oDNKYNA10qDycinlmsjectHiwisRPWuSCAs60n3Zvp3yXm7/z/O
-         HiqDgowFhqiTtgodQNH+CpeYQL5vxkrWf60wwku2064U8A+xLbyXS5uiyl/34FTTcxuf
-         eQwg==
-X-Gm-Message-State: ABuFfohZy55Ue4V7/oxWSfIZuyMQ7qz1tCRkM/bGW1J4V2z01UzLO7JH
-        qPrKE53Sbt7KGPesyWCIlxhbNHdFA3E=
-X-Google-Smtp-Source: ACcGV600ne3Z/J2XFBDawR+74H8Kv7NX8Ws49Nu05JynMEEBKRfJjgIcKSJRS2aG8Y03GXGXT8kL+w==
-X-Received: by 2002:a62:3384:: with SMTP id z126-v6mr36082448pfz.85.1539217149666;
-        Wed, 10 Oct 2018 17:19:09 -0700 (PDT)
+        bh=B2MT6Hr/No4vpDLMQ0LP9i/w9/IFVSU+eSeH5iht8h0=;
+        b=n1EpkrTGkj5JZ50N+amy9354htir0vYbX+wgvqYFXdGVbyi52nj0ctW5IFXIAtFTyU
+         MIoaK/XoPpL4Q+doJbr1fFy0D2FJ6bwJmBmRmJyPqNTInk4BzLJnm6MuIZhwBAby9UzQ
+         QHDZ5oaT6Nloybl644DBfRpvSjO141r7LSeGJ+qaNC+l0pibSn5TCANblsA2ZaDtBZM2
+         f4eC48nbJp0PEfnfsQbht/0S4ZkbIpukzKtOa0S2VsKAXuuLlgNWUZ5O/G6H/J8XXBsf
+         HY+y+7ebAFw9hHycAq7Dwaw/bEx7K7IHeVkpSY7HG5Ol9f0lB+AbP8T4i93v2+nkmX6j
+         1Tag==
+X-Gm-Message-State: ABuFfoiIpcB+QlXs0vQtDsMbegDPbWLbO5SiOLdwFPXX7T2YFaY/0/Un
+        mZLe/YkW3zv9socSteV5vZ8KdQ==
+X-Google-Smtp-Source: ACcGV6310duiuF1CQG4tNR5CeYEJfiN55QHgbhZ8qvhYNs1wQKuAfxlpd4rNTL7ACyGKDtThXGstEw==
+X-Received: by 2002:a63:2807:: with SMTP id o7-v6mr31367120pgo.155.1539217151797;
+        Wed, 10 Oct 2018 17:19:11 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id l129-v6sm37483966pfc.155.2018.10.10.17.18.59
+        by smtp.gmail.com with ESMTPSA id k3-v6sm73024896pfk.60.2018.10.10.17.19.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Wed, 10 Oct 2018 17:19:06 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -69,9 +69,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v5 15/30] LSM: Lift LSM selection out of individual LSMs
-Date:   Wed, 10 Oct 2018 17:18:31 -0700
-Message-Id: <20181011001846.30964-16-keescook@chromium.org>
+Subject: [PATCH security-next v5 21/30] LSM: Refactor "security=" in terms of enable/disable
+Date:   Wed, 10 Oct 2018 17:18:37 -0700
+Message-Id: <20181011001846.30964-22-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011001846.30964-1-keescook@chromium.org>
 References: <20181011001846.30964-1-keescook@chromium.org>
@@ -79,240 +79,65 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-As a prerequisite to adjusting LSM selection logic in the future, this
-moves the selection logic up out of the individual major LSMs, making
-their init functions only run when actually enabled. This considers all
-LSMs enabled by default unless they specified an external "enable"
-variable.
+For what are marked as the Legacy Major LSMs, make them effectively
+exclusive when selected on the "security=" boot parameter, to handle
+the future case of when a previously major LSMs become non-exclusive
+(e.g. when TOMOYO starts blob-sharing).
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
 ---
- include/linux/lsm_hooks.h  |   1 -
- security/apparmor/lsm.c    |   6 ---
- security/security.c        | 102 ++++++++++++++++++++++++++-----------
- security/selinux/hooks.c   |  10 ----
- security/smack/smack_lsm.c |   3 --
- security/tomoyo/tomoyo.c   |   2 -
- 6 files changed, 71 insertions(+), 53 deletions(-)
+ security/security.c | 28 ++++++++++++++++++++--------
+ 1 file changed, 20 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 6ec5a0266f21..9ecb623fb39d 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2085,7 +2085,6 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
- #define __lsm_ro_after_init	__ro_after_init
- #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
- 
--extern int __init security_module_enable(const char *module);
- extern void __init capability_add_hooks(void);
- #ifdef CONFIG_SECURITY_YAMA
- extern void __init yama_add_hooks(void);
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 6ace45704cb6..bc56b058dc75 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1542,12 +1542,6 @@ static int __init apparmor_init(void)
- {
- 	int error;
- 
--	if (!apparmor_enabled || !security_module_enable("apparmor")) {
--		aa_info_message("AppArmor disabled by boot time parameter");
--		apparmor_enabled = false;
--		return 0;
--	}
--
- 	aa_secids_init();
- 
- 	error = aa_setup_dfa_engine();
 diff --git a/security/security.c b/security/security.c
-index ebbbb672ced5..8968c98e0a0e 100644
+index 1b1ee823457c..2c754968f98b 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -52,33 +52,96 @@ static __initdata bool debug;
- 			pr_info(__VA_ARGS__);			\
- 	} while (0)
+@@ -129,14 +129,6 @@ static bool __init lsm_allowed(struct lsm_info *lsm)
+ 	if (!is_enabled(lsm))
+ 		return false;
  
-+static bool __init is_enabled(struct lsm_info *lsm)
-+{
-+	if (!lsm->enabled || *lsm->enabled)
-+		return true;
+-	/* Skip major-specific checks if not a major LSM. */
+-	if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
+-		return true;
+-
+-	/* Disabled if this LSM isn't the chosen one. */
+-	if (strcmp(lsm->name, chosen_major_lsm) != 0)
+-		return false;
+-
+ 	return true;
+ }
+ 
+@@ -191,8 +183,28 @@ static void __init ordered_lsm_init(void)
+ 	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+ 				GFP_KERNEL);
+ 
++	/* Process "security=", if given. */
+ 	if (!chosen_major_lsm)
+ 		chosen_major_lsm = CONFIG_DEFAULT_SECURITY;
++	if (chosen_major_lsm) {
++		struct lsm_info *major;
 +
-+	return false;
-+}
-+
-+/* Mark an LSM's enabled flag. */
-+static int lsm_enabled_true __initdata = 1;
-+static int lsm_enabled_false __initdata = 0;
-+static void __init set_enabled(struct lsm_info *lsm, bool enabled)
-+{
-+	/*
-+	 * When an LSM hasn't configured an enable variable, we can use
-+	 * a hard-coded location for storing the default enabled state.
-+	 */
-+	if (!lsm->enabled) {
-+		if (enabled)
-+			lsm->enabled = &lsm_enabled_true;
-+		else
-+			lsm->enabled = &lsm_enabled_false;
-+	} else if (lsm->enabled == &lsm_enabled_true) {
-+		if (!enabled)
-+			lsm->enabled = &lsm_enabled_false;
-+	} else if (lsm->enabled == &lsm_enabled_false) {
-+		if (enabled)
-+			lsm->enabled = &lsm_enabled_true;
-+	} else {
-+		*lsm->enabled = enabled;
++		/*
++		 * To match the original "security=" behavior, this
++		 * explicitly does NOT fallback to another Legacy Major
++		 * if the selected one was separately disabled: disable
++		 * all non-matching Legacy Major LSMs.
++		 */
++		for (major = __start_lsm_info; major < __end_lsm_info;
++		     major++) {
++			if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
++			    strcmp(major->name, chosen_major_lsm) != 0) {
++				set_enabled(major, false);
++				init_debug("security=%s disabled: %s\n",
++					   chosen_major_lsm, major->name);
++			}
++		}
 +	}
-+}
-+
-+/* Is an LSM allowed to be initialized? */
-+static bool __init lsm_allowed(struct lsm_info *lsm)
-+{
-+	/* Skip if the LSM is disabled. */
-+	if (!is_enabled(lsm))
-+		return false;
-+
-+	/* Skip major-specific checks if not a major LSM. */
-+	if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
-+		return true;
-+
-+	/* Disabled if this LSM isn't the chosen one. */
-+	if (strcmp(lsm->name, chosen_lsm) != 0)
-+		return false;
-+
-+	return true;
-+}
-+
-+/* Check if LSM should be initialized. */
-+static void __init maybe_initialize_lsm(struct lsm_info *lsm)
-+{
-+	int enabled = lsm_allowed(lsm);
-+
-+	/* Record enablement (to handle any following exclusive LSMs). */
-+	set_enabled(lsm, enabled);
-+
-+	/* If selected, initialize the LSM. */
-+	if (enabled) {
-+		int ret;
-+
-+		init_debug("initializing %s\n", lsm->name);
-+		ret = lsm->init();
-+		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
-+	}
-+}
-+
- static void __init ordered_lsm_init(void)
- {
- 	struct lsm_info *lsm;
--	int ret;
  
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
- 		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
- 			continue;
- 
--		init_debug("initializing %s\n", lsm->name);
--		ret = lsm->init();
--		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
-+		maybe_initialize_lsm(lsm);
- 	}
- }
- 
- static void __init major_lsm_init(void)
- {
- 	struct lsm_info *lsm;
--	int ret;
- 
- 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
- 		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
- 			continue;
- 
--		init_debug("initializing %s\n", lsm->name);
--		ret = lsm->init();
--		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
-+		maybe_initialize_lsm(lsm);
- 	}
- }
- 
-@@ -168,29 +231,6 @@ static int lsm_append(char *new, char **result)
- 	return 0;
- }
- 
--/**
-- * security_module_enable - Load given security module on boot ?
-- * @module: the name of the module
-- *
-- * Each LSM must pass this method before registering its own operations
-- * to avoid security registration races. This method may also be used
-- * to check if your LSM is currently loaded during kernel initialization.
-- *
-- * Returns:
-- *
-- * true if:
-- *
-- * - The passed LSM is the one chosen by user at boot time,
-- * - or the passed LSM is configured as the default and the user did not
-- *   choose an alternate LSM at boot time.
-- *
-- * Otherwise, return false.
-- */
--int __init security_module_enable(const char *module)
--{
--	return !strcmp(module, chosen_lsm);
--}
--
- /**
-  * security_add_hooks - Add a modules hooks to the hook lists.
-  * @hooks: the hooks to add
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index e8da99550b67..71a10fedecb3 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7133,16 +7133,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 
- static __init int selinux_init(void)
- {
--	if (!security_module_enable("selinux")) {
--		selinux_enabled = 0;
--		return 0;
--	}
--
--	if (!selinux_enabled) {
--		pr_info("SELinux:  Disabled at boot.\n");
--		return 0;
--	}
--
- 	pr_info("SELinux:  Initializing.\n");
- 
- 	memset(&selinux_state, 0, sizeof(selinux_state));
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index db8bc6b6d8b0..f243044d5a55 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4834,9 +4834,6 @@ static __init int smack_init(void)
- 	struct cred *cred;
- 	struct task_smack *tsp;
- 
--	if (!security_module_enable("smack"))
--		return 0;
--
- 	smack_inode_cache = KMEM_CACHE(inode_smack, 0);
- 	if (!smack_inode_cache)
- 		return -ENOMEM;
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 09f7af130d3a..a46f6bc1e97c 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -540,8 +540,6 @@ static int __init tomoyo_init(void)
- {
- 	struct cred *cred = (struct cred *) current_cred();
- 
--	if (!security_module_enable("tomoyo"))
--		return 0;
- 	/* register ourselves with the security framework */
- 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
- 	printk(KERN_INFO "TOMOYO Linux initialized\n");
+ 	if (chosen_lsm_order)
+ 		ordered_lsm_parse(chosen_lsm_order, "cmdline");
 -- 
 2.17.1
 
