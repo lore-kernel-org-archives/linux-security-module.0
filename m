@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EF3C46462
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 691F7C43441
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8181620644
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FBD720644
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 00:27:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cws5cD8U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8181620644
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i+MSroZg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FBD720644
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbeJKHu0 (ORCPT
+        id S1726070AbeJKHv2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Oct 2018 03:50:26 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46703 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbeJKHuZ (ORCPT
+        Thu, 11 Oct 2018 03:51:28 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42903 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbeJKHuY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Oct 2018 03:50:25 -0400
-Received: by mail-pl1-f194.google.com with SMTP id v5-v6so3280854plz.13
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 17:25:49 -0700 (PDT)
+        Thu, 11 Oct 2018 03:50:24 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c8-v6so3291538plo.9
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Oct 2018 17:25:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IXmX6NWqSt00W/pJqFjPQo5O3fzHwsapi11+f9ycNnY=;
-        b=cws5cD8Uerjr3MHzRcnYnlT5+eBQqFBGojNGuzv077jH86oBWEdNpl23x4IdPMZlTp
-         A6ebBufTnmglmqUmC/kB9s1M6Hu5fMFoZ69kZWKv6HcGYu7FIXM8MIulumWsAVpfrCWg
-         +5+mE7eMuFZnCg1bLyBbI5xRzVDm0O23F4o6g=
+        bh=lkpsct+7al6mQcKUWpOrrVGi/g6rgIy3oTqM5eABQTE=;
+        b=i+MSroZgJnutX2Oav6Ml2tAnleP3kHJrhHKvvu3YVHAltkMlqHmaPfXnRW9ylM3WiJ
+         P/Wyji4qgFeedpkFMpMAIfDWbYyfx6d7YkZFSXrvUtG6fOx5Au4Vga1698769wWXToFy
+         ddZtslZkSp+KCWLtsNWZOpkKGMQ7+gsI7J6z4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=IXmX6NWqSt00W/pJqFjPQo5O3fzHwsapi11+f9ycNnY=;
-        b=F7I9gGs38v+XMzdWa5EqLIe8gHxK3Qtt1ZyjeCxINBGc1iVGRQyFiqzLuSPxzuuuPV
-         KqyRRHoS3rPJMpMg2Gfu7xBStTPXXfU8UqOubZWKGqIsXrTdnkATR38faq001uR1uxtd
-         MuPD+W47G34MoH4b78zt6acx5wfWmiAsZEUXz4yqILatW9QUMNaCydMCEyj/YFlLY2El
-         5l8iwTLOT69QZN4kof1Ln3AQM8Q4lziMx7Y7XxLguxuyFgmorkwDpguiFqS122JgQ3ur
-         YRr/0I++R8XrpCLvsPqrC5b4Bt/PAFoBclPia3KISk4jutPZHnnsyk5zupX+41wcWh/u
-         254g==
-X-Gm-Message-State: ABuFfohM+2BaKqfWkaXkCGEY3raKUkEyGD5Q9NyJA4FOxzxv5vrP65vh
-        MMW3RY6xmmplcGuR0hJ2ZA2pRg==
-X-Google-Smtp-Source: ACcGV62jhBnYWxcO5h7stRmixxdBMTEDtpjlyNYVISANT7qe+10BZJpGKCGnvCYg18nHuaZ/lFlcZw==
-X-Received: by 2002:a17:902:9a07:: with SMTP id v7-v6mr34065840plp.14.1539217549396;
-        Wed, 10 Oct 2018 17:25:49 -0700 (PDT)
+        bh=lkpsct+7al6mQcKUWpOrrVGi/g6rgIy3oTqM5eABQTE=;
+        b=o/oKDe5blUz4ZRPQTYTehvkattzl5UFtAT7Hs0E/elPWOzF8OY6T2k+HmBNufy/iO/
+         VLP2R84VxbPDn3er2sVDMwGiZE6mfWKqeJ4VbpOzWQ/JNBRcqg2T518fW1imv2Q1N4JX
+         e1Jj8cwOFr/xV8DfWHWaqp4HZRUiBAITgvpazt1pBi4kcBUvdojLIIZUVwtspM0x+vD+
+         2OTM9kqAnN6/pHcEdM4IeJwiYfK3oO6Q5+PcqMMkSr01s/dV6uxGpyOX6tFIQNjZ9wXl
+         5xzRGN3C4gwr88vC2O7CC65tmza0g+P2ZAmusEbdP3LPfukwlOY6BE/qsdBKYW3fI/ew
+         S1ow==
+X-Gm-Message-State: ABuFfoiWWScDJn1wJxRIG5FAfYuovQ5IlQYvSCXoMTucqCQze06lkFQK
+        CYDS8AaGbXSevQcrb3lyiDiODw==
+X-Google-Smtp-Source: ACcGV605NzkbnTPYziyIUkQrQljKwn9ZEDxCkvTvssMk4M8pDTaDpmzuuYKyWFVypmdhrdK7yfeOIg==
+X-Received: by 2002:a17:902:b706:: with SMTP id d6-v6mr1661442pls.53.1539217548207;
+        Wed, 10 Oct 2018 17:25:48 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id v84-v6sm36583257pfk.12.2018.10.10.17.25.45
+        by smtp.gmail.com with ESMTPSA id k63-v6sm25901722pga.36.2018.10.10.17.25.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Wed, 10 Oct 2018 17:25:45 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -69,9 +69,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         LSM <linux-security-module@vger.kernel.org>,
         linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH security-next v5 24/30] selinux: Remove SECURITY_SELINUX_BOOTPARAM_VALUE
-Date:   Wed, 10 Oct 2018 17:18:40 -0700
-Message-Id: <20181011001846.30964-25-keescook@chromium.org>
+Subject: [PATCH security-next v5 29/30] LSM: Introduce enum lsm_order
+Date:   Wed, 10 Oct 2018 17:18:45 -0700
+Message-Id: <20181011001846.30964-30-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181011001846.30964-1-keescook@chromium.org>
 References: <20181011001846.30964-1-keescook@chromium.org>
@@ -79,69 +79,64 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In preparation for removing CONFIG_DEFAULT_SECURITY, this removes the
-soon-to-be redundant SECURITY_SELINUX_BOOTPARAM_VALUE. Since explicit
-ordering via CONFIG_LSM or "lsm=" will define whether an LSM is enabled or
-not, this CONFIG will become effectively ignored, so remove it. However,
-in order to stay backward-compatible with "security=selinux", the enable
-variable defaults to true.
+In preparation for distinguishing the "capability" LSM from other LSMs, it
+must be ordered first. This introduces LSM_ORDER_MUTABLE for the general
+LSMs and LSM_ORDER_FIRST for capability. In the future LSM_ORDER_LAST
+for could be added for anything that must run last (e.g. Landlock may
+use this).
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/selinux/Kconfig | 15 ---------------
- security/selinux/hooks.c |  5 +----
- 2 files changed, 1 insertion(+), 19 deletions(-)
+ include/linux/lsm_hooks.h | 6 ++++++
+ security/security.c       | 9 ++++++++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/security/selinux/Kconfig b/security/selinux/Kconfig
-index 8af7a690eb40..55f032f1fc2d 100644
---- a/security/selinux/Kconfig
-+++ b/security/selinux/Kconfig
-@@ -22,21 +22,6 @@ config SECURITY_SELINUX_BOOTPARAM
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 833ec0f03795..97898679a505 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2042,8 +2042,14 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
+ #define LSM_FLAG_EXCLUSIVE	BIT(1)
  
- 	  If you are unsure how to answer this question, answer N.
++enum lsm_order {
++	LSM_ORDER_FIRST = -1,	/* This is only for capabilities. */
++	LSM_ORDER_MUTABLE = 0,
++};
++
+ struct lsm_info {
+ 	const char *name;	/* Required. */
++	enum lsm_order order;	/* Optional: default is LSM_ORDER_MUTABLE */
+ 	unsigned long flags;	/* Optional: flags describing LSM */
+ 	int *enabled;		/* Optional: controlled by CONFIG_LSM */
+ 	int (*init)(void);	/* Required. */
+diff --git a/security/security.c b/security/security.c
+index 2eb8afdd945d..004938eb8e70 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -174,6 +174,12 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 	struct lsm_info *lsm;
+ 	char *sep, *name, *next;
  
--config SECURITY_SELINUX_BOOTPARAM_VALUE
--	int "NSA SELinux boot parameter default value"
--	depends on SECURITY_SELINUX_BOOTPARAM
--	range 0 1
--	default 1
--	help
--	  This option sets the default value for the kernel parameter
--	  'selinux', which allows SELinux to be disabled at boot.  If this
--	  option is set to 0 (zero), the SELinux kernel parameter will
--	  default to 0, disabling SELinux at bootup.  If this option is
--	  set to 1 (one), the SELinux kernel parameter will default to 1,
--	  enabling SELinux at bootup.
--
--	  If you are unsure how to answer this question, answer 1.
--
- config SECURITY_SELINUX_DISABLE
- 	bool "NSA SELinux runtime disable"
- 	depends on SECURITY_SELINUX
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 0f8d7bb88197..14c120842ab4 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -120,9 +120,8 @@ __setup("enforcing=", enforcing_setup);
- #define selinux_enforcing_boot 1
- #endif
++	/* LSM_ORDER_FIRST is always first. */
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		if (lsm->order == LSM_ORDER_FIRST)
++			append_ordered_lsm(lsm, "first");
++	}
++
+ 	sep = kstrdup(order, GFP_KERNEL);
+ 	next = sep;
+ 	/* Walk the list, looking for matching LSMs. */
+@@ -181,7 +187,8 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 		bool found = false;
  
-+int selinux_enabled __lsm_ro_after_init = 1;
- #ifdef CONFIG_SECURITY_SELINUX_BOOTPARAM
--int selinux_enabled = CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE;
--
- static int __init selinux_enabled_setup(char *str)
- {
- 	unsigned long enabled;
-@@ -131,8 +130,6 @@ static int __init selinux_enabled_setup(char *str)
- 	return 1;
- }
- __setup("selinux=", selinux_enabled_setup);
--#else
--int selinux_enabled = 1;
- #endif
- 
- static unsigned int selinux_checkreqprot_boot =
+ 		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+-			if (strcmp(lsm->name, name) == 0) {
++			if (lsm->order == LSM_ORDER_MUTABLE &&
++			    strcmp(lsm->name, name) == 0) {
+ 				append_ordered_lsm(lsm, origin);
+ 				found = true;
+ 			}
 -- 
 2.17.1
 
