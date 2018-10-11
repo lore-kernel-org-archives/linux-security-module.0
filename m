@@ -2,118 +2,111 @@ Return-Path: <SRS0=pW3O=MX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AC6C4161D
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 13:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F5FC32788
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 15:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 931312085B
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 13:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACF722087A
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 15:14:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LEjunEM1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 931312085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hGmW4Qvy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACF722087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbeJKVHU (ORCPT
+        id S1726036AbeJKWmF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Oct 2018 17:07:20 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33864 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728206AbeJKVHU (ORCPT
+        Thu, 11 Oct 2018 18:42:05 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:46266 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725984AbeJKWmF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Oct 2018 17:07:20 -0400
-Received: by mail-ot1-f68.google.com with SMTP id v2so1780063otk.1
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 06:40:06 -0700 (PDT)
+        Thu, 11 Oct 2018 18:42:05 -0400
+Received: by mail-yw1-f66.google.com with SMTP id j202-v6so3706815ywa.13
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 08:14:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=o5TfyFrjGrlzpJ2DNaYpFmSqPaCZWK+MgDuCMXQIe08=;
-        b=LEjunEM191gRoqoi54Z/nzJyoIfYa4lSuKI1E6XI+2liPXtYZFCwOZLMPdIImdW5qy
-         qMG6ribXgY5F1sDvMu56l2gSuZHkZ/XHL7YFAjQQYjn3rpn0GUCd5aSK4rqoMfHlMw4k
-         /aswJJHHtpmN0FzCvp2NqoHji3Vpy1sBa9rCXwDte9HBQr6EgR7Kc3r6r97HJ+UOV7b+
-         fhTN/QLrmsu3XFYVNaCSFb8HXaedOqs6jSJXMAhS1ftsxnc3Zi/hexGR6YRJkeo6aV/p
-         9w2ASsHSwQHYIHpBwQ/DQVSvsOWR5mw6NDUZ10J73rPMFwlkohb43AN5idBbEN4N9HN0
-         /rWg==
+        bh=vhHOhK6qIvD03E5j82CJydF0koblL9qnnu+X5reyDNk=;
+        b=hGmW4Qvy01/0H+oeR2sl6jaevIREHbKsBEeL0KgYGYQVDxkg3lguRP1SCw0IB6mIEM
+         lcd9gOlmm+cx38qOiw+KFjaAweXG14NOjliA2sDOs3WJoL7RKDrGdDEFBEwiDMjwPNDH
+         CUSMpMk/UmVS/aA67+3zE8Mn15lZsTiNbaGas=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=o5TfyFrjGrlzpJ2DNaYpFmSqPaCZWK+MgDuCMXQIe08=;
-        b=LphoF99w1AVZPOFjL2+2IBqyihWHTk4+vmLZtK0GWshb4ZxuSE+pRbeNlHzPpPWX5C
-         00HJGU5sWFR6/xVKY6SMJrXVSS09kzqw3kic5NT+sepRk0Sff3vXe95m6Yb5yJbEamrL
-         ZNzlrd4HQn5HfgbhvENeDAkxEPy4qAvX0GaQQqhYPxbCmHxUOpODldkRiJ/kGLxfp6Z7
-         7n+8uxxNXI502gCSHA0DT4KRjXXEotQiVjvh48yFRqZkW3OAAXJjaYKeTgWCpA6Uocra
-         W90ebDyUTR+pnZOk7svgwbMmhBB7Ow5iJTfLhp4kOVAFmTrkfhafiAGSuB0jQEkg/R4a
-         83Hg==
-X-Gm-Message-State: ABuFfogQBBEkmylH+6MLUmj+z6hrgWJY6UKab7w4mshY5vgFa5YWwOCq
-        pJCD3//epHQpN31UJfmh/UZypZMndiDn48zwbyXk1g==
-X-Google-Smtp-Source: ACcGV61b994IuGIe+Adm88lq6xsYjOBCX8Iqx8/9y+kO6Lmkx5EY8UqN9tm76XHTDETtP+OON1v+W3FZt+Zq3rDiIE4=
-X-Received: by 2002:a9d:4917:: with SMTP id e23mr1124110otf.73.1539265205211;
- Thu, 11 Oct 2018 06:40:05 -0700 (PDT)
+        bh=vhHOhK6qIvD03E5j82CJydF0koblL9qnnu+X5reyDNk=;
+        b=Ff+mXjTYovAbzinU012gUwbf0+9WbWwb10EXl8ODpkoQ2zQ5nyGW2dLGs0xUMxpHkr
+         JAJ1RCldErhfNip/Xm8D/eDG1BQg8KN/DECFwviH+JXpC7tM7/gdn6ep4rcXgr/SS5Lv
+         oP64TCOCF0A+EeuJLdabe6yygO2ZZzp2V5KJ7Z1VGMRS2Wt4TAU36UsZjHokj9A6Zpc4
+         UNKHybdFa3v+0mnfn7HibMVr6M9PtbtU0LzXiKq7aQmXU5IMELoVmzPrxfjUJmFa1pOz
+         rubyFjyfVj3juD9DvP/1/ypJLjG3688zv+FKSxnL8GD+wCYB7Gy/gcWwapgym5cyMG2U
+         GbKg==
+X-Gm-Message-State: ABuFfogKo48kwkbBwgR39dj2yuiN5Fu9gt29WrdIsx6jYOtFNYy6g3rr
+        9bXA/plafMpaTJcFUet3pJrDtDu+trc=
+X-Google-Smtp-Source: ACcGV63WWzQTnMVP3skiHmg4WcTIwT6dteR69YO8rbZWzAAKQ8kJUsvRMf8+hRLQR5O6GtN39NeurQ==
+X-Received: by 2002:a81:2d89:: with SMTP id t131-v6mr1063641ywt.222.1539270868321;
+        Thu, 11 Oct 2018 08:14:28 -0700 (PDT)
+Received: from mail-yw1-f49.google.com (mail-yw1-f49.google.com. [209.85.161.49])
+        by smtp.gmail.com with ESMTPSA id x185-v6sm15208401ywd.40.2018.10.11.08.14.26
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 08:14:26 -0700 (PDT)
+Received: by mail-yw1-f49.google.com with SMTP id y14-v6so3722289ywa.4
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 08:14:26 -0700 (PDT)
+X-Received: by 2002:a81:98cb:: with SMTP id p194-v6mr1074104ywg.353.1539270865726;
+ Thu, 11 Oct 2018 08:14:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180927151119.9989-1-tycho@tycho.ws> <20180927151119.9989-4-tycho@tycho.ws>
- <20181008151629.hkgzzsluevwtuclw@brauner.io> <CAG48ez3zaqOXH_jHN8=+jXjOf3vhFyWUkM_6KLPi9T8HcQySeg@mail.gmail.com>
- <20181008162147.ubfxxsv2425l2zsp@brauner.io> <CAG48ez3O+wAkq+0yDfoMt73ybnCOEPpi3Mu-uF57_v=6hA8ZEw@mail.gmail.com>
- <20181008181815.pwnqxngj22mhm2vj@brauner.io> <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
- <20181009132850.fp6yne2vgmfpi27k@brauner.io> <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
- <CAHC9VhQfzJgG3i=Q8C+pGY2Lpr+2MRTwxgUWec_heGOecd=xRg@mail.gmail.com>
- <CAG48ez2hTBFwmA65FXv0zJjc0_wpc1S-uOBn1t+X=0vPH25YvQ@mail.gmail.com> <16662034750.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <16662034750.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 11 Oct 2018 15:39:37 +0200
-Message-ID: <CAG48ez0=NRRu2FUZFwdDSMmkdWsFi1XSSPTO8bL84YAY=jOzMQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     christian@brauner.io, Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
-        Oleg Nesterov <oleg@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 08:14:24
+ -0700 (PDT)
+In-Reply-To: <alpine.LRH.2.21.1810111443500.25845@namei.org>
+References: <20181011001846.30964-1-keescook@chromium.org> <alpine.LRH.2.21.1810111443500.25845@namei.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 11 Oct 2018 08:14:24 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLzsYY1Ja8onnNdHXbenZ6vPrat_L8U_sbcCic0qk--qQ@mail.gmail.com>
+Message-ID: <CAGXu5jLzsYY1Ja8onnNdHXbenZ6vPrat_L8U_sbcCic0qk--qQ@mail.gmail.com>
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+To:     James Morris <jmorris@namei.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 11, 2018 at 9:24 AM Paul Moore <paul@paul-moore.com> wrote:
-> On October 10, 2018 11:34:11 AM Jann Horn <jannh@google.com> wrote:
-> > On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
-> >> On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
-> >>> +cc selinux people explicitly, since they probably have opinions on this
-> >>
-> >> I just spent about twenty minutes working my way through this thread,
-> >> and digging through the containers archive trying to get a good
-> >> understanding of what you guys are trying to do, and I'm not quite
-> >> sure I understand it all.  However, from what I have seen, this
-> >> approach looks very ptrace-y to me (I imagine to others as well based
-> >> on the comments) and because of this I think ensuring the usual ptrace
-> >> access controls are evaluated, including the ptrace LSM hooks, is the
-> >> right thing to do.
-> >
-> > Basically the problem is that this new ptrace() API does something
-> > that doesn't just influence the target task, but also every other task
-> > that has the same seccomp filter. So the classic ptrace check doesn't
-> > work here.
+On Wed, Oct 10, 2018 at 8:45 PM, James Morris <jmorris@namei.org> wrote:
+> On Wed, 10 Oct 2018, Kees Cook wrote:
 >
-> Due to some rather unfortunate events today I'm suddenly without easy access to the kernel code, but would it be possible to run the LSM ptrace access control checks against all of the affected tasks?  If it is possible, how painful would it be?
+>> v5:
+>> - redesigned to use CONFIG_LSM= and lsm= for both ordering and enabling
+>> - dropped various Reviewed-bys due to rather large refactoring
+>
+> Patches 1-10 applied to
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+> and next-testing.
 
-There are currently no backlinks from seccomp filters to the tasks
-that use them; the only thing you have is a refcount. If the refcount
-is 1, and the target task uses the filter directly (it is the last
-installed one), you'd be able to infer that the ptrace target is the
-only task with a reference to the filter, and you could just do the
-direct check; but if the refcount is >1, you might end up having to
-take some spinlock and then iterate over all tasks' filters with that
-spinlock held, or something like that.
+Very cool; thanks!
+
+As for the rest, I could post some examples of how the new CONFIG_LSM
+and "lsm=..." work (and how they mix with the "legacy" options). Would
+that be helpful?
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
