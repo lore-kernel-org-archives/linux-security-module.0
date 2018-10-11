@@ -2,277 +2,243 @@ Return-Path: <SRS0=pW3O=MX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA88C677FC
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 17:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07917C677FC
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 17:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD1B213A2
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 17:04:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD1B213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A917F21470
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 17:57:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MjNWm/BI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A917F21470
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbeJLAcK (ORCPT
+        id S1726722AbeJLBZ5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Oct 2018 20:32:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53124 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728529AbeJLAcK (ORCPT
+        Thu, 11 Oct 2018 21:25:57 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:35244 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbeJLBZ4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Oct 2018 20:32:10 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9BGwtc4032676
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 13:04:02 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n29jnu7mq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 13:04:02 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Thu, 11 Oct 2018 13:04:00 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 11 Oct 2018 13:03:58 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9BH3v5a43909136
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 11 Oct 2018 17:03:57 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF935AC062;
-        Thu, 11 Oct 2018 13:03:02 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9C6D4AC05F;
-        Thu, 11 Oct 2018 13:02:59 -0400 (EDT)
-Received: from [9.77.193.214] (unknown [9.77.193.214])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 11 Oct 2018 13:02:59 -0400 (EDT)
-Subject: Re: [PATCH v5 05/21] tpm: factor out tpm_get_timeouts()
-To:     Tomas Winkler <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-6-tomas.winkler@intel.com>
-From:   Nayna Jain <nayna@linux.ibm.com>
-Date:   Thu, 11 Oct 2018 22:30:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Thu, 11 Oct 2018 21:25:56 -0400
+Received: by mail-yb1-f194.google.com with SMTP id o63-v6so3956359yba.2
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 10:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=7XpdVd9yaWqxN3q4iZjDNpEN2Jt6xA4e1XAH5S9vBsk=;
+        b=MjNWm/BIPZIewSM8hnbIw2eE0ORnTDRuXgPmUACDM+YhdYt4Rl+YFD2mcJhqSM/KCw
+         3COI3U2T2InyASRyjrLkxy84P82z96V6ipys/qdYZiYDY/QHWEsy0qGcjYH6j45tw5aX
+         5T1x3iwQTOZ8IhNkwg1SuhjBGwThjyq/aThiw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=7XpdVd9yaWqxN3q4iZjDNpEN2Jt6xA4e1XAH5S9vBsk=;
+        b=CchAt6PZoQTN+BdIVZWPAo6u7IltY60Af8+PsaVYlNUFuPcV9JTFs9idWwLlOldMLZ
+         zjh8SNti6R9GClWBnunznd0qnAwtQ3sN7JCnze7kv2AUBWPkxR+JVJhTs4gRNxK4Kk8g
+         zrJ31ZbbS7NEZ5PKo6Kq8ze2hjIOjEOkfyssQGBDhyQH+DvSdvn9QzmbGU8cZXN9jijj
+         +Pdw/KaVQKVTQnKM6X1/A8ng3r/Prv68YveCYgCw4u7D8md84HYFQUw7l1ewbpzB4wZf
+         m4XFro2ZAyPChltiXfHu/JM6buRhVzLjOST2j7mMhQ7RG8qzIp1pz0CEblgbkLxl35+E
+         o2zA==
+X-Gm-Message-State: ABuFfohMKwZidfqesq5PYAJkktTevUFeofVtDUmoIqfWYH0GuuAYo7gF
+        lHoAaTVvJuuTIwljWY1Wrvqt4VrzAqs=
+X-Google-Smtp-Source: ACcGV612pb0A83LH4lq/TKzkA/Hsp8akUtwnauZfXa6r13gbB49OmMun/GmRXZZ5yN7MPdg3fbI40g==
+X-Received: by 2002:a25:4246:: with SMTP id p67-v6mr1507982yba.178.1539280657448;
+        Thu, 11 Oct 2018 10:57:37 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id u143-v6sm16087098ywc.28.2018.10.11.10.57.35
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Oct 2018 10:57:36 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id e190-v6so3948339ybb.5
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 10:57:35 -0700 (PDT)
+X-Received: by 2002:a25:3617:: with SMTP id d23-v6mr1530175yba.141.1539280655226;
+ Thu, 11 Oct 2018 10:57:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180928223035.14471-6-tomas.winkler@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18101117-0064-0000-0000-0000035DFAB7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009861; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01101182; UDB=6.00569799; IPR=6.00881228;
- MB=3.00023714; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-11 17:04:00
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101117-0065-0000-0000-00003AF26EBA
-Message-Id: <b6b0fb96-e955-bf86-9bac-e6acee1e33e0@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810110161
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Thu, 11 Oct 2018 10:57:33
+ -0700 (PDT)
+In-Reply-To: <20181011001846.30964-1-keescook@chromium.org>
+References: <20181011001846.30964-1-keescook@chromium.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 11 Oct 2018 10:57:33 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+Message-ID: <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Oct 10, 2018 at 5:18 PM, Kees Cook <keescook@chromium.org> wrote:
+> v5:
+> - redesigned to use CONFIG_LSM= and lsm= for both ordering and enabling
+> - dropped various Reviewed-bys due to rather large refactoring
 
+Here's a tl;dr of the behavioral changes...
 
-On 09/29/2018 04:00 AM, Tomas Winkler wrote:
->
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 73511cd89bef..a97d72fcda5b 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -544,8 +544,10 @@ int tpm_startup(struct tpm_chip *chip);
->   ssize_t tpm_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
->   		   const char *desc, size_t min_cap_length);
->   int tpm_get_timeouts(struct tpm_chip *);
-> -int tpm1_auto_startup(struct tpm_chip *chip);
->   int tpm_do_selftest(struct tpm_chip *chip);
-> +
-> +int tpm1_auto_startup(struct tpm_chip *chip);
+Right now, we have:
 
-What is different in this tpm1_auto_startup(...) and the original one ?
+- hard-coded special LSM: capability which cannot be disabled.
+- hard-coded "minor" LSMs: they are enabled in a static order based on
+whether they are built into the kernel or not: yama, loadpin.
+- a single LSM without a specified order because it only uses the
+early-init position: integrity.
+- "major" LSMs that are selected via CONFIG_DEFAULT_SECURITY= or
+"security=" boot param.
+- SELinux and AppArmor each can enable/disable themselves via
+CONFIG_..._BOOTPARAM_VALUE= and selinux=/apparmor=.
 
-Is this needed ?
+So, right now, systems will have all the minor LSMs and integrity
+initialized if they are built into the kernel without any way to
+control their order or disable them at boot time. To select a major
+LSM, the pattern is:
 
-Thanks & Regards,
-    - Nayna
+selinux=1 security=selinux
 
+Note that both are used here because if you built with
+CONFIG_SELINUX_BOOTPARAM_VALUE=0 and CONFIG_DEFAULT_SECURITY=apparmor,
+just booting with "security=selinux" just disables AppArmor but
+SELinux stays disabled. So the documented way to switch majors is with
+"selinux=1 security=selinux". *However* Tomoyo and Smack do not have
+separate enable/disable logic. They will work fine with just
+"security=smack".
 
-> +int tpm1_get_timeouts(struct tpm_chip *chip);
->   unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
->   unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
->   int tpm_pm_suspend(struct device *dev);
-> @@ -585,6 +587,7 @@ static inline u32 tpm2_rc_value(u32 rc)
->   	return (rc & BIT(7)) ? rc & 0xff : rc;
->   }
->
-> +int tpm2_get_timeouts(struct tpm_chip *chip);
->   int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
->   int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
->   		    struct tpm2_digest *digests);
-> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index dfbe9c60cbcf..978946748ea3 100644
-> --- a/drivers/char/tpm/tpm1-cmd.c
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -307,3 +307,109 @@ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
->   	else
->   		return duration;
->   }
-> +
-> +int tpm1_get_timeouts(struct tpm_chip *chip)
-> +{
-> +	cap_t cap;
-> +	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
-> +	ssize_t rc;
-> +
-> +	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
-> +			sizeof(cap.timeout));
-> +	if (rc == TPM_ERR_INVALID_POSTINIT) {
-> +		if (tpm_startup(chip))
-> +			return rc;
-> +
-> +		rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap,
-> +				"attempting to determine the timeouts",
-> +				sizeof(cap.timeout));
-> +	}
-> +
-> +	if (rc) {
-> +		dev_err(&chip->dev, "A TPM error (%zd) occurred attempting to determine the timeouts\n",
-> +			rc);
-> +		return rc;
-> +	}
-> +
-> +	timeout_old[0] = jiffies_to_usecs(chip->timeout_a);
-> +	timeout_old[1] = jiffies_to_usecs(chip->timeout_b);
-> +	timeout_old[2] = jiffies_to_usecs(chip->timeout_c);
-> +	timeout_old[3] = jiffies_to_usecs(chip->timeout_d);
-> +	timeout_chip[0] = be32_to_cpu(cap.timeout.a);
-> +	timeout_chip[1] = be32_to_cpu(cap.timeout.b);
-> +	timeout_chip[2] = be32_to_cpu(cap.timeout.c);
-> +	timeout_chip[3] = be32_to_cpu(cap.timeout.d);
-> +	memcpy(timeout_eff, timeout_chip, sizeof(timeout_eff));
-> +
-> +	/*
-> +	 * Provide ability for vendor overrides of timeout values in case
-> +	 * of misreporting.
-> +	 */
-> +	if (chip->ops->update_timeouts)
-> +		chip->timeout_adjusted =
-> +			chip->ops->update_timeouts(chip, timeout_eff);
-> +
-> +	if (!chip->timeout_adjusted) {
-> +		/* Restore default if chip reported 0 */
-> +		unsigned int i;
-> +
-> +		for (i = 0; i < ARRAY_SIZE(timeout_eff); i++) {
-> +			if (timeout_eff[i])
-> +				continue;
-> +
-> +			timeout_eff[i] = timeout_old[i];
-> +			chip->timeout_adjusted = true;
-> +		}
-> +
-> +		if (timeout_eff[0] != 0 && timeout_eff[0] < 1000) {
-> +			/* timeouts in msec rather usec */
-> +			for (i = 0; i != ARRAY_SIZE(timeout_eff); i++)
-> +				timeout_eff[i] *= 1000;
-> +			chip->timeout_adjusted = true;
-> +		}
-> +	}
-> +
-> +	/* Report adjusted timeouts */
-> +	if (chip->timeout_adjusted) {
-> +		dev_info(&chip->dev, HW_ERR "Adjusting reported timeouts: A %lu->%luus B %lu->%luus C %lu->%luus D %lu->%luus\n",
-> +			 timeout_chip[0], timeout_eff[0],
-> +			 timeout_chip[1], timeout_eff[1],
-> +			 timeout_chip[2], timeout_eff[2],
-> +			 timeout_chip[3], timeout_eff[3]);
-> +	}
-> +
-> +	chip->timeout_a = usecs_to_jiffies(timeout_eff[0]);
-> +	chip->timeout_b = usecs_to_jiffies(timeout_eff[1]);
-> +	chip->timeout_c = usecs_to_jiffies(timeout_eff[2]);
-> +	chip->timeout_d = usecs_to_jiffies(timeout_eff[3]);
-> +
-> +	rc = tpm_getcap(chip, TPM_CAP_PROP_TIS_DURATION, &cap,
-> +			"attempting to determine the durations",
-> +			sizeof(cap.duration));
-> +	if (rc)
-> +		return rc;
-> +
-> +	chip->duration[TPM_SHORT] =
-> +		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_short));
-> +	chip->duration[TPM_MEDIUM] =
-> +		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_medium));
-> +	chip->duration[TPM_LONG] =
-> +		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
-> +	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
-> +
-> +	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
-> +	 * value wrong and apparently reports msecs rather than usecs. So we
-> +	 * fix up the resulting too-small TPM_SHORT value to make things work.
-> +	 * We also scale the TPM_MEDIUM and -_LONG values by 1000.
-> +	 */
-> +	if (chip->duration[TPM_SHORT] < (HZ / 100)) {
-> +		chip->duration[TPM_SHORT] = HZ;
-> +		chip->duration[TPM_MEDIUM] *= 1000;
-> +		chip->duration[TPM_LONG] *= 1000;
-> +		chip->duration_adjusted = true;
-> +		dev_info(&chip->dev, "Adjusting TPM timeout parameters.");
-> +	}
-> +
-> +	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-> +	return 0;
-> +}
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 5e7bf8842be0..49df54b0e210 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -40,6 +40,28 @@ static struct tpm2_hash tpm2_hash_map[] = {
->   	{HASH_ALGO_SM3_256, TPM2_ALG_SM3_256},
->   };
->
-> +int tpm2_get_timeouts(struct tpm_chip *chip)
-> +{
-> +	/* Fixed timeouts for TPM2 */
-> +	chip->timeout_a = msecs_to_jiffies(TPM2_TIMEOUT_A);
-> +	chip->timeout_b = msecs_to_jiffies(TPM2_TIMEOUT_B);
-> +	chip->timeout_c = msecs_to_jiffies(TPM2_TIMEOUT_C);
-> +	chip->timeout_d = msecs_to_jiffies(TPM2_TIMEOUT_D);
-> +
-> +	/* PTP spec timeouts */
-> +	chip->duration[TPM_SHORT] = msecs_to_jiffies(TPM2_DURATION_SHORT);
-> +	chip->duration[TPM_MEDIUM] = msecs_to_jiffies(TPM2_DURATION_MEDIUM);
-> +	chip->duration[TPM_LONG] = msecs_to_jiffies(TPM2_DURATION_LONG);
-> +
-> +	/* Key creation commands long timeouts */
-> +	chip->duration[TPM_LONG_LONG] =
-> +		msecs_to_jiffies(TPM2_DURATION_LONG_LONG);
-> +
-> +	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
-> +
-> +	return 0;
-> +}
-> +
->   /**
->    * tpm2_ordinal_duration_index() - returns an index to the chip duration table
->    * @ordinal: TPM command ordinal.
+Now, in order to gain arbitrary LSM ordering, this series introduces
+CONFIG_LSM= (to replace CONFIG_DEFAULT_SECURITY=) and "lsm=" (to
+replace "security="). Note that "security=" has not been removed -- it
+will still work. Mixing it with "lsm=" can lead to situations where
+"security=" becomes effectively ignored, though.
 
+In the rest of this I'm going to ignore capability: it will always be
+first and it will always be enabled.
+
+Assuming that all LSMs are built in (e.g. yama, loadpin, selinux,
+smack, tomoyo, apparmor, integrity), here are the changes:
+
+To choose the "default major LSM" of AppArmor before:
+CONFIG_DEFAULT_SECURITY=apparmor
+
+To choose the "default major LSM" of AppArmor _without_ extreme stacking now:
+CONFIG_LSM=yama,loadpin,integrity,apparmor
+
+To choose the "default major LSM" of AppArmor with future extreme stacking now:
+CONFIG_LSM=yama,loadpin,integrity,apparmor,tomoyo,selinux,smack
+
+Whichever exclusive LSM is listed _first_ will be the first to attempt
+initialization. Any non-conflicting LSMs following it will initialize
+too.
+
+This means a distro can disable the "blob-sharing" behavior by just
+providing a CONFIG_LSM= that includes a single major LSM.
+
+To switch to SELinux at boot time with
+"CONFIG_LSM=yama,loadpin,integrity,apparmor", the old way continues to
+work:
+
+selinux=1 security=selinux
+
+This will work still, since it will enable selinux (selinux=1) and
+disable all other major LSMs (security=selinux).
+
+The new way to enable selinux would be using
+"lsm=yama,loadpin,integrity,selinux".
+
+To see the behaviors, you can boot with "lsm.debug". (Note that
+CONFIG_LSM= and "lsm=" are handled exactly the same, so a boot with
+"lsm=" would see the same results as a boot without "lsm=", but with
+CONFIG_LSM= set to that string.) An example:
+
+lsm.debug lsm=integrity,cows,loadpin,capability,apparmor,tomoyo
+selinux=1 security=selinux
+
+produces:
+
+[    0.292502] LSM: Security Framework initializing
+[    0.293109] LSM: security=selinux disabled: smack
+[    0.293464] LSM: security=selinux disabled: tomoyo
+[    0.294464] LSM: security=selinux disabled: apparmor
+[    0.295109] LSM: first ordering: capability (enabled)
+[    0.295464] LSM: cmdline ordering: integrity (enabled)
+[    0.296464] LSM: cmdline ignored: cows
+[    0.296953] LSM: cmdline ordering: loadpin (enabled)
+[    0.297464] LSM: cmdline ignored: capability
+[    0.298464] LSM: cmdline ordering: apparmor (disabled)
+[    0.299136] LSM: cmdline ordering: tomoyo (disabled)
+[    0.299464] LSM: security= ordering: selinux (enabled)
+[    0.300464] LSM: cmdline disabled: smack
+[    0.300979] LSM: cmdline disabled: yama
+[    0.301464] LSM: exclusive chosen: selinux
+[    0.302008] LSM: initializing capability
+[    0.302464] LSM: initializing integrity
+[    0.302968] LSM: initializing loadpin
+[    0.303464] LoadPin: ready to pin (currently not enforcing)
+[    0.304464] LSM: initializing selinux
+[    0.304946] SELinux:  Initializing.
+
+With yama left out of lsm=, it is disabled. Invalid,
+non-mutable-order, or unbuilt LSMs are ignored (i.e. "cows" and
+"capability" above). "security=selinux" disables all the other majors
+(their ordering is left alone) and things not mentioned in lsm= and[1]
+security= are explicitly disabled (and left out of the ordering).
+
+Another example, without "security="...
+
+lsm.debug lsm=integrity,yama,cows,loadpin,capability,apparmor,tomoyo,selinux,smack
+
+[    0.291697] LSM: Security Framework initializing
+[    0.292660] LSM: first ordering: capability (enabled)
+[    0.293337] LSM: cmdline ordering: integrity (enabled)
+[    0.293659] LSM: cmdline ordering: yama (enabled)
+[    0.294659] LSM: cmdline ignored: cows
+[    0.295169] LSM: cmdline ordering: loadpin (enabled)
+[    0.295659] LSM: cmdline ignored: capability
+[    0.296231] LSM: cmdline ordering: apparmor (enabled)
+[    0.296659] LSM: cmdline ordering: tomoyo (enabled)
+[    0.297659] LSM: cmdline ordering: selinux (enabled)
+[    0.298659] LSM: cmdline ordering: smack (enabled)
+[    0.299309] LSM: exclusive chosen: apparmor
+[    0.299659] LSM: exclusive disabled: tomoyo
+[    0.300216] LSM: exclusive disabled: selinux
+[    0.300659] LSM: exclusive disabled: smack
+[    0.301208] LSM: initializing capability
+[    0.301659] LSM: initializing integrity
+[    0.302662] LSM: initializing yama
+[    0.303124] Yama: becoming mindful.
+[    0.303666] LSM: initializing loadpin
+[    0.304164] LoadPin: ready to pin (currently not enforcing)
+[    0.304660] LSM: initializing apparmor
+[    0.305179] AppArmor: AppArmor initialized
+
+Given that apparmor is listed first, its exclusivity disables the
+other exclusive LSMs, and initialization proceeds.
+
+So, this should work for all the cases we've got coming, as far as I can see! :)
+
+-Kees
+
+[1] In testing v5, I did discover one glitch in my "security="
+handling, which I've fixed locally now for v6.
+
+-- 
+Kees Cook
+Pixel Security
