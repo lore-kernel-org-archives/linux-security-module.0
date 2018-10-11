@@ -2,182 +2,228 @@ Return-Path: <SRS0=pW3O=MX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FC1C677FC
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 21:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D8BC67837
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 22:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37EB620644
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 21:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29EBE20841
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Oct 2018 22:58:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EYuT8afB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37EB620644
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="JePUwiNa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29EBE20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726210AbeJLEnX (ORCPT
+        id S1726218AbeJLG1x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 00:43:23 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44517 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbeJLEnX (ORCPT
+        Fri, 12 Oct 2018 02:27:53 -0400
+Received: from mail-40135.protonmail.ch ([185.70.40.135]:55408 "EHLO
+        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbeJLG1x (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 00:43:23 -0400
-Received: by mail-oi1-f193.google.com with SMTP id u74-v6so8235962oia.11
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Oct 2018 14:14:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=e68ODD2SwmXrBHJ/fcgCwU2Ra+8m7ojuXuXDxsXA/0s=;
-        b=EYuT8afBJp+qHpGKxdfJ+P515OVHmDsNixocWW0vxSMUAYtBwVjHqQ5KeccB43xkYC
-         Vm4eE2pKfR4nc5YnbHxqMMxX2nTpwqwBqG1IF+fg2+wjOv16cWvZ+wsU5E/zbWqg/qC/
-         lniNPVfq3tLxfqk6l0xMsDEEYV1ec+z0k2GyYxvq7s67RYztoSmtf0aeVRrmQmr7FFZu
-         fNrVQrUukaafdyiGfvu7dd6dqYLvB4dyvydQ6ynjROAZMJ1gmk9TWYLQnXrlE/1Do9YA
-         CYsuZJXjC9jir5BgYKgwz92D5tQUr6gorm9aOWOoFPhklf60rKD4fqogcuqBllrQUduw
-         wR9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=e68ODD2SwmXrBHJ/fcgCwU2Ra+8m7ojuXuXDxsXA/0s=;
-        b=iynvFT2TqcK7/AxrMQaedikO9yrVqgKCrHI8KKYVnv52wIZu1+KWwKHgHcCfeySpcC
-         kQbXy3kSAP+AahBV+KBKCiZE6n10IywEFWcdIxHS1dqQAy8EFcJCszJ+le+HMIOQp0TM
-         GEuvDzYxp/Y874HckKHpeWTbvnPItk/r68AE7V6UZ/qo0qqbwY5C0R0LOTetvpqC9LCc
-         RVbahC2fxjynR6Yj3EbWrME3we6HuXBX3LcOfA4iNO4yooL7/rvOKuXfna7rKoL3UXjn
-         5JH72dXIqu+Hp6iYI7rnPnPkZ8I96o7mytNhrsiT/HWyeX3Fe/Cwg0Vtsz2dHuhQjMYJ
-         umpg==
-X-Gm-Message-State: ABuFfogC9RufICIeefUHJs2QZx+N/UjZn5/4jgrMPbUYBOVmqq3EkfWr
-        xTurW6q0sOQFZz3Rq0wMd+lS0W1EcoJdvy53slcfrg==
-X-Google-Smtp-Source: ACcGV61wyg7W9kD94lAL3Y9DOrvyoTTHis6spTzk8ZDB3SpKERhNgL1lOfYoV5jHxub+yqs35ZOMLbhdFZ7wQHbe95o=
-X-Received: by 2002:aca:490b:: with SMTP id w11-v6mr1782267oia.126.1539292459197;
- Thu, 11 Oct 2018 14:14:19 -0700 (PDT)
+        Fri, 12 Oct 2018 02:27:53 -0400
+Date:   Thu, 11 Oct 2018 22:58:21 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1539298704;
+        bh=U7vuDGTuuk6QB8i/MHG2kvDaaLJRTJOLm+wp1OfFL+M=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=JePUwiNaUoigfu0R+NY1YSP39lkZOyqlIY3fuYbf+z1htt+48ZqV9cEeX1rdFUpp0
+         KWls9jg7vTRLEThkkKn+zkc5dKkSRyjOSc/YXsFUJ3QK+tCfqI7xH//xmuNWHaJ9W9
+         OrkGhX2e0iw2pf04igOGGtGca+OfzrBphk2a1xJo=
+To:     Kees Cook <keescook@chromium.org>
+From:   Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+Message-ID: <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
+In-Reply-To: <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+References: <20181011001846.30964-1-keescook@chromium.org>
+ <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
 MIME-Version: 1.0
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 11 Oct 2018 23:13:52 +0200
-Message-ID: <CAG48ez3_1h8pJD43zmPfkmyJ78xoToqmbmM99MiO0gXXXL=b5A@mail.gmail.com>
-Subject: [RFC] proposal for resolving the cred_guard_mutex deadlock
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, John Johansen <john.johansen@canonical.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi!
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Thursday, October 11, 2018 7:57 PM, Kees Cook <keescook@chromium.org> wr=
+ote:
 
-There is that old deadlock of cred_guard_mutex that I originally heard
-about from Oleg, and that has come up on LKML sometimes since then; to
-recap, essentially, the problem is demonstrated by the following
-testcase:
+> On Wed, Oct 10, 2018 at 5:18 PM, Kees Cook keescook@chromium.org wrote:
+>
+> > v5:
+> >
+> > -   redesigned to use CONFIG_LSM=3D and lsm=3D for both ordering and en=
+abling
+> > -   dropped various Reviewed-bys due to rather large refactoring
+>
+> Here's a tl;dr of the behavioral changes...
+>
+> Right now, we have:
+>
+> -   hard-coded special LSM: capability which cannot be disabled.
+> -   hard-coded "minor" LSMs: they are enabled in a static order based on
+>     whether they are built into the kernel or not: yama, loadpin.
+>
+> -   a single LSM without a specified order because it only uses the
+>     early-init position: integrity.
+>
+> -   "major" LSMs that are selected via CONFIG_DEFAULT_SECURITY=3D or
+>     "security=3D" boot param.
+>
+> -   SELinux and AppArmor each can enable/disable themselves via
+>     CONFIG_..._BOOTPARAM_VALUE=3D and selinux=3D/apparmor=3D.
+>
+>     So, right now, systems will have all the minor LSMs and integrity
+>     initialized if they are built into the kernel without any way to
+>     control their order or disable them at boot time. To select a major
+>     LSM, the pattern is:
+>
+>     selinux=3D1 security=3Dselinux
+>
+>     Note that both are used here because if you built with
+>     CONFIG_SELINUX_BOOTPARAM_VALUE=3D0 and CONFIG_DEFAULT_SECURITY=3Dappa=
+rmor,
+>     just booting with "security=3Dselinux" just disables AppArmor but
+>     SELinux stays disabled. So the documented way to switch majors is wit=
+h
+>     "selinux=3D1 security=3Dselinux". However Tomoyo and Smack do not hav=
+e
+>     separate enable/disable logic. They will work fine with just
+>     "security=3Dsmack".
+>
+>     Now, in order to gain arbitrary LSM ordering, this series introduces
+>     CONFIG_LSM=3D (to replace CONFIG_DEFAULT_SECURITY=3D) and "lsm=3D" (t=
+o
+>     replace "security=3D"). Note that "security=3D" has not been removed =
+-- it
+>     will still work. Mixing it with "lsm=3D" can lead to situations where
+>     "security=3D" becomes effectively ignored, though.
+>
+>     In the rest of this I'm going to ignore capability: it will always be
+>     first and it will always be enabled.
+>
+>     Assuming that all LSMs are built in (e.g. yama, loadpin, selinux,
+>     smack, tomoyo, apparmor, integrity), here are the changes:
+>
+>     To choose the "default major LSM" of AppArmor before:
+>     CONFIG_DEFAULT_SECURITY=3Dapparmor
+>
+>     To choose the "default major LSM" of AppArmor without extreme stackin=
+g now:
+>     CONFIG_LSM=3Dyama,loadpin,integrity,apparmor
+>
+>     To choose the "default major LSM" of AppArmor with future extreme sta=
+cking now:
+>     CONFIG_LSM=3Dyama,loadpin,integrity,apparmor,tomoyo,selinux,smack
+>
+>     Whichever exclusive LSM is listed first will be the first to attempt
+>     initialization. Any non-conflicting LSMs following it will initialize
+>     too.
+>
+>     This means a distro can disable the "blob-sharing" behavior by just
+>     providing a CONFIG_LSM=3D that includes a single major LSM.
+>
+>     To switch to SELinux at boot time with
+>     "CONFIG_LSM=3Dyama,loadpin,integrity,apparmor", the old way continues=
+ to
+>     work:
+>
+>     selinux=3D1 security=3Dselinux
+>
+>     This will work still, since it will enable selinux (selinux=3D1) and
+>     disable all other major LSMs (security=3Dselinux).
+>
+>     The new way to enable selinux would be using
+>     "lsm=3Dyama,loadpin,integrity,selinux".
+>
 
-========
-#include <pthread.h>
-#include <stdlib.h>
-#include <sys/ptrace.h>
-#include <unistd.h>
-#include <signal.h>
+It seems to me that legacy way is more user friendly than the new one.
+AppArmor and SElinux are households names but the rest may be enigmatic
+for most users and the need for explicit passing them all may be
+troublesome. Especially when the new ones like sara,landlock or cows :)
+will be incoming. Moreover to knew what you have to pass there, you need
+to look at CONFIG_LSM in kernel config (which will vary across distros
+and also mean copy-paste from the web source may won't work as expected)
+which again most users don't do.
 
-void *thread(void *arg) {
-        ptrace(PTRACE_TRACEME, 0, 0, 0);
-        return NULL;
-}
+I think there is risk that users will end up with "lsm=3Dselinux" without
+realizing that they may disable something along the way.
 
-int main(void) {
-        int pid = fork();
+I would prefer for "lsm=3D" to work as override to "CONFIG_LSM=3D" with
+below assumptions:
 
-        if (!pid) {
-                pthread_t pt;
-                pthread_create(&pt, NULL, thread, NULL);
-                pthread_join(pt, NULL);
-                execlp("echo", "echo", "passed", NULL);
-        }
+I. lsm=3D"$lsm" will append "$lsm" at the end of string. Before extreme
+stacking it will also remove the other major (explicit) lsm from it.
 
-        sleep(1);
+II. lsm=3D"!$lsm" will remove "$lsm" from the string.
 
-        ptrace(PTRACE_ATTACH, pid, 0, 0);
-        kill(pid, SIGCONT);
+III. If "$lsm" already exist in the string, it's moved at the end of it
+(this will cover ordering).
 
-        return 0;
-}
-========
+Examples:
 
-The parent gets stuck in ptrace(), waiting for the cred_guard_mutex:
+1. Without extreme stacking.
 
-========
-[<0>] ptrace_attach+0x97/0x250
-[<0>] __x64_sys_ptrace+0xa2/0x100
-[<0>] do_syscall_64+0x55/0x110
-[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-========
+a) Enable selinux, disable apparmor and leave the rest untouched.
 
-The child gets stuck in execve(), waiting in de_thread() for its other thread:
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux =3D yama,load=
+pin,integrity,selinux
 
-========
-? __schedule+0x2b7/0x880
-schedule+0x28/0x80
-flush_old_exec+0xc8/0x6c0
-load_elf_binary+0x291/0x15d0
-? get_user_pages_remote+0x137/0x1f0
-? get_acl+0x1a/0x100
-search_binary_handler+0x90/0x1c0
-__do_execve_file.isra.37+0x6b8/0x880
-__x64_sys_execve+0x34/0x40
-do_syscall_64+0x55/0x110
-entry_SYSCALL_64_after_hwframe+0x44/0xa9
-========
+b) Enable selinux, disable apparmor and disable loadpin.
 
-But the other thread can't exit until the ptrace parent handles it;
-and the ptrace parent is stuck in another syscall, and therefore can't
-wait() for that thread.
-
-This can cause debuggers to lock up, and also gets in the way of
-taking cred_guard_mutex in more places (since that'd make the deadlock
-worse).
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux,!loadpin =3D =
+yama,integrity,selinux
 
 
-IMO at the core of the problem is that the cred_guard_mutex is held
-across pretty much all of sys_execve(), and in particular across
-do_thread(). I think that actually, we could drop the cred_guard_mutex
-before waiting for sibling threads if we make things like the ptrace
-check a bit more complicated.
+2. With extreme stacking.
 
-At the moment, cred_guard_mutex is held across de_thread() and beyond
-to protect against things like seccomp TSYNC from a sibling thread or
-ptrace attach. For TSYNC, this is necessary because another thread
-could try to TSYNC to us as long as we're not done with de_thread();
-for ptrace attach, this is necessary because we only switch
-credentials after de_thread(). But just doing the credential switch
-earlier would also be dangerous.
+a) Enable selinux, disable apparmor and leave the rest untouched.
 
-So here's my idea:
-When we're done calculating the post-execve creds (which happens
-before de_thread()), we stash a pointer to the post-exec creds in
-current->signal (or in current?). Then, in de_thread(), once we know
-that all our siblings have been zapped, we drop the cred_guard_mutex
-*before* the loop that waits for the siblings to exit. At that point,
-sibling threads that are mid-syscall and other processes can try to
-interact with us again. This means:
-For accesses that are permitted based on whether the access is
-same-thread (in particular TSYNC and probably also the
-same_thread_group() check in ptrace), we'll have to check whether exec
-creds are stashed in current->signal; if so, we have to bail out. Any
-error code we return there shouldn't be visible to userspace, since
-this can only happen to a thread that has already been zapped.
-For accesses that go through ptrace_may_access(), we'll have to expand
-the check such that, if an attempt is made to access a task that is
-currently going through execve, the access check is performed against
-*both* its old and its new credentials. This also means that the
-target credentials will have to be plumbed into the LSMs in addition
-to the target task pointer.
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux,!apparmor =3D=
+ yama,loadpin,integrity,selinux
 
-Opinions? If nobody thinks that this is an incredibly stupid idea,
-I'll try to come up with some patches.
+b) Enable selinux, disable apparmor and disable loadpin.
+
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux,!apparmor,!lo=
+adpin =3D yama,integrity,selinux
+
+c) Enable selinux and order it after apparmor.
+
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux =3D yama,load=
+pin,integrity,apparmor,selinux
+
+d) Enable selinux and order it before apparmor.
+
+CONFIG_LSM=3Dyama,loadpin,integrity,apparmor && lsm=3Dselinux,apparmor =3D =
+yama,loadpin,integrity,selinux,apparmor
+
+
+IMO above will be easier to handle for users. At worst case with
+full ordering all existing lsm's it will look the same as what
+Kees proposes but I assume that ordering is rather for more
+advanced people.
+
+It's possible that something lime this was discussed already
+but without full examples it was hard to me for tracking things.
+
+Jordan
