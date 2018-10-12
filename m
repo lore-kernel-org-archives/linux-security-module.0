@@ -2,150 +2,143 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DFBC71122
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 586F8C6787C
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:06:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1EE520868
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:02:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F28F320868
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:06:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="ChM4m4T1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1EE520868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wv3KQJCw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F28F320868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbeJMDga (ORCPT
+        id S1726896AbeJMDkh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:36:30 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45763 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbeJMDga (ORCPT
+        Fri, 12 Oct 2018 23:40:37 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34320 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbeJMDkg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:36:30 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y15-v6so6400965plr.12
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 13:02:23 -0700 (PDT)
+        Fri, 12 Oct 2018 23:40:36 -0400
+Received: by mail-ot1-f68.google.com with SMTP id v2so6348183otk.1
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 13:06:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vdPSDV1B51J0pwMLq40tWD88fqUwXxbWUb+50kgxuLY=;
-        b=ChM4m4T1i7GmucBU/JzgZcdOBchmQMqV863MHvfTtOF4s+NnnLc265AvTnM96PjZT5
-         WbQwbeC0yfsIXLgkmthuurYIB75taeGLI6vpqi/lwf3/s900+Tmajz93MaNSCUu+ucZb
-         ERyg95dOq3h4e9WHPn9BQYj7PD9lKK/1dym1Z+UdoJ4t1/kNr8As+d5xA6Oj3vyPOKQ5
-         CkWICxcewCPGYcMaHABsvuUvgmEvnCDRSY+Gl5v3+pnXa2Gi6xKTS4fnpRWWIE6EcU4Y
-         rr6xYYB3f5pjFCQTp2kXsdDJ1so6YuSOZLJU4BrFqeT+VkRMeI/uCQO+bmtbnBQ2wMqD
-         UsCA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uuFoRplXvuDg46hTY7eUtJi9J7lxsD7NBeqO8bQS2sU=;
+        b=Wv3KQJCwZZffnr9xmpNIUnptsIKSFgA9EiAwatfbv+YM20VkNox/0y55fUkx/7ghw+
+         pnrbPE0fitpeqXABKqxZ+DtjjL1Qu65KSmBgc6CHpwdWI14YfGcE3F2yVTuv/ffTEm8n
+         9uNpIqAY5Cfz8GNrip5DtYxjdXBAvNeKaUEaATCpizlb+zBSQ/p2lqI0G8N9xrcEdkRR
+         wcZAQdPiZzGnBZK70fstC3MWOVJUy1OJ2wX6V5udh8g8RziR4jbHd448LKVYGMrfF/Xg
+         PKqv8XwX3EY6kTW+wGvHdUqy3ETgGyZKA9nqRVw5SxMRe7kN+Eb979vgqqbfvjy6zjXT
+         b4iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vdPSDV1B51J0pwMLq40tWD88fqUwXxbWUb+50kgxuLY=;
-        b=Wx5/P0bkccwVl+YA4b4t/LqE9YCu2uP7LSOaZq01PP76eJSKbNMW9iBb9kLEyHsvfk
-         WcDy8NXPbh/mx8GN2ShQ+Hn6Vs1tk4lDALbHaOZM5KsCk25j+ypkqYZhdWSkifqhrxKQ
-         0Lg5wP+L/0C8lJmDnfrCxwMV0ypst/VHRdOSxQgy3EECrVop3o5GffQYVubQTT5iYv9T
-         mtYieodJB87wz3gZ2ZKX4WQPjSc6AjvMEv3X2707o/mtEM3Ua7pR7ffz6zgckMzrKb/0
-         LGiZSGvJ0dDMA9wCiIeR6+/IvfsoDqNh2kP0PPDMQswdfkT0UGhPOw84KDy3ifyjEDQY
-         pEVg==
-X-Gm-Message-State: ABuFfoh8eTKVCUPvX6mp8aHgVIGKf0Qn/NjGG+bYsi+zD0B2zYNI0RGc
-        AcjA9nhlyLA1F9ByqakmawpUsA==
-X-Google-Smtp-Source: ACcGV63kYvoDYx3c4gGc5V+dnS9PX9Zaf4WDN9ntwJ2Q1nx/EjA/Q57lSDzO93IlzSprxxNCt9xyeA==
-X-Received: by 2002:a17:902:2:: with SMTP id 2-v6mr7334285pla.178.1539374542955;
-        Fri, 12 Oct 2018 13:02:22 -0700 (PDT)
-Received: from cisco ([128.107.241.177])
-        by smtp.gmail.com with ESMTPSA id q25-v6sm3658697pfk.154.2018.10.12.13.02.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 12 Oct 2018 13:02:21 -0700 (PDT)
-Date:   Fri, 12 Oct 2018 13:02:20 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Oleg Nesterov <oleg@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SELinux-NSA <selinux@tycho.nsa.gov>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
-Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
- ptrace
-Message-ID: <20181012200220.GC5530@cisco>
-References: <20181008181815.pwnqxngj22mhm2vj@brauner.io>
- <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
- <20181009132850.fp6yne2vgmfpi27k@brauner.io>
- <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uuFoRplXvuDg46hTY7eUtJi9J7lxsD7NBeqO8bQS2sU=;
+        b=pMG7ObY71RUFX1qENzPfPA4xag/Og0R7dr1FoqvXQIQz+LLDV7pGaBZWsZGSWLRh6H
+         iOUAdOjL7vns73rmKq8d8HoQeFtU8JwZlerBW1lP3AtIsIcApp25XycoLVu9ZmYbyau9
+         GgL9YwueKXtMS8cBhO9HTeuTejFLOizysgPbqjjZ+OdXrXMH2vbGAYjkhpQD4778afXR
+         DNUgYhPgFcRYaYqc4TSFzmdgvkrmzTYUMhUsmF8gKNrAp2/rBBvaYVJ0TGmgNFgahZob
+         kqmU66Boq7tQWrAEgFONnC+732QuyxaJwb8kvlGz93XUtmwZYKLQAVBHXa/i+/BI0xjQ
+         XUZQ==
+X-Gm-Message-State: ABuFfogRYaEHY2ZMImApKqA9XxaRNf4m2t/l/xLugZRqQTMCU/T0IT7u
+        cnYQnK3+R54mmMEHxiVsX+0QHiLcXQl7IUgsDGS7BQ==
+X-Google-Smtp-Source: ACcGV62U4W/sXvna70NoU1KyEKejpbKQBChwBNYTGG28EyCI8YeyFJcWp1xqVhTcTI5fj1vWnuvWWF345JRwK/1HisM=
+X-Received: by 2002:a9d:4c15:: with SMTP id l21mr4905031otf.242.1539374787986;
+ Fri, 12 Oct 2018 13:06:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181008181815.pwnqxngj22mhm2vj@brauner.io> <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+ <20181009132850.fp6yne2vgmfpi27k@brauner.io> <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
  <CAHC9VhQfzJgG3i=Q8C+pGY2Lpr+2MRTwxgUWec_heGOecd=xRg@mail.gmail.com>
  <CAG48ez2hTBFwmA65FXv0zJjc0_wpc1S-uOBn1t+X=0vPH25YvQ@mail.gmail.com>
  <16662034750.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
  <CAG48ez0=NRRu2FUZFwdDSMmkdWsFi1XSSPTO8bL84YAY=jOzMQ@mail.gmail.com>
  <1666564e4f8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <CALCETrV1fWKJe96ow3XGy_kmZoXoehb99e4AZehsO84YGxKjgQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrV1fWKJe96ow3XGy_kmZoXoehb99e4AZehsO84YGxKjgQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+ <CALCETrV1fWKJe96ow3XGy_kmZoXoehb99e4AZehsO84YGxKjgQ@mail.gmail.com> <20181012200220.GC5530@cisco>
+In-Reply-To: <20181012200220.GC5530@cisco>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 12 Oct 2018 22:06:00 +0200
+Message-ID: <CAG48ez3o0t6UjtdsuiUck7ijJiA39uy5Jfno28UMMq_Q1d=s8g@mail.gmail.com>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Paul Moore <paul@paul-moore.com>, christian@brauner.io,
+        Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
+        Oleg Nesterov <oleg@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@tycho.nsa.gov, Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 11, 2018 at 06:02:06PM -0700, Andy Lutomirski wrote:
-> On Thu, Oct 11, 2018 at 4:10 PM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On October 11, 2018 9:40:06 AM Jann Horn <jannh@google.com> wrote:
-> > > On Thu, Oct 11, 2018 at 9:24 AM Paul Moore <paul@paul-moore.com> wrote:
-> > >> On October 10, 2018 11:34:11 AM Jann Horn <jannh@google.com> wrote:
-> > >>> On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
-> > >>>> On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
-> > >>>>> +cc selinux people explicitly, since they probably have opinions on this
-> > >>>>
-> > >>>> I just spent about twenty minutes working my way through this thread,
-> > >>>> and digging through the containers archive trying to get a good
-> > >>>> understanding of what you guys are trying to do, and I'm not quite
-> > >>>> sure I understand it all.  However, from what I have seen, this
-> > >>>> approach looks very ptrace-y to me (I imagine to others as well based
-> > >>>> on the comments) and because of this I think ensuring the usual ptrace
-> > >>>> access controls are evaluated, including the ptrace LSM hooks, is the
-> > >>>> right thing to do.
-> > >>>
-> > >>> Basically the problem is that this new ptrace() API does something
-> > >>> that doesn't just influence the target task, but also every other task
-> > >>> that has the same seccomp filter. So the classic ptrace check doesn't
-> > >>> work here.
-> > >>
-> > >> Due to some rather unfortunate events today I'm suddenly without easy access to the kernel code, but would it be possible to run the LSM ptrace access control checks against all of the affected tasks?  If it is possible, how painful would it be?
+On Fri, Oct 12, 2018 at 10:02 PM Tycho Andersen <tycho@tycho.ws> wrote:
+> On Thu, Oct 11, 2018 at 06:02:06PM -0700, Andy Lutomirski wrote:
+> > On Thu, Oct 11, 2018 at 4:10 PM Paul Moore <paul@paul-moore.com> wrote:
 > > >
-> > > There are currently no backlinks from seccomp filters to the tasks
-> > > that use them; the only thing you have is a refcount. If the refcount
-> > > is 1, and the target task uses the filter directly (it is the last
-> > > installed one), you'd be able to infer that the ptrace target is the
-> > > only task with a reference to the filter, and you could just do the
-> > > direct check; but if the refcount is >1, you might end up having to
-> > > take some spinlock and then iterate over all tasks' filters with that
-> > > spinlock held, or something like that.
+> > > On October 11, 2018 9:40:06 AM Jann Horn <jannh@google.com> wrote:
+> > > > On Thu, Oct 11, 2018 at 9:24 AM Paul Moore <paul@paul-moore.com> wrote:
+> > > >> On October 10, 2018 11:34:11 AM Jann Horn <jannh@google.com> wrote:
+> > > >>> On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > >>>> On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
+> > > >>>>> +cc selinux people explicitly, since they probably have opinions on this
+> > > >>>>
+> > > >>>> I just spent about twenty minutes working my way through this thread,
+> > > >>>> and digging through the containers archive trying to get a good
+> > > >>>> understanding of what you guys are trying to do, and I'm not quite
+> > > >>>> sure I understand it all.  However, from what I have seen, this
+> > > >>>> approach looks very ptrace-y to me (I imagine to others as well based
+> > > >>>> on the comments) and because of this I think ensuring the usual ptrace
+> > > >>>> access controls are evaluated, including the ptrace LSM hooks, is the
+> > > >>>> right thing to do.
+> > > >>>
+> > > >>> Basically the problem is that this new ptrace() API does something
+> > > >>> that doesn't just influence the target task, but also every other task
+> > > >>> that has the same seccomp filter. So the classic ptrace check doesn't
+> > > >>> work here.
+> > > >>
+> > > >> Due to some rather unfortunate events today I'm suddenly without easy access to the kernel code, but would it be possible to run the LSM ptrace access control checks against all of the affected tasks?  If it is possible, how painful would it be?
+> > > >
+> > > > There are currently no backlinks from seccomp filters to the tasks
+> > > > that use them; the only thing you have is a refcount. If the refcount
+> > > > is 1, and the target task uses the filter directly (it is the last
+> > > > installed one), you'd be able to infer that the ptrace target is the
+> > > > only task with a reference to the filter, and you could just do the
+> > > > direct check; but if the refcount is >1, you might end up having to
+> > > > take some spinlock and then iterate over all tasks' filters with that
+> > > > spinlock held, or something like that.
+> > >
+> > > That's what I was afraid of.
+> > >
+> > > Unfortunately, I stand by my previous statements that we still probably want a LSM access check similar to what we currently do for ptrace.
+> > >
 > >
-> > That's what I was afraid of.
-> >
-> > Unfortunately, I stand by my previous statements that we still probably want a LSM access check similar to what we currently do for ptrace.
-> >
-> 
-> I would argue that once "LSM" enters this conversation, it just means
-> we're on the wrong track.  Let's try to make this work without ptrace
-> if possible :)  The whole seccomp() mechanism is very carefully
-> designed so that it's perfectly safe to install seccomp filters
-> without involving LSM or even involving credentials at all.
+> > I would argue that once "LSM" enters this conversation, it just means
+> > we're on the wrong track.  Let's try to make this work without ptrace
+> > if possible :)  The whole seccomp() mechanism is very carefully
+> > designed so that it's perfectly safe to install seccomp filters
+> > without involving LSM or even involving credentials at all.
+>
+> In a last ditch effort to save the ptrace() interface: can we just
+> only allow it when refcount_read(filter->usage) == 1?
 
-In a last ditch effort to save the ptrace() interface: can we just
-only allow it when refcount_read(filter->usage) == 1?
-
-Tycho
+From a security perspective, I think that would be fine, assuming that
+we know that the target task is stopped. (But note that if the target
+process e.g. uses the filter on multiple threads, the refcount will be
+higher.)
