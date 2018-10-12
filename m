@@ -2,143 +2,165 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 586F8C6787C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A354BC71122
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F28F320868
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:06:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61ECB20865
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:07:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wv3KQJCw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F28F320868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PZeRNXeM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61ECB20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeJMDkh (ORCPT
+        id S1726869AbeJMDmB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 23:40:37 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34320 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbeJMDkg (ORCPT
+        Fri, 12 Oct 2018 23:42:01 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:45411 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbeJMDmA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 23:40:36 -0400
-Received: by mail-ot1-f68.google.com with SMTP id v2so6348183otk.1
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 13:06:28 -0700 (PDT)
+        Fri, 12 Oct 2018 23:42:00 -0400
+Received: by mail-yw1-f68.google.com with SMTP id v198-v6so5402077ywg.12
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 13:07:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=uuFoRplXvuDg46hTY7eUtJi9J7lxsD7NBeqO8bQS2sU=;
-        b=Wv3KQJCwZZffnr9xmpNIUnptsIKSFgA9EiAwatfbv+YM20VkNox/0y55fUkx/7ghw+
-         pnrbPE0fitpeqXABKqxZ+DtjjL1Qu65KSmBgc6CHpwdWI14YfGcE3F2yVTuv/ffTEm8n
-         9uNpIqAY5Cfz8GNrip5DtYxjdXBAvNeKaUEaATCpizlb+zBSQ/p2lqI0G8N9xrcEdkRR
-         wcZAQdPiZzGnBZK70fstC3MWOVJUy1OJ2wX6V5udh8g8RziR4jbHd448LKVYGMrfF/Xg
-         PKqv8XwX3EY6kTW+wGvHdUqy3ETgGyZKA9nqRVw5SxMRe7kN+Eb979vgqqbfvjy6zjXT
-         b4iQ==
+        bh=VsdDRCUqon7Z23teRbW7qQSFBgJ8uBghNMLixUZDntI=;
+        b=PZeRNXeMAVVsgiVBD1qq1ljaOyjh4ctxO0IwL3jxwPK1WsLQStqkNZYOk5pJ9V2HmE
+         alu3s50W5LLOmkg2QRwy6PLMA74sH54A2Le7RUJWMgOP/eKlhobOaUfrEzkQ9uZXaaN+
+         65V7z+ugsyVB5LabpURmSuLhRjGy8KE33/G1E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=uuFoRplXvuDg46hTY7eUtJi9J7lxsD7NBeqO8bQS2sU=;
-        b=pMG7ObY71RUFX1qENzPfPA4xag/Og0R7dr1FoqvXQIQz+LLDV7pGaBZWsZGSWLRh6H
-         iOUAdOjL7vns73rmKq8d8HoQeFtU8JwZlerBW1lP3AtIsIcApp25XycoLVu9ZmYbyau9
-         GgL9YwueKXtMS8cBhO9HTeuTejFLOizysgPbqjjZ+OdXrXMH2vbGAYjkhpQD4778afXR
-         DNUgYhPgFcRYaYqc4TSFzmdgvkrmzTYUMhUsmF8gKNrAp2/rBBvaYVJ0TGmgNFgahZob
-         kqmU66Boq7tQWrAEgFONnC+732QuyxaJwb8kvlGz93XUtmwZYKLQAVBHXa/i+/BI0xjQ
-         XUZQ==
-X-Gm-Message-State: ABuFfogRYaEHY2ZMImApKqA9XxaRNf4m2t/l/xLugZRqQTMCU/T0IT7u
-        cnYQnK3+R54mmMEHxiVsX+0QHiLcXQl7IUgsDGS7BQ==
-X-Google-Smtp-Source: ACcGV62U4W/sXvna70NoU1KyEKejpbKQBChwBNYTGG28EyCI8YeyFJcWp1xqVhTcTI5fj1vWnuvWWF345JRwK/1HisM=
-X-Received: by 2002:a9d:4c15:: with SMTP id l21mr4905031otf.242.1539374787986;
- Fri, 12 Oct 2018 13:06:27 -0700 (PDT)
+        bh=VsdDRCUqon7Z23teRbW7qQSFBgJ8uBghNMLixUZDntI=;
+        b=O3IJ30bf3PylntlsPl8QoESckld/KKu6AmoA07yZXRDHUzmWTTen/jq8wag5XjQ2sZ
+         vUq5aR0Ws7KasaqmVK6pD3NT2jI07nNrFbiW8OIjXp7j4M6VJxNMvpfR6CIBYZEeBJ7W
+         3xNQJEhTcTh0U58HRnzfgN2tk+sDQTYsIDxYKhqPs1ptEQH04AIAEds3RvfTk542uVAL
+         4f2S7zlScQBRcgznvD0KdY59cJhMDmMhpJHAGKdzYYr6Q+4KRSxqqNZ5wMA3A+L72Is2
+         wQ6N3RHp1olAx1CKMX00G3UUGv5vcuPueChwVCq58dSKzCCKUlXtI1JSEg6a+lvIp7Vd
+         uidg==
+X-Gm-Message-State: ABuFfoi/0tJrtSQuDJKRMh+iZsNjS3IFtH58hkgmjRt7L3b06XKN59BI
+        5BX32vxE07czn6Ptl3byD5ci0x1i3RI=
+X-Google-Smtp-Source: ACcGV605bXn+Sqd0w5uMLhhM6oPz6r7u4rHOwnFnBc6/56eXEY/C5oSCW3anIpAMqZcqi/x6p4CL3w==
+X-Received: by 2002:a81:5f86:: with SMTP id t128-v6mr4408379ywb.84.1539374871826;
+        Fri, 12 Oct 2018 13:07:51 -0700 (PDT)
+Received: from mail-yw1-f45.google.com (mail-yw1-f45.google.com. [209.85.161.45])
+        by smtp.gmail.com with ESMTPSA id v34-v6sm770370ywh.45.2018.10.12.13.07.48
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 13:07:48 -0700 (PDT)
+Received: by mail-yw1-f45.google.com with SMTP id y76-v6so5420671ywd.2
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 13:07:48 -0700 (PDT)
+X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr4531436ywd.124.1539374867898;
+ Fri, 12 Oct 2018 13:07:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181008181815.pwnqxngj22mhm2vj@brauner.io> <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
- <20181009132850.fp6yne2vgmfpi27k@brauner.io> <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
- <CAHC9VhQfzJgG3i=Q8C+pGY2Lpr+2MRTwxgUWec_heGOecd=xRg@mail.gmail.com>
- <CAG48ez2hTBFwmA65FXv0zJjc0_wpc1S-uOBn1t+X=0vPH25YvQ@mail.gmail.com>
- <16662034750.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <CAG48ez0=NRRu2FUZFwdDSMmkdWsFi1XSSPTO8bL84YAY=jOzMQ@mail.gmail.com>
- <1666564e4f8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <CALCETrV1fWKJe96ow3XGy_kmZoXoehb99e4AZehsO84YGxKjgQ@mail.gmail.com> <20181012200220.GC5530@cisco>
-In-Reply-To: <20181012200220.GC5530@cisco>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 12 Oct 2018 22:06:00 +0200
-Message-ID: <CAG48ez3o0t6UjtdsuiUck7ijJiA39uy5Jfno28UMMq_Q1d=s8g@mail.gmail.com>
-Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from ptrace
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Paul Moore <paul@paul-moore.com>, christian@brauner.io,
-        Kees Cook <keescook@chromium.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        containers@lists.linux-foundation.org, suda.akihiro@lab.ntt.co.jp,
-        Oleg Nesterov <oleg@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
+Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 13:07:46
+ -0700 (PDT)
+In-Reply-To: <CAGXu5j+XTMcqdPQK=E6KV3-oMCFA+UkiGsfHN2T6CCfAA7X9Qw@mail.gmail.com>
+References: <e9bfb2d5-d987-55ce-4011-9b32ff745d36@schaufler-ca.com>
+ <8010a7d0-c6a0-b327-d5dd-6857d6d42561@schaufler-ca.com> <CAGXu5j+XTMcqdPQK=E6KV3-oMCFA+UkiGsfHN2T6CCfAA7X9Qw@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 12 Oct 2018 13:07:46 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+31_T8ctncUrjkvWNKRD78TdRihm26hk=GD4Rva8TPBw@mail.gmail.com>
+Message-ID: <CAGXu5j+31_T8ctncUrjkvWNKRD78TdRihm26hk=GD4Rva8TPBw@mail.gmail.com>
+Subject: Re: [PATCH 21/19] LSM: Cleanup and fixes from Tetsuo Handa
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        LKLM <linux-kernel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 12, 2018 at 10:02 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> On Thu, Oct 11, 2018 at 06:02:06PM -0700, Andy Lutomirski wrote:
-> > On Thu, Oct 11, 2018 at 4:10 PM Paul Moore <paul@paul-moore.com> wrote:
-> > >
-> > > On October 11, 2018 9:40:06 AM Jann Horn <jannh@google.com> wrote:
-> > > > On Thu, Oct 11, 2018 at 9:24 AM Paul Moore <paul@paul-moore.com> wrote:
-> > > >> On October 10, 2018 11:34:11 AM Jann Horn <jannh@google.com> wrote:
-> > > >>> On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > >>>> On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
-> > > >>>>> +cc selinux people explicitly, since they probably have opinions on this
-> > > >>>>
-> > > >>>> I just spent about twenty minutes working my way through this thread,
-> > > >>>> and digging through the containers archive trying to get a good
-> > > >>>> understanding of what you guys are trying to do, and I'm not quite
-> > > >>>> sure I understand it all.  However, from what I have seen, this
-> > > >>>> approach looks very ptrace-y to me (I imagine to others as well based
-> > > >>>> on the comments) and because of this I think ensuring the usual ptrace
-> > > >>>> access controls are evaluated, including the ptrace LSM hooks, is the
-> > > >>>> right thing to do.
-> > > >>>
-> > > >>> Basically the problem is that this new ptrace() API does something
-> > > >>> that doesn't just influence the target task, but also every other task
-> > > >>> that has the same seccomp filter. So the classic ptrace check doesn't
-> > > >>> work here.
-> > > >>
-> > > >> Due to some rather unfortunate events today I'm suddenly without easy access to the kernel code, but would it be possible to run the LSM ptrace access control checks against all of the affected tasks?  If it is possible, how painful would it be?
-> > > >
-> > > > There are currently no backlinks from seccomp filters to the tasks
-> > > > that use them; the only thing you have is a refcount. If the refcount
-> > > > is 1, and the target task uses the filter directly (it is the last
-> > > > installed one), you'd be able to infer that the ptrace target is the
-> > > > only task with a reference to the filter, and you could just do the
-> > > > direct check; but if the refcount is >1, you might end up having to
-> > > > take some spinlock and then iterate over all tasks' filters with that
-> > > > spinlock held, or something like that.
-> > >
-> > > That's what I was afraid of.
-> > >
-> > > Unfortunately, I stand by my previous statements that we still probably want a LSM access check similar to what we currently do for ptrace.
-> > >
-> >
-> > I would argue that once "LSM" enters this conversation, it just means
-> > we're on the wrong track.  Let's try to make this work without ptrace
-> > if possible :)  The whole seccomp() mechanism is very carefully
-> > designed so that it's perfectly safe to install seccomp filters
-> > without involving LSM or even involving credentials at all.
+On Mon, Oct 1, 2018 at 2:48 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, Sep 26, 2018 at 2:57 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> lsm_early_cred()/lsm_early_task() are called from only __init functions.
+>>
+>> lsm_cred_alloc()/lsm_file_alloc() are called from only security/security.c .
+>>
+>> lsm_early_inode() should be avoided because it is not appropriate to
+>> call panic() when lsm_early_inode() is called after __init phase.
+>>
+>> Since all free hooks are called when one of init hooks failed, each
+>> free hook needs to check whether init hook was called.
+>>
+>> The original changes are from Tetsuo Handa. I have made minor
+>> changes in some places, but this is mostly his code.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/lsm_hooks.h         |  6 ++----
+>>  security/security.c               | 27 ++++-----------------------
+>>  security/selinux/hooks.c          |  5 ++++-
+>>  security/selinux/include/objsec.h |  2 ++
+>>  security/smack/smack_lsm.c        |  8 +++++++-
+>>  5 files changed, 19 insertions(+), 29 deletions(-)
 >
-> In a last ditch effort to save the ptrace() interface: can we just
-> only allow it when refcount_read(filter->usage) == 1?
+> I've split this across the various commits they touch:
+>
+> Infrastructure management of the cred security blob
+> LSM: Infrastructure management of the file security
+> LSM: Infrastructure management of the inode security
+> LSM: Infrastructure management of the task security
+> LSM: Blob sharing support for S.A.R.A and LandLock
+>
+> Based on these changes, I've uploaded the "v4.1", or "Casey is on
+> vacation", tree here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=lsm/blob-sharing-v4.1
+>
+> I'm going to work on a merged series for the "arbitrary ordering" and
+> "blob-sharing" trees next...
 
-From a security perspective, I think that would be fine, assuming that
-we know that the target task is stopped. (But note that if the target
-process e.g. uses the filter on multiple threads, the refcount will be
-higher.)
+Here is my v6 (v5 plus small fix I noticed) with my refactoring of
+Casey's blob-sharing series on top:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=lsm/ordering-v6-blob-sharing
+
+procfs: add smack subdir to attrs
+Smack: Abstract use of cred security blob
+SELinux: Abstract use of cred security blob
+SELinux: Remove cred security blob poisoning
+SELinux: Remove unused selinux_is_enabled
+AppArmor: Abstract use of cred security blob
+TOMOYO: Abstract use of cred security blob
+Infrastructure management of the cred security blob
+SELinux: Abstract use of file security blob
+Smack: Abstract use of file security blob
+LSM: Infrastructure management of the file security
+SELinux: Abstract use of inode security blob
+Smack: Abstract use of inode security blob
+LSM: Infrastructure management of the inode security
+LSM: Infrastructure management of the task security
+SELinux: Abstract use of ipc security blobs
+Smack: Abstract use of ipc security blobs
+LSM: Infrastructure management of the ipc security blob
+TOMOYO: Update LSM flags to no longer be exclusive
+
+Notably, the last patch from Casey's series is entirely removed.
+Additionally all the per-LSM initialization changes were removed since
+the blob size calculations now stay internal to security.c, done
+during the "prepare" phase.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
