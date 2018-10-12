@@ -4,68 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2A6C67877
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 17:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA11C6787C
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 17:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 817122064E
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 17:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 745AB2077C
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 17:15:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F2FUTOBL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817122064E
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gQDfm7IN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 745AB2077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbeJMAj0 (ORCPT
+        id S1727061AbeJMAsd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 20:39:26 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39040 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727791AbeJMAj0 (ORCPT
+        Fri, 12 Oct 2018 20:48:33 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39768 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbeJMAsc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 20:39:26 -0400
-Received: by mail-pf1-f193.google.com with SMTP id c25-v6so6504286pfe.6
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 10:06:00 -0700 (PDT)
+        Fri, 12 Oct 2018 20:48:32 -0400
+Received: by mail-pl1-f195.google.com with SMTP id w14-v6so6221267plp.6
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 10:15:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=p+uYe5JtXUXHeB9Dhce/DF3JebhJRFmtQIPeP5zgdEU=;
-        b=F2FUTOBLjRyIeCtztc9CRPMhYFABQ65+hsaW3juhrG4jRzglqnOKhjBL1oHvF63ULl
-         SCL8tpo0LLthdlgtLmK++wgY42ltN/r1eJIJPmuUicNiKKkrCg2u81qsFv+e/jiYxZBe
-         r3i4wOVQE2rQfnHQVcRrqbyzp/p8ExG+XvAuG/J1XVnOH3ahm992/N+rflGQtvtpPPHG
-         S7aLBTHOF4kpbIRzglZ6eFw6AAyaY9iKBSYQmLadxj3XcVpShLg0x8gxPl37Rsw3LZXR
-         LdMoJI6qTmemQHBx1iPxK0O/6Q1hFJyPkV1QhF0Uji+wc/kVyJhh8J4VcZKXWIYEElhJ
-         6qhg==
+        bh=ujwWbrimNp669KOEB8if5RkxRpiCrikk2Qz5VOA/j6M=;
+        b=gQDfm7IN81M960Ohrzsq4aoqd93BSCaPEZcF2sfrgrANy7gC5gGxReonl2EwxTCl/k
+         dKWs62xXYmi/xdzeol/ZBE6rjEo507pq6v855f+7UQG0Nj7xPAkdnbjrmpG+tGsqcMPl
+         EmgMn3sFwOc0BMqiGHt/wFuRT2DzC/RWT5OsKL9S+HkUeq1DTCiazsVWgm+NFoCZAGgN
+         VL98vlVj9jyJ32CfxNOa9WxO43zjU0mWyKaFEpSm1hhU4a1Rje4aLCA4+TIe6BtA/x6V
+         IOtVuHnlgmNSdd3dXe8rEXJAOmSsVvCveIFNHd9J0P692EbuhukRr8P/R8IpqID+qijz
+         IfAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=p+uYe5JtXUXHeB9Dhce/DF3JebhJRFmtQIPeP5zgdEU=;
-        b=PP+gYZrbivbql6fCihuj9DxdPCy2AznRzHhSRZpSYtj2CKodlKqVZZ2CppXPEXsquE
-         B4TWaW11dLALAKpFzUBg82ZXvuxY/CujzzGddkWCsMh8VoU9JJZFx1YVq+c1B4BWawaK
-         BYtVikA9mEHvSBz2eNbpo0uZ8QJmm0F6OPQSB2Ue4OEw9xqIYOvFFmrNYbe47OM8yaDR
-         pULT/fMkvAo1XUWTgE2nMsdi+iGv//arOyYJyPbXu8Gd0HStMA6APRSXRuPO/cIV3nK8
-         bE0TDiZIKx9Ay8qQzJL04jkyrbwEv3Yueh4yFq/+OOxWgLk9KuKAGIT6oL+BA81Sk9Z7
-         CzLQ==
-X-Gm-Message-State: ABuFfojW/YgpIpt0rKvin57477a7emda0xEanf8cQV38/fzUI2HoaTHy
-        +15aJ3+ud071yP+CKxQo/0/9I9lXdFU3hHtJv1yeOg==
-X-Google-Smtp-Source: ACcGV63zLk5gJw3X+I85ltyY/ebixCCNUy9mvklRRFgijyvHthqMLeuRqxjyzfPD1srrppRREpgZRileXfrtnR/k64Y=
-X-Received: by 2002:a63:9e02:: with SMTP id s2-v6mr6379313pgd.302.1539363959493;
- Fri, 12 Oct 2018 10:05:59 -0700 (PDT)
+        bh=ujwWbrimNp669KOEB8if5RkxRpiCrikk2Qz5VOA/j6M=;
+        b=BVlRAz8ViliUoWCJtsY5hca9IgMab8tffnG6gGkglfAqb4fqX8Ezop28GjXhXunIRo
+         5PE16w3bwTjrkLrz0CCzwaKOaRyn8rypBNcthd7RGSViLRsoR2eBoY0eAFcOlYw8NC3/
+         l0T9uyH1svYcz/qe79/leW1ks4LWp8yfnhin2zxSigwcnyCK7t38Ga3BGtaThMgsdj9s
+         decYkq20r+I9kI5H6nH2n0xqdaXkwdaW5qWov02eoOpkcqI0JmCw6d07kNSOB6WIz8kW
+         b9JMK9V6dnp7YV8n3TPKTNBsSjNkgz4I3Fhj2RwfOnORrqFgS8wJOqa1iF0aDN7fuASj
+         FSkw==
+X-Gm-Message-State: ABuFfohX4kcL/bDnP5L1sYBBN+Zv31IkbRw0nrKzPGaje4fQ/cGkqNiQ
+        g4pISJQNtMHv0mn7dO3c3SrYrL7mzkf7PaRQsYaAlA==
+X-Google-Smtp-Source: ACcGV60ERIB98QcruqfKMFipjqMuswzQ8amsEZFbwBlxZ/1c8Cdo0y84gfK978KgSLEqvymaf9Jr0YLKYlRwq+xWXuw=
+X-Received: by 2002:a17:902:109:: with SMTP id 9-v6mr6664670plb.320.1539364503709;
+ Fri, 12 Oct 2018 10:15:03 -0700 (PDT)
 MIME-Version: 1.0
 References: <1539274203.2623.56.camel@linux.vnet.ibm.com> <20181011203126.15338-1-ndesaulniers@google.com>
  <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com> <1539356751.2656.5.camel@linux.ibm.com>
- <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
-In-Reply-To: <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
+ <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com> <1539357759.2656.7.camel@linux.ibm.com>
+ <16de2bb3-815a-f534-4618-af854c906017@gmail.com> <1539359181.2656.13.camel@linux.ibm.com>
+ <da2a675f-bd2d-a1f3-6a67-5579e75bdb76@gmail.com> <1539360075.2656.18.camel@linux.ibm.com>
+In-Reply-To: <1539360075.2656.18.camel@linux.ibm.com>
 From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 12 Oct 2018 10:05:48 -0700
-Message-ID: <CAKwvOdmStDm3Lz=W7XjmB7f7ihe4hLOmaBRLOrStbkBMRKwdjA@mail.gmail.com>
+Date:   Fri, 12 Oct 2018 10:14:52 -0700
+Message-ID: <CAKwvOdnejRka4hP66zCGS+MSXx_z335qZUTU8J0UbEq-boRYjQ@mail.gmail.com>
 Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
-To:     denkenz@gmail.com
-Cc:     jejb@linux.ibm.com, dhowells@redhat.com,
+To:     jejb@linux.ibm.com
+Cc:     denkenz@gmail.com, dhowells@redhat.com,
         Nathan Chancellor <natechancellor@gmail.com>,
         Eric Biggers <ebiggers@google.com>, zohar@linux.vnet.ibm.com,
         jmorris@namei.org, serge@hallyn.com,
@@ -77,38 +79,49 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 12, 2018 at 8:14 AM Denis Kenzior <denkenz@gmail.com> wrote:
+On Fri, Oct 12, 2018 at 9:01 AM James Bottomley <jejb@linux.ibm.com> wrote:
 >
-> Hi James,
->
-> >> So can't we simply use 'bool' or uint32 as the type for h3 instead
-> >> of re-ordering everything
+> On Fri, 2018-10-12 at 10:53 -0500, Denis Kenzior wrote:
+> > Hi James,
 > >
-> > The problem is the standard is ambiguious.  The only thing that's
-> > guaranteed to work for all time is a char *.  If you want to keep the
-> > order, what I'd suggest is inserting a dummy pointer argument which is
-> > always expected to be NULL between the h3 and the varargs.
+> > > >   From the links provided in the patch it seems that one cannot
+> > > > pass char/float/short to va_start().  Fair enough.  So if we make
+> > > > h3 an unsigned int, the issue goes away, no?
+> > >
+> > > For the current version of clang, yes.  However, if we're fixing
+> > > this for good a char * pointer is the only guaranteed thing because
+> > > it mirrors current use in printf.
+> > >
+> >
+> > All right.  I guess I wasn't aware that non-printf like variadic
+> > functions are now considered harmful or of the impending crusade
+> > against them :)
 >
-> So maybe I'm misunderstanding something, but the issue seems to be that
-> unsigned char is promoted to 'unsigned char *' by Clang and probably
-> unsigned int or int by gcc.
+> It's not, it's just a maintainer issue: The original problem is because
+> we coded for gcc specifically; it doesn't complain and does the right
+> thing, so everyone was happy.  Now Clang comes along and is unhappy
+> with this, so the question a good maintainer should ask is "how do I
+> fix this so it never comes back again?", not "what's the easiest
+> bandaid to get both Clang and gcc to work?" because the latter is how
+> we got here in the first place.
 
-No. This is extremely well defined behavior in C.  In C, integral
-types are NEVER promoted to pointer to integer types, only to larger
-integral types through rules more complicated than the correct flags
-to pass to `tar`.
-https://xkcd.com/1168/
-
->
-> So instead of having unsigned char h3, can't we simply have bool h3 or
-> unsigned int h3?
-
-int is the default argument promotion. Proposed:
-https://github.com/ClangBuiltLinux/linux/issues/41#issuecomment-428365339
+Clang is simply pointing out that this is explicitly undefined
+behavior by the C90 spec.  As such, not only may the implementation be
+different between compilers, but it is free to change between versions
+of the same compiler (I haven't witnessed such a case yet in my
+limited career, but I would never say never when it comes to relying
+on undefined behavior).
 
 >
-> Regards,
-> -Denis
+> James
+>
+> > But in the context of this patch, can we please use something less
+> > invasive than changing all the arguments around?  Promoting h3 to a
+> > bool (if possible) or int/unsigned int would get my vote.
+> >
+> > Regards,
+> > -Denis
+> >
 >
 
 
