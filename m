@@ -2,189 +2,212 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C83FC28CF8
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 01:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F00C43441
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 09:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E744F2085B
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 01:50:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uD29YydG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E744F2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BDA2C20868
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 09:34:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA2C20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbeJLJU1 (ORCPT
+        id S1728138AbeJLRGG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 05:20:27 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37152 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbeJLJU1 (ORCPT
+        Fri, 12 Oct 2018 13:06:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47194 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728028AbeJLRGG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 05:20:27 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 185-v6so11354072wmt.2;
-        Thu, 11 Oct 2018 18:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lbPDkw8B79vAveAPAAnDcRQbuEznomdsJGqz3Eo/Jd4=;
-        b=uD29YydGo71HARPGUNanbZLnwT28fSpI+GuTcKq3l2+ca7MPS9Bh8WJvM9PJ5uDKgD
-         j+B1nQWkQnMpIx2neXQrpleXpNmXq+8SfgzefRYDYcxtkDyzGBNAF7oeXcBhJ3l32hHl
-         ddS7FeDcTWWncO2ns/IDaCWOA6Gumt1C6USYX4r3N0ZuzIF1OrOJs/sIvIlCS+782Na2
-         DfUiS4lpyaryiVuioGooKmhEmjzTJ7Lp/fCoLddzu5KuMszJMSFRa6GBJv5GqbgUs5F+
-         HpUGI2yX9Lm7oUrPPKU0T3lSa/ZzhkoeuVm2FqKDNiFmM5RTvYfiJvzfIX0KgFN846q2
-         Q3Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lbPDkw8B79vAveAPAAnDcRQbuEznomdsJGqz3Eo/Jd4=;
-        b=oeHeIUysNLUciX0IrA+z53a9VbolUNbMkL5LZ2Iom6KCcHbdrVBVbJt4fZNp11XFPn
-         xij1B0fQAXhjrBeNghqO6yE3+vu+WOjfk1eseD5hvl301ZZoerBTQOaaEF0L6Jl/m84x
-         twRpxg9AOD3DTz0g7KSs6qj4gGwJHY4b5l9tz5t9WoHQ4SHM7c8FUlVA5h6pfe/jkoRm
-         +oJXh9vhkdgYjQjzMHVupErYrIxoOB38aP3mz/LFh9xIBBEBr9XnpKkAtDlGo9bt76Rs
-         +sljGUWs1XbGkVKcYmjJXVLhrOnC3S5LHYjL9YJHnL9aV1wOm/+cVUJaeTYO4FKJ+7Ts
-         DpIA==
-X-Gm-Message-State: ABuFfoi/K80rai4mh566i2sDRMWuDoXikVvrVT6CHEn8h+4zjEJDBfFb
-        N9uy7rM6iKfPItSbF12eQVgPG0NbiOvgKQ==
-X-Google-Smtp-Source: ACcGV61NexnTQKvkWvKAvYMaQJ9Up+V/jtggPEUxMe8Z4LkVLT1poI0mhI3zQYgBosWYwDOSpb8KWQ==
-X-Received: by 2002:a7b:c259:: with SMTP id b25-v6mr3401102wmj.138.1539309025402;
-        Thu, 11 Oct 2018 18:50:25 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id l38-v6sm26845111wre.38.2018.10.11.18.50.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Oct 2018 18:50:24 -0700 (PDT)
-Date:   Thu, 11 Oct 2018 18:50:22 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     ndesaulniers@google.com
-Cc:     jejb@linux.vnet.ibm.com, dhowells@redhat.com, ebiggers@google.com,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        Fri, 12 Oct 2018 13:06:06 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9C9YWnN108004
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 05:34:32 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2pugdhwx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 05:34:32 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Fri, 12 Oct 2018 05:34:32 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 12 Oct 2018 05:34:29 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9C9YSFF26083500
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 12 Oct 2018 09:34:28 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D4BE0B2066;
+        Fri, 12 Oct 2018 05:32:27 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A1A3DB205F;
+        Fri, 12 Oct 2018 05:32:25 -0400 (EDT)
+Received: from [9.124.31.41] (unknown [9.124.31.41])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 12 Oct 2018 05:32:25 -0400 (EDT)
+Subject: Re: [PATCH v5 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
+To:     Tomas Winkler <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
-Message-ID: <20181012015022.GA7508@flashbox>
-References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
- <20181011203126.15338-1-ndesaulniers@google.com>
+References: <20180928223035.14471-1-tomas.winkler@intel.com>
+ <20180928223035.14471-7-tomas.winkler@intel.com>
+From:   Nayna Jain <nayna@linux.ibm.com>
+Date:   Fri, 12 Oct 2018 15:01:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181011203126.15338-1-ndesaulniers@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180928223035.14471-7-tomas.winkler@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18101209-0068-0000-0000-0000034C11D8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009865; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01101513; UDB=6.00569998; IPR=6.00881558;
+ MB=3.00023726; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-12 09:34:31
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101209-0069-0000-0000-0000460B88D7
+Message-Id: <24b611f6-8080-3f99-56e5-818bd16ef4f8@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810120097
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 11, 2018 at 01:31:26PM -0700, ndesaulniers@google.com wrote:
-> by swapping h2 and h3.
-> 
-> security/keys/trusted.c:146:17: warning: passing an object that
-> undergoes default
->       argument promotion to 'va_start' has undefined behavior [-Wvarargs]
->         va_start(argp, h3);
->                        ^
-> security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> char' is declared here
-> unsigned char *h2, unsigned char h3, ...)
->                                ^
-> 
-> Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> standards explicitly call this out as undefined behavior:
-> 
-> The parameter parmN is the identifier of the rightmost parameter in
-> the variable parameter list in the function definition (the one just
-> before the ...). If the parameter parmN is declared with ... or with a
-> type that is not compatible with the type that results after
-> application of the default argument promotions, the behavior is
-> undefined.
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/41
-> Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+
+
+On 09/29/2018 04:00 AM, Tomas Winkler wrote:
+> Move tpm1_pcr_extend to tpm1-cmd.c and remove
+> unused pcrextend_header structure and
+> EXTEND_PCR_RESULT_SIZE and EXTEND_PCR_RESULT_BODY_SIZE
+> defines.
+>
+> Fixes warning:
+> drivers/char/tpm/tpm-interface.c:609:38: warning: ‘pcrextend_header’ defined but not used [-Wunused-const-variable=]
+>   static const struct tpm_input_header pcrextend_header = {
+>                                        ^~~~~~~~~~~~~~~~
+>
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  security/keys/trusted.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-> index b69d3b1777c2..d425b2b839af 100644
-> --- a/security/keys/trusted.c
-> +++ b/security/keys/trusted.c
-> @@ -123,7 +123,7 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
->   */
->  static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
->  			unsigned int keylen, unsigned char *h1,
-> -			unsigned char *h2, unsigned char h3, ...)
-> +			unsigned char h2, unsigned char *h3, ...)
+>
+> V2-V3: Rebase
+> V4: Remove defines.
+> V5: Resend.
+>
+>   drivers/char/tpm/tpm-interface.c | 28 ----------------------------
+>   drivers/char/tpm/tpm.h           |  2 ++
+>   drivers/char/tpm/tpm1-cmd.c      | 21 +++++++++++++++++++++
+>   3 files changed, 23 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 1fa0300f3829..ac73e6ac3d83 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -614,34 +614,6 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+>   }
+>   EXPORT_SYMBOL_GPL(tpm_pcr_read);
+>
+> -#define TPM_ORD_PCR_EXTEND 20
+> -#define EXTEND_PCR_RESULT_SIZE 34
+> -#define EXTEND_PCR_RESULT_BODY_SIZE 20
+> -static const struct tpm_input_header pcrextend_header = {
+> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+> -	.length = cpu_to_be32(34),
+> -	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
+> -};
+> -
+> -static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> -			   char *log_msg)
+> -{
+> -	struct tpm_buf buf;
+> -	int rc;
+> -
+> -	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
+> -	if (rc)
+> -		return rc;
+> -
+> -	tpm_buf_append_u32(&buf, pcr_idx);
+> -	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
+> -
+> -	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
+> -			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
+> -	tpm_buf_destroy(&buf);
+> -	return rc;
+> -}
+> -
+>   /**
+>    * tpm_pcr_extend - extend a PCR value in SHA1 bank.
+>    * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index a97d72fcda5b..3fb268f43955 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -549,6 +549,8 @@ int tpm_do_selftest(struct tpm_chip *chip);
+>   int tpm1_auto_startup(struct tpm_chip *chip);
+>   int tpm1_get_timeouts(struct tpm_chip *chip);
+>   unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> +int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> +		    const char *log_msg);
+>   unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+>   int tpm_pm_suspend(struct device *dev);
+>   int tpm_pm_resume(struct device *dev);
+> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> index 978946748ea3..ec242397e6dc 100644
+> --- a/drivers/char/tpm/tpm1-cmd.c
+> +++ b/drivers/char/tpm/tpm1-cmd.c
+> @@ -413,3 +413,24 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+>   	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
+>   	return 0;
+>   }
+> +
+> +#define TPM_ORD_PCR_EXTEND 20
+> +int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> +		    const char *log_msg)
+> +{
+> +	struct tpm_buf buf;
+> +	int rc;
+> +
+> +	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
+> +	if (rc)
+> +		return rc;
+> +
+> +	tpm_buf_append_u32(&buf, pcr_idx);
+> +	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
+> +
+> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
+> +			      TPM_DIGEST_SIZE, 0, log_msg);
+> +
+> +	tpm_buf_destroy(&buf);
+> +	return rc;
+> +}
 
-Prototype needs to be updated in include/keys/trusted.h and it looks
-like this function is used in crypto/asymmetric_keys/asym_tpm.c so these
-same changes should be made there.
 
-Otherwise, looks good to me! Thanks for sending the patch.
+Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+Tested-by: Nayna Jain <nayna@linux.ibm.com>
 
-Nathan
+Sorry for bit delay in testing.
 
->  {
->  	unsigned char paramdigest[SHA1_DIGEST_SIZE];
->  	struct sdesc *sdesc;
-> @@ -139,7 +139,7 @@ static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
->  		return PTR_ERR(sdesc);
->  	}
->  
-> -	c = h3;
-> +	c = h2;
->  	ret = crypto_shash_init(&sdesc->shash);
->  	if (ret < 0)
->  		goto out;
-> @@ -163,7 +163,7 @@ static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
->  	if (!ret)
->  		ret = TSS_rawhmac(digest, key, keylen, SHA1_DIGEST_SIZE,
->  				  paramdigest, TPM_NONCE_SIZE, h1,
-> -				  TPM_NONCE_SIZE, h2, 1, &c, 0, 0);
-> +				  TPM_NONCE_SIZE, h3, 1, &c, 0, 0);
->  out:
->  	kzfree(sdesc);
->  	return ret;
-> @@ -508,7 +508,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
->  	if (pcrinfosize == 0) {
->  		/* no pcr info specified */
->  		ret = TSS_authhmac(td->pubauth, sess.secret, SHA1_DIGEST_SIZE,
-> -				   sess.enonce, td->nonceodd, cont,
-> +				   sess.enonce, cont, td->nonceodd,
->  				   sizeof(uint32_t), &ordinal, SHA1_DIGEST_SIZE,
->  				   td->encauth, sizeof(uint32_t), &pcrsize,
->  				   sizeof(uint32_t), &datsize, datalen, data, 0,
-> @@ -516,7 +516,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
->  	} else {
->  		/* pcr info specified */
->  		ret = TSS_authhmac(td->pubauth, sess.secret, SHA1_DIGEST_SIZE,
-> -				   sess.enonce, td->nonceodd, cont,
-> +				   sess.enonce, cont, td->nonceodd,
->  				   sizeof(uint32_t), &ordinal, SHA1_DIGEST_SIZE,
->  				   td->encauth, sizeof(uint32_t), &pcrsize,
->  				   pcrinfosize, pcrinfo, sizeof(uint32_t),
-> @@ -608,12 +608,12 @@ static int tpm_unseal(struct tpm_buf *tb,
->  		return ret;
->  	}
->  	ret = TSS_authhmac(authdata1, keyauth, TPM_NONCE_SIZE,
-> -			   enonce1, nonceodd, cont, sizeof(uint32_t),
-> +			   enonce1, cont, nonceodd, sizeof(uint32_t),
->  			   &ordinal, bloblen, blob, 0, 0);
->  	if (ret < 0)
->  		return ret;
->  	ret = TSS_authhmac(authdata2, blobauth, TPM_NONCE_SIZE,
-> -			   enonce2, nonceodd, cont, sizeof(uint32_t),
-> +			   enonce2, cont, nonceodd, sizeof(uint32_t),
->  			   &ordinal, bloblen, blob, 0, 0);
->  	if (ret < 0)
->  		return ret;
-> -- 
-> 2.19.0.605.g01d371f741-goog
-> 
+Thanks & Regards,
+    - Nayna
+
+
+
+
