@@ -2,212 +2,164 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F00C43441
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 09:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC5AC43441
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 11:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA2C20868
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 09:34:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA2C20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 89DF82086A
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 11:31:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="xo9PGaNM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89DF82086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbeJLRGG (ORCPT
+        id S1727992AbeJLTDI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 13:06:06 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47194 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728028AbeJLRGG (ORCPT
+        Fri, 12 Oct 2018 15:03:08 -0400
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:10947 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeJLTDI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 13:06:06 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9C9YWnN108004
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 05:34:32 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2pugdhwx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 05:34:32 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Fri, 12 Oct 2018 05:34:32 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 12 Oct 2018 05:34:29 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9C9YSFF26083500
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 12 Oct 2018 09:34:28 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4BE0B2066;
-        Fri, 12 Oct 2018 05:32:27 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A1A3DB205F;
-        Fri, 12 Oct 2018 05:32:25 -0400 (EDT)
-Received: from [9.124.31.41] (unknown [9.124.31.41])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 12 Oct 2018 05:32:25 -0400 (EDT)
-Subject: Re: [PATCH v5 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-To:     Tomas Winkler <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180928223035.14471-1-tomas.winkler@intel.com>
- <20180928223035.14471-7-tomas.winkler@intel.com>
-From:   Nayna Jain <nayna@linux.ibm.com>
-Date:   Fri, 12 Oct 2018 15:01:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Fri, 12 Oct 2018 15:03:08 -0400
+Date:   Fri, 12 Oct 2018 11:31:01 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1539343864;
+        bh=izOxPkH7jL1Ak8u4g3Gc4duQgc62xru88g3rROadegs=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=xo9PGaNMbbhEJiZA7GF05PxdpIE+OTkXulqPlxogOla3iA1qpbYdneLlKMIHdGc/Z
+         7zop9+QT5kTy+U+z3Nd/nq4zf4bXr8jy++wRlzQo2gyZV/52KoBB6hxjzboA55zJ04
+         /U36+16FxSlg5dW3lqJXJ7l+OAhREPzjOFvfefZo=
+To:     John Johansen <john.johansen@canonical.com>
+From:   Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+Message-ID: <oANoEf39nJu-HzALTRaisEW9Um9AoAH5KyO5lM7tpmml58QTZLk7U9aHpTmcg8W_684zTws70sLPZXlK5Z91zLluFesVPYXiEUbIZr98Ljs=@protonmail.ch>
+In-Reply-To: <1a8ac9f4-8f82-5d3b-46ef-08801793443e@canonical.com>
+References: <20181011001846.30964-1-keescook@chromium.org>
+ <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+ <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
+ <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
+ <37rRa7F7i2XcwVPiT6gLC8cX8p0732iDiT6mGjstlbBi3mcJsQCLA6A8HcDMNjR0SGheErloJl8z-Z5c57XxtJRBF9-LO_fUTUf41EcAGC4=@protonmail.ch>
+ <1a8ac9f4-8f82-5d3b-46ef-08801793443e@canonical.com>
+Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
 MIME-Version: 1.0
-In-Reply-To: <20180928223035.14471-7-tomas.winkler@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18101209-0068-0000-0000-0000034C11D8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009865; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01101513; UDB=6.00569998; IPR=6.00881558;
- MB=3.00023726; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-12 09:34:31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101209-0069-0000-0000-0000460B88D7
-Message-Id: <24b611f6-8080-3f99-56e5-818bd16ef4f8@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810120097
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
+ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
+On Friday, October 12, 2018 2:26 AM, John Johansen <john.johansen@canonical=
+.com> wrote:
 
-
-On 09/29/2018 04:00 AM, Tomas Winkler wrote:
-> Move tpm1_pcr_extend to tpm1-cmd.c and remove
-> unused pcrextend_header structure and
-> EXTEND_PCR_RESULT_SIZE and EXTEND_PCR_RESULT_BODY_SIZE
-> defines.
+> On 10/11/2018 04:53 PM, Jordan Glover wrote:
 >
-> Fixes warning:
-> drivers/char/tpm/tpm-interface.c:609:38: warning: ‘pcrextend_header’ defined but not used [-Wunused-const-variable=]
->   static const struct tpm_input_header pcrextend_header = {
->                                        ^~~~~~~~~~~~~~~~
+> > =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Origina=
+l Message =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=
+=90
+> > On Friday, October 12, 2018 1:09 AM, Kees Cook keescook@chromium.org wr=
+ote:
+> >
+> > > We've had things sort of like this proposed, but if you can convince
+> > > James and others, I'm all for it. I think the standing objection from
+> > > James and John about this is that the results of booting with
+> > > "lsm=3Dsomething" ends up depending on CONFIG_LSM=3D for that distro.=
+ So
+> > > you end up with different behaviors instead of a consistent behavior
+> > > across all distros.
+> >
+> > Ok, I'll try :)
+> > The final lsm string contains two parts: Kconfig "CONFIG_LSM=3D" and bo=
+ot
+> > param "lsm=3D". Changing even only one of those parts also changes the
+> > final string.
+> > In case of distros, it's the "CONFIG_LSM=3D" which changes. Even when "=
+lsm=3D"
+> > stays constant, the behavior will be different, example:
+> > Distro A has: CONFIG_LSM=3Dloadpin,integrity,selinux
+> > Distro B has CONFIG_LSM=3Dyama,loadpin,integrity,selinux
+> > User on distro A wants to enable apparmor with:
+> > lsm=3Dloadpin,integrity,apparmor
+> > which they do and add it to howto on wiki.
+> > User on distro B want to enable apparmor, they found info on some wiki =
+and do:
+> > lsm=3Dloadpin,integrity,apparmor
+> > Puff, yama got disabled!
+> > Above example shows why I think "consistent behavior across all distros=
+"
+> > argument for current approach is flawed - because distros aren't
+> > consistent. In my proposition the user will just use "lsm=3Dapparmor" a=
+nd
+> > it will consistently enable apparmor on all distros which is what they
+> > really wanted, but all pre-existing differences across distros will
+> > remain unchanged.
 >
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
+> Are you sure about that? I have had more than one question about
+> security=3DX resulting in a system with more than just X enabled. Ie why
+> is yama enabled when I specifically set security to X.
 >
-> V2-V3: Rebase
-> V4: Remove defines.
-> V5: Resend.
+
+So, non-explicit list will match current "security=3D" behavior which users
+are more familiar with. The current answer for this question is "because
+your distro enabled it and you didn't disabled it. With non-explcit list
+that answer will stay the same.
+
+With explicit list, the question will be "why is yama disabled when I
+enabled AppArmor with lsm=3Dapparmor".
+
+To ask both questions user have to know that something like "yama" exist
+in first place.
+
+As for question what users typically want you may look at search results
+for "disable/enable yama" and "disable/enable apparmor/selinux". The
+difference is several orders of magnitude. That's why I think typical user
+just want to switch on/off one major lsm. I don't think anecdotal evidence
+is representative here.
+
+> There will certainly be cases where what you describe is exactly what
+> the user wants. The problem is an explosion of options isn't good
+> for the user either.
 >
->   drivers/char/tpm/tpm-interface.c | 28 ----------------------------
->   drivers/char/tpm/tpm.h           |  2 ++
->   drivers/char/tpm/tpm1-cmd.c      | 21 +++++++++++++++++++++
->   3 files changed, 23 insertions(+), 28 deletions(-)
+> What I want at the moment is the discussion about different ways to
+> enable LSMs to be split off so this work can move forward.
 >
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1fa0300f3829..ac73e6ac3d83 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -614,34 +614,6 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
->   }
->   EXPORT_SYMBOL_GPL(tpm_pcr_read);
+> > The current approach requires that everyone who dares to touch "lsm=3D"
+> > knows about existence of all lsm, their enabled/disabled status on
+> > target distro and their order. I doubt there are many people other
+> > than recipients of this mail who fit for the above.
 >
-> -#define TPM_ORD_PCR_EXTEND 20
-> -#define EXTEND_PCR_RESULT_SIZE 34
-> -#define EXTEND_PCR_RESULT_BODY_SIZE 20
-> -static const struct tpm_input_header pcrextend_header = {
-> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
-> -	.length = cpu_to_be32(34),
-> -	.ordinal = cpu_to_be32(TPM_ORD_PCR_EXTEND)
-> -};
-> -
-> -static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-> -			   char *log_msg)
-> -{
-> -	struct tpm_buf buf;
-> -	int rc;
-> -
-> -	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-> -	if (rc)
-> -		return rc;
-> -
-> -	tpm_buf_append_u32(&buf, pcr_idx);
-> -	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-> -
-> -	rc = tpm_transmit_cmd(chip, NULL, buf.data, EXTEND_PCR_RESULT_SIZE,
-> -			      EXTEND_PCR_RESULT_BODY_SIZE, 0, log_msg);
-> -	tpm_buf_destroy(&buf);
-> -	return rc;
-> -}
-> -
->   /**
->    * tpm_pcr_extend - extend a PCR value in SHA1 bank.
->    * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index a97d72fcda5b..3fb268f43955 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -549,6 +549,8 @@ int tpm_do_selftest(struct tpm_chip *chip);
->   int tpm1_auto_startup(struct tpm_chip *chip);
->   int tpm1_get_timeouts(struct tpm_chip *chip);
->   unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-> +int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-> +		    const char *log_msg);
->   unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
->   int tpm_pm_suspend(struct device *dev);
->   int tpm_pm_resume(struct device *dev);
-> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index 978946748ea3..ec242397e6dc 100644
-> --- a/drivers/char/tpm/tpm1-cmd.c
-> +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -413,3 +413,24 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
->   	chip->flags |= TPM_CHIP_FLAG_HAVE_TIMEOUTS;
->   	return 0;
->   }
-> +
-> +#define TPM_ORD_PCR_EXTEND 20
-> +int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
-> +		    const char *log_msg)
-> +{
-> +	struct tpm_buf buf;
-> +	int rc;
-> +
-> +	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-> +	if (rc)
-> +		return rc;
-> +
-> +	tpm_buf_append_u32(&buf, pcr_idx);
-> +	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
-> +
-> +	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
-> +			      TPM_DIGEST_SIZE, 0, log_msg);
-> +
-> +	tpm_buf_destroy(&buf);
-> +	return rc;
-> +}
+> Without having gotten a chance to review the current set of patches
+> that was not what was discussed, it should only requires they know the
+> set that they want.
+>
 
+"it should only requires they know the set that they want" is very
+hard requirement and I don't think most users will pass this.
+Especially when sets like:
 
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-Tested-by: Nayna Jain <nayna@linux.ibm.com>
+lsm=3Dyama,loadpin,integrity,apparmor
+lsm=3Dloadpin,integrity,yama,apparmor
 
-Sorry for bit delay in testing.
+will behave differently.
 
-Thanks & Regards,
-    - Nayna
-
-
-
-
+Jordan
