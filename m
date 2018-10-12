@@ -2,112 +2,150 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1D6C6787C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 19:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DFBC71122
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C1E20865
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 19:01:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1EE520868
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 20:02:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WLP2DKZo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C1E20865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="ChM4m4T1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1EE520868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbeJMCfO (ORCPT
+        id S1726770AbeJMDga (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 22:35:14 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:41312 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbeJMCfO (ORCPT
+        Fri, 12 Oct 2018 23:36:30 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45763 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbeJMDga (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 22:35:14 -0400
-Received: by mail-yb1-f193.google.com with SMTP id e16-v6so5301141ybk.8
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 12:01:20 -0700 (PDT)
+        Fri, 12 Oct 2018 23:36:30 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y15-v6so6400965plr.12
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 13:02:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=SV1l6xGR0dH7KR9WlPOaU/bxiRwjWoygMAKTjMPmH00=;
-        b=WLP2DKZoVXREMElMyoDQ9Mgwy5nTWtF75q946kO2NOd58IwNFh4fUsntFAlt7QrWME
-         pWTs66GZF+kvgDnZBvOxPA41Dw0j2+TypN84k3ws6WpEc0TDvwzld7Ha5b100UoMlulU
-         Cc7CyPlAmaRYgCHrZNCs4VnZ23MuDNbjklGQQ=
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vdPSDV1B51J0pwMLq40tWD88fqUwXxbWUb+50kgxuLY=;
+        b=ChM4m4T1i7GmucBU/JzgZcdOBchmQMqV863MHvfTtOF4s+NnnLc265AvTnM96PjZT5
+         WbQwbeC0yfsIXLgkmthuurYIB75taeGLI6vpqi/lwf3/s900+Tmajz93MaNSCUu+ucZb
+         ERyg95dOq3h4e9WHPn9BQYj7PD9lKK/1dym1Z+UdoJ4t1/kNr8As+d5xA6Oj3vyPOKQ5
+         CkWICxcewCPGYcMaHABsvuUvgmEvnCDRSY+Gl5v3+pnXa2Gi6xKTS4fnpRWWIE6EcU4Y
+         rr6xYYB3f5pjFCQTp2kXsdDJ1so6YuSOZLJU4BrFqeT+VkRMeI/uCQO+bmtbnBQ2wMqD
+         UsCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=SV1l6xGR0dH7KR9WlPOaU/bxiRwjWoygMAKTjMPmH00=;
-        b=IjIJOzsc+d/C13hbuAPPNZ7EuXmG+U/dxM0BBJBycQmhSTrwVWdwsjvA8WesJyYYff
-         oUnqNRw89sh10/yxEXQr94SldFCcD+TT3l4FTFl3WhEjy5AT7+tka5TWwci5BWuXsPXa
-         6r33q+Vzd7WfLGaBiY9yrrOc6Pu0eDumq916EnFrfD1KKEkTVAkjdvdcfevfc4kmYFqM
-         Tm1z60gXECac0I1f2IWmWqt0HtYprjnkfDmQxLLcTXIi2RaRTeazPmnhel6edZKYOVpJ
-         GSZnsS0kZz4SSfati90a5bX5i694vKM4J0uYB1f7UmTpk94Uee9KNE5mRwMYm5di51TU
-         xhGA==
-X-Gm-Message-State: ABuFfojwGLywyQk5VsoIAQs7fBQ2M/MRaIdDi+m2LaawLSFCYZWMkVp9
-        puDIgT4QGuqQf146w9Yz2Y/gsA5Z4Xo=
-X-Google-Smtp-Source: ACcGV60fT/SSP2rc/lRzrjt2dbOhAp42NIvCnaSihGBCo5dXPRuveglzkEyCbi1zzetpEc4wSVoFqQ==
-X-Received: by 2002:a25:7610:: with SMTP id r16-v6mr3908507ybc.461.1539370880142;
-        Fri, 12 Oct 2018 12:01:20 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id w6-v6sm506659ywl.30.2018.10.12.12.01.19
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 12:01:19 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id d9-v6so5289300ybr.12
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 12:01:19 -0700 (PDT)
-X-Received: by 2002:a25:3617:: with SMTP id d23-v6mr4152480yba.141.1539370878865;
- Fri, 12 Oct 2018 12:01:18 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:d116:0:0:0:0:0 with HTTP; Fri, 12 Oct 2018 12:01:17
- -0700 (PDT)
-In-Reply-To: <8251564f-ba7a-1777-a606-dec472b32f35@canonical.com>
-References: <20181011001846.30964-1-keescook@chromium.org> <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
- <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
- <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
- <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com> <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
- <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com> <_CkJnKYmEZ4ZF0JtsSYuahAd9sgnX9OtcstjXaeqb8wn5uxfimc6S4jomly7If9VqnOXqXwaiCbJ9ttS6NiqE7n6cQUlwLvfO53paLmacvU=@protonmail.ch>
- <8251564f-ba7a-1777-a606-dec472b32f35@canonical.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 12 Oct 2018 12:01:17 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+2yVZ5DQHyqvJKnSYYqRCzeMtEabBwYFOWkTcwMUWhEw@mail.gmail.com>
-Message-ID: <CAGXu5j+2yVZ5DQHyqvJKnSYYqRCzeMtEabBwYFOWkTcwMUWhEw@mail.gmail.com>
-Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
-        James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vdPSDV1B51J0pwMLq40tWD88fqUwXxbWUb+50kgxuLY=;
+        b=Wx5/P0bkccwVl+YA4b4t/LqE9YCu2uP7LSOaZq01PP76eJSKbNMW9iBb9kLEyHsvfk
+         WcDy8NXPbh/mx8GN2ShQ+Hn6Vs1tk4lDALbHaOZM5KsCk25j+ypkqYZhdWSkifqhrxKQ
+         0Lg5wP+L/0C8lJmDnfrCxwMV0ypst/VHRdOSxQgy3EECrVop3o5GffQYVubQTT5iYv9T
+         mtYieodJB87wz3gZ2ZKX4WQPjSc6AjvMEv3X2707o/mtEM3Ua7pR7ffz6zgckMzrKb/0
+         LGiZSGvJ0dDMA9wCiIeR6+/IvfsoDqNh2kP0PPDMQswdfkT0UGhPOw84KDy3ifyjEDQY
+         pEVg==
+X-Gm-Message-State: ABuFfoh8eTKVCUPvX6mp8aHgVIGKf0Qn/NjGG+bYsi+zD0B2zYNI0RGc
+        AcjA9nhlyLA1F9ByqakmawpUsA==
+X-Google-Smtp-Source: ACcGV63kYvoDYx3c4gGc5V+dnS9PX9Zaf4WDN9ntwJ2Q1nx/EjA/Q57lSDzO93IlzSprxxNCt9xyeA==
+X-Received: by 2002:a17:902:2:: with SMTP id 2-v6mr7334285pla.178.1539374542955;
+        Fri, 12 Oct 2018 13:02:22 -0700 (PDT)
+Received: from cisco ([128.107.241.177])
+        by smtp.gmail.com with ESMTPSA id q25-v6sm3658697pfk.154.2018.10.12.13.02.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 12 Oct 2018 13:02:21 -0700 (PDT)
+Date:   Fri, 12 Oct 2018 13:02:20 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        Kees Cook <keescook@chromium.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Oleg Nesterov <oleg@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SELinux-NSA <selinux@tycho.nsa.gov>,
         Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Eric Paris <eparis@parisplace.org>
+Subject: Re: [PATCH v7 3/6] seccomp: add a way to get a listener fd from
+ ptrace
+Message-ID: <20181012200220.GC5530@cisco>
+References: <20181008181815.pwnqxngj22mhm2vj@brauner.io>
+ <CAG48ez3PEce4ynRnDk=yfsAOuFGH=YMmuf13CAxEt07Yjk3ZCw@mail.gmail.com>
+ <20181009132850.fp6yne2vgmfpi27k@brauner.io>
+ <CAG48ez2EV8Z=Egn7hNpXd86bHdvQhVxStqE1N=U2L2R7sA-gjg@mail.gmail.com>
+ <CAHC9VhQfzJgG3i=Q8C+pGY2Lpr+2MRTwxgUWec_heGOecd=xRg@mail.gmail.com>
+ <CAG48ez2hTBFwmA65FXv0zJjc0_wpc1S-uOBn1t+X=0vPH25YvQ@mail.gmail.com>
+ <16662034750.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <CAG48ez0=NRRu2FUZFwdDSMmkdWsFi1XSSPTO8bL84YAY=jOzMQ@mail.gmail.com>
+ <1666564e4f8.2781.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <CALCETrV1fWKJe96ow3XGy_kmZoXoehb99e4AZehsO84YGxKjgQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrV1fWKJe96ow3XGy_kmZoXoehb99e4AZehsO84YGxKjgQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Friday, October 12, 2018 3:19 AM, John Johansen
-<john.johansen@canonical.com> wrote:
-> It isn't perfect but it manages consistency across distros as best as
-> can be achieved atm.
+On Thu, Oct 11, 2018 at 06:02:06PM -0700, Andy Lutomirski wrote:
+> On Thu, Oct 11, 2018 at 4:10 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On October 11, 2018 9:40:06 AM Jann Horn <jannh@google.com> wrote:
+> > > On Thu, Oct 11, 2018 at 9:24 AM Paul Moore <paul@paul-moore.com> wrote:
+> > >> On October 10, 2018 11:34:11 AM Jann Horn <jannh@google.com> wrote:
+> > >>> On Wed, Oct 10, 2018 at 5:32 PM Paul Moore <paul@paul-moore.com> wrote:
+> > >>>> On Tue, Oct 9, 2018 at 9:36 AM Jann Horn <jannh@google.com> wrote:
+> > >>>>> +cc selinux people explicitly, since they probably have opinions on this
+> > >>>>
+> > >>>> I just spent about twenty minutes working my way through this thread,
+> > >>>> and digging through the containers archive trying to get a good
+> > >>>> understanding of what you guys are trying to do, and I'm not quite
+> > >>>> sure I understand it all.  However, from what I have seen, this
+> > >>>> approach looks very ptrace-y to me (I imagine to others as well based
+> > >>>> on the comments) and because of this I think ensuring the usual ptrace
+> > >>>> access controls are evaluated, including the ptrace LSM hooks, is the
+> > >>>> right thing to do.
+> > >>>
+> > >>> Basically the problem is that this new ptrace() API does something
+> > >>> that doesn't just influence the target task, but also every other task
+> > >>> that has the same seccomp filter. So the classic ptrace check doesn't
+> > >>> work here.
+> > >>
+> > >> Due to some rather unfortunate events today I'm suddenly without easy access to the kernel code, but would it be possible to run the LSM ptrace access control checks against all of the affected tasks?  If it is possible, how painful would it be?
+> > >
+> > > There are currently no backlinks from seccomp filters to the tasks
+> > > that use them; the only thing you have is a refcount. If the refcount
+> > > is 1, and the target task uses the filter directly (it is the last
+> > > installed one), you'd be able to infer that the ptrace target is the
+> > > only task with a reference to the filter, and you could just do the
+> > > direct check; but if the refcount is >1, you might end up having to
+> > > take some spinlock and then iterate over all tasks' filters with that
+> > > spinlock held, or something like that.
+> >
+> > That's what I was afraid of.
+> >
+> > Unfortunately, I stand by my previous statements that we still probably want a LSM access check similar to what we currently do for ptrace.
+> >
+> 
+> I would argue that once "LSM" enters this conversation, it just means
+> we're on the wrong track.  Let's try to make this work without ptrace
+> if possible :)  The whole seccomp() mechanism is very carefully
+> designed so that it's perfectly safe to install seccomp filters
+> without involving LSM or even involving credentials at all.
 
-Yeah, this is why I'm okay with the current series: it provides as
-consistent a view as possible, but leaves room for future improvements
-(like adding "+" or "!" or "all" or whatever).
+In a last ditch effort to save the ptrace() interface: can we just
+only allow it when refcount_read(filter->usage) == 1?
 
-I'm curious to see what SELinux folks think of v5, though. I *think* I
-addressed all the concerns there, even Paul's "I want my distro
-default to not have extreme stacking" case too.
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Tycho
