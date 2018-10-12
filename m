@@ -2,66 +2,58 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA31C6783C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 15:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432EEC67872
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 16:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECF7820835
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 15:53:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQufs+6W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECF7820835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1015220835
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 16:01:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1015220835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbeJLX0y (ORCPT
+        id S1728527AbeJLXeh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 19:26:54 -0400
-Received: from mail-it1-f177.google.com ([209.85.166.177]:51493 "EHLO
-        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729071AbeJLX0y (ORCPT
+        Fri, 12 Oct 2018 19:34:37 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44554 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729254AbeJLXeg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 19:26:54 -0400
-Received: by mail-it1-f177.google.com with SMTP id 74-v6so19448347itw.1;
-        Fri, 12 Oct 2018 08:53:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wNLSJKUU5zXLjOjVF17hVK61QMMaYTLJ9qx/1sQMUfU=;
-        b=TQufs+6W7sg/L4cpQUEp4ordO5yIZRic7jRt3QCBy1NKlkAhGkc355bqj+GpMqOYQ7
-         a3yqgvZynXu3PB2YzfIE+DVVxbHKgImS9H4N4D+f/4iA98Mi8VhulSEoGYJDl2Rima4l
-         DphTS6FhUfybstj6+ltbxDbR7wjrvoKSzzLs5BOLaEXJWc8uzXTkXtn6KjLmVav6B9EO
-         LoY2xwIa+rpQnvSd8P2PubQBKKl7YifP0R17oZGry/e3XC/WUZmD0CeGKc7QM+RdXCRc
-         dhLsml/aIrlPvzMB+ynfmQYg3jNODM0CddKZWzk4Em9gXEQwbmnkYSrcRPwbkYoRzA4F
-         mWqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wNLSJKUU5zXLjOjVF17hVK61QMMaYTLJ9qx/1sQMUfU=;
-        b=PRU2nm45G6qIcH5EAZfCDCrEJMfabVxZGhKDmytihXxqUcD4iMRmvVApSahPZRsnTW
-         oTgS5y48SLl6v1ijBZj+uNe/gJaG/R2YCFbr5uBVx1uYgVfbUXmQvufNjCA+misRrhBw
-         RjyPyvBCbdGH9ZUii42I79wpXh384cio/2PC1xj+lTgoehN6+8ExKW8ZD8kHH9bTLFAN
-         tRJljZ1jjn6zLbphJ8HJmVMLYbvF0wXp8yEEqgVEun0brdXt/k6BY40LrcaG3q9k8heQ
-         4pWsli+JREqfVsJDtMjOML8DYVQiS5NOH7B7cut9jdE6+ujc7UAeFfV5/eQZ18SZis6V
-         vn8g==
-X-Gm-Message-State: ABuFfohZ7r7tw2StthkdUtJd9QyWFO2IvXtk+ry0tVxsh8NW8BttrZoZ
-        sLnxVm3YWG4IqdWctXH7ac1ymcfc
-X-Google-Smtp-Source: ACcGV62TQXlIH30dOgYAdODYOEYISwwVQdukRloAR4LmkWH851BJcXkgHH3naOVQvYbnpsUXRVa+rA==
-X-Received: by 2002:a05:660c:fd2:: with SMTP id m18mr1543644itn.92.1539359626595;
-        Fri, 12 Oct 2018 08:53:46 -0700 (PDT)
-Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
-        by smtp.googlemail.com with ESMTPSA id y4-v6sm414057iom.73.2018.10.12.08.53.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 08:53:45 -0700 (PDT)
+        Fri, 12 Oct 2018 19:34:36 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9CFxPmN126389
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 12:01:26 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2vwncwva-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 12:01:25 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <jejb@linux.ibm.com>;
+        Fri, 12 Oct 2018 10:01:23 -0600
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 12 Oct 2018 10:01:20 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9CG1JJV51249392
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 12 Oct 2018 09:01:19 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4487B7805C;
+        Fri, 12 Oct 2018 10:01:19 -0600 (MDT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 23DA578064;
+        Fri, 12 Oct 2018 10:01:17 -0600 (MDT)
+Received: from [153.66.254.194] (unknown [9.85.185.70])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 12 Oct 2018 10:01:16 -0600 (MDT)
 Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
-To:     James Bottomley <jejb@linux.ibm.com>, ndesaulniers@google.com,
+From:   James Bottomley <jejb@linux.ibm.com>
+To:     Denis Kenzior <denkenz@gmail.com>, ndesaulniers@google.com,
         dhowells@redhat.com
 Cc:     natechancellor@gmail.com, ebiggers@google.com,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -69,47 +61,72 @@ Cc:     natechancellor@gmail.com, ebiggers@google.com,
         "Serge E. Hallyn" <serge@hallyn.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 12 Oct 2018 09:01:15 -0700
+In-Reply-To: <da2a675f-bd2d-a1f3-6a67-5579e75bdb76@gmail.com>
 References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
- <20181011203126.15338-1-ndesaulniers@google.com>
- <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
- <1539356751.2656.5.camel@linux.ibm.com>
- <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
- <1539357759.2656.7.camel@linux.ibm.com>
- <16de2bb3-815a-f534-4618-af854c906017@gmail.com>
- <1539359181.2656.13.camel@linux.ibm.com>
-From:   Denis Kenzior <denkenz@gmail.com>
-Message-ID: <da2a675f-bd2d-a1f3-6a67-5579e75bdb76@gmail.com>
-Date:   Fri, 12 Oct 2018 10:53:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <1539359181.2656.13.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+         <20181011203126.15338-1-ndesaulniers@google.com>
+         <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
+         <1539356751.2656.5.camel@linux.ibm.com>
+         <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
+         <1539357759.2656.7.camel@linux.ibm.com>
+         <16de2bb3-815a-f534-4618-af854c906017@gmail.com>
+         <1539359181.2656.13.camel@linux.ibm.com>
+         <da2a675f-bd2d-a1f3-6a67-5579e75bdb76@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18101216-8235-0000-0000-00000E1438AC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009866; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01101642; UDB=6.00570075; IPR=6.00881687;
+ MB=3.00023729; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-12 16:01:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101216-8236-0000-0000-000042F9F79A
+Message-Id: <1539360075.2656.18.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=897 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810120156
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi James,
-
->>   From the links provided in the patch it seems that one cannot pass
->> char/float/short to va_start().  Fair enough.  So if we make h3 an
->> unsigned int, the issue goes away, no?
+On Fri, 2018-10-12 at 10:53 -0500, Denis Kenzior wrote:
+> Hi James,
 > 
-> For the current version of clang, yes.  However, if we're fixing this
-> for good a char * pointer is the only guaranteed thing because it
-> mirrors current use in printf.
+> > >   From the links provided in the patch it seems that one cannot
+> > > pass char/float/short to va_start().  Fair enough.  So if we make
+> > > h3 an unsigned int, the issue goes away, no?
+> > 
+> > For the current version of clang, yes.  However, if we're fixing
+> > this for good a char * pointer is the only guaranteed thing because
+> > it mirrors current use in printf.
+> > 
 > 
+> All right.  I guess I wasn't aware that non-printf like variadic 
+> functions are now considered harmful or of the impending crusade
+> against them :)
 
-All right.  I guess I wasn't aware that non-printf like variadic 
-functions are now considered harmful or of the impending crusade against 
-them :)
+It's not, it's just a maintainer issue: The original problem is because
+we coded for gcc specifically; it doesn't complain and does the right
+thing, so everyone was happy.  Now Clang comes along and is unhappy
+with this, so the question a good maintainer should ask is "how do I
+fix this so it never comes back again?", not "what's the easiest
+bandaid to get both Clang and gcc to work?" because the latter is how
+we got here in the first place.
 
-But in the context of this patch, can we please use something less 
-invasive than changing all the arguments around?  Promoting h3 to a bool 
-(if possible) or int/unsigned int would get my vote.
+James
 
-Regards,
--Denis
+> But in the context of this patch, can we please use something less 
+> invasive than changing all the arguments around?  Promoting h3 to a
+> bool (if possible) or int/unsigned int would get my vote.
+> 
+> Regards,
+> -Denis
+> 
 
