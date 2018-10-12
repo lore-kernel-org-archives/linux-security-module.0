@@ -2,129 +2,102 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA11C6787C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 17:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8451C6787C
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 17:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 745AB2077C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 17:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D410204EC
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 17:16:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gQDfm7IN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 745AB2077C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRh59LnJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D410204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbeJMAsd (ORCPT
+        id S1727061AbeJMAt2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 20:48:33 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39768 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbeJMAsc (ORCPT
+        Fri, 12 Oct 2018 20:49:28 -0400
+Received: from mail-it1-f179.google.com ([209.85.166.179]:38499 "EHLO
+        mail-it1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbeJMAt2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 20:48:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id w14-v6so6221267plp.6
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 10:15:04 -0700 (PDT)
+        Fri, 12 Oct 2018 20:49:28 -0400
+Received: by mail-it1-f179.google.com with SMTP id i76-v6so19212071ita.3;
+        Fri, 12 Oct 2018 10:15:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ujwWbrimNp669KOEB8if5RkxRpiCrikk2Qz5VOA/j6M=;
-        b=gQDfm7IN81M960Ohrzsq4aoqd93BSCaPEZcF2sfrgrANy7gC5gGxReonl2EwxTCl/k
-         dKWs62xXYmi/xdzeol/ZBE6rjEo507pq6v855f+7UQG0Nj7xPAkdnbjrmpG+tGsqcMPl
-         EmgMn3sFwOc0BMqiGHt/wFuRT2DzC/RWT5OsKL9S+HkUeq1DTCiazsVWgm+NFoCZAGgN
-         VL98vlVj9jyJ32CfxNOa9WxO43zjU0mWyKaFEpSm1hhU4a1Rje4aLCA4+TIe6BtA/x6V
-         IOtVuHnlgmNSdd3dXe8rEXJAOmSsVvCveIFNHd9J0P692EbuhukRr8P/R8IpqID+qijz
-         IfAA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mmntQobIEjj53jWQafrzejpgRbgHAAeVrx3PmtZCc8k=;
+        b=VRh59LnJFsCADd4KsqhBOaE6xDHeLGb6HU/md8qg4zrUTeRiZXPJ0ReZvxRu2Qq+dQ
+         YTLv97snmsWNQXP3K7df3ZmjzMGr7hP0x6TMTHaKA+2tpNGEpqnddFFxUhZvjk03cqkZ
+         h2KETMvbC7VNhVJ4pafzNpNWHjvnLUZpODHkhRPaKmr0sMTf8c3gnLsTzhKAuHguWov1
+         4YyrLJE1IRbPmVA8rDaHGS8JrijHSgc5AbmunVyo+DQXjhhZDQgTVA2vnuqUZxokJoKF
+         PQ3YFx9zrFruIMZYSwFJzimDG3ipH9ZQDdYTBXH5j87r21xVyDwfa/d9Vtz4Mj+/QsoY
+         mx1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ujwWbrimNp669KOEB8if5RkxRpiCrikk2Qz5VOA/j6M=;
-        b=BVlRAz8ViliUoWCJtsY5hca9IgMab8tffnG6gGkglfAqb4fqX8Ezop28GjXhXunIRo
-         5PE16w3bwTjrkLrz0CCzwaKOaRyn8rypBNcthd7RGSViLRsoR2eBoY0eAFcOlYw8NC3/
-         l0T9uyH1svYcz/qe79/leW1ks4LWp8yfnhin2zxSigwcnyCK7t38Ga3BGtaThMgsdj9s
-         decYkq20r+I9kI5H6nH2n0xqdaXkwdaW5qWov02eoOpkcqI0JmCw6d07kNSOB6WIz8kW
-         b9JMK9V6dnp7YV8n3TPKTNBsSjNkgz4I3Fhj2RwfOnORrqFgS8wJOqa1iF0aDN7fuASj
-         FSkw==
-X-Gm-Message-State: ABuFfohX4kcL/bDnP5L1sYBBN+Zv31IkbRw0nrKzPGaje4fQ/cGkqNiQ
-        g4pISJQNtMHv0mn7dO3c3SrYrL7mzkf7PaRQsYaAlA==
-X-Google-Smtp-Source: ACcGV60ERIB98QcruqfKMFipjqMuswzQ8amsEZFbwBlxZ/1c8Cdo0y84gfK978KgSLEqvymaf9Jr0YLKYlRwq+xWXuw=
-X-Received: by 2002:a17:902:109:: with SMTP id 9-v6mr6664670plb.320.1539364503709;
- Fri, 12 Oct 2018 10:15:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <1539274203.2623.56.camel@linux.vnet.ibm.com> <20181011203126.15338-1-ndesaulniers@google.com>
- <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com> <1539356751.2656.5.camel@linux.ibm.com>
- <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com> <1539357759.2656.7.camel@linux.ibm.com>
- <16de2bb3-815a-f534-4618-af854c906017@gmail.com> <1539359181.2656.13.camel@linux.ibm.com>
- <da2a675f-bd2d-a1f3-6a67-5579e75bdb76@gmail.com> <1539360075.2656.18.camel@linux.ibm.com>
-In-Reply-To: <1539360075.2656.18.camel@linux.ibm.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 12 Oct 2018 10:14:52 -0700
-Message-ID: <CAKwvOdnejRka4hP66zCGS+MSXx_z335qZUTU8J0UbEq-boRYjQ@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mmntQobIEjj53jWQafrzejpgRbgHAAeVrx3PmtZCc8k=;
+        b=bSXSGUKZFr9XoyHiB05wsHlkT7I7f7UowoLwhvS9nvDhob7rEfm4SpKOvIzhuLVlTb
+         1QrGVGu+xBdeQargTU5Oayyc3FvaT4Nj+IHshVsC0bxfIWPF1tppNSjT9HPTM6R7Q2qo
+         hZNntVcFOWYGitae8Vpc71m+M/FQp19uIbSJpgaQFF/0qINH1JFnIHecLoOkxsTOodMf
+         VXcBM9idunCNQVf+pOmGhuNeaYRQx4IywPV7HRGXtYchRnicwzEielLkJCLCEdQjHeIg
+         kM+tBIFMPFfX/BXr2uOcB25MEuS6kDrZTF/WKFDNBN9pK5I+/yVadT8gQj274g1Bi17c
+         kx6g==
+X-Gm-Message-State: ABuFfojQsv3Bpe8HFCqpyfaZN3/L7qJchpjurZfLhRJtzcaxVO9PlPn6
+        s+OMY9DR/Qng7+FbMedcwnnTWmJe
+X-Google-Smtp-Source: ACcGV63/Eza3RSwStk0xFDeX72JaQ45YVUgpEex326ov+nkHqhQkQ+hJNKKMQ+67qUC+ldVDMt7oUw==
+X-Received: by 2002:a24:ad44:: with SMTP id a4-v6mr5102074itj.132.1539364558311;
+        Fri, 12 Oct 2018 10:15:58 -0700 (PDT)
+Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id s20-v6sm398465iog.50.2018.10.12.10.15.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 10:15:57 -0700 (PDT)
 Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
-To:     jejb@linux.ibm.com
-Cc:     denkenz@gmail.com, dhowells@redhat.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        dhowells@redhat.com, Nathan Chancellor <natechancellor@gmail.com>,
         Eric Biggers <ebiggers@google.com>, zohar@linux.vnet.ibm.com,
         jmorris@namei.org, serge@hallyn.com,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
+ <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
+ <CAKwvOdmHm_2i6bQa59hw1K1ZoTzdSx9yfNoR66WLr_UCv0Lr1w@mail.gmail.com>
+From:   Denis Kenzior <denkenz@gmail.com>
+Message-ID: <8059e3db-ee39-d5a4-b8b4-1cb2c69bf82e@gmail.com>
+Date:   Fri, 12 Oct 2018 12:15:55 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <CAKwvOdmHm_2i6bQa59hw1K1ZoTzdSx9yfNoR66WLr_UCv0Lr1w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 12, 2018 at 9:01 AM James Bottomley <jejb@linux.ibm.com> wrote:
->
-> On Fri, 2018-10-12 at 10:53 -0500, Denis Kenzior wrote:
-> > Hi James,
-> >
-> > > >   From the links provided in the patch it seems that one cannot
-> > > > pass char/float/short to va_start().  Fair enough.  So if we make
-> > > > h3 an unsigned int, the issue goes away, no?
-> > >
-> > > For the current version of clang, yes.  However, if we're fixing
-> > > this for good a char * pointer is the only guaranteed thing because
-> > > it mirrors current use in printf.
-> > >
-> >
-> > All right.  I guess I wasn't aware that non-printf like variadic
-> > functions are now considered harmful or of the impending crusade
-> > against them :)
->
-> It's not, it's just a maintainer issue: The original problem is because
-> we coded for gcc specifically; it doesn't complain and does the right
-> thing, so everyone was happy.  Now Clang comes along and is unhappy
-> with this, so the question a good maintainer should ask is "how do I
-> fix this so it never comes back again?", not "what's the easiest
-> bandaid to get both Clang and gcc to work?" because the latter is how
-> we got here in the first place.
+Hi Nick,
 
-Clang is simply pointing out that this is explicitly undefined
-behavior by the C90 spec.  As such, not only may the implementation be
-different between compilers, but it is free to change between versions
-of the same compiler (I haven't witnessed such a case yet in my
-limited career, but I would never say never when it comes to relying
-on undefined behavior).
+>> Refer to
+>> https://trustedcomputinggroup.org/wp-content/uploads/TPM-Main-Part-3-Commands_v1.2_rev116_01032011.pdf
+>> for details.
+> 
+>   Can you cite the relevant section?
+> 
 
->
-> James
->
-> > But in the context of this patch, can we please use something less
-> > invasive than changing all the arguments around?  Promoting h3 to a
-> > bool (if possible) or int/unsigned int would get my vote.
-> >
-> > Regards,
-> > -Denis
-> >
->
+Just pick any section that describes a TPM command.  I randomly used 
+Section 10.3 for TPM Unbind.  See the 'Incoming operands and sizes' table.
 
-
--- 
-Thanks,
-~Nick Desaulniers
+Regards,
+-Denis
