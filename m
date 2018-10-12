@@ -2,67 +2,58 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6264FC6783C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 12:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1EDC6783C
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 15:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 248C12087D
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 12:30:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ohznU5El"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 248C12087D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5067820645
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 15:06:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5067820645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbeJLUCL (ORCPT
+        id S1728888AbeJLWiy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 16:02:11 -0400
-Received: from mail-io1-f42.google.com ([209.85.166.42]:44217 "EHLO
-        mail-io1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728131AbeJLUCL (ORCPT
+        Fri, 12 Oct 2018 18:38:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34300 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728646AbeJLWiy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 16:02:11 -0400
-Received: by mail-io1-f42.google.com with SMTP id x26-v6so9065466iog.11;
-        Fri, 12 Oct 2018 05:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=x4X39BeHTmskD+Gyf1Bj7680OjQKEVSVl8c2DfHIMuc=;
-        b=ohznU5El1+5Ct2oI+6XOnqQkkQCLuvBmXFf0MM/ZEkO055bM4rqdjt0f3V7AdZ/FE1
-         wvv+eQ9qWJGcNTrkL45ZNBYmq5u7MxLTEleRE7O4fhjCPLPf4yBUTagf4S7UnZ8iMAum
-         14+K4kHuePAtwfXB8pytcWbBb29kKysw3cUN+1EjOQfpVh7TdJF85x+c69PUb4cxq0hx
-         tALfOA7Qut/V7YZ8u2RBFEtCx/y01d01tNh5tLRLqMYC3V8f/r3G5aHjoCEoPjcQcXSF
-         zRC3/Oo4cH17aqwS7HmV9dPBhWmNpOXjfssgIUkugRCptmTpZ9GuPfcIIsq1W8fG1c3w
-         8H8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=x4X39BeHTmskD+Gyf1Bj7680OjQKEVSVl8c2DfHIMuc=;
-        b=sKb4e6hjB9jjPjCCn+Mxcx4MrVgrBudbHtVQNTVx2LkPDbNcBof9sFYeysm9uXzd9L
-         BEs1iGngURljvc88ZvxGiSKKkhCO3zJ7K9w2br5TVUe8qEqOM/ZCdFgQBDqb52Gg3pAK
-         yiCxY6it4eY6YzGxBis4QcLyKlpR9alg3+uBhXEUaIXK8WxOzLkR4MBZo0vZq8GQ8G2U
-         TUhih4rTLwWyxurB8KJ+n0KpBAXsUUbeUh0VNgzhJVf3ttQcT6tPCKYsgM4MMCARacfK
-         1hKMuETfatuflhjP8ajFMQn8PCKOkcnbt0fnsnr44tO61IKoYkKCq0h6CkTyPjbKRTn/
-         1pvw==
-X-Gm-Message-State: ABuFfohSQ4A7ER/zhEBjM6XRZo5tdJ/jzJdVquXfAwyh0l9CTd15xeX7
-        f9Zd62SPcDtLr6a2II0c7BOZdFOHxPk=
-X-Google-Smtp-Source: ACcGV60Y5kOGGumyMqch0MfPUq8yEvNolHvi5Yx5dyv7s152FRsUNewfDfUMIjPinmf1yQsxQURRAQ==
-X-Received: by 2002:a6b:b249:: with SMTP id b70-v6mr4118048iof.252.1539347395638;
-        Fri, 12 Oct 2018 05:29:55 -0700 (PDT)
-Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
-        by smtp.googlemail.com with ESMTPSA id v13-v6sm232934iom.54.2018.10.12.05.29.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Oct 2018 05:29:54 -0700 (PDT)
-From:   Denis Kenzior <denkenz@gmail.com>
+        Fri, 12 Oct 2018 18:38:54 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9CExSAv036215
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 11:06:00 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2tu6gm9d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 11:06:00 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <jejb@linux.ibm.com>;
+        Fri, 12 Oct 2018 09:05:59 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 12 Oct 2018 09:05:56 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9CF5trj37421258
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 12 Oct 2018 08:05:55 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 016C278069;
+        Fri, 12 Oct 2018 09:05:55 -0600 (MDT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BDC7B78063;
+        Fri, 12 Oct 2018 09:05:52 -0600 (MDT)
+Received: from [153.66.254.194] (unknown [9.85.185.70])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 12 Oct 2018 09:05:52 -0600 (MDT)
 Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
-To:     ndesaulniers@google.com, jejb@linux.vnet.ibm.com,
+From:   James Bottomley <jejb@linux.ibm.com>
+To:     Denis Kenzior <denkenz@gmail.com>, ndesaulniers@google.com,
         dhowells@redhat.com
 Cc:     natechancellor@gmail.com, ebiggers@google.com,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -70,46 +61,72 @@ Cc:     natechancellor@gmail.com, ebiggers@google.com,
         "Serge E. Hallyn" <serge@hallyn.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 12 Oct 2018 08:05:51 -0700
+In-Reply-To: <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
 References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
- <20181011203126.15338-1-ndesaulniers@google.com>
-Message-ID: <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
-Date:   Fri, 12 Oct 2018 07:29:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181011203126.15338-1-ndesaulniers@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+         <20181011203126.15338-1-ndesaulniers@google.com>
+         <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18101215-0036-0000-0000-00000A495826
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009866; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01101623; UDB=6.00570064; IPR=6.00881668;
+ MB=3.00023728; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-12 15:05:58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18101215-0037-0000-0000-00004942DC0E
+Message-Id: <1539356751.2656.5.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=742 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810120148
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Nick,
+On Fri, 2018-10-12 at 07:29 -0500, Denis Kenzior wrote:
+> Hi Nick,
+> 
+> > @@ -123,7 +123,7 @@ static int TSS_rawhmac(unsigned char *digest,
+> > const unsigned char *key,
+> >    */
+> >   static int TSS_authhmac(unsigned char *digest, const unsigned
+> > char *key,
+> >   			unsigned int keylen, unsigned char *h1,
+> > -			unsigned char *h2, unsigned char h3, ...)
+> > +			unsigned char h2, unsigned char *h3, ...)
+> >   {
+> >   	unsigned char paramdigest[SHA1_DIGEST_SIZE];
+> >   	struct sdesc *sdesc;
+> 
+> So my concern here is that this actually breaks the natural argument 
+> order compared to what the specification uses.  This in turn
+> requires 
+> one to perform some mental gymnastics and I'm not sure that this is
+> such 
+> a good idea.  Refer to 
+> https://trustedcomputinggroup.org/wp-content/uploads/TPM-Main-Part-3-
+> Commands_v1.2_rev116_01032011.pdf 
+> for details.
+> 
+> Note that H3 is really the 'continueAuthSession' variable which is a 
+> bool.  In the above specification BOOL has a size of 1, and
+> TSS_authhmac already assigns a h3 to 'c' which is used for the actual
+> hashing.
+> 
+> So can't we simply use 'bool' or uint32 as the type for h3 instead
+> of re-ordering everything
 
-> @@ -123,7 +123,7 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
->    */
->   static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
->   			unsigned int keylen, unsigned char *h1,
-> -			unsigned char *h2, unsigned char h3, ...)
-> +			unsigned char h2, unsigned char *h3, ...)
->   {
->   	unsigned char paramdigest[SHA1_DIGEST_SIZE];
->   	struct sdesc *sdesc;
+The problem is the standard is ambiguious.  The only thing that's
+guaranteed to work for all time is a char *.  If you want to keep the
+order, what I'd suggest is inserting a dummy pointer argument which is
+always expected to be NULL between the h3 and the varargs.
 
-So my concern here is that this actually breaks the natural argument 
-order compared to what the specification uses.  This in turn requires 
-one to perform some mental gymnastics and I'm not sure that this is such 
-a good idea.  Refer to 
-https://trustedcomputinggroup.org/wp-content/uploads/TPM-Main-Part-3-Commands_v1.2_rev116_01032011.pdf 
-for details.
+James
 
-Note that H3 is really the 'continueAuthSession' variable which is a 
-bool.  In the above specification BOOL has a size of 1, and TSS_authhmac 
-already assigns a h3 to 'c' which is used for the actual hashing.
-
-So can't we simply use 'bool' or uint32 as the type for h3 instead of 
-re-ordering everything?
-
-Regards,
--Denis
