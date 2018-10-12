@@ -2,245 +2,189 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 246A0C28CF8
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 01:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C83FC28CF8
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 01:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3452086A
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 01:20:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3452086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id E744F2085B
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 01:50:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uD29YydG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E744F2085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeJLIty (ORCPT
+        id S1726196AbeJLJU1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 04:49:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59754 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbeJLItw (ORCPT
+        Fri, 12 Oct 2018 05:20:27 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37152 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbeJLJU1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 04:49:52 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1gAm7M-0000Xf-WD; Fri, 12 Oct 2018 01:19:53 +0000
-Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
-To:     Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Fri, 12 Oct 2018 05:20:27 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 185-v6so11354072wmt.2;
+        Thu, 11 Oct 2018 18:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lbPDkw8B79vAveAPAAnDcRQbuEznomdsJGqz3Eo/Jd4=;
+        b=uD29YydGo71HARPGUNanbZLnwT28fSpI+GuTcKq3l2+ca7MPS9Bh8WJvM9PJ5uDKgD
+         j+B1nQWkQnMpIx2neXQrpleXpNmXq+8SfgzefRYDYcxtkDyzGBNAF7oeXcBhJ3l32hHl
+         ddS7FeDcTWWncO2ns/IDaCWOA6Gumt1C6USYX4r3N0ZuzIF1OrOJs/sIvIlCS+782Na2
+         DfUiS4lpyaryiVuioGooKmhEmjzTJ7Lp/fCoLddzu5KuMszJMSFRa6GBJv5GqbgUs5F+
+         HpUGI2yX9Lm7oUrPPKU0T3lSa/ZzhkoeuVm2FqKDNiFmM5RTvYfiJvzfIX0KgFN846q2
+         Q3Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lbPDkw8B79vAveAPAAnDcRQbuEznomdsJGqz3Eo/Jd4=;
+        b=oeHeIUysNLUciX0IrA+z53a9VbolUNbMkL5LZ2Iom6KCcHbdrVBVbJt4fZNp11XFPn
+         xij1B0fQAXhjrBeNghqO6yE3+vu+WOjfk1eseD5hvl301ZZoerBTQOaaEF0L6Jl/m84x
+         twRpxg9AOD3DTz0g7KSs6qj4gGwJHY4b5l9tz5t9WoHQ4SHM7c8FUlVA5h6pfe/jkoRm
+         +oJXh9vhkdgYjQjzMHVupErYrIxoOB38aP3mz/LFh9xIBBEBr9XnpKkAtDlGo9bt76Rs
+         +sljGUWs1XbGkVKcYmjJXVLhrOnC3S5LHYjL9YJHnL9aV1wOm/+cVUJaeTYO4FKJ+7Ts
+         DpIA==
+X-Gm-Message-State: ABuFfoi/K80rai4mh566i2sDRMWuDoXikVvrVT6CHEn8h+4zjEJDBfFb
+        N9uy7rM6iKfPItSbF12eQVgPG0NbiOvgKQ==
+X-Google-Smtp-Source: ACcGV61NexnTQKvkWvKAvYMaQJ9Up+V/jtggPEUxMe8Z4LkVLT1poI0mhI3zQYgBosWYwDOSpb8KWQ==
+X-Received: by 2002:a7b:c259:: with SMTP id b25-v6mr3401102wmj.138.1539309025402;
+        Thu, 11 Oct 2018 18:50:25 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id l38-v6sm26845111wre.38.2018.10.11.18.50.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Oct 2018 18:50:24 -0700 (PDT)
+Date:   Thu, 11 Oct 2018 18:50:22 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     ndesaulniers@google.com
+Cc:     jejb@linux.vnet.ibm.com, dhowells@redhat.com, ebiggers@google.com,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181011001846.30964-1-keescook@chromium.org>
- <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
- <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
- <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
- <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
- <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com>
-Date:   Thu, 11 Oct 2018 18:19:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
+Message-ID: <20181012015022.GA7508@flashbox>
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-In-Reply-To: <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181011203126.15338-1-ndesaulniers@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/11/2018 05:11 PM, Jordan Glover wrote:
-> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
-> On Friday, October 12, 2018 1:48 AM, John Johansen <john.johansen@canonical.com> wrote:
+On Thu, Oct 11, 2018 at 01:31:26PM -0700, ndesaulniers@google.com wrote:
+> by swapping h2 and h3.
 > 
->> On 10/11/2018 04:09 PM, Kees Cook wrote:
->>
->>> On Thu, Oct 11, 2018 at 3:58 PM, Jordan Glover
->>> Golden_Miller83@protonmail.ch wrote:
->>>
->>>> On Thursday, October 11, 2018 7:57 PM, Kees Cook keescook@chromium.org wrote:
->>>>
->>>>>     To switch to SELinux at boot time with
->>>>>     "CONFIG_LSM=yama,loadpin,integrity,apparmor", the old way continues to
->>>>>     work:
->>>>>
->>>>>     selinux=1 security=selinux
->>>>>
->>>>>     This will work still, since it will enable selinux (selinux=1) and
->>>>>     disable all other major LSMs (security=selinux).
->>>>>
->>>>>     The new way to enable selinux would be using
->>>>>     "lsm=yama,loadpin,integrity,selinux".
->>>>>
->>>>
->>>> It seems to me that legacy way is more user friendly than the new one.
->>>> AppArmor and SElinux are households names but the rest may be enigmatic
->>>> for most users and the need for explicit passing them all may be
->>>> troublesome. Especially when the new ones like sara,landlock or cows :)
->>>> will be incoming. Moreover to knew what you have to pass there, you need
->>>> to look at CONFIG_LSM in kernel config (which will vary across distros
->>>> and also mean copy-paste from the web source may won't work as expected)
->>>> which again most users don't do.
->>>> I think there is risk that users will end up with "lsm=selinux" without
->>>> realizing that they may disable something along the way.
->>>> I would prefer for "lsm=" to work as override to "CONFIG_LSM=" with
->>>> below assumptions:
->>>> I. lsm="$lsm" will append "$lsm" at the end of string. Before extreme
->>>> stacking it will also remove the other major (explicit) lsm from it.
->>>> II. lsm="!$lsm" will remove "$lsm" from the string.
->>>> III. If "$lsm" already exist in the string, it's moved at the end of it
->>>> (this will cover ordering).
->>>
->>> We've had things sort of like this proposed, but if you can convince
->>> James and others, I'm all for it. I think the standing objection from
->>> James and John about this is that the results of booting with
->>> "lsm=something" ends up depending on CONFIG_LSM= for that distro. So
->>> you end up with different behaviors instead of a consistent behavior
->>> across all distros.
->>
->> Its certainly a point that could confuse the user. I do have concerns
->> about it, but not something that is on a must haves list
->>
->>> Now, in the future blob and extreme stacking world, having the
->>> explicit lsm= list shouldn't be too bad since LSMs will effectively
->>> ALL be initialized -- but they'll be inactive since they have no
->>> policy loaded.
->>
->> you are more optimistic about this than I am, but there will be at
->> least some movement towards this.
->>
->>> But I still agree with you: I'd like a friendlier way to
->>> disable/enable specific LSMs, but an explicit lsm= seems to be the
->>> only way.
->>
->> Hrmmm, I don't know about the only way, but a way to provide the
->> explicit list, and also set a specific set as the default in the
->> Kconfig is a hard requirement.
->>
+> security/keys/trusted.c:146:17: warning: passing an object that
+> undergoes default
+>       argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+>         va_start(argp, h3);
+>                        ^
+> security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+> char' is declared here
+> unsigned char *h2, unsigned char h3, ...)
+>                                ^
 > 
-> My proposition allows for explicit "lsm=" list but also accepts non
-> explicit list. This is it's advantage above current approach.
+> Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+> standards explicitly call this out as undefined behavior:
 > 
-> The current approach works but it seems to target the very same people
-> who designed it :)
+> The parameter parmN is the identifier of the rightmost parameter in
+> the variable parameter list in the function definition (the one just
+> before the ...). If the parameter parmN is declared with ... or with a
+> type that is not compatible with the type that results after
+> application of the default argument promotions, the behavior is
+> undefined.
 > 
->> The initial lsm.ebable, lsm.disable had too many issues, and for
->> various reasons I never managed to get back to kees' proposal
->> for using +.
->>
->> That said, I do think the right approach for the initial pass is
->> the explicit list. It moves the arguments to the side and allows
->> this work to move forward.
->>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/41
+> Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> ---
+>  security/keys/trusted.c | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
-> I'm afraid when it hits stable kernel and people will rely on it,
-> then it will be too late. Things will be even more hard to change
-> than now when we have to keep legacy syntax of security=xxx.
+> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+> index b69d3b1777c2..d425b2b839af 100644
+> --- a/security/keys/trusted.c
+> +++ b/security/keys/trusted.c
+> @@ -123,7 +123,7 @@ static int TSS_rawhmac(unsigned char *digest, const unsigned char *key,
+>   */
+>  static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+>  			unsigned int keylen, unsigned char *h1,
+> -			unsigned char *h2, unsigned char h3, ...)
+> +			unsigned char h2, unsigned char *h3, ...)
+
+Prototype needs to be updated in include/keys/trusted.h and it looks
+like this function is used in crypto/asymmetric_keys/asym_tpm.c so these
+same changes should be made there.
+
+Otherwise, looks good to me! Thanks for sending the patch.
+
+Nathan
+
+>  {
+>  	unsigned char paramdigest[SHA1_DIGEST_SIZE];
+>  	struct sdesc *sdesc;
+> @@ -139,7 +139,7 @@ static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+>  		return PTR_ERR(sdesc);
+>  	}
+>  
+> -	c = h3;
+> +	c = h2;
+>  	ret = crypto_shash_init(&sdesc->shash);
+>  	if (ret < 0)
+>  		goto out;
+> @@ -163,7 +163,7 @@ static int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+>  	if (!ret)
+>  		ret = TSS_rawhmac(digest, key, keylen, SHA1_DIGEST_SIZE,
+>  				  paramdigest, TPM_NONCE_SIZE, h1,
+> -				  TPM_NONCE_SIZE, h2, 1, &c, 0, 0);
+> +				  TPM_NONCE_SIZE, h3, 1, &c, 0, 0);
+>  out:
+>  	kzfree(sdesc);
+>  	return ret;
+> @@ -508,7 +508,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
+>  	if (pcrinfosize == 0) {
+>  		/* no pcr info specified */
+>  		ret = TSS_authhmac(td->pubauth, sess.secret, SHA1_DIGEST_SIZE,
+> -				   sess.enonce, td->nonceodd, cont,
+> +				   sess.enonce, cont, td->nonceodd,
+>  				   sizeof(uint32_t), &ordinal, SHA1_DIGEST_SIZE,
+>  				   td->encauth, sizeof(uint32_t), &pcrsize,
+>  				   sizeof(uint32_t), &datsize, datalen, data, 0,
+> @@ -516,7 +516,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
+>  	} else {
+>  		/* pcr info specified */
+>  		ret = TSS_authhmac(td->pubauth, sess.secret, SHA1_DIGEST_SIZE,
+> -				   sess.enonce, td->nonceodd, cont,
+> +				   sess.enonce, cont, td->nonceodd,
+>  				   sizeof(uint32_t), &ordinal, SHA1_DIGEST_SIZE,
+>  				   td->encauth, sizeof(uint32_t), &pcrsize,
+>  				   pcrinfosize, pcrinfo, sizeof(uint32_t),
+> @@ -608,12 +608,12 @@ static int tpm_unseal(struct tpm_buf *tb,
+>  		return ret;
+>  	}
+>  	ret = TSS_authhmac(authdata1, keyauth, TPM_NONCE_SIZE,
+> -			   enonce1, nonceodd, cont, sizeof(uint32_t),
+> +			   enonce1, cont, nonceodd, sizeof(uint32_t),
+>  			   &ordinal, bloblen, blob, 0, 0);
+>  	if (ret < 0)
+>  		return ret;
+>  	ret = TSS_authhmac(authdata2, blobauth, TPM_NONCE_SIZE,
+> -			   enonce2, nonceodd, cont, sizeof(uint32_t),
+> +			   enonce2, cont, nonceodd, sizeof(uint32_t),
+>  			   &ordinal, bloblen, blob, 0, 0);
+>  	if (ret < 0)
+>  		return ret;
+> -- 
+> 2.19.0.605.g01d371f741-goog
 > 
-> I added explanation why explicit list doesn't solve consistency
-> across distros in the other reply
-> 
-
-It isn't perfect but it manages consistency across distros as best as
-can be achieved atm.
-
-Its just a fact that some LSMs are not going to be built into some
-kernels. The only way to deal with that is direct people to build
-their own kernels.
-
-The other major problem is that the current LSM stacking patches do
-not deal with "extreme" stacking. So doing
-
-lsm=+apparmor
-
-(I am going to stick with the + syntax atm to avoid confusion between
-adding and setting)
-
-assuming apparmor is builtin will not necessarily get you apparmor if
-another major lsm is enabled.  Yes your specific proposal would as it
-specifies it overrides the current major, except that ordering
-important so if say landlock registers before apparmor, you may still
-not get apparmor.
-
-You proposal does not provide a means to ensure you have only a
-specific set of LSMs enabled. As an LSM not explicitly listed in lsm=
-lsm=! may still be enabled. So the user is going to have to be aware
-of the initial LSMs list if they are trying to guarentee a specific
-security arrangement.
-
-This violates one of the hard asks, and I will tell you that this will
-just mean there is going to be some distro patching to make sure it
-exists.
-
-The current explicit list is more consistent, and it is amenable to
-being extended with + or ! as selective add/remove so we are not
-locked into only supporting an explicit list.
-
-
->>>> It's possible that something lime this was discussed already
->>>> but without full examples it was hard to me for tracking things.
->>>
->>> It's been a painful thread. ;)
->>
->> Indeed
-> 
-> Jordan
-> 
-
