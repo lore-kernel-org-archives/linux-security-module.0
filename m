@@ -2,57 +2,66 @@ Return-Path: <SRS0=03NR=MY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4401EC6783C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 15:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F3AC6783C
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 15:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D6920865
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 15:26:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0D6920865
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 102DB2075B
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Oct 2018 15:44:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDvRO5nM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 102DB2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbeJLW67 (ORCPT
+        id S1729142AbeJLXRz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Oct 2018 18:58:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40528 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728857AbeJLW67 (ORCPT
+        Fri, 12 Oct 2018 19:17:55 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:36577 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728786AbeJLXRz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Oct 2018 18:58:59 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9CFP2bM070970
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 11:26:00 -0400
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2n2tu6hacu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Oct 2018 11:25:59 -0400
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <jejb@linux.ibm.com>;
-        Fri, 12 Oct 2018 09:25:59 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 12 Oct 2018 09:25:55 -0600
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9CFPsdc17891500
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 12 Oct 2018 08:25:54 -0700
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B45507805C;
-        Fri, 12 Oct 2018 09:25:54 -0600 (MDT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7E4B078067;
-        Fri, 12 Oct 2018 09:25:52 -0600 (MDT)
-Received: from [153.66.254.194] (unknown [9.85.185.70])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 12 Oct 2018 09:25:52 -0600 (MDT)
+        Fri, 12 Oct 2018 19:17:55 -0400
+Received: by mail-it1-f195.google.com with SMTP id c85-v6so18827673itd.1;
+        Fri, 12 Oct 2018 08:44:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xjp22+qgvLfc6zC63ECVLUiRfRlo2/9g+3Wm3uV09tQ=;
+        b=pDvRO5nM7xJIN5tTGvHi9Zr1DzhNfWGa9vfdVQp+Roap+Df3v/6jDdJXsDcj0t4tPD
+         ggpLc9Xt0cEV91gfzeSHw4QqBc2ZgncpxmQsO+Fnw9IiSlgHL0vujJ+4cYghVvvsOrq0
+         0+CFEiOBfhPilZ3owSp3RKTcCc5dLEn7u4biRLeu3JHKbr2wzJ/N/X7XBdMc5bORJqjM
+         3fgMOtaPwBIqIyzLiGVz5K0Bassyr8sJnK7cutcA9ZTMUusx25tXiO6qTlzI7DHsHQ7/
+         UyamjVuSXf50kHagCByXikh7IgD361E+0k+SP3gCkQZV6CnoJO35MwMItQemaZYQinsM
+         Zkng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xjp22+qgvLfc6zC63ECVLUiRfRlo2/9g+3Wm3uV09tQ=;
+        b=F6a/BBsvj3YvrlO0JYnKzv+0R5yE70uyyKaAprH2vhgSE3pLmpEb272SHRhg8tPHeg
+         3R0+Nojx3qkD6X2LqP4UiMGCZxL1aNdJWeiBTGgruBZTc/JiqltyWVWr+S1GFzjnD3Wq
+         vkkM5yGdjnwJxBr6pLWpxJ2PYCgnRK0hv3mf3JAjXNIqdAb5iZX0YUbv9iLI+ohHz4jO
+         hdiODEhLycCkAaOnFKDuqq8MfF14jgjkQHqXMPPHF248/B2e/f3j0g1Of+eE846JO1Sm
+         fHFZKXOvmR3pgjrxWAt0XC+I2fj80leq77GtCYIhPLf6yOaR/4sdv1o30GjGuLzYjGt9
+         93AA==
+X-Gm-Message-State: ABuFfogU/7PH8T66p1RWQOkidrUWJz7hVgzJuqt7S0UibpDdO5vfl8Ih
+        Jo/KzARV264ZG0N3RPDb4TFkTVoF
+X-Google-Smtp-Source: ACcGV61JWOwEPQTYvSdzNRUR0tJg67OF6isu3QHtsh6JOPCprFhGvL9SM6hqGofVQO3wRH3ysWI5bA==
+X-Received: by 2002:a02:3f5d:: with SMTP id c29-v6mr5498107jaf.107.1539359090100;
+        Fri, 12 Oct 2018 08:44:50 -0700 (PDT)
+Received: from [192.168.1.249] (cpe-70-114-247-242.austin.res.rr.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id e78-v6sm11657170itc.4.2018.10.12.08.44.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Oct 2018 08:44:49 -0700 (PDT)
 Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
-From:   James Bottomley <jejb@linux.ibm.com>
-To:     Denis Kenzior <denkenz@gmail.com>, ndesaulniers@google.com,
+To:     James Bottomley <jejb@linux.ibm.com>, ndesaulniers@google.com,
         dhowells@redhat.com
 Cc:     natechancellor@gmail.com, ebiggers@google.com,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -60,63 +69,47 @@ Cc:     natechancellor@gmail.com, ebiggers@google.com,
         "Serge E. Hallyn" <serge@hallyn.com>,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 12 Oct 2018 08:25:51 -0700
-In-Reply-To: <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
 References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
-         <20181011203126.15338-1-ndesaulniers@google.com>
-         <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
-         <1539356751.2656.5.camel@linux.ibm.com>
-         <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+ <20181011203126.15338-1-ndesaulniers@google.com>
+ <f83893d2-ed9b-613f-2768-1a975d28fe8b@gmail.com>
+ <1539356751.2656.5.camel@linux.ibm.com>
+ <fc23168b-7275-bae0-6039-04e261b3cbad@gmail.com>
+ <1539357759.2656.7.camel@linux.ibm.com>
+From:   Denis Kenzior <denkenz@gmail.com>
+Message-ID: <16de2bb3-815a-f534-4618-af854c906017@gmail.com>
+Date:   Fri, 12 Oct 2018 10:44:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <1539357759.2656.7.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18101215-0016-0000-0000-000009414D22
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009866; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01101630; UDB=6.00570068; IPR=6.00881675;
- MB=3.00023729; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-12 15:25:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101215-0017-0000-0000-000040AE76BE
-Message-Id: <1539357951.2656.9.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-12_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=755 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810120151
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2018-10-12 at 10:13 -0500, Denis Kenzior wrote:
-> Hi James,
+Hi James,
+
+>> So instead of having unsigned char h3, can't we simply have bool h3
+>> or unsigned int h3?
 > 
-> > > So can't we simply use 'bool' or uint32 as the type for h3
-> > > instead
-> > > of re-ordering everything
-> > 
-> > The problem is the standard is ambiguious.  The only thing that's
-> > guaranteed to work for all time is a char *.  If you want to keep
-> > the
-> > order, what I'd suggest is inserting a dummy pointer argument which
-> > is
-> > always expected to be NULL between the h3 and the varargs.
-> https://patchwork.kernel.org/patch/10274411/
-> So maybe I'm misunderstanding something, but the issue seems to be
-> that 
-> unsigned char is promoted to 'unsigned char *' by Clang and probably 
-> unsigned int or int by gcc.
+> Given the ambiguity in the standards, the safe thing that will work for
+> all time and all potential compilers is a char *
 > 
-> So instead of having unsigned char h3, can't we simply have bool h3
-> or unsigned int h3?
 
-Or actually, we fix this like I did for tpm2 in an unmerged patch and
-compute the hmac over the constructed buffer not using varargs:
+All right.  You state this with certainty, but I'd still like you to 
+educate me why?
 
-https://patchwork.kernel.org/patch/10274411/
+ From the links provided in the patch it seems that one cannot pass 
+char/float/short to va_start().  Fair enough.  So if we make h3 an 
+unsigned int, the issue goes away, no?
 
-James
+  int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+                         unsigned int keylen, unsigned char *h1,
+-                       unsigned char *h2, unsigned char h3, ...);
++                       unsigned char *h2, unsigned int h3, ...);
+
+Regards,
+-Denis
 
