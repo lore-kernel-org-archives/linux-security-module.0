@@ -2,65 +2,120 @@ Return-Path: <SRS0=Ek2e=M3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2003C71133
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Oct 2018 17:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0786FC04EB9
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Oct 2018 21:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B399A2098A
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Oct 2018 17:40:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B399A2098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id C03752089E
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Oct 2018 21:54:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q9xvzow8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03752089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbeJPB1A (ORCPT
+        id S1726928AbeJPFlI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Oct 2018 21:27:00 -0400
-Received: from namei.org ([65.99.196.166]:35230 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbeJPB1A (ORCPT
+        Tue, 16 Oct 2018 01:41:08 -0400
+Received: from mail-pf1-f176.google.com ([209.85.210.176]:44472 "EHLO
+        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbeJPFlH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Oct 2018 21:27:00 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w9FHejKR001635;
-        Mon, 15 Oct 2018 17:40:45 GMT
-Date:   Tue, 16 Oct 2018 04:40:45 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Subject: Re: [GIT PULL] linux-integrity patches for Linux 4.20
-In-Reply-To: <1539286401.11939.110.camel@linux.ibm.com>
-Message-ID: <alpine.LRH.2.21.1810160440240.1254@namei.org>
-References: <1539286401.11939.110.camel@linux.ibm.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Tue, 16 Oct 2018 01:41:07 -0400
+Received: by mail-pf1-f176.google.com with SMTP id r9-v6so10336938pff.11
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Oct 2018 14:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9/90pkrnEVMR461DnsdHg2gnOJuyWG/ZciqdVhYl+uQ=;
+        b=Q9xvzow8NI9z00XfehNf2cFtby3pf1Yy9smEVoO7hIqjKfMGaa8CQuEbTgwYZzpCE3
+         y34DuDhv/arDPmKUbmV+kLlfuXqJ2q6XFI0+KJbmGCp1hKF49g+PVXrgU4u0mIth0wod
+         Eyzonr+YDmCFlZ/xXR0nMwqj/R7NEBaZ2UcZBQ4x59Mehj1Pe/xq0U6A3CkMgKm54PpZ
+         oBxYLaKC52kGxOPh+XwpZfIp8PJmBqzZ2v0lIbBcqlWrS9OcRpBCOFsHPMJ0ro3Z8I8y
+         bZAlcIuEbRSd+m7HttSDsOd1e556EgQ3JecdHzkFlCIKoAmNRej6x78ePCv/vg8PVZGl
+         ZqpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9/90pkrnEVMR461DnsdHg2gnOJuyWG/ZciqdVhYl+uQ=;
+        b=S4U68DBSsMwCzwaS4+RnJlaae0iojTY5fNGPDJ3cSuw/YIq/FoKweFodq43xFPPlTC
+         p1JjumIxxLY1GjICpSmeRw8EmN7eLo0MarCmkn1yRvUZr740NEpYYGTzMY3niipyF5JI
+         vIpPHpuAZcguAVoAR5Wbw4GfojMaXl+MaJYJnfA7K5O6paGLp/UuimjJ6ajUVMOcYfC/
+         nldfInOoDsruR3RdexVJAW2XPHVE6rbOpNxr7me3K9YLqZpidDXt925wSFJ44gSBLHs1
+         XOBfMKHe/r3juH8rmNq1Q3KOosfOqrarEbCkBe4jpw764h6NMSNNOUCQWpsRNWmpfZmf
+         zMiQ==
+X-Gm-Message-State: ABuFfoiXOXJEh+RYQl0JesdEr1218lJNu7wbCTTmCyx6bYgur7arxeas
+        XHsYvfY4uatog2px59vrBKlQu0txjgPJ4WaqVjMMpg==
+X-Google-Smtp-Source: ACcGV61aKdFnBLKXlf5x+dp+pN8CK8nw8Cp42aLRzZE52A1mFjfVRCmXe87LmRaOtvoT3pWkxvv5RRVthk4/Wj7j/Ug=
+X-Received: by 2002:a63:2f42:: with SMTP id v63-v6mr3515716pgv.202.1539640441007;
+ Mon, 15 Oct 2018 14:54:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-412428846-1539625245=:1254"
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com> <20181011203126.15338-1-ndesaulniers@google.com>
+ <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
+In-Reply-To: <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 15 Oct 2018 14:53:49 -0700
+Message-ID: <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
+To:     David.Laight@aculab.com
+Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        dhowells@redhat.com, Nathan Chancellor <natechancellor@gmail.com>,
+        Eric Biggers <ebiggers@google.com>, zohar@linux.vnet.ibm.com,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Oct 15, 2018 at 2:26 AM David Laight <David.Laight@aculab.com> wrote:
+>
+> From: ndesaulniers@google.com
+> > Sent: 11 October 2018 21:31
+> ...
+> > by swapping h2 and h3.
+> >
+> > security/keys/trusted.c:146:17: warning: passing an object that
+> > undergoes default
+> >       argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+> >         va_start(argp, h3);
+> >                        ^
+> > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+> > char' is declared here
+> > unsigned char *h2, unsigned char h3, ...)
+> >                                ^
+> > Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+> > standards explicitly call this out as undefined behavior:
+>
+> I guess that problems arise when all the arguments are stacked
+> and va_start/va_arg use naive pointer manipulation.
+> In that case &h3 might be 4n+3 aligned so va_arg() will access
+> misaligned stack locations.
+>
+> I doubt any modern compilers (where va_start and va_arg are builtins)
+> will get this 'wrong' even when all arguments are stacked.
+>
+> Seems clang is being over cautious.
 
---1665246916-412428846-1539625245=:1254
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Yes; did you have feedback on the Denis' proposed fix, or another?
 
-On Thu, 11 Oct 2018, Mimi Zohar wrote:
+>
+>         David
+>
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 
-> Hi James,
-> 
-> Sorry for the delay.  This pull request contains a couple of bug
-> fixes, including one for a recent problem with calculating file hashes
-> on overlayfs, and some code cleanup.
 
-Thanks, pulled to next-integrity and next-testing.
 
 -- 
-James Morris
-<jmorris@namei.org>
-
---1665246916-412428846-1539625245=:1254--
+Thanks,
+~Nick Desaulniers
