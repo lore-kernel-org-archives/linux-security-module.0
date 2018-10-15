@@ -2,120 +2,111 @@ Return-Path: <SRS0=Ek2e=M3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0786FC04EB9
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Oct 2018 21:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16E2C04EB9
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Oct 2018 22:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C03752089E
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Oct 2018 21:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B7932089D
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Oct 2018 22:28:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q9xvzow8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03752089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="HVNnWXGd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7932089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbeJPFlI (ORCPT
+        id S1726948AbeJPGPa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Oct 2018 01:41:08 -0400
-Received: from mail-pf1-f176.google.com ([209.85.210.176]:44472 "EHLO
-        mail-pf1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbeJPFlH (ORCPT
+        Tue, 16 Oct 2018 02:15:30 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44943 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbeJPGP3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Oct 2018 01:41:07 -0400
-Received: by mail-pf1-f176.google.com with SMTP id r9-v6so10336938pff.11
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Oct 2018 14:54:01 -0700 (PDT)
+        Tue, 16 Oct 2018 02:15:29 -0400
+Received: by mail-lf1-f65.google.com with SMTP id m18-v6so15316233lfl.11
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Oct 2018 15:28:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9/90pkrnEVMR461DnsdHg2gnOJuyWG/ZciqdVhYl+uQ=;
-        b=Q9xvzow8NI9z00XfehNf2cFtby3pf1Yy9smEVoO7hIqjKfMGaa8CQuEbTgwYZzpCE3
-         y34DuDhv/arDPmKUbmV+kLlfuXqJ2q6XFI0+KJbmGCp1hKF49g+PVXrgU4u0mIth0wod
-         Eyzonr+YDmCFlZ/xXR0nMwqj/R7NEBaZ2UcZBQ4x59Mehj1Pe/xq0U6A3CkMgKm54PpZ
-         oBxYLaKC52kGxOPh+XwpZfIp8PJmBqzZ2v0lIbBcqlWrS9OcRpBCOFsHPMJ0ro3Z8I8y
-         bZAlcIuEbRSd+m7HttSDsOd1e556EgQ3JecdHzkFlCIKoAmNRej6x78ePCv/vg8PVZGl
-         ZqpA==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=VrV0GeV2TaA/kxbu/mgUaZ56z2z2D490bBGeoh3/1Uw=;
+        b=HVNnWXGdspC1awzT1127q8YpjR6OtFc2+oy72X9ZLOctVkk1mSxyXt2rUfK5XKME1T
+         IDRVUFAnWQH+xbhbdPXsCPjWxWkd+UlBT5hOjzMBcrFwRUbDBLsCEjIX7mAr9rLoA5q9
+         Hh2wVaIKrChYKO8SPUlr8TNe6djYc1NdNrkiWYY65MarnI6cRk5gtN1VJKF6yjRSiXub
+         29vRyxA6LcSs4qOX/zufkVqEOw+RnVHoFEGFAX8H11A8s8cnaUliaaQXIgSjzGM76p0N
+         NcEmG0Ax+INU6JgnkVxDNPe7C9o9OEwyIdRst3xSFSEHSdbZhsyoVOROC6yufpYa2qwe
+         4LNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9/90pkrnEVMR461DnsdHg2gnOJuyWG/ZciqdVhYl+uQ=;
-        b=S4U68DBSsMwCzwaS4+RnJlaae0iojTY5fNGPDJ3cSuw/YIq/FoKweFodq43xFPPlTC
-         p1JjumIxxLY1GjICpSmeRw8EmN7eLo0MarCmkn1yRvUZr740NEpYYGTzMY3niipyF5JI
-         vIpPHpuAZcguAVoAR5Wbw4GfojMaXl+MaJYJnfA7K5O6paGLp/UuimjJ6ajUVMOcYfC/
-         nldfInOoDsruR3RdexVJAW2XPHVE6rbOpNxr7me3K9YLqZpidDXt925wSFJ44gSBLHs1
-         XOBfMKHe/r3juH8rmNq1Q3KOosfOqrarEbCkBe4jpw764h6NMSNNOUCQWpsRNWmpfZmf
-         zMiQ==
-X-Gm-Message-State: ABuFfoiXOXJEh+RYQl0JesdEr1218lJNu7wbCTTmCyx6bYgur7arxeas
-        XHsYvfY4uatog2px59vrBKlQu0txjgPJ4WaqVjMMpg==
-X-Google-Smtp-Source: ACcGV61aKdFnBLKXlf5x+dp+pN8CK8nw8Cp42aLRzZE52A1mFjfVRCmXe87LmRaOtvoT3pWkxvv5RRVthk4/Wj7j/Ug=
-X-Received: by 2002:a63:2f42:: with SMTP id v63-v6mr3515716pgv.202.1539640441007;
- Mon, 15 Oct 2018 14:54:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=VrV0GeV2TaA/kxbu/mgUaZ56z2z2D490bBGeoh3/1Uw=;
+        b=bgpu2f2BNLjfptR+9NACeSv5DpMlKvpnJQoL2Ld5pQtacJiBt2bGNtMVACeEL7YE9F
+         KtbNVL9GVHRHQM2zvObDznm4NAE1oQJzaNPUQ51m807keXUT+SvRluaSaV/DD7wj64vi
+         eKnLOKdFlODbU0v0WllyfqOPvm16PHyAC6mIEdJOcja1Fubav/EZi2Uzm0W224E1tDCJ
+         /HCNacX7a+T61bq8Jegdwi/lMklfp6++EJWqDBR0uFiV9qDkIx5/iZHdExJH8R15uhCN
+         YvRwhzywH63VUgHtxdUBiZabuQzbY0oFnkZLaAG9NbydKInHX0A0GrvJ9cGJCkG5F0Ss
+         FIDw==
+X-Gm-Message-State: ABuFfoiztqLViMhHukIKaIFFLWa+aJGTGu2qsQy2Zw4uzpbTfasJ2n39
+        zbPKLe674ZlkFzCznZhwUcbjTMf+hrftAN2EeaCo
+X-Google-Smtp-Source: ACcGV61GpQ0OXTBs7rNqO9Eci+KiYSGmTrhnJoKU+A5Lm05lG5YV3IX1LnMe0hOA2y184K1zhFi2yxPy4jv6+RzE1Go=
+X-Received: by 2002:a19:169d:: with SMTP id 29-v6mr10703360lfw.151.1539642495550;
+ Mon, 15 Oct 2018 15:28:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <1539274203.2623.56.camel@linux.vnet.ibm.com> <20181011203126.15338-1-ndesaulniers@google.com>
- <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
-In-Reply-To: <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 15 Oct 2018 14:53:49 -0700
-Message-ID: <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: fix -Wvarags warning
-To:     David.Laight@aculab.com
-Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        dhowells@redhat.com, Nathan Chancellor <natechancellor@gmail.com>,
-        Eric Biggers <ebiggers@google.com>, zohar@linux.vnet.ibm.com,
-        jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 15 Oct 2018 18:28:04 -0400
+Message-ID: <CAHC9VhRDmorDGkUkXv5f4YT-PxBdspbqmo+fYpu7-P-xzC2FxA@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v4.19 (#1)
+To:     gregkh@linuxfoundation.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 15, 2018 at 2:26 AM David Laight <David.Laight@aculab.com> wrote:
->
-> From: ndesaulniers@google.com
-> > Sent: 11 October 2018 21:31
-> ...
-> > by swapping h2 and h3.
-> >
-> > security/keys/trusted.c:146:17: warning: passing an object that
-> > undergoes default
-> >       argument promotion to 'va_start' has undefined behavior [-Wvarargs]
-> >         va_start(argp, h3);
-> >                        ^
-> > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> > char' is declared here
-> > unsigned char *h2, unsigned char h3, ...)
-> >                                ^
-> > Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> > standards explicitly call this out as undefined behavior:
->
-> I guess that problems arise when all the arguments are stacked
-> and va_start/va_arg use naive pointer manipulation.
-> In that case &h3 might be 4n+3 aligned so va_arg() will access
-> misaligned stack locations.
->
-> I doubt any modern compilers (where va_start and va_arg are builtins)
-> will get this 'wrong' even when all arguments are stacked.
->
-> Seems clang is being over cautious.
+Hi Greg,
 
-Yes; did you have feedback on the Denis' proposed fix, or another?
+We've got one SELinux "fix" that I'd like to get into v4.19 if
+possible.  I'm using double quotes on "fix" as this is just an update
+to the MAINTAINERS file and not a code change.  From my perspective,
+MAINTAINERS updates generally don't warrant inclusion during the -rcX
+phase, but this is a change to the mailing list location so it seemed
+prudent to get this in before v4.19 is released.
 
->
->         David
->
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
+If you don't want this for v4.19 let me know and I'll queue it up for
+the upcoming merge window.
 
+Thanks,
+-Paul
 
+--
+The following changes since commit 7e4237faa7213c1cc1d0aa65a44c67ba4729ce9f:
+
+ selinux: cleanup dentry and inodes on error in selinuxfs
+   (2018-08-07 17:26:25 -0400)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20181015
+
+for you to fetch changes up to 073c1a781e4a1217d572506621434cd6d750969b:
+
+ MAINTAINERS: update the SELinux mailing list location
+   (2018-10-10 01:50:15 -0400)
+
+----------------------------------------------------------------
+selinux/stable-4.19 PR 20181015
+
+----------------------------------------------------------------
+Paul Moore (1):
+     MAINTAINERS: update the SELinux mailing list location
+
+MAINTAINERS | 2 +-
+1 file changed, 1 insertion(+), 1 deletion(-)
 
 -- 
-Thanks,
-~Nick Desaulniers
+paul moore
+www.paul-moore.com
