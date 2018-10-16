@@ -2,115 +2,102 @@ Return-Path: <SRS0=VoYI=M4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 168E9C04EBD
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 06:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3A1C070C3
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A344820866
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 06:20:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A344820866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E623120881
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E623120881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbeJPOJ0 convert rfc822-to-8bit (ORCPT
+        id S1727015AbeJPQCl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Oct 2018 10:09:26 -0400
-Received: from mga12.intel.com ([192.55.52.136]:49492 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbeJPOJ0 (ORCPT
+        Tue, 16 Oct 2018 12:02:41 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:34450 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727018AbeJPQCl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Oct 2018 10:09:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Oct 2018 23:20:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,387,1534834800"; 
-   d="scan'208";a="81544531"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by orsmga007.jf.intel.com with ESMTP; 15 Oct 2018 23:20:34 -0700
-Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 15 Oct 2018 23:20:34 -0700
-Received: from hasmsx108.ger.corp.intel.com (10.184.198.18) by
- fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Mon, 15 Oct 2018 23:20:34 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- hasmsx108.ger.corp.intel.com ([169.254.9.136]) with mapi id 14.03.0319.002;
- Tue, 16 Oct 2018 09:20:29 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Tue, 16 Oct 2018 12:02:41 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by eu-smtp-1.mimecast.com with ESMTP id
+ uk-mta-22-UPK5rDeFOYeY9zcZOCvDkg-1; Tue, 16 Oct 2018 09:13:24 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 16 Oct 2018 09:13:25 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 16 Oct 2018 09:13:25 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Nick Desaulniers' <ndesaulniers@google.com>
+CC:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Eric Biggers" <ebiggers@google.com>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] tpm: tpm_try_transmit() ignore value of go_to_idle()
-Thread-Topic: [PATCH] tpm: tpm_try_transmit() ignore value of go_to_idle()
-Thread-Index: AQHUZHjlTDh1wH1FgU+vrAhOzJfWh6UhKqiAgAA7gaA=
-Date:   Tue, 16 Oct 2018 06:20:29 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9F2C7C@hasmsx109.ger.corp.intel.com>
-References: <20181015111434.7777-1-tomas.winkler@intel.com>
- <20181016054155.GA18664@ziepe.ca>
-In-Reply-To: <20181016054155.GA18664@ziepe.ca>
-Accept-Language: en-US
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] KEYS: trusted: fix -Wvarags warning
+Thread-Topic: [PATCH] KEYS: trusted: fix -Wvarags warning
+Thread-Index: AQHUYaFtz6yVKVwaakuhVxq6kXztuKUgDL3QgADCWICAALy2IA==
+Date:   Tue, 16 Oct 2018 08:13:25 +0000
+Message-ID: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
+References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
+ <20181011203126.15338-1-ndesaulniers@google.com>
+ <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
+ <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
+In-Reply-To: <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDk2ZWMxZTYtY2YwMy00YWZmLThlNWQtYWFjZTgzNWE1Y2VjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUHlkQ2lSYjVcL29YMlZkQXFIeEhsSXNhenNpdXVqdUx5YmNmY045eHZRcjZKdlhqa0VORTUrZDg2UWhoQ2dVcFUifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.110]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
+X-MC-Unique: UPK5rDeFOYeY9zcZOCvDkg-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-> 
-> On Mon, Oct 15, 2018 at 02:14:34PM +0300, Tomas Winkler wrote:
-> > Ignore the return value of go_to_idle() in tpm_try_transmit().
-> > Once it may shadow the return value of actual tpm operation, second
-> > the consequent command will fail as well and the error will be caought
-> > anyway.
-> > Last fix wrong goto, that jumped back instead of forward.
-> >
-> > Fixes: 627448e85c76 ("tpm: separate cmd_ready/go_idle from
-> > runtime_pm")
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > drivers/char/tpm/tpm-interface.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index 129f640424b7..f69c711bf74a 100644
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -547,9 +547,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> *chip,
-> >  		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
-> >
-> >  out:
-> > -	rc = tpm_go_idle(chip, flags);
-> > -	if (rc)
-> > -		goto out;
-> > +	(void)tpm_go_idle(chip, flags);
-> 
-> We don't really use this style in the kernel, AFAIK.
-
-
-Right, there are no many of those; just wanted to emphasize that return value is ignored. I can drop (void).
-
-Thanks
-Tomas
+RnJvbTogTmljayBEZXNhdWxuaWVycw0KPiBTZW50OiAxNSBPY3RvYmVyIDIwMTggMjI6NTQNCj4g
+T24gTW9uLCBPY3QgMTUsIDIwMTggYXQgMjoyNiBBTSBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdo
+dEBhY3VsYWIuY29tPiB3cm90ZToNCj4gPg0KPiA+IEZyb206IG5kZXNhdWxuaWVyc0Bnb29nbGUu
+Y29tDQo+ID4gPiBTZW50OiAxMSBPY3RvYmVyIDIwMTggMjE6MzENCj4gPiAuLi4NCj4gPiA+IGJ5
+IHN3YXBwaW5nIGgyIGFuZCBoMy4NCj4gPiA+DQo+ID4gPiBzZWN1cml0eS9rZXlzL3RydXN0ZWQu
+YzoxNDY6MTc6IHdhcm5pbmc6IHBhc3NpbmcgYW4gb2JqZWN0IHRoYXQNCj4gPiA+IHVuZGVyZ29l
+cyBkZWZhdWx0DQo+ID4gPiAgICAgICBhcmd1bWVudCBwcm9tb3Rpb24gdG8gJ3ZhX3N0YXJ0JyBo
+YXMgdW5kZWZpbmVkIGJlaGF2aW9yIFstV3ZhcmFyZ3NdDQo+ID4gPiAgICAgICAgIHZhX3N0YXJ0
+KGFyZ3AsIGgzKTsNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgXg0KPiA+ID4gc2VjdXJp
+dHkva2V5cy90cnVzdGVkLmM6MTI2OjM3OiBub3RlOiBwYXJhbWV0ZXIgb2YgdHlwZSAndW5zaWdu
+ZWQNCj4gPiA+IGNoYXInIGlzIGRlY2xhcmVkIGhlcmUNCj4gPiA+IHVuc2lnbmVkIGNoYXIgKmgy
+LCB1bnNpZ25lZCBjaGFyIGgzLCAuLi4pDQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgXg0KPiA+ID4gU3BlY2lmaWNhbGx5LCBpdCBzZWVtcyB0aGF0IGJvdGggdGhlIEM5MCAo
+NC44LjEuMSkgYW5kIEMxMSAoNy4xNi4xLjQpDQo+ID4gPiBzdGFuZGFyZHMgZXhwbGljaXRseSBj
+YWxsIHRoaXMgb3V0IGFzIHVuZGVmaW5lZCBiZWhhdmlvcjoNCj4gPg0KPiA+IEkgZ3Vlc3MgdGhh
+dCBwcm9ibGVtcyBhcmlzZSB3aGVuIGFsbCB0aGUgYXJndW1lbnRzIGFyZSBzdGFja2VkDQo+ID4g
+YW5kIHZhX3N0YXJ0L3ZhX2FyZyB1c2UgbmFpdmUgcG9pbnRlciBtYW5pcHVsYXRpb24uDQo+ID4g
+SW4gdGhhdCBjYXNlICZoMyBtaWdodCBiZSA0biszIGFsaWduZWQgc28gdmFfYXJnKCkgd2lsbCBh
+Y2Nlc3MNCj4gPiBtaXNhbGlnbmVkIHN0YWNrIGxvY2F0aW9ucy4NCj4gPg0KPiA+IEkgZG91YnQg
+YW55IG1vZGVybiBjb21waWxlcnMgKHdoZXJlIHZhX3N0YXJ0IGFuZCB2YV9hcmcgYXJlIGJ1aWx0
+aW5zKQ0KPiA+IHdpbGwgZ2V0IHRoaXMgJ3dyb25nJyBldmVuIHdoZW4gYWxsIGFyZ3VtZW50cyBh
+cmUgc3RhY2tlZC4NCj4gPg0KPiA+IFNlZW1zIGNsYW5nIGlzIGJlaW5nIG92ZXIgY2F1dGlvdXMu
+DQo+IA0KPiBZZXM7IGRpZCB5b3UgaGF2ZSBmZWVkYmFjayBvbiB0aGUgRGVuaXMnIHByb3Bvc2Vk
+IGZpeCwgb3IgYW5vdGhlcj8NCg0KUGVyc29uYWxseSBJJ2QgYXZvaWQgY2hhciwgc2hvcnQgYW5k
+IGJvb2wgZm9yIGJvdGggZnVuY3Rpb24NCmFyZ3VtZW50cyBhbmQgcmVzdWx0cyBzaW5jZSB0aGV5
+IHR5cGljYWxseSByZXF1aXJlIGV4dHJhDQppbnN0cnVjdGlvbnMgZm9yIG1hc2tpbmcgdmFsdWVz
+IChldGMpLg0KYm9vbCBpcyBwYXJ0aWN1bGFybHkgb2Jub3hpb3VzLg0KDQpJbiB0aGF0IGNhc2Ug
+ZWl0aGVyIGludCBvciB1bnNpZ25lZCBpbnQgaXMgZ29vZC4NCg0KCURhdmlkDQoNCi0NClJlZ2lz
+dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
+S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
