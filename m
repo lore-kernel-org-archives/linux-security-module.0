@@ -3,101 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3A1C070C3
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BD6C04EBD
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E623120881
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 08:13:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E623120881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 73B262086E
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 10:16:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B262086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sigma-star.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbeJPQCl (ORCPT
+        id S1727452AbeJPSGG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Oct 2018 12:02:41 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:34450 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727018AbeJPQCl (ORCPT
+        Tue, 16 Oct 2018 14:06:06 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:54228 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbeJPSGG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Oct 2018 12:02:41 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-22-UPK5rDeFOYeY9zcZOCvDkg-1; Tue, 16 Oct 2018 09:13:24 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 16 Oct 2018 09:13:25 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 16 Oct 2018 09:13:25 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Nick Desaulniers' <ndesaulniers@google.com>
-CC:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Eric Biggers" <ebiggers@google.com>,
-        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] KEYS: trusted: fix -Wvarags warning
-Thread-Topic: [PATCH] KEYS: trusted: fix -Wvarags warning
-Thread-Index: AQHUYaFtz6yVKVwaakuhVxq6kXztuKUgDL3QgADCWICAALy2IA==
-Date:   Tue, 16 Oct 2018 08:13:25 +0000
-Message-ID: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
-References: <1539274203.2623.56.camel@linux.vnet.ibm.com>
- <20181011203126.15338-1-ndesaulniers@google.com>
- <0180360cfcb5458d8ff099744e8884d4@AcuMS.aculab.com>
- <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
-In-Reply-To: <CAKwvOdmXVY1iA-VAs-Ns3qVVnMTeU6v4RqxoS2=SJcSeQ23_og@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-MC-Unique: UPK5rDeFOYeY9zcZOCvDkg-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+        Tue, 16 Oct 2018 14:06:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lilium.sigma-star.at (Postfix) with ESMTP id 4ED27180230B6;
+        Tue, 16 Oct 2018 12:16:20 +0200 (CEST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH v2 1/2] security/keys/secure_key: Adds the secure key
+ support based on CAAM.
+From:   David Gstir <david@sigma-star.at>
+In-Reply-To: <1533320921.4337.479.camel@linux.ibm.com>
+Date:   Tue, 16 Oct 2018 12:16:15 +0200
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        David Howells <dhowells@redhat.com>,
+        Udit Agarwal <udit.agarwal@nxp.com>, zohar@linux.vnet.ibm.com,
+        jmorris@namei.org, serge@hallyn.com, denkenz@gmail.com,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sahil.malhotra@nxp.com,
+        ruchika.gupta@nxp.com, Horia Geanta <horia.geanta@nxp.com>,
+        aymen.sghaier@nxp.com, Richard Weinberger <richard@sigma-star.at>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <F6B8DD08-A54A-4792-AC36-BF0335B1750A@sigma-star.at>
+References: <20180723111432.26830-1-udit.agarwal@nxp.com>
+ <8060.1533226481@warthog.procyon.org.uk>
+ <1533297482.4337.373.camel@linux.ibm.com>
+ <1533306238.4140.1.camel@HansenPartnership.com>
+ <1533307535.4337.415.camel@linux.ibm.com>
+ <1533311338.4140.3.camel@HansenPartnership.com>
+ <1533320921.4337.479.camel@linux.ibm.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+X-Mailer: Apple Mail (2.3445.9.1)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-RnJvbTogTmljayBEZXNhdWxuaWVycw0KPiBTZW50OiAxNSBPY3RvYmVyIDIwMTggMjI6NTQNCj4g
-T24gTW9uLCBPY3QgMTUsIDIwMTggYXQgMjoyNiBBTSBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdo
-dEBhY3VsYWIuY29tPiB3cm90ZToNCj4gPg0KPiA+IEZyb206IG5kZXNhdWxuaWVyc0Bnb29nbGUu
-Y29tDQo+ID4gPiBTZW50OiAxMSBPY3RvYmVyIDIwMTggMjE6MzENCj4gPiAuLi4NCj4gPiA+IGJ5
-IHN3YXBwaW5nIGgyIGFuZCBoMy4NCj4gPiA+DQo+ID4gPiBzZWN1cml0eS9rZXlzL3RydXN0ZWQu
-YzoxNDY6MTc6IHdhcm5pbmc6IHBhc3NpbmcgYW4gb2JqZWN0IHRoYXQNCj4gPiA+IHVuZGVyZ29l
-cyBkZWZhdWx0DQo+ID4gPiAgICAgICBhcmd1bWVudCBwcm9tb3Rpb24gdG8gJ3ZhX3N0YXJ0JyBo
-YXMgdW5kZWZpbmVkIGJlaGF2aW9yIFstV3ZhcmFyZ3NdDQo+ID4gPiAgICAgICAgIHZhX3N0YXJ0
-KGFyZ3AsIGgzKTsNCj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgXg0KPiA+ID4gc2VjdXJp
-dHkva2V5cy90cnVzdGVkLmM6MTI2OjM3OiBub3RlOiBwYXJhbWV0ZXIgb2YgdHlwZSAndW5zaWdu
-ZWQNCj4gPiA+IGNoYXInIGlzIGRlY2xhcmVkIGhlcmUNCj4gPiA+IHVuc2lnbmVkIGNoYXIgKmgy
-LCB1bnNpZ25lZCBjaGFyIGgzLCAuLi4pDQo+ID4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgXg0KPiA+ID4gU3BlY2lmaWNhbGx5LCBpdCBzZWVtcyB0aGF0IGJvdGggdGhlIEM5MCAo
-NC44LjEuMSkgYW5kIEMxMSAoNy4xNi4xLjQpDQo+ID4gPiBzdGFuZGFyZHMgZXhwbGljaXRseSBj
-YWxsIHRoaXMgb3V0IGFzIHVuZGVmaW5lZCBiZWhhdmlvcjoNCj4gPg0KPiA+IEkgZ3Vlc3MgdGhh
-dCBwcm9ibGVtcyBhcmlzZSB3aGVuIGFsbCB0aGUgYXJndW1lbnRzIGFyZSBzdGFja2VkDQo+ID4g
-YW5kIHZhX3N0YXJ0L3ZhX2FyZyB1c2UgbmFpdmUgcG9pbnRlciBtYW5pcHVsYXRpb24uDQo+ID4g
-SW4gdGhhdCBjYXNlICZoMyBtaWdodCBiZSA0biszIGFsaWduZWQgc28gdmFfYXJnKCkgd2lsbCBh
-Y2Nlc3MNCj4gPiBtaXNhbGlnbmVkIHN0YWNrIGxvY2F0aW9ucy4NCj4gPg0KPiA+IEkgZG91YnQg
-YW55IG1vZGVybiBjb21waWxlcnMgKHdoZXJlIHZhX3N0YXJ0IGFuZCB2YV9hcmcgYXJlIGJ1aWx0
-aW5zKQ0KPiA+IHdpbGwgZ2V0IHRoaXMgJ3dyb25nJyBldmVuIHdoZW4gYWxsIGFyZ3VtZW50cyBh
-cmUgc3RhY2tlZC4NCj4gPg0KPiA+IFNlZW1zIGNsYW5nIGlzIGJlaW5nIG92ZXIgY2F1dGlvdXMu
-DQo+IA0KPiBZZXM7IGRpZCB5b3UgaGF2ZSBmZWVkYmFjayBvbiB0aGUgRGVuaXMnIHByb3Bvc2Vk
-IGZpeCwgb3IgYW5vdGhlcj8NCg0KUGVyc29uYWxseSBJJ2QgYXZvaWQgY2hhciwgc2hvcnQgYW5k
-IGJvb2wgZm9yIGJvdGggZnVuY3Rpb24NCmFyZ3VtZW50cyBhbmQgcmVzdWx0cyBzaW5jZSB0aGV5
-IHR5cGljYWxseSByZXF1aXJlIGV4dHJhDQppbnN0cnVjdGlvbnMgZm9yIG1hc2tpbmcgdmFsdWVz
-IChldGMpLg0KYm9vbCBpcyBwYXJ0aWN1bGFybHkgb2Jub3hpb3VzLg0KDQpJbiB0aGF0IGNhc2Ug
-ZWl0aGVyIGludCBvciB1bnNpZ25lZCBpbnQgaXMgZ29vZC4NCg0KCURhdmlkDQoNCi0NClJlZ2lz
-dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
-S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+Hi!
+
+> On 03.08.2018, at 20:28, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> 
+>>>>> If they have symmetric key support, there would be no need for
+>>>>> the
+>>>>> symmetric key ever to leave the device in the clear. The device
+>>>>> would unseal/decrypt data, such as an encrypted key.
+>>>>> 
+>>>>> The "symmetric" key type would be a generic interface for
+>>>>> different
+>>>>> devices.
+>>>> 
+>>>> It's possible, but it would only work for a non-bulk use case; do
+>>>> we
+>>>> have one of those?
+>>> 
+>>> "trusted" keys are currently being used to decrypt other keys (eg.
+>>> encrypted, ecryptfs, ...).
+>> 
+>> Yes, but that's just double encryption: it serves no real security
+>> purpose because at the end of the chain, the symmetric key is released
+>> into kernel memory to use in software crypto.  Unless you're using a
+>> high speed (and high cost) crypto accelerator with HSA, this will
+>> always be the case for bulk crypto.
+>> 
+>> The other slight problem with this chain of crypto is that I can impose
+>> conditions on the key release from the TPM (well TPM2, since TPM1.2 has
+>> a very weak policy engine) but if we use intermediate steps, those
+>> conditions might not be preserved, so I think the ideal would be a
+>> trusted key being released directly to LUKS or ecryptfs because the TPM
+>> can then verify the policy at actual unseal time.  I get that for the
+>> ecryptfs case you might want one key per file for sharding and sharing,
+>> and that's more like a bulk case because the TPM isn't going to keep up
+>> with the number of unseal operations required.
+> 
+> Agreed.  Yet there are a couple of reasons for having this sort of
+> indirection. By having the "encrypted" key encrypted/decrypted by a
+> "trusted" key, the "trusted" key could be updated without impacting
+> the "encrypted" key.  This could be used, for example, for key
+> migration.  Another reason would be to define a single "trusted" key
+> sealed to a set of PCRs, which could be used to encrypt/decrypt
+> multiple symmetric keys.
+> 
+> Nothing is preventing these subsystems from directly using a "trusted"
+> key.
+> 
+> This discussion is the result of Udit Agarwal's posting a "secure" key
+> patch. Before defining a new key type, whether it is called "secure"
+> or "symmetric", we need to understand how the this new key type is
+> going to be used.  Will it have a similar ability to impose conditions
+> on the key release as the TPM?  Will it have symmetric key support, so
+> that the symmetric key never needs to be released from the HW?
+
+
+I'm looking into mainline support for CAAM-protected keys. I currently have
+hacky patches that duplicate trusted keys, and use CAAM instead of TPM to
+seal/unseal keys and make them available to other kernel features like fscrypt.
+This patch by Udit Agarwal looks like an interesting base for my code.
+However, AFAICT there has been no progress for some time now. 
+
+Is anybody still working on this? If not, I'm happy to help out! :)
+
+Regarding the new key type:
+In addition to unsealing a key/data into kernel memory, CAAM also supports
+unsealing a symmetric key directly into a key register of CAAM's crypto
+acceleration engine. This is something I'd like to have, but it will surely
+require changes the the CAAM crypto driver as well. Jan Lübbe already mentioned
+he is interested in this too: https://www.spinics.net/lists/keyrings/msg03919.html
+
+AFAIK, CAAM does not have fine-grained key release restrictions like TPM.
+IMHO such a new key type should provide a generic interface with backends for
+CAAM, TPM and possibly others to seal/unseal arbitrary data. As for supporting
+keys that only reside in the HW, I'm not yet sure what the best approach would be.
+It should probably tie into the crypto API to be usable throughout the kernel...
+
+Thanks!
+David
+
 
