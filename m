@@ -2,82 +2,109 @@ Return-Path: <SRS0=VoYI=M4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3CBC04EBD
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 11:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA05DC04EBD
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 13:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3962098A
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 11:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C3962098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BBFC82089E
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 13:41:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBFC82089E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeJPTeo (ORCPT
+        id S1727154AbeJPVb7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Oct 2018 15:34:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40454 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726760AbeJPTeo (ORCPT
+        Tue, 16 Oct 2018 17:31:59 -0400
+Received: from mga11.intel.com ([192.55.52.93]:28953 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727002AbeJPVb7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Oct 2018 15:34:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7D2CEAEE4;
-        Tue, 16 Oct 2018 11:44:06 +0000 (UTC)
-Date:   Tue, 16 Oct 2018 13:44:05 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Jann Horn <jannh@google.com>
-cc:     Casey Schaufler <casey.schaufler@intel.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        selinux@tycho.nsa.gov, Dave Hansen <dave.hansen@intel.com>,
-        deneen.t.dock@intel.com, kristen@linux.intel.com,
-        Arjan van de Ven <arjan@linux.intel.com>
-Subject: Re: [PATCH v5 2/5] Smack: Prepare for PTRACE_MODE_SCHED
-In-Reply-To: <CAG48ez1OiAvqqtLXpBjxz-=9X+YdtR9iF7fA_pXhu2GfBt5osw@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.1810161343110.23511@cbobk.fhfr.pm>
-References: <20180926203446.2004-1-casey.schaufler@intel.com> <20180926203446.2004-3-casey.schaufler@intel.com> <CAG48ez3_XJYCURiCurDeCousGguGUdPego30j5+UF8FebWxUtA@mail.gmail.com> <99FC4B6EFCEFD44486C35F4C281DC673214625EA@ORSMSX107.amr.corp.intel.com>
- <CAG48ez1+9Bfadu4y4TzPYJfFpLk+N8w7GdCE+xwNCM5TfQ8W8Q@mail.gmail.com> <nycvar.YFH.7.76.1810040942110.14430@cbobk.fhfr.pm> <CAG48ez1OiAvqqtLXpBjxz-=9X+YdtR9iF7fA_pXhu2GfBt5osw@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 16 Oct 2018 17:31:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 06:41:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,388,1534834800"; 
+   d="scan'208";a="92433279"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by orsmga003.jf.intel.com with ESMTP; 16 Oct 2018 06:41:15 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>, stable@vger.kernel.org
+Subject: [PATCH] tpm: tpm_try_transmit() refactor error flow.
+Date:   Tue, 16 Oct 2018 16:37:16 +0300
+Message-Id: <20181016133716.17842-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.4
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 4 Oct 2018, Jann Horn wrote:
+First, rename out_no_locality to out_locality for bailing out on
+both tpm_cmd_ready() and tpm_request_locality() failure.
+Second, ignore the return value of go_to_idle() as  it may override
+the return value of the actual tpm operation, the go_to_idle() error
+will be caught on any consequent command.
+Last, fix the wrong 'goto out', that jumped back instead of forward.
 
-> > Well, we can't really call out into audit from scheduler code, and the
-> > previous versions of the patchsets didn't have PTRACE_MODE_SCHED, so it
-> > had to be included in PTRACE_MODE_IBPB in order to make sure we're not
-> > calling into audit from context switch code.
-> >
-> > Or did I misunderstand the question?
-> 
-> If I understand Casey correctly, he is saying that your patch
-> (https://lore.kernel.org/lkml/nycvar.YFH.7.76.1809251437340.15880@cbobk.fhfr.pm/)
-> doesn't include PTRACE_MODE_NOAUDIT for IBPB, but the previous v6 of
-> your patch (https://lore.kernel.org/lkml/nycvar.YFH.7.76.1809121105330.15880@cbobk.fhfr.pm/)
-> did include it, and therefore Casey thinks that there is a specific
-> reason why you removed PTRACE_MODE_NOAUDIT, 
+Cc: stable@vger.kernel.org
+Fixes: 627448e85c76 ("tpm: separate cmd_ready/go_idle from runtime_pm")
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/char/tpm/tpm-interface.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-Quite honestly, I don't remember. I dont't think there is any deadlock 
-that'd be triggered by this.
-
-> and therefore Casey is adding special-case logic for PTRACE_MODE_SCHED 
-> to Smack when simply using PTRACE_MODE_NOAUDIT would also work.
-> 
-> I think that Casey should change ptrace_may_access_sched() to use
-> "mode | PTRACE_MODE_SCHED | PTRACE_MODE_NOAUDIT".
-
-Agreed, that should work.
-
-Thanks,
-
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 129f640424b7..95db630dd722 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -477,13 +477,15 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 
+ 	if (need_locality) {
+ 		rc = tpm_request_locality(chip, flags);
+-		if (rc < 0)
+-			goto out_no_locality;
++		if (rc < 0) {
++			need_locality = false;
++			goto out_locality;
++		}
+ 	}
+ 
+ 	rc = tpm_cmd_ready(chip, flags);
+ 	if (rc)
+-		goto out;
++		goto out_locality;
+ 
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+@@ -547,14 +549,13 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+ 
+ out:
+-	rc = tpm_go_idle(chip, flags);
+-	if (rc)
+-		goto out;
++	/* may fail but do not override previous error value in rc */
++	tpm_go_idle(chip, flags);
+ 
++out_locality:
+ 	if (need_locality)
+ 		tpm_relinquish_locality(chip, flags);
+ 
+-out_no_locality:
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
 -- 
-Jiri Kosina
-SUSE Labs
+2.14.4
 
