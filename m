@@ -2,68 +2,72 @@ Return-Path: <SRS0=VoYI=M4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F48FC5ACC6
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 16:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420F1C04EBD
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 16:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B772089E
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 16:49:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B772089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 00FED21470
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Oct 2018 16:53:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ko/OIuE8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00FED21470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbeJQAkP (ORCPT
+        id S1727186AbeJQAoX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Oct 2018 20:40:15 -0400
-Received: from mga07.intel.com ([134.134.136.100]:44285 "EHLO mga07.intel.com"
+        Tue, 16 Oct 2018 20:44:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727159AbeJQAkP (ORCPT
+        id S1727007AbeJQAoX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Oct 2018 20:40:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 09:48:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,389,1534834800"; 
-   d="scan'208";a="88788644"
-Received: from unknown (HELO jsakkine-mobl1) ([10.249.254.41])
-  by FMSMGA003.fm.intel.com with ESMTP; 16 Oct 2018 09:48:53 -0700
-Date:   Tue, 16 Oct 2018 19:48:51 +0300 (EEST)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Nayna Jain <nayna@linux.ibm.com>
-cc:     Tomas Winkler <tomas.winkler@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 06/21] tpm: move tpm1_pcr_extend to tpm1-cmd.c
-In-Reply-To: <24b611f6-8080-3f99-56e5-818bd16ef4f8@linux.ibm.com>
-Message-ID: <alpine.DEB.2.21.1810161947370.11306@jsakkine-mobl1>
-References: <20180928223035.14471-1-tomas.winkler@intel.com> <20180928223035.14471-7-tomas.winkler@intel.com> <24b611f6-8080-3f99-56e5-818bd16ef4f8@linux.ibm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 16 Oct 2018 20:44:23 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9AC2205C9;
+        Tue, 16 Oct 2018 16:53:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1539708786;
+        bh=qeOIAJTmOn0k5o+SGOgqo4Ko+QwYNLbEWjvwrrvf92s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ko/OIuE8aY3kERP885lCc5fMnJFvfmYHWWE2sW0Qw1Z4se/JubRXW2tHAszyFwhMc
+         QoVKYs+mHj0+lx7pUYWRayJD4/71lQLXEQdwthofyYUsZPcMO6VpPSgjUQVpLtkXMF
+         XnCLza28/2cUeU1cw2rlm2lvpEFYx1aWC7YU/mPo=
+Date:   Tue, 16 Oct 2018 18:53:04 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] SELinux fixes for v4.19 (#1)
+Message-ID: <20181016165304.GD9547@kroah.com>
+References: <CAHC9VhRDmorDGkUkXv5f4YT-PxBdspbqmo+fYpu7-P-xzC2FxA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRDmorDGkUkXv5f4YT-PxBdspbqmo+fYpu7-P-xzC2FxA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 12 Oct 2018, Nayna Jain wrote:
-> Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-> Tested-by: Nayna Jain <nayna@linux.ibm.com>
->
-> Sorry for bit delay in testing.
->
-> Thanks & Regards,
->   - Nayna
+On Mon, Oct 15, 2018 at 06:28:04PM -0400, Paul Moore wrote:
+> Hi Greg,
+> 
+> We've got one SELinux "fix" that I'd like to get into v4.19 if
+> possible.  I'm using double quotes on "fix" as this is just an update
+> to the MAINTAINERS file and not a code change.  From my perspective,
+> MAINTAINERS updates generally don't warrant inclusion during the -rcX
+> phase, but this is a change to the mailing list location so it seemed
+> prudent to get this in before v4.19 is released.
+> 
+> If you don't want this for v4.19 let me know and I'll queue it up for
+> the upcoming merge window.
 
-Thank you. This is a big refactoring so your effort is highly
-appreciated :-)
+Not a problem, now merged, thanks.
 
-/Jarkko
+greg k-h
