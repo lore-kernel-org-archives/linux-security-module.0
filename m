@@ -4,34 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 880AAC7113E
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9A6C7113E
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0F72151D
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C0F72151D
+	by mail.kernel.org (Postfix) with ESMTP id CA3512151D
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA3512151D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeJQOpL (ORCPT
+        id S1727876AbeJQOpV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Oct 2018 10:45:11 -0400
+        Wed, 17 Oct 2018 10:45:21 -0400
 Received: from mga11.intel.com ([192.55.52.93]:48122 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbeJQOpK (ORCPT
+        id S1727570AbeJQOpV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:45:10 -0400
+        Wed, 17 Oct 2018 10:45:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 23:50:59 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 23:51:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,391,1534834800"; 
-   d="scan'208";a="79371319"
+   d="scan'208";a="79371365"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Oct 2018 23:50:53 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 16 Oct 2018 23:51:07 -0700
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -42,9 +42,9 @@ Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v6 16/20] tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
-Date:   Wed, 17 Oct 2018 09:46:09 +0300
-Message-Id: <20181017064613.19746-17-tomas.winkler@intel.com>
+Subject: [PATCH v6 20/20] tpm: use u32 instead of int for PCR index
+Date:   Wed, 17 Oct 2018 09:46:13 +0300
+Message-Id: <20181017064613.19746-21-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181017064613.19746-1-tomas.winkler@intel.com>
 References: <20181017064613.19746-1-tomas.winkler@intel.com>
@@ -52,114 +52,228 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Implement tpm1_pcr_read_dev() using tpm_buf and remove
-now unneeded structures from tpm.h
+The TPM specs defines PCR index as a positive number, and there is
+no reason to use a signed number. It is also a possible security
+issue as currently no functions check for a negative index,
+which may become a large number when converted to u32.
+
+Adjust the API to use u32 instead of int in all PCR related
+functions.
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-
 V3: New in the series.
-V4-V6: Resend.
+V4: Separate unrelated change to another patches.
+V5: Fix the commit message.
+V6: Rebased.
 
- drivers/char/tpm/tpm.h      | 18 ++----------------
- drivers/char/tpm/tpm1-cmd.c | 38 +++++++++++++++++++++-----------------
- 2 files changed, 23 insertions(+), 33 deletions(-)
+ drivers/char/tpm/tpm-interface.c    |  6 +++---
+ drivers/char/tpm/tpm-sysfs.c        |  2 +-
+ drivers/char/tpm/tpm.h              | 10 +++++-----
+ drivers/char/tpm/tpm1-cmd.c         |  6 +++---
+ drivers/char/tpm/tpm2-cmd.c         |  5 ++---
+ include/linux/tpm.h                 | 11 +++++++----
+ security/integrity/ima/ima_crypto.c |  5 +++--
+ 7 files changed, 24 insertions(+), 21 deletions(-)
 
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index acd647476ae1..d9439f9abe78 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -38,7 +38,7 @@
+  * recently changed pcr on suspend, so force the flush
+  * with an extend to the selected _unused_ non-volatile pcr.
+  */
+-static int tpm_suspend_pcr;
++static u32 tpm_suspend_pcr;
+ module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
+ MODULE_PARM_DESC(suspend_pcr,
+ 		 "PCR to use for dummy writes to facilitate flush on suspend.");
+@@ -455,7 +455,7 @@ EXPORT_SYMBOL_GPL(tpm_is_tpm2);
+  *
+  * Return: same as with tpm_transmit_cmd()
+  */
+-int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
++int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+ {
+ 	int rc;
+ 
+@@ -485,7 +485,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+  *
+  * Return: same as with tpm_transmit_cmd()
+  */
+-int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
++int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+ {
+ 	int rc;
+ 	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+index 96fc7433c57d..b88e08ec2c59 100644
+--- a/drivers/char/tpm/tpm-sysfs.c
++++ b/drivers/char/tpm/tpm-sysfs.c
+@@ -102,7 +102,7 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+ 	cap_t cap;
+ 	u8 digest[TPM_DIGEST_SIZE];
+ 	ssize_t rc;
+-	int i, j, num_pcrs;
++	u32 i, j, num_pcrs;
+ 	char *str = buf;
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+ 
 diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 6895f183396b..51d147675b1f 100644
+index e0778d19da98..f27d1f38a93d 100644
 --- a/drivers/char/tpm/tpm.h
 +++ b/drivers/char/tpm/tpm.h
-@@ -382,13 +382,10 @@ typedef union {
- 	struct	tpm_output_header out;
- } tpm_cmd_header;
+@@ -509,14 +509,14 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+ int tpm_get_timeouts(struct tpm_chip *);
+ int tpm_auto_startup(struct tpm_chip *chip);
  
--struct tpm_pcrread_out {
--	u8	pcr_result[TPM_DIGEST_SIZE];
-+struct tpm_cmd_t {
-+	tpm_cmd_header	header;
- } __packed;
+-int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
++int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr);
+ int tpm1_auto_startup(struct tpm_chip *chip);
+ int tpm1_do_selftest(struct tpm_chip *chip);
+ int tpm1_get_timeouts(struct tpm_chip *chip);
+ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+-int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
++int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+ 		    const char *log_msg);
+-int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
++int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 		    const char *desc, size_t min_cap_length);
+ int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+@@ -558,8 +558,8 @@ static inline u32 tpm2_rc_value(u32 rc)
+ }
  
--struct tpm_pcrread_in {
--	__be32	pcr_idx;
--} __packed;
- 
- /* 128 bytes is an arbitrary cap. This could be as large as TPM_BUFSIZE - 18
-  * bytes, but 128 is still a relatively large number of random bytes and
-@@ -396,17 +393,6 @@ struct tpm_pcrread_in {
-  * compiler warnings about stack frame size. */
- #define TPM_MAX_RNG_DATA	128
- 
--typedef union {
--	struct	tpm_pcrread_in	pcrread_in;
--	struct	tpm_pcrread_out	pcrread_out;
--} tpm_cmd_params;
--
--struct tpm_cmd_t {
--	tpm_cmd_header	header;
--	tpm_cmd_params	params;
--} __packed;
--
--
- /* A string buffer type for constructing TPM commands. This is based on the
-  * ideas of string buffer code in security/keys/trusted.h but is heap based
-  * in order to keep the stack usage minimal.
+ int tpm2_get_timeouts(struct tpm_chip *chip);
+-int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+-int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
++int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
++int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+ 		    struct tpm2_digest *digests);
+ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
 diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index b5c4fa158c30..d30f336518f6 100644
+index 6b04648f8184..6f306338953b 100644
 --- a/drivers/char/tpm/tpm1-cmd.c
 +++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -571,29 +571,33 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- 	return rc;
+@@ -449,7 +449,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
  }
  
--#define TPM_ORDINAL_PCRREAD 21
--#define READ_PCR_RESULT_SIZE 30
--#define READ_PCR_RESULT_BODY_SIZE 20
--static const struct tpm_input_header pcrread_header = {
--	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
--	.length = cpu_to_be32(14),
--	.ordinal = cpu_to_be32(TPM_ORDINAL_PCRREAD)
--};
--
-+#define TPM_ORD_PCRREAD 21
- int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
+ #define TPM_ORD_PCR_EXTEND 20
+-int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
++int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+ 		    const char *log_msg)
  {
-+	struct tpm_buf buf;
+ 	struct tpm_buf buf;
+@@ -572,7 +572,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ }
+ 
+ #define TPM_ORD_PCRREAD 21
+-int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
++int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+ {
+ 	struct tpm_buf buf;
  	int rc;
--	struct tpm_cmd_t cmd;
- 
--	cmd.header.in = pcrread_header;
--	cmd.params.pcrread_in.pcr_idx = cpu_to_be32(pcr_idx);
--	rc = tpm_transmit_cmd(chip, NULL, &cmd, READ_PCR_RESULT_SIZE,
--			      READ_PCR_RESULT_BODY_SIZE, 0,
-+	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCRREAD);
-+	if (rc)
-+		return rc;
-+
-+	tpm_buf_append_u32(&buf, pcr_idx);
-+
-+	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE,
-+			      TPM_DIGEST_SIZE, 0,
- 			      "attempting to read a pcr value");
-+	if (rc)
-+		goto out;
- 
--	if (rc == 0)
--		memcpy(res_buf, cmd.params.pcrread_out.pcr_result,
--		       TPM_DIGEST_SIZE);
-+	if (tpm_buf_length(&buf) < TPM_DIGEST_SIZE) {
-+		rc = -EFAULT;
-+		goto out;
-+	}
-+
-+	memcpy(res_buf, &buf.data[TPM_HEADER_SIZE], TPM_DIGEST_SIZE);
-+
-+out:
-+	tpm_buf_destroy(&buf);
+@@ -729,7 +729,7 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+  * * 0 on success,
+  * * < 0 on error.
+  */
+-int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
++int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+ {
+ 	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+ 	struct tpm_buf buf;
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 6ca4fc0a0d6f..ae86fb0218ab 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -175,7 +175,7 @@ struct tpm2_pcr_read_out {
+  *
+  * Return: Same as with tpm_transmit_cmd.
+  */
+-int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
++int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+ {
+ 	int rc;
+ 	struct tpm_buf buf;
+@@ -225,7 +225,7 @@ struct tpm2_null_auth_area {
+  *
+  * Return: Same as with tpm_transmit_cmd.
+  */
+-int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
++int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+ 		    struct tpm2_digest *digests)
+ {
+ 	struct tpm_buf buf;
+@@ -272,7 +272,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
  	return rc;
  }
  
+-
+ struct tpm2_get_random_out {
+ 	__be16 size;
+ 	u8 buffer[TPM_MAX_RNG_DATA];
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 4609b94142d4..b49a55cf775f 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -53,8 +53,8 @@ struct tpm_class_ops {
+ #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+ 
+ extern int tpm_is_tpm2(struct tpm_chip *chip);
+-extern int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
+-extern int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash);
++extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
++extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash);
+ extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
+ extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
+ extern int tpm_seal_trusted(struct tpm_chip *chip,
+@@ -69,15 +69,18 @@ static inline int tpm_is_tpm2(struct tpm_chip *chip)
+ {
+ 	return -ENODEV;
+ }
+-static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
++
++static inline int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+ {
+ 	return -ENODEV;
+ }
+-static inline int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx,
++
++static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+ 				 const u8 *hash)
+ {
+ 	return -ENODEV;
+ }
++
+ static inline int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+ {
+ 	return -ENODEV;
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 7e7e7e7c250a..959d9edc113a 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -629,7 +629,7 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
+ 	return calc_buffer_shash(buf, len, hash);
+ }
+ 
+-static void __init ima_pcrread(int idx, u8 *pcr)
++static void __init ima_pcrread(u32 idx, u8 *pcr)
+ {
+ 	if (!ima_tpm_chip)
+ 		return;
+@@ -645,7 +645,8 @@ static int __init ima_calc_boot_aggregate_tfm(char *digest,
+ 					      struct crypto_shash *tfm)
+ {
+ 	u8 pcr_i[TPM_DIGEST_SIZE];
+-	int rc, i;
++	int rc;
++	u32 i;
+ 	SHASH_DESC_ON_STACK(shash, tfm);
+ 
+ 	shash->tfm = tfm;
 -- 
 2.14.4
 
