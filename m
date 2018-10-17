@@ -3,163 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AADEECDE30
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 11:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1089BECDE32
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 12:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1536521526
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 11:57:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1536521526
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D040F21526
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 12:24:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D040F21526
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeJQTxL (ORCPT
+        id S1726996AbeJQUUA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Oct 2018 15:53:11 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43056 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726989AbeJQTxL (ORCPT
+        Wed, 17 Oct 2018 16:20:00 -0400
+Received: from mga01.intel.com ([192.55.52.88]:5574 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726954AbeJQUUA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Oct 2018 15:53:11 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9HBoomB087137
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Oct 2018 07:57:48 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2n62npngak-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Oct 2018 07:57:47 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Wed, 17 Oct 2018 07:57:47 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 17 Oct 2018 07:57:42 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9HBvfvw46137520
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 17 Oct 2018 11:57:41 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D6A8AC059;
-        Wed, 17 Oct 2018 11:57:41 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 79209AC05B;
-        Wed, 17 Oct 2018 11:57:38 +0000 (GMT)
-Received: from [9.79.213.117] (unknown [9.79.213.117])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 17 Oct 2018 11:57:38 +0000 (GMT)
-Subject: Re: [PATCH v6 03/20] tpm: factor out tpm 1.x duration calculation to
- tpm1-cmd.c
-To:     Tomas Winkler <tomas.winkler@intel.com>,
+        Wed, 17 Oct 2018 16:20:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 05:24:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,392,1534834800"; 
+   d="scan'208";a="78719211"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga007.fm.intel.com with ESMTP; 17 Oct 2018 05:24:32 -0700
+Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 17 Oct 2018 05:24:32 -0700
+Received: from hasmsx112.ger.corp.intel.com (10.184.198.40) by
+ fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 17 Oct 2018 05:24:31 -0700
+Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
+ HASMSX112.ger.corp.intel.com ([169.254.11.230]) with mapi id 14.03.0319.002;
+ Wed, 17 Oct 2018 15:24:29 +0300
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Nayna Jain <nayna@linux.ibm.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+CC:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 03/20] tpm: factor out tpm 1.x duration calculation
+ to tpm1-cmd.c
+Thread-Topic: [PATCH v6 03/20] tpm: factor out tpm 1.x duration calculation
+ to tpm1-cmd.c
+Thread-Index: AQHUZeXEAxkAvhY2ik6aE/XYedYfeaUjIkEAgAA4YJA=
+Date:   Wed, 17 Oct 2018 12:24:28 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9F4691@hasmsx109.ger.corp.intel.com>
 References: <20181017064613.19746-1-tomas.winkler@intel.com>
  <20181017064613.19746-4-tomas.winkler@intel.com>
-From:   Nayna Jain <nayna@linux.ibm.com>
-Date:   Wed, 17 Oct 2018 17:24:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20181017064613.19746-4-tomas.winkler@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+ <05fea3e6-91a3-b508-83c0-d8f06d6bbd5c@linux.ibm.com>
+In-Reply-To: <05fea3e6-91a3-b508-83c0-d8f06d6bbd5c@linux.ibm.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18101711-0072-0000-0000-000003B712FE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009891; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01103954; UDB=6.00571464; IPR=6.00884006;
- MB=3.00023791; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-17 11:57:45
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18101711-0073-0000-0000-000049C96131
-Message-Id: <05fea3e6-91a3-b508-83c0-d8f06d6bbd5c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-16_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810170105
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTAyM2E4MDgtMmUzZi00NjdiLTllZTUtZTUzYjM0MTg4NWRiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUGgxc2RJRXRMTVozSzdmY000RmRHbFBQQWZKcG5oeHltbzVmRWhQNHlVTDI2K2hTVVF4SDVZUkJpMEFmYkFCZCJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.154]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 10/17/2018 12:15 PM, Tomas Winkler wrote:
-> diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> index caa86b19c76d..5d20e98b844f 100644
-> --- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-> +++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> @@ -370,6 +370,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
->   	struct i2c_client *client = to_i2c_client(dev);
->   	u32 ordinal;
->   	size_t count = 0;
-> +	unsigned long duration;
->   	int burst_count, bytes2write, retries, rc = -EIO;
->
->   	for (retries = 0; retries < TPM_RETRY; retries++) {
-> @@ -455,12 +456,11 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
->   		return rc;
->   	}
->   	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
-> -	rc = i2c_nuvoton_wait_for_data_avail(chip,
-> -					     tpm_calc_ordinal_duration(chip,
-> -								       ordinal),
-> -					     &priv->read_queue);
-> +	duration = tpm1_calc_ordinal_duration(chip, ordinal);
-
-
-This version of the patch didn't address my previous comment -
-"The original code in the nuvoton driver does not differentiate between 
-TPM 1.2 and TPM 2.0 as it does in tpm_tis_core.c.
-Before making any changes, I would first fix it, so that it could easily 
-be backported. Only then do the refactoring."
-
-Thanks & Regards,
-    - Nayna
-
-
-> +	rc = i2c_nuvoton_wait_for_data_avail(chip, duration, &priv->read_queue);
->   	if (rc) {
-> -		dev_err(dev, "%s() timeout command duration\n", __func__);
-> +		dev_err(dev, "%s() timeout command duration %ld\n",
-> +			__func__, duration);
->   		i2c_nuvoton_ready(chip);
->   		return rc;
->   	}
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index d2345d9fd7b5..14c332104de4 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -476,7 +476,7 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
->   		if (chip->flags & TPM_CHIP_FLAG_TPM2)
->   			dur = tpm2_calc_ordinal_duration(chip, ordinal);
->   		else
-> -			dur = tpm_calc_ordinal_duration(chip, ordinal);
-> +			dur = tpm1_calc_ordinal_duration(chip, ordinal);
->
->   		if (wait_for_tpm_stat
->   		    (chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID, dur,
-> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> index b150f87f38f5..77097229bf49 100644
-> --- a/drivers/char/tpm/xen-tpmfront.c
-> +++ b/drivers/char/tpm/xen-tpmfront.c
-> @@ -164,7 +164,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   	notify_remote_via_evtchn(priv->evtchn);
->
->   	ordinal = be32_to_cpu(((struct tpm_input_header*)buf)->ordinal);
-> -	duration = tpm_calc_ordinal_duration(chip, ordinal);
-> +	duration = tpm1_calc_ordinal_duration(chip, ordinal);
->
->   	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
->   			&priv->read_queue, true) < 0) {
-
+PiANCj4gDQo+IA0KPiBPbiAxMC8xNy8yMDE4IDEyOjE1IFBNLCBUb21hcyBXaW5rbGVyIHdyb3Rl
+Og0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV9pMmNfbnV2b3Rvbi5jDQo+
+ID4gYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV9pMmNfbnV2b3Rvbi5jDQo+ID4gaW5kZXggY2FhODZi
+MTljNzZkLi41ZDIwZTk4Yjg0NGYgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jaGFyL3RwbS90
+cG1faTJjX251dm90b24uYw0KPiA+ICsrKyBiL2RyaXZlcnMvY2hhci90cG0vdHBtX2kyY19udXZv
+dG9uLmMNCj4gPiBAQCAtMzcwLDYgKzM3MCw3IEBAIHN0YXRpYyBpbnQgaTJjX251dm90b25fc2Vu
+ZChzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAsDQo+IHU4ICpidWYsIHNpemVfdCBsZW4pDQo+ID4gICAJ
+c3RydWN0IGkyY19jbGllbnQgKmNsaWVudCA9IHRvX2kyY19jbGllbnQoZGV2KTsNCj4gPiAgIAl1
+MzIgb3JkaW5hbDsNCj4gPiAgIAlzaXplX3QgY291bnQgPSAwOw0KPiA+ICsJdW5zaWduZWQgbG9u
+ZyBkdXJhdGlvbjsNCj4gPiAgIAlpbnQgYnVyc3RfY291bnQsIGJ5dGVzMndyaXRlLCByZXRyaWVz
+LCByYyA9IC1FSU87DQo+ID4NCj4gPiAgIAlmb3IgKHJldHJpZXMgPSAwOyByZXRyaWVzIDwgVFBN
+X1JFVFJZOyByZXRyaWVzKyspIHsgQEAgLTQ1NSwxMg0KPiA+ICs0NTYsMTEgQEAgc3RhdGljIGlu
+dCBpMmNfbnV2b3Rvbl9zZW5kKHN0cnVjdCB0cG1fY2hpcCAqY2hpcCwgdTggKmJ1ZiwNCj4gc2l6
+ZV90IGxlbikNCj4gPiAgIAkJcmV0dXJuIHJjOw0KPiA+ICAgCX0NCj4gPiAgIAlvcmRpbmFsID0g
+YmUzMl90b19jcHUoKigoX19iZTMyICopIChidWYgKyA2KSkpOw0KPiA+IC0JcmMgPSBpMmNfbnV2
+b3Rvbl93YWl0X2Zvcl9kYXRhX2F2YWlsKGNoaXAsDQo+ID4gLQkJCQkJICAgICB0cG1fY2FsY19v
+cmRpbmFsX2R1cmF0aW9uKGNoaXAsDQo+ID4gLQkJCQkJCQkJICAgICAgIG9yZGluYWwpLA0KPiA+
+IC0JCQkJCSAgICAgJnByaXYtPnJlYWRfcXVldWUpOw0KPiA+ICsJZHVyYXRpb24gPSB0cG0xX2Nh
+bGNfb3JkaW5hbF9kdXJhdGlvbihjaGlwLCBvcmRpbmFsKTsNCj4gDQo+IA0KPiBUaGlzIHZlcnNp
+b24gb2YgdGhlIHBhdGNoIGRpZG4ndCBhZGRyZXNzIG15IHByZXZpb3VzIGNvbW1lbnQgLSAiVGhl
+IG9yaWdpbmFsDQo+IGNvZGUgaW4gdGhlIG51dm90b24gZHJpdmVyIGRvZXMgbm90IGRpZmZlcmVu
+dGlhdGUgYmV0d2VlbiBUUE0gMS4yIGFuZCBUUE0NCj4gMi4wIGFzIGl0IGRvZXMgaW4gdHBtX3Rp
+c19jb3JlLmMuDQo+IEJlZm9yZSBtYWtpbmcgYW55IGNoYW5nZXMsIEkgd291bGQgZmlyc3QgZml4
+IGl0LCBzbyB0aGF0IGl0IGNvdWxkIGVhc2lseSBiZQ0KPiBiYWNrcG9ydGVkLiBPbmx5IHRoZW4g
+ZG8gdGhlIHJlZmFjdG9yaW5nLiINCg0KVGhpcyBwYXRjaCBkb2Vzbid0IGNoYW5nZSB0aGUgb3Jp
+Z2luYWwgYmVoYXZpb3IsIGp1c3QgY2hhbmdlIHRoZSBuYW1lIG9mIHRoZSBmdW5jdGlvbiwgIHNv
+IHRoZXJlIGlzIG5vIHJlZ3Jlc3Npb24uDQpJIHdvdWxkIHN1Z2dlc3QgdGhlcmUgaXMgYW5vdGhl
+ciBidWcgaW4gdGhvc2UgZHJpdmVycy9kZXZpY2VzIHRoYXQgaXMgb3J0aG9nb25hbCB0byB0aGlz
+IHJlZmFjdG9yaW5nIGFuZCBzaG91bGQgbm90IGJsb2NrIHRoaXMgZnJvbSBtZXJnaW5nLg0KQWNj
+b3JkaW5nIHRvIHdoYXQgeW91IHNheSAgaXQgY2FuIGNhbGwganVzdCB0cG1fY2FsY19vcmlkbmFs
+X2R1cmF0aW9uKCkgaW5zdGVhZCBvZiB0cG0xX2NhbGNfb3JkaW5hbF9kdXJhdGlvbihjaGlwLCBv
+cmRpbmFsKSwNCmJ1dCBJIHByZWZlciB0aGF0IHNvbWVvbmUgdGhhdCBoYXMgdGhvc2UgZGV2aWNl
+cyB3aWxsIGRvIHRoYXQgY2hhbmdlIG9uIHRvcCBvZiB0aGlzIHNlcmllcyBhcyAgSSBjYW5ub3Qg
+dGVzdCBpdC4NCg0KVGhhbmtzDQpUb21hcw0KDQo=
