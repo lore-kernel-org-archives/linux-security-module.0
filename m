@@ -2,79 +2,93 @@ Return-Path: <SRS0=6zia=M5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE545ECDE39
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 17:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 317D0ECDE32
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 23:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A167621477
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 17:17:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A167621477
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DBF7B20869
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 23:01:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBF7B20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727770AbeJRBOU (ORCPT
+        id S1727280AbeJRG7X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Oct 2018 21:14:20 -0400
-Received: from mga18.intel.com ([134.134.136.126]:53440 "EHLO mga18.intel.com"
+        Thu, 18 Oct 2018 02:59:23 -0400
+Received: from mga02.intel.com ([134.134.136.20]:53352 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbeJRBOS (ORCPT
+        id S1727196AbeJRG7X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Oct 2018 21:14:18 -0400
+        Thu, 18 Oct 2018 02:59:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 10:17:39 -0700
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Oct 2018 16:01:28 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,393,1534834800"; 
-   d="scan'208";a="96076007"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga002.fm.intel.com with ESMTP; 17 Oct 2018 10:17:36 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+   d="scan'208";a="98357807"
+Received: from unknown (HELO jsakkine-mobl1) ([10.249.254.40])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Oct 2018 16:01:23 -0700
+Date:   Thu, 18 Oct 2018 02:01:22 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Tomas Winkler <tomas.winkler@intel.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
         Alexander Usyskin <alexander.usyskin@intel.com>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH] tpm: fix kdoc for tpm2_flush_context_cmd()
-Date:   Wed, 17 Oct 2018 20:13:31 +0300
-Message-Id: <20181017171331.13393-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.4
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: tpm_try_transmit() ignore value of go_to_idle()
+In-Reply-To: <20181015111434.7777-1-tomas.winkler@intel.com>
+Message-ID: <alpine.DEB.2.21.1810180057470.5022@jsakkine-mobl1>
+References: <20181015111434.7777-1-tomas.winkler@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-kdoc for tpm2_flush_context_cmd() was off.
+On Mon, 15 Oct 2018, Tomas Winkler wrote:
+> Ignore the return value of go_to_idle() in tpm_try_transmit().
+> Once it may shadow the return value of actual tpm operation,
+> second the consequent command will fail as well and the error
+> will be caought anyway.
+> Last fix wrong goto, that jumped back instead of forward.
+>
+> Fixes: 627448e85c76 ("tpm: separate cmd_ready/go_idle from runtime_pm")
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+> drivers/char/tpm/tpm-interface.c | 4 +---
+> 1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 129f640424b7..f69c711bf74a 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -547,9 +547,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> 		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+>
+> out:
+> -	rc = tpm_go_idle(chip, flags);
+> -	if (rc)
+> -		goto out;
+> +	(void)tpm_go_idle(chip, flags);
+>
+> 	if (need_locality)
+> 		tpm_relinquish_locality(chip, flags);
+> -- 
+> 2.14.4
+>
+>
 
-Fixes: commit 9aa36b399a50 ("tpm: export tpm2_flush_context_cmd")'
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/char/tpm/tpm2-cmd.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+LGTM. Should be probably Cc'd to stable (can add).
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 3acf4fd4e5a5..26cc31451290 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -352,10 +352,9 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- /**
-  * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
-  * @chip: TPM chip to use
-- * @payload: the key data in clear and encrypted form
-- * @options: authentication values and other options
-+ * @handle: context handle
-+ * @flags: tpm transmit flags - bitmap
-  *
-- * Return: same as with tpm_transmit_cmd
-  */
- void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 			    unsigned int flags)
--- 
-2.14.4
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
+/Jarkko
