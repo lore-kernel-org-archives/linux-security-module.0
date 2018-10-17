@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA0AECDE25
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE3BECDE2C
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEF982151D
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEF982151D
+	by mail.kernel.org (Postfix) with ESMTP id 0A9912151D
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A9912151D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbeJQOpC (ORCPT
+        id S1727728AbeJQOo7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Oct 2018 10:45:02 -0400
+        Wed, 17 Oct 2018 10:44:59 -0400
 Received: from mga18.intel.com ([134.134.136.126]:4116 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbeJQOpB (ORCPT
+        id S1727570AbeJQOo6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:45:01 -0400
+        Wed, 17 Oct 2018 10:44:58 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 23:50:50 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 23:50:47 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,391,1534834800"; 
-   d="scan'208";a="79371271"
+   d="scan'208";a="79371258"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Oct 2018 23:50:48 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 16 Oct 2018 23:50:45 -0700
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -42,9 +42,9 @@ Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v6 14/20] tpm: tpm-space.c remove unneeded semicolon
-Date:   Wed, 17 Oct 2018 09:46:07 +0300
-Message-Id: <20181017064613.19746-15-tomas.winkler@intel.com>
+Subject: [PATCH v6 13/20] tpm: tpm-interface.c drop unused macros
+Date:   Wed, 17 Oct 2018 09:46:06 +0300
+Message-Id: <20181017064613.19746-14-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181017064613.19746-1-tomas.winkler@intel.com>
 References: <20181017064613.19746-1-tomas.winkler@intel.com>
@@ -52,30 +52,42 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Remove unneeded semicolon in tpm2_map_response_header()
+The commit:
+"tpm_tis: further simplify calculation of ordinal duration"
+left unused macros, we can drop them now.
 
+Fixes compilation warnings:
+tpm-interface.c:37:0: warning: macro "TPM_PROTECTED_COMMAND" is not used [-Wunused-macros]
+tpm-interface.c:36:0: warning: macro "TSC_MAX_ORDINAL" is not used [-Wunused-macros]
+tpm-interface.c:38:0: warning: macro "TPM_CONNECTION_COMMAND" is not used [-Wunused-macros]
+
+
+Fixes: f72864300139 ("tpm_tis: further simplify calculation of ordinal duration")
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
 V3: New in the series.
-V4-V6: Resend.
+V4: Fix the commit message.
+V5-V6: Rebase
 
- drivers/char/tpm/tpm2-space.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/tpm/tpm-interface.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index d2e101b32482..dcdfde3c253e 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -373,7 +373,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
- 		dev_err(&chip->dev, "%s: unknown handle 0x%08X\n",
- 			__func__, phandle);
- 		break;
--	};
-+	}
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 69e007a198ce..ba50554e34d3 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -33,10 +33,6 @@
  
- 	return 0;
- out_no_slots:
+ #include "tpm.h"
+ 
+-#define TSC_MAX_ORDINAL 12
+-#define TPM_PROTECTED_COMMAND 0x00
+-#define TPM_CONNECTION_COMMAND 0x40
+-
+ /*
+  * Bug workaround - some TPM's don't flush the most
+  * recently changed pcr on suspend, so force the flush
 -- 
 2.14.4
 
