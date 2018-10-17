@@ -3,35 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 852F5ECDE25
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA0AECDE25
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 517AF2151D
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 517AF2151D
+	by mail.kernel.org (Postfix) with ESMTP id AEF982151D
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Oct 2018 06:51:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEF982151D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbeJQOpN (ORCPT
+        id S1727754AbeJQOpC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Oct 2018 10:45:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:48122 "EHLO mga11.intel.com"
+        Wed, 17 Oct 2018 10:45:02 -0400
+Received: from mga18.intel.com ([134.134.136.126]:4116 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbeJQOpN (ORCPT
+        id S1727570AbeJQOpB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Oct 2018 10:45:13 -0400
+        Wed, 17 Oct 2018 10:45:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 23:51:02 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Oct 2018 23:50:50 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,391,1534834800"; 
-   d="scan'208";a="79371335"
+   d="scan'208";a="79371271"
 Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Oct 2018 23:51:00 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 16 Oct 2018 23:50:48 -0700
 From:   Tomas Winkler <tomas.winkler@intel.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
@@ -42,9 +42,9 @@ Cc:     Nayna Jain <nayna@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Tomas Winkler <tomas.winkler@intel.com>
-Subject: [PATCH v6 17/20] tmp1: rename tpm1_pcr_read_dev to tpm1_pcr_read()
-Date:   Wed, 17 Oct 2018 09:46:10 +0300
-Message-Id: <20181017064613.19746-18-tomas.winkler@intel.com>
+Subject: [PATCH v6 14/20] tpm: tpm-space.c remove unneeded semicolon
+Date:   Wed, 17 Oct 2018 09:46:07 +0300
+Message-Id: <20181017064613.19746-15-tomas.winkler@intel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181017064613.19746-1-tomas.winkler@intel.com>
 References: <20181017064613.19746-1-tomas.winkler@intel.com>
@@ -52,83 +52,30 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Rename tpm1_pcr_read_dev to tpm1_pcr_read() to match
-the counterpart tpm2_pcr_read().
+Remove unneeded semicolon in tpm2_map_response_header()
 
 Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
+V3: New in the series.
+V4-V6: Resend.
 
-V4: New in the series
-V5-V6: Resend.
+ drivers/char/tpm/tpm2-space.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/char/tpm/tpm-interface.c | 2 +-
- drivers/char/tpm/tpm-sysfs.c     | 2 +-
- drivers/char/tpm/tpm.h           | 2 +-
- drivers/char/tpm/tpm1-cmd.c      | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 8e1d2bc2df82..acd647476ae1 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -466,7 +466,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 		rc = tpm2_pcr_read(chip, pcr_idx, res_buf);
- 	else
--		rc = tpm1_pcr_read_dev(chip, pcr_idx, res_buf);
-+		rc = tpm1_pcr_read(chip, pcr_idx, res_buf);
+diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+index d2e101b32482..dcdfde3c253e 100644
+--- a/drivers/char/tpm/tpm2-space.c
++++ b/drivers/char/tpm/tpm2-space.c
+@@ -373,7 +373,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
+ 		dev_err(&chip->dev, "%s: unknown handle 0x%08X\n",
+ 			__func__, phandle);
+ 		break;
+-	};
++	}
  
- 	tpm_put_ops(chip);
- 	return rc;
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index 861acafd8f29..96fc7433c57d 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -114,7 +114,7 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
- 
- 	num_pcrs = be32_to_cpu(cap.num_pcrs);
- 	for (i = 0; i < num_pcrs; i++) {
--		rc = tpm1_pcr_read_dev(chip, i, digest);
-+		rc = tpm1_pcr_read(chip, i, digest);
- 		if (rc)
- 			break;
- 		str += sprintf(str, "PCR-%02d: ", i);
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 51d147675b1f..bf2ef1eeda50 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -525,7 +525,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip);
- unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
- int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
- 		    const char *log_msg);
--int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-+int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
- ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		    const char *desc, size_t min_cap_length);
- int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index d30f336518f6..05b772477bac 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -572,7 +572,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- }
- 
- #define TPM_ORD_PCRREAD 21
--int tpm1_pcr_read_dev(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-+int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
- {
- 	struct tpm_buf buf;
- 	int rc;
-@@ -660,7 +660,7 @@ int tpm1_do_selftest(struct tpm_chip *chip)
- 
- 	do {
- 		/* Attempt to read a PCR value */
--		rc = tpm1_pcr_read_dev(chip, 0, dummy);
-+		rc = tpm1_pcr_read(chip, 0, dummy);
- 
- 		/* Some buggy TPMs will not respond to tpm_tis_ready() for
- 		 * around 300ms while the self test is ongoing, keep trying
+ 	return 0;
+ out_no_slots:
 -- 
 2.14.4
 
