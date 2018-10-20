@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5C6ECDE3D
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Oct 2018 00:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0703ECDE43
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Oct 2018 01:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC7E21476
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Oct 2018 00:58:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DC7E21476
+	by mail.kernel.org (Postfix) with ESMTP id 8C289214C3
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Oct 2018 01:05:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C289214C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJTJGl (ORCPT
+        id S1727175AbeJTJNp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 Oct 2018 05:06:41 -0400
-Received: from mga18.intel.com ([134.134.136.126]:9226 "EHLO mga18.intel.com"
+        Sat, 20 Oct 2018 05:13:45 -0400
+Received: from mga02.intel.com ([134.134.136.20]:15653 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726502AbeJTJGl (ORCPT
+        id S1726513AbeJTJNp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 Oct 2018 05:06:41 -0400
+        Sat, 20 Oct 2018 05:13:45 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 17:58:10 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Oct 2018 18:05:14 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,402,1534834800"; 
-   d="scan'208";a="101018205"
+   d="scan'208";a="272868038"
 Received: from kskibin-mobl.ger.corp.intel.com ([10.249.254.29])
-  by orsmga001.jf.intel.com with ESMTP; 19 Oct 2018 17:58:05 -0700
-Date:   Sat, 20 Oct 2018 03:58:03 +0300 (EEST)
+  by fmsmga005.fm.intel.com with ESMTP; 19 Oct 2018 18:05:07 -0700
+Date:   Sat, 20 Oct 2018 04:05:06 +0300 (EEST)
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 X-X-Sender: jsakkine@jsakkine-mobl1
 To:     Tomas Winkler <tomas.winkler@intel.com>
@@ -43,11 +43,11 @@ cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 09/21] tpm: factor out tpm1_get_random into
+Subject: Re: [PATCH v7 11/21] tpm: factor out tpm 1.x pm suspend flow into
  tpm1-cmd.c
-In-Reply-To: <20181019182307.17745-10-tomas.winkler@intel.com>
-Message-ID: <alpine.DEB.2.21.1810200357060.9963@jsakkine-mobl1>
-References: <20181019182307.17745-1-tomas.winkler@intel.com> <20181019182307.17745-10-tomas.winkler@intel.com>
+In-Reply-To: <20181019182307.17745-12-tomas.winkler@intel.com>
+Message-ID: <alpine.DEB.2.21.1810200403450.9963@jsakkine-mobl1>
+References: <20181019182307.17745-1-tomas.winkler@intel.com> <20181019182307.17745-12-tomas.winkler@intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII; format=flowed
@@ -56,17 +56,13 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Fri, 19 Oct 2018, Tomas Winkler wrote:
-> Factor out get random implementation from tpm-interface.c
-> into tpm1_get_random function in tpm1-cmd.c.
-> No functional changes.
+> Factor out TPM 1.x suspend flow from tpm-interface.c into a new function
+> tpm1_pm_suspend() in tpm1-cmd.c
 >
 > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
-
-*If* there is need for a new version can you change that to:
 
 Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Otherwise, I can fix it.
+I'll test this later.
 
 /Jarkko
