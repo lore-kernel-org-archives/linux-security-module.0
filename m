@@ -5,86 +5,82 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F03ECDE3D
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Oct 2018 07:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3CAECDE43
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Oct 2018 09:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B52D20838
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Oct 2018 07:12:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B52D20838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 8583820843
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Oct 2018 09:01:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8583820843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbeJUP0K (ORCPT
+        id S1727231AbeJUROl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 21 Oct 2018 11:26:10 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:55886 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726975AbeJUP0K (ORCPT
+        Sun, 21 Oct 2018 13:14:41 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41381 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727182AbeJUROl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 21 Oct 2018 11:26:10 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9L7Clhh019858;
-        Sun, 21 Oct 2018 16:12:47 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Sun, 21 Oct 2018 16:12:47 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9L7CkAi019839
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sun, 21 Oct 2018 16:12:47 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-To:     serge@hallyn.com, Oleg Nesterov <oleg@redhat.com>
-References: <0000000000004904df0578b7d3da@google.com>
-Cc:     syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <bf1a083c-0d09-07fb-6ad2-4bf30ac49cd8@I-love.SAKURA.ne.jp>
-Date:   Sun, 21 Oct 2018 16:12:43 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 21 Oct 2018 13:14:41 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1EE05CEC657E1;
+        Sun, 21 Oct 2018 17:00:59 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Sun, 21 Oct 2018
+ 17:00:58 +0800
+Subject: Re: [PATCH v2 -next] KEYS: trusted: remove set but not used variable
+ 'keyhndl'
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <1539241599-140866-1-git-send-email-yuehaibing@huawei.com>
+ <1539949699-74650-1-git-send-email-yuehaibing@huawei.com>
+ <1539966623.2819.3.camel@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <853ddba3-32ce-2ba8-9e23-ee7583ef3743@huawei.com>
+Date:   Sun, 21 Oct 2018 17:00:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-In-Reply-To: <0000000000004904df0578b7d3da@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1539966623.2819.3.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2018/10/21 16:10, syzbot wrote:
-> BUG: KASAN: use-after-free in __read_once_size include/linux/compiler.h:188 [inline]
-> BUG: KASAN: use-after-free in task_is_descendant.part.2+0x610/0x670 security/yama/yama_lsm.c:295
-> Read of size 8 at addr ffff8801c4666b20 by task syz-executor3/12722
+On 2018/10/20 0:30, James Bottomley wrote:
+> On Fri, 2018-10-19 at 11:48 +0000, YueHaibing wrote:
+>> Fixes gcc '-Wunused-but-set-variable' warning:
+>>
+>> security/keys/trusted.c: In function 'tpm_unseal':
+>> security/keys/trusted.c:592:11: warning:
+>>  variable 'keyhndl' set but not used [-Wunused-but-set-variable]
+>>   uint32_t keyhndl;
+>>
+>> It never used since introduction in 
+>> commit d00a1c72f7f4 ("keys: add new trusted key-type")
 > 
-> CPU: 1 PID: 12722 Comm: syz-executor3 Not tainted 4.19.0-rc8+ #70
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  __read_once_size include/linux/compiler.h:188 [inline]
->  task_is_descendant.part.2+0x610/0x670 security/yama/yama_lsm.c:295
+> This triggered an "er, shouldn't we be using the SRK parent by
+> default?"  search through the code, but it turns out that's all taken
+> care of in trusted_options_alloc() where we'll set up the SRK as parent
+> with well known auth and unless overridden on the command line, that's
+> what we use, so I'm happy this is simply left over code from a
+> different implementation of that use case.
 
-Do we need to hold
+Thank you for comment.
 
-  write_lock_irq(&tasklist_lock);
+> 
+> James
+> 
+> 
+> .
+> 
 
-rather than
-
-  rcu_read_lock();
-
-when accessing
-
-  "struct task_struct"->real_parent
-
-?
