@@ -2,56 +2,59 @@ Return-Path: <SRS0=zjoR=NC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AEBC67863
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 07:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F011ECDE43
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 07:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 891D52083A
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 07:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 341DD2083A
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 07:35:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="kSkyUSGL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 891D52083A
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="PzVwCJkQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 341DD2083A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbeJVPuk (ORCPT
+        id S1727497AbeJVPw7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Oct 2018 11:50:40 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49538 "EHLO
+        Mon, 22 Oct 2018 11:52:59 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49572 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727497AbeJVPuk (ORCPT
+        by vger.kernel.org with ESMTP id S1727350AbeJVPw7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Oct 2018 11:50:40 -0400
+        Mon, 22 Oct 2018 11:52:59 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 26B388EE0FC;
-        Mon, 22 Oct 2018 00:33:20 -0700 (PDT)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id CF0878EE0FC;
+        Mon, 22 Oct 2018 00:35:38 -0700 (PDT)
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id E8K1Qal0MtHb; Mon, 22 Oct 2018 00:33:20 -0700 (PDT)
+        with ESMTP id 4A3Jd0uHba6n; Mon, 22 Oct 2018 00:35:38 -0700 (PDT)
 Received: from [172.20.48.127] (unknown [62.232.21.219])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 77C438EE02B;
-        Mon, 22 Oct 2018 00:33:18 -0700 (PDT)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 53C5F8EE02B;
+        Mon, 22 Oct 2018 00:35:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1540193599;
-        bh=dc3JO6W77lZTwqNbliI7b5ZSGQfaZgNt8dgy+kbZOfk=;
-        h=Subject:From:To:Cc:Date:From;
-        b=kSkyUSGLmtabL/RW1nJjcHoBdpo50wpO+DW/xgqlCOIvmclp/FnTThz+fclDKeS+I
-         S7mjTyiMxsADm8gWXCE0w6dSDw+ZXNJqDs2EcTEzaiUhCqEboCLtzEs8/FbwxeGWyu
-         6g5EP8vJ19mNkskTnkBMNFqY/r7ZOv0kZiqr1Rc0=
-Message-ID: <1540193596.3202.7.camel@HansenPartnership.com>
-Subject: [PATCH v4 0/7] add integrity and security to TPM2 transactions
+        s=20151216; t=1540193738;
+        bh=r7e2NyjcWkJvMuyBMAVQ8yfM6dxhTGylADYNmbKOuDc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=PzVwCJkQI1iHQ+Gk8sQceD8Mqv7IgD4aJEdWSz8amnz9RFtaPsOi0XWREGtt2gsjN
+         00X/9Elq8HZxiIuMYAL0kJAPjwNGoEVx4VSiyDZPnK9+qyjcIm8Ll+CdHxHmApNHfT
+         NQFDgkoom3LFSbWuoKtTRhQNjD3nE5SL8AGEullA=
+Message-ID: <1540193734.3202.9.camel@HansenPartnership.com>
+Subject: [PATCH v4 1/7] tpm-buf: create new functions for handling TPM
+ buffers
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-crypto@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 22 Oct 2018 08:33:16 +0100
+Date:   Mon, 22 Oct 2018 08:35:34 +0100
+In-Reply-To: <1540193596.3202.7.camel@HansenPartnership.com>
+References: <1540193596.3202.7.camel@HansenPartnership.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
@@ -60,70 +63,349 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-By now, everybody knows we have a problem with the TPM2_RS_PW easy
-button on TPM2 in that transactions on the TPM bus can be intercepted
-and altered.  The way to fix this is to use real sessions for HMAC
-capabilities to ensure integrity and to use parameter and response
-encryption to ensure confidentiality of the data flowing over the TPM
-bus.
+This separates out the old tpm_buf_... handling functions from static
+inlines into tpm.h and makes them their own tpm-buf.c file.  It also
+adds handling for tpm2b structures and also incremental pointer
+advancing parsers.
 
-This patch series is about adding a simple API which can ensure the
-above properties as a layered addition to the existing TPM handling
-code.  This series now includes protections for PCR extend, getting
-random numbers from the TPM and data sealing and unsealing.  It
-therefore eliminates all uses of TPM2_RS_PW in the kernel and adds
-encryption protection to sensitive data flowing into and out of the
-TPM.
-
-In the third version I added data sealing and unsealing protection,
-apart from one API based problem which means that the way trusted keys
-were protected it's not currently possible to HMAC protect an authority
-that comes with a policy, so the API will have to be extended to fix
-that case
-
-In this fourth version, I tidy up some of the code and add more
-security features, the most notable is that we now calculate the NULL
-seed name and compare our calculation to the value returned in
-TPM2_ReadPublic, which means we now can't be spoofed.  This version
-also gives a sysfs variable for the null seed which userspace can use
-to run a key certification operation to prove that the TPM was always
-secure when communicating with the kernel.
-
-I've verified this using the test suite in the last patch on a VM
-connected to a tpm2 emulator.  I also instrumented the emulator to make
-sure the sensitive data was properly encrypted.
-
-James
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 
 ---
 
-
-James Bottomley (7):
-  tpm-buf: create new functions for handling TPM buffers
-  tpm2-sessions: Add full HMAC and encrypt/decrypt session handling
-  tpm2: add hmac checks to tpm2_pcr_extend()
-  tpm2: add session encryption protection to tpm2_get_random()
-  trusted keys: Add session encryption protection to the seal/unseal
-    path
-  tpm: add the null key name as a tpm2 sysfs variable
-  tpm2-sessions: NOT FOR COMMITTING add sessions testing
-
- drivers/char/tpm/Kconfig              |    3 +
- drivers/char/tpm/Makefile             |    3 +-
- drivers/char/tpm/tpm-buf.c            |  191 ++++++
- drivers/char/tpm/tpm-chip.c           |    1 +
- drivers/char/tpm/tpm-sysfs.c          |   27 +-
- drivers/char/tpm/tpm.h                |  129 ++--
- drivers/char/tpm/tpm2-cmd.c           |  248 ++++---
- drivers/char/tpm/tpm2-sessions-test.c |  360 ++++++++++
- drivers/char/tpm/tpm2-sessions.c      | 1188 +++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm2-sessions.h      |   57 ++
- 10 files changed, 2027 insertions(+), 180 deletions(-)
+v2: added this patch to separate out the API changes
+v3: added tpm_buf_reset_cmd()
+v4: renamed tpm_buf_reset_cmd() to tpm_buf_reset()
+---
+ drivers/char/tpm/Makefile  |   2 +-
+ drivers/char/tpm/tpm-buf.c | 191 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm.h     |  96 ++++-------------------
+ 3 files changed, 208 insertions(+), 81 deletions(-)
  create mode 100644 drivers/char/tpm/tpm-buf.c
- create mode 100644 drivers/char/tpm/tpm2-sessions-test.c
- create mode 100644 drivers/char/tpm/tpm2-sessions.c
- create mode 100644 drivers/char/tpm/tpm2-sessions.h
 
+diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+index 3655258bee73..65d165cce530 100644
+--- a/drivers/char/tpm/Makefile
++++ b/drivers/char/tpm/Makefile
+@@ -5,7 +5,7 @@
+ obj-$(CONFIG_TCG_TPM) += tpm.o
+ tpm-y := tpm-interface.o tpm-dev.o tpm-sysfs.o tpm-chip.o tpm2-cmd.o \
+ 	 tpm-dev-common.o tpmrm-dev.o eventlog/common.o eventlog/tpm1.o \
+-	 eventlog/tpm2.o tpm2-space.o
++	 eventlog/tpm2.o tpm2-space.o tpm-buf.o
+ tpm-$(CONFIG_ACPI) += tpm_ppi.o eventlog/acpi.o
+ tpm-$(CONFIG_EFI) += eventlog/efi.o
+ tpm-$(CONFIG_OF) += eventlog/of.o
+diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
+new file mode 100644
+index 000000000000..faa22bb09d99
+--- /dev/null
++++ b/drivers/char/tpm/tpm-buf.c
+@@ -0,0 +1,191 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Handing for tpm2b structures to facilitate the building of commands
++ */
++
++#include "tpm.h"
++
++#include <linux/module.h>
++
++#include <asm/unaligned.h>
++
++static int __tpm_buf_init(struct tpm_buf *buf)
++{
++	buf->data_page = alloc_page(GFP_HIGHUSER);
++	if (!buf->data_page)
++		return -ENOMEM;
++
++	buf->flags = 0;
++	buf->data = kmap(buf->data_page);
++
++	return 0;
++}
++
++void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
++{
++	struct tpm_input_header *head;
++
++	head = (struct tpm_input_header *) buf->data;
++
++	head->tag = cpu_to_be16(tag);
++	head->length = cpu_to_be32(sizeof(*head));
++	head->ordinal = cpu_to_be32(ordinal);
++}
++EXPORT_SYMBOL_GPL(tpm_buf_reset);
++
++int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
++{
++	int rc;
++
++	rc = __tpm_buf_init(buf);
++	if (rc)
++		return rc;
++
++	tpm_buf_reset(buf, tag, ordinal);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(tpm_buf_init);
++
++int tpm_buf_init_2b(struct tpm_buf *buf)
++{
++	struct tpm_input_header *head;
++	int rc;
++
++	rc = __tpm_buf_init(buf);
++	if (rc)
++		return rc;
++
++	head = (struct tpm_input_header *) buf->data;
++
++	head->length = cpu_to_be32(sizeof(*head));
++
++	buf->flags = TPM_BUF_2B;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(tpm_buf_init_2b);
++
++void tpm_buf_destroy(struct tpm_buf *buf)
++{
++	kunmap(buf->data_page);
++	__free_page(buf->data_page);
++}
++EXPORT_SYMBOL_GPL(tpm_buf_destroy);
++
++static void *tpm_buf_data(struct tpm_buf *buf)
++{
++	if (buf->flags & TPM_BUF_2B)
++		return buf->data + TPM_HEADER_SIZE;
++	return buf->data;
++}
++
++u32 tpm_buf_length(struct tpm_buf *buf)
++{
++	struct tpm_input_header *head = (struct tpm_input_header *)buf->data;
++	u32 len;
++
++	len = be32_to_cpu(head->length);
++	if (buf->flags & TPM_BUF_2B)
++		len -= sizeof(*head);
++	return len;
++}
++EXPORT_SYMBOL_GPL(tpm_buf_length);
++
++u16 tpm_buf_tag(struct tpm_buf *buf)
++{
++	struct tpm_input_header *head = (struct tpm_input_header *)buf->data;
++
++	return be16_to_cpu(head->tag);
++}
++EXPORT_SYMBOL_GPL(tpm_buf_tag);
++
++void tpm_buf_append(struct tpm_buf *buf,
++		    const unsigned char *new_data,
++		    unsigned int new_len)
++{
++	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
++	u32 len = be32_to_cpu(head->length);
++
++	/* Return silently if overflow has already happened. */
++	if (buf->flags & TPM_BUF_OVERFLOW)
++		return;
++
++	if ((len + new_len) > PAGE_SIZE) {
++		WARN(1, "tpm_buf: overflow\n");
++		buf->flags |= TPM_BUF_OVERFLOW;
++		return;
++	}
++
++	memcpy(&buf->data[len], new_data, new_len);
++	head->length = cpu_to_be32(len + new_len);
++}
++EXPORT_SYMBOL_GPL(tpm_buf_append);
++
++void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value)
++{
++	tpm_buf_append(buf, &value, 1);
++}
++EXPORT_SYMBOL_GPL(tpm_buf_append_u8);
++
++void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value)
++{
++	__be16 value2 = cpu_to_be16(value);
++
++	tpm_buf_append(buf, (u8 *) &value2, 2);
++}
++EXPORT_SYMBOL_GPL(tpm_buf_append_u16);
++
++void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value)
++{
++	__be32 value2 = cpu_to_be32(value);
++
++	tpm_buf_append(buf, (u8 *) &value2, 4);
++}
++EXPORT_SYMBOL_GPL(tpm_buf_append_u32);
++
++static void tpm_buf_reset_int(struct tpm_buf *buf)
++{
++	struct tpm_input_header *head;
++
++	head = (struct tpm_input_header *)buf->data;
++	head->length = cpu_to_be32(sizeof(*head));
++}
++
++void tpm_buf_append_2b(struct tpm_buf *buf, struct tpm_buf *tpm2b)
++{
++	u16 len = tpm_buf_length(tpm2b);
++
++	tpm_buf_append_u16(buf, len);
++	tpm_buf_append(buf, tpm_buf_data(tpm2b), len);
++	/* clear the buf for reuse */
++	tpm_buf_reset_int(tpm2b);
++}
++EXPORT_SYMBOL_GPL(tpm_buf_append_2b);
++
++/* functions for unmarshalling data and moving the cursor */
++u8 tpm_get_inc_u8(const u8 **ptr)
++{
++	return *((*ptr)++);
++}
++EXPORT_SYMBOL_GPL(tpm_get_inc_u8);
++
++u16 tpm_get_inc_u16(const u8 **ptr)
++{
++	u16 val;
++
++	val = get_unaligned_be16(*ptr);
++	*ptr += sizeof(val);
++	return val;
++}
++EXPORT_SYMBOL_GPL(tpm_get_inc_u16);
++
++u32 tpm_get_inc_u32(const u8 **ptr)
++{
++	u32 val;
++
++	val = get_unaligned_be32(*ptr);
++	*ptr += sizeof(val);
++	return val;
++}
++EXPORT_SYMBOL_GPL(tpm_get_inc_u32);
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index f3501d05264f..d73701e36eba 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -416,6 +416,7 @@ struct tpm_cmd_t {
+ 
+ enum tpm_buf_flags {
+ 	TPM_BUF_OVERFLOW	= BIT(0),
++	TPM_BUF_2B		= BIT(1),
+ };
+ 
+ struct tpm_buf {
+@@ -424,86 +425,21 @@ struct tpm_buf {
+ 	u8 *data;
+ };
+ 
+-static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+-{
+-	struct tpm_input_header *head;
+-	head = (struct tpm_input_header *)buf->data;
+-	head->tag = cpu_to_be16(tag);
+-	head->length = cpu_to_be32(sizeof(*head));
+-	head->ordinal = cpu_to_be32(ordinal);
+-}
+-
+-static inline int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
+-{
+-	buf->data_page = alloc_page(GFP_HIGHUSER);
+-	if (!buf->data_page)
+-		return -ENOMEM;
+-
+-	buf->flags = 0;
+-	buf->data = kmap(buf->data_page);
+-	tpm_buf_reset(buf, tag, ordinal);
+-	return 0;
+-}
+-
+-static inline void tpm_buf_destroy(struct tpm_buf *buf)
+-{
+-	kunmap(buf->data_page);
+-	__free_page(buf->data_page);
+-}
+-
+-static inline u32 tpm_buf_length(struct tpm_buf *buf)
+-{
+-	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+-
+-	return be32_to_cpu(head->length);
+-}
+-
+-static inline u16 tpm_buf_tag(struct tpm_buf *buf)
+-{
+-	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+-
+-	return be16_to_cpu(head->tag);
+-}
+-
+-static inline void tpm_buf_append(struct tpm_buf *buf,
+-				  const unsigned char *new_data,
+-				  unsigned int new_len)
+-{
+-	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+-	u32 len = tpm_buf_length(buf);
+-
+-	/* Return silently if overflow has already happened. */
+-	if (buf->flags & TPM_BUF_OVERFLOW)
+-		return;
+-
+-	if ((len + new_len) > PAGE_SIZE) {
+-		WARN(1, "tpm_buf: overflow\n");
+-		buf->flags |= TPM_BUF_OVERFLOW;
+-		return;
+-	}
+-
+-	memcpy(&buf->data[len], new_data, new_len);
+-	head->length = cpu_to_be32(len + new_len);
+-}
+-
+-static inline void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value)
+-{
+-	tpm_buf_append(buf, &value, 1);
+-}
+-
+-static inline void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value)
+-{
+-	__be16 value2 = cpu_to_be16(value);
+-
+-	tpm_buf_append(buf, (u8 *) &value2, 2);
+-}
+-
+-static inline void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value)
+-{
+-	__be32 value2 = cpu_to_be32(value);
+-
+-	tpm_buf_append(buf, (u8 *) &value2, 4);
+-}
++int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal);
++void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal);
++int tpm_buf_init_2b(struct tpm_buf *buf);
++void tpm_buf_destroy(struct tpm_buf *buf);
++u32 tpm_buf_length(struct tpm_buf *buf);
++void tpm_buf_append(struct tpm_buf *buf, const unsigned char *new_data,
++		    unsigned int new_len);
++void tpm_buf_append_u8(struct tpm_buf *buf, const u8 value);
++void tpm_buf_append_u16(struct tpm_buf *buf, const u16 value);
++void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value);
++void tpm_buf_append_2b(struct tpm_buf *buf, struct tpm_buf *tpm2b);
++
++u8 tpm_get_inc_u8(const u8 **ptr);
++u16 tpm_get_inc_u16(const u8 **ptr);
++u32 tpm_get_inc_u32(const u8 **ptr);
+ 
+ extern struct class *tpm_class;
+ extern struct class *tpmrm_class;
 -- 
 2.16.4
 
