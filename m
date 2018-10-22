@@ -2,130 +2,102 @@ Return-Path: <SRS0=zjoR=NC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DC9C004D3
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 10:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C6BC004D3
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 13:46:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395E12064E
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 10:06:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395E12064E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id C887B2064C
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 13:46:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C887B2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbeJVSYr (ORCPT
+        id S1727587AbeJVWFR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Oct 2018 14:24:47 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:27276 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeJVSYr (ORCPT
+        Mon, 22 Oct 2018 18:05:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:25872 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727210AbeJVWFR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Oct 2018 14:24:47 -0400
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9MA6tdH009222;
-        Mon, 22 Oct 2018 19:06:55 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
- Mon, 22 Oct 2018 19:06:55 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157066051.bbtec.net [60.157.66.51])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9MA6sYL009218
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 22 Oct 2018 19:06:55 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-To:     Oleg Nesterov <oleg@redhat.com>
+        Mon, 22 Oct 2018 18:05:17 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 412788830A;
+        Mon, 22 Oct 2018 13:46:37 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BC27C5ED3A;
+        Mon, 22 Oct 2018 13:46:34 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 22 Oct 2018 15:46:36 +0200 (CEST)
+Date:   Mon, 22 Oct 2018 15:46:34 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc:     serge@hallyn.com,
         syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
         jmorris@namei.org, keescook@chromium.org,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in task_is_descendant
+Message-ID: <20181022134634.GA7358@redhat.com>
 References: <0000000000004904df0578b7d3da@google.com>
  <bf1a083c-0d09-07fb-6ad2-4bf30ac49cd8@I-love.SAKURA.ne.jp>
  <20181022095439.GA4613@redhat.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
-Date:   Mon, 22 Oct 2018 19:06:52 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20181022095439.GA4613@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 22 Oct 2018 13:46:37 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2018/10/22 18:54, Oleg Nesterov wrote:
-> On 10/21, Tetsuo Handa wrote:
->>
->> On 2018/10/21 16:10, syzbot wrote:
->>> BUG: KASAN: use-after-free in __read_once_size include/linux/compiler.h:188 [inline]
->>> BUG: KASAN: use-after-free in task_is_descendant.part.2+0x610/0x670 security/yama/yama_lsm.c:295
->>> Read of size 8 at addr ffff8801c4666b20 by task syz-executor3/12722
->>>
->>> CPU: 1 PID: 12722 Comm: syz-executor3 Not tainted 4.19.0-rc8+ #70
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->>> Call Trace:
->>>  __dump_stack lib/dump_stack.c:77 [inline]
->>>  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->>>  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->>>  kasan_report_error mm/kasan/report.c:354 [inline]
->>>  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->>>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->>>  __read_once_size include/linux/compiler.h:188 [inline]
->>>  task_is_descendant.part.2+0x610/0x670 security/yama/yama_lsm.c:295
->>
->> Do we need to hold
->>
->>   write_lock_irq(&tasklist_lock);
->>
->> rather than
->>
->>   rcu_read_lock();
->>
->> when accessing
->>
->>   "struct task_struct"->real_parent
-> 
-> Well, if "task" is stable (can't exit), then I think
-> 
-> 	rcu_dereference(task->real_parent)
-> 
-> is fine, we know that ->real_parent did not pass exit_notif() yet.
+On 10/22, Tetsuo Handa wrote:
+>
+> > However, task_is_descendant() looks unnecessarily complicated, it could be
+> >
+> > 	static int task_is_descendant(struct task_struct *parent,
+> > 				      struct task_struct *child)
+> > 	{
+> > 		int rc = 0;
+> > 		struct task_struct *walker;
+> >
+> > 		if (!parent || !child)
+> > 			return 0;
+> >
+> > 		rcu_read_lock();
+> > 		for (walker = child; walker->pid; walker = rcu_dereference(walker->real_parent))
+> > 			if (same_thread_group(parent, walker)) {
+> > 				rc = 1;
+> > 				break;
+> > 			}
+> > 		rcu_read_unlock();
+> >
+> > 		return rc;
+> > 	}
+> >
+> > And again, I do not know how/if yama ensures that child is rcu-protected, perhaps
+> > task_is_descendant() needs to check pid_alive(child) right after rcu_read_lock() ?
+>
+> Since the caller (ptrace() path) called get_task_struct(child), child itself can't be
+> released. Do we still need pid_alive(child) ?
 
-OK.
+get_task_struct(child) can only ensure that this task_struct can't be freed.
 
-> 
-> However, task_is_descendant() looks unnecessarily complicated, it could be
-> 
-> 	static int task_is_descendant(struct task_struct *parent,
-> 				      struct task_struct *child)
-> 	{
-> 		int rc = 0;
-> 		struct task_struct *walker;
-> 
-> 		if (!parent || !child)
-> 			return 0;
-> 
-> 		rcu_read_lock();
-> 		for (walker = child; walker->pid; walker = rcu_dereference(walker->real_parent))
-> 			if (same_thread_group(parent, walker)) {
-> 				rc = 1;
-> 				break;
-> 			}
-> 		rcu_read_unlock();
-> 
-> 		return rc;
-> 	}
-> 
-> And again, I do not know how/if yama ensures that child is rcu-protected, perhaps
-> task_is_descendant() needs to check pid_alive(child) right after rcu_read_lock() ?
+Suppose that this child exits after get_task_struct(), then its real_parent exits
+too and calls call_rcu(delayed_put_task_struct).
 
-Since the caller (ptrace() path) called get_task_struct(child), child itself can't be
-released. Do we still need pid_alive(child) ?
+Now, when task_is_descendant() is called, rcu_read_lock() can happen after rcu gp,
+iow child->parent can be already freed/reused/unmapped.
+
+We need to ensure that child is still protected by RCU.
+
+Oleg.
+
