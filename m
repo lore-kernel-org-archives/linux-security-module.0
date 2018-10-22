@@ -2,157 +2,110 @@ Return-Path: <SRS0=zjoR=NC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F08C7112C
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 14:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497CBC004D3
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 15:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9ABA20665
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 14:18:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="hX9ijEhf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9ABA20665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id 61F96205F4
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Oct 2018 15:50:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61F96205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbeJVWg4 (ORCPT
+        id S1728194AbeJWAJh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Oct 2018 18:36:56 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:53810 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727146AbeJVWg4 (ORCPT
+        Mon, 22 Oct 2018 20:09:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55194 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727590AbeJWAJg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Oct 2018 18:36:56 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7B6AC8EE0FC;
-        Mon, 22 Oct 2018 07:18:10 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id tOnAijf3eOK5; Mon, 22 Oct 2018 07:18:10 -0700 (PDT)
-Received: from [172.22.37.2] (unknown [167.98.65.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3C68D8EE0BA;
-        Mon, 22 Oct 2018 07:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1540217890;
-        bh=jtpaFqv7wpFL/vcgMtaFsj9MiCeMQKYPhx99BpWBFF4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=hX9ijEhfUIta1VlyQ5CK/w1TdLgyKczDmYQXca2/dX9hxdp9386rnDtt2C7KUrjtm
-         6+U/ednHmg6TCnWSk7lsh051s78YX/SQEC5sKAfuEpTnmUAuSgWsebs3RT8nJyQ9xs
-         6UtebEIZ0/fHun5u1g8mKROGgjm01NxxQ5q9D8E0=
-Message-ID: <1540217887.3012.14.camel@HansenPartnership.com>
+        Mon, 22 Oct 2018 20:09:36 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9MFnv4N043837
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Oct 2018 11:50:31 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2n9fyymsga-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Oct 2018 11:50:31 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <kgold@linux.ibm.com>;
+        Mon, 22 Oct 2018 09:50:30 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 22 Oct 2018 09:50:28 -0600
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9MFoS9j47054850
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 22 Oct 2018 08:50:28 -0700
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0107DC605A;
+        Mon, 22 Oct 2018 15:50:28 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A3D47C6057;
+        Mon, 22 Oct 2018 15:50:27 +0000 (GMT)
+Received: from [9.2.202.77] (unknown [9.2.202.77])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 22 Oct 2018 15:50:27 +0000 (GMT)
 Subject: Re: [PATCH v4 0/7] add integrity and security to TPM2 transactions
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Ken Goldman <kgold@linux.ibm.com>, linux-integrity@vger.kernel.org
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 22 Oct 2018 15:18:07 +0100
-In-Reply-To: <a8a69222-94fb-7406-d9b2-207079727eb8@linux.ibm.com>
 References: <1540193596.3202.7.camel@HansenPartnership.com>
-         <a8a69222-94fb-7406-d9b2-207079727eb8@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+ <a8a69222-94fb-7406-d9b2-207079727eb8@linux.ibm.com>
+ <1540217887.3012.14.camel@HansenPartnership.com>
+From:   Ken Goldman <kgold@linux.ibm.com>
+Date:   Mon, 22 Oct 2018 11:50:33 -0400
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1540217887.3012.14.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18102215-8235-0000-0000-00000E19E82D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009916; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01106392; UDB=6.00572947; IPR=6.00886476;
+ MB=3.00023859; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-22 15:50:30
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102215-8236-0000-0000-000043173A76
+Message-Id: <e773aafe-4b12-775c-9df9-0e747880a35f@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-22_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=640 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810220136
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2018-10-22 at 09:53 -0400, Ken Goldman wrote:
-> On 10/22/2018 3:33 AM, James Bottomley wrote:
-> > By now, everybody knows we have a problem with the TPM2_RS_PW easy
-> > button on TPM2 in that transactions on the TPM bus can be
-> > intercepted and altered.  The way to fix this is to use real
-> > sessions for HMAC capabilities to ensure integrity and to use
-> > parameter and response encryption to ensure confidentiality of the
-> > data flowing over the TPM bus.
+On 10/22/2018 10:18 AM, James Bottomley wrote:
+>> 1 - Any policy that requires a password (policypassword) can
+>> substitute
+>> an HMAC (policyauthvalue) at the callers discretion.  They result
+>> in the same policy digest.
+> Right but this requires the co-operation of the policy handle creator,
+> so it's an API change.
 > 
-> Does this design assume that there was at time zero no monitoring?
-> This would permit some shared secret to be established.
-> 
-> Or does it assume that the interception may have been present from
-> the first boot?  If so, how is the first shared secret established.
-> Salting using the EK is the usual method, but this requires walking
-> the  EK certificate chain and embedding the TPM vendor CA
-> certificates in the  kernel.
 
-The design establishes the shared secret at start of day using an EC
-derived key from the null seed.  This can obviously be spoofed by a TPM
-Genie running before the system was rebooted.  However, the computed
-key name is exposed to user space and TPM2_Certify will fail when
-userspace checks the null seed so you will know after the fact whether
-the communication channel established on boot was secure or not.
+In case it wasn't clear:  The choice is not made at the time the
+policy is calculated, nor is it made at startauthsession (when
+the policy is created).
 
-It is possible to use either the EPS or SPS if we pass in the public
-points as kernel parameters but this is getting rather complicated for
-casual users.
+The choice is made when the policy is being satisfied.
 
-> > This patch series is about adding a simple API which can ensure the
-> > above properties as a layered addition to the existing TPM handling
-> > code.  This series now includes protections for PCR extend, getting
-> > random numbers from the TPM and data sealing and unsealing.  It
-> > therefore eliminates all uses of TPM2_RS_PW in the kernel and adds
-> > encryption protection to sensitive data flowing into and out of the
-> > TPM.
-> > 
-> > In the third version I added data sealing and unsealing protection,
-> > apart from one API based problem which means that the way trusted
-> > keys were protected it's not currently possible to HMAC protect an
-> > authority that comes with a policy, so the API will have to be
-> > extended to fix that case
-> 
-> TPM 2.0 observations (questioning 'not possible'):
+policypassword tells the TPM to expect a plaintext password, while
+policyauthvalue tells the TPM to expect an HMAC.
 
-Actually, let me correct that: not possible with the way policy based
-trusted keys API works because it expects you to pass in a policy
-session handle.  The way to fix this is to fix the API to pass in the
-actual policy sequence instead of the commands, but that's long term.
-
-> 1 - Any policy that requires a password (policypassword) can
-> substitute
-> an HMAC (policyauthvalue) at the callers discretion.  They result
-> in the same policy digest.
-
-Right but this requires the co-operation of the policy handle creator,
-so it's an API change.
-
-> 2 - Any command can be HMAC protected, even one like pcrread that
-> does not require authorization.  Start an HMAC session and specify
-> audit Of course, a shared secret has to be used, either a bind or
-> salted session.
-
-Right, so if we create the session, we can then set it up to use a
-salted session, but we don't create it under the current API.
-
-> 3 - If the command is already using a policy session, but does not 
-> require a password, I believe that the same technique #2 can be
-> used - specify audit with that policy session.
-> 
-> I've tested #3 with bind but not salt.  I can test if there's
-> interest.
-
-I think the API is going to have to change, so if we're looking at a
-new API, we should set it up to do the right thing with policy anyway. 
-It turns out to be quite easy as I found out when Huawei patched the
-openssl_tpm2_engine to add policy to keys.
-
-James
-
-> > In this fourth version, I tidy up some of the code and add more
-> > security features, the most notable is that we now calculate the
-> > NULL seed name and compare our calculation to the value returned in
-> > TPM2_ReadPublic, which means we now can't be spoofed.  This version
-> > also gives a sysfs variable for the null seed which userspace can
-> > use to run a key certification operation to prove that the TPM was
-> > always secure when communicating with the kernel.
-> > 
-> > I've verified this using the test suite in the last patch on a VM
-> > connected to a tpm2 emulator.  I also instrumented the emulator to
-> > make sure the sensitive data was properly encrypted.
-> 
-> 
+It's subtle that either policy command results in the same policy
+digest.
 
