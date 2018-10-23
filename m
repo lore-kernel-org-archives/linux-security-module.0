@@ -2,115 +2,238 @@ Return-Path: <SRS0=XO9p=ND=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9AFC46475
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 16:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DB3C7112C
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C24A2075D
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 16:48:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KmrBgLXa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C24A2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id BAD1720813
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 18:42:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD1720813
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728270AbeJXBMe (ORCPT
+        id S1728146AbeJXDGx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Oct 2018 21:12:34 -0400
-Received: from sonic311-28.consmr.mail.gq1.yahoo.com ([98.137.65.209]:41806
-        "EHLO sonic311-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727758AbeJXBMe (ORCPT
+        Tue, 23 Oct 2018 23:06:53 -0400
+Received: from mga17.intel.com ([192.55.52.151]:51400 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727758AbeJXDGx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Oct 2018 21:12:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1540313303; bh=yynKm9stIduSWPbk4zo7xnaN/eaxsH/tXE8xgOv8za4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=KmrBgLXalpL5wnPbINQPxmTe5mWs3L7LrF+NppQU6xT5bgvBCsLzx/seWDLCESfaKCwOSlabL7CkCBc/2CpTWGrSkDvnxRP01SPYERD6FM0O/M4lJzoHD+//caWWHy+xZenUKC3JDooY5o2E0V+D5OXmrUo7MrRgGq+RsCbF0fJEPdm4y/lOZW6LYdat2S5mZKCts/fnZ7MD04TLscgbGGwgJzN+9ZoEeeM4UUV1cWN/6I78b2H5D4xElxlrwvJEHY4W15h8bIkGIFU7uWIQs5z/FZToEC/b7f/XDHq3PC44oc0eA+uaJLG1iascY+8r13t56zc2MK5WbOoH3gZPkQ==
-X-YMail-OSG: v.mP48gVM1lVhhZ4ugFahggzMCsjQncp6iymfalc1FGk0O6IcBXU1v0Tu6Epgfe
- AWFJMvOcKN3JQ9voTSxUZS6XKWkztuXgAKPvmi85EqsV8UzNZ0ch80TQcRsBIpniY.lRL_kjNKAV
- bINZc94RadbEEDLRpAD4JCs42VHHM5LQBkg1ZUwZymjelO5RDxwIAHnUNPisZZh_yAmZVIx_JpxI
- MjV0_vZh1foSFiwrjUFTKZUllfegaAyOQaCmz5R0jFcdD.LgLCIcUTk61_k2JNBd94obG7GxVl1O
- vtXR.05ag9JzKjfW8Rn8qzFfBp5ScT9_wbs4ee7Fx4aexqff8f9eGmuMqS2yuC9FSgviTeMqnoBl
- AadEN2FMw4WJ5bJYv78qcJ8AdukY9MQKLgH4M5zAZUX.GnbhPIqfSL5fRrcPA4fqBamYBY0dfXAI
- teqkpugihjAoPOjMRknze1vnJt.0SRYEsVpMJmFTg.AQsru1mTrpufienXIjBnpOlJd5hSFwJsox
- oi.qzJYhEyFrQTsnWnS2GPuaNS3mDfCHzqg8PTc75WdN8FuWgXXxJ2gh8OVvEjkjqzxFRR84UldL
- alQCKmJJA.Wmbu81AlxObS.d4BoOPRoIMpm6VUGF1yDksC61Q8pF6s7U2UZXbAA6DAJJD9Kp45DQ
- 1LUz3HDTt7XgPSt1yZECSABuW.izuKJVRCAMJSd2iRkDaO.lmayCxnVcjJiRHJptofx7KTWM5Tu9
- uBMYZPAQiO3WLuSQFlOao530WhifPImaGv0u6dVRSgtWAPJkmCrHR0I_dkHlkEDsM4KPxffJ2uCk
- Bs2btmt75fPt4WasNHqiiDOH5WDHAxQ0.NC2XQZ.8OWU1zueONdBZ2u_8S3KsufKuFeLrJVKSVvO
- 2a3zGEHXanhuOwPnWQONC1QboSDSI9SOoE5JQajpeD3feaCTYVMcPpbZ6eAY.YtH6JSfrx.bf5JF
- n91r5gvqAaQKjrabbklAOwwePvvV2F3ioCGN1Okul1DWN0IF0nX.NIKObGpuqqouh6MJn_U5QpL9
- V41lwwOJ7PVgbqyumYEQjaGD0S_eZOu3et8xtE6NuBVlG_BUdQEGNO9Mn5eGCdwx4U4kUbdlGTt3
- 4yAfoXkvhYombS3AiDfNBJ_VSXzWkQWmuUJc1TWJQ1k5HjpFU2Hzf9qD8UfsT
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.gq1.yahoo.com with HTTP; Tue, 23 Oct 2018 16:48:23 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp411.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b419b420ec331b823b05909e1f5b1a99;
-          Tue, 23 Oct 2018 16:48:22 +0000 (UTC)
-Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
-To:     Kees Cook <keescook@chromium.org>,
-        John Johansen <john.johansen@canonical.com>
-Cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181011001846.30964-1-keescook@chromium.org>
- <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
- <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
- <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
- <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
- <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
- <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com>
- <_CkJnKYmEZ4ZF0JtsSYuahAd9sgnX9OtcstjXaeqb8wn5uxfimc6S4jomly7If9VqnOXqXwaiCbJ9ttS6NiqE7n6cQUlwLvfO53paLmacvU=@protonmail.ch>
- <8251564f-ba7a-1777-a606-dec472b32f35@canonical.com>
- <CAGXu5j+2yVZ5DQHyqvJKnSYYqRCzeMtEabBwYFOWkTcwMUWhEw@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <96e92224-aedf-5026-d6dd-b29121b4dc0d@schaufler-ca.com>
-Date:   Tue, 23 Oct 2018 09:48:20 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 23 Oct 2018 23:06:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:42:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
+   d="scan'208";a="273827747"
+Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
+  by fmsmga005.fm.intel.com with ESMTP; 23 Oct 2018 11:42:13 -0700
+Date:   Tue, 23 Oct 2018 21:42:12 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Tomas Winkler <tomas.winkler@intel.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 09/21] tpm: factor out tpm1_get_random into
+ tpm1-cmd.c
+In-Reply-To: <20181019182307.17745-10-tomas.winkler@intel.com>
+Message-ID: <alpine.DEB.2.21.1810232141550.3433@jsakkine-mobl1>
+References: <20181019182307.17745-1-tomas.winkler@intel.com> <20181019182307.17745-10-tomas.winkler@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+2yVZ5DQHyqvJKnSYYqRCzeMtEabBwYFOWkTcwMUWhEw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/12/2018 12:01 PM, Kees Cook wrote:
-> On Friday, October 12, 2018 3:19 AM, John Johansen
-> <john.johansen@canonical.com> wrote:
->> It isn't perfect but it manages consistency across distros as best as
->> can be achieved atm.
-> Yeah, this is why I'm okay with the current series: it provides as
-> consistent a view as possible, but leaves room for future improvements
-> (like adding "+" or "!" or "all" or whatever).
+On Fri, 19 Oct 2018, Tomas Winkler wrote:
+> Factor out get random implementation from tpm-interface.c
+> into tpm1_get_random function in tpm1-cmd.c.
+> No functional changes.
 >
-> I'm curious to see what SELinux folks think of v5, though. I *think* I
-> addressed all the concerns there, even Paul's "I want my distro
-> default to not have extreme stacking" case too.
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> Reviewed-by: Jarkko Sakkine <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+> V2-V3: Rebase
+> V4-V7: Resend
 >
-> -Kees
+> drivers/char/tpm/tpm-interface.c | 58 +++++-----------------------------------
+> drivers/char/tpm/tpm.h           |  1 +
+> drivers/char/tpm/tpm1-cmd.c      | 55 +++++++++++++++++++++++++++++++++++++
+> 3 files changed, 63 insertions(+), 51 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 486e211b03a0..a72bf6ea8f05 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -812,14 +812,6 @@ int tpm_pm_resume(struct device *dev)
+> }
+> EXPORT_SYMBOL_GPL(tpm_pm_resume);
+>
+> -#define TPM_ORD_GET_RANDOM 70
+> -#define TPM_GETRANDOM_RESULT_SIZE	18
+> -static const struct tpm_input_header tpm_getrandom_header = {
+> -	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+> -	.length = cpu_to_be32(14),
+> -	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
+> -};
+> -
+> /**
+>  * tpm_get_random() - get random bytes from the TPM's RNG
+>  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+> @@ -830,58 +822,22 @@ static const struct tpm_input_header tpm_getrandom_header = {
+>  */
+> int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+> {
+> -	struct tpm_cmd_t tpm_cmd;
+> -	u32 recd, num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA), rlength;
+> -	int err, total = 0, retries = 5;
+> -	u8 *dest = out;
+> +	int rc;
+>
+> -	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
+> +	if (!out || max > TPM_MAX_RNG_DATA)
+> 		return -EINVAL;
+>
+> 	chip = tpm_find_get_ops(chip);
+> 	if (!chip)
+> 		return -ENODEV;
+>
+> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> -		err = tpm2_get_random(chip, out, max);
+> -		tpm_put_ops(chip);
+> -		return err;
+> -	}
+> -
+> -	do {
+> -		tpm_cmd.header.in = tpm_getrandom_header;
+> -		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
+> -
+> -		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
+> -				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
+> -				       offsetof(struct tpm_getrandom_out,
+> -						rng_data),
+> -				       0, "attempting get random");
+> -		if (err)
+> -			break;
+> -
+> -		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
+> -		if (recd > num_bytes) {
+> -			total = -EFAULT;
+> -			break;
+> -		}
+> -
+> -		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+> -		if (rlength < TPM_HEADER_SIZE +
+> -			      offsetof(struct tpm_getrandom_out, rng_data) +
+> -			      recd) {
+> -			total = -EFAULT;
+> -			break;
+> -		}
+> -		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+> -
+> -		dest += recd;
+> -		total += recd;
+> -		num_bytes -= recd;
+> -	} while (retries-- && total < max);
+> +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> +		rc = tpm2_get_random(chip, out, max);
+> +	else
+> +		rc = tpm1_get_random(chip, out, max);
+>
+> 	tpm_put_ops(chip);
+> -	return total ? total : -EIO;
+> +	return rc;
+> }
+> EXPORT_SYMBOL_GPL(tpm_get_random);
+>
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 05c386b3ab12..22f89f41ad52 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -551,6 +551,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+> 		    const char *log_msg);
+> ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+> 		    const char *desc, size_t min_cap_length);
+> +int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max);
+> unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> int tpm_pm_suspend(struct device *dev);
+> int tpm_pm_resume(struct device *dev);
+> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+> index 3bd079587ef5..e02f0c1c822f 100644
+> --- a/drivers/char/tpm/tpm1-cmd.c
+> +++ b/drivers/char/tpm/tpm1-cmd.c
+> @@ -469,3 +469,58 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+> 	return rc;
+> }
+> EXPORT_SYMBOL_GPL(tpm1_getcap);
+> +
+> +#define TPM_ORD_GET_RANDOM 70
+> +#define TPM_GETRANDOM_RESULT_SIZE	18
+> +static const struct tpm_input_header tpm_getrandom_header = {
+> +	.tag = cpu_to_be16(TPM_TAG_RQU_COMMAND),
+> +	.length = cpu_to_be32(14),
+> +	.ordinal = cpu_to_be32(TPM_ORD_GET_RANDOM)
+> +};
+> +
+> +int tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+> +{
+> +	struct tpm_cmd_t tpm_cmd;
+> +	u32 recd;
+> +	u32 num_bytes = min_t(u32, max, TPM_MAX_RNG_DATA);
+> +	u32 rlength;
+> +	int err, total = 0, retries = 5;
+> +	u8 *dest = out;
+> +
+> +	if (!out || !num_bytes || max > TPM_MAX_RNG_DATA)
+> +		return -EINVAL;
+> +
+> +	do {
+> +		tpm_cmd.header.in = tpm_getrandom_header;
+> +		tpm_cmd.params.getrandom_in.num_bytes = cpu_to_be32(num_bytes);
+> +
+> +		err = tpm_transmit_cmd(chip, NULL, &tpm_cmd,
+> +				       TPM_GETRANDOM_RESULT_SIZE + num_bytes,
+> +				       offsetof(struct tpm_getrandom_out,
+> +						rng_data),
+> +				       0, "attempting get random");
+> +		if (err)
+> +			break;
+> +
+> +		recd = be32_to_cpu(tpm_cmd.params.getrandom_out.rng_data_len);
+> +		if (recd > num_bytes) {
+> +			total = -EFAULT;
+> +			break;
+> +		}
+> +
+> +		rlength = be32_to_cpu(tpm_cmd.header.out.length);
+> +		if (rlength < TPM_HEADER_SIZE +
+> +			      offsetof(struct tpm_getrandom_out, rng_data) +
+> +			      recd) {
+> +			total = -EFAULT;
+> +			break;
+> +		}
+> +		memcpy(dest, tpm_cmd.params.getrandom_out.rng_data, recd);
+> +
+> +		dest += recd;
+> +		total += recd;
+> +		num_bytes -= recd;
+> +	} while (retries-- && (size_t)total < max);
+> +
+> +	return total ? total : -EIO;
+> +}
+>
 
-Looks like I should go on vacation more often. :)
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-I am generally opposed to fancy specification languages.
-I support the explicit lsm= list specification because you
-don't have to know any context to create a boot line that
-will work, and be as close to what you've specified as possible
-for the kernel configuration. One need look no further than
-the mechanisms for setting POSIX ACLs for an example of
-how to ensure a feature isn't used.
-
-Had we the foresight to make security= take a list of
-modules when Yama was added we might have avoided some of
-this brouhaha, but there was no reason to expect that stacking
-was ever going to happen back then.
-
+/Jarkko
