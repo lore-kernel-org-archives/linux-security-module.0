@@ -2,61 +2,63 @@ Return-Path: <SRS0=XO9p=ND=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F11C46475
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8515EC67863
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CA1C20813
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AD612082B
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 21:36:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIMhf+le"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA1C20813
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaGL7O9Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AD612082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbeJXGBM (ORCPT
+        id S1729273AbeJXGBi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Oct 2018 02:01:12 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46940 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbeJXGBM (ORCPT
+        Wed, 24 Oct 2018 02:01:38 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46974 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729227AbeJXGBg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Oct 2018 02:01:12 -0400
-Received: by mail-lj1-f193.google.com with SMTP id x3-v6so2783169lji.13;
-        Tue, 23 Oct 2018 14:35:58 -0700 (PDT)
+        Wed, 24 Oct 2018 02:01:36 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x3-v6so2784065lji.13;
+        Tue, 23 Oct 2018 14:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:reply-to;
-        bh=EvfJxrXks7BXh1WhlCSD8GlGCHbF3dfEcNLAYyx3uWU=;
-        b=XIMhf+leFdNLMAPB8KQ5fBNDZe4l7YhyPYpQ6DrtnnGpSlXZYULKRX9rjUkqKisJzh
-         ZYAE3wDVlDMfKoU5hFsQ3PF+mik6B89cKr0xOFLoce+b+gvySo9OLtxPlRPAZqRsAPX2
-         JCITc0BG1EAdZYkwsHwixyMsXz4TX4NKhX/dY6vMTLmzV4nPbkdUqa2gZIXE2Ks3kMha
-         FoH77yFIMx77a2DFaZqbVysMNLRmMG1J1ikCFRbP2LxJ8A0f4NsztMLRnu36lIH1UFqV
-         Nff9jVt7a+Wy42LtptF83oXSYsrLYPkwwlRO4Q5KPqqYmaG/cvcJhJQwYlGxhFHVr/Ts
-         2e2g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to;
+        bh=9FjWk819tI8q4Of5/GPMym38mMpreAR6lAKVVURm4+E=;
+        b=ZaGL7O9QhY2jV9QlUoGEx2RYYKVeDm+Qn8Dz7gfcUqyv0drW9KAQdyhAtBl5ScwmJ4
+         nDiWn/GV5yOAQihkjSTJnjT2aokUhrXlMJohwEiUETROgzQo7qqJsHjUCafOBfQvdMxH
+         YHQR1GLLP/maXsuxnk63Cxq9HpqVTBMK2NI2bv900uXuZmBGqH51It6uGOsLJE2fWYfG
+         6pkXXBdjXQw5c81MPcYkUp/W2Fchea7WoyQOXNAdP3rX0RjytwLNxw0tBso2VK3Bnzzp
+         +nDYJl8GRYYpT918e/BGp+3Qu4x67MFTUlCnXST536vZQUhX2hfdmUDtAqW8JAyluAPO
+         vifw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EvfJxrXks7BXh1WhlCSD8GlGCHbF3dfEcNLAYyx3uWU=;
-        b=P7r7v9sPd2sPYS6tMEZuvuUFODeUFA7UuaClFksuL7+QYCDaKXn+e4I2e5j1+oYMmS
-         0YgZw0cRs1gNEXmWB+UcPazHKPpEDw3VDSMtgs+eHYIm5K0VOUea8QLlMTFtHsaoDsr5
-         yTE95hv4nEML8t3nKOOkW4/NnmrNYpbkzDTqaiPDI35fcgxmYiELrWubrsgzCxXmgOhs
-         JUr5tMNngzIYrD2uIv+cQIYsIynAmHwMAPjSfriq/gjWyHbDXolAyjEdO/+zQ23EAkaz
-         2QdmOV6qixA9vaQRpwS3EwjDdQOyVqyS4hXTOFEdl2p3Yiw8tDWinyRJWnVDdUr8PpC5
-         2FBw==
-X-Gm-Message-State: ABuFfohHN7fC1SqoQRAwA8Di0bhu85eTAcserE9fIv7RRvzCW2135XFf
-        Y0Dz5EtalnPHgF+UZIlV9S8=
-X-Google-Smtp-Source: ACcGV63CK4GMH9B5QBdL2TZZ1eFF29juThMSspV3PKOLTUFwCVxVI2panE+WVoC1oj6lA0vBJ5bF6w==
-X-Received: by 2002:a2e:8347:: with SMTP id l7-v6mr23798894ljh.140.1540330556820;
-        Tue, 23 Oct 2018 14:35:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:reply-to;
+        bh=9FjWk819tI8q4Of5/GPMym38mMpreAR6lAKVVURm4+E=;
+        b=bY01P2bAWn0trm+tChkWO6aSu01j1D7IH0E8gneMnPED1+VkmoGysCKBCa3K43+Td8
+         jibpC/qXWh7GhsUDoSCSmYZ63t7K5AKzzwJ6vE3SX0YRzN90fT0l6OBbOpU0FunQyYb1
+         2utR9mJ2TqI1udO57e6po+qIiA53DD2zGm42NQbe9Sa+tpKflULswrrF6MC2oS7IecJq
+         9MRJcS2jqk+VotYqZ5z9ek07pJ4QrHbv3cNGnlMYUO1GLpJvaglcRQqLEuvBAvP90INh
+         OCdyV9IYTHq4MyQO5NTDFbN9HJbChPdUYKpafSl8LjJpRrQhHUtNLmygnJT+aVgFS32+
+         n55w==
+X-Gm-Message-State: ABuFfoixGhCl3E9m3ySPsv68ZLR2f5wRgIMYK+zwyGRaqTz22V7J4n37
+        TYXGy9tZ+mtFi8yu0/wFv5s=
+X-Google-Smtp-Source: AJdET5fStpo5iwjElaH4GwCWOgDJjeaJxYFI38XhqKxAW7VjqnSm921zQaz+uFEKHN4MgpOPwJPDsA==
+X-Received: by 2002:a2e:9f17:: with SMTP id u23-v6mr15051827ljk.53.1540330582091;
+        Tue, 23 Oct 2018 14:36:22 -0700 (PDT)
 Received: from localhost.localdomain (91-159-62-169.elisa-laajakaista.fi. [91.159.62.169])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.35.55
+        by smtp.gmail.com with ESMTPSA id y127-v6sm377950lfc.13.2018.10.23.14.36.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 14:35:55 -0700 (PDT)
+        Tue, 23 Oct 2018 14:36:21 -0700 (PDT)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -70,233 +72,438 @@ To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         linux-security-module@vger.kernel.org
 Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>
-Subject: [RFC v1 PATCH 00/17] prmem: protected memory
-Date:   Wed, 24 Oct 2018 00:34:47 +0300
-Message-Id: <20181023213504.28905-1-igor.stoppa@huawei.com>
+        Laura Abbott <labbott@redhat.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 17/17] prmem: ima: turn the measurements list write rare
+Date:   Wed, 24 Oct 2018 00:35:04 +0300
+Message-Id: <20181023213504.28905-18-igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181023213504.28905-1-igor.stoppa@huawei.com>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
 Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
--- Summary --
+The measurement list is moved to write rare memory, including
+related data structures.
 
-Preliminary version of memory protection patchset, including a sample use
-case, turning into write-rare the IMA measurement list.
-
-The core idea is to introduce two new types of memory protection, beside
-const and __ro_after_init, which will support:
-- statically allocated "write rare" memory
-- dynamically allocated "read only" and "write rare" memory
-
-On top of that, follows a set of patches which create a "write rare"
-counterpart of the kernel infrastructure used in the example chose for
-hardening: the IMA measurement list.
-
--- Mechanism --
-
-Statically allocated protected memory is identified by the __wr_after_init
-tag, which will cause the linker to place it in a special section.
-
-Dynamically allocated memory is obtained through vmalloc, but compacting
-each allocation, where possible, in the latest obtained vmap_area.
-
-The write rare mechanism is implemented by creating a temporary alternate
-writable mapping, applying the change through this mapping and then
-removing it.
-
-All of this is possible thanks to the system MMU, which must be able to
-provide write protection.
-
--- Brief history --
-
-I sent out various versions of memory protection over the last year or so,
-however this patchset is significantly expanded, including several helper
-data structures and a use case, so I decided to reset the numbering to v1.
-
-As reference, the latest "old" version is here [1].
-
-The current version is not yet ready for merge, however it is sufficiently
-complete for supporting an end-to-end discussion, I think.
-
-Eventually, I plan to write a white paper, once the code is in better shape.
-In the meanwhile, an overview can be had from these slides [2], which are
-the support material for my presentation at the Linux Security Summit 2018
-Europe.
-
--- Validation --
-
-Most of the testing is done on a Fedora image, with QEMU x86_64,
-however the code has been also tested on a real x86_64 PC, yielding
-similar positive results.
-For ARM64, I use a custom Debian installation, still with QEMU, but I have
-obtained similar failures when testing with a real device, using a
-Kirin970.
-
-I have written some test cases for the most basic parts and the behaviour
-of IMA and the Fedora image in general do not seem to be negatively
-affected, when used in conjunction with this patchset.
-However, it's far from being exhaustive testing and the torture test for
-rcu is completely missing.
-
--- Known Issues --
-
-As said, this version is preliminary and certain parts need rework.
-This is a short and incomplete list of known issues:
-
-* arm64 support is broken for __wr_after_init
-  I must create a separate section with proper mappings, similar to the
-  ones used for vmalloc()
-
-* alignment of data structures has not been throughly checked
-  There are probably several redundant forced alignments
-
-* there is no fallback for platforms missing MMU write protection
-
-* some additional care might be needed when dealing with double mapping vs
-  data cache coherency, on multicore systems
-
-* lots of additional (stress) tests are needed
-
-* memory reuse (object caches) are probably needed, to support converting
-  more use cases, and so also other data structures.
-
-* credits for original code: I have reimplemented various data structures,
-  I am not sure if I have given credit correctly to the original authors.
-
-* documentation for the re-implemented data structures is missing
-
-* confirm that the hardened usercopy logic is correct
-
--- Q&As --
-
-During reviews of the older patchset, several objections and questions
-were formulated.
-
-They are collected here in Q&A format, with both some old and new answers:
-
-1 - "The protection can still be undone"
-Yes, it is true. Using a hypervisor, like it is done in certain Huawei and
-Samsung phones, provides a better level of protection.
-However, even without that, it still gives a significantly better level of
-protection than not protecting the memory at all.
-The main advantage of this patchset is that now the attack has to focus on
-the page table, which is a significantly smaller area, than the whole
-kernel data.
-It is my intention, eventually, to provide also support for interaction
-with a FOSS hypervisor (ex: KVM), but this patchset should
-support also those cases where it's not even possible to have an hypervisor.
-So it seems simpler to start from there. The hypervisor is not mandatory.
-
-
-2 - "Do not provide a chain of trust, but protect some memory and refer to
-it with a writable pointer."
-This might be ok for protecting against bugs, but in the case of an
-attacker trying to compromise the system, the unprotected pointer has
-become the new target. It doesn't change much.
-Samsung does use a similar implementation, for protecting LSM hooks,
-however that solution also add a pointer, from the protected memory back
-to the writable memory, as validation loop. And the price to pay is that
-every time the unprotected pointer must be used, it first has to be
-validated, to point to a certain memory range and to have a specific
-alignment. It's an alternative solution to the full chain of trust and
-each has its specific advantages, depending on the data structures that
-one wants to protect.
-
-
-3 - "Do not use a secondary mapping, unprotect the current one"
-The purpose of the secondary mapping is to create a hard-to-spot window of
-writability at a random address, which cannot be easily exploited.
-Unprotecting the primary mapping would allow an attack where a core is
-busy looping trying to figure out if a specific location becomes writable
-and race against the legitimate writer. For the same reason, interrupts
-are disabled on the core that is performing the write-rare operation.
-
-
-4 - "Do not create another allocator over vmalloc(), use it plain"
-This is not good for various reasons:
-a) vmalloc() allocates at least one page for every request it receives,
-leaving most of the page typically unused. While it might not be a big
-deal on large systems, on IoT class devices it is possible to find
-relatively powerful cores paired to relatively little memory.
-Taking as example a system using SELinux, a relatively small set of rules
-can genarate a few thousands of allocations (SELinux is deny-by-default).
-Modeling each allocation to be about 64bytes, on a system with 4kB pages,
-assuming that the grand total of allocation is 100k, that means
-                 100k * 4kB = 390MB
-while, using each 64bytes slot in a page yields:
-                 100k * 64B = 6MB
-The first case would not be very compatible with a system having only
-512MB or 1GB.
-b) even worse, the amount of thrashing of the TLB would be terrible, with
-each allocation having its own translation.
-
---
+Various boilerplate linux data structures and related functions are
+replaced by their write-rare counterpart.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+CC: Mimi Zohar <zohar@linux.vnet.ibm.com>
+CC: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+CC: James Morris <jmorris@namei.org>
+CC: "Serge E. Hallyn" <serge@hallyn.com>
+CC: linux-integrity@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ security/integrity/ima/ima.h              | 18 ++++++++------
+ security/integrity/ima/ima_api.c          | 29 +++++++++++++----------
+ security/integrity/ima/ima_fs.c           | 12 +++++-----
+ security/integrity/ima/ima_main.c         |  6 +++++
+ security/integrity/ima/ima_queue.c        | 28 +++++++++++++---------
+ security/integrity/ima/ima_template.c     | 14 ++++++-----
+ security/integrity/ima/ima_template_lib.c | 14 +++++++----
+ 7 files changed, 74 insertions(+), 47 deletions(-)
 
-
--- References --
-
-[1]: https://lkml.org/lkml/2018/4/23/508
-[2]: https://events.linuxfoundation.org/wp-content/uploads/2017/12/Kernel-Hardening-Protecting-the-Protection-Mechanisms-Igor-Stoppa-Huawei.pdf
-
--- List of patches --
-
-[PATCH 01/17] prmem: linker section for static write rare
-[PATCH 02/17] prmem: write rare for static allocation
-[PATCH 03/17] prmem: vmalloc support for dynamic allocation
-[PATCH 04/17] prmem: dynamic allocation
-[PATCH 05/17] prmem: shorthands for write rare on common types
-[PATCH 06/17] prmem: test cases for memory protection
-[PATCH 07/17] prmem: lkdtm tests for memory protection
-[PATCH 08/17] prmem: struct page: track vmap_area
-[PATCH 09/17] prmem: hardened usercopy
-[PATCH 10/17] prmem: documentation
-[PATCH 11/17] prmem: llist: use designated initializer
-[PATCH 12/17] prmem: linked list: set alignment
-[PATCH 13/17] prmem: linked list: disable layout randomization
-[PATCH 14/17] prmem: llist, hlist, both plain and rcu
-[PATCH 15/17] prmem: test cases for prlist and prhlist
-[PATCH 16/17] prmem: pratomic-long
-[PATCH 17/17] prmem: ima: turn the measurements list write rare
-
--- Diffstat --
-
- Documentation/core-api/index.rst          |   1 +
- Documentation/core-api/prmem.rst          | 172 +++++
- MAINTAINERS                               |  14 +
- drivers/misc/lkdtm/core.c                 |  13 +
- drivers/misc/lkdtm/lkdtm.h                |  13 +
- drivers/misc/lkdtm/perms.c                | 248 +++++++
- include/asm-generic/vmlinux.lds.h         |  20 +
- include/linux/cache.h                     |  17 +
- include/linux/list.h                      |   5 +-
- include/linux/mm_types.h                  |  25 +-
- include/linux/pratomic-long.h             |  73 ++
- include/linux/prlist.h                    | 934 ++++++++++++++++++++++++
- include/linux/prmem.h                     | 446 +++++++++++
- include/linux/prmemextra.h                | 133 ++++
- include/linux/types.h                     |  20 +-
- include/linux/vmalloc.h                   |  11 +-
- lib/Kconfig.debug                         |   9 +
- lib/Makefile                              |   1 +
- lib/test_prlist.c                         | 252 +++++++
- mm/Kconfig                                |   6 +
- mm/Kconfig.debug                          |   9 +
- mm/Makefile                               |   2 +
- mm/prmem.c                                | 273 +++++++
- mm/test_pmalloc.c                         | 629 ++++++++++++++++
- mm/test_write_rare.c                      | 236 ++++++
- mm/usercopy.c                             |   5 +
- mm/vmalloc.c                              |   7 +
- security/integrity/ima/ima.h              |  18 +-
- security/integrity/ima/ima_api.c          |  29 +-
- security/integrity/ima/ima_fs.c           |  12 +-
- security/integrity/ima/ima_main.c         |   6 +
- security/integrity/ima/ima_queue.c        |  28 +-
- security/integrity/ima/ima_template.c     |  14 +-
- security/integrity/ima/ima_template_lib.c |  14 +-
- 34 files changed, 3635 insertions(+), 60 deletions(-)
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 67db9d9454ca..5f5959753bf5 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -24,6 +24,8 @@
+ #include <linux/hash.h>
+ #include <linux/tpm.h>
+ #include <linux/audit.h>
++#include <linux/prlist.h>
++#include <linux/pratomic-long.h>
+ #include <crypto/hash_info.h>
+ 
+ #include "../integrity.h"
+@@ -84,7 +86,7 @@ struct ima_template_field {
+ 
+ /* IMA template descriptor definition */
+ struct ima_template_desc {
+-	struct list_head list;
++	union prlist_head list;
+ 	char *name;
+ 	char *fmt;
+ 	int num_fields;
+@@ -100,11 +102,13 @@ struct ima_template_entry {
+ };
+ 
+ struct ima_queue_entry {
+-	struct hlist_node hnext;	/* place in hash collision list */
+-	struct list_head later;		/* place in ima_measurements list */
++	union prhlist_node hnext;	/* place in hash collision list */
++	union prlist_head later;	/* place in ima_measurements list */
+ 	struct ima_template_entry *entry;
+ };
+-extern struct list_head ima_measurements;	/* list of all measurements */
++
++/* list of all measurements */
++extern union prlist_head ima_measurements __wr_after_init;
+ 
+ /* Some details preceding the binary serialized measurement list */
+ struct ima_kexec_hdr {
+@@ -160,9 +164,9 @@ void ima_init_template_list(void);
+ extern spinlock_t ima_queue_lock;
+ 
+ struct ima_h_table {
+-	atomic_long_t len;	/* number of stored measurements in the list */
+-	atomic_long_t violations;
+-	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
++	struct pratomic_long_t len;	/* # of measurements in the list */
++	struct pratomic_long_t violations;
++	union prhlist_head queue[IMA_MEASURE_HTABLE_SIZE];
+ };
+ extern struct ima_h_table ima_htable;
+ 
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index a02c5acfd403..4fc28c2478b0 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -19,9 +19,12 @@
+ #include <linux/xattr.h>
+ #include <linux/evm.h>
+ #include <linux/iversion.h>
++#include <linux/prmemextra.h>
++#include <linux/pratomic-long.h>
+ 
+ #include "ima.h"
+ 
++extern struct pmalloc_pool ima_pool;
+ /*
+  * ima_free_template_entry - free an existing template entry
+  */
+@@ -29,10 +32,10 @@ void ima_free_template_entry(struct ima_template_entry *entry)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < entry->template_desc->num_fields; i++)
+-		kfree(entry->template_data[i].data);
++//	for (i = 0; i < entry->template_desc->num_fields; i++)
++//		kfree(entry->template_data[i].data);
+ 
+-	kfree(entry);
++//	kfree(entry);
+ }
+ 
+ /*
+@@ -44,12 +47,13 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 	struct ima_template_desc *template_desc = ima_template_desc_current();
+ 	int i, result = 0;
+ 
+-	*entry = kzalloc(sizeof(**entry) + template_desc->num_fields *
+-			 sizeof(struct ima_field_data), GFP_NOFS);
++	*entry = pzalloc(&ima_pool,
++			 sizeof(**entry) + template_desc->num_fields *
++			 sizeof(struct ima_field_data));
+ 	if (!*entry)
+ 		return -ENOMEM;
+ 
+-	(*entry)->template_desc = template_desc;
++	wr_ptr(&((*entry)->template_desc), template_desc);
+ 	for (i = 0; i < template_desc->num_fields; i++) {
+ 		struct ima_template_field *field = template_desc->fields[i];
+ 		u32 len;
+@@ -59,9 +63,10 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 		if (result != 0)
+ 			goto out;
+ 
+-		len = (*entry)->template_data[i].len;
+-		(*entry)->template_data_len += sizeof(len);
+-		(*entry)->template_data_len += len;
++		len = (*entry)->template_data_len + sizeof(len) +
++			(*entry)->template_data[i].len;
++		wr_memcpy(&(*entry)->template_data_len, &len,
++			  sizeof(len));
+ 	}
+ 	return 0;
+ out:
+@@ -113,9 +118,9 @@ int ima_store_template(struct ima_template_entry *entry,
+ 					    audit_cause, result, 0);
+ 			return result;
+ 		}
+-		memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
++		wr_memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
+ 	}
+-	entry->pcr = pcr;
++	wr_int(&entry->pcr, pcr);
+ 	result = ima_add_template_entry(entry, violation, op, inode, filename);
+ 	return result;
+ }
+@@ -139,7 +144,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 	int result;
+ 
+ 	/* can overflow, only indicator */
+-	atomic_long_inc(&ima_htable.violations);
++	pratomic_long_inc(&ima_htable.violations);
+ 
+ 	result = ima_alloc_init_template(&event_data, &entry);
+ 	if (result < 0) {
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index ae9d5c766a3c..ab20da1161c7 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -57,7 +57,8 @@ static ssize_t ima_show_htable_violations(struct file *filp,
+ 					  char __user *buf,
+ 					  size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.violations);
++	return ima_show_htable_value(buf, count, ppos,
++				     &ima_htable.violations.l);
+ }
+ 
+ static const struct file_operations ima_htable_violations_ops = {
+@@ -69,8 +70,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
+ 					   char __user *buf,
+ 					   size_t count, loff_t *ppos)
+ {
+-	return ima_show_htable_value(buf, count, ppos, &ima_htable.len);
+-
++	return ima_show_htable_value(buf, count, ppos, &ima_htable.len.l);
+ }
+ 
+ static const struct file_operations ima_measurements_count_ops = {
+@@ -86,7 +86,7 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+ 
+ 	/* we need a lock since pos could point beyond last element */
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(qe, &ima_measurements, later) {
++	list_for_each_entry_rcu(qe, &ima_measurements.list, later.list) {
+ 		if (!l--) {
+ 			rcu_read_unlock();
+ 			return qe;
+@@ -303,7 +303,7 @@ static ssize_t ima_read_policy(char *path)
+ 		size -= rc;
+ 	}
+ 
+-	vfree(data);
++//	vfree(data);
+ 	if (rc < 0)
+ 		return rc;
+ 	else if (size)
+@@ -350,7 +350,7 @@ static ssize_t ima_write_policy(struct file *file, const char __user *buf,
+ 	}
+ 	mutex_unlock(&ima_write_mutex);
+ out_free:
+-	kfree(data);
++//	kfree(data);
+ out:
+ 	if (result < 0)
+ 		valid_policy = 0;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2d31921fbda4..d52e59006781 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -29,6 +29,7 @@
+ #include <linux/ima.h>
+ #include <linux/iversion.h>
+ #include <linux/fs.h>
++#include <linux/prlist.h>
+ 
+ #include "ima.h"
+ 
+@@ -536,10 +537,15 @@ int ima_load_data(enum kernel_load_data_id id)
+ 	return 0;
+ }
+ 
++struct pmalloc_pool ima_pool;
++
++#define IMA_POOL_ALLOC_CHUNK (16 * PAGE_SIZE)
+ static int __init init_ima(void)
+ {
+ 	int error;
+ 
++	pmalloc_init_custom_pool(&ima_pool, IMA_POOL_ALLOC_CHUNK, 3,
++				 PMALLOC_MODE_START_WR);
+ 	ima_init_template_list();
+ 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+ 	error = ima_init();
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index b186819bd5aa..444c47b745d8 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -24,11 +24,14 @@
+ #include <linux/module.h>
+ #include <linux/rculist.h>
+ #include <linux/slab.h>
++#include <linux/prmemextra.h>
++#include <linux/prlist.h>
++#include <linux/pratomic-long.h>
+ #include "ima.h"
+ 
+ #define AUDIT_CAUSE_LEN_MAX 32
+ 
+-LIST_HEAD(ima_measurements);	/* list of all measurements */
++PRLIST_HEAD(ima_measurements);	/* list of all measurements */
+ #ifdef CONFIG_IMA_KEXEC
+ static unsigned long binary_runtime_size;
+ #else
+@@ -36,9 +39,9 @@ static unsigned long binary_runtime_size = ULONG_MAX;
+ #endif
+ 
+ /* key: inode (before secure-hashing a file) */
+-struct ima_h_table ima_htable = {
+-	.len = ATOMIC_LONG_INIT(0),
+-	.violations = ATOMIC_LONG_INIT(0),
++struct ima_h_table ima_htable __wr_after_init = {
++	.len = PRATOMIC_LONG_INIT(0),
++	.violations = PRATOMIC_LONG_INIT(0),
+ 	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
+ };
+ 
+@@ -58,7 +61,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 
+ 	key = ima_hash_key(digest_value);
+ 	rcu_read_lock();
+-	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
++	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext.node) {
+ 		rc = memcmp(qe->entry->digest, digest_value, TPM_DIGEST_SIZE);
+ 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
+ 			ret = qe;
+@@ -87,6 +90,8 @@ static int get_binary_runtime_size(struct ima_template_entry *entry)
+ 	return size;
+ }
+ 
++extern struct pmalloc_pool ima_pool;
++
+ /* ima_add_template_entry helper function:
+  * - Add template entry to the measurement list and hash table, for
+  *   all entries except those carried across kexec.
+@@ -99,20 +104,21 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 	struct ima_queue_entry *qe;
+ 	unsigned int key;
+ 
+-	qe = kmalloc(sizeof(*qe), GFP_KERNEL);
++	qe = pmalloc(&ima_pool, sizeof(*qe));
+ 	if (qe == NULL) {
+ 		pr_err("OUT OF MEMORY ERROR creating queue entry\n");
+ 		return -ENOMEM;
+ 	}
+-	qe->entry = entry;
++	wr_ptr(&qe->entry, entry);
++	INIT_PRLIST_HEAD(&qe->later);
++	prlist_add_tail_rcu(&qe->later, &ima_measurements);
++
+ 
+-	INIT_LIST_HEAD(&qe->later);
+-	list_add_tail_rcu(&qe->later, &ima_measurements);
++	pratomic_long_inc(&ima_htable.len);
+ 
+-	atomic_long_inc(&ima_htable.len);
+ 	if (update_htable) {
+ 		key = ima_hash_key(entry->digest);
+-		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
++		prhlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
+ 	}
+ 
+ 	if (binary_runtime_size != ULONG_MAX) {
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 30db39b23804..40ae57a17d89 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -22,14 +22,15 @@
+ enum header_fields { HDR_PCR, HDR_DIGEST, HDR_TEMPLATE_NAME,
+ 		     HDR_TEMPLATE_DATA, HDR__LAST };
+ 
+-static struct ima_template_desc builtin_templates[] = {
++static struct ima_template_desc builtin_templates[] __wr_after_init = {
+ 	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
+ 	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
+ 	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
+ 	{.name = "", .fmt = ""},	/* placeholder for a custom format */
+ };
+ 
+-static LIST_HEAD(defined_templates);
++static PRLIST_HEAD(defined_templates);
++
+ static DEFINE_SPINLOCK(template_list);
+ 
+ static struct ima_template_field supported_fields[] = {
+@@ -114,7 +115,8 @@ static struct ima_template_desc *lookup_template_desc(const char *name)
+ 	int found = 0;
+ 
+ 	rcu_read_lock();
+-	list_for_each_entry_rcu(template_desc, &defined_templates, list) {
++	list_for_each_entry_rcu(template_desc, &defined_templates.list,
++				list.list) {
+ 		if ((strcmp(template_desc->name, name) == 0) ||
+ 		    (strcmp(template_desc->fmt, name) == 0)) {
+ 			found = 1;
+@@ -207,12 +209,12 @@ void ima_init_template_list(void)
+ {
+ 	int i;
+ 
+-	if (!list_empty(&defined_templates))
++	if (!list_empty(&defined_templates.list))
+ 		return;
+ 
+ 	spin_lock(&template_list);
+ 	for (i = 0; i < ARRAY_SIZE(builtin_templates); i++) {
+-		list_add_tail_rcu(&builtin_templates[i].list,
++		prlist_add_tail_rcu(&builtin_templates[i].list,
+ 				  &defined_templates);
+ 	}
+ 	spin_unlock(&template_list);
+@@ -266,7 +268,7 @@ static struct ima_template_desc *restore_template_fmt(char *template_name)
+ 		goto out;
+ 
+ 	spin_lock(&template_list);
+-	list_add_tail_rcu(&template_desc->list, &defined_templates);
++	prlist_add_tail_rcu(&template_desc->list, &defined_templates);
+ 	spin_unlock(&template_list);
+ out:
+ 	return template_desc;
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 43752002c222..a6d10eabf0e5 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -15,8 +15,12 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/printk.h>
++#include <linux/prmemextra.h>
+ #include "ima_template_lib.h"
+ 
++extern struct pmalloc_pool ima_pool;
++
+ static bool ima_template_hash_algo_allowed(u8 algo)
+ {
+ 	if (algo == HASH_ALGO_SHA1 || algo == HASH_ALGO_MD5)
+@@ -42,11 +46,11 @@ static int ima_write_template_field_data(const void *data, const u32 datalen,
+ 	if (datafmt == DATA_FMT_STRING)
+ 		buflen = datalen + 1;
+ 
+-	buf = kzalloc(buflen, GFP_KERNEL);
++	buf = pzalloc(&ima_pool, buflen);
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	memcpy(buf, data, datalen);
++	wr_memcpy(buf, data, datalen);
+ 
+ 	/*
+ 	 * Replace all space characters with underscore for event names and
+@@ -58,11 +62,11 @@ static int ima_write_template_field_data(const void *data, const u32 datalen,
+ 	if (datafmt == DATA_FMT_STRING) {
+ 		for (buf_ptr = buf; buf_ptr - buf < datalen; buf_ptr++)
+ 			if (*buf_ptr == ' ')
+-				*buf_ptr = '_';
++				wr_char(buf_ptr, '_');
+ 	}
+ 
+-	field_data->data = buf;
+-	field_data->len = buflen;
++	wr_ptr(&field_data->data, buf);
++	wr_memcpy(&field_data->len, &buflen, sizeof(buflen));
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
 
