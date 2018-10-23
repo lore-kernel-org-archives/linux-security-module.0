@@ -2,147 +2,115 @@ Return-Path: <SRS0=XO9p=ND=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874CAC46475
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 14:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9AFC46475
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 16:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D0F520671
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 14:16:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D0F520671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C24A2075D
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 16:48:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KmrBgLXa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C24A2075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbeJWWj5 convert rfc822-to-8bit (ORCPT
+        id S1728270AbeJXBMe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Oct 2018 18:39:57 -0400
-Received: from mga02.intel.com ([134.134.136.20]:21621 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726970AbeJWWj4 (ORCPT
+        Tue, 23 Oct 2018 21:12:34 -0400
+Received: from sonic311-28.consmr.mail.gq1.yahoo.com ([98.137.65.209]:41806
+        "EHLO sonic311-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727758AbeJXBMe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Oct 2018 18:39:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 07:16:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,416,1534834800"; 
-   d="scan'208";a="94329879"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga003.jf.intel.com with ESMTP; 23 Oct 2018 07:16:08 -0700
-Received: from fmsmsx156.amr.corp.intel.com (10.18.116.74) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 23 Oct 2018 07:16:07 -0700
-Received: from hasmsx108.ger.corp.intel.com (10.184.198.18) by
- fmsmsx156.amr.corp.intel.com (10.18.116.74) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 23 Oct 2018 07:16:07 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- hasmsx108.ger.corp.intel.com ([169.254.9.136]) with mapi id 14.03.0319.002;
- Tue, 23 Oct 2018 17:16:05 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] tpm: tpm_try_transmit() refactor error flow.
-Thread-Topic: [PATCH] tpm: tpm_try_transmit() refactor error flow.
-Thread-Index: AQHUZneRpMm4aXcqcE6txCcRpwrMbKUkg60wgAKFoACAAbSoMIAD6zIAgAA5PtA=
-Date:   Tue, 23 Oct 2018 14:16:04 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9FB5D1@hasmsx109.ger.corp.intel.com>
-References: <20181016133716.17842-1-tomas.winkler@intel.com>
- <alpine.DEB.2.21.1810180309430.5022@jsakkine-mobl1>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9F5512@hasmsx109.ger.corp.intel.com>
- <alpine.DEB.2.21.1810200230200.9963@jsakkine-mobl1>
- <5B8DA87D05A7694D9FA63FD143655C1B9D9F85F5@hasmsx109.ger.corp.intel.com>
- <alpine.DEB.2.21.1810231618280.19836@jsakkine-mobl1>
-In-Reply-To: <alpine.DEB.2.21.1810231618280.19836@jsakkine-mobl1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMTFmYzc2OWMtNjA3NS00MjhhLTg1YjUtYjc4Y2QzOWEyNzgxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiXC9zXC9KMHFXaVk1UlNjeWtyRm01OHZvQ1h0NHFLODhRY2JHZklWYjA5dlFHbWV1WXozdndUQ0RhVkE2NHREbThBIn0=
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.252.19.114]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 23 Oct 2018 21:12:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1540313303; bh=yynKm9stIduSWPbk4zo7xnaN/eaxsH/tXE8xgOv8za4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=KmrBgLXalpL5wnPbINQPxmTe5mWs3L7LrF+NppQU6xT5bgvBCsLzx/seWDLCESfaKCwOSlabL7CkCBc/2CpTWGrSkDvnxRP01SPYERD6FM0O/M4lJzoHD+//caWWHy+xZenUKC3JDooY5o2E0V+D5OXmrUo7MrRgGq+RsCbF0fJEPdm4y/lOZW6LYdat2S5mZKCts/fnZ7MD04TLscgbGGwgJzN+9ZoEeeM4UUV1cWN/6I78b2H5D4xElxlrwvJEHY4W15h8bIkGIFU7uWIQs5z/FZToEC/b7f/XDHq3PC44oc0eA+uaJLG1iascY+8r13t56zc2MK5WbOoH3gZPkQ==
+X-YMail-OSG: v.mP48gVM1lVhhZ4ugFahggzMCsjQncp6iymfalc1FGk0O6IcBXU1v0Tu6Epgfe
+ AWFJMvOcKN3JQ9voTSxUZS6XKWkztuXgAKPvmi85EqsV8UzNZ0ch80TQcRsBIpniY.lRL_kjNKAV
+ bINZc94RadbEEDLRpAD4JCs42VHHM5LQBkg1ZUwZymjelO5RDxwIAHnUNPisZZh_yAmZVIx_JpxI
+ MjV0_vZh1foSFiwrjUFTKZUllfegaAyOQaCmz5R0jFcdD.LgLCIcUTk61_k2JNBd94obG7GxVl1O
+ vtXR.05ag9JzKjfW8Rn8qzFfBp5ScT9_wbs4ee7Fx4aexqff8f9eGmuMqS2yuC9FSgviTeMqnoBl
+ AadEN2FMw4WJ5bJYv78qcJ8AdukY9MQKLgH4M5zAZUX.GnbhPIqfSL5fRrcPA4fqBamYBY0dfXAI
+ teqkpugihjAoPOjMRknze1vnJt.0SRYEsVpMJmFTg.AQsru1mTrpufienXIjBnpOlJd5hSFwJsox
+ oi.qzJYhEyFrQTsnWnS2GPuaNS3mDfCHzqg8PTc75WdN8FuWgXXxJ2gh8OVvEjkjqzxFRR84UldL
+ alQCKmJJA.Wmbu81AlxObS.d4BoOPRoIMpm6VUGF1yDksC61Q8pF6s7U2UZXbAA6DAJJD9Kp45DQ
+ 1LUz3HDTt7XgPSt1yZECSABuW.izuKJVRCAMJSd2iRkDaO.lmayCxnVcjJiRHJptofx7KTWM5Tu9
+ uBMYZPAQiO3WLuSQFlOao530WhifPImaGv0u6dVRSgtWAPJkmCrHR0I_dkHlkEDsM4KPxffJ2uCk
+ Bs2btmt75fPt4WasNHqiiDOH5WDHAxQ0.NC2XQZ.8OWU1zueONdBZ2u_8S3KsufKuFeLrJVKSVvO
+ 2a3zGEHXanhuOwPnWQONC1QboSDSI9SOoE5JQajpeD3feaCTYVMcPpbZ6eAY.YtH6JSfrx.bf5JF
+ n91r5gvqAaQKjrabbklAOwwePvvV2F3ioCGN1Okul1DWN0IF0nX.NIKObGpuqqouh6MJn_U5QpL9
+ V41lwwOJ7PVgbqyumYEQjaGD0S_eZOu3et8xtE6NuBVlG_BUdQEGNO9Mn5eGCdwx4U4kUbdlGTt3
+ 4yAfoXkvhYombS3AiDfNBJ_VSXzWkQWmuUJc1TWJQ1k5HjpFU2Hzf9qD8UfsT
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.gq1.yahoo.com with HTTP; Tue, 23 Oct 2018 16:48:23 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp411.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b419b420ec331b823b05909e1f5b1a99;
+          Tue, 23 Oct 2018 16:48:22 +0000 (UTC)
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+To:     Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     Jordan Glover <Golden_Miller83@protonmail.ch>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181011001846.30964-1-keescook@chromium.org>
+ <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+ <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
+ <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
+ <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
+ <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
+ <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com>
+ <_CkJnKYmEZ4ZF0JtsSYuahAd9sgnX9OtcstjXaeqb8wn5uxfimc6S4jomly7If9VqnOXqXwaiCbJ9ttS6NiqE7n6cQUlwLvfO53paLmacvU=@protonmail.ch>
+ <8251564f-ba7a-1777-a606-dec472b32f35@canonical.com>
+ <CAGXu5j+2yVZ5DQHyqvJKnSYYqRCzeMtEabBwYFOWkTcwMUWhEw@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <96e92224-aedf-5026-d6dd-b29121b4dc0d@schaufler-ca.com>
+Date:   Tue, 23 Oct 2018 09:48:20 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <CAGXu5j+2yVZ5DQHyqvJKnSYYqRCzeMtEabBwYFOWkTcwMUWhEw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> 
-> 
-> On Sat, 20 Oct 2018, Winkler, Tomas wrote:
-> 
-> >>
-> >> On Thu, 18 Oct 2018, Winkler, Tomas wrote:
-> >>>> -----Original Message-----
-> >>>> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> >>>> Sent: Thursday, October 18, 2018 03:15
-> >>>> To: Winkler, Tomas <tomas.winkler@intel.com>
-> >>>> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>; Jason
-> >>>> Gunthorpe <jgg@ziepe.ca>; Nayna Jain <nayna@linux.vnet.ibm.com>;
-> >>>> Usyskin, Alexander <alexander.usyskin@intel.com>; Struk, Tadeusz
-> >>>> <tadeusz.struk@intel.com>; linux-integrity@vger.kernel.org;
-> >>>> linux-security- module@vger.kernel.org;
-> >>>> linux-kernel@vger.kernel.org; stable@vger.kernel.org
-> >>>> Subject: Re: [PATCH] tpm: tpm_try_transmit() refactor error flow.
-> >>>>
-bb> >>>> On Tue, 16 Oct 2018, Tomas Winkler wrote:
-> >>>>> First, rename out_no_locality to out_locality for bailing out on
-> >>>>> both
-> >>>>> tpm_cmd_ready() and tpm_request_locality() failure.
-> >>>>
-> >>>> This is unnecessary change and technically it is not a rename: the
-> >>>> commit message text and the code change do not match. Rename is
-> >>>> just a rename (i.e. change a variable name foo to bar).
-> >>>
-> >>> I'm renaming the label because it doesn't match the code flow
-> >>> anymore, I can change the commit message, but you please review the
-> code.
-> >>> Tomas
-> >>
-> >> The flow change is unnecessary and does not really have anything to
-> >> do with the bug fix.
-> >
-> > What I see in the original code is that when
-> > tpm_cmd_ready()  fails it's jumps to 'out' label and trying to do
-> > tpm_go_idle() but instead it should just undoing the locality, so both
-> > cmd_read and go idle had a wrong jump. I see both should  be fixed.
-> >
-> > Earlier version was better than this and would have been fine
-> >> when taking account the remark from Jason.
-> 
-> So you are doing tpm_cmd_ready() change in order to prevent unnecessary
-> call to tpm_go_idle() that was previously i.e. before when that function
-> failed in jumped to out and called tpm_go_idle()?
+On 10/12/2018 12:01 PM, Kees Cook wrote:
+> On Friday, October 12, 2018 3:19 AM, John Johansen
+> <john.johansen@canonical.com> wrote:
+>> It isn't perfect but it manages consistency across distros as best as
+>> can be achieved atm.
+> Yeah, this is why I'm okay with the current series: it provides as
+> consistent a view as possible, but leaves room for future improvements
+> (like adding "+" or "!" or "all" or whatever).
+>
+> I'm curious to see what SELinux folks think of v5, though. I *think* I
+> addressed all the concerns there, even Paul's "I want my distro
+> default to not have extreme stacking" case too.
+>
+> -Kees
 
-> 
-> This should be probably split into two commits if I understood right. You did
-> not have this updated mentioned in a changelog (there was no changelog).
+Looks like I should go on vacation more often. :)
 
-I'm not sure why to do it in two steps, this addresses the same issue.
+I am generally opposed to fancy specification languages.
+I support the explicit lsm= list specification because you
+don't have to know any context to create a boot line that
+will work, and be as close to what you've specified as possible
+for the kernel configuration. One need look no further than
+the mechanisms for setting POSIX ACLs for an example of
+how to ensure a feature isn't used.
 
-> Have you checked that if these were separate commits they would have the
-> same fixes line? Why not use the label name 'out' as the same label handles
-> bot 'locality' and 'no_locality'?
-
-To  the  out  label we jump after we are  done with locality and cmd read() before we jump to locality 'locality'.
-We will need to add another variable to check If cmd_ready() was called or not in order to get rid of the extran label,
-it's not internally tracked so far.
-I'm not sure what is better, I prefer this short fix, as the transmit() has to be rewritten anyway at some point, the recursion what is there is not helthy. 
-
-Thanks
-Tomas
+Had we the foresight to make security= take a list of
+modules when Yama was added we might have avoided some of
+this brouhaha, but there was no reason to expect that stacking
+was ever going to happen back then.
 
