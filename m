@@ -2,318 +2,129 @@ Return-Path: <SRS0=XO9p=ND=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98202C46475
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 18:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3042C67863
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 19:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53F1A2075D
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 18:56:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53F1A2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F27E2075D
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Oct 2018 19:05:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="smIgNs/w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F27E2075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbeJXDVG convert rfc822-to-8bit (ORCPT
+        id S1728282AbeJXDaB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Oct 2018 23:21:06 -0400
-Received: from mga11.intel.com ([192.55.52.93]:8280 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728575AbeJXDVF (ORCPT
+        Tue, 23 Oct 2018 23:30:01 -0400
+Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:40651
+        "EHLO sonic313-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728441AbeJXDaB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Oct 2018 23:21:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 11:56:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,417,1534834800"; 
-   d="scan'208";a="90655938"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by FMSMGA003.fm.intel.com with ESMTP; 23 Oct 2018 11:56:27 -0700
-Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Tue, 23 Oct 2018 11:56:27 -0700
-Received: from HASMSX109.ger.corp.intel.com ([169.254.3.28]) by
- LCSMSX153.ger.corp.intel.com ([169.254.8.212]) with mapi id 14.03.0319.002;
- Tue, 23 Oct 2018 21:56:24 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v7 21/21] tpm: use u32 instead of int for PCR index
-Thread-Topic: [PATCH v7 21/21] tpm: use u32 instead of int for PCR index
-Thread-Index: AQHUawHnIN5RhfIfM0i8KmmwsGrk/aUtLgFw
-Date:   Tue, 23 Oct 2018 18:56:24 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9D9FB7DC@hasmsx109.ger.corp.intel.com>
-References: <20181019182307.17745-1-tomas.winkler@intel.com>
- <20181019182307.17745-22-tomas.winkler@intel.com>
- <alpine.DEB.2.21.1810232154130.8524@jsakkine-mobl1>
-In-Reply-To: <alpine.DEB.2.21.1810232154130.8524@jsakkine-mobl1>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2Q4MTA4ODUtMmY5My00MDQ3LThiZmMtNjE2ZTk1ODUzODc3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWGZvQjZqeGtIRmdLQnVcLzdId25lN1l1VTIzcklEZE03OHlpTkR6N2VyWURBUHMrZWdSQ1psQVR2bmk4VHFvRTUifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.252.19.114]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 23 Oct 2018 23:30:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1540321520; bh=H1laKsD5UZDPVFerugLJiB83UhuvjeUFPVeNx0++dWM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=smIgNs/wDQtQiVxK4eC8nQfJdgsY+kRUD5tnTxKabCFr/k9CIybrDxY35/POaS/cliaTAyOrGr+cxb/aqKGnSAW8b+bKAX5Kkt1WKouinfYu809sbR+nTH0QyC4wenEEmhphOKBN2h79yc3la5CV2Bs/JaOHshxza1AWsqn1DnVGody6SwkXl+rNaTV/ClTDdzE8qZY3fMTkZ9y15/qukasITZ/kPnD3VxqJzGD777jpOXdwKydpcgajgt/2pdG5iV28IMs6fUe5fsdKg6FIIxziivvSdZDiWa5kArwFM2B25eUMeaN4w7zjzYJ/0xLWALD9CszlzSlS8D4Myy3Xbw==
+X-YMail-OSG: 7zB_jpUVM1ndDWNZLKcgYrx8lzN8A.54CMf8dnG.zLOCX2Yr8GR9klVoLP3x9rO
+ RRYLZ.ueKiHyJtEhNDLV36toaLE5QH0steut6gdm_0FRzDsewmhbsDTfKdu6bmY_VHg.Dw1oXMSN
+ 4Cx45r4tl15uJubUheQqCfHyzl_WonzvOOJBbZmggdkGcfTtuxDkPj3YgjSGLK7SoQzlWsd4HPQt
+ WiN3jNPplZ05WdaxQTWJkM1l8Ewp7pQ7c2p9s17hh6Q6pYo3dJYzxAiKpN3tw4Mdz6nH51jMdP9p
+ MwzkvhnHTHg42YLhFPwjlVnoXW8oTyIdcOrumTSmCxCUCkequA8TF6.EKOZl960wei35wvk4aXW5
+ iQXGGhYQP_G65Uhnkyf29fJxQSxvxerqR8XhrqJUCee6FA0kc4qOPWbFDND28spNo4FDiIyszzqH
+ zsWvVWfvhdbsfmvsmYW0xHGGjAsOsa_b3WIFdRwcgN3d91At1VA5AhuvcT6amA_dSRVK8TrRcphl
+ 0D2U7JLcjA.mogCet7QI44.O1PAYElm2NYcD6VCE.DY2RJwTBydlza5KUqIcB2D9kMeANQwP826U
+ Nbh7PhV3J6oVdR6y51pPQiigG1TE1MP.ZHTZtZWYFVC2NQiX35YQV2TLOhqTHV5gJqt2SqCGhT1K
+ x8VKQWozhe6frCALwO3GQdHqfmHgW8U2SzGUzKC8INY60uqu5tLC475T582HXMlfgmhDeeWVdmOY
+ WTYKpUCjs0LVXZkq9R0YbYWbSYNs6sRGTLLcIwWNdzn48HtPBSrbiooi7XF6D2gezOjpUCAkcJik
+ IAb4f3i.MyUO.LVHABhdUrOgYWEMbwYeHKzbDy.Fxce0lxhnDOJhUaq.yWJQyTC4tnp46wze6ie.
+ LFCdDlhgAH79ontQP6Xcz9hK3P1qNsCQMCKpowlMOwFwN6ZP61oTUyK6z9EVnxPIXqLoSxaF_kJv
+ 5kXoajAGHI2VXILea4sOvS17wA1lgPY_S89v2d2vFnYTmM8f9_BpAjwYZVCq4DTu6HXJXJWVFi6A
+ JNzcnRFYSKOVeUdRw2UzsgVVLyDjxr.BWvTFPjlcN37DHhwEaoQ9PrU0T7K_h9Wg2g6OqucD.tza
+ YHaePalc2LNRBaFECeC2vDcHCJ7rOqPBnD4tjKduuMsVnyuejxbWbf4U-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Tue, 23 Oct 2018 19:05:20 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
+          by smtp408.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 97723a383fa3c53d97cee5cb127bcd58;
+          Tue, 23 Oct 2018 19:05:17 +0000 (UTC)
+Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
+To:     Kees Cook <keescook@chromium.org>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20181011001846.30964-1-keescook@chromium.org>
+ <CAGXu5jLBaHj5MhXaK-8zdu6Rgo2B6rEq+at17xZ1Puct+YUajQ@mail.gmail.com>
+ <ZhaXhoElmWQlsxHmgFHpB2xSWzJYFZWBasrSKQNjGj4_T2A4AY2F9v1rP9LkUfilUbZ0ExWXX9koLNjUM8S6baX6xfSSMPXY_CpihbCetVc=@protonmail.ch>
+ <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
+ <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
+ <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
+ <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com>
+ <_CkJnKYmEZ4ZF0JtsSYuahAd9sgnX9OtcstjXaeqb8wn5uxfimc6S4jomly7If9VqnOXqXwaiCbJ9ttS6NiqE7n6cQUlwLvfO53paLmacvU=@protonmail.ch>
+ <8251564f-ba7a-1777-a606-dec472b32f35@canonical.com>
+ <CAGXu5j+2yVZ5DQHyqvJKnSYYqRCzeMtEabBwYFOWkTcwMUWhEw@mail.gmail.com>
+ <96e92224-aedf-5026-d6dd-b29121b4dc0d@schaufler-ca.com>
+ <CAGXu5jKFqtV_NFRaXPKVgNQt3F1pwFqopDLp1ZQJDGM_Bdid6Q@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <63410d08-d0d1-8cd9-5d9e-70d95a1a8ca0@schaufler-ca.com>
+Date:   Tue, 23 Oct 2018 12:05:14 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <CAGXu5jKFqtV_NFRaXPKVgNQt3F1pwFqopDLp1ZQJDGM_Bdid6Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> 
-> On Fri, 19 Oct 2018, Tomas Winkler wrote:
-> > The TPM specs defines PCR index as a positive number, and there is no
-> > reason to use a signed number. It is also a possible security issue as
-> > currently no functions check for a negative index, which may become a
-> > large number when converted to u32.
-> >
-> > Adjust the API to use u32 instead of int in all PCR related functions.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> > V3: New in the series.
-> > V4: Separate unrelated change to another patches.
-> > V5: Fix the commit message.
-> > V6: Rebased.
-> > V7: Resend.
-> >
-> > drivers/char/tpm/tpm-interface.c    |  6 +++---
-> > drivers/char/tpm/tpm-sysfs.c        |  2 +-
-> > drivers/char/tpm/tpm.h              | 10 +++++-----
-> > drivers/char/tpm/tpm1-cmd.c         |  6 +++---
-> > drivers/char/tpm/tpm2-cmd.c         |  5 ++---
-> > include/linux/tpm.h                 | 11 +++++++----
-> > security/integrity/ima/ima_crypto.c |  5 +++--
-> > 7 files changed, 24 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm-interface.c
-> > b/drivers/char/tpm/tpm-interface.c
-> > index acd647476ae1..d9439f9abe78 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -38,7 +38,7 @@
-> >  * recently changed pcr on suspend, so force the flush
-> >  * with an extend to the selected _unused_ non-volatile pcr.
-> >  */
-> > -static int tpm_suspend_pcr;
-> > +static u32 tpm_suspend_pcr;
-> > module_param_named(suspend_pcr, tpm_suspend_pcr, uint, 0644);
-> > MODULE_PARM_DESC(suspend_pcr,
-> > 		 "PCR to use for dummy writes to facilitate flush on
-> suspend."); @@
-> > -455,7 +455,7 @@ EXPORT_SYMBOL_GPL(tpm_is_tpm2);
-> >  *
-> >  * Return: same as with tpm_transmit_cmd()  */ -int
-> > tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> > +int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> > {
-> > 	int rc;
-> >
-> > @@ -485,7 +485,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-> >  *
-> >  * Return: same as with tpm_transmit_cmd()  */ -int
-> > tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
-> > +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8
-> > +*hash)
-> > {
-> > 	int rc;
-> > 	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> > diff --git a/drivers/char/tpm/tpm-sysfs.c
-> > b/drivers/char/tpm/tpm-sysfs.c index 96fc7433c57d..b88e08ec2c59 100644
-> > --- a/drivers/char/tpm/tpm-sysfs.c
-> > +++ b/drivers/char/tpm/tpm-sysfs.c
-> > @@ -102,7 +102,7 @@ static ssize_t pcrs_show(struct device *dev, struct
-> device_attribute *attr,
-> > 	cap_t cap;
-> > 	u8 digest[TPM_DIGEST_SIZE];
-> > 	ssize_t rc;
-> > -	int i, j, num_pcrs;
-> > +	u32 i, j, num_pcrs;
-> > 	char *str = buf;
-> > 	struct tpm_chip *chip = to_tpm_chip(dev);
-> >
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> > e0778d19da98..f27d1f38a93d 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -509,14 +509,14 @@ ssize_t tpm_transmit_cmd(struct tpm_chip
-> *chip,
-> > struct tpm_space *space, int tpm_get_timeouts(struct tpm_chip *); int
-> > tpm_auto_startup(struct tpm_chip *chip);
-> >
-> > -int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr);
-> > +int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr);
-> > int tpm1_auto_startup(struct tpm_chip *chip); int
-> > tpm1_do_selftest(struct tpm_chip *chip); int tpm1_get_timeouts(struct
-> > tpm_chip *chip); unsigned long tpm1_calc_ordinal_duration(struct
-> > tpm_chip *chip, u32 ordinal); -int tpm1_pcr_extend(struct tpm_chip
-> > *chip, int pcr_idx, const u8 *hash,
-> > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8
-> > +*hash,
-> > 		    const char *log_msg);
-> > -int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf);
-> > +int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-> > ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> > 		    const char *desc, size_t min_cap_length); int
-> > tpm1_get_random(struct tpm_chip *chip, u8 *out, size_t max); @@ -558,8
-> > +558,8 @@ static inline u32 tpm2_rc_value(u32 rc) }
-> >
-> > int tpm2_get_timeouts(struct tpm_chip *chip); -int
-> > tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf); -int
-> > tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
-> > +int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-> > +int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > 		    struct tpm2_digest *digests);
-> > int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max); void
-> > tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle, diff --git
-> > a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c index
-> > 6b04648f8184..6f306338953b 100644
-> > --- a/drivers/char/tpm/tpm1-cmd.c
-> > +++ b/drivers/char/tpm/tpm1-cmd.c
-> > @@ -449,7 +449,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip) }
-> >
-> > #define TPM_ORD_PCR_EXTEND 20
-> > -int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8
-> > *hash,
-> > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8
-> > +*hash,
-> > 		    const char *log_msg)
-> > {
-> > 	struct tpm_buf buf;
-> > @@ -572,7 +572,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8
-> > *dest, size_t max) }
-> >
-> > #define TPM_ORD_PCRREAD 21
-> > -int tpm1_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> > +int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> > {
-> > 	struct tpm_buf buf;
-> > 	int rc;
-> > @@ -729,7 +729,7 @@ int tpm1_auto_startup(struct tpm_chip *chip)
-> >  * * 0 on success,
-> >  * * < 0 on error.
-> >  */
-> > -int tpm1_pm_suspend(struct tpm_chip *chip, int tpm_suspend_pcr)
-> > +int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
-> > {
-> > 	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
-> > 	struct tpm_buf buf;
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index 6ca4fc0a0d6f..ae86fb0218ab 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -175,7 +175,7 @@ struct tpm2_pcr_read_out {
-> >  *
-> >  * Return: Same as with tpm_transmit_cmd.
-> >  */
-> > -int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf)
-> > +int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> > {
-> > 	int rc;
-> > 	struct tpm_buf buf;
-> > @@ -225,7 +225,7 @@ struct tpm2_null_auth_area {
-> >  *
-> >  * Return: Same as with tpm_transmit_cmd.
-> >  */
-> > -int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
-> > +int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > 		    struct tpm2_digest *digests)
-> > {
-> > 	struct tpm_buf buf;
-> > @@ -272,7 +272,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int
-> pcr_idx, u32 count,
-> > 	return rc;
-> > }
-> >
-> > -
-> > struct tpm2_get_random_out {
-> > 	__be16 size;
-> > 	u8 buffer[TPM_MAX_RNG_DATA];
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h index
-> > 4609b94142d4..b49a55cf775f 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -53,8 +53,8 @@ struct tpm_class_ops { #if defined(CONFIG_TCG_TPM)
-> > || defined(CONFIG_TCG_TPM_MODULE)
-> >
-> > extern int tpm_is_tpm2(struct tpm_chip *chip); -extern int
-> > tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8 *res_buf); -extern
-> > int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8
-> > *hash);
-> > +extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8
-> > +*res_buf); extern int tpm_pcr_extend(struct tpm_chip *chip, u32
-> > +pcr_idx, const u8 *hash);
-> > extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
-> > extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t
-> > max); extern int tpm_seal_trusted(struct tpm_chip *chip, @@ -69,15
-> > +69,18 @@ static inline int tpm_is_tpm2(struct tpm_chip *chip) {
-> > 	return -ENODEV;
-> > }
-> > -static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx, u8
-> > *res_buf)
-> > +
-> > +static inline int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8
-> > +*res_buf)
-> > {
-> > 	return -ENODEV;
-> > }
-> > -static inline int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx,
-> > +
-> > +static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> > 				 const u8 *hash)
-> > {
-> > 	return -ENODEV;
-> > }
-> > +
-> > static inline int tpm_send(struct tpm_chip *chip, void *cmd, size_t
-> > buflen) {
-> > 	return -ENODEV;
-> > diff --git a/security/integrity/ima/ima_crypto.c
-> > b/security/integrity/ima/ima_crypto.c
-> > index 7e7e7e7c250a..959d9edc113a 100644
-> > --- a/security/integrity/ima/ima_crypto.c
-> > +++ b/security/integrity/ima/ima_crypto.c
-> > @@ -629,7 +629,7 @@ int ima_calc_buffer_hash(const void *buf, loff_t
-> len,
-> > 	return calc_buffer_shash(buf, len, hash); }
-> >
-> > -static void __init ima_pcrread(int idx, u8 *pcr)
-> > +static void __init ima_pcrread(u32 idx, u8 *pcr)
-> > {
-> > 	if (!ima_tpm_chip)
-> > 		return;
-> > @@ -645,7 +645,8 @@ static int __init ima_calc_boot_aggregate_tfm(char
-> *digest,
-> > 					      struct crypto_shash *tfm)
-> > {
-> > 	u8 pcr_i[TPM_DIGEST_SIZE];
-> > -	int rc, i;
-> > +	int rc;
-> > +	u32 i;
-> > 	SHASH_DESC_ON_STACK(shash, tfm);
-> >
-> > 	shash->tfm = tfm;
-> >
-> 
-> All commits have been now applied.
-> 
-Appreciated.
-Thanks
-Tomas
+On 10/23/2018 11:50 AM, Kees Cook wrote:
+> On Tue, Oct 23, 2018 at 9:48 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 10/12/2018 12:01 PM, Kees Cook wrote:
+>>> On Friday, October 12, 2018 3:19 AM, John Johansen
+>>> <john.johansen@canonical.com> wrote:
+>>>> It isn't perfect but it manages consistency across distros as best as
+>>>> can be achieved atm.
+>>> Yeah, this is why I'm okay with the current series: it provides as
+>>> consistent a view as possible, but leaves room for future improvements
+>>> (like adding "+" or "!" or "all" or whatever).
+>>>
+>>> I'm curious to see what SELinux folks think of v5, though. I *think* I
+>>> addressed all the concerns there, even Paul's "I want my distro
+>>> default to not have extreme stacking" case too.
+>>>
+>>> -Kees
+>> Looks like I should go on vacation more often. :)
+>>
+>> I am generally opposed to fancy specification languages.
+>> I support the explicit lsm= list specification because you
+>> don't have to know any context to create a boot line that
+>> will work, and be as close to what you've specified as possible
+>> for the kernel configuration. One need look no further than
+>> the mechanisms for setting POSIX ACLs for an example of
+>> how to ensure a feature isn't used.
+>>
+>> Had we the foresight to make security= take a list of
+>> modules when Yama was added we might have avoided some of
+>> this brouhaha, but there was no reason to expect that stacking
+>> was ever going to happen back then.
+> This sounds like an "Ack" for you? :) I'll harass everyone in person
+> in a couple days.
+
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
+> Did you poke around at my combined series?
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=lsm/ordering-v6-blob-sharing
+
+I hope to do that on the plane later today.
+
+> -Kees
 
