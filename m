@@ -7,97 +7,87 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3E2ECDE46
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 22:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D2DECDE46
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 23:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4D4420833
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 22:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14B2B2075D
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 23:01:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbI9zD0M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D4420833
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H7dTgP4y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14B2B2075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726117AbeJYHWP (ORCPT
+        id S1726676AbeJYHbG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Oct 2018 03:22:15 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42698 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbeJYHWP (ORCPT
+        Thu, 25 Oct 2018 03:31:06 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51252 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbeJYHbG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Oct 2018 03:22:15 -0400
-Received: by mail-wr1-f65.google.com with SMTP id y15-v6so2866772wru.9;
-        Wed, 24 Oct 2018 15:52:14 -0700 (PDT)
+        Thu, 25 Oct 2018 03:31:06 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 143-v6so6954838wmf.1;
+        Wed, 24 Oct 2018 16:01:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=b7PS5g357cXYpMQNoDC0NRlpVAb0p6ug6D5Mo4tpd6w=;
-        b=RbI9zD0MztRELhCdX3ajvA6fO+ThEWsIqkV5r1wtfVKmDeSLsbgx3bUWW9PSLYuLBW
-         SCxroi2RzF0/ZiAK5xoB1bBbRH2Waun2fXmLgSG9ptLdN1vEWkEF2uOoJ+SRcCUJytoi
-         4mkG4RIPDtnvoMOja4hPvwZ9qvjQBgLJCvcyjIkcA/gTnScNbaruynRy77UZAHqIWNyy
-         2FPZ2ULRRcwPEBlUdXDe+SWPGLScyiCLvDFpC6URQZuNyiRaV9XNm57k6X+UpE7dHwQk
-         JgMhSYKbJJ43yzcUq3AAnFFfTJGQRbyW0Xh0CpRAlHg+GG/elbBZj/zXYmGTaJwSU8s6
-         Br7Q==
+        bh=pUiKFQkI36XJHPifHvNgkCndVjQT2GzGWI06zA9lZ1U=;
+        b=H7dTgP4yeEDbpIfo60PFZmqf4Uc0hE1PWrSPdHmU41MPXM9KO/VYz+KrQ3Tjt4YU6c
+         ty12n92S0TxTW2f35ZGHF5NwFd4/gHCVmtd1E4pvvGS5VzyQTrSdL7J4vQpy7QGkQ7go
+         PErMuff9X6kA9SRXtZEMOkz37YPWJ3fUZTvMz0LA13FQBiZ/rA9ZUfHFcbi6YFNnMRS4
+         MWShTKpGFEjA3mzcSlmTzOofsuPU9kbs3ELR8NUy3LEjr8adhqmXW5NpueJSNpjdbG7m
+         aEf7Y0reUS2aQItqSEeaHM4l6XZr1mmkxudhB3IYd7yP1r0H+c0VhpVxxaOeb1zIjN7/
+         5eHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=b7PS5g357cXYpMQNoDC0NRlpVAb0p6ug6D5Mo4tpd6w=;
-        b=nl0lcQwhWpefu1ZzHNr26ufZEDMUuzPw5ly7y/74VfChZZQ3ml2j1T25u9Y6tWpEkx
-         r6Ax4gqeouhmNFvhdUwUn6hmhOB+8lUr4pTzF3gpSPozF1aRSTbmI4a2ItDLEed56dOC
-         haWvwD133KRTnTm6jggHo7CUI+hbANL5XroElf0kOohAb0p/2Q4IAa29GN2PkpTzCz7D
-         cI+k3fUIbLbsRPPOifWYfNhg1PcWcxZgtAEu3R8h9f/SvujVMK5LPig38LAkcfBn9ASl
-         WUAmTUvbMAXgeNgLZ2k9y1S04xYKqsQoBRHVVOLVtrlcO5/xrNt50d+GBbm1V2ojFKRs
-         SuBA==
-X-Gm-Message-State: AGRZ1gK3qSsa4UFPi2aw7yoSbtOCpGXO1tncxfjqcH9f393CNNRryX3f
-        6Ji7cW2/ELO8ejCxll7Nc7OsUqrRni5Tdw==
-X-Google-Smtp-Source: AJdET5f7oQ1VJdOLzlUEI8yoM3RYFSRILn7zM8AXhhsgJsuynaUYR9lbqWpjr379I87kYQ+ViBlZkw==
-X-Received: by 2002:adf:f90b:: with SMTP id b11-v6mr1606405wrr.307.1540421533809;
-        Wed, 24 Oct 2018 15:52:13 -0700 (PDT)
+        bh=pUiKFQkI36XJHPifHvNgkCndVjQT2GzGWI06zA9lZ1U=;
+        b=cev9GuwDeLxXlnh0QqT/2ath0Ymr+Akaw0gKkaU/SVLD/uidVpj7QP/QcbtQrSwNrh
+         h/Cgi6odaB2aANZdSHUSJ/yJKhTfILTPqE9KHdBYt5+DX/c5CQfgB/s6eFG7WlLN3KAm
+         RObuwIxIMoYIQAkzmlkm+zkxuzoxvI/u8/0Ze63fvFUjIwNe+imodaOYalmtBpouPrIe
+         N4elnLZCR8JoIcL2SqEr4ao6HwZGfqq7bFJ1PXzliPcO7J64F6FxkASJNzb2whCovjsz
+         B2oOxuQIcCAhYYwm83OMuDJ3kBJmxwa8InydNjizWw0mTke8RswyvIOF17oBGxDcArzb
+         v1jg==
+X-Gm-Message-State: AGRZ1gKWbc0kxUHN2vwl33iczB2I0fnj9A+HwJ+8eA0GMmIJmtxHBEP+
+        9C9ntuhc3GlPojRrStmNRG35HP1FHzrRiw==
+X-Google-Smtp-Source: AJdET5dAH/w22mh/kaFPFlLUAiP0khn2L3sDgltKjJsxDcBPMCsA1Qq69uF03lFGNRowujnXQazWjQ==
+X-Received: by 2002:a1c:c58b:: with SMTP id v133-v6mr4393413wmf.139.1540422064351;
+        Wed, 24 Oct 2018 16:01:04 -0700 (PDT)
 Received: from [10.17.176.77] ([109.144.211.182])
-        by smtp.gmail.com with ESMTPSA id x8-v6sm12829794wrd.54.2018.10.24.15.52.11
+        by smtp.gmail.com with ESMTPSA id x15-v6sm6885306wrt.90.2018.10.24.16.01.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 15:52:13 -0700 (PDT)
-Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Wed, 24 Oct 2018 16:01:03 -0700 (PDT)
+Subject: Re: [PATCH 08/17] prmem: struct page: track vmap_area
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
         Dave Chinner <david@fromorbit.com>,
         James Morris <jmorris@namei.org>,
         Michal Hocko <mhocko@kernel.org>,
         kernel-hardening@lists.openwall.com,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        igor stoppa <igor.stoppa@huawei.com>,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        rostedt <rostedt@goodmis.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-15-igor.stoppa@huawei.com>
- <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
- <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
- <20181024145606.GA9019@cisco>
+ <20181023213504.28905-9-igor.stoppa@huawei.com>
+ <20181024031200.GC25444@bombadil.infradead.org>
 From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <d630474b-73a5-c6ae-2141-49c1184381b2@gmail.com>
-Date:   Thu, 25 Oct 2018 01:52:11 +0300
+Message-ID: <ffb887e1-2029-42d5-3a97-54546e4d28d8@gmail.com>
+Date:   Thu, 25 Oct 2018 02:01:02 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181024145606.GA9019@cisco>
+In-Reply-To: <20181024031200.GC25444@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -105,98 +95,72 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 24/10/2018 17:56, Tycho Andersen wrote:
-> On Wed, Oct 24, 2018 at 05:03:01PM +0300, Igor Stoppa wrote:
->> On 24/10/18 14:37, Mathieu Desnoyers wrote:
->>> Also, is it the right approach to duplicate existing APIs, or should we
->>> rather hook into page fault handlers and let the kernel do those "shadow"
->>> mappings under the hood ?
->>
->> This question is probably a good candidate for the small Q&A section I have
->> in the 00/17.
->>
->>
->>> Adding a new GFP flags for dynamic allocation, and a macro mapping to
->>> a section attribute might suffice for allocation or definition of such
->>> mostly-read-only/seldom-updated data.
->>
->> I think what you are proposing makes sense from a pure hardening standpoint.
->>  From a more defensive one, I'd rather minimise the chances of giving a free
->> pass to an attacker.
->>
->> Maybe there is a better implementation of this, than what I have in mind.
->> But, based on my current understanding of what you are describing, there
->> would be few issues:
->>
->> 1) where would the pool go? The pool is a way to manage multiple vmas and
->> express common property they share. Even before a vma is associated to the
->> pool.
->>
->> 2) there would be more code that can seamlessly deal with both protected and
->> regular data. Based on what? Some parameter, I suppose.
->> That parameter would be the new target.
->> If the code is "duplicated", as you say, the actual differences are baked in
->> at compile time. The "duplication" would also allow to have always inlined
->> functions for write-rare and leave more freedom to the compiler for their
->> non-protected version.
->>
->> Besides, I think the separate wr version also makes it very clear, to the
->> user of the API, that there will be a price to pay, in terms of performance.
->> The more seamlessly alternative might make this price less obvious.
+
+
+On 24/10/2018 06:12, Matthew Wilcox wrote:
+> On Wed, Oct 24, 2018 at 12:34:55AM +0300, Igor Stoppa wrote:
+>> The connection between each page and its vmap_area avoids more expensive
+>> searches through the btree of vmap_areas.
 > 
-> What about something in the middle, where we move list to list_impl.h,
-> and add a few macros where you have list_set_prev() in prlist now, so
-> we could do,
+> Typo -- it's an rbtree.
+
+ack
+
+>> +++ b/include/linux/mm_types.h
+>> @@ -87,13 +87,24 @@ struct page {
+>>   			/* See page-flags.h for PAGE_MAPPING_FLAGS */
+>>   			struct address_space *mapping;
+>>   			pgoff_t index;		/* Our offset within mapping. */
+>> -			/**
+>> -			 * @private: Mapping-private opaque data.
+>> -			 * Usually used for buffer_heads if PagePrivate.
+>> -			 * Used for swp_entry_t if PageSwapCache.
+>> -			 * Indicates order in the buddy system if PageBuddy.
+>> -			 */
+>> -			unsigned long private;
+>> +			union {
+>> +				/**
+>> +				 * @private: Mapping-private opaque data.
+>> +				 * Usually used for buffer_heads if
+>> +				 * PagePrivate.
+>> +				 * Used for swp_entry_t if PageSwapCache.
+>> +				 * Indicates order in the buddy system if
+>> +				 * PageBuddy.
+>> +				 */
+>> +				unsigned long private;
+>> +				/**
+>> +				 * @area: reference to the containing area
+>> +				 * For pages that are mapped into a virtually
+>> +				 * contiguous area, avoids performing a more
+>> +				 * expensive lookup.
+>> +				 */
+>> +				struct vmap_area *area;
+>> +			};
 > 
-> // prlist.h
+> Not like this.  Make it part of a different struct in the existing union,
+> not a part of the pagecache struct.  And there's no need to use ->private
+> explicitly.
+
+Ok, I'll have a look at the googledoc you made
+
+>> @@ -1747,6 +1750,10 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
+>>   	if (!addr)
+>>   		return NULL;
+>>   
+>> +	va = __find_vmap_area((unsigned long)addr);
+>> +	for (i = 0; i < va->vm->nr_pages; i++)
+>> +		va->vm->pages[i]->area = va;
 > 
-> #define list_set_next(head, next) wr_ptr(&head->next, next)
-> #define list_set_prev(head, prev) wr_ptr(&head->prev, prev)
+> I don't like it that you're calling this for _every_ vmalloc() caller
+> when most of them will never use this.  Perhaps have page->va be initially
+> NULL and then cache the lookup in it when it's accessed for the first time.
 > 
-> #include <linux/list_impl.h>
-> 
-> // list.h
-> 
-> #define list_set_next(next) (head->next = next)
-> #define list_set_next(prev) (head->prev = prev)
-> 
-> #include <linux/list_impl.h>
-> 
-> I wonder then if you can get rid of some of the type punning too? It's
-> not clear exactly why that's necessary from the series, but perhaps
-> I'm missing something obvious :)
 
-nothing obvious, probably there is only half a reference in the slides I 
-linked-to in the cover letter :-)
+If __find_vmap_area() was part of the API, this loop could be left out 
+from __vmalloc_node_range() and the user of the allocation could 
+initialize the field, if needed.
 
-So far I have minimized the number of "intrinsic" write rare functions,
-mostly because I would want first to reach an agreement on the 
-implementation of the core write-rare.
-
-However, once that is done, it might be good to convert also the prlists 
-to be "intrinsics". A list node is 2 pointers.
-If that was the alignment, i.e. __align(sizeof(list_head)), it might be 
-possible to speed up a lot the list handling even as write rare.
-
-Taking as example the insertion operation, it would be probably 
-sufficient, in most cases, to have only two remappings:
-- one covering the page with the latest two nodes
-- one covering the page with the list head
-
-That is 2 vs 8 remappings, and a good deal of memory barriers less.
-
-This would be incompatible with what you are proposing, yet it would be 
-justifiable, I think, because it would provide better performance to 
-prlist, potentially widening its adoption, where performance is a concern.
-
-> I also wonder how much the actual differences being baked in at
-> compile time makes. Most (all?) of this code is inlined.
-
-If the inlined function expects to receive a prlist_head *, instead of a 
-list_head *, doesn't it help turning runtime bugs into buildtime bugs?
-
-
-Or maybe I miss your point?
+What is the reason for keeping __find_vmap_area() private?
 
 --
 igor
