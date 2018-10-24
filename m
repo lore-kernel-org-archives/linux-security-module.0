@@ -2,124 +2,366 @@ Return-Path: <SRS0=JlTe=NE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_TVD_FUZZY_SECURITIES autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9EEC46475
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 03:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43863C46475
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 03:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE8182075D
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 03:12:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NQ9aZaX/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE8182075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id F3C0C206B5
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 03:26:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3C0C206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbeJXLiO (ORCPT
+        id S1726382AbeJXLwU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:38:14 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38150 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbeJXLiO (ORCPT
+        Wed, 24 Oct 2018 07:52:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:48099 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725896AbeJXLwU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:38:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=106b6JsqMk6qG1rTgzIvpPYL/NlC9/vSE1gH3Z64aUk=; b=NQ9aZaX/NOs/zyEbYssW99Hde
-        mgkpUqWF74Q84uqmQgknwl8sbnrT6gCo7yds9tK/SNeJPROkoo9Wob/ds16/uLzsIOSlOoPR9NwyJ
-        GUEFgno2rA3Hh+8nS0Ug+5+1kPb5hBAVMWj9A0tvvWxKIIeEHhNVEe2Qv8AgG/O4TB1IvE/OiF3uK
-        5pUb1mYJhlpYFruqE8mOwfymqEdAA53pN6jp6oooXilkvdGX0mSnC0j/zKaKwyD5/VeeKv+s4zMvA
-        ztDpB7Wr4yKwvy3Br4ualAdu/OApidXWwk19Ad3+j2/jUOtPwQvE5jPqrFtZWxSkXAhQbR7JHJAou
-        ecA6bCQcg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gF9aS-0003TE-U3; Wed, 24 Oct 2018 03:12:00 +0000
-Date:   Tue, 23 Oct 2018 20:12:00 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/17] prmem: struct page: track vmap_area
-Message-ID: <20181024031200.GC25444@bombadil.infradead.org>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-9-igor.stoppa@huawei.com>
+        Wed, 24 Oct 2018 07:52:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 17:03:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,418,1534834800"; 
+   d="scan'208";a="85045026"
+Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
+  by orsmga006.jf.intel.com with ESMTP; 23 Oct 2018 17:03:16 -0700
+Date:   Wed, 24 Oct 2018 03:03:15 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+cc:     linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH v4 5/7] trusted keys: Add session encryption protection
+ to the seal/unseal path
+In-Reply-To: <1540193921.3202.13.camel@HansenPartnership.com>
+Message-ID: <alpine.DEB.2.21.1810240259390.8524@jsakkine-mobl1>
+References: <1540193596.3202.7.camel@HansenPartnership.com> <1540193921.3202.13.camel@HansenPartnership.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181023213504.28905-9-igor.stoppa@huawei.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/mixed; boundary="8323329-1231958307-1540339399=:8524"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 24, 2018 at 12:34:55AM +0300, Igor Stoppa wrote:
-> The connection between each page and its vmap_area avoids more expensive
-> searches through the btree of vmap_areas.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Typo -- it's an rbtree.
+--8323329-1231958307-1540339399=:8524
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 
-> +++ b/include/linux/mm_types.h
-> @@ -87,13 +87,24 @@ struct page {
->  			/* See page-flags.h for PAGE_MAPPING_FLAGS */
->  			struct address_space *mapping;
->  			pgoff_t index;		/* Our offset within mapping. */
-> -			/**
-> -			 * @private: Mapping-private opaque data.
-> -			 * Usually used for buffer_heads if PagePrivate.
-> -			 * Used for swp_entry_t if PageSwapCache.
-> -			 * Indicates order in the buddy system if PageBuddy.
-> -			 */
-> -			unsigned long private;
-> +			union {
-> +				/**
-> +				 * @private: Mapping-private opaque data.
-> +				 * Usually used for buffer_heads if
-> +				 * PagePrivate.
-> +				 * Used for swp_entry_t if PageSwapCache.
-> +				 * Indicates order in the buddy system if
-> +				 * PageBuddy.
-> +				 */
-> +				unsigned long private;
-> +				/**
-> +				 * @area: reference to the containing area
-> +				 * For pages that are mapped into a virtually
-> +				 * contiguous area, avoids performing a more
-> +				 * expensive lookup.
-> +				 */
-> +				struct vmap_area *area;
-> +			};
+The tag in the short description does not look at all. Should be either
+"tpm:" or "keys, trusted:".
 
-Not like this.  Make it part of a different struct in the existing union,
-not a part of the pagecache struct.  And there's no need to use ->private
-explicitly.
+On Mon, 22 Oct 2018, James Bottomley wrote:
+> If some entity is snooping the TPM bus, the can see the data going in
+> to be sealed and the data coming out as it is unsealed.  Add parameter
+> and response encryption to these cases to ensure that no secrets are
+> leaked even if the bus is snooped.
+>
+> As part of doing this conversion it was discovered that policy
+> sessions can't work with HMAC protected authority because of missing
+> pieces (the tpm Nonce).  I've added code to work the same way as
+> before, which will result in potential authority exposure (while still
+> adding security for the command and the returned blob), and a fixme to
+> redo the API to get rid of this security hole.
+>
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> ---
+> drivers/char/tpm/tpm2-cmd.c | 155 ++++++++++++++++++++++++++++----------------
+> 1 file changed, 98 insertions(+), 57 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 22f1c7bee173..a8655cd535d1 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -425,7 +425,9 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> {
+> 	unsigned int blob_len;
+> 	struct tpm_buf buf;
+> +	struct tpm_buf t2b;
+> 	u32 hash;
+> +	struct tpm2_auth *auth;
+> 	int i;
+> 	int rc;
+>
+> @@ -439,45 +441,56 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> 	if (i == ARRAY_SIZE(tpm2_hash_map))
+> 		return -EINVAL;
+>
+> -	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
+> +	rc = tpm2_start_auth_session(chip, &auth);
+> 	if (rc)
+> 		return rc;
+>
+> -	tpm_buf_append_u32(&buf, options->keyhandle);
+> -	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
+> -			     NULL /* nonce */, 0,
+> -			     0 /* session_attributes */,
+> -			     options->keyauth /* hmac */,
+> -			     TPM_DIGEST_SIZE);
+> +	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CREATE);
+> +	if (rc) {
+> +		tpm2_end_auth_session(auth);
+> +		return rc;
+> +	}
+> +
+> +	rc = tpm_buf_init_2b(&t2b);
+> +	if (rc) {
+> +		tpm_buf_destroy(&buf);
+> +		tpm2_end_auth_session(auth);
+> +		return rc;
+> +	}
+>
+> +	tpm_buf_append_name(&buf, auth, options->keyhandle, NULL);
+> +	tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_DECRYPT,
+> +				    options->keyauth, TPM_DIGEST_SIZE);
+> 	/* sensitive */
+> -	tpm_buf_append_u16(&buf, 4 + TPM_DIGEST_SIZE + payload->key_len + 1);
+> +	tpm_buf_append_u16(&t2b, TPM_DIGEST_SIZE);
+> +	tpm_buf_append(&t2b, options->blobauth, TPM_DIGEST_SIZE);
+> +	tpm_buf_append_u16(&t2b, payload->key_len + 1);
+> +	tpm_buf_append(&t2b, payload->key, payload->key_len);
+> +	tpm_buf_append_u8(&t2b, payload->migratable);
+>
+> -	tpm_buf_append_u16(&buf, TPM_DIGEST_SIZE);
+> -	tpm_buf_append(&buf, options->blobauth, TPM_DIGEST_SIZE);
+> -	tpm_buf_append_u16(&buf, payload->key_len + 1);
+> -	tpm_buf_append(&buf, payload->key, payload->key_len);
+> -	tpm_buf_append_u8(&buf, payload->migratable);
+> +	tpm_buf_append_2b(&buf, &t2b);
+>
+> 	/* public */
+> -	tpm_buf_append_u16(&buf, 14 + options->policydigest_len);
+> -	tpm_buf_append_u16(&buf, TPM2_ALG_KEYEDHASH);
+> -	tpm_buf_append_u16(&buf, hash);
+> +	tpm_buf_append_u16(&t2b, TPM2_ALG_KEYEDHASH);
+> +	tpm_buf_append_u16(&t2b, hash);
+>
+> 	/* policy */
+> 	if (options->policydigest_len) {
+> -		tpm_buf_append_u32(&buf, 0);
+> -		tpm_buf_append_u16(&buf, options->policydigest_len);
+> -		tpm_buf_append(&buf, options->policydigest,
+> +		tpm_buf_append_u32(&t2b, 0);
+> +		tpm_buf_append_u16(&t2b, options->policydigest_len);
+> +		tpm_buf_append(&t2b, options->policydigest,
+> 			       options->policydigest_len);
+> 	} else {
+> -		tpm_buf_append_u32(&buf, TPM2_OA_USER_WITH_AUTH);
+> -		tpm_buf_append_u16(&buf, 0);
+> +		tpm_buf_append_u32(&t2b, TPM2_OA_USER_WITH_AUTH);
+> +		tpm_buf_append_u16(&t2b, 0);
+> 	}
+>
+> 	/* public parameters */
+> -	tpm_buf_append_u16(&buf, TPM2_ALG_NULL);
+> -	tpm_buf_append_u16(&buf, 0);
+> +	tpm_buf_append_u16(&t2b, TPM2_ALG_NULL);
+> +	/* unique (zero) */
+> +	tpm_buf_append_u16(&t2b, 0);
+> +
+> +	tpm_buf_append_2b(&buf, &t2b);
+>
+> 	/* outside info */
+> 	tpm_buf_append_u16(&buf, 0);
+> @@ -490,8 +503,11 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> 		goto out;
+> 	}
+>
+> -	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 4, 0,
+> -			      "sealing data");
+> +	tpm_buf_fill_hmac_session(&buf, auth);
+> +
+> +	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data,
+> +			      PAGE_SIZE, 4, 0, "sealing data");
+> +	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
+> 	if (rc)
+> 		goto out;
+>
+> @@ -509,6 +525,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> 	payload->blob_len = blob_len;
+>
+> out:
+> +	tpm_buf_destroy(&t2b);
+> 	tpm_buf_destroy(&buf);
+>
+> 	if (rc > 0) {
+> @@ -528,7 +545,6 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+>  * @payload: the key data in clear and encrypted form
+>  * @options: authentication values and other options
+>  * @blob_handle: returned blob handle
+> - * @flags: tpm transmit flags
+>  *
+>  * Return: 0 on success.
+>  *        -E2BIG on wrong payload size.
+> @@ -538,9 +554,10 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> static int tpm2_load_cmd(struct tpm_chip *chip,
+> 			 struct trusted_key_payload *payload,
+> 			 struct trusted_key_options *options,
+> -			 u32 *blob_handle, unsigned int flags)
+> +			 u32 *blob_handle)
+> {
+> 	struct tpm_buf buf;
+> +	struct tpm2_auth *auth;
+> 	unsigned int private_len;
+> 	unsigned int public_len;
+> 	unsigned int blob_len;
+> @@ -555,17 +572,18 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> 	if (blob_len > payload->blob_len)
+> 		return -E2BIG;
+>
+> -	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
+> +	rc = tpm2_start_auth_session(chip, &auth);
+> 	if (rc)
+> 		return rc;
+>
+> -	tpm_buf_append_u32(&buf, options->keyhandle);
+> -	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
+> -			     NULL /* nonce */, 0,
+> -			     0 /* session_attributes */,
+> -			     options->keyauth /* hmac */,
+> -			     TPM_DIGEST_SIZE);
+> +	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
+> +	if (rc) {
+> +		tpm2_end_auth_session(auth);
+> +		return rc;
+> +	}
+>
+> +	tpm_buf_append_name(&buf, auth, options->keyhandle, NULL);
+> +	tpm_buf_append_hmac_session(&buf, auth, 0, options->keyauth, TPM_DIGEST_SIZE);
+> 	tpm_buf_append(&buf, payload->blob, blob_len);
+>
+> 	if (buf.flags & TPM_BUF_OVERFLOW) {
+> @@ -573,8 +591,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> 		goto out;
+> 	}
+>
+> -	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 4, flags,
+> -			      "loading blob");
+> +	tpm_buf_fill_hmac_session(&buf, auth);
+> +	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
+> +			      4, 0, "loading blob");
+> +	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
+> 	if (!rc)
+> 		*blob_handle = be32_to_cpup(
+> 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
+> @@ -595,7 +615,6 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+>  * @payload: the key data in clear and encrypted form
+>  * @options: authentication values and other options
+>  * @blob_handle: blob handle
+> - * @flags: tpm_transmit_cmd flags
+>  *
+>  * Return: 0 on success
+>  *         -EPERM on tpm error status
+> @@ -604,28 +623,54 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> static int tpm2_unseal_cmd(struct tpm_chip *chip,
+> 			   struct trusted_key_payload *payload,
+> 			   struct trusted_key_options *options,
+> -			   u32 blob_handle, unsigned int flags)
+> +			   u32 blob_handle)
+> {
+> 	struct tpm_buf buf;
+> +	struct tpm2_auth *auth;
+> 	u16 data_len;
+> 	u8 *data;
+> 	int rc;
+>
+> -	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
+> +	rc = tpm2_start_auth_session(chip, &auth);
+> 	if (rc)
+> 		return rc;
+>
+> -	tpm_buf_append_u32(&buf, blob_handle);
+> -	tpm2_buf_append_auth(&buf,
+> -			     options->policyhandle ?
+> -			     options->policyhandle : TPM2_RS_PW,
+> -			     NULL /* nonce */, 0,
+> -			     TPM2_SA_CONTINUE_SESSION,
+> -			     options->blobauth /* hmac */,
+> -			     TPM_DIGEST_SIZE);
+> -
+> -	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 6, flags,
+> -			      "unsealing");
+> +	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_UNSEAL);
+> +	if (rc) {
+> +		tpm2_end_auth_session(auth);
+> +		return rc;
+> +	}
+> +
+> +	tpm_buf_append_name(&buf, auth, blob_handle, NULL);
+> +
+> +	if (!options->policyhandle) {
+> +		tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT,
+> +					    options->blobauth, TPM_DIGEST_SIZE);
+> +	} else {
+> +		/*
+> +		 * FIXME: the policy can't be used for HMAC protection
+> +		 * of the authorization because it must be generated
+> +		 * with the initial nonces which isn't passed in, so
+> +		 * append a second encryption session to at least HMAC
+> +		 * protect the command and encrypt the sealed blob on
+> +		 * return so the only thing the attacker can get is
+> +		 * the password.
+> +		 *
+> +		 * We also consume the policy session otherwise it
+> +		 * would be absorbed into the kernel space.
+> +		 */
+> +		tpm2_buf_append_auth(&buf, options->policyhandle,
+> +				     NULL /* nonce */, 0, 0,
+> +				     options->blobauth /* hmac */,
+> +				     TPM_DIGEST_SIZE);
+> +		tpm_buf_append_hmac_session(&buf, auth, TPM2_SA_ENCRYPT,
+> +					    NULL, 0);
+> +	}
+> +
+> +	tpm_buf_fill_hmac_session(&buf, auth);
+> +	rc = tpm_transmit_cmd(chip, &chip->kernel_space, buf.data, PAGE_SIZE,
+> +			      6, 0, "unsealing");
+> +	rc = tpm_buf_check_hmac_response(&buf, auth, rc);
+> 	if (rc > 0)
+> 		rc = -EPERM;
+>
+> @@ -669,17 +714,13 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+> 	u32 blob_handle;
+> 	int rc;
+>
+> -	mutex_lock(&chip->tpm_mutex);
+> -	rc = tpm2_load_cmd(chip, payload, options, &blob_handle,
+> -			   TPM_TRANSMIT_UNLOCKED);
+> +	rc = tpm2_load_cmd(chip, payload, options, &blob_handle);
+> 	if (rc)
+> 		goto out;
+>
+> -	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle,
+> -			     TPM_TRANSMIT_UNLOCKED);
+> -	tpm2_flush_context_cmd(chip, blob_handle, TPM_TRANSMIT_UNLOCKED);
+> +	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
+> +	tpm2_flush_context_cmd(chip, blob_handle, 0);
+> out:
+> -	mutex_unlock(&chip->tpm_mutex);
+> 	return rc;
+> }
+>
+> -- 
+> 2.16.4
+>
+>
 
-> @@ -1747,6 +1750,10 @@ void *__vmalloc_node_range(unsigned long size, unsigned long align,
->  	if (!addr)
->  		return NULL;
->  
-> +	va = __find_vmap_area((unsigned long)addr);
-> +	for (i = 0; i < va->vm->nr_pages; i++)
-> +		va->vm->pages[i]->area = va;
+This commit makes me almost demand a preliminary patch set that just
+does the groundwork and takes new stuff into use (tpm2b).
 
-I don't like it that you're calling this for _every_ vmalloc() caller
-when most of them will never use this.  Perhaps have page->va be initially
-NULL and then cache the lookup in it when it's accessed for the first time.
+BTW, the whole patch set should speak integrity and encryption.
+"security" essentially means absolutely nothing.
+
+/Jarkko
+--8323329-1231958307-1540339399=:8524--
