@@ -2,66 +2,66 @@ Return-Path: <SRS0=JlTe=NE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACFCC004D3
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 14:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D651C004D3
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 14:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42131207DD
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 14:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DBC2082F
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 14:56:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hOy8N5cF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42131207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="yCoKAAuP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11DBC2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbeJXW7R (ORCPT
+        id S1727140AbeJXXYm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:59:17 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46031 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeJXW7R (ORCPT
+        Wed, 24 Oct 2018 19:24:42 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34616 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeJXXYm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:59:17 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j4-v6so4964407ljc.12;
-        Wed, 24 Oct 2018 07:30:55 -0700 (PDT)
+        Wed, 24 Oct 2018 19:24:42 -0400
+Received: by mail-qk1-f194.google.com with SMTP id p6-v6so3470537qkg.1
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Oct 2018 07:56:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+G+J5R4KOjCZx9oUTz0EKjFR9FArlG2HBdbRs2HP5PY=;
-        b=hOy8N5cFoGPRjyMfXzyQO+fKGIsldr5WXMYGX2cd9MvtXrqnOyEJL8nh+nDhO80s9A
-         6DGS3HJ7INNOoG35zNvm9a66+4Um0Z6ecdTpbQ5xyDEhgt9GUStDDYmVYDphx+JII0Fu
-         qC4Vo336T7tsUnp7dsq2dUeSfWd5n//PlB1+99KwDUQAXR/U+TfhbkAn5fBNOtLIVh08
-         88mYBfztOn7/tGj0xxakOCH15lmPdP01X3IlVhngDqgo07WiVOHX2FkAV3mlMfhQwcnx
-         aqG4fMBbT7mba0LPdTDWkYco7Q/aU0vIg4I9iDJCuyriUU9PqsynvaFKHEcQ5vjsfkn+
-         bu6w==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qZ2514qk1H7lrT6V2q7uwHgptwI/uC+DgUUVl41xFxM=;
+        b=yCoKAAuPKizyRRLcbeJ4eLSHRX33vdSWumR/8HFlQem5CnxmTYc2hglr1JtGYrc/KB
+         OvOW9R3RqwQjOh1V59ockJlflL4/agZNKHdnOcHGNQOKRtS9l61sUj1ZmWR/BNdmSr/w
+         kUzcD0WFwIvI8nI8kWkLuMk9WND0liCRLaeJ0vxK5QEN5dDOyA2EX8mEyaM5d4n9TLG2
+         FfkKWaQzRCX9u/87dXy7Kyk+3n/+Om/vkQ8mCaRciHxMUUEUnhs3fQJHYGiiOb5rr+Ob
+         XvuiqzUZW1jQe/UZ394W1QZDgkdTrxZfhKRoCkTtwtu5VjW8kqPf22XQ0I5TlLGZoKWH
+         TInw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+G+J5R4KOjCZx9oUTz0EKjFR9FArlG2HBdbRs2HP5PY=;
-        b=eSagEURttjJBUB0+3FaAVhtUNn9IYfP/ErpTfGgNu1KO4c953Zv98rX0gskswcPKp2
-         sm7i+/8fJOcTtiGLX1eYuw8u1K+SZR8hQKvsekzsGnx//8ILkZwp1chhpbDsTCrfjSRi
-         XbgQKddZEyY+rK88/QHNx73HyU4fnUkOC+NRTbvsFBXdNAmNp9LLCNAJOGmh7E0Q+uCH
-         3az+pDtiYn02DSaMaCxk5QoIO8X4CWyTlJyO0kqYYAuDqwr/EN5axLuzntadFryNzOgo
-         YvI6CSjj1Sfw8GC97FiZeHRWChNtJ6QMPAzkQpvMRkskJQdq9rSOgBSl5RYp/gTJODJy
-         3C0w==
-X-Gm-Message-State: AGRZ1gI0vRC6gKUWyFeiAKszQN3HIgE9i9qYuIUB5lieQf4d4O/Pgnjk
-        xdVW+vKuYiu6sYNjiBoOffLbJxnZS0Y=
-X-Google-Smtp-Source: AJdET5dREK9ZXVcNYM9E9tnFT1wkD5VzLdyU3DHL/xqz6T+XVsrtQ5MwHlkU0mXuPXi1z74+AxUkag==
-X-Received: by 2002:a2e:651d:: with SMTP id z29-v6mr2134192ljb.36.1540391454141;
-        Wed, 24 Oct 2018 07:30:54 -0700 (PDT)
-Received: from [10.222.93.64] ([212.213.198.112])
-        by smtp.gmail.com with ESMTPSA id n192-v6sm873329lfn.0.2018.10.24.07.30.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 07:30:53 -0700 (PDT)
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Randy Dunlap <rdunlap@infradead.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qZ2514qk1H7lrT6V2q7uwHgptwI/uC+DgUUVl41xFxM=;
+        b=N1lUc7rVk+9dvNPAQYpp52OUU/COk8rH5H/HPiM7HTX/PYBMHtAUxDHkg+ZS333R40
+         tEXdiOcCGFSUuzgegJmnhM/CTipAvRT5KfEylQ5fnrmDAzbkH1PcvbAnCKrdpW0kxO+I
+         omTlV0KqUTHf7hXLTaXUe8eJyy22AC2cwaa/fa7QEMTg1CB4FjKYpaxWarHbHDujoiJP
+         uc1ue0mRAAsYHUG404ifdgF30pA96w1e6cqo25CscJyJl+nqdI1UL4vX4oHESo0mhWIH
+         mo5Hcs1XnLlETSRMAGK97RjT3D5Ct+vSunJRroSWA3GHc72pg0LzRK2OpOqcOb/51G9G
+         LTpg==
+X-Gm-Message-State: AGRZ1gJzvsjrc7NBncBo++kd5tvLWngVLFBQdVOVpuog2V+mRfDZ7zZa
+        PhYKFCIaQghqOXd9rkKp3JhgQA==
+X-Google-Smtp-Source: AJdET5e99wyv4PKWEz3r3V7UFK7qWXI3xrDG/D67w1jWqdNZ+/ujU1pdTkq7DJAH8eq9uZPMIQ5sNw==
+X-Received: by 2002:ac8:27d0:: with SMTP id x16-v6mr2695782qtx.61.1540392975547;
+        Wed, 24 Oct 2018 07:56:15 -0700 (PDT)
+Received: from cisco ([192.241.255.151])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm2732998qkc.75.2018.10.24.07.56.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Oct 2018 07:56:14 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 15:56:06 +0100
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Kees Cook <keescook@chromium.org>,
         Matthew Wilcox <willy@infradead.org>,
@@ -70,112 +70,99 @@ To:     Randy Dunlap <rdunlap@infradead.org>,
         Michal Hocko <mhocko@kernel.org>,
         kernel-hardening@lists.openwall.com,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-security-module@vger.kernel.org,
+        igor stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        rostedt <rostedt@goodmis.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
+Message-ID: <20181024145606.GA9019@cisco>
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <b09b3feb-8e3d-5fab-4e2b-35e8c252b27c@infradead.org>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <42e65f5f-2753-54a7-08a4-b51e56dfedbe@gmail.com>
-Date:   Wed, 24 Oct 2018 17:30:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ <20181023213504.28905-15-igor.stoppa@huawei.com>
+ <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
+ <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <b09b3feb-8e3d-5fab-4e2b-35e8c252b27c@infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
-
-On 24/10/18 06:48, Randy Dunlap wrote:
-> Hi,
+On Wed, Oct 24, 2018 at 05:03:01PM +0300, Igor Stoppa wrote:
+> On 24/10/18 14:37, Mathieu Desnoyers wrote:
+> > Also, is it the right approach to duplicate existing APIs, or should we
+> > rather hook into page fault handlers and let the kernel do those "shadow"
+> > mappings under the hood ?
 > 
-> On 10/23/18 2:34 PM, Igor Stoppa wrote:
-
-[...]
-
->> +- The present document doesn't address such transient.
+> This question is probably a good candidate for the small Q&A section I have
+> in the 00/17.
 > 
->                                                 transience.
-
-ok
-
-[...]
-
->> +   are attempted after the write protection is in place, will cause
 > 
-> no comma.
-
-ok
-
-[...]
-
->> +        - Its usefulness depends on the specific use case at hand
+> > Adding a new GFP flags for dynamic allocation, and a macro mapping to
+> > a section attribute might suffice for allocation or definition of such
+> > mostly-read-only/seldom-updated data.
 > 
-> end above sentence with a period, please, like all of the others above it.
-
-ok
-
-
->> +    - The "START_WR" mode is the only one which provides immediate protection, at the cost of speed.
+> I think what you are proposing makes sense from a pure hardening standpoint.
+> From a more defensive one, I'd rather minimise the chances of giving a free
+> pass to an attacker.
 > 
-> Please try to keep the line above and a few below to < 80 characters in length.
-> (because some of us read rst files as text files, with a text editor, and line
-> wrap is ugly)
-
-ok, I still have to master .rst :-(
-
-[...]
-
->> +- The users of rare write must take care of ensuring the atomicity of the
+> Maybe there is a better implementation of this, than what I have in mind.
+> But, based on my current understanding of what you are describing, there
+> would be few issues:
 > 
-> s/rare write/write rare/ ?
-
-thanks
-
->> +  action, respect to the way they use the data being altered; for example,
+> 1) where would the pool go? The pool is a way to manage multiple vmas and
+> express common property they share. Even before a vma is associated to the
+> pool.
 > 
->    This ..   "respect to the way" is awkward, but I don't know what to
-> change it to.
+> 2) there would be more code that can seamlessly deal with both protected and
+> regular data. Based on what? Some parameter, I suppose.
+> That parameter would be the new target.
+> If the code is "duplicated", as you say, the actual differences are baked in
+> at compile time. The "duplication" would also allow to have always inlined
+> functions for write-rare and leave more freedom to the compiler for their
+> non-protected version.
 > 
->> +  take a lock before making a copy of the value to modify (if it's
->> +  relevant), then alter it, issue the call to rare write and finally
->> +  release the lock. Some special scenario might be exempt from the need
->> +  for locking, but in general rare-write must be treated as an operation
-> 
-> It seemed to me that "write-rare" (or write rare) was the going name, but now
-> it's being called "rare write" (or rare-write).  Just be consistent, please.
+> Besides, I think the separate wr version also makes it very clear, to the
+> user of the API, that there will be a price to pay, in terms of performance.
+> The more seamlessly alternative might make this price less obvious.
 
+What about something in the middle, where we move list to list_impl.h,
+and add a few macros where you have list_set_prev() in prlist now, so
+we could do,
 
-write-rare it is, because it can be shortened as wr_xxx
+// prlist.h
 
-rare_write becomes rw_xxx
+#define list_set_next(head, next) wr_ptr(&head->next, next)
+#define list_set_prev(head, prev) wr_ptr(&head->prev, prev)
 
-which wrongly hints at read/write, which it definitely is not
+#include <linux/list_impl.h>
 
->> +  tlb entries. It still does a better job of it, compared to invoking
-> 
->       TLB
+// list.h
 
-ok
+#define list_set_next(next) (head->next = next)
+#define list_set_next(prev) (head->prev = prev)
 
->> +  vmalloc for each allocation, but it is undeniably less optimized wrt to
-> 
-> s/wrt/with respect to/
+#include <linux/list_impl.h>
 
-yes
+I wonder then if you can get rid of some of the type punning too? It's
+not clear exactly why that's necessary from the series, but perhaps
+I'm missing something obvious :)
 
-> Thanks for the documentation.
+I also wonder how much the actual differences being baked in at
+compile time makes. Most (all?) of this code is inlined.
 
-thanks for the review :-)
+Cheers,
 
---
-igor
+Tycho
