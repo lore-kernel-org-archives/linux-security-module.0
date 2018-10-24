@@ -3,51 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BCBC7112C
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 08:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488FFC67863
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 08:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589142082E
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 08:40:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589142082E
+	by mail.kernel.org (Postfix) with ESMTP id 197A920824
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 08:59:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197A920824
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbeJXRID (ORCPT
+        id S1727534AbeJXR0y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:08:03 -0400
-Received: from mga17.intel.com ([192.55.52.151]:31095 "EHLO mga17.intel.com"
+        Wed, 24 Oct 2018 13:26:54 -0400
+Received: from mga07.intel.com ([134.134.136.100]:5526 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726531AbeJXRID (ORCPT
+        id S1727508AbeJXR0y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:08:03 -0400
+        Wed, 24 Oct 2018 13:26:54 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 01:40:53 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 01:59:39 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,419,1534834800"; 
-   d="scan'208";a="81171124"
+   d="scan'208";a="85158266"
 Received: from sakethyx-mobl2.gar.corp.intel.com ([10.249.254.29])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Oct 2018 01:40:50 -0700
-Date:   Wed, 24 Oct 2018 11:40:49 +0300 (EEST)
+  by orsmga006.jf.intel.com with ESMTP; 24 Oct 2018 01:59:35 -0700
+Date:   Wed, 24 Oct 2018 11:59:34 +0300 (EEST)
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: [PATCH v4 2/7] tpm2-sessions: Add full HMAC and encrypt/decrypt
- session handling
-In-Reply-To: <CAKv+Gu8T8yGEu2GWWKzLXR=wgd=mYHcTYLrD69_zpaddQK3Zxw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1810241137400.3525@jsakkine-mobl1>
-References: <1540193596.3202.7.camel@HansenPartnership.com> <1540193787.3202.10.camel@HansenPartnership.com> <CAKv+Gu-gYLY1vmtgFC0MTkBfsAkPz658ELaGW78MbD=6ROrLFQ@mail.gmail.com> <1540278091.3347.9.camel@HansenPartnership.com>
- <CAKv+Gu8T8yGEu2GWWKzLXR=wgd=mYHcTYLrD69_zpaddQK3Zxw@mail.gmail.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH] tpm: tpm_try_transmit() refactor error flow.
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9D9FB5D1@hasmsx109.ger.corp.intel.com>
+Message-ID: <alpine.DEB.2.21.1810241150580.3525@jsakkine-mobl1>
+References: <20181016133716.17842-1-tomas.winkler@intel.com> <alpine.DEB.2.21.1810180309430.5022@jsakkine-mobl1> <5B8DA87D05A7694D9FA63FD143655C1B9D9F5512@hasmsx109.ger.corp.intel.com> <alpine.DEB.2.21.1810200230200.9963@jsakkine-mobl1>
+ <5B8DA87D05A7694D9FA63FD143655C1B9D9F85F5@hasmsx109.ger.corp.intel.com> <alpine.DEB.2.21.1810231618280.19836@jsakkine-mobl1> <5B8DA87D05A7694D9FA63FD143655C1B9D9FB5D1@hasmsx109.ger.corp.intel.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII; format=flowed
@@ -55,41 +58,18 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 23 Oct 2018, Ard Biesheuvel wrote:
-> On 23 October 2018 at 04:01, James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
->> On Mon, 2018-10-22 at 19:19 -0300, Ard Biesheuvel wrote:
->> [...]
->>>> +static void hmac_init(struct shash_desc *desc, u8 *key, int
->>>> keylen)
->>>> +{
->>>> +       u8 pad[SHA256_BLOCK_SIZE];
->>>> +       int i;
->>>> +
->>>> +       desc->tfm = sha256_hash;
->>>> +       desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
->>>
->>> I don't think this actually does anything in the shash API
->>> implementation, so you can drop this.
->>
->> OK, I find crypto somewhat hard to follow.  There were bits I had to
->> understand, like when I wrote the CFB implementation or when I fixed
->> the ECDH scatterlist handling, but I've got to confess, in time
->> honoured tradition I simply copied this from EVM crypto without
->> actually digging into the code to understand why.
->>
->
-> Yeah, it is notoriously hard to use, and we should try to improve that.
+On Tue, 23 Oct 2018, Winkler, Tomas wrote:
+> To  the  out  label we jump after we are  done with locality and cmd
+> read() before we jump to locality 'locality'.  We will need to add
+> another variable to check If cmd_ready() was called or not in order to
+> get rid of the extran label, it's not internally tracked so far.
 
-James,
+I think this is fine.
 
-I would hope (already said in my review) to use longer than one
-character variable names for most of the stuff. I did not quite
-understand why you decided to use 'counter' for obvious counter
-variable and one character names for non-obvious stuff :-)
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-I'm not sure where the 'encoded' exactly comes in the variable
-name 'encoded_key' especially in the context of these cryptic
-names.
+I tested this by assigning rc error code instead of requesting locality
+in addition of testig unchanged code.
 
 /Jarkko
