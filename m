@@ -2,66 +2,66 @@ Return-Path: <SRS0=JlTe=NE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A17C004D3
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 13:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB2FC004D3
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 14:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3132220832
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 13:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 113F92082F
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 14:03:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7Qbpjfs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3132220832
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LUpMu5HM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 113F92082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbeJXWL6 (ORCPT
+        id S1726433AbeJXWb0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:11:58 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37439 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbeJXWL6 (ORCPT
+        Wed, 24 Oct 2018 18:31:26 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36541 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbeJXWbZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:11:58 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g9-v6so5658680wrq.4;
-        Wed, 24 Oct 2018 06:43:47 -0700 (PDT)
+        Wed, 24 Oct 2018 18:31:25 -0400
+Received: by mail-lj1-f193.google.com with SMTP id s15-v6so4896307lji.3;
+        Wed, 24 Oct 2018 07:03:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dNJtO6i3Kfvf1KktXEna8GrGSbj5XeMGVArGLLH9Iwk=;
-        b=D7Qbpjfs83TTGaTKXLLfoV9nMNNXmCTAscxOF5Z42z1oNXFMhuLoGfe1XT5+mkPX2g
-         FyUjTyIGZJDtnwkRTezwdphbBLQ9liGuLgBA8VnDTM1SIxSQwO98/+XYpH2EaSLgUUkr
-         rqkhrtT4T4a/khzjB4whJL9PMvLUCWXMGDiz9LxzyKYvbpoot2DLYo3F42X41rPuBVmq
-         r1ge3kHV1J7VIjRzZ3VEmpXDlBnSrFvhP5R9tpidAmBdaQNONznHGzuekmkh4R+yOMc0
-         rlY47qBRQkV+VvO/5rjZulEd/5wvTbL2mRqnfmTpztn5RpPNiMe9k6mYnkOjDPM8aJOr
-         9/aw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4oigFIxbskxQ+7j0sOvaNmyhXD381TEaoqgq18GgLd8=;
+        b=LUpMu5HMo/ylWBXkbU6ZEQy6GVx90KNbd+aWDu0yLoaiokqjUdXOKuzMXnbAGdgovn
+         WfIztBwenEEY/GPTQ/ygbrvC+Us5EzwZWMd9MhbLf2CCTpRu0jkWEiHZkUeuaDJsftNy
+         LcwpzSjevuss2oV/v2wblJAf6xwPZoXYtbixhWk2P0QuxkX8UwUBgzY1J8igdbYnCGt5
+         s8N7ATeOgkBc6x2RNfHfzLLlMQqAdhXtWOrHo1lhhw12cFp6ALhl4KowkPzOggsdrYRY
+         /SXajjQlrxy0VqtJdarjQrviHz4pVSkoy/nAwqsDyvmAt72C0el+kzkzwElbny961FMz
+         kxkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dNJtO6i3Kfvf1KktXEna8GrGSbj5XeMGVArGLLH9Iwk=;
-        b=uLnq4YehmBAti4uW2SbJMNvR/Qpzxuw/vXOuMtTLC4bsyZi7nF1KG3Qe6Omc3l+QL0
-         yHzmUiQbKU4Nb2pe70r6mTd3ElEtfHRKbNo3LeAQPop3xI4w/s/bBel2f3FJpr1m3RW3
-         ALTImTkiTdGndDnQ7VJ52BJ9LgKWPFSWxN07F6vTrK4Lf0oFu04tw49p4lpk0aLnjHnB
-         xlP6QafLm8KhGy4zMC9qHanUN3QUp4AuLdLtTLMf9SYokhYmsGpNWVhwnVePSIzCHmpM
-         ObJ9hdUK85jJk5MsLtoek46xXQpnEy2U9USc4sxoWyQBxWBfgjELzTJMDSz2u8hwAsIk
-         FyjQ==
-X-Gm-Message-State: AGRZ1gJuqLYxgFiQ2xZliABIw0KcQXlLlCSVv9CrFEH8nC/scCvqHg6J
-        C4jw/JD3Khq4Cp90hopmzQ==
-X-Google-Smtp-Source: AJdET5fl9VwfAPxKCK3bVYvE4u89Qilo/202VZ7Wn9iu+eHOMop3IqLiin8QfIt6E62WlAHIgRTj4A==
-X-Received: by 2002:adf:9592:: with SMTP id p18-v6mr3145316wrp.202.1540388626661;
-        Wed, 24 Oct 2018 06:43:46 -0700 (PDT)
-Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
-        by smtp.gmail.com with ESMTPSA id m16sm3812393wrx.75.2018.10.24.06.43.45
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4oigFIxbskxQ+7j0sOvaNmyhXD381TEaoqgq18GgLd8=;
+        b=Nuo3cBt/zFf2NFNP+RgLOxZ7LwuvzanGVleaknZc1VMTlDJi0CbS9LBbDMA+Wr96CZ
+         hW6oWKo2db4BBsGoXAbcWwPkCiApKBt4HWYg9CvOnq21pf8PZ96ZQi0q8NcbTf6qfcH2
+         aJAmoskw8oREmZUfWjp5XLeZhdaDnj6kQlrc33otpA0C7AwIbK09Z6YpmaEOhDjPfU8u
+         jE4CuRgnfJsp3L3NwuTi0VzJSCZB/RdNO0wZo4DeZsO7dFkO0zOYhNyC10sOG/de+95k
+         7m9VdVLGUWuTAnPeEy6tUKbusRqecI7ue2usqDd1Tu2kgqVFnt3vEFAjOGnKpErkcBDu
+         LqlA==
+X-Gm-Message-State: AGRZ1gKmmQ1hdVVDAG3gjqdmcnexzWyXfxisS4Iv1Bex80/TTwfXUiru
+        GkUxt2v3a6XxAm74UEO0u/xbUsLoN2w=
+X-Google-Smtp-Source: AJdET5fbSQ+PHVEsZDI7REDXRgFb8dtL3n5QN1wm5AfCwMDbxOo/kVGB8Ve/2K3BGrJpZtMkSbZsOw==
+X-Received: by 2002:a2e:b1ca:: with SMTP id e10-v6mr1650020lja.38.1540389787662;
+        Wed, 24 Oct 2018 07:03:07 -0700 (PDT)
+Received: from [10.222.93.64] ([164.5.176.2])
+        by smtp.gmail.com with ESMTPSA id 134-v6sm737953lfz.76.2018.10.24.07.03.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 06:43:45 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 16:43:43 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
+        Wed, 24 Oct 2018 07:03:05 -0700 (PDT)
+Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Kees Cook <keescook@chromium.org>,
         Matthew Wilcox <willy@infradead.org>,
@@ -70,33 +70,99 @@ Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Michal Hocko <mhocko@kernel.org>,
         kernel-hardening@lists.openwall.com,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        linux-security-module@vger.kernel.org,
+        igor stoppa <igor.stoppa@huawei.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Pekka Enberg <penberg@kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Lihao Liang <lianglihao@huawei.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/17] prmem: linked list: disable layout randomization
-Message-ID: <20181024134343.GA7767@avx2>
+        Josh Triplett <josh@joshtriplett.org>,
+        rostedt <rostedt@goodmis.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-14-igor.stoppa@huawei.com>
+ <20181023213504.28905-15-igor.stoppa@huawei.com>
+ <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
+Date:   Wed, 24 Oct 2018 17:03:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181023213504.28905-14-igor.stoppa@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 24, 2018 at 12:35:00AM +0300, Igor Stoppa wrote:
-> Some of the data structures used in list management are composed by two
-> pointers. Since the kernel is now configured by default to randomize the
-> layout of data structures soleley composed by pointers,
+On 24/10/18 14:37, Mathieu Desnoyers wrote:
 
-Isn't this true for function pointers?
+> I could not find a description of the overall context of this patch
+> (e.g. a patch 00/17 ?) that would explain the attack vectors this aims
+> to protect against.
+
+Apologies, I have to admit I was a bit baffled about what to do: the 
+patchset spans across several subsystems and I was reluctant at spamming 
+all the mailing lists.
+
+I was hoping that by CC-ing kernel.org, the explicit recipients would 
+get both the mail directly intended for them (as subsystem 
+maintainers/supporters) and the rest.
+
+The next time I'll err in the opposite direction.
+
+In the meanwhile, please find the whole set here:
+
+https://www.openwall.com/lists/kernel-hardening/2018/10/23/3
+
+> This might help figuring out whether this added complexity in the core
+> kernel is worth it.
+
+I hope it will.
+
+> Also, is it the right approach to duplicate existing APIs, or should we
+> rather hook into page fault handlers and let the kernel do those "shadow"
+> mappings under the hood ?
+
+This question is probably a good candidate for the small Q&A section I 
+have in the 00/17.
+
+
+> Adding a new GFP flags for dynamic allocation, and a macro mapping to
+> a section attribute might suffice for allocation or definition of such
+> mostly-read-only/seldom-updated data.
+
+I think what you are proposing makes sense from a pure hardening 
+standpoint. From a more defensive one, I'd rather minimise the chances 
+of giving a free pass to an attacker.
+
+Maybe there is a better implementation of this, than what I have in 
+mind. But, based on my current understanding of what you are describing, 
+there would be few issues:
+
+1) where would the pool go? The pool is a way to manage multiple vmas 
+and express common property they share. Even before a vma is associated 
+to the pool.
+
+2) there would be more code that can seamlessly deal with both protected 
+and regular data. Based on what? Some parameter, I suppose.
+That parameter would be the new target.
+If the code is "duplicated", as you say, the actual differences are 
+baked in at compile time. The "duplication" would also allow to have 
+always inlined functions for write-rare and leave more freedom to the 
+compiler for their non-protected version.
+
+Besides, I think the separate wr version also makes it very clear, to 
+the user of the API, that there will be a price to pay, in terms of 
+performance. The more seamlessly alternative might make this price less 
+obvious.
+
+--
+igor
