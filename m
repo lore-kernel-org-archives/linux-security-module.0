@@ -2,111 +2,65 @@ Return-Path: <SRS0=JlTe=NE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2044BC67863
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 03:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADEAC67863
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 03:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCA7F206B5
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 03:27:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GBTmaOSK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA7F206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A21062082E
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Oct 2018 03:29:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A21062082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbeJXLx1 (ORCPT
+        id S1726457AbeJXLzg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:53:27 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60690 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbeJXLx1 (ORCPT
+        Wed, 24 Oct 2018 07:55:36 -0400
+Received: from mga18.intel.com ([134.134.136.126]:50553 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725896AbeJXLzg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:53:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zy2K2F53CAySisxVSbuPTYkyH7omh33CXz0Q8cfK5Bk=; b=GBTmaOSKz8/YDkvow2wdP5lv+h
-        8buucDgjgAYU08f2K7BLQApXv4+do+w7TpHWqZqucNnUuTzzcMdw+r1A0KuruvQrEqG/zLNP5sEs6
-        EFyc8DjtyH6R/WQ+6NLMHdXOejE8gC/4YXyhzQH56PY8fz4pHlAdZvSNJbdlBvUS8LSfuQh+fIQhR
-        pXGWrw9/X7yEQSXZMx4ZBwI8Nfu33V7ZDptGUxno5x/X4tY/6l1N8bQzj+Dggt8/c+FK+9UlSrGpI
-        U2b//WB32MtA/LBmpa7VzttDfNUonly5cZLUXRmJewazEbJvLPovGZXtpn0PymkfKXJTeGz4cBlOX
-        MaV35JkA==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gF9p7-0005cA-SN; Wed, 24 Oct 2018 03:27:10 +0000
-Subject: Re: [PATCH 06/17] prmem: test cases for memory protection
-To:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
+        Wed, 24 Oct 2018 07:55:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2018 17:06:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,418,1534834800"; 
+   d="scan'208";a="243795578"
+Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
+  by orsmga004.jf.intel.com with ESMTP; 23 Oct 2018 17:06:44 -0700
+Date:   Wed, 24 Oct 2018 03:06:42 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Ken Goldman <kgold@linux.ibm.com>
+cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-7-igor.stoppa@huawei.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a6c74bb1-bd0c-ed8a-1dd3-b04f2e3c78d4@infradead.org>
-Date:   Tue, 23 Oct 2018 20:27:06 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH v4 0/7] add integrity and security to TPM2 transactions
+In-Reply-To: <a8a69222-94fb-7406-d9b2-207079727eb8@linux.ibm.com>
+Message-ID: <alpine.DEB.2.21.1810240303560.8524@jsakkine-mobl1>
+References: <1540193596.3202.7.camel@HansenPartnership.com> <a8a69222-94fb-7406-d9b2-207079727eb8@linux.ibm.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181023213504.28905-7-igor.stoppa@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/23/18 2:34 PM, Igor Stoppa wrote:
-> diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-> index 9a7b8b049d04..57de5b3c0bae 100644
-> --- a/mm/Kconfig.debug
-> +++ b/mm/Kconfig.debug
-> @@ -94,3 +94,12 @@ config DEBUG_RODATA_TEST
->      depends on STRICT_KERNEL_RWX
->      ---help---
->        This option enables a testcase for the setting rodata read-only.
-> +
-> +config DEBUG_PRMEM_TEST
-> +    tristate "Run self test for protected memory"
-> +    depends on STRICT_KERNEL_RWX
-> +    select PRMEM
-> +    default n
-> +    help
-> +      Tries to verify that the memory protection works correctly and that
-> +      the memory is effectively protected.
+On Mon, 22 Oct 2018, Ken Goldman wrote:
+> Does this design assume that there was at time zero no monitoring?
+> This would permit some shared secret to be established.
+>
+> Or does it assume that the interception may have been present from
+> the first boot?  If so, how is the first shared secret established.
+> Salting using the EK is the usual method, but this requires walking the EK
+> certificate chain and embedding the TPM vendor CA certificates in the kernel.
 
-Hi,
+Kernel gets the public portion EK and uses its own key pair in its own
+end so everything should be good, right?
 
-a. It seems backwards (or upside down) to have a test case select a feature (PRMEM)
-instead of depending on that feature.
-
-b. Since PRMEM depends on MMU (in patch 04/17), the "select" here could try to
-enabled PRMEM even when MMU is not enabled.
-
-Changing this to "depends on PRMEM" would solve both of these issues.
-
-c. Don't use "default n".  That is already the default.
-
-
-thanks,
--- 
-~Randy
+/Jarkko
