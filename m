@@ -2,161 +2,151 @@ Return-Path: <SRS0=wXFO=NF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7ABC46475
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 15:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE2CC46475
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 15:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F009D2083E
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 15:55:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F009D2083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 807BC2083E
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 15:56:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 807BC2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeJZA2b (ORCPT
+        id S1727367AbeJZAaM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:28:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60434 "EHLO mx1.redhat.com"
+        Thu, 25 Oct 2018 20:30:12 -0400
+Received: from mga11.intel.com ([192.55.52.93]:7014 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727350AbeJZA2a (ORCPT
+        id S1727350AbeJZAaM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:28:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 540783001A6F;
-        Thu, 25 Oct 2018 15:55:08 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3B3495B69D;
-        Thu, 25 Oct 2018 15:55:05 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 25 Oct 2018 17:55:06 +0200 (CEST)
-Date:   Thu, 25 Oct 2018 17:55:04 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     serge@hallyn.com,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
+        Thu, 25 Oct 2018 20:30:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 08:56:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,424,1534834800"; 
+   d="scan'208";a="244333282"
+Received: from mstribae-mobl.ger.corp.intel.com ([10.249.254.38])
+  by orsmga004.jf.intel.com with ESMTP; 25 Oct 2018 08:56:46 -0700
+Date:   Thu, 25 Oct 2018 16:56:45 +0100 (IST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-Message-ID: <20181025155503.GF3725@redhat.com>
-References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
- <20181022134634.GA7358@redhat.com>
- <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
- <20181025111355.GA3725@redhat.com>
- <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
- <20181025121709.GD3725@redhat.com>
- <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH v4 2/7] tpm2-sessions: Add full HMAC and encrypt/decrypt
+ session handling
+In-Reply-To: <1540373514.3008.45.camel@HansenPartnership.com>
+Message-ID: <alpine.DEB.2.21.1810251643080.4065@jsakkine-mobl1>
+References: <1540193596.3202.7.camel@HansenPartnership.com>  <1540193787.3202.10.camel@HansenPartnership.com>  <alpine.DEB.2.21.1810232239140.8524@jsakkine-mobl1> <1540373514.3008.45.camel@HansenPartnership.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 25 Oct 2018 15:55:08 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/25, Tetsuo Handa wrote:
+On Wed, 24 Oct 2018, James Bottomley wrote:
+>>> +static void KDFa(u8 *key, int keylen, const char *label, u8 *u,
+>>> +		 u8 *v, int bytes, u8 *out)
+>>
+>> Should this be in lower case? I would rename it as tpm_kdfa().
 >
-> On 2018/10/25 21:17, Oleg Nesterov wrote:
-> >>> And yes, task_is_descendant() can hit the dead child, if nothing else it can
-> >>> be killed. This can explain the kasan report.
-> >>
-> >> The kasan is reporting that child->real_parent (or maybe child->real_parent->real_parent
-> >> or child->real_parent->real_parent->real_parent ...) was pointing to already freed memory,
-> >> isn't it?
-> >
-> > Yes. and you know, I am all confused. I no longer can understand you :/
+> This one is defined as KDFa() in the standards and it's not TPM
+> specific (although some standards refer to it as KDFA).  I'm not averse
+> to making them tpm_kdfe() and tpm_kdfa() but I was hoping that one day
+> the crypto subsystem would need them and we could move them in there
+> because KDFs are the new shiny in crypto primitives (TLS 1.2 started
+> using them, for instance).
+
+I care more about tracing and debugging than naming and having 'tpm_' in
+front of every TPM function makes tracing a lean process. AFAIK using
+upper case letters is against kernel coding conventions. I'm not sure
+why this would make an exception on that.
+
+>> Why doesn't it matter here?
 >
-> Why don't we need to check every time like shown below?
-> Why checking only once is sufficient?
+> Because, as the comment says, it eventually gets overwritten by running
+> ecdh to derive the two co-ordinates.  (pointers to these two
+> uninitialized areas are passed into the ecdh destination sg list).
 
-Why do you think it is not sufficient?
+Oh, I just misunderstood the comment. Wouldn't it be easier to say that
+the data is initialized later?
 
-Again, I can be easily wrong, rcu is not simple, but so far I think we need
-a single check at the start.
+>>> +	buf_len = crypto_ecdh_key_len(&p);
+>>> +	if (sizeof(encoded_key) < buf_len) {
+>>> +		dev_err(&chip->dev, "salt buffer too small needs
+>>> %d\n",
+>>> +			buf_len);
+>>> +		goto out;
+>>> +	}
+>>
+>> In what situation this can happen? Can sizeof(encoded_key) >=
+>> buf_len?
+>
+> Yes, but only if someone is trying to crack your ecdh.  One of the
+> security issues in ecdh is if someone makes a very specific point
+> choice (usually in the cofactor space) that has a very short period,
+> the attacker can guess the input to KDFe.  In this case if TPM genie
+> provided a specially crafted attack EC point, we'd detect it here
+> because the resulting buffer would be too short.
 
-> --- a/security/yama/yama_lsm.c
-> +++ b/security/yama/yama_lsm.c
-> @@ -285,7 +285,7 @@ static int task_is_descendant(struct task_struct *parent,
->  	rcu_read_lock();
->  	if (!thread_group_leader(parent))
->  		parent = rcu_dereference(parent->group_leader);
-> -	while (walker->pid > 0) {
-> +	while (pid_alive(walker) && walker->pid > 0) {
+Right. Thank you for the explanation. Here some kind of comment might
+not be a bad idea...
 
-OK. To simplify, ets suppose that task_is_descendant() is called with tasklist
-lock held. And lets suppose that all tasks are single-threaded.
+>> In general this function should have a clear explanation what it does
+>> and maybe less these one character variables but instead variables
+>> with more documenting names. Explain in high level what algorithms
+>> are used and how the salt is calculated.
+>
+> I'll try, but this is a rather complex function.
 
-Then we obviously need a single check at the start, we need to ensure that the
-child was not removed from its ->real_parent->children list. The latter means
-that if ->real_parent exits, the child will be re-parented and its ->real_parent
-will be updated.
+Understood. I do not expect perfection here and we can improve
+documetation later on.
 
-So we could do
+For anyone wanting to review James' patches and w/o much experience on
+EC, I recommend reading this article:
 
-	read_lock(tasklist);
+https://arstechnica.com/information-technology/2013/10/a-relatively-easy-to-understand-primer-on-elliptic-curve-cryptography/
 
-	if (list_empty(child->sibling))
-		// it is dead, removed from ->children list, we can't trust
-		// child->real_parent
-		return -EWHATEVER;
+I read it few years ago and refreshed my memory few days ago by
+re-reading it.
 
-	task_is_descendant(current, child);
+>
+>>> +
+>>> +/**
+>>> + * tpm_buf_append_hmac_session() append a TPM session element
+>>> + * @buf: The buffer to be appended
+>>> + * @auth: the auth structure allocated by
+>>> tpm2_start_auth_session()
+>>> + * @attributes: The session attributes
+>>> + * @passphrase: The session authority (NULL if none)
+>>> + * @passphraselen: The length of the session authority (0 if none)
+>>
+>> The alignment.
+>
+> the alignment of what?
 
-But note that we can safely use pid_alive(child) instead, detach_pid() and
-list_del_init(&p->sibling) happen "at the same time" since we hold tasklist.
+We generally have parameter descriptions tab-aligned.
 
-(And btw, I suggested several times to rename it, or add another helper with
- a better name. Note also that we could check, say, ->sighand != NULL with
- the same effect.)
+>> Why there would be trailing zeros?
+>
+> Because TPM 1.2 mandated zero padded fixed size passphrases so the TPM
+> 2.0 standard specifies a way of converting these to variable size
+> strings by eliminating the zero padding.
 
+Ok.
 
-Now. Why do you think rcu_read_lock() differs in that we need to check
-pid_alive() at every step?
+> James
 
-Suppose that one of the grand parents exits, and it is going to be freed. Again,
-to (over)simplify the things, lets suppose that release_task() does
+I'm also looking forward for the CONTEXT_GAP patch based on the
+yesterdays discussion. We do want it and I was stupid not to take it
+couple years ago :-) Thanks.
 
-	synchronize_rcu();
-	free_task(p);
-
-at the end. Now, can
-
-	rcu_read_lock();
-	if (pid_alive(child)) {
-		while (child->pid)
-			child = child->real_parent;
-	}
-	rcu_read_unlock();
-
-hit the already freed ->real_parent ? Say, the freed child->real_parent->real_parent.
-
-Lets denote P1 = child->real_parent, P2 = P1->real_parent. Can P2 be already freed?
-
-This is only possible if synchronize_rcu() above was called before rcu_read_lock(),
-see the last sentence below.
-
-If P1->real_parent is still P2, then P1 has already exited too. And we still observe
-that child->real_parent == P1, this too is only possible if child has exited, so we
-must see pid_alive() == F.
-
-Why must we see pid_alive() == F without tasklist? It must be true, release_task()
-is serialized by tasklist_lock, but why we can't get the stale value under
-rcu_read_lock() ?
-
-Because our rcu read-lock critical section extends beyond the return from
-synchronize_rcu(), and thus we must have a full memory barrier _between_
-that synchronize_rcu() and our rcu_read_lock(). We must see all memory updates,
-including thread_pid = NULL which makes pid_alive() == F.
-
-Do you see any hole?
-
-Oleg.
-
+/Jarkko
