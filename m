@@ -6,81 +6,81 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCDA3ECDE46
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 20:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9617CC46475
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 20:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AEBB2054F
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 20:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A1032054F
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 20:31:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Xdmr/J/f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AEBB2054F
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hD0XyUca"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A1032054F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725946AbeJZFBB (ORCPT
+        id S1725867AbeJZFFY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Oct 2018 01:01:01 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34374 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbeJZFBB (ORCPT
+        Fri, 26 Oct 2018 01:05:24 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38955 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725834AbeJZFFY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Oct 2018 01:01:01 -0400
-Received: by mail-lf1-f65.google.com with SMTP id n26-v6so7830616lfl.1
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Oct 2018 13:26:48 -0700 (PDT)
+        Fri, 26 Oct 2018 01:05:24 -0400
+Received: by mail-lf1-f67.google.com with SMTP id p11-v6so7812854lfc.6
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Oct 2018 13:31:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NEx6wTAtxpXIkFKcFNoT1Bo/YKcSYnIa2M4hPw7qvVo=;
-        b=Xdmr/J/f+oNW1BfFZIdhjVEfgSM9RHek4iqHCMJ+vGXUUFSVs5kDoukBvxFqk87L/C
-         sgsp4IkmtRWUBPApwJUPzhfAke8oDOht4pR954691+DpUfDCJdxd5UHhC17344Dm3QEK
-         9Rc5F8XFP6uurHQQ9v3Rde3K7CtEXZ/7GVrSQ=
+        bh=Ubu7hiIXp/Cf6M28prv4hk/vUOl9HoBHNpLAI80hflk=;
+        b=hD0XyUcaGfWNSl6iBi87qv+OBvn5MN0p6OAAm0vvFAd8wiH0zqJj+6DKQ3nFAcsLq4
+         yfsU2OQDanDEokJA9o3r93bR2EI9GDCSJDPL57evETouJk9D/DCk+n19ApFkbLVx0ICL
+         Kvzy+8YWEejbVXg79Ur37NAxgG6Vqq6KsLzNs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NEx6wTAtxpXIkFKcFNoT1Bo/YKcSYnIa2M4hPw7qvVo=;
-        b=FAAfjy7ogJqXQ6wTQYmqFcd2QkY3kKzcEkHDJ4uN5y5zZxyExQTgtKMHOstxLXF7Sn
-         7SSCUb1tbIjVoLtCyYYNWIDt/mkyDlxUkKZHVbeV15G0U9C/vXimwLFN6apCed1k6RQO
-         WEP/mB1XF+DCd2qH+wWtFZFd+s5UnM9PJ1mOyS49nnKSWMqC0qYgLGe13esYrKUltDok
-         AqCyjXfpVTzzKtX+6wzT53R/nQsUjNClDaslHT3VfTxgZqOhDuLrJBEk1lfjP07TlESI
-         bMPloSqii73VJ68WSnJ63ZySSxb+iRRqECdfVaQEveE0vIbFEqCwB2HuxcNSylKu6PlB
-         MIng==
-X-Gm-Message-State: AGRZ1gIdCGXIoy57PdBbeDh9PXVpy8VWXfLHz4/rQ2UlQxTnyIRWesx+
-        p0Yy8Ij3tLXdJKGFM+5IRpTLl1NaA5kBVQ==
-X-Google-Smtp-Source: AJdET5dQWEMh0iImmN5RMV+QgJxzYPq2ow63zEo+4Ct4/Yme6BwDbJhXpBD8nJm5XczMERw7c75l2g==
-X-Received: by 2002:a19:17d8:: with SMTP id 85mr421368lfx.5.1540499207295;
-        Thu, 25 Oct 2018 13:26:47 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id 9-v6sm1264643lju.61.2018.10.25.13.26.46
+        bh=Ubu7hiIXp/Cf6M28prv4hk/vUOl9HoBHNpLAI80hflk=;
+        b=l7AmmRb49jyBHZ7tAL0a7FbDXYXHF/4R0gG3XPuMS0WaDXsUD3hPrP+nwym1dvJO4A
+         i9fwUkyH6JCzXfpOcpnTaMe4LE3QFmYzrqJKfQiG4bLCvkQ9T6JL2pWGC6JnIV2WzhBF
+         UnYyQS/SSFV2DOPEt8Oav/O0S/xrl8SkHAm+X9rQKiw9wk545bldOLBOedPFspaiDzmL
+         7XiX19OzE9h04BQEvY99VCPF40Lv2EbBgbNFNaaoTrE644ldcub4DbNmf0EPgRQp0iXx
+         kuThrY8JBcCIxllnE6wNBg48XyfeqIruWDUFF3wpmxAnXV2V1miziYnBAbFNKHhq8Ky8
+         KRKQ==
+X-Gm-Message-State: AGRZ1gLSDz2ubpJNOrxvPlEv/PYyAYLumpGeJPbXY1ujqQvd3Oi7x4hn
+        csBKEczJggHGaEznz5iOJRType7uiplAEA==
+X-Google-Smtp-Source: AJdET5daQK30vuan8FBuuWdKhxNrJJlNzRnzkBbPOwVlhAyRVQ5nDYK5z6FA9J3VLUSv1uXBmx/l8Q==
+X-Received: by 2002:a19:10da:: with SMTP id 87mr450814lfq.60.1540499469686;
+        Thu, 25 Oct 2018 13:31:09 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id t15-v6sm1265019lji.75.2018.10.25.13.31.08
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 13:26:46 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id h192so2875050lfg.3
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Oct 2018 13:26:46 -0700 (PDT)
-X-Received: by 2002:ac2:41d8:: with SMTP id d24-v6mr414428lfi.138.1540499205935;
- Thu, 25 Oct 2018 13:26:45 -0700 (PDT)
+        Thu, 25 Oct 2018 13:31:08 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id f3-v6so348573ljk.9
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Oct 2018 13:31:08 -0700 (PDT)
+X-Received: by 2002:a2e:980f:: with SMTP id a15-v6mr530691ljj.6.1540499468327;
+ Thu, 25 Oct 2018 13:31:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <alpine.LRH.2.21.1810252032230.30470@namei.org>
-In-Reply-To: <alpine.LRH.2.21.1810252032230.30470@namei.org>
+References: <alpine.LRH.2.21.1810252035220.30470@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1810252035220.30470@namei.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 25 Oct 2018 13:26:30 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgyh8P4jwOoffW-2CHcuQLZuTf2+YZWnudALcxkeBUj=A@mail.gmail.com>
-Message-ID: <CAHk-=wgyh8P4jwOoffW-2CHcuQLZuTf2+YZWnudALcxkeBUj=A@mail.gmail.com>
-Subject: Re: [GIT PULL] security: TPM updates for v4.20
+Date:   Thu, 25 Oct 2018 13:30:52 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgwjHF9NrHY6Vii3gSz8aKVgjPZwAvA78R+t3t6iq+L3A@mail.gmail.com>
+Message-ID: <CAHk-=wgwjHF9NrHY6Vii3gSz8aKVgjPZwAvA78R+t3t6iq+L3A@mail.gmail.com>
+Subject: Re: [GIT PULL] security: Smack updates for v4.20
 To:     jmorris@namei.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 25, 2018 at 2:35 AM James Morris <jmorris@namei.org> wrote:
+On Thu, Oct 25, 2018 at 2:37 AM James Morris <jmorris@namei.org> wrote:
 >
-> From Jarkko: "These are the updates to v4.20. The only new feature is
-> non-blocking operation for /dev/tpm0."
+> From Casey: "Here are three patches for Smack for 4.20. Two clean up
+> warnings and one is a rarely encountered ptrace capability check."
 
 Pulled,
 
-                  Linus
+                 Linus
