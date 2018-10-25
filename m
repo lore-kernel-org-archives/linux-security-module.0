@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C516AECDE46
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 00:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C8EECDE44
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 00:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92C2A20824
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 00:26:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C2A20824
+	by mail.kernel.org (Postfix) with ESMTP id 075B320824
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 00:28:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075B320824
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbeJYI4T (ORCPT
+        id S1726236AbeJYI6a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Oct 2018 04:56:19 -0400
-Received: from mga01.intel.com ([192.55.52.88]:62828 "EHLO mga01.intel.com"
+        Thu, 25 Oct 2018 04:58:30 -0400
+Received: from mga01.intel.com ([192.55.52.88]:62983 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726117AbeJYI4T (ORCPT
+        id S1726019AbeJYI6a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:56:19 -0400
+        Thu, 25 Oct 2018 04:58:30 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 17:26:01 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 17:28:13 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,422,1534834800"; 
-   d="scan'208";a="102424817"
+   d="scan'208";a="102425444"
 Received: from chgehman-mobl2.amr.corp.intel.com (HELO [10.251.13.14]) ([10.251.13.14])
-  by orsmga001.jf.intel.com with ESMTP; 24 Oct 2018 17:26:01 -0700
-Subject: Re: [PATCH 03/17] prmem: vmalloc support for dynamic allocation
+  by orsmga001.jf.intel.com with ESMTP; 24 Oct 2018 17:28:12 -0700
+Subject: Re: [PATCH 05/17] prmem: shorthands for write rare on common types
 To:     Igor Stoppa <igor.stoppa@gmail.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Kees Cook <keescook@chromium.org>,
@@ -46,17 +46,13 @@ To:     Igor Stoppa <igor.stoppa@gmail.com>,
 Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>, linux-mm@kvack.org,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-4-igor.stoppa@huawei.com>
+ <20181023213504.28905-6-igor.stoppa@huawei.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -102,12 +98,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <489bf780-7dd2-2feb-8456-25ad5beeb3e4@intel.com>
-Date:   Wed, 24 Oct 2018 17:26:00 -0700
+Message-ID: <fbb38802-3dc3-4890-c981-724b9096a6be@intel.com>
+Date:   Wed, 24 Oct 2018 17:28:12 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181023213504.28905-4-igor.stoppa@huawei.com>
+In-Reply-To: <20181023213504.28905-6-igor.stoppa@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -116,9 +112,10 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On 10/23/18 2:34 PM, Igor Stoppa wrote:
-> +#define VM_PMALLOC		0x00000100	/* pmalloc area - see docs */
-> +#define VM_PMALLOC_WR		0x00000200	/* pmalloc write rare area */
-> +#define VM_PMALLOC_PROTECTED	0x00000400	/* pmalloc protected area */
+> Wrappers around the basic write rare functionality, addressing several
+> common data types found in the kernel, allowing to specify the new
+> values through immediates, like constants and defines.
 
-Please introduce things as you use them.  It's impossible to review a
-patch that just says "see docs" that doesn't contain any docs. :)
+I have to wonder whether this is the right way, or whether a
+size-agnostic function like put_user() is the right way.  put_user() is
+certainly easier to use.
