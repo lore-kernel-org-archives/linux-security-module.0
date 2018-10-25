@@ -2,128 +2,86 @@ Return-Path: <SRS0=wXFO=NF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2675ECDE46
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 16:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A716BC46475
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 20:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80E2020854
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 16:43:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80E2020854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2AF972054F
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 20:25:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CYVfvVJK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF972054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeJZBR1 (ORCPT
+        id S1725832AbeJZE7L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Oct 2018 21:17:27 -0400
-Received: from mga12.intel.com ([192.55.52.136]:13580 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727564AbeJZBR1 (ORCPT
+        Fri, 26 Oct 2018 00:59:11 -0400
+Received: from mail-lf1-f49.google.com ([209.85.167.49]:37661 "EHLO
+        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbeJZE7K (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Oct 2018 21:17:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 09:43:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,424,1534834800"; 
-   d="scan'208";a="102648104"
-Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
-  by orsmga001.jf.intel.com with ESMTP; 25 Oct 2018 09:43:52 -0700
-Subject: Re: [PATCH 06/17] prmem: test cases for memory protection
-To:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-7-igor.stoppa@huawei.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <0175ca6a-40d1-0fde-350c-891488432ecb@intel.com>
-Date:   Thu, 25 Oct 2018 09:43:52 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 26 Oct 2018 00:59:10 -0400
+Received: by mail-lf1-f49.google.com with SMTP id a82-v6so7829005lfa.4
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Oct 2018 13:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7fX5oxsXfvnoDXOpfE1vrfgQeNDjptwR6xgo4hnsCak=;
+        b=CYVfvVJKQsWZJ9FSoyKFFWfGG4SsgJqf0ZG20xJxgIKlR6W11BXqLPceO8JJSOcdNJ
+         OUgcCREuD9KsDyxRIj0FTPkJ4UTeGpJ7FayBKZ1hClbS6QEDCFnymm6lsyOsVneKHW40
+         1Q2e2XX+uwcN0lLQZYWChvBSPOibnqnKuTyFI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7fX5oxsXfvnoDXOpfE1vrfgQeNDjptwR6xgo4hnsCak=;
+        b=EmmnHU4bH+vhXlBogO+Bve422Ye5cbQoKq5cMjuu7QDp5DKcDaTB4mY9CWJxLT1/ux
+         8ZnYcrp92LU0hfWrQssgZCUqQHXXxy/2R1Iq5xhO/xwzO9R0iwD0E/dYe1pQG8OqicnN
+         wcNc9F7enqMkN08byKpqWWrBkaDzrknhwd0YavIzb7ekElU9xjFAdFiERvVAwW9RKIG5
+         neHRDa7PgxitGxv42lhW0U0oOuxzv4I89Ek/uBK9hBecMJ5rPg7nMqrFCJcGhM3ymKq4
+         fD9HWzHnhMvIdt+NU1nzzTzucXVQNFU/OrDzVlauHUZXJPWsnJMtNqsTPYXkX8xtPWl6
+         1aag==
+X-Gm-Message-State: AGRZ1gJW9MTxmh/WBXLY5AAhz7r5fdsS+4G/gJLM4ACGf33w8SnsDqgL
+        9xAYzfhooqznHm9vkW6pwl/kcQszaMa5Lw==
+X-Google-Smtp-Source: AJdET5dZaGjhI3koCWFLtMSpVx+ON+SOC3pmE4ovdJQoGIGMT87E5WeStqyfPxgu+2TT1LvWiuG21A==
+X-Received: by 2002:a19:7306:: with SMTP id o6mr406038lfc.136.1540499097333;
+        Thu, 25 Oct 2018 13:24:57 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id h87-v6sm1299010lji.9.2018.10.25.13.24.56
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 13:24:56 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id h192so2871305lfg.3
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Oct 2018 13:24:56 -0700 (PDT)
+X-Received: by 2002:a19:288c:: with SMTP id o134-v6mr457113lfo.124.1540499095902;
+ Thu, 25 Oct 2018 13:24:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181023213504.28905-7-igor.stoppa@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <alpine.LRH.2.21.1810252029570.30470@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1810252029570.30470@namei.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 25 Oct 2018 13:24:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wif2p+P2HWUdyak7i3tgMgtG-dT_hh1uwt7=HgVyUSBcQ@mail.gmail.com>
+Message-ID: <CAHk-=wif2p+P2HWUdyak7i3tgMgtG-dT_hh1uwt7=HgVyUSBcQ@mail.gmail.com>
+Subject: Re: [GIT PULL] security: integrity subsystem updates for 4.20
+To:     jmorris@namei.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> +static bool is_address_protected(void *p)
-> +{
-> +	struct page *page;
-> +	struct vmap_area *area;
-> +
-> +	if (unlikely(!is_vmalloc_addr(p)))
-> +		return false;
-> +	page = vmalloc_to_page(p);
-> +	if (unlikely(!page))
-> +		return false;
-> +	wmb(); /* Flush changes to the page table - is it needed? */
+On Thu, Oct 25, 2018 at 2:32 AM James Morris <jmorris@namei.org> wrote:
+>
+> From Mimi: "This pull request contains a couple of bug fixes, including
+> one for a recent problem with calculating file hashes on overlayfs, and
+> some code cleanup."
 
-No.
+Pulled,
 
-The rest of this is just pretty verbose and seems to have been very
-heavily copied and pasted.  I guess that's OK for test code, though.
+                  Linus
