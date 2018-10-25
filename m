@@ -3,35 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CC8ECDE46
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 00:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C516AECDE46
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 00:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C50B520824
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 00:24:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C50B520824
+	by mail.kernel.org (Postfix) with ESMTP id 92C2A20824
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 00:26:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C2A20824
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbeJYIyo (ORCPT
+        id S1726647AbeJYI4T (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Oct 2018 04:54:44 -0400
-Received: from mga06.intel.com ([134.134.136.31]:51883 "EHLO mga06.intel.com"
+        Thu, 25 Oct 2018 04:56:19 -0400
+Received: from mga01.intel.com ([192.55.52.88]:62828 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726117AbeJYIyo (ORCPT
+        id S1726117AbeJYI4T (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:54:44 -0400
+        Thu, 25 Oct 2018 04:56:19 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 17:24:28 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 17:26:01 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,422,1534834800"; 
-   d="scan'208";a="102424364"
+   d="scan'208";a="102424817"
 Received: from chgehman-mobl2.amr.corp.intel.com (HELO [10.251.13.14]) ([10.251.13.14])
-  by orsmga001.jf.intel.com with ESMTP; 24 Oct 2018 17:24:27 -0700
-Subject: Re: [PATCH 02/17] prmem: write rare for static allocation
+  by orsmga001.jf.intel.com with ESMTP; 24 Oct 2018 17:26:01 -0700
+Subject: Re: [PATCH 03/17] prmem: vmalloc support for dynamic allocation
 To:     Igor Stoppa <igor.stoppa@gmail.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Kees Cook <keescook@chromium.org>,
@@ -45,13 +46,17 @@ To:     Igor Stoppa <igor.stoppa@gmail.com>,
 Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Joe Perches <joe@perches.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-3-igor.stoppa@huawei.com>
+ <20181023213504.28905-4-igor.stoppa@huawei.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -97,85 +102,23 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <23022d8a-dcef-20d5-cb07-a218b08b7b9a@intel.com>
-Date:   Wed, 24 Oct 2018 17:24:27 -0700
+Message-ID: <489bf780-7dd2-2feb-8456-25ad5beeb3e4@intel.com>
+Date:   Wed, 24 Oct 2018 17:26:00 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181023213504.28905-3-igor.stoppa@huawei.com>
+In-Reply-To: <20181023213504.28905-4-igor.stoppa@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> +static __always_inline bool __is_wr_after_init(const void *ptr, size_t size)
-> +{
-> +	size_t start = (size_t)&__start_wr_after_init;
-> +	size_t end = (size_t)&__end_wr_after_init;
-> +	size_t low = (size_t)ptr;
-> +	size_t high = (size_t)ptr + size;
-> +
-> +	return likely(start <= low && low < high && high <= end);
-> +}
+On 10/23/18 2:34 PM, Igor Stoppa wrote:
+> +#define VM_PMALLOC		0x00000100	/* pmalloc area - see docs */
+> +#define VM_PMALLOC_WR		0x00000200	/* pmalloc write rare area */
+> +#define VM_PMALLOC_PROTECTED	0x00000400	/* pmalloc protected area */
 
-size_t is an odd type choice for doing address arithmetic.
-
-> +/**
-> + * wr_memset() - sets n bytes of the destination to the c value
-> + * @dst: beginning of the memory to write to
-> + * @c: byte to replicate
-> + * @size: amount of bytes to copy
-> + *
-> + * Returns true on success, false otherwise.
-> + */
-> +static __always_inline
-> +bool wr_memset(const void *dst, const int c, size_t n_bytes)
-> +{
-> +	size_t size;
-> +	unsigned long flags;
-> +	uintptr_t d = (uintptr_t)dst;
-> +
-> +	if (WARN(!__is_wr_after_init(dst, n_bytes), WR_ERR_RANGE_MSG))
-> +		return false;
-> +	while (n_bytes) {
-> +		struct page *page;
-> +		uintptr_t base;
-> +		uintptr_t offset;
-> +		uintptr_t offset_complement;
-
-Again, these are really odd choices for types.  vmap() returns a void*
-pointer, on which you can do arithmetic.  Why bother keeping another
-type to which you have to cast to and from?
-
-BTW, our usual "pointer stored in an integer type" is 'unsigned long',
-if a pointer needs to be manipulated.
-
-> +		local_irq_save(flags);
-
-Why are you doing the local_irq_save()?
-
-> +		page = virt_to_page(d);
-> +		offset = d & ~PAGE_MASK;
-> +		offset_complement = PAGE_SIZE - offset;
-> +		size = min(n_bytes, offset_complement);
-> +		base = (uintptr_t)vmap(&page, 1, VM_MAP, PAGE_KERNEL);
-
-Can you even call vmap() (which sleeps) with interrupts off?
-
-> +		if (WARN(!base, WR_ERR_PAGE_MSG)) {
-> +			local_irq_restore(flags);
-> +			return false;
-> +		}
-
-You really need some kmap_atomic()-style accessors to wrap this stuff
-for you.  This little pattern is repeated over and over.
-
-...
-> +const char WR_ERR_RANGE_MSG[] = "Write rare on invalid memory range.";
-> +const char WR_ERR_PAGE_MSG[] = "Failed to remap write rare page.";
-
-Doesn't the compiler de-duplicate duplicated strings for you?  Is there
-any reason to declare these like this?
-
+Please introduce things as you use them.  It's impossible to review a
+patch that just says "see docs" that doesn't contain any docs. :)
