@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8ACEC46475
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 11:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A0AC46475
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 12:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CA252075D
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 11:52:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA252075D
+	by mail.kernel.org (Postfix) with ESMTP id 4EE9F2075D
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 12:05:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE9F2075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbeJYUZR (ORCPT
+        id S1727302AbeJYUhx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Oct 2018 16:25:17 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45416 "EHLO mx1.redhat.com"
+        Thu, 25 Oct 2018 16:37:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36344 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727208AbeJYUZQ (ORCPT
+        id S1727276AbeJYUhx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Oct 2018 16:25:16 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        Thu, 25 Oct 2018 16:37:53 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 514A93082B22;
-        Thu, 25 Oct 2018 11:52:50 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id D3E2B308212A;
+        Thu, 25 Oct 2018 12:05:24 +0000 (UTC)
 Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 85A8C4DA81;
-        Thu, 25 Oct 2018 11:52:48 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0531362527;
+        Thu, 25 Oct 2018 12:05:22 +0000 (UTC)
 Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 25 Oct 2018 13:52:48 +0200 (CEST)
-Date:   Thu, 25 Oct 2018 13:52:46 +0200
+        oleg@redhat.com; Thu, 25 Oct 2018 14:05:23 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 14:05:20 +0200
 From:   Oleg Nesterov <oleg@redhat.com>
 To:     Kees Cook <keescook@chromium.org>
 Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
@@ -44,83 +44,51 @@ Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         syzkaller-bugs@googlegroups.com
 Subject: Re: KASAN: use-after-free Read in task_is_descendant
-Message-ID: <20181025115245.GB3725@redhat.com>
-References: <0000000000004904df0578b7d3da@google.com>
- <bf1a083c-0d09-07fb-6ad2-4bf30ac49cd8@I-love.SAKURA.ne.jp>
- <20181022095439.GA4613@redhat.com>
- <CAGXu5jLxLqieLCZfAzw_xX-k3bbESUF3pjuGEDRRH1CY2O8JSA@mail.gmail.com>
+Message-ID: <20181025120520.GC3725@redhat.com>
+References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
+ <20181022134634.GA7358@redhat.com>
+ <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
+ <20181025111355.GA3725@redhat.com>
+ <CAGXu5jK5c5mf=EarFNBWeq5Gc3LB=Kd8tqDc_a2nc6Xmtu=s6g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jLxLqieLCZfAzw_xX-k3bbESUF3pjuGEDRRH1CY2O8JSA@mail.gmail.com>
+In-Reply-To: <CAGXu5jK5c5mf=EarFNBWeq5Gc3LB=Kd8tqDc_a2nc6Xmtu=s6g@mail.gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 25 Oct 2018 11:52:50 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 25 Oct 2018 12:05:25 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On 10/25, Kees Cook wrote:
 >
-> task_is_descendant() is called under rcu_read_lock() in both
-> ptracer_exception_found() and yama_ptrace_access_check() so I don't
-> understand how any of the tasks could get freed? This is walking
-> group_leader and real_parent -- are these not stable under rcu_lock()?
+> On Thu, Oct 25, 2018 at 12:13 PM, Oleg Nesterov <oleg@redhat.com> wrote:
+> > So again, suppose that "child" is already dead. Its task_struct can't be freed,
+> > but child->real_parent can point to the already freed memory.
+>
+> I can't find a path for "child" to be released. I see task_lock()
+> always called on it before it ends up in Yama.
 
-group_leader/real_parent/etc are no longer rcu-protected after the exiting
-child calls release_task() which in particular removes the child from
-children/thread_group lists.
+Are you saying that yama_ptrace_access_check() is always called under
+task_lock(child) ? Yes, it seems so
 
-OK. Suppose you have an rcu-protected list, and each element also has a
-reference counter so you can do something
+So what? Say, ptrace_attach() can hit a dead task. It should notice this
+and fail later, but security_ptrace_access_check() is called before that.
 
-	struct elt {
-		atomic_t ctr;
-		struct list_head list;
-		int pid;
-	};
 
-	rcu_read_lock();
-	list_for_each_entry(elt, &LIST, list) {
-		if (elt->pid == 100) {
-			atomic_inc(&elt->ctr);	// get_task_struct()
-			break;
-		}
-	}
-	rcu_read_unlock();
+> > This means that the 1st walker = rcu_dereference(walker->real_parent) is fine,
+> > this simply reads the child->real_parent pointer, but on the second iteration
+> >
+> >         walker = rcu_dereference(walker->real_parent);
+> >
+> > reads the alredy freed memory.
+>
+> What does rcu_read_lock() protect actually protect here? I thought
+> none of the task structs would be freed until after all
+> rcu_read_unlock() finished.
 
-	do_something(elt);
-
-This code is fine. This elt can't be freed, you have a reference. But once
-you drop rcu lock you can't trust elt->list.next! So, for example, you can
-not do
-
-	rcu_read_lock();
-	list_for_each_entry_continue_rcu(elt, &LIST, list) {
-		...
-	}
-	rcu_read_unlock();
-
-too late, elt.list.next can be already freed, or it can be freed while you
-iterate the list.
-
-Another simple example. Suppose you have a global PTR protected by rcu. So
-ignoring the necessary rcu_dereference this code is fine:
-
-	rcu_read_lock();
-	if (ptr = PTR)
-		do_something(ptr);
-	rcu_read_unlcok();
-
-But this is not:
-
-	ptr = PTR;
-	rcu_read_lock();
-	if (ptr)
-		do_something(ptr);
-	rcu_read_unlock();
-
-basically the same thing...
+See another email I sent you a minute ago.
 
 Oleg.
 
