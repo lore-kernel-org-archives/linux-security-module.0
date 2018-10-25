@@ -3,34 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A2DECDE46
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 09:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EB3C46475
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 09:35:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C6F2082E
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 09:32:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C6F2082E
+	by mail.kernel.org (Postfix) with ESMTP id A65912082E
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Oct 2018 09:35:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A65912082E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbeJYSEP (ORCPT
+        id S1726674AbeJYSHQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:04:15 -0400
-Received: from namei.org ([65.99.196.166]:49086 "EHLO namei.org"
+        Thu, 25 Oct 2018 14:07:16 -0400
+Received: from namei.org ([65.99.196.166]:49094 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbeJYSEP (ORCPT
+        id S1726652AbeJYSHQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:04:15 -0400
+        Thu, 25 Oct 2018 14:07:16 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w9P9WJwA031132;
-        Thu, 25 Oct 2018 09:32:19 GMT
-Date:   Thu, 25 Oct 2018 20:32:19 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id w9P9ZKDX031382;
+        Thu, 25 Oct 2018 09:35:20 GMT
+Date:   Thu, 25 Oct 2018 20:35:20 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] security: integrity subsystem updates for 4.20
-Message-ID: <alpine.LRH.2.21.1810252029570.30470@namei.org>
+Subject: [GIT PULL] security: TPM updates for v4.20
+Message-ID: <alpine.LRH.2.21.1810252032230.30470@namei.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -40,46 +41,50 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Please pull.
 
-From Mimi: "This pull request contains a couple of bug fixes, including 
-one for a recent problem with calculating file hashes on overlayfs, and 
-some code cleanup."
+From Jarkko: "These are the updates to v4.20. The only new feature is 
+non-blocking operation for /dev/tpm0."
 
 ---
 
-The following changes since commit e6123c524064a571616ec978b1317f1696eff0ae:
+The following changes since commit 2ecefa0a15fd0ef88b9cd5d15ceb813008136431:
 
-  security: fix LSM description location (2018-10-09 12:18:38 -0700)
+  keys: Fix the use of the C++ keyword "private" in uapi/linux/keyctl.h (2018-09-28 09:51:51 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
 
-for you to fetch changes up to 34bccd61b139dbb452421aebf480e7af5f7a12ed:
+for you to fetch changes up to b8d7b758145252e60ea0198e531a8b00a75b8895:
 
-  MAINTAINERS: add Jarkko as maintainer for trusted keys (2018-10-11 12:10:16 -0400)
+  Merge tag 'tpmdd-next-20181005' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm (2018-10-05 11:21:23 -0700)
 
 ----------------------------------------------------------------
-Eric Biggers (4):
-      vfs: require i_size <= SIZE_MAX in kernel_read_file()
-      security/integrity: constify some read-only data
-      security/integrity: remove unnecessary 'init_keyring' variable
-      ima: fix showing large 'violations' or 'runtime_measurements_count'
+Dr. Greg Wettstein (1):
+      tpm: Restore functionality to xen vtpm driver.
 
-Goldwyn Rodrigues (1):
-      ima: open a new file instance if no read permissions
+James Morris (1):
+      Merge tag 'tpmdd-next-20181005' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm
 
-Mimi Zohar (1):
-      MAINTAINERS: add Jarkko as maintainer for trusted keys
+Jarkko Sakkinen (1):
+      tpm: fix response size validation in tpm_get_random()
 
- MAINTAINERS                           |  1 +
- fs/exec.c                             |  8 +++---
- security/integrity/digsig.c           | 10 ++-----
- security/integrity/evm/evm_crypto.c   |  4 +--
- security/integrity/ima/ima.h          |  2 +-
- security/integrity/ima/ima_api.c      |  3 +-
- security/integrity/ima/ima_crypto.c   | 54 ++++++++++++++++++++++-------------
- security/integrity/ima/ima_fs.c       |  9 +++---
- security/integrity/ima/ima_init.c     |  2 +-
- security/integrity/ima/ima_main.c     |  2 +-
- security/integrity/ima/ima_template.c | 11 +++----
- 11 files changed, 59 insertions(+), 47 deletions(-)
+Javier Martinez Canillas (1):
+      tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
+
+Peter Huewe (1):
+      tpm: Make SECURITYFS a weak dependency
+
+Tadeusz Struk (2):
+      tpm: add ptr to the tpm_space struct to file_priv
+      tpm: add support for nonblocking operation
+
+ drivers/char/tpm/Kconfig          |   2 +-
+ drivers/char/tpm/tpm-dev-common.c | 147 ++++++++++++++++++++++++++++----------
+ drivers/char/tpm/tpm-dev.c        |  11 +--
+ drivers/char/tpm/tpm-dev.h        |  18 +++--
+ drivers/char/tpm/tpm-interface.c  |  30 ++++++--
+ drivers/char/tpm/tpm.h            |   2 +
+ drivers/char/tpm/tpm2-cmd.c       |   4 +-
+ drivers/char/tpm/tpmrm-dev.c      |  15 +---
+ drivers/char/tpm/xen-tpmfront.c   |   2 +-
+ 9 files changed, 157 insertions(+), 74 deletions(-)
