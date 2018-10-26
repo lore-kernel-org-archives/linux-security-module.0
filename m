@@ -2,92 +2,107 @@ Return-Path: <SRS0=VgA4=NG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DA8ECDE44
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 15:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9EB3C6786E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 15:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DC692064C
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 15:05:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC692064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id AA3B02054F
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 15:22:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA3B02054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727591AbeJZXmr (ORCPT
+        id S1726179AbeJZX7k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:42:47 -0400
-Received: from ms.lwn.net ([45.79.88.28]:48812 "EHLO ms.lwn.net"
+        Fri, 26 Oct 2018 19:59:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54328 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726159AbeJZXmr (ORCPT
+        id S1726159AbeJZX7k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:42:47 -0400
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 26 Oct 2018 19:59:40 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 36A822B7;
-        Fri, 26 Oct 2018 15:05:20 +0000 (UTC)
-Date:   Fri, 26 Oct 2018 09:05:18 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181026090518.6f3c064e@lwn.net>
-In-Reply-To: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
-        <20181023213504.28905-11-igor.stoppa@huawei.com>
-        <20181026092609.GB3159@worktop.c.hoisthospitality.com>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6CE593082DD1;
+        Fri, 26 Oct 2018 15:22:12 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
+        by smtp.corp.redhat.com (Postfix) with SMTP id CCBCB100190B;
+        Fri, 26 Oct 2018 15:22:09 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 26 Oct 2018 17:22:12 +0200 (CEST)
+Date:   Fri, 26 Oct 2018 17:22:09 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     serge@hallyn.com,
+        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
+        jmorris@namei.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in task_is_descendant
+Message-ID: <20181026152208.GB18848@redhat.com>
+References: <20181025111355.GA3725@redhat.com>
+ <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
+ <20181025121709.GD3725@redhat.com>
+ <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
+ <20181025155503.GF3725@redhat.com>
+ <3423a470-c152-0dbf-c7a7-2775a9679194@i-love.sakura.ne.jp>
+ <20181026130442.GB10581@redhat.com>
+ <522c4993-4d98-be98-def2-452ed28098f9@i-love.sakura.ne.jp>
+ <20181026143937.GA18848@redhat.com>
+ <4264173d-4947-9fad-97e6-5269defb6eb4@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4264173d-4947-9fad-97e6-5269defb6eb4@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 26 Oct 2018 15:22:12 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 26 Oct 2018 11:26:09 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On 10/27, Tetsuo Handa wrote:
+>
+> On 2018/10/26 23:39, Oleg Nesterov wrote:
+> > On 10/26, Tetsuo Handa wrote:
+> >> Suppose p1 == p2->real_parent and p2 == p3->real_parent, and p1 exited
+> >> when someone tried to attach on p2, p2->real_parent was pointing to already
+> >> (or about to be) freed p1.
+> >
+> > I don't see a difference.
+> >
+> > If p1 exits it will re-parent p2, p2->real_parent will be updated.
+> >
+> >> So, the puzzle part is why p2->real_parent was still pointing p1 even after
+> >> p1 was freed...
+> >
+> > I don't understand the question.
+> >
+> > Once again. TASK->real_parent can point to the freed mem only if a) TASK exits,
+> > and b) _after_ that its parent TASK->real_parent exits too.
+>
+> Oh, p2 exited and then p1 also exited when someone tried to attach on p2.
+> Then, p2->real_parent can point to already (or about to be) freed p1.
 
-> Jon,
-> 
-> So the below document is a prime example for why I think RST sucks. As a
-> text document readability is greatly diminished by all the markup
-> nonsense.
+Then we must see pid_alive(p2) == F as I already explained you in my
+yesterday's email.
 
-Please don't confused RST with the uses of it.  The fact that one can do
-amusing things with the C preprocessor doesn't, on its own, make C
-suck... 
-> 
-> This stuff should not become write-only content like html and other
-> gunk. The actual text file is still the primary means of reading this.
+Because if p1 exits _after_ p2, then pid_alive(p2) == F must be already
+completed, p1 can't exit (I mean, release_task(p1) can't be called) until
+release_task(p2) does detach_pid() and drops tasklist_lock.
 
-I agree that the text file comes first, and I agree that the markup in
-this particular document is excessive.
+> (By the way, if p->real_parent were updated to point to init_task when p exits,
+> we could omit pid_alive() check?)
 
-Igor, just like #ifdef's make code hard to read, going overboard with RST
-markup makes text hard to read.  It's a common trap to fall into, because
-it lets you make slick-looking web pages, but that is not our primary
-goal here.  Many thanks for writing documentation for this feature, that
-already puts you way ahead of a discouraging number of contributors.  But
-could I ask you, please, to make a pass over it and reduce the markup to
-a minimum?  Using lists as suggested by Markus would help here.
+Sorry, I don't understand the question...
 
-Thanks,
+Ignoring the PR_SET_CHILD_SUBREAPER parents, ignoring the exiting sub-threads
+which reparent to group leader, ->real_parent is alwasy updated to point to
+init_task. But I don't see why we could omit pid_alive() check.
 
-jon
+Oleg.
+
