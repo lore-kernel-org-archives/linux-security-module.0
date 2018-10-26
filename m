@@ -2,47 +2,48 @@ Return-Path: <SRS0=VgA4=NG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA4BC6786E
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 09:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0E0C6786E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 09:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7E4220834
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 09:41:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 540BB2082E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 09:57:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="b1F6jio+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7E4220834
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tWrEqNJ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 540BB2082E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbeJZSRj (ORCPT
+        id S1727020AbeJZSdQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Oct 2018 14:17:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32946 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeJZSRj (ORCPT
+        Fri, 26 Oct 2018 14:33:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33250 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbeJZSdP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Oct 2018 14:17:39 -0400
+        Fri, 26 Oct 2018 14:33:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=12yu2//rJr5DMe6Xs212+GnjuBvECqEIB865SHmpats=; b=b1F6jio+XBPpKYaCFyXWeTKLX
-        0YXjPfjW4OUpBKs6kq3RneDw5i5Gu4zlc+org+qK7VTwoQRAgE579i7J04e4uFIkMAVtT0/ArZYjY
-        9zKYrVrVfnbSARe2wBt/mgBY+pGwmt5OyzzaMRNbkT3HY5Ybc+Hz9DGL4UHeV33eGcIS3edWEMHvQ
-        DJvz+Ml7p+T93g6NBAAqAGrIoXeZ4KmshNPYXRSiUM2fvJrbWy4ma+PEgBN2eR4UFZAzihjlc9NCs
-        Bm1zHcP7+YLlOlGguCNKaBNKRWGo1aUbA8/pxQoko0+0ic0SHnzCuiCYzxVdH3QjZMzf+qP2wEiiQ
-        cwpzUinAw==;
+         bh=7xgOBhIV84R3NpYql/jkh1mbbx8m+kry9kTYf0pKJ4Q=; b=tWrEqNJ+UI1qQvK1coEIG27bZ
+        lWi0ep0c8oURa7uP0nZ95XzDiEjL+KFLVHZPhNXb70m58UMqKitVtmilaYjYm7gBVlkHVV4Sruirb
+        h2fnbJO2BXL8LUj07r+EyiVEyHpVWD5XuxmshFxlx6CfZV+B+lSGazyKV3rHzkT6G5Rcj94c5zINL
+        tSx2KBo1iRMM8Xm8fkG/90AZjoNMZri4TZuW+7ekgpUyM0D1r2pDhmt+Gm5FLgmXpPUk57Vxnu1Px
+        w4nHohYZK4h402lMFbL7EW+Ut+Ggjd43TZJe6bfyAiozmTzrgpUG+GQC0/xL0zt9M2gmyn4FPq4Dv
+        f8E0B17kw==;
 Received: from [167.98.65.38] (helo=worktop)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gFyc7-0005NO-Lb; Fri, 26 Oct 2018 09:41:08 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFyqk-0001HE-V6; Fri, 26 Oct 2018 09:56:15 +0000
 Received: by worktop (Postfix, from userid 1000)
-        id B10AA6E07CA; Fri, 26 Oct 2018 11:41:05 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 11:41:05 +0200
+        id CF15C6E07BE; Fri, 26 Oct 2018 11:38:04 +0200 (CEST)
+Date:   Fri, 26 Oct 2018 11:38:04 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Igor Stoppa <igor.stoppa@gmail.com>
 Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -57,138 +58,67 @@ Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/17] prmem: write rare for static allocation
-Message-ID: <20181026094105.GE3159@worktop.c.hoisthospitality.com>
+Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
+Message-ID: <20181026093804.GD3126@worktop.c.hoisthospitality.com>
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-3-igor.stoppa@huawei.com>
+ <20181023213504.28905-15-igor.stoppa@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181023213504.28905-3-igor.stoppa@huawei.com>
+In-Reply-To: <20181023213504.28905-15-igor.stoppa@huawei.com>
 User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 24, 2018 at 12:34:49AM +0300, Igor Stoppa wrote:
-> +static __always_inline
+On Wed, Oct 24, 2018 at 12:35:01AM +0300, Igor Stoppa wrote:
+> In some cases, all the data needing protection can be allocated from a pool
+> in one go, as directly writable, then initialized and protected.
+> The sequence is relatively short and it's acceptable to leave the entire
+> data set unprotected.
+> 
+> In other cases, this is not possible, because the data will trickle over
+> a relatively long period of time, in a non predictable way, possibly for
+> the entire duration of the operations.
+> 
+> For these cases, the safe approach is to have the memory already write
+> protected, when allocated. However, this will require replacing any
+> direct assignment with calls to functions that can perform write rare.
+> 
+> Since lists are one of the most commonly used data structures in kernel,
+> they are a the first candidate for receiving write rare extensions.
+> 
+> This patch implements basic functionality for altering said lists.
+> 
+> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+> CC: Thomas Gleixner <tglx@linutronix.de>
+> CC: Kate Stewart <kstewart@linuxfoundation.org>
+> CC: "David S. Miller" <davem@davemloft.net>
+> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> CC: Philippe Ombredanne <pombredanne@nexb.com>
+> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> CC: Josh Triplett <josh@joshtriplett.org>
+> CC: Steven Rostedt <rostedt@goodmis.org>
+> CC: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> CC: Lai Jiangshan <jiangshanlai@gmail.com>
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  MAINTAINERS            |   1 +
+>  include/linux/prlist.h | 934 +++++++++++++++++++++++++++++++++++++++++
 
-That's far too large for inline.
+I'm not at all sure I understand the Changelog, or how it justifies
+duplicating almost 1k lines of code.
 
-> +bool wr_memset(const void *dst, const int c, size_t n_bytes)
-> +{
-> +	size_t size;
-> +	unsigned long flags;
-> +	uintptr_t d = (uintptr_t)dst;
-> +
-> +	if (WARN(!__is_wr_after_init(dst, n_bytes), WR_ERR_RANGE_MSG))
-> +		return false;
-> +	while (n_bytes) {
-> +		struct page *page;
-> +		uintptr_t base;
-> +		uintptr_t offset;
-> +		uintptr_t offset_complement;
-> +
-> +		local_irq_save(flags);
-> +		page = virt_to_page(d);
-> +		offset = d & ~PAGE_MASK;
-> +		offset_complement = PAGE_SIZE - offset;
-> +		size = min(n_bytes, offset_complement);
-> +		base = (uintptr_t)vmap(&page, 1, VM_MAP, PAGE_KERNEL);
-> +		if (WARN(!base, WR_ERR_PAGE_MSG)) {
-> +			local_irq_restore(flags);
-> +			return false;
-> +		}
-> +		memset((void *)(base + offset), c, size);
-> +		vunmap((void *)base);
-
-BUG
-
-> +		d += size;
-> +		n_bytes -= size;
-> +		local_irq_restore(flags);
-> +	}
-> +	return true;
-> +}
-> +
-> +static __always_inline
-
-Similarly large
-
-> +bool wr_memcpy(const void *dst, const void *src, size_t n_bytes)
-> +{
-> +	size_t size;
-> +	unsigned long flags;
-> +	uintptr_t d = (uintptr_t)dst;
-> +	uintptr_t s = (uintptr_t)src;
-> +
-> +	if (WARN(!__is_wr_after_init(dst, n_bytes), WR_ERR_RANGE_MSG))
-> +		return false;
-> +	while (n_bytes) {
-> +		struct page *page;
-> +		uintptr_t base;
-> +		uintptr_t offset;
-> +		uintptr_t offset_complement;
-> +
-> +		local_irq_save(flags);
-> +		page = virt_to_page(d);
-> +		offset = d & ~PAGE_MASK;
-> +		offset_complement = PAGE_SIZE - offset;
-> +		size = (size_t)min(n_bytes, offset_complement);
-> +		base = (uintptr_t)vmap(&page, 1, VM_MAP, PAGE_KERNEL);
-> +		if (WARN(!base, WR_ERR_PAGE_MSG)) {
-> +			local_irq_restore(flags);
-> +			return false;
-> +		}
-> +		__write_once_size((void *)(base + offset), (void *)s, size);
-> +		vunmap((void *)base);
-
-Similarly BUG.
-
-> +		d += size;
-> +		s += size;
-> +		n_bytes -= size;
-> +		local_irq_restore(flags);
-> +	}
-> +	return true;
-> +}
-
-> +static __always_inline
-
-Guess what..
-
-> +uintptr_t __wr_rcu_ptr(const void *dst_p_p, const void *src_p)
-> +{
-> +	unsigned long flags;
-> +	struct page *page;
-> +	void *base;
-> +	uintptr_t offset;
-> +	const size_t size = sizeof(void *);
-> +
-> +	if (WARN(!__is_wr_after_init(dst_p_p, size), WR_ERR_RANGE_MSG))
-> +		return (uintptr_t)NULL;
-> +	local_irq_save(flags);
-> +	page = virt_to_page(dst_p_p);
-> +	offset = (uintptr_t)dst_p_p & ~PAGE_MASK;
-> +	base = vmap(&page, 1, VM_MAP, PAGE_KERNEL);
-> +	if (WARN(!base, WR_ERR_PAGE_MSG)) {
-> +		local_irq_restore(flags);
-> +		return (uintptr_t)NULL;
-> +	}
-> +	rcu_assign_pointer((*(void **)(offset + (uintptr_t)base)), src_p);
-> +	vunmap(base);
-
-Also still bug.
-
-> +	local_irq_restore(flags);
-> +	return (uintptr_t)src_p;
-> +}
-
-Also, I see an amount of duplication here that shows you're not nearly
-lazy enough.
-
+Sure lists aren't the most complicated thing we have, but duplicating
+that much is still very _very_ bad form. Why are we doing this?
