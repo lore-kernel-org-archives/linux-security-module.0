@@ -2,127 +2,98 @@ Return-Path: <SRS0=VgA4=NG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4008C6786E
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 13:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4414CECDE46
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 13:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84D6B20824
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 13:04:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D6B20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 094F12086C
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 13:26:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 094F12086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726128AbeJZVlr (ORCPT
+        id S1726179AbeJZWDG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Oct 2018 17:41:47 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51776 "EHLO mx1.redhat.com"
+        Fri, 26 Oct 2018 18:03:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:28840 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726113AbeJZVlr (ORCPT
+        id S1726014AbeJZWDF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Oct 2018 17:41:47 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 51D45308FECE;
-        Fri, 26 Oct 2018 13:04:45 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 7521E5D773;
-        Fri, 26 Oct 2018 13:04:43 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 26 Oct 2018 15:04:45 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 15:04:42 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     serge@hallyn.com,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-Message-ID: <20181026130442.GB10581@redhat.com>
-References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
- <20181022134634.GA7358@redhat.com>
- <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
- <20181025111355.GA3725@redhat.com>
- <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
- <20181025121709.GD3725@redhat.com>
- <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
- <20181025155503.GF3725@redhat.com>
- <3423a470-c152-0dbf-c7a7-2775a9679194@i-love.sakura.ne.jp>
+        Fri, 26 Oct 2018 18:03:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 06:26:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,428,1534834800"; 
+   d="scan'208";a="100917176"
+Received: from pwolsza-mobl1.ger.corp.intel.com ([10.249.254.37])
+  by fmsmga004.fm.intel.com with ESMTP; 26 Oct 2018 06:25:55 -0700
+Date:   Fri, 26 Oct 2018 14:25:54 +0100 (IST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Tomas Winkler <tomas.winkler@intel.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Alexander Usyskin <alexander.usyskin@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tpm: fix kdoc for tpm2_flush_context_cmd()
+In-Reply-To: <20181026101558.11753-1-tomas.winkler@intel.com>
+Message-ID: <alpine.DEB.2.21.1810261420290.3511@jsakkine-mobl1>
+References: <20181026101558.11753-1-tomas.winkler@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3423a470-c152-0dbf-c7a7-2775a9679194@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 26 Oct 2018 13:04:45 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/26, Tetsuo Handa wrote:
+On Fri, 26 Oct 2018, Tomas Winkler wrote:
+> kdoc for tpm2_flush_context_cmd() was off.
 >
-> Since the "child" passed to task_is_descendant() has at least one reference
-> count taken by find_get_task_by_vpid(), rcu_dereference(walker->real_parent)
-> in the first iteration
+> Fixes: 9aa36b399a50 ("tpm: export tpm2_flush_context_cmd")'
+> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> ---
+> V2: drop 'commit' from Fixes:
+> drivers/char/tpm/tpm2-cmd.c | 5 ++---
+> 1 file changed, 2 insertions(+), 3 deletions(-)
 >
->   while (child->pid > 0) {
->     if (!thread_group_leader(child))
->       walker = rcu_dereference(child->group_leader);
->     if (walker == parent) {
->       rc = 1;
->       break;
->     }
->     walker = rcu_dereference(walker->real_parent);
->   }
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index ae86fb0218ab..ba94dd5f11a4 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -343,10 +343,9 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+> /**
+>  * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
+>  * @chip: TPM chip to use
+> - * @payload: the key data in clear and encrypted form
+> - * @options: authentication values and other options
+> + * @handle: context handle
+> + * @flags: tpm transmit flags - bitmap
+>  *
+> - * Return: same as with tpm_transmit_cmd
+>  */
+> void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+> 			    unsigned int flags)
+> -- 
+> 2.14.5
 >
-> must not trigger use-after-free bug.
-
-Yes,
-
-> Thus, when this use-after-free was
-> detected at rcu_dereference(walker->real_parent), the memory pointed by
-> "walker" must have been released between
 >
->   while (walker->pid > 0) {
->     if (!thread_group_leader(walker))
->       walker = rcu_dereference(walker->group_leader);
->
-> and
->
->     walker = rcu_dereference(walker->real_parent);
->   }
 
-this is possible too, rcu callback which frees the task_struct can run
-int between
+A minor request. There's some convention mismatch in the subsystem.  In
+some places the arguments are aligned and in some place they are not.
+In order to make educated decision what is right I checked
+Documentation/doc-guide/kernel-doc.rst. In the section called 'Function
+documentation' they are aligned.
 
-> because otherwise use-after-free would have been reported at walker->pid
-> or thread_group_leader(walker) or rcu_dereference(walker->group_leader).
+Can you do one more revision where @payload and @options are aligned
+(with a tab-character) now that you are updating the kdoc anyway?
+Otherwise, this looks good to me.
 
-Well, I do not know how much kasan is "percise", but if it is "perfect"
-then you are right,
-
-> Then, what pid_alive(child) is testing?
-
-I tried to explain this in my previous email. I even mentioned that we could
-do another check, say, ->sighand != NULL, or list_empty(child->sibling) with
-the same effect.
-
-> Suppose p1 == p2->real_parent and p2 == p3->real_parent, and p1 exited
-> when p2 tried to attach on p1, p2->real_parent was pointing to already
-> (or about to be) freed p1.
-
-No, p2->real_parent will be updated. If p1 exits it will re-parent its
-children including p2.
-
-Again, did you read my previous email?
-
-Let me repeat, of course I can be wrong. But so far I am answering the
-same questions again and again...
-
-Oleg.
-
+/Jarkko
