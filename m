@@ -2,48 +2,48 @@ Return-Path: <SRS0=VgA4=NG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04873C6786E
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 12:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4008C6786E
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 13:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8766720824
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 12:24:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8766720824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 84D6B20824
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Oct 2018 13:04:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D6B20824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeJZVAy (ORCPT
+        id S1726128AbeJZVlr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Oct 2018 17:00:54 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:55528 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbeJZVAy (ORCPT
+        Fri, 26 Oct 2018 17:41:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51776 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726113AbeJZVlr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Oct 2018 17:00:54 -0400
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9QCNw6n012693;
-        Fri, 26 Oct 2018 21:23:58 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
- Fri, 26 Oct 2018 21:23:58 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9QCNs2E012681
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 26 Oct 2018 21:23:58 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-To:     Oleg Nesterov <oleg@redhat.com>
+        Fri, 26 Oct 2018 17:41:47 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 51D45308FECE;
+        Fri, 26 Oct 2018 13:04:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 7521E5D773;
+        Fri, 26 Oct 2018 13:04:43 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 26 Oct 2018 15:04:45 +0200 (CEST)
+Date:   Fri, 26 Oct 2018 15:04:42 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc:     serge@hallyn.com,
         syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
         jmorris@namei.org, keescook@chromium.org,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in task_is_descendant
+Message-ID: <20181026130442.GB10581@redhat.com>
 References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
  <20181022134634.GA7358@redhat.com>
  <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
@@ -52,155 +52,77 @@ References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
  <20181025121709.GD3725@redhat.com>
  <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
  <20181025155503.GF3725@redhat.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <3423a470-c152-0dbf-c7a7-2775a9679194@i-love.sakura.ne.jp>
-Date:   Fri, 26 Oct 2018 21:23:54 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ <3423a470-c152-0dbf-c7a7-2775a9679194@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20181025155503.GF3725@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3423a470-c152-0dbf-c7a7-2775a9679194@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 26 Oct 2018 13:04:45 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2018/10/26 0:55, Oleg Nesterov wrote:
-> On 10/25, Tetsuo Handa wrote:
->>
->> On 2018/10/25 21:17, Oleg Nesterov wrote:
->>>>> And yes, task_is_descendant() can hit the dead child, if nothing else it can
->>>>> be killed. This can explain the kasan report.
->>>>
->>>> The kasan is reporting that child->real_parent (or maybe child->real_parent->real_parent
->>>> or child->real_parent->real_parent->real_parent ...) was pointing to already freed memory,
->>>> isn't it?
->>>
->>> Yes. and you know, I am all confused. I no longer can understand you :/
->>
->> Why don't we need to check every time like shown below?
->> Why checking only once is sufficient?
-> 
-> Why do you think it is not sufficient?
-> 
-> Again, I can be easily wrong, rcu is not simple, but so far I think we need
-> a single check at the start.
-> 
+On 10/26, Tetsuo Handa wrote:
+>
+> Since the "child" passed to task_is_descendant() has at least one reference
+> count taken by find_get_task_by_vpid(), rcu_dereference(walker->real_parent)
+> in the first iteration
+>
+>   while (child->pid > 0) {
+>     if (!thread_group_leader(child))
+>       walker = rcu_dereference(child->group_leader);
+>     if (walker == parent) {
+>       rc = 1;
+>       break;
+>     }
+>     walker = rcu_dereference(walker->real_parent);
+>   }
+>
+> must not trigger use-after-free bug.
 
-Hmm, this report is difficult to guess what happened.
+Yes,
 
-Since the "child" passed to task_is_descendant() has at least one reference
-count taken by find_get_task_by_vpid(), rcu_dereference(walker->real_parent)
-in the first iteration
+> Thus, when this use-after-free was
+> detected at rcu_dereference(walker->real_parent), the memory pointed by
+> "walker" must have been released between
+>
+>   while (walker->pid > 0) {
+>     if (!thread_group_leader(walker))
+>       walker = rcu_dereference(walker->group_leader);
+>
+> and
+>
+>     walker = rcu_dereference(walker->real_parent);
+>   }
 
-  while (child->pid > 0) {
-    if (!thread_group_leader(child))
-      walker = rcu_dereference(child->group_leader);
-    if (walker == parent) {
-      rc = 1;
-      break;
-    }
-    walker = rcu_dereference(walker->real_parent);
-  }
+this is possible too, rcu callback which frees the task_struct can run
+int between
 
-must not trigger use-after-free bug. Thus, when this use-after-free was
-detected at rcu_dereference(walker->real_parent), the memory pointed by
-"walker" must have been released between
+> because otherwise use-after-free would have been reported at walker->pid
+> or thread_group_leader(walker) or rcu_dereference(walker->group_leader).
 
-  while (walker->pid > 0) {
-    if (!thread_group_leader(walker))
-      walker = rcu_dereference(walker->group_leader);
+Well, I do not know how much kasan is "percise", but if it is "perfect"
+then you are right,
 
-and
+> Then, what pid_alive(child) is testing?
 
-    walker = rcu_dereference(walker->real_parent);
-  }
+I tried to explain this in my previous email. I even mentioned that we could
+do another check, say, ->sighand != NULL, or list_empty(child->sibling) with
+the same effect.
 
-because otherwise use-after-free would have been reported at walker->pid
-or thread_group_leader(walker) or rcu_dereference(walker->group_leader).
+> Suppose p1 == p2->real_parent and p2 == p3->real_parent, and p1 exited
+> when p2 tried to attach on p1, p2->real_parent was pointing to already
+> (or about to be) freed p1.
 
-Is my understanding correct?
+No, p2->real_parent will be updated. If p1 exits it will re-parent its
+children including p2.
 
+Again, did you read my previous email?
 
+Let me repeat, of course I can be wrong. But so far I am answering the
+same questions again and again...
 
-Then, what pid_alive(child) is testing? It is not memory pointed by "child" but
-memory pointed by "walker" (i.e. parent of "child" or parent of parent of "child"
-or ... ) which is triggering use-after-free.
-
-Suppose p1 == p2->real_parent and p2 == p3->real_parent, and p1 exited
-when p2 tried to attach on p1, p2->real_parent was pointing to already
-(or about to be) freed p1.
-
-Even if pid_alive(p2) test can guarantee that p1 won't be released,
-how can pid_alive(p3) test guarantee that p1 won't be released?
-p1 can be released any moment because it has already waited for RCU
-grace period, can't it?
-
-
-ptrace(PTRACE_ATTACH, vpid_of_p2) {
-  p2 = find_get_task_by_vpid(vpid_of_p2);
-  ptrace_attach(p2, PTRACE_ATTACH, addr, data) {
-    mutex_lock_interruptible(&p2->signal->cred_guard_mutex);
-    // p1 starts exit()ing here.
-    task_lock(p2);
-    __ptrace_may_access(p2) {
-      // p2->real_parent starts pointing to already freed p1.
-      security_ptrace_access_check(p2, PTRACE_MODE_ATTACH) {
-        yama_ptrace_access_check() {
-           task_is_descendant(current, p2) {
-             walker = p2;
-             rcu_read_lock();
-             if (pid_alive(p2)) { // If true
-               if (p2->pid > 0) { // will be true
-                 p1 = rcu_dereference(p2->real_parent); // might be OK due to pid_alive(p2) == true?
-               }
-             }
-             rcu_read_unlock();
-           }
-        }
-      }
-    }
-    task_unlock(p2);
-    mutex_unlock(&p2->signal->cred_guard_mutex);
-  }
-  put_task_struct(p2);
-}
-
-ptrace(PTRACE_ATTACH, vpid_of_p3) {
-  p3 = find_get_task_by_vpid(vpid_of_p3);
-  ptrace_attach(p3, PTRACE_ATTACH, addr, data) {
-    mutex_lock_interruptible(&p3->signal->cred_guard_mutex);
-    // p1 starts exit()ing here.
-    task_lock(p3);
-    __ptrace_may_access(p3) {
-      // p2->real_parent starts pointing to already freed p1.
-      security_ptrace_access_check(p3, PTRACE_MODE_ATTACH) {
-        yama_ptrace_access_check() {
-           task_is_descendant(current, p3) {
-             walker = p3;
-             rcu_read_lock();
-             if (pid_alive(p3)) { // If true
-               if (p3->pid > 0) { // will be true
-                 p2 = rcu_dereference(p3->real_parent); // will be OK if above assumption is OK.
-                 if (p2->pid > 0) { // will be true
-                   p1 = rcu_dereference(p2->real_parent); // will read already (or about to be) freed p1 address
-                   if (p1->pid > 0) { // Oops here or
-                     if (!thread_group_leader(p1)) // oops here or
-                       p1 = rcu_dereference(p1->group_leader); // oops here or
-                     p0 = rcu_dereference(p1->real_parent); // oops here, or not oops because releasing after this
-                   }
-                 }
-               }
-             }
-             rcu_read_unlock();
-           }
-        }
-      }
-    }
-    task_unlock(p3);
-    mutex_unlock(&p3->signal->cred_guard_mutex);
-  }
-  put_task_struct(p3);
-}
+Oleg.
 
