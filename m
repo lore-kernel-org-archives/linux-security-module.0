@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52FEECDE44
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 18:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 764D3ECDE44
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 18:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F1122087A
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 18:07:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41BFF2087A
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 18:12:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HU+ne1BX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1122087A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXg2v0Sc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41BFF2087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbeJ3C5Q (ORCPT
+        id S1727712AbeJ3DCW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:57:16 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33094 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeJ3C5Q (ORCPT
+        Mon, 29 Oct 2018 23:02:22 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34245 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbeJ3DCW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:57:16 -0400
-Received: by mail-lj1-f194.google.com with SMTP id z21-v6so8762020ljz.0;
-        Mon, 29 Oct 2018 11:07:32 -0700 (PDT)
+        Mon, 29 Oct 2018 23:02:22 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n26-v6so6818735lfl.1;
+        Mon, 29 Oct 2018 11:12:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pR8/LuDExk9lZ2Q4gxSaTG3u4O1iTDqahE/PFUWPLp4=;
-        b=HU+ne1BXKQKDeJ7KlXZjyjFG5HSyJYT3LMPsGopzs7wmO+5HWkI2BeJFJM1mepCFkq
-         0bl6Z1hCPV5kixtK1DSpysHT9QEiUPzSFs52M/Nm0m9TqMSv9SnmZLRr5cvRwahtAEXE
-         UMkWySvQ0t4WrKwHEeNTTF2FB5s6Wj7KyuzC8MB4axxpat18d3plGuROqqjsPHI6MrEm
-         ZYop28DmO75qWecyql80IJDSuCAusWEJ0JQWYWs95t6QnviCKvdM1TuPqH4q+uvckRbq
-         xYkAHE3hBvseGjV10lA2tj56Iir1QxiySL5jnZuNi3JYwDmfUfOliJQTlc7GXTzRKLDz
-         R7Sw==
+        bh=5a6ry7YS/1XocQEq1IL80cJaCAab2eR6B7M0r5JjgFc=;
+        b=WXg2v0ScrzR9IYVwfUfjD37ZnceesvUK34sTAfMJUnhu1hne6NOMw5luNk5cOQyGcS
+         TAAjXbwPfFO1P4BBydaPRj1Kbm8ZqVxiJI9vq1FwEBd0/0Ha2AucxC3COLyjBgoKg2d/
+         0QXKSj72Ek95PHJMmY8QP+Xpbt6Vp5VXpUCkd+YIbhnEqQg5tzRqi0t1AR9AVDZATmCJ
+         yRUMxCjUHi73rbZW9zziNcxMUf99lQ31tqI3ufksnPEhVvT3pP57s8WhLlpNHXS/L0eX
+         ROCsdGjeetoJXAe8L2ChEOop147Cenx98dmxF6hSEmai/hzONbvjdjvdblTeMyQkcgZ1
+         15lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=pR8/LuDExk9lZ2Q4gxSaTG3u4O1iTDqahE/PFUWPLp4=;
-        b=VwtAwkWmBlevGE96AMY/5CHqs5tI8MtI6Yps59AXYgcUAWXw38WPO0uDo960Fwrcf4
-         B0ZY8FjgcYCBMx6dXzXDfBhGFzvGTSiJOHOmwaMy58NxCSiQCCtvjKzyMZLk9e2HoImU
-         sRRWmh+p51jDbDoNPA03vo37l3GQGJ0Amu7fU57ThvCg4owBbWzU4FrE9bMF79FMZSvt
-         bOtMurbrv1s8jpK1ef6mSJ2nlB3m/wiCT6LBMvqn1IRWReeUniM3svhFwalruY0dv0Gv
-         AZwztztVfGRH73gXeCN0qs4YC44BS1RzunW4WYBidWeb+sZPIR/2tIZ7sAj//rTvBtHx
-         8qFw==
-X-Gm-Message-State: AGRZ1gJ3fgPVHPAJ0dkZIljXat+PAeE8CyHCQxz3VgCX+q1Qqu3q10kt
-        6CAulNZCYh+In1+ID/37XqsXdFD0irj/Yw==
-X-Google-Smtp-Source: AJdET5cjCMtIIWyH960cKXiJ+KhL5HHd2z4p7RNvWsTSbIIV5oG+Gc2A0wIcDNubx1SVsvi1tblFFQ==
-X-Received: by 2002:a2e:9e10:: with SMTP id e16-v6mr10080880ljk.169.1540836450960;
-        Mon, 29 Oct 2018 11:07:30 -0700 (PDT)
+        bh=5a6ry7YS/1XocQEq1IL80cJaCAab2eR6B7M0r5JjgFc=;
+        b=K9tLH5cAb6nyUG3Z1Do9eFztFR+ujp9hkSSlCLGWmYrpcGArrD/my//WIcq01/33z0
+         P0qVeXBhrxtESrXPodn9mjnAPMKBX2dsuKExygdQ1jPKy6Yxu7jSC9Y1JPV6HtZXtfNa
+         Alkdjm0y1uSgZPqiy0GcUTLZks8qper5ecPD1NceondUVoppzw+GLVIHFdK685QK14YX
+         lRFFa1cX0G5RZQSzffQtUnXoabEo5oMV2gen9zyqqJRozXq+OdiLX/Z7TZmzs2erSv/k
+         lYBv0fzgNRseSglbLhBozOBhwaijtZhivLi+xT5fKnHHFeSG/XfFY4cECYrBagHFRxzc
+         /RMA==
+X-Gm-Message-State: AGRZ1gJTLqGRNuT+SHsrAqprP4gHlZFehwAWu1GLSOGKsXyaEclLE7Dq
+        pKO642+jk3MB/tRpJ0OVZzWP9XlXpTDTzw==
+X-Google-Smtp-Source: AJdET5esv9xYVJMVq/i2+fiVUUAXZ9a1k5j+eVp1q5Nhca5Us3zfvSRM578DxByYPyH93j4ryxQ1VQ==
+X-Received: by 2002:a19:4c02:: with SMTP id z2-v6mr8555753lfa.48.1540836755411;
+        Mon, 29 Oct 2018 11:12:35 -0700 (PDT)
 Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm3221546lfc.13.2018.10.29.11.07.28
+        by smtp.gmail.com with ESMTPSA id e201-v6sm3310177lfg.42.2018.10.29.11.12.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 11:07:30 -0700 (PDT)
-Subject: Re: [PATCH 03/17] prmem: vmalloc support for dynamic allocation
+        Mon, 29 Oct 2018 11:12:34 -0700 (PDT)
+Subject: Re: [PATCH 05/17] prmem: shorthands for write rare on common types
 To:     Dave Hansen <dave.hansen@intel.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Kees Cook <keescook@chromium.org>,
@@ -74,25 +74,21 @@ To:     Dave Hansen <dave.hansen@intel.com>,
 Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>, linux-mm@kvack.org,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-4-igor.stoppa@huawei.com>
- <489bf780-7dd2-2feb-8456-25ad5beeb3e4@intel.com>
+ <20181023213504.28905-6-igor.stoppa@huawei.com>
+ <fbb38802-3dc3-4890-c981-724b9096a6be@intel.com>
 From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <624caa9a-e591-a1f4-40d1-49db10a91f03@gmail.com>
-Date:   Mon, 29 Oct 2018 20:07:23 +0200
+Message-ID: <aa6d9911-c5f8-d759-a117-810d59763467@gmail.com>
+Date:   Mon, 29 Oct 2018 20:12:32 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <489bf780-7dd2-2feb-8456-25ad5beeb3e4@intel.com>
+In-Reply-To: <fbb38802-3dc3-4890-c981-724b9096a6be@intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -102,24 +98,20 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 
 
-On 25/10/2018 01:26, Dave Hansen wrote:
+On 25/10/2018 01:28, Dave Hansen wrote:
 > On 10/23/18 2:34 PM, Igor Stoppa wrote:
->> +#define VM_PMALLOC		0x00000100	/* pmalloc area - see docs */
->> +#define VM_PMALLOC_WR		0x00000200	/* pmalloc write rare area */
->> +#define VM_PMALLOC_PROTECTED	0x00000400	/* pmalloc protected area */
+>> Wrappers around the basic write rare functionality, addressing several
+>> common data types found in the kernel, allowing to specify the new
+>> values through immediates, like constants and defines.
 > 
-> Please introduce things as you use them.  It's impossible to review a
-> patch that just says "see docs" that doesn't contain any docs. :)
+> I have to wonder whether this is the right way, or whether a
+> size-agnostic function like put_user() is the right way.  put_user() is
+> certainly easier to use.
 
-Yes, otoh it's a big pain in the neck to keep the docs split into 
-smaller patches interleaved with the code, at least while the code is 
-still in a flux.
-
-And since the docs refer to the sources, for the automated documentation 
-of the API, I cannot just put the documentation at the beginning of the 
-patchset.
-
-Can I keep the docs as they are, for now, till the code is more stable?
+I definitely did not like it either.
+But it was the best that came to my mind ...
+The main purpose of this code was to show what I wanted to do.
+Once more, thanks for pointing out a better way to do it.
 
 --
 igor
