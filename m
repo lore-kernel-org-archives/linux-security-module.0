@@ -2,119 +2,231 @@ Return-Path: <SRS0=k4kS=NJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DD4C0044C
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 17:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3D9C2BC61
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 18:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEBAC204FD
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 17:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6E522064C
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 18:03:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DQ6AoN4m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEBAC204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5oTUjMh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6E522064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbeJ3CoV (ORCPT
+        id S1728285AbeJ3Cwz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:44:21 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33614 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbeJ3CoV (ORCPT
+        Mon, 29 Oct 2018 22:52:55 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33622 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728161AbeJ3Cwz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:44:21 -0400
-Received: by mail-pf1-f194.google.com with SMTP id a15-v6so4423514pfn.0
-        for <linux-security-module@vger.kernel.org>; Mon, 29 Oct 2018 10:54:41 -0700 (PDT)
+        Mon, 29 Oct 2018 22:52:55 -0400
+Received: by mail-lj1-f193.google.com with SMTP id z21-v6so8748103ljz.0;
+        Mon, 29 Oct 2018 11:03:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dSRBAJc5LjP0q5OJVj+GJWLu8GLrm3rpsIZDICYf+sg=;
-        b=DQ6AoN4mF54G/icj5lBMWGhZ4iWMO8x8DBlN3zsG31Pc1xz7P5mYixswVbf6xhV4/H
-         WjElr0+2zmHrpMdPL7oBZJ742nNedfPz2hHISNtsg2Vm6X+L6EBM095DE9wkDJ1sL6Jq
-         2IE5mU1XtzUurNJtaSy1QlwRprNYfM5XEoU52t56dKByc1+SvPddXo23s/IkIB5/sfGa
-         sRZ8BWZFzV8URRKQ7XNzImTjgJd4Hfco5bnO5g93pNWs22zn/PqiYQVDmZ/sOTYVq0BA
-         v/jOzivQlkAdo0XGSMbTyypNqCwVaotpGJI+ox8jxS5DtSCB8H24UxnbnOkipH/g/uJ0
-         JEyg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=t6xiqK4v9iNRHHQrMF7tqrJ+DDjMcL+GLezehYMFE4c=;
+        b=K5oTUjMhkg0q73FRNd8lyRNADWFZDkJt9LISlnPQIxTtc+Q6h08RFofvPO4Y3rwj1u
+         b4FQOGE3/Rijvbh8EE8BGNW34pZAtO5YASQjhOKKGR44BMZr9DLC3kr7fXi3l5v1zPHy
+         p0gJpAlSs2wGJuASWXTN9GZrT57bwtoS8swLMRd+6oMY3gjexBXNqpBv2pkgIGSDFyo8
+         OfcefNTbn6p3msJF87ecWlyGsDzP2ojgogr7EidCyJg+rUEOmry8Wn9ZmAdaql8rX1wI
+         S9xZDajHlX45D08PycYyVIJHdcPLfxghji27kbmZ3+l3EoQFvHb6VgZJSllWzP1Ra8Wb
+         Dicg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dSRBAJc5LjP0q5OJVj+GJWLu8GLrm3rpsIZDICYf+sg=;
-        b=BEgISfUyWaB/WLt96334wCN3BsSn3yEqoNZN+T6GpU5UJRWKlrcQyssgIxkw1JkbXj
-         m8MbErlVBKk4ZICMkoXqJfzUnkUx9E9be5M3LNXn3DwinvGJMVEhyrxnInx/ERqzd5Xt
-         jfymPNChzG556DviVnn0+xH7z/H5LVhGu7P4GkSuu5Wcr32Ib9f6uTt/NSbDl8w3mj59
-         VCE+8BzE/oxsCa1+Q3tJJrzwnCK0uF+tic8d7wtdTEQ7q1tm9GzUKnccs2mUhku8sHHB
-         vbxebjX/tPw2ZAyfHxMdBNvQlvyholk0LQDq4/ZudD04aT5pk8T2j3/u9RPW6lugKdCj
-         PK1Q==
-X-Gm-Message-State: AGRZ1gI1tLRZ2Hn9/HqxYNUUbZnYYRz/KSHfWE8AWA0giwlYtvQ61Z6Y
-        GhpIQpNEMm7q/TEBWGH3nlPKBTJqf8jMeTBhpNwdrw==
-X-Google-Smtp-Source: AJdET5ciTSlNdT5VcV0g+PyFSxZrRZ/Q6sx+8JJsqXE5PJQTH8uMDebizR9yNr3teLO58R+ZFmMVOuLyRoWNuyVdBXA=
-X-Received: by 2002:a62:5bc4:: with SMTP id p187-v6mr13503819pfb.94.1540835680718;
- Mon, 29 Oct 2018 10:54:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
- <20181022234357.82217-1-ndesaulniers@google.com> <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
-In-Reply-To: <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 29 Oct 2018 10:54:29 -0700
-Message-ID: <CAKwvOdn+V8iFJ_V1vr3GBm-NwxzaDbcmK+nW1q3uVky7bRsB3w@mail.gmail.com>
-Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     dhowells@redhat.com,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        David.Laight@aculab.com, denkenz@gmail.com,
-        zohar@linux.vnet.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        keyrings@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=t6xiqK4v9iNRHHQrMF7tqrJ+DDjMcL+GLezehYMFE4c=;
+        b=IHvDVwJs52sMghi+qd39uPia3DRF5cgAJyzV9GuZYVjmqdSpLEFupZhKPU+FCNsWFZ
+         POf0qodel7OUGOQXdxYwB7C9ax/x5AfxfN6Bw4CSqJE5QwJX3cVDBK6u5eFWQXJkKSYt
+         Qa4etH2DUlwv5EwRMcbcdo/B41+zUvciH8JhWDDu3+yHFeQyUIIL6d4t+zD9QK0J2sUb
+         KLafNjhu1YhlNNkcLjzamdo/NRBwf0abdowc17efFR5U/WwPZy76QmJEdtO1/YKFTGvP
+         79Kk2cugGCQSnfUcOacE1WsEgXidUgHC8fsL7SaBSuFMBozIS9xM6EjpTOG2OR03ZHPG
+         MMPA==
+X-Gm-Message-State: AGRZ1gLyHyegjFxrxgp83mCxJMSRVPdvf0Y6EmbnjgkaJHxG4m2lPdHb
+        C49s3RomxdPZEbe5QvY/I5pDTl5NsyotJg==
+X-Google-Smtp-Source: AJdET5fCEGLpaah0Tq8vpMZOtvEPJ0sEGUnR3jKVv9n8dFJVLyRt777baMJHNcoCLOLNj4iobj9p2A==
+X-Received: by 2002:a2e:92:: with SMTP id e18-v6mr10962931lji.130.1540836190393;
+        Mon, 29 Oct 2018 11:03:10 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
+        by smtp.gmail.com with ESMTPSA id x29-v6sm1897421ljb.69.2018.10.29.11.03.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 11:03:09 -0700 (PDT)
+Subject: Re: [PATCH 02/17] prmem: write rare for static allocation
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-3-igor.stoppa@huawei.com>
+ <23022d8a-dcef-20d5-cb07-a218b08b7b9a@intel.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <311d06ab-df6d-134a-82fc-1e2098f8a924@gmail.com>
+Date:   Mon, 29 Oct 2018 20:03:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <23022d8a-dcef-20d5-cb07-a218b08b7b9a@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 24, 2018 at 1:37 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Mon, 22 Oct 2018, ndesaulniers@google.com wrote:
-> > Fixes the warning reported by Clang:
-> > security/keys/trusted.c:146:17: warning: passing an object that
-> > undergoes default
-> >      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
-> >        va_start(argp, h3);
-> >                       ^
-> > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> > char' is declared here
-> > unsigned char *h2, unsigned char h3, ...)
-> >                               ^
-> > Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> > standards explicitly call this out as undefined behavior:
-> >
-> > The parameter parmN is the identifier of the rightmost parameter in
-> > the variable parameter list in the function definition (the one just
-> > before the ...). If the parameter parmN is declared with ... or with a
-> > type that is not compatible with the type that results after
-> > application of the default argument promotions, the behavior is
-> > undefined.
-> >
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/41
-> > Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
-> > Suggested-by: David Laight <David.Laight@aculab.com>
-> > Suggested-by: Denis Kenzior <denkenz@gmail.com>
-> > Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
-> > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
->
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
-> /Jarkko
+On 25/10/2018 01:24, Dave Hansen wrote:
+>> +static __always_inline bool __is_wr_after_init(const void *ptr, size_t size)
+>> +{
+>> +	size_t start = (size_t)&__start_wr_after_init;
+>> +	size_t end = (size_t)&__end_wr_after_init;
+>> +	size_t low = (size_t)ptr;
+>> +	size_t high = (size_t)ptr + size;
+>> +
+>> +	return likely(start <= low && low < high && high <= end);
+>> +}
+> 
+> size_t is an odd type choice for doing address arithmetic.
 
-Bumping the maintainers if this isn't already picked up?
+it seemed more portable than unsigned long
 
--- 
-Thanks,
-~Nick Desaulniers
+>> +/**
+>> + * wr_memset() - sets n bytes of the destination to the c value
+>> + * @dst: beginning of the memory to write to
+>> + * @c: byte to replicate
+>> + * @size: amount of bytes to copy
+>> + *
+>> + * Returns true on success, false otherwise.
+>> + */
+>> +static __always_inline
+>> +bool wr_memset(const void *dst, const int c, size_t n_bytes)
+>> +{
+>> +	size_t size;
+>> +	unsigned long flags;
+>> +	uintptr_t d = (uintptr_t)dst;
+>> +
+>> +	if (WARN(!__is_wr_after_init(dst, n_bytes), WR_ERR_RANGE_MSG))
+>> +		return false;
+>> +	while (n_bytes) {
+>> +		struct page *page;
+>> +		uintptr_t base;
+>> +		uintptr_t offset;
+>> +		uintptr_t offset_complement;
+> 
+> Again, these are really odd choices for types.  vmap() returns a void*
+> pointer, on which you can do arithmetic.  
+
+I wasn't sure of how much I could rely on the compiler not doing some 
+unwanted optimizations.
+
+> Why bother keeping another
+> type to which you have to cast to and from?
+
+For the above reason. If I'm worrying unnecessarily, I can switch back 
+to void *
+It certainly is easier to use.
+
+> BTW, our usual "pointer stored in an integer type" is 'unsigned long',
+> if a pointer needs to be manipulated.
+
+yes, I noticed that, but it seemed strange ...
+size_t corresponds to unsigned long, afaik
+
+but it seems that I have not fully understood where to use it
+
+anyway, I can stick to the convention with unsigned long
+
+> 
+>> +		local_irq_save(flags);
+> 
+> Why are you doing the local_irq_save()?
+
+The idea was to avoid the case where an attack would somehow freeze the 
+core doing the write-rare operation, while the temporary mapping is 
+accessible.
+
+I have seen comments about using mappings that are private to the 
+current core (and I will reply to those comments as well), but this 
+approach seems architecture-dependent, while I was looking for a 
+solution that, albeit not 100% reliable, would work on any system with 
+an MMU. This would not prevent each arch to come up with own custom 
+implementation that provides better coverage, performance, etc.
+
+>> +		page = virt_to_page(d);
+>> +		offset = d & ~PAGE_MASK;
+>> +		offset_complement = PAGE_SIZE - offset;
+>> +		size = min(n_bytes, offset_complement);
+>> +		base = (uintptr_t)vmap(&page, 1, VM_MAP, PAGE_KERNEL);
+> 
+> Can you even call vmap() (which sleeps) with interrupts off?
+
+I accidentally disabled sleeping while atomic debugging and I totally 
+missed this problem :-(
+
+However, to answer your question, nothing exploded while I was testing 
+(without that type of debugging).
+
+I suspect I was just "lucky". Or maybe I was simply not triggering the 
+sleeping sub-case.
+
+As I understood the code, sleeping _might_ happen, but it's not going to 
+happen systematically.
+
+I wonder if I could split vmap() into two parts: first the sleeping one, 
+with interrupts enabled, then the non sleeping one, with interrupts 
+disabled.
+
+I need to read the code more carefully, but it seems that sleeping might 
+happen when memory for the mapping meta data is not immediately available.
+
+BTW, wouldn't the might_sleep() call belong more to the part which 
+really sleeps, instead than to the whole vmap() ?
+
+>> +		if (WARN(!base, WR_ERR_PAGE_MSG)) {
+>> +			local_irq_restore(flags);
+>> +			return false;
+>> +		}
+> 
+> You really need some kmap_atomic()-style accessors to wrap this stuff
+> for you.  This little pattern is repeated over and over.
+
+I really need to learn more about the way the kernel works and is 
+structured. It's a work in progress. Thanks for the advice.
+
+> ...
+>> +const char WR_ERR_RANGE_MSG[] = "Write rare on invalid memory range.";
+>> +const char WR_ERR_PAGE_MSG[] = "Failed to remap write rare page.";
+> 
+> Doesn't the compiler de-duplicate duplicated strings for you?  Is there
+> any reason to declare these like this?
+
+I noticed I have made some accidental modifications in a couple of 
+cases, when replicating the command.
+
+So I thought that if I really want to use the same string, why not doing 
+it explicitly? It seemed also easier, in case I want to tweak the 
+message. I need to do it only in one place.
+
+--
+igor
