@@ -4,67 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9E2C2BC61
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 19:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0291EC0044C
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 19:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47A3820824
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 19:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B90D52082D
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 19:36:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TSDfw0Ow"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47A3820824
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oQZ+80j9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B90D52082D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729521AbeJ3ESV (ORCPT
+        id S1727816AbeJ3E0M (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:18:21 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44091 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeJ3ESV (ORCPT
+        Tue, 30 Oct 2018 00:26:12 -0400
+Received: from mail-lj1-f173.google.com ([209.85.208.173]:36174 "EHLO
+        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeJ3E0M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:18:21 -0400
-Received: by mail-lf1-f66.google.com with SMTP id m18-v6so6970204lfl.11;
-        Mon, 29 Oct 2018 12:28:16 -0700 (PDT)
+        Tue, 30 Oct 2018 00:26:12 -0400
+Received: by mail-lj1-f173.google.com with SMTP id s15-v6so9033216lji.3;
+        Mon, 29 Oct 2018 12:36:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JBSrFj3O8LNxKuKz0PuGBw2F7O3AoE7ZdTVHGW8CSiY=;
-        b=TSDfw0OwfQAxcJlmIY4nTIl82Mq5rMVwdxCZlwAdBeMTudjDeD9iJJbL/9RhCo9l3P
-         HSS6FkT1lOYQ3Xj58CO8ytl256mDUEL3BGe8ACR7uLgehvE0MXI4twNXrDNm2DTywOTx
-         XPZjdrqRLtnQk/0IFoJUWqNX8WgOyoOx/zIvknXmL/iElmRszdVGB1YXd859CrWLiJiv
-         mN0gT32pyVB0wYD0A18Yeuq5gUB/FfNOu+Ah03yx8KXlHLapFRnvYi+KUbwECd8o/r18
-         31JWo/tdOYt/90PiBmmp1ckmo6drXEE+xgGwYiznNSfajbnqVgdgJEK3CIgw+LjsZL2m
-         nJ6Q==
+        bh=NUYptIum6tI5/3Gjw2sGCgiaZibf6kTLo5FT7lE3Ed0=;
+        b=oQZ+80j9ZNTFDQZ3+7wA76aU32gcE9UmE36beLaKnPG6s6ZjfgxookcO1eSMaMNH0n
+         WE94ypKV77boBmHfcjBmVMvpPwYYYPdmbvErFCDoBAyV57Lh8mccjLcOTSENhehGga8s
+         OSqRawJLzRn5IFNIxfXQ8gexLg/4lOJBissZzKWWImI4WgXQpt7SCJz4Gdlm8jWojgmu
+         ZQhNNtkhoXq8tG/D4oJa0J/QouOUt0iHVxL47H14gB7K41PSOunElvPQRzeGd9kQ6XZH
+         8YC/tQkJWKha49WAR0V2dV25l3WugorNsem9DjbRvFX+l98s+MjUGjfNyMiL+rtgX5XU
+         IU+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=JBSrFj3O8LNxKuKz0PuGBw2F7O3AoE7ZdTVHGW8CSiY=;
-        b=TXlBuLvQggYDg5Dc8lNQ9KqnufmMXzs6LRK7P1QA0OwMzOdYoMIj0eBTn/v6jmXp2Z
-         GdGX/gVsZqdQ5aS/ffrK92VTK+ITKjK3N8xrYBaPzqxqaB4Xjekd6gwsgB0b4Nq4x6OL
-         54XE02R22rMoEue9uxYvJPBVWrm1fSk52/rMIMmaOLXZbXZLGKBfAIfm1a9VagbPw1pD
-         hvs3L0vozZRwti/sz4sxoiuT3Ih34Qj//CI0s4t7AtUnd5tqjLuOovWxX3JuIhXYHMv8
-         3x+vvep5ca6SYsAehBqzQT4ubeLA0eShzz+O6ex9qFyKRvse9yKnytoX/xss4mB1CXHX
-         PEXQ==
-X-Gm-Message-State: AGRZ1gJtdgdaE+or3D8//pPbGOREaaO4+mUl/BN5P2ilxlSwowGc0peR
-        djrePV70989xGt4DgCem6bkcXzQMOjI=
-X-Google-Smtp-Source: AJdET5ckG+jRcFcSbIvNw2tSVzwhOVdgoCJ8g72cREZKxuHPpvNAuf7Og2LR+4rHGR7UC9SJaCMH5Q==
-X-Received: by 2002:a19:978c:: with SMTP id z134mr7232lfd.109.1540841295393;
-        Mon, 29 Oct 2018 12:28:15 -0700 (PDT)
+        bh=NUYptIum6tI5/3Gjw2sGCgiaZibf6kTLo5FT7lE3Ed0=;
+        b=ImrxUPtUJciIoh7MjQUrHDajdAXof//5d6lwAOCBZqgMxnyJYZHMTzh5djCeBx2xWf
+         x+82EMZTnzZpmzBmQPRDR3bVvUQ3Om7SIbYn6qDA3/OFVoQeaQQZbmmkEWuaQ1ocnrv1
+         oROskJCmvr8IWuBuMMIma62NLCn7Pa7Gluh5M8LYXAxrB4gChEK/C0ILgvt7qDkqctpq
+         +P2d4G0JpwY6G+YiGqzzzBCNyCI4fN2biSCR3k7fTf/ClQU50eWOLpy697cI6fiakgmq
+         Rg2Rvm5WE0Mx3OC8Fvw0TgeR9vvOLSdg+p2QvuWbUEJuh4YxnPo8L6mw93cqWRn6wlq2
+         v6hA==
+X-Gm-Message-State: AGRZ1gJo+UcptBHieBoJZvHwH86ozB7c3EuKyYRfoEQfLM+QXH1Xy/iS
+        3lruySRoc6Ga42sM3kvY4ehsuy5mETw=
+X-Google-Smtp-Source: AJdET5cYI9BVmXsSReUZ/+VmeINZesPQ1zW1S/8WmxMy5IMQLBm8wp5DfMYjk9Dde7vds0be5mAehQ==
+X-Received: by 2002:a2e:484:: with SMTP id a4-v6mr10077366ljf.27.1540841764367;
+        Mon, 29 Oct 2018 12:36:04 -0700 (PDT)
 Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
-        by smtp.gmail.com with ESMTPSA id 75-v6sm1136016ljs.50.2018.10.29.12.28.13
+        by smtp.gmail.com with ESMTPSA id p192-v6sm1996315lfe.7.2018.10.29.12.35.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 12:28:14 -0700 (PDT)
+        Mon, 29 Oct 2018 12:36:03 -0700 (PDT)
 Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Matthew Wilcox <willy@infradead.org>,
+To:     Markus Heiser <markus.heiser@darmarit.de>,
         Peter Zijlstra <peterz@infradead.org>
 Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
         Dave Chinner <david@fromorbit.com>,
         James Morris <jmorris@namei.org>,
         Michal Hocko <mhocko@kernel.org>,
@@ -80,14 +81,14 @@ Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
 References: <20181023213504.28905-1-igor.stoppa@huawei.com>
  <20181023213504.28905-11-igor.stoppa@huawei.com>
  <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <20181026102009.GP25444@bombadil.infradead.org>
+ <094556ca-ea87-9c4a-2115-600d2833fb2a@darmarit.de>
 From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <6f554454-ab8c-92be-a2b5-543e609dc351@gmail.com>
-Date:   Mon, 29 Oct 2018 21:28:12 +0200
+Message-ID: <c3a66398-a1be-9fe9-9108-93dc6a9bbcde@gmail.com>
+Date:   Mon, 29 Oct 2018 21:35:58 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181026102009.GP25444@bombadil.infradead.org>
+In-Reply-To: <094556ca-ea87-9c4a-2115-600d2833fb2a@darmarit.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -95,39 +96,25 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 26/10/2018 12:09, Markus Heiser wrote:
 
+> I guess Igor was looking for a definition list ...
 
-On 26/10/2018 11:20, Matthew Wilcox wrote:
-> On Fri, Oct 26, 2018 at 11:26:09AM +0200, Peter Zijlstra wrote:
->> Jon,
->>
->> So the below document is a prime example for why I think RST sucks. As a
->> text document readability is greatly diminished by all the markup
->> nonsense.
->>
->> This stuff should not become write-only content like html and other
->> gunk. The actual text file is still the primary means of reading this.
+It was meant to be bold.
+Even after reading the guideline "keep it simple", what exactly is 
+simple can be subjective.
+
+If certain rst constructs are not acceptable and can be detected 
+unequivocally, maybe it would help to teach them to checkpatch.pl
+
+[...]
+
+> see "Lists and Quote-like blocks" [1]
 > 
-> I think Igor neglected to read doc-guide/sphinx.rst:
+> [1] 
+> http://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#lists-and-quote-like-blocks 
 
-Guilty as charged :-/
-
-> Specific guidelines for the kernel documentation
-> ------------------------------------------------
-> 
-> Here are some specific guidelines for the kernel documentation:
-> 
-> * Please don't go overboard with reStructuredText markup. Keep it
->    simple. For the most part the documentation should be plain text with
->    just enough consistency in formatting that it can be converted to
->    other formats.
-
-> I agree that it's overly marked up.
-
-I'll fix it
+thank you
 
 --
 igor
-
-
-
