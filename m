@@ -2,119 +2,163 @@ Return-Path: <SRS0=k4kS=NJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD6BC0044C
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 19:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281ABECDE44
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 19:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41FF320870
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 19:47:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlvG2fBn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41FF320870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id ECF372064C
+	for <linux-security-module@archiver.kernel.org>; Mon, 29 Oct 2018 19:52:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECF372064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbeJ3Ehw (ORCPT
+        id S1726016AbeJ3Em0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:37:52 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33179 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeJ3Ehv (ORCPT
+        Tue, 30 Oct 2018 00:42:26 -0400
+Received: from mga12.intel.com ([192.55.52.136]:30194 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725850AbeJ3Em0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:37:51 -0400
-Received: by mail-lf1-f67.google.com with SMTP id i26so2706243lfc.0;
-        Mon, 29 Oct 2018 12:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OSI8WggWUkh3l9NcpbEVJXbbRwwdMMcVDoCVkF1GW5o=;
-        b=jlvG2fBnoHG5x+iuVysZUcCSZwRyOwuGUu4XT/5BtcWg4qD5Ca1AMr2g6Bah7CDluv
-         OTXHvjofUsZwK/yUaIQmc2C8l4+ihdpDSmkCNKr4hlkVEN34jd9BRfHEJ2CK5b4GgTlI
-         R8blnfOTktWDd9FxkzQoxhdZLXY4ygVDixuP80orUXDM2/0IVI2r8aOR8TK+k8GwIl2O
-         5meQc8XATWewoS5+ZG62mxJsgXt3PK1Dw54ahq98PPOZsGbN+hS5saT7pG3M058CetHM
-         TQoMCcSpVrY/bQ4I+H/YoGpIflcaumPGSejZZXqZ4IX2PfVLFueK0x+PxJ+NMLKdGLNt
-         MRog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OSI8WggWUkh3l9NcpbEVJXbbRwwdMMcVDoCVkF1GW5o=;
-        b=JPGUk8hwCiWz6DdV3SB+S0G42lktyhL+KrXis1HXKtCPsdp++sHAafF6ixzaS+jAl7
-         w9B1KlLf4RwCVSN56ykoYNCrmst7ysG0d6ZHhmystyomKrNbOZrJ4WovNU0+hNYm4GZe
-         R3PwL1vYl+L+EqX2zZtN1CwMGlIUOfBU2uy6R8XPcWU8GTtV9qvrAaakEhwW02NxfJEi
-         WJsZLDFfMDRM0bazkDFBi154kIvMpNWLytM2/5bQsnKbOi5oXgK/6c6JkLa5gFBFElLU
-         lm41h2qpytM9jkMALrr748oWunjTqv3TZDbCol3EYyvGsrOxWOmZX27fllIoj2W9R0Ft
-         nyyg==
-X-Gm-Message-State: AGRZ1gLyOWWoWW98eRFjdjVaxj0aOcHUU/KSJl5X6JECb1A3l9jM+lcl
-        xIiXWIN0YRHu09tws2luFLU=
-X-Google-Smtp-Source: AJdET5czUOvlimV4PeoNFQ1TdlBDAaKHwmG0K5rN8i1MnJkAYRy25kta/s5qeeX1KrsHej+Mock5yA==
-X-Received: by 2002:a19:ab1a:: with SMTP id u26-v6mr46402lfe.103.1540842461899;
-        Mon, 29 Oct 2018 12:47:41 -0700 (PDT)
-Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
-        by smtp.gmail.com with ESMTPSA id w13-v6sm2075688lfc.61.2018.10.29.12.47.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 12:47:41 -0700 (PDT)
-Subject: Re: [RFC v1 PATCH 00/17] prmem: protected memory
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181024230345.GE6311@dastard>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <aa37468e-651d-fbcd-692c-aa19d19d9f38@gmail.com>
-Date:   Mon, 29 Oct 2018 21:47:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 00:42:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 12:52:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,441,1534834800"; 
+   d="scan'208";a="85438765"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.197.156])
+  by orsmga008.jf.intel.com with ESMTP; 29 Oct 2018 12:52:17 -0700
+Subject: [PATCH  v2] tpm: add support for partial reads
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
+Date:   Mon, 29 Oct 2018 12:52:17 -0700
+Message-ID: <154084273717.29396.1021945733871865594.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20181024230345.GE6311@dastard>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Currently to read a response from the TPM device an application needs
+provide big enough buffer for the whole response and read it in one go.
+The application doesn't know how big the response it beforehand so it
+always needs to maintain a 4K buffer and read the max (4K).
+In case if the user of the TSS library doesn't provide big enough
+buffer the TCTI spec says that the library should set the required
+size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
+application could allocate a bigger buffer and call receive again.
+To make it possible in the TSS library, this requires being able to do
+partial reads from the driver.
+The library would read the 10 bytes header first to get the actual size
+of the response from the header, and then read the rest of the response.
+This patch adds support for partial reads, i.e. the user can read the
+response in one or multiple reads, until the whole response is consumed.
+The user can also read only part of the response and ignore
+the rest by issuing a new write to send a new command.
 
+The usecase is implemented in this TSS commit:
+https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
 
-On 25/10/2018 00:03, Dave Chinner wrote:
-> On Wed, Oct 24, 2018 at 12:34:47AM +0300, Igor Stoppa wrote:
->> -- Summary --
->>
->> Preliminary version of memory protection patchset, including a sample use
->> case, turning into write-rare the IMA measurement list.
-> 
-> I haven't looked at the patches yet, but I see a significant issue
-> from the subject lines. "prmem" is very similar to "pmem"
-> (persistent memory) and that's going to cause confusion. Especially
-> if people start talking about prmem and pmem in the context of write
-> protect pmem with prmem...
-> 
-> Naming is hard :/
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+Changes in v2:
+ - Allow writes after only partial response is consumed to maintain
+   backwords compatibility.
+---
+ drivers/char/tpm/tpm-dev-common.c |   38 ++++++++++++++++++++++++++++---------
+ drivers/char/tpm/tpm-dev.h        |    2 ++
+ 2 files changed, 31 insertions(+), 9 deletions(-)
 
-yes, at some point I had to go from rare-write to write-rare because I 
-realized that the acronym "rw" was likely to be interpreted as "read/write"
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 99b5133a9d05..77e686d35384 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -64,6 +64,7 @@ static void tpm_timeout_work(struct work_struct *work)
+ 
+ 	mutex_lock(&priv->buffer_mutex);
+ 	priv->data_pending = 0;
++	priv->partial_data = 0;
+ 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	wake_up_interruptible(&priv->async_wait);
+@@ -90,22 +91,39 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 	ssize_t ret_size = 0;
+ 	int rc;
+ 
+-	del_singleshot_timer_sync(&priv->user_read_timer);
+-	flush_work(&priv->timeout_work);
+ 	mutex_lock(&priv->buffer_mutex);
++	if (priv->data_pending || priv->partial_data) {
++		if (*off == 0)
++			priv->partial_data = priv->data_pending;
++
++		ret_size = min_t(ssize_t, size + *off, priv->partial_data);
++		if (ret_size <= 0) {
++			ret_size = 0;
++			priv->data_pending = 0;
++			priv->partial_data = 0;
++			goto out;
++		}
+ 
+-	if (priv->data_pending) {
+-		ret_size = min_t(ssize_t, size, priv->data_pending);
+-		if (ret_size > 0) {
+-			rc = copy_to_user(buf, priv->data_buffer, ret_size);
+-			memset(priv->data_buffer, 0, priv->data_pending);
+-			if (rc)
+-				ret_size = -EFAULT;
++		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
++		if (rc) {
++			memset(priv->data_buffer, 0, TPM_BUFSIZE);
++			priv->partial_data = 0;
++			ret_size = -EFAULT;
++		} else {
++			memset(priv->data_buffer + *off, 0, ret_size);
++			priv->partial_data -= ret_size;
++			*off += ret_size;
+ 		}
+ 
+ 		priv->data_pending = 0;
+ 	}
+ 
++out:
++	if (!priv->partial_data) {
++		*off = 0;
++		del_singleshot_timer_sync(&priv->user_read_timer);
++		flush_work(&priv->timeout_work);
++	}
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	return ret_size;
+ }
+@@ -150,6 +168,8 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 		goto out;
+ 	}
+ 
++	priv->partial_data = 0;
++
+ 	/*
+ 	 * If in nonblocking mode schedule an async job to send
+ 	 * the command return the size.
+diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+index a126b575cb8c..a2ca6a7a06f1 100644
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -11,6 +11,8 @@ struct file_priv {
+ 
+ 	/* Holds the amount of data passed or an error code from async op */
+ 	ssize_t data_pending;
++	/* For partial reads, holds the reminder of a response */
++	ssize_t partial_data;
+ 	struct mutex buffer_mutex;
+ 
+ 	struct timer_list user_read_timer;      /* user needs to claim result */
 
-I propose to keep prmem for the time being, just to avoid adding extra 
-changes that are not functional.
-Once the code has somewhat settled down, I can proceed with the 
-renaming. In the meanwhile, a better name could be discussed.
-
-For example, would "prmemory" be sufficiently unambiguous?
-
---
-igor
