@@ -2,47 +2,68 @@ Return-Path: <SRS0=E2Uq=NK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A036C2BC61
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 22:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 225D7C2BC61
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 22:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC122081B
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 22:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A23802081B
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 22:15:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oZUEqDP7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC122081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ujaGyG03"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A23802081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbeJaHER (ORCPT
+        id S1726754AbeJaHLI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:04:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39434 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728491AbeJaHER (ORCPT
+        Wed, 31 Oct 2018 03:11:08 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45278 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeJaHLH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:04:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9HsO2khZ0MbzoRWq5VhqQW+lsDypsc7reBiq9uyPhDE=; b=oZUEqDP7nN3We7XktLLu71bDuR
-        P7+9AvpCLjl5Jk5dZWcPftmm4Ijm6EbTedMNOA1fOfH70uuzYGNY0qxZuOmuQB+W4hNOMCo5t6NpX
-        Sjps9B4Jxkq1rDIl+fI0W2NTHVLX0+8sqpXoSHOW/eXgJJM8gXhhXeATS1oKiNREcvYA8z3Z+gkUV
-        /YkUP3g42+eng0fjkP5jOKS6Y5P6RtIK3nVzBL7OjH3PFNKKjiAozXo5eEh9TxNEd/78GaiLMhwEF
-        7FAgtOZcSl4ezJcj/K3KAfZco1j81c9KX0Inxi+xuwpy0dTnt5gs5uflbqVbzYniC4uh3GgqROHjZ
-        2R/sMU1w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHcC3-0005hL-Je; Tue, 30 Oct 2018 22:08:59 +0000
-Date:   Tue, 30 Oct 2018 15:08:59 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>, nadav.amit@gmail.com,
+        Wed, 31 Oct 2018 03:11:07 -0400
+Received: by mail-lf1-f68.google.com with SMTP id c24-v6so10131041lfi.12;
+        Tue, 30 Oct 2018 15:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5Ky3uiKRIkgCOv3N0jJvjqQ23cVkr/7JkItMxX78SbQ=;
+        b=ujaGyG03GOtuFjUJZIu2eAQzgm6NK2JTwXOltUPpx6nXKFLGbqGZC5IKtsI3xXeAX2
+         ivRnhJJpJbDHp6yCFpcraDcKyMzwwX2hk6UtkPpTr2jikgp6zO/X26orMQ22dbGlSe5Y
+         c4DQFR6EclBCeM9bxMP2xSetjrt6iC2V9VNxUyjmF6hD4Mmti368oMeQb1aaQ+Xv3oGS
+         L/tFlhHz8qSb/a8tRGtJtI2svKIdbyh9knE4tPQudiGTlGj2mmqOOt0vLzlLz10nBcIR
+         aT0nGswAi7ucysGJIfMri+Fpcso28891sM9EtH8XcP/MPXZ/5uIROZXooaUTFu7Y0nWT
+         pmNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5Ky3uiKRIkgCOv3N0jJvjqQ23cVkr/7JkItMxX78SbQ=;
+        b=P8YhsGVkrqGlVj+fU6egPMROtb9dhFkqwSC7QsNimuWxVQPkVFk9LD75MZr//92KAO
+         eTFoSxq0lN/1j6YMeycwNSWnNZw/UOCQPuBh8BMIdqyCxLd/dIUXPxPYCHevox/tC1gM
+         aZMnwe7ntrz39UOOJs3gehglNMHtumtNQlrGuHrMRTnIV4/y32fkanBertgp99cFNGOt
+         m0amACjbo/n69PcDl2WVAz/iEnDu55qn8jn+PAF9Qa4DEDk0QZsocHnEClwNdHsuFqCc
+         PRC4SqCbPGJgyV9bEr8BxLiG8E9M+OyAJqWdvHGCpgL5EmLwWlQtiGzhxpAhmXZoqRQR
+         pGpg==
+X-Gm-Message-State: AGRZ1gKl7jaQ+c2CLC5K3U8smWMLw6cnxPiRyvJZppV0aLkIoKlhq1AC
+        dMd9vCvNWnj3oe7wC+FOVgg=
+X-Google-Smtp-Source: AJdET5cLfZ/LiUZETwLRKti0DlIEs5ZZWN7s5o0SKnm9C5hTnMmQ1HWGdfadZaZxwn14awXniefvbQ==
+X-Received: by 2002:a19:5713:: with SMTP id l19mr297890lfb.85.1540937748834;
+        Tue, 30 Oct 2018 15:15:48 -0700 (PDT)
+Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
+        by smtp.gmail.com with ESMTPSA id a8-v6sm3672465ljd.6.2018.10.30.15.15.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 15:15:48 -0700 (PDT)
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
         Kees Cook <keescook@chromium.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -61,61 +82,88 @@ Cc:     Andy Lutomirski <luto@amacapital.net>, nadav.amit@gmail.com,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181030220859.GF10491@bombadil.infradead.org>
-References: <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+References: <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
  <20181028183126.GB744@hirez.programming.kicks-ass.net>
  <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
  <20181030152641.GE8177@hirez.programming.kicks-ass.net>
  <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
  <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
- <20181030212551.GD10491@bombadil.infradead.org>
- <a62a1fed-252b-f4c8-8abb-0e4468f50fe8@gmail.com>
+ <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com>
+Date:   Wed, 31 Oct 2018 00:15:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a62a1fed-252b-f4c8-8abb-0e4468f50fe8@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 30, 2018 at 11:55:46PM +0200, Igor Stoppa wrote:
-> On 30/10/2018 23:25, Matthew Wilcox wrote:
-> > On Tue, Oct 30, 2018 at 11:51:17AM -0700, Andy Lutomirski wrote:
-> > > Finally, one issue: rare_alloc() is going to utterly suck
-> > > performance-wise due to the global IPI when the region gets zapped out
-> > > of the direct map or otherwise made RO.  This is the same issue that
-> > > makes all existing XPO efforts so painful. We need to either optimize
-> > > the crap out of it somehow or we need to make sure it’s not called
-> > > except during rare events like device enumeration.
-> > 
-> > Batching operations is kind of the whole point of the VM ;-)  Either
-> > this rare memory gets used a lot, in which case we'll want to create slab
-> > caches for it, make it a MM zone and the whole nine yeards, or it's not
-> > used very much in which case it doesn't matter that performance sucks.
-> > 
-> > For now, I'd suggest allocating 2MB chunks as needed, and having a
-> > shrinker to hand back any unused pieces.
-> 
-> One of the prime candidates for this sort of protection is IMA.
-> In the IMA case, there are ever-growing lists which are populated when
-> accessing files.
-> It's something that ends up on the critical path of any usual performance
-> critical use case, when accessing files for the first time, like at
-> boot/application startup.
-> 
-> Also the SELinux AVC is based on lists. It uses an object cache, but it is
-> still something that grows and is on the critical path of evaluating the
-> callbacks from the LSM hooks. A lot of them.
-> 
-> These are the main two reasons, so far, for me advocating an optimization of
-> the write-rare version of the (h)list.
 
-I think these are both great examples of why doubly-linked lists _suck_.
-You have to modify three cachelines to add an entry to a list.  Walking a
-linked list is an exercise in cache misses.  Far better to use an XArray /
-IDR for this purpose.
+
+On 30/10/2018 23:02, Andy Lutomirski wrote:
+> 
+> 
+>> On Oct 30, 2018, at 1:43 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
+
+
+>> There is no need to process each of these tens of thousands allocations and initialization as write-rare.
+>>
+>> Would it be possible to do the same here?
+> 
+> I don’t see why not, although getting the API right will be a tad complicated.
+
+yes, I have some first-hand experience with this :-/
+
+>>
+>>>>>
+>>>>> To subsequently modify q,
+>>>>>
+>>>>>     p = rare_modify(q);
+>>>>>     q->a = y;
+>>>>
+>>>> Do you mean
+>>>>
+>>>>      p->a = y;
+>>>>
+>>>> here? I assume the intent is that q isn't writable ever, but that's
+>>>> the one we have in the structure at rest.
+>>> Yes, that was my intent, thanks.
+>>> To handle the list case that Igor has pointed out, you might want to
+>>> do something like this:
+>>>     list_for_each_entry(x, &xs, entry) {
+>>>         struct foo *writable = rare_modify(entry);
+>>
+>> Would this mapping be impossible to spoof by other cores?
+>>
+> 
+> Indeed. Only the core with the special mm loaded could see it.
+> 
+> But I dislike allowing regular writes in the protected region. We really only need four write primitives:
+> 
+> 1. Just write one value.  Call at any time (except NMI).
+> 
+> 2. Just copy some bytes. Same as (1) but any number of bytes.
+> 
+> 3,4: Same as 1 and 2 but must be called inside a special rare write region. This is purely an optimization.
+
+Atomic? RCU?
+
+Yes, they are technically just memory writes, but shouldn't the "normal" 
+operation be executed on the writable mapping?
+
+It is possible to sandwich any call between a rare_modify/rare_protect, 
+however isn't that pretty close to having a write-rare version of these 
+plain function.
+
+--
+igor
