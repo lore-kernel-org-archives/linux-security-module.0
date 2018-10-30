@@ -2,46 +2,66 @@ Return-Path: <SRS0=E2Uq=NK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 498B0C2BC61
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 21:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552A5C2BC61
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 21:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFF2A2081B
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 21:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 063932081B
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 21:49:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CwfXroiG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF2A2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pTqlyTCC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 063932081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbeJaGbM (ORCPT
+        id S1727840AbeJaGo1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:31:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:32986 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725743AbeJaGbM (ORCPT
+        Wed, 31 Oct 2018 02:44:27 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42037 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbeJaGo1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:31:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aUavaxogKH403XKXRPnEVNz6RyBC+eD5hHVDUeLt+mY=; b=CwfXroiGl1iorCuN3F1tA9J1q
-        DmMej9IeRdtCWzJcrG/znrrZpyrLbDOk53lsMNEfWiA63Uq9/ZeeN2Cu/xjfU4mmH/LaDvJcdYbax
-        A3SIweSwoNRH5EbjUIZKqeiQ7ZYH/ZCBah5Jz5ppBhcd9EsDLaxWE4QGGm2ZXhD/ZycXZnSxehbYZ
-        qVoGadHOYiLfYG1MDVQcVjNeMNQIq8UWJOrb0Nviai2/AG2zrGVxCuIPlqNy+yZnJnzWYPlEmbtmn
-        YiX6eUCXcAQz2rSQYfvlcI/LOYJLDyL1q9knQS/hVljf6eM+cAmWl7Jm95obQtZ7/YDKW4WO5lsB0
-        AHnRlXlkg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHbg5-0004UL-KK; Tue, 30 Oct 2018 21:35:57 +0000
-Date:   Tue, 30 Oct 2018 14:35:57 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
+        Wed, 31 Oct 2018 02:44:27 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f3-v6so12890549ljk.9;
+        Tue, 30 Oct 2018 14:49:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9gl8AdXDJcsEfO/u8owGMVyrsCHiw9dEED9FVNch6HM=;
+        b=pTqlyTCCU/6bvOxMU6QtG2SA9sIfzQHw9qTJo5CaRuX0xs2vWdyTXez8LSeKMM0H2j
+         sLiGaY5YGwGn3JSSEHf5rMRsYKnWSVlDEwEwb1wxJOaj4Md1+on/x8/PFk7reg2Z8fPK
+         65LWJp8LBMjItp5MHR6l+2cB9o8weBkiGojpQ69aGGqKvYCepfL8JqrWwCk57iYstySD
+         pRe7S4ahdibjQtn+VzAX98Ut1VtOJEQmYV/kw6Kqfc9zhEGwRARllJMMHEYTdBqop2xH
+         nt6jgPuJGnAv6vtt7FWImGeaqHYz8cqhqkkOouI9MILSpxSDrIf0Ut4oZznMKLS7Ql7x
+         qsCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9gl8AdXDJcsEfO/u8owGMVyrsCHiw9dEED9FVNch6HM=;
+        b=eJwsmgHLG3XFHrKXs+BcYs4l5toKIL5solTIEn6xvJryGUIasKIQqpMjMgQusayHr/
+         7wZ4Uj2g9/0AeU4hfFj0fADtXSNN67pUXkg+mbmsNTuAXM9zwO18BSj+AAKNW/ULZhBo
+         Ggb+U0Z+Huwd1qLEEnyeKwsq4YHOJm5ZkHIDFZvnWfx7Y15+fEzTNcZn0i0KXyGszNW9
+         DpwG7Bjv78p1wzFhzGnnZ8JL6Fkpm70oJKlKo4d476Zo2/xH9H8wq3K0++NRjZIWSv04
+         kSPTHlmQ6A8BXgFTO9HhSBQZFX/WdnSur2qUguDxIE0OHGlr6IoG5uAyGCjosoeqEYDD
+         J4kQ==
+X-Gm-Message-State: AGRZ1gJzLmmMyroN/8mMbu3cqrIEs4rTTinDCYwoHZEN+83GkvmIyzq4
+        ywYvH5YUoWdvr75PaZpvJZI=
+X-Google-Smtp-Source: AJdET5fRN09Ty4enu79g9N6X54IF4aOEztg6fkfApsZkEetRpSHHkt6mp0ZfqNyrB6UU2xh+HBr1ow==
+X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr283408lja.58.1540936154022;
+        Tue, 30 Oct 2018 14:49:14 -0700 (PDT)
+Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
+        by smtp.gmail.com with ESMTPSA id t6-v6sm3631523ljd.2.2018.10.30.14.49.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 14:49:13 -0700 (PDT)
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Tycho Andersen <tycho@tycho.ws>,
         Andy Lutomirski <luto@amacapital.net>,
         Kees Cook <keescook@chromium.org>,
@@ -62,60 +82,73 @@ Cc:     Tycho Andersen <tycho@tycho.ws>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181030213557.GE10491@bombadil.infradead.org>
 References: <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
  <20181028183126.GB744@hirez.programming.kicks-ass.net>
  <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
  <20181030152641.GE8177@hirez.programming.kicks-ass.net>
  <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
  <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <20181030182841.GE7343@cisco>
+ <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
  <20181030192021.GC10491@bombadil.infradead.org>
  <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <20181030213557.GE10491@bombadil.infradead.org>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <1245ce5b-5c36-7b5e-6bd7-b7bfeb3848b5@gmail.com>
+Date:   Tue, 30 Oct 2018 23:49:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181030213557.GE10491@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 30, 2018 at 10:43:14PM +0200, Igor Stoppa wrote:
-> On 30/10/2018 21:20, Matthew Wilcox wrote:
-> > > > So the API might look something like this:
-> > > > 
-> > > > 	void *p = rare_alloc(...);	/* writable pointer */
-> > > > 	p->a = x;
-> > > > 	q = rare_protect(p);		/* read-only pointer */
-> 
-> With pools and memory allocated from vmap_areas, I was able to say
-> 
-> protect(pool)
-> 
-> and that would do a swipe on all the pages currently in use.
-> In the SELinux policyDB, for example, one doesn't really want to
-> individually protect each allocation.
-> 
-> The loading phase happens usually at boot, when the system can be assumed to
-> be sane (one might even preload a bare-bone set of rules from initramfs and
-> then replace it later on, with the full blown set).
-> 
-> There is no need to process each of these tens of thousands allocations and
-> initialization as write-rare.
-> 
-> Would it be possible to do the same here?
+On 30/10/2018 23:35, Matthew Wilcox wrote:
+> On Tue, Oct 30, 2018 at 10:43:14PM +0200, Igor Stoppa wrote:
 
-What Andy is proposing effectively puts all rare allocations into
-one pool.  Although I suppose it could be generalised to multiple pools
-... one mm_struct per pool.  Andy, what do you think to doing that?
 
-> > but we'd probably wrap it in list_for_each_rare_entry(), just to be nicer.
+>> Would it be possible to do the same here?
 > 
-> This seems suspiciously close to the duplication of kernel interfaces that I
-> was roasted for :-)
+> What Andy is proposing effectively puts all rare allocations into
+> one pool.  Although I suppose it could be generalised to multiple pools
+> ... one mm_struct per pool.  Andy, what do you think to doing that?
 
-Can you not see the difference between adding one syntactic sugar function
-and duplicating the entire infrastructure?
+The reason to have pools is that, continuing the SELinux example, it 
+supports reloading the policyDB.
+
+In this case it seems to me that it would be faster to drop the entire 
+pool in one go, and create a new one when re-initializing the rules.
+
+Or maybe the pool could be flushed, without destroying the metadata.
+One more reason for having pools is to assign certain property to the 
+pool and then rely on it to be applied to every subsequent allocation.
+
+I've also been wondering if pools can be expected to have some well 
+defined property.
+
+One might be that they do not need to be created on the fly.
+The number of pools should be known at compilation time.
+At least the meta-data could be static, but I do not know how this would 
+work with modules.
+
+>>> but we'd probably wrap it in list_for_each_rare_entry(), just to be nicer.
+>>
+>> This seems suspiciously close to the duplication of kernel interfaces that I
+>> was roasted for :-)
+> 
+> Can you not see the difference between adding one syntactic sugar function
+> and duplicating the entire infrastructure?
+
+And list_add()? or any of the other list related functions?
+Don't they end up receiving a similar treatment?
+
+I might have misunderstood your proposal, but it seems to me that they 
+too will need the same type of pairs rare_modify/rare_protect. No?
+
+And same for hlist, including the _rcu variants.
+
+--
+igor
