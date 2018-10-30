@@ -2,128 +2,98 @@ Return-Path: <SRS0=E2Uq=NK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9BA4C2BC61
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 19:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C771C6786F
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 19:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5387C2081B
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 19:20:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KRJQaIsC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5387C2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E5DBE20823
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 19:45:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5DBE20823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbeJaEPM (ORCPT
+        id S1726021AbeJaEkV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 00:15:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45990 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725743AbeJaEPM (ORCPT
+        Wed, 31 Oct 2018 00:40:21 -0400
+Received: from mga09.intel.com ([134.134.136.24]:22884 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725880AbeJaEkV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 00:15:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=37nJP9R2qcO8HBp/dMyepi58FVf9IEQD7mWnc5gvOVU=; b=KRJQaIsC774yFQU2a5LgnLkLS
-        SSGXeYxMt6FaQKWmDTNz6ne2oE0AZXsXUx4Q0g+y3nyb1M6pLClzCvMywUxGuJXr/xjqubuyTnZv2
-        Go2w8uj9DvgZcq74mG3w4ej1/TWmISnqEs7SNchJML7UQ4DvCtIsDlh4F7VO5KTqGSoHg3Q08g8sd
-        KaWv/YZMWvFsFR7+vPRVEmamyeE+y4hxCpQRbZGLGVCpwDAB9x2qnfYQXPrh4CjxytK50eeB1JUsY
-        uarR2NbtMIwmc1HWVfWxIRWE3wQWYCUBr65PxjBkuyYVpOxIkKU0kqMWCC6mV6jbf3nx8kik7wyB5
-        4un6CBuYw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHZYr-0000hc-Sk; Tue, 30 Oct 2018 19:20:21 +0000
-Date:   Tue, 30 Oct 2018 12:20:21 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181030192021.GC10491@bombadil.infradead.org>
-References: <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <20181030182841.GE7343@cisco>
+        Wed, 31 Oct 2018 00:40:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 12:45:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,445,1534834800"; 
+   d="scan'208";a="85436253"
+Received: from anumodth-mobl.gar.corp.intel.com ([10.249.254.57])
+  by orsmga007.jf.intel.com with ESMTP; 30 Oct 2018 12:45:25 -0700
+Date:   Tue, 30 Oct 2018 21:45:23 +0200 (EET)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+cc:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v3 1/5] tpm: change the end marker of the active_banks
+ array to zero
+In-Reply-To: <20181030154711.2782-2-roberto.sassu@huawei.com>
+Message-ID: <alpine.DEB.2.21.1810302144590.5058@jsakkine-mobl1>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com> <20181030154711.2782-2-roberto.sassu@huawei.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181030182841.GE7343@cisco>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 30, 2018 at 12:28:41PM -0600, Tycho Andersen wrote:
-> On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
-> > On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
-> > > > On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
-> > > I support the addition of a rare-write mechanism to the upstream kernel.
-> > > And I think that there is only one sane way to implement it: using an
-> > > mm_struct. That mm_struct, just like any sane mm_struct, should only
-> > > differ from init_mm in that it has extra mappings in the *user* region.
-> > 
-> > I'd like to understand this approach a little better.  In a syscall path,
-> > we run with the user task's mm.  What you're proposing is that when we
-> > want to modify rare data, we switch to rare_mm which contains a
-> > writable mapping to all the kernel data which is rare-write.
-> > 
-> > So the API might look something like this:
-> > 
-> > 	void *p = rare_alloc(...);	/* writable pointer */
-> > 	p->a = x;
-> > 	q = rare_protect(p);		/* read-only pointer */
-> > 
-> > To subsequently modify q,
-> > 
-> > 	p = rare_modify(q);
-> > 	q->a = y;
-> 
-> Do you mean
-> 
->     p->a = y;
-> 
-> here? I assume the intent is that q isn't writable ever, but that's
-> the one we have in the structure at rest.
+On Tue, 30 Oct 2018, Roberto Sassu wrote:
+> This patch changes the end marker of the active_banks array from
+> TPM2_ALG_ERROR to zero.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+> drivers/char/tpm/tpm-interface.c | 2 +-
+> drivers/char/tpm/tpm2-cmd.c      | 3 ---
+> 2 files changed, 1 insertion(+), 4 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 1a803b0cf980..f7fc4b5ee239 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -1051,7 +1051,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+> 		memset(digest_list, 0, sizeof(digest_list));
+>
+> 		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+> +			    chip->active_banks[i]; i++) {
+> 			digest_list[i].alg_id = chip->active_banks[i];
+> 			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+> 			count++;
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index c31b490bd41d..046c9d8f3c1e 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -908,9 +908,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+> 	}
+>
+> out:
+> -	if (i < ARRAY_SIZE(chip->active_banks))
+> -		chip->active_banks[i] = TPM2_ALG_ERROR;
+> -
+> 	tpm_buf_destroy(&buf);
+>
+> 	return rc;
+> -- 
+> 2.17.1
+>
+>
 
-Yes, that was my intent, thanks.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-To handle the list case that Igor has pointed out, you might want to
-do something like this:
-
-	list_for_each_entry(x, &xs, entry) {
-		struct foo *writable = rare_modify(entry);
-		kref_get(&writable->ref);
-		rare_protect(writable);
-	}
-
-but we'd probably wrap it in list_for_each_rare_entry(), just to be nicer.
+/Jarkko
