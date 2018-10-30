@@ -2,102 +2,71 @@ Return-Path: <SRS0=E2Uq=NK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF7DECDE44
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 11:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 981D9C2BC61
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 14:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73F4A20838
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 11:23:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73F4A20838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 66C8F2080A
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 14:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C8F2080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbeJ3UQM (ORCPT
+        id S1728033AbeJ3XFN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Oct 2018 16:16:12 -0400
-Received: from mga01.intel.com ([192.55.52.88]:18171 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726225AbeJ3UQM (ORCPT
+        Tue, 30 Oct 2018 19:05:13 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52222 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727798AbeJ3XFN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Oct 2018 16:16:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 04:23:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
-   d="scan'208";a="85322871"
-Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.120])
-  by orsmga007.jf.intel.com with ESMTP; 30 Oct 2018 04:23:03 -0700
-Date:   Tue, 30 Oct 2018 13:23:01 +0200 (EET)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Tomas Winkler <tomas.winkler@intel.com>
-cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: tpm_ibmvtpm: fix kdoc warnings
-In-Reply-To: <20181026184043.5524-2-tomas.winkler@intel.com>
-Message-ID: <alpine.DEB.2.21.1810301322480.16909@jsakkine-mobl1>
-References: <20181026184043.5524-1-tomas.winkler@intel.com> <20181026184043.5524-2-tomas.winkler@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 30 Oct 2018 19:05:13 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gHUjz-0006Yo-Qj; Tue, 30 Oct 2018 14:11:31 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] apparmor: clean an indentation issue, remove extraneous space
+Date:   Tue, 30 Oct 2018 14:11:31 +0000
+Message-Id: <20181030141131.3258-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 26 Oct 2018, Tomas Winkler wrote:
-> Remove redundant lines in the kdoc:
->
-> Fixes kdoc warnings:
->
-> drivers/char/tpm/tpm_ibmvtpm.c:42: warning: Cannot understand  *
-> on line 42 - I thought it was a doc line
-> drivers/char/tpm/tpm_ibmvtpm.c:57: warning: Cannot understand  *
-> on line 57 - I thought it was a doc line
->
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> ---
-> drivers/char/tpm/tpm_ibmvtpm.c | 6 ++----
-> 1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index 25f6e2665385..07b5a487d0c8 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -39,8 +39,7 @@ static const struct vio_device_id tpm_ibmvtpm_device_table[] = {
-> MODULE_DEVICE_TABLE(vio, tpm_ibmvtpm_device_table);
->
-> /**
-> - *
-> - * ibmvtpm_send_crq_word - Send a CRQ request
-> + * ibmvtpm_send_crq_word() - Send a CRQ request
->  * @vdev:	vio device struct
->  * @w1:		pre-constructed first word of tpm crq (second word is reserved)
->  *
-> @@ -54,8 +53,7 @@ static int ibmvtpm_send_crq_word(struct vio_dev *vdev, u64 w1)
-> }
->
-> /**
-> - *
-> - * ibmvtpm_send_crq - Send a CRQ request
-> + * ibmvtpm_send_crq() - Send a CRQ request
->  *
->  * @vdev:	vio device struct
->  * @valid:	Valid field
-> -- 
-> 2.14.5
->
->
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Trivial fix to clean up an indentation issue, remove space
 
-/Jarkko
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ security/apparmor/apparmorfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 658b85639006..33f89b3f28a4 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -1744,7 +1744,7 @@ static int ns_rmdir_op(struct inode *dir, struct dentry *dentry)
+ 	if (error)
+ 		return error;
+ 
+-	 parent = aa_get_ns(dir->i_private);
++	parent = aa_get_ns(dir->i_private);
+ 	/* rmdir calls the generic securityfs functions to remove files
+ 	 * from the apparmor dir. It is up to the apparmor ns locking
+ 	 * to avoid races.
+-- 
+2.19.1
+
