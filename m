@@ -2,73 +2,84 @@ Return-Path: <SRS0=E2Uq=NK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F61C2BC61
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 21:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C00ECDE44
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 21:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3949E204FD
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 21:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAB2D2082D
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 21:07:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="wtlh+YOU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3949E204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mxS5QgvV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAB2D2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbeJaF5V (ORCPT
+        id S1727863AbeJaGC6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:57:21 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33066 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbeJaF5V (ORCPT
+        Wed, 31 Oct 2018 02:02:58 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:43289 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbeJaGC5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 01:57:21 -0400
-Received: by mail-pg1-f196.google.com with SMTP id q5-v6so2572673pgv.0
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Oct 2018 14:02:16 -0700 (PDT)
+        Wed, 31 Oct 2018 02:02:57 -0400
+Received: by mail-yb1-f195.google.com with SMTP id g75-v6so5673415yba.10
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Oct 2018 14:07:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=6dY837RQhEmGwvz9vbze/eT+gbXOrsHQHQPFduJSgN0=;
-        b=wtlh+YOUjRSN6oC/c4JvA5EAWBxuor+FSzHoEDhcIqcBqFVyoVBNtL6jyfHcDmlN0N
-         xnElEL66EgOYVxrXy+IG29L0tTU2VwFGVUJG7Yb/KDkILMNsiuU88Gub+Qqheage9e/4
-         YorOF4RLHUjJrtACPZnECW/R00mQdJtXfDiy7aB0CeTFFM291Jzt35ZSxXQxE5ISMT3K
-         k/bHOTCbY0oef4v7M/V9kB67GtKOoGBkPz5vxlDUbR6Imk3cv+ajBmbUbhhWleXLMnsV
-         rY6Z40NqZzfqC3OYK7TKbsK2jp8/xBOnJu+SRYeJKv/YggkM3ZW+cKmT/LY+LQgBB4zl
-         iHdg==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jyiOPOCckzrbIKAshXrPMU0L5xcGklBFrQXLee5VrHU=;
+        b=mxS5QgvVZduXsqT44pfmSvL3VNLgxeTwCignfntI8Cw8waLM7cUr9tzKaulQIdYPBC
+         y0cU84bcvv5mHPjU6sMaLoiVCD11xR+MCWQtRRLNBFiC3gYjgZJs8QxWG+o+aMWZGTId
+         F9O44F7hYnRzDFMUa+x+azpcbUxfCPjboI4tg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=6dY837RQhEmGwvz9vbze/eT+gbXOrsHQHQPFduJSgN0=;
-        b=lmfUeaKcpCyn9MjlAjdVtHUvJVZtFmbngdGfjTpb7ejH2d+JEb73CWr1FzZy0prBAz
-         OX7ssdeRbzQf9ojbFh+THrwcc+gIcDxQxEl+2nL4etRhFIw8795FavFtw63ET4h2tOO+
-         /mdLHEazOiunakWBQww8gjC9kcX0qniBMcwwC8z7kIGPG3qG0Ge/P/Q+1XzN7597sYpQ
-         veBDKijLC9c2p7fIvsmfJBPvdMojGxbWXyw6c//SZTb52/m2yaeP5TuJ8n/fT6/eUbXa
-         Vtjh4bxM3A6sv7+stBwQ2PBE9K0VY2vhMu066kK687yPVRJhY2k1PSFHbC89QZSBFBQK
-         c/oQ==
-X-Gm-Message-State: AGRZ1gJQ5jzZAQj2EuhgZzsA03Ebs+TkdPPgcOvEp43ejCKmphLW92Rx
-        RKrX5E46NsbISWPDH3cc42g8cw==
-X-Google-Smtp-Source: AJdET5fS1xJL+nycTTrL8Be3Jq5vtgnwxCO6ZpbPxMxvSIQcdV7HAeGx78CJqVAXtaq0VqB5KAKUNw==
-X-Received: by 2002:a62:a50d:: with SMTP id v13-v6mr333447pfm.18.1540933335870;
-        Tue, 30 Oct 2018 14:02:15 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b021:f9e6:a9a5:9545:35ee:19c8? ([2600:1010:b021:f9e6:a9a5:9545:35ee:19c8])
-        by smtp.gmail.com with ESMTPSA id m12-v6sm24976627pgd.81.2018.10.30.14.02.13
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jyiOPOCckzrbIKAshXrPMU0L5xcGklBFrQXLee5VrHU=;
+        b=WXZBHfNG/wd1XVccg+fgrEmKi1P8VXVI9ws61p8o6C05NCyULnPCMrbpxzdSXjJxbo
+         K7QlepIeo7LtL6SpvlXpDytYLo5uTrCj0iPGhvbvfaKkED1BD8LjgPYaBetuqUN8o+mT
+         5+QCoJOMNcvb5kNgRi8+juBUrd9UPTuHZp+t8bby9wb6UTGPmqshs3MW/3r05Hikkkl8
+         623ign94aksiid2yGReDiBODzQOxcuqXQS1Gv+PIF66mY3IH0W1/VqnLc1IOp5CADMLU
+         IIzXLc4KqEsSHN2mp2wbIl7u1Qrfcu3hrdz+gl2xSzeztqfl6hgEbwZUlzlIAnxzw0hy
+         7pxA==
+X-Gm-Message-State: AGRZ1gJDLmL/MT3wlLc1SlxyyHlIc6rq1R3GUhCZlOqMeYsdd93wOcdX
+        dvlYzDHG1V+SlG/awYzEcKx0jkk+fUc=
+X-Google-Smtp-Source: AJdET5ektg7au1jI/ewqFP/04rOOvYYxhXTmoEVJ1/4Ign/YP80p3yXZ3PdK3wcQHN2kG/spOIaCxQ==
+X-Received: by 2002:a25:c04b:: with SMTP id c72-v6mr379371ybf.289.1540933671018;
+        Tue, 30 Oct 2018 14:07:51 -0700 (PDT)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id f7-v6sm14568055ywf.108.2018.10.30.14.07.47
+        for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 14:02:14 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
+        Tue, 30 Oct 2018 14:07:49 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id n140-v6so5693799yba.1
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Oct 2018 14:07:47 -0700 (PDT)
+X-Received: by 2002:a25:8409:: with SMTP id u9-v6mr366343ybk.421.1540933667165;
+ Tue, 30 Oct 2018 14:07:47 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 14:07:45
+ -0700 (PDT)
+In-Reply-To: <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
+References: <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com> <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org>
+ <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com> <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 30 Oct 2018 14:07:45 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+58PcvXmt6qp4aZdDz_pBFV-P_rmp3zg6vQnpMvoMdXA@mail.gmail.com>
+Message-ID: <CAGXu5j+58PcvXmt6qp4aZdDz_pBFV-P_rmp3zg6vQnpMvoMdXA@mail.gmail.com>
 Subject: Re: [PATCH 10/17] prmem: documentation
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
-Date:   Tue, 30 Oct 2018 14:02:12 -0700
-Cc:     Matthew Wilcox <willy@infradead.org>,
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dave Chinner <david@fromorbit.com>,
@@ -86,106 +97,119 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
-References: <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com> <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com> <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com> <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org> <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Oct 30, 2018 at 2:02 PM, Andy Lutomirski <luto@amacapital.net> wrot=
+e:
+>
+>
+>> On Oct 30, 2018, at 1:43 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
+>>
+>>> On 30/10/2018 21:20, Matthew Wilcox wrote:
+>>>> On Tue, Oct 30, 2018 at 12:28:41PM -0600, Tycho Andersen wrote:
+>>>>> On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
+>>>>> On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
+>>>>>>> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrot=
+e:
+>>>>>> I support the addition of a rare-write mechanism to the upstream ker=
+nel.
+>>>>>> And I think that there is only one sane way to implement it: using a=
+n
+>>>>>> mm_struct. That mm_struct, just like any sane mm_struct, should only
+>>>>>> differ from init_mm in that it has extra mappings in the *user* regi=
+on.
+>>>>>
+>>>>> I'd like to understand this approach a little better.  In a syscall p=
+ath,
+>>>>> we run with the user task's mm.  What you're proposing is that when w=
+e
+>>>>> want to modify rare data, we switch to rare_mm which contains a
+>>>>> writable mapping to all the kernel data which is rare-write.
+>>>>>
+>>>>> So the API might look something like this:
+>>>>>
+>>>>>    void *p =3D rare_alloc(...);    /* writable pointer */
+>>>>>    p->a =3D x;
+>>>>>    q =3D rare_protect(p);        /* read-only pointer */
+>>
+>> With pools and memory allocated from vmap_areas, I was able to say
+>>
+>> protect(pool)
+>>
+>> and that would do a swipe on all the pages currently in use.
+>> In the SELinux policyDB, for example, one doesn't really want to individ=
+ually protect each allocation.
+>>
+>> The loading phase happens usually at boot, when the system can be assume=
+d to be sane (one might even preload a bare-bone set of rules from initramf=
+s and then replace it later on, with the full blown set).
+>>
+>> There is no need to process each of these tens of thousands allocations =
+and initialization as write-rare.
+>>
+>> Would it be possible to do the same here?
+>
+> I don=E2=80=99t see why not, although getting the API right will be a tad=
+ complicated.
+>
+>>
+>>>>>
+>>>>> To subsequently modify q,
+>>>>>
+>>>>>    p =3D rare_modify(q);
+>>>>>    q->a =3D y;
+>>>>
+>>>> Do you mean
+>>>>
+>>>>     p->a =3D y;
+>>>>
+>>>> here? I assume the intent is that q isn't writable ever, but that's
+>>>> the one we have in the structure at rest.
+>>> Yes, that was my intent, thanks.
+>>> To handle the list case that Igor has pointed out, you might want to
+>>> do something like this:
+>>>    list_for_each_entry(x, &xs, entry) {
+>>>        struct foo *writable =3D rare_modify(entry);
+>>
+>> Would this mapping be impossible to spoof by other cores?
+>>
+>
+> Indeed. Only the core with the special mm loaded could see it.
+>
+> But I dislike allowing regular writes in the protected region. We really =
+only need four write primitives:
+>
+> 1. Just write one value.  Call at any time (except NMI).
+>
+> 2. Just copy some bytes. Same as (1) but any number of bytes.
+>
+> 3,4: Same as 1 and 2 but must be called inside a special rare write regio=
+n. This is purely an optimization.
+>
+> Actually getting a modifiable pointer should be disallowed for two reason=
+s:
+>
+> 1. Some architectures may want to use a special write-different-address-s=
+pace operation. Heck, x86 could, too: make the actual offset be a secret an=
+d shove the offset into FSBASE or similar. Then %fs-prefixed writes would d=
+o the rare writes.
+>
+> 2. Alternatively, x86 could set the U bit. Then the actual writes would u=
+se the uaccess helpers, giving extra protection via SMAP.
+>
+> We don=E2=80=99t really want a situation where an unchecked pointer in th=
+e rare write region completely defeats the mechanism.
 
+We still have to deal with certain structures under the write-rare
+window. For example, see:
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=3D=
+kspp/write-rarely&id=3D60430b4d3b113aae4adab66f8339074986276474
+They are wrappers to non-inline functions that have the same sanity-checkin=
+g.
 
-> On Oct 30, 2018, at 1:43 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
->=20
->> On 30/10/2018 21:20, Matthew Wilcox wrote:
->>> On Tue, Oct 30, 2018 at 12:28:41PM -0600, Tycho Andersen wrote:
->>>> On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
->>>> On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
->>>>>> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:=
-
->>>>> I support the addition of a rare-write mechanism to the upstream kerne=
-l.
->>>>> And I think that there is only one sane way to implement it: using an
->>>>> mm_struct. That mm_struct, just like any sane mm_struct, should only
->>>>> differ from init_mm in that it has extra mappings in the *user* region=
-.
->>>>=20
->>>> I'd like to understand this approach a little better.  In a syscall pat=
-h,
->>>> we run with the user task's mm.  What you're proposing is that when we
->>>> want to modify rare data, we switch to rare_mm which contains a
->>>> writable mapping to all the kernel data which is rare-write.
->>>>=20
->>>> So the API might look something like this:
->>>>=20
->>>>    void *p =3D rare_alloc(...);    /* writable pointer */
->>>>    p->a =3D x;
->>>>    q =3D rare_protect(p);        /* read-only pointer */
->=20
-> With pools and memory allocated from vmap_areas, I was able to say
->=20
-> protect(pool)
->=20
-> and that would do a swipe on all the pages currently in use.
-> In the SELinux policyDB, for example, one doesn't really want to individua=
-lly protect each allocation.
->=20
-> The loading phase happens usually at boot, when the system can be assumed t=
-o be sane (one might even preload a bare-bone set of rules from initramfs an=
-d then replace it later on, with the full blown set).
->=20
-> There is no need to process each of these tens of thousands allocations an=
-d initialization as write-rare.
->=20
-> Would it be possible to do the same here?
-
-I don=E2=80=99t see why not, although getting the API right will be a tad co=
-mplicated.
-
->=20
->>>>=20
->>>> To subsequently modify q,
->>>>=20
->>>>    p =3D rare_modify(q);
->>>>    q->a =3D y;
->>>=20
->>> Do you mean
->>>=20
->>>     p->a =3D y;
->>>=20
->>> here? I assume the intent is that q isn't writable ever, but that's
->>> the one we have in the structure at rest.
->> Yes, that was my intent, thanks.
->> To handle the list case that Igor has pointed out, you might want to
->> do something like this:
->>    list_for_each_entry(x, &xs, entry) {
->>        struct foo *writable =3D rare_modify(entry);
->=20
-> Would this mapping be impossible to spoof by other cores?
->=20
-
-Indeed. Only the core with the special mm loaded could see it.
-
-But I dislike allowing regular writes in the protected region. We really onl=
-y need four write primitives:
-
-1. Just write one value.  Call at any time (except NMI).
-
-2. Just copy some bytes. Same as (1) but any number of bytes.
-
-3,4: Same as 1 and 2 but must be called inside a special rare write region. T=
-his is purely an optimization.
-
-Actually getting a modifiable pointer should be disallowed for two reasons:
-
-1. Some architectures may want to use a special write-different-address-spac=
-e operation. Heck, x86 could, too: make the actual offset be a secret and sh=
-ove the offset into FSBASE or similar. Then %fs-prefixed writes would do the=
- rare writes.
-
-2. Alternatively, x86 could set the U bit. Then the actual writes would use t=
-he uaccess helpers, giving extra protection via SMAP.
-
-We don=E2=80=99t really want a situation where an unchecked pointer in the r=
-are write region completely defeats the mechanism.=
+--=20
+Kees Cook
