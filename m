@@ -2,104 +2,99 @@ Return-Path: <SRS0=E2Uq=NK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDA1ECDE44
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 15:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B04C2BC61
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 15:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CEF2075D
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 15:40:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SbQ0z9k3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CEF2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E8ED20664
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 15:50:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E8ED20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbeJaAd7 (ORCPT
+        id S1727596AbeJaAoR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:33:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57126 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726549AbeJaAd7 (ORCPT
+        Tue, 30 Oct 2018 20:44:17 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32703 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725853AbeJaAoQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:33:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=55ckWGvPLucEZ6A7S9A1AJ7MTVz42QBk9yQvmKgwzxc=; b=SbQ0z9k3KbFUKKpXmkp3dFQik
-        4OZFN88GKQBN/8UmraKtjJXUOGI5UuDIhdrVo/KinNraL716rtrSYQ/oDeW7KkvYGIwALAw02ugs8
-        9vn88o5gjdxpqBKCYByD3fw65nt+cZIb/UDGKILl8VYp90g4gIjWLYCeZHdiOzGcMDaGi1V8VbeRd
-        ufLaV3Z99BwOMrBgZKLnQMPvJtDJnmDjSF8HkWXy3nAanT/GJv7Q9NotvCDnbpLgn4QTFUAANe/Uq
-        VTtWoPmO0epxhJ+DeC4MSyTeSoXUTEjCTK2C1cs3CRstLrDGtvDGBeyroHJlqHZRWed0Z6bgkKVlK
-        wyRTlOdKQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHW7O-0005ed-GQ; Tue, 30 Oct 2018 15:39:46 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EFADE2029FA14; Tue, 30 Oct 2018 16:39:44 +0100 (CET)
-Date:   Tue, 30 Oct 2018 16:39:44 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Lihao Liang <lianglihao@huawei.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/17] prmem: linked list: disable layout randomization
-Message-ID: <20181030153944.GB13436@hirez.programming.kicks-ass.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-14-igor.stoppa@huawei.com>
- <20181026093205.GD3159@worktop.c.hoisthospitality.com>
- <20181026101707.GO25444@bombadil.infradead.org>
+        Tue, 30 Oct 2018 20:44:16 -0400
+Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id A24C8950F1832;
+        Tue, 30 Oct 2018 15:50:12 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.44) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 30 Oct 2018 15:50:05 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 0/5] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Tue, 30 Oct 2018 16:47:06 +0100
+Message-ID: <20181030154711.2782-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181026101707.GO25444@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 26, 2018 at 03:17:07AM -0700, Matthew Wilcox wrote:
-> On Fri, Oct 26, 2018 at 11:32:05AM +0200, Peter Zijlstra wrote:
-> > On Wed, Oct 24, 2018 at 12:35:00AM +0300, Igor Stoppa wrote:
-> > > Some of the data structures used in list management are composed by two
-> > > pointers. Since the kernel is now configured by default to randomize the
-> > > layout of data structures soleley composed by pointers, this might
-> > > prevent correct type punning between these structures and their write
-> > > rare counterpart.
-> > 
-> > 'might' doesn't really work for me. Either it does or it does not.
-> 
-> He means "Depending on the random number generator, the two pointers
-> might be AB or BA.  If they're of opposite polarity (50% of the time),
-> it _will_ break, and 50% of the time it _won't_ break."
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
 
-So don't do that then. If he were to include struct list_head inside his
-prlist_head, then there is only the one randomization and things will
-just work.
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
 
-Also, I really don't see why he needs that second type and all that type
-punning crap in the first place.
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
 
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
+
+Changelog
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+Roberto Sassu (5):
+  tpm: change the end marker of the active_banks array to zero
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: modify tpm_pcr_read() definition to pass a TPM hash algorithm
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: ensure that output of PCR read contains the correct digest size
+
+ drivers/char/tpm/tpm-interface.c    | 19 ++++--
+ drivers/char/tpm/tpm.h              | 18 ++----
+ drivers/char/tpm/tpm2-cmd.c         | 99 +++++++++++++++++++++--------
+ include/linux/tpm.h                 | 30 ++++++++-
+ include/linux/tpm_eventlog.h        |  9 +--
+ security/integrity/ima/ima_crypto.c | 10 +--
+ 6 files changed, 122 insertions(+), 63 deletions(-)
+
+-- 
+2.17.1
 
