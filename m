@@ -2,68 +2,71 @@ Return-Path: <SRS0=E2Uq=NK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2874C2BC61
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 18:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AEBC2BC61
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 18:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CE222081B
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 18:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61FBF20657
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 18:51:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="PJMbUGRm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE222081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="dlnDeEWl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FBF20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbeJaDXW (ORCPT
+        id S1727547AbeJaDqB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Oct 2018 23:23:22 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42875 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbeJaDXV (ORCPT
+        Tue, 30 Oct 2018 23:46:01 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39896 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbeJaDqA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Oct 2018 23:23:21 -0400
-Received: by mail-oi1-f194.google.com with SMTP id h23-v6so11324050oih.9
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Oct 2018 11:28:47 -0700 (PDT)
+        Tue, 30 Oct 2018 23:46:00 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c25-v6so6303873pfe.6
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Oct 2018 11:51:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JAI1HlD5dqyB57uwgCSv8VB+R5Ii9fVP8ESJ5dTebS8=;
-        b=PJMbUGRmPILUnsWvEUdbJIt7iUWOCmUt02bd9DyUKPUQ33vRm3PZjHaUHSL+1UY1qW
-         iZTK/ujHIqGV1xQn/UMj7VL9pg4/Cf+i3IoKSnFt6gAMbjjYLKGY40ZFeMCUC5edThpn
-         cXKpkZ0T9yNtTdx6KY9Tkf3XCRp52YxRPiFqVkQ/PR4D06VBHmXncHXzvUP881uUF6Qy
-         Q/rP7sAD92l3p6pNekTxgNh5eBVZS9YgrAZA9SrQB5Ec1yYR04uwI0Ed3mTxx1ZXE05o
-         e6fuwObYCuO07bw4QI1iwdlzXGoFM7YQBwZtpwVI4ohwxLogtdmKhlIOQ25zXhJ28BYw
-         Jh/w==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=rb6YvcGOAMe/gwiFBMF9WZ2MVHDY2CeNDGz9YQsONMw=;
+        b=dlnDeEWl/upXbbOU895iXNU3Fv7dD34w37fudMV6cLJ0OWuqgP2au4nclePyohHbeC
+         t2624op9N/hpZYLdggT+0lWOYZz0XaIaOYScrz6WpzaA8Ar45iShOgq0Lc2Y9U7yn9f0
+         sS9HPVTm8/kfK2CeoXd+oV/W6ps7FkjzRvAiAOJEFq1DNTAH7y8WC3gBHSdwAD//rHch
+         zxoJnEQ4Di9AwFI5VVIwM8VjExVK5S4saWiwV08gFAgIeqauKSck1AKUbds34kGgddeJ
+         3YYKRpyPuC4DsexudYrLf9PY3Yau7g6crupTZJ46n6t0e51biDl9VQfxwKuPkn8Has9f
+         8dDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JAI1HlD5dqyB57uwgCSv8VB+R5Ii9fVP8ESJ5dTebS8=;
-        b=eiyo+brR7oYRY0KgT7mAz0PWFGjVNxue5QHnbzFIflDbMIHFCG1EE8Btj/d9m+R5Dc
-         iqS8ZxkWzSbactUAjQ8pb3Ds/HJIsbRPSjjkZIAauAZkpMdD/1ntHjn1wDgpL9ON0yKk
-         GtX9AX9vOMqUR/9vfBprpwUGRL4MsKR+UlbjsC/DO+i+z4UrFgoMV3qnbWKS1ojFiKr9
-         bxqb41+zfjM+v3oOYZvO65OxemPeKHDXWGH2/HftqxCM3CuG0AcaTCEGzypgxEORNBEi
-         GD3TQFwk6mzcMEb4tYejxFqw8f9LBPJe9XBV6OsbJ8bJbgOAp43OId8DW+6h3SEFGb3H
-         rZYQ==
-X-Gm-Message-State: AGRZ1gKnBepe1IZPfd5PqBdTkE8hApD4Gxw0nd+YxRlSVDlT+cY0Bh9f
-        196yH626dzXOWT85UmBXmmv7EA==
-X-Google-Smtp-Source: AJdET5e7OwnfpoGuZ/wri/U0UVODeOEd6lgoAUGVeZGLs9KrBtMDUUXspaq0Iv8fu6Yeo7UGCEGS2Q==
-X-Received: by 2002:aca:72cd:: with SMTP id p196-v6mr3533oic.252.1540924126358;
-        Tue, 30 Oct 2018 11:28:46 -0700 (PDT)
-Received: from cisco ([128.107.241.170])
-        by smtp.gmail.com with ESMTPSA id w37sm9597052oti.77.2018.10.30.11.28.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 11:28:45 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 12:28:41 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=rb6YvcGOAMe/gwiFBMF9WZ2MVHDY2CeNDGz9YQsONMw=;
+        b=hiQho1ic0ZyZb3sPdRUOQtV/rJrM2cU/PCMgFr4VJGtIomc2oOp8hM714Ok6RGc5BL
+         kKa/rTdPl1c+w2o4FKW1+lmA4S5GEln2gsIKzsrnuX4VqbUi9yIY3jttzP6RFtZayAz0
+         74VugpjffQOTZHpTlOyePelnEhibNsTC4ckEWKocTNZfVETJs6qyypfhuzF3RRDxIjBj
+         r+KfhUarH1RhpPB2KpqoOdhzNhxiRNlSUIBk5snUTzN9OFlKu3g24FcThE0cSVDJza0y
+         pCRWCTcVh0QK+p19UQ4cWm6KCMg2hz3x8GyqqqmFNEYi3I/kJjZE5czJLlC627aq2zmq
+         tNng==
+X-Gm-Message-State: AGRZ1gJKx9UQWAVfuOKke2nWBDyEPIxtVN5bLMOL2jXwerS7sJUaNbmm
+        UTbqyg3HLpK9jpNa/oA7+LDVbw==
+X-Google-Smtp-Source: AJdET5dJlZ4nxUnqhdvGPbfJBzHxBH8NcYilBZIMH/rItwX1GAspFkxj86srmnWm+e37pScA+3erQg==
+X-Received: by 2002:a62:5343:: with SMTP id h64-v6mr4136829pfb.226.1540925480273;
+        Tue, 30 Oct 2018 11:51:20 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b021:f9e6:a9a5:9545:35ee:19c8? ([2600:1010:b021:f9e6:a9a5:9545:35ee:19c8])
+        by smtp.gmail.com with ESMTPSA id u1-v6sm24711389pgr.61.2018.10.30.11.51.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 11:51:18 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 10/17] prmem: documentation
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <20181030175814.GB10491@bombadil.infradead.org>
+Date:   Tue, 30 Oct 2018 11:51:17 -0700
+Cc:     Kees Cook <keescook@chromium.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Igor Stoppa <igor.stoppa@gmail.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -82,69 +85,64 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181030182841.GE7343@cisco>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181030175814.GB10491@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com> <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com> <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com> <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com> <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>, nadav.amit@gmail.com
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
+
+
+> On Oct 30, 2018, at 10:58 AM, Matthew Wilcox <willy@infradead.org> wrote:
+>=20
 > On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
-> > > On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
-> > I support the addition of a rare-write mechanism to the upstream kernel.
-> > And I think that there is only one sane way to implement it: using an
-> > mm_struct. That mm_struct, just like any sane mm_struct, should only
-> > differ from init_mm in that it has extra mappings in the *user* region.
-> 
+>>> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
+>> I support the addition of a rare-write mechanism to the upstream kernel.
+>> And I think that there is only one sane way to implement it: using an
+>> mm_struct. That mm_struct, just like any sane mm_struct, should only
+>> differ from init_mm in that it has extra mappings in the *user* region.
+>=20
 > I'd like to understand this approach a little better.  In a syscall path,
 > we run with the user task's mm.  What you're proposing is that when we
 > want to modify rare data, we switch to rare_mm which contains a
 > writable mapping to all the kernel data which is rare-write.
-> 
+>=20
 > So the API might look something like this:
-> 
-> 	void *p = rare_alloc(...);	/* writable pointer */
-> 	p->a = x;
-> 	q = rare_protect(p);		/* read-only pointer */
-> 
+>=20
+>    void *p =3D rare_alloc(...);    /* writable pointer */
+>    p->a =3D x;
+>    q =3D rare_protect(p);        /* read-only pointer */
+>=20
 > To subsequently modify q,
-> 
-> 	p = rare_modify(q);
-> 	q->a = y;
+>=20
+>    p =3D rare_modify(q);
+>    q->a =3D y;
+>    rare_protect(p);
 
-Do you mean
+How about:
 
-    p->a = y;
+rare_write(&q->a, y);
 
-here? I assume the intent is that q isn't writable ever, but that's
-the one we have in the structure at rest.
+Or, for big writes:
 
-Tycho
+rare_write_copy(&q, local_q);
 
-> 	rare_protect(p);
-> 
-> Under the covers, rare_modify() would switch to the rare_mm and return
-> (void *)((unsigned long)q + ARCH_RARE_OFFSET).  All of the rare data
-> would then be modifiable, although you don't have any other pointers
-> to it.  rare_protect() would switch back to the previous mm and return
-> (p - ARCH_RARE_OFFSET).
-> 
-> Does this satisfy Igor's requirements?  We wouldn't be able to
-> copy_to/from_user() while rare_mm was active.  I think that's a feature
-> though!  It certainly satisfies my interests (kernel code be able to
-> mark things as dynamically-allocated-and-read-only-after-initialisation)
+This avoids a whole ton of issues.  In practice, actually running with a spe=
+cial mm requires preemption disabled as well as some other stuff, which Nada=
+v carefully dealt with.
+
+Also, can we maybe focus on getting something merged for statically allocate=
+d data first?
+
+Finally, one issue: rare_alloc() is going to utterly suck performance-wise d=
+ue to the global IPI when the region gets zapped out of the direct map or ot=
+herwise made RO.  This is the same issue that makes all existing XPO efforts=
+ so painful. We need to either optimize the crap out of it somehow or we nee=
+d to make sure it=E2=80=99s not called except during rare events like device=
+ enumeration.
+
+Nadav, want to resubmit your series?  IIRC the only thing wrong with it was t=
+hat it was a big change and we wanted a simpler fix to backport. But that=E2=
+=80=99s all done now, and I, at least, rather liked your code. :)
