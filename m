@@ -2,187 +2,275 @@ Return-Path: <SRS0=E2Uq=NK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC81C6786F
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 20:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC45CC6786F
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 20:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F2F2081B
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 20:43:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0aWIQci"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7F2F2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BD552080A
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 20:57:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BD552080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeJaFiV (ORCPT
+        id S1725978AbeJaFw2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:38:21 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40013 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbeJaFiV (ORCPT
+        Wed, 31 Oct 2018 01:52:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:64138 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726840AbeJaFw2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 01:38:21 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n3-v6so9982150lfe.7;
-        Tue, 30 Oct 2018 13:43:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xu5WEvOdkhwAcw/tDTH6tw+32SrXTot1y5NB/AFoBIs=;
-        b=b0aWIQciD2DGRdfad6mVuqrT1TXY/CanJEtTZyG6XTjz+2+EOLjtS+rkfnpr2boN03
-         oN9lVCpGlyc0tzzkI/I5TdRulXOXBnCtUmStuLEC424QT09opngSh3BEjE4ihuJXDcG3
-         m+taoz6yBFDiLKzINxZZupGq8xq3fmGbW2J2Dc4n+4tUUciYVhR+T5ST3tUeXCRKz6W5
-         HoeepadUg8CE5t6HfOzFnqMwpZoodPw3l0UXcacKN06WCuLjmHxVedUGoYk+x3AK5K5r
-         s03Hn2XEzSk9Gy8m5mXkMQcJgu0soW8vQ+nxi8L8zbRSktJ7o/73zW8kG8MKcM2lWrwR
-         q/3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xu5WEvOdkhwAcw/tDTH6tw+32SrXTot1y5NB/AFoBIs=;
-        b=MOwjWdxMkdASGOArDEjwpgnJfuS0MP7MFgBFviDz9GV8EkUTCsQnwi6oB45iCMUtL8
-         2I+7dEt1lSYr0f555JNqc9dwGngv1LMF6G/66Ic7d4NbgcJsd0pEwpOWeAOhEwjj4c3D
-         mnY3gJWk1SVOCWVOg3iWS6UNbDUxARoyv6Kz49BjNcW+jEUDSazyTs+I2OniOyLUOjAY
-         L9sIc7fkMPEtcDw65na5/x2Lib5jKZSC/tODcBjgt+zJ2Rl9AXf7wvmEaHlIT5SjfNlr
-         EA+hHdryj6ZTu0Fptt5PPYQXids/QH/OXYFcMA9cgt9+TTLWe6gIqjCp8xG70WEd4RJV
-         zw4w==
-X-Gm-Message-State: AGRZ1gIk1QOeoZvxAC4BZOvsMi6LlYUhel9As9hEECh3cQo7Z5naWogI
-        i3cE92mXXMIx4ltTBEHmfRs=
-X-Google-Smtp-Source: AJdET5dXWs7fa9BaqgZOVF6fMUdOnr5Ha1IdjeehNskiWZnKSyoAqYLsDI8EHJfZ96s+YcHb7RUc6A==
-X-Received: by 2002:a19:ab1a:: with SMTP id u26-v6mr139559lfe.103.1540932196483;
-        Tue, 30 Oct 2018 13:43:16 -0700 (PDT)
-Received: from [192.168.10.160] (91-159-62-169.elisa-laajakaista.fi. [91.159.62.169])
-        by smtp.gmail.com with ESMTPSA id s69-v6sm3848162lfs.92.2018.10.30.13.43.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 13:43:15 -0700 (PDT)
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Matthew Wilcox <willy@infradead.org>,
-        Tycho Andersen <tycho@tycho.ws>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Wed, 31 Oct 2018 01:52:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 13:57:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
+   d="scan'208";a="92481159"
+Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
+  by FMSMGA003.fm.intel.com with ESMTP; 30 Oct 2018 13:57:23 -0700
+Received: from orsmsx110.amr.corp.intel.com ([169.254.10.166]) by
+ ORSMSX101.amr.corp.intel.com ([169.254.8.174]) with mapi id 14.03.0415.000;
+ Tue, 30 Oct 2018 13:57:22 -0700
+From:   "Schaufler, Casey" <casey.schaufler@intel.com>
+To:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-References: <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
- <20181030192021.GC10491@bombadil.infradead.org>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
-Date:   Tue, 30 Oct 2018 22:43:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181030192021.GC10491@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+CC:     Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Mallick, Asit K" <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: RE: [Patch v4 13/18] security: Update security level of a process
+ when modifying its dumpability
+Thread-Topic: [Patch v4 13/18] security: Update security level of a process
+ when modifying its dumpability
+Thread-Index: AQHUcIX1hxicXgbmAEOLDSitei16taU4PnJA
+Date:   Tue, 30 Oct 2018 20:57:22 +0000
+Message-ID: <99FC4B6EFCEFD44486C35F4C281DC6732148DC65@ORSMSX110.amr.corp.intel.com>
+References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
+ <e8b6b10e15653b3b2c5727e935f75142e441f834.1540923609.git.tim.c.chen@linux.intel.com>
+In-Reply-To: <e8b6b10e15653b3b2c5727e935f75142e441f834.1540923609.git.tim.c.chen@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMWEwMTEwYTAtNDUzNy00MmUzLTliMmItOGVlMDJhMjFlYWEzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiOXdDcVwvMEtFQVFWXC9RVnNYNE1EOFM0RXBzcDQ0M3ZCMk0yK1FIVCtHZk00SkppVFFZQVg5Y2Q3bVk2XC9TT0tKNiJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 30/10/2018 21:20, Matthew Wilcox wrote:
-> On Tue, Oct 30, 2018 at 12:28:41PM -0600, Tycho Andersen wrote:
->> On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
->>> On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
->>>>> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
->>>> I support the addition of a rare-write mechanism to the upstream kernel.
->>>> And I think that there is only one sane way to implement it: using an
->>>> mm_struct. That mm_struct, just like any sane mm_struct, should only
->>>> differ from init_mm in that it has extra mappings in the *user* region.
->>>
->>> I'd like to understand this approach a little better.  In a syscall path,
->>> we run with the user task's mm.  What you're proposing is that when we
->>> want to modify rare data, we switch to rare_mm which contains a
->>> writable mapping to all the kernel data which is rare-write.
->>>
->>> So the API might look something like this:
->>>
->>> 	void *p = rare_alloc(...);	/* writable pointer */
->>> 	p->a = x;
->>> 	q = rare_protect(p);		/* read-only pointer */
+> -----Original Message-----
+> From: Tim Chen [mailto:tim.c.chen@linux.intel.com]
+> Sent: Tuesday, October 30, 2018 11:49 AM
+> To: Jiri Kosina <jikos@kernel.org>; Thomas Gleixner <tglx@linutronix.de>
+> Cc: Tim Chen <tim.c.chen@linux.intel.com>; Tom Lendacky
+> <thomas.lendacky@amd.com>; Ingo Molnar <mingo@redhat.com>; Peter
+> Zijlstra <peterz@infradead.org>; Josh Poimboeuf <jpoimboe@redhat.com>;
+> Andrea Arcangeli <aarcange@redhat.com>; David Woodhouse
+> <dwmw@amazon.co.uk>; Andi Kleen <ak@linux.intel.com>; Hansen, Dave
+> <dave.hansen@intel.com>; Schaufler, Casey <casey.schaufler@intel.com>;
+> Mallick, Asit K <asit.k.mallick@intel.com>; Arjan van de Ven
+> <arjan@linux.intel.com>; Jon Masters <jcm@redhat.com>; Waiman Long
+> <longman9394@gmail.com>; linux-kernel@vger.kernel.org; x86@kernel.org
 
-With pools and memory allocated from vmap_areas, I was able to say
+Added LSM mail list to the CC:
 
-protect(pool)
+> Subject: [Patch v4 13/18] security: Update security level of a process when
+> modifying its dumpability
 
-and that would do a swipe on all the pages currently in use.
-In the SELinux policyDB, for example, one doesn't really want to 
-individually protect each allocation.
+"Level" isn't a good description of security characteristics
+as it has been overloaded in too many ways already. More
+on that later.
 
-The loading phase happens usually at boot, when the system can be 
-assumed to be sane (one might even preload a bare-bone set of rules from 
-initramfs and then replace it later on, with the full blown set).
+> When a process is made non-dumpable, the action implies a higher level
+> of security implicitly as its memory is imposed with access restriction.
 
-There is no need to process each of these tens of thousands allocations 
-and initialization as write-rare.
+How is this "higher level" manifest?
 
-Would it be possible to do the same here?
+> A call to update_process_security() is added to update security defenses
+> according to a process's dumpability and its implied security level.
 
->>>
->>> To subsequently modify q,
->>>
->>> 	p = rare_modify(q);
->>> 	q->a = y;
->>
->> Do you mean
->>
->>      p->a = y;
->>
->> here? I assume the intent is that q isn't writable ever, but that's
->> the one we have in the structure at rest.
+Can you describe the set of security attributes that are implied by the
+process' dumpability? I would think that the dumpability would be an
+artifact of these attributes, not the other way around.
+
+> Architecture specific defenses is erected for threads in the process
+
+nit: s/is/are/
+
+> by calling arch_set_security(task, SECURITY_LEVEL_HIGH) or the defenses
+> relaxed via arch_set_security(task, SECURITY_LEVEL_NORMAL).  Such defenses
+> may incur extra overhead and is reserved for tasks needing high security.
+
+nit: s/is/are/
+
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> ---
+>  fs/exec.c                |  2 ++
+>  include/linux/security.h |  6 ++++++
+>  kernel/cred.c            |  5 ++++-
+>  kernel/sys.c             |  1 +
+>  security/security.c      | 31 +++++++++++++++++++++++++++++++
+>  5 files changed, 44 insertions(+), 1 deletion(-)
 > 
-> Yes, that was my intent, thanks.
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 1ebf6e5..e70c8a7 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1366,6 +1366,8 @@ void setup_new_exec(struct linux_binprm * bprm)
+>  	else
+>  		set_dumpable(current->mm, SUID_DUMP_USER);
 > 
-> To handle the list case that Igor has pointed out, you might want to
-> do something like this:
+> +	update_process_security(current);
+> +
+>  	arch_setup_new_exec();
+>  	perf_event_exec();
+>  	__set_task_comm(current, kbasename(bprm->filename), true);
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 75f4156..469d05f 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -61,6 +61,12 @@ struct mm_struct;
+>  /* LSM Agnostic defines for sb_set_mnt_opts */
+>  #define SECURITY_LSM_NATIVE_LABELS	1
 > 
-> 	list_for_each_entry(x, &xs, entry) {
-> 		struct foo *writable = rare_modify(entry);
+> +/* Security level */
+> +#define SECURITY_NORMAL	0
+> +#define SECURITY_HIGH	1
 
-Would this mapping be impossible to spoof by other cores?
+NAK: "NORMAL" and "HIGH" are meaningless in this context.
+If you intend to differentiate between "dumpable" and "undumpable"
+you could use those, although I would recommend something that
+describes the reason the task is dumpable.
 
-I'm asking this because, from what I understand, local interrupts are 
-enabled here, so an attack could freeze the core performing the 
-write-rare operation, while another scrapes the memory.
-
-But blocking interrupts for the entire body of the loop would make RT 
-latency unpredictable.
-
-> 		kref_get(&writable->ref);
-> 		rare_protect(writable);
-> 	}
+> +
+> +extern int update_process_security(struct task_struct *task);
+> +
+>  struct ctl_table;
+>  struct audit_krule;
+>  struct user_namespace;
+> diff --git a/kernel/cred.c b/kernel/cred.c
+> index ecf0365..0806a74 100644
+> --- a/kernel/cred.c
+> +++ b/kernel/cred.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/security.h>
+>  #include <linux/binfmts.h>
+>  #include <linux/cn_proc.h>
+> +#include <linux/security.h>
 > 
-> but we'd probably wrap it in list_for_each_rare_entry(), just to be nicer.
+>  #if 0
+>  #define kdebug(FMT, ...)						\
+> @@ -445,8 +446,10 @@ int commit_creds(struct cred *new)
+>  	    !uid_eq(old->fsuid, new->fsuid) ||
+>  	    !gid_eq(old->fsgid, new->fsgid) ||
+>  	    !cred_cap_issubset(old, new)) {
+> -		if (task->mm)
+> +		if (task->mm) {
+>  			set_dumpable(task->mm, suid_dumpable);
+> +			update_process_security(task);
+> +		}
+>  		task->pdeath_signal = 0;
+>  		smp_wmb();
+>  	}
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index cf5c675..c6f179a 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2293,6 +2293,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long,
+> arg2, unsigned long, arg3,
+>  			break;
+>  		}
+>  		set_dumpable(me->mm, arg2);
+> +		update_process_security(me);
+>  		break;
+> 
+>  	case PR_SET_UNALIGN:
+> diff --git a/security/security.c b/security/security.c
+> index 736e78d..12460f2 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -28,6 +28,8 @@
+>  #include <linux/personality.h>
+>  #include <linux/backing-dev.h>
+>  #include <linux/string.h>
+> +#include <linux/coredump.h>
+> +#include <linux/sched/signal.h>
+>  #include <net/flow.h>
+> 
+>  #include <trace/events/initcall.h>
+> @@ -1353,6 +1355,35 @@ int security_inode_getsecctx(struct inode *inode,
+> void **ctx, u32 *ctxlen)
+>  }
+>  EXPORT_SYMBOL(security_inode_getsecctx);
+> 
+> +void __weak arch_set_security(struct task_struct *task,
+> +			      unsigned int security_level)
+> +{
+> +}
 
-This seems suspiciously close to the duplication of kernel interfaces 
-that I was roasted for :-)
+This isn't an LSM hook and hence does not belong in this file.
+arch_set_security() isn't descriptive, and is in fact a bad choice
+as task_struct has a field "security". This function has nothing
+to do with the task->security field, which is what I would expect
+based on the name.
 
---
-igor
+> +
+> +int update_process_security(struct task_struct *task)
+
+Again, this isn't an LSM hook and does not belong in this file.
+Also again, "security" isn't descriptive in the name.
+
+> +{
+> +	unsigned long flags;
+> +	struct task_struct *t;
+> +	int security_level;
+> +
+> +	if (!task->mm)
+> +		return -EINVAL;
+> +
+> +	if (!lock_task_sighand(task, &flags))
+> +		return -ESRCH;
+> +
+> +	if (get_dumpable(task->mm) != SUID_DUMP_USER)
+> +		security_level = SECURITY_HIGH;
+> +	else
+> +		security_level = SECURITY_NORMAL;
+> +
+> +	for_each_thread(task, t)
+> +		arch_set_security(task, security_level);
+> +
+> +	unlock_task_sighand(task, &flags);
+> +	return 0;
+> +}
+> +
+>  #ifdef CONFIG_SECURITY_NETWORK
+> 
+>  int security_unix_stream_connect(struct sock *sock, struct sock *other, struct
+> sock *newsk)
+> --
+> 2.9.4
 
