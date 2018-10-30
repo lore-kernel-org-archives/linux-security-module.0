@@ -2,74 +2,50 @@ Return-Path: <SRS0=E2Uq=NK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5347C2BC61
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 17:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBC6ECDE44
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 17:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D7E320823
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 17:06:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F8BF2080A
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Oct 2018 17:58:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="p1l66SWY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D7E320823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LAUn5VAF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8BF2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbeJaCBO (ORCPT
+        id S1728113AbeJaCw7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Oct 2018 22:01:14 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37752 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeJaCBO (ORCPT
+        Tue, 30 Oct 2018 22:52:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48696 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727771AbeJaCw7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Oct 2018 22:01:14 -0400
-Received: by mail-pl1-f196.google.com with SMTP id bh10-v6so5857135plb.4
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Oct 2018 10:06:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sJmp+TrcVE0cp1ysnbfmg2a9gbYbs/fVQwhmUWhAsKM=;
-        b=p1l66SWYsa9jw7rC4PMjsgTC62QiTmvIb5lE1PnTeKkdUJFayeHPDUMw6jW3+RzpFu
-         pKOQdHK/b5u9j+v+6E8yGOsp0dO9E5G9WVJE6wotNmtxGeYIsom8GcQWnDNIieLtPMwM
-         xigXW4Ywm9Thy8f/fQfppOcFf0vRpJptRvlODU2nlbnsra2MhrrcYXTosAjSIoNUsarb
-         XbdLjn4SBUPrxtf7sJctAqhEe63yVYFXz9rBzwtsYjLNX7+riHwnd+r62e4XzN7ZkZeK
-         /u3L9UQyFp87WLV1aHCGlhTtqW5Jz1NE+fSsKJvtD2Ndlj10qlKLdOxDeK1rt9YdIPRo
-         yH/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sJmp+TrcVE0cp1ysnbfmg2a9gbYbs/fVQwhmUWhAsKM=;
-        b=McuO3DhcazHqvBD90cR+QE8XROFgAk8NVu3G1fbfA2o0aiVx9cNImB3HqRkcvg8agI
-         TMxV6Pi9DpqOX9thFXsVLpRZQ4DFPlYRcBggpDGR8F4Q1ifCVlpYTMnb6sHpcbyM8oEV
-         tDj47eDuUGndtsiKuVNgseLKhQn2EHSNljbYkYaxrcAyvVNigubfSQTeJ+I+6TxvyRhu
-         NBsxGFaTtqjK4Ndg5M4h+LGg1FewlIGviZId6KpafHwLNKXyya/Y66Fr2Cm5Qbqdo27f
-         Y2PpbwuRjtPjI20vSJIsysM2RvAuICCu+2sHqKmWlKovK2lkzofEWuxBuvfNBC3tXRv9
-         bqzg==
-X-Gm-Message-State: AGRZ1gJB1OQ3atfHIq0i6Dm6jZ7oVv5HbKR3/ggVdg92GKjSlJAkVncl
-        I8zo/EKTq9GRQb0pDcE8rN5CSQ==
-X-Google-Smtp-Source: AJdET5fnTABXu89GAubNDA3hUzdJdWV/ivDrtYqUoxQ/cSMvKdlm4RK2+Mqv63Iu2OSxu7de7vlwHA==
-X-Received: by 2002:a17:902:4025:: with SMTP id b34-v6mr15610050pld.318.1540919215631;
-        Tue, 30 Oct 2018 10:06:55 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b06f:4f72:1c47:d0f8:77c2:af6e? ([2600:1010:b06f:4f72:1c47:d0f8:77c2:af6e])
-        by smtp.gmail.com with ESMTPSA id e8-v6sm948953pgh.67.2018.10.30.10.06.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 10:06:53 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 10/17] prmem: documentation
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
-Date:   Tue, 30 Oct 2018 10:06:51 -0700
-Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Tue, 30 Oct 2018 22:52:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hOYWHalG3Y75DkapHEk+KGS33M+jo0PxnQZRMWWEPDw=; b=LAUn5VAFrKdjhcQJb1i0SEG9p
+        cPOEsORxwVWPJv5gMmVTLPOHIsr6cdXMqOGAtudMvPcYlS5R4WMumsACsgk56M9TWUYIlAmtw+X6v
+        JP/D3xGnSmjXGlHRrORSwx0D4zH1EQn2fFj5XYRWj4nNmiPrQ/GTrEAfserDocmzdiZk/lXDWUG9n
+        UdcxqXbixNbKD3cREqhDzoRNDI9wc9lffAPTwS2ufz/+DM28yfxiEGdZQjhT3hryTxkGT2ACvcVCK
+        KkHcVdLTdaCRHOwSuMQQgdchI1SUHFTfAyw261MrKSyiSnVJDPkk/iqFK0oOpqY5L+qR2BPrXqvYa
+        jXgR9dzCA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHYHO-0001qf-Ff; Tue, 30 Oct 2018 17:58:14 +0000
+Date:   Tue, 30 Oct 2018 10:58:14 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Igor Stoppa <igor.stoppa@gmail.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
         Dave Chinner <david@fromorbit.com>,
         James Morris <jmorris@namei.org>,
         Michal Hocko <mhocko@kernel.org>,
@@ -85,91 +61,57 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com> <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com> <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com> <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com> <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
-To:     Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181030175814.GB10491@bombadil.infradead.org>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
+> > On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
+> I support the addition of a rare-write mechanism to the upstream kernel.
+> And I think that there is only one sane way to implement it: using an
+> mm_struct. That mm_struct, just like any sane mm_struct, should only
+> differ from init_mm in that it has extra mappings in the *user* region.
 
-> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
->=20
->> On Tue, Oct 30, 2018 at 8:26 AM, Peter Zijlstra <peterz@infradead.org> wr=
-ote:
->> I suppose the 'normal' attack goes like:
->>=20
->> 1) find buffer-overrun / bound check failure
->> 2) use that to write to 'interesting' location
->> 3) that write results arbitrary code execution
->> 4) win
->>=20
->> Of course, if the store of 2 is to the current cred structure, and
->> simply sets the effective uid to 0, we can skip 3.
->=20
-> In most cases, yes, gaining root is game over. However, I don't want
-> to discount other threat models: some systems have been designed not
-> to trust root, so a cred attack doesn't always get an attacker full
-> control (e.g. lockdown series, signed modules, encrypted VMs, etc).
->=20
->> Which seems to suggest all cred structures should be made r/o like this.
->> But I'm not sure I remember these patches doing that.
->=20
-> There are things that attempt to protect cred (and other things, like
-> page tables) via hypervisors (see Samsung KNOX) or via syscall
-> boundary checking (see Linux Kernel Runtime Guard). They're pretty
-> interesting, but I'm not sure if there is a clear way forward on it
-> working in upstream, but that's why I think these discussions are
-> useful.
->=20
->> Also, there is an inverse situation with all this. If you make
->> everything R/O, then you need this allow-write for everything you do,
->> which then is about to include a case with an overflow / bound check
->> fail, and we're back to square 1.
->=20
-> Sure -- this is the fine line in trying to build these defenses. The
-> point is to narrow the scope of attack. Stupid metaphor follows: right
-> now we have only a couple walls; if we add walls we can focus on make
-> sure the doors and windows are safe. If we make the relatively
-> easy-to-find-in-memory page tables read-only-at-rest then a whole
-> class of very powerful exploits that depend on page table attacks go
-> away.
->=20
-> As part of all of this is the observation that there are two types of
-> things clearly worth protecting: that which is updated rarely (no need
-> to leave it writable for so much of its lifetime), and that which is
-> especially sensitive (page tables, security policy, function pointers,
-> etc). Finding a general purpose way to deal with these (like we have
-> for other data-lifetime cases like const and __ro_after_init) would be
-> very nice. I don't think there is a slippery slope here.
->=20
->=20
+I'd like to understand this approach a little better.  In a syscall path,
+we run with the user task's mm.  What you're proposing is that when we
+want to modify rare data, we switch to rare_mm which contains a
+writable mapping to all the kernel data which is rare-write.
 
-Since I wasn=E2=80=99t cc=E2=80=99d on this series:
+So the API might look something like this:
 
-I support the addition of a rare-write mechanism to the upstream kernel.  An=
-d I think that there is only one sane way to implement it: using an mm_struc=
-t. That mm_struct, just like any sane mm_struct, should only differ from ini=
-t_mm in that it has extra mappings in the *user* region.
+	void *p = rare_alloc(...);	/* writable pointer */
+	p->a = x;
+	q = rare_protect(p);		/* read-only pointer */
 
-If anyone wants to use CR0.WP instead, I=E2=80=99ll remind them that they ha=
-ve to fix up the entry code and justify the added complexity. And make perfo=
-rmance not suck in a VM (i.e. CR0 reads on entry are probably off the table)=
-.  None of these will be easy.
+To subsequently modify q,
 
-If anyone wants to use kmap_atomic-like tricks, I=E2=80=99ll point out that w=
-e already have enough problems with dangling TLB entries due to SMP issues. T=
-he last thing we need is more of them. If someone proposes a viable solution=
- that doesn=E2=80=99t involve CR3 fiddling, I=E2=80=99ll be surprised.
+	p = rare_modify(q);
+	q->a = y;
+	rare_protect(p);
 
-Keep in mind that switch_mm() is actually decently fast on modern CPUs.  It=E2=
-=80=99s probably considerably faster than writing CR0, although I haven=E2=80=
-=99t benchmarked it. It=E2=80=99s certainly faster than writing CR4.  It=E2=80=
-=99s also faster than INVPCID, surprisingly, which means that it will be qui=
-te hard to get better performance using any sort of trickery.
+Under the covers, rare_modify() would switch to the rare_mm and return
+(void *)((unsigned long)q + ARCH_RARE_OFFSET).  All of the rare data
+would then be modifiable, although you don't have any other pointers
+to it.  rare_protect() would switch back to the previous mm and return
+(p - ARCH_RARE_OFFSET).
 
-Nadav=E2=80=99s patch set would be an excellent starting point.
-
-P.S. EFI is sort of grandfathered in as a hackish alternate page table hiera=
-rchy. We=E2=80=99re not adding another one.=
+Does this satisfy Igor's requirements?  We wouldn't be able to
+copy_to/from_user() while rare_mm was active.  I think that's a feature
+though!  It certainly satisfies my interests (kernel code be able to
+mark things as dynamically-allocated-and-read-only-after-initialisation)
