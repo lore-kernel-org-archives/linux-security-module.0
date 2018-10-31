@@ -2,123 +2,130 @@ Return-Path: <SRS0=zj7v=NL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35A3C0044C
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 11:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E94A8ECDE46
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 14:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99C3F2081B
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 11:33:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XOqqvlIV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C3F2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B9EAE20664
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 14:43:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9EAE20664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbeJaUbD (ORCPT
+        id S1729570AbeJaXli (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 16:31:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44280 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727546AbeJaUbC (ORCPT
+        Wed, 31 Oct 2018 19:41:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58884 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729651AbeJaXli (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 16:31:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1Nx7BO2VnRh0a+k2wp2hDZfug8S8paE2B6A9HLC6QA8=; b=XOqqvlIVZO/TCdFsj9fzYAmfN
-        vtDeI48fJxQqPNLDNNW2FRQ59jRc0YgoyWc9OZk1adej3fYHmt+6SSNPQMTL73MRRLd51foZ5ngyr
-        mOrh1B6t1BAsAiyCg0xWZmKqF4Hgxwpr47JkvcOMd4rzIL/Q1J3OXgFO9Ypv3J3pITxZN52VnBJHM
-        9NTbMJHfSSrqWKf77P0SreElImwrKXths6lRkk/dsgFD2hqCOjfWr14YpuxIuDsVbloZVtzBCVKFO
-        FtwS1T7Tjfk3GwYpJGdLK1FynxfapKnEjRAkPuiE++hznb2wbpm7Ld7C8FaltPVcev3oq2gMlFkXh
-        Xk3OM+keA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHokB-0006ej-FS; Wed, 31 Oct 2018 11:33:03 +0000
-Date:   Wed, 31 Oct 2018 04:33:03 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181031113303.GJ10491@bombadil.infradead.org>
-References: <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <20181031093659.GL744@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031093659.GL744@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 31 Oct 2018 19:41:38 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9VEdaxs005312
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Oct 2018 10:43:18 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nfctxd14k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Oct 2018 10:43:17 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 31 Oct 2018 14:43:15 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 31 Oct 2018 14:43:13 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9VEhCon5898742
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 31 Oct 2018 14:43:12 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C3885204F;
+        Wed, 31 Oct 2018 14:43:12 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.104.249])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 35B2752057;
+        Wed, 31 Oct 2018 14:43:11 +0000 (GMT)
+Subject: Re: [PATCH v3 1/5] tpm: change the end marker of the active_banks
+ array to zero
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Wed, 31 Oct 2018 10:43:00 -0400
+In-Reply-To: <20181030154711.2782-2-roberto.sassu@huawei.com>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com>
+         <20181030154711.2782-2-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18103114-0016-0000-0000-0000021D0F71
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18103114-0017-0000-0000-000032753AB7
+Message-Id: <1540996980.11273.67.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-31_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810310124
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 31, 2018 at 10:36:59AM +0100, Peter Zijlstra wrote:
-> On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
-> > On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
-> > > > On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
-> > > I support the addition of a rare-write mechanism to the upstream kernel.
-> > > And I think that there is only one sane way to implement it: using an
-> > > mm_struct. That mm_struct, just like any sane mm_struct, should only
-> > > differ from init_mm in that it has extra mappings in the *user* region.
-> > 
-> > I'd like to understand this approach a little better.  In a syscall path,
-> > we run with the user task's mm.  What you're proposing is that when we
-> > want to modify rare data, we switch to rare_mm which contains a
-> > writable mapping to all the kernel data which is rare-write.
-> > 
-> > So the API might look something like this:
-> > 
-> > 	void *p = rare_alloc(...);	/* writable pointer */
-> > 	p->a = x;
-> > 	q = rare_protect(p);		/* read-only pointer */
-> > 
-> > To subsequently modify q,
-> > 
-> > 	p = rare_modify(q);
-> > 	q->a = y;
-> > 	rare_protect(p);
+On Tue, 2018-10-30 at 16:47 +0100, Roberto Sassu wrote:
+> This patch changes the end marker of the active_banks array from
+> TPM2_ALG_ERROR to zero.
+
+The patch description is a bit off.
+
+TPM2_ALG_ERROR is defined as zero.  Since tpm_chip_alloc() calls
+kzalloc to allocate the structure, there is no need to explicitly set
+the active_banks end marker to TPM2_ALG_ERROR, nor is there a need to
+explicitly test for the end marker.
+
+This patch removes explicitly setting the end marker and changes the
+coding style.
+
 > 
-> Why would you have rare_alloc() imply rare_modify() ? Would you have the
-> allocator meta data inside the rare section?
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 2 +-
+>  drivers/char/tpm/tpm2-cmd.c      | 3 ---
+>  2 files changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 1a803b0cf980..f7fc4b5ee239 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -1051,7 +1051,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+>  		memset(digest_list, 0, sizeof(digest_list));
+>  
+>  		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+> +			    chip->active_banks[i]; i++) {
+>  			digest_list[i].alg_id = chip->active_banks[i];
+>  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+>  			count++;
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index c31b490bd41d..046c9d8f3c1e 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -908,9 +908,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>  	}
+>  
+>  out:
+> -	if (i < ARRAY_SIZE(chip->active_banks))
+> -		chip->active_banks[i] = TPM2_ALG_ERROR;
+> -
+>  	tpm_buf_destroy(&buf);
+>  
+>  	return rc;
 
-Normally when I allocate some memory I need to initialise it before
-doing anything else with it ;-)
-
-I mean, you could do:
-
-	ro = rare_alloc(..);
-	rare = rare_modify(ro);
-	rare->a = x;
-	rare_protect(rare);
-
-but that's more typing.
