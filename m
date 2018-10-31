@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D720ECDE44
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C0CDECDE44
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6BEA20847
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11D1420847
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 23:26:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uNBzINul"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6BEA20847
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QErZ8pNl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D1420847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbeKAIYm (ORCPT
+        id S1727805AbeKAI0p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:24:42 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33849 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731229AbeKAIKr (ORCPT
+        Thu, 1 Nov 2018 04:26:45 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41240 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727546AbeKAI0m (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:10:47 -0400
-Received: by mail-lf1-f67.google.com with SMTP id n26-v6so12960357lfl.1;
-        Wed, 31 Oct 2018 16:10:34 -0700 (PDT)
+        Thu, 1 Nov 2018 04:26:42 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c16so12945153lfj.8;
+        Wed, 31 Oct 2018 16:26:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bYvSjIaIsPqm0El1wWSvP8KsufjC/oEwOQPYiVRHspc=;
-        b=uNBzINulDQi6bkHaqZ/jJmLA6O8ppB1Chie3RRl6cDZjNCc2opxtV//u6TJabrAjDO
-         hMUXnrrWSMLAwezRpxNto5dgQstx1KWHCPUtVNt9iTkJqJDi4J+Xe2V5hR89zldgBfhC
-         csJbppMR6ETBaGRns5zLoqy7Hq2FhIrQDT6sdSy2OGwddkCw2Gfh+e/eHSS2Ozco4y01
-         vDEl/ilE6y2oQ63lbzPyrT+C0QbKBYpKt7AMuuWwrvRK9GWa0C7p96zoulDj44RGsXTH
-         wNk3EyYVdR/Gs1DWG9itlgLR9hz7fwphGS8mUL3L1n1gG6eiedDY7WIm9NZ1FN6VTCJR
-         2xlg==
+        bh=Dq7VC9OA51j0v9D76s73ZNiqY11Lfx+xMfnqOl+h9IY=;
+        b=QErZ8pNl4q35OEABZnKleOEqU+yK4KcnVy0PCybVaskL7VB2mnKgof7nOHKOKQQtvm
+         s2IylFcXQR3tbtuhIyN5xSGQz4uz7pN0I0LqsRaidL8jkzhjYEp9P5HRURrwhooEuvh2
+         CGDLJzbhDdvl61GaqfmNYA4j4GhLEMJc7oXa3HJfwERbezyiuXGn2qBTi7SGl41YF7Mz
+         j7wEekAKvELMmpMjnBW0zWKXM0EcZh7EvpbBTxFuSrviJOzuUkDEzZp9uvsmvY+m12hH
+         AxpGlXIKjIlZkzAo/rBqUUI5RyHILE93apAnPh4VBMIyp0yVo2dk33P3XnFwsR0eTMcg
+         WN/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=bYvSjIaIsPqm0El1wWSvP8KsufjC/oEwOQPYiVRHspc=;
-        b=oVyv+/VATxZi2bNr5ODilo2mxw78yaGQMsJlz+dMZ9n9Zm26uMsN+Uc7Uc4ncGc4Yf
-         VVXdI3k9ml9ZUzT9ft2FKvQskcetGB4XijhoK/KY5avNqxGYJv8mfc9mSC4RfX1c8jG5
-         DubcOVzp3bxP+TRCKBxVpeeiCLEe0WOe7ry5kIXia6Lu0qmpyjzkWACt6/DGttcbv+FE
-         L4z496i7f21Ul+BZuvi0Pjo7/R7hBOCIb92AYkkn1sV9n267XOVXiLACL+oWHkZ3eSgG
-         8eu/42frC67bnOdx4jrfBim+T8ZdtYtGMJSBapZESq2k7p1qiR+VpFniQQv83Mi1rlnp
-         XfYw==
-X-Gm-Message-State: AGRZ1gJl3qPs6Iev00KVOxE0mkY8JT6WX2kr+KeCxlQnInniF77t9AC0
-        lkc4bpj3MspqPwd6Dzrf5rE=
-X-Google-Smtp-Source: AJdET5d+pgCrny9FrLo89lL5MKtLMx0Ce00NcYH9Al+J7eP+RGQ/olbAcOfwyGhZPPSRIbX3sLkfJg==
-X-Received: by 2002:a19:200b:: with SMTP id g11mr1281107lfg.58.1541027433478;
-        Wed, 31 Oct 2018 16:10:33 -0700 (PDT)
+        bh=Dq7VC9OA51j0v9D76s73ZNiqY11Lfx+xMfnqOl+h9IY=;
+        b=rAq0v5FQq4aiCuzGwMqZXfWW5CLUC+VTYD+sE76T2uaqoLyDd/kjPlabRlb7F7pac5
+         18rBzIlwOe+8Dlz5sXS+gwf+KpwRWQ0OOmSNJXst5MCy2POQ0WXwHi+9tWb5YFJz40Oj
+         czFMeClgAFdX7RY0nYdyTpxizgTDzeJFu0JgTwtuUTohkHcLsVRCeLT14nFvcCCrb8jX
+         A1JVh7zON64AtsVZ+adSbC5QfMy95DqiDc0WtFWIYvoTllwELcLzJ/hGWBCpuKA+cD4f
+         aAq4Tq8uaZruMwc95bT7J8Z4xyyv8M7quCpYTNhB5XeoVUxsVuhfMuEzCTtUNmG/yugN
+         lZSQ==
+X-Gm-Message-State: AGRZ1gKMy9Of154TxmYNNqcEuIus4M7lmVSZA4dZY0+iFYI/xvW4J7bE
+        mKACUaKVTfpfmjlOBpUkVk8=
+X-Google-Smtp-Source: AJdET5fK56VAEVSIiEWpFJwkll6LM+hwh86+kCzurB3BUsHLIjdZ24L6MB9hcIinNrLzkd756zgcvg==
+X-Received: by 2002:a19:4948:: with SMTP id l8-v6mr2883476lfj.16.1541028383218;
+        Wed, 31 Oct 2018 16:26:23 -0700 (PDT)
 Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
-        by smtp.gmail.com with ESMTPSA id e14-v6sm672120ljl.43.2018.10.31.16.10.31
+        by smtp.gmail.com with ESMTPSA id k2-v6sm2659485ljg.39.2018.10.31.16.26.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 16:10:32 -0700 (PDT)
+        Wed, 31 Oct 2018 16:26:22 -0700 (PDT)
 Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
         Tycho Andersen <tycho@tycho.ws>,
         Kees Cook <keescook@chromium.org>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -93,13 +93,15 @@ References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
  <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
  <20181031210032.GA3159@hirez.programming.kicks-ass.net>
  <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+ <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com>
+ <CALCETrWCvAfyfBWgcmhy8TGByiX3ZXXSOkLtZFdM385fDqYJVw@mail.gmail.com>
 From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com>
-Date:   Thu, 1 Nov 2018 01:10:30 +0200
+Message-ID: <8675e9d8-0ef0-7515-a894-097d4be25b73@gmail.com>
+Date:   Thu, 1 Nov 2018 01:26:20 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+In-Reply-To: <CALCETrWCvAfyfBWgcmhy8TGByiX3ZXXSOkLtZFdM385fDqYJVw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -109,27 +111,16 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 
 
-On 01/11/2018 00:57, Andy Lutomirski wrote:
-> 
-> 
->> On Oct 31, 2018, at 2:00 PM, Peter Zijlstra <peterz@infradead.org> wrote:
+On 01/11/2018 01:19, Andy Lutomirski wrote:
 
+> ISTM you don't need that atomic operation -- you could take a spinlock
+> and then just add one directly to the variable.
 
+It was my intention to provide a 1:1 conversion of existing code, as it 
+should be easier to verify the correctness of the conversion, as long as 
+there isn't any significant degradation in performance.
 
->> I _think_ the use-case for atomics is updating the reference counts of
->> objects that are in this write-rare domain. But I'm not entirely clear
->> on that myself either. I just really want to avoid duplicating that
->> stuff.
-> 
-> Sounds nuts. Doing a rare-write is many hundreds of cycles at best. Using that for a reference count sounds wacky.
-> 
-> Can we see a *real* use case before we over complicate the API?
-> 
-
-
-Does patch #14 of this set not qualify? ima_htable.len ?
-
-https://www.openwall.com/lists/kernel-hardening/2018/10/23/20
+The rework could be done afterward.
 
 --
 igor
