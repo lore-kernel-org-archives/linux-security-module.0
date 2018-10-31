@@ -2,148 +2,88 @@ Return-Path: <SRS0=zj7v=NL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F926ECDE44
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 04:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAECECDE46
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 08:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06B0A20821
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 04:41:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Yr8Ov/5f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B0A20821
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 170A620838
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 08:17:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 170A620838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbeJaNhv (ORCPT
+        id S1727339AbeJaRON (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 09:37:51 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37410 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728965AbeJaNhv (ORCPT
+        Wed, 31 Oct 2018 13:14:13 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32709 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727020AbeJaRON (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 09:37:51 -0400
-Received: by mail-wm1-f68.google.com with SMTP id p2-v6so13222574wmc.2
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Oct 2018 21:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TuB+km0LMAbwqhBPSE0z5upz2c8PWBTaUi2I3CbmuY8=;
-        b=Yr8Ov/5fvhd9aO52cRacUwUgzrmRLoK3jqgJ1sM7H7OFeYOLjAt676JaWoWPP5TUFl
-         syNvd4/1BU2W0xuYm7jYipw1hTNieCIOmcsB/DbJ74S66KvIgy2snJpguKmPDJ+wyT0V
-         9dxIGW3SiTsgNeiRYJ5e6P3cdBYllM8iQAZWpSffgobF2yTb/sff8cz7F6WTUUPhXBXu
-         1x2RtjrcYgk4Lc0mecMwXRswYpv7qk5g0ycW+WO9w4F85h9agfR3hzW+wyyB6dkvd24T
-         eJY1PQQX5zw/SRxelpQQu1HUDVO78oQHEWzsBptq9h8mq7ka6rz+MbQQXaU8SjFZAC78
-         /5Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TuB+km0LMAbwqhBPSE0z5upz2c8PWBTaUi2I3CbmuY8=;
-        b=fxyVtYIORhzfiMUQEL7xSF2cqq8yFbfEDyEqCxFdvBJAmPKvo3RSzMv4RNiZZEtmBa
-         nCvQt7ULFEO4yOUGkRBEhRVTsegjRlS1CTgtiAs5kBAxZfOEdkZZqnouZ6DJNHRy9rEX
-         ++hvwS5iiExEs4vvz7m2JdyTFTh4RoWUEMBHJY99oI1OPxYW4KIH0Bhnk0bcr5bgJI2L
-         A0Ito4/UYaxeWtGc6os+kfANHu/AyDsI4ZAQnjetPiyFqNbMKJlKJ0Pu1WgfnGy528E8
-         2OCQCtcfOPECoGtn3ECG40V6WI45DF9Qu2zG2TE29JKPJFuTWwrrE7w7cYu5U1bqckY5
-         XtNQ==
-X-Gm-Message-State: AGRZ1gKWPAbtq30/GZt0Zu+O2Sj0RWhfmIYst9x3np60hRLrfR1HiMj5
-        bgcc0CbeO9/q9yW7tFNzmJKUNno+xs+9N8sDvIlz7g==
-X-Google-Smtp-Source: AJdET5da2fWDOBqUm/NfMQo0FfaejNVTvyDWDmJIuOPBGo9zkY9ccnZamzEZmlflpUrPCg3ryi2Q8jzp6SNqWde+UUU=
-X-Received: by 2002:a1c:410a:: with SMTP id o10-v6mr1003272wma.19.1540960885281;
- Tue, 30 Oct 2018 21:41:25 -0700 (PDT)
+        Wed, 31 Oct 2018 13:14:13 -0400
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 1D5F2325EA7D7;
+        Wed, 31 Oct 2018 08:17:05 +0000 (GMT)
+Received: from [10.204.65.163] (10.204.65.163) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 31 Oct
+ 2018 08:16:57 +0000
+Subject: Re: [PATCH v3 5/5] tpm: ensure that output of PCR read contains the
+ correct digest size
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com>
+ <20181030154711.2782-6-roberto.sassu@huawei.com>
+ <alpine.DEB.2.21.1810302151580.5058@jsakkine-mobl1>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <7adca046-ae80-7453-9fee-a802b46ceb86@huawei.com>
+Date:   Wed, 31 Oct 2018 09:16:53 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org>
- <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com> <20181030213557.GE10491@bombadil.infradead.org>
-In-Reply-To: <20181030213557.GE10491@bombadil.infradead.org>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Tue, 30 Oct 2018 21:41:13 -0700
-Message-ID: <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1810302151580.5058@jsakkine-mobl1>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.163]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 30, 2018 at 2:36 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Tue, Oct 30, 2018 at 10:43:14PM +0200, Igor Stoppa wrote:
-> > On 30/10/2018 21:20, Matthew Wilcox wrote:
-> > > > > So the API might look something like this:
-> > > > >
-> > > > >         void *p = rare_alloc(...);      /* writable pointer */
-> > > > >         p->a = x;
-> > > > >         q = rare_protect(p);            /* read-only pointer */
-> >
-> > With pools and memory allocated from vmap_areas, I was able to say
-> >
-> > protect(pool)
-> >
-> > and that would do a swipe on all the pages currently in use.
-> > In the SELinux policyDB, for example, one doesn't really want to
-> > individually protect each allocation.
-> >
-> > The loading phase happens usually at boot, when the system can be assumed to
-> > be sane (one might even preload a bare-bone set of rules from initramfs and
-> > then replace it later on, with the full blown set).
-> >
-> > There is no need to process each of these tens of thousands allocations and
-> > initialization as write-rare.
-> >
-> > Would it be possible to do the same here?
->
-> What Andy is proposing effectively puts all rare allocations into
-> one pool.  Although I suppose it could be generalised to multiple pools
-> ... one mm_struct per pool.  Andy, what do you think to doing that?
+On 10/30/2018 8:52 PM, Jarkko Sakkinen wrote:
+> On Tue, 30 Oct 2018, Roberto Sassu wrote:
+>> This patch ensures that the digest size returned by the TPM during a PCR
+>> read matches the size of the algorithm passed as argument to
+>> tpm2_pcr_read(). The check is performed after information about the PCR
+>> banks has been retrieved.
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> What is the scenarion when this can happen (should be explained in
+> the commit message)?
 
-Hmm.  Let's see.
+Without an HMAC session, the request/response payload can be modified.
+This patch ensures that the digest size in the payload is equal to the
+size of the algorithm specified by the caller.
 
-To clarify some of this thread, I think that the fact that rare_write
-uses an mm_struct and alias mappings under the hood should be
-completely invisible to users of the API.  No one should ever be
-handed a writable pointer to rare_write memory (except perhaps during
-bootup or when initializing a large complex data structure that will
-be rare_write but isn't yet, e.g. the policy db).
+Patch 3/5 only ensures that there is no buffer overflow when data is
+copied to the tpm_digest structure passed by the caller.
 
-For example, there could easily be architectures where having a
-writable alias is problematic.  On such architectures, an entirely
-different mechanism might work better.  And, if a tool like KNOX ever
-becomes a *part* of the Linux kernel (hint hint!)
+Patch 5/5 uses the PCR bank information introduced in patch 4/5 to
+ensure that the exact amount of data is copied from the response
+payload. However, the patch may not help because an attacker can modify
+the algorithm in the request payload so that the TPM returns a shorter
+digest.
 
-If you have multiple pools and one mm_struct per pool, you'll need a
-way to find the mm_struct from a given allocation.  Regardless of how
-the mm_structs are set up, changing rare_write memory to normal memory
-or vice versa will require a global TLB flush (all ASIDs and global
-pages) on all CPUs, so having extra mm_structs doesn't seem to buy
-much.
+For me it is ok to remove this patch from the set. It was requested by
+Mimi.
 
-(It's just possible that changing rare_write back to normal might be
-able to avoid the flush if the spurious faults can be handled
-reliably.)
+Roberto
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
