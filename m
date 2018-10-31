@@ -2,75 +2,68 @@ Return-Path: <SRS0=zj7v=NL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0F9ECDE46
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 23:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D720ECDE44
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D19A20664
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 23:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6BEA20847
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 23:24:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Hm+tK84D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D19A20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uNBzINul"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6BEA20847
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731882AbeKAIU1 (ORCPT
+        id S1729785AbeKAIYm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 04:20:27 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55871 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731910AbeKAIU0 (ORCPT
+        Thu, 1 Nov 2018 04:24:42 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33849 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731229AbeKAIKr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 04:20:26 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s10-v6so16670976wmc.5
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Oct 2018 16:20:11 -0700 (PDT)
+        Thu, 1 Nov 2018 04:10:47 -0400
+Received: by mail-lf1-f67.google.com with SMTP id n26-v6so12960357lfl.1;
+        Wed, 31 Oct 2018 16:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TT21JLJWskt2g1msOdcsqE48Bpu2vFvvh1THgqTNaLk=;
-        b=Hm+tK84DOjoWRGUYFyb4UbI1bKiMKShx86X1Bc9gs/pD7Ec+J2XR+/e1q+GmMuV3/Z
-         a+6xynZcyRqAhRGJMQjW3HJ6oCYcahrGfh9Q5lid44xbmndLew8FOZpSG0mdw8g1EocS
-         wLV0PTpcLVoGhojbV4jGo0YLaMFENEZQBSRSwHhmJ/aRxeljkqSAkPArlmHGXuE+Zj6n
-         UmSCEWBroNAjImrJK8FGEAwTTGHHvj3BydZrs/Nyee8XP2xV4qCWt82JPPL8Z5LhBg4w
-         VVnQ9rZlpeNO6iibcMfV6xTggedC8VNzvwoTRa9Rcwtx6rrGT2Q5iBfhdk0gj2SyoSQh
-         Omjg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=bYvSjIaIsPqm0El1wWSvP8KsufjC/oEwOQPYiVRHspc=;
+        b=uNBzINulDQi6bkHaqZ/jJmLA6O8ppB1Chie3RRl6cDZjNCc2opxtV//u6TJabrAjDO
+         hMUXnrrWSMLAwezRpxNto5dgQstx1KWHCPUtVNt9iTkJqJDi4J+Xe2V5hR89zldgBfhC
+         csJbppMR6ETBaGRns5zLoqy7Hq2FhIrQDT6sdSy2OGwddkCw2Gfh+e/eHSS2Ozco4y01
+         vDEl/ilE6y2oQ63lbzPyrT+C0QbKBYpKt7AMuuWwrvRK9GWa0C7p96zoulDj44RGsXTH
+         wNk3EyYVdR/Gs1DWG9itlgLR9hz7fwphGS8mUL3L1n1gG6eiedDY7WIm9NZ1FN6VTCJR
+         2xlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TT21JLJWskt2g1msOdcsqE48Bpu2vFvvh1THgqTNaLk=;
-        b=mJo6LUxWhDvByvhqY47PwqV2rmAXJzDHDsDqw4xAZzdEVnN1XWWhqMlWtK/GPKgOuG
-         1ZFRcVm87/Sqk8hmCysaMxvIKOTpt3achD/N2G4PiDK8OpjLkKk88w1choTa11tnURZM
-         27a0F1kc7oMp05mleV5R44JMeGdy1az5JRHlW5LKPkhaOw22anqPMVx84BHU8ZplsN6Q
-         LS/wc5bYOVL2SuY511CsENdNkeyalOAbaoaaQIneNpA47LIq73aTFQcTH2ZY61mGn0af
-         Br6JIB/R0xIHsJuwXI6i/PAIipjHWePRvF9gwzprZ4sQjH5/nHrMHn66qINVxL0qcgLd
-         DEDw==
-X-Gm-Message-State: AGRZ1gIZlpPEhobzFDhFiGOUnvMlM3xSCJxSprRjsPJJERCRFk9RWLon
-        taXxZ0hGW/gUJdb6jFBZWNvv8uq8oKXxrwoWsckyUw==
-X-Google-Smtp-Source: AJdET5cswhcW0zw1Us6QHlMtxL3CprdQtw+7uDz9uFv6Iqzb00eHjNGPMFZAGShwo2VCD4kwIJkFulljIuVotNUhcww=
-X-Received: by 2002:a1c:4b1a:: with SMTP id y26-v6mr3933349wma.82.1541028010252;
- Wed, 31 Oct 2018 16:20:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org>
- <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com> <20181030213557.GE10491@bombadil.infradead.org>
- <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
- <20181031100237.GN744@hirez.programming.kicks-ass.net> <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
- <20181031210032.GA3159@hirez.programming.kicks-ass.net> <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
- <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com>
-In-Reply-To: <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Wed, 31 Oct 2018 16:19:58 -0700
-Message-ID: <CALCETrWCvAfyfBWgcmhy8TGByiX3ZXXSOkLtZFdM385fDqYJVw@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bYvSjIaIsPqm0El1wWSvP8KsufjC/oEwOQPYiVRHspc=;
+        b=oVyv+/VATxZi2bNr5ODilo2mxw78yaGQMsJlz+dMZ9n9Zm26uMsN+Uc7Uc4ncGc4Yf
+         VVXdI3k9ml9ZUzT9ft2FKvQskcetGB4XijhoK/KY5avNqxGYJv8mfc9mSC4RfX1c8jG5
+         DubcOVzp3bxP+TRCKBxVpeeiCLEe0WOe7ry5kIXia6Lu0qmpyjzkWACt6/DGttcbv+FE
+         L4z496i7f21Ul+BZuvi0Pjo7/R7hBOCIb92AYkkn1sV9n267XOVXiLACL+oWHkZ3eSgG
+         8eu/42frC67bnOdx4jrfBim+T8ZdtYtGMJSBapZESq2k7p1qiR+VpFniQQv83Mi1rlnp
+         XfYw==
+X-Gm-Message-State: AGRZ1gJl3qPs6Iev00KVOxE0mkY8JT6WX2kr+KeCxlQnInniF77t9AC0
+        lkc4bpj3MspqPwd6Dzrf5rE=
+X-Google-Smtp-Source: AJdET5d+pgCrny9FrLo89lL5MKtLMx0Ce00NcYH9Al+J7eP+RGQ/olbAcOfwyGhZPPSRIbX3sLkfJg==
+X-Received: by 2002:a19:200b:: with SMTP id g11mr1281107lfg.58.1541027433478;
+        Wed, 31 Oct 2018 16:10:33 -0700 (PDT)
+Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
+        by smtp.gmail.com with ESMTPSA id e14-v6sm672120ljl.43.2018.10.31.16.10.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 16:10:32 -0700 (PDT)
 Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
         Tycho Andersen <tycho@tycho.ws>,
         Kees Cook <keescook@chromium.org>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -89,50 +82,54 @@ Cc:     Peter Zijlstra <peterz@infradead.org>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <20181030213557.GE10491@bombadil.infradead.org>
+ <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
+ <20181031100237.GN744@hirez.programming.kicks-ass.net>
+ <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
+ <20181031210032.GA3159@hirez.programming.kicks-ass.net>
+ <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com>
+Date:   Thu, 1 Nov 2018 01:10:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 31, 2018 at 4:10 PM Igor Stoppa <igor.stoppa@gmail.com> wrote:
->
->
->
-> On 01/11/2018 00:57, Andy Lutomirski wrote:
-> >
-> >
-> >> On Oct 31, 2018, at 2:00 PM, Peter Zijlstra <peterz@infradead.org> wrote:
->
->
->
-> >> I _think_ the use-case for atomics is updating the reference counts of
-> >> objects that are in this write-rare domain. But I'm not entirely clear
-> >> on that myself either. I just really want to avoid duplicating that
-> >> stuff.
-> >
-> > Sounds nuts. Doing a rare-write is many hundreds of cycles at best. Using that for a reference count sounds wacky.
-> >
-> > Can we see a *real* use case before we over complicate the API?
-> >
->
->
-> Does patch #14 of this set not qualify? ima_htable.len ?
->
-> https://www.openwall.com/lists/kernel-hardening/2018/10/23/20
->
 
-Do you mean this (sorry for whitespace damage):
 
-+ pratomic_long_inc(&ima_htable.len);
+On 01/11/2018 00:57, Andy Lutomirski wrote:
+> 
+> 
+>> On Oct 31, 2018, at 2:00 PM, Peter Zijlstra <peterz@infradead.org> wrote:
 
-- atomic_long_inc(&ima_htable.len);
-  if (update_htable) {
-    key = ima_hash_key(entry->digest);
--   hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
-+   prhlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
-  }
 
-ISTM you don't need that atomic operation -- you could take a spinlock
-and then just add one directly to the variable.
 
---Andy
+>> I _think_ the use-case for atomics is updating the reference counts of
+>> objects that are in this write-rare domain. But I'm not entirely clear
+>> on that myself either. I just really want to avoid duplicating that
+>> stuff.
+> 
+> Sounds nuts. Doing a rare-write is many hundreds of cycles at best. Using that for a reference count sounds wacky.
+> 
+> Can we see a *real* use case before we over complicate the API?
+> 
+
+
+Does patch #14 of this set not qualify? ima_htable.len ?
+
+https://www.openwall.com/lists/kernel-hardening/2018/10/23/20
+
+--
+igor
