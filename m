@@ -2,52 +2,53 @@ Return-Path: <SRS0=zj7v=NL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AAAECDE46
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 09:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF917C0044C
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 09:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 446DA20685
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 09:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81F7B20821
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 09:45:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ScM0FWYk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 446DA20685
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HA1WlLxi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81F7B20821
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbeJaSeg (ORCPT
+        id S1727645AbeJaSmm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:34:36 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35302 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbeJaSef (ORCPT
+        Wed, 31 Oct 2018 14:42:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43866 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727519AbeJaSmm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:34:35 -0400
+        Wed, 31 Oct 2018 14:42:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=G0893bgA/y7iXzmJuJJEVe9WVnnsrWSG6x1JuEa+NgM=; b=ScM0FWYkYbf/CLCPPDd73lfwM
-        897SU9uP4fuMmkc9waT5p56RwxfAgMpMFZEo1aJjb6mf8eFn3vODDpK5CocZEdpWjxbhxWNQ9uEHN
-        IUEcJYfBJhm/V3GC8ZHWXyEPB2YWe8G/YlmpuZ1JCLoxVZdNxCflEYq3vVVNDJZpRFAB4ahh5Wf5v
-        /uGE9HR0w6FrbHPodGKHfAkkj6QmcD/5TFPce9EUlvPoPXwkSlHlGRyS36E3qfhb6MbbFpyrqqQdb
-        FP/++d19zyCqKfej6Tvz7/rIlbCjb43R0TmwD18UWLrVEueyKU7cYWRB0Ln2Xl0bleGY+FZfP9sGp
-        eZghIjyCQ==;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5duRF5Ve0wJcAnT0Nx+ccoQUyWmGXvrB97qVmZnpHNQ=; b=HA1WlLxiJQhwR98VcoVIEWsUTd
+        G9aW8fe9+smp2ldyfb4DGTjYtjxKvVtcCafBMsG3R0hx3Wp4tZTzf/GznxbP/NftKQs4bTqhsV64S
+        8FPhoT/LUpOCxZFLg+KzJG6GJpZVWb16efuo9KPb2iU6kCqj2WYSeP5PHNzM6vs9/6gRiIb2X5WZS
+        SQVQ9yKiPvOf8mnycWNn+v8wkg4+bMLyOa3LXatp/KOAsWXrhLsKhp54Ui4OpJY50lyPfdr7ogFN9
+        LDW/27qcUabj6v4H+K4LqALcOFU+/mVwVYlUcbCltJ3qhjy1ay+KAHTPCSRCf3QIrDJgXUFyxfcQw
+        QxAvu8wQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHmvt-0002ZX-9f; Wed, 31 Oct 2018 09:37:01 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHn3k-0000rL-F1; Wed, 31 Oct 2018 09:45:08 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BF0032029FA14; Wed, 31 Oct 2018 10:36:59 +0100 (CET)
-Date:   Wed, 31 Oct 2018 10:36:59 +0100
+        id A8B492029FA14; Wed, 31 Oct 2018 10:45:06 +0100 (CET)
+Date:   Wed, 31 Oct 2018 10:45:06 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
         Kees Cook <keescook@chromium.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dave Chinner <david@fromorbit.com>,
         James Morris <jmorris@namei.org>,
@@ -65,50 +66,59 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181031093659.GL744@hirez.programming.kicks-ass.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
+Message-ID: <20181031094506.GM744@hirez.programming.kicks-ass.net>
+References: <20181028183126.GB744@hirez.programming.kicks-ass.net>
  <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
  <20181030152641.GE8177@hirez.programming.kicks-ass.net>
  <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
  <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
  <20181030175814.GB10491@bombadil.infradead.org>
+ <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181030175814.GB10491@bombadil.infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
-> On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
-> > > On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
-> > I support the addition of a rare-write mechanism to the upstream kernel.
-> > And I think that there is only one sane way to implement it: using an
-> > mm_struct. That mm_struct, just like any sane mm_struct, should only
-> > differ from init_mm in that it has extra mappings in the *user* region.
+On Tue, Oct 30, 2018 at 02:02:12PM -0700, Andy Lutomirski wrote:
+> But I dislike allowing regular writes in the protected region. We
+> really only need four write primitives:
 > 
-> I'd like to understand this approach a little better.  In a syscall path,
-> we run with the user task's mm.  What you're proposing is that when we
-> want to modify rare data, we switch to rare_mm which contains a
-> writable mapping to all the kernel data which is rare-write.
+> 1. Just write one value.  Call at any time (except NMI).
 > 
-> So the API might look something like this:
-> 
-> 	void *p = rare_alloc(...);	/* writable pointer */
-> 	p->a = x;
-> 	q = rare_protect(p);		/* read-only pointer */
-> 
-> To subsequently modify q,
-> 
-> 	p = rare_modify(q);
-> 	q->a = y;
-> 	rare_protect(p);
+> 2. Just copy some bytes. Same as (1) but any number of bytes.
 
-Why would you have rare_alloc() imply rare_modify() ? Would you have the
-allocator meta data inside the rare section?
+Given the !preempt/!IRQ contraints I'd certainly put an upper limit on
+the number of bytes there.
+
+> 3,4: Same as 1 and 2 but must be called inside a special rare write
+> region. This is purely an optimization.
+> 
+> Actually getting a modifiable pointer should be disallowed for two
+> reasons:
+> 
+> 1. Some architectures may want to use a special
+> write-different-address-space operation.
+
+You're thinking of s390 ? :-)
+
+> Heck, x86 could, too: make
+> the actual offset be a secret and shove the offset into FSBASE or
+> similar. Then %fs-prefixed writes would do the rare writes.
+
+> 2. Alternatively, x86 could set the U bit. Then the actual writes
+> would use the uaccess helpers, giving extra protection via SMAP.
+
+Cute, and yes, something like that would be nice.
+
+> We don’t really want a situation where an unchecked pointer in the
+> rare write region completely defeats the mechanism.
+
+Agreed.
