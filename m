@@ -2,69 +2,53 @@ Return-Path: <SRS0=zj7v=NL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C623C0044C
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 09:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D65C0044C
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 09:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E9F20821
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 09:27:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9D3B20821
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 09:30:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hqjXSFEW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E9F20821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jY8arnAl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D3B20821
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJaSYX (ORCPT
+        id S1727735AbeJaS1b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 14:24:23 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36666 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727757AbeJaSYW (ORCPT
+        Wed, 31 Oct 2018 14:27:31 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34858 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeJaS1b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 14:24:22 -0400
-Received: by mail-lf1-f66.google.com with SMTP id h192so11095901lfg.3;
-        Wed, 31 Oct 2018 02:27:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wjWGJMBjAYOtg/ptm8tzogysjtI/euxcYBSvlp1KYNk=;
-        b=hqjXSFEW6gVaIPRrCElTSgcsV+NMOLvQ7BOV2b89x13+rTMYt94wz3dmaG6pdpzv/V
-         seYn+r2ZfJ53E850vFkdbFn6Ynv3KyyTd5fkeII+yNeDJQCLZr8qaig6bWZVo/GmBcY3
-         EBDsecuwrH9PYN7hpm1/JbZCUHoHtviD8Br5cwuXM22NnHDFMwgpp6dM8MlpYMaxFPAt
-         oewIFJVktKJbOCFw8sgJiUsAV2oRIA1NmuFLt1PRNEkVy5RyWa9Wa7GwxnVTrStKfyNK
-         S8XWyv5F//0nrN4ldCehGNVBMIGOa5o2RH+oanPJ8wLPRpKUDdN4WYhpkt94Uqrl0bww
-         9+3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wjWGJMBjAYOtg/ptm8tzogysjtI/euxcYBSvlp1KYNk=;
-        b=cNGfwdYT/IROmIzSsRJhp4Iu5969I2pT1ViMXS1qGsf4XcbsdNE1O07+Shhxa70HJS
-         TQr+3chvKsbL5HE49HAwsuSe37qen6fVl4RBaA2mRYTys6ys+Uva0igh6IzPGW7TRtbA
-         YgeIIIt5peDqrEZCnm3kJkfAc5OJ+DpQtet9+0PBg2SWwDWaEpTfTc0GmRcXH6xlEyUs
-         PUV6xljGbQEEgFxAo50SEneIdHFf+TmFXYi4FRnUn9DbwC+ut4Vpp1Kv5wCJnu0FQ7Fs
-         FguQ2ZRgV2jnW4EYzXcr+tv6eBuk5XgKEbAUjuVNit4bVM0k3/3hUOu7MluFNeHyCHZR
-         5Bpg==
-X-Gm-Message-State: AGRZ1gLYuBRO2SYTXV4A0cnfb00d4pn2sM+aNbZITcgpbDqPMbEW0G5W
-        IbknP26gSGAyJgJJPT4bWAE=
-X-Google-Smtp-Source: AJdET5de9wbbH/+B8NPVDLnMQYOyVLLiZ1keyqYy8njWrzulBwaMiDt+axJCah+Pf/T9SoXYRceZxg==
-X-Received: by 2002:a19:4287:: with SMTP id p129mr1387081lfa.135.1540978021862;
-        Wed, 31 Oct 2018 02:27:01 -0700 (PDT)
-Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
-        by smtp.gmail.com with ESMTPSA id c5-v6sm810518lja.62.2018.10.31.02.27.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 02:27:01 -0700 (PDT)
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
+        Wed, 31 Oct 2018 14:27:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=3jes58u1jTxmuOF8FMhmEDRdUkFP9Qkm++im5XLV5ys=; b=jY8arnAl+D3zGHGTnlVl9fRINf
+        0r1qffbbaW9tzevjDNcuLMs29ffRTn85xFLvU6m15urgYyQQF0NVmBRd3mTeQps+9jOn+LQZSz8th
+        pQ9qe85dgObjx+EzzI2vfdYSD4xlHYw4nsgyLEdfqO8stcKrJUL/ywEI4ZfdOiTHcKplk8Vp5BIU2
+        QjfTR3C+gjZk9IIk9Eh6V4M6qbLokd0V/dY7XwKEAHL3FQ5aeP/yhFMUXBygnusbhuAi5bbiuSR/2
+        DbOWIzFiRCvk8ikqZF78waI5gkJiEkOGKvl9bBUSKIF1eelCR0wpbSTvdVNEVdmNoCQAp0cABhfhW
+        /9+Xy3Ag==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHmoq-0002Sf-7w; Wed, 31 Oct 2018 09:29:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 36EB42029FA14; Wed, 31 Oct 2018 10:29:42 +0100 (CET)
+Date:   Wed, 31 Oct 2018 10:29:42 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>, nadav.amit@gmail.com,
+        Kees Cook <keescook@chromium.org>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dave Chinner <david@fromorbit.com>,
         James Morris <jmorris@namei.org>,
         Michal Hocko <mhocko@kernel.org>,
@@ -79,68 +63,52 @@ Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
         Thomas Gleixner <tglx@linutronix.de>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181031092942.GJ744@hirez.programming.kicks-ass.net>
+References: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
  <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
  <20181028183126.GB744@hirez.programming.kicks-ass.net>
  <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
  <20181030152641.GE8177@hirez.programming.kicks-ass.net>
  <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <58295796-9bb5-080a-4c4d-47761d0876a9@gmail.com>
-Date:   Wed, 31 Oct 2018 11:27:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org>
+ <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
+ <20181030212551.GD10491@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181030212551.GD10491@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 30/10/2018 18:37, Kees Cook wrote:
-> On Tue, Oct 30, 2018 at 8:26 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->> I suppose the 'normal' attack goes like:
->>
->>   1) find buffer-overrun / bound check failure
->>   2) use that to write to 'interesting' location
->>   3) that write results arbitrary code execution
->>   4) win
->>
->> Of course, if the store of 2 is to the current cred structure, and
->> simply sets the effective uid to 0, we can skip 3.
+On Tue, Oct 30, 2018 at 02:25:51PM -0700, Matthew Wilcox wrote:
+> On Tue, Oct 30, 2018 at 11:51:17AM -0700, Andy Lutomirski wrote:
+> > Finally, one issue: rare_alloc() is going to utterly suck
+> > performance-wise due to the global IPI when the region gets zapped out
+> > of the direct map or otherwise made RO.  This is the same issue that
+> > makes all existing XPO efforts so painful. We need to either optimize
+> > the crap out of it somehow or we need to make sure it’s not called
+> > except during rare events like device enumeration.
 > 
-> In most cases, yes, gaining root is game over. However, I don't want
-> to discount other threat models: some systems have been designed not
-> to trust root, so a cred attack doesn't always get an attacker full
-> control (e.g. lockdown series, signed modules, encrypted VMs, etc).
+> Batching operations is kind of the whole point of the VM ;-)  Either
+> this rare memory gets used a lot, in which case we'll want to create slab
+> caches for it, make it a MM zone and the whole nine yeards, or it's not
+> used very much in which case it doesn't matter that performance sucks.
 
-Reading these points I see where I was not clear.
+Yes, for the dynamic case something along those lines would be needed.
+If we have a single rare zone, we could even have __GFP_RARE or whatever
+that manages this.
 
-Maybe I can fix that. SELinux is a good example of safeguard against a 
-takeover of root, so it is a primary target. Unfortunately it contains 
-some state variables that can be used to disable it.
+The page allocator would have to grow a rare memblock type, and every
+rare alloc would allocate from a rare memblock, when none is available,
+creation of a rare block would set up the mappings etc..
 
-Other attack that comes to my mind, for executing code within the 
-kernel, without sweating too much with ROP is the following:
+> For now, I'd suggest allocating 2MB chunks as needed, and having a
+> shrinker to hand back any unused pieces.
 
-1) find the rabbit hole to write kernel data, whatever it might be
-2) spray the keyring with own key
-3) use the module loading infrastructure to load own module, signed with 
-the key at point 2)
-
-Just to say that direct arbitrary code execution is becoming harder to 
-perform, but there are ways around it which rely more on overwriting 
-unprotected data.
-
-They are a lower hanging fruit for an attacker.
-
---
-igor
+Something like the percpu allocator?
