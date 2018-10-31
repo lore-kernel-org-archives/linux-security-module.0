@@ -6,49 +6,45 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C667ECDE44
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 10:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35A3C0044C
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 11:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6F7920685
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 10:12:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C3F2081B
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 11:33:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XE6cCwPx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F7920685
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XOqqvlIV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C3F2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeJaTJ0 (ORCPT
+        id S1728482AbeJaUbD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Oct 2018 15:09:26 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35630 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727692AbeJaTJ0 (ORCPT
+        Wed, 31 Oct 2018 16:31:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44280 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727546AbeJaUbC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Oct 2018 15:09:26 -0400
+        Wed, 31 Oct 2018 16:31:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gq+In4AB5xCINJI4HV1K716XlMaT2LdiwoPTCQL+wv4=; b=XE6cCwPxeHBHyBSmrkkSTtRE4
-        fFj0439HWdMorMVwv7jsOrdkAXPvSjMnG/TENzReeveGoTBa+dxhZ76iqkmyThYV/MB1dmgIPVqQD
-        MSKW5vE1nLpkVp6eBNJowgXIICZK7MbBSZUKahue+7DkfjGMRbFJvFyPf99SqB95s3MrWytVaO4jf
-        51lu/xx4Qn4ZxcZbAUCoYETUTMyP21EfRyu9SmJn9YN/f42JOr7Bk1P1enkB2Pkn/e4MoXiAxENhO
-        G87ck59YrOaR4fQ2/VojZzeVciQeAaKM9RVVxbQqXVNCiE30fW+THRoTmxgxZNEZ2lKjn3j4mg7Cj
-        Eoe6im17Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHnTD-0002jN-Qt; Wed, 31 Oct 2018 10:11:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 34E802029FA14; Wed, 31 Oct 2018 11:11:24 +0100 (CET)
-Date:   Wed, 31 Oct 2018 11:11:24 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
+         bh=1Nx7BO2VnRh0a+k2wp2hDZfug8S8paE2B6A9HLC6QA8=; b=XOqqvlIVZO/TCdFsj9fzYAmfN
+        vtDeI48fJxQqPNLDNNW2FRQ59jRc0YgoyWc9OZk1adej3fYHmt+6SSNPQMTL73MRRLd51foZ5ngyr
+        mOrh1B6t1BAsAiyCg0xWZmKqF4Hgxwpr47JkvcOMd4rzIL/Q1J3OXgFO9Ypv3J3pITxZN52VnBJHM
+        9NTbMJHfSSrqWKf77P0SreElImwrKXths6lRkk/dsgFD2hqCOjfWr14YpuxIuDsVbloZVtzBCVKFO
+        FtwS1T7Tjfk3GwYpJGdLK1FynxfapKnEjRAkPuiE++hznb2wbpm7Ld7C8FaltPVcev3oq2gMlFkXh
+        Xk3OM+keA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHokB-0006ej-FS; Wed, 31 Oct 2018 11:33:03 +0000
+Date:   Wed, 31 Oct 2018 04:33:03 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tycho Andersen <tycho@tycho.ws>,
         Kees Cook <keescook@chromium.org>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dave Chinner <david@fromorbit.com>,
         James Morris <jmorris@namei.org>,
@@ -66,44 +62,63 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181031101124.GO744@hirez.programming.kicks-ass.net>
-References: <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+Message-ID: <20181031113303.GJ10491@bombadil.infradead.org>
+References: <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
  <20181030152641.GE8177@hirez.programming.kicks-ass.net>
  <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
  <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
  <20181030175814.GB10491@bombadil.infradead.org>
- <20181030182841.GE7343@cisco>
- <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
- <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
- <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com>
+ <20181031093659.GL744@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181031093659.GL744@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 31, 2018 at 12:15:46AM +0200, Igor Stoppa wrote:
-> On 30/10/2018 23:02, Andy Lutomirski wrote:
-
-> > But I dislike allowing regular writes in the protected region. We
-> > really only need four write primitives:
+On Wed, Oct 31, 2018 at 10:36:59AM +0100, Peter Zijlstra wrote:
+> On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
+> > On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
+> > > > On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
+> > > I support the addition of a rare-write mechanism to the upstream kernel.
+> > > And I think that there is only one sane way to implement it: using an
+> > > mm_struct. That mm_struct, just like any sane mm_struct, should only
+> > > differ from init_mm in that it has extra mappings in the *user* region.
 > > 
-> > 1. Just write one value.  Call at any time (except NMI).
+> > I'd like to understand this approach a little better.  In a syscall path,
+> > we run with the user task's mm.  What you're proposing is that when we
+> > want to modify rare data, we switch to rare_mm which contains a
+> > writable mapping to all the kernel data which is rare-write.
 > > 
-> > 2. Just copy some bytes. Same as (1) but any number of bytes.
+> > So the API might look something like this:
 > > 
-> > 3,4: Same as 1 and 2 but must be called inside a special rare write
-> > region. This is purely an optimization.
+> > 	void *p = rare_alloc(...);	/* writable pointer */
+> > 	p->a = x;
+> > 	q = rare_protect(p);		/* read-only pointer */
+> > 
+> > To subsequently modify q,
+> > 
+> > 	p = rare_modify(q);
+> > 	q->a = y;
+> > 	rare_protect(p);
 > 
-> Atomic? RCU?
+> Why would you have rare_alloc() imply rare_modify() ? Would you have the
+> allocator meta data inside the rare section?
 
-RCU can be done, that's not really a problem. Atomics otoh are a
-problem. Having pointers makes them just work.
+Normally when I allocate some memory I need to initialise it before
+doing anything else with it ;-)
 
-Andy; I understand your reason for not wanting them, but I really don't
-want to duplicate everything. Is there something we can do with static
-analysis to make you more comfortable with the pointer thing?
+I mean, you could do:
+
+	ro = rare_alloc(..);
+	rare = rare_modify(ro);
+	rare->a = x;
+	rare_protect(rare);
+
+but that's more typing.
