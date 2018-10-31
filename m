@@ -2,115 +2,117 @@ Return-Path: <SRS0=zj7v=NL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0329C0044C
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 21:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63FCC0044C
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 21:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76CED2064C
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 21:01:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r+gKVQiB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76CED2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 267D72080A
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Oct 2018 21:10:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 267D72080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbeKAGAp (ORCPT
+        id S1729898AbeKAGJw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 02:00:45 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:44108 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726127AbeKAGAp (ORCPT
+        Thu, 1 Nov 2018 02:09:52 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:52124 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726023AbeKAGJv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 02:00:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=n9e9jx5bhT7iQOS4/AYUEiXPtLoQRDuZXOe6A2RZAow=; b=r+gKVQiBGZuRlTYYn0pqnPPZx
-        w/uYbpzWqFEmKqO1lW1UDk4pwqHcTlkYOwrTom7IgA8qgZBKle+fe34Wlq6PlSguoF9RDPmq7zeRS
-        8Ab4CTH7M/LBH2kZCZb2FT0iD7vmeqIhwnK9v3r9k8pEwcE7nGf56wYCEMVkVN/GgHagIJZMV+ocE
-        FaARVd5/5jIlTD5iqJZ3wU6G2Dn2JAMdS3Sbtdilc8hJwQd5FhqHsSW01ci5V1bi8WgGn+XvGtEMg
-        9uKedkCdXFCuT/Qlu6D7ErBAUWZj/tb8/ZslR3FSo6LnS9l4bLJZINJTVte/Su89aqSRcCZTHSZSx
-        rY9hJ/9TA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHxbO-0006zU-6J; Wed, 31 Oct 2018 21:00:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3FE712029F887; Wed, 31 Oct 2018 22:00:32 +0100 (CET)
-Date:   Wed, 31 Oct 2018 22:00:32 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181031210032.GA3159@hirez.programming.kicks-ass.net>
-References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <20181030182841.GE7343@cisco>
- <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
- <20181030213557.GE10491@bombadil.infradead.org>
- <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com>
- <20181031100237.GN744@hirez.programming.kicks-ass.net>
- <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
+        Thu, 1 Nov 2018 02:09:51 -0400
+X-Greylist: delayed 439 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Nov 2018 02:09:49 EDT
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 98C65755; Wed, 31 Oct 2018 21:02:45 +0000 (UTC)
+Date:   Wed, 31 Oct 2018 21:02:45 +0000
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     mortonm@chromium.org
+Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
+Message-ID: <20181031210245.GA3537@mail.hallyn.com>
+References: <20181031152846.234791-1-mortonm@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181031152846.234791-1-mortonm@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 31, 2018 at 01:36:48PM -0700, Andy Lutomirski wrote:
+Quoting mortonm@chromium.org (mortonm@chromium.org):
+> From: Micah Morton <mortonm@chromium.org>
 > 
-> > On Oct 31, 2018, at 3:02 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> >> On Tue, Oct 30, 2018 at 09:41:13PM -0700, Andy Lutomirski wrote:
-> >> To clarify some of this thread, I think that the fact that rare_write
-> >> uses an mm_struct and alias mappings under the hood should be
-> >> completely invisible to users of the API.  No one should ever be
-> >> handed a writable pointer to rare_write memory (except perhaps during
-> >> bootup or when initializing a large complex data structure that will
-> >> be rare_write but isn't yet, e.g. the policy db).
-> > 
-> > Being able to use pointers would make it far easier to do atomics and
-> > other things though.
+> SafeSetID gates the setid family of syscalls to restrict UID/GID
+> transitions from a given UID/GID to only those approved by a
+> system-wide whitelist. These restrictions also prohibit the given
+> UIDs/GIDs from obtaining auxiliary privileges associated with
+> CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
+> mappings. For now, only gating the set*uid family of syscalls is
+> supported, with support for set*gid coming in a future patch set.
 > 
-> This stuff is called *rare* write for a reason. Do we really want to
-> allow atomics beyond just store-release?  Taking a big lock and then
-> writing in the right order should cover everything, no?
+> Signed-off-by: Micah Morton <mortonm@chromium.org>
+> ---
+> 
+> NOTE: See the TODO above setuid_syscall() in lsm.c for an aspect of this
+> code that likely needs improvement before being an acceptable approach.
+> I'm specifically interested to see if there are better ideas for how
+> this could be done.
+> 
+>  Documentation/admin-guide/LSM/SafeSetID.rst |  94 ++++++
+>  Documentation/admin-guide/LSM/index.rst     |   1 +
+>  arch/Kconfig                                |   5 +
+>  arch/arm/Kconfig                            |   1 +
+>  arch/arm64/Kconfig                          |   1 +
+>  arch/x86/Kconfig                            |   1 +
+>  security/Kconfig                            |   1 +
+>  security/Makefile                           |   2 +
+>  security/safesetid/Kconfig                  |  13 +
+>  security/safesetid/Makefile                 |   7 +
+>  security/safesetid/lsm.c                    | 334 ++++++++++++++++++++
+>  security/safesetid/lsm.h                    |  30 ++
+>  security/safesetid/securityfs.c             | 189 +++++++++++
+>  13 files changed, 679 insertions(+)
+>  create mode 100644 Documentation/admin-guide/LSM/SafeSetID.rst
+>  create mode 100644 security/safesetid/Kconfig
+>  create mode 100644 security/safesetid/Makefile
+>  create mode 100644 security/safesetid/lsm.c
+>  create mode 100644 security/safesetid/lsm.h
+>  create mode 100644 security/safesetid/securityfs.c
+> 
+> diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/admin-guide/LSM/SafeSetID.rst
+> new file mode 100644
+> index 000000000000..e7d072124424
+> --- /dev/null
+> +++ b/Documentation/admin-guide/LSM/SafeSetID.rst
+> @@ -0,0 +1,94 @@
+> +=========
+> +SafeSetID
+> +=========
+> +SafeSetID is an LSM module that gates the setid family of syscalls to restrict
+> +UID/GID transitions from a given UID/GID to only those approved by a
+> +system-wide whitelist. These restrictions also prohibit the given UIDs/GIDs
+> +from obtaining auxiliary privileges associated with CAP_SET{U/G}ID, such as
+> +allowing a user to set up user namespace UID mappings.
+> +
+> +
+> +Background
+> +==========
+> +In absence of file capabilities, processes spawned on a Linux system that need
+> +to switch to a different user must be spawned with CAP_SETUID privileges.
+> +CAP_SETUID is granted to programs running as root or those running as a non-root
+> +user that have been explicitly given the CAP_SETUID runtime capability. It is
+> +often preferable to use Linux runtime capabilities rather than file
+> +capabilities, since using file capabilities to run a program with elevated
+> +privileges opens up possible security holes since any user with access to the
+> +file can exec() that program to gain the elevated privileges.
 
-Ah, so no. That naming is very misleading.
+Not true, see inheritable capabilities.  You also might look at ambient
+capabilities.
 
-We modify page-tables a _lot_. The point is that only a few sanctioned
-sites are allowed writing to it, not everybody.
-
-I _think_ the use-case for atomics is updating the reference counts of
-objects that are in this write-rare domain. But I'm not entirely clear
-on that myself either. I just really want to avoid duplicating that
-stuff.
+Just to be sure - your end-goal is to have a set of tasks which have
+some privileges, including CAP_SETUID, but which cannot transition to
+certain uids, perhaps including root?
