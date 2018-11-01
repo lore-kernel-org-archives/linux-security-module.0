@@ -6,112 +6,135 @@ X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB9EC0044C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 01:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23551ECDE44
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 03:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C4D2064C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 01:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E09F720821
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 03:28:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QOsPlqrN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C4D2064C
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cnTIdqoV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09F720821
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbeKAKNn (ORCPT
+        id S1726095AbeKAM3p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 06:13:43 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:35638 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbeKAKNn (ORCPT
+        Thu, 1 Nov 2018 08:29:45 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33323 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbeKAM3p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 06:13:43 -0400
-Received: by mail-yw1-f68.google.com with SMTP id w135-v6so5067427ywd.2
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Oct 2018 18:12:59 -0700 (PDT)
+        Thu, 1 Nov 2018 08:29:45 -0400
+Received: by mail-yw1-f66.google.com with SMTP id z72-v6so3108028ywa.0
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Oct 2018 20:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=3kfZv1noKDNsYODE6bbzMlrs6X6ZlKzXF3RZ/uRtUZc=;
-        b=QOsPlqrN8kPdUtwrqmkqWVuLYY+9PLDtI0+70sqY0a+HytmFzdQga5BlUS7JNVrldY
-         nvckUWXeej5hL8fJovqa9eCtJENx7yxGMIQZaFVoOxuBiNUgkJ5bSi6HU7gAToN4ZzL4
-         LFp4XyL0yvUsHMTgd+Tcm8pQY4BL9DG80JdvQ=
+        bh=zamWPB7Zrsbk1HU+g6DyYhjI1LOLXffcsrjOS1cfmoc=;
+        b=cnTIdqoVbcehNhb9FKMitRDNdejZO0Uh4fHM64GEX5NlGgV/K5FQMWArwEJN8bWFnU
+         yjVdKN2oGs+Fl4ZFjEZR0f48ZsnrB0TnFnAapbuRW3YuhENboxof8QwfUdgneZQ6xT0n
+         mPwb4THqjBtZ6Wm7eNfxvBNDmeQla1kSlCmV8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=3kfZv1noKDNsYODE6bbzMlrs6X6ZlKzXF3RZ/uRtUZc=;
-        b=jfF9AcHx7lFTuF8nBzURR9Tp9S9dg4S4mUJCKMvoNakSZ/uVEQrIofIMW3vgcBe+3E
-         UZVH5IcV4ghLm5RmSybR0wkkcq/S+c2f6y/Exd49/ZvyhqYzbDToEKf3lhBtOOfL9JC3
-         0PSwzntskNNM+HtURAF/eO5VyLm9UIM17YogSYaXIvkiy6GJeZgNdnT4RfL9Ls3pyrEf
-         2K3fW/dM9OGVrRnPlJ496FPqGeX354I4F5s9K7ZAh7kHxor/jj7XjmwW0Lppd8bxKpa6
-         1rizDWMg0wJrEej9Hxyfn9hN9hdKjtvd9nLHist8FocyAWvvIvHJeGIM1mm6pcOobo90
-         kRug==
-X-Gm-Message-State: AGRZ1gKvMEOsqcjkXfT+gN/fWUsfvi8WBVdvVh7q3SGpLhXc6ilAHK3D
-        BMKSiy++bl4J8hJHNnVxI1FNv6cyGmbbqLOYp+PGpg==
-X-Google-Smtp-Source: AJdET5f6rXmbBGm+rI0Knz6EJV8MAMewkDwu0d/zg2rG5JgKaBZ5mm0qkmWXzuCcivYOSP6FB+OSjptfyoOMGWdCP9Y=
-X-Received: by 2002:a81:34d0:: with SMTP id b199-v6mr5357662ywa.322.1541034777590;
- Wed, 31 Oct 2018 18:12:57 -0700 (PDT)
+        bh=zamWPB7Zrsbk1HU+g6DyYhjI1LOLXffcsrjOS1cfmoc=;
+        b=QePON5At+eK/yIcM1y1Dl58ZkCv7On9nVNcH122Cm74YFdYyK2nX0opvb8x/hICc5d
+         JUb41y46FBTw+SwT65ZIOdGEd1u0NljBpSXTP9NG+X14hGc8pXGXOElpZpeXAxUALvNv
+         5BmRc8i1QzwgleMoU6vmu4qC/nAFrtbcaa4+8BXZYm5cUyQvKseGQtzelIFuvJzQ9O0T
+         1bjeKulvOBPT4SI8RG+j02CGOaU2tcPkZpMkY+vC8q5nBXFw4Xf1r7OtYO+69DfMd8qj
+         kuIie2z4USAJwKv4W9nqtiDMg2MKILdcTNmUV5WOPQMI3Vpf+ojBTT+/AY3+uN6QJDTf
+         NjyA==
+X-Gm-Message-State: AGRZ1gLKIDyRuxNNlUhkAHWuxqh9FU/uDz18jmH3a++9auS6r577LPt5
+        U1cxRzYIqMrnkOruYB/X3NDGBGKAEeY=
+X-Google-Smtp-Source: AJdET5eDZzceXDCEldNwppwNNUY5y1jjlBb2VJzPpKwyGM9CcEFj5v9ZaGnSRsaRyEHjkVxGbMXXCg==
+X-Received: by 2002:a81:a4d8:: with SMTP id b207-v6mr5922964ywh.261.1541042918027;
+        Wed, 31 Oct 2018 20:28:38 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 205-v6sm7490656ywd.1.2018.10.31.20.28.35
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Oct 2018 20:28:36 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id n140-v6so7582382yba.1
+        for <linux-security-module@vger.kernel.org>; Wed, 31 Oct 2018 20:28:35 -0700 (PDT)
+X-Received: by 2002:a25:7643:: with SMTP id r64-v6mr5969887ybc.403.1541042915047;
+ Wed, 31 Oct 2018 20:28:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181031152846.234791-1-mortonm@chromium.org> <20181031210245.GA3537@mail.hallyn.com>
- <CAGXu5jJN4Z8RiweDjRTpEbhVsb=js0N2-w1Xy12o6nrkZE9gwA@mail.gmail.com> <49f92f71-ba6f-9991-af95-03b04a42b6d0@schaufler-ca.com>
-In-Reply-To: <49f92f71-ba6f-9991-af95-03b04a42b6d0@schaufler-ca.com>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Wed, 31 Oct 2018 18:12:46 -0700
-Message-ID: <CAJ-EccPCxi1Fn-TVnGHBADKuoSi3XC0_UAkXRk49+iTjoLoecA@mail.gmail.com>
-Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
-To:     casey@schaufler-ca.com
-Cc:     Kees Cook <keescook@chromium.org>, serge@hallyn.com,
-        jmorris@namei.org, linux-security-module@vger.kernel.org
+Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 20:28:33
+ -0700 (PDT)
+In-Reply-To: <20181031091048.GH744@hirez.programming.kicks-ass.net>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-17-igor.stoppa@huawei.com> <20181025001312.GA3159@worktop.c.hoisthospitality.com>
+ <806bfff0-8d62-9918-480d-ec791b93841e@gmail.com> <20181030155841.GF8177@hirez.programming.kicks-ass.net>
+ <20181030162815.GB20827@arm.com> <20181031091048.GH744@hirez.programming.kicks-ass.net>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 31 Oct 2018 20:28:33 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKmhoSsOTqDJmr3ijwDAh57Bfq3KVE+AjrBdLXjPz83+g@mail.gmail.com>
+Message-ID: <CAGXu5jKmhoSsOTqDJmr3ijwDAh57Bfq3KVE+AjrBdLXjPz83+g@mail.gmail.com>
+Subject: Re: [PATCH 16/17] prmem: pratomic-long
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 31, 2018 at 3:37 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Wed, Oct 31, 2018 at 2:10 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Tue, Oct 30, 2018 at 04:28:16PM +0000, Will Deacon wrote:
+>> On Tue, Oct 30, 2018 at 04:58:41PM +0100, Peter Zijlstra wrote:
+>> > Like mentioned elsewhere; if you do write_enable() + write_disable()
+>> > thingies, it all becomes:
+>> >
+>> >     write_enable();
+>> >     atomic_foo(&bar);
+>> >     write_disable();
+>> >
+>> > No magic gunk infested duplication at all. Of course, ideally you'd then
+>> > teach objtool about this (or a GCC plugin I suppose) to ensure any
+>> > enable reached a disable.
+>>
+>> Isn't the issue here that we don't want to change the page tables for the
+>> mapping of &bar, but instead want to create a temporary writable alias
+>> at a random virtual address?
+>>
+>> So you'd want:
+>>
+>>       wbar = write_enable(&bar);
+>>       atomic_foo(wbar);
+>>       write_disable(wbar);
+>>
+>> which is probably better expressed as a map/unmap API. I suspect this
+>> would also be the only way to do things for cmpxchg() loops, where you
+>> want to create the mapping outside of the loop to minimise your time in
+>> the critical section.
 >
-> On 10/31/2018 2:57 PM, Kees Cook wrote:
-> > On Wed, Oct 31, 2018 at 2:02 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
-> >> Just to be sure - your end-goal is to have a set of tasks which have
-> >> some privileges, including CAP_SETUID, but which cannot transition to
-> >> certain uids, perhaps including root?
+> Ah, so I was thikning that the altnerative mm would have stuff in the
+> same location, just RW instead of RO.
 
-Correct, only whitelisted uids can be switched to. This only pertains
-to CAP_SETUID, other capabilities are not affected.
+I was hoping for the same location too. That allows use to use a gcc
+plugin to mark, say, function pointer tables, as read-only, and
+annotate their rare updates with write_rare() without any
+recalculation.
 
-> > AIUI, the issue is that CAP_SETUID is TOO permissive. Instead, run
-> > _without_ CAP_SETUID and still allow whitelisted uid transitions.
+-Kees
 
-Kees is right that this LSM only pertains to a single capability:
-CAP_SETUID (future work could tackle CAP_SETGID in the same fashion)
--- although the idea here is to put in per-user limitations on what a
-process running as that user can do even when it _has_ CAP_SETUID. So
-it doesn't grant any extra privileges to processes that don't have
-CAP_SETUID, only restricts processes that _do_ have CAP_SETUID if the
-user they are running under is restricted.
-
->
-> I don't like that thought at all at all. You need CAP_SETUID for
-> some transitions but not all. I can call setreuid() and restore
-> the saved UID to the effective UID. If this LSM works correctly
-> (I haven't examined it carefully yet) it should prevent restoring
-> the effective UID if there isn't an appropriate whitelist entry.
-
-Yep, thats how it works. The idea here is that you still need
-CAP_SETUID for all transitions, regardless of whether whitelist
-policies exist or not.
-
->
-> It also violates the "additional restriction" model of LSMs.
->
-> That has the potential to introduce a failure when a process tries
-> to give up privilege. If 0:1000 isn't on the whitelist but 1000:0
-
-As above, if a process drops CAP_SETUID it wouldn't be able to do any
-transitions (if this is what you mean by give up privilege). The
-whitelist is a one-way policy so if one wanted to restrict user 123
-but let it switch to 456 and back, 2 policies would need to be added:
-123 -> 456 and 456 -> 123.
-
-> is Bad Things can happen. A SUID root program would be unable to
-> give up its privilege by going back to the real UID in this case.
->
+-- 
+Kees Cook
