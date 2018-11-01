@@ -2,136 +2,116 @@ Return-Path: <SRS0=OxMS=NM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51878C0044C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 06:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B70C0044C
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 06:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D690320820
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 06:07:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D690320820
+	by mail.kernel.org (Postfix) with ESMTP id 3EBA820820
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 06:13:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EBA820820
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeKAPJN (ORCPT
+        id S1727666AbeKAPO6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 11:09:13 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:58814 "EHLO mail.hallyn.com"
+        Thu, 1 Nov 2018 11:14:58 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:58894 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727712AbeKAPJM (ORCPT
+        id S1727533AbeKAPO6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 11:09:12 -0400
+        Thu, 1 Nov 2018 11:14:58 -0400
 Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id AE78F100A; Thu,  1 Nov 2018 06:07:37 +0000 (UTC)
-Date:   Thu, 1 Nov 2018 06:07:37 +0000
+        id 3F21FB46; Thu,  1 Nov 2018 06:13:22 +0000 (UTC)
+Date:   Thu, 1 Nov 2018 06:13:22 +0000
 From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     mortonm@chromium.org, jmorris@namei.org, keescook@chromium.org,
+To:     Micah Morton <mortonm@chromium.org>
+Cc:     casey@schaufler-ca.com, Kees Cook <keescook@chromium.org>,
+        serge@hallyn.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org
 Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
-Message-ID: <20181101060737.GA7132@mail.hallyn.com>
+Message-ID: <20181101061322.GB7132@mail.hallyn.com>
 References: <20181031152846.234791-1-mortonm@chromium.org>
  <20181031210245.GA3537@mail.hallyn.com>
+ <CAGXu5jJN4Z8RiweDjRTpEbhVsb=js0N2-w1Xy12o6nrkZE9gwA@mail.gmail.com>
+ <49f92f71-ba6f-9991-af95-03b04a42b6d0@schaufler-ca.com>
+ <CAJ-EccPCxi1Fn-TVnGHBADKuoSi3XC0_UAkXRk49+iTjoLoecA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181031210245.GA3537@mail.hallyn.com>
+In-Reply-To: <CAJ-EccPCxi1Fn-TVnGHBADKuoSi3XC0_UAkXRk49+iTjoLoecA@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 31, 2018 at 09:02:45PM +0000, Serge E. Hallyn wrote:
-> Quoting mortonm@chromium.org (mortonm@chromium.org):
-> > From: Micah Morton <mortonm@chromium.org>
-> > 
-> > SafeSetID gates the setid family of syscalls to restrict UID/GID
-> > transitions from a given UID/GID to only those approved by a
-> > system-wide whitelist. These restrictions also prohibit the given
-> > UIDs/GIDs from obtaining auxiliary privileges associated with
-> > CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
-> > mappings. For now, only gating the set*uid family of syscalls is
-> > supported, with support for set*gid coming in a future patch set.
-> > 
-> > Signed-off-by: Micah Morton <mortonm@chromium.org>
-> > ---
-> > 
-> > NOTE: See the TODO above setuid_syscall() in lsm.c for an aspect of this
-> > code that likely needs improvement before being an acceptable approach.
-> > I'm specifically interested to see if there are better ideas for how
-> > this could be done.
-> > 
-> >  Documentation/admin-guide/LSM/SafeSetID.rst |  94 ++++++
-> >  Documentation/admin-guide/LSM/index.rst     |   1 +
-> >  arch/Kconfig                                |   5 +
-> >  arch/arm/Kconfig                            |   1 +
-> >  arch/arm64/Kconfig                          |   1 +
-> >  arch/x86/Kconfig                            |   1 +
-> >  security/Kconfig                            |   1 +
-> >  security/Makefile                           |   2 +
-> >  security/safesetid/Kconfig                  |  13 +
-> >  security/safesetid/Makefile                 |   7 +
-> >  security/safesetid/lsm.c                    | 334 ++++++++++++++++++++
-> >  security/safesetid/lsm.h                    |  30 ++
-> >  security/safesetid/securityfs.c             | 189 +++++++++++
-> >  13 files changed, 679 insertions(+)
-> >  create mode 100644 Documentation/admin-guide/LSM/SafeSetID.rst
-> >  create mode 100644 security/safesetid/Kconfig
-> >  create mode 100644 security/safesetid/Makefile
-> >  create mode 100644 security/safesetid/lsm.c
-> >  create mode 100644 security/safesetid/lsm.h
-> >  create mode 100644 security/safesetid/securityfs.c
-> > 
-> > diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/admin-guide/LSM/SafeSetID.rst
-> > new file mode 100644
-> > index 000000000000..e7d072124424
-> > --- /dev/null
-> > +++ b/Documentation/admin-guide/LSM/SafeSetID.rst
-> > @@ -0,0 +1,94 @@
-> > +=========
-> > +SafeSetID
-> > +=========
-> > +SafeSetID is an LSM module that gates the setid family of syscalls to restrict
-> > +UID/GID transitions from a given UID/GID to only those approved by a
-> > +system-wide whitelist. These restrictions also prohibit the given UIDs/GIDs
-> > +from obtaining auxiliary privileges associated with CAP_SET{U/G}ID, such as
-> > +allowing a user to set up user namespace UID mappings.
-> > +
-> > +
-> > +Background
-> > +==========
-> > +In absence of file capabilities, processes spawned on a Linux system that need
-> > +to switch to a different user must be spawned with CAP_SETUID privileges.
-> > +CAP_SETUID is granted to programs running as root or those running as a non-root
-> > +user that have been explicitly given the CAP_SETUID runtime capability. It is
-> > +often preferable to use Linux runtime capabilities rather than file
-> > +capabilities, since using file capabilities to run a program with elevated
-> > +privileges opens up possible security holes since any user with access to the
-> > +file can exec() that program to gain the elevated privileges.
+On Wed, Oct 31, 2018 at 06:12:46PM -0700, Micah Morton wrote:
+> On Wed, Oct 31, 2018 at 3:37 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >
+> > On 10/31/2018 2:57 PM, Kees Cook wrote:
+> > > On Wed, Oct 31, 2018 at 2:02 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
+> > >> Just to be sure - your end-goal is to have a set of tasks which have
+> > >> some privileges, including CAP_SETUID, but which cannot transition to
+> > >> certain uids, perhaps including root?
 > 
-> Not true, see inheritable capabilities.  You also might look at ambient
-> capabilities.
+> Correct, only whitelisted uids can be switched to. This only pertains
+> to CAP_SETUID, other capabilities are not affected.
+> 
+> > > AIUI, the issue is that CAP_SETUID is TOO permissive. Instead, run
+> > > _without_ CAP_SETUID and still allow whitelisted uid transitions.
+> 
+> Kees is right that this LSM only pertains to a single capability:
+> CAP_SETUID (future work could tackle CAP_SETGID in the same fashion)
+> -- although the idea here is to put in per-user limitations on what a
+> process running as that user can do even when it _has_ CAP_SETUID. So
+> it doesn't grant any extra privileges to processes that don't have
+> CAP_SETUID, only restricts processes that _do_ have CAP_SETUID if the
+> user they are running under is restricted.
+> 
+> >
+> > I don't like that thought at all at all. You need CAP_SETUID for
+> > some transitions but not all. I can call setreuid() and restore
+> > the saved UID to the effective UID. If this LSM works correctly
+> > (I haven't examined it carefully yet) it should prevent restoring
+> > the effective UID if there isn't an appropriate whitelist entry.
+> 
+> Yep, thats how it works. The idea here is that you still need
+> CAP_SETUID for all transitions, regardless of whether whitelist
+> policies exist or not.
+> 
+> >
+> > It also violates the "additional restriction" model of LSMs.
 
-So for example with pam_cap.so you could have your N uids each be given
-the desired pI, and assign the corrsponding fIs to the files they should
-be able to exec with privilege.  No other uids will run those files with
-privilege.  *1
+Does it, or does the fact that CAP_SETUID is still required in order
+to change uids address that?
 
-Can you give some more details about exactly how you see SafeSetID being
-used?
+> > That has the potential to introduce a failure when a process tries
+> > to give up privilege. If 0:1000 isn't on the whitelist but 1000:0
+> 
+> As above, if a process drops CAP_SETUID it wouldn't be able to do any
+> transitions (if this is what you mean by give up privilege). The
+> whitelist is a one-way policy so if one wanted to restrict user 123
+> but let it switch to 456 and back, 2 policies would need to be added:
+> 123 -> 456 and 456 -> 123.
+> 
+> > is Bad Things can happen. A SUID root program would be unable to
+> > give up its privilege by going back to the real UID in this case.
 
-I'm still not quite clear on whether you want N completely unprivileged
-uids to be used by some user (i.e. uid 1000), or whether one or more of
-those should also have some privileged, or whether one of the uids might
-or might not b uid 0.  Years ago I used to use N separate uids to
-somewhat segragate workloads on my laptop, and I'd like my browser to
-do something like that.  Is that the kind of uid switching you have
-in mind?
+Yes, this was the root cause of the "sendmail capabilities bug" - a
+privileged daemon which could be made to run with slightly less
+privilege in such a way that it failed to drop privilege, then continued
+ot run with some privilege.
+
+But the key trigger there was that an unprivileged task could prevent
+the more privileged task from dropping its privilege.
+
+Is that the case here?  It might be...  If one of the uid-restricted
+tasks running with CAP_SETUID runs a filter over some malicious data
+which forces it to run a program which intends to change its uid and
+fails to detect that that failed.  It's not quite as cut-and-dried
+though, and if we simply do not allow uid 0 to be in the set of uids,
+that may prevent any such cases.
 
 -serge
-
-*1 And maybe with one of the p9auth/factotem proposals out there you
-could have a userspace daemon hand out the tokens for setuid, but that's
-getting "out there" and probably derailing this conversation :)
