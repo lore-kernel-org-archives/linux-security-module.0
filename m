@@ -2,151 +2,197 @@ Return-Path: <SRS0=OxMS=NM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A25C0044C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:32:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96058C0044C
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 268542064C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:32:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D25B205F4
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AATcQtgw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 268542064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GCS1wrTm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D25B205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbeKBBfu (ORCPT
+        id S1725959AbeKBBpl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:35:50 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34468 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728372AbeKBBfu (ORCPT
+        Thu, 1 Nov 2018 21:45:41 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:38649 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKBBpl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:35:50 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f78-v6so9598297pfe.1;
-        Thu, 01 Nov 2018 09:32:08 -0700 (PDT)
+        Thu, 1 Nov 2018 21:45:41 -0400
+Received: by mail-yw1-f66.google.com with SMTP id d126-v6so8142731ywa.5
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Nov 2018 09:41:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nX6+O2gcmN+wf5wYI35jSqSfPHK0o+mAaMNAqvcu52I=;
-        b=AATcQtgw4OgBirkGwvnev1NHDLu20mOrNOBTk3mtc8rtBaSE7Rb1gc9g+oGWLVauTy
-         bC5LUZf64mIdb5FT1gqpKHTxXhQeTaaGUOmhyGfJzfWQ9nOMLPfSQgWKQ5chJEls2bNz
-         x6cTy4F0mA4fiKKhEFX16FkS/1U7a+pZPPfCD6pk0h+VxN0Uv+L2a015nfDLvpUJlTRO
-         pbVyzv/j4vNsdLtGTsq9DtZJ/IQN5ub2PnGDUqhO4NxSYNoA8kvkcPiJ3/Mf6e+zdUEw
-         VoHNbDZbexpieUNxDjQrya2xUCNW4zhk5nbE3zqXsoMnz/PQ14UmKipJQGaHrzIMFAFp
-         6Clg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wqg3SqQEy3nikO8nWK0ctPRlQhtrMFT1+CaIoN336z8=;
+        b=GCS1wrTmLe3kum75QG1omSaDW74QVfpxA64uA8tvVlMcqlyshdHGr2c4HZro8lq3mz
+         5AG8bPPVl6fR0ZVSk/xWE4Is3txMjRTVxvA6nrD0BBW0oZ+SjdMAr/FrPKVgcBCB47je
+         o+0s6gps0pwjAjut7IC/aB2bg2EPl7xWe57i4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nX6+O2gcmN+wf5wYI35jSqSfPHK0o+mAaMNAqvcu52I=;
-        b=j6VIoGe9nXMOC8jnzLO51R5Av0NYSe0D0xLZ3AitxamzyyP23m88jiBwLEMkQcN7+0
-         oUpkGvuDbKdmqWKjR7CXYJfjBHx5OdMRR5NAhrKGKIblsufZ2KpaXLp8gLi5ZvEE1F/q
-         Id0p2MDJ6fcls53ECB54En3TmceiBtvZxebrZbc2VHP5sTWXnPxbvjqk2L2S1L2tbQ5r
-         Krfw8CZAaFQuerYLeNwTOmwAX8776FjPsWqqVZZjKq4wsWOu/J/RqsYNXBEM2CIy99+p
-         C5dmMeJj8JIAZTkirbWwUuBOHdhymUs+2y/1qS8+/hwz+RECcivsy6iis6t8RLz0tDxK
-         AKfA==
-X-Gm-Message-State: AGRZ1gLdHnbS0K5GYzXyVGCrm3GGbmixQULP72xcz+NaWMPLXSr+Nqbn
-        nxU74/qV/hCYSjdZRMbU54k=
-X-Google-Smtp-Source: AJdET5fgJblcobbtWN43vziOs7OA7inJWEFOO1N2KO5+PVOr8+1H0QPwzWqA786ws/jd50RrRywtsg==
-X-Received: by 2002:a63:e918:: with SMTP id i24-v6mr7767635pgh.64.1541089928101;
-        Thu, 01 Nov 2018 09:32:08 -0700 (PDT)
-Received: from [172.20.5.66] (rrcs-24-227-212-35.sw.biz.rr.com. [24.227.212.35])
-        by smtp.gmail.com with ESMTPSA id d67-v6sm9436155pfg.2.2018.11.01.09.32.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Nov 2018 09:32:06 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH 10/17] prmem: documentation
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20181031090835.GG744@hirez.programming.kicks-ass.net>
-Date:   Thu, 1 Nov 2018 11:31:59 -0500
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <59E8A6FB-9762-499F-89AC-D85E1498BE38@gmail.com>
-References: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
- <CAC99157-7A9B-4AC6-BA41-EAA7A99FE53D@gmail.com>
- <20181031090835.GG744@hirez.programming.kicks-ass.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-X-Mailer: Apple Mail (2.3445.9.1)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wqg3SqQEy3nikO8nWK0ctPRlQhtrMFT1+CaIoN336z8=;
+        b=Gl7S7x3+YaM5FSxIc23ue0FTK6ZNtsv0vQpR/EYOghrL2bkL+R/cI5/mtdhNEsPeDU
+         vqZWSdGLI5bmdYsY8h7s9rJBKbvy+XrqAkt2ss8boUWyrFatW/eWYH0CTSYHknMk78W7
+         BDP525GW5f3sCzmh2YWTae5Ca31YVp/3ND5Ekv7x3GELE8HvFH+0GS+76sGGaj/DICVf
+         Uc7yUY9UD1NKpiy0MayESwPr2RUp0yKtTWu5Z+1UTYeGq1sghbUDR1uMtvAzL20cLvBj
+         tgRnSmIMY11ZcRBFeVsdFK7dgYLswis4LYUeDLZdrnhL6QovCgQMJRz1LF1GcVW2Qrtw
+         29bA==
+X-Gm-Message-State: AGRZ1gLFUIo1SopQDlN85hgxgtrDNIMYfThnYAV40yvMDfClRmaxqMmQ
+        JnkqSfIGSj9E3DyImSYd/4uW44StsHUD7YagrxUY05kS
+X-Google-Smtp-Source: AJdET5drHYE4dqMfNJFbnQxeDUJjfssksJ58VL2Em+CSjE9uljKOwJkXg52an04Uj5xMLDClhjHp4ufejEmfjCA3+vI=
+X-Received: by 2002:a81:c806:: with SMTP id n6-v6mr8076104ywi.172.1541090517008;
+ Thu, 01 Nov 2018 09:41:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181031152846.234791-1-mortonm@chromium.org> <20181031210245.GA3537@mail.hallyn.com>
+ <20181101060737.GA7132@mail.hallyn.com> <CAJ-EccMaAu+g55Nuh1nZqt3Ld-YEgDiT_ewdQzGtFGmzRgXckw@mail.gmail.com>
+In-Reply-To: <CAJ-EccMaAu+g55Nuh1nZqt3Ld-YEgDiT_ewdQzGtFGmzRgXckw@mail.gmail.com>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Thu, 1 Nov 2018 09:41:45 -0700
+Message-ID: <CAJ-EccMwiyFCemJfwmq5qhEw4fXkVrHt5gFo_u1gf=2C=A0s+A@mail.gmail.com>
+Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
+To:     serge@hallyn.com
+Cc:     jmorris@namei.org, Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Peter Zijlstra
-Sent: October 31, 2018 at 9:08:35 AM GMT
-> To: Nadav Amit <nadav.amit@gmail.com>
-> Cc: Andy Lutomirski <luto@amacapital.net>, Matthew Wilcox =
-<willy@infradead.org>, Kees Cook <keescook@chromium.org>, Igor Stoppa =
-<igor.stoppa@gmail.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dave =
-Chinner <david@fromorbit.com>, James Morris <jmorris@namei.org>, Michal =
-Hocko <mhocko@kernel.org>, Kernel Hardening =
-<kernel-hardening@lists.openwall.com>, linux-integrity =
-<linux-integrity@vger.kernel.org>, linux-security-module =
-<linux-security-module@vger.kernel.org>, Igor Stoppa =
-<igor.stoppa@huawei.com>, Dave Hansen <dave.hansen@linux.intel.com>, =
-Jonathan Corbet <corbet@lwn.net>, Laura Abbott <labbott@redhat.com>, =
-Randy Dunlap <rdunlap@infradead.org>, Mike Rapoport =
-<rppt@linux.vnet.ibm.com>, open list:DOCUMENTATION =
-<linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas =
-Gleixner <tglx@linutronix.de>
-> Subject: Re: [PATCH 10/17] prmem: documentation
->=20
->=20
-> On Tue, Oct 30, 2018 at 04:18:39PM -0700, Nadav Amit wrote:
->>> Nadav, want to resubmit your series? IIRC the only thing wrong with =
-it was
->>> that it was a big change and we wanted a simpler fix to backport. =
-But
->>> that=E2=80=99s all done now, and I, at least, rather liked your =
-code. :)
->>=20
->> I guess since it was based on your ideas=E2=80=A6
->>=20
->> Anyhow, the only open issue that I have with v2 is Peter=E2=80=99s =
-wish that I would
->> make kgdb use of poke_text() less disgusting. I still don=E2=80=99t =
-know exactly
->> how to deal with it.
->>=20
->> Perhaps it (fixing kgdb) can be postponed? In that case I can just =
-resend
->> v2.
->=20
-> Oh man, I completely forgot about kgdb :/
->=20
-> Also, would it be possible to entirely remove that kmap fallback path?
+On Thu, Nov 1, 2018 at 9:11 AM Micah Morton <mortonm@chromium.org> wrote:
+>
+> On Wed, Oct 31, 2018 at 11:07 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+> >
+> > On Wed, Oct 31, 2018 at 09:02:45PM +0000, Serge E. Hallyn wrote:
+> > > Quoting mortonm@chromium.org (mortonm@chromium.org):
+> > > > From: Micah Morton <mortonm@chromium.org>
+> > > >
+> > > > SafeSetID gates the setid family of syscalls to restrict UID/GID
+> > > > transitions from a given UID/GID to only those approved by a
+> > > > system-wide whitelist. These restrictions also prohibit the given
+> > > > UIDs/GIDs from obtaining auxiliary privileges associated with
+> > > > CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
+> > > > mappings. For now, only gating the set*uid family of syscalls is
+> > > > supported, with support for set*gid coming in a future patch set.
+> > > >
+> > > > Signed-off-by: Micah Morton <mortonm@chromium.org>
+> > > > ---
+> > > >
+> > > > NOTE: See the TODO above setuid_syscall() in lsm.c for an aspect of this
+> > > > code that likely needs improvement before being an acceptable approach.
+> > > > I'm specifically interested to see if there are better ideas for how
+> > > > this could be done.
+> > > >
+> > > >  Documentation/admin-guide/LSM/SafeSetID.rst |  94 ++++++
+> > > >  Documentation/admin-guide/LSM/index.rst     |   1 +
+> > > >  arch/Kconfig                                |   5 +
+> > > >  arch/arm/Kconfig                            |   1 +
+> > > >  arch/arm64/Kconfig                          |   1 +
+> > > >  arch/x86/Kconfig                            |   1 +
+> > > >  security/Kconfig                            |   1 +
+> > > >  security/Makefile                           |   2 +
+> > > >  security/safesetid/Kconfig                  |  13 +
+> > > >  security/safesetid/Makefile                 |   7 +
+> > > >  security/safesetid/lsm.c                    | 334 ++++++++++++++++++++
+> > > >  security/safesetid/lsm.h                    |  30 ++
+> > > >  security/safesetid/securityfs.c             | 189 +++++++++++
+> > > >  13 files changed, 679 insertions(+)
+> > > >  create mode 100644 Documentation/admin-guide/LSM/SafeSetID.rst
+> > > >  create mode 100644 security/safesetid/Kconfig
+> > > >  create mode 100644 security/safesetid/Makefile
+> > > >  create mode 100644 security/safesetid/lsm.c
+> > > >  create mode 100644 security/safesetid/lsm.h
+> > > >  create mode 100644 security/safesetid/securityfs.c
+> > > >
+> > > > diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/admin-guide/LSM/SafeSetID.rst
+> > > > new file mode 100644
+> > > > index 000000000000..e7d072124424
+> > > > --- /dev/null
+> > > > +++ b/Documentation/admin-guide/LSM/SafeSetID.rst
+> > > > @@ -0,0 +1,94 @@
+> > > > +=========
+> > > > +SafeSetID
+> > > > +=========
+> > > > +SafeSetID is an LSM module that gates the setid family of syscalls to restrict
+> > > > +UID/GID transitions from a given UID/GID to only those approved by a
+> > > > +system-wide whitelist. These restrictions also prohibit the given UIDs/GIDs
+> > > > +from obtaining auxiliary privileges associated with CAP_SET{U/G}ID, such as
+> > > > +allowing a user to set up user namespace UID mappings.
+> > > > +
+> > > > +
+> > > > +Background
+> > > > +==========
+> > > > +In absence of file capabilities, processes spawned on a Linux system that need
+> > > > +to switch to a different user must be spawned with CAP_SETUID privileges.
+> > > > +CAP_SETUID is granted to programs running as root or those running as a non-root
+> > > > +user that have been explicitly given the CAP_SETUID runtime capability. It is
+> > > > +often preferable to use Linux runtime capabilities rather than file
+> > > > +capabilities, since using file capabilities to run a program with elevated
+> > > > +privileges opens up possible security holes since any user with access to the
+> > > > +file can exec() that program to gain the elevated privileges.
+> > >
+> > > Not true, see inheritable capabilities.  You also might look at ambient
+> > > capabilities.
+> >
+> > So for example with pam_cap.so you could have your N uids each be given
+> > the desired pI, and assign the corrsponding fIs to the files they should
+> > be able to exec with privilege.  No other uids will run those files with
+> > privilege.  *1
+>
+> Sorry, what are "pl" and "fls" here? "Privilege level" and "files"?
+>
+> >
+> > Can you give some more details about exactly how you see SafeSetID being
+> > used?
+>
+> Sure. The main use case for this LSM is to allow a non-root program to
+> transition to other untrusted uids without full blown CAP_SETUID
+> capabilities. The non-root program would still need CAP_SETUID to do
+> any kind of transition, but the additional restrictions imposed by
+> this LSM would mean it is a "safer" version of CAP_SETUID since the
+> non-root program cannot take advantage of CAP_SETUID to do any
+> unapproved actions (i.e. setuid to uid 0 or create/enter new user
+> namespace). The higher level goal is to allow for uid-based sandboxing
+> of system services without having to give out CAP_SETUID all over the
+> place just so that non-root programs can drop to
+> even-further-non-privileged uids. This is especially relevant when one
+> non-root daemon on the system should be allowed to spawn other
+> processes as different uids, but its undesirable to give the daemon a
+> basically-root-equivalent CAP_SETUID.
+>
+> >
+> > I'm still not quite clear on whether you want N completely unprivileged
+> > uids to be used by some user (i.e. uid 1000), or whether one or more of
+> > those should also have some privileged, or whether one of the uids might
+> > or might not b uid 0.  Years ago I used to use N separate uids to
+> > somewhat segragate workloads on my laptop, and I'd like my browser to
+> > do something like that.  Is that the kind of uid switching you have
+> > in mind?
+>
+> "N completely unprivileged uids to be used by some user (i.e. uid
+> 1000)" is the closest description of what this LSM has in mind. For
+> example, uid 123 is some system service that needs runtime
+> capabilities X, Y and Z and a bunch of DBus permissions associated
+> with uid 123, but also wants to spawn another program without any of
+> these capabilities/permissions. In this case we would like to avoid
+> giving the system service CAP_SETUID.
 
-Let me see what I can do about it.=
+Another clarification: "avoid giving the system service
+_full/unrestricted_ CAP_SETUID capabilities"
+
+>
+> >
+> > -serge
+> >
+> > *1 And maybe with one of the p9auth/factotem proposals out there you
+> > could have a userspace daemon hand out the tokens for setuid, but that's
+> > getting "out there" and probably derailing this conversation :)
