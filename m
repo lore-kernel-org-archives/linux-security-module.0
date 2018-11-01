@@ -2,139 +2,136 @@ Return-Path: <SRS0=OxMS=NM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23551ECDE44
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 03:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51878C0044C
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 06:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E09F720821
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 03:28:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cnTIdqoV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E09F720821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id D690320820
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 06:07:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D690320820
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726095AbeKAM3p (ORCPT
+        id S1727743AbeKAPJN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 08:29:45 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:33323 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbeKAM3p (ORCPT
+        Thu, 1 Nov 2018 11:09:13 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:58814 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727712AbeKAPJM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 08:29:45 -0400
-Received: by mail-yw1-f66.google.com with SMTP id z72-v6so3108028ywa.0
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Oct 2018 20:28:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zamWPB7Zrsbk1HU+g6DyYhjI1LOLXffcsrjOS1cfmoc=;
-        b=cnTIdqoVbcehNhb9FKMitRDNdejZO0Uh4fHM64GEX5NlGgV/K5FQMWArwEJN8bWFnU
-         yjVdKN2oGs+Fl4ZFjEZR0f48ZsnrB0TnFnAapbuRW3YuhENboxof8QwfUdgneZQ6xT0n
-         mPwb4THqjBtZ6Wm7eNfxvBNDmeQla1kSlCmV8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zamWPB7Zrsbk1HU+g6DyYhjI1LOLXffcsrjOS1cfmoc=;
-        b=QePON5At+eK/yIcM1y1Dl58ZkCv7On9nVNcH122Cm74YFdYyK2nX0opvb8x/hICc5d
-         JUb41y46FBTw+SwT65ZIOdGEd1u0NljBpSXTP9NG+X14hGc8pXGXOElpZpeXAxUALvNv
-         5BmRc8i1QzwgleMoU6vmu4qC/nAFrtbcaa4+8BXZYm5cUyQvKseGQtzelIFuvJzQ9O0T
-         1bjeKulvOBPT4SI8RG+j02CGOaU2tcPkZpMkY+vC8q5nBXFw4Xf1r7OtYO+69DfMd8qj
-         kuIie2z4USAJwKv4W9nqtiDMg2MKILdcTNmUV5WOPQMI3Vpf+ojBTT+/AY3+uN6QJDTf
-         NjyA==
-X-Gm-Message-State: AGRZ1gLKIDyRuxNNlUhkAHWuxqh9FU/uDz18jmH3a++9auS6r577LPt5
-        U1cxRzYIqMrnkOruYB/X3NDGBGKAEeY=
-X-Google-Smtp-Source: AJdET5eDZzceXDCEldNwppwNNUY5y1jjlBb2VJzPpKwyGM9CcEFj5v9ZaGnSRsaRyEHjkVxGbMXXCg==
-X-Received: by 2002:a81:a4d8:: with SMTP id b207-v6mr5922964ywh.261.1541042918027;
-        Wed, 31 Oct 2018 20:28:38 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id 205-v6sm7490656ywd.1.2018.10.31.20.28.35
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Oct 2018 20:28:36 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id n140-v6so7582382yba.1
-        for <linux-security-module@vger.kernel.org>; Wed, 31 Oct 2018 20:28:35 -0700 (PDT)
-X-Received: by 2002:a25:7643:: with SMTP id r64-v6mr5969887ybc.403.1541042915047;
- Wed, 31 Oct 2018 20:28:35 -0700 (PDT)
+        Thu, 1 Nov 2018 11:09:12 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id AE78F100A; Thu,  1 Nov 2018 06:07:37 +0000 (UTC)
+Date:   Thu, 1 Nov 2018 06:07:37 +0000
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     mortonm@chromium.org, jmorris@namei.org, keescook@chromium.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
+Message-ID: <20181101060737.GA7132@mail.hallyn.com>
+References: <20181031152846.234791-1-mortonm@chromium.org>
+ <20181031210245.GA3537@mail.hallyn.com>
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Wed, 31 Oct 2018 20:28:33
- -0700 (PDT)
-In-Reply-To: <20181031091048.GH744@hirez.programming.kicks-ass.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-17-igor.stoppa@huawei.com> <20181025001312.GA3159@worktop.c.hoisthospitality.com>
- <806bfff0-8d62-9918-480d-ec791b93841e@gmail.com> <20181030155841.GF8177@hirez.programming.kicks-ass.net>
- <20181030162815.GB20827@arm.com> <20181031091048.GH744@hirez.programming.kicks-ass.net>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 31 Oct 2018 20:28:33 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKmhoSsOTqDJmr3ijwDAh57Bfq3KVE+AjrBdLXjPz83+g@mail.gmail.com>
-Message-ID: <CAGXu5jKmhoSsOTqDJmr3ijwDAh57Bfq3KVE+AjrBdLXjPz83+g@mail.gmail.com>
-Subject: Re: [PATCH 16/17] prmem: pratomic-long
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031210245.GA3537@mail.hallyn.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 31, 2018 at 2:10 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Tue, Oct 30, 2018 at 04:28:16PM +0000, Will Deacon wrote:
->> On Tue, Oct 30, 2018 at 04:58:41PM +0100, Peter Zijlstra wrote:
->> > Like mentioned elsewhere; if you do write_enable() + write_disable()
->> > thingies, it all becomes:
->> >
->> >     write_enable();
->> >     atomic_foo(&bar);
->> >     write_disable();
->> >
->> > No magic gunk infested duplication at all. Of course, ideally you'd then
->> > teach objtool about this (or a GCC plugin I suppose) to ensure any
->> > enable reached a disable.
->>
->> Isn't the issue here that we don't want to change the page tables for the
->> mapping of &bar, but instead want to create a temporary writable alias
->> at a random virtual address?
->>
->> So you'd want:
->>
->>       wbar = write_enable(&bar);
->>       atomic_foo(wbar);
->>       write_disable(wbar);
->>
->> which is probably better expressed as a map/unmap API. I suspect this
->> would also be the only way to do things for cmpxchg() loops, where you
->> want to create the mapping outside of the loop to minimise your time in
->> the critical section.
->
-> Ah, so I was thikning that the altnerative mm would have stuff in the
-> same location, just RW instead of RO.
+On Wed, Oct 31, 2018 at 09:02:45PM +0000, Serge E. Hallyn wrote:
+> Quoting mortonm@chromium.org (mortonm@chromium.org):
+> > From: Micah Morton <mortonm@chromium.org>
+> > 
+> > SafeSetID gates the setid family of syscalls to restrict UID/GID
+> > transitions from a given UID/GID to only those approved by a
+> > system-wide whitelist. These restrictions also prohibit the given
+> > UIDs/GIDs from obtaining auxiliary privileges associated with
+> > CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
+> > mappings. For now, only gating the set*uid family of syscalls is
+> > supported, with support for set*gid coming in a future patch set.
+> > 
+> > Signed-off-by: Micah Morton <mortonm@chromium.org>
+> > ---
+> > 
+> > NOTE: See the TODO above setuid_syscall() in lsm.c for an aspect of this
+> > code that likely needs improvement before being an acceptable approach.
+> > I'm specifically interested to see if there are better ideas for how
+> > this could be done.
+> > 
+> >  Documentation/admin-guide/LSM/SafeSetID.rst |  94 ++++++
+> >  Documentation/admin-guide/LSM/index.rst     |   1 +
+> >  arch/Kconfig                                |   5 +
+> >  arch/arm/Kconfig                            |   1 +
+> >  arch/arm64/Kconfig                          |   1 +
+> >  arch/x86/Kconfig                            |   1 +
+> >  security/Kconfig                            |   1 +
+> >  security/Makefile                           |   2 +
+> >  security/safesetid/Kconfig                  |  13 +
+> >  security/safesetid/Makefile                 |   7 +
+> >  security/safesetid/lsm.c                    | 334 ++++++++++++++++++++
+> >  security/safesetid/lsm.h                    |  30 ++
+> >  security/safesetid/securityfs.c             | 189 +++++++++++
+> >  13 files changed, 679 insertions(+)
+> >  create mode 100644 Documentation/admin-guide/LSM/SafeSetID.rst
+> >  create mode 100644 security/safesetid/Kconfig
+> >  create mode 100644 security/safesetid/Makefile
+> >  create mode 100644 security/safesetid/lsm.c
+> >  create mode 100644 security/safesetid/lsm.h
+> >  create mode 100644 security/safesetid/securityfs.c
+> > 
+> > diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/admin-guide/LSM/SafeSetID.rst
+> > new file mode 100644
+> > index 000000000000..e7d072124424
+> > --- /dev/null
+> > +++ b/Documentation/admin-guide/LSM/SafeSetID.rst
+> > @@ -0,0 +1,94 @@
+> > +=========
+> > +SafeSetID
+> > +=========
+> > +SafeSetID is an LSM module that gates the setid family of syscalls to restrict
+> > +UID/GID transitions from a given UID/GID to only those approved by a
+> > +system-wide whitelist. These restrictions also prohibit the given UIDs/GIDs
+> > +from obtaining auxiliary privileges associated with CAP_SET{U/G}ID, such as
+> > +allowing a user to set up user namespace UID mappings.
+> > +
+> > +
+> > +Background
+> > +==========
+> > +In absence of file capabilities, processes spawned on a Linux system that need
+> > +to switch to a different user must be spawned with CAP_SETUID privileges.
+> > +CAP_SETUID is granted to programs running as root or those running as a non-root
+> > +user that have been explicitly given the CAP_SETUID runtime capability. It is
+> > +often preferable to use Linux runtime capabilities rather than file
+> > +capabilities, since using file capabilities to run a program with elevated
+> > +privileges opens up possible security holes since any user with access to the
+> > +file can exec() that program to gain the elevated privileges.
+> 
+> Not true, see inheritable capabilities.  You also might look at ambient
+> capabilities.
 
-I was hoping for the same location too. That allows use to use a gcc
-plugin to mark, say, function pointer tables, as read-only, and
-annotate their rare updates with write_rare() without any
-recalculation.
+So for example with pam_cap.so you could have your N uids each be given
+the desired pI, and assign the corrsponding fIs to the files they should
+be able to exec with privilege.  No other uids will run those files with
+privilege.  *1
 
--Kees
+Can you give some more details about exactly how you see SafeSetID being
+used?
 
--- 
-Kees Cook
+I'm still not quite clear on whether you want N completely unprivileged
+uids to be used by some user (i.e. uid 1000), or whether one or more of
+those should also have some privileged, or whether one of the uids might
+or might not b uid 0.  Years ago I used to use N separate uids to
+somewhat segragate workloads on my laptop, and I'd like my browser to
+do something like that.  Is that the kind of uid switching you have
+in mind?
+
+-serge
+
+*1 And maybe with one of the p9auth/factotem proposals out there you
+could have a userspace daemon hand out the tokens for setuid, but that's
+getting "out there" and probably derailing this conversation :)
