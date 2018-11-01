@@ -2,80 +2,93 @@ Return-Path: <SRS0=OxMS=NM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5352FC0044C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 22:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B76DDECDE46
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 22:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E8C2064C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 22:04:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E8C2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 6C9E32082E
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 22:32:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="T8Jvo/XG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C9E32082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbeKBHJP (ORCPT
+        id S1727115AbeKBHho (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Nov 2018 03:09:15 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:39803 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbeKBHJP (ORCPT
+        Fri, 2 Nov 2018 03:37:44 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43004 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbeKBHho (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Nov 2018 03:09:15 -0400
-Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wA1M4DqZ033663;
-        Fri, 2 Nov 2018 07:04:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
- Fri, 02 Nov 2018 07:04:13 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wA1M48FR033651
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 2 Nov 2018 07:04:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] tomoyo: fix small typo
-To:     Yangtao Li <tiny.windzz@gmail.com>, jmorris@namei.org
-Cc:     takedakn@nttdata.co.jp, serge@hallyn.com,
-        linux-security-module@vger.kernel.org
-References: <20181101155508.23383-1-tiny.windzz@gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <4712c089-3fbf-2753-dc42-4db5f8ef771a@i-love.sakura.ne.jp>
-Date:   Fri, 2 Nov 2018 07:04:08 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 2 Nov 2018 03:37:44 -0400
+Received: by mail-lj1-f193.google.com with SMTP id f3-v6so40762ljk.9
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Nov 2018 15:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bmb61KaE3nVV/km7pxh+AG3gjbCBwkcZpKgeNbBOiNg=;
+        b=T8Jvo/XGlN9+Y7FRYd3AA/hg5sr0rzpTQzpmCfaCnCJNqSZP3GFuKqa0hlKHp91pys
+         a7bedABRU8E8xj2zOz+8AYnwkpBCgyEexDSfK7q7asawHkwxTyHq71NdJJmmKc3OuGKJ
+         fFN0xfv+eygXQaon6UUISluJ49+UR5RBpMo6o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bmb61KaE3nVV/km7pxh+AG3gjbCBwkcZpKgeNbBOiNg=;
+        b=dthfz64ZhF06A/6mJW1gbZ7aWCXH/F+2QC6c979Iqwc37CopYmD6yvf5+/r3B/f0tN
+         e4DlnRCCsWJhekeLfBnmpSOBDTZsdlrKGkvwiMQXtsgIr0NlU85FupqoElLGQE+M5CTv
+         0TSq0VW20/xPG6M/hnveigMB363JIrLf6aYSLYLvkNbwcZ/8r3wSceZOdDV9233YiP1x
+         1jN/BPMOxGAESsvWMKjHa/l3N2PcdYo4KWOrBVa+pFSAoKCxkuI9aiXp9AZl7PVyMwsN
+         gdUgTGDYhVZpMKcN4YApcUiQDQVRvBfj6zMGb6F1m6UxDQbBoX3ZVLlcGsVuYIrNT/gc
+         zuFg==
+X-Gm-Message-State: AGRZ1gKTp2tiHYlYUNR0+vChmHYUeSsVnKgImgJcakqhq/TaTgOpAeDF
+        L7K+S3COw4VOyIumPtYA2INHqp2zAJqlwQ==
+X-Google-Smtp-Source: AJdET5f46SnkMI/yjCJYYPBg6fAy294yL5gQwBToYT86h0mghrSoTJWAJkdHDvi78+Q7sE+DAfiErA==
+X-Received: by 2002:a2e:9c59:: with SMTP id t25-v6mr6583696ljj.107.1541111565455;
+        Thu, 01 Nov 2018 15:32:45 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id x204sm556233lfa.5.2018.11.01.15.32.44
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Nov 2018 15:32:44 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id u6-v6so76712ljd.1
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Nov 2018 15:32:44 -0700 (PDT)
+X-Received: by 2002:a2e:3e06:: with SMTP id l6-v6mr2868322lja.148.1541111563482;
+ Thu, 01 Nov 2018 15:32:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181101155508.23383-1-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <alpine.LRH.2.21.1810262033270.5228@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1810262033270.5228@namei.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 1 Nov 2018 15:32:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgiWxgsvmSs=BewWpfLB=vjCJ4U3yzaKzDsZVFA0L3Xtw@mail.gmail.com>
+Message-ID: <CAHk-=wgiWxgsvmSs=BewWpfLB=vjCJ4U3yzaKzDsZVFA0L3Xtw@mail.gmail.com>
+Subject: Re: [GIT PULL] security: keys updates for v4.20
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2018/11/02 0:55, Yangtao Li wrote:
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+On Fri, Oct 26, 2018 at 2:36 AM James Morris <jmorris@namei.org> wrote:
+>
+> From David: "Provide five new operations in the key_type struct that can
+> be used to provide access to asymmetric key operations.  These will be
+> implemented for the asymmetric key type in a later patch and may refer to
+> a key retained in RAM by the kernel or a key retained in crypto hardware.
 
-Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Pulled.
 
-> ---
->  security/tomoyo/util.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
-> index d3d9d9f1edb0..badffc8271c8 100644
-> --- a/security/tomoyo/util.c
-> +++ b/security/tomoyo/util.c
-> @@ -106,7 +106,7 @@ void tomoyo_convert_time(time64_t time64, struct tomoyo_time *stamp)
->   * @string: String representation for permissions in foo/bar/buz format.
->   * @keyword: Keyword to find from @string/
->   *
-> - * Returns ture if @keyword was found in @string, false otherwise.
-> + * Returns true if @keyword was found in @string, false otherwise.
->   *
->   * This function assumes that strncmp(w1, w2, strlen(w1)) != 0 if w1 != w2.
->   */
-> 
+However. I really would have expected some of the TPM people to have
+acked these, or at least looked at them. There was no sign of that in
+any of the tpm commits that I could see..
+
+Hmm?
+
+               Linus
