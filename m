@@ -2,150 +2,159 @@ Return-Path: <SRS0=OxMS=NM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E339AC6786F
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D525C0044C
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 15:39:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3BD22082E
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 14:43:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3BD22082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F3562064C
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 15:39:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bQ1q8Xsi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3562064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbeKAXqd (ORCPT
+        id S1728518AbeKBAnI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 19:46:33 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38496 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728175AbeKAXqd (ORCPT
+        Thu, 1 Nov 2018 20:43:08 -0400
+Received: from sonic301-9.consmr.mail.bf2.yahoo.com ([74.6.129.48]:35558 "EHLO
+        sonic301-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727950AbeKBAnH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 19:46:33 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1ETTsc032662
-        for <linux-security-module@vger.kernel.org>; Thu, 1 Nov 2018 10:43:16 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ng2h7b1ae-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Nov 2018 10:43:16 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 1 Nov 2018 14:43:14 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Nov 2018 14:43:10 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1Eh9rj65273986
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Nov 2018 14:43:09 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 031C011C050;
-        Thu,  1 Nov 2018 14:43:09 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 236A611C054;
-        Thu,  1 Nov 2018 14:43:08 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.105.26])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Nov 2018 14:43:07 +0000 (GMT)
-Subject: Re: [PATCH v3 1/5] tpm: change the end marker of the active_banks
- array to zero
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        jarkko.sakkinen@linux.intel.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Thu, 01 Nov 2018 10:42:57 -0400
-In-Reply-To: <1540996980.11273.67.camel@linux.ibm.com>
-References: <20181030154711.2782-1-roberto.sassu@huawei.com>
-         <20181030154711.2782-2-roberto.sassu@huawei.com>
-         <1540996980.11273.67.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18110114-0008-0000-0000-00000289A9A5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110114-0009-0000-0000-000021F3D0DA
-Message-Id: <1541083377.4035.13.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811010127
+        Thu, 1 Nov 2018 20:43:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1541086777; bh=u/NAman+QvDB4pNGwn3umVJwDofHOSBKDHdIZstyBI0=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=bQ1q8XsiMj7FtvNc7hDzPRzsizsP/PJXUE8fv1SwwZ2Lt2o0cmrLyR0bQOzGHsdZYFCpmQg9w0w3yMZ8gGJ2dA2VQjo55KtjpT12UCFx+lsJVI/Dv/5O+nnrw3nvwnX4kgzri7ezlbXTHamKuTvOPQFakphkoZ0k+pbTgNA5ll6wSiVgbCe7WGgc0XFAlHBzcJlfLMp6n1yMdrjUSY3VGtqJHrtSpt3qcj6T3gV8NEPSPiUbiyFdO7kvyeyllaengKUqm55gGEatoxD8FB3P566txrEjitKNc2wKVgver9OT4kAsOwWTRw2gWtNeqcaExgAnQ39qVbNs0S8qZCMd3w==
+X-YMail-OSG: yyVo4xAVM1k84XYIjr17dEqzVff4eJVBpiTS89mPXfkwaPoCvmLb_qGouJhYulY
+ 0ZYKy7yWcTMXkGypbrnDCl4Asd0fu7PJZ6qFNJMbMD8o6850yH0OmJdn1W01J8NZtfQQlTmXKwkw
+ wTO_ISYlswbOojMgLhdLWG3A_tS7jRIw1Y2VmSJ.PBW2mdDfEjODhzZiyyKmIWHWVf_T_zbWZEKI
+ wECadunQuLMoGy3fFqTj6moeyb4kZb.5ijRjY89_WUdWUa_2A3E15RwLOFecSCvxRRCKE83Mtfns
+ NvtMA3oHanBhI1goTUpGFzU8aqW7Z5GIiAsbRLlkKCOL441kUWoQhtAm1.G2RmeT5Xw6dVet1NIf
+ fEUGCrXzPEaqr4.3x1PNLtqMB2SYX7_2lPhvsoy5mjt2L8xA7vnp6bE1U6KpNV9KL0qzVwVKdtHZ
+ AXKF2SDhaUL0y8Ic3dlcc72H6KfZ0bDEuIl2.dJN218xzSHchn8rIdkE9RFJTOhCePW7TuvFZkea
+ Sfhw_vCyshZJNXVU1OQtgwoRRd59JtCBJbFR0zsDrt8Twn.IB2ASXvPVkQMFRVgPaDolPEtFc_.L
+ eJorMRLVgrcmarMZQ7oUhMzRHhoVSFS1qcfUmhAzkPrSX_JJeHo1twFhlHd4Hs.0pOFJDssC1gnZ
+ AKKjWHg3vB25bJg8RejSwL8b8B1VO7PeCgkxeG8Uf0mpl.wSo3ShCItPsu1H8h4FfNlE_PgXJu9H
+ nSIpYFQNlWZvpTMvHI8xhoqXPW_y.Wb1QunvYKaD_V28lvRrp0hS6_FU1WE_1X1mRmopkBgkYPQb
+ MJ52mdYSmGkSaDO_y24FjA6cjebyd8vcQkTXTVNtRDxd4YXg4Nuu8TJBBq7AkKiWn7KtOUCQGGpf
+ TiXBK21DfVnsDxpxcdKLAWCRIsLGcVn7S9Kk_uoL0F6Oe3RSV3WBZmpdXT0CxqMIi388scAeB8JD
+ 96kgNkGqyTwyP8plc7OZEXgIYj1u.CAzs3ZgvlAjGD.aq5GBTphyAfD31Swm6j.rDIbHegSy_Vm6
+ REgb7v1VbXekDqErPZqjJ4ft7pGP.1O_aJIxrlL_xDzMUEriYVQ8m934FqOFVu4tDhLTMHfNwI7X
+ rKm2p6bM-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Thu, 1 Nov 2018 15:39:37 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
+          by smtp411.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 429b2332824fc73d3f76757b8ec123df;
+          Thu, 01 Nov 2018 15:39:36 +0000 (UTC)
+Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
+To:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Micah Morton <mortonm@chromium.org>
+Cc:     Kees Cook <keescook@chromium.org>, jmorris@namei.org,
+        linux-security-module@vger.kernel.org
+References: <20181031152846.234791-1-mortonm@chromium.org>
+ <20181031210245.GA3537@mail.hallyn.com>
+ <CAGXu5jJN4Z8RiweDjRTpEbhVsb=js0N2-w1Xy12o6nrkZE9gwA@mail.gmail.com>
+ <49f92f71-ba6f-9991-af95-03b04a42b6d0@schaufler-ca.com>
+ <CAJ-EccPCxi1Fn-TVnGHBADKuoSi3XC0_UAkXRk49+iTjoLoecA@mail.gmail.com>
+ <20181101061322.GB7132@mail.hallyn.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <2d8b8ee8-0087-b9c2-f20d-90108e0b18bd@schaufler-ca.com>
+Date:   Thu, 1 Nov 2018 08:39:34 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181101061322.GB7132@mail.hallyn.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2018-10-31 at 10:43 -0400, Mimi Zohar wrote:
-> On Tue, 2018-10-30 at 16:47 +0100, Roberto Sassu wrote:
-> > This patch changes the end marker of the active_banks array from
-> > TPM2_ALG_ERROR to zero.
-> 
-> The patch description is a bit off.
-> 
-> TPM2_ALG_ERROR is defined as zero.  Since tpm_chip_alloc() calls
-> kzalloc to allocate the structure, there is no need to explicitly set
-> the active_banks end marker to TPM2_ALG_ERROR, nor is there a need to
-> explicitly test for the end marker.
-> 
-> This patch removes explicitly setting the end marker and changes the
-> coding style.
-> 
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  drivers/char/tpm/tpm-interface.c | 2 +-
-> >  drivers/char/tpm/tpm2-cmd.c      | 3 ---
-> >  2 files changed, 1 insertion(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > index 1a803b0cf980..f7fc4b5ee239 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -1051,7 +1051,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
-> >  		memset(digest_list, 0, sizeof(digest_list));
-> >  
-> >  		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
-> > -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
-> > +			    chip->active_banks[i]; i++) {
-> >  			digest_list[i].alg_id = chip->active_banks[i];
-> >  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-> >  			count++;
+On 10/31/2018 11:13 PM, Serge E. Hallyn wrote:
+> On Wed, Oct 31, 2018 at 06:12:46PM -0700, Micah Morton wrote:
+>> On Wed, Oct 31, 2018 at 3:37 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> On 10/31/2018 2:57 PM, Kees Cook wrote:
+>>>> On Wed, Oct 31, 2018 at 2:02 PM, Serge E. Hallyn <serge@hallyn.com> wrote:
+>>>>> Just to be sure - your end-goal is to have a set of tasks which have
+>>>>> some privileges, including CAP_SETUID, but which cannot transition to
+>>>>> certain uids, perhaps including root?
+>> Correct, only whitelisted uids can be switched to. This only pertains
+>> to CAP_SETUID, other capabilities are not affected.
+>>
+>>>> AIUI, the issue is that CAP_SETUID is TOO permissive. Instead, run
+>>>> _without_ CAP_SETUID and still allow whitelisted uid transitions.
+>> Kees is right that this LSM only pertains to a single capability:
+>> CAP_SETUID (future work could tackle CAP_SETGID in the same fashion)
+>> -- although the idea here is to put in per-user limitations on what a
+>> process running as that user can do even when it _has_ CAP_SETUID. So
+>> it doesn't grant any extra privileges to processes that don't have
+>> CAP_SETUID, only restricts processes that _do_ have CAP_SETUID if the
+>> user they are running under is restricted.
+>>
+>>> I don't like that thought at all at all. You need CAP_SETUID for
+>>> some transitions but not all. I can call setreuid() and restore
+>>> the saved UID to the effective UID. If this LSM works correctly
+>>> (I haven't examined it carefully yet) it should prevent restoring
+>>> the effective UID if there isn't an appropriate whitelist entry.
+>> Yep, thats how it works. The idea here is that you still need
+>> CAP_SETUID for all transitions, regardless of whether whitelist
+>> policies exist or not.
+>>
+>>> It also violates the "additional restriction" model of LSMs.
+> Does it, or does the fact that CAP_SETUID is still required in order
+> to change uids address that?
 
-The fourth patch further updates this code.  Please move those changes
-to this first patch.  No need to touch the same code in both places.
+Yes, it does. Reading Kees' response had me a little concerned.
 
-                for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
--                           chip->active_banks[i]; i++) {
--                       digest_list[i].alg_id = chip->active_banks[i];
-+                           chip->active_banks[i].alg_id; i++) {
-+                       digest_list[i].alg_id = chip->active_banks[i].alg_id;
-                        memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-                        count++;
-                }
-Mimi
+>>> That has the potential to introduce a failure when a process tries
+>>> to give up privilege. If 0:1000 isn't on the whitelist but 1000:0
+>> As above, if a process drops CAP_SETUID it wouldn't be able to do any
+>> transitions (if this is what you mean by give up privilege). The
+>> whitelist is a one-way policy so if one wanted to restrict user 123
+>> but let it switch to 456 and back, 2 policies would need to be added:
+>> 123 -> 456 and 456 -> 123.
+>>
+>>> is Bad Things can happen. A SUID root program would be unable to
+>>> give up its privilege by going back to the real UID in this case.
+> Yes, this was the root cause of the "sendmail capabilities bug"
 
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index c31b490bd41d..046c9d8f3c1e 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -908,9 +908,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
-> >  	}
-> >  
-> >  out:
-> > -	if (i < ARRAY_SIZE(chip->active_banks))
-> > -		chip->active_banks[i] = TPM2_ALG_ERROR;
-> > -
-> >  	tpm_buf_destroy(&buf);
-> >  
-> >  	return rc;
-> 
+I'm very familiar with that particular bug, as Bob Mende's
+work to convert sendmail to using capabilities was done for
+a project I owned. The blowback against all things security
+was pretty intense.
+
+>  - a
+> privileged daemon which could be made to run with slightly less
+> privilege in such a way that it failed to drop privilege, then continued
+> ot run with some privilege.
+>
+> But the key trigger there was that an unprivileged task could prevent
+> the more privileged task from dropping its privilege.
+>
+> Is that the case here?
+
+I think it is reasonably safe to assume that there
+are many instances of programs that don't handle errors
+from setreuid() in the reset case. Without privilege
+setreuid() can be used to swap effective and real UIDs.
+
+>   It might be...  If one of the uid-restricted
+> tasks running with CAP_SETUID runs a filter over some malicious data
+> which forces it to run a program which intends to change its uid and
+> fails to detect that that failed.  It's not quite as cut-and-dried
+> though, and if we simply do not allow uid 0 to be in the set of uids,
+> that may prevent any such cases.
+
+Alas, UID 0 is not the only case we have to worry about.
+If I run a program owned by tss (Trousers) with the setuid
+bit set it will change the effective UID to tss. If this
+program expects to switch effective UID back to me and
+the SafeSetID whitelist prevents it, Bad Things may happen
+even though no capabilities or root privilege where ever
+involved.
+
+It would be easy for an inexperienced or malicious admin to
+include cschaufler:tss in the whitelist but miss on adding
+tss:cschaufler.
 
