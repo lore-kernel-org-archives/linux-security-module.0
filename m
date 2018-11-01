@@ -2,309 +2,191 @@ Return-Path: <SRS0=OxMS=NM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B54C0044C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14B8C0044C
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:12:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7EA0205F4
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:03:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7EA0205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 95BE22081B
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:12:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jNm9dcnF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95BE22081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbeKBBGw (ORCPT
+        id S1728591AbeKBBPf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:06:52 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60060 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728561AbeKBBGv (ORCPT
+        Thu, 1 Nov 2018 21:15:35 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:36579 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbeKBBPf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:06:51 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1FxOoN141622
-        for <linux-security-module@vger.kernel.org>; Thu, 1 Nov 2018 12:03:15 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ng1b41srt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Nov 2018 12:03:12 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 1 Nov 2018 16:03:10 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Nov 2018 16:03:05 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1G35mU6095356
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Nov 2018 16:03:05 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5DBD4C046;
-        Thu,  1 Nov 2018 16:03:04 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 05AE34C044;
-        Thu,  1 Nov 2018 16:03:04 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.105.26])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Nov 2018 16:03:03 +0000 (GMT)
-Subject: Re: [PATCH v3 4/5] tpm: retrieve digest size of unknown algorithms
- with PCR read
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        jarkko.sakkinen@linux.intel.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Thu, 01 Nov 2018 12:02:53 -0400
-In-Reply-To: <20181030154711.2782-5-roberto.sassu@huawei.com>
-References: <20181030154711.2782-1-roberto.sassu@huawei.com>
-         <20181030154711.2782-5-roberto.sassu@huawei.com>
+        Thu, 1 Nov 2018 21:15:35 -0400
+Received: by mail-yb1-f196.google.com with SMTP id w16-v6so8328908ybp.3
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Nov 2018 09:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lYtsIBEzeKUX7fbuLYWn3z8FS2RCOJ7e8fTLr7vOiEw=;
+        b=jNm9dcnF0fmoEJiavUywKdcIjB/g29eKenLsDFTSEfhKRNdP/FQavJQRJQhdn6KkJS
+         qxnACib34jnWBT8i1q/vNFzCQxE72OOjjS1SBqfyWHBQeSIEef4sFYvJ9XZV0gUPVWVV
+         iBOaCPOt8AgfVHhq3KwPcVngZD/1ma5PzExzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lYtsIBEzeKUX7fbuLYWn3z8FS2RCOJ7e8fTLr7vOiEw=;
+        b=E/JVEyHqoKFeR1VBzA7uUzaDZsSzsDdbpcLFtr0plz7K0XGqlIXGOlf2loi+dsIz2t
+         drcrd13sYwlaxZEZPQUC53RGZ5yem67UP+WSBHyQ4nI4rBUe9mnpJpwB1SDe1TAmqmCH
+         fv5KkvVVsF/bIAilwm+ebWGCf1FtcyXrWCcf9DVBrGAeqzIe+D0BJSoCcBW6iPS2lDPH
+         f9AqdOU7My04xJRhpPDaiE0tUoy2lg7ytRiUc7W23VrH2sjHaLnOUrTqDkasqluP7ZZX
+         sR82Jz8K+2s/jRxGT7U6CtwLVnm7tjP8gVO4Xx2xmVLboX6mx2ACBUGlmY2LHTOe36ve
+         0uPQ==
+X-Gm-Message-State: AGRZ1gICJR4cH5cDDawnfa+hQl4DrQc0eZ3WJPK8929VYII2m2G/GaGO
+        E0ZtSg1C+xdgHCNL+LQOEiif4NF63RWXhR0rS+JSwQ==
+X-Google-Smtp-Source: AJdET5cQc/7fWUB0+z9MY44hQhYLRpJHiNPkEfZyoui98w2DZzJ6H8wmAf1FG76pW7ciA98VX6Kyuasx2arDlfjb80s=
+X-Received: by 2002:a25:3c43:: with SMTP id j64-v6mr8122847yba.17.1541088717970;
+ Thu, 01 Nov 2018 09:11:57 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181031152846.234791-1-mortonm@chromium.org> <20181031210245.GA3537@mail.hallyn.com>
+ <20181101060737.GA7132@mail.hallyn.com>
+In-Reply-To: <20181101060737.GA7132@mail.hallyn.com>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Thu, 1 Nov 2018 09:11:46 -0700
+Message-ID: <CAJ-EccMaAu+g55Nuh1nZqt3Ld-YEgDiT_ewdQzGtFGmzRgXckw@mail.gmail.com>
+Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
+To:     serge@hallyn.com
+Cc:     jmorris@namei.org, Kees Cook <keescook@chromium.org>,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18110116-0008-0000-0000-00000289B359
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110116-0009-0000-0000-000021F3DAD8
-Message-Id: <1541088173.4035.26.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811010136
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2018-10-30 at 16:47 +0100, Roberto Sassu wrote:
-> Currently, the TPM driver retrieves the digest size from a table mapping
-> TPM algorithms identifiers to identifiers defined by the crypto subsystem.
-> If the algorithm is not defined by the latter, the digest size can be
-> retrieved from the output of the PCR read command.
-> 
-> The patch retrieves at TPM startup the digest sizes for each PCR bank and
-> stores them in the new structure tpm_bank_info, member of tpm_chip, so that
-> the information can be passed to other kernel subsystems.
-> 
-> tpm_bank_info contains: the TPM algorithm identifier, necessary to generate
-> the event log as defined by Trusted Computing Group (TCG); the digest size,
-> to pad/truncate a digest calculated with a different algorithm; the crypto
-> subsystem identifier, to calculate the digest of event data.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  drivers/char/tpm/tpm-interface.c | 10 ++++---
->  drivers/char/tpm/tpm.h           |  4 +--
->  drivers/char/tpm/tpm2-cmd.c      | 45 ++++++++++++++++++++++++--------
->  include/linux/tpm.h              |  6 +++++
->  4 files changed, 49 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 4d0f5da5bf98..49761c88c21e 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -989,7 +989,7 @@ int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx,
->  	if (!chip)
->  		return -ENODEV;
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> -		rc = tpm2_pcr_read(chip, pcr_idx, digest_struct);
-> +		rc = tpm2_pcr_read(chip, pcr_idx, digest_struct, NULL);
->  	else
->  		rc = tpm_pcr_read_dev(chip, pcr_idx, digest_struct->digest);
->  	tpm_put_ops(chip);
-> @@ -1052,8 +1052,8 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
->  		memset(digest_list, 0, sizeof(digest_list));
->  
->  		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
-> -			    chip->active_banks[i]; i++) {
-> -			digest_list[i].alg_id = chip->active_banks[i];
-> +			    chip->active_banks[i].alg_id; i++) {
-> +			digest_list[i].alg_id = chip->active_banks[i].alg_id;
->  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
->  			count++;
->  		}
-> @@ -1154,6 +1154,10 @@ int tpm1_auto_startup(struct tpm_chip *chip)
->  		goto out;
->  	}
->  
-> +	chip->active_banks[0].alg_id = TPM_ALG_SHA1;
-> +	chip->active_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
-> +	chip->active_banks[0].crypto_id = HASH_ALGO_SHA1;
-> +
->  	return rc;
->  out:
->  	if (rc > 0)
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 633e16f42107..8662e8587dce 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -237,7 +237,7 @@ struct tpm_chip {
->  	const struct attribute_group *groups[3];
->  	unsigned int groups_cnt;
->  
-> -	u16 active_banks[7];
-> +	struct tpm_bank_info active_banks[7];
+On Wed, Oct 31, 2018 at 11:07 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+>
+> On Wed, Oct 31, 2018 at 09:02:45PM +0000, Serge E. Hallyn wrote:
+> > Quoting mortonm@chromium.org (mortonm@chromium.org):
+> > > From: Micah Morton <mortonm@chromium.org>
+> > >
+> > > SafeSetID gates the setid family of syscalls to restrict UID/GID
+> > > transitions from a given UID/GID to only those approved by a
+> > > system-wide whitelist. These restrictions also prohibit the given
+> > > UIDs/GIDs from obtaining auxiliary privileges associated with
+> > > CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
+> > > mappings. For now, only gating the set*uid family of syscalls is
+> > > supported, with support for set*gid coming in a future patch set.
+> > >
+> > > Signed-off-by: Micah Morton <mortonm@chromium.org>
+> > > ---
+> > >
+> > > NOTE: See the TODO above setuid_syscall() in lsm.c for an aspect of this
+> > > code that likely needs improvement before being an acceptable approach.
+> > > I'm specifically interested to see if there are better ideas for how
+> > > this could be done.
+> > >
+> > >  Documentation/admin-guide/LSM/SafeSetID.rst |  94 ++++++
+> > >  Documentation/admin-guide/LSM/index.rst     |   1 +
+> > >  arch/Kconfig                                |   5 +
+> > >  arch/arm/Kconfig                            |   1 +
+> > >  arch/arm64/Kconfig                          |   1 +
+> > >  arch/x86/Kconfig                            |   1 +
+> > >  security/Kconfig                            |   1 +
+> > >  security/Makefile                           |   2 +
+> > >  security/safesetid/Kconfig                  |  13 +
+> > >  security/safesetid/Makefile                 |   7 +
+> > >  security/safesetid/lsm.c                    | 334 ++++++++++++++++++++
+> > >  security/safesetid/lsm.h                    |  30 ++
+> > >  security/safesetid/securityfs.c             | 189 +++++++++++
+> > >  13 files changed, 679 insertions(+)
+> > >  create mode 100644 Documentation/admin-guide/LSM/SafeSetID.rst
+> > >  create mode 100644 security/safesetid/Kconfig
+> > >  create mode 100644 security/safesetid/Makefile
+> > >  create mode 100644 security/safesetid/lsm.c
+> > >  create mode 100644 security/safesetid/lsm.h
+> > >  create mode 100644 security/safesetid/securityfs.c
+> > >
+> > > diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/admin-guide/LSM/SafeSetID.rst
+> > > new file mode 100644
+> > > index 000000000000..e7d072124424
+> > > --- /dev/null
+> > > +++ b/Documentation/admin-guide/LSM/SafeSetID.rst
+> > > @@ -0,0 +1,94 @@
+> > > +=========
+> > > +SafeSetID
+> > > +=========
+> > > +SafeSetID is an LSM module that gates the setid family of syscalls to restrict
+> > > +UID/GID transitions from a given UID/GID to only those approved by a
+> > > +system-wide whitelist. These restrictions also prohibit the given UIDs/GIDs
+> > > +from obtaining auxiliary privileges associated with CAP_SET{U/G}ID, such as
+> > > +allowing a user to set up user namespace UID mappings.
+> > > +
+> > > +
+> > > +Background
+> > > +==========
+> > > +In absence of file capabilities, processes spawned on a Linux system that need
+> > > +to switch to a different user must be spawned with CAP_SETUID privileges.
+> > > +CAP_SETUID is granted to programs running as root or those running as a non-root
+> > > +user that have been explicitly given the CAP_SETUID runtime capability. It is
+> > > +often preferable to use Linux runtime capabilities rather than file
+> > > +capabilities, since using file capabilities to run a program with elevated
+> > > +privileges opens up possible security holes since any user with access to the
+> > > +file can exec() that program to gain the elevated privileges.
+> >
+> > Not true, see inheritable capabilities.  You also might look at ambient
+> > capabilities.
+>
+> So for example with pam_cap.so you could have your N uids each be given
+> the desired pI, and assign the corrsponding fIs to the files they should
+> be able to exec with privilege.  No other uids will run those files with
+> privilege.  *1
 
-Commit 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
-PCR banks") defined active_banks[7].  Subsequently, commit
-4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event
-log") defined TPM2_PCR_ACTIVE_BANKS as 3.  I'm not sure which is the
-correct value, but the number of active_banks should not be hard coded
-here.
+Sorry, what are "pl" and "fls" here? "Privilege level" and "files"?
 
+>
+> Can you give some more details about exactly how you see SafeSetID being
+> used?
 
->  #ifdef CONFIG_ACPI
->  	acpi_handle acpi_dev_handle;
->  	char ppi_version[TPM_PPI_VERSION_LEN + 1];
-> @@ -565,7 +565,7 @@ static inline u32 tpm2_rc_value(u32 rc)
->  }
->  
->  int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
-> -		  struct tpm_digest *digest_struct);
-> +		  struct tpm_digest *digest_struct, u16 *digest_size_ptr);
->  int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
->  		    struct tpm_digest *digests);
->  int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 8babd826ad27..8e821e7b4674 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -180,11 +180,12 @@ struct tpm2_pcr_read_out {
->   * @chip:	TPM chip to use.
->   * @pcr_idx:	index of the PCR to read.
->   * @digest_struct:	pcr bank and buffer current PCR value is written to.
-> + * @digest_size_ptr:	pointer to variable that stores the digest size.
->   *
->   * Return: Same as with tpm_transmit_cmd.
->   */
->  int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
-> -		  struct tpm_digest *digest_struct)
-> +		  struct tpm_digest *digest_struct, u16 *digest_size_ptr)
->  {
->  	int rc;
->  	struct tpm_buf buf;
-> @@ -219,6 +220,9 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
->  		goto out;
->  	}
->  
-> +	if (digest_size_ptr)
-> +		*digest_size_ptr = digest_size;
-> +
->  	memcpy(digest_struct->digest, out->digest, digest_size);
->  out:
->  	tpm_buf_destroy(&buf);
-> @@ -249,7 +253,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
->  	struct tpm2_null_auth_area auth_area;
->  	int rc;
->  	int i;
-> -	int j;
->  
->  	if (count > ARRAY_SIZE(chip->active_banks))
->  		return -EINVAL;
-> @@ -271,14 +274,9 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
->  	tpm_buf_append_u32(&buf, count);
->  
->  	for (i = 0; i < count; i++) {
-> -		for (j = 0; j < ARRAY_SIZE(tpm2_hash_map); j++) {
-> -			if (digests[i].alg_id != tpm2_hash_map[j].tpm_id)
-> -				continue;
-> -			tpm_buf_append_u16(&buf, digests[i].alg_id);
-> -			tpm_buf_append(&buf, (const unsigned char
-> -					      *)&digests[i].digest,
-> -			       hash_digest_size[tpm2_hash_map[j].crypto_id]);
-> -		}
-> +		tpm_buf_append_u16(&buf, digests[i].alg_id);
-> +		tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
-> +			       chip->active_banks[i].digest_size);
->  	}
->  
+Sure. The main use case for this LSM is to allow a non-root program to
+transition to other untrusted uids without full blown CAP_SETUID
+capabilities. The non-root program would still need CAP_SETUID to do
+any kind of transition, but the additional restrictions imposed by
+this LSM would mean it is a "safer" version of CAP_SETUID since the
+non-root program cannot take advantage of CAP_SETUID to do any
+unapproved actions (i.e. setuid to uid 0 or create/enter new user
+namespace). The higher level goal is to allow for uid-based sandboxing
+of system services without having to give out CAP_SETUID all over the
+place just so that non-root programs can drop to
+even-further-non-privileged uids. This is especially relevant when one
+non-root daemon on the system should be allowed to spawn other
+processes as different uids, but its undesirable to give the daemon a
+basically-root-equivalent CAP_SETUID.
 
-These tpm2_pcr_extend changes don't belong here in this patch.  Please
-move them to 1/5.
+>
+> I'm still not quite clear on whether you want N completely unprivileged
+> uids to be used by some user (i.e. uid 1000), or whether one or more of
+> those should also have some privileged, or whether one of the uids might
+> or might not b uid 0.  Years ago I used to use N separate uids to
+> somewhat segragate workloads on my laptop, and I'd like my browser to
+> do something like that.  Is that the kind of uid switching you have
+> in mind?
 
->  	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-> @@ -855,6 +853,26 @@ int tpm2_probe(struct tpm_chip *chip)
->  }
->  EXPORT_SYMBOL_GPL(tpm2_probe);
->  
-> +static int tpm2_init_bank_info(struct tpm_chip *chip,
-> +			       struct tpm_bank_info *bank)
-> +{
-> +	struct tpm_digest digest = {.alg_id = bank->alg_id};
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
-> +		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
-> +
-> +		if (bank->alg_id != tpm2_hash_map[i].tpm_id)
-> +			continue;
-> +
-> +		bank->digest_size = hash_digest_size[crypto_algo];
-> +		bank->crypto_id = crypto_algo;
-> +		return 0;
-> +	}
-> +
-> +	return tpm2_pcr_read(chip, 0, &digest, &bank->digest_size);
-> +}
-> +
->  struct tpm2_pcr_selection {
->  	__be16  hash_alg;
->  	u8  size_of_select;
-> @@ -909,7 +927,12 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  		}
->  
->  		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
-> -		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
-> +		chip->active_banks[i].alg_id =
-> +			be16_to_cpu(pcr_selection.hash_alg);
-> +		rc =  tpm2_init_bank_info(chip, &chip->active_banks[i]);
+"N completely unprivileged uids to be used by some user (i.e. uid
+1000)" is the closest description of what this LSM has in mind. For
+example, uid 123 is some system service that needs runtime
+capabilities X, Y and Z and a bunch of DBus permissions associated
+with uid 123, but also wants to spawn another program without any of
+these capabilities/permissions. In this case we would like to avoid
+giving the system service CAP_SETUID.
 
-Please fix the formatting in the above 2 lines.
-
-There's been discussion in the past on removing scripts/Lindent from
-the coding-style documentation, but that hasn't happened quite yet. I
-do think section 3 "New drivers" in Documentation/hwmon/submitting-
-patches has a good balance.
-
-* Running your patch or driver file(s) through checkpatch does not mean its
-  formatting is clean. If unsure about formatting in your new driver, run it
-  through Lindent. Lindent is not perfect, and you may have to do some minor
-  cleanup, but it is a good start.
-
-thanks!
-
-Mimi  
-
-> +		if (rc)
-> +			break;
-> +
->  		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
->  			sizeof(pcr_selection.size_of_select) +
->  			pcr_selection.size_of_select;
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 4f00daf44dd2..3f91124837cf 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -46,6 +46,12 @@ struct tpm_digest {
->  	u8 digest[SHA512_DIGEST_SIZE];
->  } __packed;
->  
-> +struct tpm_bank_info {
-> +	u16 alg_id;
-> +	u16 digest_size;
-> +	u16 crypto_id;
-> +};
-> +
->  enum TPM_OPS_FLAGS {
->  	TPM_OPS_AUTO_STARTUP = BIT(0),
->  };
-
+>
+> -serge
+>
+> *1 And maybe with one of the p9auth/factotem proposals out there you
+> could have a userspace daemon hand out the tokens for setuid, but that's
+> getting "out there" and probably derailing this conversation :)
