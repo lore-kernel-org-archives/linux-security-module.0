@@ -2,196 +2,114 @@ Return-Path: <SRS0=OxMS=NM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 745AFC0044C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B823EC6786F
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16E542064C
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:22:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ef0CTfW8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16E542064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 8531D20820
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 16:23:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8531D20820
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbeKBB0T (ORCPT
+        id S1728980AbeKBB1H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 21:26:19 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:33877 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727950AbeKBB0T (ORCPT
+        Thu, 1 Nov 2018 21:27:07 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38834 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728817AbeKBB1G (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 21:26:19 -0400
-Received: by mail-yw1-f65.google.com with SMTP id v199-v6so8133252ywg.1
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Nov 2018 09:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qlatHY+JLNvfMrNkHD1V69dg3f+LUj/tzOwix1mIVf0=;
-        b=Ef0CTfW8rbBsMlRRgh3H047+vA6W5WPH+9oqCNhez9mMPFvQthiNah+Gw0jrESMisz
-         JhZ1h/B1p5Lk1++EQd7W61Als0Gq5NEDxQRbxxRDYHzlfuafTCXIN9lRRbi47bZM5QYt
-         DhJwql6Hl55rNR98XfGwWy5lAi3ivno7c5EUQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qlatHY+JLNvfMrNkHD1V69dg3f+LUj/tzOwix1mIVf0=;
-        b=fuPK7kKEgSKgwkLP+HXFkAa2HQBvAt59gHpV6emzOFUjS3KZ2bywxWOgLKAYst20GF
-         U1BuP+rjImG5SfxsrQa8BLWs8uax8OTpwfcDe9/8qEOFF8+tv1Zv7f9ZzFZKR+H//5DY
-         wEKXbJ1OuYiH0HXedYBXnCxlSMD34VIfCFSOh/oxZCxV26vTE8iEsqW9L/vy3Nk/HhiD
-         3+pAv4Pqw7j8KuJs//7tDzwxiAKDWHDfQra4ivoW3vnLfp+lQdoXBJg3FYF/aL1RHgBZ
-         3AlOtjIR7RrgaUE9ZzuMiD76ywkuJsajFN2/q4nY8XrfBchmvILZWv5sUraBD4uBUCeo
-         10BQ==
-X-Gm-Message-State: AGRZ1gJtAL6bW99siFKtzL20TOIpqXo8YFTXTA4+DyU4K6E7cflVLQar
-        0FuJuV8uWohdQK0YVLlMFEvQO2Tb9TMiLyVk2AOECCrh
-X-Google-Smtp-Source: AJdET5ciBdzn28+k3xsMTjJeCYDMjjQoM/0o0m5a4udljbBmFsi05TrK8bVmmItFIBiKvpMWJcrPMkf4DT5o8sRPOx0=
-X-Received: by 2002:a81:7b0b:: with SMTP id w11-v6mr8042830ywc.167.1541089359802;
- Thu, 01 Nov 2018 09:22:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181031152846.234791-1-mortonm@chromium.org> <20181031210245.GA3537@mail.hallyn.com>
- <20181101060737.GA7132@mail.hallyn.com> <CAJ-EccMaAu+g55Nuh1nZqt3Ld-YEgDiT_ewdQzGtFGmzRgXckw@mail.gmail.com>
-In-Reply-To: <CAJ-EccMaAu+g55Nuh1nZqt3Ld-YEgDiT_ewdQzGtFGmzRgXckw@mail.gmail.com>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Thu, 1 Nov 2018 09:22:28 -0700
-Message-ID: <CAJ-EccMgObaz-=aN1_GQWrS2PPRLXjw-SRQe6_gtquTsSt+DuQ@mail.gmail.com>
-Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
-To:     serge@hallyn.com
-Cc:     jmorris@namei.org, Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org
+        Thu, 1 Nov 2018 21:27:06 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA1GJ4Cq047417
+        for <linux-security-module@vger.kernel.org>; Thu, 1 Nov 2018 12:23:26 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ng49y1wy6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Nov 2018 12:23:26 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 1 Nov 2018 16:23:24 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Nov 2018 16:23:21 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA1GNKjl1769958
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 1 Nov 2018 16:23:20 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A103F11C054;
+        Thu,  1 Nov 2018 16:23:20 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B6C4A11C04A;
+        Thu,  1 Nov 2018 16:23:19 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.26])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Nov 2018 16:23:19 +0000 (GMT)
+Subject: Re: [PATCH v3 4/5] tpm: retrieve digest size of unknown algorithms
+ with PCR read
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Thu, 01 Nov 2018 12:23:09 -0400
+In-Reply-To: <1541088173.4035.26.camel@linux.ibm.com>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com>
+         <20181030154711.2782-5-roberto.sassu@huawei.com>
+         <1541088173.4035.26.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110116-0012-0000-0000-000002C1BC54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110116-0013-0000-0000-000020F5EE46
+Message-Id: <1541089389.4035.34.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-01_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=871 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811010139
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 1, 2018 at 9:11 AM Micah Morton <mortonm@chromium.org> wrote:
->
-> On Wed, Oct 31, 2018 at 11:07 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> >
-> > On Wed, Oct 31, 2018 at 09:02:45PM +0000, Serge E. Hallyn wrote:
-> > > Quoting mortonm@chromium.org (mortonm@chromium.org):
-> > > > From: Micah Morton <mortonm@chromium.org>
-> > > >
-> > > > SafeSetID gates the setid family of syscalls to restrict UID/GID
-> > > > transitions from a given UID/GID to only those approved by a
-> > > > system-wide whitelist. These restrictions also prohibit the given
-> > > > UIDs/GIDs from obtaining auxiliary privileges associated with
-> > > > CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
-> > > > mappings. For now, only gating the set*uid family of syscalls is
-> > > > supported, with support for set*gid coming in a future patch set.
-> > > >
-> > > > Signed-off-by: Micah Morton <mortonm@chromium.org>
-> > > > ---
-> > > >
-> > > > NOTE: See the TODO above setuid_syscall() in lsm.c for an aspect of this
-> > > > code that likely needs improvement before being an acceptable approach.
-> > > > I'm specifically interested to see if there are better ideas for how
-> > > > this could be done.
-> > > >
-> > > >  Documentation/admin-guide/LSM/SafeSetID.rst |  94 ++++++
-> > > >  Documentation/admin-guide/LSM/index.rst     |   1 +
-> > > >  arch/Kconfig                                |   5 +
-> > > >  arch/arm/Kconfig                            |   1 +
-> > > >  arch/arm64/Kconfig                          |   1 +
-> > > >  arch/x86/Kconfig                            |   1 +
-> > > >  security/Kconfig                            |   1 +
-> > > >  security/Makefile                           |   2 +
-> > > >  security/safesetid/Kconfig                  |  13 +
-> > > >  security/safesetid/Makefile                 |   7 +
-> > > >  security/safesetid/lsm.c                    | 334 ++++++++++++++++++++
-> > > >  security/safesetid/lsm.h                    |  30 ++
-> > > >  security/safesetid/securityfs.c             | 189 +++++++++++
-> > > >  13 files changed, 679 insertions(+)
-> > > >  create mode 100644 Documentation/admin-guide/LSM/SafeSetID.rst
-> > > >  create mode 100644 security/safesetid/Kconfig
-> > > >  create mode 100644 security/safesetid/Makefile
-> > > >  create mode 100644 security/safesetid/lsm.c
-> > > >  create mode 100644 security/safesetid/lsm.h
-> > > >  create mode 100644 security/safesetid/securityfs.c
-> > > >
-> > > > diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/admin-guide/LSM/SafeSetID.rst
-> > > > new file mode 100644
-> > > > index 000000000000..e7d072124424
-> > > > --- /dev/null
-> > > > +++ b/Documentation/admin-guide/LSM/SafeSetID.rst
-> > > > @@ -0,0 +1,94 @@
-> > > > +=========
-> > > > +SafeSetID
-> > > > +=========
-> > > > +SafeSetID is an LSM module that gates the setid family of syscalls to restrict
-> > > > +UID/GID transitions from a given UID/GID to only those approved by a
-> > > > +system-wide whitelist. These restrictions also prohibit the given UIDs/GIDs
-> > > > +from obtaining auxiliary privileges associated with CAP_SET{U/G}ID, such as
-> > > > +allowing a user to set up user namespace UID mappings.
-> > > > +
-> > > > +
-> > > > +Background
-> > > > +==========
-> > > > +In absence of file capabilities, processes spawned on a Linux system that need
-> > > > +to switch to a different user must be spawned with CAP_SETUID privileges.
-> > > > +CAP_SETUID is granted to programs running as root or those running as a non-root
-> > > > +user that have been explicitly given the CAP_SETUID runtime capability. It is
-> > > > +often preferable to use Linux runtime capabilities rather than file
-> > > > +capabilities, since using file capabilities to run a program with elevated
-> > > > +privileges opens up possible security holes since any user with access to the
-> > > > +file can exec() that program to gain the elevated privileges.
-> > >
-> > > Not true, see inheritable capabilities.  You also might look at ambient
-> > > capabilities.
-> >
-> > So for example with pam_cap.so you could have your N uids each be given
-> > the desired pI, and assign the corrsponding fIs to the files they should
-> > be able to exec with privilege.  No other uids will run those files with
-> > privilege.  *1
->
-> Sorry, what are "pl" and "fls" here? "Privilege level" and "files"?
->
-> >
-> > Can you give some more details about exactly how you see SafeSetID being
-> > used?
->
-> Sure. The main use case for this LSM is to allow a non-root program to
-> transition to other untrusted uids without full blown CAP_SETUID
-> capabilities. The non-root program would still need CAP_SETUID to do
-> any kind of transition, but the additional restrictions imposed by
-> this LSM would mean it is a "safer" version of CAP_SETUID since the
-> non-root program cannot take advantage of CAP_SETUID to do any
-> unapproved actions (i.e. setuid to uid 0 or create/enter new user
-> namespace). The higher level goal is to allow for uid-based sandboxing
-> of system services without having to give out CAP_SETUID all over the
-> place just so that non-root programs can drop to
-> even-further-non-privileged uids. This is especially relevant when one
-> non-root daemon on the system should be allowed to spawn other
-> processes as different uids, but its undesirable to give the daemon a
-> basically-root-equivalent CAP_SETUID.
->
-> >
-> > I'm still not quite clear on whether you want N completely unprivileged
-> > uids to be used by some user (i.e. uid 1000), or whether one or more of
-> > those should also have some privileged, or whether one of the uids might
-> > or might not b uid 0.  Years ago I used to use N separate uids to
-> > somewhat segragate workloads on my laptop, and I'd like my browser to
-> > do something like that.  Is that the kind of uid switching you have
-> > in mind?
->
-> "N completely unprivileged uids to be used by some user (i.e. uid
-> 1000)" is the closest description of what this LSM has in mind. For
-> example, uid 123 is some system service that needs runtime
-> capabilities X, Y and Z and a bunch of DBus permissions associated
-> with uid 123, but also wants to spawn another program without any of
-> these capabilities/permissions. In this case we would like to avoid
-> giving the system service CAP_SETUID.
+On Thu, 2018-11-01 at 12:02 -0400, Mimi Zohar wrote:
+> On Tue, 2018-10-30 at 16:47 +0100, Roberto Sassu wrote:
 
-To clarify: "spawn another program *as a different uid* without any..."
+ 
+> > +static int tpm2_init_bank_info(struct tpm_chip *chip,
+> > +			       struct tpm_bank_info *bank)
+> > +{
+> > +	struct tpm_digest digest = {.alg_id = bank->alg_id};
+> > +	int i;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
+> > +		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
+> > +
+> > +		if (bank->alg_id != tpm2_hash_map[i].tpm_id)
+> > +			continue;
+> > +
+> > +		bank->digest_size = hash_digest_size[crypto_algo];
+> > +		bank->crypto_id = crypto_algo;
+> > +		return 0;
+> > +	}
+> > +
+> > +	return tpm2_pcr_read(chip, 0, &digest, &bank->digest_size);
 
->
-> >
-> > -serge
-> >
-> > *1 And maybe with one of the p9auth/factotem proposals out there you
-> > could have a userspace daemon hand out the tokens for setuid, but that's
-> > getting "out there" and probably derailing this conversation :)
+Somewhere there needs to be a check to verify that the returned digest
+size is equal to or less than the maximum digest size defined in
+tpm_digest structure.
+
+Mimi
+
