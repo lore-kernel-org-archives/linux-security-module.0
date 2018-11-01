@@ -2,99 +2,80 @@ Return-Path: <SRS0=OxMS=NM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BE9C6786F
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 08:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA519C6786F
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 14:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B08BD2082E
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 08:22:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B08BD2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BA2F9205F4
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Nov 2018 14:32:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2F9205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbeKARX7 (ORCPT
+        id S1728611AbeKAXgF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Nov 2018 13:23:59 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:57034 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727774AbeKARX7 (ORCPT
+        Thu, 1 Nov 2018 19:36:05 -0400
+Received: from mga01.intel.com ([192.55.52.88]:44835 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728436AbeKAXgF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Nov 2018 13:23:59 -0400
-Received: from p5492fe24.dip0.t-ipconnect.de ([84.146.254.36] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gI8ER-0000Qm-3H; Thu, 01 Nov 2018 09:21:35 +0100
-Date:   Thu, 1 Nov 2018 09:21:34 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-cc:     Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 10/17] prmem: documentation
-In-Reply-To: <8675e9d8-0ef0-7515-a894-097d4be25b73@gmail.com>
-Message-ID: <alpine.DEB.2.21.1811010909480.1642@nanos.tec.linutronix.de>
-References: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org>
- <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com> <20181030213557.GE10491@bombadil.infradead.org> <CALCETrW1FcT88u0QY9k_PMOeZj0G8H6KNb5Bnreo-12NvmmCEQ@mail.gmail.com> <20181031100237.GN744@hirez.programming.kicks-ass.net> <659CFC78-22BF-492B-B2E4-B8E89AA08446@amacapital.net>
- <20181031210032.GA3159@hirez.programming.kicks-ass.net> <2E29C35B-3F98-473D-A874-0D9B9B15B399@amacapital.net> <4124995b-4363-9b37-19b1-1879bf04978b@gmail.com> <CALCETrWCvAfyfBWgcmhy8TGByiX3ZXXSOkLtZFdM385fDqYJVw@mail.gmail.com>
- <8675e9d8-0ef0-7515-a894-097d4be25b73@gmail.com>
+        Thu, 1 Nov 2018 19:36:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2018 07:32:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,452,1534834800"; 
+   d="scan'208";a="105118268"
+Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.155])
+  by orsmga002.jf.intel.com with ESMTP; 01 Nov 2018 07:32:50 -0700
+Date:   Thu, 1 Nov 2018 16:32:48 +0200 (EET)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v3 5/5] tpm: ensure that output of PCR read contains the
+ correct digest size
+In-Reply-To: <7adca046-ae80-7453-9fee-a802b46ceb86@huawei.com>
+Message-ID: <alpine.DEB.2.21.1811011631010.14303@jsakkine-mobl1>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com> <20181030154711.2782-6-roberto.sassu@huawei.com> <alpine.DEB.2.21.1810302151580.5058@jsakkine-mobl1> <7adca046-ae80-7453-9fee-a802b46ceb86@huawei.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Igor,
+On Wed, 31 Oct 2018, Roberto Sassu wrote:
+> On 10/30/2018 8:52 PM, Jarkko Sakkinen wrote:
+>> On Tue, 30 Oct 2018, Roberto Sassu wrote:
+>>> This patch ensures that the digest size returned by the TPM during a PCR
+>>> read matches the size of the algorithm passed as argument to
+>>> tpm2_pcr_read(). The check is performed after information about the PCR
+>>> banks has been retrieved.
+>>> 
+>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> 
+>> What is the scenarion when this can happen (should be explained in
+>> the commit message)?
+>
+> Without an HMAC session, the request/response payload can be modified.
+> This patch ensures that the digest size in the payload is equal to the
+> size of the algorithm specified by the caller.
 
-On Thu, 1 Nov 2018, Igor Stoppa wrote:
-> On 01/11/2018 01:19, Andy Lutomirski wrote:
-> 
-> > ISTM you don't need that atomic operation -- you could take a spinlock
-> > and then just add one directly to the variable.
-> 
-> It was my intention to provide a 1:1 conversion of existing code, as it should
-> be easier to verify the correctness of the conversion, as long as there isn't
-> any significant degradation in performance.
-> 
-> The rework could be done afterward.
+i.e. it protect against memory corruption that could happen in the bus?
+Please state this.
 
-Please don't go there. The usual approach is to
+> For me it is ok to remove this patch from the set. It was requested by
+> Mimi.
 
-  1) Rework existing code in a way that the new functionality can be added
-     with minimal effort afterwards and without creating API horrors.
+For me it is not ok remove this patch :-) I just want that note to the
+commit message in order to have it documented.
 
-  2) Verify correctness of the rework
-
-  3) Add the new functionality
-  
-That avoids creation of odd functionality and APIs in the first place, so
-they won't be used in other places and does not leave half cleaned up code
-around which will stick for a long time.
-
-Thanks,
-
-	tglx
+/Jarkko
