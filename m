@@ -2,178 +2,158 @@ Return-Path: <SRS0=l7tI=NN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC58C32789
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Nov 2018 21:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D02CC32789
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Nov 2018 23:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4C22081F
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Nov 2018 21:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3F7920657
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Nov 2018 23:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RiGKDhiH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4C22081F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pfYT9pRq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F7920657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbeKCGUS (ORCPT
+        id S1728591AbeKCIZJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 3 Nov 2018 02:20:18 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:33200 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbeKCGUS (ORCPT
+        Sat, 3 Nov 2018 04:25:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726705AbeKCIZI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 3 Nov 2018 02:20:18 -0400
-Received: by mail-yw1-f65.google.com with SMTP id z72-v6so1325751ywa.0;
-        Fri, 02 Nov 2018 14:11:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=BeJmC4AmAsWdpXlgK55iLlOwRYQpI5sykBJJFBJdXzs=;
-        b=RiGKDhiH1VGlb6l62xZIomzQwUX3sesNq/40uJcF+2fDIr00g5uhOhQuSPi0Qm7hEG
-         6r0D2S1AklloFioOKWEibhrsLD2bfyS2I9mz8UQz4r/4nyABPOBzVtHS2aH5azcDJooB
-         vbQBFaGmvRSuBImLJOUWkEh3kZZCdSkyWEIn8o18y0kVM7phFLIHLIeY0qtr7DJ42EB3
-         1ARJHuL+ZJmC0SrsMUut8HpkpiKfqP0I+Y+QdeK9gYkQX+MB6pgaFQbr2p/DRxfvWBER
-         KZa9jSESMAho+5jRVBBUUQHeK9weAqrGpteBWSnicqgpwt84zYbnkg5Sh5rZAOgUI4dL
-         HM4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=BeJmC4AmAsWdpXlgK55iLlOwRYQpI5sykBJJFBJdXzs=;
-        b=Ed/+D60GNodFp7kdT4eStHdXSi6SiitXObPHDlwuuQHGpv17c1UPNQa4shXa4DNPt6
-         +x3FAjCzpj22NwZrx0rGgqKZsLC5BR0HFUCTz9xdQQolTyYnJ4cS1wgDTN6jLaevZkIF
-         FQogOEBzeO+dpvXMClJD4bqJLntLXcn/w/vTIQuTAQ0azJw69+iu40xpKFjCZmrcZJW+
-         4P6eEBeAv+moXxNGaN+ZWSEsUZmpDPJknPyHpcVbipKTq/Latu15ZWH0qA1kyt1B0Fwr
-         IgQmQkfz7XMwbiHF+4ZNbqclSBwiJvt9Bjsh0vWucSgc4oWETZUrbA56a59QTqgbr9fG
-         9heQ==
-X-Gm-Message-State: AGRZ1gJiZ6OOl2LqlBSB8D9Ufh0QAH5SC2F5PZspJfspu1EzApRdgNKb
-        LYcrnSr6bmMIHqYapgorMUc=
-X-Google-Smtp-Source: AJdET5cHD2a32hUHlmAaHi4IzDmr3FFX/JCOTIjm47cjFORT3BJ69cYnKCqLr0u3iD4HHRdH0R+8Og==
-X-Received: by 2002:a81:a0cd:: with SMTP id x196-v6mr12466127ywg.73.1541193093953;
-        Fri, 02 Nov 2018 14:11:33 -0700 (PDT)
-Received: from [172.20.31.92] ([12.228.154.70])
-        by smtp.gmail.com with ESMTPSA id f68-v6sm9211332ywh.60.2018.11.02.14.11.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Nov 2018 14:11:32 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH 10/17] prmem: documentation
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <59E8A6FB-9762-499F-89AC-D85E1498BE38@gmail.com>
-Date:   Fri, 2 Nov 2018 16:11:30 -0500
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1ECE02D5-2D80-4234-8523-E481B930A66D@gmail.com>
-References: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <20181030175814.GB10491@bombadil.infradead.org>
- <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
- <CAC99157-7A9B-4AC6-BA41-EAA7A99FE53D@gmail.com>
- <20181031090835.GG744@hirez.programming.kicks-ass.net>
- <59E8A6FB-9762-499F-89AC-D85E1498BE38@gmail.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Sat, 3 Nov 2018 04:25:08 -0400
+Received: from ebiggers-linuxstation.kir.corp.google.com (unknown [104.132.51.88])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0DB020840;
+        Fri,  2 Nov 2018 23:16:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541200560;
+        bh=6Tj0pfrqxdoZwXBnYgcqUbUKAp3odQzkw+GN2Z0ssz8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pfYT9pRqwcvJX/8WsYhTa7EidNkUp7Oc3fEp9DGeNC68z16FmrFMsXp2OtLxdS7im
+         m6o3jbvfGPK4LMQqhUCt4eYHNwwGOjZJz3o0JGJEyejqAC+gE3bAphFNrPfsxxag+G
+         LMKgU8C+LAjqSxstHDeyx8mrK+ocv8HfvPTPF0ok=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: [PATCH] KEYS: always initialize keyring_index_key::desc_len
+Date:   Fri,  2 Nov 2018 16:15:10 -0700
+Message-Id: <20181102231510.15911-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+In-Reply-To: <000000000000a722550577796543@google.com>
+References: <000000000000a722550577796543@google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Nadav Amit
-Sent: November 1, 2018 at 4:31:59 PM GMT
-> To: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andy Lutomirski <luto@amacapital.net>, Matthew Wilcox =
-<willy@infradead.org>, Kees Cook <keescook@chromium.org>, Igor Stoppa =
-<igor.stoppa@gmail.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dave =
-Chinner <david@fromorbit.com>, James Morris <jmorris@namei.org>, Michal =
-Hocko <mhocko@kernel.org>, Kernel Hardening =
-<kernel-hardening@lists.openwall.com>, linux-integrity =
-<linux-integrity@vger.kernel.org>, linux-security-module =
-<linux-security-module@vger.kernel.org>, Igor Stoppa =
-<igor.stoppa@huawei.com>, Dave Hansen <dave.hansen@linux.intel.com>, =
-Jonathan Corbet <corbet@lwn.net>, Laura Abbott <labbott@redhat.com>, =
-Randy Dunlap <rdunlap@infradead.org>, Mike Rapoport =
-<rppt@linux.vnet.ibm.com>, open list:DOCUMENTATION =
-<linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas =
-Gleixner <tglx@linutronix.de>
-> Subject: Re: [PATCH 10/17] prmem: documentation
->=20
->=20
-> From: Peter Zijlstra
-> Sent: October 31, 2018 at 9:08:35 AM GMT
->> To: Nadav Amit <nadav.amit@gmail.com>
->> Cc: Andy Lutomirski <luto@amacapital.net>, Matthew Wilcox =
-<willy@infradead.org>, Kees Cook <keescook@chromium.org>, Igor Stoppa =
-<igor.stoppa@gmail.com>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dave =
-Chinner <david@fromorbit.com>, James Morris <jmorris@namei.org>, Michal =
-Hocko <mhocko@kernel.org>, Kernel Hardening =
-<kernel-hardening@lists.openwall.com>, linux-integrity =
-<linux-integrity@vger.kernel.org>, linux-security-module =
-<linux-security-module@vger.kernel.org>, Igor Stoppa =
-<igor.stoppa@huawei.com>, Dave Hansen <dave.hansen@linux.intel.com>, =
-Jonathan Corbet <corbet@lwn.net>, Laura Abbott <labbott@redhat.com>, =
-Randy Dunlap <rdunlap@infradead.org>, Mike Rapoport =
-<rppt@linux.vnet.ibm.com>, open list:DOCUMENTATION =
-<linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Thomas =
-Gleixner <tglx@linutronix.de>
->> Subject: Re: [PATCH 10/17] prmem: documentation
->>=20
->>=20
->> On Tue, Oct 30, 2018 at 04:18:39PM -0700, Nadav Amit wrote:
->>>> Nadav, want to resubmit your series? IIRC the only thing wrong with =
-it was
->>>> that it was a big change and we wanted a simpler fix to backport. =
-But
->>>> that=E2=80=99s all done now, and I, at least, rather liked your =
-code. :)
->>>=20
->>> I guess since it was based on your ideas=E2=80=A6
->>>=20
->>> Anyhow, the only open issue that I have with v2 is Peter=E2=80=99s =
-wish that I would
->>> make kgdb use of poke_text() less disgusting. I still don=E2=80=99t =
-know exactly
->>> how to deal with it.
->>>=20
->>> Perhaps it (fixing kgdb) can be postponed? In that case I can just =
-resend
->>> v2.
->>=20
->> Oh man, I completely forgot about kgdb :/
->>=20
->> Also, would it be possible to entirely remove that kmap fallback =
-path?
->=20
-> Let me see what I can do about it.
+From: Eric Biggers <ebiggers@google.com>
 
-My patches had several embarrassing bugs. I=E2=80=99m fixing and will =
-resend later,
-hopefully today.
+syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
+called from construct_alloc_key() during sys_request_key(), because the
+length of the key description was never calculated.
+
+The problem is that we rely on ->desc_len being initialized by
+search_process_keyrings(), specifically by search_nested_keyrings().
+But, if the process isn't subscribed to any keyrings that never happens.
+
+Fix it by always initializing keyring_index_key::desc_len as soon as the
+description is set, like we already do in some places.
+
+The following program reproduces the BUG_ON() when it's run as root and
+no session keyring has been installed.  If it doesn't work, try removing
+pam_keyinit.so from /etc/pam.d/login and rebooting.
+
+    #include <stdlib.h>
+    #include <unistd.h>
+    #include <keyutils.h>
+
+    int main(void)
+    {
+            int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
+
+            keyctl_setperm(id, KEY_OTH_WRITE);
+            setreuid(5000, 5000);
+            request_key("user", "desc", "", id);
+    }
+
+Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
+Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+Cc: <stable@vger.kernel.org> # v3.13+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ security/keys/keyring.c          | 4 +---
+ security/keys/proc.c             | 1 +
+ security/keys/request_key.c      | 1 +
+ security/keys/request_key_auth.c | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 41bcf57e96f2..99a55145ddcd 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -661,9 +661,6 @@ static bool search_nested_keyrings(struct key *keyring,
+ 	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
+ 	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
+ 
+-	if (ctx->index_key.description)
+-		ctx->index_key.desc_len = strlen(ctx->index_key.description);
+-
+ 	/* Check to see if this top-level keyring is what we are looking for
+ 	 * and whether it is valid or not.
+ 	 */
+@@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyring,
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
++		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+diff --git a/security/keys/proc.c b/security/keys/proc.c
+index 5af2934965d8..909f6c5270a1 100644
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -168,6 +168,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= key->type,
+ 		.index_key.description	= key->description,
++		.index_key.desc_len	= strlen(key->description),
+ 		.cred			= m->file->f_cred,
+ 		.match_data.cmp		= lookup_user_key_possessed,
+ 		.match_data.raw_data	= key,
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 114f7408feee..738553698649 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -545,6 +545,7 @@ struct key *request_key_and_link(struct key_type *type,
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
++		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index 424e1d90412e..6797843154f0 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -246,7 +246,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
+ 	struct key *authkey;
+ 	key_ref_t authkey_ref;
+ 
+-	sprintf(description, "%x", target_id);
++	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
+ 
+ 	authkey_ref = search_process_keyrings(&ctx);
+ 
+-- 
+2.19.1.930.g4563a0d9d0-goog
 
