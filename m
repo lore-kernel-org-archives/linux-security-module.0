@@ -2,191 +2,88 @@ Return-Path: <SRS0=kguh=NO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C787AC0044C
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Nov 2018 15:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10690C6786F
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Nov 2018 17:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 766752082E
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Nov 2018 15:48:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 766752082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CAA3820833
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Nov 2018 17:08:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAA3820833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeKDA7o (ORCPT
+        id S1727162AbeKDCUE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 3 Nov 2018 20:59:44 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:37447 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbeKDA7o (ORCPT
+        Sat, 3 Nov 2018 22:20:04 -0400
+Received: from mga09.intel.com ([134.134.136.24]:25467 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727100AbeKDCUE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 3 Nov 2018 20:59:44 -0400
-Received: by mail-io1-f69.google.com with SMTP id w26-v6so5241769ioa.4
-        for <linux-security-module@vger.kernel.org>; Sat, 03 Nov 2018 08:48:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=baVhf6jWaxhwUZUGJ/5iqnEYWigi9vHPwOCWpgXT5lU=;
-        b=HvYidXgpcaGp/Q79FhPcanyXBC1yrw4Sm+bhr6569s2czDvozYBL8tVBa1eB4VDNrM
-         BeqMSvoEfLMvMroqaJm3PhDbz+s5HKUVMXGdddmPfsOcF8IpiRvZdBkNGaurs2sWhWft
-         j4RCuMbLyoIVK0MptZJ8tMFf6Ay6C335F/xXQL3sI0/nrt8tLQ5bxOX3SeMa6gmPTQvE
-         AiSwkhFG5r4mcl6A5CMEPCeMunsP295pAjpD4r+3N8n/jUhYFC+FblOsPnIBluhx0j5c
-         jGQC4SttSUj4UeOiIfqXR5e5Zuv7OxzOvZLxPrV76HOk2F/ahPPdgqfht+9qWerV2D9T
-         OPlg==
-X-Gm-Message-State: AGRZ1gIWN9bp9XGQl4csV+RN76wx/41t9f2eBrWXpWxtgzOq/k8bzTyl
-        iLBpsd8PQPvkVRi0vlWGmsT4sjfUriQlOKvlKRx0QsZWji65
-X-Google-Smtp-Source: AJdET5dXTeDN5zZnIi2Vd4jiPsH5oJ5bXRO9o66u5loZmmWt/Ejr08b5OfI2PzbivAizw7yMN/wry8RWzjwsskdBhwcDy5bppT9K
+        Sat, 3 Nov 2018 22:20:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Nov 2018 10:08:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,460,1534834800"; 
+   d="scan'208";a="271118484"
+Received: from rysgaard-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.46])
+  by orsmga005.jf.intel.com with ESMTP; 03 Nov 2018 10:08:08 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/8] Detach TPM space code out of the tpm_transmit() flow
+Date:   Sat,  3 Nov 2018 19:07:57 +0200
+Message-Id: <20181103170806.12177-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:e181:: with SMTP id n123-v6mr1115547ith.23.1541260083074;
- Sat, 03 Nov 2018 08:48:03 -0700 (PDT)
-Date:   Sat, 03 Nov 2018 08:48:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c220960579c4936d@google.com>
-Subject: general protection fault in keyctl_pkey_params_get
-From:   syzbot <syzbot+a22e0dc07567662c50bc@syzkaller.appspotmail.com>
-To:     dhowells@redhat.com, jmorris@namei.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Make the changes that are needed to detach TPM space code from
+tpm_transmit() flow so that we do no longer need nested tpm_transmit()
+calls.
 
-syzbot found the following crash on:
+v2:
+* Print tpm2_commit_space() error inside tpm2_commit_space()
+* Error code was not printed when recv() callback failed. It is
+  fixed in this version.
+* Added a patch that removes @space from tpm_transmit().
+* Fixed a regression in earlier series. Forgot to amend the change
+  from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
 
-HEAD commit:    5f21585384a4 Merge tag 'for-linus-20181102' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10ba246d400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9384ecb1c973baed
-dashboard link: https://syzkaller.appspot.com/bug?extid=a22e0dc07567662c50bc
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1026dcd5400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167e882b400000
+Jarkko Sakkinen (8):
+  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+  tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+  tpm: clean up tpm_try_transmit() error handling flow
+  tpm: access command header through struct in  tpm_try_transmit()
+  tpm: move tpm_validate_commmand() to tpm2-space.c
+  tpm: encapsulate tpm_dev_transmit()
+  tpm: move TPM space code out of tpm_transmit()
+  tpm: remove @space from tpm_transmit()
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a22e0dc07567662c50bc@syzkaller.appspotmail.com
+ drivers/char/tpm/tpm-dev-common.c |  50 ++++++-
+ drivers/char/tpm/tpm-interface.c  | 240 +++++++++++-------------------
+ drivers/char/tpm/tpm-sysfs.c      |   5 +-
+ drivers/char/tpm/tpm.h            |  16 +-
+ drivers/char/tpm/tpm1-cmd.c       |  28 +---
+ drivers/char/tpm/tpm2-cmd.c       |  39 ++---
+ drivers/char/tpm/tpm2-space.c     |  77 +++++++---
+ drivers/char/tpm/tpm_vtpm_proxy.c |   3 +-
+ 8 files changed, 220 insertions(+), 238 deletions(-)
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 7247 Comm: syz-executor236 Not tainted 4.19.0+ #317
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:keyctl_pkey_params_parse security/keys/keyctl_pkey.c:56 [inline]
-RIP: 0010:keyctl_pkey_params_get+0x2e7/0x550 security/keys/keyctl_pkey.c:96
-Code: fe 48 8b 44 24 38 48 c1 e8 03 42 80 3c 28 00 0f 85 f7 01 00 00 4c 8b  
-a4 24 e0 00 00 00 4c 89 e0 4c 89 e2 48 c1 e8 03 83 e2 07 <42> 0f b6 04 28  
-38 d0 7f 08 84 c0 0f 85 e0 01 00 00 41 0f b6 04 24
-RSP: 0018:ffff8801ce84faa0 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff8801ce84fd60 RCX: ffffffff83429990
-RDX: 0000000000000000 RSI: ffffffff8342999e RDI: 0000000000000001
-RBP: ffff8801ce84fc08 R08: ffff8801ce928480 R09: ffffed0039e73310
-R10: ffffed0039e73310 R11: 0000000000000001 R12: 0000000000000000
-R13: dffffc0000000000 R14: ffffffffffffffff R15: ffffffffffffffff
-FS:  0000000001e1c880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000414cd0 CR3: 00000001ce5e6000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  keyctl_pkey_params_get_2+0x12f/0x580 security/keys/keyctl_pkey.c:130
-kasan: CONFIG_KASAN_INLINE enabled
-  keyctl_pkey_verify+0xaa/0x400 security/keys/keyctl_pkey.c:293
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-  __do_sys_keyctl security/keys/keyctl.c:1768 [inline]
-  __se_sys_keyctl security/keys/keyctl.c:1637 [inline]
-  __x64_sys_keyctl+0x101/0x430 security/keys/keyctl.c:1637
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444c39
-Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 2b ce fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffefdd59f88 EFLAGS: 00000286 ORIG_RAX: 00000000000000fa
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444c39
-RDX: 00000000200002c0 RSI: 00000000200000c0 RDI: 000000000000001c
-RBP: 0000000000000000 R08: 0000000020000380 R09: 00000000004002e0
-R10: 00000000fffffd2a R11: 0000000000000286 R12: 0000000000011956
-R13: 0000000000401f80 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace e5c46bb5200c69dc ]---
-general protection fault: 0000 [#2] PREEMPT SMP KASAN
-RIP: 0010:keyctl_pkey_params_parse security/keys/keyctl_pkey.c:56 [inline]
-RIP: 0010:keyctl_pkey_params_get+0x2e7/0x550 security/keys/keyctl_pkey.c:96
-CPU: 0 PID: 7401 Comm: syz-executor236 Tainted: G      D           4.19.0+  
-#317
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:keyctl_pkey_params_parse security/keys/keyctl_pkey.c:56 [inline]
-RIP: 0010:keyctl_pkey_params_get+0x2e7/0x550 security/keys/keyctl_pkey.c:96
-Code: fe 48 8b 44 24 38 48 c1 e8 03 42 80 3c 28 00 0f 85 f7 01 00 00 4c 8b  
-a4 24 e0 00 00 00 4c 89 e0 4c 89 e2 48 c1 e8 03 83 e2 07 <42> 0f b6 04 28  
-38 d0 7f 08 84 c0 0f 85 e0 01 00 00 41 0f b6 04 24
-Code: fe 48 8b 44 24 38 48 c1 e8 03 42 80 3c 28 00 0f 85 f7 01 00 00 4c 8b  
-a4 24 e0 00 00 00 4c 89 e0 4c 89 e2 48 c1 e8 03 83 e2 07 <42> 0f b6 04 28  
-38 d0 7f 08 84 c0 0f 85 e0 01 00 00 41 0f b6 04 24
-RSP: 0018:ffff8801c52cfaa0 EFLAGS: 00010246
-RAX: 0000000000000002 RBX: ffff8801c52cfd60 RCX: ffffffff83429990
-RDX: 0000000000000000 RSI: ffffffff8342999e RDI: 0000000000000001
-RBP: ffff8801c52cfc08 R08: ffff8801b8a86000 R09: ffffed0039bb1378
-R10: ffffed0039bb1378 R11: 0000000000000001 R12: 0000000000000010
-R13: dffffc0000000000 R14: ffffffffffffffff R15: ffffffffffffffff
-FS:  0000000001e1c880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-RSP: 0018:ffff8801ce84faa0 EFLAGS: 00010246
-CR2: 0000000000414cd0 CR3: 00000001ce654000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-RAX: 0000000000000000 RBX: ffff8801ce84fd60 RCX: ffffffff83429990
-  keyctl_pkey_params_get_2+0x12f/0x580 security/keys/keyctl_pkey.c:130
-RDX: 0000000000000000 RSI: ffffffff8342999e RDI: 0000000000000001
-  keyctl_pkey_verify+0xaa/0x400 security/keys/keyctl_pkey.c:293
-RBP: ffff8801ce84fc08 R08: ffff8801ce928480 R09: ffffed0039e73310
-R10: ffffed0039e73310 R11: 0000000000000001 R12: 0000000000000000
-  __do_sys_keyctl security/keys/keyctl.c:1768 [inline]
-  __se_sys_keyctl security/keys/keyctl.c:1637 [inline]
-  __x64_sys_keyctl+0x101/0x430 security/keys/keyctl.c:1637
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-R13: dffffc0000000000 R14: ffffffffffffffff R15: ffffffffffffffff
-FS:  0000000001e1c880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-RIP: 0033:0x444c39
-Code: e8 ac e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 2b ce fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffefdd59f88 EFLAGS: 00000286 ORIG_RAX: 00000000000000fa
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444c39
-RDX: 00000000200002c0 RSI: 00000000200000c0 RDI: 000000000000001c
-RBP: 0000000000000000 R08: 0000000020000380 R09: 00000000004002e0
-R10: 00000000fffffd2a R11: 0000000000000286 R12: 0000000000011a27
-CR2: 0000000000414cd0 CR3: 00000001ce5e6000 CR4: 00000000001406e0
-R13: 0000000000401f80 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace e5c46bb5200c69dd ]---
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-RIP: 0010:keyctl_pkey_params_parse security/keys/keyctl_pkey.c:56 [inline]
-RIP: 0010:keyctl_pkey_params_get+0x2e7/0x550 security/keys/keyctl_pkey.c:96
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Code: fe 48 8b 44 24 38 48 c1 e8 03 42 80 3c 28 00 0f 85 f7 01 00 00 4c 8b  
-a4 24 e0 00 00 00 4c 89 e0 4c 89 e2 48 c1 e8 03 83 e2 07 <42> 0f b6 04 28  
-38 d0 7f 08 84 c0 0f 85 e0 01 00 00 41 0f b6 04 24
+-- 
+2.19.1
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
