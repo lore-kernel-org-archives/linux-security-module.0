@@ -2,163 +2,76 @@ Return-Path: <SRS0=kguh=NO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FD3C32789
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Nov 2018 01:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92517C65C22
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Nov 2018 04:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 783F72082D
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Nov 2018 01:59:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FA7or1AK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 783F72082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 56A1E20833
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Nov 2018 04:08:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56A1E20833
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbeKCLJX (ORCPT
+        id S1726553AbeKCNS3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 3 Nov 2018 07:09:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38466 "EHLO mail.kernel.org"
+        Sat, 3 Nov 2018 09:18:29 -0400
+Received: from mga12.intel.com ([192.55.52.136]:53362 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726729AbeKCLJX (ORCPT
+        id S1726129AbeKCNS3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 3 Nov 2018 07:09:23 -0400
-Received: from sol.hsd1.wa.comcast.net (c-67-185-97-198.hsd1.wa.comcast.net [67.185.97.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 983142082D;
-        Sat,  3 Nov 2018 01:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541210387;
-        bh=Dt4O2Re6+WrrGvALQ9ol0uDtX6tVKxnGIKbHB8XRO2g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FA7or1AKaB9Yi9EcxAMYhEdDV/USFo9C6sJnhsdoGnD9sMzMX0yACc4hS1VMDCmxr
-         0noFHsd1j2Au18+f4Gd99KGELoiY0aV9qJ26mK/HJKR+5+EEwl7oKzphjt73aX/2wv
-         kQU8MrBVZG7WAJInLQQTvJscy+DfH9i4Wzc/4bEA=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+        Sat, 3 Nov 2018 09:18:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Nov 2018 21:08:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,458,1534834800"; 
+   d="scan'208";a="88251178"
+Received: from unknown (HELO localhost) ([10.249.254.143])
+  by orsmga006.jf.intel.com with ESMTP; 02 Nov 2018 21:08:31 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: [PATCH v2] KEYS: always initialize keyring_index_key::desc_len
-Date:   Fri,  2 Nov 2018 18:58:54 -0700
-Message-Id: <20181103015854.7380-1-ebiggers@kernel.org>
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/6] Detach TPM space code from tpm_transmit() flow
+Date:   Sat,  3 Nov 2018 06:08:14 +0200
+Message-Id: <20181103040820.23360-1-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <000000000000a722550577796543@google.com>
-References: <000000000000a722550577796543@google.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+Make the changes that are needed to detach TPM space code from
+tpm_transmit() flow so that we do no longer need nested tpm_transmit()
+calls.
 
-syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
-called from construct_alloc_key() during sys_request_key(), because the
-length of the key description was never calculated.
+Jarkko Sakkinen (6):
+  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+  tpm: clean up tpm_try_transmit() error handling flow
+  tpm: access command header through struct in  tpm_try_transmit()
+  tpm: move tpm_validate_commmand() to tpm2-space.c
+  tpm: encapsulate tpm_dev_transmit()
+  tpm: move TPM space code out of tpm_transmit()
 
-The problem is that we rely on ->desc_len being initialized by
-search_process_keyrings(), specifically by search_nested_keyrings().
-But, if the process isn't subscribed to any keyrings that never happens.
+ drivers/char/tpm/tpm-dev-common.c |  50 ++++++-
+ drivers/char/tpm/tpm-interface.c  | 231 +++++++++++-------------------
+ drivers/char/tpm/tpm-sysfs.c      |   2 +-
+ drivers/char/tpm/tpm.h            |  14 +-
+ drivers/char/tpm/tpm1-cmd.c       |  26 +---
+ drivers/char/tpm/tpm2-cmd.c       |  37 ++---
+ drivers/char/tpm/tpm2-space.c     |  58 ++++++--
+ drivers/char/tpm/tpm_vtpm_proxy.c |   3 +-
+ 8 files changed, 206 insertions(+), 215 deletions(-)
 
-Fix it by always initializing keyring_index_key::desc_len as soon as the
-description is set, like we already do in some places.
-
-The following program reproduces the BUG_ON() when it's run as root and
-no session keyring has been installed.  If it doesn't work, try removing
-pam_keyinit.so from /etc/pam.d/login and rebooting.
-
-    #include <stdlib.h>
-    #include <unistd.h>
-    #include <keyutils.h>
-
-    int main(void)
-    {
-            int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
-
-            keyctl_setperm(id, KEY_OTH_WRITE);
-            setreuid(5000, 5000);
-            request_key("user", "desc", "", id);
-    }
-
-Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
-Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-Cc: <stable@vger.kernel.org> # v3.13+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
-
-v2: In proc_keys_show(), assign index_key directly
-
- security/keys/keyring.c          | 4 +---
- security/keys/proc.c             | 3 +--
- security/keys/request_key.c      | 1 +
- security/keys/request_key_auth.c | 2 +-
- 4 files changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 41bcf57e96f21..99a55145ddcd2 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -661,9 +661,6 @@ static bool search_nested_keyrings(struct key *keyring,
- 	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
- 	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
- 
--	if (ctx->index_key.description)
--		ctx->index_key.desc_len = strlen(ctx->index_key.description);
--
- 	/* Check to see if this top-level keyring is what we are looking for
- 	 * and whether it is valid or not.
- 	 */
-@@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyring,
- 	struct keyring_search_context ctx = {
- 		.index_key.type		= type,
- 		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
- 		.cred			= current_cred(),
- 		.match_data.cmp		= key_default_cmp,
- 		.match_data.raw_data	= description,
-diff --git a/security/keys/proc.c b/security/keys/proc.c
-index 5af2934965d80..d38be9db2cc07 100644
---- a/security/keys/proc.c
-+++ b/security/keys/proc.c
-@@ -166,8 +166,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
- 	int rc;
- 
- 	struct keyring_search_context ctx = {
--		.index_key.type		= key->type,
--		.index_key.description	= key->description,
-+		.index_key		= key->index_key,
- 		.cred			= m->file->f_cred,
- 		.match_data.cmp		= lookup_user_key_possessed,
- 		.match_data.raw_data	= key,
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 114f7408feee6..7385536986497 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -545,6 +545,7 @@ struct key *request_key_and_link(struct key_type *type,
- 	struct keyring_search_context ctx = {
- 		.index_key.type		= type,
- 		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
- 		.cred			= current_cred(),
- 		.match_data.cmp		= key_default_cmp,
- 		.match_data.raw_data	= description,
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index 424e1d90412ea..6797843154f03 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -246,7 +246,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
- 	struct key *authkey;
- 	key_ref_t authkey_ref;
- 
--	sprintf(description, "%x", target_id);
-+	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
- 
- 	authkey_ref = search_process_keyrings(&ctx);
- 
 -- 
 2.19.1
 
