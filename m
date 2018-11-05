@@ -3,55 +3,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 068DBC0044C
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 21:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FE5C0044C
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 21:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C42DF2084F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 21:51:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42DF2084F
+	by mail.kernel.org (Postfix) with ESMTP id C482F2084F
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 21:55:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C482F2084F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387928AbeKFHM5 (ORCPT
+        id S2387869AbeKFHQq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:12:57 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40622 "EHLO
+        Tue, 6 Nov 2018 02:16:46 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38238 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387672AbeKFHM5 (ORCPT
+        by vger.kernel.org with ESMTP id S2387775AbeKFHQq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:12:57 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5LnK9M117503
-        for <linux-security-module@vger.kernel.org>; Mon, 5 Nov 2018 16:51:10 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nju8d7hd7-1
+        Tue, 6 Nov 2018 02:16:46 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5LsM1e137161
+        for <linux-security-module@vger.kernel.org>; Mon, 5 Nov 2018 16:54:58 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2njw2kjxec-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Nov 2018 16:51:10 -0500
+        for <linux-security-module@vger.kernel.org>; Mon, 05 Nov 2018 16:54:58 -0500
 Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Mon, 5 Nov 2018 21:51:09 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 5 Nov 2018 21:54:57 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Nov 2018 21:51:05 -0000
+        Mon, 5 Nov 2018 21:54:54 -0000
 Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5Lp4lj42663964
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5Lsr2N36175944
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 21:51:04 GMT
+        Mon, 5 Nov 2018 21:54:53 GMT
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AFEBB124053;
-        Mon,  5 Nov 2018 21:51:04 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 30295124053;
+        Mon,  5 Nov 2018 21:54:53 +0000 (GMT)
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9ACF6124054;
-        Mon,  5 Nov 2018 21:51:04 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id B5BAB124052;
+        Mon,  5 Nov 2018 21:54:52 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  5 Nov 2018 21:51:04 +0000 (GMT)
-Subject: Re: [PATCH v3 02/16] tpm: fix invalid return value in pubek_show()
+        Mon,  5 Nov 2018 21:54:52 +0000 (GMT)
+Subject: Re: [PATCH v3 03/16] tpm: return 0 from pcrs_show() when
+ tpm1_pcr_read() fails
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -65,64 +66,71 @@ Cc:     linux-security-module@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
 References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
- <20181105014552.20262-3-jarkko.sakkinen@linux.intel.com>
+ <20181105014552.20262-4-jarkko.sakkinen@linux.intel.com>
 From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Mon, 5 Nov 2018 16:51:04 -0500
+Date:   Mon, 5 Nov 2018 16:54:52 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181105014552.20262-3-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181105014552.20262-4-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-MW
 X-TM-AS-GCONF: 00
-x-cbid: 18110521-0060-0000-0000-000002CDBAB3
+x-cbid: 18110521-0040-0000-0000-0000048D488C
 X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009993; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01113186; UDB=6.00577032; IPR=6.00893286;
- MB=3.00024037; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-05 21:51:08
+X-IBM-SpamModules-Versions: BY=3.00009973; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01112010; UDB=6.00576322; IPR=6.00892101;
+ MB=3.00024008; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-05 21:54:56
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110521-0061-0000-0000-000047194B46
-Message-Id: <e007b417-c9a0-8aed-3ecb-5ffcda644462@linux.ibm.com>
+x-cbparentid: 18110521-0041-0000-0000-000008964CC1
+Message-Id: <d5296b84-0a2c-56ce-ae65-71e6a6d0c820@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_12:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=797 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811050192
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050193
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
-> Return zero when tpm_buf_init() fails as we do for other functions in
-> tpm-sysfs.c.
+> Do not print partial list of PCRs when tpm1_pcr_read() fails but instead
+> return 0 from pcrs_show(). This is consistent behavior with other sysfs
+> functions.
 >
-> Fixes: da379f3c1db0c ("tpm: migrate pubek_show to struct tpm_buf")
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-
-
 > ---
->   drivers/char/tpm/tpm-sysfs.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
+>   drivers/char/tpm/tpm-sysfs.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-> index c2769e55cb6c..7ed7eb6f906a 100644
+> index 7ed7eb6f906a..d3b05c7526c8 100644
 > --- a/drivers/char/tpm/tpm-sysfs.c
 > +++ b/drivers/char/tpm/tpm-sysfs.c
-> @@ -47,9 +47,8 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
->
->   	memset(&anti_replay, 0, sizeof(anti_replay));
->
-> -	rc = tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK);
-> -	if (rc)
-> -		return rc;
-> +	if (tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK))
-> +		return 0;
->
->   	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
+> @@ -115,13 +115,15 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
+>   	for (i = 0; i < num_pcrs; i++) {
+>   		rc = tpm1_pcr_read(chip, i, digest);
+>   		if (rc)
+> -			break;
+> +			goto out;
+
+Previous patch said "Return zero when tpm_buf_init() fails as we do for 
+other functions in tpm-sysfs.c.". Why not return 0 in this case as well?
+
+
+>   		str += sprintf(str, "PCR-%02d: ", i);
+>   		for (j = 0; j < TPM_DIGEST_SIZE; j++)
+>   			str += sprintf(str, "%02X ", digest[j]);
+>   		str += sprintf(str, "\n");
+>   	}
+> -	return str - buf;
+> +	rc = str - buf;
+> +out:
+> +	return rc;
+>   }
+>   static DEVICE_ATTR_RO(pcrs);
 >
 
