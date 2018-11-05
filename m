@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB03C46465
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 22:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0983AC46464
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 22:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95F002084F
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 22:04:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95F002084F
+	by mail.kernel.org (Postfix) with ESMTP id C928320862
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 22:20:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C928320862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387775AbeKFH0k (ORCPT
+        id S2388244AbeKFHmd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 02:26:40 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32988 "EHLO
+        Tue, 6 Nov 2018 02:42:33 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54028 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387752AbeKFH0k (ORCPT
+        by vger.kernel.org with ESMTP id S2387441AbeKFHmd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 02:26:40 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5LxEpI011541
-        for <linux-security-module@vger.kernel.org>; Mon, 5 Nov 2018 17:04:51 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2njvwvur2r-1
+        Tue, 6 Nov 2018 02:42:33 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5MJG6A093760
+        for <linux-security-module@vger.kernel.org>; Mon, 5 Nov 2018 17:20:39 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2njukpytdq-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Nov 2018 17:04:50 -0500
+        for <linux-security-module@vger.kernel.org>; Mon, 05 Nov 2018 17:20:38 -0500
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Mon, 5 Nov 2018 22:04:50 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 5 Nov 2018 22:20:38 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 5 Nov 2018 22:04:47 -0000
+        Mon, 5 Nov 2018 22:20:34 -0000
 Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5M4ksV42598562
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5MKXYa17170476
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 5 Nov 2018 22:04:46 GMT
+        Mon, 5 Nov 2018 22:20:33 GMT
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 84E05124054;
-        Mon,  5 Nov 2018 22:04:46 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 62390124053;
+        Mon,  5 Nov 2018 22:20:33 +0000 (GMT)
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6C774124052;
-        Mon,  5 Nov 2018 22:04:46 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 3291A124052;
+        Mon,  5 Nov 2018 22:20:33 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  5 Nov 2018 22:04:46 +0000 (GMT)
-Subject: Re: [PATCH v3 05/16] tpm: print tpm2_commit_space() error inside
- tpm2_commit_space()
+        Mon,  5 Nov 2018 22:20:33 +0000 (GMT)
+Subject: Re: [PATCH v3 06/16] tpm: clean up tpm_try_transmit() error handling
+ flow
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -66,87 +66,198 @@ Cc:     linux-security-module@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
 References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
- <20181105014552.20262-6-jarkko.sakkinen@linux.intel.com>
+ <20181105014552.20262-7-jarkko.sakkinen@linux.intel.com>
 From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Mon, 5 Nov 2018 17:04:46 -0500
+Date:   Mon, 5 Nov 2018 17:20:33 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181105014552.20262-6-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181105014552.20262-7-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-MW
 X-TM-AS-GCONF: 00
-x-cbid: 18110522-0064-0000-0000-0000036EEE00
+x-cbid: 18110522-0060-0000-0000-000002CDBD45
 X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009973; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01111983; UDB=6.00576306; IPR=6.00892074;
- MB=3.00024008; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-05 22:04:50
+X-IBM-SpamModules-Versions: BY=3.00009993; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01113196; UDB=6.00577038; IPR=6.00893295;
+ MB=3.00024037; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-05 22:20:37
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110522-0065-0000-0000-00003B3C91D7
-Message-Id: <3a9f9abe-525a-9101-3c25-7bd50029f305@linux.ibm.com>
+x-cbparentid: 18110522-0061-0000-0000-000047195ED5
+Message-Id: <b64dc22e-b7c5-edaf-7836-d99e51a0c724@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_12:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811050194
+ mlxlogscore=838 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050197
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
-> The error logging for tpm2_commit_space() is in a wrong place. This
-> commit moves it inside that function.
+> Move locking, locality handling and power management to tpm_transmit()
+> in order to simplify the flow.
 >
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->   drivers/char/tpm/tpm2-space.c | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
+>   drivers/char/tpm/tpm-interface.c | 90 ++++++++++++++------------------
+>   1 file changed, 39 insertions(+), 51 deletions(-)
 >
-> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> index d53c882268ff..3d5f9577e5de 100644
-> --- a/drivers/char/tpm/tpm2-space.c
-> +++ b/drivers/char/tpm/tpm2-space.c
-> @@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
->   	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
->   	if (rc) {
->   		tpm2_flush_space(chip);
-> -		return rc;
-> +		goto out;
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index ecda6f96cde0..0f343407daf8 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -171,7 +171,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   	ssize_t len = 0;
+>   	u32 count, ordinal;
+>   	unsigned long stop;
+> -	bool need_locality;
+>
+>   	rc = tpm_validate_command(chip, space, buf, bufsiz);
+>   	if (rc == -EINVAL)
+> @@ -201,30 +200,9 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   		return -E2BIG;
 >   	}
 >
->   	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
->   	if (rc) {
+> -	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
+> -		mutex_lock(&chip->tpm_mutex);
+> -
+> -	if (chip->ops->clk_enable != NULL)
+> -		chip->ops->clk_enable(chip, true);
+> -
+> -	/* Store the decision as chip->locality will be changed. */
+> -	need_locality = chip->locality == -1;
+> -
+> -	if (need_locality) {
+> -		rc = tpm_request_locality(chip, flags);
+> -		if (rc < 0) {
+> -			need_locality = false;
+> -			goto out_locality;
+> -		}
+> -	}
+> -
+> -	rc = tpm_cmd_ready(chip, flags);
+> -	if (rc)
+> -		goto out_locality;
+> -
+>   	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+
+
+tpm2_prepare_space() may issue TPM commands itself. Following your tree 
+the move should now put the clk_enable() and tpm_request_locality() in 
+the path. So, looks good.
+
+
+>   	if (rc)
+> -		goto out_idle;
+> +		return rc;
+>
+>   	rc = chip->ops->send(chip, buf, count);
+>   	if (rc < 0) {
+> @@ -265,40 +243,16 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   		rc = len;
+>   		dev_err(&chip->dev,
+>   			"tpm_transmit: tpm_recv: error %d\n", rc);
+> -		goto out_idle;
+> -	} else if (len < TPM_HEADER_SIZE) {
+> -		rc = -EFAULT;
+> -		goto out_idle;
+> -	}
+> -
+> -	if (len != be32_to_cpu(header->length)) {
+> +		tpm2_flush_space(chip);
+> +	} else if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
+>   		rc = -EFAULT;
+> -		goto out_idle;
+> -	}
+>
+>   out_space:
+> -	if (rc) {
+> +	if (rc)
 >   		tpm2_flush_space(chip);
-> -		return rc;
-> +		goto out;
->   	}
+> -	} else {
+> +	else
+>   		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> -		if (rc)
+> -			dev_err(&chip->dev, "tpm2_commit_space: error %d\n",
+> -				rc);
+
+
+This should have been removed in the previous patch...
+
+
+> -	}
+> -
+> -out_idle:
+> -	/* may fail but do not override previous error value in rc */
+> -	tpm_go_idle(chip, flags);
+> -
+> -out_locality:
+> -	if (need_locality)
+> -		tpm_relinquish_locality(chip, flags);
+> -
+> -	if (chip->ops->clk_enable != NULL)
+> -		chip->ops->clk_enable(chip, false);
 >
->   	rc = tpm2_save_space(chip);
->   	if (rc) {
->   		tpm2_flush_space(chip);
-> -		return rc;
-> +		goto out;
->   	}
->
->   	*bufsiz = be32_to_cpu(header->length);
-> @@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
->   	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
->
->   	return 0;
-> +out:
-> +	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
-> +	return rc;
+> -	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
+> -		mutex_unlock(&chip->tpm_mutex);
+>   	return rc ? rc : len;
 >   }
+>
+> @@ -328,6 +282,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>   	/* space for header and handles */
+>   	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
+>   	unsigned int delay_msec = TPM2_DURATION_SHORT;
+> +	bool has_locality = false;
+>   	u32 rc = 0;
+>   	ssize_t ret;
+>   	const size_t save_size = min(space ? sizeof(save) : TPM_HEADER_SIZE,
+> @@ -343,7 +298,40 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>   	memcpy(save, buf, save_size);
+>
+>   	for (;;) {
+> +		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
+> +		    !(flags & TPM_TRANSMIT_NESTED))
+> +			mutex_lock(&chip->tpm_mutex);
+> +
+> +		if (chip->ops->clk_enable != NULL)
+> +			chip->ops->clk_enable(chip, true);
+> +
+> +		if (chip->locality == -1) {
+> +			ret = tpm_request_locality(chip, flags);
+> +			if (ret)
+> +				goto out_locality;
+> +			has_locality = true;
+> +		}
+> +
+> +		ret = tpm_cmd_ready(chip, flags);
+> +		if (ret)
+> +			goto out_locality;
+> +
+>   		ret = tpm_try_transmit(chip, space, buf, bufsiz, flags);
+> +
+> +		/* This may fail but do not override ret. */
+> +		tpm_go_idle(chip, flags);
+> +
+> +out_locality:
+> +		if (has_locality)
+> +			tpm_relinquish_locality(chip, flags);
+
+Safer to also put has_locality = false here ?
 
 
-This is in tpm-interface.c:
+> +
+> +		if (chip->ops->clk_enable != NULL)
+> +			chip->ops->clk_enable(chip, false);
+> +
+> +		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
+> +		    !(flags & TPM_TRANSMIT_NESTED))
+> +			mutex_unlock(&chip->tpm_mutex);
+> +
+>   		if (ret < 0)
+>   			break;
+>   		rc = be32_to_cpu(header->return_code);
 
-     rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-     if (rc)
-         dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
-
-I suppose you will remove if(rc) ... ?
 
