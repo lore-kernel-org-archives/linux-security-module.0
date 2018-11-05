@@ -2,104 +2,108 @@ Return-Path: <SRS0=P2kJ=NQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBF9C0044C
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 13:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64062C0044C
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 14:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B10D02085A
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 13:44:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B10D02085A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D98320862
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 14:14:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D98320862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729794AbeKEXE1 (ORCPT
+        id S1728718AbeKEXeP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Nov 2018 18:04:27 -0500
-Received: from mga04.intel.com ([192.55.52.120]:54633 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727390AbeKEXE1 (ORCPT
+        Mon, 5 Nov 2018 18:34:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51430 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729031AbeKEXeP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Nov 2018 18:04:27 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 05:44:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="103527711"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.180])
-  by fmsmga004.fm.intel.com with ESMTP; 05 Nov 2018 05:44:36 -0800
-Date:   Mon, 5 Nov 2018 15:44:36 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH  v2] tpm: add support for partial reads
-Message-ID: <20181105134436.GB21757@linux.intel.com>
-References: <154084273717.29396.1021945733871865594.stgit@tstruk-mobl1.jf.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154084273717.29396.1021945733871865594.stgit@tstruk-mobl1.jf.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 5 Nov 2018 18:34:15 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA5E9GKI015116
+        for <linux-security-module@vger.kernel.org>; Mon, 5 Nov 2018 09:14:19 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2njpkvu0e0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 05 Nov 2018 09:14:18 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 5 Nov 2018 14:14:16 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 5 Nov 2018 14:14:12 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA5EEBVa62390284
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 5 Nov 2018 14:14:11 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4AFF752050;
+        Mon,  5 Nov 2018 14:14:11 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.137])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9283352052;
+        Mon,  5 Nov 2018 14:14:09 +0000 (GMT)
+Subject: Re: [PATCH security-next v5 12/30] LSM: Provide separate ordered
+ initialization
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jordan Glover <Golden_Miller83@protonmail.ch>,
+        LSM <linux-security-module@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Mon, 05 Nov 2018 09:13:58 -0500
+In-Reply-To: <CAGXu5jKM_goC2519EXZu7Bh0VoW8jQeR=AJ0XovUPe4_635XNw@mail.gmail.com>
+References: <20181011001846.30964-1-keescook@chromium.org>
+         <20181011001846.30964-13-keescook@chromium.org>
+         <1541182406.20901.31.camel@linux.ibm.com>
+         <CAGXu5jKM_goC2519EXZu7Bh0VoW8jQeR=AJ0XovUPe4_635XNw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110514-4275-0000-0000-000002D9A880
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110514-4276-0000-0000-000037E6C052
+Message-Id: <1541427238.21115.58.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=893 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811050130
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Oct 29, 2018 at 12:52:17PM -0700, Tadeusz Struk wrote:
-> Currently to read a response from the TPM device an application needs
-> provide big enough buffer for the whole response and read it in one go.
-> The application doesn't know how big the response it beforehand so it
-> always needs to maintain a 4K buffer and read the max (4K).
-> In case if the user of the TSS library doesn't provide big enough
-> buffer the TCTI spec says that the library should set the required
-> size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
-> application could allocate a bigger buffer and call receive again.
-> To make it possible in the TSS library, this requires being able to do
-> partial reads from the driver.
-> The library would read the 10 bytes header first to get the actual size
-> of the response from the header, and then read the rest of the response.
-> This patch adds support for partial reads, i.e. the user can read the
-> response in one or multiple reads, until the whole response is consumed.
-> The user can also read only part of the response and ignore
-> the rest by issuing a new write to send a new command.
-
-You don't explain what the commit does at all.
-
-> The usecase is implemented in this TSS commit:
-> https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
-
-We do not want this as part of the commit message. You should place this
-in the beginning of the diffstat section.
-
+On Fri, 2018-11-02 at 13:49 -0700, Kees Cook wrote:
+> On Fri, Nov 2, 2018 at 11:13 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > I don't recall why "integrity" is on the security_initcall, while both
+> > IMA and EVM are on the late_initcall().
 > 
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-> ---
-> Changes in v2:
->  - Allow writes after only partial response is consumed to maintain
->    backwords compatibility.
-> ---
->  drivers/char/tpm/tpm-dev-common.c |   38 ++++++++++++++++++++++++++++---------
->  drivers/char/tpm/tpm-dev.h        |    2 ++
->  2 files changed, 31 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> index 99b5133a9d05..77e686d35384 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -64,6 +64,7 @@ static void tpm_timeout_work(struct work_struct *work)
->  
->  	mutex_lock(&priv->buffer_mutex);
->  	priv->data_pending = 0;
-> +	priv->partial_data = 0;
+> It's because integrity needs to have a VFS buffer allocated extremely
+> early, so it used the security init to do it. While it's not an LSM,
+> it does use this part of LSM infrastructure. I didn't see an obvious
+> alternative at the time, but now that I think about it, maybe just a
+> simple postcore_initcall() would work?
 
-What is this variable?
+I was questioning why the "security_initcall", which is called after
+the late_initcall.  Moving it to the postcore_initcall, before the
+late_initcall, sounds right.
 
-Please refine the patch with better documentation.
+Mimi
 
-/Jarkko
