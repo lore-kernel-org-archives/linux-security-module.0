@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192A4C0044C
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 692F9C0044C
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4A652086A
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:06:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A652086A
+	by mail.kernel.org (Postfix) with ESMTP id 3EDBD20700
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:06:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EDBD20700
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387978AbeKFE0L (ORCPT
+        id S2387469AbeKFE02 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Nov 2018 23:26:11 -0500
-Received: from mga06.intel.com ([134.134.136.31]:23434 "EHLO mga06.intel.com"
+        Mon, 5 Nov 2018 23:26:28 -0500
+Received: from mga06.intel.com ([134.134.136.31]:23416 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387612AbeKFE0K (ORCPT
+        id S2387522AbeKFE0J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Nov 2018 23:26:10 -0500
+        Mon, 5 Nov 2018 23:26:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 11:05:06 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="271567363"
+   d="scan'208";a="271567353"
 Received: from cschaufl-mobl.amr.corp.intel.com ([10.254.103.117])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 11:05:06 -0800
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 11:05:05 -0800
 From:   Casey Schaufler <casey.schaufler@intel.com>
 To:     kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
         casey.schaufler@intel.com, dave.hansen@intel.com,
         deneen.t.dock@intel.com, kristen@linux.intel.com,
         arjan@linux.intel.com
-Subject: [PATCH v6 3/5] SELinux: Prepare for PTRACE_MODE_SCHED
-Date:   Mon,  5 Nov 2018 11:05:02 -0800
-Message-Id: <20181105190504.500-4-casey.schaufler@intel.com>
+Subject: [PATCH v6 2/5] Smack: Prepare for PTRACE_MODE_SCHED
+Date:   Mon,  5 Nov 2018 11:05:01 -0800
+Message-Id: <20181105190504.500-3-casey.schaufler@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20181105190504.500-1-casey.schaufler@intel.com>
 References: <20181105190504.500-1-casey.schaufler@intel.com>
@@ -51,30 +51,29 @@ List-ID: <linux-security-module.vger.kernel.org>
 From: Casey Schaufler <casey@schaufler-ca.com>
 
 A ptrace access check with mode PTRACE_MODE_SCHED gets called
-from process switching code. This precludes the use of audit or avc,
-as the locking is incompatible. The only available check that
-can be made without using avc is a comparison of the secids.
-This is not very satisfactory as it will indicate possible
-vulnerabilies much too aggressively.
+from process switching code. This precludes the use of audit,
+as the locking is incompatible. Don't do audit in the PTRACE_MODE_SCHED
+case.
 
 Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
 ---
- security/selinux/hooks.c | 2 ++
- 1 file changed, 2 insertions(+)
+ security/smack/smack_lsm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index ad9a9b8e9979..160239791007 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2267,6 +2267,8 @@ static int selinux_ptrace_access_check(struct task_struct *child,
- 	u32 sid = current_sid();
- 	u32 csid = task_sid(child);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 340fc30ad85d..ffa95bcab599 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -422,7 +422,8 @@ static int smk_ptrace_rule_check(struct task_struct *tracer,
+ 	struct task_smack *tsp;
+ 	struct smack_known *tracer_known;
  
-+	if (mode & PTRACE_MODE_SCHED)
-+		return sid == csid ? 0 : -EACCES;
- 	if (mode & PTRACE_MODE_READ)
- 		return avc_has_perm(&selinux_state,
- 				    sid, csid, SECCLASS_FILE, FILE__READ, NULL);
+-	if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
++	if ((mode & PTRACE_MODE_NOAUDIT) == 0 &&
++	    (mode & PTRACE_MODE_SCHED) == 0) {
+ 		smk_ad_init(&ad, func, LSM_AUDIT_DATA_TASK);
+ 		smk_ad_setfield_u_tsk(&ad, tracer);
+ 		saip = &ad;
 -- 
 2.17.1
 
