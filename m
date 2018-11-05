@@ -2,99 +2,141 @@ Return-Path: <SRS0=P2kJ=NQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E001CECDE43
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 17:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05F4C0044C
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8FD520869
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 17:13:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FD520869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9918720866
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:05:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9918720866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729800AbeKFCeS (ORCPT
+        id S2387629AbeKFE0J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Nov 2018 21:34:18 -0500
-Received: from mga06.intel.com ([134.134.136.31]:14534 "EHLO mga06.intel.com"
+        Mon, 5 Nov 2018 23:26:09 -0500
+Received: from mga06.intel.com ([134.134.136.31]:23416 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729775AbeKFCeS (ORCPT
+        id S2387522AbeKFE0J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Nov 2018 21:34:18 -0500
-X-Amp-Result: UNSCANNABLE
+        Mon, 5 Nov 2018 23:26:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 09:13:39 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 11:05:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="271539054"
-Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 09:13:35 -0800
-Date:   Mon, 5 Nov 2018 19:13:34 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v3 4/5] tpm: retrieve digest size of unknown algorithms
- with PCR read
-Message-ID: <20181105171334.GB4502@linux.intel.com>
-References: <20181030154711.2782-1-roberto.sassu@huawei.com>
- <20181030154711.2782-5-roberto.sassu@huawei.com>
- <1541088173.4035.26.camel@linux.ibm.com>
- <3034c896-788b-50f9-23cb-f4b2cd6363e6@huawei.com>
- <20181105120147.GA7621@linux.intel.com>
- <3b198ce9-9e2e-5290-bd40-e9a62da1f50d@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3b198ce9-9e2e-5290-bd40-e9a62da1f50d@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+   d="scan'208";a="271567345"
+Received: from cschaufl-mobl.amr.corp.intel.com ([10.254.103.117])
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 11:05:05 -0800
+From:   Casey Schaufler <casey.schaufler@intel.com>
+To:     kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
+        casey.schaufler@intel.com, dave.hansen@intel.com,
+        deneen.t.dock@intel.com, kristen@linux.intel.com,
+        arjan@linux.intel.com
+Subject: [PATCH v6 1/5] AppArmor: Prepare for PTRACE_MODE_SCHED
+Date:   Mon,  5 Nov 2018 11:05:00 -0800
+Message-Id: <20181105190504.500-2-casey.schaufler@intel.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20181105190504.500-1-casey.schaufler@intel.com>
+References: <20181105190504.500-1-casey.schaufler@intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 05, 2018 at 02:09:12PM +0100, Roberto Sassu wrote:
-> On 11/5/2018 1:01 PM, Jarkko Sakkinen wrote:
-> > On Mon, Nov 05, 2018 at 10:47:19AM +0100, Roberto Sassu wrote:
-> > > > Commit 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
-> > > > PCR banks") defined active_banks[7].  Subsequently, commit
-> > > > 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event
-> > > > log") defined TPM2_PCR_ACTIVE_BANKS as 3.  I'm not sure which is the
-> > > > correct value, but the number of active_banks should not be hard coded
-> > > > here.
-> > > 
-> > > Jarkko, should I change the value of TPM2_PCR_ACTIVE_BANKS, or set the
-> > > size of the active_banks array to TPM2_PCR_ACTIVE_BANKS?
-> > 
-> > Hi, sorry I missed your patch set. Please add me either to 'To' or 'Cc'
-> > field of the email if you want a quick response.
-> > 
-> > I think the implementation is flakky in both places and should be fixed
-> > before doing any other changes. Thanks James for pointing out these
-> > commits.
-> > 
-> > What you need to do is to create a prequel commit that reads the number
-> > of banks to a variable e.g.
-> > 
-> >    unsigned int nr_active_banks;
-> > 
-> > and allocate 'active_banks' dynamically and change the places that
-> > James pointed out. I guess it is OK to have a commit with two 'Fixes'
-> > tags.
-> 
-> Ok, then I can remove patch 1/5 if nr_active_banks is included in the
-> tpm_chip structure.
-> 
-> Roberto
+From: Casey Schaufler <casey@schaufler-ca.com>
 
-Yeah, I think it would be appropriate to have two fixes tags albeit it
-is arguable whether those are regressions (probably not, I guess
-inconsistency would be a better word) but I don't think they need to be
-cc'd to stable@vger.kernel.org.
+A ptrace access check with mode PTRACE_MODE_SCHED gets called
+from process switching code. This precludes the use of audit,
+as the locking is incompatible. Don't do audit in the PTRACE_MODE_SCHED
+case.
 
-/Jarkko
+Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
+---
+ security/apparmor/domain.c      | 2 +-
+ security/apparmor/include/ipc.h | 2 +-
+ security/apparmor/ipc.c         | 8 +++++---
+ security/apparmor/lsm.c         | 5 +++--
+ 4 files changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 08c88de0ffda..28300f4c3ef9 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -77,7 +77,7 @@ static int may_change_ptraced_domain(struct aa_label *to_label,
+ 	if (!tracer || unconfined(tracerl))
+ 		goto out;
+ 
+-	error = aa_may_ptrace(tracerl, to_label, PTRACE_MODE_ATTACH);
++	error = aa_may_ptrace(tracerl, to_label, PTRACE_MODE_ATTACH, true);
+ 
+ out:
+ 	rcu_read_unlock();
+diff --git a/security/apparmor/include/ipc.h b/security/apparmor/include/ipc.h
+index 5ffc218d1e74..299d1c45fef0 100644
+--- a/security/apparmor/include/ipc.h
++++ b/security/apparmor/include/ipc.h
+@@ -34,7 +34,7 @@ struct aa_profile;
+ 	"xcpu xfsz vtalrm prof winch io pwr sys emt lost"
+ 
+ int aa_may_ptrace(struct aa_label *tracer, struct aa_label *tracee,
+-		  u32 request);
++		  u32 request, bool audit);
+ int aa_may_signal(struct aa_label *sender, struct aa_label *target, int sig);
+ 
+ #endif /* __AA_IPC_H */
+diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
+index 527ea1557120..9ed110afc822 100644
+--- a/security/apparmor/ipc.c
++++ b/security/apparmor/ipc.c
+@@ -121,15 +121,17 @@ static int profile_tracer_perm(struct aa_profile *tracer,
+  * Returns: %0 else error code if permission denied or error
+  */
+ int aa_may_ptrace(struct aa_label *tracer, struct aa_label *tracee,
+-		  u32 request)
++		  u32 request, bool audit)
+ {
+ 	struct aa_profile *profile;
+ 	u32 xrequest = request << PTRACE_PERM_SHIFT;
+ 	DEFINE_AUDIT_DATA(sa, LSM_AUDIT_DATA_NONE, OP_PTRACE);
+ 
+ 	return xcheck_labels(tracer, tracee, profile,
+-			profile_tracer_perm(profile, tracee, request, &sa),
+-			profile_tracee_perm(profile, tracer, xrequest, &sa));
++			profile_tracer_perm(profile, tracee, request,
++					    audit ? &sa : NULL),
++			profile_tracee_perm(profile, tracer, xrequest,
++					    audit ? &sa : NULL));
+ }
+ 
+ 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 8b8b70620bbe..da9d0b228857 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -118,7 +118,8 @@ static int apparmor_ptrace_access_check(struct task_struct *child,
+ 	tracee = aa_get_task_label(child);
+ 	error = aa_may_ptrace(tracer, tracee,
+ 			(mode & PTRACE_MODE_READ) ? AA_PTRACE_READ
+-						  : AA_PTRACE_TRACE);
++						  : AA_PTRACE_TRACE,
++			!(mode & PTRACE_MODE_SCHED));
+ 	aa_put_label(tracee);
+ 	end_current_label_crit_section(tracer);
+ 
+@@ -132,7 +133,7 @@ static int apparmor_ptrace_traceme(struct task_struct *parent)
+ 
+ 	tracee = begin_current_label_crit_section();
+ 	tracer = aa_get_task_label(parent);
+-	error = aa_may_ptrace(tracer, tracee, AA_PTRACE_TRACE);
++	error = aa_may_ptrace(tracer, tracee, AA_PTRACE_TRACE, true);
+ 	aa_put_label(tracer);
+ 	end_current_label_crit_section(tracee);
+ 
+-- 
+2.17.1
+
