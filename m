@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05F4C0044C
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C22D4C0044C
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9918720866
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:05:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9918720866
+	by mail.kernel.org (Postfix) with ESMTP id 98EED2085A
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Nov 2018 19:06:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98EED2085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387629AbeKFE0J (ORCPT
+        id S2387976AbeKFE0N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Nov 2018 23:26:09 -0500
-Received: from mga06.intel.com ([134.134.136.31]:23416 "EHLO mga06.intel.com"
+        Mon, 5 Nov 2018 23:26:13 -0500
+Received: from mga06.intel.com ([134.134.136.31]:23434 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387522AbeKFE0J (ORCPT
+        id S2387977AbeKFE0M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Nov 2018 23:26:09 -0500
+        Mon, 5 Nov 2018 23:26:12 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 11:05:05 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 11:05:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,468,1534834800"; 
-   d="scan'208";a="271567345"
+   d="scan'208";a="271567374"
 Received: from cschaufl-mobl.amr.corp.intel.com ([10.254.103.117])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 11:05:05 -0800
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 11:05:07 -0800
 From:   Casey Schaufler <casey.schaufler@intel.com>
 To:     kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, selinux@tycho.nsa.gov,
         casey.schaufler@intel.com, dave.hansen@intel.com,
         deneen.t.dock@intel.com, kristen@linux.intel.com,
         arjan@linux.intel.com
-Subject: [PATCH v6 1/5] AppArmor: Prepare for PTRACE_MODE_SCHED
-Date:   Mon,  5 Nov 2018 11:05:00 -0800
-Message-Id: <20181105190504.500-2-casey.schaufler@intel.com>
+Subject: [PATCH v6 5/5] sidechannel: Linux Security Module for sidechannel
+Date:   Mon,  5 Nov 2018 11:05:04 -0800
+Message-Id: <20181105190504.500-6-casey.schaufler@intel.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20181105190504.500-1-casey.schaufler@intel.com>
 References: <20181105190504.500-1-casey.schaufler@intel.com>
@@ -50,93 +50,205 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Casey Schaufler <casey@schaufler-ca.com>
 
-A ptrace access check with mode PTRACE_MODE_SCHED gets called
-from process switching code. This precludes the use of audit,
-as the locking is incompatible. Don't do audit in the PTRACE_MODE_SCHED
-case.
+This is a new Linux Security Module (LSM) that checks for
+potential sidechannel issues that are not covered in the
+ptrace PTRACE_MODE_SCHED option. Namespace differences are
+checked in this intitial version. Additional checks should
+be added when they are determined to be useful.
 
 Signed-off-by: Casey Schaufler <casey.schaufler@intel.com>
 ---
- security/apparmor/domain.c      | 2 +-
- security/apparmor/include/ipc.h | 2 +-
- security/apparmor/ipc.c         | 8 +++++---
- security/apparmor/lsm.c         | 5 +++--
- 4 files changed, 10 insertions(+), 7 deletions(-)
+ include/linux/lsm_hooks.h          |  5 ++
+ security/Kconfig                   |  1 +
+ security/Makefile                  |  2 +
+ security/security.c                |  1 +
+ security/sidechannel/Kconfig       | 13 +++++
+ security/sidechannel/Makefile      |  1 +
+ security/sidechannel/sidechannel.c | 88 ++++++++++++++++++++++++++++++
+ 7 files changed, 111 insertions(+)
+ create mode 100644 security/sidechannel/Kconfig
+ create mode 100644 security/sidechannel/Makefile
+ create mode 100644 security/sidechannel/sidechannel.c
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 08c88de0ffda..28300f4c3ef9 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -77,7 +77,7 @@ static int may_change_ptraced_domain(struct aa_label *to_label,
- 	if (!tracer || unconfined(tracerl))
- 		goto out;
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 97a020c616ad..3cb6516dba3c 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2081,5 +2081,10 @@ void __init loadpin_add_hooks(void);
+ #else
+ static inline void loadpin_add_hooks(void) { };
+ #endif
++#ifdef CONFIG_SECURITY_SIDECHANNEL
++void __init sidechannel_add_hooks(void);
++#else
++static inline void sidechannel_add_hooks(void) { };
++#endif
  
--	error = aa_may_ptrace(tracerl, to_label, PTRACE_MODE_ATTACH);
-+	error = aa_may_ptrace(tracerl, to_label, PTRACE_MODE_ATTACH, true);
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/Kconfig b/security/Kconfig
+index d9aa521b5206..6b814a3f93ea 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -236,6 +236,7 @@ source security/tomoyo/Kconfig
+ source security/apparmor/Kconfig
+ source security/loadpin/Kconfig
+ source security/yama/Kconfig
++source security/sidechannel/Kconfig
  
- out:
- 	rcu_read_unlock();
-diff --git a/security/apparmor/include/ipc.h b/security/apparmor/include/ipc.h
-index 5ffc218d1e74..299d1c45fef0 100644
---- a/security/apparmor/include/ipc.h
-+++ b/security/apparmor/include/ipc.h
-@@ -34,7 +34,7 @@ struct aa_profile;
- 	"xcpu xfsz vtalrm prof winch io pwr sys emt lost"
+ source security/integrity/Kconfig
  
- int aa_may_ptrace(struct aa_label *tracer, struct aa_label *tracee,
--		  u32 request);
-+		  u32 request, bool audit);
- int aa_may_signal(struct aa_label *sender, struct aa_label *target, int sig);
+diff --git a/security/Makefile b/security/Makefile
+index 4d2d3782ddef..d0c9e1b227f9 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -10,6 +10,7 @@ subdir-$(CONFIG_SECURITY_TOMOYO)        += tomoyo
+ subdir-$(CONFIG_SECURITY_APPARMOR)	+= apparmor
+ subdir-$(CONFIG_SECURITY_YAMA)		+= yama
+ subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
++subdir-$(CONFIG_SECURITY_SIDECHANNEL)	+= sidechannel
  
- #endif /* __AA_IPC_H */
-diff --git a/security/apparmor/ipc.c b/security/apparmor/ipc.c
-index 527ea1557120..9ed110afc822 100644
---- a/security/apparmor/ipc.c
-+++ b/security/apparmor/ipc.c
-@@ -121,15 +121,17 @@ static int profile_tracer_perm(struct aa_profile *tracer,
-  * Returns: %0 else error code if permission denied or error
-  */
- int aa_may_ptrace(struct aa_label *tracer, struct aa_label *tracee,
--		  u32 request)
-+		  u32 request, bool audit)
- {
- 	struct aa_profile *profile;
- 	u32 xrequest = request << PTRACE_PERM_SHIFT;
- 	DEFINE_AUDIT_DATA(sa, LSM_AUDIT_DATA_NONE, OP_PTRACE);
+ # always enable default capabilities
+ obj-y					+= commoncap.o
+@@ -25,6 +26,7 @@ obj-$(CONFIG_SECURITY_TOMOYO)		+= tomoyo/
+ obj-$(CONFIG_SECURITY_APPARMOR)		+= apparmor/
+ obj-$(CONFIG_SECURITY_YAMA)		+= yama/
+ obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
++obj-$(CONFIG_SECURITY_SIDECHANNEL)	+= sidechannel/
+ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
  
- 	return xcheck_labels(tracer, tracee, profile,
--			profile_tracer_perm(profile, tracee, request, &sa),
--			profile_tracee_perm(profile, tracer, xrequest, &sa));
-+			profile_tracer_perm(profile, tracee, request,
-+					    audit ? &sa : NULL),
-+			profile_tracee_perm(profile, tracer, xrequest,
-+					    audit ? &sa : NULL));
- }
+ # Object integrity file lists
+diff --git a/security/security.c b/security/security.c
+index 12460f20c652..6047634d86a0 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -85,6 +85,7 @@ int __init security_init(void)
+ 	capability_add_hooks();
+ 	yama_add_hooks();
+ 	loadpin_add_hooks();
++	sidechannel_add_hooks();
  
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 8b8b70620bbe..da9d0b228857 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -118,7 +118,8 @@ static int apparmor_ptrace_access_check(struct task_struct *child,
- 	tracee = aa_get_task_label(child);
- 	error = aa_may_ptrace(tracer, tracee,
- 			(mode & PTRACE_MODE_READ) ? AA_PTRACE_READ
--						  : AA_PTRACE_TRACE);
-+						  : AA_PTRACE_TRACE,
-+			!(mode & PTRACE_MODE_SCHED));
- 	aa_put_label(tracee);
- 	end_current_label_crit_section(tracer);
- 
-@@ -132,7 +133,7 @@ static int apparmor_ptrace_traceme(struct task_struct *parent)
- 
- 	tracee = begin_current_label_crit_section();
- 	tracer = aa_get_task_label(parent);
--	error = aa_may_ptrace(tracer, tracee, AA_PTRACE_TRACE);
-+	error = aa_may_ptrace(tracer, tracee, AA_PTRACE_TRACE, true);
- 	aa_put_label(tracer);
- 	end_current_label_crit_section(tracee);
- 
+ 	/*
+ 	 * Load all the remaining security modules.
+diff --git a/security/sidechannel/Kconfig b/security/sidechannel/Kconfig
+new file mode 100644
+index 000000000000..653033027415
+--- /dev/null
++++ b/security/sidechannel/Kconfig
+@@ -0,0 +1,13 @@
++config SECURITY_SIDECHANNEL
++	bool "Sidechannel attack safety extra checks"
++	depends on SECURITY
++	default n
++	help
++	  Look for a variety of cases where a side-channel attack
++	  could potentially be exploited. Instruct the switching
++	  code to use the indirect_branch_prediction_barrier in
++	  cases where the passed task and the current task may be
++	  at risk.
++
++          If you are unsure how to answer this question, answer N.
++
+diff --git a/security/sidechannel/Makefile b/security/sidechannel/Makefile
+new file mode 100644
+index 000000000000..f61d83f28035
+--- /dev/null
++++ b/security/sidechannel/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_SECURITY_SIDECHANNEL) += sidechannel.o
+diff --git a/security/sidechannel/sidechannel.c b/security/sidechannel/sidechannel.c
+new file mode 100644
+index 000000000000..18a67d19c020
+--- /dev/null
++++ b/security/sidechannel/sidechannel.c
+@@ -0,0 +1,88 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Side Channel Safety Security Module
++ *
++ * Copyright (C) 2018 Intel Corporation.
++ *
++ */
++
++#define pr_fmt(fmt) "SideChannel: " fmt
++
++#include <linux/types.h>
++#include <linux/lsm_hooks.h>
++#include <linux/capability.h>
++#include <linux/cred.h>
++#include <linux/sched.h>
++#include <linux/string_helpers.h>
++#include <linux/nsproxy.h>
++#include <linux/pid_namespace.h>
++#include <linux/ptrace.h>
++
++#ifdef CONFIG_NAMESPACES
++/**
++ * safe_by_namespace - Are task and current sidechannel safe?
++ * @p: task to check on
++ *
++ * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
++ */
++static int safe_by_namespace(struct task_struct *p)
++{
++	struct cgroup_namespace *ccgn = NULL;
++	struct cgroup_namespace *pcgn = NULL;
++
++	/*
++	 * Namespace checks. Considered safe if:
++	 *	cgroup namespace is the same
++	 *	User namespace is the same
++	 *	PID namespace is the same
++	 */
++	if (current->nsproxy)
++		ccgn = current->nsproxy->cgroup_ns;
++	if (p->nsproxy)
++		pcgn = p->nsproxy->cgroup_ns;
++	if (ccgn != pcgn)
++		return -EACCES;
++	if (current->cred->user_ns != p->cred->user_ns)
++		return -EACCES;
++	if (task_active_pid_ns(current) != task_active_pid_ns(p))
++		return -EACCES;
++	return 0;
++}
++#else
++static int safe_by_namespace(struct task_struct *p)
++{
++	return 0;
++}
++#endif
++
++/**
++ * sidechannel_ptrace_access_check - Are task and current sidechannel safe?
++ * @p: task to check on
++ * @mode: ptrace access mode
++ *
++ * Returns 0 if the tasks are sidechannel safe, -EACCES otherwise.
++ */
++static int sidechannel_ptrace_access_check(struct task_struct *p,
++					   unsigned int mode)
++{
++	int rc;
++
++	if ((mode & PTRACE_MODE_SCHED) == 0)
++		return 0;
++
++	rc = safe_by_namespace(p);
++	if (rc)
++		return rc;
++	return 0;
++}
++
++static struct security_hook_list sidechannel_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(ptrace_access_check, sidechannel_ptrace_access_check),
++};
++
++void __init sidechannel_add_hooks(void)
++{
++	pr_info("Extra sidechannel checks enabled\n");
++	security_add_hooks(sidechannel_hooks, ARRAY_SIZE(sidechannel_hooks),
++			   "sidechannel");
++}
 -- 
 2.17.1
 
