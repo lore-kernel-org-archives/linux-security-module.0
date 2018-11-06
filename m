@@ -2,108 +2,148 @@ Return-Path: <SRS0=j9HE=NR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D055C46465
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E2DC32789
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 452E720869
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:07:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 452E720869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0769220862
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:08:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0769220862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbeKGAdb (ORCPT
+        id S2388008AbeKGAeL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:33:31 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32720 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729574AbeKGAda (ORCPT
+        Tue, 6 Nov 2018 19:34:11 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41004 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387930AbeKGAeL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:33:30 -0500
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 5C5F51837C5A4;
-        Tue,  6 Nov 2018 15:07:49 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
- by smtpsuk.huawei.com (10.201.108.35) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Tue, 6 Nov 2018 15:07:40 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 6/6] tpm: ensure that the output of PCR read contains the correct digest size
-Date:   Tue, 6 Nov 2018 16:01:59 +0100
-Message-ID: <20181106150159.1136-7-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181106150159.1136-1-roberto.sassu@huawei.com>
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.153]
-X-CFilter-Loop: Reflected
+        Tue, 6 Nov 2018 19:34:11 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA6F4mtO082542
+        for <linux-security-module@vger.kernel.org>; Tue, 6 Nov 2018 10:08:31 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nkcxksabs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Nov 2018 10:08:27 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 6 Nov 2018 15:08:25 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 6 Nov 2018 15:08:19 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA6F8InQ5243278
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 6 Nov 2018 15:08:18 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 221BC52052;
+        Tue,  6 Nov 2018 15:08:18 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.87.124])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 8D5BD52050;
+        Tue,  6 Nov 2018 15:08:16 +0000 (GMT)
+Subject: Re: [PATCH v2 2/3] keys: export find_keyring_by_name()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.vnet.ibm.com>, dhowells@redhat.com
+Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jforbes@redhat.com, seth.forshee@canonical.com, pjones@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com, ebiederm@xmission.com,
+        kexec@lists.infradead.org, Michael Ellerman <mpe@ellerman.id.au>
+Date:   Tue, 06 Nov 2018 10:08:05 -0500
+In-Reply-To: <20180309153803.25859-2-nayna@linux.vnet.ibm.com>
+References: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
+         <20180309153803.25859-2-nayna@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18110615-0012-0000-0000-000002C49453
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110615-0013-0000-0000-000020F8D98A
+Message-Id: <1541516885.8568.29.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811060133
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch protects against data corruption that could happen in the bus,
-by checking that that the digest size returned by the TPM during a PCR read
-matches the size of the algorithm passed as argument to tpm2_pcr_read().
+Hi Nayna,
 
-This check is performed after information about the PCR banks has been
-retrieved.
+On Fri, 2018-03-09 at 21:08 +0530, Nayna Jain wrote:
+> This patch exports the function find_keyring_by_name() to be used by
+> other subsystems.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- drivers/char/tpm/tpm2-cmd.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+Looking this patch over again, I realize that exported functions must
+be prefixed with the subsystem name.  I'm also a bit concerned with
+exporting find_keyring_by_name().  David, any comments?
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index e2d5b84286a7..3b0b5b032901 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -187,15 +187,28 @@ struct tpm2_pcr_read_out {
- int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
- 		  struct tpm_digest *digest_struct, u16 *digest_size_ptr)
- {
-+	int i;
- 	int rc;
- 	struct tpm_buf buf;
- 	struct tpm2_pcr_read_out *out;
- 	u8 pcr_select[TPM2_PCR_SELECT_MIN] = {0};
- 	u16 digest_size;
-+	u16 expected_digest_size = 0;
- 
- 	if (pcr_idx >= TPM2_PLATFORM_PCR)
- 		return -EINVAL;
- 
-+	if (!digest_size_ptr) {
-+		for (i = 0; i < chip->nr_active_banks &&
-+		     chip->active_banks[i].alg_id != digest_struct->alg_id; i++)
-+			;
-+
-+		if (i == chip->nr_active_banks)
-+			return -EINVAL;
-+
-+		expected_digest_size = chip->active_banks[i].digest_size;
-+	}
-+
- 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
- 	if (rc)
- 		return rc;
-@@ -215,7 +228,8 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
- 
- 	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
- 	digest_size = be16_to_cpu(out->digest_size);
--	if (digest_size > sizeof(digest_struct->digest)) {
-+	if (digest_size > sizeof(digest_struct->digest) ||
-+	    (!digest_size_ptr && digest_size != expected_digest_size)) {
- 		rc = -EINVAL;
- 		goto out;
- 	}
--- 
-2.17.1
+Perhaps it would be better if IMA creates the .platform keyring so
+that it has access to the keyring id instead.
+
+Mimi
+  
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+> ---
+> Changelog:
+> 
+> v2:
+> * Fix the patch description per line length as suggested by Mimi
+> 
+>  include/linux/key.h      | 2 ++
+>  security/keys/internal.h | 2 --
+>  security/keys/keyring.c  | 1 +
+>  3 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/key.h b/include/linux/key.h
+> index e58ee10f6e58..c8d332d4103c 100644
+> --- a/include/linux/key.h
+> +++ b/include/linux/key.h
+> @@ -346,6 +346,8 @@ static inline key_serial_t key_serial(const struct key *key)
+> 
+>  extern void key_set_timeout(struct key *, unsigned);
+> 
+> +extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
+> +
+>  /*
+>   * The permissions required on a key that we're looking up.
+>   */
+> diff --git a/security/keys/internal.h b/security/keys/internal.h
+> index 9f8208dc0e55..8aa8d347a1ab 100644
+> --- a/security/keys/internal.h
+> +++ b/security/keys/internal.h
+> @@ -141,8 +141,6 @@ extern key_ref_t keyring_search_aux(key_ref_t keyring_ref,
+>  extern key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx);
+>  extern key_ref_t search_process_keyrings(struct keyring_search_context *ctx);
+> 
+> -extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
+> -
+>  extern int install_user_keyrings(void);
+>  extern int install_thread_keyring_to_cred(struct cred *);
+>  extern int install_process_keyring_to_cred(struct cred *);
+> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+> index 41bcf57e96f2..4b9c3f1166d1 100644
+> --- a/security/keys/keyring.c
+> +++ b/security/keys/keyring.c
+> @@ -1152,6 +1152,7 @@ struct key *find_keyring_by_name(const char *name, bool uid_keyring)
+>  	read_unlock(&keyring_name_lock);
+>  	return keyring;
+>  }
+> +EXPORT_SYMBOL(find_keyring_by_name);
+> 
+>  static int keyring_detect_cycle_iterator(const void *object,
+>  					 void *iterator_data)
 
