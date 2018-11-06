@@ -2,38 +2,38 @@ Return-Path: <SRS0=j9HE=NR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978E6C32789
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 05:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C178C32789
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 06:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68DAD2081D
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 05:58:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68DAD2081D
+	by mail.kernel.org (Postfix) with ESMTP id 6ED082081D
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 06:01:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ED082081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbeKFPWX (ORCPT
+        id S1730124AbeKFPZP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:22:23 -0500
-Received: from mga12.intel.com ([192.55.52.136]:6563 "EHLO mga12.intel.com"
+        Tue, 6 Nov 2018 10:25:15 -0500
+Received: from mga11.intel.com ([192.55.52.93]:9530 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729326AbeKFPWX (ORCPT
+        id S1729326AbeKFPZO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:22:23 -0500
+        Tue, 6 Nov 2018 10:25:14 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 21:58:50 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 22:01:41 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
-   d="scan'208";a="97945897"
+   d="scan'208";a="97946633"
 Received: from unknown (HELO localhost) ([10.249.254.149])
-  by orsmga003.jf.intel.com with ESMTP; 05 Nov 2018 21:58:44 -0800
-Date:   Tue, 6 Nov 2018 07:58:43 +0200
+  by orsmga003.jf.intel.com with ESMTP; 05 Nov 2018 22:01:35 -0800
+Date:   Tue, 6 Nov 2018 08:01:33 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Stefan Berger <stefanb@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org,
@@ -47,79 +47,29 @@ Cc:     linux-integrity@vger.kernel.org,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 05/16] tpm: print tpm2_commit_space() error inside
- tpm2_commit_space()
-Message-ID: <20181106055843.GE15575@linux.intel.com>
+Subject: Re: [PATCH v3 06/16] tpm: clean up tpm_try_transmit() error handling
+ flow
+Message-ID: <20181106060133.GF15575@linux.intel.com>
 References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
- <20181105014552.20262-6-jarkko.sakkinen@linux.intel.com>
- <3a9f9abe-525a-9101-3c25-7bd50029f305@linux.ibm.com>
+ <20181105014552.20262-7-jarkko.sakkinen@linux.intel.com>
+ <b64dc22e-b7c5-edaf-7836-d99e51a0c724@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3a9f9abe-525a-9101-3c25-7bd50029f305@linux.ibm.com>
+In-Reply-To: <b64dc22e-b7c5-edaf-7836-d99e51a0c724@linux.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 05, 2018 at 05:04:46PM -0500, Stefan Berger wrote:
-> On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
-> > The error logging for tpm2_commit_space() is in a wrong place. This
-> > commit moves it inside that function.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >   drivers/char/tpm/tpm2-space.c | 9 ++++++---
-> >   1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> > index d53c882268ff..3d5f9577e5de 100644
-> > --- a/drivers/char/tpm/tpm2-space.c
-> > +++ b/drivers/char/tpm/tpm2-space.c
-> > @@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> >   	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
-> >   	if (rc) {
-> >   		tpm2_flush_space(chip);
-> > -		return rc;
-> > +		goto out;
-> >   	}
-> > 
-> >   	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
-> >   	if (rc) {
-> >   		tpm2_flush_space(chip);
-> > -		return rc;
-> > +		goto out;
-> >   	}
-> > 
-> >   	rc = tpm2_save_space(chip);
-> >   	if (rc) {
-> >   		tpm2_flush_space(chip);
-> > -		return rc;
-> > +		goto out;
-> >   	}
-> > 
-> >   	*bufsiz = be32_to_cpu(header->length);
-> > @@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> >   	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
-> > 
-> >   	return 0;
-> > +out:
-> > +	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
-> > +	return rc;
-> >   }
+On Mon, Nov 05, 2018 at 05:20:33PM -0500, Stefan Berger wrote:
+> > +out_locality:
+> > +		if (has_locality)
+> > +			tpm_relinquish_locality(chip, flags);
 > 
-> 
-> This is in tpm-interface.c:
-> 
->     rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
->     if (rc)
->         dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
-> 
-> I suppose you will remove if(rc) ... ?
+> Safer to also put has_locality = false here ?
 
-That removal must have gone at some point when rebasing fixups.
-Thanks.
+Not really sure why?
 
 /Jarkko
