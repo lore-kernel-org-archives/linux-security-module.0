@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C7CC46465
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 06:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F27CDC32789
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 06:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F64820862
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 06:08:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F64820862
+	by mail.kernel.org (Postfix) with ESMTP id B9B1F20827
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 06:10:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B1F20827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbeKFPcW (ORCPT
+        id S2387472AbeKFPeH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:32:22 -0500
-Received: from mga02.intel.com ([134.134.136.20]:6978 "EHLO mga02.intel.com"
+        Tue, 6 Nov 2018 10:34:07 -0500
+Received: from mga03.intel.com ([134.134.136.65]:30587 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729342AbeKFPcV (ORCPT
+        id S1730148AbeKFPeD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:32:21 -0500
+        Tue, 6 Nov 2018 10:34:03 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 22:08:47 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 22:10:28 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
-   d="scan'208";a="88889799"
+   d="scan'208";a="271701586"
 Received: from unknown (HELO localhost) ([10.249.254.149])
-  by orsmga006.jf.intel.com with ESMTP; 05 Nov 2018 22:08:41 -0800
-Date:   Tue, 6 Nov 2018 08:08:39 +0200
+  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 22:10:22 -0800
+Date:   Tue, 6 Nov 2018 08:10:20 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Stefan Berger <stefanb@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org,
@@ -46,72 +46,274 @@ Cc:     linux-integrity@vger.kernel.org,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 07/16] tpm: access command header through struct in
- tpm_try_transmit()
-Message-ID: <20181106060839.GG15575@linux.intel.com>
+Subject: Re: [PATCH v3 08/16] tpm: move tpm_validate_commmand() to
+ tpm2-space.c
+Message-ID: <20181106061020.GH15575@linux.intel.com>
 References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
- <20181105014552.20262-8-jarkko.sakkinen@linux.intel.com>
- <739339e6-4cd3-974d-617e-9e64cb2195cb@linux.ibm.com>
+ <20181105014552.20262-9-jarkko.sakkinen@linux.intel.com>
+ <4d71e3e5-67b6-d9b3-0561-a1221b5d6bbf@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <739339e6-4cd3-974d-617e-9e64cb2195cb@linux.ibm.com>
+In-Reply-To: <4d71e3e5-67b6-d9b3-0561-a1221b5d6bbf@linux.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 05, 2018 at 05:26:30PM -0500, Stefan Berger wrote:
+On Mon, Nov 05, 2018 at 05:36:03PM -0500, Stefan Berger wrote:
 > On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
-> > Instead of accessing fields of the command header through offsets to
-> > the raw buffer, it is a better idea to use the header struct pointer
-> > that is already used elsewhere in the function.
+> > Move tpm_validate_command() to tpm2-space.c and make it part of the
+> > tpm2_prepare_space() flow. Make cc resolution as part of the TPM space
+> > functionality in order to detach it from rest of the tpm_transmit()
+> > flow.
 > > 
 > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > > ---
-> >   drivers/char/tpm/tpm-interface.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >   drivers/char/tpm/tpm-interface.c | 72 +++++++-------------------------
+> >   drivers/char/tpm/tpm.h           |  9 ++--
+> >   drivers/char/tpm/tpm2-space.c    | 54 +++++++++++++++++++++---
+> >   3 files changed, 68 insertions(+), 67 deletions(-)
 > > 
 > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > index 0f343407daf8..422e3bb0bd3d 100644
+> > index 422e3bb0bd3d..3bf0c51b7b4f 100644
 > > --- a/drivers/char/tpm/tpm-interface.c
 > > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -190,8 +190,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> > @@ -62,47 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+> >   }
+> >   EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+> > 
+> > -static int tpm_validate_command(struct tpm_chip *chip,
+> > -				 struct tpm_space *space,
+> > -				 const u8 *cmd,
+> > -				 size_t len)
+> > -{
+> > -	const struct tpm_input_header *header = (const void *)cmd;
+> > -	int i;
+> > -	u32 cc;
+> > -	u32 attrs;
+> > -	unsigned int nr_handles;
+> > -
+> > -	if (len < TPM_HEADER_SIZE)
+> > -		return -EINVAL;
+> > -
+> > -	if (!space)
+> > -		return 0;
+> > -
+> > -	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
+> > -		cc = be32_to_cpu(header->ordinal);
+> > -
+> > -		i = tpm2_find_cc(chip, cc);
+> > -		if (i < 0) {
+> > -			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
+> > -				cc);
+> > -			return -EOPNOTSUPP;
+> > -		}
+> > -
+> > -		attrs = chip->cc_attrs_tbl[i];
+> > -		nr_handles =
+> > -			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
+> > -		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
+> > -			goto err_len;
+> > -	}
+> > -
+> > -	return 0;
+> > -err_len:
+> > -	dev_dbg(&chip->dev,
+> > -		"%s: insufficient command length %zu", __func__, len);
+> > -	return -EINVAL;
+> > -}
+> > -
+> >   static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
+> >   {
+> >   	int rc;
+> > @@ -172,20 +131,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> >   	u32 count, ordinal;
+> >   	unsigned long stop;
+> > 
+> > -	rc = tpm_validate_command(chip, space, buf, bufsiz);
+> > -	if (rc == -EINVAL)
+> > -		return rc;
+> > -	/*
+> > -	 * If the command is not implemented by the TPM, synthesize a
+> > -	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
+> > -	 */
+> > -	if (rc == -EOPNOTSUPP) {
+> > -		header->length = cpu_to_be32(sizeof(*header));
+> > -		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+> > -		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+> > -						  TSS2_RESMGR_TPM_RC_LAYER);
+> > -		return sizeof(*header);
+> > -	}
+> > +	if (bufsiz < TPM_HEADER_SIZE)
+> > +		return -EINVAL;
+> > 
 > >   	if (bufsiz > TPM_BUFSIZE)
 > >   		bufsiz = TPM_BUFSIZE;
+> > @@ -200,7 +147,18 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> >   		return -E2BIG;
+> >   	}
 > > 
-> > -	count = be32_to_cpu(*((__be32 *) (buf + 2)));
-> > -	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
-> > +	count = be32_to_cpu(header->length);
-> > +	ordinal = be32_to_cpu(header->return_code);
+> > -	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+> > +	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
+> > +	/*
+> > +	 * If the command is not implemented by the TPM, synthesize a
+> > +	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
+> > +	 */
+> > +	if (rc == -EOPNOTSUPP) {
+> > +		header->length = cpu_to_be32(sizeof(*header));
+> > +		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+> > +		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+> > +						  TSS2_RESMGR_TPM_RC_LAYER);
+> > +		return sizeof(*header);
+> > +	}
+> >   	if (rc)
+> >   		return rc;
+> > 
+> > @@ -251,7 +209,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> >   	if (rc)
+> >   		tpm2_flush_space(chip);
+> >   	else
+> > -		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> > +		rc = tpm2_commit_space(chip, space, buf, &len);
+> > 
+> >   	return rc ? rc : len;
+> >   }
+> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > index 229ac42b644e..8503dd261897 100644
+> > --- a/drivers/char/tpm/tpm.h
+> > +++ b/drivers/char/tpm/tpm.h
+> > @@ -264,6 +264,7 @@ struct tpm_chip {
+> >   #endif /* CONFIG_ACPI */
+> > 
+> >   	struct tpm_space work_space;
+> > +	u32 last_cc;
+> >   	u32 nr_commands;
+> >   	u32 *cc_attrs_tbl;
+> > 
+> > @@ -580,10 +581,10 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+> >   int tpm2_init_space(struct tpm_space *space);
+> >   void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
+> >   void tpm2_flush_space(struct tpm_chip *chip);
+> > -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+> > -		       u8 *cmd);
+> > -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> > -		      u32 cc, u8 *buf, size_t *bufsiz);
+> > +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
+> > +		       size_t cmdsiz);
+> > +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
+> > +		       size_t *bufsiz);
+> > 
+> >   int tpm_bios_log_setup(struct tpm_chip *chip);
+> >   void tpm_bios_log_teardown(struct tpm_chip *chip);
+> > diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> > index 3d5f9577e5de..20c295fadd50 100644
+> > --- a/drivers/char/tpm/tpm2-space.c
+> > +++ b/drivers/char/tpm/tpm2-space.c
+> > @@ -264,14 +264,55 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
+> >   	return 0;
+> >   }
+> > 
+> > -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+> > -		       u8 *cmd)
+> > +static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space *space,
+> > +				const u8 *cmd, size_t len)
 > 
-> Hm. This should use the proper type of header and use in_header->ordinal.
+> 
+> Nit: len -> cmdsiz (like below)
+> 
+> 
+> > +{
+> > +	const struct tpm_input_header *header = (const void *)cmd;
+> > +	int i;
+> > +	u32 cc;
+> > +	u32 attrs;
+> > +	unsigned int nr_handles;
+> > +
+> > +	if (len < TPM_HEADER_SIZE)
+> > +		return -EINVAL;
+> > +
+> > +	if (chip->nr_commands) {
+> > +		cc = be32_to_cpu(header->ordinal);
+> > +
+> > +		i = tpm2_find_cc(chip, cc);
+> > +		if (i < 0) {
+> > +			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
+> > +				cc);
+> > +			return -EOPNOTSUPP;
+> > +		}
+> > +
+> > +		attrs = chip->cc_attrs_tbl[i];
+> > +		nr_handles =
+> > +			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
+> > +		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
+> > +			goto err_len;
+> > +	}
+> > +
+> > +	return cc;
+> > +err_len:
+> > +	dev_dbg(&chip->dev, "%s: insufficient command length %zu", __func__,
+> > +		len);
+> > +	return -EINVAL;
+> > +}
+> > +
+> > +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
+> > +		       size_t cmdsiz)
+> >   {
+> >   	int rc;
+> > +	int cc;
+> > 
+> >   	if (!space)
+> >   		return 0;
+> > 
+> > +	cc = tpm_validate_command(chip, space, cmd, cmdsiz);
+> > +	if (cc < 0)
+> > +		return cc;
+> > +
+> >   	memcpy(&chip->work_space.context_tbl, &space->context_tbl,
+> >   	       sizeof(space->context_tbl));
+> >   	memcpy(&chip->work_space.session_tbl, &space->session_tbl,
+> > @@ -291,6 +332,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+> >   		return rc;
+> >   	}
+> > 
+> > +	chip->last_cc = cc;
+> >   	return 0;
+> >   }
+> > 
+> > @@ -489,8 +531,8 @@ static int tpm2_save_space(struct tpm_chip *chip)
+> >   	return 0;
+> >   }
+> > 
+> > -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> > -		      u32 cc, u8 *buf, size_t *bufsiz)
+> > +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
+> > +		      size_t *bufsiz)
+> >   {
+> >   	struct tpm_output_header *header = (void *)buf;
+> >   	int rc;
+> > @@ -498,13 +540,13 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> >   	if (!space)
+> >   		return 0;
+> > 
+> > -	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
+> > +	rc = tpm2_map_response_header(chip, chip->last_cc, buf, *bufsiz);
+> >   	if (rc) {
+> >   		tpm2_flush_space(chip);
+> >   		goto out;
+> >   	}
+> > 
+> > -	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
+> > +	rc = tpm2_map_response_body(chip, chip->last_cc, buf, *bufsiz);
+> >   	if (rc) {
+> >   		tpm2_flush_space(chip);
+> >   		goto out;
+> 
+> Rest looks good.
+> 
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-Well, the fuction has output header already declared. What I could do
-as a prequel commit is to take these:
-
-struct tpm_input_header {
-	__be16	tag;
-	__be32	length;
-	__be32	ordinal;
-} __packed;
-
-struct tpm_output_header {
-	__be16	tag;
-	__be32	length;
-	__be32	return_code;
-} __packed;
-
-and replace them with this:
-
-struct tpm_header {
-	__be16	tag;
-	__be32	length;
-	union {
-		__be32 ordinal;
-		__be32 return_code;
-	};
-} __packed;
+Great, awesome, thank you for all your reviews!
 
 /Jarkko
