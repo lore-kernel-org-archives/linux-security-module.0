@@ -2,318 +2,113 @@ Return-Path: <SRS0=j9HE=NR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F27CDC32789
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 06:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B62D8C32789
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 14:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B1F20827
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 06:10:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B1F20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7D4852085B
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 14:32:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c16fS6gh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D4852085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387472AbeKFPeH (ORCPT
+        id S2388798AbeKFX6E (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 10:34:07 -0500
-Received: from mga03.intel.com ([134.134.136.65]:30587 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730148AbeKFPeD (ORCPT
+        Tue, 6 Nov 2018 18:58:04 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44111 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388583AbeKFX6E (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 10:34:03 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Nov 2018 22:10:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,470,1534834800"; 
-   d="scan'208";a="271701586"
-Received: from unknown (HELO localhost) ([10.249.254.149])
-  by orsmga005.jf.intel.com with ESMTP; 05 Nov 2018 22:10:22 -0800
-Date:   Tue, 6 Nov 2018 08:10:20 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 08/16] tpm: move tpm_validate_commmand() to
- tpm2-space.c
-Message-ID: <20181106061020.GH15575@linux.intel.com>
-References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
- <20181105014552.20262-9-jarkko.sakkinen@linux.intel.com>
- <4d71e3e5-67b6-d9b3-0561-a1221b5d6bbf@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d71e3e5-67b6-d9b3-0561-a1221b5d6bbf@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 6 Nov 2018 18:58:04 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w3-v6so5882289pgs.11;
+        Tue, 06 Nov 2018 06:32:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=AnFs2TkY5mLKqb7/FpVKODm3xN3gu/ye0hFME6VO/f8=;
+        b=c16fS6ghjk4/Avx4KgDZbjrrMeCxqz6OEHWt51ewmP12PVkm6NAXE66CZmT9o7AKs9
+         nS0XzCOGG1hUR0wFKkBrKWUFGh0OaX0lMIhWg6p1UWvx3G06gLMyOdKu2Zu5PXC6tkd5
+         k84cw2v/S+CQ8Ue+PqqPcwKDvZROB4l+GkISFnb8i3Xr6zBIMg15cUJ49QQ3OP6ccYhp
+         46A0DUbuN+5JLGRceGh8Vq3bkbYsZ17e3NDOEejxKjxCRWVDhwXAKMyoijnaeo/V8uqP
+         81cDUu6ecx9h8dR8sTjfpaAibunQ5yOC4hZP6sePeyYxxXJ3XoNBJ/CatLuAgmNzvvRk
+         EzfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AnFs2TkY5mLKqb7/FpVKODm3xN3gu/ye0hFME6VO/f8=;
+        b=VBOMDkEhiyrRpdm81W8AKwbE1MYYkr3AwmP8NRD3pxbvYgttYsneB1O5zrOs8DwjR8
+         m83/hxh2RkSx2+4s/mtrXGl4QjyewNyG2YReJSFXFpJGLgoR6PrGvlJW3hyn4mdR3IZD
+         Lz9IejJz8OJtvZIEX0PiUUhDYUEY4gv9Ugzqkz8e++UhxbasJstYl6iafvil0EUGTHB4
+         f2xk9AywS9Y/BbnjBatbWKwOcZa8tPUJd0Na+O5o64z2OE4BXB086ALs3G7PFuRL9qjZ
+         dx95amiHFvtTlcQNQMYizj7biMW7V3UXYj7Wq+WAyBFb85RkTle/kJ9Qs1ef/IpjVad4
+         10nA==
+X-Gm-Message-State: AGRZ1gLh/vaKlQezyas7IqMwsvZgC/p8ZSS/fKquCx0N2F8hirAf1tDh
+        R0ozWB2xuV5Kc2VLzTsv2mY=
+X-Google-Smtp-Source: AJdET5dIGsDrVgPUUkUWLT0P8UJsHbwU2DjD9IkSaN2XINzlgMLo6S8yRN0izWpbsLDL72RmztCNvw==
+X-Received: by 2002:a62:2ec3:: with SMTP id u186-v6mr26392963pfu.189.1541514754774;
+        Tue, 06 Nov 2018 06:32:34 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id q134-v6sm10871312pfc.88.2018.11.06.06.32.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 06 Nov 2018 06:32:33 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] apparmor: Change to use DEFINE_SHOW_ATTRIBUTE macro
+Date:   Tue,  6 Nov 2018 09:32:27 -0500
+Message-Id: <20181106143227.8287-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 05, 2018 at 05:36:03PM -0500, Stefan Berger wrote:
-> On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
-> > Move tpm_validate_command() to tpm2-space.c and make it part of the
-> > tpm2_prepare_space() flow. Make cc resolution as part of the TPM space
-> > functionality in order to detach it from rest of the tpm_transmit()
-> > flow.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >   drivers/char/tpm/tpm-interface.c | 72 +++++++-------------------------
-> >   drivers/char/tpm/tpm.h           |  9 ++--
-> >   drivers/char/tpm/tpm2-space.c    | 54 +++++++++++++++++++++---
-> >   3 files changed, 68 insertions(+), 67 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > index 422e3bb0bd3d..3bf0c51b7b4f 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -62,47 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
-> >   }
-> >   EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
-> > 
-> > -static int tpm_validate_command(struct tpm_chip *chip,
-> > -				 struct tpm_space *space,
-> > -				 const u8 *cmd,
-> > -				 size_t len)
-> > -{
-> > -	const struct tpm_input_header *header = (const void *)cmd;
-> > -	int i;
-> > -	u32 cc;
-> > -	u32 attrs;
-> > -	unsigned int nr_handles;
-> > -
-> > -	if (len < TPM_HEADER_SIZE)
-> > -		return -EINVAL;
-> > -
-> > -	if (!space)
-> > -		return 0;
-> > -
-> > -	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
-> > -		cc = be32_to_cpu(header->ordinal);
-> > -
-> > -		i = tpm2_find_cc(chip, cc);
-> > -		if (i < 0) {
-> > -			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
-> > -				cc);
-> > -			return -EOPNOTSUPP;
-> > -		}
-> > -
-> > -		attrs = chip->cc_attrs_tbl[i];
-> > -		nr_handles =
-> > -			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
-> > -		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
-> > -			goto err_len;
-> > -	}
-> > -
-> > -	return 0;
-> > -err_len:
-> > -	dev_dbg(&chip->dev,
-> > -		"%s: insufficient command length %zu", __func__, len);
-> > -	return -EINVAL;
-> > -}
-> > -
-> >   static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
-> >   {
-> >   	int rc;
-> > @@ -172,20 +131,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> >   	u32 count, ordinal;
-> >   	unsigned long stop;
-> > 
-> > -	rc = tpm_validate_command(chip, space, buf, bufsiz);
-> > -	if (rc == -EINVAL)
-> > -		return rc;
-> > -	/*
-> > -	 * If the command is not implemented by the TPM, synthesize a
-> > -	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-> > -	 */
-> > -	if (rc == -EOPNOTSUPP) {
-> > -		header->length = cpu_to_be32(sizeof(*header));
-> > -		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-> > -		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
-> > -						  TSS2_RESMGR_TPM_RC_LAYER);
-> > -		return sizeof(*header);
-> > -	}
-> > +	if (bufsiz < TPM_HEADER_SIZE)
-> > +		return -EINVAL;
-> > 
-> >   	if (bufsiz > TPM_BUFSIZE)
-> >   		bufsiz = TPM_BUFSIZE;
-> > @@ -200,7 +147,18 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> >   		return -E2BIG;
-> >   	}
-> > 
-> > -	rc = tpm2_prepare_space(chip, space, ordinal, buf);
-> > +	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
-> > +	/*
-> > +	 * If the command is not implemented by the TPM, synthesize a
-> > +	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-> > +	 */
-> > +	if (rc == -EOPNOTSUPP) {
-> > +		header->length = cpu_to_be32(sizeof(*header));
-> > +		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
-> > +		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
-> > +						  TSS2_RESMGR_TPM_RC_LAYER);
-> > +		return sizeof(*header);
-> > +	}
-> >   	if (rc)
-> >   		return rc;
-> > 
-> > @@ -251,7 +209,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> >   	if (rc)
-> >   		tpm2_flush_space(chip);
-> >   	else
-> > -		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> > +		rc = tpm2_commit_space(chip, space, buf, &len);
-> > 
-> >   	return rc ? rc : len;
-> >   }
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> > index 229ac42b644e..8503dd261897 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -264,6 +264,7 @@ struct tpm_chip {
-> >   #endif /* CONFIG_ACPI */
-> > 
-> >   	struct tpm_space work_space;
-> > +	u32 last_cc;
-> >   	u32 nr_commands;
-> >   	u32 *cc_attrs_tbl;
-> > 
-> > @@ -580,10 +581,10 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
-> >   int tpm2_init_space(struct tpm_space *space);
-> >   void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
-> >   void tpm2_flush_space(struct tpm_chip *chip);
-> > -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
-> > -		       u8 *cmd);
-> > -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> > -		      u32 cc, u8 *buf, size_t *bufsiz);
-> > +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
-> > +		       size_t cmdsiz);
-> > +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
-> > +		       size_t *bufsiz);
-> > 
-> >   int tpm_bios_log_setup(struct tpm_chip *chip);
-> >   void tpm_bios_log_teardown(struct tpm_chip *chip);
-> > diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> > index 3d5f9577e5de..20c295fadd50 100644
-> > --- a/drivers/char/tpm/tpm2-space.c
-> > +++ b/drivers/char/tpm/tpm2-space.c
-> > @@ -264,14 +264,55 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
-> >   	return 0;
-> >   }
-> > 
-> > -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
-> > -		       u8 *cmd)
-> > +static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space *space,
-> > +				const u8 *cmd, size_t len)
-> 
-> 
-> Nit: len -> cmdsiz (like below)
-> 
-> 
-> > +{
-> > +	const struct tpm_input_header *header = (const void *)cmd;
-> > +	int i;
-> > +	u32 cc;
-> > +	u32 attrs;
-> > +	unsigned int nr_handles;
-> > +
-> > +	if (len < TPM_HEADER_SIZE)
-> > +		return -EINVAL;
-> > +
-> > +	if (chip->nr_commands) {
-> > +		cc = be32_to_cpu(header->ordinal);
-> > +
-> > +		i = tpm2_find_cc(chip, cc);
-> > +		if (i < 0) {
-> > +			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
-> > +				cc);
-> > +			return -EOPNOTSUPP;
-> > +		}
-> > +
-> > +		attrs = chip->cc_attrs_tbl[i];
-> > +		nr_handles =
-> > +			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
-> > +		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
-> > +			goto err_len;
-> > +	}
-> > +
-> > +	return cc;
-> > +err_len:
-> > +	dev_dbg(&chip->dev, "%s: insufficient command length %zu", __func__,
-> > +		len);
-> > +	return -EINVAL;
-> > +}
-> > +
-> > +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
-> > +		       size_t cmdsiz)
-> >   {
-> >   	int rc;
-> > +	int cc;
-> > 
-> >   	if (!space)
-> >   		return 0;
-> > 
-> > +	cc = tpm_validate_command(chip, space, cmd, cmdsiz);
-> > +	if (cc < 0)
-> > +		return cc;
-> > +
-> >   	memcpy(&chip->work_space.context_tbl, &space->context_tbl,
-> >   	       sizeof(space->context_tbl));
-> >   	memcpy(&chip->work_space.session_tbl, &space->session_tbl,
-> > @@ -291,6 +332,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
-> >   		return rc;
-> >   	}
-> > 
-> > +	chip->last_cc = cc;
-> >   	return 0;
-> >   }
-> > 
-> > @@ -489,8 +531,8 @@ static int tpm2_save_space(struct tpm_chip *chip)
-> >   	return 0;
-> >   }
-> > 
-> > -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> > -		      u32 cc, u8 *buf, size_t *bufsiz)
-> > +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, u8 *buf,
-> > +		      size_t *bufsiz)
-> >   {
-> >   	struct tpm_output_header *header = (void *)buf;
-> >   	int rc;
-> > @@ -498,13 +540,13 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> >   	if (!space)
-> >   		return 0;
-> > 
-> > -	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
-> > +	rc = tpm2_map_response_header(chip, chip->last_cc, buf, *bufsiz);
-> >   	if (rc) {
-> >   		tpm2_flush_space(chip);
-> >   		goto out;
-> >   	}
-> > 
-> > -	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
-> > +	rc = tpm2_map_response_body(chip, chip->last_cc, buf, *bufsiz);
-> >   	if (rc) {
-> >   		tpm2_flush_space(chip);
-> >   		goto out;
-> 
-> Rest looks good.
-> 
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Great, awesome, thank you for all your reviews!
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ security/apparmor/apparmorfs.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
 
-/Jarkko
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index e09fe4d7307c..0e80ea4a3f6b 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -977,7 +977,7 @@ static const struct file_operations aa_sfs_access = {
+ 	.llseek		= generic_file_llseek,
+ };
+ 
+-static int aa_sfs_seq_show(struct seq_file *seq, void *v)
++static int aa_sfs_seq_file_show(struct seq_file *seq, void *v)
+ {
+ 	struct aa_sfs_entry *fs_file = seq->private;
+ 
+@@ -1002,18 +1002,7 @@ static int aa_sfs_seq_show(struct seq_file *seq, void *v)
+ 	return 0;
+ }
+ 
+-static int aa_sfs_seq_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, aa_sfs_seq_show, inode->i_private);
+-}
+-
+-const struct file_operations aa_sfs_seq_file_ops = {
+-	.owner		= THIS_MODULE,
+-	.open		= aa_sfs_seq_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(aa_sfs_seq_file);
+ 
+ /*
+  * profile based file operations
+-- 
+2.17.0
+
