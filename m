@@ -2,73 +2,89 @@ Return-Path: <SRS0=j9HE=NR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E2DC32789
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9A6C32789
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0769220862
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:08:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0769220862
+	by mail.kernel.org (Postfix) with ESMTP id 070CC20862
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:18:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 070CC20862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388008AbeKGAeL (ORCPT
+        id S2387913AbeKGAnr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 19:34:11 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41004 "EHLO
+        Tue, 6 Nov 2018 19:43:47 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48664 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387930AbeKGAeL (ORCPT
+        by vger.kernel.org with ESMTP id S2387887AbeKGAnr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 19:34:11 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA6F4mtO082542
-        for <linux-security-module@vger.kernel.org>; Tue, 6 Nov 2018 10:08:31 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nkcxksabs-1
+        Tue, 6 Nov 2018 19:43:47 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA6FGFL7056681
+        for <linux-security-module@vger.kernel.org>; Tue, 6 Nov 2018 10:18:05 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nkdey02tf-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 06 Nov 2018 10:08:27 -0500
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Nov 2018 10:18:04 -0500
 Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 6 Nov 2018 15:08:25 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Tue, 6 Nov 2018 15:18:03 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 6 Nov 2018 15:08:19 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA6F8InQ5243278
+        Tue, 6 Nov 2018 15:17:59 -0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA6FHx3o26214556
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 6 Nov 2018 15:08:18 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 221BC52052;
-        Tue,  6 Nov 2018 15:08:18 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.87.124])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 8D5BD52050;
-        Tue,  6 Nov 2018 15:08:16 +0000 (GMT)
-Subject: Re: [PATCH v2 2/3] keys: export find_keyring_by_name()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna Jain <nayna@linux.vnet.ibm.com>, dhowells@redhat.com
-Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        jforbes@redhat.com, seth.forshee@canonical.com, pjones@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com, ebiederm@xmission.com,
-        kexec@lists.infradead.org, Michael Ellerman <mpe@ellerman.id.au>
-Date:   Tue, 06 Nov 2018 10:08:05 -0500
-In-Reply-To: <20180309153803.25859-2-nayna@linux.vnet.ibm.com>
-References: <20180309153803.25859-1-nayna@linux.vnet.ibm.com>
-         <20180309153803.25859-2-nayna@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 6 Nov 2018 15:17:59 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EE1FB124055;
+        Tue,  6 Nov 2018 15:17:58 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E17912405E;
+        Tue,  6 Nov 2018 15:17:58 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  6 Nov 2018 15:17:58 +0000 (GMT)
+Subject: Re: [PATCH v3 09/16] tpm: encapsulate tpm_dev_transmit()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181105014552.20262-1-jarkko.sakkinen@linux.intel.com>
+ <20181105014552.20262-10-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Tue, 6 Nov 2018 10:17:58 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20181105014552.20262-10-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
 X-TM-AS-GCONF: 00
-x-cbid: 18110615-0012-0000-0000-000002C49453
+x-cbid: 18110615-0040-0000-0000-0000048DB415
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009997; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01113535; UDB=6.00577119; IPR=6.00893635;
+ MB=3.00024046; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-06 15:18:02
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110615-0013-0000-0000-000020F8D98A
-Message-Id: <1541516885.8568.29.camel@linux.ibm.com>
+x-cbparentid: 18110615-0041-0000-0000-00000896B8C0
+Message-Id: <a002bb09-4a94-5c5b-b468-94ca028cd3f6@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-06_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -80,70 +96,75 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Nayna,
-
-On Fri, 2018-03-09 at 21:08 +0530, Nayna Jain wrote:
-> This patch exports the function find_keyring_by_name() to be used by
-> other subsystems.
-
-Looking this patch over again, I realize that exported functions must
-be prefixed with the subsystem name.  I'm also a bit concerned with
-exporting find_keyring_by_name().  David, any comments?
-
-Perhaps it would be better if IMA creates the .platform keyring so
-that it has access to the keyring id instead.
-
-Mimi
-  
-> 
-> Signed-off-by: Nayna Jain <nayna@linux.vnet.ibm.com>
+On 11/4/18 8:45 PM, Jarkko Sakkinen wrote:
+> Encapsulate tpm_transmit() call pattern to tpm_dev_transmit() because it
+> is identically used from two places. Use unlocked version of
+> tpm_transmit() so that we are able to move the calls to
+> tpm2_prepare_space() and tpm2_commit_space() later on to this new
+> function.
+>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 > ---
-> Changelog:
-> 
-> v2:
-> * Fix the patch description per line length as suggested by Mimi
-> 
->  include/linux/key.h      | 2 ++
->  security/keys/internal.h | 2 --
->  security/keys/keyring.c  | 1 +
->  3 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/key.h b/include/linux/key.h
-> index e58ee10f6e58..c8d332d4103c 100644
-> --- a/include/linux/key.h
-> +++ b/include/linux/key.h
-> @@ -346,6 +346,8 @@ static inline key_serial_t key_serial(const struct key *key)
-> 
->  extern void key_set_timeout(struct key *, unsigned);
-> 
-> +extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
+>   drivers/char/tpm/tpm-dev-common.c | 25 ++++++++++++++++++-------
+>   1 file changed, 18 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> index 99b5133a9d05..cbb0ee30b511 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -27,7 +27,19 @@
+>   static struct workqueue_struct *tpm_dev_wq;
+>   static DEFINE_MUTEX(tpm_dev_wq_lock);
+>
+> -static void tpm_async_work(struct work_struct *work)
+> +static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+> +				u8 *buf, size_t bufsiz)
+> +{
+> +	ssize_t ret;
 > +
->  /*
->   * The permissions required on a key that we're looking up.
->   */
-> diff --git a/security/keys/internal.h b/security/keys/internal.h
-> index 9f8208dc0e55..8aa8d347a1ab 100644
-> --- a/security/keys/internal.h
-> +++ b/security/keys/internal.h
-> @@ -141,8 +141,6 @@ extern key_ref_t keyring_search_aux(key_ref_t keyring_ref,
->  extern key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx);
->  extern key_ref_t search_process_keyrings(struct keyring_search_context *ctx);
-> 
-> -extern struct key *find_keyring_by_name(const char *name, bool uid_keyring);
+> +	mutex_lock(&chip->tpm_mutex);
+> +	ret = tpm_transmit(chip, space, buf, bufsiz, TPM_TRANSMIT_UNLOCKED);
+> +	mutex_unlock(&chip->tpm_mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static void tpm_dev_async_work(struct work_struct *work)
+>   {
+>   	struct file_priv *priv =
+>   			container_of(work, struct file_priv, async_work);
+> @@ -35,9 +47,8 @@ static void tpm_async_work(struct work_struct *work)
+>
+>   	mutex_lock(&priv->buffer_mutex);
+>   	priv->command_enqueued = false;
+> -	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+> -			   sizeof(priv->data_buffer), 0);
 > -
->  extern int install_user_keyrings(void);
->  extern int install_thread_keyring_to_cred(struct cred *);
->  extern int install_process_keyring_to_cred(struct cred *);
-> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> index 41bcf57e96f2..4b9c3f1166d1 100644
-> --- a/security/keys/keyring.c
-> +++ b/security/keys/keyring.c
-> @@ -1152,6 +1152,7 @@ struct key *find_keyring_by_name(const char *name, bool uid_keyring)
->  	read_unlock(&keyring_name_lock);
->  	return keyring;
->  }
-> +EXPORT_SYMBOL(find_keyring_by_name);
-> 
->  static int keyring_detect_cycle_iterator(const void *object,
->  					 void *iterator_data)
+> +	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
+> +			       sizeof(priv->data_buffer));
+>   	tpm_put_ops(priv->chip);
+>   	if (ret > 0) {
+>   		priv->data_pending = ret;
+> @@ -78,7 +89,7 @@ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+>   	mutex_init(&priv->buffer_mutex);
+>   	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
+>   	INIT_WORK(&priv->timeout_work, tpm_timeout_work);
+> -	INIT_WORK(&priv->async_work, tpm_async_work);
+> +	INIT_WORK(&priv->async_work, tpm_dev_async_work);
+>   	init_waitqueue_head(&priv->async_wait);
+>   	file->private_data = priv;
+>   }
+> @@ -163,8 +174,8 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+>   		return size;
+>   	}
+>
+> -	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+> -			   sizeof(priv->data_buffer), 0);
+> +	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
+> +			       sizeof(priv->data_buffer));
+>   	tpm_put_ops(priv->chip);
+>
+>   	if (ret > 0) {
+
 
