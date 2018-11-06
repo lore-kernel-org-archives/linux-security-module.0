@@ -2,113 +2,107 @@ Return-Path: <SRS0=j9HE=NR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62D8C32789
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 14:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D970EC32789
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D4852085B
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 14:32:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c16fS6gh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D4852085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A64520685
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 15:05:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A64520685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388798AbeKFX6E (ORCPT
+        id S2387851AbeKGAbY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 18:58:04 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44111 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388583AbeKFX6E (ORCPT
+        Tue, 6 Nov 2018 19:31:24 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32714 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387593AbeKGAbY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 18:58:04 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w3-v6so5882289pgs.11;
-        Tue, 06 Nov 2018 06:32:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=AnFs2TkY5mLKqb7/FpVKODm3xN3gu/ye0hFME6VO/f8=;
-        b=c16fS6ghjk4/Avx4KgDZbjrrMeCxqz6OEHWt51ewmP12PVkm6NAXE66CZmT9o7AKs9
-         nS0XzCOGG1hUR0wFKkBrKWUFGh0OaX0lMIhWg6p1UWvx3G06gLMyOdKu2Zu5PXC6tkd5
-         k84cw2v/S+CQ8Ue+PqqPcwKDvZROB4l+GkISFnb8i3Xr6zBIMg15cUJ49QQ3OP6ccYhp
-         46A0DUbuN+5JLGRceGh8Vq3bkbYsZ17e3NDOEejxKjxCRWVDhwXAKMyoijnaeo/V8uqP
-         81cDUu6ecx9h8dR8sTjfpaAibunQ5yOC4hZP6sePeyYxxXJ3XoNBJ/CatLuAgmNzvvRk
-         EzfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=AnFs2TkY5mLKqb7/FpVKODm3xN3gu/ye0hFME6VO/f8=;
-        b=VBOMDkEhiyrRpdm81W8AKwbE1MYYkr3AwmP8NRD3pxbvYgttYsneB1O5zrOs8DwjR8
-         m83/hxh2RkSx2+4s/mtrXGl4QjyewNyG2YReJSFXFpJGLgoR6PrGvlJW3hyn4mdR3IZD
-         Lz9IejJz8OJtvZIEX0PiUUhDYUEY4gv9Ugzqkz8e++UhxbasJstYl6iafvil0EUGTHB4
-         f2xk9AywS9Y/BbnjBatbWKwOcZa8tPUJd0Na+O5o64z2OE4BXB086ALs3G7PFuRL9qjZ
-         dx95amiHFvtTlcQNQMYizj7biMW7V3UXYj7Wq+WAyBFb85RkTle/kJ9Qs1ef/IpjVad4
-         10nA==
-X-Gm-Message-State: AGRZ1gLh/vaKlQezyas7IqMwsvZgC/p8ZSS/fKquCx0N2F8hirAf1tDh
-        R0ozWB2xuV5Kc2VLzTsv2mY=
-X-Google-Smtp-Source: AJdET5dIGsDrVgPUUkUWLT0P8UJsHbwU2DjD9IkSaN2XINzlgMLo6S8yRN0izWpbsLDL72RmztCNvw==
-X-Received: by 2002:a62:2ec3:: with SMTP id u186-v6mr26392963pfu.189.1541514754774;
-        Tue, 06 Nov 2018 06:32:34 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id q134-v6sm10871312pfc.88.2018.11.06.06.32.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 06 Nov 2018 06:32:33 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] apparmor: Change to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Tue,  6 Nov 2018 09:32:27 -0500
-Message-Id: <20181106143227.8287-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 6 Nov 2018 19:31:24 -0500
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id BBB034F3D9EA2;
+        Tue,  6 Nov 2018 15:05:42 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.35) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 6 Nov 2018 15:05:35 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4 0/6] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Tue, 6 Nov 2018 16:01:53 +0100
+Message-ID: <20181106150159.1136-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- security/apparmor/apparmorfs.c | 15 ++-------------
- 1 file changed, 2 insertions(+), 13 deletions(-)
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index e09fe4d7307c..0e80ea4a3f6b 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -977,7 +977,7 @@ static const struct file_operations aa_sfs_access = {
- 	.llseek		= generic_file_llseek,
- };
- 
--static int aa_sfs_seq_show(struct seq_file *seq, void *v)
-+static int aa_sfs_seq_file_show(struct seq_file *seq, void *v)
- {
- 	struct aa_sfs_entry *fs_file = seq->private;
- 
-@@ -1002,18 +1002,7 @@ static int aa_sfs_seq_show(struct seq_file *seq, void *v)
- 	return 0;
- }
- 
--static int aa_sfs_seq_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, aa_sfs_seq_show, inode->i_private);
--}
--
--const struct file_operations aa_sfs_seq_file_ops = {
--	.owner		= THIS_MODULE,
--	.open		= aa_sfs_seq_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(aa_sfs_seq_file);
- 
- /*
-  * profile based file operations
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
+
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
+
+Changelog
+
+v3:
+- remove end marker change
+- replace active_banks static array with pointer to dynamic array
+- remove TPM2_ACTIVE_PCR_BANKS
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+Roberto Sassu (6):
+  tpm: dynamically allocate active_banks array
+  tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: modify tpm_pcr_read() definition to pass a TPM hash algorithm
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: ensure that the output of PCR read contains the correct digest
+    size
+
+ drivers/char/tpm/tpm-chip.c         |   1 +
+ drivers/char/tpm/tpm-interface.c    |  34 +++++---
+ drivers/char/tpm/tpm.h              |  19 ++---
+ drivers/char/tpm/tpm2-cmd.c         | 115 ++++++++++++++++++++--------
+ include/linux/tpm.h                 |  30 +++++++-
+ include/linux/tpm_eventlog.h        |  12 +--
+ security/integrity/ima/ima_crypto.c |  10 +--
+ 7 files changed, 145 insertions(+), 76 deletions(-)
+
 -- 
-2.17.0
+2.17.1
 
