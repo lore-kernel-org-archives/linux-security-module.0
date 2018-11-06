@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E98EC46464
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A204C32789
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C8DD2086C
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C8DD2086C
+	by mail.kernel.org (Postfix) with ESMTP id 0E4932081D
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4932081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389706AbeKGDDn (ORCPT
+        id S2389728AbeKGDEB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:03:43 -0500
-Received: from mga09.intel.com ([134.134.136.24]:6975 "EHLO mga09.intel.com"
+        Tue, 6 Nov 2018 22:04:01 -0500
+Received: from mga07.intel.com ([134.134.136.100]:51995 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389275AbeKGDDn (ORCPT
+        id S2389275AbeKGDEA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:03:43 -0500
+        Tue, 6 Nov 2018 22:04:00 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:37:26 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:37:43 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="87127051"
+   d="scan'208";a="87127136"
 Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
-  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 09:37:19 -0800
+  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 09:37:36 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 03/17] tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
-Date:   Tue,  6 Nov 2018 19:36:35 +0200
-Message-Id: <20181106173652.31020-4-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v4 05/17] tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+Date:   Tue,  6 Nov 2018 19:36:37 +0200
+Message-Id: <20181106173652.31020-6-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
 References: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
@@ -57,48 +57,71 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Do not print partial list of PCRs when tpm1_pcr_read() fails but instead
-return 0 from pcrs_show(). This is consistent behavior with other sysfs
-functions.
+The error logging for tpm2_commit_space() is in a wrong place. This
+commit moves it inside that function.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm-sysfs.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 8 ++------
+ drivers/char/tpm/tpm2-space.c    | 9 ++++++---
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index 7ed7eb6f906a..928d4e839bb7 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -100,22 +100,21 @@ static ssize_t pcrs_show(struct device *dev, struct device_attribute *attr,
- {
- 	cap_t cap;
- 	u8 digest[TPM_DIGEST_SIZE];
--	ssize_t rc;
- 	u32 i, j, num_pcrs;
- 	char *str = buf;
- 	struct tpm_chip *chip = to_tpm_chip(dev);
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index c9efd1b9fd2c..7ffb16edab6f 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -268,14 +268,10 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 		rc = -EFAULT;
  
--	rc = tpm1_getcap(chip, TPM_CAP_PROP_PCR, &cap,
--			 "attempting to determine the number of PCRS",
--			 sizeof(cap.num_pcrs));
--	if (rc)
-+	if (tpm1_getcap(chip, TPM_CAP_PROP_PCR, &cap,
-+			"attempting to determine the number of PCRS",
-+			sizeof(cap.num_pcrs)))
- 		return 0;
- 
- 	num_pcrs = be32_to_cpu(cap.num_pcrs);
- 	for (i = 0; i < num_pcrs; i++) {
--		rc = tpm1_pcr_read(chip, i, digest);
+ out_space:
+-	if (rc) {
++	if (rc)
+ 		tpm2_flush_space(chip);
+-	} else {
++	else
+ 		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
 -		if (rc)
-+		if (tpm1_pcr_read(chip, i, digest)) {
-+			str = buf;
- 			break;
-+		}
- 		str += sprintf(str, "PCR-%02d: ", i);
- 		for (j = 0; j < TPM_DIGEST_SIZE; j++)
- 			str += sprintf(str, "%02X ", digest[j]);
+-			dev_err(&chip->dev, "tpm2_commit_space: error %d\n",
+-				rc);
+-	}
+ 
+ out_idle:
+ 	/* may fail but do not override previous error value in rc */
+diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+index d53c882268ff..3d5f9577e5de 100644
+--- a/drivers/char/tpm/tpm2-space.c
++++ b/drivers/char/tpm/tpm2-space.c
+@@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+ 	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	rc = tpm2_save_space(chip);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	*bufsiz = be32_to_cpu(header->length);
+@@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+ 	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
+ 
+ 	return 0;
++out:
++	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
++	return rc;
+ }
 -- 
 2.19.1
 
