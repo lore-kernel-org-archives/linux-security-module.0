@@ -2,693 +2,984 @@ Return-Path: <SRS0=j9HE=NR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A173C32789
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A427AC32789
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 19:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F29C2081D
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:39:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F29C2081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 521E120827
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 19:09:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bqMBW6L+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521E120827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389552AbeKGDFh (ORCPT
+        id S2388177AbeKGEgD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:05:37 -0500
-Received: from mga07.intel.com ([134.134.136.100]:52100 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389722AbeKGDFh (ORCPT
+        Tue, 6 Nov 2018 23:36:03 -0500
+Received: from mail-pl1-f200.google.com ([209.85.214.200]:36856 "EHLO
+        mail-pl1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387612AbeKGEgC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:05:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:39:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="87127542"
-Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
-  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 09:39:12 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 17/17] tpm: remove @flags from tpm_transmit()
-Date:   Tue,  6 Nov 2018 19:36:49 +0200
-Message-Id: <20181106173652.31020-18-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
-References: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 6 Nov 2018 23:36:02 -0500
+Received: by mail-pl1-f200.google.com with SMTP id b39-v6so14013408plb.3
+        for <linux-security-module@vger.kernel.org>; Tue, 06 Nov 2018 11:09:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc:content-transfer-encoding;
+        bh=w7kqfkylY2XNweejk62VxkacbKXRYO3FolVTWrBy20A=;
+        b=bqMBW6L+JtUYRy/OD+huks5AVBtc46O0EjRa3sx7qoZBYuS5mhrFVWLEmjdCcGGoYo
+         7TcAeQFa0CE7AjavC6j49dbUG6Z1gjqKTY1zyt14RxijZM7kzVpoR9HebhpZqPfAf7Qi
+         aL/sB2ripjHiq0tuMMYreP7ovy+m/Ru/Ko1Uc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc:content-transfer-encoding;
+        bh=w7kqfkylY2XNweejk62VxkacbKXRYO3FolVTWrBy20A=;
+        b=OdwNWfKP8IIEfjaDfkNTx9Y3+HVnNoerdwQ0uwCQL2C0vvHHDfM1Bst34lXW6qLkEl
+         3cVAgDPGyvo9uliaXOiDeSPdi4E5TJCtF8uZ1KA9oLhFlRDLvMpOXLH7VWDvTOV+sf1/
+         oU+bT8p8WFz4h/G7b/HUsc+ILokCauwYpZjopnE4Mb5fwSxbr9OOCCnsOdBRWtn9s6WS
+         uebBAfUg4gSnDhIR20h586syLkePpjvKgiAkRxKXIeiLaIMo+esZf5MpzfJ5Ch4vp+zy
+         VtPl63v2+l6kwvqx4kfvnIp+U4mZUKZruorxghKq1kPO35V6w59GNSdluqRY+77ZQt70
+         ayDQ==
+X-Gm-Message-State: AGRZ1gJJLEC5DvPEDWjb+Rq1P7Ca9a2lA0iWus6fODJBUjtg66kZgliO
+        megvKOFcbNho2aONfgosh1l9DlrbEwnPcIbj
+X-Google-Smtp-Source: AJdET5fo9uVzLhIcQALN11snxHMBZt0PAcamfzOiauqpqU0yUEfcCCYX2IfBcHOxFjocGpAc+VEr7lZMsf8fEdT4
+X-Received: by 2002:a62:5697:: with SMTP id h23-v6mr9614527pfj.104.1541531361635;
+ Tue, 06 Nov 2018 11:09:21 -0800 (PST)
+Date:   Tue,  6 Nov 2018 11:09:16 -0800
+In-Reply-To: <5c7e1a80-c534-6adb-be19-58bb0d97084f@schaufler-ca.com>
+Message-Id: <20181106190916.106057-1-mortonm@chromium.org>
+Mime-Version: 1.0
+References: <5c7e1a80-c534-6adb-be19-58bb0d97084f@schaufler-ca.com>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+Subject: [PATCH v2] LSM: add SafeSetID module that gates setid calls
+From:   mortonm@chromium.org
+To:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        casey@schaufler-ca.com, linux-security-module@vger.kernel.org
+Cc:     Micah Morton <mortonm@chromium.org>
+Content-Type: text/plain; charset="y"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Remove @flags from tpm_transmit() API. It is no longer used for
-anything.
+From: Micah Morton <mortonm@chromium.org>
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+SafeSetID gates the setid family of syscalls to restrict UID/GID
+transitions from a given UID/GID to only those approved by a
+system-wide whitelist. These restrictions also prohibit the given
+UIDs/GIDs from obtaining auxiliary privileges associated with
+CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
+mappings. For now, only gating the set*uid family of syscalls is
+supported, with support for set*gid coming in a future patch set.
+
+Signed-off-by: Micah Morton <mortonm@chromium.org>
 ---
- drivers/char/tpm/tpm-chip.c       | 32 ++++++++++-----------
- drivers/char/tpm/tpm-dev-common.c |  2 +-
- drivers/char/tpm/tpm-interface.c  | 18 ++++--------
- drivers/char/tpm/tpm-sysfs.c      |  2 +-
- drivers/char/tpm/tpm.h            | 13 ++++-----
- drivers/char/tpm/tpm1-cmd.c       | 14 ++++-----
- drivers/char/tpm/tpm2-cmd.c       | 48 ++++++++++++++-----------------
- drivers/char/tpm/tpm2-space.c     | 16 +++++------
- drivers/char/tpm/tpm_vtpm_proxy.c |  2 +-
- 9 files changed, 65 insertions(+), 82 deletions(-)
+Added a line in setuid_policy_warning to kill processes which violate
+setid whitelist policies. This prevents potential security
+vulnerabilities that could arise from a missing whitelist entry
+preventing a privileged process from dropping to a lesser-privileged
+one.
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 87570182f75e..46aa68756bac 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -37,7 +37,7 @@ struct class *tpm_class;
- struct class *tpmrm_class;
- dev_t tpm_devt;
- 
--static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
-+static int tpm_request_locality(struct tpm_chip *chip)
+ Documentation/admin-guide/LSM/SafeSetID.rst |  94 ++++++
+ Documentation/admin-guide/LSM/index.rst     |   1 +
+ arch/Kconfig                                |   5 +
+ arch/arm/Kconfig                            |   1 +
+ arch/arm64/Kconfig                          |   1 +
+ arch/x86/Kconfig                            |   1 +
+ security/Kconfig                            |   1 +
+ security/Makefile                           |   2 +
+ security/safesetid/Kconfig                  |  13 +
+ security/safesetid/Makefile                 |   7 +
+ security/safesetid/lsm.c                    | 342 ++++++++++++++++++++
+ security/safesetid/lsm.h                    |  30 ++
+ security/safesetid/securityfs.c             | 189 +++++++++++
+ 13 files changed, 687 insertions(+)
+ create mode 100644 Documentation/admin-guide/LSM/SafeSetID.rst
+ create mode 100644 security/safesetid/Kconfig
+ create mode 100644 security/safesetid/Makefile
+ create mode 100644 security/safesetid/lsm.c
+ create mode 100644 security/safesetid/lsm.h
+ create mode 100644 security/safesetid/securityfs.c
+
+diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/ad=
+min-guide/LSM/SafeSetID.rst
+new file mode 100644
+index 000000000000..e7d072124424
+--- /dev/null
++++ b/Documentation/admin-guide/LSM/SafeSetID.rst
+@@ -0,0 +1,94 @@
++=3D=3D=3D=3D=3D=3D=3D=3D=3D
++SafeSetID
++=3D=3D=3D=3D=3D=3D=3D=3D=3D
++SafeSetID is an LSM module that gates the setid family of syscalls to rest=
+rict
++UID/GID transitions from a given UID/GID to only those approved by a
++system-wide whitelist. These restrictions also prohibit the given UIDs/GID=
+s
++from obtaining auxiliary privileges associated with CAP_SET{U/G}ID, such a=
+s
++allowing a user to set up user namespace UID mappings.
++
++
++Background
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++In absence of file capabilities, processes spawned on a Linux system that =
+need
++to switch to a different user must be spawned with CAP_SETUID privileges.
++CAP_SETUID is granted to programs running as root or those running as a no=
+n-root
++user that have been explicitly given the CAP_SETUID runtime capability. It=
+ is
++often preferable to use Linux runtime capabilities rather than file
++capabilities, since using file capabilities to run a program with elevated
++privileges opens up possible security holes since any user with access to =
+the
++file can exec() that program to gain the elevated privileges.
++
++While it is possible to implement a tree of processes by giving full
++CAP_SET{U/G}ID capabilities, this is often at odds with the goals of runni=
+ng a
++tree of processes under non-root user(s) in the first place. Specifically,
++since CAP_SETUID allows changing to any user on the system, including the =
+root
++user, it is an overpowered capability for what is needed in this scenario,
++especially since programs often only call setuid() to drop privileges to a
++lesser-privileged user -- not elevate privileges. Unfortunately, there is =
+no
++generally feasible way in Linux to restrict the potential UIDs that a user=
+ can
++switch to through setuid() beyond allowing a switch to any user on the sys=
+tem.
++This SafeSetID LSM seeks to provide a solution for restricting setid
++capabilities in such a way.
++
++
++Other Approaches Considered
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
++
++Solve this problem in userspace
++-------------------------------
++For candidate applications that would like to have restricted setid capabi=
+lities
++as implemented in this LSM, an alternative option would be to simply take =
+away
++setid capabilities from the application completely and refactor the proces=
+s
++spawning semantics in the application (e.g. by using a privileged helper p=
+rogram
++to do process spawning and UID/GID transitions). Unfortunately, there are =
+a
++number of semantics around process spawning that would be affected by this=
+, such
++as fork() calls where the program doesn=E2=80=99t immediately call exec() =
+after the
++fork(), parent processes specifying custom environment variables or comman=
+d line
++args for spawned child processes, or inheritance of file handles across a
++fork()/exec(). Because of this, as solution that uses a privileged helper =
+in
++userspace would likely be less appealing to incorporate into existing proj=
+ects
++that rely on certain process-spawning semantics in Linux.
++
++Use user namespaces
++-------------------
++Another possible approach would be to run a given process tree in its own =
+user
++namespace and give programs in the tree setid capabilities. In this way,
++programs in the tree could change to any desired UID/GID in the context of=
+ their
++own user namespace, and only approved UIDs/GIDs could be mapped back to th=
+e
++initial system user namespace, affectively preventing privilege escalation=
+.
++Unfortunately, it is not generally feasible to use user namespaces in isol=
+ation,
++without pairing them with other namespace types, which is not always an op=
+tion.
++Linux checks for capabilities based off of the user namespace that =E2=80=
+=9Cowns=E2=80=9D some
++entity. For example, Linux has the notion that network namespaces are owne=
+d by
++the user namespace in which they were created. A consequence of this is th=
+at
++capability checks for access to a given network namespace are done by chec=
+king
++whether a task has the given capability in the context of the user namespa=
+ce
++that owns the network namespace -- not necessarily the user namespace unde=
+r
++which the given task runs. Therefore spawning a process in a new user name=
+space
++effectively prevents it from accessing the network namespace owned by the
++initial namespace. This is a deal-breaker for any application that expects=
+ to
++retain the CAP_NET_ADMIN capability for the purpose of adjusting network
++configurations. Using user namespaces in isolation causes problems regardi=
+ng
++other system interactions, including use of pid namespaces and device crea=
+tion.
++
++Use an existing LSM
++-------------------
++None of the other in-tree LSMs have the capability to gate setid transitio=
+ns, or
++even employ the security_task_fix_setuid hook at all. SELinux says of that=
+ hook:
++"Since setuid only affects the current process, and since the SELinux cont=
+rols
++are not based on the Linux identity attributes, SELinux does not need to c=
+ontrol
++this operation."
++
++
++Directions for use
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++This LSM hooks the setid syscalls to make sure transitions are allowed if =
+an
++applicable restriction policy is in place. Policies are configured through
++securityfs by writing to the safesetid/add_whitelist_policy and
++safesetid/flush_whitelist_policies files at the location where securityfs =
+is
++mounted. The format for adding a policy is '<UID>:<UID>', using literal
++numbers, such as '123:456'. To flush the policies, any write to the file i=
+s
++sufficient. Again, configuring a policy for a UID will prevent that UID fr=
+om
++obtaining auxiliary setid privileges, such as allowing a user to set up us=
+er
++namespace UID mappings.
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-=
+guide/LSM/index.rst
+index c980dfe9abf1..a0c387649e12 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -39,3 +39,4 @@ the one "major" module (e.g. SELinux) if there is one con=
+figured.
+    Smack
+    tomoyo
+    Yama
++   SafeSetID
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 1aa59063f1fd..c87070807ba2 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -381,6 +381,11 @@ config ARCH_WANT_OLD_COMPAT_IPC
+ 	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
+ 	bool
+=20
++config HAVE_SAFESETID
++	bool
++	help
++	  This option enables the SafeSetID LSM.
++
+ config HAVE_ARCH_SECCOMP_FILTER
+ 	bool
+ 	help
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 843edfd000be..35b1a772c971 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -92,6 +92,7 @@ config ARM
+ 	select HAVE_RCU_TABLE_FREE if (SMP && ARM_LPAE)
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RSEQ
++	select HAVE_SAFESETID
+ 	select HAVE_STACKPROTECTOR
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_UID16
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 42c090cf0292..2c6f5ec3a55e 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -127,6 +127,7 @@ config ARM64
+ 	select HAVE_PERF_USER_STACK_DUMP
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RCU_TABLE_FREE
++	select HAVE_SAFESETID
+ 	select HAVE_STACKPROTECTOR
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_KPROBES
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 887d3a7bb646..a6527d6c0426 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -27,6 +27,7 @@ config X86_64
+ 	select ARCH_SUPPORTS_INT128
+ 	select ARCH_USE_CMPXCHG_LOCKREF
+ 	select HAVE_ARCH_SOFT_DIRTY
++	select HAVE_SAFESETID
+ 	select MODULES_USE_ELF_RELA
+ 	select NEED_DMA_MAP_STATE
+ 	select SWIOTLB
+diff --git a/security/Kconfig b/security/Kconfig
+index c4302067a3ad..7d9008ad5903 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -237,6 +237,7 @@ source security/tomoyo/Kconfig
+ source security/apparmor/Kconfig
+ source security/loadpin/Kconfig
+ source security/yama/Kconfig
++source security/safesetid/Kconfig
+=20
+ source security/integrity/Kconfig
+=20
+diff --git a/security/Makefile b/security/Makefile
+index 4d2d3782ddef..88209d827832 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -10,6 +10,7 @@ subdir-$(CONFIG_SECURITY_TOMOYO)        +=3D tomoyo
+ subdir-$(CONFIG_SECURITY_APPARMOR)	+=3D apparmor
+ subdir-$(CONFIG_SECURITY_YAMA)		+=3D yama
+ subdir-$(CONFIG_SECURITY_LOADPIN)	+=3D loadpin
++subdir-$(CONFIG_SECURITY_SAFESETID)	+=3D safesetid
+=20
+ # always enable default capabilities
+ obj-y					+=3D commoncap.o
+@@ -25,6 +26,7 @@ obj-$(CONFIG_SECURITY_TOMOYO)		+=3D tomoyo/
+ obj-$(CONFIG_SECURITY_APPARMOR)		+=3D apparmor/
+ obj-$(CONFIG_SECURITY_YAMA)		+=3D yama/
+ obj-$(CONFIG_SECURITY_LOADPIN)		+=3D loadpin/
++obj-$(CONFIG_SECURITY_SAFESETID)	+=3D safesetid/
+ obj-$(CONFIG_CGROUP_DEVICE)		+=3D device_cgroup.o
+=20
+ # Object integrity file lists
+diff --git a/security/safesetid/Kconfig b/security/safesetid/Kconfig
+new file mode 100644
+index 000000000000..4ff82c7ed273
+--- /dev/null
++++ b/security/safesetid/Kconfig
+@@ -0,0 +1,13 @@
++config SECURITY_SAFESETID
++        bool "Gate setid transitions to limit CAP_SET{U/G}ID capabilities"
++        depends on HAVE_SAFESETID
++        default n
++        help
++          SafeSetID is an LSM module that gates the setid family of syscal=
+ls to
++          restrict UID/GID transitions from a given UID/GID to only those
++          approved by a system-wide whitelist. These restrictions also pro=
+hibit
++          the given UIDs/GIDs from obtaining auxiliary privileges associat=
+ed
++          with CAP_SET{U/G}ID, such as allowing a user to set up user name=
+space
++          UID mappings.
++
++          If you are unsure how to answer this question, answer N.
+diff --git a/security/safesetid/Makefile b/security/safesetid/Makefile
+new file mode 100644
+index 000000000000..6b0660321164
+--- /dev/null
++++ b/security/safesetid/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++#
++# Makefile for the safesetid LSM.
++#
++
++obj-$(CONFIG_SECURITY_SAFESETID) :=3D safesetid.o
++safesetid-y :=3D lsm.o securityfs.o
+diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+new file mode 100644
+index 000000000000..32040f8db7ce
+--- /dev/null
++++ b/security/safesetid/lsm.c
+@@ -0,0 +1,342 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * SafeSetID Linux Security Module
++ *
++ * Author: Micah Morton <mortonm@chromium.org>
++ *
++ * Copyright (C) 2018 The Chromium OS Authors.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#define pr_fmt(fmt) "SafeSetID: " fmt
++
++#include <asm/syscall.h>
++#include <linux/hashtable.h>
++#include <linux/lsm_hooks.h>
++#include <linux/module.h>
++#include <linux/ptrace.h>
++#include <linux/sched/task_stack.h>
++#include <linux/security.h>
++
++#define NUM_BITS 8 /* 128 buckets in hash table */
++
++static DEFINE_HASHTABLE(safesetid_whitelist_hashtable, NUM_BITS);
++
++/*
++ * Hash table entry to store safesetid policy signifying that 'parent' use=
+r
++ * can setid to 'child' user.
++ */
++struct entry {
++	struct hlist_node next;
++	struct hlist_node dlist; /* for deletion cleanup */
++	uint64_t parent_kuid;
++	uint64_t child_kuid;
++};
++
++static DEFINE_SPINLOCK(safesetid_whitelist_hashtable_spinlock);
++
++static bool check_setuid_policy_hashtable_key(kuid_t parent)
++{
++	struct entry *entry;
++
++	rcu_read_lock();
++	hash_for_each_possible_rcu(safesetid_whitelist_hashtable,
++				   entry, next, __kuid_val(parent)) {
++		if (entry->parent_kuid =3D=3D __kuid_val(parent)) {
++			rcu_read_unlock();
++			return true;
++		}
++	}
++	rcu_read_unlock();
++
++	return false;
++}
++
++static bool check_setuid_policy_hashtable_key_value(kuid_t parent,
++						    kuid_t child)
++{
++	struct entry *entry;
++
++	rcu_read_lock();
++	hash_for_each_possible_rcu(safesetid_whitelist_hashtable,
++				   entry, next, __kuid_val(parent)) {
++		if (entry->parent_kuid =3D=3D __kuid_val(parent) &&
++		    entry->child_kuid =3D=3D __kuid_val(child)) {
++			rcu_read_unlock();
++			return true;
++		}
++	}
++	rcu_read_unlock();
++
++	return false;
++}
++
++/*
++ * TODO: Figuring out whether the current syscall number (saved on the ker=
+nel
++ * stack) is one of the set*uid syscalls is an operation that requires che=
+cking
++ * the number against arch-specific constants as seen below. The need for =
+this
++ * LSM to know about arch-specific syscall stuff is not ideal. Is it bette=
+r to
++ * implement an arch-specific function that gets called from this file and
++ * update arch/Kconfig to mention that the HAVE_SAFESETID symbol should on=
+ly be
++ * selected for architectures that implement the function? Any other ideas=
+?
++ */
++static bool setuid_syscall(int num)
++{
++#ifdef CONFIG_X86_64
++#ifdef CONFIG_COMPAT
++	if (!(num =3D=3D __NR_setreuid ||
++	      num =3D=3D __NR_setuid ||
++	      num =3D=3D __NR_setresuid ||
++	      num =3D=3D __NR_setfsuid ||
++	      num =3D=3D __NR_ia32_setreuid32 ||
++	      num =3D=3D __NR_ia32_setuid ||
++	      num =3D=3D __NR_ia32_setresuid ||
++	      num =3D=3D __NR_ia32_setresuid ||
++	      num =3D=3D __NR_ia32_setuid32))
++		return false;
++#else
++	if (!(num =3D=3D __NR_setreuid ||
++	      num =3D=3D __NR_setuid ||
++	      num =3D=3D __NR_setresuid ||
++	      num =3D=3D __NR_setfsuid))
++		return false;
++#endif /* CONFIG_COMPAT */
++#elif defined CONFIG_ARM64
++#ifdef CONFIG_COMPAT
++	if (!(num =3D=3D __NR_setuid ||
++	      num =3D=3D __NR_setreuid ||
++	      num =3D=3D __NR_setfsuid ||
++	      num =3D=3D __NR_setresuid ||
++	      num =3D=3D __NR_setreuid32 ||
++	      num =3D=3D __NR_setresuid32 ||
++	      num =3D=3D __NR_setuid32 ||
++	      num =3D=3D __NR_setfsuid32 ||
++	      num =3D=3D __NR_compat_setuid ||
++	      num =3D=3D __NR_compat_setreuid ||
++	      num =3D=3D __NR_compat_setfsuid ||
++	      num =3D=3D __NR_compat_setresuid ||
++	      num =3D=3D __NR_compat_setreuid32 ||
++	      num =3D=3D __NR_compat_setresuid32 ||
++	      num =3D=3D __NR_compat_setuid32 ||
++	      num =3D=3D __NR_compat_setfsuid32))
++		return false;
++#else
++	if (!(num =3D=3D __NR_setuid ||
++	      num =3D=3D __NR_setreuid ||
++	      num =3D=3D __NR_setfsuid ||
++	      num =3D=3D __NR_setresuid))
++		return false;
++#endif /* CONFIG_COMPAT */
++#elif defined CONFIG_ARM
++	if (!(num =3D=3D __NR_setreuid32 ||
++	      num =3D=3D __NR_setuid32 ||
++	      num =3D=3D __NR_setresuid32 ||
++	      num =3D=3D __NR_setfsuid32))
++		return false;
++#else
++	BUILD_BUG();
++#endif
++	return true;
++}
++
++static int safesetid_security_capable(const struct cred *cred,
++				      struct user_namespace *ns,
++				      int cap,
++				      int audit)
++{
++	/* The current->mm check will fail if this is a kernel thread. */
++	if (cap =3D=3D CAP_SETUID &&
++	    current->mm &&
++	    check_setuid_policy_hashtable_key(cred->uid)) {
++		/*
++		 * syscall_get_nr can theoretically return 0 or -1, but that
++		 * would signify that the syscall is being aborted due to a
++		 * signal, so we don't need to check for this case here.
++		 */
++		if (!(setuid_syscall(syscall_get_nr(current,
++						    current_pt_regs()))))
++			/*
++			 * Deny if we're not in a set*uid() syscall to avoid
++			 * giving powers gated by CAP_SETUID that are related
++			 * to functionality other than calling set*uid() (e.g.
++			 * allowing user to set up userns uid mappings).
++			 */
++			return -1;
++	}
++	return 0;
++}
++
++static void setuid_policy_warning(kuid_t parent, kuid_t child)
++{
++	pr_warn("UID transition (%d -> %d) blocked",
++		__kuid_val(parent),
++		__kuid_val(child));
++        /*
++         * Kill this process to avoid potential security vulnerabilities
++         * that could arise from a missing whitelist entry preventing a
++         * privileged process from dropping to a lesser-privileged one.
++         */
++        do_exit(SIGKILL);
++}
++
++static int check_uid_transition(kuid_t parent, kuid_t child)
++{
++	if (check_setuid_policy_hashtable_key_value(parent, child))
++		return 0;
++	setuid_policy_warning(parent, child);
++	return -1;
++}
++
++/*
++ * Check whether there is either an exception for user under old cred stru=
+ct to
++ * set*uid to user under new cred struct, or the UID transition is allowed=
+ (by
++ * Linux set*uid rules) even without CAP_SETUID.
++ */
++static int safesetid_task_fix_setuid(struct cred *new,
++				     const struct cred *old,
++				     int flags)
++{
++
++	/* Do nothing if there are no setuid restrictions for this UID. */
++	if (!check_setuid_policy_hashtable_key(old->uid))
++		return 0;
++
++	switch (flags) {
++	case LSM_SETID_RE:
++		/*
++		 * Users for which setuid restrictions exist can only set the
++		 * real UID to the real UID or the effective UID, unless an
++		 * explicit whitelist policy allows the transition.
++		 */
++		if (!uid_eq(old->uid, new->uid) &&
++			!uid_eq(old->euid, new->uid)) {
++			return check_uid_transition(old->uid, new->uid);
++		}
++		/*
++		 * Users for which setuid restrictions exist can only set the
++		 * effective UID to the real UID, the effective UID, or the
++		 * saved set-UID, unless an explicit whitelist policy allows
++		 * the transition.
++		 */
++		if (!uid_eq(old->uid, new->euid) &&
++			!uid_eq(old->euid, new->euid) &&
++			!uid_eq(old->suid, new->euid)) {
++			return check_uid_transition(old->euid, new->euid);
++		}
++		break;
++	case LSM_SETID_ID:
++		/*
++		 * Users for which setuid restrictions exist cannot change the
++		 * real UID or saved set-UID unless an explicit whitelist
++		 * policy allows the transition.
++		 */
++		if (!uid_eq(old->uid, new->uid))
++			return check_uid_transition(old->uid, new->uid);
++		if (!uid_eq(old->suid, new->suid))
++			return check_uid_transition(old->suid, new->suid);
++		break;
++	case LSM_SETID_RES:
++		/*
++		 * Users for which setuid restrictions exist cannot change the
++		 * real UID, effective UID, or saved set-UID to anything but
++		 * one of: the current real UID, the current effective UID or
++		 * the current saved set-user-ID unless an explicit whitelist
++		 * policy allows the transition.
++		 */
++		if (!uid_eq(new->uid, old->uid) &&
++			!uid_eq(new->uid, old->euid) &&
++			!uid_eq(new->uid, old->suid)) {
++			return check_uid_transition(old->uid, new->uid);
++		}
++		if (!uid_eq(new->euid, old->uid) &&
++			!uid_eq(new->euid, old->euid) &&
++			!uid_eq(new->euid, old->suid)) {
++			return check_uid_transition(old->euid, new->euid);
++		}
++		if (!uid_eq(new->suid, old->uid) &&
++			!uid_eq(new->suid, old->euid) &&
++			!uid_eq(new->suid, old->suid)) {
++			return check_uid_transition(old->suid, new->suid);
++		}
++		break;
++	case LSM_SETID_FS:
++		/*
++		 * Users for which setuid restrictions exist cannot change the
++		 * filesystem UID to anything but one of: the current real UID,
++		 * the current effective UID or the current saved set-UID
++		 * unless an explicit whitelist policy allows the transition.
++		 */
++		if (!uid_eq(new->fsuid, old->uid)  &&
++			!uid_eq(new->fsuid, old->euid)  &&
++			!uid_eq(new->fsuid, old->suid) &&
++			!uid_eq(new->fsuid, old->fsuid)) {
++			return check_uid_transition(old->fsuid, new->fsuid);
++		}
++		break;
++	}
++	return 0;
++}
++
++int add_safesetid_whitelist_entry(kuid_t parent, kuid_t child)
++{
++	struct entry *new;
++
++	/* Return if entry already exists */
++	if (check_setuid_policy_hashtable_key_value(parent, child))
++		return 0;
++
++	new =3D kzalloc(sizeof(struct entry), GFP_KERNEL);
++	if (!new)
++		return -ENOMEM;
++	new->parent_kuid =3D __kuid_val(parent);
++	new->child_kuid =3D __kuid_val(child);
++	spin_lock(&safesetid_whitelist_hashtable_spinlock);
++	hash_add_rcu(safesetid_whitelist_hashtable,
++		     &new->next,
++		     __kuid_val(parent));
++	spin_unlock(&safesetid_whitelist_hashtable_spinlock);
++	return 0;
++}
++
++void flush_safesetid_whitelist_entries(void)
++{
++	struct entry *entry;
++	struct hlist_node *hlist_node;
++	unsigned int bkt_loop_cursor;
++	HLIST_HEAD(free_list);
++
++	/*
++	 * Could probably use hash_for_each_rcu here instead, but this should
++	 * be fine as well.
++	 */
++	spin_lock(&safesetid_whitelist_hashtable_spinlock);
++	hash_for_each_safe(safesetid_whitelist_hashtable, bkt_loop_cursor,
++			   hlist_node, entry, next) {
++		hash_del_rcu(&entry->next);
++		hlist_add_head(&entry->dlist, &free_list);
++	}
++	spin_unlock(&safesetid_whitelist_hashtable_spinlock);
++	synchronize_rcu();
++	hlist_for_each_entry_safe(entry, hlist_node, &free_list, dlist) {
++		hlist_del(&entry->dlist);
++		kfree(entry);
++	}
++}
++
++static struct security_hook_list safesetid_security_hooks[] =3D {
++	LSM_HOOK_INIT(task_fix_setuid, safesetid_task_fix_setuid),
++	LSM_HOOK_INIT(capable, safesetid_security_capable)
++};
++
++static int __init safesetid_security_init(void)
++{
++	security_add_hooks(safesetid_security_hooks,
++			   ARRAY_SIZE(safesetid_security_hooks), "safesetid");
++
++	return 0;
++}
++security_initcall(safesetid_security_init);
+diff --git a/security/safesetid/lsm.h b/security/safesetid/lsm.h
+new file mode 100644
+index 000000000000..bf78af9bf314
+--- /dev/null
++++ b/security/safesetid/lsm.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * SafeSetID Linux Security Module
++ *
++ * Author: Micah Morton <mortonm@chromium.org>
++ *
++ * Copyright (C) 2018 The Chromium OS Authors.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ *
++ */
++#ifndef _SAFESETID_H
++#define _SAFESETID_H
++
++#include <linux/types.h>
++
++/* Function type. */
++enum safesetid_whitelist_file_write_type {
++	SAFESETID_WHITELIST_ADD, /* Add whitelist policy. */
++	SAFESETID_WHITELIST_FLUSH, /* Flush whitelist policies. */
++};
++
++/* Add entry to safesetid whitelist to allow 'parent' to setid to 'child'.=
+ */
++int add_safesetid_whitelist_entry(kuid_t parent, kuid_t child);
++
++void flush_safesetid_whitelist_entries(void);
++
++#endif /* _SAFESETID_H */
+diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityf=
+s.c
+new file mode 100644
+index 000000000000..ff5fcf2c1b37
+--- /dev/null
++++ b/security/safesetid/securityfs.c
+@@ -0,0 +1,189 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * SafeSetID Linux Security Module
++ *
++ * Author: Micah Morton <mortonm@chromium.org>
++ *
++ * Copyright (C) 2018 The Chromium OS Authors.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2, as
++ * published by the Free Software Foundation.
++ *
++ */
++#include <linux/security.h>
++#include <linux/cred.h>
++
++#include "lsm.h"
++
++static struct dentry *safesetid_policy_dir;
++
++struct safesetid_file_entry {
++	const char *name;
++	enum safesetid_whitelist_file_write_type type;
++	struct dentry *dentry;
++};
++
++static struct safesetid_file_entry safesetid_files[] =3D {
++	{.name =3D "add_whitelist_policy",
++	 .type =3D SAFESETID_WHITELIST_ADD},
++	{.name =3D "flush_whitelist_policies",
++	 .type =3D SAFESETID_WHITELIST_FLUSH},
++};
++
++/*
++ * In the case the input buffer contains one or more invalid UIDs, the kui=
+d_t
++ * variables pointed to by 'parent' and 'child' will get updated but this
++ * function will return an error.
++ */
++static int parse_safesetid_whitelist_policy(const char __user *buf,
++					    size_t len,
++					    kuid_t *parent,
++					    kuid_t *child)
++{
++	char *kern_buf;
++	char *parent_buf;
++	char *child_buf;
++	const char separator[] =3D ":";
++	int ret;
++	size_t first_substring_length;
++	long parsed_parent;
++	long parsed_child;
++
++	/* Duplicate string from user memory and NULL-terminate */
++	kern_buf =3D memdup_user_nul(buf, len);
++	if (IS_ERR(kern_buf))
++		return PTR_ERR(kern_buf);
++
++	/*
++	 * Format of |buf| string should be <UID>:<UID>.
++	 * Find location of ":" in kern_buf (copied from |buf|).
++	 */
++	first_substring_length =3D strcspn(kern_buf, separator);
++	if (first_substring_length =3D=3D 0 || first_substring_length =3D=3D len)=
  {
- 	int rc;
- 
-@@ -52,7 +52,7 @@ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
- 	return 0;
- }
- 
--static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
-+static void tpm_relinquish_locality(struct tpm_chip *chip)
- {
- 	int rc;
- 
-@@ -66,7 +66,7 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
- 	chip->locality = -1;
- }
- 
--static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
-+static int tpm_cmd_ready(struct tpm_chip *chip)
- {
- 	if (!chip->ops->cmd_ready)
- 		return 0;
-@@ -74,7 +74,7 @@ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
- 	return chip->ops->cmd_ready(chip);
- }
- 
--static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
-+static int tpm_go_idle(struct tpm_chip *chip)
- {
- 	if (!chip->ops->go_idle)
- 		return 0;
-@@ -85,13 +85,12 @@ static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
- /**
-  * tpm_chip_start() - power on the TPM
-  * @chip:	a TPM chip to use
-- * @flags:	TPM transmit flags
-  *
-  * Return:
-  * * The response length	- OK
-  * * -errno			- A system error
-  */
--int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
-+int tpm_chip_start(struct tpm_chip *chip)
- {
- 	int ret;
- 
-@@ -99,16 +98,16 @@ int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
- 		chip->ops->clk_enable(chip, true);
- 
- 	if (chip->locality == -1) {
--		ret = tpm_request_locality(chip, flags);
-+		ret = tpm_request_locality(chip);
- 		if (ret) {
- 			chip->ops->clk_enable(chip, false);
- 			return ret;
- 		}
- 	}
- 
--	ret = tpm_cmd_ready(chip, flags);
-+	ret = tpm_cmd_ready(chip);
- 	if (ret) {
--		tpm_relinquish_locality(chip, flags);
-+		tpm_relinquish_locality(chip);
- 		if (chip->ops->clk_enable)
- 			chip->ops->clk_enable(chip, false);
- 		return ret;
-@@ -120,16 +119,15 @@ int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
- /**
-  * tpm_chip_stop() - power off the TPM
-  * @chip:	a TPM chip to use
-- * @flags:	TPM transmit flags
-  *
-  * Return:
-  * * The response length	- OK
-  * * -errno			- A system error
-  */
--void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
-+void tpm_chip_stop(struct tpm_chip *chip)
- {
--	tpm_go_idle(chip, flags);
--	tpm_relinquish_locality(chip, flags);
-+	tpm_go_idle(chip);
-+	tpm_relinquish_locality(chip);
- 	if (chip->ops->clk_enable)
- 		chip->ops->clk_enable(chip, false);
- }
-@@ -157,7 +155,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
- 		goto out_lock;
- 
- 	mutex_lock(&chip->tpm_mutex);
--	return tpm_chip_start(chip, 0);
-+	return tpm_chip_start(chip);
- out_lock:
- 	up_read(&chip->ops_sem);
- 	put_device(&chip->dev);
-@@ -174,7 +172,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
-  */
- void tpm_put_ops(struct tpm_chip *chip)
- {
--	tpm_chip_stop(chip, 0);
-+	tpm_chip_stop(chip);
- 	mutex_unlock(&chip->tpm_mutex);
- 	up_read(&chip->ops_sem);
- 	put_device(&chip->dev);
-@@ -552,11 +550,11 @@ int tpm_chip_register(struct tpm_chip *chip)
- {
- 	int rc;
- 
--	rc = tpm_chip_start(chip, 0);
-+	rc = tpm_chip_start(chip);
- 	if (rc)
- 		return rc;
- 	rc = tpm_auto_startup(chip);
--	tpm_chip_stop(chip, 0);
-+	tpm_chip_stop(chip);
- 	if (rc)
- 		return rc;
- 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 582caefcf19b..024229a08876 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -47,7 +47,7 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	if (ret)
- 		goto out_lock;
- 
--	len = tpm_transmit(chip, buf, bufsiz, 0);
-+	len = tpm_transmit(chip, buf, bufsiz);
- 	if (len < 0)
- 		ret = len;
- 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 5c04c0d9aaba..5e3d5e95ea46 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -62,8 +62,7 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
- 
--static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
--				unsigned int flags)
-+static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
- {
- 	struct tpm_header *header = (void *)buf;
- 	int rc;
-@@ -134,7 +133,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-  * @chip:	a TPM chip to use
-  * @buf:	a TPM command buffer
-  * @bufsiz:	length of the TPM command buffer
-- * @flags:	TPM transmit flags
-  *
-  * A wrapper around tpm_try_transmit() that handles TPM2_RC_RETRY returns from
-  * the TPM and retransmits the command after a delay up to a maximum wait of
-@@ -147,8 +145,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-  * * The response length	- OK
-  * * -errno			- A system error
-  */
--ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
--		     unsigned int flags)
-+ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
- {
- 	struct tpm_header *header = (struct tpm_header *)buf;
- 	/* space for header and handles */
-@@ -168,7 +165,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
- 	memcpy(save, buf, save_size);
- 
- 	for (;;) {
--		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
-+		ret = tpm_try_transmit(chip, buf, bufsiz);
- 
- 		rc = be32_to_cpu(header->return_code);
- 		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
-@@ -200,7 +197,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-  * @chip:			a TPM chip to use
-  * @buf:			a TPM command buffer
-  * @min_rsp_body_length:	minimum expected length of response body
-- * @flags:			TPM transmit flags
-  * @desc:			command description used in the error message
-  *
-  * Return:
-@@ -209,14 +205,13 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-  * * TPM_RC	- A TPM error
-  */
- ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
--			 size_t min_rsp_body_length, unsigned int flags,
--			 const char *desc)
-+			 size_t min_rsp_body_length, const char *desc)
- {
- 	const struct tpm_header *header = (struct tpm_header *)buf->data;
- 	int err;
- 	ssize_t len;
- 
--	len = tpm_transmit(chip, buf->data, PAGE_SIZE, flags);
-+	len = tpm_transmit(chip, buf->data, PAGE_SIZE);
- 	if (len <  0)
- 		return len;
- 
-@@ -365,8 +360,7 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
- 		goto out;
- 
- 	memcpy(buf.data, cmd, buflen);
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0,
--			      "attempting to a send a command");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to a send a command");
- 	tpm_buf_destroy(&buf);
- out:
- 	tpm_put_ops(chip);
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index 3733491671ca..533a260d744e 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -55,7 +55,7 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
- 	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
- 
- 	if (tpm_transmit_cmd(chip, &tpm_buf, READ_PUBEK_RESULT_MIN_BODY_SIZE,
--			      0, "attempting to read the PUBEK"))
-+			     "attempting to read the PUBEK"))
- 		goto out_buf;
- 
- 	out = (struct tpm_readpubek_out *)&tpm_buf.data[10];
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f9d56dfd0d20..6121663b7e9f 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -485,11 +485,9 @@ extern const struct file_operations tpm_fops;
- extern const struct file_operations tpmrm_fops;
- extern struct idr dev_nums_idr;
- 
--ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
--		     unsigned int flags);
-+ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz);
- ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
--			 size_t min_rsp_body_length, unsigned int flags,
--			 const char *desc);
-+			 size_t min_rsp_body_length, const char *desc);
- int tpm_get_timeouts(struct tpm_chip *);
- int tpm_auto_startup(struct tpm_chip *chip);
- 
-@@ -514,8 +512,8 @@ static inline void tpm_msleep(unsigned int delay_msec)
- 		     delay_msec * 1000);
- };
- 
--int tpm_chip_start(struct tpm_chip *chip, unsigned int flags);
--void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags);
-+int tpm_chip_start(struct tpm_chip *chip);
-+void tpm_chip_stop(struct tpm_chip *chip);
- struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
- __must_check int tpm_try_get_ops(struct tpm_chip *chip);
- void tpm_put_ops(struct tpm_chip *chip);
-@@ -548,8 +546,7 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
- int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
- 		    struct tpm2_digest *digests);
- int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
--void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
--			    unsigned int flags);
-+void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
- int tpm2_seal_trusted(struct tpm_chip *chip,
- 		      struct trusted_key_payload *payload,
- 		      struct trusted_key_options *options);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 162c255dd131..438c14106e19 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -334,7 +334,7 @@ static int tpm1_startup(struct tpm_chip *chip)
- 
- 	tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to start the TPM");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to start the TPM");
- 	tpm_buf_destroy(&buf);
- 	return rc;
- }
-@@ -459,7 +459,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
- 	tpm_buf_append_u32(&buf, pcr_idx);
- 	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
- 
--	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE, 0, log_msg);
-+	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE, log_msg);
- 	tpm_buf_destroy(&buf);
- 	return rc;
- }
-@@ -489,7 +489,7 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
- 		tpm_buf_append_u32(&buf, 4);
- 		tpm_buf_append_u32(&buf, subcap_id);
- 	}
--	rc = tpm_transmit_cmd(chip, &buf, min_cap_length, 0, desc);
-+	rc = tpm_transmit_cmd(chip, &buf, min_cap_length, desc);
- 	if (!rc)
- 		*cap = *(cap_t *)&buf.data[TPM_HEADER_SIZE + 4];
- 	tpm_buf_destroy(&buf);
-@@ -530,7 +530,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- 	do {
- 		tpm_buf_append_u32(&buf, num_bytes);
- 
--		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len), 0,
-+		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len),
- 				      "attempting get random");
- 		if (rc)
- 			goto out;
-@@ -575,7 +575,7 @@ int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
- 
- 	tpm_buf_append_u32(&buf, pcr_idx);
- 
--	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE, 0,
-+	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE,
- 			      "attempting to read a pcr value");
- 	if (rc)
- 		goto out;
-@@ -609,7 +609,7 @@ static int tpm1_continue_selftest(struct tpm_chip *chip)
- 	if (rc)
- 		return rc;
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "continue selftest");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "continue selftest");
- 	tpm_buf_destroy(&buf);
- 	return rc;
- }
-@@ -735,7 +735,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
- 		return rc;
- 	/* now do the actual savestate */
- 	for (try = 0; try < TPM_RETRY; try++) {
--		rc = tpm_transmit_cmd(chip, &buf, 0, 0, NULL);
-+		rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
- 		/*
- 		 * If the TPM indicates that it is too busy to respond to
- 		 * this command then retry before giving up.  It can take
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index d6abc964ef66..971d46efaca5 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -197,7 +197,7 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
- 	tpm_buf_append(&buf, (const unsigned char *)pcr_select,
- 		       sizeof(pcr_select));
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, res_buf ?
-+	rc = tpm_transmit_cmd(chip, &buf, 0, res_buf ?
- 			      "attempting to read a pcr value" : NULL);
- 	if (rc == 0 && res_buf) {
- 		out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
-@@ -264,8 +264,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
- 		}
- 	}
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0,
--			      "attempting extend a PCR value");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting extend a PCR value");
- 
- 	tpm_buf_destroy(&buf);
- 
-@@ -312,7 +311,7 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- 		err = tpm_transmit_cmd(chip, &buf,
- 				       offsetof(struct tpm2_get_random_out,
- 						buffer),
--				       0, "attempting get random");
-+				       "attempting get random");
- 		if (err)
- 			goto out;
- 
-@@ -341,14 +340,11 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
- }
- 
- /**
-- * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
-+ * tpm2_flush_context() - execute a TPM2_FlushContext command
-  * @chip:	TPM chip to use
-  * @handle:	context handle
-- * @flags:	tpm transmit flags - bitmap
-- *
-  */
--void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
--			    unsigned int flags)
-+void tpm2_flush_context(struct tpm_chip *chip, u32 handle)
- {
- 	struct tpm_buf buf;
- 	int rc;
-@@ -362,7 +358,7 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
- 
- 	tpm_buf_append_u32(&buf, handle);
- 
--	tpm_transmit_cmd(chip, &buf, 0, flags, "flushing context");
-+	tpm_transmit_cmd(chip, &buf, 0, "flushing context");
- 	tpm_buf_destroy(&buf);
- }
- 
-@@ -476,7 +472,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		goto out;
- 	}
- 
--	rc = tpm_transmit_cmd(chip, &buf, 4, 0, "sealing data");
-+	rc = tpm_transmit_cmd(chip, &buf, 4, "sealing data");
- 	if (rc)
- 		goto out;
- 
-@@ -513,7 +509,6 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-  * @payload: the key data in clear and encrypted form
-  * @options: authentication values and other options
-  * @blob_handle: returned blob handle
-- * @flags: tpm transmit flags
-  *
-  * Return: 0 on success.
-  *        -E2BIG on wrong payload size.
-@@ -523,7 +518,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- static int tpm2_load_cmd(struct tpm_chip *chip,
- 			 struct trusted_key_payload *payload,
- 			 struct trusted_key_options *options,
--			 u32 *blob_handle, unsigned int flags)
-+			 u32 *blob_handle)
- {
- 	struct tpm_buf buf;
- 	unsigned int private_len;
-@@ -558,7 +553,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		goto out;
- 	}
- 
--	rc = tpm_transmit_cmd(chip, &buf, 4, flags, "loading blob");
-+	rc = tpm_transmit_cmd(chip, &buf, 4, "loading blob");
- 	if (!rc)
- 		*blob_handle = be32_to_cpup(
- 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
-@@ -579,7 +574,6 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-  * @payload: the key data in clear and encrypted form
-  * @options: authentication values and other options
-  * @blob_handle: blob handle
-- * @flags: tpm_transmit_cmd flags
-  *
-  * Return: 0 on success
-  *         -EPERM on tpm error status
-@@ -588,7 +582,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			   struct trusted_key_payload *payload,
- 			   struct trusted_key_options *options,
--			   u32 blob_handle, unsigned int flags)
-+			   u32 blob_handle)
- {
- 	struct tpm_buf buf;
- 	u16 data_len;
-@@ -608,7 +602,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			     options->blobauth /* hmac */,
- 			     TPM_DIGEST_SIZE);
- 
--	rc = tpm_transmit_cmd(chip, &buf, 6, flags, "unsealing");
-+	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
- 	if (rc > 0)
- 		rc = -EPERM;
- 
-@@ -652,12 +646,12 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
- 	u32 blob_handle;
- 	int rc;
- 
--	rc = tpm2_load_cmd(chip, payload, options, &blob_handle, 0);
-+	rc = tpm2_load_cmd(chip, payload, options, &blob_handle);
- 	if (rc)
- 		return rc;
- 
--	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle, 0);
--	tpm2_flush_context_cmd(chip, blob_handle, 0);
-+	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
-+	tpm2_flush_context(chip, blob_handle);
- 	return rc;
- }
- 
-@@ -693,7 +687,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
- 	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
- 	tpm_buf_append_u32(&buf, property_id);
- 	tpm_buf_append_u32(&buf, 1);
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
- 	if (!rc) {
- 		out = (struct tpm2_get_cap_out *)
- 			&buf.data[TPM_HEADER_SIZE];
-@@ -723,7 +717,7 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
- 	if (rc)
- 		return;
- 	tpm_buf_append_u16(&buf, shutdown_type);
--	tpm_transmit_cmd(chip, &buf, 0, 0, "stopping the TPM");
-+	tpm_transmit_cmd(chip, &buf, 0, "stopping the TPM");
- 	tpm_buf_destroy(&buf);
- }
- 
-@@ -752,7 +746,7 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
- 			return rc;
- 
- 		tpm_buf_append_u8(&buf, full);
--		rc = tpm_transmit_cmd(chip, &buf, 0, 0,
-+		rc = tpm_transmit_cmd(chip, &buf, 0,
- 				      "attempting the self test");
- 		tpm_buf_destroy(&buf);
- 
-@@ -789,7 +783,7 @@ int tpm2_probe(struct tpm_chip *chip)
- 	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
- 	tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
- 	tpm_buf_append_u32(&buf, 1);
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
- 	/* We ignore TPM return codes on purpose. */
- 	if (rc >=  0) {
- 		out = (struct tpm_header *)buf.data;
-@@ -828,7 +822,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- 	tpm_buf_append_u32(&buf, 0);
- 	tpm_buf_append_u32(&buf, 1);
- 
--	rc = tpm_transmit_cmd(chip, &buf, 9, 0, "get tpm pcr allocation");
-+	rc = tpm_transmit_cmd(chip, &buf, 9, "get tpm pcr allocation");
- 	if (rc)
- 		goto out;
- 
-@@ -899,7 +893,7 @@ static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
- 	tpm_buf_append_u32(&buf, TPM2_CC_FIRST);
- 	tpm_buf_append_u32(&buf, nr_commands);
- 
--	rc = tpm_transmit_cmd(chip, &buf, 9 + 4 * nr_commands, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &buf, 9 + 4 * nr_commands, NULL);
- 	if (rc) {
- 		tpm_buf_destroy(&buf);
- 		goto out;
-@@ -956,7 +950,7 @@ static int tpm2_startup(struct tpm_chip *chip)
- 		return rc;
- 
- 	tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to start the TPM");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to start the TPM");
- 	tpm_buf_destroy(&buf);
- 
- 	return rc;
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 8ed063b54040..ccda48ec67f2 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -38,7 +38,7 @@ static void tpm2_flush_sessions(struct tpm_chip *chip, struct tpm_space *space)
- 
- 	for (i = 0; i < ARRAY_SIZE(space->session_tbl); i++) {
- 		if (space->session_tbl[i])
--			tpm2_flush_context_cmd(chip, space->session_tbl[i], 0);
-+			tpm2_flush_context(chip, space->session_tbl[i]);
- 	}
- }
- 
-@@ -60,9 +60,9 @@ int tpm2_init_space(struct tpm_space *space)
- void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
- {
- 	mutex_lock(&chip->tpm_mutex);
--	if (!tpm_chip_start(chip, 0)) {
-+	if (!tpm_chip_start(chip)) {
- 		tpm2_flush_sessions(chip, space);
--		tpm_chip_stop(chip, 0);
-+		tpm_chip_stop(chip);
- 	}
- 	mutex_unlock(&chip->tpm_mutex);
- 	kfree(space->context_buf);
-@@ -85,7 +85,7 @@ static int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
- 	body_size = sizeof(*ctx) + be16_to_cpu(ctx->blob_size);
- 	tpm_buf_append(&tbuf, &buf[*offset], body_size);
- 
--	rc = tpm_transmit_cmd(chip, &tbuf, 4, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &tbuf, 4, NULL);
- 	if (rc < 0) {
- 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
- 			 __func__, rc);
-@@ -133,7 +133,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
- 
- 	tpm_buf_append_u32(&tbuf, handle);
- 
--	rc = tpm_transmit_cmd(chip, &tbuf, 0, 0, NULL);
-+	rc = tpm_transmit_cmd(chip, &tbuf, 0, NULL);
- 	if (rc < 0) {
- 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
- 			 __func__, rc);
-@@ -169,7 +169,7 @@ void tpm2_flush_space(struct tpm_chip *chip)
- 
- 	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
- 		if (space->context_tbl[i] && ~space->context_tbl[i])
--			tpm2_flush_context_cmd(chip, space->context_tbl[i], 0);
-+			tpm2_flush_context(chip, space->context_tbl[i]);
- 
- 	tpm2_flush_sessions(chip, space);
- }
-@@ -418,7 +418,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
- 
- 	return 0;
- out_no_slots:
--	tpm2_flush_context_cmd(chip, phandle, 0);
-+	tpm2_flush_context(chip, phandle);
- 	dev_warn(&chip->dev, "%s: out of slots for 0x%08X\n", __func__,
- 		 phandle);
- 	return -ENOMEM;
-@@ -505,7 +505,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
- 		} else if (rc)
- 			return rc;
- 
--		tpm2_flush_context_cmd(chip, space->context_tbl[i], 0);
-+		tpm2_flush_context(chip, space->context_tbl[i]);
- 		space->context_tbl[i] = ~0;
- 	}
- 
-diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-index a4bb60e163cc..26a2be555288 100644
---- a/drivers/char/tpm/tpm_vtpm_proxy.c
-+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-@@ -417,7 +417,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
- 
- 	proxy_dev->state |= STATE_DRIVER_COMMAND;
- 
--	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
-+	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to set locality");
- 
- 	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
- 
--- 
-2.19.1
++		ret =3D -EINVAL;
++		goto free_kern;
++	}
++
++	parent_buf =3D kmemdup_nul(kern_buf, first_substring_length, GFP_KERNEL);
++	if (!parent_buf) {
++		ret =3D -ENOMEM;
++		goto free_kern;
++	}
++
++	ret =3D kstrtol(parent_buf, 0, &parsed_parent);
++	if (ret)
++		goto free_both;
++
++	child_buf =3D kern_buf + first_substring_length + 1;
++	ret =3D kstrtol(child_buf, 0, &parsed_child);
++	if (ret)
++		goto free_both;
++
++	*parent =3D make_kuid(current_user_ns(), parsed_parent);
++	if (!uid_valid(*parent)) {
++		ret =3D -EINVAL;
++		goto free_both;
++	}
++
++	*child =3D make_kuid(current_user_ns(), parsed_child);
++	if (!uid_valid(*child)) {
++		ret =3D -EINVAL;
++		goto free_both;
++	}
++
++free_both:
++	kfree(parent_buf);
++free_kern:
++	kfree(kern_buf);
++	return ret;
++}
++
++static ssize_t safesetid_file_write(struct file *file,
++				    const char __user *buf,
++				    size_t len,
++				    loff_t *ppos)
++{
++	struct safesetid_file_entry *file_entry =3D
++		file->f_inode->i_private;
++	kuid_t parent;
++	kuid_t child;
++	int ret;
++
++	if (!ns_capable(current_user_ns(), CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (*ppos !=3D 0)
++		return -EINVAL;
++
++	if (file_entry->type =3D=3D SAFESETID_WHITELIST_FLUSH) {
++		flush_safesetid_whitelist_entries();
++		return len;
++	}
++
++	/*
++	 * If we get to here, must be the case that file_entry->type equals
++	 * SAFESETID_WHITELIST_ADD
++	 */
++	ret =3D parse_safesetid_whitelist_policy(buf, len, &parent,
++							 &child);
++	if (ret)
++		return ret;
++
++	ret =3D add_safesetid_whitelist_entry(parent, child);
++	if (ret)
++		return ret;
++
++	/* Return len on success so caller won't keep trying to write */
++	return len;
++}
++
++static const struct file_operations safesetid_file_fops =3D {
++	.write =3D safesetid_file_write,
++};
++
++static void safesetid_shutdown_securityfs(void)
++{
++	int i;
++
++	for (i =3D 0; i < ARRAY_SIZE(safesetid_files); ++i) {
++		struct safesetid_file_entry *entry =3D
++			&safesetid_files[i];
++		securityfs_remove(entry->dentry);
++		entry->dentry =3D NULL;
++	}
++
++	securityfs_remove(safesetid_policy_dir);
++	safesetid_policy_dir =3D NULL;
++}
++
++static int __init safesetid_init_securityfs(void)
++{
++	int i;
++	int ret;
++
++	safesetid_policy_dir =3D securityfs_create_dir("safesetid", NULL);
++	if (!safesetid_policy_dir) {
++		ret =3D PTR_ERR(safesetid_policy_dir);
++		goto error;
++	}
++
++	for (i =3D 0; i < ARRAY_SIZE(safesetid_files); ++i) {
++		struct safesetid_file_entry *entry =3D
++			&safesetid_files[i];
++		entry->dentry =3D securityfs_create_file(
++			entry->name, 0200, safesetid_policy_dir,
++			entry, &safesetid_file_fops);
++		if (IS_ERR(entry->dentry)) {
++			ret =3D PTR_ERR(entry->dentry);
++			goto error;
++		}
++	}
++
++	return 0;
++
++error:
++	safesetid_shutdown_securityfs();
++	return ret;
++}
++fs_initcall(safesetid_init_securityfs);
+--=20
+2.19.1.930.g4563a0d9d0-goog
 
