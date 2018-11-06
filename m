@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A204C32789
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A697AC32789
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4932081D
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4932081D
+	by mail.kernel.org (Postfix) with ESMTP id 7CE072081D
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Nov 2018 17:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE072081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389728AbeKGDEB (ORCPT
+        id S2389587AbeKGDDw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Nov 2018 22:04:01 -0500
-Received: from mga07.intel.com ([134.134.136.100]:51995 "EHLO mga07.intel.com"
+        Tue, 6 Nov 2018 22:03:52 -0500
+Received: from mga12.intel.com ([192.55.52.136]:55305 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389275AbeKGDEA (ORCPT
+        id S2389275AbeKGDDw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Nov 2018 22:04:00 -0500
+        Tue, 6 Nov 2018 22:03:52 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:37:43 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Nov 2018 09:37:34 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,472,1534834800"; 
-   d="scan'208";a="87127136"
+   d="scan'208";a="87127107"
 Received: from wenjiewa-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.60])
-  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 09:37:36 -0800
+  by orsmga007.jf.intel.com with ESMTP; 06 Nov 2018 09:37:27 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -41,13 +41,13 @@ Cc:     linux-security-module@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         Nayna Jain <nayna@linux.ibm.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
+        stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 05/17] tpm: print tpm2_commit_space() error inside tpm2_commit_space()
-Date:   Tue,  6 Nov 2018 19:36:37 +0200
-Message-Id: <20181106173652.31020-6-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v4 04/17] tpm: call tpm2_flush_space() on error in tpm_try_transmit()
+Date:   Tue,  6 Nov 2018 19:36:36 +0200
+Message-Id: <20181106173652.31020-5-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
 References: <20181106173652.31020-1-jarkko.sakkinen@linux.intel.com>
@@ -57,71 +57,119 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The error logging for tpm2_commit_space() is in a wrong place. This
-commit moves it inside that function.
+Always call tpm2_flush_space() on failure in tpm_try_transmit() so that
+the volatile memory of the TPM gets cleared. If /dev/tpm0 does not have
+sufficient permissions (usually it has), this could lead to the leakage
+of TPM objects. Through /dev/tpmrm0 this issue does not raise any new
+security concerns.
 
+Cc: stable@vger.kernel.org
+Fixes: 745b361e989a ("tpm:tpm: infrastructure for TPM spaces")
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/char/tpm/tpm-interface.c | 8 ++------
- drivers/char/tpm/tpm2-space.c    | 9 ++++++---
- 2 files changed, 8 insertions(+), 9 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 33 +++++++++++++++-----------------
+ drivers/char/tpm/tpm.h           |  1 +
+ drivers/char/tpm/tpm2-space.c    |  2 +-
+ 3 files changed, 17 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index c9efd1b9fd2c..7ffb16edab6f 100644
+index 64510ed81b46..c9efd1b9fd2c 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -268,14 +268,10 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 		rc = -EFAULT;
+@@ -224,14 +224,14 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
  
- out_space:
--	if (rc) {
-+	if (rc)
- 		tpm2_flush_space(chip);
--	} else {
-+	else
- 		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
--		if (rc)
--			dev_err(&chip->dev, "tpm2_commit_space: error %d\n",
--				rc);
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+-		goto out;
++		goto out_idle;
+ 
+ 	rc = chip->ops->send(chip, buf, count);
+ 	if (rc < 0) {
+ 		if (rc != -EPIPE)
+ 			dev_err(&chip->dev,
+ 				"%s: tpm_send: error %d\n", __func__, rc);
+-		goto out;
++		goto out_space;
+ 	}
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_IRQ)
+@@ -247,7 +247,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 		if (chip->ops->req_canceled(chip, status)) {
+ 			dev_err(&chip->dev, "Operation Canceled\n");
+ 			rc = -ECANCELED;
+-			goto out;
++			goto out_space;
+ 		}
+ 
+ 		tpm_msleep(TPM_TIMEOUT_POLL);
+@@ -257,30 +257,27 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	chip->ops->cancel(chip);
+ 	dev_err(&chip->dev, "Operation Timed out\n");
+ 	rc = -ETIME;
+-	goto out;
++	goto out_space;
+ 
+ out_recv:
+ 	len = chip->ops->recv(chip, buf, bufsiz);
+ 	if (len < 0) {
+ 		rc = len;
+-		dev_err(&chip->dev,
+-			"tpm_transmit: tpm_recv: error %d\n", rc);
+-		goto out;
+-	} else if (len < TPM_HEADER_SIZE) {
++		dev_err(&chip->dev, "tpm_transmit: tpm_recv: error %d\n", rc);
++	} else if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
+ 		rc = -EFAULT;
+-		goto out;
 -	}
  
- out_idle:
+-	if (len != be32_to_cpu(header->length)) {
+-		rc = -EFAULT;
+-		goto out;
++out_space:
++	if (rc) {
++		tpm2_flush_space(chip);
++	} else {
++		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
++		if (rc)
++			dev_err(&chip->dev, "tpm2_commit_space: error %d\n",
++				rc);
+ 	}
+ 
+-	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+-	if (rc)
+-		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+-
+-out:
++out_idle:
  	/* may fail but do not override previous error value in rc */
+ 	tpm_go_idle(chip, flags);
+ 
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 49bca4d1e786..229ac42b644e 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -579,6 +579,7 @@ int tpm2_probe(struct tpm_chip *chip);
+ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+ int tpm2_init_space(struct tpm_space *space);
+ void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
++void tpm2_flush_space(struct tpm_chip *chip);
+ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+ 		       u8 *cmd);
+ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
 diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index d53c882268ff..3d5f9577e5de 100644
+index 1131a8e7b79b..d53c882268ff 100644
 --- a/drivers/char/tpm/tpm2-space.c
 +++ b/drivers/char/tpm/tpm2-space.c
-@@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
- 	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
- 	if (rc) {
- 		tpm2_flush_space(chip);
--		return rc;
-+		goto out;
- 	}
- 
- 	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
- 	if (rc) {
- 		tpm2_flush_space(chip);
--		return rc;
-+		goto out;
- 	}
- 
- 	rc = tpm2_save_space(chip);
- 	if (rc) {
- 		tpm2_flush_space(chip);
--		return rc;
-+		goto out;
- 	}
- 
- 	*bufsiz = be32_to_cpu(header->length);
-@@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
- 	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
- 
+@@ -162,7 +162,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
  	return 0;
-+out:
-+	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
-+	return rc;
  }
+ 
+-static void tpm2_flush_space(struct tpm_chip *chip)
++void tpm2_flush_space(struct tpm_chip *chip)
+ {
+ 	struct tpm_space *space = &chip->work_space;
+ 	int i;
 -- 
 2.19.1
 
