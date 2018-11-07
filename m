@@ -2,256 +2,126 @@ Return-Path: <SRS0=u7jB=NS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46702C46464
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Nov 2018 09:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05238C0044C
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Nov 2018 12:07:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 107852086C
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Nov 2018 09:42:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107852086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 748D1204FD
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Nov 2018 12:07:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 748D1204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730433AbeKGTLr (ORCPT
+        id S1726493AbeKGVhq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Nov 2018 14:11:47 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32721 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727364AbeKGTLr (ORCPT
+        Wed, 7 Nov 2018 16:37:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37312 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726395AbeKGVhq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Nov 2018 14:11:47 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id F240CCEB842FC;
-        Wed,  7 Nov 2018 09:42:08 +0000 (GMT)
-Received: from [10.204.65.142] (10.204.65.142) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 7 Nov
- 2018 09:42:02 +0000
+        Wed, 7 Nov 2018 16:37:46 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA7C4qcL119277
+        for <linux-security-module@vger.kernel.org>; Wed, 7 Nov 2018 07:07:40 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nkvw0qg0f-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 07 Nov 2018 07:07:40 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 7 Nov 2018 12:07:38 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 7 Nov 2018 12:07:34 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA7C7XZk4391392
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 7 Nov 2018 12:07:33 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CC22C4C044;
+        Wed,  7 Nov 2018 12:07:33 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0D644C046;
+        Wed,  7 Nov 2018 12:07:32 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.109])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  7 Nov 2018 12:07:32 +0000 (GMT)
 Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
+From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Nayna Jain <nayna@linux.ibm.com>,
-        <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-2-roberto.sassu@huawei.com>
- <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <da2ef557-3041-a1ca-47cb-fd7ab92876aa@huawei.com>
-Date:   Wed, 7 Nov 2018 10:41:57 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
 In-Reply-To: <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+         <20181106150159.1136-2-roberto.sassu@huawei.com>
+         <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 07 Nov 2018 06:10:30 -0500
+Mime-Version: 1.0
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.204.65.142]
-X-CFilter-Loop: Reflected
+X-TM-AS-GCONF: 00
+x-cbid: 18110712-0020-0000-0000-000002E31622
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110712-0021-0000-0000-000021329285
+Message-Id: <1541589030.4619.21.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-07_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=963 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811070112
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/7/2018 7:14 AM, Nayna Jain wrote:
-> 
-> 
+On Wed, 2018-11-07 at 11:44 +0530, Nayna Jain wrote:
 > On 11/06/2018 08:31 PM, Roberto Sassu wrote:
->> This patch removes the hard-coded limit of the active_banks array size.
-> 
-> 
-> The hard-coded limit in static array active_banks[] represents the 
-> maximum possible banks.
-> A TPM might have three banks, but only one bank may be active.
-> 
-> To confirm my understanding, is the idea for this patch is to 
-> dynamically identify the number of possible banks or the number of 
-> active banks ?
-
-The idea is to dynamically identify the number of active banks.
-
-In the TPM Commands specification (section 30.2.1), I found:
-
-TPM_CAP_PCRS – Returns the current allocation of PCR in a
-TPML_PCR_SELECTION.
-
-You mentioned:
-
-#TPM_RC_SIZE response code when count is greater
-than the possible number of banks
-
-but TPML_PCR_SELECTION is provided by the TPM.
-
-Roberto
 
 
->> It stores in the tpm_chip structure the number of active PCR banks,
->> determined in tpm2_get_pcr_allocation(), and replaces the static array
->> with a pointer to a dynamically allocated array.
->>
->> As a consequence of the introduction of nr_active_banks, tpm_pcr_extend()
->> does not check anymore if the algorithm stored in tpm_chip is equal to
->> zero. The active_banks array always contains valid algorithms.
->>
->> Fixes: 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
->> PCR banks")
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>   drivers/char/tpm/tpm-chip.c      |  1 +
->>   drivers/char/tpm/tpm-interface.c | 19 ++++++++++++-------
->>   drivers/char/tpm/tpm.h           |  3 ++-
->>   drivers/char/tpm/tpm2-cmd.c      | 17 ++++++++---------
->>   4 files changed, 23 insertions(+), 17 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->> index 46caadca916a..2a9e8b744436 100644
->> --- a/drivers/char/tpm/tpm-chip.c
->> +++ b/drivers/char/tpm/tpm-chip.c
->> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
->>       kfree(chip->log.bios_event_log);
->>       kfree(chip->work_space.context_buf);
->>       kfree(chip->work_space.session_buf);
->> +    kfree(chip->active_banks);
->>       kfree(chip);
->>   }
->>
->> diff --git a/drivers/char/tpm/tpm-interface.c 
->> b/drivers/char/tpm/tpm-interface.c
->> index 1a803b0cf980..ba7ca6b3e664 100644
->> --- a/drivers/char/tpm/tpm-interface.c
->> +++ b/drivers/char/tpm/tpm-interface.c
->> @@ -1039,8 +1039,7 @@ static int tpm1_pcr_extend(struct tpm_chip 
->> *chip, int pcr_idx, const u8 *hash,
->>   int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
->>   {
->>       int rc;
->> -    struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
->> -    u32 count = 0;
->> +    struct tpm2_digest *digest_list;
->>       int i;
->>
->>       chip = tpm_find_get_ops(chip);
->> @@ -1048,16 +1047,22 @@ int tpm_pcr_extend(struct tpm_chip *chip, int 
->> pcr_idx, const u8 *hash)
->>           return -ENODEV;
->>
->>       if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->> -        memset(digest_list, 0, sizeof(digest_list));
->> +        digest_list = kmalloc_array(chip->nr_active_banks,
->> +                        sizeof(*digest_list), GFP_KERNEL);
->> +        if (!digest_list)
->> +            return -ENOMEM;
->>
->> -        for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
->> -                chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
->> +        memset(digest_list, 0,
->> +               chip->nr_active_banks * sizeof(*digest_list));
->> +
->> +        for (i = 0; i < chip->nr_active_banks; i++) {
->>               digest_list[i].alg_id = chip->active_banks[i];
->>               memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
->> -            count++;
->>           }
->>
->> -        rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
->> +        rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_active_banks,
->> +                     digest_list);
->> +        kfree(digest_list);
->>           tpm_put_ops(chip);
->>           return rc;
->>       }
->> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
->> index f3501d05264f..98368c3a6ff7 100644
->> --- a/drivers/char/tpm/tpm.h
->> +++ b/drivers/char/tpm/tpm.h
->> @@ -248,7 +248,8 @@ struct tpm_chip {
->>       const struct attribute_group *groups[3];
->>       unsigned int groups_cnt;
->>
->> -    u16 active_banks[7];
->> +    u32 nr_active_banks;
->> +    u16 *active_banks;
->>   #ifdef CONFIG_ACPI
->>       acpi_handle acpi_dev_handle;
->>       char ppi_version[TPM_PPI_VERSION_LEN + 1];
->> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->> index c31b490bd41d..533089cede07 100644
->> --- a/drivers/char/tpm/tpm2-cmd.c
->> +++ b/drivers/char/tpm/tpm2-cmd.c
->> @@ -242,7 +242,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int 
->> pcr_idx, u32 count,
->>       int i;
->>       int j;
->>
->> -    if (count > ARRAY_SIZE(chip->active_banks))
->> +    if (count > chip->nr_active_banks)
->>           return -EINVAL;
->>
->>       rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
->> @@ -859,7 +859,6 @@ static ssize_t tpm2_get_pcr_allocation(struct 
->> tpm_chip *chip)
->>       void *marker;
->>       void *end;
->>       void *pcr_select_offset;
->> -    unsigned int count;
->>       u32 sizeof_pcr_selection;
->>       u32 rsp_len;
->>       int rc;
->> @@ -878,11 +877,14 @@ static ssize_t tpm2_get_pcr_allocation(struct 
->> tpm_chip *chip)
->>       if (rc)
->>           goto out;
->>
->> -    count = be32_to_cpup(
->> +    chip->nr_active_banks = be32_to_cpup(
->>           (__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+> > @@ -878,11 +877,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+> >   	if (rc)
+> >   		goto out;
+> >
+> > -	count = be32_to_cpup(
+> > +	chip->nr_active_banks = be32_to_cpup(
+> >   		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
 > 
 > 
 > As per my understanding, the count in the TPML_PCR_SELECTION represent 
 > the number of possible banks and not the number of active banks.
 > TCG Structures Spec for TPM 2.0 - Table 102 mentions this as explanation 
 > of #TPM_RC_SIZE.
-> 
-> Thanks & Regards,
->      - Nayna
-> 
-> 
->>
->> -    if (count > ARRAY_SIZE(chip->active_banks)) {
->> -        rc = -ENODEV;
->> +    chip->active_banks = kmalloc_array(chip->nr_active_banks,
->> +                       sizeof(*chip->active_banks),
->> +                       GFP_KERNEL);
->> +    if (!chip->active_banks) {
->> +        rc = -ENOMEM;
->>           goto out;
->>       }
->>
->> @@ -891,7 +893,7 @@ static ssize_t tpm2_get_pcr_allocation(struct 
->> tpm_chip *chip)
->>       rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
->>       end = &buf.data[rsp_len];
->>
->> -    for (i = 0; i < count; i++) {
->> +    for (i = 0; i < chip->nr_active_banks; i++) {
->>           pcr_select_offset = marker +
->>               offsetof(struct tpm2_pcr_selection, size_of_select);
->>           if (pcr_select_offset >= end) {
->> @@ -908,9 +910,6 @@ static ssize_t tpm2_get_pcr_allocation(struct 
->> tpm_chip *chip)
->>       }
->>
->>   out:
->> -    if (i < ARRAY_SIZE(chip->active_banks))
->> -        chip->active_banks[i] = TPM2_ALG_ERROR;
->> -
->>       tpm_buf_destroy(&buf);
->>
->>       return rc;
+
+Instead of storing the result in a local variable, the only change
+here is saving the result in the chip info (nr_active_banks).
+ Everything else remains the same.
+
+
+> >
+> > -	if (count > ARRAY_SIZE(chip->active_banks)) {
+> > -		rc = -ENODEV;
+> > +	chip->active_banks = kmalloc_array(chip->nr_active_banks,
+> > +					   sizeof(*chip->active_banks),
+> > +					   GFP_KERNEL);
+
+With this change, the exact number of banks can be allocated, as done
+here.  Nice! 
+
+Mimi
+
+> > +	if (!chip->active_banks) {
+> > +		rc = -ENOMEM;
+> >   		goto out;
+> >   	}
+> >
 > 
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
