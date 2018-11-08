@@ -2,257 +2,78 @@ Return-Path: <SRS0=rvaM=NT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52682ECDE4C
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 18:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D770FECDE47
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 18:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FCDE20827
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 18:39:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FCDE20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A009220825
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 18:52:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A009220825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbeKIEPv convert rfc822-to-8bit (ORCPT
+        id S1727029AbeKIE3h (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:15:51 -0500
-Received: from mga07.intel.com ([134.134.136.100]:5225 "EHLO mga07.intel.com"
+        Thu, 8 Nov 2018 23:29:37 -0500
+Received: from mga04.intel.com ([192.55.52.120]:33629 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbeKIEPu (ORCPT
+        id S1726751AbeKIE3h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:15:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        Thu, 8 Nov 2018 23:29:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 10:39:03 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 10:52:48 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="85006210"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga008.fm.intel.com with ESMTP; 08 Nov 2018 10:39:03 -0800
-Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 8 Nov 2018 10:39:03 -0800
-Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
- fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 8 Nov 2018 10:39:02 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
- LCSMSX153.ger.corp.intel.com ([169.254.8.236]) with mapi id 14.03.0415.000;
- Thu, 8 Nov 2018 20:39:00 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "Nayna Jain" <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 16/17] tpm: take TPM chip power gating out of
- tpm_transmit()
-Thread-Topic: [PATCH v5 16/17] tpm: take TPM chip power gating out of
- tpm_transmit()
-Thread-Index: AQHUd238CNv13jYvhU+0nbO7Ml7SjKVGNDsw
-Date:   Thu, 8 Nov 2018 18:38:59 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA18602@hasmsx108.ger.corp.intel.com>
-References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTg0NzZhNmItYTVmMC00NzViLWE4ZDAtMDRiNTcxMDlkMDZmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiWHl3Q0V0M2FHS3JwMklsekdjeGlMTmx6cHJYZ2c2REJickZuRUsxM2hwSWNucWZrSGdKdTN5SmRPUUdiR25wKyJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.255.203.64]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+   d="scan'208";a="106464378"
+Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
+  by fmsmga001.fm.intel.com with ESMTP; 08 Nov 2018 10:52:44 -0800
+Date:   Thu, 8 Nov 2018 20:52:43 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v4 6/6] tpm: ensure that the output of PCR read contains
+ the correct digest size
+Message-ID: <20181108185243.GA20608@linux.intel.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-7-roberto.sassu@huawei.com>
+ <20181108140814.GF8922@linux.intel.com>
+ <353ac2d0-591f-f950-f3ad-18e6a4f6085c@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <353ac2d0-591f-f950-f3ad-18e6a4f6085c@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Nov 08, 2018 at 03:47:39PM +0100, Roberto Sassu wrote:
+> > > +		for (i = 0; i < chip->nr_active_banks &&
+> > > +		     chip->active_banks[i].alg_id != digest_struct->alg_id; i++)
+> > > +			;
+> > 
+> > Not sure if the semicolon should be in its own line.
+> 
+> scripts/Lindent suggests:
+> 
+> for (i = 0; i < chip->nr_active_banks &&
+>      chip->active_banks[i].alg_id != digest_struct->alg_id;
+>      i++) ;
+> 
+> but this is not accepted by scripts/checkpatch.pl (there are no
+> warnings/errors on the patch I sent).
 
+Yeah, not a really blocker for me.
 
-> Call tpm_chip_start() and tpm_chip_stop() in
-> 
-> * tpm_try_get_ops() and tpm_put_ops()
-> * tpm_chip_register()
-> * tpm2_del_space()
-> 
-> And remove these calls from tpm_transmit(). The core reason for this change
-> is that in tpm_vtpm_proxy a locality change requires a virtual TPM command
-> (a command made up just for that driver).
-> 
-I don't think you can do that,  locality has to be request for each command, as  for example tboot can request higher locality any time. 
-Same for cmd_ready()/go_idle() powergatin, you will prevent the whole platform entering power save state.
-Thanks
-Tomas
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-
-
-> The consequence of this is that this commit removes the remaining nested
-> calls.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/char/tpm/tpm-chip.c       | 19 ++++++-------------
->  drivers/char/tpm/tpm-interface.c  |  4 ----
->  drivers/char/tpm/tpm.h            |  9 ---------
->  drivers/char/tpm/tpm2-space.c     |  5 ++++-
->  drivers/char/tpm/tpm_vtpm_proxy.c |  3 +--
->  5 files changed, 11 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c index
-> 65f1561eba81..87570182f75e 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -41,9 +41,6 @@ static int tpm_request_locality(struct tpm_chip *chip,
-> unsigned int flags)  {
->  	int rc;
-> 
-> -	if (flags & TPM_TRANSMIT_NESTED)
-> -		return 0;
-> -
->  	if (!chip->ops->request_locality)
->  		return 0;
-> 
-> @@ -59,9 +56,6 @@ static void tpm_relinquish_locality(struct tpm_chip
-> *chip, unsigned int flags)  {
->  	int rc;
-> 
-> -	if (flags & TPM_TRANSMIT_NESTED)
-> -		return;
-> -
->  	if (!chip->ops->relinquish_locality)
->  		return;
-> 
-> @@ -74,9 +68,6 @@ static void tpm_relinquish_locality(struct tpm_chip
-> *chip, unsigned int flags)
-> 
->  static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)  {
-> -	if (flags & TPM_TRANSMIT_NESTED)
-> -		return 0;
-> -
->  	if (!chip->ops->cmd_ready)
->  		return 0;
-> 
-> @@ -85,9 +76,6 @@ static int tpm_cmd_ready(struct tpm_chip *chip,
-> unsigned int flags)
-> 
->  static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)  {
-> -	if (flags & TPM_TRANSMIT_NESTED)
-> -		return 0;
-> -
->  	if (!chip->ops->go_idle)
->  		return 0;
-> 
-> @@ -169,7 +157,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
->  		goto out_lock;
-> 
->  	mutex_lock(&chip->tpm_mutex);
-> -	return 0;
-> +	return tpm_chip_start(chip, 0);
->  out_lock:
->  	up_read(&chip->ops_sem);
->  	put_device(&chip->dev);
-> @@ -186,6 +174,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
->   */
->  void tpm_put_ops(struct tpm_chip *chip)  {
-> +	tpm_chip_stop(chip, 0);
->  	mutex_unlock(&chip->tpm_mutex);
->  	up_read(&chip->ops_sem);
->  	put_device(&chip->dev);
-> @@ -563,7 +552,11 @@ int tpm_chip_register(struct tpm_chip *chip)  {
->  	int rc;
-> 
-> +	rc = tpm_chip_start(chip, 0);
-> +	if (rc)
-> +		return rc;
->  	rc = tpm_auto_startup(chip);
-> +	tpm_chip_stop(chip, 0);
->  	if (rc)
->  		return rc;
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
-> interface.c
-> index 888c9923fca1..5c04c0d9aaba 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -168,11 +168,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8
-> *buf, size_t bufsiz,
->  	memcpy(save, buf, save_size);
-> 
->  	for (;;) {
-> -		ret = tpm_chip_start(chip, flags);
-> -		if (ret)
-> -			return ret;
->  		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
-> -		tpm_chip_stop(chip, flags);
-> 
->  		rc = be32_to_cpu(header->return_code);
->  		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING) diff --
-> git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> c42a75710b70..f9d56dfd0d20 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -485,15 +485,6 @@ extern const struct file_operations tpm_fops;
-> extern const struct file_operations tpmrm_fops;  extern struct idr
-> dev_nums_idr;
-> 
-> -/**
-> - * enum tpm_transmit_flags - flags for tpm_transmit()
-> - *
-> - * %TPM_TRANSMIT_NESTED:	discard setup steps (power management,
-> locality)
-> - */
-> -enum tpm_transmit_flags {
-> -	TPM_TRANSMIT_NESTED      = BIT(0),
-> -};
-> -
->  ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
->  		     unsigned int flags);
->  ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf, diff -
-> -git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> index 341d4b90ba2f..8ed063b54040 100644
-> --- a/drivers/char/tpm/tpm2-space.c
-> +++ b/drivers/char/tpm/tpm2-space.c
-> @@ -60,7 +60,10 @@ int tpm2_init_space(struct tpm_space *space)  void
-> tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)  {
->  	mutex_lock(&chip->tpm_mutex);
-> -	tpm2_flush_sessions(chip, space);
-> +	if (!tpm_chip_start(chip, 0)) {
-> +		tpm2_flush_sessions(chip, space);
-> +		tpm_chip_stop(chip, 0);
-> +	}
->  	mutex_unlock(&chip->tpm_mutex);
->  	kfree(space->context_buf);
->  	kfree(space->session_buf);
-> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c
-> b/drivers/char/tpm/tpm_vtpm_proxy.c
-> index e8a1da2810a9..a4bb60e163cc 100644
-> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> @@ -417,8 +417,7 @@ static int vtpm_proxy_request_locality(struct
-> tpm_chip *chip, int locality)
-> 
->  	proxy_dev->state |= STATE_DRIVER_COMMAND;
-> 
-> -	rc = tpm_transmit_cmd(chip, &buf, 0, TPM_TRANSMIT_NESTED,
-> -			      "attempting to set locality");
-> +	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
-> 
->  	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
-> 
-> --
-> 2.19.1
-
+/Jarkko
