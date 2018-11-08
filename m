@@ -2,108 +2,353 @@ Return-Path: <SRS0=rvaM=NT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A798FECDE47
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD13ECDE47
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 17:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 799472077B
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:54:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799472077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EFF2920825
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 17:03:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF2920825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeKIBbA (ORCPT
+        id S1727252AbeKICkA convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Nov 2018 20:31:00 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58684 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726700AbeKIBbA (ORCPT
+        Thu, 8 Nov 2018 21:40:00 -0500
+Received: from mga14.intel.com ([192.55.52.115]:24683 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726780AbeKICkA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:31:00 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8Fs8px040195
-        for <linux-security-module@vger.kernel.org>; Thu, 8 Nov 2018 10:54:52 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmnum7d5n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Nov 2018 10:54:51 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <kgold@linux.ibm.com>;
-        Thu, 8 Nov 2018 15:54:45 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Nov 2018 15:54:43 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8Fsgpj37355726
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 15:54:42 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42CFCAC05F;
-        Thu,  8 Nov 2018 15:54:42 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2F189AC059;
-        Thu,  8 Nov 2018 15:54:42 +0000 (GMT)
-Received: from [9.74.9.249] (unknown [9.74.9.249])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Nov 2018 15:54:42 +0000 (GMT)
-Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-2-roberto.sassu@huawei.com>
- <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
- <da2ef557-3041-a1ca-47cb-fd7ab92876aa@huawei.com>
- <086944ab-dd56-5522-af26-e9bb545556fd@linux.ibm.com>
- <20181108152124.GE14072@linux.intel.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-Date:   Thu, 8 Nov 2018 10:54:38 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181108152124.GE14072@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+        Thu, 8 Nov 2018 21:40:00 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 09:03:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="278214638"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 09:03:34 -0800
+Received: from fmsmsx152.amr.corp.intel.com (10.18.125.5) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 8 Nov 2018 09:03:33 -0800
+Received: from HASMSX109.ger.corp.intel.com (10.184.198.21) by
+ FMSMSX152.amr.corp.intel.com (10.18.125.5) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 8 Nov 2018 09:03:33 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
+ hasmsx109.ger.corp.intel.com ([169.254.3.7]) with mapi id 14.03.0415.000;
+ Thu, 8 Nov 2018 19:03:30 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 09/17] tpm: move tpm_validate_commmand() to
+ tpm2-space.c
+Thread-Topic: [PATCH v5 09/17] tpm: move tpm_validate_commmand() to
+ tpm2-space.c
+Thread-Index: AQHUd22+oc6RxW5vx0q+z+0w19EPqqVGGrzA
+Date:   Thu, 8 Nov 2018 17:03:29 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA18589@hasmsx108.ger.corp.intel.com>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-10-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181108141541.12832-10-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18110815-0040-0000-0000-0000048F25A6
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000269; SDB=6.01114506; UDB=6.00577119; IPR=6.00894604;
- MB=3.00024076; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 15:54:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110815-0041-0000-0000-000008982BE8
-Message-Id: <74cc831a-f4b6-6c59-58d8-f3f74c283346@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=642 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811080134
-To:     unlisted-recipients:; (no To-header on input)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjQ1YjBmMWEtZDRjMy00NDE3LTk5NzQtMmRlMTcyZTNkNDQ3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieDcrUXNNYVF2bHZSVEtaQkJcL2RLRzlweTNkRHBwSHVha0lld2ZTWDZZNlo0RFdGVHRNNEVUM3JNMDk4WFhFVlQifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.255.203.64]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/8/2018 10:21 AM, Jarkko Sakkinen wrote:
 
-> I would just allocate array of the size of possible banks and grow
-> nr_active_banks for active algorithms to keep the code simple because
-> we are talking about insignificant amount of wasted space (might be
-> even zero bytes given how kernel allocators works)>
+> 
+> Move tpm_validate_command() to tpm2-space.c and make it part of the
+> tpm2_prepare_space() flow. Make cc resolution as part of the TPM space
+> functionality in order to detach it from rest of the tpm_transmit() flow.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 72 +++++++-------------------------
+>  drivers/char/tpm/tpm.h           |  9 ++--
+>  drivers/char/tpm/tpm2-space.c    | 54 +++++++++++++++++++++---
+>  3 files changed, 68 insertions(+), 67 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> interface.c
+> index f2280bf15339..a6ffd0960ae5 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -62,47 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct
+> tpm_chip *chip, u32 ordinal)  }
+> EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+> 
+> -static int tpm_validate_command(struct tpm_chip *chip,
+> -				 struct tpm_space *space,
+> -				 const u8 *cmd,
+> -				 size_t len)
+> -{
+> -	const struct tpm_header *header = (const void *)cmd;
+> -	int i;
+> -	u32 cc;
+> -	u32 attrs;
+> -	unsigned int nr_handles;
+> -
+> -	if (len < TPM_HEADER_SIZE)
+> -		return -EINVAL;
+> -
+> -	if (!space)
+> -		return 0;
+> -
+> -	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
+> -		cc = be32_to_cpu(header->ordinal);
+> -
+> -		i = tpm2_find_cc(chip, cc);
+> -		if (i < 0) {
+> -			dev_dbg(&chip->dev, "0x%04X is an invalid
+> command\n",
+> -				cc);
+> -			return -EOPNOTSUPP;
+> -		}
+> -
+> -		attrs = chip->cc_attrs_tbl[i];
+> -		nr_handles =
+> -			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) &
+> GENMASK(2, 0));
+> -		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
+> -			goto err_len;
+> -	}
+> -
+> -	return 0;
+> -err_len:
+> -	dev_dbg(&chip->dev,
+> -		"%s: insufficient command length %zu", __func__, len);
+> -	return -EINVAL;
+> -}
+> -
+>  static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)  {
+>  	int rc;
+> @@ -172,20 +131,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip
+> *chip,
+>  	u32 count, ordinal;
+>  	unsigned long stop;
+> 
+> -	rc = tpm_validate_command(chip, space, buf, bufsiz);
+> -	if (rc == -EINVAL)
+> -		return rc;
+> -	/*
+> -	 * If the command is not implemented by the TPM, synthesize a
+> -	 * response with a TPM2_RC_COMMAND_CODE return for user-
+> space.
+> -	 */
+> -	if (rc == -EOPNOTSUPP) {
+> -		header->length = cpu_to_be32(sizeof(*header));
+> -		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+> -		header->return_code =
+> cpu_to_be32(TPM2_RC_COMMAND_CODE |
+> -
+> TSS2_RESMGR_TPM_RC_LAYER);
+> -		return sizeof(*header);
+> -	}
+> +	if (bufsiz < TPM_HEADER_SIZE)
+> +		return -EINVAL;
+> 
+>  	if (bufsiz > TPM_BUFSIZE)
+>  		bufsiz = TPM_BUFSIZE;
+> @@ -200,7 +147,18 @@ static ssize_t tpm_try_transmit(struct tpm_chip
+> *chip,
+>  		return -E2BIG;
+>  	}
+> 
+> -	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+> +	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
+> +	/*
+> +	 * If the command is not implemented by the TPM, synthesize a
+> +	 * response with a TPM2_RC_COMMAND_CODE return for user-
+> space.
+> +	 */
+> +	if (rc == -EOPNOTSUPP) {
+> +		header->length = cpu_to_be32(sizeof(*header));
+> +		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+> +		header->return_code =
+> cpu_to_be32(TPM2_RC_COMMAND_CODE |
+> +
+> TSS2_RESMGR_TPM_RC_LAYER);
+> +		return sizeof(*header);
+> +	}
+>  	if (rc)
+>  		return rc;
+> 
+> @@ -249,7 +207,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip
+> *chip,
+>  	if (rc)
+>  		tpm2_flush_space(chip);
+>  	else
+> -		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> +		rc = tpm2_commit_space(chip, space, buf, &len);
+> 
+>  	return rc ? rc : len;
+>  }
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
+> 92638ec6ec97..68d78ebba032 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -264,6 +264,7 @@ struct tpm_chip {
+>  #endif /* CONFIG_ACPI */
+> 
+>  	struct tpm_space work_space;
+> +	u32 last_cc;
+>  	u32 nr_commands;
+>  	u32 *cc_attrs_tbl;
+> 
+> @@ -577,10 +578,10 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+> int tpm2_init_space(struct tpm_space *space);  void tpm2_del_space(struct
+> tpm_chip *chip, struct tpm_space *space);  void tpm2_flush_space(struct
+> tpm_chip *chip); -int tpm2_prepare_space(struct tpm_chip *chip, struct
+> tpm_space *space, u32 cc,
+> -		       u8 *cmd);
+> -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> -		      u32 cc, u8 *buf, size_t *bufsiz);
+> +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space,
+> u8 *cmd,
+> +		       size_t cmdsiz);
+> +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> u8 *buf,
+> +		       size_t *bufsiz);
+> 
+>  int tpm_bios_log_setup(struct tpm_chip *chip);  void
+> tpm_bios_log_teardown(struct tpm_chip *chip); diff --git
+> a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c index
+> 393d9aadadce..f35ac941c3a4 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -264,14 +264,55 @@ static int tpm2_map_command(struct tpm_chip
+> *chip, u32 cc, u8 *cmd)
+>  	return 0;
+>  }
+> 
+> -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space,
+> u32 cc,
+> -		       u8 *cmd)
+> +static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space
+> *space,
+> +				const u8 *cmd, size_t len)
+> +{
+> +	const struct tpm_input_header *header = (const void *)cmd;
+> +	int i;
+> +	u32 cc;
+> +	u32 attrs;
+> +	unsigned int nr_handles;
+> +
+> +	if (len < TPM_HEADER_SIZE)
+> +		return -EINVAL;
+> +
+> +	if (chip->nr_commands) {
+> +		cc = be32_to_cpu(header->ordinal);
+You initialized cc under if only 
+> +
+> +		i = tpm2_find_cc(chip, cc);
+> +		if (i < 0) {
+> +			dev_dbg(&chip->dev, "0x%04X is an invalid
+> command\n",
+> +				cc);
+> +			return -EOPNOTSUPP;
+> +		}
+> +
+> +		attrs = chip->cc_attrs_tbl[i];
+> +		nr_handles =
+> +			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) &
+> GENMASK(2, 0));
+> +		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
+> +			goto err_len;
+> +	}
+> +
+> +	return cc;
+You can return uninitialized cc here.
 
-Just beware that "possible banks" is tricky.  While 2 is typical, 
-getcapability will return a bitmap for each digest algorithm.  This is
-also currently 2, but will be 3 in the next TPM, is 4 in the SW TPM,
-and is potentially even higher.
-
-Also, account for a TPM that is malicious and can return a count
-as high as 0xffffffff.  Range check count.
-
-
+> +err_len:
+> +	dev_dbg(&chip->dev, "%s: insufficient command length %zu",
+> __func__,
+> +		len);
+> +	return -EINVAL;
+> +}
+> +
+> +int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space,
+> u8 *cmd,
+> +		       size_t cmdsiz)
+>  {
+>  	int rc;
+> +	int cc;
+> 
+>  	if (!space)
+>  		return 0;
+> 
+> +	cc = tpm_validate_command(chip, space, cmd, cmdsiz);
+> +	if (cc < 0)
+> +		return cc;
+> +
+>  	memcpy(&chip->work_space.context_tbl, &space->context_tbl,
+>  	       sizeof(space->context_tbl));
+>  	memcpy(&chip->work_space.session_tbl, &space->session_tbl, @@ -
+> 291,6 +332,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct
+> tpm_space *space, u32 cc,
+>  		return rc;
+>  	}
+> 
+> +	chip->last_cc = cc;
+>  	return 0;
+>  }
+> 
+> @@ -489,8 +531,8 @@ static int tpm2_save_space(struct tpm_chip *chip)
+>  	return 0;
+>  }
+> 
+> -int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> -		      u32 cc, u8 *buf, size_t *bufsiz)
+> +int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> u8 *buf,
+> +		      size_t *bufsiz)
+>  {
+>  	struct tpm_header *header = (void *)buf;
+>  	int rc;
+> @@ -498,13 +540,13 @@ int tpm2_commit_space(struct tpm_chip *chip,
+> struct tpm_space *space,
+>  	if (!space)
+>  		return 0;
+> 
+> -	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
+> +	rc = tpm2_map_response_header(chip, chip->last_cc, buf, *bufsiz);
+>  	if (rc) {
+>  		tpm2_flush_space(chip);
+>  		goto out;
+>  	}
+> 
+> -	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
+> +	rc = tpm2_map_response_body(chip, chip->last_cc, buf, *bufsiz);
+>  	if (rc) {
+>  		tpm2_flush_space(chip);
+>  		goto out;
+> --
+> 2.19.1
 
