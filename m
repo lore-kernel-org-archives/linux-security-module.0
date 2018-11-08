@@ -2,87 +2,294 @@ Return-Path: <SRS0=rvaM=NT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F351CECDE4B
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41909ECDE4B
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C18912077B
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C18912077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 011602077B
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:17:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 011602077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbeKIAvI (ORCPT
+        id S1726469AbeKIAw7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:51:08 -0500
-Received: from mga01.intel.com ([192.55.52.88]:44710 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbeKIAvH (ORCPT
+        Thu, 8 Nov 2018 19:52:59 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47594 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726509AbeKIAw6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:51:07 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 07:15:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="278183687"
-Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 07:15:05 -0800
-Date:   Thu, 8 Nov 2018 17:15:04 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v4 4/6] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-Message-ID: <20181108151504.GD14072@linux.intel.com>
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-5-roberto.sassu@huawei.com>
- <20181108140454.GE8922@linux.intel.com>
- <7a43680a-a216-a191-62a3-c2fb4e72d699@huawei.com>
+        Thu, 8 Nov 2018 19:52:58 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8FFK6e035201
+        for <linux-security-module@vger.kernel.org>; Thu, 8 Nov 2018 10:16:59 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nmpqh2ywd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Nov 2018 10:16:59 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Thu, 8 Nov 2018 15:16:58 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 8 Nov 2018 15:16:55 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8FGsbF4981072
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 15:16:54 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8C313B2068;
+        Thu,  8 Nov 2018 15:16:54 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 512DAB2066;
+        Thu,  8 Nov 2018 15:16:54 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  8 Nov 2018 15:16:54 +0000 (GMT)
+Subject: Re: [PATCH v5 11/17] tpm: move TPM space code out of tpm_transmit()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-12-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Thu, 8 Nov 2018 10:16:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a43680a-a216-a191-62a3-c2fb4e72d699@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181108141541.12832-12-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18110815-0064-0000-0000-00000370C715
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000269; SDB=6.01114494; UDB=6.00577118; IPR=6.00894592;
+ MB=3.00024076; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 15:16:58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110815-0065-0000-0000-00003B44EDA9
+Message-Id: <23545a3e-9792-3a22-97eb-9744079b9ea4@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811080129
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 08, 2018 at 03:16:03PM +0100, Roberto Sassu wrote:
-> On 11/8/2018 3:04 PM, Jarkko Sakkinen wrote:
-> > On Tue, Nov 06, 2018 at 04:01:57PM +0100, Roberto Sassu wrote:
-> > > Currently the TPM driver allows other kernel subsystems to read only the
-> > > SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
-> > > tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
-> > > hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
-> > > RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
-> > > the new parameter is expected to be always not NULL.
-> > > 
-> > > Due to the API change, IMA functions have been modified.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> > 
-> > Does not apply to the current upstream (with tpm1-cmd.c).
-> 
-> Unfortunately, I cannot fetch the repository as infradead.org only
-> supports the git protocol (I'm behind a proxy).
-> 
-> Roberto
+On 11/8/18 9:15 AM, Jarkko Sakkinen wrote:
+> Prepare and commit TPM space before and after calling tpm_transmit()
+> instead of doing that inside tpm_transmit(). After this change we can
+> remove TPM_TRANSMIT_NESTED flag from tpm2_prepare_space() and
+> tpm2_commit_space() and replace it with TPM_TRANSMIT_UNLOCKED.
+>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>   drivers/char/tpm/tpm-dev-common.c | 30 ++++++++++++++++++++++++++----
+>   drivers/char/tpm/tpm-interface.c  | 29 +++--------------------------
+>   drivers/char/tpm/tpm2-space.c     | 14 +++++++-------
+>   3 files changed, 36 insertions(+), 37 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> index cbb0ee30b511..40c1cb09ebd2 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -30,13 +30,35 @@ static DEFINE_MUTEX(tpm_dev_wq_lock);
+>   static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>   				u8 *buf, size_t bufsiz)
+>   {
+> -	ssize_t ret;
+> +	struct tpm_header *header = (void *)buf;
+> +	ssize_t ret, len;
+>
+>   	mutex_lock(&chip->tpm_mutex);
+> -	ret = tpm_transmit(chip, space, buf, bufsiz, TPM_TRANSMIT_UNLOCKED);
+> -	mutex_unlock(&chip->tpm_mutex);
+> +	ret = tpm2_prepare_space(chip, space, buf, bufsiz);
+> +	/* If the command is not implemented by the TPM, synthesize a
+> +	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
+> +	 */
+> +	if (ret == -EOPNOTSUPP) {
+> +		header->length = cpu_to_be32(sizeof(*header));
+> +		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+> +		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+> +						  TSS2_RESMGR_TPM_RC_LAYER);
+> +		ret = sizeof(*header);
+> +	}
+> +	if (ret)
+> +		goto out_lock;
+>
+> -	return ret;
+> +	len = tpm_transmit(chip, space, buf, bufsiz, TPM_TRANSMIT_UNLOCKED);
+> +	if (len < 0)
+> +		ret = len;
+> +
+> +	if (ret)
+> +		tpm2_flush_space(chip);
+> +	else
+> +		ret = tpm2_commit_space(chip, space, buf, &len);
+> +out_lock:
+> +	mutex_unlock(&chip->tpm_mutex);
+> +	return ret ? ret : len;
+>   }
+>
+>   static void tpm_dev_async_work(struct work_struct *work)
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index a6ffd0960ae5..7bec03e46043 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -147,27 +147,12 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   		return -E2BIG;
+>   	}
+>
+> -	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
+> -	/*
+> -	 * If the command is not implemented by the TPM, synthesize a
+> -	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
+> -	 */
+> -	if (rc == -EOPNOTSUPP) {
+> -		header->length = cpu_to_be32(sizeof(*header));
+> -		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+> -		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+> -						  TSS2_RESMGR_TPM_RC_LAYER);
+> -		return sizeof(*header);
+> -	}
+> -	if (rc)
+> -		return rc;
+> -
+>   	rc = chip->ops->send(chip, buf, count);
+>   	if (rc < 0) {
+>   		if (rc != -EPIPE)
+>   			dev_err(&chip->dev,
+>   				"%s: tpm_send: error %d\n", __func__, rc);
+> -		goto out_space;
+> +		return rc;
+>   	}
+>
+>   	if (chip->flags & TPM_CHIP_FLAG_IRQ)
+> @@ -182,8 +167,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>
+>   		if (chip->ops->req_canceled(chip, status)) {
+>   			dev_err(&chip->dev, "Operation Canceled\n");
+> -			rc = -ECANCELED;
+> -			goto out_space;
+> +			return -ECANCELED;
+>   		}
+>
+>   		tpm_msleep(TPM_TIMEOUT_POLL);
+> @@ -192,8 +176,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>
+>   	chip->ops->cancel(chip);
+>   	dev_err(&chip->dev, "Operation Timed out\n");
+> -	rc = -ETIME;
+> -	goto out_space;
+> +	return -ETIME;
+>
+>   out_recv:
+>   	len = chip->ops->recv(chip, buf, bufsiz);
+> @@ -203,12 +186,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   	} else if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
+>   		rc = -EFAULT;
+>
+> -out_space:
+> -	if (rc)
+> -		tpm2_flush_space(chip);
+> -	else
+> -		rc = tpm2_commit_space(chip, space, buf, &len);
+> -
+>   	return rc ? rc : len;
+>   }
+>
+> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> index f35ac941c3a4..9c009db15f88 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -39,7 +39,7 @@ static void tpm2_flush_sessions(struct tpm_chip *chip, struct tpm_space *space)
+>   	for (i = 0; i < ARRAY_SIZE(space->session_tbl); i++) {
+>   		if (space->session_tbl[i])
+>   			tpm2_flush_context_cmd(chip, space->session_tbl[i],
+> -					       TPM_TRANSMIT_NESTED);
+> +					       TPM_TRANSMIT_UNLOCKED);
+>   	}
+>   }
+>
+> @@ -84,7 +84,7 @@ static int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
+>   	tpm_buf_append(&tbuf, &buf[*offset], body_size);
+>
+>   	rc = tpm_transmit_cmd(chip, NULL, &tbuf, 4,
+> -			      TPM_TRANSMIT_NESTED, NULL);
+> +			      TPM_TRANSMIT_UNLOCKED, NULL);
+>   	if (rc < 0) {
+>   		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
+>   			 __func__, rc);
+> @@ -133,7 +133,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
+>   	tpm_buf_append_u32(&tbuf, handle);
+>
+>   	rc = tpm_transmit_cmd(chip, NULL, &tbuf, 0,
+> -			      TPM_TRANSMIT_NESTED, NULL);
+> +			      TPM_TRANSMIT_UNLOCKED, NULL);
+>   	if (rc < 0) {
+>   		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
+>   			 __func__, rc);
+> @@ -170,7 +170,7 @@ void tpm2_flush_space(struct tpm_chip *chip)
+>   	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
+>   		if (space->context_tbl[i] && ~space->context_tbl[i])
+>   			tpm2_flush_context_cmd(chip, space->context_tbl[i],
+> -					       TPM_TRANSMIT_NESTED);
+> +					       TPM_TRANSMIT_UNLOCKED);
+>
+>   	tpm2_flush_sessions(chip, space);
+>   }
+> @@ -267,7 +267,7 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
+>   static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space *space,
+>   				const u8 *cmd, size_t len)
+>   {
+> -	const struct tpm_input_header *header = (const void *)cmd;
+> +	const struct tpm_header *header = (const void *)cmd;
 
-I use a proxy script similar to this:
 
-https://gist.github.com/sit/49288
+You'll have to move this...
 
-(random googling but gives the idea)
 
-/Jarkko
+>   	int i;
+>   	u32 cc;
+>   	u32 attrs;
+> @@ -419,7 +419,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
+>
+>   	return 0;
+>   out_no_slots:
+> -	tpm2_flush_context_cmd(chip, phandle, TPM_TRANSMIT_NESTED);
+> +	tpm2_flush_context_cmd(chip, phandle, TPM_TRANSMIT_UNLOCKED);
+>   	dev_warn(&chip->dev, "%s: out of slots for 0x%08X\n", __func__,
+>   		 phandle);
+>   	return -ENOMEM;
+> @@ -507,7 +507,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
+>   			return rc;
+>
+>   		tpm2_flush_context_cmd(chip, space->context_tbl[i],
+> -				       TPM_TRANSMIT_NESTED);
+> +				       TPM_TRANSMIT_UNLOCKED);
+>   		space->context_tbl[i] = ~0;
+>   	}
+>
+
+The rest looks good.
+
