@@ -2,128 +2,87 @@ Return-Path: <SRS0=rvaM=NT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 413EEECDE47
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F351CECDE4B
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159CA20827
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:03:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159CA20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C18912077B
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:15:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C18912077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbeKIAjL (ORCPT
+        id S1726862AbeKIAvI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:39:11 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60172 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726609AbeKIAjL (ORCPT
+        Thu, 8 Nov 2018 19:51:08 -0500
+Received: from mga01.intel.com ([192.55.52.88]:44710 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726758AbeKIAvH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:39:11 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8ExOjM104714
-        for <linux-security-module@vger.kernel.org>; Thu, 8 Nov 2018 10:03:16 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nmpqh2955-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Nov 2018 10:03:14 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Thu, 8 Nov 2018 15:03:13 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Nov 2018 15:03:10 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8F39Ej28835840
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 15:03:09 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D381FB2066;
-        Thu,  8 Nov 2018 15:03:09 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 82873B2067;
-        Thu,  8 Nov 2018 15:03:08 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Nov 2018 15:03:08 +0000 (GMT)
-Subject: Re: [PATCH v5 08/17] tpm: access command header through struct in
- tpm_try_transmit()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-9-jarkko.sakkinen@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Thu, 8 Nov 2018 10:03:08 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 8 Nov 2018 19:51:07 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 07:15:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="278183687"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 07:15:05 -0800
+Date:   Thu, 8 Nov 2018 17:15:04 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v4 4/6] tpm: modify tpm_pcr_read() definition to pass a
+ TPM hash algorithm
+Message-ID: <20181108151504.GD14072@linux.intel.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-5-roberto.sassu@huawei.com>
+ <20181108140454.GE8922@linux.intel.com>
+ <7a43680a-a216-a191-62a3-c2fb4e72d699@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20181108141541.12832-9-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18110815-0040-0000-0000-0000048F2112
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000269; SDB=6.01114489; UDB=6.00577119; IPR=6.00894588;
- MB=3.00024076; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 15:03:13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110815-0041-0000-0000-00000898274C
-Message-Id: <9bb8277d-87c3-34b4-341b-66db5d0b671a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811080128
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7a43680a-a216-a191-62a3-c2fb4e72d699@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/8/18 9:15 AM, Jarkko Sakkinen wrote:
-> Instead of accessing fields of the command header through offsets to
-> the raw buffer, it is a better idea to use the header struct pointer
-> that is already used elsewhere in the function.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Thu, Nov 08, 2018 at 03:16:03PM +0100, Roberto Sassu wrote:
+> On 11/8/2018 3:04 PM, Jarkko Sakkinen wrote:
+> > On Tue, Nov 06, 2018 at 04:01:57PM +0100, Roberto Sassu wrote:
+> > > Currently the TPM driver allows other kernel subsystems to read only the
+> > > SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+> > > tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
+> > > hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
+> > > RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
+> > > the new parameter is expected to be always not NULL.
+> > > 
+> > > Due to the API change, IMA functions have been modified.
+> > > 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> > 
+> > Does not apply to the current upstream (with tpm1-cmd.c).
+> 
+> Unfortunately, I cannot fetch the repository as infradead.org only
+> supports the git protocol (I'm behind a proxy).
+> 
+> Roberto
 
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+I use a proxy script similar to this:
 
+https://gist.github.com/sit/49288
 
-> ---
->   drivers/char/tpm/tpm-interface.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 6abbcedc87a3..f2280bf15339 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -190,8 +190,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->   	if (bufsiz > TPM_BUFSIZE)
->   		bufsiz = TPM_BUFSIZE;
->
-> -	count = be32_to_cpu(*((__be32 *) (buf + 2)));
-> -	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
-> +	count = be32_to_cpu(header->length);
-> +	ordinal = be32_to_cpu(header->ordinal);
->   	if (count == 0)
->   		return -ENODATA;
->   	if (count > bufsiz) {
+(random googling but gives the idea)
 
-
+/Jarkko
