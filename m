@@ -4,55 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68BDECDE4B
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1860ECDE4C
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADEDA2081D
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADEDA2081D
+	by mail.kernel.org (Postfix) with ESMTP id A31DE2081D
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:02:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A31DE2081D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbeKIAf4 (ORCPT
+        id S1726672AbeKIAiX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:35:56 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57778 "EHLO
+        Thu, 8 Nov 2018 19:38:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53516 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726421AbeKIAf4 (ORCPT
+        by vger.kernel.org with ESMTP id S1726583AbeKIAiW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:35:56 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8ExfuO011723
-        for <linux-security-module@vger.kernel.org>; Thu, 8 Nov 2018 10:00:02 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nmpcru8f9-1
+        Thu, 8 Nov 2018 19:38:22 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8ExT7Q133075
+        for <linux-security-module@vger.kernel.org>; Thu, 8 Nov 2018 10:02:26 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmprpa2mv-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 08 Nov 2018 10:00:01 -0500
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Nov 2018 10:02:26 -0500
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Thu, 8 Nov 2018 15:00:01 -0000
+        Thu, 8 Nov 2018 15:02:25 -0000
 Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Nov 2018 14:59:57 -0000
+        Thu, 8 Nov 2018 15:02:21 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8ExuXL46137436
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8F2KGE46399590
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 14:59:56 GMT
+        Thu, 8 Nov 2018 15:02:20 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E8E2B2064;
-        Thu,  8 Nov 2018 14:59:56 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 3885BB205F;
+        Thu,  8 Nov 2018 15:02:20 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED8A9B205F;
-        Thu,  8 Nov 2018 14:59:55 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 79060B2067;
+        Thu,  8 Nov 2018 15:02:19 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Nov 2018 14:59:55 +0000 (GMT)
-Subject: Re: [PATCH v5 06/17] tpm: clean up tpm_try_transmit() error handling
- flow
+        Thu,  8 Nov 2018 15:02:19 +0000 (GMT)
+Subject: Re: [PATCH v5 07/17] tpm: declare struct tpm_header
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -64,164 +63,289 @@ Cc:     linux-security-module@vger.kernel.org,
         Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Microchip (AT91) SoC support" 
+        <linux-arm-kernel@lists.infradead.org>
 References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-7-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-8-jarkko.sakkinen@linux.intel.com>
 From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Thu, 8 Nov 2018 09:59:55 -0500
+Date:   Thu, 8 Nov 2018 10:02:19 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181108141541.12832-7-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181108141541.12832-8-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-MW
 X-TM-AS-GCONF: 00
-x-cbid: 18110814-0040-0000-0000-0000048F2079
+x-cbid: 18110815-0052-0000-0000-00000352ADD8
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000269; SDB=6.01114488; UDB=6.00577119; IPR=6.00894587;
- MB=3.00024076; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 14:59:59
+ PH=3.00000004; SC=3.00000268; SDB=6.01114489; UDB=6.00577814; IPR=6.00894588;
+ MB=3.00024075; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 15:02:24
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110814-0041-0000-0000-0000089826B4
-Message-Id: <8eb47b50-d94f-b7dd-f500-83640d88f427@linux.ibm.com>
+x-cbparentid: 18110815-0053-0000-0000-00005EB2BBB0
+Message-Id: <0683a6db-109f-e08e-eae7-636ee9c28540@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=993 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1811080128
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On 11/8/18 9:15 AM, Jarkko Sakkinen wrote:
-> Move locking, locality handling and power management to tpm_transmit()
-> in order to simplify the flow.
+> Decleare struct tpm_header that replaces struct tpm_input_header and
+> struct tpm_output_header.
 >
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
 
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
 
 > ---
->   drivers/char/tpm/tpm-interface.c | 71 ++++++++++++++++----------------
->   1 file changed, 35 insertions(+), 36 deletions(-)
+>   drivers/char/tpm/tpm-interface.c  |  9 ++++-----
+>   drivers/char/tpm/tpm.h            | 27 ++++++++++++---------------
+>   drivers/char/tpm/tpm2-cmd.c       |  4 ++--
+>   drivers/char/tpm/tpm2-space.c     |  6 +++---
+>   drivers/char/tpm/tpm_i2c_atmel.c  |  5 ++---
+>   drivers/char/tpm/tpm_vtpm_proxy.c |  8 ++++----
+>   drivers/char/tpm/xen-tpmfront.c   |  2 +-
+>   7 files changed, 28 insertions(+), 33 deletions(-)
 >
 > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 7ffb16edab6f..28d48799b044 100644
+> index 28d48799b044..6abbcedc87a3 100644
 > --- a/drivers/char/tpm/tpm-interface.c
 > +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -171,7 +171,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> @@ -67,7 +67,7 @@ static int tpm_validate_command(struct tpm_chip *chip,
+>   				 const u8 *cmd,
+>   				 size_t len)
+>   {
+> -	const struct tpm_input_header *header = (const void *)cmd;
+> +	const struct tpm_header *header = (const void *)cmd;
+>   	int i;
+>   	u32 cc;
+>   	u32 attrs;
+> @@ -166,7 +166,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   				u8 *buf, size_t bufsiz,
+>   				unsigned int flags)
+>   {
+> -	struct tpm_output_header *header = (void *)buf;
+> +	struct tpm_header *header = (void *)buf;
+>   	int rc;
 >   	ssize_t len = 0;
 >   	u32 count, ordinal;
->   	unsigned long stop;
-> -	bool need_locality;
->
->   	rc = tpm_validate_command(chip, space, buf, bufsiz);
->   	if (rc == -EINVAL)
-> @@ -201,30 +200,9 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->   		return -E2BIG;
->   	}
->
-> -	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
-> -		mutex_lock(&chip->tpm_mutex);
-> -
-> -	if (chip->ops->clk_enable != NULL)
-> -		chip->ops->clk_enable(chip, true);
-> -
-> -	/* Store the decision as chip->locality will be changed. */
-> -	need_locality = chip->locality == -1;
-> -
-> -	if (need_locality) {
-> -		rc = tpm_request_locality(chip, flags);
-> -		if (rc < 0) {
-> -			need_locality = false;
-> -			goto out_locality;
-> -		}
-> -	}
-> -
-> -	rc = tpm_cmd_ready(chip, flags);
-> -	if (rc)
-> -		goto out_locality;
-> -
->   	rc = tpm2_prepare_space(chip, space, ordinal, buf);
->   	if (rc)
-> -		goto out_idle;
-> +		return rc;
->
->   	rc = chip->ops->send(chip, buf, count);
->   	if (rc < 0) {
-> @@ -273,19 +251,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
->   	else
->   		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
->
-> -out_idle:
-> -	/* may fail but do not override previous error value in rc */
-> -	tpm_go_idle(chip, flags);
-> -
-> -out_locality:
-> -	if (need_locality)
-> -		tpm_relinquish_locality(chip, flags);
-> -
-> -	if (chip->ops->clk_enable != NULL)
-> -		chip->ops->clk_enable(chip, false);
-> -
-> -	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
-> -		mutex_unlock(&chip->tpm_mutex);
->   	return rc ? rc : len;
->   }
->
-> @@ -315,6 +280,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+> @@ -276,7 +276,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>   		     u8 *buf, size_t bufsiz, unsigned int flags)
+>   {
+> -	struct tpm_output_header *header = (struct tpm_output_header *)buf;
+> +	struct tpm_header *header = (struct tpm_header *)buf;
 >   	/* space for header and handles */
 >   	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
 >   	unsigned int delay_msec = TPM2_DURATION_SHORT;
-> +	bool has_locality = false;
->   	u32 rc = 0;
->   	ssize_t ret;
->   	const size_t save_size = min(space ? sizeof(save) : TPM_HEADER_SIZE,
-> @@ -330,7 +296,40 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   	memcpy(save, buf, save_size);
+> @@ -375,8 +375,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
+>   			 struct tpm_buf *buf, size_t min_rsp_body_length,
+>   			 unsigned int flags, const char *desc)
+>   {
+> -	const struct tpm_output_header *header =
+> -		(struct tpm_output_header *)buf->data;
+> +	const struct tpm_header *header = (struct tpm_header *)buf->data;
+>   	int err;
+>   	ssize_t len;
 >
->   	for (;;) {
-> +		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
-> +		    !(flags & TPM_TRANSMIT_NESTED))
-> +			mutex_lock(&chip->tpm_mutex);
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 229ac42b644e..92638ec6ec97 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -273,16 +273,13 @@ struct tpm_chip {
+>
+>   #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
+>
+> -struct tpm_input_header {
+> -	__be16	tag;
+> -	__be32	length;
+> -	__be32	ordinal;
+> -} __packed;
+> -
+> -struct tpm_output_header {
+> -	__be16	tag;
+> -	__be32	length;
+> -	__be32	return_code;
+> +struct tpm_header {
+> +	__be16 tag;
+> +	__be32 length;
+> +	union {
+> +		__be32 ordinal;
+> +		__be32 return_code;
+> +	};
+>   } __packed;
+>
+>   #define TPM_TAG_RQU_COMMAND 193
+> @@ -401,8 +398,8 @@ struct tpm_buf {
+>
+>   static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
+>   {
+> -	struct tpm_input_header *head;
+> -	head = (struct tpm_input_header *)buf->data;
+> +	struct tpm_header *head = (struct tpm_header *)buf->data;
 > +
-> +		if (chip->ops->clk_enable != NULL)
-> +			chip->ops->clk_enable(chip, true);
-> +
-> +		if (chip->locality == -1) {
-> +			ret = tpm_request_locality(chip, flags);
-> +			if (ret)
-> +				goto out_locality;
-> +			has_locality = true;
-> +		}
-> +
-> +		ret = tpm_cmd_ready(chip, flags);
-> +		if (ret)
-> +			goto out_locality;
-> +
->   		ret = tpm_try_transmit(chip, space, buf, bufsiz, flags);
-> +
-> +		/* This may fail but do not override ret. */
-> +		tpm_go_idle(chip, flags);
-> +
-> +out_locality:
-> +		if (has_locality)
-> +			tpm_relinquish_locality(chip, flags);
-> +
-> +		if (chip->ops->clk_enable != NULL)
-> +			chip->ops->clk_enable(chip, false);
-> +
-> +		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
-> +		    !(flags & TPM_TRANSMIT_NESTED))
-> +			mutex_unlock(&chip->tpm_mutex);
-> +
->   		if (ret < 0)
->   			break;
->   		rc = be32_to_cpu(header->return_code);
+>   	head->tag = cpu_to_be16(tag);
+>   	head->length = cpu_to_be32(sizeof(*head));
+>   	head->ordinal = cpu_to_be32(ordinal);
+> @@ -428,14 +425,14 @@ static inline void tpm_buf_destroy(struct tpm_buf *buf)
+>
+>   static inline u32 tpm_buf_length(struct tpm_buf *buf)
+>   {
+> -	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> +	struct tpm_header *head = (struct tpm_header *) buf->data;
+>
+>   	return be32_to_cpu(head->length);
+>   }
+>
+>   static inline u16 tpm_buf_tag(struct tpm_buf *buf)
+>   {
+> -	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> +	struct tpm_header *head = (struct tpm_header *) buf->data;
+>
+>   	return be16_to_cpu(head->tag);
+>   }
+> @@ -444,7 +441,7 @@ static inline void tpm_buf_append(struct tpm_buf *buf,
+>   				  const unsigned char *new_data,
+>   				  unsigned int new_len)
+>   {
+> -	struct tpm_input_header *head = (struct tpm_input_header *) buf->data;
+> +	struct tpm_header *head = (struct tpm_header *) buf->data;
+>   	u32 len = tpm_buf_length(buf);
+>
+>   	/* Return silently if overflow has already happened. */
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index 2bcf470c8e5d..ab03f8600f89 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -784,7 +784,7 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+>    */
+>   int tpm2_probe(struct tpm_chip *chip)
+>   {
+> -	struct tpm_output_header *out;
+> +	struct tpm_header *out;
+>   	struct tpm_buf buf;
+>   	int rc;
+>
+> @@ -797,7 +797,7 @@ int tpm2_probe(struct tpm_chip *chip)
+>   	rc = tpm_transmit_cmd(chip, NULL, &buf, 0, 0, NULL);
+>   	/* We ignore TPM return codes on purpose. */
+>   	if (rc >=  0) {
+> -		out = (struct tpm_output_header *)buf.data;
+> +		out = (struct tpm_header *)buf.data;
+>   		if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
+>   			chip->flags |= TPM_CHIP_FLAG_TPM2;
+>   	}
+> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> index 3d5f9577e5de..393d9aadadce 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -334,7 +334,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
+>   				    size_t len)
+>   {
+>   	struct tpm_space *space = &chip->work_space;
+> -	struct tpm_output_header *header = (void *)rsp;
+> +	struct tpm_header *header = (void *)rsp;
+>   	u32 phandle;
+>   	u32 phandle_type;
+>   	u32 vhandle;
+> @@ -394,7 +394,7 @@ static int tpm2_map_response_body(struct tpm_chip *chip, u32 cc, u8 *rsp,
+>   				  size_t len)
+>   {
+>   	struct tpm_space *space = &chip->work_space;
+> -	struct tpm_output_header *header = (void *)rsp;
+> +	struct tpm_header *header = (void *)rsp;
+>   	struct tpm2_cap_handles *data;
+>   	u32 phandle;
+>   	u32 phandle_type;
+> @@ -492,7 +492,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
+>   int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+>   		      u32 cc, u8 *buf, size_t *bufsiz)
+>   {
+> -	struct tpm_output_header *header = (void *)buf;
+> +	struct tpm_header *header = (void *)buf;
+>   	int rc;
+>
+>   	if (!space)
+> diff --git a/drivers/char/tpm/tpm_i2c_atmel.c b/drivers/char/tpm/tpm_i2c_atmel.c
+> index 95ce2e9ccdc6..4720b2442ffe 100644
+> --- a/drivers/char/tpm/tpm_i2c_atmel.c
+> +++ b/drivers/char/tpm/tpm_i2c_atmel.c
+> @@ -46,7 +46,7 @@ struct priv_data {
+>   	/* This is the amount we read on the first try. 25 was chosen to fit a
+>   	 * fair number of read responses in the buffer so a 2nd retry can be
+>   	 * avoided in small message cases. */
+> -	u8 buffer[sizeof(struct tpm_output_header) + 25];
+> +	u8 buffer[sizeof(struct tpm_header) + 25];
+>   };
+>
+>   static int i2c_atmel_send(struct tpm_chip *chip, u8 *buf, size_t len)
+> @@ -72,8 +72,7 @@ static int i2c_atmel_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>   {
+>   	struct priv_data *priv = dev_get_drvdata(&chip->dev);
+>   	struct i2c_client *client = to_i2c_client(chip->dev.parent);
+> -	struct tpm_output_header *hdr =
+> -		(struct tpm_output_header *)priv->buffer;
+> +	struct tpm_header *hdr = (struct tpm_header *)priv->buffer;
+>   	u32 expected_len;
+>   	int rc;
+>
+> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+> index 5f95fbfb7f6b..28eb5ab15b99 100644
+> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
+> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+> @@ -303,9 +303,9 @@ static int vtpm_proxy_tpm_op_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>   static int vtpm_proxy_is_driver_command(struct tpm_chip *chip,
+>   					u8 *buf, size_t count)
+>   {
+> -	struct tpm_input_header *hdr = (struct tpm_input_header *)buf;
+> +	struct tpm_header *hdr = (struct tpm_header *)buf;
+>
+> -	if (count < sizeof(struct tpm_input_header))
+> +	if (count < sizeof(struct tpm_header))
+>   		return 0;
+>
+>   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> @@ -402,7 +402,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
+>   {
+>   	struct tpm_buf buf;
+>   	int rc;
+> -	const struct tpm_output_header *header;
+> +	const struct tpm_header *header;
+>   	struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
+>
+>   	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> @@ -427,7 +427,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
+>   		goto out;
+>   	}
+>
+> -	header = (const struct tpm_output_header *)buf.data;
+> +	header = (const struct tpm_header *)buf.data;
+>   	rc = be32_to_cpu(header->return_code);
+>   	if (rc)
+>   		locality = -1;
+> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+> index b150f87f38f5..1259e935fd58 100644
+> --- a/drivers/char/tpm/xen-tpmfront.c
+> +++ b/drivers/char/tpm/xen-tpmfront.c
+> @@ -163,7 +163,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+>   	wmb();
+>   	notify_remote_via_evtchn(priv->evtchn);
+>
+> -	ordinal = be32_to_cpu(((struct tpm_input_header*)buf)->ordinal);
+> +	ordinal = be32_to_cpu(((struct tpm_header *)buf)->ordinal);
+>   	duration = tpm_calc_ordinal_duration(chip, ordinal);
+>
+>   	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
 
 
