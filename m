@@ -2,97 +2,105 @@ Return-Path: <SRS0=rvaM=NT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B503ECDE4B
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 19:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6D3ECDE4B
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 19:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6D8C20840
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 19:02:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6D8C20840
+	by mail.kernel.org (Postfix) with ESMTP id DCE7020825
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 19:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE7020825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeKIEjf (ORCPT
+        id S1726801AbeKIEmS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:39:35 -0500
-Received: from mga09.intel.com ([134.134.136.24]:49869 "EHLO mga09.intel.com"
+        Thu, 8 Nov 2018 23:42:18 -0500
+Received: from mga07.intel.com ([134.134.136.100]:7392 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbeKIEjf (ORCPT
+        id S1727231AbeKIEmS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:39:35 -0500
+        Thu, 8 Nov 2018 23:42:18 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 11:02:43 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 11:05:27 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="279497280"
+   d="scan'208";a="279498180"
 Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Nov 2018 11:02:34 -0800
-Date:   Thu, 8 Nov 2018 21:02:34 +0200
+  by fmsmga006.fm.intel.com with ESMTP; 08 Nov 2018 11:05:24 -0800
+Date:   Thu, 8 Nov 2018 21:05:23 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 14/17] tpm: remove TPM_TRANSMIT_UNLOCKED flag
-Message-ID: <20181108190234.GD20608@linux.intel.com>
-References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-15-jarkko.sakkinen@linux.intel.com>
- <5a0628cb-84e2-6fab-8fce-a77dc7adceb2@linux.ibm.com>
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v4 2/6] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+Message-ID: <20181108190523.GE20608@linux.intel.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-3-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5a0628cb-84e2-6fab-8fce-a77dc7adceb2@linux.ibm.com>
+In-Reply-To: <20181106150159.1136-3-roberto.sassu@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 08, 2018 at 10:43:46AM -0500, Stefan Berger wrote:
-> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > index f2b0e5c52a57..d6abc964ef66 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -652,17 +652,12 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
-> >   	u32 blob_handle;
-> >   	int rc;
-> > 
-> > -	mutex_lock(&chip->tpm_mutex);
-> > -	rc = tpm2_load_cmd(chip, payload, options, &blob_handle,
-> > -			   TPM_TRANSMIT_UNLOCKED);
-> > +	rc = tpm2_load_cmd(chip, payload, options, &blob_handle, 0);
-> >   	if (rc)
-> > -		goto out;
-> > +		return rc;
-> > 
-> > -	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle,
-> > -			     TPM_TRANSMIT_UNLOCKED);
-> > -	tpm2_flush_context_cmd(chip, blob_handle, TPM_TRANSMIT_UNLOCKED);
-> > -out:
-> > -	mutex_unlock(&chip->tpm_mutex);
-> > +	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle, 0);
-> > +	tpm2_flush_context_cmd(chip, blob_handle, 0);
+On Tue, Nov 06, 2018 at 04:01:55PM +0100, Roberto Sassu wrote:
+> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
+> for a list of hash algorithms used for event logs and event log digests.
+> However, according to TCG EFI Protocol Specification, these arrays have
+> variable sizes and are not suitable for parsing events with type casting.
 > 
+> Since declaring static arrays with hard-coded sizes does not help to parse
+> data after these arrays, this patch removes the declaration of
+> TPM2_ACTIVE_PCR_BANKS and sets the size of the arrays above to zero.
 > 
-> This lock was covering quite a few commands from being interfered by others.
-> Is this still guaranteed to work after or can different subsystems like
-> trusted keys and IMA and /dev/tpm0 users interfere with this previous atomic
-> sequence ?
+> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
+> event log")
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+> index 20d9da77fc11..3d5d162f09cc 100644
+> --- a/include/linux/tpm_eventlog.h
+> +++ b/include/linux/tpm_eventlog.h
+> @@ -8,7 +8,6 @@
+>  #define TCG_EVENT_NAME_LEN_MAX	255
+>  #define MAX_TEXT_EVENT		1000	/* Max event string length */
+>  #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
+> -#define TPM2_ACTIVE_PCR_BANKS	3
+>  
+>  #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
+>  #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
+> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
+>  	u8 spec_errata;
+>  	u8 uintnsize;
+>  	u32 num_algs;
+> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
+> +	struct tcg_efi_specid_event_algs digest_sizes[0];
+>  	u8 vendor_info_size;
+>  	u8 vendor_info[0];
+>  } __packed;
+> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
+>  	u32 pcr_idx;
+>  	u32 event_type;
+>  	u32 count;
+> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
+> +	struct tpm2_digest digests[0];
+>  	struct tcg_event_field event;
+>  } __packed;
+>  
+> -- 
+> 2.17.1
+> 
 
-One way to keep this sequence atomic would be to use a TPM space. Then
-you can release the lock in-between the sequence.
+I somehow lost your response but what you must do is to explain why is
+it OK for last two fields to overlap.
 
 /Jarkko
