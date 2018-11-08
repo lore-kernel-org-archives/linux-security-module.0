@@ -4,122 +4,215 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90407ECDE47
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 14:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B583ECDE4B
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 14:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B7B20817
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 14:52:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B7B20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 104CD2081D
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 14:55:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 104CD2081D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbeKIA2b (ORCPT
+        id S1726571AbeKIAb3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:28:31 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32726 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726469AbeKIA2b (ORCPT
+        Thu, 8 Nov 2018 19:31:29 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39138 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726375AbeKIAb2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:28:31 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id E4E47B166B2FB;
-        Thu,  8 Nov 2018 14:52:35 +0000 (GMT)
-Received: from [10.204.65.142] (10.204.65.142) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 8 Nov
- 2018 14:52:29 +0000
-Subject: Re: [PATCH v4 2/6] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-3-roberto.sassu@huawei.com>
- <20181108140208.GC8922@linux.intel.com>
- <20181108140318.GD8922@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <624865ac-a410-00f0-43b7-5ee5bc324b1f@huawei.com>
-Date:   Thu, 8 Nov 2018 15:52:28 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 8 Nov 2018 19:31:28 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8EtXbA096633
+        for <linux-security-module@vger.kernel.org>; Thu, 8 Nov 2018 09:55:35 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmnmwd72r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 08 Nov 2018 09:55:34 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Thu, 8 Nov 2018 14:55:22 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 8 Nov 2018 14:55:18 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8EtHdT29294814
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 14:55:18 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAA47B2065;
+        Thu,  8 Nov 2018 14:55:17 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 995ADB2064;
+        Thu,  8 Nov 2018 14:55:15 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  8 Nov 2018 14:55:15 +0000 (GMT)
+Subject: Re: [PATCH v5 04/17] tpm: call tpm2_flush_space() on error in
+ tpm_try_transmit()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-5-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Thu, 8 Nov 2018 09:55:15 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181108140318.GD8922@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <20181108141541.12832-5-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.142]
-X-CFilter-Loop: Reflected
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18110814-0072-0000-0000-000003C58867
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01114486; UDB=6.00577118; IPR=6.00894585;
+ MB=3.00024075; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 14:55:21
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110814-0073-0000-0000-00004A0AE812
+Message-Id: <5f9a97a0-c4e1-41ca-d590-dc0eec2dbb82@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811080127
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/8/2018 3:03 PM, Jarkko Sakkinen wrote:
-> On Thu, Nov 08, 2018 at 04:02:08PM +0200, Jarkko Sakkinen wrote:
->> On Tue, Nov 06, 2018 at 04:01:55PM +0100, Roberto Sassu wrote:
->>> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
->>> for a list of hash algorithms used for event logs and event log digests.
->>> However, according to TCG EFI Protocol Specification, these arrays have
->>> variable sizes and are not suitable for parsing events with type casting.
->>>
->>> Since declaring static arrays with hard-coded sizes does not help to parse
->>> data after these arrays, this patch removes the declaration of
->>> TPM2_ACTIVE_PCR_BANKS and sets the size of the arrays above to zero.
->>>
->>> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
->>> event log")
->>>
->>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>> ---
->>>   include/linux/tpm_eventlog.h | 5 ++---
->>>   1 file changed, 2 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
->>> index 20d9da77fc11..3d5d162f09cc 100644
->>> --- a/include/linux/tpm_eventlog.h
->>> +++ b/include/linux/tpm_eventlog.h
->>> @@ -8,7 +8,6 @@
->>>   #define TCG_EVENT_NAME_LEN_MAX	255
->>>   #define MAX_TEXT_EVENT		1000	/* Max event string length */
->>>   #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
->>> -#define TPM2_ACTIVE_PCR_BANKS	3
->>>   
->>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
->>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
->>> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
->>>   	u8 spec_errata;
->>>   	u8 uintnsize;
->>>   	u32 num_algs;
->>> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
->>> +	struct tcg_efi_specid_event_algs digest_sizes[0];
->>>   	u8 vendor_info_size;
->>>   	u8 vendor_info[0];
->>>   } __packed;
->>> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
->>>   	u32 pcr_idx;
->>>   	u32 event_type;
->>>   	u32 count;
->>> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
->>> +	struct tpm2_digest digests[0];
->>>   	struct tcg_event_field event;
->>
->> Last two fields make sense at least without comment as they overlap.
-> 
-> i.e. would be semantically equal to
-> 
-> union {
-> 	struct tpm2_digest digests[0];
-> 	struct tcg_event_field event;
-> };
+On 11/8/18 9:15 AM, Jarkko Sakkinen wrote:
+> Always call tpm2_flush_space() on failure in tpm_try_transmit() so that
+> the volatile memory of the TPM gets cleared. If /dev/tpm0 does not have
+> sufficient permissions (usually it has), this could lead to the leakage
+> of TPM objects. Through /dev/tpmrm0 this issue does not raise any new
+> security concerns.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 745b361e989a ("tpm:tpm: infrastructure for TPM spaces")
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-I didn't understand. Should I add the union?
-
-Roberto
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
 
-> /Jarkko
-> 
+> ---
+>   drivers/char/tpm/tpm-interface.c | 33 +++++++++++++++-----------------
+>   drivers/char/tpm/tpm.h           |  1 +
+>   drivers/char/tpm/tpm2-space.c    |  2 +-
+>   3 files changed, 17 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 64510ed81b46..c9efd1b9fd2c 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -224,14 +224,14 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>
+>   	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+>   	if (rc)
+> -		goto out;
+> +		goto out_idle;
+>
+>   	rc = chip->ops->send(chip, buf, count);
+>   	if (rc < 0) {
+>   		if (rc != -EPIPE)
+>   			dev_err(&chip->dev,
+>   				"%s: tpm_send: error %d\n", __func__, rc);
+> -		goto out;
+> +		goto out_space;
+>   	}
+>
+>   	if (chip->flags & TPM_CHIP_FLAG_IRQ)
+> @@ -247,7 +247,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   		if (chip->ops->req_canceled(chip, status)) {
+>   			dev_err(&chip->dev, "Operation Canceled\n");
+>   			rc = -ECANCELED;
+> -			goto out;
+> +			goto out_space;
+>   		}
+>
+>   		tpm_msleep(TPM_TIMEOUT_POLL);
+> @@ -257,30 +257,27 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+>   	chip->ops->cancel(chip);
+>   	dev_err(&chip->dev, "Operation Timed out\n");
+>   	rc = -ETIME;
+> -	goto out;
+> +	goto out_space;
+>
+>   out_recv:
+>   	len = chip->ops->recv(chip, buf, bufsiz);
+>   	if (len < 0) {
+>   		rc = len;
+> -		dev_err(&chip->dev,
+> -			"tpm_transmit: tpm_recv: error %d\n", rc);
+> -		goto out;
+> -	} else if (len < TPM_HEADER_SIZE) {
+> +		dev_err(&chip->dev, "tpm_transmit: tpm_recv: error %d\n", rc);
+> +	} else if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
+>   		rc = -EFAULT;
+> -		goto out;
+> -	}
+>
+> -	if (len != be32_to_cpu(header->length)) {
+> -		rc = -EFAULT;
+> -		goto out;
+> +out_space:
+> +	if (rc) {
+> +		tpm2_flush_space(chip);
+> +	} else {
+> +		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> +		if (rc)
+> +			dev_err(&chip->dev, "tpm2_commit_space: error %d\n",
+> +				rc);
+>   	}
+>
+> -	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> -	if (rc)
+> -		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+> -
+> -out:
+> +out_idle:
+>   	/* may fail but do not override previous error value in rc */
+>   	tpm_go_idle(chip, flags);
+>
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 49bca4d1e786..229ac42b644e 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -579,6 +579,7 @@ int tpm2_probe(struct tpm_chip *chip);
+>   int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+>   int tpm2_init_space(struct tpm_space *space);
+>   void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
+> +void tpm2_flush_space(struct tpm_chip *chip);
+>   int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+>   		       u8 *cmd);
+>   int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> index 1131a8e7b79b..d53c882268ff 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -162,7 +162,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
+>   	return 0;
+>   }
+>
+> -static void tpm2_flush_space(struct tpm_chip *chip)
+> +void tpm2_flush_space(struct tpm_chip *chip)
+>   {
+>   	struct tpm_space *space = &chip->work_space;
+>   	int i;
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+
