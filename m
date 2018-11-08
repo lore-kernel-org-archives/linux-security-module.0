@@ -2,83 +2,126 @@ Return-Path: <SRS0=rvaM=NT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A27ECDE4B
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 14:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E884ECDE4B
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 14:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB0520827
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 14:16:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB0520827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id E65B620827
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 14:16:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E65B620827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeKHXv7 (ORCPT
+        id S1726988AbeKHXwO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:51:59 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32722 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726359AbeKHXv7 (ORCPT
+        Thu, 8 Nov 2018 18:52:14 -0500
+Received: from mga05.intel.com ([192.55.52.43]:25148 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726359AbeKHXwO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:51:59 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 67FCDF31B9936;
-        Thu,  8 Nov 2018 14:16:14 +0000 (GMT)
-Received: from [10.204.65.142] (10.204.65.142) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 8 Nov
- 2018 14:16:07 +0000
-Subject: Re: [PATCH v4 4/6] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-5-roberto.sassu@huawei.com>
- <20181108140454.GE8922@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <7a43680a-a216-a191-62a3-c2fb4e72d699@huawei.com>
-Date:   Thu, 8 Nov 2018 15:16:03 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 8 Nov 2018 18:52:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 06:16:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
+   d="scan'208";a="94663846"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Nov 2018 06:16:26 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v5 05/17] tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+Date:   Thu,  8 Nov 2018 16:15:26 +0200
+Message-Id: <20181108141541.12832-6-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181108140454.GE8922@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.142]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/8/2018 3:04 PM, Jarkko Sakkinen wrote:
-> On Tue, Nov 06, 2018 at 04:01:57PM +0100, Roberto Sassu wrote:
->> Currently the TPM driver allows other kernel subsystems to read only the
->> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
->> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
->> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
->> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
->> the new parameter is expected to be always not NULL.
->>
->> Due to the API change, IMA functions have been modified.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> 
-> Does not apply to the current upstream (with tpm1-cmd.c).
+The error logging for tpm2_commit_space() is in a wrong place. This
+commit moves it inside that function.
 
-Unfortunately, I cannot fetch the repository as infradead.org only
-supports the git protocol (I'm behind a proxy).
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm-interface.c | 8 ++------
+ drivers/char/tpm/tpm2-space.c    | 9 ++++++---
+ 2 files changed, 8 insertions(+), 9 deletions(-)
 
-Roberto
-
-
-> /Jarkko
-> 
-
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index c9efd1b9fd2c..7ffb16edab6f 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -268,14 +268,10 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 		rc = -EFAULT;
+ 
+ out_space:
+-	if (rc) {
++	if (rc)
+ 		tpm2_flush_space(chip);
+-	} else {
++	else
+ 		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+-		if (rc)
+-			dev_err(&chip->dev, "tpm2_commit_space: error %d\n",
+-				rc);
+-	}
+ 
+ out_idle:
+ 	/* may fail but do not override previous error value in rc */
+diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+index d53c882268ff..3d5f9577e5de 100644
+--- a/drivers/char/tpm/tpm2-space.c
++++ b/drivers/char/tpm/tpm2-space.c
+@@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+ 	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	rc = tpm2_save_space(chip);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	*bufsiz = be32_to_cpu(header->length);
+@@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+ 	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
+ 
+ 	return 0;
++out:
++	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
++	return rc;
+ }
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+2.19.1
+
