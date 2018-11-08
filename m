@@ -2,108 +2,91 @@ Return-Path: <SRS0=rvaM=NT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50015ECDE47
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7C3ECDE47
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2365C2077B
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:19:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2365C2077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 0ABCE20825
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Nov 2018 15:21:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ABCE20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeKIAzZ convert rfc822-to-8bit (ORCPT
+        id S1726861AbeKIA5a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:55:25 -0500
-Received: from mout.gmx.net ([212.227.15.19]:54831 "EHLO mout.gmx.net"
+        Thu, 8 Nov 2018 19:57:30 -0500
+Received: from mga04.intel.com ([192.55.52.120]:13857 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726627AbeKIAzZ (ORCPT
+        id S1726541AbeKIA5a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:55:25 -0500
-Received: from [10.230.161.1] ([217.10.52.9]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0LeN3N-1fiiZO2iXV-00qFB1; Thu, 08
- Nov 2018 16:19:11 +0100
-Date:   Thu, 08 Nov 2018 16:19:09 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20181108151504.GD14072@linux.intel.com>
-References: <20181106150159.1136-1-roberto.sassu@huawei.com> <20181106150159.1136-5-roberto.sassu@huawei.com> <20181108140454.GE8922@linux.intel.com> <7a43680a-a216-a191-62a3-c2fb4e72d699@huawei.com> <20181108151504.GD14072@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v4 4/6] tpm: modify tpm_pcr_read() definition to pass a TPM hash algorithm
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-CC:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        Thu, 8 Nov 2018 19:57:30 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 07:21:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="94677167"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Nov 2018 07:21:25 -0800
+Date:   Thu, 8 Nov 2018 17:21:24 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Nayna Jain <nayna@linux.ibm.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-From:   Peter Huewe <peterhuewe@gmx.de>
-Message-ID: <289C0413-4FFB-4831-B82A-D0C3A965053D@gmx.de>
-X-Provags-ID: V03:K1:QMjGP1NINSNraVcUDTS3u/isUDlBHl/6H6Br+/qNEXg7ecjUdvS
- qeda0C0NQ4RwTtJ8NAc5WQ86mdReoMs9RcCJg+GNuhnOg8e4qaDgeoIIEpPIod8zhcxTO90
- JeTvrTdZsUH7jVf/aAb8XuzFq03aXYWqsqj4RVyMpVb++8VEStXoxJP10f3EIx4SrpBA4mo
- 8lBpA9xoGzTDBXBS2KPbQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6IS+jDa2M+k=:Hr1wwhbe/YvhwMRUo7v00a
- oPqq1T7P1e5VLMvf1j+SEyB07Y+LSXEC3Cv7QshWqln8NGr1M/aUeB8mQeF+YuLbg3rCxuwJo
- APj6SY2aWX+iDskh8+xxA4fUPr4GMbGTuRDg+cPxegnGL8a5nB/J1czy4W2rg/pchA4zpeETC
- gHYP/4twa0wlTaU1ATQLxAwpQk+MO5QNLtxE8FfAvxAxMXrGldr0zH2GPPeTsbldVHzCOHW4z
- Wd0no9vmIz7Em+ch2pqh9O08HsBouAa/lcWEVjCvTucIgzHJqHBzFjErkfyXI9Kktn92hQof5
- Ha0YQTwGGMTYYGw8cWXqGGwosmTSsaVVwKGdQRBFvipHiQt7FgJO9a8/nnU4xPIWjIEJmYPov
- f01odRrmo6IJofXgEdWQN2vdosDMqMV2d/3o8eIvir2T/n7mlfHMVjJ+U7JtpFT3rExdwZYC0
- HiiJ5MLtYryaj4raGuI/t0iYlpDZ0gDlaqRt797kj38YSKy0lTsIxgHfpBFkxOMJ1NcbJCJJD
- Id6/d62cyiatY9tNyQqLtLYarIQqcsrn/tSsaMGvNiT0Jh5eMf4dv33MMLbuFtj3FMdO4z26U
- +JiGH07dDSQU4g3BCdCD/m5LsmMAWfAEhznCAKzcZ2DQ25hegBts98A7fCrOjIWe/3BG5JaDD
- +lPqj0fsbNzSHOwzJNHiRF6xRdFDMTdzgR4X7AZ+7pf4PseyfJT0dn7wMxB8Cty6ypPY5zMH2
- t9pOgGY3LIKfSynmBRZeOdDz3aKu4MHJYmvxzqIhnZPYGduQoZ7w/KhcaKPSgKrXlmEkrTqje
- jYby1E5lBnTvs3NUSpHnGiybJo4B4SA73bkx5NEkdKz55KdMn6SYtTPAn9j3hXWWzqnerOXY4
- bT1d9rLZbIXuuP6GhkpFe5jwLyl3Knf6Vv8B8/EOYnYsOuhcvaOKV/fLXy48Y4
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        Ken Goldman <kgold@linux.vnet.ibm.com>,
+        Kenneth Goldman <kgoldman@us.ibm.com>
+Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
+Message-ID: <20181108152124.GE14072@linux.intel.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-2-roberto.sassu@huawei.com>
+ <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
+ <da2ef557-3041-a1ca-47cb-fd7ab92876aa@huawei.com>
+ <086944ab-dd56-5522-af26-e9bb545556fd@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <086944ab-dd56-5522-af26-e9bb545556fd@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Nov 08, 2018 at 07:20:51PM +0530, Nayna Jain wrote:
+> Based on a discussion with Ken, the count in the TPML_PCR_SELECTION returns
+> the number of possible algorithms supported. In the example below, two
+> possible algorithms - SHA1 and SHA256 - are returned.
+> 
+> # /usr/local/bin/tssgetcapability -cap 5
+> 2 PCR selections
+>     hash TPM_ALG_SHA1
+>     TPMS_PCR_SELECTION length 3
+>     ff ff ff
+>     hash TPM_ALG_SHA256
+>     TPMS_PCR_SELECTION length 3
+>     00 00 00
+> 
+> The pcr_select fields - "ff ff ff" and "00 00 00" - are bit masks for the
+> enabled PCRs. The SHA1 bank is enabled for all PCRs (0-23), while the SHA256
+> bank is not enabled.
+> 
+> The current code works, but it unnecessarily extends some banks. Instead of
+> basing the number of active banks on the number of algorithms returned, it
+> should be based on the pcr_select field.
+> 
+>    - Mimi & Nayna
 
+I would just allocate array of the size of possible banks and grow
+nr_active_banks for active algorithms to keep the code simple because
+we are talking about insignificant amount of wasted space (might be
+even zero bytes given how kernel allocators works)>
 
-Am 8. November 2018 16:15:04 MEZ schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
->On Thu, Nov 08, 2018 at 03:16:03PM +0100, Roberto Sassu wrote:
->> On 11/8/2018 3:04 PM, Jarkko Sakkinen wrote:
->> > On Tue, Nov 06, 2018 at 04:01:57PM +0100, Roberto Sassu wrote:
->> > > Currently the TPM driver allows other kernel subsystems to read
->only the
->> > > SHA1 PCR bank. This patch modifies the parameters of
->tpm_pcr_read() and
->> > > tpm2_pcr_read() to pass a tpm_digest structure, which contains
->the desired
->> > > hash algorithm. Also, since commit 125a22105410 ("tpm: React
->correctly to
->> > > RC_TESTING from TPM 2.0 self tests") removed the call to
->tpm2_pcr_read(),
->> > > the new parameter is expected to be always not NULL.
->> > > 
->> > > Due to the API change, IMA functions have been modified.
->> > > 
->> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> > > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
->> > 
->> > Does not apply to the current upstream (with tpm1-cmd.c).
->> 
->> Unfortunately, I cannot fetch the repository as infradead.org only
->> supports the git protocol (I'm behind a proxy).
->> 
->> Roberto
->
->I use a proxy script similar to this:
->
->https://gist.github.com/sit/49288
->
->(random googling but gives the idea)
->
->/Jarkko
-Moving to a kernel.org repo would be really a benefit or convincing them to have a https interface as well.
-We have the same proxy issue with infradead.
-Peter
--- 
-Sent from my mobile
+/Jarkko
