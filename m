@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EBFC43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 13:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D9EC43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 13:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD2C322507
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 13:08:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2C322507
+	by mail.kernel.org (Postfix) with ESMTP id 2ABAB223AE
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 13:34:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ABAB223AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387418AbeKMXGz (ORCPT
+        id S2387489AbeKMXc6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:06:55 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32753 "EHLO huawei.com"
+        Tue, 13 Nov 2018 18:32:58 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32755 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732728AbeKMXGz (ORCPT
+        id S1733229AbeKMXc6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:06:55 -0500
+        Tue, 13 Nov 2018 18:32:58 -0500
 Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 851EF55C6FEAD;
-        Tue, 13 Nov 2018 13:08:48 +0000 (GMT)
+        by Forcepoint Email with ESMTP id 2CD036B5544DA;
+        Tue, 13 Nov 2018 13:34:46 +0000 (GMT)
 Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
  (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
- 2018 13:08:40 +0000
-Subject: Re: [PATCH v4 6/6] tpm: ensure that the output of PCR read contains
- the correct digest size
+ 2018 13:34:40 +0000
+Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 CC:     <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
 References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-7-roberto.sassu@huawei.com>
- <20181108140814.GF8922@linux.intel.com>
+ <20181106150159.1136-2-roberto.sassu@huawei.com>
+ <20181108134651.GA8922@linux.intel.com>
 From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <bb9af477-61b0-7d11-4509-15cc2b2c0024@huawei.com>
-Date:   Tue, 13 Nov 2018 14:08:39 +0100
+Message-ID: <38bdee38-503b-0bac-efba-99f285018934@huawei.com>
+Date:   Tue, 13 Nov 2018 14:34:39 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181108140814.GF8922@linux.intel.com>
+In-Reply-To: <20181108134651.GA8922@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -54,80 +53,176 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/8/2018 3:08 PM, Jarkko Sakkinen wrote:
-> On Tue, Nov 06, 2018 at 04:01:59PM +0100, Roberto Sassu wrote:
->> This patch protects against data corruption that could happen in the bus,
->> by checking that that the digest size returned by the TPM during a PCR read
->> matches the size of the algorithm passed as argument to tpm2_pcr_read().
+On 11/8/2018 2:46 PM, Jarkko Sakkinen wrote:
+> Orrayn Tue, Nov 06, 2018 at 04:01:54PM +0100, Roberto Sassu wrote:
+>> This patch removes the hard-coded limit of the active_banks array size.
+>> It stores in the tpm_chip structure the number of active PCR banks,
+>> determined in tpm2_get_pcr_allocation(), and replaces the static array
+>> with a pointer to a dynamically allocated array.
 >>
->> This check is performed after information about the PCR banks has been
->> retrieved.
+>> As a consequence of the introduction of nr_active_banks, tpm_pcr_extend()
+>> does not check anymore if the algorithm stored in tpm_chip is equal to
+>> zero. The active_banks array always contains valid algorithms.
+>>
+>> Fixes: 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
+>> PCR banks")
 >>
 >> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 >> ---
->>   drivers/char/tpm/tpm2-cmd.c | 16 +++++++++++++++-
->>   1 file changed, 15 insertions(+), 1 deletion(-)
+>>   drivers/char/tpm/tpm-chip.c      |  1 +
+>>   drivers/char/tpm/tpm-interface.c | 19 ++++++++++++-------
+>>   drivers/char/tpm/tpm.h           |  3 ++-
+>>   drivers/char/tpm/tpm2-cmd.c      | 17 ++++++++---------
+>>   4 files changed, 23 insertions(+), 17 deletions(-)
 >>
->> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->> index e2d5b84286a7..3b0b5b032901 100644
->> --- a/drivers/char/tpm/tpm2-cmd.c
->> +++ b/drivers/char/tpm/tpm2-cmd.c
->> @@ -187,15 +187,28 @@ struct tpm2_pcr_read_out {
->>   int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
->>   		  struct tpm_digest *digest_struct, u16 *digest_size_ptr)
+>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>> index 46caadca916a..2a9e8b744436 100644
+>> --- a/drivers/char/tpm/tpm-chip.c
+>> +++ b/drivers/char/tpm/tpm-chip.c
+>> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
+>>   	kfree(chip->log.bios_event_log);
+>>   	kfree(chip->work_space.context_buf);
+>>   	kfree(chip->work_space.session_buf);
+>> +	kfree(chip->active_banks);
+>>   	kfree(chip);
+>>   }
+>>   
+>> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+>> index 1a803b0cf980..ba7ca6b3e664 100644
+>> --- a/drivers/char/tpm/tpm-interface.c
+>> +++ b/drivers/char/tpm/tpm-interface.c
+>> @@ -1039,8 +1039,7 @@ static int tpm1_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash,
+>>   int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
 >>   {
->> +	int i;
 >>   	int rc;
->>   	struct tpm_buf buf;
->>   	struct tpm2_pcr_read_out *out;
->>   	u8 pcr_select[TPM2_PCR_SELECT_MIN] = {0};
->>   	u16 digest_size;
->> +	u16 expected_digest_size = 0;
+>> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+>> -	u32 count = 0;
+>> +	struct tpm2_digest *digest_list;
+>>   	int i;
 >>   
->>   	if (pcr_idx >= TPM2_PLATFORM_PCR)
->>   		return -EINVAL;
->>   
->> +	if (!digest_size_ptr) {
->> +		for (i = 0; i < chip->nr_active_banks &&
->> +		     chip->active_banks[i].alg_id != digest_struct->alg_id; i++)
->> +			;
+>>   	chip = tpm_find_get_ops(chip);
+>> @@ -1048,16 +1047,22 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+>>   		return -ENODEV;
 > 
-> Not sure if the semicolon should be in its own line.
-> `
->> +
->> +		if (i == chip->nr_active_banks)
->> +			return -EINVAL;
->> +
->> +		expected_digest_size = chip->active_banks[i].digest_size;
->> +	}
->> +
->>   	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
->>   	if (rc)
->>   		return rc;
->> @@ -215,7 +228,8 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
->>   
->>   	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
->>   	digest_size = be16_to_cpu(out->digest_size);
->> -	if (digest_size > sizeof(digest_struct->digest)) {
->> +	if (digest_size > sizeof(digest_struct->digest) ||
->> +	    (!digest_size_ptr && digest_size != expected_digest_size)) {
->>   		rc = -EINVAL;
->>   		goto out;
->>   	}
->> -- 
->> 2.17.1
->>
+> Should take digest_list as input. Probably callers could re-use the
+> same digest_list array multiple times?
 > 
-> Please add
-> 
-> Cc: stable@vger.kernel.org.
+> Move struct tpm_chip to include/linux/tpm.h so that the caller can query
+> nr_active_banks and active_banks and can create the digest array by
+> itself. Lets do this right at once now that this is being restructured.
 
-Should I do the same for the previous patches? This patch cannot be
-applied alone.
+I have to move also other structures and #define. Wouldn't be better to
+introduce a new function to pass to the caller active_banks and
+nr_active_banks?
 
 Roberto
 
 
+>>   
+>>   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>> -		memset(digest_list, 0, sizeof(digest_list));
+>> +		digest_list = kmalloc_array(chip->nr_active_banks,
+>> +					    sizeof(*digest_list), GFP_KERNEL);
+>> +		if (!digest_list)
+>> +			return -ENOMEM;
+>>   
+>> -		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+>> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+>> +		memset(digest_list, 0,
+>> +		       chip->nr_active_banks * sizeof(*digest_list));
+> 
+> You should use kcalloc() to allocate digest_list.
+> 
+>> +
+>> +		for (i = 0; i < chip->nr_active_banks; i++) {
+>>   			digest_list[i].alg_id = chip->active_banks[i];
+>>   			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+>> -			count++;
+>>   		}
+>>   
+>> -		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
+>> +		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_active_banks,
+>> +				     digest_list);
+>> +		kfree(digest_list);
+>>   		tpm_put_ops(chip);
+>>   		return rc;
+>>   	}
+>> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+>> index f3501d05264f..98368c3a6ff7 100644
+>> --- a/drivers/char/tpm/tpm.h
+>> +++ b/drivers/char/tpm/tpm.h
+>> @@ -248,7 +248,8 @@ struct tpm_chip {
+>>   	const struct attribute_group *groups[3];
+>>   	unsigned int groups_cnt;
+>>   
+>> -	u16 active_banks[7];
+>> +	u32 nr_active_banks;
+>> +	u16 *active_banks;
+>>   #ifdef CONFIG_ACPI
+>>   	acpi_handle acpi_dev_handle;
+>>   	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+>> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+>> index c31b490bd41d..533089cede07 100644
+>> --- a/drivers/char/tpm/tpm2-cmd.c
+>> +++ b/drivers/char/tpm/tpm2-cmd.c
+>> @@ -242,7 +242,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, int pcr_idx, u32 count,
+>>   	int i;
+>>   	int j;
+>>   
+>> -	if (count > ARRAY_SIZE(chip->active_banks))
+>> +	if (count > chip->nr_active_banks)
+>>   		return -EINVAL;
+>>   
+>>   	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+>> @@ -859,7 +859,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>>   	void *marker;
+>>   	void *end;
+>>   	void *pcr_select_offset;
+>> -	unsigned int count;
+>>   	u32 sizeof_pcr_selection;
+>>   	u32 rsp_len;
+>>   	int rc;
+>> @@ -878,11 +877,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>>   	if (rc)
+>>   		goto out;
+>>   
+>> -	count = be32_to_cpup(
+>> +	chip->nr_active_banks = be32_to_cpup(
+>>   		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+>>   
+>> -	if (count > ARRAY_SIZE(chip->active_banks)) {
+>> -		rc = -ENODEV;
+>> +	chip->active_banks = kmalloc_array(chip->nr_active_banks,
+>> +					   sizeof(*chip->active_banks),
+>> +					   GFP_KERNEL);
+>> +	if (!chip->active_banks) {
+>> +		rc = -ENOMEM;
+>>   		goto out;
+>>   	}
+>>   
+>> @@ -891,7 +893,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>>   	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
+>>   	end = &buf.data[rsp_len];
+>>   
+>> -	for (i = 0; i < count; i++) {
+>> +	for (i = 0; i < chip->nr_active_banks; i++) {
+>>   		pcr_select_offset = marker +
+>>   			offsetof(struct tpm2_pcr_selection, size_of_select);
+>>   		if (pcr_select_offset >= end) {
+>> @@ -908,9 +910,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+>>   	}
+>>   
+>>   out:
+>> -	if (i < ARRAY_SIZE(chip->active_banks))
+>> -		chip->active_banks[i] = TPM2_ALG_ERROR;
+>> -
+>>   	tpm_buf_destroy(&buf);
+>>   
+>>   	return rc;
+>> -- 
+>> 2.17.1
+>>
+> 
 > /Jarkko
 > 
 
