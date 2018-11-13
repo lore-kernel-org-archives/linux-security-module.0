@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E81AC43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 924DAC43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13229223CB
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:26:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13229223CB
+	by mail.kernel.org (Postfix) with ESMTP id 5BE8A216FD
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:26:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BE8A216FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725813AbeKNGZ1 (ORCPT
+        id S1731370AbeKNG0H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:25:27 -0500
+        Wed, 14 Nov 2018 01:26:07 -0500
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:21360 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725892AbeKNGZ0 (ORCPT
+        by vger.kernel.org with ESMTP id S1725835AbeKNGZ1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:25:26 -0500
+        Wed, 14 Nov 2018 01:25:27 -0500
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Tue, 13 Nov 2018 12:25:11 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 8DB64B1A5A;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id BE83FB1A56;
         Tue, 13 Nov 2018 15:25:38 -0500 (EST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -40,14 +40,10 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v5 02/10] x86/jump_label: Use text_poke_early() during early init
-Date:   Tue, 13 Nov 2018 05:07:22 -0800
-Message-ID: <20181113130730.44844-3-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v5 07/10] x86/kgdb: avoid redundant comparison of patched code
+Date:   Tue, 13 Nov 2018 05:07:27 -0800
+Message-ID: <20181113130730.44844-8-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113130730.44844-1-namit@vmware.com>
 References: <20181113130730.44844-1-namit@vmware.com>
@@ -59,43 +55,57 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There is no apparent reason not to use text_poke_early() while we are
-during early-init and we do not patch code that might be on the stack
-(i.e., we'll return to the middle of the patched code). This appears to
-be the case of jump-labels, so do so.
+text_poke() already ensures that the written value is the correct one
+and fails if that is not the case. There is no need for an additional
+comparison. Remove it.
 
-This is required for the next patches that would set a temporary mm for
-patching, which is initialized after some static-keys are
-enabled/disabled.
-
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Co-Developed-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/jump_label.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/kernel/kgdb.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index aac0c1f7e354..ed5fe274a7d8 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 8091b2e381d4..d14e1be576fd 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -751,7 +751,6 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
+ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ {
+ 	int err;
+-	char opc[BREAK_INSTR_SIZE];
  
--	if (early_boot_irqs_disabled)
-+	/*
-+	 * As long as we're UP and not yet marked RO, we can use
-+	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-+	 * SYSTEM_SCHEDULING before going either.
-+	 */
-+	if (system_state == SYSTEM_BOOTING)
- 		poker = text_poke_early;
+ 	bpt->type = BP_BREAKPOINT;
+ 	err = probe_kernel_read(bpt->saved_instr, (char *)bpt->bpt_addr,
+@@ -772,11 +771,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 			     BREAK_INSTR_SIZE);
+ 	if (err)
+ 		return err;
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err)
+-		return err;
+-	if (memcmp(opc, arch_kgdb_ops.gdb_bpt_instr, BREAK_INSTR_SIZE))
+-		return -EINVAL;
+ 	bpt->type = BP_POKE_BREAKPOINT;
  
- 	if (type == JUMP_LABEL_JMP) {
+ 	return err;
+@@ -785,7 +779,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ {
+ 	int err;
+-	char opc[BREAK_INSTR_SIZE];
+ 
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+@@ -798,9 +791,6 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 	err = text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
+ 			     BREAK_INSTR_SIZE);
+ 	if (err)
+-		return err;
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+ 		goto knl_write;
+ 	return err;
+ 
 -- 
 2.17.1
 
