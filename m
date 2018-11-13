@@ -2,300 +2,190 @@ Return-Path: <SRS0=2v5L=NY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C808AC43610
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881FCC43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AA9B22419
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:39:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA9B22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D38C22419
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:40:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D38C22419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbeKNGjq (ORCPT
+        id S1728330AbeKNGkf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:39:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43936 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726291AbeKNGjq (ORCPT
+        Wed, 14 Nov 2018 01:40:35 -0500
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:18398 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726460AbeKNGkf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:39:46 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wADKdq38094418
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 15:39:53 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nr5g50vbw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 15:39:53 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Tue, 13 Nov 2018 20:39:50 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 13 Nov 2018 20:39:45 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wADKdikb43974820
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Nov 2018 20:39:44 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 68FDCAC059;
-        Tue, 13 Nov 2018 20:39:44 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A37A0AC05F;
-        Tue, 13 Nov 2018 20:39:43 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 13 Nov 2018 20:39:43 +0000 (GMT)
-Subject: Re: [PATCH v7 14/17] tpm: remove TPM_TRANSMIT_UNLOCKED flag
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
- <20181113183620.27447-15-jarkko.sakkinen@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Tue, 13 Nov 2018 15:39:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 14 Nov 2018 01:40:35 -0500
+X-Greylist: delayed 910 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Nov 2018 01:40:35 EST
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 13 Nov 2018 12:25:16 -0800
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id C54CEB1A5A;
+        Tue, 13 Nov 2018 15:25:38 -0500 (EST)
+From:   Nadav Amit <namit@vmware.com>
+To:     Ingo Molnar <mingo@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Nadav Amit <namit@vmware.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Masami Hiramatsu" <mhiramat@kernel.org>
+Subject: [PATCH v5 08/10] x86: avoid W^X being broken during modules loading
+Date:   Tue, 13 Nov 2018 05:07:28 -0800
+Message-ID: <20181113130730.44844-9-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181113130730.44844-1-namit@vmware.com>
+References: <20181113130730.44844-1-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <20181113183620.27447-15-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18111320-0040-0000-0000-00000491CE61
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010043; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116990; UDB=6.00577119; IPR=6.00897098;
- MB=3.00024147; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-13 20:39:48
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111320-0041-0000-0000-0000089AD8A4
-Message-Id: <0d87935b-9316-4119-7e37-b3a3309cf328@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=870 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811130187
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/13/18 1:36 PM, Jarkko Sakkinen wrote:
-> Added locking as part of tpm_try_get_ops() and tpm_put_ops() as they are
-> anyway used in most of the call sites except in tpmrm_release() where we
-> take the locks manually.
-Ok, so this is pulling the locking further up.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+When modules and BPF filters are loaded, there is a time window in
+which some memory is both writable and executable. An attacker that has
+already found another vulnerability (e.g., a dangling pointer) might be
+able to exploit this behavior to overwrite kernel code. This patch
+prevents having writable executable PTEs in this stage.
 
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+In addition, avoiding having R+X mappings can also slightly simplify the
+patching of modules code on initialization (e.g., by alternatives and
+static-key), as would be done in the next patch.
 
+To avoid having W+X mappings, set them initially as RW (NX) and after
+they are set as RO set them as X as well. Setting them as executable is
+done as a separate step to avoid one core in which the old PTE is cached
+(hence writable), and another which sees the updated PTE (executable),
+which would break the W^X protection.
 
-> ---
->   drivers/char/tpm/tpm-chip.c       |  2 ++
->   drivers/char/tpm/tpm-dev-common.c |  4 +---
->   drivers/char/tpm/tpm-interface.c  |  8 --------
->   drivers/char/tpm/tpm.h            |  8 ++------
->   drivers/char/tpm/tpm2-cmd.c       | 13 ++++---------
->   drivers/char/tpm/tpm2-space.c     | 15 ++++++---------
->   6 files changed, 15 insertions(+), 35 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 32db84683c40..157505b0f755 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -58,6 +58,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
->   	if (!chip->ops)
->   		goto out_lock;
->
-> +	mutex_lock(&chip->tpm_mutex);
->   	return 0;
->   out_lock:
->   	up_read(&chip->ops_sem);
-> @@ -75,6 +76,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
->    */
->   void tpm_put_ops(struct tpm_chip *chip)
->   {
-> +	mutex_unlock(&chip->tpm_mutex);
->   	up_read(&chip->ops_sem);
->   	put_device(&chip->dev);
->   }
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> index c7dc54930576..582caefcf19b 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -33,7 +33,6 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   	struct tpm_header *header = (void *)buf;
->   	ssize_t ret, len;
->
-> -	mutex_lock(&chip->tpm_mutex);
->   	ret = tpm2_prepare_space(chip, space, buf, bufsiz);
->   	/* If the command is not implemented by the TPM, synthesize a
->   	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
-> @@ -48,7 +47,7 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   	if (ret)
->   		goto out_lock;
->
-> -	len = tpm_transmit(chip, buf, bufsiz, TPM_TRANSMIT_UNLOCKED);
-> +	len = tpm_transmit(chip, buf, bufsiz, 0);
->   	if (len < 0)
->   		ret = len;
->
-> @@ -57,7 +56,6 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
->   	else
->   		ret = tpm2_commit_space(chip, space, buf, &len);
->   out_lock:
-> -	mutex_unlock(&chip->tpm_mutex);
->   	return ret ? ret : len;
->   }
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 8d75c103f280..5865b9671d20 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -227,10 +227,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
->   	memcpy(save, buf, save_size);
->
->   	for (;;) {
-> -		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
-> -		    !(flags & TPM_TRANSMIT_NESTED))
-> -			mutex_lock(&chip->tpm_mutex);
-> -
->   		if (chip->ops->clk_enable != NULL)
->   			chip->ops->clk_enable(chip, true);
->
-> @@ -257,10 +253,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
->   		if (chip->ops->clk_enable != NULL)
->   			chip->ops->clk_enable(chip, false);
->
-> -		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
-> -		    !(flags & TPM_TRANSMIT_NESTED))
-> -			mutex_unlock(&chip->tpm_mutex);
-> -
->   		if (ret < 0)
->   			break;
->   		rc = be32_to_cpu(header->return_code);
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 10a5bcf806aa..c7c06de651a0 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -488,14 +488,10 @@ extern struct idr dev_nums_idr;
->   /**
->    * enum tpm_transmit_flags - flags for tpm_transmit()
->    *
-> - * @TPM_TRANSMIT_UNLOCKED:	do not lock the chip
-> - * @TPM_TRANSMIT_NESTED:	discard setup steps (power management,
-> - *				locality) including locking (i.e. implicit
-> - *				UNLOCKED)
-> + * %TPM_TRANSMIT_NESTED:	discard setup steps (power management, locality)
->    */
->   enum tpm_transmit_flags {
-> -	TPM_TRANSMIT_UNLOCKED	= BIT(0),
-> -	TPM_TRANSMIT_NESTED      = BIT(1),
-> +	TPM_TRANSMIT_NESTED      = BIT(0),
->   };
->
->   ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index f2b0e5c52a57..d6abc964ef66 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -652,17 +652,12 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
->   	u32 blob_handle;
->   	int rc;
->
-> -	mutex_lock(&chip->tpm_mutex);
-> -	rc = tpm2_load_cmd(chip, payload, options, &blob_handle,
-> -			   TPM_TRANSMIT_UNLOCKED);
-> +	rc = tpm2_load_cmd(chip, payload, options, &blob_handle, 0);
->   	if (rc)
-> -		goto out;
-> +		return rc;
->
-> -	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle,
-> -			     TPM_TRANSMIT_UNLOCKED);
-> -	tpm2_flush_context_cmd(chip, blob_handle, TPM_TRANSMIT_UNLOCKED);
-> -out:
-> -	mutex_unlock(&chip->tpm_mutex);
-> +	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle, 0);
-> +	tpm2_flush_context_cmd(chip, blob_handle, 0);
->   	return rc;
->   }
->
-> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> index 46a58fda8cf5..ced1dc91ba6f 100644
-> --- a/drivers/char/tpm/tpm2-space.c
-> +++ b/drivers/char/tpm/tpm2-space.c
-> @@ -38,8 +38,7 @@ static void tpm2_flush_sessions(struct tpm_chip *chip, struct tpm_space *space)
->
->   	for (i = 0; i < ARRAY_SIZE(space->session_tbl); i++) {
->   		if (space->session_tbl[i])
-> -			tpm2_flush_context_cmd(chip, space->session_tbl[i],
-> -					       TPM_TRANSMIT_UNLOCKED);
-> +			tpm2_flush_context_cmd(chip, space->session_tbl[i], 0);
->   	}
->   }
->
-> @@ -83,7 +82,7 @@ static int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
->   	body_size = sizeof(*ctx) + be16_to_cpu(ctx->blob_size);
->   	tpm_buf_append(&tbuf, &buf[*offset], body_size);
->
-> -	rc = tpm_transmit_cmd(chip, &tbuf, 4, TPM_TRANSMIT_UNLOCKED, NULL);
-> +	rc = tpm_transmit_cmd(chip, &tbuf, 4, 0, NULL);
->   	if (rc < 0) {
->   		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
->   			 __func__, rc);
-> @@ -131,7 +130,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
->
->   	tpm_buf_append_u32(&tbuf, handle);
->
-> -	rc = tpm_transmit_cmd(chip, &tbuf, 0, TPM_TRANSMIT_UNLOCKED, NULL);
-> +	rc = tpm_transmit_cmd(chip, &tbuf, 0, 0, NULL);
->   	if (rc < 0) {
->   		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
->   			 __func__, rc);
-> @@ -167,8 +166,7 @@ void tpm2_flush_space(struct tpm_chip *chip)
->
->   	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
->   		if (space->context_tbl[i] && ~space->context_tbl[i])
-> -			tpm2_flush_context_cmd(chip, space->context_tbl[i],
-> -					       TPM_TRANSMIT_UNLOCKED);
-> +			tpm2_flush_context_cmd(chip, space->context_tbl[i], 0);
->
->   	tpm2_flush_sessions(chip, space);
->   }
-> @@ -417,7 +415,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
->
->   	return 0;
->   out_no_slots:
-> -	tpm2_flush_context_cmd(chip, phandle, TPM_TRANSMIT_UNLOCKED);
-> +	tpm2_flush_context_cmd(chip, phandle, 0);
->   	dev_warn(&chip->dev, "%s: out of slots for 0x%08X\n", __func__,
->   		 phandle);
->   	return -ENOMEM;
-> @@ -504,8 +502,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
->   		} else if (rc)
->   			return rc;
->
-> -		tpm2_flush_context_cmd(chip, space->context_tbl[i],
-> -				       TPM_TRANSMIT_UNLOCKED);
-> +		tpm2_flush_context_cmd(chip, space->context_tbl[i], 0);
->   		space->context_tbl[i] = ~0;
->   	}
->
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Suggested-by: Andy Lutomirski <luto@amacapital.net>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/kernel/alternative.c | 28 +++++++++++++++++++++-------
+ arch/x86/kernel/module.c      |  2 +-
+ include/linux/filter.h        |  6 ++++++
+ kernel/module.c               | 10 ++++++++++
+ 4 files changed, 38 insertions(+), 8 deletions(-)
+
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 96607ef285c3..70827332da0f 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -667,15 +667,29 @@ void __init alternative_instructions(void)
+  * handlers seeing an inconsistent instruction while you patch.
+  */
+ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+-					      size_t len)
++				       size_t len)
+ {
+ 	unsigned long flags;
+-	local_irq_save(flags);
+-	memcpy(addr, opcode, len);
+-	local_irq_restore(flags);
+-	sync_core();
+-	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+-	   that causes hangs on some VIA CPUs. */
++
++	if (static_cpu_has(X86_FEATURE_NX) &&
++	    is_module_text_address((unsigned long)addr)) {
++		/*
++		 * Modules text is marked initially as non-executable, so the
++		 * code cannot be running and speculative code-fetches are
++		 * prevented. We can just change the code.
++		 */
++		memcpy(addr, opcode, len);
++	} else {
++		local_irq_save(flags);
++		memcpy(addr, opcode, len);
++		local_irq_restore(flags);
++		sync_core();
++
++		/*
++		 * Could also do a CLFLUSH here to speed up CPU recovery; but
++		 * that causes hangs on some VIA CPUs.
++		 */
++	}
+ 	return addr;
+ }
+ 
+diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+index b052e883dd8c..cfa3106faee4 100644
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -87,7 +87,7 @@ void *module_alloc(unsigned long size)
+ 	p = __vmalloc_node_range(size, MODULE_ALIGN,
+ 				    MODULES_VADDR + get_module_load_offset(),
+ 				    MODULES_END, GFP_KERNEL,
+-				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
++				    PAGE_KERNEL, 0, NUMA_NO_NODE,
+ 				    __builtin_return_address(0));
+ 	if (p && (kasan_module_alloc(p, size) < 0)) {
+ 		vfree(p);
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index de629b706d1d..ee9ae03c5f56 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -704,7 +704,13 @@ static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
+ 
+ static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
+ {
++	/*
++	 * Perform mapping changes in two stages to avoid opening a time-window
++	 * in which a PTE is cached in any TLB as writable, but marked as
++	 * executable in the memory-resident mappings (e.g., page-tables).
++	 */
+ 	set_memory_ro((unsigned long)hdr, hdr->pages);
++	set_memory_x((unsigned long)hdr, hdr->pages);
+ }
+ 
+ static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
+diff --git a/kernel/module.c b/kernel/module.c
+index 49a405891587..7cb207249437 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1946,9 +1946,19 @@ void module_enable_ro(const struct module *mod, bool after_init)
+ 	if (!rodata_enabled)
+ 		return;
+ 
++	/*
++	 * Perform mapping changes in two stages to avoid opening a time-window
++	 * in which a PTE is cached in any TLB as writable, but marked as
++	 * executable in the memory-resident mappings (e.g., page-tables).
++	 */
+ 	frob_text(&mod->core_layout, set_memory_ro);
++	frob_text(&mod->core_layout, set_memory_x);
++
+ 	frob_rodata(&mod->core_layout, set_memory_ro);
++
+ 	frob_text(&mod->init_layout, set_memory_ro);
++	frob_text(&mod->init_layout, set_memory_x);
++
+ 	frob_rodata(&mod->init_layout, set_memory_ro);
+ 
+ 	if (after_init)
+-- 
+2.17.1
 
