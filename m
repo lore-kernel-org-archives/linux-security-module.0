@@ -2,45 +2,82 @@ Return-Path: <SRS0=2v5L=NY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD81C169D4
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAD1C43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D96C2245E
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:33:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D96C2245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B5502175B
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="GQLveIUh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5502175B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730729AbeKNEdH (ORCPT
+        id S1726695AbeKNEf0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:33:07 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32760 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726932AbeKNEdH (ORCPT
+        Tue, 13 Nov 2018 23:35:26 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36990 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729768AbeKNEf0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:33:07 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id E9C733EB549FB;
-        Tue, 13 Nov 2018 18:33:45 +0000 (GMT)
-Received: from [10.202.210.149] (10.202.210.149) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
- 2018 18:33:43 +0000
+        Tue, 13 Nov 2018 23:35:26 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p2-v6so12372234wmc.2
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 10:36:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=srCcrn9kPDYHv5RsnDuEY83gk928+k3hynyAdn3Y8Pg=;
+        b=GQLveIUhsI/F4IwjREUDGARnt4jT80vgXXupCkzLOkuOjm8n6t41/gD5IcV6nYZP5H
+         P29zYAXGAgiZsxBT5Gijp44woWXulSEs5pGGD1vz/1HXiU9FhXpVUDbeZxW9LtzgdyQx
+         A1Dc/leRlfri2uVYNzJcbmwIE/Mw+r/x+NIvr6VLXJpXDJfsOuQq2SS6cpOEeMaTbJ2j
+         hJIEOoJAA+5xGKRGulZqzCRhU7aP1J4hA96YlftbQROIImHPnFIf7S5WAbOBC5o45awB
+         mR0vsIxuw2EYCnkqV0rLYQwib7mER/ULglOCdCj8gTnMkr9eTqtXX9nmBiGrcAZpKz3u
+         /XJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=srCcrn9kPDYHv5RsnDuEY83gk928+k3hynyAdn3Y8Pg=;
+        b=nrZg/cbhQNWzw19NWnKI0dT8GCpKPC7OMQXAkKZSjKDRIlMwNoEBwfzMNwtDwcvCoC
+         hpsEVAAkblGCHwPL60LXUyEHG2GeFg/CylO4VjFThqyTGN987m8C6p5rlmty6b1hJRyh
+         qlBkVF7P+HAj8g6NEznaHnR41FWueIhhpCWj6zrXzEoLJUk4HfdN0xGZB+kBvH3mddgx
+         h1JBJ4BkDOIaX8XN7Ltvgca28G73qKE5fFqhFv7QqhCuwGDLk+kDINzNMSPjA/RXPOZx
+         gWuD9QSuXTI3bhzTeUeTK3PovbWA0f9ZLOcrV3G/dYS+CQ7mVNVKMzeacIMj559E4RDO
+         icwA==
+X-Gm-Message-State: AGRZ1gKE+DL1fIF0cRAiNzuVLhNZWwtGwx/NRPBmjSOdjM6Nh9o4B2EN
+        YGaCxhVWTwYmyr5HEtVXLJ6Z9s7/r+BOKrQn02zSEA==
+X-Google-Smtp-Source: AJdET5dDnWZD5TNYzUEvANWFD7cK3nVexWklKcLqa5BGCz6kLND1He95hc9PD9wjgi310VGjwblWHlkVqsZgsYt0mzE=
+X-Received: by 2002:a1c:2b45:: with SMTP id r66-v6mr4153457wmr.128.1542134164781;
+ Tue, 13 Nov 2018 10:36:04 -0800 (PST)
+MIME-Version: 1.0
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
+ <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com> <17a007eb-43ea-e4da-b066-0d8c502f5f6e@huawei.com>
+In-Reply-To: <17a007eb-43ea-e4da-b066-0d8c502f5f6e@huawei.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Tue, 13 Nov 2018 10:35:53 -0800
+Message-ID: <CALCETrVaPTbgycjzSB0fLUeGL=j1srUh-cL0qsKn6fw6UQgj7Q@mail.gmail.com>
 Subject: Re: [PATCH 10/17] prmem: documentation
-From:   Igor Stoppa <igor.stoppa@huawei.com>
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Nadav Amit <nadav.amit@gmail.com>
-CC:     Igor Stoppa <igor.stoppa@gmail.com>,
+To:     Igor Stoppa <igor.stoppa@huawei.com>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Matthew Wilcox <willy@infradead.org>,
         Dave Chinner <david@fromorbit.com>,
         James Morris <jmorris@namei.org>,
         Michal Hocko <mhocko@kernel.org>,
-        "Kernel Hardening" <kernel-hardening@lists.openwall.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
         linux-integrity <linux-integrity@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -50,61 +87,107 @@ CC:     Igor Stoppa <igor.stoppa@gmail.com>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
- <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
- <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com>
- <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com>
- <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com>
-Message-ID: <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com>
-Date:   Tue, 13 Nov 2018 20:33:41 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.210.149]
-X-CFilter-Loop: Reflected
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I forgot one sentence :-(
+On Tue, Nov 13, 2018 at 10:26 AM Igor Stoppa <igor.stoppa@huawei.com> wrote:
+>
+> On 13/11/2018 19:16, Andy Lutomirski wrote:
+>
+> > should be
+> > entirely abstracted away by an appropriate API, so neither SELinux nor
+> > IMA need to be aware that there's an mm_struct involved.
+>
+> Yes, that is fine. In my proposal I was thinking about tying it to the
+> core/thread that performs the actual write.
+>
+> The high level API could be something like:
+>
+> wr_memcpy(void *src, void *dst, uint_t size)
+>
+> >  It's also
+> > entirely possible that some architectures won't even use an mm_struct
+> > behind the scenes -- x86, for example, could have avoided it if there
+> > were a kernel equivalent of PKRU.  Sadly, there isn't.
+>
+> The mm_struct - or whatever is the means to do the write on that
+> architecture - can be kept hidden from the API.
+>
+> But the reason why I was proposing to have one mm_struct per writer is
+> that, iiuc, the secondary mapping is created in the secondary mm_struct
+> for each writer using it.
+>
+> So the updating of IMA measurements would have, theoretically, also
+> write access to the SELinux AVC. Which I was trying to avoid.
+> And similarly any other write rare updater. Is this correct?
 
-On 13/11/2018 20:31, Igor Stoppa wrote:
-> On 13/11/2018 19:47, Andy Lutomirski wrote:
-> 
->> For general rare-writish stuff, I don't think we want IRQs running
->> with them mapped anywhere for write.  For AVC and IMA, I'm less sure.
-> 
-> Why would these be less sensitive?
-> 
-> But I see a big difference between my initial implementation and this one.
-> 
-> In my case, by using a shared mapping, visible to all cores, freezing
-> the core that is performing the write would have exposed the writable
-> mapping to a potential attack run from another core.
-> 
-> If the mapping is private to the core performing the write, even if it
-> is frozen, it's much harder to figure out what it had mapped and where,
-> from another core.
-> 
-> To access that mapping, the attack should be performed from the ISR, I
-> think.
+If you call a wr_memcpy() function with the signature you suggested,
+then you can overwrite any memory of this type.  Having a different
+mm_struct under the hood makes no difference.  As far as I'm
+concerned, for *dynamically allocated* rare-writable memory, you might
+as well allocate all the paging structures at the same time, so the
+mm_struct will always contain the mappings.  If there are serious bugs
+in wr_memcpy() that cause it to write to the wrong place, we have
+bigger problems.
 
-Unless the secondary mapping is also available to other cores, through
-the shared mm_struct ?
+I can imagine that we'd want a *typed* wr_memcpy()-like API some day,
+but that can wait for v2.  And it still doesn't obviously need
+multiple mm_structs.
 
---
-igor
+>
+> >> 2) Iiuc, the purpose of the 2 pages being remapped is that the target of
+> >> the patch might spill across the page boundary, however if I deal with
+> >> the modification of generic data, I shouldn't (shouldn't I?) assume that
+> >> the data will not span across multiple pages.
+> >
+> > The reason for the particular architecture of text_poke() is to avoid
+> > memory allocation to get it working.  i think that prmem/rare_write
+> > should have each rare-writable kernel address map to a unique user
+> > address, possibly just by offsetting everything by a constant.  For
+> > rare_write, you don't actually need it to work as such until fairly
+> > late in boot, since the rare_writable data will just be writable early
+> > on.
+>
+> Yes, that is true. I think it's safe to assume, from an attack pattern,
+> that as long as user space is not started, the system can be considered
+> ok. Even user-space code run from initrd should be ok, since it can be
+> bundled (and signed) as a single binary with the kernel.
+>
+> Modules loaded from a regular filesystem are a bit more risky, because
+> an attack might inject a rogue key in the key-ring and use it to load
+> malicious modules.
+
+If a malicious module is loaded, the game is over.
+
+>
+> >> If the data spans across multiple pages, in unknown amount, I suppose
+> >> that I should not keep interrupts disabled for an unknown time, as it
+> >> would hurt preemption.
+> >>
+> >> What I thought, in my initial patch-set, was to iterate over each page
+> >> that must be written to, in a loop, re-enabling interrupts in-between
+> >> iterations, to give pending interrupts a chance to be served.
+> >>
+> >> This would mean that the data being written to would not be consistent,
+> >> but it's a problem that would have to be addressed anyways, since it can
+> >> be still read by other cores, while the write is ongoing.
+> >
+> > This probably makes sense, except that enabling and disabling
+> > interrupts means you also need to restore the original mm_struct (most
+> > likely), which is slow.  I don't think there's a generic way to check
+> > whether in interrupt is pending without turning interrupts on.
+>
+> The only "excuse" I have is that write_rare is opt-in and is "rare".
+> Maybe the enabling/disabling of interrupts - and the consequent switch
+> of mm_struct - could be somehow tied to the latency configuration?
+>
+> If preemption is disabled, the expectations on the system latency are
+> anyway more relaxed.
+>
+> But I'm not sure how it would work against I/O.
+
+I think it's entirely reasonable for the API to internally break up
+very large memcpys.
