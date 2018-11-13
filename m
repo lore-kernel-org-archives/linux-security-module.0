@@ -2,118 +2,86 @@ Return-Path: <SRS0=2v5L=NY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F03C7C43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26075C43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B61672175B
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:37:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5C/l0D/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B61672175B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EDFAB2175B
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:37:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDFAB2175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731023AbeKNEgq (ORCPT
+        id S1731503AbeKNEgv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:36:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44456 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 23:36:51 -0500
+Received: from mga01.intel.com ([192.55.52.88]:62106 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727154AbeKNEgp (ORCPT
+        id S1727154AbeKNEgv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:36:45 -0500
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 672022251E
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 18:37:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542134244;
-        bh=BajjHn6cEQ7SoqjIQfb5d1ujATvkHkGfcLsnEJ+eoxc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=D5C/l0D/dDbV4R9jfpCgQglzBkFBLTtB4v+ltkbSItLc6HqQyXen12ZwNhEAPrmrc
-         bZzqp9Q3QOKTNHcBxm6dTjuioZ7IZmLxNDF7INGnIzHFeGEmYgc1ftLrGl5u1ZeQf0
-         B53TVu8eMPZhXR+CJnpa1uLDWySNl1KB+rEku/XI=
-Received: by mail-wr1-f45.google.com with SMTP id j10so256031wru.4
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 10:37:24 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJfitTKaCZwoR/WBMEQCXZ5YkJMqJ+uVr/yO8IQ/fcSOhxw4Pcw
-        /+rpbgWvlFtvU2/ws8Uq3izwjDhzaBhSEjM6x64qxw==
-X-Google-Smtp-Source: AJdET5dSLTau2dEWkhRXAQsNP8JIIsqsITd4SDC6cslvHjjsjrtRQ0PD+oieu3oCWHAxIJYwmOdVpspdT0ruL6HQpBY=
-X-Received: by 2002:adf:9d4a:: with SMTP id o10-v6mr6212862wre.94.1542134217353;
- Tue, 13 Nov 2018 10:36:57 -0800 (PST)
+        Tue, 13 Nov 2018 23:36:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 10:37:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,229,1539673200"; 
+   d="scan'208";a="107948906"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
+  by orsmga001.jf.intel.com with ESMTP; 13 Nov 2018 10:37:25 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v7 06/17] tpm: access command header through struct in tpm_try_transmit()
+Date:   Tue, 13 Nov 2018 20:36:05 +0200
+Message-Id: <20181113183620.27447-7-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
+References: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
- <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
- <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com> <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com>
- <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com> <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com>
-In-Reply-To: <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 13 Nov 2018 10:36:45 -0800
-X-Gmail-Original-Message-ID: <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
-Message-ID: <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Igor Stoppa <igor.stoppa@huawei.com>
-Cc:     Nadav Amit <nadav.amit@gmail.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 13, 2018 at 10:33 AM Igor Stoppa <igor.stoppa@huawei.com> wrote:
->
-> I forgot one sentence :-(
->
-> On 13/11/2018 20:31, Igor Stoppa wrote:
-> > On 13/11/2018 19:47, Andy Lutomirski wrote:
-> >
-> >> For general rare-writish stuff, I don't think we want IRQs running
-> >> with them mapped anywhere for write.  For AVC and IMA, I'm less sure.
-> >
-> > Why would these be less sensitive?
-> >
-> > But I see a big difference between my initial implementation and this one.
-> >
-> > In my case, by using a shared mapping, visible to all cores, freezing
-> > the core that is performing the write would have exposed the writable
-> > mapping to a potential attack run from another core.
-> >
-> > If the mapping is private to the core performing the write, even if it
-> > is frozen, it's much harder to figure out what it had mapped and where,
-> > from another core.
-> >
-> > To access that mapping, the attack should be performed from the ISR, I
-> > think.
->
-> Unless the secondary mapping is also available to other cores, through
-> the shared mm_struct ?
->
+Instead of accessing fields of the command header through offsets to
+the raw buffer, it is a better idea to use the header struct pointer
+that is already used elsewhere in the function.
 
-I don't think this matters much.  The other cores will only be able to
-use that mapping when they're doing a rare write.
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ drivers/char/tpm/tpm-interface.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index cb0d44c158ae..11af50646ed1 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -191,8 +191,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	if (bufsiz > TPM_BUFSIZE)
+ 		bufsiz = TPM_BUFSIZE;
+ 
+-	count = be32_to_cpu(*((__be32 *) (buf + 2)));
+-	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
++	count = be32_to_cpu(header->length);
++	ordinal = be32_to_cpu(header->ordinal);
+ 	if (count == 0)
+ 		return -ENODATA;
+ 	if (count > bufsiz) {
+-- 
+2.19.1
+
