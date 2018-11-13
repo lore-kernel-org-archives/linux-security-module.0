@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 215C7C43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 05:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1561C43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 06:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE356223CB
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 05:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B86A92082A
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 06:04:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0NL4FpK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE356223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyWxOPih"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86A92082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732611AbeKMP4M (ORCPT
+        id S1730990AbeKMQAy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:56:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33984 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 11:00:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732279AbeKMPr6 (ORCPT
+        id S1731362AbeKMPq6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:47:58 -0500
+        Tue, 13 Nov 2018 10:46:58 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD31E22521;
-        Tue, 13 Nov 2018 05:51:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63A6522522;
+        Tue, 13 Nov 2018 05:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088290;
-        bh=3AqE4y5OxtQFqhDehZ2mIiCnMTz9xrofwndnElIrMiM=;
+        s=default; t=1542088231;
+        bh=ReUernQqS4tozE1OPy3w7M9VZmyf+c7zWqJULAlhLVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C0NL4FpKszOlNrAl1lotkDAqZSHlaqWr7Epjy4VFMIANQc52XQFPvyFdQsKS/I11S
-         K5QzYJLRUgTfqATA+PrAFmPAD+Uowps8gMz9ZHFOYzMEAXVtVj5SUTx19SyqK6sH5U
-         eKhDsZDtjVHYySe6b7zQZDeENNUlYw6PLj57WeHA=
+        b=OyWxOPihOioyHtBfaQ7XSI8LUySN7BPJMvIcFhUD7ZHs4NJi9/6tVAI084zusvisJ
+         gqn13FO+5+7UCuYmX/ITNyzVmpTCnB1ejM1lPy4iLSQWdJ8s/sZz6VT8MYhzfRwYTQ
+         lwvisE2dykcDV0mKoToAYxLOtwIMRj/nlVeHHiVk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Zubin Mithra <zsm@chromium.org>,
         John Johansen <john.johansen@canonical.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 26/39] apparmor: Fix uninitialized value in aa_split_fqname
-Date:   Tue, 13 Nov 2018 00:50:40 -0500
-Message-Id: <20181113055053.78352-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 28/44] apparmor: Fix uninitialized value in aa_split_fqname
+Date:   Tue, 13 Nov 2018 00:49:34 -0500
+Message-Id: <20181113054950.77898-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113055053.78352-1-sashal@kernel.org>
-References: <20181113055053.78352-1-sashal@kernel.org>
+In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
+References: <20181113054950.77898-1-sashal@kernel.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
@@ -103,7 +102,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index a7b3f681b80e..230d39b0ddfc 100644
+index 974affe50531..76491e7f4177 100644
 --- a/security/apparmor/lib.c
 +++ b/security/apparmor/lib.c
 @@ -90,10 +90,12 @@ const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
