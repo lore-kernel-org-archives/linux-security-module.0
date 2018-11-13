@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5783C169D4
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028F0C43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84EE0224E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84EE0224E0
+	by mail.kernel.org (Postfix) with ESMTP id C5291216FD
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5291216FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbeKNGZ0 (ORCPT
+        id S1728686AbeKNGZa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:25:26 -0500
+        Wed, 14 Nov 2018 01:25:30 -0500
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:21360 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725813AbeKNGZZ (ORCPT
+        by vger.kernel.org with ESMTP id S1731024AbeKNGZa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:25:25 -0500
+        Wed, 14 Nov 2018 01:25:30 -0500
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 13 Nov 2018 12:25:11 -0800
+ 15.0.1156.6; Tue, 13 Nov 2018 12:25:12 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 94FCEB1A5C;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id D9225B1A56;
         Tue, 13 Nov 2018 15:25:38 -0500 (EST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -40,13 +40,14 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
+        Nadav Amit <namit@vmware.com>,
         Andy Lutomirski <luto@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v5 03/10] x86/mm: temporary mm struct
-Date:   Tue, 13 Nov 2018 05:07:23 -0800
-Message-ID: <20181113130730.44844-4-namit@vmware.com>
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v5 09/10] x86/jump-label: remove support for custom poker
+Date:   Tue, 13 Nov 2018 05:07:29 -0800
+Message-ID: <20181113130730.44844-10-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113130730.44844-1-namit@vmware.com>
 References: <20181113130730.44844-1-namit@vmware.com>
@@ -58,81 +59,88 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Andy Lutomirski <luto@kernel.org>
+There are only two types of poking: early and breakpoint based. The use
+of a function pointer to perform poking complicates the code and is
+probably inefficient due to the use of indirect branches.
 
-Sometimes we want to set a temporary page-table entries (PTEs) in one of
-the cores, without allowing other cores to use - even speculatively -
-these mappings. There are two benefits for doing so:
-
-(1) Security: if sensitive PTEs are set, temporary mm prevents their use
-in other cores. This hardens the security as it prevents exploding a
-dangling pointer to overwrite sensitive data using the sensitive PTE.
-
-(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-remote page-tables.
-
-To do so a temporary mm_struct can be used. Mappings which are private
-for this mm can be set in the userspace part of the address-space.
-During the whole time in which the temporary mm is loaded, interrupts
-must be disabled.
-
-The first use-case for temporary PTEs, which will follow, is for poking
-the kernel text.
-
-[ Commit message was written by Nadav ]
-
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/mmu_context.h | 32 ++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/x86/kernel/jump_label.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 0ca50611e8ce..0141b7fa6d01 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -338,4 +338,36 @@ static inline unsigned long __get_current_cr3_fast(void)
- 	return cr3;
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index ed5fe274a7d8..994c13e2867d 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -39,7 +39,6 @@ static void bug_at(unsigned char *ip, int line)
+ 
+ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 					 enum jump_label_type type,
+-					 void *(*poker)(void *, const void *, size_t),
+ 					 int init)
+ {
+ 	union jump_code_union jmp;
+@@ -52,14 +51,6 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 	jmp.offset = jump_entry_target(entry) -
+ 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+ 
+-	/*
+-	 * As long as we're UP and not yet marked RO, we can use
+-	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
+-	 * SYSTEM_SCHEDULING before going either.
+-	 */
+-	if (system_state == SYSTEM_BOOTING)
+-		poker = text_poke_early;
+-
+ 	if (type == JUMP_LABEL_JMP) {
+ 		if (init) {
+ 			expect = default_nop; line = __LINE__;
+@@ -82,16 +73,17 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 		bug_at((void *)jump_entry_code(entry), line);
+ 
+ 	/*
+-	 * Make text_poke_bp() a default fallback poker.
++	 * As long as we're UP and not yet marked RO, we can use
++	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
++	 * SYSTEM_SCHEDULING before going either.
+ 	 *
+ 	 * At the time the change is being done, just ignore whether we
+ 	 * are doing nop -> jump or jump -> nop transition, and assume
+ 	 * always nop being the 'currently valid' instruction
+-	 *
+ 	 */
+-	if (poker) {
+-		(*poker)((void *)jump_entry_code(entry), code,
+-			 JUMP_LABEL_NOP_SIZE);
++	if (init || system_state == SYSTEM_BOOTING) {
++		text_poke_early((void *)jump_entry_code(entry), code,
++				JUMP_LABEL_NOP_SIZE);
+ 		return;
+ 	}
+ 
+@@ -103,7 +95,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
+ 			       enum jump_label_type type)
+ {
+ 	mutex_lock(&text_mutex);
+-	__jump_label_transform(entry, type, NULL, 0);
++	__jump_label_transform(entry, type, 0);
+ 	mutex_unlock(&text_mutex);
  }
  
-+typedef struct {
-+	struct mm_struct *prev;
-+} temporary_mm_state_t;
-+
-+/*
-+ * Using a temporary mm allows to set temporary mappings that are not accessible
-+ * by other cores. Such mappings are needed to perform sensitive memory writes
-+ * that override the kernel memory protections (e.g., W^X), without exposing the
-+ * temporary page-table mappings that are required for these write operations to
-+ * other cores.
-+ *
-+ * Context: The temporary mm needs to be used exclusively by a single core. To
-+ *          harden security IRQs must be disabled while the temporary mm is
-+ *          loaded, thereby preventing interrupt handler bugs from override the
-+ *          kernel memory protection.
-+ */
-+static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
-+{
-+	temporary_mm_state_t state;
-+
-+	lockdep_assert_irqs_disabled();
-+	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	switch_mm_irqs_off(NULL, mm, current);
-+	return state;
-+}
-+
-+static inline void unuse_temporary_mm(temporary_mm_state_t prev)
-+{
-+	lockdep_assert_irqs_disabled();
-+	switch_mm_irqs_off(NULL, prev.prev, current);
-+}
-+
- #endif /* _ASM_X86_MMU_CONTEXT_H */
+@@ -133,7 +125,7 @@ __init_or_module void arch_jump_label_transform_static(struct jump_entry *entry,
+ 			jlstate = JL_STATE_NO_UPDATE;
+ 	}
+ 	if (jlstate == JL_STATE_UPDATE)
+-		__jump_label_transform(entry, type, text_poke_early, 1);
++		__jump_label_transform(entry, type, 1);
+ }
+ 
+ #endif
 -- 
 2.17.1
 
