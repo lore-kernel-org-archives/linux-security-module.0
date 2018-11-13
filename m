@@ -4,34 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C356C169D4
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7689C169D4
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0C25223C8
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0C25223C8
+	by mail.kernel.org (Postfix) with ESMTP id AB280214F1
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 18:37:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB280214F1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbeKNEgM (ORCPT
+        id S1726932AbeKNEg3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:36:12 -0500
-Received: from mga18.intel.com ([134.134.136.126]:8339 "EHLO mga18.intel.com"
+        Tue, 13 Nov 2018 23:36:29 -0500
+Received: from mga12.intel.com ([192.55.52.136]:40277 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726842AbeKNEgM (ORCPT
+        id S1726459AbeKNEg2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:36:12 -0500
+        Tue, 13 Nov 2018 23:36:28 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 10:36:52 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 10:37:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,229,1539673200"; 
-   d="scan'208";a="107948760"
+   d="scan'208";a="107948821"
 Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
-  by orsmga001.jf.intel.com with ESMTP; 13 Nov 2018 10:36:45 -0800
+  by orsmga001.jf.intel.com with ESMTP; 13 Nov 2018 10:37:02 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -45,9 +45,9 @@ Cc:     linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v7 02/17] tpm: fix invalid return value in pubek_show()
-Date:   Tue, 13 Nov 2018 20:36:01 +0200
-Message-Id: <20181113183620.27447-3-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v7 04/17] tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+Date:   Tue, 13 Nov 2018 20:36:03 +0200
+Message-Id: <20181113183620.27447-5-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
 References: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
@@ -57,32 +57,65 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Return zero when tpm_buf_init() fails as we do for other functions in
-tpm-sysfs.c.
+The error logging for tpm2_commit_space() is in a wrong place. This
+commit moves it inside that function.
 
-Fixes: da379f3c1db0c ("tpm: migrate pubek_show to struct tpm_buf")
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- drivers/char/tpm/tpm-sysfs.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 2 --
+ drivers/char/tpm/tpm2-space.c    | 9 ++++++---
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index c2769e55cb6c..7ed7eb6f906a 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -47,9 +47,8 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 64510ed81b46..7ac6ada8428c 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -277,8 +277,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	}
  
- 	memset(&anti_replay, 0, sizeof(anti_replay));
- 
--	rc = tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK);
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
 -	if (rc)
+-		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+ 
+ out:
+ 	/* may fail but do not override previous error value in rc */
+diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+index 1131a8e7b79b..5ecc73988f7c 100644
+--- a/drivers/char/tpm/tpm2-space.c
++++ b/drivers/char/tpm/tpm2-space.c
+@@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+ 	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
 -		return rc;
-+	if (tpm_buf_init(&tpm_buf, TPM_TAG_RQU_COMMAND, TPM_ORD_READPUBEK))
-+		return 0;
++		goto out;
+ 	}
  
- 	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
+ 	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+-		return rc;
++		goto out;
+ 	}
  
+ 	rc = tpm2_save_space(chip);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	*bufsiz = be32_to_cpu(header->length);
+@@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+ 	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
+ 
+ 	return 0;
++out:
++	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
++	return rc;
+ }
 -- 
 2.19.1
 
