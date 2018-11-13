@@ -2,56 +2,55 @@ Return-Path: <SRS0=2v5L=NY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAADC43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 22:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC93C43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 23:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57476223C8
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 22:35:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57476223C8
+	by mail.kernel.org (Postfix) with ESMTP id EB88E2175B
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 23:02:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB88E2175B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbeKNIfW (ORCPT
+        id S1731312AbeKNJDB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Nov 2018 03:35:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35316 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726531AbeKNIfV (ORCPT
+        Wed, 14 Nov 2018 04:03:01 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36526 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726890AbeKNJDA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Nov 2018 03:35:21 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wADMXvlM037268
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 17:35:03 -0500
+        Wed, 14 Nov 2018 04:03:00 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wADMx4t8082416
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 18:02:37 -0500
 Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nr7dp08da-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nr7dsh3fd-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 17:35:02 -0500
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 18:02:36 -0500
 Received: from localhost
         by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Tue, 13 Nov 2018 22:35:02 -0000
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        Tue, 13 Nov 2018 23:02:35 -0000
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
         by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 13 Nov 2018 22:34:57 -0000
+        Tue, 13 Nov 2018 23:02:32 -0000
 Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wADMYuhX24707262
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wADN2Vc017236190
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Nov 2018 22:34:56 GMT
+        Tue, 13 Nov 2018 23:02:32 GMT
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 171B8136053;
-        Tue, 13 Nov 2018 22:34:56 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D2169136063;
+        Tue, 13 Nov 2018 23:02:31 +0000 (GMT)
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8ED60136051;
-        Tue, 13 Nov 2018 22:34:54 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 87925136055;
+        Tue, 13 Nov 2018 23:02:28 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 13 Nov 2018 22:34:54 +0000 (GMT)
+        Tue, 13 Nov 2018 23:02:28 +0000 (GMT)
 Subject: Re: [PATCH v7 15/17] tpm: introduce tpm_chip_start() and
  tpm_chip_stop()
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -69,30 +68,30 @@ Cc:     linux-security-module@vger.kernel.org,
 References: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
  <20181113183620.27447-16-jarkko.sakkinen@linux.intel.com>
 From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Tue, 13 Nov 2018 17:34:54 -0500
+Date:   Tue, 13 Nov 2018 18:02:27 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
 In-Reply-To: <20181113183620.27447-16-jarkko.sakkinen@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-MW
 X-TM-AS-GCONF: 00
-x-cbid: 18111322-0016-0000-0000-00000952D6BD
+x-cbid: 18111323-0016-0000-0000-00000952D836
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010044; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01117028; UDB=6.00577116; IPR=6.00897136;
- MB=3.00024148; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-13 22:35:00
+ PH=3.00000004; SC=3.00000270; SDB=6.01117037; UDB=6.00577116; IPR=6.00897146;
+ MB=3.00024148; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-13 23:02:35
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111322-0017-0000-0000-0000410C947E
-Message-Id: <f13401b7-e683-6b61-b0cf-7c4be87903cb@linux.ibm.com>
+x-cbparentid: 18111323-0017-0000-0000-0000410CA1E8
+Message-Id: <d20eaac5-4da2-6322-ef18-23366027a060@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_16:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=879 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811130201
+ mlxlogscore=992 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811130205
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
@@ -101,117 +100,6 @@ On 11/13/18 1:36 PM, Jarkko Sakkinen wrote:
 > Encapsulate power gating and locality functionality to tpm_chip_start()
 > and tpm_chip_stop() in order to clean up the branching mess in
 > tpm_transmit().
-
-
-I ran the vtpm proxy test suite on this series and got this error when 
-running it with 'make check-j5' 
-(https://github.com/stefanberger/linux-vtpm-tests).
-
-It's was actually difficult to hit this bug since I ran it with -j1 , 
--j2 and so on before.
-
-
-[ 3003.838138] BUG: unable to handle kernel NULL pointer dereference at 
-0000000000000000
-[ 3003.838806] PGD 0 P4D 0
-[ 3003.838806] Oops: 0010 [#1] SMP PTI
-[ 3003.840394] CPU: 3 PID: 111 Comm: kworker/3:1 Not tainted 4.20.0-rc2+ #6
-[ 3003.840394] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), 
-BIOS rel-1.11.0-50-g14221cd-dirty-20181018_164544-sbct-4.pok.ibm.com 
-04/01/2014
-[ 3003.840394] Workqueue: tpm-vtpm vtpm_proxy_work
-[ 3003.840394] RIP: 0010:          (null)
-[ 3003.840394] Code: Bad RIP value.
-[ 3003.840394] RSP: 0018:ffffa6e6816d7e10 EFLAGS: 00010246
-[ 3003.840394] RAX: 00000000ffffffe0 RBX: ffff9698077ad000 RCX: 
-0000000000000006
-[ 3003.840394] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 
-ffff9698077ad000
-[ 3003.840394] RBP: ffff9698077ad000 R08: fffff59bc6172d08 R09: 
-0000000000000000
-[ 3003.840394] R10: 0000000000000000 R11: 0000000000000000 R12: 
-ffff9698b78f0700
-[ 3003.840394] R13: ffff9698b78fbc00 R14: 0000000000000000 R15: 
-ffff9697f8ea10f8
-[ 3003.840394] FS:  0000000000000000(0000) GS:ffff9698b78c0000(0000) 
-knlGS:0000000000000000
-[ 3003.840394] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 3003.840394] CR2: ffffffffffffffd6 CR3: 0000000190606000 CR4: 
-00000000000006e0
-[ 3003.840394] Call Trace:
-[ 3003.840394]  ? tpm_chip_start+0xb8/0xe0
-[ 3003.840394]  ? tpm_chip_register+0x15/0x240
-[ 3003.840394]  ? vtpm_proxy_work+0x15/0x30
-[ 3003.840394]  ? process_one_work+0x237/0x5c0
-[ 3003.840394]  ? worker_thread+0x1d5/0x390
-[ 3003.840394]  ? process_one_work+0x5c0/0x5c0
-[ 3003.840394]  ? kthread+0x11e/0x140
-[ 3003.840394]  ? kthread_park+0x90/0x90
-[ 3003.840394]  ? ret_from_fork+0x3a/0x50
-[ 3003.840394] Modules linked in: xt_CHECKSUM ipt_MASQUERADE tun 
-nf_conntrack_netbios_ns nf_conntrack_broadcast xt_CT ip6t_rpfilter 
-ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat 
-ebtable_broute bridge stp llc ip6table_nat nf_nat_ipv6 ip6table_mangle 
-ip6table_raw ip6table_security iptable_nat nf_nat_ipv4 nf_nat 
-nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c iptable_mangle 
-iptable_raw iptable_security ebtable_filter ebtables ip6table_filter 
-ip6_tables sunrpc virtio_gpu ttm drm_kms_helper drm joydev syscopyarea 
-sysfillrect sysimgblt pcspkr virtio_balloon i2c_piix4 fb_sys_fops 
-virtio_net net_failover virtio_console failover virtio_blk crc32c_intel 
-virtio_pci serio_raw ata_generic virtio_ring virtio pata_acpi floppy 
-qemu_fw_cfg
-[ 3003.840394] CR2: 0000000000000000
-[ 3003.840394] ---[ end trace 29e5990b605a7ccb ]---
-[ 3003.840394] RIP: 0010:          (null)
-[ 3003.840394] Code: Bad RIP value.
-[ 3003.840394] RSP: 0018:ffffa6e6816d7e10 EFLAGS: 00010246
-[ 3003.840394] RAX: 00000000ffffffe0 RBX: ffff9698077ad000 RCX: 
-0000000000000006
-[ 3003.840394] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 
-ffff9698077ad000
-[ 3003.840394] RBP: ffff9698077ad000 R08: fffff59bc6172d08 R09: 
-0000000000000000
-[ 3003.840394] R10: 0000000000000000 R11: 0000000000000000 R12: 
-ffff9698b78f0700
-[ 3003.840394] R13: ffff9698b78fbc00 R14: 0000000000000000 R15: 
-ffff9697f8ea10f8
-[ 3003.840394] FS:  0000000000000000(0000) GS:ffff9698b78c0000(0000) 
-knlGS:0000000000000000
-[ 3003.840394] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 3003.840394] CR2: ffffffffffffffd6 CR3: 0000000190606000 CR4: 
-00000000000006e0
-[ 3003.840394] BUG: sleeping function called from invalid context at 
-./include/linux/percpu-rwsem.h:34
-[ 3003.840394] in_atomic(): 0, irqs_disabled(): 1, pid: 111, name: 
-kworker/3:1
-[ 3003.840394] INFO: lockdep is turned off.
-[ 3003.840394] irq event stamp: 165206
-[ 3003.840394] hardirqs last  enabled at (165205): [<ffffffff8b220113>] 
-free_unref_page+0xf3/0x1f0
-[ 3003.840394] hardirqs last disabled at (165206): [<ffffffff8b0019ee>] 
-trace_hardirqs_off_thunk+0x1a/0x1c
-[ 3003.840394] softirqs last  enabled at (165182): [<ffffffff8b785e01>] 
-peernet2id+0x41/0x50
-[ 3003.840394] softirqs last disabled at (165180): [<ffffffff8b785de2>] 
-peernet2id+0x22/0x50
-[ 3003.840394] CPU: 3 PID: 111 Comm: kworker/3:1 Tainted: G D           
-4.20.0-rc2+ #6
-[ 3003.840394] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), 
-BIOS rel-1.11.0-50-g14221cd-dirty-20181018_164544-sbct-4.pok.ibm.com 
-04/01/2014
-[ 3003.840394] Workqueue: tpm-vtpm vtpm_proxy_work
-[ 3003.840394] Call Trace:
-[ 3003.840394]  dump_stack+0x67/0x9b
-[ 3003.840394]  ___might_sleep+0x149/0x230
-[ 3003.840394]  exit_signals+0x20/0x210
-[ 3003.840394]  ? worker_thread+0x1d5/0x390
-[ 3003.840394]  do_exit+0xa0/0xc70
-[ 3003.840394]  ? process_one_work+0x5c0/0x5c0
-[ 3003.840394]  ? kthread+0x11e/0x140
-[ 3003.840394]  rewind_stack_do_exit+0x17/0x20
-[ 3004.389582] tpm tpm1803: tpm_try_transmit: tpm_send: error -14
-
-
 >
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
@@ -292,6 +180,7 @@ BIOS rel-1.11.0-50-g14221cd-dirty-20181018_164544-sbct-4.pok.ibm.com
 > + *
 > + * Return:
 > + * * The response length	- OK
+I don't think this is right. Have to withdraw my Reviewed-by on this one.
 > + * * -errno			- A system error
 > + */
 > +int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
@@ -328,6 +217,11 @@ BIOS rel-1.11.0-50-g14221cd-dirty-20181018_164544-sbct-4.pok.ibm.com
 > + * Return:
 > + * * The response length	- OK
 > + * * -errno			- A system error
+
+This function doesn't return anything.
+
+
+
 > + */
 > +void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
 > +{
