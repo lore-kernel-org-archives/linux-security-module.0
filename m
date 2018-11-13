@@ -2,181 +2,87 @@ Return-Path: <SRS0=2v5L=NY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1D0C43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 14:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A21C0044C
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 15:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAFE32086A
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 14:25:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a3MSvPkF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAFE32086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 09F2D214F1
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 15:52:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09F2D214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731192AbeKNAXm (ORCPT
+        id S2387659AbeKNBv1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Nov 2018 19:23:42 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44646 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731116AbeKNAXm (ORCPT
+        Tue, 13 Nov 2018 20:51:27 -0500
+Received: from mga04.intel.com ([192.55.52.120]:13418 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732449AbeKNBv0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Nov 2018 19:23:42 -0500
-Received: by mail-lj1-f195.google.com with SMTP id k19-v6so10953565lji.11;
-        Tue, 13 Nov 2018 06:25:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BjlCuWwV0XhG5M/Vs9+XqiQhcHAPHhzqj8fntK4oh4Y=;
-        b=a3MSvPkFyT+SkEEYH/s0Ek7nd/Rl3ZC3qx99za4CxikuJhU5aAtrGf7yArtQOdd84r
-         168IZM/NVm+JtHv22doUNsPcdou9LficsLjHm3hSB3xB+krst4Hjmo+p+aHORuapOoMU
-         Ni2DwqlK1eseoOBsZIkN8muGqpI4p9tIXTL0rNULKqJYPOwzC1dIBom4WQIlNUKzRc/9
-         t7UG4g2AyLh8iI1mdc4Jc/lE4SLDZ+2s+3aQr2wp1mGv/zTZ82nch/oO2Y33c8RPm3Ve
-         V4ZAywJ7UxuV7f6FkAQBUgflYg2DefYO8fJOgHl8Cz7mcQXmy4l8OPPjG+sgZWVvJ5tZ
-         TghA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BjlCuWwV0XhG5M/Vs9+XqiQhcHAPHhzqj8fntK4oh4Y=;
-        b=I9vAydNNttZs33kn0yHj6GttzEirkKLMzr7ldZS87DalZ432rbKIj7wvtCslFMQbq/
-         PML5sm2lX4KBe/slvJiAQOJE1hgWkrHGODCCEpLMzRFy+p5AlfBircwEi6LO/s9xjFeQ
-         NSMDrABLhxOM8ejQ2RKGQG97d8gS6ZlfoCBGyaJm5f0SHEmH7tO+sk9iVjSdArGeuhM/
-         mV2bDbwMWVvoz1gMOqqnq9v62qnW8m6Z1SUdqogh4RcchY77bXzBqWBUPdFyvbJMAcHD
-         SPPwu7GxcsgTAuDRycpBPyY++EYz8z0FBhQ6VKvlP8QD1aiOKdTyggReX31ktqGSozzy
-         aPkQ==
-X-Gm-Message-State: AGRZ1gJ91q1WbLIiJvrkGlcpvvWZ7XyVSEBZEDygFXWX0gHNf8KgJYMO
-        4wO2zWpgglANtJ66YqXWzqE=
-X-Google-Smtp-Source: AJdET5ezMdNoePu2JHKcFskIid7SjooAJ77ZTagbpFpg8MCSqPQ6bOYsCd2Bg/b02XGc9NHC2UAhug==
-X-Received: by 2002:a2e:8596:: with SMTP id b22-v6mr3243629lji.122.1542119116280;
-        Tue, 13 Nov 2018 06:25:16 -0800 (PST)
-Received: from ?IPv6:2001:14bb:40:1c40:f0bf:dd2d:f008:5213? (dkyrfb8g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:40:1c40:f0bf:dd2d:f008:5213])
-        by smtp.gmail.com with ESMTPSA id w12sm2461903lfe.80.2018.11.13.06.25.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 06:25:15 -0800 (PST)
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
-Date:   Tue, 13 Nov 2018 16:25:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 13 Nov 2018 20:51:26 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 07:52:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
+   d="scan'208";a="108220024"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
+  by orsmga002.jf.intel.com with ESMTP; 13 Nov 2018 07:52:40 -0800
+Date:   Tue, 13 Nov 2018 17:52:38 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 16/17] tpm: take TPM chip power gating out of
+ tpm_transmit()
+Message-ID: <20181113155238.GB4601@linux.intel.com>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA18602@hasmsx108.ger.corp.intel.com>
+ <20181108230700.GA8038@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA190F4@hasmsx108.ger.corp.intel.com>
+ <20181113111204.GD10434@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA1CC0A@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA1CC0A@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
-I've been studying v4 of the patch-set [1] that Nadav has been working on.
-Incidentally, I think it would be useful to cc also the 
-security/hardening ml.
-The patch-set seems to be close to final, so I am resuming this discussion.
+On Tue, Nov 13, 2018 at 11:58:58AM +0000, Winkler, Tomas wrote:
+> Yes, w/o this constrain it would be okay to request locality only once, 
+> we can ask tboot ask again but at the time the requirement was that locality can be taken of at any point, 
+> I believe that the locality won't be granted till a single command is completed.
 
-On 30/10/2018 19:06, Andy Lutomirski wrote:
+But then tboot could race between requesting a locality and sending
+the command (like immediately after the locality has been granted).
 
-> I support the addition of a rare-write mechanism to the upstream kernel.  And I think that there is only one sane way to implement it: using an mm_struct. That mm_struct, just like any sane mm_struct, should only differ from init_mm in that it has extra mappings in the *user* region.
+> Anyhow still the power gating is wrong in this patch do not ignore
+> that part.
 
-After reading the code, I see what you meant.
-I think I can work with it.
+I can certainly take steps back with gating. It is not a blocker for
+other changes but I do need to explain it in the changelog what problem
+does cause. I'm not ignoring it. I just don't understad what is wrong.
 
-But I have a couple of questions wrt the use of this mechanism, in the 
-context of write rare.
+> Thanks
+> Tomas
 
-
-1) mm_struct.
-
-Iiuc, the purpose of the patchset is mostly (only?) to patch kernel code 
-(live patch?), which seems to happen sequentially and in a relatively 
-standardized way, like replacing the NOPs specifically placed in the 
-functions that need patching.
-
-This is a bit different from the more generic write-rare case, applied 
-to data.
-
-As example, I have in mind a system where both IMA and SELinux are in use.
-
-In this system, a file is accessed for the first time.
-
-That would trigger 2 things:
-- evaluation of the SELinux rules and probably update of the AVC cache
-- IMA measurement and update of the measurements
-
-Both of them could be write protected, meaning that they would both have 
-to be modified through the write rare mechanism.
-
-While the events, for 1 specific file, would be sequential, it's not 
-difficult to imagine that multiple files could be accessed at the same time.
-
-If the update of the data structures in both IMA and SELinux must use 
-the same mm_struct, that would have to be somehow regulated and it would 
-introduce an unnecessary (imho) dependency.
-
-How about having one mm_struct for each writer (core or thread)?
-
-
-
-2) Iiuc, the purpose of the 2 pages being remapped is that the target of 
-the patch might spill across the page boundary, however if I deal with 
-the modification of generic data, I shouldn't (shouldn't I?) assume that 
-the data will not span across multiple pages.
-
-If the data spans across multiple pages, in unknown amount, I suppose 
-that I should not keep interrupts disabled for an unknown time, as it 
-would hurt preemption.
-
-What I thought, in my initial patch-set, was to iterate over each page 
-that must be written to, in a loop, re-enabling interrupts in-between 
-iterations, to give pending interrupts a chance to be served.
-
-This would mean that the data being written to would not be consistent, 
-but it's a problem that would have to be addressed anyways, since it can 
-be still read by other cores, while the write is ongoing.
-
-
-Is this a valid concern/approach?
-
-
---
-igor
-
-
-[1] https://lkml.org/lkml/2018/11/11/110
+/Jarkko
