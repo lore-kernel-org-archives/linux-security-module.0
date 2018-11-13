@@ -3,43 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D9EC43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 13:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0050BC43610
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 13:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ABAB223AE
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 13:34:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ABAB223AE
+	by mail.kernel.org (Postfix) with ESMTP id C57A3206BA
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 13:53:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C57A3206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387489AbeKMXc6 (ORCPT
+        id S2387499AbeKMXwG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:32:58 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32755 "EHLO huawei.com"
+        Tue, 13 Nov 2018 18:52:06 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32756 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733229AbeKMXc6 (ORCPT
+        id S1733103AbeKMXwG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:32:58 -0500
+        Tue, 13 Nov 2018 18:52:06 -0500
 Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 2CD036B5544DA;
-        Tue, 13 Nov 2018 13:34:46 +0000 (GMT)
+        by Forcepoint Email with ESMTP id D7E3DE41FC821;
+        Tue, 13 Nov 2018 13:53:47 +0000 (GMT)
 Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
  (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
- 2018 13:34:40 +0000
+ 2018 13:53:43 +0000
 Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Safford, David (GE Global Research, US)" <david.safford@ge.com>
 CC:     <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        "Wiseman, Monty (GE Global Research, US)" <monty.wiseman@ge.com>
 References: <20181106150159.1136-1-roberto.sassu@huawei.com>
  <20181106150159.1136-2-roberto.sassu@huawei.com>
  <20181108134651.GA8922@linux.intel.com>
 From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <38bdee38-503b-0bac-efba-99f285018934@huawei.com>
-Date:   Tue, 13 Nov 2018 14:34:39 +0100
+Message-ID: <2a00ffbd-c6c4-3288-ee43-b6e75b69be98@huawei.com>
+Date:   Tue, 13 Nov 2018 14:53:42 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
@@ -52,6 +54,9 @@ X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
+
+Adding in CC Monty and Dave.
+
 
 On 11/8/2018 2:46 PM, Jarkko Sakkinen wrote:
 > Orrayn Tue, Nov 06, 2018 at 04:01:54PM +0100, Roberto Sassu wrote:
@@ -106,18 +111,30 @@ On 11/8/2018 2:46 PM, Jarkko Sakkinen wrote:
 > 
 > Should take digest_list as input. Probably callers could re-use the
 > same digest_list array multiple times?
-> 
-> Move struct tpm_chip to include/linux/tpm.h so that the caller can query
-> nr_active_banks and active_banks and can create the digest array by
-> itself. Lets do this right at once now that this is being restructured.
 
-I have to move also other structures and #define. Wouldn't be better to
-introduce a new function to pass to the caller active_banks and
-nr_active_banks?
+I plan to introduce a new structure with the digest size, as Monty
+suggested at LSS. The name of the new structure is tpm_bank_list.
+
+The benefit is that we don't have to rely on the TPM driver or the
+crypto subsystem to find the digest size for the TPM algorithms
+specified by the users of the TPM driver (it is not mandatory that the
+users check the list of active banks).
+
+It could happen that the TPM driver does not know the size of SHA256 if
+the SHA256 bank was not allocated. Then, it has to search in the array
+containing the mapping between TPM algorithm IDs and crypto IDs.
+
+Since it is the user of the TPM driver that calculates the digest,
+passing the digest size to tpm_pcr_extend() does not require too much
+effort, and it also simplifies the TPM driver code.
 
 Roberto
 
 
+> Move struct tpm_chip to include/linux/tpm.h so that the caller can query
+> nr_active_banks and active_banks and can create the digest array by
+> itself. Lets do this right at once now that this is being restructured.
+> 
 >>   
 >>   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
 >> -		memset(digest_list, 0, sizeof(digest_list));
