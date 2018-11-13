@@ -2,73 +2,132 @@ Return-Path: <SRS0=2v5L=NY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB484C43610
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 16:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0833C43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 16:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E4D72243E
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 16:56:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E4D72243E
+	by mail.kernel.org (Postfix) with ESMTP id 74A7522360
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 16:59:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74A7522360
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbeKNCzQ (ORCPT
+        id S1728745AbeKNC62 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Nov 2018 21:55:16 -0500
-Received: from mga12.intel.com ([192.55.52.136]:30379 "EHLO mga12.intel.com"
+        Tue, 13 Nov 2018 21:58:28 -0500
+Received: from mga18.intel.com ([134.134.136.126]:63148 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731259AbeKNCzQ (ORCPT
+        id S1727042AbeKNC62 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Nov 2018 21:55:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        Tue, 13 Nov 2018 21:58:28 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 08:56:21 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 08:59:29 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,228,1539673200"; 
-   d="scan'208";a="90806709"
+   d="scan'208";a="90807242"
 Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
-  by orsmga006.jf.intel.com with ESMTP; 13 Nov 2018 08:56:17 -0800
-Date:   Tue, 13 Nov 2018 18:56:15 +0200
+  by orsmga006.jf.intel.com with ESMTP; 13 Nov 2018 08:59:26 -0800
+Date:   Tue, 13 Nov 2018 18:59:24 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v4 4/6] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-Message-ID: <20181113165615.GB4752@linux.intel.com>
+Subject: Re: [PATCH v4 6/6] tpm: ensure that the output of PCR read contains
+ the correct digest size
+Message-ID: <20181113165924.GC4752@linux.intel.com>
 References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-5-roberto.sassu@huawei.com>
- <20181108140454.GE8922@linux.intel.com>
- <7a43680a-a216-a191-62a3-c2fb4e72d699@huawei.com>
- <20181108151504.GD14072@linux.intel.com>
- <289C0413-4FFB-4831-B82A-D0C3A965053D@gmx.de>
- <20181108190835.GF20608@linux.intel.com>
- <20181113123449.GA22356@linux.intel.com>
- <0bbfd76f-67eb-52be-4475-7f8b57d198a1@huawei.com>
+ <20181106150159.1136-7-roberto.sassu@huawei.com>
+ <20181108140814.GF8922@linux.intel.com>
+ <bb9af477-61b0-7d11-4509-15cc2b2c0024@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0bbfd76f-67eb-52be-4475-7f8b57d198a1@huawei.com>
+In-Reply-To: <bb9af477-61b0-7d11-4509-15cc2b2c0024@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 13, 2018 at 01:39:26PM +0100, Roberto Sassu wrote:
-> > AFAIK the kernel development process does not disallow to use direct
-> > git protocol for maintainer branches. Please, correct me if I'm
-> > mistaken.
+On Tue, Nov 13, 2018 at 02:08:39PM +0100, Roberto Sassu wrote:
+> On 11/8/2018 3:08 PM, Jarkko Sakkinen wrote:
+> > On Tue, Nov 06, 2018 at 04:01:59PM +0100, Roberto Sassu wrote:
+> > > This patch protects against data corruption that could happen in the bus,
+> > > by checking that that the digest size returned by the TPM during a PCR read
+> > > matches the size of the algorithm passed as argument to tpm2_pcr_read().
+> > > 
+> > > This check is performed after information about the PCR banks has been
+> > > retrieved.
+> > > 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >   drivers/char/tpm/tpm2-cmd.c | 16 +++++++++++++++-
+> > >   1 file changed, 15 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> > > index e2d5b84286a7..3b0b5b032901 100644
+> > > --- a/drivers/char/tpm/tpm2-cmd.c
+> > > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > > @@ -187,15 +187,28 @@ struct tpm2_pcr_read_out {
+> > >   int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
+> > >   		  struct tpm_digest *digest_struct, u16 *digest_size_ptr)
+> > >   {
+> > > +	int i;
+> > >   	int rc;
+> > >   	struct tpm_buf buf;
+> > >   	struct tpm2_pcr_read_out *out;
+> > >   	u8 pcr_select[TPM2_PCR_SELECT_MIN] = {0};
+> > >   	u16 digest_size;
+> > > +	u16 expected_digest_size = 0;
+> > >   	if (pcr_idx >= TPM2_PLATFORM_PCR)
+> > >   		return -EINVAL;
+> > > +	if (!digest_size_ptr) {
+> > > +		for (i = 0; i < chip->nr_active_banks &&
+> > > +		     chip->active_banks[i].alg_id != digest_struct->alg_id; i++)
+> > > +			;
+> > 
+> > Not sure if the semicolon should be in its own line.
+> > `
+> > > +
+> > > +		if (i == chip->nr_active_banks)
+> > > +			return -EINVAL;
+> > > +
+> > > +		expected_digest_size = chip->active_banks[i].digest_size;
+> > > +	}
+> > > +
+> > >   	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
+> > >   	if (rc)
+> > >   		return rc;
+> > > @@ -215,7 +228,8 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
+> > >   	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
+> > >   	digest_size = be16_to_cpu(out->digest_size);
+> > > -	if (digest_size > sizeof(digest_struct->digest)) {
+> > > +	if (digest_size > sizeof(digest_struct->digest) ||
+> > > +	    (!digest_size_ptr && digest_size != expected_digest_size)) {
+> > >   		rc = -EINVAL;
+> > >   		goto out;
+> > >   	}
+> > > -- 
+> > > 2.17.1
+> > > 
+> > 
+> > Please add
+> > 
+> > Cc: stable@vger.kernel.org.
 > 
-> I solved the issue by creating a mirror of your repository with gitlab.
+> Should I do the same for the previous patches? This patch cannot be
+> applied alone.
+> 
+> Roberto
 
-Ok, great!
+No need. It is an issue that we deal with depenendent commits once it is
+being backported. This could be dependent for example of a commit that
+is even not in the series so does not make sense to do it now.
 
 /Jarkko
