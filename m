@@ -2,124 +2,95 @@ Return-Path: <SRS0=2v5L=NY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1561C43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 06:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8601FC0044C
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 11:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B86A92082A
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 06:04:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyWxOPih"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86A92082A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D88B223C8
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 11:12:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D88B223C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730990AbeKMQAy (ORCPT
+        id S1732444AbeKMVJt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Nov 2018 11:00:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60736 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 16:09:49 -0500
+Received: from mga11.intel.com ([192.55.52.93]:14522 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731362AbeKMPq6 (ORCPT
+        id S1726581AbeKMVJt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:46:58 -0500
-Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63A6522522;
-        Tue, 13 Nov 2018 05:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088231;
-        bh=ReUernQqS4tozE1OPy3w7M9VZmyf+c7zWqJULAlhLVQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OyWxOPihOioyHtBfaQ7XSI8LUySN7BPJMvIcFhUD7ZHs4NJi9/6tVAI084zusvisJ
-         gqn13FO+5+7UCuYmX/ITNyzVmpTCnB1ejM1lPy4iLSQWdJ8s/sZz6VT8MYhzfRwYTQ
-         lwvisE2dykcDV0mKoToAYxLOtwIMRj/nlVeHHiVk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Zubin Mithra <zsm@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 28/44] apparmor: Fix uninitialized value in aa_split_fqname
-Date:   Tue, 13 Nov 2018 00:49:34 -0500
-Message-Id: <20181113054950.77898-28-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
-References: <20181113054950.77898-1-sashal@kernel.org>
+        Tue, 13 Nov 2018 16:09:49 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 03:12:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,498,1534834800"; 
+   d="scan'208";a="95921696"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Nov 2018 03:12:05 -0800
+Date:   Tue, 13 Nov 2018 13:12:04 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 16/17] tpm: take TPM chip power gating out of
+ tpm_transmit()
+Message-ID: <20181113111204.GD10434@linux.intel.com>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA18602@hasmsx108.ger.corp.intel.com>
+ <20181108230700.GA8038@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA190F4@hasmsx108.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA190F4@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Zubin Mithra <zsm@chromium.org>
+On Fri, Nov 09, 2018 at 09:37:48PM +0000, Winkler, Tomas wrote:
+> > On Thu, Nov 08, 2018 at 06:38:59PM +0000, Winkler, Tomas wrote:
+> > > > Call tpm_chip_start() and tpm_chip_stop() in
+> > > >
+> > > > * tpm_try_get_ops() and tpm_put_ops()
+> > > > * tpm_chip_register()
+> > > > * tpm2_del_space()
+> > > >
+> > > > And remove these calls from tpm_transmit(). The core reason for this
+> > > > change is that in tpm_vtpm_proxy a locality change requires a
+> > > > virtual TPM command (a command made up just for that driver).
+> > > >
+> > > I don't think you can do that,  locality has to be request for each
+> > > command, as  for example tboot can request higher locality any time.
+> > 
+> > That could be a potential problem. How tboot intervention gets prevented
+> > without this patch?
+> As it was said, need to request locality and relinquish it for each
+> command, I believe thought this is not required for client platforms
+> only for servers. 
 
-[ Upstream commit 250f2da49cb8e582215a65c03f50e8ddf5cd119c ]
+And what I'm trying to under is why so.
 
-Syzkaller reported a OOB-read with the stacktrace below. This occurs
-inside __aa_lookupn_ns as `n` is not initialized. `n` is obtained from
-aa_splitn_fqname. In cases where `name` is invalid, aa_splitn_fqname
-returns without initializing `ns_name` and `ns_len`.
+If the intervention can happen at any time that would imply that even if
+you would request and relinquish locality for a single TPM command, the
+intervention could happen in the middle. That is why I'm asking why
+without this patch things are just fine.
 
-Fix this by always initializing `ns_name` and `ns_len`.
-
-	__dump_stack lib/dump_stack.c:77 [inline]
-	dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
-	print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
-	kasan_report_error mm/kasan/report.c:354 [inline]
-	kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
-	__asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-	memcmp+0xe3/0x160 lib/string.c:861
-	strnstr+0x4b/0x70 lib/string.c:934
-	__aa_lookupn_ns+0xc1/0x570 security/apparmor/policy_ns.c:209
-	aa_lookupn_ns+0x88/0x1e0 security/apparmor/policy_ns.c:240
-	aa_fqlookupn_profile+0x1b9/0x1010 security/apparmor/policy.c:468
-	fqlookupn_profile+0x80/0xc0 security/apparmor/label.c:1844
-	aa_label_strn_parse+0xa3a/0x1230 security/apparmor/label.c:1908
-	aa_label_parse+0x42/0x50 security/apparmor/label.c:1943
-	aa_change_profile+0x513/0x3510 security/apparmor/domain.c:1362
-	apparmor_setprocattr+0xaa4/0x1150 security/apparmor/lsm.c:658
-	security_setprocattr+0x66/0xc0 security/security.c:1298
-	proc_pid_attr_write+0x301/0x540 fs/proc/base.c:2555
-	__vfs_write+0x119/0x9f0 fs/read_write.c:485
-	vfs_write+0x1fc/0x560 fs/read_write.c:549
-	ksys_write+0x101/0x260 fs/read_write.c:598
-	__do_sys_write fs/read_write.c:610 [inline]
-	__se_sys_write fs/read_write.c:607 [inline]
-	__x64_sys_write+0x73/0xb0 fs/read_write.c:607
-	do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-	entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: 3b0aaf5866bf ("apparmor: add lib fn to find the "split" for fqnames")
-Reported-by: syzbot+61e4b490d9d2da591b50@syzkaller.appspotmail.com
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: John Johansen <john.johansen@canonical.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/apparmor/lib.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index 974affe50531..76491e7f4177 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -90,10 +90,12 @@ const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
- 	const char *end = fqname + n;
- 	const char *name = skipn_spaces(fqname, n);
- 
--	if (!name)
--		return NULL;
- 	*ns_name = NULL;
- 	*ns_len = 0;
-+
-+	if (!name)
-+		return NULL;
-+
- 	if (name[0] == ':') {
- 		char *split = strnchr(&name[1], end - &name[1], ':');
- 		*ns_name = skipn_spaces(&name[1], end - &name[1]);
--- 
-2.17.1
-
+/Jarkko
