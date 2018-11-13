@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 028F0C43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA30DC43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5291216FD
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5291216FD
+	by mail.kernel.org (Postfix) with ESMTP id 6CFA2223CB
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 20:26:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFA2223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbeKNGZa (ORCPT
+        id S1731024AbeKNGZr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:25:30 -0500
+        Wed, 14 Nov 2018 01:25:47 -0500
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:21360 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731024AbeKNGZa (ORCPT
+        by vger.kernel.org with ESMTP id S1730853AbeKNGZ3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:25:30 -0500
+        Wed, 14 Nov 2018 01:25:29 -0500
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 13 Nov 2018 12:25:12 -0800
+ 15.0.1156.6; Tue, 13 Nov 2018 12:25:11 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id D9225B1A56;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id B76FD1B8196;
         Tue, 13 Nov 2018 15:25:38 -0500 (EST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -45,9 +45,9 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v5 09/10] x86/jump-label: remove support for custom poker
-Date:   Tue, 13 Nov 2018 05:07:29 -0800
-Message-ID: <20181113130730.44844-10-namit@vmware.com>
+Subject: [PATCH v5 06/10] x86/alternative: use temporary mm for text poking
+Date:   Tue, 13 Nov 2018 05:07:26 -0800
+Message-ID: <20181113130730.44844-7-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113130730.44844-1-namit@vmware.com>
 References: <20181113130730.44844-1-namit@vmware.com>
@@ -59,9 +59,20 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There are only two types of poking: early and breakpoint based. The use
-of a function pointer to perform poking complicates the code and is
-probably inefficient due to the use of indirect branches.
+text_poke() can potentially compromise the security as it sets temporary
+PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
+from other cores accidentally or maliciously, if an attacker gains the
+ability to write onto kernel memory.
+
+Moreover, since remote TLBs are not flushed after the temporary PTEs are
+removed, the time-window in which the code is writable is not limited if
+the fixmap PTEs - maliciously or accidentally - are cached in the TLB.
+To address these potential security hazards, we use a temporary mm for
+patching the code.
+
+Finally, text_poke() is also not conservative enough when mapping pages,
+as it always tries to map 2 pages, even when a single one is sufficient.
+So try to be more conservative, and do not map more than needed.
 
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
@@ -70,77 +81,181 @@ Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/jump_label.c | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+ arch/x86/include/asm/fixmap.h |   2 -
+ arch/x86/kernel/alternative.c | 112 +++++++++++++++++++++++++++-------
+ arch/x86/xen/mmu_pv.c         |   2 -
+ 3 files changed, 89 insertions(+), 27 deletions(-)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index ed5fe274a7d8..994c13e2867d 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -39,7 +39,6 @@ static void bug_at(unsigned char *ip, int line)
+diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+index 50ba74a34a37..9da8cccdf3fb 100644
+--- a/arch/x86/include/asm/fixmap.h
++++ b/arch/x86/include/asm/fixmap.h
+@@ -103,8 +103,6 @@ enum fixed_addresses {
+ #ifdef CONFIG_PARAVIRT
+ 	FIX_PARAVIRT_BOOTMAP,
+ #endif
+-	FIX_TEXT_POKE1,	/* reserve 2 pages for text_poke() */
+-	FIX_TEXT_POKE0, /* first page is last, because allocation is backward */
+ #ifdef	CONFIG_X86_INTEL_MID
+ 	FIX_LNW_VRTC,
+ #endif
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index d3ae5c26e5a0..96607ef285c3 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -11,6 +11,7 @@
+ #include <linux/stop_machine.h>
+ #include <linux/slab.h>
+ #include <linux/kdebug.h>
++#include <linux/mmu_context.h>
+ #include <asm/text-patching.h>
+ #include <asm/alternative.h>
+ #include <asm/sections.h>
+@@ -683,43 +684,108 @@ __ro_after_init unsigned long poking_addr;
  
- static void __ref __jump_label_transform(struct jump_entry *entry,
- 					 enum jump_label_type type,
--					 void *(*poker)(void *, const void *, size_t),
- 					 int init)
+ static int __text_poke(void *addr, const void *opcode, size_t len)
  {
- 	union jump_code_union jmp;
-@@ -52,14 +51,6 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
- 
--	/*
--	 * As long as we're UP and not yet marked RO, we can use
--	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
--	 * SYSTEM_SCHEDULING before going either.
--	 */
--	if (system_state == SYSTEM_BOOTING)
--		poker = text_poke_early;
--
- 	if (type == JUMP_LABEL_JMP) {
- 		if (init) {
- 			expect = default_nop; line = __LINE__;
-@@ -82,16 +73,17 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 		bug_at((void *)jump_entry_code(entry), line);
++	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
++	temporary_mm_state_t prev;
++	struct page *pages[2] = {NULL};
+ 	unsigned long flags;
+-	char *vaddr;
+-	struct page *pages[2];
+-	int i, r = 0;
++	pte_t pte, *ptep;
++	spinlock_t *ptl;
++	int r = 0;
  
  	/*
--	 * Make text_poke_bp() a default fallback poker.
-+	 * As long as we're UP and not yet marked RO, we can use
-+	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-+	 * SYSTEM_SCHEDULING before going either.
- 	 *
- 	 * At the time the change is being done, just ignore whether we
- 	 * are doing nop -> jump or jump -> nop transition, and assume
- 	 * always nop being the 'currently valid' instruction
--	 *
+-	 * While boot memory allocator is runnig we cannot use struct
+-	 * pages as they are not yet initialized.
++	 * While boot memory allocator is running we cannot use struct pages as
++	 * they are not yet initialized.
  	 */
--	if (poker) {
--		(*poker)((void *)jump_entry_code(entry), code,
--			 JUMP_LABEL_NOP_SIZE);
-+	if (init || system_state == SYSTEM_BOOTING) {
-+		text_poke_early((void *)jump_entry_code(entry), code,
-+				JUMP_LABEL_NOP_SIZE);
- 		return;
+ 	BUG_ON(!after_bootmem);
+ 
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+-		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
++		if (cross_page_boundary)
++			pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+ 	} else {
+ 		pages[0] = virt_to_page(addr);
+ 		WARN_ON(!PageReserved(pages[0]));
+-		pages[1] = virt_to_page(addr + PAGE_SIZE);
++		if (cross_page_boundary)
++			pages[1] = virt_to_page(addr + PAGE_SIZE);
  	}
- 
-@@ -103,7 +95,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
- 			       enum jump_label_type type)
- {
- 	mutex_lock(&text_mutex);
--	__jump_label_transform(entry, type, NULL, 0);
-+	__jump_label_transform(entry, type, 0);
- 	mutex_unlock(&text_mutex);
+-	if (!pages[0])
++
++	if (!pages[0] || (cross_page_boundary && !pages[1]))
+ 		return -EFAULT;
++
+ 	local_irq_save(flags);
+-	set_fixmap(FIX_TEXT_POKE0, page_to_phys(pages[0]));
+-	if (pages[1])
+-		set_fixmap(FIX_TEXT_POKE1, page_to_phys(pages[1]));
+-	vaddr = (char *)fix_to_virt(FIX_TEXT_POKE0);
+-	memcpy(&vaddr[(unsigned long)addr & ~PAGE_MASK], opcode, len);
+-	clear_fixmap(FIX_TEXT_POKE0);
+-	if (pages[1])
+-		clear_fixmap(FIX_TEXT_POKE1);
+-	local_flush_tlb();
+-	sync_core();
+-	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+-	   that causes hangs on some VIA CPUs. */
+-	for (i = 0; i < len; i++)
+-		if (((char *)addr)[i] != ((char *)opcode)[i])
+-			r = -EFAULT;
++
++	/*
++	 * The lock is not really needed, but this allows to avoid open-coding.
++	 */
++	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
++
++	/*
++	 * If we failed to allocate a PTE, fail. This should *never* happen,
++	 * since we preallocate the PTE.
++	 */
++	if (WARN_ON_ONCE(!ptep))
++		goto out;
++
++	pte = mk_pte(pages[0], PAGE_KERNEL);
++	set_pte_at(poking_mm, poking_addr, ptep, pte);
++
++	if (cross_page_boundary) {
++		pte = mk_pte(pages[1], PAGE_KERNEL);
++		set_pte_at(poking_mm, poking_addr + PAGE_SIZE, ptep + 1, pte);
++	}
++
++	/*
++	 * Loading the temporary mm behaves as a compiler barrier, which
++	 * guarantees that the PTE will be set at the time memcpy() is done.
++	 */
++	prev = use_temporary_mm(poking_mm);
++
++	kasan_disable_current();
++	memcpy((u8 *)poking_addr + offset_in_page(addr), opcode, len);
++	kasan_enable_current();
++
++	/*
++	 * Ensure that the PTE is only cleared after the instructions of memcpy
++	 * were issued by using a compiler barrier.
++	 */
++	barrier();
++
++	pte_clear(poking_mm, poking_addr, ptep);
++
++	/*
++	 * __flush_tlb_one_user() performs a redundant TLB flush when PTI is on,
++	 * as it also flushes the corresponding "user" address spaces, which
++	 * does not exist.
++	 *
++	 * Poking, however, is already very inefficient since it does not try to
++	 * batch updates, so we ignore this problem for the time being.
++	 *
++	 * Since the PTEs do not exist in other kernel address-spaces, we do
++	 * not use __flush_tlb_one_kernel(), which when PTI is on would cause
++	 * more unwarranted TLB flushes.
++	 *
++	 * There is a slight anomaly here: the PTE is a supervisor-only and
++	 * (potentially) global and we use __flush_tlb_one_user() but this
++	 * should be fine.
++	 */
++	__flush_tlb_one_user(poking_addr);
++	if (cross_page_boundary) {
++		pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
++		__flush_tlb_one_user(poking_addr + PAGE_SIZE);
++	}
++
++	/*
++	 * Loading the previous page-table hierarchy requires a serializing
++	 * instruction that already allows the core to see the updated version.
++	 * Xen-PV is assumed to serialize execution in a similar manner.
++	 */
++	unuse_temporary_mm(prev);
++
++	pte_unmap_unlock(ptep, ptl);
++out:
++	if (memcmp(addr, opcode, len))
++		r = -EFAULT;
++
+ 	local_irq_restore(flags);
+ 	return r;
  }
- 
-@@ -133,7 +125,7 @@ __init_or_module void arch_jump_label_transform_static(struct jump_entry *entry,
- 			jlstate = JL_STATE_NO_UPDATE;
- 	}
- 	if (jlstate == JL_STATE_UPDATE)
--		__jump_label_transform(entry, type, text_poke_early, 1);
-+		__jump_label_transform(entry, type, 1);
- }
- 
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index a5d7ed125337..e9b474c396d2 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -2318,8 +2318,6 @@ static void xen_set_fixmap(unsigned idx, phys_addr_t phys, pgprot_t prot)
+ #elif defined(CONFIG_X86_VSYSCALL_EMULATION)
+ 	case VSYSCALL_PAGE:
  #endif
+-	case FIX_TEXT_POKE0:
+-	case FIX_TEXT_POKE1:
+ 		/* All local page mappings */
+ 		pte = pfn_pte(phys, prot);
+ 		break;
 -- 
 2.17.1
 
