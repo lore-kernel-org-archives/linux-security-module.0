@@ -1,56 +1,56 @@
-Return-Path: <SRS0=2v5L=NY=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=+5fq=NZ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC93C43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 23:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2148C43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Nov 2018 01:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB88E2175B
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Nov 2018 23:02:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB88E2175B
+	by mail.kernel.org (Postfix) with ESMTP id 95E262145D
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Nov 2018 01:47:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95E262145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731312AbeKNJDB (ORCPT
+        id S1731719AbeKNLsw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Nov 2018 04:03:01 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36526 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726890AbeKNJDA (ORCPT
+        Wed, 14 Nov 2018 06:48:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37984 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726496AbeKNLsw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Nov 2018 04:03:00 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wADMx4t8082416
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 18:02:37 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nr7dsh3fd-1
+        Wed, 14 Nov 2018 06:48:52 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAE1imtk061339
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 20:47:52 -0500
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nr7dpp1dn-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 18:02:36 -0500
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 20:47:51 -0500
 Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Tue, 13 Nov 2018 23:02:35 -0000
+        Wed, 14 Nov 2018 01:47:51 -0000
 Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 13 Nov 2018 23:02:32 -0000
+        Wed, 14 Nov 2018 01:47:46 -0000
 Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wADN2Vc017236190
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAE1ljwd17760308
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Nov 2018 23:02:32 GMT
+        Wed, 14 Nov 2018 01:47:45 GMT
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D2169136063;
-        Tue, 13 Nov 2018 23:02:31 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 66267136059;
+        Wed, 14 Nov 2018 01:47:45 +0000 (GMT)
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87925136055;
-        Tue, 13 Nov 2018 23:02:28 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 2BDDA136055;
+        Wed, 14 Nov 2018 01:47:44 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 13 Nov 2018 23:02:28 +0000 (GMT)
+        Wed, 14 Nov 2018 01:47:43 +0000 (GMT)
 Subject: Re: [PATCH v7 15/17] tpm: introduce tpm_chip_start() and
  tpm_chip_stop()
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -68,7 +68,7 @@ Cc:     linux-security-module@vger.kernel.org,
 References: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
  <20181113183620.27447-16-jarkko.sakkinen@linux.intel.com>
 From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Tue, 13 Nov 2018 18:02:27 -0500
+Date:   Tue, 13 Nov 2018 20:47:43 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.0
 MIME-Version: 1.0
@@ -77,21 +77,21 @@ Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-MW
 X-TM-AS-GCONF: 00
-x-cbid: 18111323-0016-0000-0000-00000952D836
+x-cbid: 18111401-0036-0000-0000-00000A5AE2C5
 X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010044; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01117037; UDB=6.00577116; IPR=6.00897146;
- MB=3.00024148; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-13 23:02:35
+X-IBM-SpamModules-Versions: BY=3.00010045; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01117092; UDB=6.00579381; IPR=6.00897201;
+ MB=3.00024149; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-14 01:47:49
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111323-0017-0000-0000-0000410CA1E8
-Message-Id: <d20eaac5-4da2-6322-ef18-23366027a060@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_16:,,
+x-cbparentid: 18111401-0037-0000-0000-000049A0EC03
+Message-Id: <fedbdc12-4e50-b057-0d7f-ac9c0afa6daa@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-14_01:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=992 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811130205
+ mlxlogscore=896 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811140014
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
@@ -180,7 +180,6 @@ On 11/13/18 1:36 PM, Jarkko Sakkinen wrote:
 > + *
 > + * Return:
 > + * * The response length	- OK
-I don't think this is right. Have to withdraw my Reviewed-by on this one.
 > + * * -errno			- A system error
 > + */
 > +int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
@@ -217,11 +216,6 @@ I don't think this is right. Have to withdraw my Reviewed-by on this one.
 > + * Return:
 > + * * The response length	- OK
 > + * * -errno			- A system error
-
-This function doesn't return anything.
-
-
-
 > + */
 > +void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
 > +{
@@ -347,6 +341,10 @@ This function doesn't return anything.
 > -
 > -		if (ret < 0)
 > -			break;
+
+I think this should stay.
+
+
 >   		rc = be32_to_cpu(header->return_code);
 >   		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
 >   			break;
