@@ -2,529 +2,128 @@ Return-Path: <SRS0=+5fq=NZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A7BC169D4
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Nov 2018 01:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F112C07E85
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Nov 2018 15:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A8AC214F1
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Nov 2018 01:57:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8AC214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E7AD322419
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Nov 2018 15:33:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AD322419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728391AbeKNL6D (ORCPT
+        id S1732933AbeKOBhO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Nov 2018 06:58:03 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51122 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727770AbeKNL6D (ORCPT
+        Wed, 14 Nov 2018 20:37:14 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32764 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727731AbeKOBhO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Nov 2018 06:58:03 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAE1mQVw059763
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 20:56:59 -0500
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nr7dpxf4m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 13 Nov 2018 20:56:59 -0500
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Wed, 14 Nov 2018 01:56:58 -0000
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 14 Nov 2018 01:56:54 -0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAE1ur7n21233726
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 14 Nov 2018 01:56:53 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 746DF13604F;
-        Wed, 14 Nov 2018 01:56:53 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB4DC136051;
-        Wed, 14 Nov 2018 01:56:51 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 14 Nov 2018 01:56:51 +0000 (GMT)
-Subject: Re: [PATCH v7 15/17] tpm: introduce tpm_chip_start() and
- tpm_chip_stop()
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
- <20181113183620.27447-16-jarkko.sakkinen@linux.intel.com>
- <f13401b7-e683-6b61-b0cf-7c4be87903cb@linux.ibm.com>
-Date:   Tue, 13 Nov 2018 20:56:51 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 14 Nov 2018 20:37:14 -0500
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id B9EE8C5A1AE9F;
+        Wed, 14 Nov 2018 15:33:25 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.37) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 14 Nov 2018 15:33:22 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v5 0/7] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Wed, 14 Nov 2018 16:31:01 +0100
+Message-ID: <20181114153108.12907-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <f13401b7-e683-6b61-b0cf-7c4be87903cb@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 18111401-0004-0000-0000-000014B17A67
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010045; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01117095; UDB=6.00579383; IPR=6.00897203;
- MB=3.00024149; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-14 01:56:57
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111401-0005-0000-0000-0000898037FA
-Message-Id: <f4d13062-9094-7afd-24d6-4daf781d20d4@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-14_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=990 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811140015
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/13/18 5:34 PM, Stefan Berger wrote:
-> On 11/13/18 1:36 PM, Jarkko Sakkinen wrote:
->> Encapsulate power gating and locality functionality to tpm_chip_start()
->> and tpm_chip_stop() in order to clean up the branching mess in
->> tpm_transmit().
->
->
-> I ran the vtpm proxy test suite on this series and got this error when 
-> running it with 'make check-j5' 
-> (https://github.com/stefanberger/linux-vtpm-tests).
->
-> It's was actually difficult to hit this bug since I ran it with -j1 , 
-> -j2 and so on before.
+Update
 
-This is the diff against your nested branch that fixes this bug and the 
-other issue I found:
-
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 46aa68756bac..42bce9bc41b1 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -155,7 +155,13 @@ int tpm_try_get_ops(struct tpm_chip *chip)
-          goto out_lock;
-
-      mutex_lock(&chip->tpm_mutex);
--    return tpm_chip_start(chip);
-+    rc = tpm_chip_start(chip);
-+    if (rc)
-+        goto out_unlock;
-+    return 0;
-+
-+out_unlock:
-+    mutex_unlock(&chip->tpm_mutex);
-  out_lock:
-      up_read(&chip->ops_sem);
-      put_device(&chip->dev);
-diff --git a/drivers/char/tpm/tpm-interface.c 
-b/drivers/char/tpm/tpm-interface.c
-index 5e3d5e95ea46..c3260ae8aca3 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -167,6 +167,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, 
-size_t bufsiz)
-      for (;;) {
-          ret = tpm_try_transmit(chip, buf, bufsiz);
-
-+        if (ret < 0)
-+            break;
-          rc = be32_to_cpu(header->return_code);
-          if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
-              break;
+This version of the patch set includes an additional patch (7/7) which
+modifies the definition of tpm_pcr_extend() and tpm2_pcr_extend(). The new
+patch has been included to facilitate the review of the changes to support
+TPM 2.0 crypto agility for reading/extending PCRs.
 
 
+Original patch set description
 
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
 
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
 
->
->
-> [ 3003.838138] BUG: unable to handle kernel NULL pointer dereference 
-> at 0000000000000000
-> [ 3003.838806] PGD 0 P4D 0
-> [ 3003.838806] Oops: 0010 [#1] SMP PTI
-> [ 3003.840394] CPU: 3 PID: 111 Comm: kworker/3:1 Not tainted 
-> 4.20.0-rc2+ #6
-> [ 3003.840394] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), 
-> BIOS rel-1.11.0-50-g14221cd-dirty-20181018_164544-sbct-4.pok.ibm.com 
-> 04/01/2014
-> [ 3003.840394] Workqueue: tpm-vtpm vtpm_proxy_work
-> [ 3003.840394] RIP: 0010:          (null)
-> [ 3003.840394] Code: Bad RIP value.
-> [ 3003.840394] RSP: 0018:ffffa6e6816d7e10 EFLAGS: 00010246
-> [ 3003.840394] RAX: 00000000ffffffe0 RBX: ffff9698077ad000 RCX: 
-> 0000000000000006
-> [ 3003.840394] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 
-> ffff9698077ad000
-> [ 3003.840394] RBP: ffff9698077ad000 R08: fffff59bc6172d08 R09: 
-> 0000000000000000
-> [ 3003.840394] R10: 0000000000000000 R11: 0000000000000000 R12: 
-> ffff9698b78f0700
-> [ 3003.840394] R13: ffff9698b78fbc00 R14: 0000000000000000 R15: 
-> ffff9697f8ea10f8
-> [ 3003.840394] FS:  0000000000000000(0000) GS:ffff9698b78c0000(0000) 
-> knlGS:0000000000000000
-> [ 3003.840394] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 3003.840394] CR2: ffffffffffffffd6 CR3: 0000000190606000 CR4: 
-> 00000000000006e0
-> [ 3003.840394] Call Trace:
-> [ 3003.840394]  ? tpm_chip_start+0xb8/0xe0
-> [ 3003.840394]  ? tpm_chip_register+0x15/0x240
-> [ 3003.840394]  ? vtpm_proxy_work+0x15/0x30
-> [ 3003.840394]  ? process_one_work+0x237/0x5c0
-> [ 3003.840394]  ? worker_thread+0x1d5/0x390
-> [ 3003.840394]  ? process_one_work+0x5c0/0x5c0
-> [ 3003.840394]  ? kthread+0x11e/0x140
-> [ 3003.840394]  ? kthread_park+0x90/0x90
-> [ 3003.840394]  ? ret_from_fork+0x3a/0x50
-> [ 3003.840394] Modules linked in: xt_CHECKSUM ipt_MASQUERADE tun 
-> nf_conntrack_netbios_ns nf_conntrack_broadcast xt_CT ip6t_rpfilter 
-> ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat 
-> ebtable_broute bridge stp llc ip6table_nat nf_nat_ipv6 ip6table_mangle 
-> ip6table_raw ip6table_security iptable_nat nf_nat_ipv4 nf_nat 
-> nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c iptable_mangle 
-> iptable_raw iptable_security ebtable_filter ebtables ip6table_filter 
-> ip6_tables sunrpc virtio_gpu ttm drm_kms_helper drm joydev syscopyarea 
-> sysfillrect sysimgblt pcspkr virtio_balloon i2c_piix4 fb_sys_fops 
-> virtio_net net_failover virtio_console failover virtio_blk 
-> crc32c_intel virtio_pci serio_raw ata_generic virtio_ring virtio 
-> pata_acpi floppy qemu_fw_cfg
-> [ 3003.840394] CR2: 0000000000000000
-> [ 3003.840394] ---[ end trace 29e5990b605a7ccb ]---
-> [ 3003.840394] RIP: 0010:          (null)
-> [ 3003.840394] Code: Bad RIP value.
-> [ 3003.840394] RSP: 0018:ffffa6e6816d7e10 EFLAGS: 00010246
-> [ 3003.840394] RAX: 00000000ffffffe0 RBX: ffff9698077ad000 RCX: 
-> 0000000000000006
-> [ 3003.840394] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 
-> ffff9698077ad000
-> [ 3003.840394] RBP: ffff9698077ad000 R08: fffff59bc6172d08 R09: 
-> 0000000000000000
-> [ 3003.840394] R10: 0000000000000000 R11: 0000000000000000 R12: 
-> ffff9698b78f0700
-> [ 3003.840394] R13: ffff9698b78fbc00 R14: 0000000000000000 R15: 
-> ffff9697f8ea10f8
-> [ 3003.840394] FS:  0000000000000000(0000) GS:ffff9698b78c0000(0000) 
-> knlGS:0000000000000000
-> [ 3003.840394] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 3003.840394] CR2: ffffffffffffffd6 CR3: 0000000190606000 CR4: 
-> 00000000000006e0
-> [ 3003.840394] BUG: sleeping function called from invalid context at 
-> ./include/linux/percpu-rwsem.h:34
-> [ 3003.840394] in_atomic(): 0, irqs_disabled(): 1, pid: 111, name: 
-> kworker/3:1
-> [ 3003.840394] INFO: lockdep is turned off.
-> [ 3003.840394] irq event stamp: 165206
-> [ 3003.840394] hardirqs last  enabled at (165205): 
-> [<ffffffff8b220113>] free_unref_page+0xf3/0x1f0
-> [ 3003.840394] hardirqs last disabled at (165206): 
-> [<ffffffff8b0019ee>] trace_hardirqs_off_thunk+0x1a/0x1c
-> [ 3003.840394] softirqs last  enabled at (165182): 
-> [<ffffffff8b785e01>] peernet2id+0x41/0x50
-> [ 3003.840394] softirqs last disabled at (165180): 
-> [<ffffffff8b785de2>] peernet2id+0x22/0x50
-> [ 3003.840394] CPU: 3 PID: 111 Comm: kworker/3:1 Tainted: G 
-> D           4.20.0-rc2+ #6
-> [ 3003.840394] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), 
-> BIOS rel-1.11.0-50-g14221cd-dirty-20181018_164544-sbct-4.pok.ibm.com 
-> 04/01/2014
-> [ 3003.840394] Workqueue: tpm-vtpm vtpm_proxy_work
-> [ 3003.840394] Call Trace:
-> [ 3003.840394]  dump_stack+0x67/0x9b
-> [ 3003.840394]  ___might_sleep+0x149/0x230
-> [ 3003.840394]  exit_signals+0x20/0x210
-> [ 3003.840394]  ? worker_thread+0x1d5/0x390
-> [ 3003.840394]  do_exit+0xa0/0xc70
-> [ 3003.840394]  ? process_one_work+0x5c0/0x5c0
-> [ 3003.840394]  ? kthread+0x11e/0x140
-> [ 3003.840394]  rewind_stack_do_exit+0x17/0x20
-> [ 3004.389582] tpm tpm1803: tpm_try_transmit: tpm_send: error -14
->
->
->>
->> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->> ---
->>   drivers/char/tpm/tpm-chip.c      | 110 +++++++++++++++++++++++++++++++
->>   drivers/char/tpm/tpm-interface.c |  87 +-----------------------
->>   drivers/char/tpm/tpm.h           |   2 +
->>   3 files changed, 115 insertions(+), 84 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->> index 157505b0f755..65f1561eba81 100644
->> --- a/drivers/char/tpm/tpm-chip.c
->> +++ b/drivers/char/tpm/tpm-chip.c
->> @@ -37,6 +37,116 @@ struct class *tpm_class;
->>   struct class *tpmrm_class;
->>   dev_t tpm_devt;
->>
->> +static int tpm_request_locality(struct tpm_chip *chip, unsigned int 
->> flags)
->> +{
->> +    int rc;
->> +
->> +    if (flags & TPM_TRANSMIT_NESTED)
->> +        return 0;
->> +
->> +    if (!chip->ops->request_locality)
->> +        return 0;
->> +
->> +    rc = chip->ops->request_locality(chip, 0);
->> +    if (rc < 0)
->> +        return rc;
->> +
->> +    chip->locality = rc;
->> +    return 0;
->> +}
->> +
->> +static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned 
->> int flags)
->> +{
->> +    int rc;
->> +
->> +    if (flags & TPM_TRANSMIT_NESTED)
->> +        return;
->> +
->> +    if (!chip->ops->relinquish_locality)
->> +        return;
->> +
->> +    rc = chip->ops->relinquish_locality(chip, chip->locality);
->> +    if (rc)
->> +        dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
->> +
->> +    chip->locality = -1;
->> +}
->> +
->> +static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
->> +{
->> +    if (flags & TPM_TRANSMIT_NESTED)
->> +        return 0;
->> +
->> +    if (!chip->ops->cmd_ready)
->> +        return 0;
->> +
->> +    return chip->ops->cmd_ready(chip);
->> +}
->> +
->> +static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
->> +{
->> +    if (flags & TPM_TRANSMIT_NESTED)
->> +        return 0;
->> +
->> +    if (!chip->ops->go_idle)
->> +        return 0;
->> +
->> +    return chip->ops->go_idle(chip);
->> +}
->> +
->> +/**
->> + * tpm_chip_start() - power on the TPM
->> + * @chip:    a TPM chip to use
->> + * @flags:    TPM transmit flags
->> + *
->> + * Return:
->> + * * The response length    - OK
->> + * * -errno            - A system error
->> + */
->> +int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
->> +{
->> +    int ret;
->> +
->> +    if (chip->ops->clk_enable)
->> +        chip->ops->clk_enable(chip, true);
->> +
->> +    if (chip->locality == -1) {
->> +        ret = tpm_request_locality(chip, flags);
->> +        if (ret) {
->> +            chip->ops->clk_enable(chip, false);
->> +            return ret;
->> +        }
->> +    }
->> +
->> +    ret = tpm_cmd_ready(chip, flags);
->> +    if (ret) {
->> +        tpm_relinquish_locality(chip, flags);
->> +        if (chip->ops->clk_enable)
->> +            chip->ops->clk_enable(chip, false);
->> +        return ret;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +/**
->> + * tpm_chip_stop() - power off the TPM
->> + * @chip:    a TPM chip to use
->> + * @flags:    TPM transmit flags
->> + *
->> + * Return:
->> + * * The response length    - OK
->> + * * -errno            - A system error
->> + */
->> +void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
->> +{
->> +    tpm_go_idle(chip, flags);
->> +    tpm_relinquish_locality(chip, flags);
->> +    if (chip->ops->clk_enable)
->> +        chip->ops->clk_enable(chip, false);
->> +}
->> +
->> +
->>   /**
->>    * tpm_try_get_ops() - Get a ref to the tpm_chip
->>    * @chip: Chip to ref
->> diff --git a/drivers/char/tpm/tpm-interface.c 
->> b/drivers/char/tpm/tpm-interface.c
->> index 5865b9671d20..888c9923fca1 100644
->> --- a/drivers/char/tpm/tpm-interface.c
->> +++ b/drivers/char/tpm/tpm-interface.c
->> @@ -62,64 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct 
->> tpm_chip *chip, u32 ordinal)
->>   }
->>   EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
->>
->> -static int tpm_request_locality(struct tpm_chip *chip, unsigned int 
->> flags)
->> -{
->> -    int rc;
->> -
->> -    if (flags & TPM_TRANSMIT_NESTED)
->> -        return 0;
->> -
->> -    if (!chip->ops->request_locality)
->> -        return 0;
->> -
->> -    rc = chip->ops->request_locality(chip, 0);
->> -    if (rc < 0)
->> -        return rc;
->> -
->> -    chip->locality = rc;
->> -
->> -    return 0;
->> -}
->> -
->> -static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned 
->> int flags)
->> -{
->> -    int rc;
->> -
->> -    if (flags & TPM_TRANSMIT_NESTED)
->> -        return;
->> -
->> -    if (!chip->ops->relinquish_locality)
->> -        return;
->> -
->> -    rc = chip->ops->relinquish_locality(chip, chip->locality);
->> -    if (rc)
->> -        dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
->> -
->> -    chip->locality = -1;
->> -}
->> -
->> -static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
->> -{
->> -    if (flags & TPM_TRANSMIT_NESTED)
->> -        return 0;
->> -
->> -    if (!chip->ops->cmd_ready)
->> -        return 0;
->> -
->> -    return chip->ops->cmd_ready(chip);
->> -}
->> -
->> -static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
->> -{
->> -    if (flags & TPM_TRANSMIT_NESTED)
->> -        return 0;
->> -
->> -    if (!chip->ops->go_idle)
->> -        return 0;
->> -
->> -    return chip->ops->go_idle(chip);
->> -}
->> -
->>   static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, 
->> size_t bufsiz,
->>                   unsigned int flags)
->>   {
->> @@ -212,7 +154,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 
->> *buf, size_t bufsiz,
->>       /* space for header and handles */
->>       u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
->>       unsigned int delay_msec = TPM2_DURATION_SHORT;
->> -    bool has_locality = false;
->>       u32 rc = 0;
->>       ssize_t ret;
->>       const size_t save_size = min(sizeof(save), bufsiz);
->> @@ -227,34 +168,12 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 
->> *buf, size_t bufsiz,
->>       memcpy(save, buf, save_size);
->>
->>       for (;;) {
->> -        if (chip->ops->clk_enable != NULL)
->> -            chip->ops->clk_enable(chip, true);
->> -
->> -        if (chip->locality == -1) {
->> -            ret = tpm_request_locality(chip, flags);
->> -            if (ret)
->> -                goto out_locality;
->> -            has_locality = true;
->> -        }
->> -
->> -        ret = tpm_cmd_ready(chip, flags);
->> +        ret = tpm_chip_start(chip, flags);
->>           if (ret)
->> -            goto out_locality;
->> -
->> +            return ret;
->>           ret = tpm_try_transmit(chip, buf, bufsiz, flags);
->> +        tpm_chip_stop(chip, flags);
->>
->> -        /* This may fail but do not override ret. */
->> -        tpm_go_idle(chip, flags);
->> -
->> -out_locality:
->> -        if (has_locality)
->> -            tpm_relinquish_locality(chip, flags);
->> -
->> -        if (chip->ops->clk_enable != NULL)
->> -            chip->ops->clk_enable(chip, false);
->> -
->> -        if (ret < 0)
->> -            break;
->>           rc = be32_to_cpu(header->return_code);
->>           if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
->>               break;
->> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
->> index c7c06de651a0..c42a75710b70 100644
->> --- a/drivers/char/tpm/tpm.h
->> +++ b/drivers/char/tpm/tpm.h
->> @@ -523,6 +523,8 @@ static inline void tpm_msleep(unsigned int 
->> delay_msec)
->>                delay_msec * 1000);
->>   };
->>
->> +int tpm_chip_start(struct tpm_chip *chip, unsigned int flags);
->> +void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags);
->>   struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
->>   __must_check int tpm_try_get_ops(struct tpm_chip *chip);
->>   void tpm_put_ops(struct tpm_chip *chip);
->
->
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
+
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
+
+Changelog
+
+v4:
+- rename active_banks to allocated_banks
+- replace kmalloc_array() with kcalloc()
+- increment nr_allocated_banks if at least one PCR in the bank is selected
+- pass multiple digests to tpm_pcr_extend()
+
+v3:
+- remove end marker change
+- replace active_banks static array with pointer to dynamic array
+- remove TPM2_ACTIVE_PCR_BANKS
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+Roberto Sassu (7):
+  tpm: dynamically allocate the allocated_banks array
+  tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: modify tpm_pcr_read() definition to pass a TPM hash algorithm
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: ensure that the output of PCR read contains the correct digest
+    size
+  tpm: pass an array of tpm_bank_list structures to tpm_pcr_extend()
+
+ drivers/char/tpm/tpm-chip.c         |   1 +
+ drivers/char/tpm/tpm-interface.c    |  36 +++----
+ drivers/char/tpm/tpm.h              |  23 ++---
+ drivers/char/tpm/tpm1-cmd.c         |  26 ++++-
+ drivers/char/tpm/tpm2-cmd.c         | 155 +++++++++++++++++++++-------
+ include/linux/tpm.h                 |  43 +++++++-
+ include/linux/tpm_eventlog.h        |  12 +--
+ security/integrity/ima/ima_crypto.c |  10 +-
+ security/integrity/ima/ima_queue.c  |   5 +-
+ security/keys/trusted.c             |   5 +-
+ 10 files changed, 213 insertions(+), 103 deletions(-)
+
+-- 
+2.17.1
 
