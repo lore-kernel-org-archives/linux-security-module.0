@@ -2,110 +2,61 @@ Return-Path: <SRS0=s83O=N2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC461C43441
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Nov 2018 13:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00018C43441
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Nov 2018 17:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D28F223CB
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Nov 2018 13:03:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="JjJGa1cV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D28F223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	by mail.kernel.org (Postfix) with ESMTP id C2DDB223CB
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Nov 2018 17:30:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2DDB223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733254AbeKOXKq (ORCPT
+        id S2388686AbeKPDir (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Nov 2018 18:10:46 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34830 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729024AbeKOXKq (ORCPT
+        Thu, 15 Nov 2018 22:38:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41464 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726910AbeKPDiq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Nov 2018 18:10:46 -0500
-Received: by mail-lf1-f67.google.com with SMTP id e26so12283691lfc.2
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Nov 2018 05:02:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=fU0bSahDOVLphCMLSHPEdDcSEo/lWX0hmnXsSE8SHtE=;
-        b=JjJGa1cVNvAjxasjq32pTy2r7G6/zLKQWghQAftoNiR7KSNvcEacIq4aAaCVWiQ9z2
-         Xmoz3waCssQ9WSvN4QIRBGWeYm+bMIapBEIl8Ayfer+yeOCP92SemG9iaNcLrEK406Lk
-         64T2l9V6+KHkwViSWdAL7T8JNXW+GMKRKPEcu7kB2CxpQPjyS2McnbasbzeAw9ELCRjF
-         IKzWgy/STZO+VJWu5lde5lf4TirVF3G0Iz58ZiGsu6CtaHzFT+FhXPkezXYmMw3AtsNK
-         NnZgb3iBAoX+rvqaDo5smvdguTUzQuFzv0cn3NqjfpwUI6FZEDKuQpPndPbvr2dLfd1K
-         RmkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=fU0bSahDOVLphCMLSHPEdDcSEo/lWX0hmnXsSE8SHtE=;
-        b=WjTI/ZnHbU5wQBZ7L5wCvnBPOAwY6H0yOj+I+LaMR8BRrqGz0EOc244ynCxsnXTJVb
-         9R/GdoeUUI35XkD414Gm+gnStujtR8kyjgkZjrhC+JjuT2wySh7iohY+RxoBHPnFLqJt
-         79NWdsFTiBW4aI9IZMLWaozNuoRJDwTtQcFQHdh5IJgEbribrr8GDCB9khuKKP1S33Ln
-         Ygf2xD4uXfWM9wSyj61jlAxLuiTGUtQZLqCyYwX/jHbxHaVlWMe5RBttgieg+oUnGX0f
-         ju17wZjuXhnUlJcbLoPSDj52/evKMkhdaZe2VUqvxmvXYoyhG9IV1BGICMQQGnwj/dXS
-         Vl+w==
-X-Gm-Message-State: AGRZ1gIjflvW11cblvVvPp03SAsB9ChkexEp/1AGEJ1pflQj38IHLe/0
-        znGb1CHNxXLVA/rAx2Sup0obyZw9NdCVNOG1ULp9
-X-Google-Smtp-Source: AJdET5c5LRJPfYcCYNAtxewzKAyacBPE0MRcxhDW3MUowdf8MCl5aC/vDgvI6kXI4KpA7KwiDjkf6Z1FYtN6VmLL/sA=
-X-Received: by 2002:a19:a7c1:: with SMTP id q184mr3255399lfe.4.1542286978330;
- Thu, 15 Nov 2018 05:02:58 -0800 (PST)
-MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 15 Nov 2018 08:02:47 -0500
-Message-ID: <CAHC9VhRWJ2s+z3TYazcgb6e2mkYuvD4Hy5W-N8i4Qo9Rn_8SeA@mail.gmail.com>
-Subject: [GIT PULL] SELinux fixes for v4.20 (#1)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Thu, 15 Nov 2018 22:38:46 -0500
+Subject: Re: [GIT PULL] SELinux fixes for v4.20 (#1)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD87223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=pr-tracker-bot@kernel.org
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhRWJ2s+z3TYazcgb6e2mkYuvD4Hy5W-N8i4Qo9Rn_8SeA@mail.gmail.com>
+References: <CAHC9VhRWJ2s+z3TYazcgb6e2mkYuvD4Hy5W-N8i4Qo9Rn_8SeA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhRWJ2s+z3TYazcgb6e2mkYuvD4Hy5W-N8i4Qo9Rn_8SeA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20181115
+X-PR-Tracked-Commit-Id: 877181a8d9dc663f7a73f77f50af714d7888ec3b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: da5322e65940e4e8426613a8ff3d99a08b350a52
+Message-Id: <20181115173002.30611.37125.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Thu, 15 Nov 2018 17:30:02 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+The pull request you sent on Thu, 15 Nov 2018 08:02:47 -0500:
 
-Two small SELinux fixes for v4.20; Ondrej's patch adds a check on user
-input, and my patch ensures we don't look past the end of a buffer.
-Both patches are quite small and pass the selinux-testsuite, please
-merge them into the next v4.20-rc.
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20181115
 
-Thanks,
--Paul
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/da5322e65940e4e8426613a8ff3d99a08b350a52
 
---
-The following changes since commit 4458bba09788e70e8fb39ad003f087cd9dfbd6ac:
-
- selinux: Add __GFP_NOWARN to allocation at str_read()
-   (2018-09-13 15:36:25 -0400)
-
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20181115
-
-for you to fetch changes up to 877181a8d9dc663f7a73f77f50af714d7888ec3b:
-
- selinux: fix non-MLS handling in mls_context_to_sid()
-   (2018-11-13 21:44:33 -0500)
-
-----------------------------------------------------------------
-selinux/stable-4.20 PR 20181115
-
-----------------------------------------------------------------
-Ondrej Mosnacek (1):
-     selinux: check length properly in SCTP bind hook
-
-Paul Moore (1):
-     selinux: fix non-MLS handling in mls_context_to_sid()
-
-security/selinux/hooks.c  |  3 +++
-security/selinux/ss/mls.c | 10 +++++++---
-2 files changed, 10 insertions(+), 3 deletions(-)
+Thank you!
 
 -- 
-paul moore
-www.paul-moore.com
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
