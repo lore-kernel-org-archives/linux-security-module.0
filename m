@@ -2,96 +2,71 @@ Return-Path: <SRS0=qsML=N3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 387ABC04EBC
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 13:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89294C04EBC
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 13:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B532087A
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 13:41:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B532087A
+	by mail.kernel.org (Postfix) with ESMTP id 5E3642087A
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 13:42:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3642087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbeKPXxn (ORCPT
+        id S1728124AbeKPXyZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Nov 2018 18:53:43 -0500
-Received: from mga12.intel.com ([192.55.52.136]:51440 "EHLO mga12.intel.com"
+        Fri, 16 Nov 2018 18:54:25 -0500
+Received: from mga02.intel.com ([134.134.136.20]:62476 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727727AbeKPXxn (ORCPT
+        id S1727711AbeKPXyZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Nov 2018 18:53:43 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        Fri, 16 Nov 2018 18:54:25 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 05:41:16 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 05:41:57 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="250265900"
+   d="scan'208";a="250265950"
 Received: from unknown (HELO localhost) ([10.249.254.86])
-  by orsmga004.jf.intel.com with ESMTP; 16 Nov 2018 05:41:13 -0800
-Date:   Fri, 16 Nov 2018 15:41:12 +0200
+  by orsmga004.jf.intel.com with ESMTP; 16 Nov 2018 05:41:54 -0800
+Date:   Fri, 16 Nov 2018 15:41:53 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>
 Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v5 4/7] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-Message-ID: <20181116134112.GC4163@linux.intel.com>
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v5 6/7] tpm: ensure that the output of PCR read contains
+ the correct digest size
+Message-ID: <20181116134153.GD4163@linux.intel.com>
 References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-5-roberto.sassu@huawei.com>
+ <20181114153108.12907-7-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181114153108.12907-5-roberto.sassu@huawei.com>
+In-Reply-To: <20181114153108.12907-7-roberto.sassu@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 14, 2018 at 04:31:05PM +0100, Roberto Sassu wrote:
-> Currently the TPM driver allows other kernel subsystems to read only the
-> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
-> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
-> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
-> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
-> the new parameter is expected to be always not NULL.
+On Wed, Nov 14, 2018 at 04:31:07PM +0100, Roberto Sassu wrote:
+> This patch protects against data corruption that could happen in the bus,
+> by checking that that the digest size returned by the TPM during a PCR read
+> matches the size of the algorithm passed to tpm2_pcr_read().
 > 
-> Due to the API change, IMA functions have been modified.
+> This check is performed after information about the PCR banks has been
+> retrieved.
 > 
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  drivers/char/tpm/tpm-interface.c    |  9 +++++----
->  drivers/char/tpm/tpm.h              |  3 ++-
->  drivers/char/tpm/tpm2-cmd.c         | 23 ++++++++++++++++-------
->  include/linux/tpm.h                 |  6 ++++--
->  security/integrity/ima/ima_crypto.c | 10 +++++-----
->  5 files changed, 32 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 96c8261d0f04..04aa39432f58 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -451,11 +451,12 @@ EXPORT_SYMBOL_GPL(tpm_is_tpm2);
->   * tpm_pcr_read - read a PCR value from SHA1 bank
->   * @chip:	a &struct tpm_chip instance, %NULL for the default chip
->   * @pcr_idx:	the PCR to be retrieved
-> - * @res_buf:	the value of the PCR
-> + * @digest_struct:	the PCR bank and buffer current PCR value is written to
->   *
->   * Return: same as with tpm_transmit_cmd()
->   */
-> -int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-> +int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
-> +		 struct tpm_digest *digest_struct)
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Cc: stable@vger.kernel.org
 
-Should be just struct tpm_digest *digest
+Missing fixes tag.
 
 /Jarkko
