@@ -2,319 +2,82 @@ Return-Path: <SRS0=qsML=N3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801A6C4161B
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 12:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 827C4C04EBC
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 13:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 486B42087C
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 12:41:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486B42087C
+	by mail.kernel.org (Postfix) with ESMTP id 4D184208A3
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 13:36:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D184208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389682AbeKPWw4 (ORCPT
+        id S2389753AbeKPXtA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:52:56 -0500
-Received: from mga14.intel.com ([192.55.52.115]:54374 "EHLO mga14.intel.com"
+        Fri, 16 Nov 2018 18:49:00 -0500
+Received: from mga12.intel.com ([192.55.52.136]:51187 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727965AbeKPWwz (ORCPT
+        id S1728234AbeKPXs7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:52:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        Fri, 16 Nov 2018 18:48:59 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 04:40:41 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 05:36:34 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="86984162"
-Received: from unknown (HELO localhost) ([10.249.254.90])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Nov 2018 04:40:37 -0800
+   d="scan'208";a="281677638"
+Received: from unknown (HELO localhost) ([10.249.254.86])
+  by fmsmga006.fm.intel.com with ESMTP; 16 Nov 2018 05:36:31 -0800
+Date:   Fri, 16 Nov 2018 15:36:30 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v8 15/17] tpm: introduce tpm_chip_start() and tpm_chip_stop()
-Date:   Fri, 16 Nov 2018 14:38:39 +0200
-Message-Id: <20181116123845.15705-16-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
-References: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v5 1/7] tpm: dynamically allocate the allocated_banks
+ array
+Message-ID: <20181116133630.GA4163@linux.intel.com>
+References: <20181114153108.12907-1-roberto.sassu@huawei.com>
+ <20181114153108.12907-2-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181114153108.12907-2-roberto.sassu@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Encapsulate power gating and locality functionality to tpm_chip_start()
-and tpm_chip_stop() in order to clean up the branching mess in
-tpm_transmit().
+On Wed, Nov 14, 2018 at 04:31:02PM +0100, Roberto Sassu wrote:
+> This patch renames active_banks (member of tpm_chip) to allocated_banks,
+> stores the number of allocated PCR banks in nr_allocated_banks (new member
+> of tpm_chip), and replaces the static array with a pointer to a dynamically
+> allocated array.
+> 
+> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
+> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
+> TPM2_Get_Capability(). One PCR bank with algorithm set to SHA1 is always
+> allocated for TPM 1.x.
+> 
+> As a consequence of the introduction of nr_allocated_banks,
+> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
+> is equal to zero.
+> 
+> Fixes: 1db15344f874 ("tpm: implement TPM 2.0 capability to get active
+> PCR banks")
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-chip.c      | 110 +++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm-interface.c |  86 +-----------------------
- drivers/char/tpm/tpm.h           |   2 +
- 3 files changed, 115 insertions(+), 83 deletions(-)
+There should not be a newline between tags and I don't think this should
+have fixes tag. Otherwise, looks good.
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 157505b0f755..65f1561eba81 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -37,6 +37,116 @@ struct class *tpm_class;
- struct class *tpmrm_class;
- dev_t tpm_devt;
- 
-+static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
-+{
-+	int rc;
-+
-+	if (flags & TPM_TRANSMIT_NESTED)
-+		return 0;
-+
-+	if (!chip->ops->request_locality)
-+		return 0;
-+
-+	rc = chip->ops->request_locality(chip, 0);
-+	if (rc < 0)
-+		return rc;
-+
-+	chip->locality = rc;
-+	return 0;
-+}
-+
-+static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
-+{
-+	int rc;
-+
-+	if (flags & TPM_TRANSMIT_NESTED)
-+		return;
-+
-+	if (!chip->ops->relinquish_locality)
-+		return;
-+
-+	rc = chip->ops->relinquish_locality(chip, chip->locality);
-+	if (rc)
-+		dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
-+
-+	chip->locality = -1;
-+}
-+
-+static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
-+{
-+	if (flags & TPM_TRANSMIT_NESTED)
-+		return 0;
-+
-+	if (!chip->ops->cmd_ready)
-+		return 0;
-+
-+	return chip->ops->cmd_ready(chip);
-+}
-+
-+static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
-+{
-+	if (flags & TPM_TRANSMIT_NESTED)
-+		return 0;
-+
-+	if (!chip->ops->go_idle)
-+		return 0;
-+
-+	return chip->ops->go_idle(chip);
-+}
-+
-+/**
-+ * tpm_chip_start() - power on the TPM
-+ * @chip:	a TPM chip to use
-+ * @flags:	TPM transmit flags
-+ *
-+ * Return:
-+ * * The response length	- OK
-+ * * -errno			- A system error
-+ */
-+int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
-+{
-+	int ret;
-+
-+	if (chip->ops->clk_enable)
-+		chip->ops->clk_enable(chip, true);
-+
-+	if (chip->locality == -1) {
-+		ret = tpm_request_locality(chip, flags);
-+		if (ret) {
-+			chip->ops->clk_enable(chip, false);
-+			return ret;
-+		}
-+	}
-+
-+	ret = tpm_cmd_ready(chip, flags);
-+	if (ret) {
-+		tpm_relinquish_locality(chip, flags);
-+		if (chip->ops->clk_enable)
-+			chip->ops->clk_enable(chip, false);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * tpm_chip_stop() - power off the TPM
-+ * @chip:	a TPM chip to use
-+ * @flags:	TPM transmit flags
-+ *
-+ * Return:
-+ * * The response length	- OK
-+ * * -errno			- A system error
-+ */
-+void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
-+{
-+	tpm_go_idle(chip, flags);
-+	tpm_relinquish_locality(chip, flags);
-+	if (chip->ops->clk_enable)
-+		chip->ops->clk_enable(chip, false);
-+}
-+
-+
- /**
-  * tpm_try_get_ops() - Get a ref to the tpm_chip
-  * @chip: Chip to ref
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 5865b9671d20..2c79284ffd4e 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -62,64 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
- }
- EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
- 
--static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
--{
--	int rc;
--
--	if (flags & TPM_TRANSMIT_NESTED)
--		return 0;
--
--	if (!chip->ops->request_locality)
--		return 0;
--
--	rc = chip->ops->request_locality(chip, 0);
--	if (rc < 0)
--		return rc;
--
--	chip->locality = rc;
--
--	return 0;
--}
--
--static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
--{
--	int rc;
--
--	if (flags & TPM_TRANSMIT_NESTED)
--		return;
--
--	if (!chip->ops->relinquish_locality)
--		return;
--
--	rc = chip->ops->relinquish_locality(chip, chip->locality);
--	if (rc)
--		dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
--
--	chip->locality = -1;
--}
--
--static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
--{
--	if (flags & TPM_TRANSMIT_NESTED)
--		return 0;
--
--	if (!chip->ops->cmd_ready)
--		return 0;
--
--	return chip->ops->cmd_ready(chip);
--}
--
--static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
--{
--	if (flags & TPM_TRANSMIT_NESTED)
--		return 0;
--
--	if (!chip->ops->go_idle)
--		return 0;
--
--	return chip->ops->go_idle(chip);
--}
--
- static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
- 				unsigned int flags)
- {
-@@ -212,7 +154,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
- 	/* space for header and handles */
- 	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
- 	unsigned int delay_msec = TPM2_DURATION_SHORT;
--	bool has_locality = false;
- 	u32 rc = 0;
- 	ssize_t ret;
- 	const size_t save_size = min(sizeof(save), bufsiz);
-@@ -227,32 +168,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
- 	memcpy(save, buf, save_size);
- 
- 	for (;;) {
--		if (chip->ops->clk_enable != NULL)
--			chip->ops->clk_enable(chip, true);
--
--		if (chip->locality == -1) {
--			ret = tpm_request_locality(chip, flags);
--			if (ret)
--				goto out_locality;
--			has_locality = true;
--		}
--
--		ret = tpm_cmd_ready(chip, flags);
-+		ret = tpm_chip_start(chip, flags);
- 		if (ret)
--			goto out_locality;
--
-+			return ret;
- 		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
--
--		/* This may fail but do not override ret. */
--		tpm_go_idle(chip, flags);
--
--out_locality:
--		if (has_locality)
--			tpm_relinquish_locality(chip, flags);
--
--		if (chip->ops->clk_enable != NULL)
--			chip->ops->clk_enable(chip, false);
--
-+		tpm_chip_stop(chip, flags);
- 		if (ret < 0)
- 			break;
- 		rc = be32_to_cpu(header->return_code);
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index c7c06de651a0..c42a75710b70 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -523,6 +523,8 @@ static inline void tpm_msleep(unsigned int delay_msec)
- 		     delay_msec * 1000);
- };
- 
-+int tpm_chip_start(struct tpm_chip *chip, unsigned int flags);
-+void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags);
- struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
- __must_check int tpm_try_get_ops(struct tpm_chip *chip);
- void tpm_put_ops(struct tpm_chip *chip);
--- 
-2.19.1
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
+/Jarkko
