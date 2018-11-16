@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C95A7C43610
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 504D3C43441
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E98E2086B
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:08:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E98E2086B
+	by mail.kernel.org (Postfix) with ESMTP id 20B972086B
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:09:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B972086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729481AbeKQGWj (ORCPT
+        id S1726126AbeKQGWw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 17 Nov 2018 01:22:39 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52252 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729498AbeKQGWi (ORCPT
+        Sat, 17 Nov 2018 01:22:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45106 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725824AbeKQGWu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 17 Nov 2018 01:22:38 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGK4HCk125073
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:49 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nt2nemrm1-1
+        Sat, 17 Nov 2018 01:22:50 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGK8wt9041843
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:09:01 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nt24t639t-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:49 -0500
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:09:00 -0500
 Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Fri, 16 Nov 2018 20:08:48 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 16 Nov 2018 20:09:00 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 16 Nov 2018 20:08:42 -0000
+        Fri, 16 Nov 2018 20:08:54 -0000
 Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGK8fSP41025580
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGK8r2r36438158
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 16 Nov 2018 20:08:42 GMT
+        Fri, 16 Nov 2018 20:08:53 GMT
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6A10AC05E;
-        Fri, 16 Nov 2018 20:08:41 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 22BACAC05B;
+        Fri, 16 Nov 2018 20:08:53 +0000 (GMT)
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A54C6AC059;
-        Fri, 16 Nov 2018 20:08:37 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 2387AAC05E;
+        Fri, 16 Nov 2018 20:08:49 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.80.224.199])
         by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 16 Nov 2018 20:08:37 +0000 (GMT)
+        Fri, 16 Nov 2018 20:08:48 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -67,142 +67,103 @@ Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         Jonathan Corbet <corbet@lwn.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH v8 06/14] integrity: Introduce asymmetric_sig_has_known_key()
-Date:   Fri, 16 Nov 2018 18:07:04 -0200
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH v8 08/14] ima: Introduce is_signed()
+Date:   Fri, 16 Nov 2018 18:07:06 -0200
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181116200712.14154-1-bauerman@linux.ibm.com>
 References: <20181116200712.14154-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111620-0060-0000-0000-000002D42FB2
+x-cbid: 18111620-0072-0000-0000-000003CA291C
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010063; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01118417; UDB=6.00580177; IPR=6.00898525;
- MB=3.00024196; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 20:08:46
+ PH=3.00000004; SC=3.00000270; SDB=6.01118417; UDB=6.00577118; IPR=6.00898526;
+ MB=3.00024197; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 20:08:58
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111620-0061-0000-0000-0000473845FC
-Message-Id: <20181116200712.14154-7-bauerman@linux.ibm.com>
+x-cbparentid: 18111620-0073-0000-0000-00004A21827F
+Message-Id: <20181116200712.14154-9-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811160178
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811160179
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA will only look for a modsig if the xattr sig references a key which is
-not in the expected kernel keyring. To that end, introduce
-asymmetric_sig_has_known_key().
+With the introduction of another IMA signature type (modsig), some places
+will need to check for both of them. It is cleaner to do that if there's a
+helper function to tell whether an xattr_value represents an IMA
+signature.
 
-The logic of extracting the key used in the xattr sig is factored out from
-asymmetric_verify() so that it can be used by the new function.
-
+Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- security/integrity/digsig_asymmetric.c | 44 +++++++++++++++++++-------
- security/integrity/integrity.h         |  8 +++++
- 2 files changed, 41 insertions(+), 11 deletions(-)
+ security/integrity/ima/ima.h              | 5 +++++
+ security/integrity/ima/ima_appraise.c     | 7 +++----
+ security/integrity/ima/ima_template_lib.c | 2 +-
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-index d775e03fbbcc..4c3c49f919f5 100644
---- a/security/integrity/digsig_asymmetric.c
-+++ b/security/integrity/digsig_asymmetric.c
-@@ -79,26 +79,48 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
- 	return key;
- }
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index cc12f3449a72..e4f72b30cb28 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -154,6 +154,11 @@ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
  
--int asymmetric_verify(struct key *keyring, const char *sig,
--		      int siglen, const char *data, int datalen)
-+static struct key *asymmetric_key_from_sig(struct key *keyring, const char *sig,
-+					   int siglen)
++static inline bool is_signed(const struct evm_ima_xattr_data *xattr_value)
++{
++	return xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG;
++}
++
+ /*
+  * used to protect h_table and sha_table
+  */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 8bcef90939f8..c6459408e6b2 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -325,15 +325,14 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	} else if (status != INTEGRITY_PASS) {
+ 		/* Fix mode, but don't replace file signatures. */
+ 		if ((ima_appraise & IMA_APPRAISE_FIX) &&
+-		    (!xattr_value ||
+-		     xattr_value->type != EVM_IMA_XATTR_DIGSIG)) {
++		    !is_signed(xattr_value)) {
+ 			if (!ima_fix_xattr(dentry, iint))
+ 				status = INTEGRITY_PASS;
+ 		}
+ 
+ 		/* Permit new files with file signatures, but without data. */
+ 		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
+-		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
++		    is_signed(xattr_value)) {
+ 			status = INTEGRITY_PASS;
+ 		}
+ 
+@@ -448,7 +447,7 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+ 			return -EINVAL;
+ 		ima_reset_appraise_flags(d_backing_inode(dentry),
+-			xvalue->type == EVM_IMA_XATTR_DIGSIG);
++					 is_signed(xvalue));
+ 		result = 0;
+ 	}
+ 	return result;
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 43752002c222..300912914b17 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -382,7 +382,7 @@ int ima_eventsig_init(struct ima_event_data *event_data,
  {
--	struct public_key_signature pks;
--	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
--	struct key *key;
--	int ret = -ENOMEM;
-+	const struct signature_v2_hdr *hdr = (struct signature_v2_hdr *) sig;
+ 	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
  
- 	if (siglen <= sizeof(*hdr))
--		return -EBADMSG;
-+		return ERR_PTR(-EBADMSG);
+-	if ((!xattr_value) || (xattr_value->type != EVM_IMA_XATTR_DIGSIG))
++	if (!is_signed(xattr_value))
+ 		return 0;
  
- 	siglen -= sizeof(*hdr);
- 
- 	if (siglen != be16_to_cpu(hdr->sig_size))
--		return -EBADMSG;
-+		return ERR_PTR(-EBADMSG);
- 
- 	if (hdr->hash_algo >= HASH_ALGO__LAST)
--		return -ENOPKG;
-+		return ERR_PTR(-ENOPKG);
-+
-+	return request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
-+}
-+
-+bool asymmetric_sig_has_known_key(struct key *keyring, const char *sig,
-+				  int siglen)
-+{
-+	struct key *key;
-+
-+	key = asymmetric_key_from_sig(keyring, sig, siglen);
-+	if (IS_ERR_OR_NULL(key))
-+		return false;
-+
-+	key_put(key);
-+
-+	return true;
-+}
-+
-+int asymmetric_verify(struct key *keyring, const char *sig,
-+		      int siglen, const char *data, int datalen)
-+{
-+	struct public_key_signature pks;
-+	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
-+	struct key *key;
-+	int ret = -ENOMEM;
- 
--	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
-+	key = asymmetric_key_from_sig(keyring, sig, siglen);
- 	if (IS_ERR(key))
- 		return PTR_ERR(key);
- 
-@@ -110,7 +132,7 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 	pks.digest = (u8 *)data;
- 	pks.digest_size = datalen;
- 	pks.s = hdr->sig;
--	pks.s_size = siglen;
-+	pks.s_size = siglen - sizeof(*hdr);
- 	ret = verify_signature(key, &pks);
- 	key_put(key);
- 	pr_debug("%s() = %d\n", __func__, ret);
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 91c41351e18a..ae3c79c63674 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -182,12 +182,20 @@ static inline int integrity_init_keyring(const unsigned int id)
- #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
- int asymmetric_verify(struct key *keyring, const char *sig,
- 		      int siglen, const char *data, int datalen);
-+bool asymmetric_sig_has_known_key(struct key *keyring, const char *sig,
-+				  int siglen);
- #else
- static inline int asymmetric_verify(struct key *keyring, const char *sig,
- 				    int siglen, const char *data, int datalen)
- {
- 	return -EOPNOTSUPP;
- }
-+
-+static inline bool asymmetric_sig_has_known_key(struct key *keyring,
-+						const char *sig, int siglen)
-+{
-+	return false;
-+}
- #endif
- 
- #ifdef CONFIG_IMA_LOAD_X509
+ 	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
 
