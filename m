@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E6FC04EBC
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630DEC43441
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 960932086B
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:09:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960932086B
+	by mail.kernel.org (Postfix) with ESMTP id 27C7B2086B
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:09:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27C7B2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729568AbeKQGWs (ORCPT
+        id S1727799AbeKQGW2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 17 Nov 2018 01:22:48 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51684 "EHLO
+        Sat, 17 Nov 2018 01:22:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56468 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725977AbeKQGWr (ORCPT
+        by vger.kernel.org with ESMTP id S1727593AbeKQGW2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 17 Nov 2018 01:22:47 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGK8vqU046908
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:58 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nt38yu5b6-1
+        Sat, 17 Nov 2018 01:22:28 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGK4AUi005052
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:39 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nt1kmffya-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:58 -0500
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:39 -0500
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Fri, 16 Nov 2018 20:08:53 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 16 Nov 2018 20:08:37 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 16 Nov 2018 20:08:48 -0000
+        Fri, 16 Nov 2018 20:08:31 -0000
 Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGK8lUM43319358
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGK8UqQ29687906
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 16 Nov 2018 20:08:47 GMT
+        Fri, 16 Nov 2018 20:08:30 GMT
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE932AC064;
-        Fri, 16 Nov 2018 20:08:47 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 96CA7AC060;
+        Fri, 16 Nov 2018 20:08:30 +0000 (GMT)
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B879AC059;
-        Fri, 16 Nov 2018 20:08:43 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 64AACAC05B;
+        Fri, 16 Nov 2018 20:08:26 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.80.224.199])
         by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 16 Nov 2018 20:08:43 +0000 (GMT)
+        Fri, 16 Nov 2018 20:08:26 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -67,56 +67,142 @@ Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         Jonathan Corbet <corbet@lwn.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH v8 07/14] integrity: Select CONFIG_KEYS instead of depending on it
-Date:   Fri, 16 Nov 2018 18:07:05 -0200
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH v8 04/14] integrity: Introduce struct evm_xattr
+Date:   Fri, 16 Nov 2018 18:07:02 -0200
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181116200712.14154-1-bauerman@linux.ibm.com>
 References: <20181116200712.14154-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111620-0064-0000-0000-000003756405
+x-cbid: 18111620-0040-0000-0000-00000493BC2B
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010063; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01118417; UDB=6.00577118; IPR=6.00898526;
- MB=3.00024196; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 20:08:53
+ PH=3.00000004; SC=3.00000270; SDB=6.01118417; UDB=6.00577119; IPR=6.00898525;
+ MB=3.00024197; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 20:08:36
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111620-0065-0000-0000-00003B5B7D55
-Message-Id: <20181116200712.14154-8-bauerman@linux.ibm.com>
+x-cbparentid: 18111620-0041-0000-0000-0000089CC8B7
+Message-Id: <20181116200712.14154-5-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=873 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811160179
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811160178
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This avoids a dependency cycle in soon-to-be-introduced
-CONFIG_IMA_APPRAISE_MODSIG: it will select CONFIG_MODULE_SIG_FORMAT
-which in turn selects CONFIG_KEYS. Kconfig then complains that
-CONFIG_INTEGRITY_SIGNATURE depends on CONFIG_KEYS.
+Even though struct evm_ima_xattr_data includes a fixed-size array to hold a
+SHA1 digest, most of the code ignores the array and uses the struct to mean
+"type indicator followed by data of unspecified size" and tracks the real
+size of what the struct represents in a separate length variable.
+
+The only exception to that is the EVM code, which correctly uses the
+definition of struct evm_ima_xattr_data.
+
+So make this explicit in the code by removing the length specification from
+the array in struct evm_ima_xattr_data. Also, change the name of the
+element from digest to data since in most places the array doesn't hold a
+digest.
+
+A separate struct evm_xattr is introduced, with the original definition of
+evm_ima_xattr_data to be used in the places that actually expect that
+definition.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- security/integrity/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/integrity/evm/evm_main.c     | 8 ++++----
+ security/integrity/ima/ima_appraise.c | 7 ++++---
+ security/integrity/integrity.h        | 5 +++++
+ 3 files changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
-index da9565891738..0d642e0317c7 100644
---- a/security/integrity/Kconfig
-+++ b/security/integrity/Kconfig
-@@ -17,8 +17,8 @@ if INTEGRITY
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 7f3f54d89a6e..a1b42d10efc7 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -169,7 +169,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 	/* check value type */
+ 	switch (xattr_data->type) {
+ 	case EVM_XATTR_HMAC:
+-		if (xattr_len != sizeof(struct evm_ima_xattr_data)) {
++		if (xattr_len != sizeof(struct evm_xattr)) {
+ 			evm_status = INTEGRITY_FAIL;
+ 			goto out;
+ 		}
+@@ -179,7 +179,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 				   xattr_value_len, &digest);
+ 		if (rc)
+ 			break;
+-		rc = crypto_memneq(xattr_data->digest, digest.digest,
++		rc = crypto_memneq(xattr_data->data, digest.digest,
+ 				   SHA1_DIGEST_SIZE);
+ 		if (rc)
+ 			rc = -EINVAL;
+@@ -523,7 +523,7 @@ int evm_inode_init_security(struct inode *inode,
+ 				 const struct xattr *lsm_xattr,
+ 				 struct xattr *evm_xattr)
+ {
+-	struct evm_ima_xattr_data *xattr_data;
++	struct evm_xattr *xattr_data;
+ 	int rc;
  
- config INTEGRITY_SIGNATURE
- 	bool "Digital signature verification using multiple keyrings"
--	depends on KEYS
- 	default n
-+	select KEYS
- 	select SIGNATURE
- 	help
- 	  This option enables digital signature verification support
+ 	if (!evm_key_loaded() || !evm_protected_xattr(lsm_xattr->name))
+@@ -533,7 +533,7 @@ int evm_inode_init_security(struct inode *inode,
+ 	if (!xattr_data)
+ 		return -ENOMEM;
+ 
+-	xattr_data->type = EVM_XATTR_HMAC;
++	xattr_data->data.type = EVM_XATTR_HMAC;
+ 	rc = evm_init_hmac(inode, lsm_xattr, xattr_data->digest);
+ 	if (rc < 0)
+ 		goto out;
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index deec1804a00a..8bcef90939f8 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -167,7 +167,8 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+ 		return sig->hash_algo;
+ 		break;
+ 	case IMA_XATTR_DIGEST_NG:
+-		ret = xattr_value->digest[0];
++		/* first byte contains algorithm id */
++		ret = xattr_value->data[0];
+ 		if (ret < HASH_ALGO__LAST)
+ 			return ret;
+ 		break;
+@@ -175,7 +176,7 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+ 		/* this is for backward compatibility */
+ 		if (xattr_len == 21) {
+ 			unsigned int zero = 0;
+-			if (!memcmp(&xattr_value->digest[16], &zero, 4))
++			if (!memcmp(&xattr_value->data[16], &zero, 4))
+ 				return HASH_ALGO_MD5;
+ 			else
+ 				return HASH_ALGO_SHA1;
+@@ -274,7 +275,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 			/* xattr length may be longer. md5 hash in previous
+ 			   version occupied 20 bytes in xattr, instead of 16
+ 			 */
+-			rc = memcmp(&xattr_value->digest[hash_start],
++			rc = memcmp(&xattr_value->data[hash_start],
+ 				    iint->ima_hash->digest,
+ 				    iint->ima_hash->length);
+ 		else
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index e60473b13a8d..20ac02bf1b84 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -79,6 +79,11 @@ enum evm_ima_xattr_type {
+ 
+ struct evm_ima_xattr_data {
+ 	u8 type;
++	u8 data[];
++} __packed;
++
++struct evm_xattr {
++	struct evm_ima_xattr_data data;
+ 	u8 digest[SHA1_DIGEST_SIZE];
+ } __packed;
+ 
 
