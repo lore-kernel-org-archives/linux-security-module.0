@@ -3,54 +3,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24646C07E85
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2428C43441
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E86582086B
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:08:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86582086B
+	by mail.kernel.org (Postfix) with ESMTP id 8834A2086B
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:08:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8834A2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725763AbeKQGWV (ORCPT
+        id S1729430AbeKQGWc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 17 Nov 2018 01:22:21 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58342 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727585AbeKQGWV (ORCPT
+        Sat, 17 Nov 2018 01:22:32 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39668 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726451AbeKQGWb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 17 Nov 2018 01:22:21 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGK4BHS060721
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:32 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nt493gwdf-1
+        Sat, 17 Nov 2018 01:22:31 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGK6ZiL035638
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:42 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nt20jeb2j-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:32 -0500
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:08:42 -0500
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Fri, 16 Nov 2018 20:08:31 -0000
+        Fri, 16 Nov 2018 20:08:41 -0000
 Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 16 Nov 2018 20:08:26 -0000
+        Fri, 16 Nov 2018 20:08:37 -0000
 Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGK8P6v29229292
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGK8aVc29818896
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 16 Nov 2018 20:08:25 GMT
+        Fri, 16 Nov 2018 20:08:36 GMT
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 14AFFAC062;
-        Fri, 16 Nov 2018 20:08:25 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 4D16FAC05F;
+        Fri, 16 Nov 2018 20:08:36 +0000 (GMT)
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F088EAC059;
-        Fri, 16 Nov 2018 20:08:20 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 0B16EAC064;
+        Fri, 16 Nov 2018 20:08:32 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.80.224.199])
         by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 16 Nov 2018 20:08:20 +0000 (GMT)
+        Fri, 16 Nov 2018 20:08:31 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -67,21 +67,22 @@ Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         "David S. Miller" <davem@davemloft.net>,
         Jonathan Corbet <corbet@lwn.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v8 03/14] PKCS#7: Introduce pkcs7_get_digest()
-Date:   Fri, 16 Nov 2018 18:07:01 -0200
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: [PATCH v8 05/14] integrity: Introduce integrity_keyring_from_id()
+Date:   Fri, 16 Nov 2018 18:07:03 -0200
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181116200712.14154-1-bauerman@linux.ibm.com>
 References: <20181116200712.14154-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111620-0040-0000-0000-00000493BC29
+x-cbid: 18111620-0052-0000-0000-000003576A1D
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010063; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01118417; UDB=6.00577119; IPR=6.00898525;
- MB=3.00024197; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 20:08:30
+ PH=3.00000004; SC=3.00000270; SDB=6.01118417; UDB=6.00580177; IPR=6.00898525;
+ MB=3.00024196; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 20:08:41
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111620-0041-0000-0000-0000089CC8B6
-Message-Id: <20181116200712.14154-4-bauerman@linux.ibm.com>
+x-cbparentid: 18111620-0053-0000-0000-00005EC97473
+Message-Id: <20181116200712.14154-6-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -93,79 +94,93 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA will need to access the digest of the PKCS7 message (as calculated by
-the kernel) before the signature is verified, so introduce
-pkcs7_get_digest() for that purpose.
-
-Also, modify pkcs7_digest() to detect when the digest was already
-calculated so that it doesn't have to do redundant work. Verifying that
-sinfo->sig->digest isn't NULL is sufficient because both places which
-allocate sinfo->sig (pkcs7_parse_message() and pkcs7_note_signed_info())
-use kzalloc() so sig->digest is always initialized to zero.
+IMA will need to obtain the keyring used to verify file signatures so that
+it can verify the module-style signature appended to files.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
+Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 ---
- crypto/asymmetric_keys/pkcs7_verify.c | 25 +++++++++++++++++++++++++
- include/crypto/pkcs7.h                |  3 +++
- 2 files changed, 28 insertions(+)
+ security/integrity/digsig.c    | 28 +++++++++++++++++++++-------
+ security/integrity/integrity.h |  6 ++++++
+ 2 files changed, 27 insertions(+), 7 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
-index 97c77f66b20d..e61f121bfc87 100644
---- a/crypto/asymmetric_keys/pkcs7_verify.c
-+++ b/crypto/asymmetric_keys/pkcs7_verify.c
-@@ -33,6 +33,10 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 5eacba858e4b..bfa27f166184 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -43,11 +43,10 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+ #define restrict_link_to_ima restrict_link_by_builtin_trusted
+ #endif
  
- 	kenter(",%u,%s", sinfo->index, sinfo->sig->hash_algo);
+-int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+-			    const char *digest, int digestlen)
++struct key *integrity_keyring_from_id(const unsigned int id)
+ {
+-	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
+-		return -EINVAL;
++	if (id >= INTEGRITY_KEYRING_MAX)
++		return ERR_PTR(-EINVAL);
  
-+	/* The digest was calculated already. */
-+	if (sig->digest)
-+		return 0;
-+
- 	if (!sinfo->sig->hash_algo)
- 		return -ENOPKG;
+ 	if (!keyring[id]) {
+ 		keyring[id] =
+@@ -56,17 +55,32 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			int err = PTR_ERR(keyring[id]);
+ 			pr_err("no %s keyring: %d\n", keyring_name[id], err);
+ 			keyring[id] = NULL;
+-			return err;
++			return ERR_PTR(err);
+ 		}
+ 	}
  
-@@ -122,6 +126,27 @@ static int pkcs7_digest(struct pkcs7_message *pkcs7,
- 	return ret;
- }
- 
-+int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf, u8 *len)
-+{
-+	struct pkcs7_signed_info *sinfo = pkcs7->signed_infos;
-+	int ret;
-+
-+	/*
-+	 * This function doesn't support messages with more than one signature.
-+	 */
-+	if (sinfo == NULL || sinfo->next != NULL)
-+		return -EBADMSG;
-+
-+	ret = pkcs7_digest(pkcs7, sinfo);
-+	if (ret)
-+		return ret;
-+
-+	*buf = sinfo->sig->digest;
-+	*len = sinfo->sig->digest_size;
-+
-+	return 0;
++	return keyring[id];
 +}
 +
- /*
-  * Find the key (X.509 certificate) to use to verify a PKCS#7 message.  PKCS#7
-  * uses the issuer's name and the issuing certificate serial number for
-diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-index 6f51d0cb6d12..cfaea9c37f4a 100644
---- a/include/crypto/pkcs7.h
-+++ b/include/crypto/pkcs7.h
-@@ -46,4 +46,7 @@ extern int pkcs7_verify(struct pkcs7_message *pkcs7,
- extern int pkcs7_supply_detached_data(struct pkcs7_message *pkcs7,
- 				      const void *data, size_t datalen);
- 
-+extern int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf,
-+			    u8 *len);
++int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
++			    const char *digest, int digestlen)
++{
++	struct key *keyring;
 +
- #endif /* _CRYPTO_PKCS7_H */
++	if (siglen < 2)
++		return -EINVAL;
++
++	keyring = integrity_keyring_from_id(id);
++	if (IS_ERR(keyring))
++		return PTR_ERR(keyring);
++
+ 	switch (sig[1]) {
+ 	case 1:
+ 		/* v1 API expect signature without xattr type */
+-		return digsig_verify(keyring[id], sig + 1, siglen - 1,
++		return digsig_verify(keyring, sig + 1, siglen - 1,
+ 				     digest, digestlen);
+ 	case 2:
+-		return asymmetric_verify(keyring[id], sig, siglen,
++		return asymmetric_verify(keyring, sig, siglen,
+ 					 digest, digestlen);
+ 	}
+ 
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 20ac02bf1b84..91c41351e18a 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -153,6 +153,7 @@ extern struct dentry *integrity_dir;
+ 
+ #ifdef CONFIG_INTEGRITY_SIGNATURE
+ 
++struct key *integrity_keyring_from_id(const unsigned int id);
+ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			    const char *digest, int digestlen);
+ 
+@@ -160,6 +161,11 @@ int __init integrity_init_keyring(const unsigned int id);
+ int __init integrity_load_x509(const unsigned int id, const char *path);
+ #else
+ 
++static inline struct key *integrity_keyring_from_id(const unsigned int id)
++{
++	return ERR_PTR(-EINVAL);
++}
++
+ static inline int integrity_digsig_verify(const unsigned int id,
+ 					  const char *sig, int siglen,
+ 					  const char *digest, int digestlen)
 
