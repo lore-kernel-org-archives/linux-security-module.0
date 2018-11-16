@@ -2,56 +2,55 @@ Return-Path: <SRS0=qsML=N3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F92C43610
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE4AC43441
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4743A2087C
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:09:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4743A2087C
+	by mail.kernel.org (Postfix) with ESMTP id ED5402086B
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 20:10:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5402086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbeKQGXS (ORCPT
+        id S1726126AbeKQGYL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 17 Nov 2018 01:23:18 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38412 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730399AbeKQGXS (ORCPT
+        Sat, 17 Nov 2018 01:24:11 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57998 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725854AbeKQGYK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 17 Nov 2018 01:23:18 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGK8vSK020263
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:09:29 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nt1kmfgwn-1
+        Sat, 17 Nov 2018 01:24:10 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGKAIL2105511
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:10:20 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nt11898au-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:09:29 -0500
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 15:10:19 -0500
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Fri, 16 Nov 2018 20:09:28 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 16 Nov 2018 20:09:05 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 16 Nov 2018 20:09:21 -0000
+        Fri, 16 Nov 2018 20:08:59 -0000
 Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGK9Kca66715868
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGK8wtx29818972
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 16 Nov 2018 20:09:20 GMT
+        Fri, 16 Nov 2018 20:08:58 GMT
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C363AAC059;
-        Fri, 16 Nov 2018 20:09:20 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 81BD4AC05E;
+        Fri, 16 Nov 2018 20:08:58 +0000 (GMT)
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8FF90AC05E;
-        Fri, 16 Nov 2018 20:09:16 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 72AAEAC060;
+        Fri, 16 Nov 2018 20:08:54 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.80.224.199])
         by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 16 Nov 2018 20:09:16 +0000 (GMT)
+        Fri, 16 Nov 2018 20:08:54 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -69,24 +68,24 @@ Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v8 13/14] ima: Write modsig to the measurement list
-Date:   Fri, 16 Nov 2018 18:07:11 -0200
+Subject: [PATCH v8 09/14] ima: Export func_tokens
+Date:   Fri, 16 Nov 2018 18:07:07 -0200
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181116200712.14154-1-bauerman@linux.ibm.com>
 References: <20181116200712.14154-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111620-0052-0000-0000-000003576A27
+x-cbid: 18111620-0064-0000-0000-00000375640D
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010063; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01118417; UDB=6.00580177; IPR=6.00898525;
- MB=3.00024196; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 20:09:26
+ PH=3.00000004; SC=3.00000270; SDB=6.01118417; UDB=6.00577118; IPR=6.00898526;
+ MB=3.00024196; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 20:09:04
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111620-0053-0000-0000-00005EC974CF
-Message-Id: <20181116200712.14154-14-bauerman@linux.ibm.com>
+x-cbparentid: 18111620-0065-0000-0000-00003B5B7D68
+Message-Id: <20181116200712.14154-10-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1811160179
@@ -94,93 +93,55 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add modsig support to the "sig" template field, allowing the the contents
-of the modsig to be included in the measurement list.
+ima_read_modsig() will need it so that it can show an error message.
 
-Suggested-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- security/integrity/ima/ima.h              |  7 +++++++
- security/integrity/ima/ima_modsig.c       | 13 +++++++++++++
- security/integrity/ima/ima_template_lib.c | 15 ++++++++++++++-
- 3 files changed, 34 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima.h        |  2 ++
+ security/integrity/ima/ima_policy.c | 12 ++++++------
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 7f88e4b86156..8e1b1ddbe14f 100644
+index e4f72b30cb28..f0bc2a182cbf 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -315,6 +315,7 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 		    int *xattr_len);
- int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr, enum hash_algo *algo,
- 			const u8 **hash, u8 *len);
-+int ima_modsig_serialize_data(struct evm_ima_xattr_data **data, int *data_len);
- int ima_modsig_verify(const unsigned int keyring_id,
- 		      struct evm_ima_xattr_data *hdr);
- void ima_free_xattr_data(struct evm_ima_xattr_data *hdr);
-@@ -339,6 +340,12 @@ static inline int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr,
- 	return -EOPNOTSUPP;
+@@ -195,6 +195,8 @@ enum ima_hooks {
+ 	__ima_hooks(__ima_hook_enumify)
+ };
+ 
++extern const char *const func_tokens[];
++
+ /* LIM API function definitions */
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+ 		   int mask, enum ima_hooks func, int *pcr);
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index b20770704b6c..fd31e42c2bad 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1136,6 +1136,12 @@ void ima_delete_rules(void)
+ 	}
  }
  
-+static inline int ima_modsig_serialize_data(struct evm_ima_xattr_data **data,
-+					    int *data_len)
-+{
-+	return -EOPNOTSUPP;
-+}
++#define __ima_hook_stringify(str)	(#str),
 +
- static inline int ima_modsig_verify(const unsigned int keyring_id,
- 				    struct evm_ima_xattr_data *hdr)
- {
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-index 584d9d77b2c4..e31ab7dc11db 100644
---- a/security/integrity/ima/ima_modsig.c
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -167,6 +167,19 @@ int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr, enum hash_algo *algo,
- 	return pkcs7_get_digest(modsig->pkcs7_msg, hash, len);
- }
++const char *const func_tokens[] = {
++	__ima_hooks(__ima_hook_stringify)
++};
++
+ #ifdef	CONFIG_IMA_READ_POLICY
+ enum {
+ 	mask_exec = 0, mask_write, mask_read, mask_append
+@@ -1148,12 +1154,6 @@ static const char *const mask_tokens[] = {
+ 	"MAY_APPEND"
+ };
  
-+int ima_modsig_serialize_data(struct evm_ima_xattr_data **data, int *data_len)
-+{
-+	struct modsig_hdr *modsig = (struct modsig_hdr *) *data;
-+
-+	if (!*data || (*data)->type != IMA_MODSIG)
-+		return -EINVAL;
-+
-+	*data = &modsig->raw_pkcs7;
-+	*data_len = modsig->raw_pkcs7_len;
-+
-+	return 0;
-+}
-+
- int ima_modsig_verify(const unsigned int keyring_id,
- 		      struct evm_ima_xattr_data *hdr)
+-#define __ima_hook_stringify(str)	(#str),
+-
+-static const char *const func_tokens[] = {
+-	__ima_hooks(__ima_hook_stringify)
+-};
+-
+ void *ima_policy_start(struct seq_file *m, loff_t *pos)
  {
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 36d175816894..417cd153ba60 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -411,10 +411,23 @@ int ima_eventsig_init(struct ima_event_data *event_data,
- 		      struct ima_field_data *field_data)
- {
- 	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
-+	int xattr_len = event_data->xattr_len;
- 
- 	if (!is_signed(xattr_value))
- 		return 0;
- 
--	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
-+	/*
-+	 * The xattr_value for IMA_MODSIG is a runtime structure containing
-+	 * pointers. Get its raw data instead.
-+	 */
-+	if (xattr_value->type == IMA_MODSIG) {
-+		int rc;
-+
-+		rc = ima_modsig_serialize_data(&xattr_value, &xattr_len);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	return ima_write_template_field_data(xattr_value, xattr_len,
- 					     DATA_FMT_HEX, field_data);
- }
+ 	loff_t l = *pos;
 
