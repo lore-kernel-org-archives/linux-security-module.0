@@ -2,89 +2,362 @@ Return-Path: <SRS0=qsML=N3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6EEC43441
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 16:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B67C43441
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 17:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3BFB2086B
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 16:20:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vhwFUlVj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3BFB2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F8652086B
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Nov 2018 17:00:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F8652086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390064AbeKQCc7 (ORCPT
+        id S1729076AbeKQDNj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Nov 2018 21:32:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728481AbeKQCc6 (ORCPT
+        Fri, 16 Nov 2018 22:13:39 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46000 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728684AbeKQDNj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Nov 2018 21:32:58 -0500
-Received: from localhost (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDF6320825;
-        Fri, 16 Nov 2018 16:19:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542385198;
-        bh=fiNXAnJ0prtU/3Ve4W2KZh0TOP9dj5xMbRihD+M9muc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vhwFUlVjbC0grCIACuFr9EebLd427VTRICGGj/p0+6xVgGpXTL8LKVNT+5aYkz3Jx
-         nxuvBbqFLvy7+X8ZswVwnwDX7VO7rL48iB4wz4Rn7frOg2ZF6oMgUykNPlLScHiut2
-         8DriqfHtLEH4/K2BIn9hEOA03Sr+MTMw4KFjcSmU=
-Date:   Fri, 16 Nov 2018 11:19:57 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        Fri, 16 Nov 2018 22:13:39 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGGx9Lj067691
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 12:00:28 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nsy5vfn4k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 16 Nov 2018 12:00:27 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 16 Nov 2018 17:00:26 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 16 Nov 2018 17:00:21 -0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGH0Kl426476700
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 16 Nov 2018 17:00:20 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C51C2AC05B;
+        Fri, 16 Nov 2018 17:00:20 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AFB34AC05F;
+        Fri, 16 Nov 2018 17:00:20 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 16 Nov 2018 17:00:20 +0000 (GMT)
+Subject: Re: [PATCH v8 15/17] tpm: introduce tpm_chip_start() and
+ tpm_chip_stop()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
         James Bottomley <James.Bottomley@HansenPartnership.com>,
         Tomas Winkler <tomas.winkler@intel.com>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org,
+        Nayna Jain <nayna@linux.ibm.com>,
         Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 08/17] tpm: call tpm2_flush_space() on error in
- tpm_try_transmit()
-Message-ID: <20181116161957.GG1706@sasha-vm>
 References: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
- <20181116123845.15705-9-jarkko.sakkinen@linux.intel.com>
+ <20181116123845.15705-16-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Fri, 16 Nov 2018 12:00:20 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181116123845.15705-9-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181116123845.15705-16-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18111617-0072-0000-0000-000003CA1550
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010062; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01118354; UDB=6.00577118; IPR=6.00898463;
+ MB=3.00024196; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 17:00:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111617-0073-0000-0000-00004A212495
+Message-Id: <74b2bb37-6fa6-3d53-4d6f-0d54bff18130@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=821 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811160151
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 16, 2018 at 02:38:32PM +0200, Jarkko Sakkinen wrote:
->Always call tpm2_flush_space() on failure in tpm_try_transmit() so that
->the volatile memory of the TPM gets cleared. If /dev/tpm0 does not have
->sufficient permissions (usually it has), this could lead to the leakage
->of TPM objects. Through /dev/tpmrm0 this issue does not raise any new
->security concerns.
+On 11/16/18 7:38 AM, Jarkko Sakkinen wrote:
+> Encapsulate power gating and locality functionality to tpm_chip_start()
+> and tpm_chip_stop() in order to clean up the branching mess in
+> tpm_transmit().
 >
->Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
->Cc: stable@vger.kernel.org
->Fixes: 745b361e989a ("tpm:tpm: infrastructure for TPM spaces")
->Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Hi Jarkko,
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-This patch seems to depend on previous patches in this series, but those
-were not tagged for stable. Do they also need to be backported? If so,
-can you tag them as such?
 
---
-Thanks,
-Sasha
+> ---
+>   drivers/char/tpm/tpm-chip.c      | 110 +++++++++++++++++++++++++++++++
+>   drivers/char/tpm/tpm-interface.c |  86 +-----------------------
+>   drivers/char/tpm/tpm.h           |   2 +
+>   3 files changed, 115 insertions(+), 83 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 157505b0f755..65f1561eba81 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -37,6 +37,116 @@ struct class *tpm_class;
+>   struct class *tpmrm_class;
+>   dev_t tpm_devt;
+>
+> +static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
+> +{
+> +	int rc;
+> +
+> +	if (flags & TPM_TRANSMIT_NESTED)
+> +		return 0;
+> +
+> +	if (!chip->ops->request_locality)
+> +		return 0;
+> +
+> +	rc = chip->ops->request_locality(chip, 0);
+> +	if (rc < 0)
+> +		return rc;
+> +
+> +	chip->locality = rc;
+> +	return 0;
+> +}
+> +
+> +static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
+> +{
+> +	int rc;
+> +
+> +	if (flags & TPM_TRANSMIT_NESTED)
+> +		return;
+> +
+> +	if (!chip->ops->relinquish_locality)
+> +		return;
+> +
+> +	rc = chip->ops->relinquish_locality(chip, chip->locality);
+> +	if (rc)
+> +		dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
+> +
+> +	chip->locality = -1;
+> +}
+> +
+> +static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+> +{
+> +	if (flags & TPM_TRANSMIT_NESTED)
+> +		return 0;
+> +
+> +	if (!chip->ops->cmd_ready)
+> +		return 0;
+> +
+> +	return chip->ops->cmd_ready(chip);
+> +}
+> +
+> +static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
+> +{
+> +	if (flags & TPM_TRANSMIT_NESTED)
+> +		return 0;
+> +
+> +	if (!chip->ops->go_idle)
+> +		return 0;
+> +
+> +	return chip->ops->go_idle(chip);
+> +}
+> +
+> +/**
+> + * tpm_chip_start() - power on the TPM
+> + * @chip:	a TPM chip to use
+> + * @flags:	TPM transmit flags
+> + *
+> + * Return:
+> + * * The response length	- OK
+> + * * -errno			- A system error
+> + */
+> +int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
+> +{
+> +	int ret;
+> +
+> +	if (chip->ops->clk_enable)
+> +		chip->ops->clk_enable(chip, true);
+> +
+> +	if (chip->locality == -1) {
+> +		ret = tpm_request_locality(chip, flags);
+> +		if (ret) {
+> +			chip->ops->clk_enable(chip, false);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = tpm_cmd_ready(chip, flags);
+> +	if (ret) {
+> +		tpm_relinquish_locality(chip, flags);
+> +		if (chip->ops->clk_enable)
+> +			chip->ops->clk_enable(chip, false);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * tpm_chip_stop() - power off the TPM
+> + * @chip:	a TPM chip to use
+> + * @flags:	TPM transmit flags
+> + *
+> + * Return:
+> + * * The response length	- OK
+> + * * -errno			- A system error
+> + */
+> +void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
+> +{
+> +	tpm_go_idle(chip, flags);
+> +	tpm_relinquish_locality(chip, flags);
+> +	if (chip->ops->clk_enable)
+> +		chip->ops->clk_enable(chip, false);
+> +}
+> +
+> +
+>   /**
+>    * tpm_try_get_ops() - Get a ref to the tpm_chip
+>    * @chip: Chip to ref
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 5865b9671d20..2c79284ffd4e 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -62,64 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+>   }
+>   EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+>
+> -static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
+> -{
+> -	int rc;
+> -
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+> -	if (!chip->ops->request_locality)
+> -		return 0;
+> -
+> -	rc = chip->ops->request_locality(chip, 0);
+> -	if (rc < 0)
+> -		return rc;
+> -
+> -	chip->locality = rc;
+> -
+> -	return 0;
+> -}
+> -
+> -static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
+> -{
+> -	int rc;
+> -
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return;
+> -
+> -	if (!chip->ops->relinquish_locality)
+> -		return;
+> -
+> -	rc = chip->ops->relinquish_locality(chip, chip->locality);
+> -	if (rc)
+> -		dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
+> -
+> -	chip->locality = -1;
+> -}
+> -
+> -static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+> -{
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+> -	if (!chip->ops->cmd_ready)
+> -		return 0;
+> -
+> -	return chip->ops->cmd_ready(chip);
+> -}
+> -
+> -static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
+> -{
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+> -	if (!chip->ops->go_idle)
+> -		return 0;
+> -
+> -	return chip->ops->go_idle(chip);
+> -}
+> -
+>   static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   				unsigned int flags)
+>   {
+> @@ -212,7 +154,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   	/* space for header and handles */
+>   	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
+>   	unsigned int delay_msec = TPM2_DURATION_SHORT;
+> -	bool has_locality = false;
+>   	u32 rc = 0;
+>   	ssize_t ret;
+>   	const size_t save_size = min(sizeof(save), bufsiz);
+> @@ -227,32 +168,11 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   	memcpy(save, buf, save_size);
+>
+>   	for (;;) {
+> -		if (chip->ops->clk_enable != NULL)
+> -			chip->ops->clk_enable(chip, true);
+> -
+> -		if (chip->locality == -1) {
+> -			ret = tpm_request_locality(chip, flags);
+> -			if (ret)
+> -				goto out_locality;
+> -			has_locality = true;
+> -		}
+> -
+> -		ret = tpm_cmd_ready(chip, flags);
+> +		ret = tpm_chip_start(chip, flags);
+>   		if (ret)
+> -			goto out_locality;
+> -
+> +			return ret;
+>   		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
+> -
+> -		/* This may fail but do not override ret. */
+> -		tpm_go_idle(chip, flags);
+> -
+> -out_locality:
+> -		if (has_locality)
+> -			tpm_relinquish_locality(chip, flags);
+> -
+> -		if (chip->ops->clk_enable != NULL)
+> -			chip->ops->clk_enable(chip, false);
+> -
+> +		tpm_chip_stop(chip, flags);
+>   		if (ret < 0)
+>   			break;
+>   		rc = be32_to_cpu(header->return_code);
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index c7c06de651a0..c42a75710b70 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -523,6 +523,8 @@ static inline void tpm_msleep(unsigned int delay_msec)
+>   		     delay_msec * 1000);
+>   };
+>
+> +int tpm_chip_start(struct tpm_chip *chip, unsigned int flags);
+> +void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags);
+>   struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
+>   __must_check int tpm_try_get_ops(struct tpm_chip *chip);
+>   void tpm_put_ops(struct tpm_chip *chip);
+
+
