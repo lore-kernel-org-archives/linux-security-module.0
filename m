@@ -2,94 +2,122 @@ Return-Path: <SRS0=iPov=N6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0A9C04EBA
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 13:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13494C43610
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 14:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5A2A2086A
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 13:58:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A2A2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D925220851
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 14:14:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D925220851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728463AbeKTAVp (ORCPT
+        id S1728252AbeKTAht (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:21:45 -0500
-Received: from mga06.intel.com ([134.134.136.31]:8070 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728258AbeKTAVp (ORCPT
+        Mon, 19 Nov 2018 19:37:49 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54492 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727324AbeKTAhs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:21:45 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 05:58:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="scan'208";a="250905002"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by orsmga004.jf.intel.com with ESMTP; 19 Nov 2018 05:58:01 -0800
-Date:   Mon, 19 Nov 2018 15:58:00 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] tpm: add support for partial reads
-Message-ID: <20181119135800.GE8755@linux.intel.com>
-References: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
- <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
- <20181118074832.GG5897@linux.intel.com>
- <90072f09-6388-b1f7-387b-42f056f8893d@intel.com>
+        Mon, 19 Nov 2018 19:37:48 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAJE9PPj002733
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Nov 2018 09:14:02 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nuwtf31qr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Nov 2018 09:14:01 -0500
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Mon, 19 Nov 2018 14:14:01 -0000
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 19 Nov 2018 14:13:57 -0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAJEDv8l23920762
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Nov 2018 14:13:57 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ECDC7C605B;
+        Mon, 19 Nov 2018 14:13:56 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 35E4FC6057;
+        Mon, 19 Nov 2018 14:13:55 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 19 Nov 2018 14:13:55 +0000 (GMT)
+Subject: Re: [PATCH v9 15/17] tpm: introduce tpm_chip_start() and
+ tpm_chip_stop()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
+ <20181118124753.18613-16-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Mon, 19 Nov 2018 09:13:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90072f09-6388-b1f7-387b-42f056f8893d@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181118124753.18613-16-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18111914-0020-0000-0000-00000E8BEF32
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010080; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01119725; UDB=6.00580969; IPR=6.00899846;
+ MB=3.00024231; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-19 14:14:01
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111914-0021-0000-0000-000063C35163
+Message-Id: <1406ac79-992e-256f-f361-da412a04c856@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=348 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811190132
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Nov 18, 2018 at 07:05:19PM -0800, Tadeusz Struk wrote:
-> > When ret_size < 0? Shouldn't this be just "if (!ret_size)"?
-> 
-> What we want to check here is if ret_size is positive, which is a valid
-> value, or if it is negative or zero, which is an invalid value, so in
-> this case (!ret_size) will not work.
 
-Please explain a scenario where "!ret_size" would no work given that
-both size and partial_data have always positive value?
+> +}
+> +
+> +/**
+> + * tpm_chip_stop() - power off the TPM
+> + * @chip:	a TPM chip to use
+> + * @flags:	TPM transmit flags
+> + *
+> + * Return:
+> + * * The response length	- OK
+> + * * -errno			- A system error
 
-> >> 	/* Holds the resul of the last successful call to tpm_transmit() */
-> >>  	size_t transmit_result;
-> >> +	/* Holds the count how much of the response is still unread */
-> >> +	size_t partial_data;
-> > I'm otherwise happy how this look like but why call it partial_data.
-> > You cannot really tell from the name anything about its contents as
-> > data is very abstract term.
->  
-> so I will rename these two to response_length and response_length_rem,
-> how does this sound?
+This function returns void!
 
-Yes, assuming that there would be a hard requirement to even have two
-variables in the first place.
 
-> > BTW, why you need the new variable anyway and not just decrease the
-> > variable where the length is original stored?
-> 
-> We need to have two variables, otherwise how do we tell if some part of
-> response was consumed to allow sending a new command?
+> + */
+> +void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
+> +{
+> +	tpm_go_idle(chip, flags);
+> +	tpm_relinquish_locality(chip, flags);
+> +	if (chip->ops->clk_enable)
+> +		chip->ops->clk_enable(chip, false);
+> +}
+> +
 
-I don't understand. In order to maintain backwards compatibility you can
-send a new command at any time.
-
-> The transmit_result is used for that. If it is zero then one can transmit
-> a new command even if the whole response is not consumed. The new variable
-> tracks how much of the response is still to be read. 
-
-AFAIK you only need to track the latter, not both.
-
-/Jarkko
