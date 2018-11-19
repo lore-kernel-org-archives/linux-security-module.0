@@ -2,245 +2,106 @@ Return-Path: <SRS0=iPov=N6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D60C43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 18:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A17ECC43441
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 19:56:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C33620659
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 18:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C33620659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 73EA220831
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 19:56:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73EA220831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbeKTFUJ (ORCPT
+        id S1730526AbeKTGVo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:20:09 -0500
-Received: from mga06.intel.com ([134.134.136.31]:32253 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbeKTFUJ (ORCPT
+        Tue, 20 Nov 2018 01:21:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39984 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730221AbeKTGVn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:20:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 10:55:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
-   d="scan'208";a="109585298"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
-  by orsmga001.jf.intel.com with ESMTP; 19 Nov 2018 10:55:15 -0800
-Subject: [PATCH v5] tpm: add support for partial reads
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
-Date:   Mon, 19 Nov 2018 10:55:15 -0800
-Message-ID: <154265371562.23494.10113870855345906523.stgit@tstruk-mobl1.jf.intel.com>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Tue, 20 Nov 2018 01:21:43 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAJJrxZB042209
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Nov 2018 14:56:32 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nv32xhktu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Nov 2018 14:56:30 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 19 Nov 2018 19:56:27 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 19 Nov 2018 19:56:25 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAJJuN97917992
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Nov 2018 19:56:23 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D7D80A405B;
+        Mon, 19 Nov 2018 19:56:23 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A08DAA405C;
+        Mon, 19 Nov 2018 19:56:22 +0000 (GMT)
+Received: from dhcp-9-31-102-82.watson.ibm.com (unknown [9.31.102.82])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 19 Nov 2018 19:56:22 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        jforbes@redhat.com, seth.forshee@canonical.com,
+        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH 1/3] ima: add error mesage to kexec_load
+Date:   Mon, 19 Nov 2018 14:56:09 -0500
+X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com>
+References: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18111919-0012-0000-0000-000002CCE817
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111919-0013-0000-0000-000021020D86
+Message-Id: <1542657371-7019-2-git-send-email-zohar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=747 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811190178
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Currently to read a response from the TPM device an application needs
-provide big enough buffer for the whole response and read it in one go.
-The application doesn't know how big the response it beforehand so it
-always needs to maintain a 4K buffer and read the max (4K).
-In case if the user of the TSS library doesn't provide big enough
-buffer the TCTI spec says that the library should set the required
-size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
-application could allocate a bigger buffer and call receive again.
-To make it possible in the TSS library, this requires being able to do
-partial reads from the driver.
-The library would read the 10 bytes header first to get the actual size
-of the response from the header, and then read the rest of the response.
+Reject the kexec_load syscall with some indication of the problem.
 
-This patch adds support for partial reads, i.e. the user can read the
-response in one or multiple reads, until the whole response is consumed.
-The user can also read only part of the response and ignore
-the rest by issuing a new write to send a new command.
-
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
-The usecase is implemented in this TSS commit:
-https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
+ security/integrity/ima/ima_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Changes in v5:
- - Merge the two patches back into one.
- - Change variable 'partial_data' to a new flag 'response_read'.
- - Update the logic around partial_data to reflect the new flag.
- - Add a new variable response_length that keeps track of how much
-   of the response is left.
-
-Changes in v4:
- - Use unsigned type for response_pending as it will never be negative.
- - Rebased on top of name change data_pending to transmit_result patch.
-
-Changes in v3:
- - Remove link to usecase implemented in TSS out of the commit message.
- - Update the conddition in tpm_common_poll() to take into account
-   the partial_data also.
-
-Changes in v2:
- - Allow writes after only partial response is consumed to maintain
-   backwords compatibility.
----
- drivers/char/tpm/tpm-dev-common.c |   51 +++++++++++++++++++++++++------------
- drivers/char/tpm/tpm-dev.h        |    7 +++--
- 2 files changed, 39 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 99b5133a9d05..344739223451 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -40,7 +40,7 @@ static void tpm_async_work(struct work_struct *work)
- 
- 	tpm_put_ops(priv->chip);
- 	if (ret > 0) {
--		priv->data_pending = ret;
-+		priv->response_length = ret;
- 		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
- 	}
- 	mutex_unlock(&priv->buffer_mutex);
-@@ -63,7 +63,8 @@ static void tpm_timeout_work(struct work_struct *work)
- 					      timeout_work);
- 
- 	mutex_lock(&priv->buffer_mutex);
--	priv->data_pending = 0;
-+	priv->response_read = true;
-+	priv->response_length = 0;
- 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
- 	mutex_unlock(&priv->buffer_mutex);
- 	wake_up_interruptible(&priv->async_wait);
-@@ -74,6 +75,7 @@ void tpm_common_open(struct file *file, struct tpm_chip *chip,
- {
- 	priv->chip = chip;
- 	priv->space = space;
-+	priv->response_read = true;
- 
- 	mutex_init(&priv->buffer_mutex);
- 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
-@@ -90,22 +92,35 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
- 	ssize_t ret_size = 0;
- 	int rc;
- 
--	del_singleshot_timer_sync(&priv->user_read_timer);
--	flush_work(&priv->timeout_work);
- 	mutex_lock(&priv->buffer_mutex);
- 
--	if (priv->data_pending) {
--		ret_size = min_t(ssize_t, size, priv->data_pending);
--		if (ret_size > 0) {
--			rc = copy_to_user(buf, priv->data_buffer, ret_size);
--			memset(priv->data_buffer, 0, priv->data_pending);
--			if (rc)
--				ret_size = -EFAULT;
-+	if (priv->response_length) {
-+		priv->response_read = true;
-+
-+		ret_size = min_t(ssize_t, size, priv->response_length);
-+		if (!ret_size) {
-+			priv->response_length = 0;
-+			goto out;
- 		}
- 
--		priv->data_pending = 0;
-+		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
-+		if (rc) {
-+			memset(priv->data_buffer, 0, TPM_BUFSIZE);
-+			priv->response_length = 0;
-+			ret_size = -EFAULT;
-+		} else {
-+			memset(priv->data_buffer + *off, 0, ret_size);
-+			priv->response_length -= ret_size;
-+			*off += ret_size;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 41e4771980d5..df0b2ee49fa2 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -513,8 +513,10 @@ int ima_load_data(enum kernel_load_data_id id)
+ 	switch (id) {
+ 	case LOADING_KEXEC_IMAGE:
+ 		if (IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG)
+-		    && arch_ima_get_secureboot())
++		    && arch_ima_get_secureboot()) {
++			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
+ 			return -EACCES;
 +		}
- 	}
  
-+out:
-+	if (!priv->response_length) {
-+		*off = 0;
-+		del_singleshot_timer_sync(&priv->user_read_timer);
-+		flush_work(&priv->timeout_work);
-+	}
- 	mutex_unlock(&priv->buffer_mutex);
- 	return ret_size;
- }
-@@ -125,7 +140,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 	 * tpm_read or a user_read_timer timeout. This also prevents split
- 	 * buffered writes from blocking here.
- 	 */
--	if (priv->data_pending != 0 || priv->command_enqueued) {
-+	if (!priv->response_read || priv->command_enqueued) {
- 		ret = -EBUSY;
- 		goto out;
- 	}
-@@ -150,6 +165,10 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 		goto out;
- 	}
- 
-+	priv->response_length = 0;
-+	priv->response_read = false;
-+	*off = 0;
-+
- 	/*
- 	 * If in nonblocking mode schedule an async job to send
- 	 * the command return the size.
-@@ -168,7 +187,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 	tpm_put_ops(priv->chip);
- 
- 	if (ret > 0) {
--		priv->data_pending = ret;
-+		priv->response_length = ret;
- 		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
- 		ret = size;
- 	}
-@@ -184,7 +203,7 @@ __poll_t tpm_common_poll(struct file *file, poll_table *wait)
- 
- 	poll_wait(file, &priv->async_wait, wait);
- 
--	if (priv->data_pending)
-+	if (!priv->response_read || priv->response_length)
- 		mask = EPOLLIN | EPOLLRDNORM;
- 	else
- 		mask = EPOLLOUT | EPOLLWRNORM;
-@@ -201,7 +220,7 @@ void tpm_common_release(struct file *file, struct file_priv *priv)
- 	del_singleshot_timer_sync(&priv->user_read_timer);
- 	flush_work(&priv->timeout_work);
- 	file->private_data = NULL;
--	priv->data_pending = 0;
-+	priv->response_length = 0;
- }
- 
- int __init tpm_dev_common_init(void)
-diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-index a126b575cb8c..a744d9bec7b6 100644
---- a/drivers/char/tpm/tpm-dev.h
-+++ b/drivers/char/tpm/tpm-dev.h
-@@ -9,14 +9,15 @@ struct file_priv {
- 	struct tpm_chip *chip;
- 	struct tpm_space *space;
- 
--	/* Holds the amount of data passed or an error code from async op */
--	ssize_t data_pending;
- 	struct mutex buffer_mutex;
--
- 	struct timer_list user_read_timer;      /* user needs to claim result */
- 	struct work_struct timeout_work;
- 	struct work_struct async_work;
- 	wait_queue_head_t async_wait;
-+	/* Holds the resul of the last successful call to tpm_transmit() */
-+	size_t response_length;
-+	/* Becomes true when the response (or part of it) is consumed */
-+	bool response_read;
- 	bool command_enqueued;
- 
- 	u8 data_buffer[TPM_BUFSIZE];
+ 		if (ima_enforce && (ima_appraise & IMA_APPRAISE_KEXEC)) {
+ 			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
+-- 
+2.7.5
 
