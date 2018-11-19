@@ -3,72 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DE9C04EBA
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 12:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE839C43441
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 12:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C3B220851
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 12:48:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C3B220851
+	by mail.kernel.org (Postfix) with ESMTP id A4A022086A
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 12:57:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A022086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728821AbeKSXMC (ORCPT
+        id S1728869AbeKSXUp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:12:02 -0500
-Received: from mga11.intel.com ([192.55.52.93]:34675 "EHLO mga11.intel.com"
+        Mon, 19 Nov 2018 18:20:45 -0500
+Received: from mga18.intel.com ([134.134.136.126]:59378 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728701AbeKSXMC (ORCPT
+        id S1728724AbeKSXUp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:12:02 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        Mon, 19 Nov 2018 18:20:45 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 04:48:30 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 04:57:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="scan'208";a="282337788"
+   d="scan'208";a="107493545"
 Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by fmsmga006.fm.intel.com with ESMTP; 19 Nov 2018 04:48:24 -0800
-Date:   Mon, 19 Nov 2018 14:48:22 +0200
+  by fmsmga004.fm.intel.com with ESMTP; 19 Nov 2018 04:57:06 -0800
+Date:   Mon, 19 Nov 2018 14:57:04 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org,
         Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 16/17] tpm: take TPM chip power gating out of
- tpm_transmit()
-Message-ID: <20181119124822.GB8755@linux.intel.com>
-References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
- <20181118124753.18613-17-jarkko.sakkinen@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA225B9@hasmsx108.ger.corp.intel.com>
+Subject: Re: [PATCH v8 08/17] tpm: call tpm2_flush_space() on error in
+ tpm_try_transmit()
+Message-ID: <20181119125704.GC8755@linux.intel.com>
+References: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
+ <20181116123845.15705-9-jarkko.sakkinen@linux.intel.com>
+ <20181116161957.GG1706@sasha-vm>
+ <20181118073618.GD5897@linux.intel.com>
+ <20181118232157.GA1711@sasha-vm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA225B9@hasmsx108.ger.corp.intel.com>
+In-Reply-To: <20181118232157.GA1711@sasha-vm>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Nov 18, 2018 at 10:52:46PM +0000, Winkler, Tomas wrote:
-> This is still NACK from my side
+On Sun, Nov 18, 2018 at 06:21:57PM -0500, Sasha Levin wrote:
+> There's no "preferred" approach really. I try to warn about cases like
+> this early because the response rates to Greg's "FAILED" email seem to
+> be low - by the time they are sent out people are done with that code
+> and have moved on.
+> 
+> In this scenario, for exmaple, this patch would not apply to any stable
+> tree because it depends on a previous patch in this series that was not
+> tagged for stable. My hopes are that if I warn you about this early you
+> can work around this (for example, by marking that prior patch for
+> stable as well) so you won't need to deal with this patch again in a few
+> weeks.
+> 
+> There's no need to change anything about your flow if it works for you.
 
-Last time you spoke about tboot intervention but I don't see why as even
-sending a single command is not atomic in the true sense of the word
-i.e. if there was a problem that would already affect the existing code
-and would essentially mean that tboot itself is broken.
+Ok, I see. Yeah, it is just how I organize my work. Rather solve the
+patch dependency sudoku one time than two times.
+
+When I maintain a subsystem I've thought that it is my responsibility to
+always do that and not wait someone else to do it for me :-) That is the
+responsibility part of the equation when you have the power to decide
+what gets in.
+
+Right now I have two failed merges in my queue that I plan to take care
+of them next week.
+
+> Thanks,
+> Sasha
 
 /Jarkko
