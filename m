@@ -1,124 +1,116 @@
-Return-Path: <SRS0=Xiaw=N5=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=iPov=N6=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA82DC04EBC
-	for <linux-security-module@archiver.kernel.org>; Sun, 18 Nov 2018 23:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7EAC43441
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 03:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 804202086A
-	for <linux-security-module@archiver.kernel.org>; Sun, 18 Nov 2018 23:22:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ycZvqg/9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 804202086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 35DAC206BA
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 03:05:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35DAC206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbeKSJnj (ORCPT
+        id S1728006AbeKSN1d (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Nov 2018 04:43:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57640 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 08:27:33 -0500
+Received: from mga17.intel.com ([192.55.52.151]:14766 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726073AbeKSJnj (ORCPT
+        id S1726975AbeKSN1d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Nov 2018 04:43:39 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E47220815;
-        Sun, 18 Nov 2018 23:21:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542583318;
-        bh=8bLbxwpovdoYOX+O2eS16D44bdJOgeBteNPJUV+hdwI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ycZvqg/98/cFAX8/5i22O3M4J9vaqRdQH0zkxwMi908797RoX9viL74pSAAgCpRfq
-         i095VR9KX24FznaNHoHGxQU/c1Nf+exGMTIaFpmFBe1Zl0Sory5uMSK7h3+FkcC8SO
-         sIXWFcQVI8U9tGmyFObqMHRZfI5ryyhxOyprrDBc=
-Date:   Sun, 18 Nov 2018 18:21:57 -0500
-From:   Sasha Levin <sashal@kernel.org>
+        Mon, 19 Nov 2018 08:27:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2018 19:05:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,250,1539673200"; 
+   d="scan'208";a="101332823"
+Received: from ltchung-mobl1.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.254.4.5])
+  by orsmga003.jf.intel.com with ESMTP; 18 Nov 2018 19:05:21 -0800
+Subject: Re: [PATCH v4 2/2] tpm: add support for partial reads
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 08/17] tpm: call tpm2_flush_space() on error in
- tpm_try_transmit()
-Message-ID: <20181118232157.GA1711@sasha-vm>
-References: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
- <20181116123845.15705-9-jarkko.sakkinen@linux.intel.com>
- <20181116161957.GG1706@sasha-vm>
- <20181118073618.GD5897@linux.intel.com>
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
+ <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
+ <20181118074832.GG5897@linux.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <90072f09-6388-b1f7-387b-42f056f8893d@intel.com>
+Date:   Sun, 18 Nov 2018 19:05:19 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181118073618.GD5897@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181118074832.GG5897@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Nov 18, 2018 at 09:36:18AM +0200, Jarkko Sakkinen wrote:
->On Fri, Nov 16, 2018 at 11:19:57AM -0500, Sasha Levin wrote:
->> On Fri, Nov 16, 2018 at 02:38:32PM +0200, Jarkko Sakkinen wrote:
->> > Always call tpm2_flush_space() on failure in tpm_try_transmit() so that
->> > the volatile memory of the TPM gets cleared. If /dev/tpm0 does not have
->> > sufficient permissions (usually it has), this could lead to the leakage
->> > of TPM objects. Through /dev/tpmrm0 this issue does not raise any new
->> > security concerns.
->> >
->> > Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
->> > Cc: stable@vger.kernel.org
->> > Fixes: 745b361e989a ("tpm:tpm: infrastructure for TPM spaces")
->> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->>
->> Hi Jarkko,
->>
->> This patch seems to depend on previous patches in this series, but those
->> were not tagged for stable. Do they also need to be backported? If so,
->> can you tag them as such?
->
->Hi
->
->Is that the preferred approach?
->
->I've usually followed this workflow:
->
->1. Mark patches with a fix to a regression with the fixes tag.
->2. If a merge conflict raises, I'll locate the deps.
->
->I've done it this way because often patches can depend on patches
->outside the patch set. Anyway, I'm open to change my workflow if
->that is required.
->
->/Jarkko
+On 11/17/18 11:48 PM, Jarkko Sakkinen wrote:
+>> +	if (priv->transmit_result || priv->partial_data) {
+>> +		if (*off == 0)
+>> +			priv->partial_data = priv->transmit_result;
+>> +
+>> +		ret_size = min_t(ssize_t, size, priv->partial_data);
+>> +		if (ret_size <= 0) {
+> When ret_size < 0? Shouldn't this be just "if (!ret_size)"?
 
-Hi Jarkko,
+What we want to check here is if ret_size is positive, which is a valid
+value, or if it is negative or zero, which is an invalid value, so in
+this case (!ret_size) will not work.
 
-There's no "preferred" approach really. I try to warn about cases like
-this early because the response rates to Greg's "FAILED" email seem to
-be low - by the time they are sent out people are done with that code
-and have moved on.
+> 
+>> 	/* Holds the resul of the last successful call to tpm_transmit() */
+>>  	size_t transmit_result;
+>> +	/* Holds the count how much of the response is still unread */
+>> +	size_t partial_data;
+> I'm otherwise happy how this look like but why call it partial_data.
+> You cannot really tell from the name anything about its contents as
+> data is very abstract term.
+ 
+so I will rename these two to response_length and response_length_rem,
+how does this sound?
 
-In this scenario, for exmaple, this patch would not apply to any stable
-tree because it depends on a previous patch in this series that was not
-tagged for stable. My hopes are that if I warn you about this early you
-can work around this (for example, by marking that prior patch for
-stable as well) so you won't need to deal with this patch again in a few
-weeks.
+> BTW, why you need the new variable anyway and not just decrease the
+> variable where the length is original stored?
 
-There's no need to change anything about your flow if it works for you.
+We need to have two variables, otherwise how do we tell if some part of
+response was consumed to allow sending a new command?
+The transmit_result is used for that. If it is zero then one can transmit
+a new command even if the whole response is not consumed. The new variable
+tracks how much of the response is still to be read. 
 
---
 Thanks,
-Sasha
+-- 
+Tadeusz
