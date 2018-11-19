@@ -2,100 +2,68 @@ Return-Path: <SRS0=iPov=N6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C07F1C43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 14:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC23C43441
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 14:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8434020831
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 14:34:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8434020831
+	by mail.kernel.org (Postfix) with ESMTP id 3C1E92080C
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 14:39:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C1E92080C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbeKTA5s (ORCPT
+        id S1729306AbeKTBC6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:57:48 -0500
-Received: from mga05.intel.com ([192.55.52.43]:23645 "EHLO mga05.intel.com"
+        Mon, 19 Nov 2018 20:02:58 -0500
+Received: from mga04.intel.com ([192.55.52.120]:20838 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729365AbeKTA5s (ORCPT
+        id S1727769AbeKTBC6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:57:48 -0500
+        Mon, 19 Nov 2018 20:02:58 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 06:34:00 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 06:39:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="scan'208";a="97444961"
+   d="scan'208";a="87591791"
 Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by FMSMGA003.fm.intel.com with ESMTP; 19 Nov 2018 06:33:58 -0800
-Date:   Mon, 19 Nov 2018 16:33:57 +0200
+  by fmsmga008.fm.intel.com with ESMTP; 19 Nov 2018 06:39:07 -0800
+Date:   Mon, 19 Nov 2018 16:39:06 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, david.safford@ge.com,
+        monty.wiseman@ge.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] tpm: ensure that the output of PCR read contains
- the correct digest size
-Message-ID: <20181119143357.GG8755@linux.intel.com>
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v5 7/7] tpm: pass an array of tpm_bank_list structures to
+ tpm_pcr_extend()
+Message-ID: <20181119143906.GH8755@linux.intel.com>
 References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-7-roberto.sassu@huawei.com>
- <20181116134153.GD4163@linux.intel.com>
- <05c7c936-da58-f386-0a43-69e96d6e18a8@huawei.com>
- <20181118073207.GC5897@linux.intel.com>
- <a259a629-def7-b538-2a54-8ca6bfbe772a@huawei.com>
+ <20181114153108.12907-8-roberto.sassu@huawei.com>
+ <20181116150352.GA3612@linux.intel.com>
+ <9c534ed1-7832-7a3b-3e69-5fcc25c565cc@huawei.com>
+ <20181118072745.GA5897@linux.intel.com>
+ <1542603470.4914.55.camel@linux.ibm.com>
+ <26519f33-b5d6-c2c6-5179-c43f197f2cbd@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a259a629-def7-b538-2a54-8ca6bfbe772a@huawei.com>
+In-Reply-To: <26519f33-b5d6-c2c6-5179-c43f197f2cbd@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 19, 2018 at 09:14:00AM +0100, Roberto Sassu wrote:
-> On 11/18/2018 8:32 AM, Jarkko Sakkinen wrote:
-> > On Fri, Nov 16, 2018 at 05:06:48PM +0100, Roberto Sassu wrote:
-> > > On 11/16/2018 2:41 PM, Jarkko Sakkinen wrote:
-> > > > On Wed, Nov 14, 2018 at 04:31:07PM +0100, Roberto Sassu wrote:
-> > > > > This patch protects against data corruption that could happen in the bus,
-> > > > > by checking that that the digest size returned by the TPM during a PCR read
-> > > > > matches the size of the algorithm passed to tpm2_pcr_read().
-> > > > > 
-> > > > > This check is performed after information about the PCR banks has been
-> > > > > retrieved.
-> > > > > 
-> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > Cc: stable@vger.kernel.org
-> > > > 
-> > > > Missing fixes tag.
-> > > 
-> > > Before this patch set, tpm2_pcr_extend() always copied 20 bytes from the
-> > > output sent by the TPM.
-> > > 
-> > > Roberto
-> > 
-> > Aah, right, of course. Well the patch set is ATM somewhat broken because
-> > this would require a fixes tag that points to a patch insdie the patch
-> > set.
-> > 
-> > Probably good way to fix the issue is to just merge this with the
-> > earlier commit.
-> 
-> Unfortunately, it is not possible. The exact digest size has been
-> introduced with patch 5/7.
+On Mon, Nov 19, 2018 at 09:16:45AM +0100, Roberto Sassu wrote:
+> The caller of tpm_pcr_extend() could pass a subset of the allocated
+> banks, but the TPM driver extends all banks as before.
 
-I put this in simple terms: if I merge 5/7 the driver will be broken.
-Any commit in the patch set should not leave the tree in broken state.
-
-That implies that 5/7 and 6/7 cannot be separate commits.
+Ah, of course. Then it should be legit I guess...
 
 /Jarkko
