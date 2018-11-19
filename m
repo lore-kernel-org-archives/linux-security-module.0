@@ -3,104 +3,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058F9C43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 08:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07225C04EBF
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 08:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB6EB20823
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 08:16:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB6EB20823
+	by mail.kernel.org (Postfix) with ESMTP id C5D0520871
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 08:22:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5D0520871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbeKSSjr (ORCPT
+        id S1726967AbeKSSph (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:39:47 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32776 "EHLO huawei.com"
+        Mon, 19 Nov 2018 13:45:37 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32777 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726687AbeKSSjq (ORCPT
+        id S1726784AbeKSSph (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:39:46 -0500
+        Mon, 19 Nov 2018 13:45:37 -0500
 Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 42754A2F000E7;
-        Mon, 19 Nov 2018 08:16:50 +0000 (GMT)
+        by Forcepoint Email with ESMTP id 2628BCBB03349;
+        Mon, 19 Nov 2018 08:22:40 +0000 (GMT)
 Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
  (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 19 Nov
- 2018 08:16:46 +0000
+ 2018 08:22:32 +0000
 Subject: Re: [PATCH v5 7/7] tpm: pass an array of tpm_bank_list structures to
  tpm_pcr_extend()
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <david.safford@ge.com>, <monty.wiseman@ge.com>,
-        <linux-integrity@vger.kernel.org>,
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
 References: <20181114153108.12907-1-roberto.sassu@huawei.com>
  <20181114153108.12907-8-roberto.sassu@huawei.com>
  <20181116150352.GA3612@linux.intel.com>
  <9c534ed1-7832-7a3b-3e69-5fcc25c565cc@huawei.com>
- <20181118072745.GA5897@linux.intel.com>
- <1542603470.4914.55.camel@linux.ibm.com>
+ <20181118072901.GB5897@linux.intel.com>
 From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <26519f33-b5d6-c2c6-5179-c43f197f2cbd@huawei.com>
-Date:   Mon, 19 Nov 2018 09:16:45 +0100
+Message-ID: <5dd9fc97-2fb8-0e17-9ae0-88ce8db83903@huawei.com>
+Date:   Mon, 19 Nov 2018 09:22:32 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <1542603470.4914.55.camel@linux.ibm.com>
+In-Reply-To: <20181118072901.GB5897@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.204.65.144]
 X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/19/2018 5:57 AM, Mimi Zohar wrote:
-> On Sun, 2018-11-18 at 09:27 +0200, Jarkko Sakkinen wrote:
->> On Fri, Nov 16, 2018 at 04:55:36PM +0100, Roberto Sassu wrote:
->>> On 11/16/2018 4:03 PM, Jarkko Sakkinen wrote:
->>>> On Wed, Nov 14, 2018 at 04:31:08PM +0100, Roberto Sassu wrote:
->>>>> Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
->>>>>
->>>>> This patch modifies the definition of tpm_pcr_extend() to allow other
->>>>> kernel subsystems to pass a digest for each algorithm supported by the TPM.
->>>>> All digests are processed by the TPM in one operation.
->>>>>
->>>>> If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
->>>>> the TPM driver extends the remaining PCR banks with the first digest
->>>>> passed as an argument to the function.
->>>>
->>>> What is the legit use case for this?
->>>
->>> A subset could be chosen for better performance, or when a TPM algorithm
->>> is not supported by the crypto subsystem.
->>
->> Doesn't extending a subset a security concern?
+On 11/18/2018 8:29 AM, Jarkko Sakkinen wrote:
+> On Fri, Nov 16, 2018 at 04:55:36PM +0100, Roberto Sassu wrote:
+>> I understood from a previous email that you want to include all API
+>> changes for crypto agility in the same patch set.
 > 
-> Right, so instead of extending a subset of the allocated banks, all of
-> the allocated banks need to be extended, even for those banks that a
-> digest was not included.  This is no different than what is being done
-> today.  IMA is currently only calculating the SHA1 hash, padding the
-> digest with 0's, and extending the padded value(s) into all of the
-> allocated banks.
+> Hmm.. maybe there is some misunderstading. Can you point me to the
+> comment? Thanks.
 
-The caller of tpm_pcr_extend() could pass a subset of the allocated
-banks, but the TPM driver extends all banks as before.
+---
+On Thu, Nov 08, 2018 at 03:24:46PM +0100, Roberto Sassu wrote:
+ > Should I include the patch for tpm_pcr_extend() in this patch set, even
+ > if the set fixes the digest size issue?
+
+Just add some note to the cover letter. Makes sense here to have a
+prequel patch for that because otherwise the implementation will be
+a bit messy and half-baked.
+---
 
 Roberto
 
 
-> If there is a vulnerability with the hash algorithm, then any bank
-> extended with the padded/truncated digest would be susceptible.
-> 
-> IMA will need to become TPM 2.0 aware, calculating and extending
-> multiple banks and define a new measurement list format containing the
-> multiple digests.
-> 
-> Mimi
+> /Jarkko
 > 
 
 -- 
