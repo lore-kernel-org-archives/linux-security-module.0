@@ -6,111 +6,121 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7EAC43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 03:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AA9C04EBF
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 04:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35DAC206BA
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 03:05:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35DAC206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 139A2208E4
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Nov 2018 04:58:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139A2208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbeKSN1d (ORCPT
+        id S1725890AbeKSPUj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Nov 2018 08:27:33 -0500
-Received: from mga17.intel.com ([192.55.52.151]:14766 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726975AbeKSN1d (ORCPT
+        Mon, 19 Nov 2018 10:20:39 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52800 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725880AbeKSPUj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Nov 2018 08:27:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2018 19:05:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,250,1539673200"; 
-   d="scan'208";a="101332823"
-Received: from ltchung-mobl1.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.254.4.5])
-  by orsmga003.jf.intel.com with ESMTP; 18 Nov 2018 19:05:21 -0800
-Subject: Re: [PATCH v4 2/2] tpm: add support for partial reads
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
- <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
- <20181118074832.GG5897@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <90072f09-6388-b1f7-387b-42f056f8893d@intel.com>
-Date:   Sun, 18 Nov 2018 19:05:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181118074832.GG5897@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 19 Nov 2018 10:20:39 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAJ4rRX5089581
+        for <linux-security-module@vger.kernel.org>; Sun, 18 Nov 2018 23:58:12 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nujd699j3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Sun, 18 Nov 2018 23:58:12 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 19 Nov 2018 04:58:10 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 19 Nov 2018 04:58:06 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAJ4w5G751314802
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Nov 2018 04:58:05 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4AAB811C04C;
+        Mon, 19 Nov 2018 04:58:05 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 38BAA11C04A;
+        Mon, 19 Nov 2018 04:58:02 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.88.94])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 19 Nov 2018 04:58:01 +0000 (GMT)
+Subject: Re: [PATCH v5 7/7] tpm: pass an array of tpm_bank_list structures
+ to tpm_pcr_extend()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Sun, 18 Nov 2018 23:57:50 -0500
+In-Reply-To: <20181118072745.GA5897@linux.intel.com>
+References: <20181114153108.12907-1-roberto.sassu@huawei.com>
+         <20181114153108.12907-8-roberto.sassu@huawei.com>
+         <20181116150352.GA3612@linux.intel.com>
+         <9c534ed1-7832-7a3b-3e69-5fcc25c565cc@huawei.com>
+         <20181118072745.GA5897@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18111904-0016-0000-0000-00000228F3FE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111904-0017-0000-0000-000032812487
+Message-Id: <1542603470.4914.55.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811190045
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/17/18 11:48 PM, Jarkko Sakkinen wrote:
->> +	if (priv->transmit_result || priv->partial_data) {
->> +		if (*off == 0)
->> +			priv->partial_data = priv->transmit_result;
->> +
->> +		ret_size = min_t(ssize_t, size, priv->partial_data);
->> +		if (ret_size <= 0) {
-> When ret_size < 0? Shouldn't this be just "if (!ret_size)"?
-
-What we want to check here is if ret_size is positive, which is a valid
-value, or if it is negative or zero, which is an invalid value, so in
-this case (!ret_size) will not work.
-
+On Sun, 2018-11-18 at 09:27 +0200, Jarkko Sakkinen wrote:
+> On Fri, Nov 16, 2018 at 04:55:36PM +0100, Roberto Sassu wrote:
+> > On 11/16/2018 4:03 PM, Jarkko Sakkinen wrote:
+> > > On Wed, Nov 14, 2018 at 04:31:08PM +0100, Roberto Sassu wrote:
+> > > > Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
+> > > > 
+> > > > This patch modifies the definition of tpm_pcr_extend() to allow other
+> > > > kernel subsystems to pass a digest for each algorithm supported by the TPM.
+> > > > All digests are processed by the TPM in one operation.
+> > > > 
+> > > > If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
+> > > > the TPM driver extends the remaining PCR banks with the first digest
+> > > > passed as an argument to the function.
+> > > 
+> > > What is the legit use case for this?
+> > 
+> > A subset could be chosen for better performance, or when a TPM algorithm
+> > is not supported by the crypto subsystem.
 > 
->> 	/* Holds the resul of the last successful call to tpm_transmit() */
->>  	size_t transmit_result;
->> +	/* Holds the count how much of the response is still unread */
->> +	size_t partial_data;
-> I'm otherwise happy how this look like but why call it partial_data.
-> You cannot really tell from the name anything about its contents as
-> data is very abstract term.
- 
-so I will rename these two to response_length and response_length_rem,
-how does this sound?
+> Doesn't extending a subset a security concern?
 
-> BTW, why you need the new variable anyway and not just decrease the
-> variable where the length is original stored?
+Right, so instead of extending a subset of the allocated banks, all of
+the allocated banks need to be extended, even for those banks that a
+digest was not included.  This is no different than what is being done
+today.  IMA is currently only calculating the SHA1 hash, padding the
+digest with 0's, and extending the padded value(s) into all of the
+allocated banks.
 
-We need to have two variables, otherwise how do we tell if some part of
-response was consumed to allow sending a new command?
-The transmit_result is used for that. If it is zero then one can transmit
-a new command even if the whole response is not consumed. The new variable
-tracks how much of the response is still to be read. 
+If there is a vulnerability with the hash algorithm, then any bank
+extended with the padded/truncated digest would be susceptible.
 
-Thanks,
--- 
-Tadeusz
+IMA will need to become TPM 2.0 aware, calculating and extending
+multiple banks and define a new measurement list format containing the
+multiple digests.
+
+Mimi
+
