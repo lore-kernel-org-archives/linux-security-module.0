@@ -2,165 +2,174 @@ Return-Path: <SRS0=2Rj0=N7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE75C43610
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 00:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1041C04EBA
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 03:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 603E82089F
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 00:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BF4820870
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 03:06:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="qSanhPsI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 603E82089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NjYoLH36"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BF4820870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730140AbeKTLU6 (ORCPT
+        id S1729553AbeKTNcx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Nov 2018 06:20:58 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:59686 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725961AbeKTLU6 (ORCPT
+        Tue, 20 Nov 2018 08:32:53 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38075 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbeKTNcx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Nov 2018 06:20:58 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id F0DD38EE2C9;
-        Mon, 19 Nov 2018 16:54:33 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id K_IX2Otl1R0G; Mon, 19 Nov 2018 16:54:33 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 61B6A8EE0BA;
-        Mon, 19 Nov 2018 16:54:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1542675273;
-        bh=3Nx+t45VWhyU0MoQobQxbni5FepA8KxwYb6lrkWKqxs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qSanhPsIdSpD41I9UH8OoJc2Kjeh4teKEajDnQ27ZQ1dbiIe9OnCnwCRFujq6CiL2
-         y/UNaRoY6+RVxIKHfV/+BN1+rgDjEpJrbkDCSlW7p4HivNxvhlfjr9PIyp8SLaZaYZ
-         1C5PAQVnE7RYHpZHT3wm8UNQWCZzm6CvRm1S+OU4=
-Message-ID: <1542675272.2910.63.camel@HansenPartnership.com>
-Subject: Re: Documenting the proposal for TPM 2.0 security in the face of
- bus interposer attacks
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
+        Tue, 20 Nov 2018 08:32:53 -0500
+Received: by mail-pg1-f196.google.com with SMTP id g189so234812pgc.5
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Nov 2018 19:05:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zAQSluj1LNS3RqNFhmyQt214e3JGfMk7B1IzjwWm7vI=;
+        b=NjYoLH36JubPR2mYvQ0ONtTdVP55JHb4Gs75phBdtDUL2QPYLlBuGipk4WZQa7zNdF
+         H7hs9CFWSSE6fJNWm/UTyEfNSngmTfSiPiXdQok8i5QsbOZHID1I0BFfxfw1TWp/rz2e
+         6fchL9BERHTpcTmgD19+slGFO7jUdd9uxX70/5J3ld/7zVvCscmqDmQAFNmH7AoqtCot
+         XgwEqgUE2HLkGI4he7uJMKlTaKfTGUtjqvNlzWvRa/FI9LEIh9ZMko3ba4FDVg8qk9r+
+         NyplyKRItEXNpMubHPkJce7yhO5hM8e8QoX0ewJA53lomTNuYvp0MNYxIdVDeXULFC1u
+         UdgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zAQSluj1LNS3RqNFhmyQt214e3JGfMk7B1IzjwWm7vI=;
+        b=tsLYQRI7S2WXOvEUjC3z0NU3mJs4mm3M8n0wnlZTK1YtHvnmD7QBV3T1/VGG8JYWDw
+         yOyqGxdlCHyuxzRXsyT0pgvVguBDvL3kdeBKMrdUfiUzLxBsKpkcr8TErH2EA+remHIE
+         3pLLq2S01YV1BHqCE5QRxiUzWH4SCwTAffgB9tAq589DLgFIQPT3EcCoF1gm+4H3mwSj
+         gy3G9HBIkf9b8MQaJML+q6FP5DdLYEEap0jtqKXEBWqswgu1S0BnUtW+mqvMeSTtophL
+         DppovdJJkWc69WkhaZ5Z+6vTZAIGrmmPTEapy8SBH92HTi+DZvCI0PJPB3tWpvTGnfOp
+         n/zQ==
+X-Gm-Message-State: AGRZ1gJF83W3sCzRsA/SUPVkXz6CIpk4g5n1wO0p43MlIVWxvlplJn6j
+        ddq8u9AND5tUDUS1t3tqVgR3WQ==
+X-Google-Smtp-Source: AJdET5de6ak6nzEnVXKswflTTRDRyrixXeR/SNbB0WAYEXdMtkmqw5MMfyLN0bcJ4QRMAR+2GjnhtQ==
+X-Received: by 2002:a62:3c6:: with SMTP id 189-v6mr333586pfd.19.1542683158826;
+        Mon, 19 Nov 2018 19:05:58 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id p11sm37596853pgn.60.2018.11.19.19.05.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 19:05:58 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gOwMO-0001bP-Up; Mon, 19 Nov 2018 20:05:56 -0700
+Date:   Mon, 19 Nov 2018 20:05:56 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         monty.wiseman@ge.com, Monty Wiseman <montywiseman32@gmail.com>,
         Matthew Garrett <mjg59@google.com>
-Date:   Mon, 19 Nov 2018 16:54:32 -0800
-In-Reply-To: <20181119230826.GN4890@ziepe.ca>
+Subject: Re: Documenting the proposal for TPM 2.0 security in the face of bus
+ interposer attacks
+Message-ID: <20181120030556.GP4890@ziepe.ca>
 References: <1542648844.2910.9.camel@HansenPartnership.com>
-         <20181119200505.GF4890@ziepe.ca>
-         <1542658839.2910.32.camel@HansenPartnership.com>
-         <20181119211911.GH4890@ziepe.ca>
-         <1542663281.2910.44.camel@HansenPartnership.com>
-         <20181119214426.GK4890@ziepe.ca>
-         <1542666988.2910.49.camel@HansenPartnership.com>
-         <20181119230826.GN4890@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+ <20181119200505.GF4890@ziepe.ca>
+ <1542658839.2910.32.camel@HansenPartnership.com>
+ <20181119211911.GH4890@ziepe.ca>
+ <1542663281.2910.44.camel@HansenPartnership.com>
+ <20181119214426.GK4890@ziepe.ca>
+ <1542666988.2910.49.camel@HansenPartnership.com>
+ <20181119230826.GN4890@ziepe.ca>
+ <1542675272.2910.63.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542675272.2910.63.camel@HansenPartnership.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2018-11-19 at 16:08 -0700, Jason Gunthorpe wrote:
-> On Mon, Nov 19, 2018 at 02:36:28PM -0800, James Bottomley wrote:
-> > On Mon, 2018-11-19 at 14:44 -0700, Jason Gunthorpe wrote:
-> > > On Mon, Nov 19, 2018 at 01:34:41PM -0800, James Bottomley wrote:
-> > > > On Mon, 2018-11-19 at 14:19 -0700, Jason Gunthorpe wrote:
-> > > > [...]
-> > > > > Sure, for stuff working with shared secrets, etc, this make
-> > > > > sense. But PCR extends are not secret, so there is no reason
-> > > > > to
-> > > > > encrypt them on the bus.
+On Mon, Nov 19, 2018 at 04:54:32PM -0800, James Bottomley wrote:
+> On Mon, 2018-11-19 at 16:08 -0700, Jason Gunthorpe wrote:
+> > On Mon, Nov 19, 2018 at 02:36:28PM -0800, James Bottomley wrote:
+> > > On Mon, 2018-11-19 at 14:44 -0700, Jason Gunthorpe wrote:
+> > > > On Mon, Nov 19, 2018 at 01:34:41PM -0800, James Bottomley wrote:
+> > > > > On Mon, 2018-11-19 at 14:19 -0700, Jason Gunthorpe wrote:
+> > > > > [...]
+> > > > > > Sure, for stuff working with shared secrets, etc, this make
+> > > > > > sense. But PCR extends are not secret, so there is no reason
+> > > > > > to
+> > > > > > encrypt them on the bus.
+> > > > > 
+> > > > > OK, there's a miscommunication here.  I believe the current
+> > > > > document states twice that there's no encryption for PCR
+> > > > > operations.  We merely use a salted HMAC session to ensure that
+> > > > > they're reliably received by the TPM and not altered in-flight.
 > > > > 
-> > > > OK, there's a miscommunication here.  I believe the current
-> > > > document states twice that there's no encryption for PCR
-> > > > operations.  We merely use a salted HMAC session to ensure that
-> > > > they're reliably received by the TPM and not altered in-flight.
+> > > > Sure, but again, what is this preventing?
 > > > 
-> > > Sure, but again, what is this preventing?
+> > > It prevents the interposer having free reign to set the PCR values
+> > > by substituting every measurement you send to the TPM.  
 > > 
-> > It prevents the interposer having free reign to set the PCR values
-> > by substituting every measurement you send to the TPM.  
+> > But the threat model for PCR excludes the possibility of an
+> > interposer. If you have an interposer the PCB is broken and all PCR
+> > security is already lost.
 > 
-> But the threat model for PCR excludes the possibility of an
-> interposer. If you have an interposer the PCB is broken and all PCR
-> security is already lost.
+> Yours might, mine doesn't and I think I can mitigate the we can give
+> you approved PCRs attack ... I can't prevent the we muck with your PCRs
+> attack.
 
-Yours might, mine doesn't and I think I can mitigate the we can give
-you approved PCRs attack ... I can't prevent the we muck with your PCRs
-attack.
+It is not 'mine' or 'your' threat model. These trade offs are baked
+into the TPM protocol design itself.
 
-> > some scope for detecting the presence of an interposer if it does
-> > try to tamper with your measurements.
-> 
-> But I can still tamper with them.. I can have the interposer
-> delete/fail the kernel PCR commands and issue un-hashed ones.
+I guess I haven't really heard you explain what your threat model
+is.
 
-You can't because you don't have the HMAC key to fake the response, so
-as long as I check the HMAC return I know you've tampered.
+I would think if an interposer can muck with the PCRs then the main
+attack would be to cause the CPU to run code that does not match the
+PCRs while tricking the TPM into thinking the PCR matches.
 
-> The kernel would have to do something extreme like fault the TPM and
-> totally disable the linux device if any PCR extend fails. That should
-> probably be included in the plan?
+This would let an attack unseal, say, a disk encryption secret while
+running a hostile version of Linux. A big failure of the fundamental
+PCR guarentee.
 
-If we detect an interposer (if one of the HMACs or encrypt/decrypt
-fails) it depends on policy what you do.  We certainly log a message saying TPM integrity is compromised.  I think we should also disable the TPM, but I haven't done that yet because I thought it would bear more discussion.
+So any point along the PCR trust chain that does not do secure PCR
+updates is a failure point. Since the BIOS doesn't do it, one would
+probably start by replacing the bootloader and kernel in conjunction
+with the interposer?
 
-> > tamper, like there is for confidentiality of sealed data and random
-> > numbers, but it seems to be an improvement on what's currently
-> > there given that we have to install the session machinery for
-> > encryption/decryption anyway.
-> 
-> Sure, if you have the machinery and it can be used at PCR time, then
-> why not use it.. But I think any description about why this is being
-> done should be clear about what the threat model is for PCR. 
+The incremental gain from having the kernel do this seems negligible
+to me.
 
-Right, the threat model for me is complete control of the PCRs.  I can
-mitigate that by HMACing the request and response and checking the
-response HMAC.
+I think to properly address this threat work needs to be done in the
+TPM spec to establish a secure TPM communication channel at power on..
 
-> I'm mostly concerned about how the document was written which makes
-> it seems like security of extend beyond what is integral to the
-> PCB/chipset is meaningful, considering the threat model PCR is based
-> on.
-> 
-> We don't want people to become confused and think they are getting
-> more security than there really is.
-
-Agreed.
-
-> > > If you accept that PCB trust is essential for PCR security, then
-> > > I think trusting the PCB to deliver the PCR extends is perfectly
-> > > fine.
+> > > some scope for detecting the presence of an interposer if it does
+> > > try to tamper with your measurements.
 > > 
-> > The *current* interposer is a hardware device on the bus.  The next
-> > gen is reported to be more software based.
+> > But I can still tamper with them.. I can have the interposer
+> > delete/fail the kernel PCR commands and issue un-hashed ones.
 > 
-> Well, that is terrifying.
+> You can't because you don't have the HMAC key to fake the response, so
+> as long as I check the HMAC return I know you've tampered.
+
+.. and you stop using the TPM after this. Otherwise the interposer can
+fail the command, issue an extend with the right data, and cause the
+PCRs to match trusted data while running actually untrusted code.
+
+> > The kernel would have to do something extreme like fault the TPM and
+> > totally disable the linux device if any PCR extend fails. That should
+> > probably be included in the plan?
 > 
-> But a SW based attack that can toggle TPM reset or alter TPM commands
-> in flight getting very much into the 'chips are broken' territory
-> where the chain of trust required for PCR is broken. This is breaking
-> fundamental assumptions of the threat model here :(
-> 
-> It is hard to know if more crypto could really prevent problems
-> without knowing the details of how this is being done??
+> If we detect an interposer (if one of the HMACs or encrypt/decrypt
+> fails) it depends on policy what you do.  We certainly log a message
+> saying TPM integrity is compromised.  I think we should also disable
+> the TPM, but I haven't done that yet because I thought it would bear
+> more discussion.
 
-I think if I can mitigate some of the PCR problems and prevent snooping
-for the hardware interposer, it will also go a long way to defeating
-the more software one ... of course, not having seen it, this is just a
-guess, but it's based on the idea that the software one probably has
-the same or more limited access to the bus.
+Logging doesn't seem useful - if a HW interposer is present then
+someone is already in control of the HW and will happily ignore
+warnings ...
 
-James
-
+Jason
