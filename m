@@ -2,83 +2,72 @@ Return-Path: <SRS0=2Rj0=N7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE72C43610
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2408CC43610
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4B621479
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:08:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA4B621479
+	by mail.kernel.org (Postfix) with ESMTP id 909272147A
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:10:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909272147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725900AbeKUJjm (ORCPT
+        id S1725957AbeKUJll (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 04:39:42 -0500
-Received: from mga18.intel.com ([134.134.136.126]:30315 "EHLO mga18.intel.com"
+        Wed, 21 Nov 2018 04:41:41 -0500
+Received: from mga17.intel.com ([192.55.52.151]:42464 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbeKUJjl (ORCPT
+        id S1725913AbeKUJll (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 04:39:41 -0500
-X-Amp-Result: UNSCANNABLE
+        Wed, 21 Nov 2018 04:41:41 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 15:08:04 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 15:10:03 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,258,1539673200"; 
-   d="scan'208";a="87466627"
+   d="scan'208";a="106326035"
 Received: from drhumphr-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.165])
-  by fmsmga007.fm.intel.com with ESMTP; 20 Nov 2018 15:08:01 -0800
-Date:   Wed, 21 Nov 2018 01:07:59 +0200
+  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 15:10:00 -0800
+Date:   Wed, 21 Nov 2018 01:09:58 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Tadeusz Struk <tadeusz.struk@intel.com>
 Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v5] tpm: add support for partial reads
-Message-ID: <20181120230759.GF8391@linux.intel.com>
+Message-ID: <20181120230958.GG8391@linux.intel.com>
 References: <154265371562.23494.10113870855345906523.stgit@tstruk-mobl1.jf.intel.com>
  <20181120124810.GB8813@linux.intel.com>
- <77b031b2-7fa2-f057-1e6a-70f0427ec6c4@intel.com>
+ <573e2328-1015-f2ae-e3e0-088b4d5238bc@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <77b031b2-7fa2-f057-1e6a-70f0427ec6c4@intel.com>
+In-Reply-To: <573e2328-1015-f2ae-e3e0-088b4d5238bc@intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 20, 2018 at 10:36:14AM -0800, Tadeusz Struk wrote:
+On Tue, Nov 20, 2018 at 10:30:32AM -0800, Tadeusz Struk wrote:
 > On 11/20/18 4:48 AM, Jarkko Sakkinen wrote:
-> >> +	/* Holds the resul of the last successful call to tpm_transmit() */
-> > This comment is cruft.
-> 
-> Do you want me to remove it? This is the comment you proposed.
-
-As I explained before it made sense before you made the remark that
-it can only get positive values i.e. the length.
-
-> > data_pending would be now perfectly fine name now that we concluded
-> > that the original length is not needed to be stored. Better than this
-> > as once you decrease it the variable name and contents mismatch.
+> >> The usecase is implemented in this TSS commit:
+> >> https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
+> > Can you implement test for this to
 > > 
+> > https://github.com/jsakkine-intel/tpm2-scripts
 > 
-> Can we finally agree on something? We have changed three times already.
-> response_length is exactly what it is and data_pending is a bit vague.
+> Just created a PR for you
+> https://github.com/jsakkine-intel/tpm2-scripts/pull/4
 
-You are correct in this one. If I remember right, I finally proposed
-'response_pending' because 'data_pending' is really vague. For me
-'response_length' is just fine too.
+Great, thank you.
 
-If you see problem in my review comment or inconsistency or whatever,
-please just state it. I will listen. When you multitask between patch
-reviews etc. forgetting stuff is not unheard.
-
-And seriously, 5th iteration is not alot. User space facing changes
-need alot of consideration and as uncluttered code change as possible.
+I'm wondering if Python scripts can be added to kselftests. Then a test
+case could be part of a tpmdd change when required. Have to do research
+on this...
 
 /Jarkko
