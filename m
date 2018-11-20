@@ -1,252 +1,221 @@
 Return-Path: <SRS0=9590=OA=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,LONGWORDS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B45FEC43610
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 02:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 994FFC04EBA
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 601E12146D
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 02:31:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nccgroup.com header.i=@nccgroup.com header.b="qclSlvrM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 601E12146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=nccgroup.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D5B8214F1
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5B8214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbeKUNDZ (ORCPT
+        id S1726877AbeKUO0I (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 08:03:25 -0500
-Received: from eu-smtp-delivery-170.mimecast.com ([207.82.80.170]:50153 "EHLO
-        eu-smtp-delivery-170.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725937AbeKUNDZ (ORCPT
+        Wed, 21 Nov 2018 09:26:08 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:13925 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726406AbeKUO0I (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 08:03:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nccgroup.com; s=mimecast20140812; t=1542767463; h=from:from:sender:reply-to:subject:subject:date:date: message-id:message-id:to:to:cc:cc:mime-version:mime-version: content-type:content-type:content-transfer-encoding: in-reply-to:in-reply-to:references:references; bh=rXvF6wp5HNtuL5Xe5KDnVy+7WW/PuvuBH0FFzruhahc=; b=qclSlvrM2DULEokX8JcM6ckfCoemp8awQw8JtRMDbq97dLSSI0htOTDvpYUK6NvOmRnaAj8wwbkCB6+vatI83JVo9VHKz3tvJwdEM5TvAc6oxpQHYkIonN1G+XJF3GesVjIThQEdx80bd9BN1q0xAoo10T5gLDhnh1Va5E8Vm5U=
-Received: from man1srvpgp01p.nccgroup.local (195.95.131.28 [195.95.131.28])
- (Using TLS) by relay.mimecast.com with ESMTP id
- uk-mta-36-uiCC_G5JNLe987TAfqa6rA-1; Wed, 21 Nov 2018 02:24:20 +0000
-X-MC-Unique: uiCC_G5JNLe987TAfqa6rA-1
-Received: from LDCDBSEXCH01p.nccgroup.local ([10.2.120.103])
-  by man1srvpgp01p.nccgroup.local (PGP Universal service);
-  Wed, 21 Nov 2018 02:24:20 +0000
-X-PGP-Universal: processed;
-        by man1srvpgp01p.nccgroup.local on Wed, 21 Nov 2018 02:24:20 +0000
-Received: from LDCDBSEXCH01p.nccgroup.local (10.2.120.103) by
- LDCDBSEXCH01p.nccgroup.local (10.2.120.103) with Microsoft SMTP Server (TLS)
- id 15.0.1365.1; Wed, 21 Nov 2018 02:24:18 +0000
-Received: from LDCDBSEXCH01p.nccgroup.local ([10.2.120.103]) by
- LDCDBSEXCH01p.nccgroup.local ([10.2.120.103]) with mapi id 15.00.1365.000;
- Wed, 21 Nov 2018 02:24:18 +0000
-From:   Jeremy Boone <jeremy.boone@nccgroup.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
+        Wed, 21 Nov 2018 09:26:08 -0500
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 20 Nov 2018 19:52:52 -0800
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 390D3B1872;
+        Tue, 20 Nov 2018 22:53:30 -0500 (EST)
+From:   Nadav Amit <namit@vmware.com>
+To:     Ingo Molnar <mingo@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
+        <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "monty.wiseman@ge.com" <monty.wiseman@ge.com>,
-        Monty Wiseman <montywiseman32@gmail.com>,
-        "Matthew Garrett" <mjg59@google.com>
-Subject: Re: EXTERNAL: Re: Documenting the proposal for TPM 2.0 security in
- the face of bus interposer attacks
-Thread-Topic: EXTERNAL: Re: Documenting the proposal for TPM 2.0 security in
- the face of bus interposer attacks
-Thread-Index: AQHUgEMuFXzG8g+oYkGJ3yFw/xOJk6VXiiaAgAAQWoCAAARVgIAAArkAgAAOigCAAAjvAIAAHaQAgAAktwCAAO4PgIAAR3aAgAARFACAABHvAIAALikA
-Date:   Wed, 21 Nov 2018 02:24:18 +0000
-Message-ID: <01A99B24-E772-489C-A33F-2F3CC80281FA@nccgroup.com>
-References: <20181119211911.GH4890@ziepe.ca>
- <1542663281.2910.44.camel@HansenPartnership.com>
- <20181119214426.GK4890@ziepe.ca>
- <1542666988.2910.49.camel@HansenPartnership.com>
- <20181119230826.GN4890@ziepe.ca>
- <1542675272.2910.63.camel@HansenPartnership.com>
- <20181120030556.GP4890@ziepe.ca>
- <1542734279.2814.23.camel@HansenPartnership.com>
- <20181120213345.GC22023@ziepe.ca>
- <1542753292.2814.45.camel@HansenPartnership.com>
- <20181120233904.GF22023@ziepe.ca>
-In-Reply-To: <20181120233904.GF22023@ziepe.ca>
-Accept-Language: en-CA, en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-smime:  TRUE
+        Nadav Amit <namit@vmware.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v6 01/10] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+Date:   Tue, 20 Nov 2018 12:35:36 -0800
+Message-ID: <20181120203545.34928-2-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181120203545.34928-1-namit@vmware.com>
+References: <20181120203545.34928-1-namit@vmware.com>
 MIME-Version: 1.0
-Content-Language: en-CA
-Content-Type: multipart/signed;
-        boundary="Apple-Mail-B5398688-675B-4A83-BE83-F2839A5E33FE";
-        protocol="application/pkcs7-signature"; micalg=sha1
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
---Apple-Mail-B5398688-675B-4A83-BE83-F2839A5E33FE
-Content-Type: text/plain;
-	charset=utf-8
-Content-Transfer-Encoding: base64
+text_mutex is currently expected to be held before text_poke() is
+called, but we kgdb does not take the mutex, and instead *supposedly*
+ensures the lock is not taken and will not be acquired by any other core
+while text_poke() is running.
 
-DQoNCj4gT24gTm92IDIwLCAyMDE4LCBhdCA2OjM5IFBNLCBKYXNvbiBHdW50aG9ycGUgPGpnZ0B6
-aWVwZS5jYT4gd3JvdGU6DQo+IA0KPj4gT24gVHVlLCBOb3YgMjAsIDIwMTggYXQgMDI6MzQ6NTJQ
-TSAtMDgwMCwgSmFtZXMgQm90dG9tbGV5IHdyb3RlOg0KPj4gDQo+PiBodHRwczovL3Byb3RlY3Qt
-ZXUubWltZWNhc3QuY29tL3MvRF83YkNqMkJsaVlFWW4wVFdEVjFxDQo+IA0KPiBOb3RpY2Ugbm9u
-ZSBvZiB0aGVpciBleGFtcGxlcyBpbmNsdWRlICdwcmV2ZW50IHRhbXBlcmluZyB3aXRoIHRoZQ0K
-PiBoYXJkd2FyZScgYWxsIGFyZSBmb2N1c2VkIG9uIHB1cmUgc29mdHdhcmUgYXR0YWNrcywgd2hp
-Y2ggdGhlIFRQTSBpcw0KPiBleGNlbGxlbnQgYXQgcHJldmVudGluZy4gVGhlIFRQTSB3YXMgbmV2
-ZXIgc3VwcG9zZWQgdG8gcHJldmVudA0KPiBwaHlzaWNhbCBhdHRhY2tzIGFnYWluc3QgdGhlIEhX
-IGZvciB0aGUgUENSIGZlYXR1cmUuDQo+IA0KPiBUaGUgb25seSBIVyBndWFyZW50ZWUgaXQgZXZl
-ciBwcm92aWRlZCBpcyB0byBwcmV2ZW50IHRoZWZ0IG9mIHRoZQ0KPiBwcml2YXRlIHNlY3JldHMs
-IGV2ZW4gd2l0aCBwaHlzaWNhbCBhY2Nlc3MuDQo+IA0KPj4+IEl0IGRvZXNuJ3QgbmVlZCBjb250
-YWN0IHdpdGggdGhlIENQVS4gVGhlIGJhc2ljIGZsb3cgd291bGQgYmUgdG8gdXNlDQo+Pj4gdGhl
-IGludGVycG9zZXIgb24gU1BJIG9yIExQQyB0byBibG9jayB0aGUgTnRoIFBDUiB1cGRhdGUsIGhh
-dmluZw0KPj4+IGRldGVybWluZWQgdGhhdCBOdGggY29tZXMgZnJvbSB0aGUgQklPUyBhbmQgY292
-ZXJzIHRoZQ0KPj4+IGJvb3Rsb2FkZXIuLiBUaGUgQklPUyBpZ25vcmVzIHRoZSBlcnJvciwgb3Ig
-Y2FuJ3QgdGVsbCB0aGUgUENSIHVwZGF0ZQ0KPj4+IHdhcyBjb3JydXB0ZWQuIEZyb20gdGhlcmUg
-aXQgaXMgZWFzeSB0byBzZWUgaG93IHRvIGdldCBpbnRvIGEgaG9zdGlsZQ0KPj4+IGtlcm5lbCBh
-bmQgZXh0ZW5kIHRoZSBQQ1JzIHRvIG1hdGNoIGEgdHJ1c3RlZCBrZXJuZWwuDQo+PiANCj4+IFJp
-Z2h0LCBidXQgdGhhdCdzIHdoeSBJIHdhbnQgdG8gZGV0ZWN0IHRoZSBlcnJvciBhbmQgc2h1dCBk
-b3duIHRoZSBUUE0uDQo+IA0KPiBXZWxsLCBJIHRoaW5rIHRoaXMgaXMgYSBsb3Qgb2YgaW5kdXN0
-cnkgZWZmb3J0IGFuZCBzdGlsbCBsZWF2ZXMgb3Blbg0KPiBvdGhlciBmYWlybHkgc2ltcGxlIHBo
-eXNpY2FsIGF0dGFja3MsIGxpa2Ugd2lyZS10by10aGUtcmVzZXQuDQo+IA0KPiBJIGNhbiBhbHdh
-eXMgbWFrZSBhbiBpbnRlcnBvc2VyIHRoYXQgZGlkIHdpcmUtdG8tdGhlLXJlc2V0LCBJIGRvbid0
-DQo+IG5lZWQgdG8gZG8gY29tcGxpY2F0ZWQgZHluYW1pYyB0aGluZ3Mgd2l0aCBQQ1IgZXh0ZW5k
-IGNvbW1hbmRzLg0KPiANCj4gQW5kIHRoZSBudWxsIGtleSBkb2Vzbid0IHJlYWxseSBwcm90ZWN0
-IGFnYWluc3Qgd2lyZS10by10aGUtcmVzZXQsIGFzDQo+IHRoZSBudWxsIGtleSBkb2Vzbid0IHBh
-cnRpY2lwYXRlIGluIHRoZSBQQ1IgZXh0ZW5kLiBTbw0KPiB1bnNlYWwvc2VhbC9hdHRlc3QgY29t
-bWFuZHMgZG9uJ3Qga25vdyBpZiB0aGUgVFBNIHdhcyBib290ZWQNCj4gYXV0aGVudGljYWxseSBv
-ciB2aWEgYSB3aXJlLXRvLXRoZS1yZXNldCBhbmQgYSBob3N0aWxlIGtlcm5lbC4NCj4gDQo+IFll
-cywgaXQgbGV0cyBhIHRydXN0ZWQga2VybmVsIGRldGVjdCBhIHByb2JsZW0sIGJ1dCBhIHRocmVh
-dCBtb2RlbA0KPiB0aGF0IGluY2x1ZGVzIGFuIGludGVycG9zZXIgYW5kIGV4Y2x1ZGVzIGEgaG9z
-dGlsZSBrZXJuZWwgZG9lc24ndA0KPiBzb3VuZCBzbyBpbnRlcmVzdGluZyB0byBtZT8/Pw0KDQpU
-aGUgaWRlYSBpcyB0aGF0IGlmIHRoZSBib290bG9hZGVyKHMpIGFsc28gcHJvdGVjdCB0aGUgYnVz
-IHRyYW5zYWN0aW9ucyB3aXRoIGFuIEhNQUMsIHRoZW4gd2UgY291bGQgZGV0ZWN0IHRhbXBlcmlu
-ZyBhbmQgYmVmb3JlIGV2ZXIgYm9vdGluZyBpbnRvIGEgaG9zdGlsZSBrZXJuZWwuDQoNCj4gDQo+
-IExpa2UgSSBzYWlkIGF0IHRoZSBzdGFydCwgdGhlIHdheSB0aGUgc3BlYyBpcyB3cml0dGVuLCBQ
-Q1IgcmVxdWlyZXMNCj4gdHJ1c3RlZCBIVy4gV2l0aG91dCBhIFRQTSBzcGVjIGNoYW5nZSB3ZSBj
-YW4ndCBmaXggdGhpcyBiYXNpYw0KPiBhc3N1bXB0aW9uLg0KPiANCj4gQSBiZXR0ZXIgbWl0aWdh
-dGlvbiB0byB0aGUgaW50ZXJwb3NlciB0aHJlYXQgaXMgZm9yIFBDQiBtYW51ZmFjdHVyZXMNCj4g
-dG8gdXNlIEJHQSBwYWNrYWdlcywgYmxpbmQgdmlhcyBhbmQgaW50ZXJuYWwgdHJhY2VzIHRvIHBo
-eXNpY2FsbHkgZGVueQ0KPiBlYXN5IGFjY2VzcyB0byB0aGUgVFBNIGJ1cyBhbmQgcmVzZXQgc2ln
-bmFsLg0KDQpZZXMuIEkgc2FpZCBhcyBtdWNoIGluIHRoZSBUUE0gR2VuaWUgcGFwZXIuIEEgZmly
-bXdhcmUgVFBNIGlzIGV2ZW4gYmV0dGVyLCBhcyB3ZSBuZXZlciBuZWVkIHRvIHdvcnJ5IGFib3V0
-IHByb3RlY3RpbmcgdGhlIGJ1cyBiZWNhdXNlIGl0IGlzIG5ldmVyIGV4cG9zZWQgaW4gdGhlIGZp
-cnN0IHBsYWNlLiANCg0KPiANCj4gVGhlIGxhc3QgVFBNIHByb2plY3QgSSB3b3JrZWQgb24gdG9v
-ayBwaHlzaWNhbCBzZWN1cml0eSBpbnRvIGFjY291bnQNCj4gd2hlbiBkZXNpZ25pbmcgdGhlIFBD
-QiBhbmQgVFBNIGNoaXAgcGxhY2VtZW50LCBvdGhlcnMgc2hvdWxkIGRvIHRoZQ0KPiBzYW1lIDop
-DQo+IA0KPiBKYXNvbg0KPiANCg0KSSB0aGluayBpdOKAmXMgd29ydGggcmVjb2duaXppbmcgdGhh
-dCBUUE1zIGFyZSB1c2VkIGluIGEgdmFyaWV0eSBvZiBkZXBsb3ltZW50cywgZWFjaCB3aXRoIHRo
-ZWlyIG93biB1bmlxdWUgdGhyZWF0IG1vZGVsIGFuZCBhdHRhY2sgc3VyZmFjZS4gDQoNCkZvciBl
-eGFtcGxlLCBzb21lIHVzZXJzIG1heSBjYXJlIGFib3V0IGV2aWwgbWFpZCBzY2VuYXJpb3MuIEhl
-Y2ssIFRQTS1UT1RQIChhbmQgZGFyZSBJIG1lbnRpb24gdGhlIFF1YmVzIEFudGktRXZpbCBNYWlk
-IHRlY2hub2xvZ3kpIHV0aWxpemVzIHRoZSBUUE0gdG8gYXR0ZXN0IHRoZSBib290IHN0YXRlIHRv
-IHRoZSBkZXZpY2Ugb3duZXIuIA0KDQpPdGhlciB1c2VycyBtYXkgY2FyZSBhYm91dCB0aGUg4oCc
-bG9zdCBpbiB0aGUgYmFjayBvZiBhIHRheGnigJ0gc2NlbmFyaW8gd2hlcmVpbiB0aGUgYXR0YWNr
-ZXIgbWF5IGhhdmUgZXh0ZW5kZWQgcGh5c2ljYWwgYWNjZXNzIHRvIHRoZSBtb2JpbGUgZGV2aWNl
-IChhIHBob25lIG9yIGxhcHRvcCkgYmVmb3JlIHJldHVybmluZyBpdCB0byB0aGUgb3duZXIuIA0K
-DQpJbiBvdGhlciBzY2VuYXJpb3MsIHRoZSBkZXZpY2UgdXNlciBtYXkgYmUgYSBkaWZmZXJlbnQg
-ZW50aXR5IHRoYW4gdGhlIGRldmljZSBvd25lciwgYW5kIGFzIHN1Y2gsIGRpZmZlcmVudCBzZWN1
-cml0eSBjb25zaWRlcmF0aW9ucyBtdXN0IGJlIGFwcGxpZWQuIFRoaW5rIG9mIGEgc2V0IHRvcCBi
-b3ggdGhhdCB5b3XigJl2ZSByZW50ZWQgZnJvbSB5b3VyIGNhYmxlIHNlcnZpY2UgcHJvdmlkZXIg
-d2hpY2ggdXNlcyBhIFRQTSB0byByZW1vdGVseSBhdHRlc3QgdGhlIGZpcm13YXJlIGJlZm9yZSBi
-ZWluZyB0cnVzdGVkIHRvIGhhbmRsZSBjb250ZW50IGRlY3J5cHRpb24ga2V5cy4gT3IgYSBjYXIg
-c2hhcmUgcHJvZ3JhbSB0aGF0IHVzZXMgdGhlIFRQTSBhcyBhIG1lYW5zIHRvIHN0b3JlIHRlbXBv
-cmFyeSBrZXlsZXNzLWVudHJ5IHRva2VucyDigJQgQWZ0ZXIgYWxsLCB0aGUgVENHIEF1dG9tb3Rp
-dmUgVGhpbiBQcm9maWxlIGlzIHRha2luZyBvZmYsIGFzIGFyZSB0aGUgU0FFIEozMTAxIHJlcXVp
-cmVtZW50cyB3aGljaCBzdWdnZXN0IHRoZSB1c2Ugb2YgVFBNIGluIGF1dG9tb3RpdmUgYXBwbGlj
-YXRpb25zLiAgQW4gaW50ZXJwb3Nlciwgb3IgZXZlbiBhIHNpbXBsZSBzbmlmZmVyIGF0dGFjaGVk
-IHRvIHRlc3QgcG9pbnRzIG9uIHRoZSBidXMsIHdvdWxkIGJlIGFibGUgdG8gb2JzZXJ2ZSBhbnkg
-c2VjcmV0cyB0cmFuc21pdHRlZCBiZXR3ZWVuIHRoZSBUUE0gYW5kIGhvc3QuIA0KDQpJIGJlbGll
-dmUgdGhhdCB0aGUgTGludXgga2VybmVsIGhhcyBhbiBvYmxpZ2F0aW9uIHRvIGJ1aWxkIGluIGFj
-dGl2ZSBkZWZlbmNlcyB0aGF0IHByb3RlY3QgVFBNIHVzZXJzIGFnYWluc3Qgc2VyaWFsIGJ1cyBh
-dHRhY2tzLCBhbmQgbWFrZXMgbm8gYmxpbmQgYXNzdW1wdGlvbnMgYWJvdXQgdGhlIHdheXMgaW4g
-d2hpY2ggYSBUUE0gbWF5IGJlIHVzZWQgb3IgZGVwbG95ZWQgaW4gYSB2YXJpZXR5IG9mIGNyZWF0
-aXZlIG9yIHVuZXhwZWN0ZWQgd2F5cy4gDQoNClRoaXMgaXMgZXNwZWNpYWxseSB0cnVlIGluIGxp
-Z2h0IG9mIHRoZSBmYWN0IHRoYXQgdGhlIFRDRyAoYW5kIFRQTSBjaGlwIG1hbnVmYWN0dXJlcnMg
-YXMgd2VsbCkgaGF2ZSBub3QgcGxhaW5seSBkb2N1bWVudGVkIHRoYXQsIGRlc3BpdGUgaGF2aW5n
-IGV4cGVuZGVkIGNvbnNpZGVyYWJsZSBlZmZvcnQgZGVmZW5kaW5nIGFnYWluc3QgaW52YXNpdmUg
-c2lsaWNvbiBhdHRhY2tzIChzZWUgQ2hyaXMgVGFybm92c2t54oCZcyB3b3JrKSwgYSB0cml2aWFs
-IGludGVycG9zZXIgY2FuIHN0aWxsIGRlZmVhdCBUUE0gc2VjdXJpdHkuIEkgYmVsaWV2ZSB0aGF0
-IG1hbnkgZG8gbm90IHVuZGVyc3RhbmQgdGhpcyBmYWN0LCBhbmQgY29uZmxhdGUgdGhlIGlkZWEg
-dGhhdCBtZWFzdXJlZCBib290IGNhbiBkZXRlY3Qg4oCcaGFyZHdhcmUgdGFtcGVyaW5n4oCdIHZz
-LiBtZXJlIOKAnGZpcm13YXJlIHRhbXBlcmluZ+KAnS4gUmVnYXJkbGVzcywgaXQgc2VlbXMgb2Rk
-IHRvIG1lIHRoYXQgd2Ugd2lzaCB0byBkZWZlbmQgYWdhaW5zdCBvbmUtb2ZmIGF0dGFja3MgaW52
-b2x2aW5nIGFuIGVsZWN0cm9uIG1pY3Jvc2NvcGUsIGJ1dCBkbyBub3Qgd2lzaCB0byBkZWZlbmQg
-YWdhaW5zdCBhIHNpbXBsZSBtaWNyb2NvbnRyb2xsZXIgYWN0aW5nIGFzIGEgbWFuLWluLXRoZS1t
-aWRkbGUgb24gdGhlIGJ1cy4gDQoNCkl04oCZcyB0cnVlIHRoYXQgd2l0aCBzdWZmaWNpZW50IHRp
-bWUgYW5kIG1vdGl2YXRpb24sIGEgZGVkaWNhdGVkIGFuZCB3ZWxsLWZ1bmRlZCBhZHZlcnNhcnkg
-Y2FuIGRlZmVhdCBhbG1vc3QgYW55IHByb3RlY3Rpb24gbWVjaGFuaXNtLiBCdXQgb3VyIGpvYiBh
-cyBkZWZlbmRlcnMgaXMgdG8gcmFpc2UgdGhlIGJhciBzbyB0aGF0IGNoZWFwIGFuZCBpbmV4cGVu
-c2l2ZSBhdHRhY2tzIGFyZSBubyBsb25nZXIgZmVhc2libGUuIEJ5IHJhaXNpbmcgdGhlIGNvc3Qg
-b2YgZXhwbG9pdGF0aW9uIGJleW9uZCB0aGUgYWR2ZXJzYXJ54oCZcyBhcHBldGl0ZSwgd2UgZWxp
-bWluYXRlIGVudGlyZSBjbGFzc2VzIG9mIGF0dGFjay4NCg0KQ2hvb3NpbmcgdG8gZG8gbm90aGlu
-ZyBzaW1wbHkgYmVjYXVzZSBvdGhlciBhdHRhY2sgYXZlbnVlcyBleGlzdCBpcyBhIGxpdHRsZSB0
-b28gZGVmZWF0aXN0IG9mIGFuIGF0dGl0dWRlIGZvciBtZS4gRXNwZWNpYWxseSBnaXZlbiB0aGF0
-IHRoZSBUUE0gc3BlY2lmaWNhdGlvbiBkb2VzIHN1cHBvcnQgcGF5bG9hZCBlbmNyeXB0aW9uIGFu
-ZCBpbnRlZ3JpdHkgcHJvdGVjdGlvbiB0aHJvdWdoIHRoZSB1c2Ugb2YgQXV0aG9yaXphdGlvbiBT
-ZXNzaW9ucy4gU28gd2UgZG8gaGF2ZSB0aGUgbmVjZXNzYXJ5IHRvb2xzIHRvIGJlZ2luIHRvIHNv
-bHZlIHRoaXMgcHJvYmxlbS4gVW5mb3J0dW5hdGVseSwgaXQgaXMgYWxzbyB0cnVlIHRoYXQgdGhp
-cyBpc3N1ZSBleHRlbmRzIGJleW9uZCB0aGUga2VybmVsLiBXZSBhbHNvIG5lZWQgdG8gbGFuZCBz
-aW1pbGFyIHBhdGNoZXMgZm9yIGV2ZXJ5IHN0YWdlIG9mIHRoZSBib290IHByb2Nlc3MgdGhhdCBw
-ZXJmb3JtcyBhIFBDUiBFeHRlbmQgb3BlcmF0aW9uLiBPdGhlcndpc2UgdGhlIGNoYWluIG9mIHRy
-dXN0IGNhbiBiZSBicm9rZW4gYmVmb3JlIHRoZSBrZXJuZWwgaXMgZXZlbiBzdGFydGVkLiANCg0K
-QWxsIHRoYXQgc2FpZCwgSeKAmW0gcHJldHR5IGludmVzdGVkIGluIFRQTSBHZW5pZSwgc28gSSBh
-bSBvYnZpb3VzbHkgYmlhc2VkIHRvd2FyZHMgc2VlaW5nIGEgZml4LiANCg0KSmVyZW15
---Apple-Mail-B5398688-675B-4A83-BE83-F2839A5E33FE
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+The reason for the "supposedly" comment is that it is not entirely clear
+that this would be the case if gdb_do_roundup is zero.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIGODCCBjQw
-ggUcoAMCAQICEAEJ+XaUirTKFDXrmkF/knMwDQYJKoZIhvcNAQENBQAwZTELMAkGA1UEBhMCVVMx
-FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
-AxMbRGlnaUNlcnQgU0hBMiBBc3N1cmVkIElEIENBMB4XDTE4MDkwNzAwMDAwMFoXDTIxMDkwNzEy
-MDAwMFowUTELMAkGA1UEBhMCR0IxEzARBgNVBAcTCk1hbmNoZXN0ZXIxFjAUBgNVBAoTDU5DQyBH
-cm91cCBQTEMxFTATBgNVBAMTDEplcmVteSBCb29uZTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCC
-AgoCggIBANIMHGOcKFG2g8urbwLGZcpE8X6szEZXdXwA+i16JKsQrMJd8kHZ2EC1Gs+FPhXV/jzu
-2Pb7Z21q0ZIMa5PdpC8JCVKk5T2lSykMndnUVv30s0hQJPNXWvdO93xopWnOdM+bKEz+pYNoYaSZ
-ukHAKlkPTeDfEUdP2J0/s5NDeCUZycLNhmHXvkMS07B4m7t0dQCbzQfMx+uceEZ+HsuhicOwbh79
-11a/iC9UOyA+dSIl8Hyl2sriNr2Nba61YLRdEUrV32OwiYUedIr1MtQRc9oINwtCXCbqDRcdaJ01
-n5TSBIX42zyJcPWGzz9A9ocKqotDp84smw+dktmg0pBPoc4lrJ/wAW2ouqfeBx+LIGFIM/JSfitX
-HaZeY3m2vlExHDRQjU38K4i22E8iltQ4YsGTT4XVEH80LIDQiy9xXzN5WH4re81aebSaJP0pg5qM
-kULoFi3a6QASOpils1E+TvwkygLDSXRGiO/7eUEJ96CPWMxeaRsuPv4yHO5AWyPiVnOxfv/kJVHq
-r2z6a9yVHRzhRtseQBTAlNiMuADiDMvsixD8F72gYguUlib37Ar3ARrovHiE5h64pZoa3GbY7rjg
-ic9uddHyf9dt7WrRXuLXCR3RxxZqqvyoTY0tb1QncNmKQo6P0JD3WrjSSoMpEYhxSlUy5WgoblRD
-Sfz3E5YLAgMBAAGjggHyMIIB7jAfBgNVHSMEGDAWgBTnAiOAAE/Y17yUC9k/dDlJMjyKeTAdBgNV
-HQ4EFgQUb/31vCdNPMbdI8MKWjcnKHWIPDUwDAYDVR0TAQH/BAIwADAkBgNVHREEHTAbgRlqZXJl
-bXkuYm9vbmVAbmNjZ3JvdXAuY29tMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcD
-AgYIKwYBBQUHAwQwQwYDVR0gBDwwOjA4BgpghkgBhv1sBAECMCowKAYIKwYBBQUHAgEWHGh0dHBz
-Oi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMwgYgGA1UdHwSBgDB+MD2gO6A5hjdodHRwOi8vY3JsMy5k
-aWdpY2VydC5jb20vRGlnaUNlcnRTSEEyQXNzdXJlZElEQ0EtZzIuY3JsMD2gO6A5hjdodHRwOi8v
-Y3JsNC5kaWdpY2VydC5jb20vRGlnaUNlcnRTSEEyQXNzdXJlZElEQ0EtZzIuY3JsMHkGCCsGAQUF
-BwEBBG0wazAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMEMGCCsGAQUFBzAC
-hjdodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRTSEEyQXNzdXJlZElEQ0EuY3J0
-MA0GCSqGSIb3DQEBDQUAA4IBAQDJxuvlSYH3naQXpVjpc2uDNF8K+wGzC7ESkhumFR2Bf6B8ysaR
-6vRNGuIvawBXsXxBCfpbGvA1PLf7DtmxaMRp5XqV58n8YKEVtVtkJZXF3U2bqdH9hqeNoBDO5cfc
-6zgZafOfBczyafLQcDRNUmu8nhuJQFIre4OpeYwjVf0nSfgjsx/i4fzfhvpldldJmryjGaUW/tbm
-B7JowoLm9V6H2yuuOKZrnRofmfz7m8MzAAT5JgXCqKi+Yfq4vBrkyb0NGmXiSGqK6PdH3Jz1Mb8z
-WUt3UAl/SOXV9OZujodKeoAqk2IFoPFlKexKrPjMC4FN0eSRobHeLR5xsR3RT7v+MYIEGTCCBBUC
-AQEweTBlMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cu
-ZGlnaWNlcnQuY29tMSQwIgYDVQQDExtEaWdpQ2VydCBTSEEyIEFzc3VyZWQgSUQgQ0ECEAEJ+XaU
-irTKFDXrmkF/knMwCQYFKw4DAhoFAKCCAXUwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkq
-hkiG9w0BCQUxDxcNMTgxMTIxMDIyNDE3WjAjBgkqhkiG9w0BCQQxFgQUqJ2WWtH8sifyZRwtX2y2
-SOYbpLowgYgGCSsGAQQBgjcQBDF7MHkwZTELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0
-IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UEAxMbRGlnaUNlcnQgU0hBMiBB
-c3N1cmVkIElEIENBAhABCfl2lIq0yhQ165pBf5JzMIGKBgsqhkiG9w0BCRACCzF7oHkwZTELMAkG
-A1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNv
-bTEkMCIGA1UEAxMbRGlnaUNlcnQgU0hBMiBBc3N1cmVkIElEIENBAhABCfl2lIq0yhQ165pBf5Jz
-MA0GCSqGSIb3DQEBAQUABIICAEmDnA0tZVi68OJeeqJLZw5v8My2Rc19/ePU0xQGpHlouQfMXMx1
-OwTIB0MKKJke/Ouv8cThY7AKKlWrqRbqzKK75rJgjHt3+N0m6NwAYUwQ8zS4g3aBiJVFG4omsgXp
-8kKIspdkvg24ieQdIkhyoAWadSv0GlZ66XmcbZxn0ETBe7gazqj3O3YczF+4JjP8xbDikzFOrpTp
-daLaRItcp5eDpp6HemXye46BgtcYT62gN4rMEJoz/Mck90euVg1qZ2DWXmRhRWxSWqt22ttZ4EIv
-SiEXtaXm5Zv98Q+z8w8E5ayfcHfvRrSv0Ov/WqTKIggZeuypibfd1XM7soqsFx+I+8OYrVP27tse
-F9QWwlxs8UnT1pljmphfBa9BK0FrIwYY2tKRkwJcsWz43qsTBxEPKP2N96bd7uDu4cXEva/R0JA/
-hXuCEpkR78OeN6Z3f5dpOq3j693wZZE17fPoc1uSIpik/D3u+yfhx6AF4+Cs/Zy+euQTRxEC0gCy
-1/4fRvgjgrlJFu97kjdHD2Wb/R0enyX8O0pgpGnHrN9gKkgetTtFOguvmfso0lTPx/a/btYyKP3P
-9zdLHERCoWtcx7+Obu/ImLf4RnYt8c9xJAsk6Ks1Y2A7JRYCWMxNW0LMrGtOA3G2RJ386FHIV+vw
-ybRbwc/ocyT33+eDNPnFAMi1AAAAAAAA
+This patch creates two wrapper functions, text_poke() and
+text_poke_kgdb() which do or do not run the lockdep assertion
+respectively.
 
---Apple-Mail-B5398688-675B-4A83-BE83-F2839A5E33FE--
+While we are at it, change the return code of text_poke() to something
+meaningful. One day, callers might actually respect it and the existing
+BUG_ON() when patching fails could be removed. For kgdb, the return
+value can actually be used.
+
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/text-patching.h |  1 +
+ arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
+ arch/x86/kernel/kgdb.c               | 11 +++---
+ 3 files changed, 45 insertions(+), 19 deletions(-)
+
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index e85ff65c43c3..f8fc8e86cf01 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+  * inconsistent instruction while you patch.
+  */
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
++extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index ebeac487a20c..c6a3a10a2fd5 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -678,18 +678,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	return addr;
+ }
+ 
+-/**
+- * text_poke - Update instructions on a live kernel
+- * @addr: address to modify
+- * @opcode: source of the copy
+- * @len: length to copy
+- *
+- * Only atomic text poke/set should be allowed when not doing early patching.
+- * It means the size must be writable atomically and the address must be aligned
+- * in a way that permits an atomic write. It also makes sure we fit on a single
+- * page.
+- */
+-void *text_poke(void *addr, const void *opcode, size_t len)
++static void *__text_poke(void *addr, const void *opcode, size_t len)
+ {
+ 	unsigned long flags;
+ 	char *vaddr;
+@@ -702,8 +691,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
+-	lockdep_assert_held(&text_mutex);
+-
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+ 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+@@ -732,6 +719,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	return addr;
+ }
+ 
++/**
++ * text_poke - Update instructions on a live kernel
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ */
++void *text_poke(void *addr, const void *opcode, size_t len)
++{
++	lockdep_assert_held(&text_mutex);
++
++	return __text_poke(addr, opcode, len);
++}
++
++/**
++ * text_poke_kgdb - Update instructions on a live kernel by kgdb
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ *
++ * Context: should only be used by kgdb, which ensures no other core is running,
++ *	    despite the fact it does not hold the text_mutex.
++ */
++void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
++{
++	return __text_poke(addr, opcode, len);
++}
++
+ static void do_sync_core(void *info)
+ {
+ 	sync_core();
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 8e36f249646e..2636ca8394bd 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -763,13 +763,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (!err)
+ 		return err;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		return -EBUSY;
+-	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+-		  BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err)
+ 		return err;
+@@ -788,12 +788,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		goto knl_write;
+-	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+ 		goto knl_write;
+-- 
+2.17.1
 
