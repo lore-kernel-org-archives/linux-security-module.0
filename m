@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C71C04EBA
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2A8C04EBA
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C13152145D
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13152145D
+	by mail.kernel.org (Postfix) with ESMTP id 717C72145D
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 717C72145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbeKUO0K (ORCPT
+        id S1725938AbeKUO0t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:26:10 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:2110 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726773AbeKUO0K (ORCPT
+        Wed, 21 Nov 2018 09:26:49 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:13925 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726849AbeKUO0K (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 21 Nov 2018 09:26:10 -0500
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 20 Nov 2018 19:52:59 -0800
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 20 Nov 2018 19:52:52 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 90DA7B1875;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 4CD13B1877;
         Tue, 20 Nov 2018 22:53:30 -0500 (EST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -40,76 +40,99 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
         Nadav Amit <namit@vmware.com>
-Subject: [PATCH v6 07/10] x86/kgdb: avoid redundant comparison of patched code
-Date:   Tue, 20 Nov 2018 12:35:42 -0800
-Message-ID: <20181120203545.34928-8-namit@vmware.com>
+Subject: [PATCH v6 03/10] x86/mm: temporary mm struct
+Date:   Tue, 20 Nov 2018 12:35:38 -0800
+Message-ID: <20181120203545.34928-4-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181120203545.34928-1-namit@vmware.com>
 References: <20181120203545.34928-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-text_poke() already ensures that the written value is the correct one
-and fails if that is not the case. There is no need for an additional
-comparison. Remove it.
+From: Andy Lutomirski <luto@kernel.org>
 
+Sometimes we want to set a temporary page-table entries (PTEs) in one of
+the cores, without allowing other cores to use - even speculatively -
+these mappings. There are two benefits for doing so:
+
+(1) Security: if sensitive PTEs are set, temporary mm prevents their use
+in other cores. This hardens the security as it prevents exploding a
+dangling pointer to overwrite sensitive data using the sensitive PTE.
+
+(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
+remote page-tables.
+
+To do so a temporary mm_struct can be used. Mappings which are private
+for this mm can be set in the userspace part of the address-space.
+During the whole time in which the temporary mm is loaded, interrupts
+must be disabled.
+
+The first use-case for temporary PTEs, which will follow, is for poking
+the kernel text.
+
+[ Commit message was written by Nadav ]
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/kgdb.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ arch/x86/include/asm/mmu_context.h | 32 ++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 2636ca8394bd..86484510bf54 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -751,7 +751,6 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
- int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
- {
- 	int err;
--	char opc[BREAK_INSTR_SIZE];
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 0ca50611e8ce..0141b7fa6d01 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -338,4 +338,36 @@ static inline unsigned long __get_current_cr3_fast(void)
+ 	return cr3;
+ }
  
- 	bpt->type = BP_BREAKPOINT;
- 	err = probe_kernel_read(bpt->saved_instr, (char *)bpt->bpt_addr,
-@@ -770,11 +769,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
- 		return -EBUSY;
- 	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
- 		       BREAK_INSTR_SIZE);
--	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
--	if (err)
--		return err;
--	if (memcmp(opc, arch_kgdb_ops.gdb_bpt_instr, BREAK_INSTR_SIZE))
--		return -EINVAL;
- 	bpt->type = BP_POKE_BREAKPOINT;
- 
- 	return err;
-@@ -782,9 +776,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
- 
- int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
- {
--	int err;
--	char opc[BREAK_INSTR_SIZE];
--
- 	if (bpt->type != BP_POKE_BREAKPOINT)
- 		goto knl_write;
- 	/*
-@@ -795,10 +786,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
- 		goto knl_write;
- 	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
- 		       BREAK_INSTR_SIZE);
--	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
--	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
--		goto knl_write;
--	return err;
-+	return 0;
- 
- knl_write:
- 	return probe_kernel_write((char *)bpt->bpt_addr,
++typedef struct {
++	struct mm_struct *prev;
++} temporary_mm_state_t;
++
++/*
++ * Using a temporary mm allows to set temporary mappings that are not accessible
++ * by other cores. Such mappings are needed to perform sensitive memory writes
++ * that override the kernel memory protections (e.g., W^X), without exposing the
++ * temporary page-table mappings that are required for these write operations to
++ * other cores.
++ *
++ * Context: The temporary mm needs to be used exclusively by a single core. To
++ *          harden security IRQs must be disabled while the temporary mm is
++ *          loaded, thereby preventing interrupt handler bugs from override the
++ *          kernel memory protection.
++ */
++static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
++{
++	temporary_mm_state_t state;
++
++	lockdep_assert_irqs_disabled();
++	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
++	switch_mm_irqs_off(NULL, mm, current);
++	return state;
++}
++
++static inline void unuse_temporary_mm(temporary_mm_state_t prev)
++{
++	lockdep_assert_irqs_disabled();
++	switch_mm_irqs_off(NULL, prev.prev, current);
++}
++
+ #endif /* _ASM_X86_MMU_CONTEXT_H */
 -- 
 2.17.1
 
