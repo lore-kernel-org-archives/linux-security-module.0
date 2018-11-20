@@ -2,36 +2,36 @@ Return-Path: <SRS0=2Rj0=N7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E120EC4161D
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1EFC46462
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8479420685
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8479420685
+	by mail.kernel.org (Postfix) with ESMTP id 649922087E
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:36:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 649922087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbeKUFBE (ORCPT
+        id S1725865AbeKUFGr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 00:01:04 -0500
-Received: from mga09.intel.com ([134.134.136.24]:2222 "EHLO mga09.intel.com"
+        Wed, 21 Nov 2018 00:06:47 -0500
+Received: from mga11.intel.com ([192.55.52.93]:48366 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725728AbeKUFBE (ORCPT
+        id S1725938AbeKUFGr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 00:01:04 -0500
+        Wed, 21 Nov 2018 00:06:47 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 10:30:33 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 10:36:15 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,258,1539673200"; 
-   d="scan'208";a="109903258"
+   d="scan'208";a="109904711"
 Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
-  by orsmga001.jf.intel.com with ESMTP; 20 Nov 2018 10:30:32 -0800
+  by orsmga001.jf.intel.com with ESMTP; 20 Nov 2018 10:36:14 -0800
 Subject: Re: [PATCH v5] tpm: add support for partial reads
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
@@ -63,8 +63,8 @@ Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
  ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
  EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
  kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <573e2328-1015-f2ae-e3e0-088b4d5238bc@intel.com>
-Date:   Tue, 20 Nov 2018 10:30:32 -0800
+Message-ID: <77b031b2-7fa2-f057-1e6a-70f0427ec6c4@intel.com>
+Date:   Tue, 20 Nov 2018 10:36:14 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
@@ -77,14 +77,26 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On 11/20/18 4:48 AM, Jarkko Sakkinen wrote:
->> The usecase is implemented in this TSS commit:
->> https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
-> Can you implement test for this to
-> 
-> https://github.com/jsakkine-intel/tpm2-scripts
+>> +	/* Holds the resul of the last successful call to tpm_transmit() */
+> This comment is cruft.
 
-Just created a PR for you
-https://github.com/jsakkine-intel/tpm2-scripts/pull/4
+Do you want me to remove it? This is the comment you proposed.
+
+> 
+>> +	size_t response_length;
+> data_pending would be now perfectly fine name now that we concluded
+> that the original length is not needed to be stored. Better than this
+> as once you decrease it the variable name and contents mismatch.
+> 
+
+Can we finally agree on something? We have changed three times already.
+response_length is exactly what it is and data_pending is a bit vague.
+
+>> +	/* Becomes true when the response (or part of it) is consumed */
+>> +	bool response_read;
+> /* Tell whether response been consumed (read at least once). */
+> 
+Ok I'll update the comment.
 
 -- 
 Tadeusz
