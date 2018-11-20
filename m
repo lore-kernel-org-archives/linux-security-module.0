@@ -4,30 +4,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BC8C43441
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC948C43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C32AA2145D
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C32AA2145D
+	by mail.kernel.org (Postfix) with ESMTP id AD20D2145D
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD20D2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbeKUO0L (ORCPT
+        id S1727314AbeKUO0e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:26:11 -0500
+        Wed, 21 Nov 2018 09:26:34 -0500
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:2110 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725995AbeKUO0L (ORCPT
+        by vger.kernel.org with ESMTP id S1727874AbeKUO0L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 21 Nov 2018 09:26:11 -0500
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Tue, 20 Nov 2018 19:52:59 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 74178B1870;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id B710FB1872;
         Tue, 20 Nov 2018 22:53:30 -0500 (EST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -40,11 +41,13 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         Nadav Amit <namit@vmware.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH v6 05/10] x86/alternative: initializing temporary mm for patching
-Date:   Tue, 20 Nov 2018 12:35:40 -0800
-Message-ID: <20181120203545.34928-6-namit@vmware.com>
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v6 10/10] x86/alternative: remove the return value of text_poke_*()
+Date:   Tue, 20 Nov 2018 12:35:45 -0800
+Message-ID: <20181120203545.34928-11-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181120203545.34928-1-namit@vmware.com>
 References: <20181120203545.34928-1-namit@vmware.com>
@@ -56,147 +59,91 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-To prevent improper use of the PTEs that are used for text patching, we
-want to use a temporary mm struct. We initailize it by copying the init
-mm.
+The return value of text_poke_early() and text_poke_bp() is useless.
+Remove it.
 
-The address that will be used for patching is taken from the lower area
-that is usually used for the task memory. Doing so prevents the need to
-frequently synchronize the temporary-mm (e.g., when BPF programs are
-installed), since different PGDs are used for the task memory.
-
-Finally, we randomize the address of the PTEs to harden against exploits
-that use these PTEs.
-
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/pgtable.h       |  3 +++
- arch/x86/include/asm/text-patching.h |  2 ++
- arch/x86/kernel/alternative.c        |  3 +++
- arch/x86/mm/init_64.c                | 35 ++++++++++++++++++++++++++++
- init/main.c                          |  3 +++
- 5 files changed, 46 insertions(+)
+ arch/x86/include/asm/text-patching.h |  4 ++--
+ arch/x86/kernel/alternative.c        | 11 ++++-------
+ 2 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 40616e805292..e8f630d9a2ed 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1021,6 +1021,9 @@ static inline void __meminit init_trampoline_default(void)
- 	/* Default trampoline pgd value */
- 	trampoline_pgd_entry = init_top_pgt[pgd_index(__PAGE_OFFSET)];
- }
-+
-+void __init poking_init(void);
-+
- # ifdef CONFIG_RANDOMIZE_MEMORY
- void __meminit init_trampoline(void);
- # else
 diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index f8fc8e86cf01..a75eed841eed 100644
+index a75eed841eed..c90678fd391a 100644
 --- a/arch/x86/include/asm/text-patching.h
 +++ b/arch/x86/include/asm/text-patching.h
-@@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
-+extern __ro_after_init struct mm_struct *poking_mm;
-+extern __ro_after_init unsigned long poking_addr;
+@@ -18,7 +18,7 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
+ #define __parainstructions_end	NULL
+ #endif
  
- #endif /* _ASM_X86_TEXT_PATCHING_H */
+-extern void *text_poke_early(void *addr, const void *opcode, size_t len);
++extern void text_poke_early(void *addr, const void *opcode, size_t len);
+ 
+ /*
+  * Clear and restore the kernel write-protection flag on the local CPU.
+@@ -37,7 +37,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
+ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+-extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
++extern void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+ extern __ro_after_init struct mm_struct *poking_mm;
+ extern __ro_after_init unsigned long poking_addr;
 diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index c6a3a10a2fd5..57fdde308bb6 100644
+index 18415e3b6000..2740ad2c6f21 100644
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
- 	return addr;
- }
+@@ -264,7 +264,7 @@ static void __init_or_module add_nops(void *insns, unsigned int len)
  
-+__ro_after_init struct mm_struct *poking_mm;
-+__ro_after_init unsigned long poking_addr;
-+
- static void *__text_poke(void *addr, const void *opcode, size_t len)
+ extern struct alt_instr __alt_instructions[], __alt_instructions_end[];
+ extern s32 __smp_locks[], __smp_locks_end[];
+-void *text_poke_early(void *addr, const void *opcode, size_t len);
++void text_poke_early(void *addr, const void *opcode, size_t len);
+ 
+ /*
+  * Are we looking at a near JMP with a 1 or 4-byte displacement.
+@@ -666,8 +666,8 @@ void __init alternative_instructions(void)
+  * instructions. And on the local CPU you need to be protected again NMI or MCE
+  * handlers seeing an inconsistent instruction while you patch.
+  */
+-void *__init_or_module text_poke_early(void *addr, const void *opcode,
+-				       size_t len)
++void __init_or_module text_poke_early(void *addr, const void *opcode,
++				      size_t len)
  {
  	unsigned long flags;
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 5fab264948c2..356a28569a19 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -53,6 +53,7 @@
- #include <asm/init.h>
- #include <asm/uv/uv.h>
- #include <asm/setup.h>
-+#include <asm/text-patching.h>
  
- #include "mm_internal.h"
- 
-@@ -1388,6 +1389,40 @@ unsigned long memory_block_size_bytes(void)
- 	return memory_block_size_probed;
+@@ -690,7 +690,6 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 		 * that causes hangs on some VIA CPUs.
+ 		 */
+ 	}
+-	return addr;
  }
  
-+/*
-+ * Initialize an mm_struct to be used during poking and a pointer to be used
-+ * during patching.
-+ */
-+void __init poking_init(void)
-+{
-+	spinlock_t *ptl;
-+	pte_t *ptep;
-+
-+	poking_mm = copy_init_mm();
-+	BUG_ON(!poking_mm);
-+
-+	/*
-+	 * Randomize the poking address, but make sure that the following page
-+	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
-+	 * and adjust the address if the PMD ends after the first one.
-+	 */
-+	poking_addr = TASK_UNMAPPED_BASE +
-+		(kaslr_get_random_long("Poking") & PAGE_MASK) %
-+		(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
-+
-+	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
-+		poking_addr += PAGE_SIZE;
-+
-+	/*
-+	 * We need to trigger the allocation of the page-tables that will be
-+	 * needed for poking now. Later, poking may be performed in an atomic
-+	 * section, which might cause allocation to fail.
-+	 */
-+	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
-+	BUG_ON(!ptep);
-+	pte_unmap_unlock(ptep, ptl);
-+}
-+
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
- /*
-  * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
-diff --git a/init/main.c b/init/main.c
-index ee147103ba1b..a461150adfb1 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -497,6 +497,8 @@ void __init __weak thread_stack_cache_init(void)
+ __ro_after_init struct mm_struct *poking_mm;
+@@ -893,7 +892,7 @@ int poke_int3_handler(struct pt_regs *regs)
+  *	  replacing opcode
+  *	- sync cores
+  */
+-void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
++void text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ {
+ 	unsigned char int3 = 0xcc;
  
- void __init __weak mem_encrypt_init(void) { }
+@@ -935,7 +934,5 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
+ 	 * the writing of the new instruction.
+ 	 */
+ 	bp_patching_in_progress = false;
+-
+-	return addr;
+ }
  
-+void __init __weak poking_init(void) { }
-+
- bool initcall_debug;
- core_param(initcall_debug, initcall_debug, bool, 0644);
- 
-@@ -731,6 +733,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	taskstats_init_early();
- 	delayacct_init();
- 
-+	poking_init();
- 	check_bugs();
- 
- 	acpi_subsystem_init();
 -- 
 2.17.1
 
