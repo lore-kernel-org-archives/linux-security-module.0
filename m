@@ -2,57 +2,73 @@ Return-Path: <SRS0=2Rj0=N7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E042EC46463
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E120EC4161D
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD2AD20870
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:23:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD2AD20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 8479420685
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:30:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8479420685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725950AbeKUEyC (ORCPT
+        id S1725938AbeKUFBE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:54:02 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33639 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbeKUEyC (ORCPT
+        Wed, 21 Nov 2018 00:01:04 -0500
+Received: from mga09.intel.com ([134.134.136.24]:2222 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725728AbeKUFBE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:54:02 -0500
-Received: from hanvin-mobl2.amr.corp.intel.com ([134.134.139.82])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wAKIN1l13067053
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 20 Nov 2018 10:23:02 -0800
-Subject: Re: [PATCH v5 02/10] x86/jump_label: Use text_poke_early() during
- early init
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20181113130730.44844-1-namit@vmware.com>
- <20181113130730.44844-3-namit@vmware.com>
- <76c41854-b12d-5c4e-cfa4-f448e102860b@zytor.com>
- <20181120181830.GB2131@hirez.programming.kicks-ass.net>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <34f7e083-218e-dbdf-73ca-47dd11e750cc@zytor.com>
-Date:   Tue, 20 Nov 2018 10:23:01 -0800
+        Wed, 21 Nov 2018 00:01:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 10:30:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,258,1539673200"; 
+   d="scan'208";a="109903258"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
+  by orsmga001.jf.intel.com with ESMTP; 20 Nov 2018 10:30:32 -0800
+Subject: Re: [PATCH v5] tpm: add support for partial reads
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <154265371562.23494.10113870855345906523.stgit@tstruk-mobl1.jf.intel.com>
+ <20181120124810.GB8813@linux.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <573e2328-1015-f2ae-e3e0-088b4d5238bc@intel.com>
+Date:   Tue, 20 Nov 2018 10:30:32 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181120181830.GB2131@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181120124810.GB8813@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -60,16 +76,15 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/20/18 10:18 AM, Peter Zijlstra wrote:
->>
->> Can't we make this test in text_poke() directly, please?
+On 11/20/18 4:48 AM, Jarkko Sakkinen wrote:
+>> The usecase is implemented in this TSS commit:
+>> https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
+> Can you implement test for this to
 > 
-> He does that in 9/10 iirc.
-> 
+> https://github.com/jsakkine-intel/tpm2-scripts
 
-No, in 9/10 he does that change locally for the jump_label, but there is
-absolutely no reason not to do that test in text_poke() proper, and
-simply use text_poke() everywhere in the kernel.
+Just created a PR for you
+https://github.com/jsakkine-intel/tpm2-scripts/pull/4
 
-	-hpa
-
+-- 
+Tadeusz
