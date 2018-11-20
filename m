@@ -4,31 +4,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B6FC04EBA
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CACCC04EBA
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A172145D
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A172145D
+	by mail.kernel.org (Postfix) with ESMTP id 1F5632145D
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F5632145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbeKUO0J (ORCPT
+        id S1725995AbeKUO0O (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:26:09 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:2110 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726849AbeKUO0J (ORCPT
+        Wed, 21 Nov 2018 09:26:14 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:13925 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728021AbeKUO0N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:26:09 -0500
+        Wed, 21 Nov 2018 09:26:13 -0500
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 20 Nov 2018 19:52:59 -0800
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 20 Nov 2018 19:52:52 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 429FAB1874;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id A3EFFB1879;
         Tue, 20 Nov 2018 22:53:30 -0500 (EST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -45,57 +45,102 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v6 02/10] x86/jump_label: Use text_poke_early() during early init
-Date:   Tue, 20 Nov 2018 12:35:37 -0800
-Message-ID: <20181120203545.34928-3-namit@vmware.com>
+Subject: [PATCH v6 09/10] x86/jump-label: remove support for custom poker
+Date:   Tue, 20 Nov 2018 12:35:44 -0800
+Message-ID: <20181120203545.34928-10-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181120203545.34928-1-namit@vmware.com>
 References: <20181120203545.34928-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There is no apparent reason not to use text_poke_early() while we are
-during early-init and we do not patch code that might be on the stack
-(i.e., we'll return to the middle of the patched code). This appears to
-be the case of jump-labels, so do so.
-
-This is required for the next patches that would set a temporary mm for
-patching, which is initialized after some static-keys are
-enabled/disabled.
+There are only two types of poking: early and breakpoint based. The use
+of a function pointer to perform poking complicates the code and is
+probably inefficient due to the use of indirect branches.
 
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Co-Developed-by: Peter Zijlstra <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/jump_label.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/kernel/jump_label.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
 diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index aac0c1f7e354..ed5fe274a7d8 100644
+index ed5fe274a7d8..994c13e2867d 100644
 --- a/arch/x86/kernel/jump_label.c
 +++ b/arch/x86/kernel/jump_label.c
-@@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+@@ -39,7 +39,6 @@ static void bug_at(unsigned char *ip, int line)
+ 
+ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 					 enum jump_label_type type,
+-					 void *(*poker)(void *, const void *, size_t),
+ 					 int init)
+ {
+ 	union jump_code_union jmp;
+@@ -52,14 +51,6 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
  	jmp.offset = jump_entry_target(entry) -
  		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
  
--	if (early_boot_irqs_disabled)
-+	/*
+-	/*
+-	 * As long as we're UP and not yet marked RO, we can use
+-	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
+-	 * SYSTEM_SCHEDULING before going either.
+-	 */
+-	if (system_state == SYSTEM_BOOTING)
+-		poker = text_poke_early;
+-
+ 	if (type == JUMP_LABEL_JMP) {
+ 		if (init) {
+ 			expect = default_nop; line = __LINE__;
+@@ -82,16 +73,17 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 		bug_at((void *)jump_entry_code(entry), line);
+ 
+ 	/*
+-	 * Make text_poke_bp() a default fallback poker.
 +	 * As long as we're UP and not yet marked RO, we can use
 +	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
 +	 * SYSTEM_SCHEDULING before going either.
-+	 */
-+	if (system_state == SYSTEM_BOOTING)
- 		poker = text_poke_early;
+ 	 *
+ 	 * At the time the change is being done, just ignore whether we
+ 	 * are doing nop -> jump or jump -> nop transition, and assume
+ 	 * always nop being the 'currently valid' instruction
+-	 *
+ 	 */
+-	if (poker) {
+-		(*poker)((void *)jump_entry_code(entry), code,
+-			 JUMP_LABEL_NOP_SIZE);
++	if (init || system_state == SYSTEM_BOOTING) {
++		text_poke_early((void *)jump_entry_code(entry), code,
++				JUMP_LABEL_NOP_SIZE);
+ 		return;
+ 	}
  
- 	if (type == JUMP_LABEL_JMP) {
+@@ -103,7 +95,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
+ 			       enum jump_label_type type)
+ {
+ 	mutex_lock(&text_mutex);
+-	__jump_label_transform(entry, type, NULL, 0);
++	__jump_label_transform(entry, type, 0);
+ 	mutex_unlock(&text_mutex);
+ }
+ 
+@@ -133,7 +125,7 @@ __init_or_module void arch_jump_label_transform_static(struct jump_entry *entry,
+ 			jlstate = JL_STATE_NO_UPDATE;
+ 	}
+ 	if (jlstate == JL_STATE_UPDATE)
+-		__jump_label_transform(entry, type, text_poke_early, 1);
++		__jump_label_transform(entry, type, 1);
+ }
+ 
+ #endif
 -- 
 2.17.1
 
