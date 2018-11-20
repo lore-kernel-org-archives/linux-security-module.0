@@ -2,103 +2,117 @@ Return-Path: <SRS0=2Rj0=N7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97CF5C4161D
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCC9C4161D
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5602E208E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:11:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5602E208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 553712087E
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 18:21:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PBpq6Tmu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 553712087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbeKUElf (ORCPT
+        id S1726457AbeKUEvb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:41:35 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45375 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeKUElf (ORCPT
+        Tue, 20 Nov 2018 23:51:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43196 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeKUEvb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:41:35 -0500
-Received: from hanvin-mobl2.amr.corp.intel.com (fmdmzpr04-ext.fm.intel.com [192.55.54.39])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wAKIAJZC3063572
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 20 Nov 2018 10:10:20 -0800
-Subject: Re: [PATCH v5 02/10] x86/jump_label: Use text_poke_early() during
- early init
-To:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Tue, 20 Nov 2018 23:51:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yYG2/dt+yey+HN1j3OMMn3FS9wio/UPftluKiMcmkbE=; b=PBpq6TmuNJc4PQ/ATCAFj5CcS
+        NHZ/sRhge+W/70n4H2YTH99T3Qlcm9pDkw32baZPmshbIs/en1xdf20fl5L2Yi6qLuuyQYko/sCxD
+        fOf0d0tx/d4AcnweInnYHIshtYYsDnMSErg5GqxYJFIiCbCKId/tkPC+n9Us6cXbSlUqFtOEbmPVr
+        JwlR01j1d4JhC5mL9dBR0CB+TtdmlorPP+WTZXjSz1QgMBK+7aSK6qyXyOXvJ0vQxekm94IcGqg3z
+        0u3g6FNGsW/3MfXhh8JLCWLQ5t5UnecTAV6u/Mzt4VfCRe6w3pe1TC+Z5HTLgIH0IzdDdHcBiEo0T
+        IRj6+ISsQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPAbg-0000KW-Pq; Tue, 20 Nov 2018 18:18:41 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 55DFD2029FD58; Tue, 20 Nov 2018 19:18:30 +0100 (CET)
+Date:   Tue, 20 Nov 2018 19:18:30 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
+        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Andy Lutomirski <luto@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v5 02/10] x86/jump_label: Use text_poke_early() during
+ early init
+Message-ID: <20181120181830.GB2131@hirez.programming.kicks-ass.net>
 References: <20181113130730.44844-1-namit@vmware.com>
  <20181113130730.44844-3-namit@vmware.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <76c41854-b12d-5c4e-cfa4-f448e102860b@zytor.com>
-Date:   Tue, 20 Nov 2018 10:10:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ <76c41854-b12d-5c4e-cfa4-f448e102860b@zytor.com>
 MIME-Version: 1.0
-In-Reply-To: <20181113130730.44844-3-namit@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76c41854-b12d-5c4e-cfa4-f448e102860b@zytor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/13/18 5:07 AM, Nadav Amit wrote:
-> There is no apparent reason not to use text_poke_early() while we are
-> during early-init and we do not patch code that might be on the stack
-> (i.e., we'll return to the middle of the patched code). This appears to
-> be the case of jump-labels, so do so.
+On Tue, Nov 20, 2018 at 10:10:14AM -0800, H. Peter Anvin wrote:
+> On 11/13/18 5:07 AM, Nadav Amit wrote:
+> > There is no apparent reason not to use text_poke_early() while we are
+> > during early-init and we do not patch code that might be on the stack
+> > (i.e., we'll return to the middle of the patched code). This appears to
+> > be the case of jump-labels, so do so.
+> > 
+> > This is required for the next patches that would set a temporary mm for
+> > patching, which is initialized after some static-keys are
+> > enabled/disabled.
+> > 
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Dave Hansen <dave.hansen@intel.com>
+> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> > Co-Developed-by: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Nadav Amit <namit@vmware.com>
+> > ---
+> >  arch/x86/kernel/jump_label.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+> > index aac0c1f7e354..ed5fe274a7d8 100644
+> > --- a/arch/x86/kernel/jump_label.c
+> > +++ b/arch/x86/kernel/jump_label.c
+> > @@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+> >  	jmp.offset = jump_entry_target(entry) -
+> >  		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+> >  
+> > -	if (early_boot_irqs_disabled)
+> > +	/*
+> > +	 * As long as we're UP and not yet marked RO, we can use
+> > +	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
+> > +	 * SYSTEM_SCHEDULING before going either.
+> > +	 */
+> > +	if (system_state == SYSTEM_BOOTING)
+> >  		poker = text_poke_early;
+> >  
+> >  	if (type == JUMP_LABEL_JMP) {
+> > 
 > 
-> This is required for the next patches that would set a temporary mm for
-> patching, which is initialized after some static-keys are
-> enabled/disabled.
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Co-Developed-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> ---
->  arch/x86/kernel/jump_label.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-> index aac0c1f7e354..ed5fe274a7d8 100644
-> --- a/arch/x86/kernel/jump_label.c
-> +++ b/arch/x86/kernel/jump_label.c
-> @@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
->  	jmp.offset = jump_entry_target(entry) -
->  		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
->  
-> -	if (early_boot_irqs_disabled)
-> +	/*
-> +	 * As long as we're UP and not yet marked RO, we can use
-> +	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-> +	 * SYSTEM_SCHEDULING before going either.
-> +	 */
-> +	if (system_state == SYSTEM_BOOTING)
->  		poker = text_poke_early;
->  
->  	if (type == JUMP_LABEL_JMP) {
-> 
+> Can't we make this test in text_poke() directly, please?
 
-Can't we make this test in text_poke() directly, please?
-
-	-hpa
-
+He does that in 9/10 iirc.
