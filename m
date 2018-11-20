@@ -2,164 +2,147 @@ Return-Path: <SRS0=2Rj0=N7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBCAC18E01
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 13:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9605DC4161D
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 16:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 013142087E
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 13:13:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 013142087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 625D1208E3
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 16:01:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="oDMnKzCB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 625D1208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeKTXmF convert rfc822-to-8bit (ORCPT
+        id S1728809AbeKUCbE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:42:05 -0500
-Received: from mga09.intel.com ([134.134.136.24]:37741 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725902AbeKTXmE (ORCPT
+        Tue, 20 Nov 2018 21:31:04 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46466 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728648AbeKUCbD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:42:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 05:13:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,257,1539673200"; 
-   d="scan'208";a="101738434"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga003.jf.intel.com with ESMTP; 20 Nov 2018 05:12:59 -0800
-Received: from fmsmsx124.amr.corp.intel.com (10.18.125.39) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 20 Nov 2018 05:12:58 -0800
-Received: from lcsmsx154.ger.corp.intel.com (10.186.165.229) by
- fmsmsx124.amr.corp.intel.com (10.18.125.39) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 20 Nov 2018 05:12:58 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
- LCSMSX154.ger.corp.intel.com ([169.254.7.79]) with mapi id 14.03.0415.000;
- Tue, 20 Nov 2018 15:12:55 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+        Tue, 20 Nov 2018 21:31:03 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c73so1181331pfe.13
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Nov 2018 08:01:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DvUoJOin8oF8QpyGvA1ZpCRhZ1YJ0gF1sdpviGxLSQo=;
+        b=oDMnKzCBdteQQRJr05BKNPx4cA0kHIKnnj0HW+zIH3uDCAURPkFYNPIPaVauOyXxVN
+         IZfurwhVPinLYVirMyXI4DOlIwLUjwQj7jU07Ei5yQt/D+IqDEjjvRKHvd/+q1q4MrAR
+         ZVqvOIrZC5qcGtVKzlIAoANEYCPwsCoxJv1YTZRXrXu4MlWicfJ4F/QnOdb02TbnRiCM
+         KRGtA+t7xCnb0e+SB58E94AD8kC1CMYaH5Pvhk7iEd1U3wKRSlGPfGaWZaqwNYcAxOEA
+         U/AvaVFLyPkyRSSOvlpFsXsGgn0iJx8Iiz9eCd0TkyRpnku+OKr5kDFUrUsPrSNsgta0
+         AtGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DvUoJOin8oF8QpyGvA1ZpCRhZ1YJ0gF1sdpviGxLSQo=;
+        b=neFMg4nRD5Cok6rMr12a1kiFxvG+HtczNqJvGkXiKevgrvOKM9uN+jcVyXNsSO2Fk1
+         OM6AVtNDaVWK8B/Ytn6RJtKZCgAGI5JQdWM8+TPwizu0tQr0YSMfjkWGlCNLNw4T3M7E
+         rf6FHVNSRCoQcYjuXXXAXCWinyjXZ11f521L8mOGLWxGg26DHJBtkQr8hLImaePnV5qR
+         0RDDimSRusqmS/956+jTuz0LzuSEeEW1d0etL4Wtr31sBSxyEldRnYgj4xq6Px6Dg0YY
+         kymkUUQV+8R4/vqErS28zpuPQ84LwMJ22/v4xG8lp3yP8XgyaJEZRH545MNuz9m2yKSi
+         S9Rw==
+X-Gm-Message-State: AGRZ1gJfjBnNXwjkMXZ5by7XsmNJgNvUf+Fn/fIB8YyJZo2oy1TZozmN
+        gFST7FFPtlEoK3GrrZbkbaOFyA==
+X-Google-Smtp-Source: AJdET5eMWu+Htowk8HXsXRKZlXNRSGx7cpS6cAbREtozRO+eLRT26Mcx2vS/pyyLn4PRh34ewL8uPw==
+X-Received: by 2002:a62:b2c3:: with SMTP id z64mr2728281pfl.120.1542729673504;
+        Tue, 20 Nov 2018 08:01:13 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id s184sm49007013pgc.38.2018.11.20.08.01.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 08:01:12 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gP8Sd-00062G-4O; Tue, 20 Nov 2018 09:01:11 -0700
+Date:   Tue, 20 Nov 2018 09:01:11 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+Cc:     "Winkler, Tomas" <tomas.winkler@intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
         James Bottomley <James.Bottomley@HansenPartnership.com>,
         "Struk, Tadeusz" <tadeusz.struk@intel.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "Nayna Jain" <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v9 04/17] tpm: print tpm2_commit_space() error inside
- tpm2_commit_space()
-Thread-Topic: [PATCH v9 04/17] tpm: print tpm2_commit_space() error inside
- tpm2_commit_space()
-Thread-Index: AQHUfz0HV9TuDcLLJkegLXS35AC8EqVXnOgQgADh94CAACdDQA==
-Date:   Tue, 20 Nov 2018 13:12:55 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA243C3@hasmsx108.ger.corp.intel.com>
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Microchip (AT91) SoC support" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v9 05/17] tpm: declare struct tpm_header
+Message-ID: <20181120160111.GA22023@ziepe.ca>
 References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
- <20181118124753.18613-5-jarkko.sakkinen@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA23561@hasmsx108.ger.corp.intel.com>
- <20181120124913.GC8813@linux.intel.com>
-In-Reply-To: <20181120124913.GC8813@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDJiMWE2MzEtYzQ4ZS00NWYyLWI2ZGQtMTQyMDliY2UyMTVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMmF6cmJMc0lOaG8xbDI4UjU4ZEVuY05MQ2JXN2JnV2p3MTdLanVwS3JcL0VNWGw4aWpEcE5QVWpXcTVJbGcxQWsifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.168]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+ <20181118124753.18613-6-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA235BB@hasmsx108.ger.corp.intel.com>
+ <20181120130805.GD8813@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120130805.GD8813@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
+On Tue, Nov 20, 2018 at 03:08:05PM +0200, Jarkko Sakkinen wrote:
+> On Mon, Nov 19, 2018 at 09:33:31PM +0000, Winkler, Tomas wrote:
+> > 
+> > > 
+> > > Decleare struct tpm_header that replaces struct tpm_input_header and
+> > Typo 
 > 
-> On Mon, Nov 19, 2018 at 09:25:22PM +0000, Winkler, Tomas wrote:
-> >
-> >
-> > >
-> > > The error logging for tpm2_commit_space() is in a wrong place. This
-> > > commit moves it inside that function.
-> > >
-> > > Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Thanks, will fix for the next version.
+> 
+> > > struct tpm_output_header.
+> > > 
 > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > ---
-> > >  drivers/char/tpm/tpm-interface.c | 2 --
-> > >  drivers/char/tpm/tpm2-space.c    | 9 ++++++---
-> > >  2 files changed, 6 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/drivers/char/tpm/tpm-interface.c
-> > > b/drivers/char/tpm/tpm- interface.c index 64510ed81b46..7ac6ada8428c
-> > > 100644
-> > > --- a/drivers/char/tpm/tpm-interface.c
+> > >  drivers/char/tpm/tpm-interface.c  |  9 ++++-----
+> > >  drivers/char/tpm/tpm.h            | 27 ++++++++++++---------------
+> > >  drivers/char/tpm/tpm2-cmd.c       |  4 ++--
+> > >  drivers/char/tpm/tpm2-space.c     |  6 +++---
+> > >  drivers/char/tpm/tpm_i2c_atmel.c  |  5 ++---
+> > > drivers/char/tpm/tpm_vtpm_proxy.c |  8 ++++----
+> > >  drivers/char/tpm/xen-tpmfront.c   |  2 +-
+> > >  7 files changed, 28 insertions(+), 33 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> > > interface.c
+> > > index 7ac6ada8428c..cb0d44c158ae 100644
 > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > @@ -277,8 +277,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip
+> > > @@ -67,7 +67,7 @@ static int tpm_validate_command(struct tpm_chip
 > > > *chip,
-> > >  	}
-> > >
-> > >  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> > > -	if (rc)
-> > > -		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
-> > >
-> > >  out:
-> > >  	/* may fail but do not override previous error value in rc */ diff
-> > > --git a/drivers/char/tpm/tpm2-space.c
-> > > b/drivers/char/tpm/tpm2-space.c index 1131a8e7b79b..5ecc73988f7c
-> > > 100644
-> > > --- a/drivers/char/tpm/tpm2-space.c
-> > > +++ b/drivers/char/tpm/tpm2-space.c
-> > > @@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip,
-> > > struct tpm_space *space,
-> > >  	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
-> > >  	if (rc) {
-> > >  		tpm2_flush_space(chip);
-> > > -		return rc;
-> > > +		goto out;
-> > >  	}
-> > >
-> > >  	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
-> > >  	if (rc) {
-> > >  		tpm2_flush_space(chip);
-> > > -		return rc;
-> > > +		goto out;
-> > >  	}
-> > >
-> > >  	rc = tpm2_save_space(chip);
-> > >  	if (rc) {
-> > >  		tpm2_flush_space(chip);
-> > > -		return rc;
-> > > +		goto out;
-> > >  	}
-> > >
-> > >  	*bufsiz = be32_to_cpu(header->length); @@ -526,4 +526,7 @@ int
-> > > tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> > >  	memcpy(space->session_buf, chip->work_space.session_buf,
-> > > PAGE_SIZE);
-> > >
-> > >  	return 0;
-> > > +out:
-> > Maybe 'out' is too positive name for an error-only exit point?
-> > or you can use if (rc) ... dev_err()
+> > >  				 const u8 *cmd,
+> > >  				 size_t len)
+> > >  {
+> > > -	const struct tpm_input_header *header = (const void *)cmd;
+> > > +	const struct tpm_header *header = (const void *)cmd;
+> > 
+> > 
+> > Sometimes it is casted (void *), sometimes (struct tpm_header *)
+> > Better to use one convention 
 > 
-> out_err?
-out_err is good, it is used in more places, so it has some of consistency.
-Thanks
-Tomas
+> I would prefer (const void *) because it is shorter form, and no
+> need to duplicate the type name two times, that way also more
+> readable. Anyway, agreed that we do have inconsistency with these.
 
+It is better to pass in 'const void *cmd' than to explicitly cast like
+this.
 
+I generally discourage casts to voids to save typing, just creates
+confusion what is going on. Better to try to avoid casts by
+constructing the code properly.
 
-> 
-> /Jarkko
+Jason
