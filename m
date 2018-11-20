@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D2A8C04EBA
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07290C43610
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717C72145D
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 717C72145D
+	by mail.kernel.org (Postfix) with ESMTP id D13682145D
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13682145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbeKUO0t (ORCPT
+        id S1727587AbeKUO0K (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:26:49 -0500
+        Wed, 21 Nov 2018 09:26:10 -0500
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:13925 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726849AbeKUO0K (ORCPT
+        by vger.kernel.org with ESMTP id S1726791AbeKUO0J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:26:10 -0500
+        Wed, 21 Nov 2018 09:26:09 -0500
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Tue, 20 Nov 2018 19:52:52 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 4CD13B1877;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 61629B1873;
         Tue, 20 Nov 2018 22:53:30 -0500 (EST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -40,13 +40,13 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
+        Nadav Amit <namit@vmware.com>,
         Andy Lutomirski <luto@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v6 03/10] x86/mm: temporary mm struct
-Date:   Tue, 20 Nov 2018 12:35:38 -0800
-Message-ID: <20181120203545.34928-4-namit@vmware.com>
+        Dave Hansen <dave.hansen@intel.com>
+Subject: [PATCH v6 04/10] fork: provide a function for copying init_mm
+Date:   Tue, 20 Nov 2018 12:35:39 -0800
+Message-ID: <20181120203545.34928-5-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181120203545.34928-1-namit@vmware.com>
 References: <20181120203545.34928-1-namit@vmware.com>
@@ -58,81 +58,84 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Andy Lutomirski <luto@kernel.org>
+Provide a function for copying init_mm. This function will be later used
+for setting a temporary mm.
 
-Sometimes we want to set a temporary page-table entries (PTEs) in one of
-the cores, without allowing other cores to use - even speculatively -
-these mappings. There are two benefits for doing so:
-
-(1) Security: if sensitive PTEs are set, temporary mm prevents their use
-in other cores. This hardens the security as it prevents exploding a
-dangling pointer to overwrite sensitive data using the sensitive PTE.
-
-(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-remote page-tables.
-
-To do so a temporary mm_struct can be used. Mappings which are private
-for this mm can be set in the userspace part of the address-space.
-During the whole time in which the temporary mm is loaded, interrupts
-must be disabled.
-
-The first use-case for temporary PTEs, which will follow, is for poking
-the kernel text.
-
-[ Commit message was written by Nadav ]
-
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
 Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/include/asm/mmu_context.h | 32 ++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ include/linux/sched/task.h |  1 +
+ kernel/fork.c              | 24 ++++++++++++++++++------
+ 2 files changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 0ca50611e8ce..0141b7fa6d01 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -338,4 +338,36 @@ static inline unsigned long __get_current_cr3_fast(void)
- 	return cr3;
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 108ede99e533..ac0a675678f5 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -74,6 +74,7 @@ extern void exit_itimers(struct signal_struct *);
+ extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
+ extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
+ struct task_struct *fork_idle(int);
++struct mm_struct *copy_init_mm(void);
+ extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
+ extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
+ 
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 07cddff89c7b..01d3f5b39363 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1297,13 +1297,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
+ 		complete_vfork_done(tsk);
  }
  
-+typedef struct {
-+	struct mm_struct *prev;
-+} temporary_mm_state_t;
-+
-+/*
-+ * Using a temporary mm allows to set temporary mappings that are not accessible
-+ * by other cores. Such mappings are needed to perform sensitive memory writes
-+ * that override the kernel memory protections (e.g., W^X), without exposing the
-+ * temporary page-table mappings that are required for these write operations to
-+ * other cores.
+-/*
+- * Allocate a new mm structure and copy contents from the
+- * mm structure of the passed in task structure.
++/**
++ * dup_mm() - duplicates an existing mm structure
++ * @tsk: the task_struct with which the new mm will be associated.
++ * @oldmm: the mm to duplicate.
 + *
-+ * Context: The temporary mm needs to be used exclusively by a single core. To
-+ *          harden security IRQs must be disabled while the temporary mm is
-+ *          loaded, thereby preventing interrupt handler bugs from override the
-+ *          kernel memory protection.
-+ */
-+static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
++ * Allocates a new mm structure and copy contents from the provided
++ * @oldmm structure.
++ *
++ * Return: the duplicated mm or NULL on failure.
+  */
+-static struct mm_struct *dup_mm(struct task_struct *tsk)
++static struct mm_struct *dup_mm(struct task_struct *tsk,
++				struct mm_struct *oldmm)
+ {
+-	struct mm_struct *mm, *oldmm = current->mm;
++	struct mm_struct *mm;
+ 	int err;
+ 
+ 	mm = allocate_mm();
+@@ -1370,7 +1377,7 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
+ 	}
+ 
+ 	retval = -ENOMEM;
+-	mm = dup_mm(tsk);
++	mm = dup_mm(tsk, current->mm);
+ 	if (!mm)
+ 		goto fail_nomem;
+ 
+@@ -2176,6 +2183,11 @@ struct task_struct *fork_idle(int cpu)
+ 	return task;
+ }
+ 
++struct mm_struct *copy_init_mm(void)
 +{
-+	temporary_mm_state_t state;
-+
-+	lockdep_assert_irqs_disabled();
-+	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	switch_mm_irqs_off(NULL, mm, current);
-+	return state;
++	return dup_mm(NULL, &init_mm);
 +}
 +
-+static inline void unuse_temporary_mm(temporary_mm_state_t prev)
-+{
-+	lockdep_assert_irqs_disabled();
-+	switch_mm_irqs_off(NULL, prev.prev, current);
-+}
-+
- #endif /* _ASM_X86_MMU_CONTEXT_H */
+ /*
+  *  Ok, this is the main fork-routine.
+  *
 -- 
 2.17.1
 
