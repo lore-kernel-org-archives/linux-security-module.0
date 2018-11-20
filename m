@@ -2,125 +2,141 @@ Return-Path: <SRS0=2Rj0=N7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FFDC43610
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DF3C43610
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6544820870
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:36:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C6F32147A
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="q4Zh2lKi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6544820870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="e9UlUVZ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6F32147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbeKUKIE (ORCPT
+        id S1726345AbeKUKKw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 05:08:04 -0500
-Received: from sonic303-10.consmr.mail.bf2.yahoo.com ([74.6.131.49]:40408 "EHLO
-        sonic303-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726115AbeKUKID (ORCPT
+        Wed, 21 Nov 2018 05:10:52 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35929 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbeKUKKv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 05:08:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1542756978; bh=JLFiMu63rJeinEE/xeJto1FGgWu6foRtz5WKH9K1JFU=; h=Subject:From:To:Cc:References:Date:In-Reply-To:From:Subject; b=q4Zh2lKiAVsSxWID+xpYSRBBa72J+E1qQ6TqC0gZ6d3JTXF+uuEjNb2w1wU/7d4CVvJvpPjk1FJKK2kdk2W3GlrbHz6wm8NrCg7Z96Y5IomEOobpP3IXIwVvtjpSCt30TIb5xpRdUCNgCANNrc53C+YmagflrdRvfa4g1oAQZ3SV8DuDSEQ81X5/rE1kf+AIH2VCMu7DJLgM1r9H1FauncDCmVoJi6r1v88BUlV/TnikM7tNdjPOS61F+XwL2NvMdq+ESr55wCmDGIoOdJ/tL9IJDBrSg8MhWv0uK6Tek6a9dznHUX9ZsBMXJfIcWx89AB7Mf9NBb8kN4YfMOIQ2mQ==
-X-YMail-OSG: D4JI.IcVM1nSRGlS9Ik.JWUyRXIuM.1fbhxBxXyvMfMxPrrmKO2OPVsE5sdfeN.
- p9d2d_BvSvgYn1vk.Ymj1Sq5oZmPcdFUhW4X6q1ZQGwbYsIuxnkadxSm3CrTKvFJYzp7Uf8RA_tD
- 3wxAlc3YKNQ6Kr9xPnP.xZu3W4kXrjQTZQasQtZX.HYKf.y8xt0hYUHtS8O7NshnEmitcLk.Q3zK
- wbsRgPo_RfWAHv.ZiiLcgDUeRtdTHO7eWougKf0RNc25uee1ghMxtqUZMnmf5MUTQP_qRKEyl.R9
- PT3cCcRymBu1oXYv9tdESM.vlGnRXdkxreBG50o4eGFC2hx7q8u2bmRkR6tienFdTHtRREiaKJhT
- X6flcr6DTluAfQqenfLAHGXrWQlODHaPnQr4VpvU78iPrhKSquJ9IKpMTHWY987yPKJSgc_ysGjv
- i7vVgrV2p6KxSVHLLgk0HVG_2cpKt3e.tg3Y1m1XKdSkN8jFPXPAPKtvzcjUJbDTeHZABEzpewg8
- Yg2q2VphcQN46c_rfJHVEkiubhbFTXrCKSUVNwkdvrfoyH2uUkKroV6xeIqIXv7iD9mAte3s7jqw
- d.QiIUrAw3z8Cnb6uAFHwO_dQoiBQWC8rZ2ciHoTsIPDW..9LslCQsy.3NJqxjYAyRujRCAt4Qfs
- 0r7658g6nsDUXIhnuiGbkzSEGvXEUYx0EUsuSyzH1YrHw9LSchZlRPr7W7J3qcY2hpU4amyvpbtJ
- PnMOY1Rw0IVRZAuKPDKEpKohjLmT3iEjjkAB3XcLXH5q9qaVAV6tTmu9ducYNyzIc0q196bVzV1B
- U4Ixzz0Fpla1c3Ma5a9W2eTKdy4GuNSfCfZZyvHCygnP5OGWqKCKe3EZuNzgvpn1ZCeYL6FstbNG
- GFXzY1L3l5QL34ssssoOTK3mjdkaOVwrt7dvRV62CegWoQh5lCFLHhtTh3W4uyJzwdhl3zSmVOVK
- 3NiUR8XrF.h9oDyjl5cz5gRdWeIw64m4qaJB4cymazhcvvJqJ5UitZv8BVOKhirdSvOoGwvh7L75
- 4Erz8Sf88ZXMqU6hEyjH7yjcMgsmbezhZmRZBq5lSWAqvseLP_Z1LqYkg9L6h9xj00wIsgzKVkBX
- owRjPXi7sWlCvEyEQ6dmEG_6.ljP_YdDoJqTNNZe66_gDkknAGOHvVtGt8N_c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Tue, 20 Nov 2018 23:36:18 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp417.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 822fd97e1eb4757f94b00d25d0ed12ff;
-          Tue, 20 Nov 2018 23:36:17 +0000 (UTC)
-Subject: Re: [PATCH security-next v5 00/30] LSM: Explict ordering
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Jordan Glover <Golden_Miller83@protonmail.ch>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20181011001846.30964-1-keescook@chromium.org>
- <CAGXu5j+kekUdcE2EhUu__8MXJ1O+D=-zTXLGNCRVa_VyDxePpw@mail.gmail.com>
- <f68e5f4b-6360-a9e7-597f-89d1d3ca73c1@canonical.com>
- <32stV62RmME8Dj5jKB8Z03zPe_Et72kMo71D8SpgSOHUo6SaROc8DomMWdk5jDGpyqVd8T63NIIK2NdDw95clpF8Uj47Wca2FBFItXDRh7E=@protonmail.ch>
- <38dde301-d77e-35fd-88d4-5cdc5b570ee8@canonical.com>
- <_CkJnKYmEZ4ZF0JtsSYuahAd9sgnX9OtcstjXaeqb8wn5uxfimc6S4jomly7If9VqnOXqXwaiCbJ9ttS6NiqE7n6cQUlwLvfO53paLmacvU=@protonmail.ch>
- <8251564f-ba7a-1777-a606-dec472b32f35@canonical.com>
- <CAGXu5j+2yVZ5DQHyqvJKnSYYqRCzeMtEabBwYFOWkTcwMUWhEw@mail.gmail.com>
- <96e92224-aedf-5026-d6dd-b29121b4dc0d@schaufler-ca.com>
- <CAGXu5jKFqtV_NFRaXPKVgNQt3F1pwFqopDLp1ZQJDGM_Bdid6Q@mail.gmail.com>
- <63410d08-d0d1-8cd9-5d9e-70d95a1a8ca0@schaufler-ca.com>
- <33754ab5-5c7a-b174-0ad6-195323a169f1@schaufler-ca.com>
- <CAGXu5jLyn6mLKFK+RuBkYWenm8sXXR+yqJ3VzVCpUqOVmru_XA@mail.gmail.com>
- <1df16f7f-aabb-9581-d41d-25d0582cdd06@schaufler-ca.com>
-Message-ID: <c353fa85-eb76-721b-26ac-431513d138eb@schaufler-ca.com>
-Date:   Tue, 20 Nov 2018 15:36:15 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 21 Nov 2018 05:10:51 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y6-v6so2590904plt.3
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Nov 2018 15:39:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JoJDF4Jve8GOIQJZW7DaShOnnQbEYSLbl7K9ZWZew7Q=;
+        b=e9UlUVZ19QFserdXADsLheyDWNH2BTJchMpE1i9bRlMgorbF3Lp24U8TxOy00FGi6g
+         3zeRxC6jaiaBl8pBvm4ne9NDCu+UV4O6HZe7udwGDClu8bRluJ13G2D0393VZTsWKu+5
+         ByUa5DXDsK5pKvBOu8o/x7b45ILZJr5a75iIrXaNrSFlhGqqLzVSduw9Je/HGRiUC+Gs
+         JefFWpkTKr7ejUOP7JpI7+YFxlTVcRvVDrs53iuQnTIMKuPaqorAPB384quBjyzXtPKm
+         7Bo2vWSPZZaeCQ/BL4DmPUxw2CS+nIxrir1TNlvJ6CM8ESwixcazIR7mt4yk686+m8pV
+         n9Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JoJDF4Jve8GOIQJZW7DaShOnnQbEYSLbl7K9ZWZew7Q=;
+        b=X58b86Omj+igNj75EHriCaDBmEevQWs/XvuBjQkM6T1esKjFUWdWYNukKZ6mN+F5GU
+         Vb4FT4Dc3huyKvO5jtzUzWKXQMymwAa7Z1KveoFzCdmJ9DA8mUmdJ4WY7fcSQGvBiYoq
+         myub5N7SSL8k8qIr2eETurvkwVfnD4w8YmnAEUyjIGXJOnwVOaOPnjPavy9LrhSPioQP
+         U8TaRNgzZeGu0BxW0QylK4PVw0mhkZ4EpLOxyG2RpENXKGXxbcoDtKCTiDOGHvFYRqmX
+         AnKZePfvjfj3ssifz9sSc5Iy6DUv8oj1fUFFKD+2J4WOLbl74PIRwKAllOy+Q9L3biZD
+         hJQg==
+X-Gm-Message-State: AA+aEWYBg/Q4lyd5OjNgUFe1BtC/VhpRyG/7q5w01UYZItgNbal6E9/D
+        2imCIfEekceCgd6xnESoQ+N9nw==
+X-Google-Smtp-Source: AFSGD/XNTiyBOKHy3zBme3Bu6RxMY5QNgunENzkMNb7q/0bHV4TErvP5t/hk3jXt2k98y0teCvjTtw==
+X-Received: by 2002:a17:902:20c6:: with SMTP id v6mr3793495plg.156.1542757146850;
+        Tue, 20 Nov 2018 15:39:06 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id y26-v6sm2990362pfi.123.2018.11.20.15.39.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 15:39:05 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gPFbk-0003Ir-R6; Tue, 20 Nov 2018 16:39:04 -0700
+Date:   Tue, 20 Nov 2018 16:39:04 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        monty.wiseman@ge.com, Monty Wiseman <montywiseman32@gmail.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: Documenting the proposal for TPM 2.0 security in the face of bus
+ interposer attacks
+Message-ID: <20181120233904.GF22023@ziepe.ca>
+References: <20181119211911.GH4890@ziepe.ca>
+ <1542663281.2910.44.camel@HansenPartnership.com>
+ <20181119214426.GK4890@ziepe.ca>
+ <1542666988.2910.49.camel@HansenPartnership.com>
+ <20181119230826.GN4890@ziepe.ca>
+ <1542675272.2910.63.camel@HansenPartnership.com>
+ <20181120030556.GP4890@ziepe.ca>
+ <1542734279.2814.23.camel@HansenPartnership.com>
+ <20181120213345.GC22023@ziepe.ca>
+ <1542753292.2814.45.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <1df16f7f-aabb-9581-d41d-25d0582cdd06@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542753292.2814.45.camel@HansenPartnership.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/14/2018 1:04 PM, Casey Schaufler wrote:
-> On 10/24/2018 1:12 PM, Kees Cook wrote:
->> On Wed, Oct 24, 2018 at 1:56 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
->>> On 10/23/2018 12:05 PM, Casey Schaufler wrote:
->>>> On 10/23/2018 11:50 AM, Kees Cook wrote:
->>>>
->>>>> Did you poke around at my combined series?
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=lsm/ordering-v6-blob-sharing
->>>> I hope to do that on the plane later today.
->>> I had a chance to poke at the combined series and it
->>> all seems to work as advertised.
->> /me stares at John, Paul, and Stephen. Hurry up and get off your planes! ;)
->>
->> -Kees
->>
-> Now that we have next-general updated I'm porting these forward.
+On Tue, Nov 20, 2018 at 02:34:52PM -0800, James Bottomley wrote:
 
-I have ported Kees' set forward to 4.20-rc2:
-	https://github.com/cschaufler/lsm-stacking.git#after-kees-4.20-rc2
+> https://trustedcomputinggroup.org/resource/implementing-hardware-roots-of-trust/
 
-There's one bug fix in ordered_lsm_parse() but otherwise just mechanical.
+Notice none of their examples include 'prevent tampering with the
+hardware' all are focused on pure software attacks, which the TPM is
+excellent at preventing. The TPM was never supposed to prevent
+physical attacks against the HW for the PCR feature.
 
-The infrastructure blob management required for TOMOYO, Landlock
-and SARA is available:
-	https://github.com/cschaufler/lsm-stacking.git#blobs-4.20-rc2
+The only HW guarentee it ever provided is to prevent theft of the
+private secrets, even with physical access.
 
-There's nothing new here, although I had to make a few changes to
-account for Kees' changes in the preceding patches. I will post the
-patches shortly.
+> > It doesn't need contact with the CPU. The basic flow would be to use
+> > the interposer on SPI or LPC to block the Nth PCR update, having
+> > determined that Nth comes from the BIOS and covers the
+> > bootloader.. The BIOS ignores the error, or can't tell the PCR update
+> > was corrupted. From there it is easy to see how to get into a hostile
+> > kernel and extend the PCRs to match a trusted kernel.
+> 
+> Right, but that's why I want to detect the error and shut down the TPM.
 
-The full stacking changes based on this are still in the works. Netfilter
-has added a whole new use of secmarks and I'm working to make the individual
-patches smaller for easier review.
+Well, I think this is a lot of industry effort and still leaves open
+other fairly simple physical attacks, like wire-to-the-reset.
 
+I can always make an interposer that did wire-to-the-reset, I don't
+need to do complicated dynamic things with PCR extend commands.
 
+And the null key doesn't really protect against wire-to-the-reset, as
+the null key doesn't participate in the PCR extend. So
+unseal/seal/attest commands don't know if the TPM was booted
+authentically or via a wire-to-the-reset and a hostile kernel.
+
+Yes, it lets a trusted kernel detect a problem, but a threat model
+that includes an interposer and excludes a hostile kernel doesn't
+sound so interesting to me???
+
+Like I said at the start, the way the spec is written, PCR requires
+trusted HW. Without a TPM spec change we can't fix this basic
+assumption.
+
+A better mitigation to the interposer threat is for PCB manufactures
+to use BGA packages, blind vias and internal traces to physically deny
+easy access to the TPM bus and reset signal.
+
+The last TPM project I worked on took physical security into account
+when designing the PCB and TPM chip placement, others should do the
+same :)
+
+Jason
