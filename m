@@ -2,87 +2,109 @@ Return-Path: <SRS0=2Rj0=N7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98344C4161B
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D690C32788
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89C662147D
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:52:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89C662147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D5CEC20836
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Nov 2018 23:58:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="YOWBxRe4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5CEC20836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726021AbeKUKYi (ORCPT
+        id S1726542AbeKUKal (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 05:24:38 -0500
-Received: from mga01.intel.com ([192.55.52.88]:24852 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726001AbeKUKYi (ORCPT
+        Wed, 21 Nov 2018 05:30:41 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45250 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726021AbeKUKal (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 05:24:38 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 15:52:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,259,1539673200"; 
-   d="scan'208";a="92735573"
-Received: from drhumphr-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.165])
-  by orsmga006.jf.intel.com with ESMTP; 20 Nov 2018 15:52:46 -0800
-Date:   Wed, 21 Nov 2018 01:52:45 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org,
+        Wed, 21 Nov 2018 05:30:41 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 861338EE2C9;
+        Tue, 20 Nov 2018 15:58:53 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id saNVE0-wR8sh; Tue, 20 Nov 2018 15:58:53 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 0CAFD8EE0E2;
+        Tue, 20 Nov 2018 15:58:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1542758333;
+        bh=kVv3dCv7eFQ2pb+ThuNkR27BdQ44StHJOgSkxzeZeNQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=YOWBxRe4MbMf1LYcVgXjgFZUxjYGLpAuVrdUAyOkq/RuIBBB+WOF8IYNt51wj6Ehx
+         ISRiHxNioyEL1G1fIWYNCxg8CUVFUNumsJke4N2uOeGcqLcGQ2sLfy/NmSv97s8lRK
+         o5CLh/hboTZ3MbuIHNihhQNPK/CgmO/xcXlEqc8Y=
+Message-ID: <1542758331.2814.48.camel@HansenPartnership.com>
+Subject: Re: Documenting the proposal for TPM 2.0 security in the face of
+ bus interposer attacks
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, monty.wiseman@ge.com,
         Monty Wiseman <montywiseman32@gmail.com>,
         Matthew Garrett <mjg59@google.com>
-Subject: Re: Documenting the proposal for TPM 2.0 security in the face of bus
- interposer attacks
-Message-ID: <20181120235245.GK8391@linux.intel.com>
-References: <1542658839.2910.32.camel@HansenPartnership.com>
- <20181119211911.GH4890@ziepe.ca>
- <1542663281.2910.44.camel@HansenPartnership.com>
- <20181119214426.GK4890@ziepe.ca>
- <1542666988.2910.49.camel@HansenPartnership.com>
- <20181119230826.GN4890@ziepe.ca>
- <1542675272.2910.63.camel@HansenPartnership.com>
- <20181120030556.GP4890@ziepe.ca>
- <1542734279.2814.23.camel@HansenPartnership.com>
- <20181120213345.GC22023@ziepe.ca>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120213345.GC22023@ziepe.ca>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Date:   Tue, 20 Nov 2018 15:58:51 -0800
+In-Reply-To: <20181120231320.GI8391@linux.intel.com>
+References: <1542648844.2910.9.camel@HansenPartnership.com>
+         <20181120111049.GC14594@linux.intel.com>
+         <20181120124116.GA8813@linux.intel.com>
+         <1542734743.2814.31.camel@HansenPartnership.com>
+         <20181120231320.GI8391@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 20, 2018 at 02:33:45PM -0700, Jason Gunthorpe wrote:
-> So it really is essential that all steps, including the BIOS use
-> secure PCR updates, or you may as well not bother in Linux, at least
-> for security reasons.
+On Wed, 2018-11-21 at 01:13 +0200, Jarkko Sakkinen wrote:
+> On Tue, Nov 20, 2018 at 09:25:43AM -0800, James Bottomley wrote:
+> > On Tue, 2018-11-20 at 14:41 +0200, Jarkko Sakkinen wrote:
+> > > On Tue, Nov 20, 2018 at 01:10:49PM +0200, Jarkko Sakkinen wrote:
+> > > > This is basically rewrite of TPM genie paper with extras. Maybe
+> > > > just shorten it to include the proposed architecture and point
+> > > > to the TPM Genie paper (which is not in the references at all
+> > > > ATM).
+> > > > 
+> > > > The way I see it the data validation is way more important than
+> > > > protecting against physical interposer to be frank.
+> > > > 
+> > > > The attack scenario would require to open the damn device. For
+> > > > laptop that would leave physical marks (i.e. evil maid). In a
+> > > > data center with armed guards I would wish you good luck
+> > > > accomplishing it. It is not anything like sticking a USB stick
+> > > > and run.
+> > > > 
+> > > > We can take a fix into Linux with a clean implementation but it
+> > > > needs to be an opt-in feature because not all users will want
+> > > > to use it.
+> > > 
+> > > Someone (might have been either Mimi or David Howells but cannot
+> > > recall) correctly pointed out at LSS 2018 that you could just as
+> > > easily spy and corrupt RAM if you have a time window to perform
+> > > this type of attack.
+> > 
+> > Not using the simple plug in on the TPM bus, you can't.  The point
+> > is basically the difference in the technology: the interposer is a
+> > simple, easy to construct, plugin; a RAM spy is a huge JTAG thing
+> > that would be hard even to fit into a modern thin laptop, let alone
+> > extremely difficult to build.
 > 
-> And I think you were on the right track, the TPM should have a
-> per-boot authorization that flows through all layers of the TPM stack
-> and guarantees the TPM hasn't been rebooted and with crypto prevents
-> lost PCR updates. 
-> 
-> But that does require standardization, as we do need the BIOS to
-> participate.
+> Why you wouldn't use DMA to spy the RAM?
 
-These talks were already started before LSS 2018 on chat session.
-The idea would be to promote the same approach for BIOS.
+You mean from a plugin on the TPM bus? most of the buses the TPM is on
+don't get DMA access.  Some of them barely get interrupts, which is why
+we waste a lot of time polling in TPM drivers.
 
-I see what James is doing a piece, not a full solution but you
-have to start from somewhere.
+James
 
-As an opt-in feature it should be ok.
-
-/Jarkko
