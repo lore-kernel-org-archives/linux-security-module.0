@@ -2,68 +2,73 @@ Return-Path: <SRS0=9590=OA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1554C43441
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 18:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644DEC04EBC
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 18:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60E3021479
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 18:01:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20CC5214DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 18:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5y6bz4F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60E3021479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="tBSaAqqX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20CC5214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732817AbeKVEhE (ORCPT
+        id S1733035AbeKVEv0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:37:04 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36574 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730780AbeKVEhD (ORCPT
+        Wed, 21 Nov 2018 23:51:26 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43020 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731449AbeKVEvZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:37:03 -0500
-Received: by mail-lj1-f196.google.com with SMTP id g11-v6so5658926ljk.3;
-        Wed, 21 Nov 2018 10:01:38 -0800 (PST)
+        Wed, 21 Nov 2018 23:51:25 -0500
+Received: by mail-io1-f67.google.com with SMTP id g8so4734050iop.10
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Nov 2018 10:15:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mWykYS+jUbGJe43LdZkd94pFw+HtdGCnZbU+fASezfE=;
-        b=i5y6bz4Fer523odc6ZKUZfVnbm7+N7MmGn0EPqSgMWJHfINRr2oIgJn7bNj5+Mpzyo
-         h4dCP/8cIOqlqIKACJyZVHJBWSdfNa6cSErTX0Jr98SbFcZwC5kmAewDHqWyyX+BKk+3
-         Lsrc3VwL1bEpjFdX2Ss4Qjot9syh/hlvS3Y+LI9GVdqiqXED59BFeT70vGJSP/kyGYit
-         QkDPdUu7/swpzQ9e22zyROAyqYvXOnB5wD/8Jm88luTCYCYr5OICsN5f0SzTYl6+4e5q
-         m/tPngb1GjUVnv/WRI1HOVOpcy7UXp9pobz//9sY9rnFsKKds/dQrvRs1FLyZyl2QmEn
-         zkSg==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=GmIGIP5BMNNQIU9SWNX7PqO+dvzqp1ZHFbw42p5PecE=;
+        b=tBSaAqqX2CJoq08gjXFyy0rSOkk4HVt+BHen25kTBbaaGlg/G51ZwPFnv8JVwQ9Do0
+         a50+Ld9jEYgBHtFTP0AdfyKEfxeHLeGhadsxMbxzR+VcbGTHAodsjqY6HTHK8dH/ncGf
+         K839hVu/p/U88Lvp9EPY4avocC5zIoxNzV/UznyuNoJsRt5YhQiK9zRgI1fOw19RgB94
+         1YJK/Hr2HAZkqra5C0Cb0DUTqOsDEccY9RnWgj1dgkhXgQk2/nm0mSq2U1r6NYsIoUNI
+         46VYZHvz64DZHutqpwB23WHPcWCJOWhRvRO8gEHXzUit80167MkupGu2mGK63KgY+cAm
+         LqFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mWykYS+jUbGJe43LdZkd94pFw+HtdGCnZbU+fASezfE=;
-        b=MRXZzAgsBicHtV5YZva007zor+z4LZeOYuZjFshL+ypG9QmklyOATbS9ppYKj7eJNz
-         JvieT4ExbEFvtb6r/Sr/YR9LqbOKcFxSMxN0iKmRkTY7P9s2fGNAs0wknHHoFGr/aC6v
-         fSCPsew9gg1ZqEOXZe0z6oIaAfDMmrD1RgfASZC6DfdJfpOXomb6HM42irJxpYpLqK92
-         i47Sy7lrAirt+Ne6tUu3PiyvP8WScgbgSDllkidFr+6PcYZ+VjQ/zDt4HKtx/jbRi5CE
-         ruPDXPSzkYcPqpURRsSlDsQ7rCT6VIXxAnjMRSmMTx22DDx0UMxahJXgnAzkgOmN6KzL
-         NxJw==
-X-Gm-Message-State: AA+aEWbrt9H8JhEO6Zv/8hMWLV0TKi++bLNcz8Ip02eokTd66qt2NogL
-        0q5yAn6bHT7/QYrK+6l7nfo=
-X-Google-Smtp-Source: AFSGD/VLaPJTwFuyLVu1W/ARAq0Wul/qU/M2Un9AKnfc3QNPTnj+c2PdKqif+bdNHuK5BRLcU45YeA==
-X-Received: by 2002:a2e:9b15:: with SMTP id u21-v6mr4574418lji.29.1542823297973;
-        Wed, 21 Nov 2018 10:01:37 -0800 (PST)
-Received: from ?IPv6:2001:14bb:40:1c40:9d63:5352:fe43:f29c? (dkyrfbjndmqls8t-wxt-4.rev.dnainternet.fi. [2001:14bb:40:1c40:9d63:5352:fe43:f29c])
-        by smtp.gmail.com with ESMTPSA id s127sm6797324lfe.8.2018.11.21.10.01.35
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=GmIGIP5BMNNQIU9SWNX7PqO+dvzqp1ZHFbw42p5PecE=;
+        b=n8B3nYOLktw1GOzQMRKX7aWpRPcFKVmoqS0dqI1uNt/bg44+ZKIDZRHcM6mddm/D5e
+         T6YzjhEPk3cH/mEaW04hTvx2YN9N0xRrrN7zKfJQJp5JeP0Ze1hN8Yde3GBJo5FHlIJd
+         VkHMk9eGca+qxO4c7rXuxbKjHHYc0G0fcU/Eqsw/8CQxonvvw/pcyUXGgDvmjR4Ongjv
+         wvvNI357AXC4oV1cNDBOAMC6y+jLtLrS5Aw8Q96gl56/qfoJdk29qvdaJcE7BJzTczOQ
+         z/bFtFRtkzH6AwmJ/bQnL5pT9aFaOrlBXUOIj5YAcWvGmEdCP4MrreWaYUs+LUAAfAW3
+         vZQg==
+X-Gm-Message-State: AA+aEWbEuN6osXYtsxstcNSxFrcLbS9Ba9MxmS5XqEI5iIQsHzZNLksS
+        i1zAMq4wP6BZ+hsBvJsG56qHqw==
+X-Google-Smtp-Source: AFSGD/UPRYnitpcH6b5hqb9s1xNfYVbQJgUW7ZyCZpur77D9ucZuaVh/On2qHQtvdjbvqMW7M07Duw==
+X-Received: by 2002:a6b:c402:: with SMTP id y2mr6080745ioa.77.1542824159250;
+        Wed, 21 Nov 2018 10:15:59 -0800 (PST)
+Received: from ?IPv6:2600:100e:b040:b126:ec78:48dd:44e2:e165? ([2600:100e:b040:b126:ec78:48dd:44e2:e165])
+        by smtp.gmail.com with ESMTPSA id c187-v6sm608844itc.2.2018.11.21.10.15.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 10:01:37 -0800 (PST)
+        Wed, 21 Nov 2018 10:15:57 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
 Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Nadav Amit <nadav.amit@gmail.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <1166e55c-0c06-195c-a501-383b4055ea46@gmail.com>
+Date:   Wed, 21 Nov 2018 11:15:56 -0700
 Cc:     Andy Lutomirski <luto@kernel.org>,
         Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -82,108 +87,101 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
- <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
- <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com>
- <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com>
- <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com>
- <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com>
- <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
- <1166e55c-0c06-195c-a501-383b4055ea46@gmail.com>
- <03E199F6-FD90-4B88-838E-C3702F982F78@gmail.com>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <19a216e3-2f1a-32d5-ed22-99d9fdd93a59@gmail.com>
-Date:   Wed, 21 Nov 2018 20:01:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <03E199F6-FD90-4B88-838E-C3702F982F78@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3BB9DE07-E0AE-43E2-99F1-E4AA774CD462@amacapital.net>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com> <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com> <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com> <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com> <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com> <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com> <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com> <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com> <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com> <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com> <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com> <1166e55c-0c06-195c-a501-383b4055ea46@gmail.com>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
 
-On 21/11/2018 19:36, Nadav Amit wrote:
->> On Nov 21, 2018, at 8:34 AM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
+> On Nov 21, 2018, at 9:34 AM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
+>=20
+> Hi,
+>=20
+>>> On 13/11/2018 20:36, Andy Lutomirski wrote:
+>>> On Tue, Nov 13, 2018 at 10:33 AM Igor Stoppa <igor.stoppa@huawei.com> wr=
+ote:
+>>>=20
+>>> I forgot one sentence :-(
+>>>=20
+>>>>> On 13/11/2018 20:31, Igor Stoppa wrote:
+>>>>> On 13/11/2018 19:47, Andy Lutomirski wrote:
+>>>>>=20
+>>>>> For general rare-writish stuff, I don't think we want IRQs running
+>>>>> with them mapped anywhere for write.  For AVC and IMA, I'm less sure.
+>>>>=20
+>>>> Why would these be less sensitive?
+>>>>=20
+>>>> But I see a big difference between my initial implementation and this o=
+ne.
+>>>>=20
+>>>> In my case, by using a shared mapping, visible to all cores, freezing
+>>>> the core that is performing the write would have exposed the writable
+>>>> mapping to a potential attack run from another core.
+>>>>=20
+>>>> If the mapping is private to the core performing the write, even if it
+>>>> is frozen, it's much harder to figure out what it had mapped and where,=
 
-[...]
+>>>> from another core.
+>>>>=20
+>>>> To access that mapping, the attack should be performed from the ISR, I
+>>>> think.
+>>>=20
+>>> Unless the secondary mapping is also available to other cores, through
+>>> the shared mm_struct ?
+>> I don't think this matters much.  The other cores will only be able to
+>> use that mapping when they're doing a rare write.
+>=20
+>=20
+> I'm still mulling over this.
+> There might be other reasons for replicating the mm_struct.
+>=20
+> If I understand correctly how the text patching works, it happens sequenti=
+ally, because of the text_mutex used by arch_jump_label_transform
+>=20
+> Which might be fine for this specific case, but I think I shouldn't introd=
+uce a global mutex, when it comes to data.
+> Most likely, if two or more cores want to perform a write rare operation, t=
+here is no correlation between them, they could proceed in parallel. And if t=
+here really is, then the user of the API should introduce own locking, for t=
+hat specific case.
 
->> There might be other reasons for replicating the mm_struct.
->>
->> If I understand correctly how the text patching works, it happens sequentially, because of the text_mutex used by arch_jump_label_transform
->>
->> Which might be fine for this specific case, but I think I shouldn't introduce a global mutex, when it comes to data.
->> Most likely, if two or more cores want to perform a write rare operation, there is no correlation between them, they could proceed in parallel. And if there really is, then the user of the API should introduce own locking, for that specific case.
-> 
-> I think that if you create per-CPU temporary mms as you proposed, you do not
-> need a global lock. You would need to protect against module unloading,
+Text patching uses the same VA for different physical addresses, so it need a=
+ mutex to avoid conflicts. I think that, for rare writes, you should just ma=
+p each rare-writable address at a *different* VA.  You=E2=80=99ll still need=
+ a mutex (mmap_sem) to synchronize allocation and freeing of rare-writable r=
+anges, but that shouldn=E2=80=99t have much contention.
 
-yes, it's unlikely to happen and probably a bug in the module, if it 
-tries to write while being unloaded, but I can do it
+>=20
+> A bit unrelated question, related to text patching: I see that each patchi=
+ng operation is validated, but wouldn't it be more robust to first validate =
+ all of then, and only after they are all found to be compliant, to proceed w=
+ith the actual modifications?
+>=20
+> And about the actual implementation of the write rare for the statically a=
+llocated variables, is it expected that I use Nadav's function?
+> Or that I refactor the code?
 
-> and
-> maybe refactor the code. Specifically, I’m not sure whether protection
-> against IRQs is something that you need.
+I would either refactor it or create a new function to handle the write. The=
+ main thing that Nadav is adding that I think you=E2=80=99ll want to use is t=
+he infrastructure for temporarily switching mms from a non-kernel-thread con=
+text.
 
-With the initial way I used to do write rare, which was done by creating 
-a temporary mapping visible to every core, disabling IRQs was meant to 
-prevent that the "writer" core would be frozen and then the mappings 
-scrubbed for the page in writable state.
+>=20
+> The name, referring to text would definitely not be ok for data.
+> And I would have to also generalize it, to deal with larger amounts of dat=
+a.
+>=20
+> I would find it easier, as first cut, to replicate its behavior and refact=
+or only later, once it has stabilized and possibly Nadav's patches have been=
+ acked.
+>=20
 
-Without shared mapping of the page, the only way to attack it should be 
-to generate an interrupt on the "writer" core, while the writing is 
-ongoing, and to perform the attack from the interrupt itself, because it 
-is on the same core that has the writable mapping.
+Sounds reasonable. You=E2=80=99ll still want Nadav=E2=80=99s code for settin=
+g up the mm in the first place, though.
 
-Maybe it's possible, but it seems to have become quite a corner case.
-
-> I’m also not familiar with this
-> patch-set so I’m not sure what atomicity guarantees do you need.
-
-At the very least, I think I need to ensure that pointers are updated 
-atomically, like with WRITE_ONCE() And spinlocks.
-Maybe atomic types can be left out.
-
->> A bit unrelated question, related to text patching: I see that each patching operation is validated, but wouldn't it be more robust to first validate  all of then, and only after they are all found to be compliant, to proceed with the actual modifications?
->>
->> And about the actual implementation of the write rare for the statically allocated variables, is it expected that I use Nadav's function?
-> 
-> It’s not “my” function. ;-)
-
-:-P
-
-ok, what I meant is that the signature of the __text_poke() function is 
-quite specific to what it's meant to do.
-
-I do not rule out that it might be eventually refactored as a special 
-case of a more generic __write_rare() function, that would operate on 
-different targets, but I'd rather do the refactoring after I have a 
-clear understanding of how to alter write-protected data.
-
-The refactoring could be the last patch of the write rare patchset.
-
-> IMHO the code is in relatively good and stable state. The last couple of
-> versions were due to me being afraid to add BUG_ONs as Peter asked me to.
-> 
-> The code is rather simple, but there are a couple of pitfalls that hopefully
-> I avoided correctly.
-
-Yes, I did not mean to question the quality of the code, but I'd prefer 
-to not have to carry also this patchset, while it's not yet merged.
-
-I actually hope it gets merged soon :-)
---
-igor
-
+> --
+> igor
