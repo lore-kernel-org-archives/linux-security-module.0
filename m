@@ -2,135 +2,246 @@ Return-Path: <SRS0=9590=OA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4703C43441
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 12:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F1CC43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 14:50:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8FE621479
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 12:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8FE621479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 71D0F2146F
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 14:50:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D0F2146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730128AbeKUWjb (ORCPT
+        id S1729682AbeKVBZW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:39:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50962 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729157AbeKUWja (ORCPT
+        Wed, 21 Nov 2018 20:25:22 -0500
+Received: from mga06.intel.com ([134.134.136.31]:65416 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729240AbeKVBZW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:39:30 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wALBx5kJ093704
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Nov 2018 07:05:22 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nw6w8gg34-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Nov 2018 07:05:22 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <gor@linux.ibm.com>;
-        Wed, 21 Nov 2018 12:05:20 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 21 Nov 2018 12:05:17 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wALC5GXF60817580
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 21 Nov 2018 12:05:16 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4EB1CA4060;
-        Wed, 21 Nov 2018 12:05:16 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C844A405F;
-        Wed, 21 Nov 2018 12:05:16 +0000 (GMT)
-Received: from localhost (unknown [9.152.212.229])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 21 Nov 2018 12:05:15 +0000 (GMT)
-Date:   Wed, 21 Nov 2018 13:05:10 +0100
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH next-lockdown 1/1] debugfs: avoid EPERM when no open file
- operation defined
-References: <4136.1522452584@warthog.procyon.org.uk>
- <cover.thread-bfac1b.your-ad-here.call-01542799656-ext-6093@work.hours>
+        Wed, 21 Nov 2018 20:25:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 06:50:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
+   d="scan'208";a="108157103"
+Received: from yucummi-mobl1.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.252.132.153])
+  by fmsmga004.fm.intel.com with ESMTP; 21 Nov 2018 06:50:37 -0800
+Subject: [PATCH v6] tpm: add support for partial reads
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
+Date:   Wed, 21 Nov 2018 06:50:37 -0800
+Message-ID: <154281183700.2093.10559851516194502797.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.thread-bfac1b.your-ad-here.call-01542799656-ext-6093@work.hours>
-X-TM-AS-GCONF: 00
-x-cbid: 18112112-0008-0000-0000-000002963F3F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112112-0009-0000-0000-000022006F52
-Message-Id: <patch-1.thread-bfac1b.git-bfac1b60354c.your-ad-here.call-01542799656-ext-6093@work.hours>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811210107
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-With "debugfs: Restrict debugfs when the kernel is locked down"
-return code "r" is unconditionally set to -EPERM, which stays like that
-until function return if no "open" file operation defined, effectivelly
-resulting in "Operation not permitted" for all such files despite kernel
-lock down status or CONFIG_LOCK_DOWN_KERNEL being enabled.
+Currently to read a response from the TPM device an application needs
+provide big enough buffer for the whole response and read it in one go.
+The application doesn't know how big the response it beforehand so it
+always needs to maintain a 4K buffer and read the max (4K).
+In case if the user of the TSS library doesn't provide big enough
+buffer the TCTI spec says that the library should set the required
+size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
+application could allocate a bigger buffer and call receive again.
+To make it possible in the TSS library, this requires being able to do
+partial reads from the driver.
+The library would read the 10 bytes header first to get the actual size
+of the response from the header, and then read the rest of the response.
 
-In particular this breaks 2 debugfs files on s390:
-/sys/kernel/debug/s390_hypfs/diag_304
-/sys/kernel/debug/s390_hypfs/diag_204
+This patch adds support for partial reads, i.e. the user can read the
+response in one or multiple reads, until the whole response is consumed.
+The user can also read only part of the response and ignore
+the rest by issuing a new write to send a new command.
 
-To address that set EPERM return code only when debugfs_is_locked_down
-returns true.
-
-Fixes: 3fc322605158 ("debugfs: Restrict debugfs when the kernel is locked down")
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 ---
- fs/debugfs/file.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+The usecase is implemented in this TSS commit:
+https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 51cb894c21f2..89c86faaa02a 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -167,9 +167,10 @@ static int open_proxy_open(struct inode *inode, struct file *filp)
+Changes in v6:
+ - Remove needless comments in struct file_priv
+
+Changes in v5:
+ - Merge the two patches back into one.
+ - Change variable 'partial_data' to a new flag 'response_read'.
+ - Update the logic around partial_data to reflect the new flag.
+ - Add a new variable response_length that keeps track of how much
+   of the response is left.
+
+Changes in v4:
+ - Use unsigned type for response_pending as it will never be negative.
+ - Rebased on top of name change data_pending to transmit_result patch.
+
+Changes in v3:
+ - Remove link to usecase implemented in TSS out of the commit message.
+ - Update the conddition in tpm_common_poll() to take into account
+   the partial_data also.
+
+Changes in v2:
+ - Allow writes after only partial response is consumed to maintain
+   backwords compatibility.
+---
+ drivers/char/tpm/tpm-dev-common.c |   51 +++++++++++++++++++++++++------------
+ drivers/char/tpm/tpm-dev.h        |    5 +---
+ 2 files changed, 37 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 99b5133a9d05..344739223451 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -40,7 +40,7 @@ static void tpm_async_work(struct work_struct *work)
  
- 	real_fops = debugfs_real_fops(filp);
+ 	tpm_put_ops(priv->chip);
+ 	if (ret > 0) {
+-		priv->data_pending = ret;
++		priv->response_length = ret;
+ 		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
+ 	}
+ 	mutex_unlock(&priv->buffer_mutex);
+@@ -63,7 +63,8 @@ static void tpm_timeout_work(struct work_struct *work)
+ 					      timeout_work);
  
--	r = -EPERM;
--	if (debugfs_is_locked_down(inode, filp, real_fops))
-+	if (debugfs_is_locked_down(inode, filp, real_fops)) {
-+		r = -EPERM;
- 		goto out;
+ 	mutex_lock(&priv->buffer_mutex);
+-	priv->data_pending = 0;
++	priv->response_read = true;
++	priv->response_length = 0;
+ 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	wake_up_interruptible(&priv->async_wait);
+@@ -74,6 +75,7 @@ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+ {
+ 	priv->chip = chip;
+ 	priv->space = space;
++	priv->response_read = true;
+ 
+ 	mutex_init(&priv->buffer_mutex);
+ 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
+@@ -90,22 +92,35 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 	ssize_t ret_size = 0;
+ 	int rc;
+ 
+-	del_singleshot_timer_sync(&priv->user_read_timer);
+-	flush_work(&priv->timeout_work);
+ 	mutex_lock(&priv->buffer_mutex);
+ 
+-	if (priv->data_pending) {
+-		ret_size = min_t(ssize_t, size, priv->data_pending);
+-		if (ret_size > 0) {
+-			rc = copy_to_user(buf, priv->data_buffer, ret_size);
+-			memset(priv->data_buffer, 0, priv->data_pending);
+-			if (rc)
+-				ret_size = -EFAULT;
++	if (priv->response_length) {
++		priv->response_read = true;
++
++		ret_size = min_t(ssize_t, size, priv->response_length);
++		if (!ret_size) {
++			priv->response_length = 0;
++			goto out;
+ 		}
+ 
+-		priv->data_pending = 0;
++		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
++		if (rc) {
++			memset(priv->data_buffer, 0, TPM_BUFSIZE);
++			priv->response_length = 0;
++			ret_size = -EFAULT;
++		} else {
++			memset(priv->data_buffer + *off, 0, ret_size);
++			priv->response_length -= ret_size;
++			*off += ret_size;
++		}
+ 	}
+ 
++out:
++	if (!priv->response_length) {
++		*off = 0;
++		del_singleshot_timer_sync(&priv->user_read_timer);
++		flush_work(&priv->timeout_work);
 +	}
- 
- 	real_fops = fops_get(real_fops);
- 	if (!real_fops) {
-@@ -296,9 +297,10 @@ static int full_proxy_open(struct inode *inode, struct file *filp)
- 		return r == -EIO ? -ENOENT : r;
- 
- 	real_fops = debugfs_real_fops(filp);
--	r = -EPERM;
--	if (debugfs_is_locked_down(inode, filp, real_fops))
-+	if (debugfs_is_locked_down(inode, filp, real_fops)) {
-+		r = -EPERM;
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	return ret_size;
+ }
+@@ -125,7 +140,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 	 * tpm_read or a user_read_timer timeout. This also prevents split
+ 	 * buffered writes from blocking here.
+ 	 */
+-	if (priv->data_pending != 0 || priv->command_enqueued) {
++	if (!priv->response_read || priv->command_enqueued) {
+ 		ret = -EBUSY;
  		goto out;
-+	}
+ 	}
+@@ -150,6 +165,10 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 		goto out;
+ 	}
  
- 	real_fops = fops_get(real_fops);
- 	if (!real_fops) {
--- 
-2.18.0.13.gd42ae10
++	priv->response_length = 0;
++	priv->response_read = false;
++	*off = 0;
++
+ 	/*
+ 	 * If in nonblocking mode schedule an async job to send
+ 	 * the command return the size.
+@@ -168,7 +187,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 	tpm_put_ops(priv->chip);
+ 
+ 	if (ret > 0) {
+-		priv->data_pending = ret;
++		priv->response_length = ret;
+ 		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
+ 		ret = size;
+ 	}
+@@ -184,7 +203,7 @@ __poll_t tpm_common_poll(struct file *file, poll_table *wait)
+ 
+ 	poll_wait(file, &priv->async_wait, wait);
+ 
+-	if (priv->data_pending)
++	if (!priv->response_read || priv->response_length)
+ 		mask = EPOLLIN | EPOLLRDNORM;
+ 	else
+ 		mask = EPOLLOUT | EPOLLWRNORM;
+@@ -201,7 +220,7 @@ void tpm_common_release(struct file *file, struct file_priv *priv)
+ 	del_singleshot_timer_sync(&priv->user_read_timer);
+ 	flush_work(&priv->timeout_work);
+ 	file->private_data = NULL;
+-	priv->data_pending = 0;
++	priv->response_length = 0;
+ }
+ 
+ int __init tpm_dev_common_init(void)
+diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+index a126b575cb8c..1089fc0bb290 100644
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -9,14 +9,13 @@ struct file_priv {
+ 	struct tpm_chip *chip;
+ 	struct tpm_space *space;
+ 
+-	/* Holds the amount of data passed or an error code from async op */
+-	ssize_t data_pending;
+ 	struct mutex buffer_mutex;
+-
+ 	struct timer_list user_read_timer;      /* user needs to claim result */
+ 	struct work_struct timeout_work;
+ 	struct work_struct async_work;
+ 	wait_queue_head_t async_wait;
++	size_t response_length;
++	bool response_read;
+ 	bool command_enqueued;
+ 
+ 	u8 data_buffer[TPM_BUFSIZE];
 
