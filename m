@@ -2,143 +2,258 @@ Return-Path: <SRS0=9590=OA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2F9C04EBA
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5069C43610
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 05:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A333C2145D
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 03:54:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A333C2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id ACE962087E
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Nov 2018 05:16:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="VYpJ4v63"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACE962087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeKUO0I (ORCPT
+        id S1727659AbeKUPto (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:26:08 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:2110 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726773AbeKUO0I (ORCPT
+        Wed, 21 Nov 2018 10:49:44 -0500
+Received: from mail-pl1-f181.google.com ([209.85.214.181]:40958 "EHLO
+        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbeKUPto (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:26:08 -0500
-Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 20 Nov 2018 19:52:59 -0800
-Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 30782B1870;
-        Tue, 20 Nov 2018 22:53:30 -0500 (EST)
-From:   Nadav Amit <namit@vmware.com>
-To:     Ingo Molnar <mingo@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
-        <linux-integrity@vger.kernel.org>,
+        Wed, 21 Nov 2018 10:49:44 -0500
+Received: by mail-pl1-f181.google.com with SMTP id b22-v6so3703990pls.7
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Nov 2018 21:16:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=icx9gocQ95ZTtP0q5hQPP/LdR8YIQ4wgBXZggcGoLe0=;
+        b=VYpJ4v63Jpt9JUPai5DR6+H/uHecIGgoai9LqKhzbSXDS5FN7pkdDV9dlQ4Q519WYM
+         XDNPkcX2R28GCUNIVBpItTtjj4nuq2JX/Liv8qVubXEwFBKMyUPL+VKsCrn5vtfc+B4f
+         HDbw8bl/pZSJG9pogRvK/HAsTGjhR3MVo1Beqq4TOlHgstS11SGv+L+0/aeYvMSdsgqw
+         xjojmlUveGRyCct/FLRcdLU2KuvjVzlTBu0WXao3UiKqHQu+ZDr+pjEvAFLkJiwv1InB
+         VlKTwi9O/fRwx+wJsfkXlXCYu03Z3PNBJWO6k7KHWZluN0SYdQ6LyD+o+srioZ1EONT7
+         C12Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=icx9gocQ95ZTtP0q5hQPP/LdR8YIQ4wgBXZggcGoLe0=;
+        b=uhBY0FEiA378xcReZ0GP9n7CKFMGjoa4tlGDDb7IwsRaOY7DfhlXkmoRy5pQcmo2mJ
+         PfPGF9aOopnsVULBhcalOA6UQ13364CEGFpcIDFpXcTuBFJimt0FzbcRLjsaiV1FdJAo
+         np03t056u0t0kU0Dfak293lTHyg0SghfuURO8g0pWJV14RpWN5c02LMG6JudtpwmSp8E
+         CoH+zESO+sx/IkUCdURPkky7MIpKPjIpXW0TQF4UinHLQoMsM5H6ht3ycUU2fVMeD55L
+         j73QJhqhQ3N9NGh7Q88VC+ktGy019pPY0Te7yyXSl9kKmaZsUKcAv6nQAYVq+Z5HpToN
+         +tYg==
+X-Gm-Message-State: AGRZ1gLpcpL+2bVxb+s6H+wjNrSmCDiZLDBeM5UQ6wsjNHp4D1kT3399
+        fs3S1A79ZiG8O6Ngdw/Y+xx5+A==
+X-Google-Smtp-Source: AJdET5e7LZ0sthoCFTWPGG6q1k1g6gZ9bBrQcDyRJdZg2r5B5Nsne+dHExxwLWV6vcK4K+pDS9Lt0A==
+X-Received: by 2002:a62:8dd9:: with SMTP id p86mr5238311pfk.143.1542777409760;
+        Tue, 20 Nov 2018 21:16:49 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id o13sm18327143pfk.57.2018.11.20.21.16.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 21:16:48 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gPKsZ-0004bb-GS; Tue, 20 Nov 2018 22:16:47 -0700
+Date:   Tue, 20 Nov 2018 22:16:47 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jeremy Boone <jeremy.boone@nccgroup.com>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v6 00/10] x86/alternative: text_poke() fixes
-Date:   Tue, 20 Nov 2018 12:35:35 -0800
-Message-ID: <20181120203545.34928-1-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "monty.wiseman@ge.com" <monty.wiseman@ge.com>,
+        Monty Wiseman <montywiseman32@gmail.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: EXTERNAL: Re: Documenting the proposal for TPM 2.0 security in
+ the face of bus interposer attacks
+Message-ID: <20181121051647.GA17002@ziepe.ca>
+References: <20181119214426.GK4890@ziepe.ca>
+ <1542666988.2910.49.camel@HansenPartnership.com>
+ <20181119230826.GN4890@ziepe.ca>
+ <1542675272.2910.63.camel@HansenPartnership.com>
+ <20181120030556.GP4890@ziepe.ca>
+ <1542734279.2814.23.camel@HansenPartnership.com>
+ <20181120213345.GC22023@ziepe.ca>
+ <1542753292.2814.45.camel@HansenPartnership.com>
+ <20181120233904.GF22023@ziepe.ca>
+ <01A99B24-E772-489C-A33F-2F3CC80281FA@nccgroup.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <01A99B24-E772-489C-A33F-2F3CC80281FA@nccgroup.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch-set addresses some issues that might affect the security and
-the correctness of code patching.
+On Wed, Nov 21, 2018 at 02:24:18AM +0000, Jeremy Boone wrote:
 
-The main issue that the patches deal with is the fact that the fixmap
-PTEs that are used for patching are available for access from other
-cores and might be exploited. They are not even flushed from the TLB in
-remote cores, so the risk is even higher. This set addresses this issue
-by introducing a temporary mm that is only used during patching.
+> I think it’s worth recognizing that TPMs are used in a variety of
+> deployments, each with their own unique threat model and attack
+> surface.
+> 
+> For example, some users may care about evil maid scenarios. Heck,
+> TPM-TOTP (and dare I mention the Qubes Anti-Evil Maid technology)
+> utilizes the TPM to attest the boot state to the device owner.
+> 
+> Other users may care about the “lost in the back of a taxi” scenario
+> wherein the attacker may have extended physical access to the mobile
+> device (a phone or laptop) before returning it to the owner.
+> 
+> In other scenarios, the device user may be a different entity than
+> the device owner, and as such, different security considerations
+> must be applied. Think of a set top box that you’ve rented from your
+> cable service provider which uses a TPM to remotely attest the
+> firmware before being trusted to handle content decryption keys. Or
+> a car share program that uses the TPM as a means to store temporary
+> keyless-entry tokens — After all, the TCG Automotive Thin Profile is
+> taking off, as are the SAE J3101 requirements which suggest the use
+> of TPM in automotive applications.
 
-To do so, we need to avoid using text_poke() before the poking-mm is
-initialized and instead use text_poke_early().
+> An interposer, or even a simple
+> sniffer attached to test points on the bus, would be able to observe
+> any secrets transmitted between the TPM and host.
 
-During v3 of this set, Andy & Thomas suggested that early patching of
-modules can be improved by simply writing to the memory. This actually
-raises a security concern: there should not be any W+X mappings at any
-given moment, and modules loading breaks this protection for no good
-reason. So this patch also addresses this issue, while (presumably)
-improving patching speed by making module memory initially RW(+NX) and
-before execution changing it into RO(+X).
+Not quite, it is not 'any' secrets. We can and absolutely should
+competently encrypt various things, like shared secrets for unlocking
+keys private data to be seal/unsealed, etc. There are robust working
+mechanisms for this already in the spec.
 
-In addition the patch addresses various issues that are related to code
-patching, and do some cleanup.
+I think this is very important and I know I've always coded my TPM
+implementations to make use of these features.
 
-v5->v6:
-- Panic if anything goes wrong when poking [peterZ]
+But PCR extend is not private data, the data is well known.
 
-v4->v5:
-- Fix Xen breakage [Damian Tometzki]
-- BUG_ON() when poking_mm initialization fails [peterZ]
-- Better comments on "x86/mm: temporary mm struct"
-- Cleaner removal of the custom poker
+> I believe that the Linux kernel has an obligation to build in active
+> defences that protect TPM users against serial bus attacks, and
+> makes no blind assumptions about the ways in which a TPM may be used
+> or deployed in a variety of creative or unexpected ways.
+> 
+> This is especially true in light of the fact that the TCG (and TPM
+> chip manufacturers as well) have not plainly documented that,
+> despite having expended considerable effort defending against
+> invasive silicon attacks (see Chris Tarnovsky’s work), a trivial
+> interposer can still defeat TPM security. I believe that many do not
+> understand this fact, and conflate the idea that measured boot can
+> detect “hardware tampering” vs. mere “firmware
+> tampering”. 
 
-v3->v4:
-- Setting modules as RO when loading [andy, tglx]
-- Adding text_poke_kgdb() to keep the text_mutex assertion [tglx]
-- Simpler logic to decide when to use early-poking [peterZ]
-- More cleanup
+This is basically my concern. HMACing the PCRs does not magically
+allow measured boot to detect "hardware tampering". Even if all layers
+from the BIOS down do this correctly. Pretending otherwise continues
+to push the incorrect message that PCRs do anything beyond detecting
+"firmware tampering", as you say.
 
-v2->v3:
-- Remove the fallback path in text_poke() [peterZ]
-- poking_init() was broken due to the local variable poking_addr
-- Preallocate tables for the temporary-mm to avoid sleep-in-atomic
-- Prevent KASAN from yelling at text_poke()
+> Regardless, it seems odd to me that we wish to defend against
+> one-off attacks involving an electron microscope, but do not wish to
+> defend against a simple microcontroller acting as a
+> man-in-the-middle on the bus.
 
-v1->v2:
-- Partial revert of 9222f606506c added to 1/6 [masami]
-- Added Masami's reviewed-by tag
+I agree with this, but if you want to defent against hardware
+tampering then one should defend robustly against all hardware
+tampering and call that a TPM capability. A half implemented hardware
+tampering defence only gives a false sense of security.
 
-RFC->v1:
-- Added handling of error in get_locked_pte()
-- Remove lockdep assertion, clarify text_mutex use instead [masami]
-- Comment fix [peterz]
-- Removed remainders of text_poke return value [masami]
-- Use __weak for poking_init instead of macros [masami]
-- Simplify error handling in poking_init [masami]
+I think it is possible to do, but it requires some updates to the TPM
+specification.
 
-andy Lutomirski (1):
-  x86/mm: temporary mm struct
+A general proposal would go something like...
 
-Nadav Amit (9):
-  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-  x86/jump_label: Use text_poke_early() during early init
-  fork: provide a function for copying init_mm
-  x86/alternative: initializing temporary mm for patching
-  x86/alternative: use temporary mm for text poking
-  x86/kgdb: avoid redundant comparison of patched code
-  x86: avoid W^X being broken during modules loading
-  x86/jump-label: remove support for custom poker
-  x86/alternative: remove the return value of text_poke_*()
+1) The TPM gains a new NV flag 'Secure Reset Required' and a new command
+   'Secure Reset'
+2) Issuing the'Secure Reset' command requires the TPM and CPU to both
+   prove to each other they are authentic, using some crypto protocol
+   (lots of options here)
+2a) The TPM will store it's private secret for #2 either as a loaded blob
+    against a NV key or in NV itself. There is some protocol during
+    owning that allows the BIOS to initialize this stuff and set
+    Secure Reset Required. Maybe we assume the HW is untampered during
+    owning.
+2b) The CPU will store its private secret for #2 encrypted using modern
+    CPU encryption technology like Intel's SGX, or similar. The
+    encrypted key will be stored in BIOS flash.
+3) Upon boot the CPU will securely decrypt it's secret and issue
+   'Secure Reset'. The TPM will not function until this command is
+   issued. The only other option is a complete wipe.
+4) During the 'Secure Reset' crypto the two sides will exchange
+   trusted or secret information used to authenticate and encrypt
+   all future communications
+5) The BIOS will pass the #4 data down to the bootloader and to the
+   kernel for use when executign TPM commands, or maybe the BIOS will
+   transparently link it into the ACPI CRB executor or something.
+6) TPM will reject any unathenticated&encrypted packet after Secure Reset
 
- arch/x86/include/asm/fixmap.h        |   2 -
- arch/x86/include/asm/mmu_context.h   |  32 +++++
- arch/x86/include/asm/pgtable.h       |   3 +
- arch/x86/include/asm/text-patching.h |   7 +-
- arch/x86/kernel/alternative.c        | 197 ++++++++++++++++++++-------
- arch/x86/kernel/jump_label.c         |  19 ++-
- arch/x86/kernel/kgdb.c               |  25 +---
- arch/x86/kernel/module.c             |   2 +-
- arch/x86/mm/init_64.c                |  35 +++++
- arch/x86/xen/mmu_pv.c                |   2 -
- include/linux/filter.h               |   6 +
- include/linux/sched/task.h           |   1 +
- init/main.c                          |   3 +
- kernel/fork.c                        |  24 +++-
- kernel/module.c                      |  10 ++
- 15 files changed, 279 insertions(+), 89 deletions(-)
+Now we have properly defended against a wide range of HW
+tampering. You can't snoop/hijack the TPM bus. You can't reset the
+TPM. You can't hack the BIOS FLASH and take over the BIOS before TPM
+reset (assuming SGX is implemented properly). You can't replace the
+trusted CPU with a hostile CPU. You can't desolder the TPM. This is an
+excellent improvement in HW defense. If the SGX code also sets up DRAM
+encryption then we are getting to be really properly secured against
+HW tampering.
 
--- 
-2.17.1
+This is sort of what I mean when I say a spec update is needed. The
+spec needs to be designed to properly detect and combat HW tampering.
+We can't add this new feature robustly with only the functional
+elements already in the spec.
 
+[Of course this is kind of a silly thing to do, because if you have
+ this CPU technology then you may was well just implement the TPM in
+ the CPU.. But this is more of a thought experiment as to what would be
+ needed to secure a discrete TPM against HW tampering]
+
+> It’s true that with sufficient time and motivation, a dedicated and
+> well-funded adversary can defeat almost any protection
+> mechanism. But our job as defenders is to raise the bar so that
+> cheap and inexpensive attacks are no longer feasible. By raising the
+> cost of exploitation beyond the adversary’s appetite, we eliminate
+> entire classes of attack.
+
+My concern is we haven't done this simply because the reset-line
+attack is less cost and complexity than the interposer on the data bus
+attack, so we must prevent it first and foremost. Then prevent data
+bus mangling, then prevent loading modified BIOS's, then prevent
+hacked CPUs, and so on until things become properly expensive.
+
+> Choosing to do nothing simply because other attack avenues exist is
+> a little too defeatist of an attitude for me. Especially given that
+> the TPM specification does support payload encryption and integrity
+> protection through the use of Authorization Sessions. 
+
+We absolutely should be using encrypted and authenticated sessions
+when transporting any secret data.
+
+> So we do have the necessary tools to begin to solve this
+> problem. Unfortunately, it is also true that this issue extends
+> beyond the kernel. We also need to land similar patches for every
+> stage of the boot process that performs a PCR Extend
+> operation. Otherwise the chain of trust can be broken before the
+> kernel is even started.
+
+Right, but this chain of trust starts at the reset line, not at the
+BIOS. There is language in the spec requiring the platform to control
+the reset line along with the CPU reset - this is critically necessary
+to make PCRs work for 'measured boot'.
+
+In my mind an interposer also means hostile control over the reset
+line, so reset protection must be part of any complete defence against
+an interposer.
+
+The idea James had with the null key to detect reset doesn't mitigate
+the case where hostile code is running on the CPU along with an
+interposer. We can't make the assumption that only trusted code is
+running in the CPU - if we could assume that we wouldn't need PCRs and
+measured boot in the first place. ;)
+
+Jason
