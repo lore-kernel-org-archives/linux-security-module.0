@@ -2,48 +2,74 @@ Return-Path: <SRS0=R1tM=OB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB685C43441
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Nov 2018 20:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1E0C43441
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Nov 2018 20:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8414920892
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Nov 2018 20:04:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7330020864
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Nov 2018 20:54:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="diYQAdNo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8414920892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="vF/rVIqa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7330020864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387455AbeKWGpV (ORCPT
+        id S1731743AbeKWHfM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Nov 2018 01:45:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50338 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbeKWGpU (ORCPT
+        Fri, 23 Nov 2018 02:35:12 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37765 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387439AbeKWHfM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Nov 2018 01:45:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3iMUh2dkWeYr3Wxskhu4eNYKLzoeaX8kLN4jP9KbV3Y=; b=diYQAdNo0/Z1OVDUdcJUj5cyr
-        kFIDSxC0oD+zPTGgG2cpefx6eEjJueDDF8bO7wAL31DT08IZKtnQSXTeBQiE0S26khoHh8+iLeUU0
-        tnhLlAdFPNmETrYCM7lM0c5OOdYuv+NqNC4Wp8cj2oNY0b4R+gUZyxL+zgytlZbX13RKtQs0u5R2O
-        tx6TRpwrOeoaT/hJ5gguBahHSBlwQryWsQtuOdOgeW4njwKYevV4rKDrju0cESv4JTKHDMw8OvUF8
-        6ONLalQU7wN46hsiNcn+98H1iKB+zSYY9sKiM1ySrQXZ2lTOKdOB+w48QC7WnabPA9ITd+Rzk+7WJ
-        e2mXwOvkw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPvCy-0007Hx-D4; Thu, 22 Nov 2018 20:04:16 +0000
-Date:   Thu, 22 Nov 2018 12:04:16 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
+        Fri, 23 Nov 2018 02:35:12 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j10so10420454wru.4
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Nov 2018 12:54:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yWk5Q2KMhxFtebTCYvLWJNAVtksZ74uiL41lCD1gibo=;
+        b=vF/rVIqaMPhwF9p+EBeHZmWm+gX9jSVviiwtAHK0ybpRFkWf7AQ5/t54m580ItKGSf
+         p3KPht5N1pxnRP28k69UlX3YkEFw//lyfq4GE7Zq6XpKJYelvHVkn9YrYgRHowh3abbQ
+         kdDL113OtEXzSW/241DIghIiTHxHXx1SQa26a04SFCtb6VcOhf6+h6LhItMIHuEgX2Ln
+         2Y9I2ZIW5fneanOKSdpJq73n21JeHbZwQzleS+srTHZ3no/8HJSue1cACZgJamu3tkvK
+         QrNl03CkNjUnsyC6KgivOAI+mUlA5YvJdnIzyYXbq4rSrAzIkBQtU8QQx6j9bbtGHu0K
+         NAIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yWk5Q2KMhxFtebTCYvLWJNAVtksZ74uiL41lCD1gibo=;
+        b=tPY2+/z07uyWZgsZcm57ka+X2oOCYOpoihBs6gYRSxnWuPNG0zTyEk0USRYDSbs9Gh
+         pMdZE+xLWIlgkZ1VJj7zFcvevhlNNVaUKnebiRDihFig6C6DFoW5sC6NPaEv+XmLvooa
+         qtLlAHGbuawuRc7+tSY3apye7ITDfaXrI7J76hKjNeOamYW9pawg9ejajuQ+3DzQ1Sbe
+         3aqblbH/V84BE47S0qDpkVH39uczmzFE3zN/3RpymP2vI8mKM5dNJHflsruLglWF2TJ8
+         01CFzQhF13B07VBjdvV+2t4Nh1GvgAsDKI5UL0H3/6arF1idGomk3lQHYp37H1eyPZJj
+         vUhA==
+X-Gm-Message-State: AA+aEWYKquewecBvRVZM1TrBxGgfl8YepEsJ9B2eAR0w5tUPPE9XEtWR
+        Lzr1MOwQV5OMiDqCbjkHzcQfhaJKlSQa/IGMT6+FMQ==
+X-Google-Smtp-Source: AFSGD/UNdYaStKbo/7oDTpht9hcx83ywYAoB2YA/js5oR5hMMtCENW6Uphl+52hDJRvdwm/GpSu1LjW2T5jdjUM0jYM=
+X-Received: by 2002:adf:ea81:: with SMTP id s1mr10927772wrm.309.1542920045656;
+ Thu, 22 Nov 2018 12:54:05 -0800 (PST)
+MIME-Version: 1.0
+References: <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
+ <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
+ <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com> <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com>
+ <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com> <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com>
+ <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
+ <1166e55c-0c06-195c-a501-383b4055ea46@gmail.com> <3BB9DE07-E0AE-43E2-99F1-E4AA774CD462@amacapital.net>
+ <5e10c8e4-aa71-1eea-b1ce-50d7d0a60e8c@gmail.com> <20181122200416.GS3065@bombadil.infradead.org>
+In-Reply-To: <20181122200416.GS3065@bombadil.infradead.org>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Thu, 22 Nov 2018 12:53:52 -0800
+Message-ID: <CALCETrXB34QBcYk=k5DT1t4h7EezaPxbxM2S_h2nYk5Nv1c4_Q@mail.gmail.com>
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Andrew Lutomirski <luto@kernel.org>,
         Igor Stoppa <igor.stoppa@huawei.com>,
         Nadav Amit <nadav.amit@gmail.com>,
         Kees Cook <keescook@chromium.org>,
@@ -63,53 +89,50 @@ Cc:     Andy Lutomirski <luto@amacapital.net>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181122200416.GS3065@bombadil.infradead.org>
-References: <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
- <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
- <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com>
- <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com>
- <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com>
- <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com>
- <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
- <1166e55c-0c06-195c-a501-383b4055ea46@gmail.com>
- <3BB9DE07-E0AE-43E2-99F1-E4AA774CD462@amacapital.net>
- <5e10c8e4-aa71-1eea-b1ce-50d7d0a60e8c@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5e10c8e4-aa71-1eea-b1ce-50d7d0a60e8c@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 22, 2018 at 09:27:02PM +0200, Igor Stoppa wrote:
-> I have studied the code involved with Nadav's patchset.
-> I am perplexed about these sentences you wrote.
-> 
-> More to the point (to the best of my understanding):
-> 
-> poking_init()
-> -------------
->   1. it gets one random poking address and ensures to have at least 2
->      consecutive PTEs from the same PMD
->   2. it then proceeds to map/unmap an address from the first of the 2
->      consecutive PTEs, so that, later on, there will be no need to
->      allocate pages, which might fail, if poking from atomic context.
->   3. at this point, the page tables are populated, for the address that
->      was obtained at point 1, and this is ok, because the address is fixed
-> 
-> write_rare
-> ----------
->   4. it can happen on any available core / thread at any time, therefore
->      each of them needs a different address
+On Thu, Nov 22, 2018 at 12:04 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Thu, Nov 22, 2018 at 09:27:02PM +0200, Igor Stoppa wrote:
+> > I have studied the code involved with Nadav's patchset.
+> > I am perplexed about these sentences you wrote.
+> >
+> > More to the point (to the best of my understanding):
+> >
+> > poking_init()
+> > -------------
+> >   1. it gets one random poking address and ensures to have at least 2
+> >      consecutive PTEs from the same PMD
+> >   2. it then proceeds to map/unmap an address from the first of the 2
+> >      consecutive PTEs, so that, later on, there will be no need to
+> >      allocate pages, which might fail, if poking from atomic context.
+> >   3. at this point, the page tables are populated, for the address that
+> >      was obtained at point 1, and this is ok, because the address is fixed
+> >
+> > write_rare
+> > ----------
+> >   4. it can happen on any available core / thread at any time, therefore
+> >      each of them needs a different address
+>
+> No?  Each CPU has its own CR3 (eg each CPU might be running a different
+> user task).  If you have _one_ address for each allocation, it may or
+> may not be mapped on other CPUs at the same time -- you simply don't care.
+>
+> The writable address can even be a simple formula to calculate from
+> the read-only address, you don't have to allocate an address in the
+> writable mapping space.
+>
 
-No?  Each CPU has its own CR3 (eg each CPU might be running a different
-user task).  If you have _one_ address for each allocation, it may or
-may not be mapped on other CPUs at the same time -- you simply don't care.
+Agreed.  I suggest the formula:
 
-The writable address can even be a simple formula to calculate from
-the read-only address, you don't have to allocate an address in the
-writable mapping space.
+writable_address = readable_address - rare_write_offset.  For
+starters, rare_write_offset can just be a constant.  If we want to get
+fancy later on, it can be randomized.
 
+If we do it like this, then we don't need to modify any pagetables at
+all when we do a rare write.  Instead we can set up the mapping at
+boot or when we allocate the rare write space, and the actual rare
+write code can just switch mms and do the write.
