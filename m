@@ -2,135 +2,123 @@ Return-Path: <SRS0=NT/5=OC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B94DC04EBA
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Nov 2018 19:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22862C43441
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Nov 2018 20:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFA920C01
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Nov 2018 19:31:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FFA920C01
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id DE3F620664
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Nov 2018 20:21:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="QHg+1Glv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3F620664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441392AbeKXGQw (ORCPT
+        id S2441452AbeKXHHX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 24 Nov 2018 01:16:52 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35904 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2441387AbeKXGQw (ORCPT
+        Sat, 24 Nov 2018 02:07:23 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37856 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410240AbeKXHHX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 24 Nov 2018 01:16:52 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wANJSnY2048724
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Nov 2018 14:31:14 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nxn29dysu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Nov 2018 14:31:14 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 23 Nov 2018 19:31:11 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 23 Nov 2018 19:31:06 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wANJV6It57671862
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 23 Nov 2018 19:31:06 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 00C01A405C;
-        Fri, 23 Nov 2018 19:31:06 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A6F6A4060;
-        Fri, 23 Nov 2018 19:31:04 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.87.216])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 23 Nov 2018 19:31:03 +0000 (GMT)
+        Sat, 24 Nov 2018 02:07:23 -0500
+Received: by mail-it1-f196.google.com with SMTP id b5so19457832iti.2
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Nov 2018 12:21:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0ztVUjuR029DPuq6x1COYKxRhgpBTvFYUQJdXiWMSsY=;
+        b=QHg+1Glvk7KVsuJp7mdds9RnOMm9MUE5lHaigz6dVIESzE+lM0ulpzN3RurgPx8/ii
+         oltlMRx9XnrOFFyipqW1iqq/3+l34wHxJO68tYHKDe0K6Frvg7OJRLQaH+bVOaBu3qeG
+         2TAkwyR4ial7zcNN7GOeFafLky+ns+WP6SCDLsqNIw30P0RDH+uSbot5WHNOp6CEtyA8
+         vDBb+VRd89QGXGkVklJ7euvqXEkxuiq6cEwlEK/GSJsQP1Bxfq0Y10/FyXafr6gbOoRY
+         eFPPJVr/cDdevfu/HtrkDV4AHnJzUtCnCiCkNjZC52JaHoJ/rS9Fd+K2qMhfJ0QHdXGz
+         7AgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0ztVUjuR029DPuq6x1COYKxRhgpBTvFYUQJdXiWMSsY=;
+        b=VFurDEskz59GQr6xxWTkbpkafCQeFbJa1ECw5+E/cTzf7JnJp6M8jWQeZDhFBwNAS/
+         YTyBr2vJLNwgcDCbO8Emm6K73m7xgf+StWfVdU77V4KDJZMtWwTZ5lau5DKOzId+dGFi
+         bF6CwBDoltCuEhbz+YeLT8B8I/PfVGf/GCxuC0lCtGrcZqEXwbSD4GlTX/Yc7BXYYJt4
+         O+WIJIJ53xzNH9nxYOu9Of5EJ2P4coHcgnZxYq8zvhByZzOhKHvtPWIQjDTkII97gkvy
+         8JHNVRYzC2aqAywLkiilaSdYz6DN7taRqJno2ltLT/9Ws2uvBkVcwGYi+ZpXos4s63nZ
+         TBqw==
+X-Gm-Message-State: AA+aEWYxOxv4L7qQWhp1hy4otP4kImR+zx8Z69XEs1h6nsf1mwvlqON2
+        13JOXViKBtmtvH0LZRTnJcGbbg==
+X-Google-Smtp-Source: AFSGD/UkBVJ3JEn5YKF8mCs+WCVZSToi4u1J1uWhCaeiE3Kvlovi9/SWVeDugs5UiSApLzwO239kkQ==
+X-Received: by 2002:a24:76d0:: with SMTP id z199mr3048319itb.165.1543004496721;
+        Fri, 23 Nov 2018 12:21:36 -0800 (PST)
+Received: from [192.168.5.201] (96-67-187-70-static.hfc.comcastbusiness.net. [96.67.187.70])
+        by smtp.googlemail.com with ESMTPSA id s13sm6521238ioj.71.2018.11.23.12.21.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Nov 2018 12:21:35 -0800 (PST)
 Subject: Re: [RFC][PATCH] fs: set xattrs in initramfs from regular files
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        viro@zeniv.linux.org.uk
+To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
 Cc:     linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        dmitry.kasatkin@huawei.com, takondra@cisco.com, kamensky@cisco.com,
-        hpa@zytor.com, arnd@arndb.de, rob@landley.net,
-        james.w.mcmechan@gmail.com
-Date:   Fri, 23 Nov 2018 14:30:53 -0500
-In-Reply-To: <3d1bfbd7-7d45-4cf1-32d6-7f6985b42393@schaufler-ca.com>
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, hpa@zytor.com,
+        arnd@arndb.de, james.w.mcmechan@gmail.com
 References: <20181122154942.18262-1-roberto.sassu@huawei.com>
-         <3d1bfbd7-7d45-4cf1-32d6-7f6985b42393@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112319-0020-0000-0000-000002ECD5D9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112319-0021-0000-0000-0000213C1AF9
-Message-Id: <1543001453.4298.23.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-23_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811230162
+From:   Rob Landley <rob@landley.net>
+Message-ID: <7f2b0288-a173-e2bb-70ee-d552610bfc1e@landley.net>
+Date:   Fri, 23 Nov 2018 14:21:34 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181122154942.18262-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2018-11-23 at 11:03 -0800, Casey Schaufler wrote:
-> On 11/22/2018 7:49 AM, Roberto Sassu wrote:
-> > Although rootfs (tmpfs) supports xattrs, they are not set due to the
-> > limitation of the cpio format. A new format called 'newcx' was proposed to
-> > overcome this limitation.
-> >
-> > However, it looks like that adding a new format is not simple: 15 kernel
-> > patches; user space tools must support the new format; mistakes made in the
-> > past should be avoided; it is unclear whether the kernel should switch from
-> > cpio to tar.
-> >
-> > The aim of this patch is to provide the same functionality without
-> > introducing a new format. The value of xattrs is placed in regular files
-> > having the same file name as the files xattrs are added to, plus a
-> > separator and the xattr name (<filename>.xattr-<xattr name>).
-> >
-> > Example:
-> >
-> > '/bin/cat.xattr-security.ima' is the name of a file containing the value of
-> > the security.ima xattr to be added to /bin/cat.
-> >
-> > At kernel initialization time, the kernel iterates over the rootfs
-> > filesystem, and if it encounters files with the '.xattr-' separator, it
-> > reads the content and adds the xattr to the file without the suffix.
-> 
-> No.
-> 
-> Really, no.
-> 
-> It would be incredibly easy to use this mechanism to break
-> into systems.
->  
-> 
-> > This proposal requires that LSMs and IMA allow the read and setxattr
-> > operations. This should not be a concern since: files with xattr values
-> > are not parsed by the kernel; user space processes are not yet executed.
-> >
-> > It would be possible to include all xattrs in the same file, but this
-> > increases the risk of the kernel being compromised by parsing the content.
-> 
-> The kernel mustn't do this.
+On 11/22/18 9:49 AM, Roberto Sassu wrote:
+> Although rootfs (tmpfs) supports xattrs, they are not set due to the
+> limitation of the cpio format. A new format called 'newcx' was proposed to
+> overcome this limitation.
 
-Mustn't do what?  Store the xattr as separate detached files, 
-include all the xattrs in a single or per security/LSM xattr attribute
-file(s), or either?
+I got email about that format the day before you posted this, by the way.
 
-Mimi
+> However, it looks like that adding a new format is not simple: 15 kernel
+> patches; user space tools must support the new format; mistakes made in the
+> past should be avoided; it is unclear whether the kernel should switch from
+> cpio to tar.
 
+The kernel _can't_ switch from cpio to tar without breaking backwards
+compatability, it could only add tar as a second format it supported (remember
+cpio images can be sideloaded so a new rootfs can be used with an existing
+initramfs, plus existing build systems generate them and would still need to if
+they wanted to keep supporting older kernels), and then once you've got two
+formats somebody will propose zip support, and let's just not go there please.
+
+The changes to the userspace tools are trivial (I say that as the maintainer of
+toybox, which has a cpio). The argument was about things like 64 bit timestamps
+(y2038 problem), nanosecond support, sparse files, etc. And I think the argument
+had largely died down?
+
+Keep in mind the squashfs guy spent 5 years trying to get his filesystem merged
+(https://lwn.net/Articles/563578/), I spent several years trying to get my perl
+removal patch merged (and only work up the enthusiasm to resubmit
+http://lists.busybox.net/pipermail/buildroot/2015-March/123385.html
+https://patchwork.kernel.org/patch/9193529/ https://lkml.org/lkml/2017/9/13/651
+about once a year because dealing with linux-kernel is just no fun for hobbyists
+anymore).
+
+> The aim of this patch is to provide the same functionality without
+> introducing a new format. The value of xattrs is placed in regular files
+> having the same file name as the files xattrs are added to, plus a
+> separator and the xattr name (<filename>.xattr-<xattr name>).
+
+I think you're solving the wrong problem, but that's just my opinion.
+
+Rob
