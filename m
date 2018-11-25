@@ -1,129 +1,142 @@
-Return-Path: <SRS0=R/6G=OD=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=hbz4=OE=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3113C43441
-	for <linux-security-module@archiver.kernel.org>; Sat, 24 Nov 2018 02:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DACAC43441
+	for <linux-security-module@archiver.kernel.org>; Sun, 25 Nov 2018 15:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8511F2082F
-	for <linux-security-module@archiver.kernel.org>; Sat, 24 Nov 2018 02:07:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="N5x89Lif"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8511F2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id C065C20865
+	for <linux-security-module@archiver.kernel.org>; Sun, 25 Nov 2018 15:18:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C065C20865
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729348AbeKXMx4 (ORCPT
+        id S1726115AbeKZCJw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 24 Nov 2018 07:53:56 -0500
-Received: from sonic305-28.consmr.mail.ne1.yahoo.com ([66.163.185.154]:37062
-        "EHLO sonic305-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729344AbeKXMx4 (ORCPT
+        Sun, 25 Nov 2018 21:09:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60370 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726090AbeKZCJw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 24 Nov 2018 07:53:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543025239; bh=sa+lR7ZgzzkySYWvI+bDfjWaBovWZDEHM7o03IW2COo=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=N5x89LifGBU+RB0hXJuB8PavmJ75yDa25OHlvoGU4vcaAeSu3cWKfGncbknxufREI9rYnHXPOGgv17eGiG31mmOK+xi9NNNZusvo2r3OPPwCvQmY3VCVM/BT0Ii8G+xI6LhkqPHTyo/WQGtFuLETgJfNVItqkPk4x8XluNQkqSfCfhORMLdD4gmgHJjd/vIxz0pBv1l1yKf4uuZW3wIK+L9JeYU0DzaW1PKxSY+W6+wkbaoB/vunIQk2uD9k5Jy+XuHMBxald8na0emzbWG+cRskWQzULISjc1t/yEtDRwGGcQcORzDf6DTMpMMhiLwAckL7mrfeBvbU52EdqFfobg==
-X-YMail-OSG: sEHf0k4VM1nGE9PoijP5LS9XHflL_MbN5p.3sR4Ml6XHzNBAZ6SnSYcV_zYflCc
- 2wLXFgJKLvvbCYuCCwpz3y2N0iJk4wh_3v2o0sJNJPtVTAa80HxXEInscIWQVq0aVy3nV8eu.fAW
- _XKhNRAvGT30K_hiVe3G7fxEUa.YoTw6SS42D7kQ9v2loeFttor5.njZD._vTboalIdzZ8Uun7MW
- rvtQtETxDgVP1fFHWg.ZQjvUOtEZHLyYOrflV6r6y26ANR2yBj0Wheawk0FSHrx2FY8ocgF0V6V5
- GhvyHZu95.ltujWvdSWdR3vYdy9r0ABwRZJWqv3SLaR6rWKkk.eE0VgP0OvQMrjosAIN7oJ4lGjO
- K3B4RqaQVgjzPhNLfmYl7dgI_mufpzLKqd9aJGlaGIiv1ovXyhrmOqG69fnEo9aEoTATPo8PczQ5
- r020RGLVUxKdgb0X6UXlGgf1ToZmEQPGQ1SHVy5ivSFHsVyZEWpndRrNSYyzi0UnwRF.b34jLMEr
- hw6vjh3xy018MfHiw0FBpv.EvOvYXYU_2v5cyFKRkcH3d5rHlePxJ8Jhl6I8Cd01Lg6EDYl3JjCg
- zB8a6MOzjivtwvwtwSPJ0a9K5XnLowlMqKMlp5gIZFyq5bQvO65o6y5dLs_2dJXIhFjki0eiT67u
- tjgWjLlk7crxtLdqeFMozAecvoEKNHe08Ig9yUIwy7QtbRD3GrdonAsV06pL63ekABxf29Atdw.G
- dT1zvK5hzo8RTJG_KKiR.wnlST19sUOZ9bV.N0obvJsX5VxdRH5I7fdSFtx7CheAwEAvshSbAp_8
- BEV6.LezXpGKd.dJsAxrhhRq_eHaRn3BpQ7ZGia9Qqj3F55n3cGvQnqMPRNey5QAk2P1NV9FZQPl
- JfZDIZWf0GthvEOULB2KMBtg2_PHi28UN_MlzhJx_6ZsE787SAnZP.6EzSGK11GqqHItfMojG6T1
- 3EGtUsja9VauMEpDnv01UBR1gcLqldxIr5w1HbvWByAqdEWVTJHTrzG6yl05yQ05ple6stwB0_iI
- Ust.napZCvUmBnXcRWmRJ2cSk2JbhyHFBW0UVRFh80SQyjmUOoXDfLE5qTqKau5vIYi2SxKYU8Iy
- Fo0YVucgXBX4-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Sat, 24 Nov 2018 02:07:19 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp428.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 90f505ce1fb503747a7ed7a030947d41;
-          Sat, 24 Nov 2018 02:07:16 +0000 (UTC)
-Subject: Re: [RFC][PATCH] fs: set xattrs in initramfs from regular files
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, initramfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        dmitry.kasatkin@huawei.com, takondra@cisco.com, kamensky@cisco.com,
-        hpa@zytor.com, arnd@arndb.de, rob@landley.net,
-        james.w.mcmechan@gmail.com
-References: <20181122154942.18262-1-roberto.sassu@huawei.com>
- <3d1bfbd7-7d45-4cf1-32d6-7f6985b42393@schaufler-ca.com>
- <1543001453.4298.23.camel@linux.ibm.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <6d6f3a60-7c80-4107-6d9b-be3d53cefefc@schaufler-ca.com>
-Date:   Fri, 23 Nov 2018 18:07:13 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1543001453.4298.23.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Sun, 25 Nov 2018 21:09:52 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAPFEafH057442
+        for <linux-security-module@vger.kernel.org>; Sun, 25 Nov 2018 10:18:34 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nymdv78tg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Sun, 25 Nov 2018 10:18:34 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Sun, 25 Nov 2018 15:18:32 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 25 Nov 2018 15:18:27 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAPFIPni41484394
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 25 Nov 2018 15:18:25 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A8FDA4C046;
+        Sun, 25 Nov 2018 15:18:25 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C27634C040;
+        Sun, 25 Nov 2018 15:18:21 +0000 (GMT)
+Received: from swastik.ibmuc.com (unknown [9.85.72.131])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 25 Nov 2018 15:18:21 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
+        mpe@ellerman.id.au, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH 0/7] add platform/firmware keys support for kernel verification by IMA 
+Date:   Sun, 25 Nov 2018 20:44:53 +0530
+X-Mailer: git-send-email 2.13.6
+X-TM-AS-GCONF: 00
+x-cbid: 18112515-0028-0000-0000-000003213452
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112515-0029-0000-0000-000023DD3549
+Message-Id: <20181125151500.8298-1-nayna@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-25_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811250071
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/23/2018 11:30 AM, Mimi Zohar wrote:
-> On Fri, 2018-11-23 at 11:03 -0800, Casey Schaufler wrote:
->> On 11/22/2018 7:49 AM, Roberto Sassu wrote:
->>> Although rootfs (tmpfs) supports xattrs, they are not set due to the
->>> limitation of the cpio format. A new format called 'newcx' was proposed to
->>> overcome this limitation.
->>>
->>> However, it looks like that adding a new format is not simple: 15 kernel
->>> patches; user space tools must support the new format; mistakes made in the
->>> past should be avoided; it is unclear whether the kernel should switch from
->>> cpio to tar.
->>>
->>> The aim of this patch is to provide the same functionality without
->>> introducing a new format. The value of xattrs is placed in regular files
->>> having the same file name as the files xattrs are added to, plus a
->>> separator and the xattr name (<filename>.xattr-<xattr name>).
->>>
->>> Example:
->>>
->>> '/bin/cat.xattr-security.ima' is the name of a file containing the value of
->>> the security.ima xattr to be added to /bin/cat.
->>>
->>> At kernel initialization time, the kernel iterates over the rootfs
->>> filesystem, and if it encounters files with the '.xattr-' separator, it
->>> reads the content and adds the xattr to the file without the suffix.
->> No.
->>
->> Really, no.
->>
->> It would be incredibly easy to use this mechanism to break
->> into systems.
->>  
->>
->>> This proposal requires that LSMs and IMA allow the read and setxattr
->>> operations. This should not be a concern since: files with xattr values
->>> are not parsed by the kernel; user space processes are not yet executed.
->>>
->>> It would be possible to include all xattrs in the same file, but this
->>> increases the risk of the kernel being compromised by parsing the content.
->> The kernel mustn't do this.
-> Mustn't do what?  Store the xattr as separate detached files, 
-> include all the xattrs in a single or per security/LSM xattr attribute
-> file(s), or either?
+On secure boot enabled systems, a verified kernel may need to kexec
+additional kernels. For example, it may be used as a bootloader needing
+to kexec a target kernel or it may need to kexec a crashdump kernel.
+In such cases, it may want to verify the signature of the next kernel
+image.
 
-Any and all of the above. The proposed behavior is a kludge
-around making the installation tools work correctly. Sure, it
-may be easier to change the kernel than to change the utilities.
-That's doesn't make it right.
+It is possible that the new kernel image is signed with third party keys
+which are stored as platform or firmware keys in the 'db' variable. The
+kernel, however, can not directly verify these platform keys, and an
+administrator may therefore not want to trust them for arbitrary usage.
+In order to differentiate platform keys from other keys and provide the
+necessary separation of trust the kernel needs an additional keyring to
+store platform/firmware keys.
 
->
-> Mimi
->
->
+The secure boot key database is expected to store the keys as EFI
+Signature List(ESL). The patch set uses David Howells and Josh Boyer's
+patch to access and parse the ESL to extract the certificates and load
+them onto the platform keyring.
+
+The last patch in this patch set adds support for IMA-appraisal to
+verify the kexec'ed kernel image based on keys stored in the platform
+keyring.
+
+Changelog:
+
+v0:
+- The original patches loaded the certificates onto the secondary
+  trusted keyring. This patch set defines a new keyring named
+  ".platform" and adds the certificates to this new keyring  
+- removed CONFIG EFI_SIGNATURE_LIST_PARSER and LOAD_UEFI_KEYS
+- moved files from certs/ to security/integrity/platform_certs/
+
+Dave Howells (2):
+  efi: Add EFI signature data types
+  efi: Add an EFI signature blob parser
+
+Josh Boyer (2):
+  efi: Import certificates from UEFI Secure Boot
+  efi: Allow the "db" UEFI variable to be suppressed
+
+Nayna Jain (3):
+  integrity: define a trusted platform keyring
+  integrity: load certs to the platform keyring
+  ima: support platform keyring for kernel appraisal
+
+ include/linux/efi.h                                |  34 ++++
+ security/integrity/Kconfig                         |  11 ++
+ security/integrity/Makefile                        |   5 +
+ security/integrity/digsig.c                        | 115 ++++++++----
+ security/integrity/ima/ima_appraise.c              |  11 +-
+ security/integrity/integrity.h                     |  23 ++-
+ security/integrity/platform_certs/efi_parser.c     | 112 ++++++++++++
+ security/integrity/platform_certs/load_uefi.c      | 192 +++++++++++++++++++++
+ .../integrity/platform_certs/platform_keyring.c    |  62 +++++++
+ 9 files changed, 527 insertions(+), 38 deletions(-)
+ create mode 100644 security/integrity/platform_certs/efi_parser.c
+ create mode 100644 security/integrity/platform_certs/load_uefi.c
+ create mode 100644 security/integrity/platform_certs/platform_keyring.c
+
+-- 
+2.13.6
 
