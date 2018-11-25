@@ -2,56 +2,55 @@ Return-Path: <SRS0=hbz4=OE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10644C43441
-	for <linux-security-module@archiver.kernel.org>; Sun, 25 Nov 2018 15:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD36CC43441
+	for <linux-security-module@archiver.kernel.org>; Sun, 25 Nov 2018 15:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74BD20865
-	for <linux-security-module@archiver.kernel.org>; Sun, 25 Nov 2018 15:19:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74BD20865
+	by mail.kernel.org (Postfix) with ESMTP id 775DB20865
+	for <linux-security-module@archiver.kernel.org>; Sun, 25 Nov 2018 15:19:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 775DB20865
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726226AbeKZCKU (ORCPT
+        id S1726923AbeKZCKc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 25 Nov 2018 21:10:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54504 "EHLO
+        Sun, 25 Nov 2018 21:10:32 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44922 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726739AbeKZCKT (ORCPT
+        by vger.kernel.org with ESMTP id S1726916AbeKZCKb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 25 Nov 2018 21:10:19 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAPFEWVc129329
-        for <linux-security-module@vger.kernel.org>; Sun, 25 Nov 2018 10:19:02 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nymnsf1uw-1
+        Sun, 25 Nov 2018 21:10:31 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAPFEfJe131728
+        for <linux-security-module@vger.kernel.org>; Sun, 25 Nov 2018 10:19:14 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nyn6jx8kb-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Sun, 25 Nov 2018 10:19:02 -0500
+        for <linux-security-module@vger.kernel.org>; Sun, 25 Nov 2018 10:19:14 -0500
 Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Sun, 25 Nov 2018 15:19:00 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sun, 25 Nov 2018 15:19:12 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 25 Nov 2018 15:18:56 -0000
+        Sun, 25 Nov 2018 15:19:07 -0000
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAPFItJM39321734
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAPFJ5Qj61669574
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 25 Nov 2018 15:18:55 GMT
+        Sun, 25 Nov 2018 15:19:05 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1606C4C044;
-        Sun, 25 Nov 2018 15:18:55 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id B24984C044;
+        Sun, 25 Nov 2018 15:19:05 +0000 (GMT)
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6F574C046;
-        Sun, 25 Nov 2018 15:18:50 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 414724C040;
+        Sun, 25 Nov 2018 15:19:02 +0000 (GMT)
 Received: from swastik.ibmuc.com (unknown [9.85.72.131])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 25 Nov 2018 15:18:50 +0000 (GMT)
+        Sun, 25 Nov 2018 15:19:01 +0000 (GMT)
 From:   Nayna Jain <nayna@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
@@ -59,18 +58,17 @@ Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
         dhowells@redhat.com, jforbes@redhat.com,
         seth.forshee@canonical.com, kexec@lists.infradead.org,
         keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au, Josh Boyer <jwboyer@fedoraproject.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH 5/7] efi: Import certificates from UEFI Secure Boot
-Date:   Sun, 25 Nov 2018 20:44:58 +0530
+        mpe@ellerman.id.au, Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH 7/7] ima: Support platform keyring for kernel appraisal
+Date:   Sun, 25 Nov 2018 20:45:00 +0530
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20181125151500.8298-1-nayna@linux.ibm.com>
 References: <20181125151500.8298-1-nayna@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18112515-0028-0000-0000-00000321345A
+x-cbid: 18112515-0008-0000-0000-000002983C20
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112515-0029-0000-0000-000023DD3552
-Message-Id: <20181125151500.8298-6-nayna@linux.ibm.com>
+x-cbparentid: 18112515-0009-0000-0000-0000220278E9
+Message-Id: <20181125151500.8298-8-nayna@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-25_14:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -82,246 +80,44 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Josh Boyer <jwboyer@fedoraproject.org>
+On secure boot enabled systems, the bootloader verifies the kernel
+image and possibly the initramfs signatures based on a set of keys. A
+soft reboot(kexec) of the system, with the same kernel image and
+initramfs, requires access to the original keys to verify the
+signatures.
 
-New Patch Description:
-======================
+This patch allows IMA-appraisal access to those original keys, now
+loaded on the platform keyring, needed for verifying the kernel image
+and initramfs signatures.
 
-Secure Boot stores a list of allowed certificates in the 'db' variable.
-This patch imports those certificates into the platform keyring. The shim
-UEFI bootloader has a similar certificate list stored in the 'MokListRT'
-variable. We import those as well.
-
-Secure Boot also maintains a list of disallowed certificates in the 'dbx'
-variable. We load those certificates into the system blacklist keyring
-and forbid any kernel signed with those from loading.
-
-Original Patch Description:
-============================
-
-Secure Boot stores a list of allowed certificates in the 'db' variable.
-This imports those certificates into the system trusted keyring.  This
-allows for a third party signing certificate to be used in conjunction
-with signed modules. By importing the public certificate into the 'db'
-variable, a user can allow a module signed with that certificate to
-load. The shim UEFI bootloader has a similar certificate list stored
-in the 'MokListRT' variable. We import those as well.
-
-Secure Boot also maintains a list of disallowed certificates in the 'dbx'
-variable. We load those certificates into the newly introduced system
-blacklist keyring and forbid any module signed with those from loading and
-forbid the use within the kernel of any key with a matching hash.
-
-This facility is enabled by setting CONFIG_LOAD_UEFI_KEYS.
-
-Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
-Changelog:
+ security/integrity/ima/ima_appraise.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-v0:
-- This patch replaces the loading of certificates onto the secondary
-  keyring with platform keyring
-- removed the CONFIG LOAD_UEFI_KEYS
-- moved the file load_uefi.o from certs to
-  security/integrity/platform_certs
-
- security/integrity/Makefile                   |   5 +-
- security/integrity/platform_certs/load_uefi.c | 168 ++++++++++++++++++++++++++
- 2 files changed, 172 insertions(+), 1 deletion(-)
- create mode 100644 security/integrity/platform_certs/load_uefi.c
-
-diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-index 6ee9058866cd..86df9aba8c0f 100644
---- a/security/integrity/Makefile
-+++ b/security/integrity/Makefile
-@@ -10,7 +10,10 @@ integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
- integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
- integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
- integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
--						  platform_certs/efi_parser.o
-+						  platform_certs/efi_parser.o \
-+						  platform_certs/load_uefi.o
-+obj-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/load_uefi.o
-+$(obj)/load_uefi.o: KBUILD_CFLAGS += -fshort-wchar
- 
- subdir-$(CONFIG_IMA)			+= ima
- obj-$(CONFIG_IMA)			+= ima/
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-new file mode 100644
-index 000000000000..dbccb45147ef
---- /dev/null
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -0,0 +1,168 @@
-+#include <linux/kernel.h>
-+#include <linux/sched.h>
-+#include <linux/cred.h>
-+#include <linux/err.h>
-+#include <linux/efi.h>
-+#include <linux/slab.h>
-+#include <keys/asymmetric-type.h>
-+#include <keys/system_keyring.h>
-+#include "../integrity.h"
-+
-+static __initdata efi_guid_t efi_cert_x509_guid = EFI_CERT_X509_GUID;
-+static __initdata efi_guid_t efi_cert_x509_sha256_guid = EFI_CERT_X509_SHA256_GUID;
-+static __initdata efi_guid_t efi_cert_sha256_guid = EFI_CERT_SHA256_GUID;
-+
-+/*
-+ * Get a certificate list blob from the named EFI variable.
-+ */
-+static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
-+				  unsigned long *size)
-+{
-+	efi_status_t status;
-+	unsigned long lsize = 4;
-+	unsigned long tmpdb[4];
-+	void *db;
-+
-+	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
-+	if (status != EFI_BUFFER_TOO_SMALL) {
-+		pr_err("Couldn't get size: 0x%lx\n", status);
-+		return NULL;
-+	}
-+
-+	db = kmalloc(lsize, GFP_KERNEL);
-+	if (!db) {
-+		pr_err("Couldn't allocate memory for uefi cert list\n");
-+		return NULL;
-+	}
-+
-+	status = efi.get_variable(name, guid, NULL, &lsize, db);
-+	if (status != EFI_SUCCESS) {
-+		kfree(db);
-+		pr_err("Error reading db var: 0x%lx\n", status);
-+		return NULL;
-+	}
-+
-+	*size = lsize;
-+	return db;
-+}
-+
-+/*
-+ * Blacklist an X509 TBS hash.
-+ */
-+static __init void uefi_blacklist_x509_tbs(const char *source,
-+					   const void *data, size_t len)
-+{
-+	char *hash, *p;
-+
-+	hash = kmalloc(4 + len * 2 + 1, GFP_KERNEL);
-+	if (!hash)
-+		return;
-+	p = memcpy(hash, "tbs:", 4);
-+	p += 4;
-+	bin2hex(p, data, len);
-+	p += len * 2;
-+	*p = 0;
-+
-+	mark_hash_blacklisted(hash);
-+	kfree(hash);
-+}
-+
-+/*
-+ * Blacklist the hash of an executable.
-+ */
-+static __init void uefi_blacklist_binary(const char *source,
-+					 const void *data, size_t len)
-+{
-+	char *hash, *p;
-+
-+	hash = kmalloc(4 + len * 2 + 1, GFP_KERNEL);
-+	if (!hash)
-+		return;
-+	p = memcpy(hash, "bin:", 4);
-+	p += 4;
-+	bin2hex(p, data, len);
-+	p += len * 2;
-+	*p = 0;
-+
-+	mark_hash_blacklisted(hash);
-+	kfree(hash);
-+}
-+
-+/*
-+ * Return the appropriate handler for particular signature list types found in
-+ * the UEFI db and MokListRT tables.
-+ */
-+static __init efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type)
-+{
-+	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0)
-+		return add_to_platform_keyring;
-+	return 0;
-+}
-+
-+/*
-+ * Return the appropriate handler for particular signature list types found in
-+ * the UEFI dbx and MokListXRT tables.
-+ */
-+static __init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type)
-+{
-+	if (efi_guidcmp(*sig_type, efi_cert_x509_sha256_guid) == 0)
-+		return uefi_blacklist_x509_tbs;
-+	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) == 0)
-+		return uefi_blacklist_binary;
-+	return 0;
-+}
-+
-+/*
-+ * Load the certs contained in the UEFI databases
-+ */
-+static int __init load_uefi_certs(void)
-+{
-+	efi_guid_t secure_var = EFI_IMAGE_SECURITY_DATABASE_GUID;
-+	efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
-+	void *db = NULL, *dbx = NULL, *mok = NULL;
-+	unsigned long dbsize = 0, dbxsize = 0, moksize = 0;
-+	int rc = 0;
-+
-+	if (!efi.get_variable)
-+		return false;
-+
-+	/* Get db, MokListRT, and dbx.  They might not exist, so it isn't
-+	 * an error if we can't get them.
-+	 */
-+	db = get_cert_list(L"db", &secure_var, &dbsize);
-+	if (!db) {
-+		pr_err("Couldn't get UEFI db list\n");
-+	} else {
-+		rc = parse_efi_signature_list("UEFI:db",
-+					      db, dbsize, get_handler_for_db);
-+		if (rc)
-+			pr_err("Couldn't parse db signatures: %d\n", rc);
-+		kfree(db);
-+	}
-+
-+	mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
-+	if (!mok) {
-+		pr_info("Couldn't get UEFI MokListRT\n");
-+	} else {
-+		rc = parse_efi_signature_list("UEFI:MokListRT",
-+					      mok, moksize, get_handler_for_db);
-+		if (rc)
-+			pr_err("Couldn't parse MokListRT signatures: %d\n", rc);
-+		kfree(mok);
-+	}
-+
-+	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
-+	if (!dbx) {
-+		pr_info("Couldn't get UEFI dbx list\n");
-+	} else {
-+		rc = parse_efi_signature_list("UEFI:dbx",
-+					      dbx, dbxsize,
-+					      get_handler_for_dbx);
-+		if (rc)
-+			pr_err("Couldn't parse dbx signatures: %d\n", rc);
-+		kfree(dbx);
-+	}
-+
-+	return rc;
-+}
-+late_initcall(load_uefi_certs);
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index deec1804a00a..9c13585e7d3e 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -294,7 +294,16 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 					     iint->ima_hash->length);
+ 		if (rc == -EOPNOTSUPP) {
+ 			status = INTEGRITY_UNKNOWN;
+-		} else if (rc) {
++			break;
++		}
++		if (rc && func == KEXEC_KERNEL_CHECK)
++			rc = integrity_digsig_verify(
++					INTEGRITY_KEYRING_PLATFORM,
++					(const char *)xattr_value,
++					xattr_len,
++					iint->ima_hash->digest,
++					iint->ima_hash->length);
++		if (rc) {
+ 			cause = "invalid-signature";
+ 			status = INTEGRITY_FAIL;
+ 		} else {
 -- 
 2.13.6
 
