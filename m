@@ -2,56 +2,56 @@ Return-Path: <SRS0=4Wmn=OF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 724F0C43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FD2C43441
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2663B208E7
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2A9E208E4
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:27:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="P77Plwwl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2663B208E7
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="p/JeJBcA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2A9E208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbeK0KSi (ORCPT
+        id S1726448AbeK0KWp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:18:38 -0500
-Received: from sonic304-28.consmr.mail.ne1.yahoo.com ([66.163.191.154]:37272
-        "EHLO sonic304-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726888AbeK0KSh (ORCPT
+        Tue, 27 Nov 2018 05:22:45 -0500
+Received: from sonic302-28.consmr.mail.ne1.yahoo.com ([66.163.186.154]:39867
+        "EHLO sonic302-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726634AbeK0KWk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:18:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543274570; bh=K00PF8JPHI9bzQkvZYFvbvZvCj8ZciWak9UFgtmEYGM=; h=To:From:Cc:Subject:Date:From:Subject; b=P77PlwwldKhx7WDgHxODiQghD3cgX8B1POIIXPAAYPXolZjhde4+49lP4496a4KJt+1sc/3sDypCeE7B6Ehlqe4njM4LQxKx6NWNdTHfnSW4ldvYwt8TnoFrW2q9E8dxxYkSkSrg/ClZ6k5NtqmfgqkOMB4fDqIGhGXIndBDuTWSITcKfPh7DPTDqODAyFV5RSaa/TZX/ILRz7L+J7I1IAwW95ULPHBQ+i67rGApbt7OBEeycmzSY1O79XvNC9jciHH3pIzxQqUB2flYSxvABd/B++GMESfnV7XjwPzrqgu0Z/rAcIdBFSVEG/+tpdl2YGDoMp1LBcWb2NHmxzbe7A==
-X-YMail-OSG: 6Q7.LAIVM1m4Fez3pCSkMFjN7RHq4tGQ2d8qWA8QC29yA8VKM6UYLP5Jzwcg2d0
- PNg.JVoZOrw7yapUd6mQE2TVbHQ8SDBAUc4wLAO0XKqUjNzO.FDqccHs77e5_kdMuO8XeJVqC8nX
- pfpzUJC75UWB8bCd97DMRPyHd5WYw9XtBo7Aa5zXJW4YK_gnOFTMZIukOpVMkaTzK9138d7i0Fk_
- DYkGHsqz3BS1B4H4lIUcIo3XDxsE1zPNF0cT5DTaUxWJL2vwx0PB9s.jeWX6SuOYMEbGOuyjwXKz
- oXQWrI51vaTQbzYFD_6JKfyTpP7t7CIL0f1y1.FaUm2Nio_LqjPT0ypt_A6XqEcEKuOaH.l3xq4Q
- D8TG0TyEMT2B3aFzf.clF1mfjYplPVBqfRTlLJLKeF7VzS_q_l9dCk1sj5v9FvET1.jf.aoGfLLb
- M1elctMf.wAAxrr0vsn04UsTVyViFN7PGYyQUCI8IpXInvtZXCDAtAGVilPOAt73qrTm5d4Yre8l
- VdW87xq4KnkwPqaUe3D0zHvJojFYD4Fbs9.9_3vb6GJFpKYyKctrKvBrOFZLapE6nj70pvTvM9g9
- ZVHJw.iDOfomFMjOhUhBykV8OV.N9p6ln2GSxBaRNB_.BUarSGqpAG9yZQJyX62Wt9m3z9DPMvhB
- fuE5x.78H0cGv.RdDg.1SEJs1QLlikT.2CUbnFCXx4.FEqgMcnI9lITGBo31uFgPuNalxXG2xX6C
- UoFQGB4u6YHkua16Xn_PF7OaC0l53AVsj.3Fb895nI1oGMoTAIM0wJBtlgP0kuW0UhFIP1wttQga
- euRdtD17jr.4kR.g6bS8l1TIE6lOqDcMzbGcc8DTPbSAe90DOcK29QfR7oDHaSMI1B.tipOhP_72
- Vr.OKIS3MWsQjM9Q1vq9nW3sZ6lGeGvM7k1RGeDE7Fb2cL5tOjqCRU8j.7yQ6SYDMu97aPVSoKwf
- QcTwwkFTBirrzXC18xhB6gkueZvworL8P5A0S2T.zf8_SCjTpvWQgjm6ntFIt3Olk.3385y1h.31
- ICiVmoeoz5i3bMksNMUKT5C22gerfgQBDArHTAnU7d3eYzyy75ziJAHuWNFm8uzXfqiWn1HMkzUD
- PQUwdlqnKvrE_.vxxfgk4d29wkqVJc4KsQCHBOi9BOTc1bTMHoWg1dYU-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:22:50 +0000
+        Tue, 27 Nov 2018 05:22:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543274812; bh=mdy2YdUdtSJS+oWKPUtutk2c4C3wLLPLrYrGLBo+7N8=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=p/JeJBcAiLq17bJWVyy9tmqSP1VEwJZOxnPc5f/lLRd/r24uHLo5Jj5vB4DxOiPp+PqNP4btZVhrO/f7N7UFBHPho1QWjA+3r9DQ+To9eHCBmnqiZgESLcsdnxIfpc0cFNBqQcMKp9padW3OVs99MkPkOWMt61KpYfWTcS3cOeOBi6LA5q1XoIjIWtHTjthBgC9l3ZKJTVnEkelrQMmwMsMNsoey3EXOW3Da3Mzypb7IG1GUUhm/fRQM/vCUPPamOKO08Kvxj3JR7ujLn3TxlO8nmgaSRcqNcqgpO+pCWjGjbuN/uULTdAD/dLLAD3zz6ZS7QyzTM8DgpM6dUonAug==
+X-YMail-OSG: _cZQ2iYVM1k_4JyYuTwv5LfT8_Pl6w2BJwh10yHM6HKOlwiM9HZM8KBI9.G_MuT
+ bwg2kme0j3iFs.tRkrbx8OamVLTGVyPKX2w3EmL.NERv0K8rVVe9P1u5yB9Z_U92F1ZjEgtfiPdZ
+ .VfZN2GAP5FEgnNjWDMsIAokUDD1awKLHKT5K92bZ9A3q3F3pCOrJtC4BR.UTj7tTiZ3DRYVbdhA
+ FabhdXlJh4Wje7lFxbRafA84MpkjIDHZ_kHhlreqGBeSjTyf5OpJJl4p98T5GsA8WlrGYlRmC7p4
+ mtP6b1Z0gVfwXDFlOnFs5V.MJyvkgsa_ajHTEZqIcpuBM22LlGLlwCXsnR6uLzJTd2n8Nk8A4Mm3
+ zjHsHcPtMBQXvq.r5DKWhQffgUQyPnG6Ofy9d6jjJBKV2i5ZvHFHAfIsRxkKbUYFBET.gY2FZKty
+ As_0qWpU7jcx1t0FfyCziDJhWrvvdDv6E0Q4ROcX2Ls7N1J_betq_xGWRrkzcu6pW6nnotMN8znK
+ Fgp1fInBGIDm2BIMFJMjES8TmMSkU6pth1WGdMpUR1lesOSDgPdu8XntHF.wZr56CtQQ3CevdjYx
+ lpKUbKg.7iJjKB.cOC1QVs8XhGTcTEl3gtWLKmhTwdF3rxxNnZ8PGioNIt7QTBytqK2nZADcuMTo
+ i6N.FRJ3yxB9lp53KcGZPc.exxIH3RlAjvM7ZF0cYP.CwR.d4LeUGL.smD3wj3jq5i91Tqx6fGmu
+ fD5UFyWGSE2WppJ.7lJGezJWvWTcor.w5nU.s7vsIvuJlLLGjJPCbduoKYXfrZDGWvLSrUn__IHk
+ 9HT3LXk4ZnBafsviOxfP_HpcJHT5Y7__6kQhxhKbkszrkI6b9H2XIDTqDe06bxrs5ZydK_4R.tFr
+ VbnpH03B8K.K0t8.JY7gQopntEmC0ZmbQW02EuRmKMqtlSOrmvHPbMV2IYcFG_gsfSZMSihdDmOx
+ 2rm694vb6SUmCIuB8WquVB48inQE7jj5eN87cN2ne15E0GVoRytammRF9Gzv7zIZQ6r.2tLtQrx0
+ ZWL8DJDooA2CAA8eyR3.wcGt1RqTWrYbCKbkgcBxhlJ8WZ3PwvN6v8_8iEIt.bf7Xuz9APQbwuH7
+ Iz9jP79eExK8Ie0hKLNee4o9EqUEwgJW41NY-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:26:52 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp428.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 7d36ae424f480cb3fa200502c1ff140e;
-          Mon, 26 Nov 2018 23:22:46 +0000 (UTC)
+          by smtp429.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 29dff8d62ab536d21f7d336a2d7a212f;
+          Mon, 26 Nov 2018 23:26:49 +0000 (UTC)
+Subject: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
 To:     James Morris <jmorris@namei.org>,
         LSM <linux-security-module@vger.kernel.org>,
         LKLM <linux-kernel@vger.kernel.org>,
         SE Linux <selinux@tycho.nsa.gov>
-From:   Casey Schaufler <casey@schaufler-ca.com>
 Cc:     John Johansen <john.johansen@canonical.com>,
         Kees Cook <keescook@chromium.org>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
@@ -60,14 +60,15 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
-Message-ID: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:22:43 -0800
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:26:46 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -75,87 +76,83 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-v5: Include Kees Cook's rework of the lsm command
-    line interface. Stacking is not conditional.
-v4: Finer granularity in the patches and other
-    cleanups suggested by Kees Cook.
-    Removed dead code created by the removal of SELinux
-    credential blob poisoning.
-v3: Add ipc blob for SARA and task blob for Landlock.
-    Removing the SELinux cred blob pointer poisoning
-    results selinux_is_enabled() being unused, so it and
-    all it's overhead has been removed.
-    Broke up the cred infrastructure patch.
-v2: Reduce the patchset to what is required to support
-    the proposed SARA and LandLock security modules
+This adds a flag for the current "major" LSMs to distinguish them when
+we have a universal method for ordering all LSMs. It's called "legacy"
+since the distinction of "major" will go away in the blob-sharing world.
 
-The SARA security module is intended to be used
-in conjunction with other security modules. It requires
-state to be maintained for the credential, which
-in turn requires a mechanism for sharing the credential
-security blob. It also uses the ipc security blob. The
-module also requires mechanism for user space manipulation
-of the credential information, hence an additional
-subdirectory in /proc/.../attr.
-
-The LandLock security module provides user configurable
-policy in the secmark mechanism. It requires data in
-the credential, file, inode and task security blobs. For
-this to be used along side the existing "major" security
-modules mechanism for sharing these blobs are provided.
-
-A side effect of providing sharing of the crendential
-security blob is that the TOMOYO module can be used at
-the same time as the other "major" modules. The "security="
-option works as before. A new "lsm=" option allows the
-order of module execution to be supplied at boot time.
-
-The security module stacking issues around networking and
-IPC are not addressed here as they are beyond what is
-required for TOMOYO, SARA and LandLock.
-
-git://github.com/cschaufler/lsm-stacking.git#blob-4.20-rc2
-
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
 ---
- Documentation/admin-guide/LSM/index.rst         |  13 +-
- Documentation/admin-guide/kernel-parameters.txt |   4 +
- fs/proc/base.c                                  |  64 ++-
- fs/proc/internal.h                              |   1 +
- include/linux/cred.h                            |   1 -
- include/linux/lsm_hooks.h                       |  40 +-
- include/linux/security.h                        |  15 +-
- include/linux/selinux.h                         |  35 --
- kernel/cred.c                                   |  13 -
- security/Kconfig                                |  41 +-
- security/apparmor/Kconfig                       |  16 -
- security/apparmor/domain.c                      |   2 +-
- security/apparmor/include/cred.h                |  16 +-
- security/apparmor/include/file.h                |   5 +-
- security/apparmor/include/lib.h                 |   4 +
- security/apparmor/include/task.h                |  18 +-
- security/apparmor/lsm.c                         |  65 ++-
- security/apparmor/task.c                        |   6 +-
- security/commoncap.c                            |   9 +-
- security/loadpin/loadpin.c                      |   8 +-
- security/security.c                             | 635 +++++++++++++++++++++---
- security/selinux/Kconfig                        |  15 -
- security/selinux/Makefile                       |   2 +-
- security/selinux/exports.c                      |  23 -
- security/selinux/hooks.c                        | 345 ++++---------
- security/selinux/include/audit.h                |   3 -
- security/selinux/include/objsec.h               |  38 +-
- security/selinux/selinuxfs.c                    |   4 +-
- security/selinux/ss/services.c                  |   1 -
- security/selinux/xfrm.c                         |   4 +-
- security/smack/smack.h                          |  44 +-
- security/smack/smack_access.c                   |   4 +-
- security/smack/smack_lsm.c                      | 316 ++++--------
- security/smack/smackfs.c                        |  18 +-
- security/tomoyo/common.h                        |  22 +-
- security/tomoyo/domain.c                        |   4 +-
- security/tomoyo/securityfs_if.c                 |  15 +-
- security/tomoyo/tomoyo.c                        |  49 +-
- security/yama/yama_lsm.c                        |   8 +-
- 39 files changed, 1133 insertions(+), 793 deletions(-)
+ include/linux/lsm_hooks.h  | 3 +++
+ security/apparmor/lsm.c    | 1 +
+ security/selinux/hooks.c   | 1 +
+ security/smack/smack_lsm.c | 1 +
+ security/tomoyo/tomoyo.c   | 1 +
+ 5 files changed, 7 insertions(+)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index aaeb7fa24dc4..63c0e102de20 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2039,8 +2039,11 @@ extern char *lsm_names;
+ extern void security_add_hooks(struct security_hook_list *hooks, int count,
+ 				char *lsm);
+ 
++#define LSM_FLAG_LEGACY_MAJOR	BIT(0)
++
+ struct lsm_info {
+ 	const char *name;	/* Required. */
++	unsigned long flags;	/* Optional: flags describing LSM */
+ 	int (*init)(void);	/* Required. */
+ };
+ 
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 42446a216f3b..2edd35ca5044 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1728,5 +1728,6 @@ static int __init apparmor_init(void)
+ 
+ DEFINE_LSM(apparmor) = {
+ 	.name = "apparmor",
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.init = apparmor_init,
+ };
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 7ce683259357..56c6f1849c80 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7209,6 +7209,7 @@ void selinux_complete_init(void)
+    all processes and objects when they are created. */
+ DEFINE_LSM(selinux) = {
+ 	.name = "selinux",
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.init = selinux_init,
+ };
+ 
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 81fb4c1631e9..3639e55b1f4b 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4891,5 +4891,6 @@ static __init int smack_init(void)
+  */
+ DEFINE_LSM(smack) = {
+ 	.name = "smack",
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.init = smack_init,
+ };
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 1b5b5097efd7..09f7af130d3a 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -552,5 +552,6 @@ static int __init tomoyo_init(void)
+ 
+ DEFINE_LSM(tomoyo) = {
+ 	.name = "tomoyo",
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.init = tomoyo_init,
+ };
+-- 
+2.14.5
+
 
