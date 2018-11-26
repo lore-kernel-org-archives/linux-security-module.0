@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52257C43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD083C43441
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15253208E4
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:28:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61BF6208E4
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:29:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jxSfTQKi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15253208E4
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="g8Z+N/JB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61BF6208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeK0KYf (ORCPT
+        id S1727684AbeK0KZb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:24:35 -0500
-Received: from sonic302-28.consmr.mail.ne1.yahoo.com ([66.163.186.154]:46283
-        "EHLO sonic302-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727456AbeK0KYf (ORCPT
+        Tue, 27 Nov 2018 05:25:31 -0500
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com ([66.163.191.154]:45809
+        "EHLO sonic304-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727244AbeK0KZb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:24:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543274928; bh=312IAhYZpl8ub+eZq6+4gtdGxApt35wUQovj9MI+k8s=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=jxSfTQKiXJNJOIBP6MKetpVELei/t6KLUZ8Z8L/uezkH318j8B+3NFFpQrNPLgFZ7CsqeLWoDL/vzUuVxA9Oz9FZRiOVK9xuVB2icuCdbs84j9g/s1KoNpxCLAq5U5oTdHQSxWBy5ldN7LBoQn/AVitL1u60L9jGM1CetlBNT8b7sIpS3ljtlQHjm0Tpwz1njUVdXHkyFs4vTpGRIZEhdyhLMQjCP3v8NZd3V1ULfECg8AXnNqk7GY9NaSr6dN9aIoc+Y69J0H2n2tLaUWCT/0OiNQSTQYbcgHUP8CseZ4oKMprivpZCPXs0jGXAMRz4H8C1UrVkPhgyJ+om9DryLA==
-X-YMail-OSG: ZRU9.DsVM1lZhUH8LFy0FYsBONEzzJH5xVBuACBIohjVWeCKGsW68MkoQgyCA2_
- H7XvjpEdVzTK6JHIjFDZLubD67fZT01qny2n3vvIUJKQa.5T.33NBzSHYkqbSqG5FhEUTP5xeO0f
- 1nwIw54uYxFH0oxAcHlZjTB5HljMpzE5w4jPm0DilTnE0QRss_xzppNWg.AUtK2ki2AWHCy.nhy5
- vikiqbNBqPYWRlShr8mWPhXH_eleC6r_hmq.BTSZdzbQcbvYLQe4Po9G9wj6gsErWbdU.DJwJewQ
- 1_v9x_KaMGW1FwBduaen1iN1R_oyBhlF9JQG_XZvmQAnHJR9MZUKmadPkPcS60p0tilJPEwwm2vC
- iieibhzBG0evktE_jRnfjT.QfWXmdnxvY6szkc2D3_5SO1L0s8O_KokmTU6jYUMW_9vHaNo86Tws
- 41Huz77RY8EzcAH.MKp3vku5CRqaTBk0x4YSa1XsZyO_dBKQ6PN3VED8p5wDXgSepE3k1YGW4Ytu
- CodmcfbBpP_XLtP5EqwCu.oN7MhHz.0qlNeTvmWf87GM7OAnLi2lzgFdQyTR_UU9GQql_hYF0H9t
- da31R6Su9cx7_e0jqwfq4oa8h.9crg.f4vlH4Yf0eKDjDb_Ppe9FpZLc2_40R7ToYX0DNnjkIDF6
- 1At9wVXmGRGwwTqIUsPBNeESHaDWoDNRDDo.zp1KXJ1qxG66nZivxw6TD2IrQ4HGAubhJXE9Zwr3
- ULmitct8p3Nb0WQrccxrbEktBt6nlUB0JQYRxpeOn740eEmrKwMNtougjgFulRhIHencW8ZdbQ.Y
- VPP7hd5oqhfv3cd4kHA_QGR2ywdbDW_z5eC.n0Yg29XUyNxFALP32ewPmZmw7yPi5GcshU33mSgU
- sEWoKdx5QvKxfOxi4LR3B3moHFR_qkmABhejK5qE5XNPA3HVR_uBdp57oNhfzbBma7eIWwYGMNjf
- o7KgM9I8FK3Kg8HAuNnXuTEZ1NfZzxnmUBYkfQLhFIfxRWXcQiFiSFdKJagUK9TNotSUif0GpAps
- SPh1Z5s2SNDUtC8DVZMfoPME.0MToc2bJk_Xlr66LXgl08C8nx4Ek0mzGKZT2yzrm7A_HoJEahy.
- .UKDQWxyKenYwRvreJ3v_0PHddtK5hRQwxPw-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:28:48 +0000
+        Tue, 27 Nov 2018 05:25:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543274982; bh=Ya7Phvm+WiI8d4/gPHrsBV24paT3pkpeWbno0iaac1A=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=g8Z+N/JB5ib9tb4u6lqmZO/0N7MfwJV6YUe927WMsZ69rE7z1V+2scF1GbTNxpN1xZtv/t26XAHTJ6VP+gWk+vSzWg/sR1JHxAYIVQky0FO7i+kxox3B7UO4JFheNc4Sbs+9sryfOxmLXIOVCP8uWOz909A9Wf4hdhN/3ukIhb/c815mtIr4r62Ju+5yrlfq1iMjhimVQCQ+3hbXSH6IQ0f8cWGrImHsrXAu7gMtCcgbkzZcePpvr9Zo5eGco1Qr8cs+Ft+noIaqcbvICZHvDhsiudi4PulXlYQRiNj/6NgeI7+NvOxCHFeXxz36rDOLwUxWofPXa/aaCH6zN1SeUA==
+X-YMail-OSG: GNYzrEUVM1kuC7ec_zv5qAali_PwYKhswLLGVujRMA1PeO0xm2nPQCMQ4sxkGf4
+ IcWejIK4OBf2ASPWehr674MwOxZQCjHJi_EkVKzmcGj4JMdZaJsB3yg8eATxtCzEThuwZSYb0wN.
+ PyZbjoHFsrZyTEfsAVBxJ3DWkZiyGbQ0c5XLs1zG_UymryRD.jo1Yldlx1rFwxL0zxYC89Uim11W
+ 0zyE4jLOVEa_yztXA28YsgOM8ek54_a.sbZ0CCW.mlXvXBekTRhzkGV1tAu3wZ0jmFiQYpC2e6Qc
+ AeXINxcQ_fZ0cx_21Xz4q0G9QgEjLMHuS1Tv3tuYP7BjNijpB2Nd8zd0JgmlIxM.ElkxgJ3WvBT4
+ bECkPlY0nzRHvfvQxjzw6rNIoO4X64Gs8PYG7zrMbRCdvT7Z5FPfme_Vo7ZFt3iMbadNStIsiJq8
+ 40obd9R30_hgiDeK_ENoJe7TysYjmv037iCCkWq8mXGKB3lvWv5WCsk9KJ3VzReVrMuDGEQN1OqG
+ A2HewvajEMYdlHRrFrcll_HTcV0G9aeEumkSQQ9H7T2NPq9FzE2oEPFFPuMHdvrbV2C0P00MdF9m
+ atsvzbHGtNR1TTkcT9ryXZups1nRNwuiUqjsDcHtuPbGy1AOBSdjaRm.3PszKZTaj6Y2PhqROZkm
+ HQngC7NFWeQdicUJIj88BnHVhO_WCLTzpL3DK1emZfB4sPh.joSZrN.nNIBU00BWIKGYErjI5qba
+ cFeNaHWhmOzDXrhHNjaYLS6JJyjm8kLnDXpiIqx8NxgZHHUTFK9QZBPxoUp6k9rDKffGE7BgpNew
+ xG.uCUG6pPPYDpmYPCOtemmun9V0pvjiJnEfeCkwqRgMm4nUc48PEeN5f4bur7AnSeAnZ6TZKmfW
+ R2iynRhGs6kM1IKjqwUQsX5Pw9qqC_Bgs188Z0G.iZazTnWPJCPLt95N0mVwaMZx35coKyGEn3Wz
+ 0YjR_oiAurixZZXN1LOW_uJbqg072Vt9v3uC05uWFHY0XaYCWPTNuzLlYm3PYG50QlG7bdRCKEJB
+ 4xwWA3NnfqHe1lI.DL4hxrhDhIQK27..Mfz7HDJGvHcEnz.9HsuP7MbuPNpoSRSuv5JU9nZoFemC
+ pSFpDaio0vd8MM1DwmnTVdzeyt7jOrndCmly2AWMn
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:29:42 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp419.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3d12d55a43ffd32d6288c356d89534e8;
-          Mon, 26 Nov 2018 23:28:47 +0000 (UTC)
-Subject: [PATCH v5 03/38] LSM: Plumb visibility into optional "enabled" state
+          by smtp430.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 37e4085ac49bce8b94538b8e3540aa56;
+          Mon, 26 Nov 2018 23:29:41 +0000 (UTC)
+Subject: [PATCH v5 04/38] LSM: Lift LSM selection out of individual LSMs
 To:     James Morris <jmorris@namei.org>,
         LSM <linux-security-module@vger.kernel.org>,
         LKLM <linux-kernel@vger.kernel.org>,
@@ -63,8 +63,8 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <aff8e873-56da-fcc2-9ad5-a9d6a6b48356@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:28:45 -0800
+Message-ID: <60a53863-a05e-cbbd-d73e-5a0d2fc6567c@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:29:39 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -76,67 +76,240 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In preparation for lifting the "is this LSM enabled?" logic out of the
-individual LSMs, pass in any special enabled state tracking (as needed
-for SELinux, AppArmor, and LoadPin). This should be an "int" to include
-handling any future cases where "enabled" is exposed via sysctl which
-has no "bool" type.
+As a prerequisite to adjusting LSM selection logic in the future, this
+moves the selection logic up out of the individual major LSMs, making
+their init functions only run when actually enabled. This considers all
+LSMs enabled by default unless they specified an external "enable"
+variable.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 ---
- include/linux/lsm_hooks.h | 1 +
- security/apparmor/lsm.c   | 5 +++--
- security/selinux/hooks.c  | 1 +
- 3 files changed, 5 insertions(+), 2 deletions(-)
+ include/linux/lsm_hooks.h  |   1 -
+ security/apparmor/lsm.c    |   6 ---
+ security/security.c        | 102 +++++++++++++++++++++++++++++++--------------
+ security/selinux/hooks.c   |  10 -----
+ security/smack/smack_lsm.c |   3 --
+ security/tomoyo/tomoyo.c   |   2 -
+ 6 files changed, 71 insertions(+), 53 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 63c0e102de20..4e2e9cdf78c6 100644
+index 4e2e9cdf78c6..dabd2761acfc 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -2044,6 +2044,7 @@ extern void security_add_hooks(struct security_hook_list *hooks, int count,
- struct lsm_info {
- 	const char *name;	/* Required. */
- 	unsigned long flags;	/* Optional: flags describing LSM */
-+	int *enabled;		/* Optional: NULL means enabled. */
- 	int (*init)(void);	/* Required. */
- };
+@@ -2085,7 +2085,6 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ #define __lsm_ro_after_init	__ro_after_init
+ #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
  
+-extern int __init security_module_enable(const char *module);
+ extern void __init capability_add_hooks(void);
+ #ifdef CONFIG_SECURITY_YAMA
+ extern void __init yama_add_hooks(void);
 diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 2edd35ca5044..127a540ef63a 100644
+index 127a540ef63a..d840c1ef3e4d 100644
 --- a/security/apparmor/lsm.c
 +++ b/security/apparmor/lsm.c
-@@ -1332,8 +1332,8 @@ bool aa_g_paranoid_load = true;
- module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
- 
- /* Boot time disable flag */
--static bool apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
--module_param_named(enabled, apparmor_enabled, bool, S_IRUGO);
-+static int apparmor_enabled = CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE;
-+module_param_named(enabled, apparmor_enabled, int, 0444);
- 
- static int __init apparmor_enabled_setup(char *str)
+@@ -1662,12 +1662,6 @@ static int __init apparmor_init(void)
  {
-@@ -1729,5 +1729,6 @@ static int __init apparmor_init(void)
- DEFINE_LSM(apparmor) = {
- 	.name = "apparmor",
- 	.flags = LSM_FLAG_LEGACY_MAJOR,
-+	.enabled = &apparmor_enabled,
- 	.init = apparmor_init,
- };
+ 	int error;
+ 
+-	if (!apparmor_enabled || !security_module_enable("apparmor")) {
+-		aa_info_message("AppArmor disabled by boot time parameter");
+-		apparmor_enabled = false;
+-		return 0;
+-	}
+-
+ 	aa_secids_init();
+ 
+ 	error = aa_setup_dfa_engine();
+diff --git a/security/security.c b/security/security.c
+index 0688dfd57e95..7562da854b62 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -52,33 +52,96 @@ static __initdata bool debug;
+ 			pr_info(__VA_ARGS__);			\
+ 	} while (0)
+ 
++static bool __init is_enabled(struct lsm_info *lsm)
++{
++	if (!lsm->enabled || *lsm->enabled)
++		return true;
++
++	return false;
++}
++
++/* Mark an LSM's enabled flag. */
++static int lsm_enabled_true __initdata = 1;
++static int lsm_enabled_false __initdata = 0;
++static void __init set_enabled(struct lsm_info *lsm, bool enabled)
++{
++	/*
++	 * When an LSM hasn't configured an enable variable, we can use
++	 * a hard-coded location for storing the default enabled state.
++	 */
++	if (!lsm->enabled) {
++		if (enabled)
++			lsm->enabled = &lsm_enabled_true;
++		else
++			lsm->enabled = &lsm_enabled_false;
++	} else if (lsm->enabled == &lsm_enabled_true) {
++		if (!enabled)
++			lsm->enabled = &lsm_enabled_false;
++	} else if (lsm->enabled == &lsm_enabled_false) {
++		if (enabled)
++			lsm->enabled = &lsm_enabled_true;
++	} else {
++		*lsm->enabled = enabled;
++	}
++}
++
++/* Is an LSM allowed to be initialized? */
++static bool __init lsm_allowed(struct lsm_info *lsm)
++{
++	/* Skip if the LSM is disabled. */
++	if (!is_enabled(lsm))
++		return false;
++
++	/* Skip major-specific checks if not a major LSM. */
++	if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
++		return true;
++
++	/* Disabled if this LSM isn't the chosen one. */
++	if (strcmp(lsm->name, chosen_lsm) != 0)
++		return false;
++
++	return true;
++}
++
++/* Check if LSM should be initialized. */
++static void __init maybe_initialize_lsm(struct lsm_info *lsm)
++{
++	int enabled = lsm_allowed(lsm);
++
++	/* Record enablement (to handle any following exclusive LSMs). */
++	set_enabled(lsm, enabled);
++
++	/* If selected, initialize the LSM. */
++	if (enabled) {
++		int ret;
++
++		init_debug("initializing %s\n", lsm->name);
++		ret = lsm->init();
++		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
++	}
++}
++
+ static void __init ordered_lsm_init(void)
+ {
+ 	struct lsm_info *lsm;
+-	int ret;
+ 
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+ 		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
+ 			continue;
+ 
+-		init_debug("initializing %s\n", lsm->name);
+-		ret = lsm->init();
+-		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
++		maybe_initialize_lsm(lsm);
+ 	}
+ }
+ 
+ static void __init major_lsm_init(void)
+ {
+ 	struct lsm_info *lsm;
+-	int ret;
+ 
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
+ 		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
+ 			continue;
+ 
+-		init_debug("initializing %s\n", lsm->name);
+-		ret = lsm->init();
+-		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
++		maybe_initialize_lsm(lsm);
+ 	}
+ }
+ 
+@@ -168,29 +231,6 @@ static int lsm_append(char *new, char **result)
+ 	return 0;
+ }
+ 
+-/**
+- * security_module_enable - Load given security module on boot ?
+- * @module: the name of the module
+- *
+- * Each LSM must pass this method before registering its own operations
+- * to avoid security registration races. This method may also be used
+- * to check if your LSM is currently loaded during kernel initialization.
+- *
+- * Returns:
+- *
+- * true if:
+- *
+- * - The passed LSM is the one chosen by user at boot time,
+- * - or the passed LSM is configured as the default and the user did not
+- *   choose an alternate LSM at boot time.
+- *
+- * Otherwise, return false.
+- */
+-int __init security_module_enable(const char *module)
+-{
+-	return !strcmp(module, chosen_lsm);
+-}
+-
+ /**
+  * security_add_hooks - Add a modules hooks to the hook lists.
+  * @hooks: the hooks to add
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 56c6f1849c80..efc0ac1b5019 100644
+index efc0ac1b5019..b81239a09dbb 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -7210,6 +7210,7 @@ void selinux_complete_init(void)
- DEFINE_LSM(selinux) = {
- 	.name = "selinux",
- 	.flags = LSM_FLAG_LEGACY_MAJOR,
-+	.enabled = &selinux_enabled,
- 	.init = selinux_init,
- };
+@@ -7138,16 +7138,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
  
+ static __init int selinux_init(void)
+ {
+-	if (!security_module_enable("selinux")) {
+-		selinux_enabled = 0;
+-		return 0;
+-	}
+-
+-	if (!selinux_enabled) {
+-		pr_info("SELinux:  Disabled at boot.\n");
+-		return 0;
+-	}
+-
+ 	pr_info("SELinux:  Initializing.\n");
+ 
+ 	memset(&selinux_state, 0, sizeof(selinux_state));
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 3639e55b1f4b..56a114c1d750 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4841,9 +4841,6 @@ static __init int smack_init(void)
+ 	struct cred *cred;
+ 	struct task_smack *tsp;
+ 
+-	if (!security_module_enable("smack"))
+-		return 0;
+-
+ 	smack_inode_cache = KMEM_CACHE(inode_smack, 0);
+ 	if (!smack_inode_cache)
+ 		return -ENOMEM;
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 09f7af130d3a..a46f6bc1e97c 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -540,8 +540,6 @@ static int __init tomoyo_init(void)
+ {
+ 	struct cred *cred = (struct cred *) current_cred();
+ 
+-	if (!security_module_enable("tomoyo"))
+-		return 0;
+ 	/* register ourselves with the security framework */
+ 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
+ 	printk(KERN_INFO "TOMOYO Linux initialized\n");
 -- 
 2.14.5
 
