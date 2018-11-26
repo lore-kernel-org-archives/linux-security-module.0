@@ -7,33 +7,47 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C4E9C43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C6EC43441
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 094C92082F
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59A8F2082F
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:49:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="skIuVzj6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 094C92082F
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PUZWDRr8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A8F2082F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbeK0KpB (ORCPT
+        id S1727662AbeK0KpV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:45:01 -0500
-Received: from sonic309-48.consmr.mail.ne1.yahoo.com ([66.163.184.174]:33705
-        "EHLO sonic309-48.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727958AbeK0KpB (ORCPT
+        Tue, 27 Nov 2018 05:45:21 -0500
+Received: from sonic302-28.consmr.mail.ne1.yahoo.com ([66.163.186.154]:42460
+        "EHLO sonic302-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727750AbeK0KpU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:45:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543276149; bh=mOH1jMGSjEQ/xFrT6GtLpC/r3huR+zGxEWp8FnuIDGw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=skIuVzj6GesAhMBCuXNCurKLMmgw4kDrOdXkmSGufOMk+tgiE20NK6w3dvGRd/qDOOj3DxHP1xotD77hN2vYTC833ZV9j9isL5NiHGnG5+nhB/WgmpIUYb5Jo9WbrvkhsSQxDL0x3q+6FUTPI/na/xrHqiooY/CoBL0B8KA/8gUxzp0XzM5xQ9m839OIBCjq5XA6Nr7ghaYxJCQbjfcbuuIRZ40g4UdnH6sPg5rEnSEU1mH1vx7O+9UDCtIP+GrN19TCV1j0YbLWw3cuDGmdoeBSdToSzKyWKik1PlKaLzrvGTIoKqXxord/NSkH5fadeGHBDm6h9Nhg41X+TXjO8Q==
-X-YMail-OSG: d3pmbgEVM1llWOF2tZuzwc9V9jVaNTKNwr9e4YE8huehbYkgGKsge_S0oUfznnR
- lXhuy_6UO3A--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:49:09 +0000
+        Tue, 27 Nov 2018 05:45:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543276168; bh=lKw+YFFirAcuaGMfYgMV+U5QfYDFlilvNclUnUdmOyY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=PUZWDRr8EYLlnKnekUjgioCnumfLXNQ04xw1cyuCNWpBgqAZ9garQJFPRpjnjN2VEAPi+2fpWgFKHRs765YX9T4VC22Eb6PNo8fMAUFZ+jbZoWNP0PDsAoz9VCAuGcZ3+hztA3QiPiFp96sFh73ft/VE00jhCc56OIcNOBkLuJ8izANWPbBdts+oKKnlBqm6xtkJSlslXcTbAtJYRB3gAs07gl2tvzLGnPOWNeSjHiu4wr2igUVJDzEPfglk5vEncO1Wr2vsbw2Eknc1sfnYmB757/h/zD3VoV3aSmZWuJ/o6vYrOnQaRe1K9kyg1fQR0sbmkBar5fjnPxK2hRTm9w==
+X-YMail-OSG: gS.HxdUVM1nlXMw0xCjA21XvdNUX6gCb8SJkztD8YX1gtO.B1dUDwLfwxAEqrW6
+ tjgGh3VTkaZgWci8UZSiu6DN1tMjQqGr5A6xkRNQWWFDIfK5H3Kt.lgjKgUNi__38mz5.d2EOODO
+ fibOhFOF9q2HZq4HfTlAWGTYYAzEvbcJlJhjgsEmDRDghJUnJvBHTNw9h0NrxV.1R9xrB_jfg3wF
+ PHu9SSzvsoOYFEuGAbZltoBYUBTL6K5kcNCYFmRBQcAHoO9hsHrGdl_4wtkD3iURa2RbKhMx96sT
+ LV2z2Td59VxzSrhvO0LOtf3KOQ.neFyu2LyBge.kZ6Pb1vJJXttq3OOY01nxgUWBT2MOvPohaa7w
+ tijrbUFZUNXT46dZyA53oVAiGEZvdI2GMfJJocF3xe5_g0q0qGSBPYML_g_oOfz.Wqi0KGQBv6Yx
+ JQF9WTRHIZLErErRpzfC_79K3bGbaZh5YJQRcyby4nm8T_LpbYFQUR54gzSe6f0zRd08agDj2kAm
+ zoOwUAC8JHKFrPo8xjCQLR_WhrfCY.UhjAuLPdXZbRPStVXCvy_IQpKhpww7yRUCA.hMNKfyFlTL
+ UWyKvmQZWTOFqWCFjPvNGukOBIv8sssY23xpXzLuIyC5MlFmRnDzUZzfsPLCWGhwX5iiYq_TOn_b
+ GNP0.0HoRB0ydcML6jk9BW0Dj8TRAISpsqZ_o8rXx6lx9R8XO261k8.m1cqRgsW2WaEaxnEMFlhx
+ Pe.18b7KlhHvIZ66Ofe5psQ.GFDP4gkt6HtyIHHQaHJYMHSBoQs3kNF7kM6yVN97R9N9kQmLYK5X
+ Y0LWf6d2k.lHIihuCuNxW5sizCsTLUt_2CoYKtXDCGghRkDqALuNu2jYoWVXfh0R2p0tK4WAK_In
+ 5uN8ZGvq0xEg.XXTmM4lIWHC5D.s1ziyquI.2k08WJ92wURZluTJUtv0h5u0mRa6gjM4dtxCKKhT
+ Auv4x4kY9bSY4CNbP8OUUzjDi3YKk9xFfdIuJnUeGOJpEVu7pcXCe.Un6qtu8GT3.Zj3mTli8NU5
+ 2PTp1vYPFLrcx19hhKZH9T3TfHkkfdnO0n4VicCmw6J47Z3Q3l1rJMRQpueqRYJn50RiVFfV.N1L
+ LUzJDNFFisUC9W9PNewBqrFtDjhTKVHVHWNA03w--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:49:28 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp405.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 5288dd96c25f63a0964f292e22c42e02;
-          Mon, 26 Nov 2018 23:45:08 +0000 (UTC)
-Subject: [PATCH v5 24/38] SELinux: Remove unused selinux_is_enabled
+          by smtp429.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d56dcb8ac3e69b0ed5e21632e555d156;
+          Mon, 26 Nov 2018 23:49:26 +0000 (UTC)
+Subject: [PATCH v5 29/38] Smack: Abstract use of file security blob
 To:     James Morris <jmorris@namei.org>,
         LSM <linux-security-module@vger.kernel.org>,
         LKLM <linux-kernel@vger.kernel.org>,
@@ -49,8 +63,8 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <8b7b3c7e-acd1-cd0f-95a3-02f09bfbfc96@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:45:05 -0800
+Message-ID: <a158e14c-c75c-8f84-a131-aa1ba209a4d9@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:49:23 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -62,158 +76,78 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There are no longer users of selinux_is_enabled().
-Remove it. As selinux_is_enabled() is the only reason
-for include/linux/selinux.h remove that as well.
+Don't use the file->f_security pointer directly.
+Provide a helper function that provides the security blob pointer.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/cred.h             |  1 -
- include/linux/selinux.h          | 35 -----------------------------------
- security/selinux/Makefile        |  2 +-
- security/selinux/exports.c       | 23 -----------------------
- security/selinux/hooks.c         |  1 -
- security/selinux/include/audit.h |  3 ---
- security/selinux/ss/services.c   |  1 -
- 7 files changed, 1 insertion(+), 65 deletions(-)
- delete mode 100644 include/linux/selinux.h
- delete mode 100644 security/selinux/exports.c
+ security/smack/smack.h     |  5 +++++
+ security/smack/smack_lsm.c | 12 ++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 7eed6101c791..2e715e202e6a 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -15,7 +15,6 @@
- #include <linux/capability.h>
- #include <linux/init.h>
- #include <linux/key.h>
--#include <linux/selinux.h>
- #include <linux/atomic.h>
- #include <linux/uidgid.h>
- #include <linux/sched.h>
-diff --git a/include/linux/selinux.h b/include/linux/selinux.h
-deleted file mode 100644
-index 44f459612690..000000000000
---- a/include/linux/selinux.h
-+++ /dev/null
-@@ -1,35 +0,0 @@
--/*
-- * SELinux services exported to the rest of the kernel.
-- *
-- * Author: James Morris <jmorris@redhat.com>
-- *
-- * Copyright (C) 2005 Red Hat, Inc., James Morris <jmorris@redhat.com>
-- * Copyright (C) 2006 Trusted Computer Solutions, Inc. <dgoeddel@trustedcs.com>
-- * Copyright (C) 2006 IBM Corporation, Timothy R. Chavez <tinytim@us.ibm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2,
-- * as published by the Free Software Foundation.
-- */
--#ifndef _LINUX_SELINUX_H
--#define _LINUX_SELINUX_H
--
--struct selinux_audit_rule;
--struct audit_context;
--struct kern_ipc_perm;
--
--#ifdef CONFIG_SECURITY_SELINUX
--
--/**
-- * selinux_is_enabled - is SELinux enabled?
-- */
--bool selinux_is_enabled(void);
--#else
--
--static inline bool selinux_is_enabled(void)
--{
--	return false;
--}
--#endif	/* CONFIG_SECURITY_SELINUX */
--
--#endif /* _LINUX_SELINUX_H */
-diff --git a/security/selinux/Makefile b/security/selinux/Makefile
-index c7161f8792b2..ccf950409384 100644
---- a/security/selinux/Makefile
-+++ b/security/selinux/Makefile
-@@ -6,7 +6,7 @@
- obj-$(CONFIG_SECURITY_SELINUX) := selinux.o
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index b27eb252e953..50854969a391 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -362,6 +362,11 @@ static inline struct task_smack *smack_cred(const struct cred *cred)
+ 	return cred->security + smack_blob_sizes.lbs_cred;
+ }
  
- selinux-y := avc.o hooks.o selinuxfs.o netlink.o nlmsgtab.o netif.o \
--	     netnode.o netport.o ibpkey.o exports.o \
-+	     netnode.o netport.o ibpkey.o \
- 	     ss/ebitmap.o ss/hashtab.o ss/symtab.o ss/sidtab.o ss/avtab.o \
- 	     ss/policydb.o ss/services.o ss/conditional.o ss/mls.o ss/status.o
- 
-diff --git a/security/selinux/exports.c b/security/selinux/exports.c
-deleted file mode 100644
-index e75dd94e2d2b..000000000000
---- a/security/selinux/exports.c
-+++ /dev/null
-@@ -1,23 +0,0 @@
--/*
-- * SELinux services exported to the rest of the kernel.
-- *
-- * Author: James Morris <jmorris@redhat.com>
-- *
-- * Copyright (C) 2005 Red Hat, Inc., James Morris <jmorris@redhat.com>
-- * Copyright (C) 2006 Trusted Computer Solutions, Inc. <dgoeddel@trustedcs.com>
-- * Copyright (C) 2006 IBM Corporation, Timothy R. Chavez <tinytim@us.ibm.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2,
-- * as published by the Free Software Foundation.
-- */
--#include <linux/module.h>
--#include <linux/selinux.h>
--
--#include "security.h"
--
--bool selinux_is_enabled(void)
--{
--	return selinux_enabled;
--}
--EXPORT_SYMBOL_GPL(selinux_is_enabled);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 41b230d459a6..c82f11270de6 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -79,7 +79,6 @@
- #include <linux/personality.h>
- #include <linux/audit.h>
- #include <linux/string.h>
--#include <linux/selinux.h>
- #include <linux/mutex.h>
- #include <linux/posix-timers.h>
- #include <linux/syslog.h>
-diff --git a/security/selinux/include/audit.h b/security/selinux/include/audit.h
-index 1bdf973433cc..36e1d44c0209 100644
---- a/security/selinux/include/audit.h
-+++ b/security/selinux/include/audit.h
-@@ -1,9 +1,6 @@
++static inline struct smack_known **smack_file(const struct file *file)
++{
++	return (struct smack_known **)&file->f_security;
++}
++
  /*
-  * SELinux support for the Audit LSM hooks
-  *
-- * Most of below header was moved from include/linux/selinux.h which
-- * is released under below copyrights:
-- *
-  * Author: James Morris <jmorris@redhat.com>
-  *
-  * Copyright (C) 2005 Red Hat, Inc., James Morris <jmorris@redhat.com>
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index 12e414394530..1a745e2f49a9 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -49,7 +49,6 @@
- #include <linux/sched.h>
- #include <linux/audit.h>
- #include <linux/mutex.h>
--#include <linux/selinux.h>
- #include <linux/flex_array.h>
- #include <linux/vmalloc.h>
- #include <net/netlabel.h>
+  * Is the directory transmuting?
+  */
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 459f7d523ca6..3e11be8cce7e 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1573,9 +1573,9 @@ static void smack_inode_getsecid(struct inode *inode, u32 *secid)
+  */
+ static int smack_file_alloc_security(struct file *file)
+ {
+-	struct smack_known *skp = smk_of_current();
++	struct smack_known **blob = smack_file(file);
+ 
+-	file->f_security = skp;
++	*blob = smk_of_current();
+ 	return 0;
+ }
+ 
+@@ -1815,7 +1815,9 @@ static int smack_mmap_file(struct file *file,
+  */
+ static void smack_file_set_fowner(struct file *file)
+ {
+-	file->f_security = smk_of_current();
++	struct smack_known **blob = smack_file(file);
++
++	*blob = smk_of_current();
+ }
+ 
+ /**
+@@ -1832,6 +1834,7 @@ static void smack_file_set_fowner(struct file *file)
+ static int smack_file_send_sigiotask(struct task_struct *tsk,
+ 				     struct fown_struct *fown, int signum)
+ {
++	struct smack_known **blob;
+ 	struct smack_known *skp;
+ 	struct smack_known *tkp = smk_of_task(smack_cred(tsk->cred));
+ 	const struct cred *tcred;
+@@ -1845,7 +1848,8 @@ static int smack_file_send_sigiotask(struct task_struct *tsk,
+ 	file = container_of(fown, struct file, f_owner);
+ 
+ 	/* we don't log here as rc can be overriden */
+-	skp = file->f_security;
++	blob = smack_file(file);
++	skp = *blob;
+ 	rc = smk_access(skp, tkp, MAY_DELIVER, NULL);
+ 	rc = smk_bu_note("sigiotask", skp, tkp, MAY_DELIVER, rc);
+ 
 -- 
 2.14.5
 
