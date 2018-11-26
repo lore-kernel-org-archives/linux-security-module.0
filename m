@@ -4,36 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E20C43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBF7C43441
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14092208E4
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7146D208E4
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:36:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="U8nMJ3bk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14092208E4
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="MGJ3DdiS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7146D208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727829AbeK0Kbi (ORCPT
+        id S1727415AbeK0Kc2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:31:38 -0500
-Received: from sonic309-48.consmr.mail.ne1.yahoo.com ([66.163.184.174]:43865
-        "EHLO sonic309-48.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727542AbeK0Kbi (ORCPT
+        Tue, 27 Nov 2018 05:32:28 -0500
+Received: from sonic304-28.consmr.mail.ne1.yahoo.com ([66.163.191.154]:36056
+        "EHLO sonic304-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727580AbeK0Kc2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:31:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543275349; bh=HQoavzPoUgtaN9gOCWKpLaU9vTUnkapJ2x/zqvAbtZs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=U8nMJ3bkt4M2GxgbIS4IJT1IOq/V9xh2RpEyQ9xpCJz9MhAgOFNVTku8/nzza2n+J2GU9EZe+DXNhPECZz4slfugYt9F4RU3wWjpT+XcycFNFNSX170Z5o1wd4PvJ7BBdkQkQyePL8TO3ctj1KwvLRXeOKw4/30t/ijKHxh7QXRlDGwLsEcXS2EHiwtYuxQvp3a56Uwsb/g1DQ7IMDAoZn5UedOsPSw7R26kV0Up2+/DbXQEbn1Brs+ckkBTFwGR6bv/Dk9nNO7RH4sLPHFibwn3WHYBsLlBvC7YZv4W+JOSKA77vnRJoBX0rDBTblvZHYhTi8IMSWkcPfZJDQ+Khg==
-X-YMail-OSG: UKSUkGAVM1l9sRpN7q3tqu_Y4K48kAK8mvREIdnDAoQqTDQwAAbkGtOsjTuM_3_
- krv8x0a9OKg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:35:49 +0000
+        Tue, 27 Nov 2018 05:32:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543275399; bh=B7bxOfpQI1kzSPjOBDZSM+OSrBcvf30xxjpv6gdsFtY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=MGJ3DdiSo+yGlruHPTkyhsfkFbFww1GQMhfTKL5zCeDCh149v/9VbvTX2Qltl1HZjpCu//ugcO5aCaAnR8jVxhIFXU3Y3uor3Oq7NSptOnZE1QCkrSIrflucJE47bLXoxMbJEXwYNmT2Wx1hchLpCDfqpAFkrflrLlMTPDx6ZEMBKGYw5bw4thoiXEWRxA3czXMpzX09NtXTIP9WZRQXHntk/0QiNpgNSM3GjmWw7rSMwblXnZ5CeOOIWZcNVY/Uk2XNoEU5/MnVhaLiUL1pN0p+b/2MMdBEnbMi0qhWqTfAOKo6XeBIMP28Tvd64UduDNo/GDVE4tGyR10j2ugTrg==
+X-YMail-OSG: bm6jbHkVM1l6zujn9CEOJnFeUTm5pLMqUN5TdUz6sFEfAh.yBhogAp.UAgxGg01
+ fas7Js9CWdRoCkXeVG0GL1RSKpRc0hbWnuxaVVLDQNERdWKjfvhbiOiVHVF3BH6mL5V0Bzz6WYRP
+ Cd79kXzqBxkrR2cu3bME8HDcqA2xCHr.CcJ4G8d2tH6caRe60kfCm2A2hTxCn9ccwt2jw77gLt5h
+ c.IOXRXw_tqWUYCcarF5INrg4dHPcabDPdruHpA9AjvW46glEMBZ0oe4sVQzLy5A2DrXSCUYEu9c
+ u8VBtgRqeckZ3QlWbFkswEuHdAjiCHXrnXeFnAToP8ErePlsxiyNvAxU31Fbd93E9l8yIfVdAyXg
+ oVCbGTkgq2eaflMA1Zpmg5PrYR404u.aQco6ZdVywJoL7uoFupp20s_IZ5cCD0QY03uXHiXVVyk7
+ V5arvoYbrYDBFtUHiV8Lazls3a1N2Rpan1cO3NV9bkcCmmnKBNluYdfx5WyBWfThL9oILs8Vjn9f
+ epB2bbFbXc0u1L_nugPP3mzGP4B1N_3uy_BZokUsKNVSTAqRVY5UFqo5UeMR1RNE57uOla1GKB_O
+ OXNrYLoFUTPIAiQH03dNWiWPCQbkVUGyvQ4a1W7mkEyx9krG6IIbJVVo2DC7taAQvEpk6L8dDH.J
+ yF0C2iW_v7wC17GZ9McPI.c9CZ2ojzPjOAI9FwUBXZ6gRHzNMWTP.tVc.qeZJKSvJy4WdfBC99Yr
+ wDgqw7jZLA9wGKj86hgUfV7ryaiYGgGjL_qlO60Qi8cQDgCpQcuxO0oDPAFOMKmo0.SJzlj6djPD
+ R1S5dIu1zSuID1cR50berltLQeLt4.qIU5MBq6i6RuPJxb9VwqNzFUhXp.oMvTR94RYrjFWl98zl
+ QXLbDi3NQ_qx6MSkS6f_d0TSW2kch93LjsBSMqKYQtyNXVTgJqeG.S0gASatBdm.LpAyb3I1KYWA
+ I.u5.nDwZOsqzP9FQqeh91iGRH1m04x4TGmDDxkjnLlNzL0WoJAAM.xMguW.2k37RCCHWg98pyTT
+ fQBLtA92TP.y1JeP3n3HcQUp0JKYnfSQMHk.PTiCzc1.wMZzAyfCbVBzurcEogismwttYqGd8e0p
+ LGrC_hZQ.OX_xiiJDKX5gtaXesjuPtZQveYZlSdaIRSg-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:36:39 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp420.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3f9402b8f658487cba525e8eec926514;
-          Mon, 26 Nov 2018 23:31:47 +0000 (UTC)
-Subject: [PATCH v5 07/38] LSM: Introduce "lsm=" for boottime LSM selection
+          by smtp422.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 5a854c24c8b472307d347f0b8eba087a;
+          Mon, 26 Nov 2018 23:36:39 +0000 (UTC)
+Subject: [PATCH v5 13/38] selinux: Remove SECURITY_SELINUX_BOOTPARAM_VALUE
 To:     James Morris <jmorris@namei.org>,
         LSM <linux-security-module@vger.kernel.org>,
         LKLM <linux-kernel@vger.kernel.org>,
@@ -49,8 +63,8 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <3003d07a-61dc-e997-2814-50ad27930b9d@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:31:44 -0800
+Message-ID: <5ea7cc62-94f0-0496-b39c-e6aff4cd9e9e@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:36:36 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -62,84 +76,69 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Provide a way to explicitly choose LSM initialization order via the new
-"lsm=" comma-separated list of LSMs.
+In preparation for removing CONFIG_DEFAULT_SECURITY, this removes the
+soon-to-be redundant SECURITY_SELINUX_BOOTPARAM_VALUE. Since explicit
+ordering via CONFIG_LSM or "lsm=" will define whether an LSM is enabled or
+not, this CONFIG will become effectively ignored, so remove it. However,
+in order to stay backward-compatible with "security=selinux", the enable
+variable defaults to true.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  4 ++++
- security/Kconfig                                |  3 ++-
- security/security.c                             | 14 +++++++++++++-
- 3 files changed, 19 insertions(+), 2 deletions(-)
+ security/selinux/Kconfig | 15 ---------------
+ security/selinux/hooks.c |  5 +----
+ 2 files changed, 1 insertion(+), 19 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 81d1d5a74728..ea33bcbaecb2 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2302,6 +2302,10 @@
+diff --git a/security/selinux/Kconfig b/security/selinux/Kconfig
+index 8af7a690eb40..55f032f1fc2d 100644
+--- a/security/selinux/Kconfig
++++ b/security/selinux/Kconfig
+@@ -22,21 +22,6 @@ config SECURITY_SELINUX_BOOTPARAM
  
- 	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
+ 	  If you are unsure how to answer this question, answer N.
  
-+	lsm=lsm1,...,lsmN
-+			[SECURITY] Choose order of LSM initialization. This
-+			overrides CONFIG_LSM.
-+
- 	machvec=	[IA-64] Force the use of a particular machine-vector
- 			(machvec) in a generic kernel.
- 			Example: machvec=hpzx1_swiotlb
-diff --git a/security/Kconfig b/security/Kconfig
-index 7de42bbacc28..41aa0be6142f 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -281,7 +281,8 @@ config LSM
- 	default "integrity"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
--	  Any LSMs left off this list will be ignored.
-+	  Any LSMs left off this list will be ignored. This can be
-+	  controlled at boot with the "lsm=" parameter.
+-config SECURITY_SELINUX_BOOTPARAM_VALUE
+-	int "NSA SELinux boot parameter default value"
+-	depends on SECURITY_SELINUX_BOOTPARAM
+-	range 0 1
+-	default 1
+-	help
+-	  This option sets the default value for the kernel parameter
+-	  'selinux', which allows SELinux to be disabled at boot.  If this
+-	  option is set to 0 (zero), the SELinux kernel parameter will
+-	  default to 0, disabling SELinux at bootup.  If this option is
+-	  set to 1 (one), the SELinux kernel parameter will default to 1,
+-	  enabling SELinux at bootup.
+-
+-	  If you are unsure how to answer this question, answer 1.
+-
+ config SECURITY_SELINUX_DISABLE
+ 	bool "NSA SELinux runtime disable"
+ 	depends on SECURITY_SELINUX
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3687599d9d16..edd5b8dd3e56 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -120,9 +120,8 @@ __setup("enforcing=", enforcing_setup);
+ #define selinux_enforcing_boot 1
+ #endif
  
- 	  If unsure, leave this as the default.
- 
-diff --git a/security/security.c b/security/security.c
-index 96e0b7d057b0..38fc436e8b4b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -47,6 +47,7 @@ char *lsm_names;
- /* Boot-time LSM user choice */
- static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
- 	CONFIG_DEFAULT_SECURITY;
-+static __initdata const char *chosen_lsm_order;
- 
- static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
- 
-@@ -190,7 +191,10 @@ static void __init ordered_lsm_init(void)
- 	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
- 				GFP_KERNEL);
- 
--	ordered_lsm_parse(builtin_lsm_order, "builtin");
-+	if (chosen_lsm_order)
-+		ordered_lsm_parse(chosen_lsm_order, "cmdline");
-+	else
-+		ordered_lsm_parse(builtin_lsm_order, "builtin");
- 
- 	for (lsm = ordered_lsms; *lsm; lsm++)
- 		maybe_initialize_lsm(*lsm);
-@@ -252,6 +256,14 @@ static int __init choose_lsm(char *str)
- }
- __setup("security=", choose_lsm);
- 
-+/* Explicitly choose LSM initialization order. */
-+static int __init choose_lsm_order(char *str)
-+{
-+	chosen_lsm_order = str;
-+	return 1;
-+}
-+__setup("lsm=", choose_lsm_order);
-+
- /* Enable LSM order debugging. */
- static int __init enable_debug(char *str)
++int selinux_enabled __lsm_ro_after_init = 1;
+ #ifdef CONFIG_SECURITY_SELINUX_BOOTPARAM
+-int selinux_enabled = CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE;
+-
+ static int __init selinux_enabled_setup(char *str)
  {
+ 	unsigned long enabled;
+@@ -131,8 +130,6 @@ static int __init selinux_enabled_setup(char *str)
+ 	return 1;
+ }
+ __setup("selinux=", selinux_enabled_setup);
+-#else
+-int selinux_enabled = 1;
+ #endif
+ 
+ static unsigned int selinux_checkreqprot_boot =
 -- 
 2.14.5
 
