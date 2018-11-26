@@ -3,52 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08995C43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 16:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D5BC04EB8
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 17:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B98220663
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 16:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4093B20663
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 17:42:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="AdOlgUu4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B98220663
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="pHkDyUJ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4093B20663
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbeK0D3g (ORCPT
+        id S1726312AbeK0EhN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Nov 2018 22:29:36 -0500
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com ([66.163.190.152]:33017
-        "EHLO sonic315-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726224AbeK0D3g (ORCPT
+        Mon, 26 Nov 2018 23:37:13 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38436 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726206AbeK0EhM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Nov 2018 22:29:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543250098; bh=a3m1eFlsSM3SrVWRsMILtkAXDYkdsQYxiEQo5LLz7g4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=AdOlgUu4iXOQJZR7eHGk20VdY9/nh6GSygi8bEH9V68n6/+dDP4SlK9w6Yv7AIc6y4ov+KN2FSEGi2jLUYSOL1vIziqwXZCDvkqX1UfAyX+qv8sUqCAiFHKPyjI295e7ET7DcfOYqs8wugPhr3ED5u54srWmLPqo3doU3N2U5LaVxz0GKETVp64RqD0OgWuWygbiWOT6LgyBukD/JxndVjKIh9cNkAgLxfQ8bh+qOv2uOPht3wD3Mf/t+6TajZFmtXsfVeLb8Lmn+m/8v36vHpITgph4cTxAoQqOR/nFJPwLu4o2itN/rcROh6UjloLOEh2yqb06TKFE3XwIdKeO0g==
-X-YMail-OSG: MJCUdzwVM1niKdp4DdLZKXMeRj4NjLn.accY_KXf7JoMno20DdHgM94N.AJW0Fg
- NnresUH2TCDgqkFkSGCYv35FbFtavloTIUQKBQq46SwKcVaBz.ocq37oK3yuWQ79xsgZPx2oH086
- F0WPmYNj07jvzsnTwITiFmf1uTPEKicxzd864ngyMyM9vIaIt9I9Xou7AtRsYuyML7tXwoFtIU7c
- JZGdxVQ73.OzOGZIK_cPgcUl6J.W.8tuv1XGZrlTdNfY1V_c7Lw43i9VUijJZz8q7HmI0DzupDaf
- 0DMJ8ClDSOK1Ao4v42npun8grFdnvWGutJkpOTJu6D2GCcBHQLD6eksqgp26PeaRSL0oz20gSUcf
- mYzOlpJdUGjXsUAsi48il_lF1Acagi_cPIFi5uLnohpxw0PqdLvuKc9DR8KOrA7pz2EloqmA6uGI
- TbgxdrxBEasKnHTZkgkUF8gtFNjDcMj5cLiPAo.AhauT8D9MRWWUO1hoeBROq9p1mmEi3H0JTEGA
- qcJEjPUYmr3ueQWvOvi9qaUF9T5x2NDgNrSEJi4ryMBprt9wiWcL4ZnPUayl5THXTw62Df2T9UzM
- lAXlVB7_kZr7PgtFmmfRt5dCSeCjL.WKihh_83uHxpBrrPcNTHYU7g0E27VEfI93pXLT3h4LLVn1
- dKPcQhUW6x4mYPLp14bAcXKRsO3n9x.d0y3sHklY9dGPOQls9CG4q130AQJh6eXa7aLDRhnV4dS2
- DdsKf5x5o9eZNllyhzskc3cW0QtgXT.Ox_Cpc0zQ_TgdSOd8Ho2WlyzURxi_PvJSS_erSl4aG5MP
- j6.zCcMmsiw0mFfvNydUQ5OeIbMPpqShvR9yac19DvOOGqcNos87uBf8E7pYy7G50jjOvbBIu3T8
- wiNbM2oL3IuyF38Ij38ZX2AXo4ySR3_AP17RPN.bMUzDET55Im_9IypTxY2Agu2RfW1sYepcQGjo
- L9ezChsc3YyOdmljfpyl9wZOiYNcoaFBvUn3im4DxaemidpUZxK5M8EJ4wjFHxXHHZ2Nyex0I9Zy
- mITTqxAlYpNf3ZYw.45Xls..c5LvLiOLDH1GokWU1G1jR2RxsfduZWf7pUJtv.lJhp1kjVJyMR3I
- OUUdH
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 16:34:58 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp411.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 878996b26d439be5fb769f591f7a9b16;
-          Mon, 26 Nov 2018 16:34:57 +0000 (UTC)
+        Mon, 26 Nov 2018 23:37:12 -0500
+Received: by mail-io1-f68.google.com with SMTP id l14so14493602ioj.5
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Nov 2018 09:42:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GDturwg8qsxrN1xf6XDaVk8WYMlDhJGb6QPJJMKCVFg=;
+        b=pHkDyUJ+5k8jzUWOKmAWZok9z2B1fxN58HXoPcLUD8+fu2e+mqbfwO3qEDVtdlHS+g
+         rFHpMpINsOWbegkzUCFYaO1uyATn83Ihr+MG74eSiVhTE7Z/PJocZuk2HmGB+x84cPW9
+         k9QvMxqDoMXuWqGafjQ8F1DW2P2J+CqOf+nKelFxPnX3rLvcvAYYwRRK+Bw533LcSxoM
+         lI1sgwRY1QLSR1jDKyvkp/LFEMeBOmUOC85NfWYTrBex2e8Ic8+DCVovAKjGsI6tUZ/6
+         zQfPLHlGXLAYz0sRsOwg+f3D0SL7xy4eH4MEn9KQJm4nhyon3UvzykxVuSf6gthrpKLd
+         q2sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GDturwg8qsxrN1xf6XDaVk8WYMlDhJGb6QPJJMKCVFg=;
+        b=qxpEMb2xgqeYQGDJ+W/dBxrwTiBPMZF21W77JnMnyXoLZ6y4ggMFTDCX6uHygqsjXS
+         HMrpZxImuc/K0KgnlQteQIuLLy0aSNBjgha71pVnaYrwmbI4C13PQuuJ3XbAWGbmnJiE
+         qdNBUXW+eLyt7rCRy8hqAUVdPtwKRqAQt6D2EPM8oiDarJiX/0RFDCrJYZu1XxxeDBZy
+         ysrJb/eADEtcx2Po8f1hdq/14ixPRmsp3Cr2W+5tL2MwqVDr4FuppTs4E0DpRkWWXoGI
+         bYB1T2VDrbCTKyKAR723rL3fftse4LL5YAMZL56eAyDVWAu+ER7+urSEOIydp3Qsr5Wz
+         3HBg==
+X-Gm-Message-State: AA+aEWboA9eijE5uA1iTOaT4WDPI3Q02lVHhX5CU/iCfWFzPmZobPnum
+        3Fzr9IcbRz/07pOk9EVNxseUbA==
+X-Google-Smtp-Source: AFSGD/Uzk2NNR4t3Q0VsIIouxbr9rGEDyEyPn3O2S/QyfPgIwkFLqHEsAOjIG1LTqNcaQRurnEJong==
+X-Received: by 2002:a6b:c806:: with SMTP id y6mr21377963iof.79.1543254142237;
+        Mon, 26 Nov 2018 09:42:22 -0800 (PST)
+Received: from [192.168.42.130] ([172.58.142.221])
+        by smtp.googlemail.com with ESMTPSA id y13sm283232ioa.56.2018.11.26.09.42.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 09:42:21 -0800 (PST)
 Subject: Re: [RFC][PATCH] fs: set xattrs in initramfs from regular files
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Rob Landley <rob@landley.net>, viro@zeniv.linux.org.uk
+To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
 Cc:     linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, initramfs@vger.kernel.org,
         linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
@@ -58,81 +70,65 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
 References: <20181122154942.18262-1-roberto.sassu@huawei.com>
  <7f2b0288-a173-e2bb-70ee-d552610bfc1e@landley.net>
  <b907b5ca-1515-1ed4-d50d-28c1736c0eb8@huawei.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <f2886ac7-aff9-94bc-5f65-b3b2e946a6ff@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 08:34:54 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+From:   Rob Landley <rob@landley.net>
+Message-ID: <79a41125-0232-6f6e-6f38-f4c45a7b439e@landley.net>
+Date:   Mon, 26 Nov 2018 11:42:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
 In-Reply-To: <b907b5ca-1515-1ed4-d50d-28c1736c0eb8@huawei.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/26/2018 4:56 AM, Roberto Sassu wrote:
+On 11/26/18 6:56 AM, Roberto Sassu wrote:
 > On 11/23/2018 9:21 PM, Rob Landley wrote:
->> On 11/22/18 9:49 AM, Roberto Sassu wrote:
->>> Although rootfs (tmpfs) supports xattrs, they are not set due to the
->>> limitation of the cpio format. A new format called 'newcx' was proposed to
->>> overcome this limitation.
->>
->> I got email about that format the day before you posted this, by the way.
->>
->>> However, it looks like that adding a new format is not simple: 15 kernel
->>> patches; user space tools must support the new format; mistakes made in the
->>> past should be avoided; it is unclear whether the kernel should switch from
->>> cpio to tar.
->>
->> The kernel _can't_ switch from cpio to tar without breaking backwards
->> compatability, it could only add tar as a second format it supported (remember
->> cpio images can be sideloaded so a new rootfs can be used with an existing
->> initramfs, plus existing build systems generate them and would still need to if
->> they wanted to keep supporting older kernels), and then once you've got two
->> formats somebody will propose zip support, and let's just not go there please.
->>
->> The changes to the userspace tools are trivial (I say that as the maintainer of
->> toybox, which has a cpio). The argument was about things like 64 bit timestamps
->> (y2038 problem), nanosecond support, sparse files, etc. And I think the argument
->> had largely died down?
->>
->> Keep in mind the squashfs guy spent 5 years trying to get his filesystem merged
->> (https://lwn.net/Articles/563578/), I spent several years trying to get my perl
->> removal patch merged (and only work up the enthusiasm to resubmit
->> http://lists.busybox.net/pipermail/buildroot/2015-March/123385.html
->> https://patchwork.kernel.org/patch/9193529/ https://lkml.org/lkml/2017/9/13/651
->> about once a year because dealing with linux-kernel is just no fun for hobbyists
->> anymore).
->>
 >>> The aim of this patch is to provide the same functionality without
 >>> introducing a new format. The value of xattrs is placed in regular files
 >>> having the same file name as the files xattrs are added to, plus a
 >>> separator and the xattr name (<filename>.xattr-<xattr name>).
 >>
 >> I think you're solving the wrong problem, but that's just my opinion.
->
+> 
 > Instead of iterating over rootfs, would it be better to detect files
 > with extended attributes (from the file name) when the cpio image is
-> parsed by the kernel, and call sys_lsetxattr() in do_copy()? This part
+> parsed by the kernel,
+
+Huh, I thought at first glance that's what the new approach _was_ doing.
+
+In band signaling in the archive is ugly, still requires new tools to create it,
+doesn't address the y2038 issue... (Although we could cheat, treat the time
+signature as unsigned, and buy another few decades.)
+
+But doing that in the filesystem _after_ you extract the archive is beyond ugly.
+
+> and call sys_lsetxattr() in do_copy()? This part
 > can be turned on by introducing a new type in the existing format (if
 > possible).
-
-A very similar approach was used in at least one MLS Unix
-system back in the day. It used tar, but would have worked
-just as well with CPIO. Any file with a specific name
-was assumed to contain the security attributes for the
-preceding file, and tar invoked a helper program to set
-them. No change to the tar format was required, and if
-you read an archive with a generic tar you just got multiple
-entries for the special name. No format or special types
-required.
-
->
+> 
 > The impact of this alternative is very low, and LSMs/IMA would be able,
 > with minimum effort, to enforce policies on files in the initial ram
 > disk.
 
-True. And it worked. But it was still a kludge.
+The cpio extension isn't a big deal, I was pondering doing it myself in toybox
+(and submitting a kernel patch to consume the output) before Mimi approached me.
+(I did the initmpfs stuff already, I've stomped around in this area before.) I
+just didn't because mimi sent their patch first, so I waited for that to work
+its way though.
 
+Unfortunately, it's simple enough that there was a bit of bikeshedding. (You can
+store time in milliseconds as a 64 bit number without worrying about the range,
+but if you do it as nanoseconds you need two fields, but people spoke up and
+said "but if you don't store the nanoseconds the rounding causes spurious time
+differences when between filesystems and it confuses our build system about what
+has and hasn't changed"...)
+
+The new in-band signaling proposal is, at best, a hack. (Filename lengths are
+capped at 255 in the VFS, can you strip the xattrs on a long filename by having
+the extension fail to create in the filesystem? Or do you have an arbitrary max
+length on filenames because you need to reserve room for the extension?)
+
+Rob
