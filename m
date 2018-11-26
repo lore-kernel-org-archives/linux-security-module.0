@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37169C43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6F0C04EB8
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0AE62082F
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:41:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EA7A20C01
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:42:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="aHaG5NTi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AE62082F
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bc1GNyWA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EA7A20C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeK0KhI (ORCPT
+        id S1727689AbeK0Kh4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:37:08 -0500
-Received: from sonic304-28.consmr.mail.ne1.yahoo.com ([66.163.191.154]:43089
-        "EHLO sonic304-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727655AbeK0KhI (ORCPT
+        Tue, 27 Nov 2018 05:37:56 -0500
+Received: from sonic315-27.consmr.mail.ne1.yahoo.com ([66.163.190.153]:46397
+        "EHLO sonic315-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727707AbeK0Kh4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:37:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543275679; bh=fVRVzoVAGOfByb/OFixOZSHvg+YGRncLAzZbI7X+PB4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=aHaG5NTite4g0yXIUuftVxSoRcpRH/V1A84lIWUk9Abtr3jaVXKzdV6lrzQemwLD5ktJwzEg51eYIFQ8iIkaZ+lKcf0ifhu/cctXUCFUEo+WYXi8/vMwwxCGD4k5Ny/g0s0abENPO+YByYGz1CLQcgfxFEgdU6cjJjAEcfyh583cgVkwJC+HDDbN6/tTxnZVCE63MhewshIySv7P3pIZAeAIY87EoZiH1rBzUcJtDnUTR1V5Qf36PalXd/q6HeWZqIvf5TvlK1M761Z+OeKBBHPCh+1eZO/zHEVfs6bK280A8dZd+IL5Y5FVWSz+7j2UJLKeSvsQ1uUh1lmG9HMOCQ==
-X-YMail-OSG: aCn9FCgVM1l9DwgaAq62waoREZGjbj8wRXb0C4bj459iqdlzLnJ0BsFiIPC77m7
- sw73Zu2X8PzyYWtF4cTj7burWPhFicPYnwMLtd2sT1ft2dDTnhVWLd1dGgCAboaOLWFqOsdehAQu
- ZhCiOhX7g5R945ZwHRr1yHjO2SKCOKnovZkrxRx06A9PunqtSFb79MEGFi01woPTjR5Kivg75wHp
- ZZ66Q.WyUAuZCz.08YtgKfrzpEfgPmCVIo_TN4BtWySiJml9Azx.EmrY9lHPshwn97wNzxbinpwn
- 5_fwS.WhkTJpeNIPhB56QPdg2ySPDLQRgLOazfpvyDFjfnOHrJj4LJh.2KItSCuY85CHcjdFhwd.
- P6lN7gKy7Tw0eM9koPuEiUHQGaVmYcLRQiAWtczYRdUrisq45HpjtxslRT.xWg8CJxJzSfH8p3lC
- Ae9ZjI3KTEuqbiG466mKGoYkPZjHXeAM_6GbFF24bxTgM.WaESIkQwWB5_cTExg_FoX90oXZIeI.
- YFSC7zPQ45aMsIHu5wSpX5yympGeFn3HlkRj6.SXgCpqnmIGvFm5tvdEtVRlS2iO_YFCCL1ZxVY.
- EemsoH30dX8AGvOcXPfUApKi7BheyfEPUE_qfTYwDqGEgolg0A6IkWepZoA3riaffdAxWKuC8xx5
- dawrYkHcu3arOVjVrgHuHXOj06ADzG_.8XI3qnkTeBJyk4Luz3.DH3Bv.K8MKq.BB6WWdyRoPVyE
- I9.SBZ1B_JDf2ajjz4YGmwqB0fK_b6OPu680CxEcQ3hQWU0HwMlXaFADbsqHC.ypcu24V8dc6Zl1
- ecSlYpfZcFwV9Fo1V2aroNnTzGiuBsdNhL.Cvz7CMxATypjhaaMkNC692QdmCuVnZ2xZ.bRYrWo1
- wfPHxlojYfbwqBTxD_GsAti.SUaWI1z7i2X6b.XD9nAM6fCyRO60bHAhOP2IifK9166vg1CtlCUz
- IBxT5JC35K5jQJI4gJsbruCkOCldXbSShRlmtksHv1hXJpicbRuL9MFEqDEI5muAdVakZ_00ndpf
- dP9rZ2g29IFjAsY7pHxrRIIuZVJGf0RlTozfyuK0uJZx1IwFQ2TstOUx_3C_mWuzbw7lcehwdJxm
- 85upxH55gnTSpz7R25.9uldv0pG_CyEHDACza4n.MA3A-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:41:19 +0000
+        Tue, 27 Nov 2018 05:37:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543275723; bh=PBT9NIfIFWqve0jgHQc8SqCsASaMC4tLfOD1iemFqzE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=bc1GNyWAZhbd47rY8amCXU97aHDSJdnMmll9z13Dev6bWz/Sw+RlE11z+FOgOFygL7pbQ+SCYjKr0SJeEWLm+sdyTNDlXum6GH7UBWL9FWCj2KLaRmM2fZmt3vztAd+r/9qlC0jZJmQ1yoJ2qxkTAqCyz90IKyQQMGB0HnmuEflLrrDERZ5e7xqW7ClAc/0BWtugTeQZJieL+syAfWnoxXfgzBnqc66LTdPiSdhSEOPzTobwvzYN9tvVzzLF06Q7fXMU7GddkhXdoxZrhU8yOlXkO1KvfSV13yrjSgwu2q6zwQoYzO8dM4ctaoyQwcqYwMMgX012tvQnSOYiE43agw==
+X-YMail-OSG: jHQ5y9gVM1lMq359mOf9kWSDWqtHxABXzwOonJH7uuDO0udN1vpvDYhaXD1pvFE
+ BQF4gGgNqpuJWd4VbccbqIMrTh3gGxi.lQyXhP8xQGz5EnfVpHI.HcznAcHyHum0OOWQUYYjM_56
+ 6lySS_aVE1fCQIDLjuhtc6KnTCcJZ4e47YaSdaVc73e1UwqkWZtLmIM_a1GVK3u.5BhkDgUeg33S
+ yUE8ESg4.cCDkxJFYLlHrUy_oqhNAHtdMq8.NgkSg4rbqtSW.2PrzelyojzWXKDSAxyE.mxXqZhz
+ .s1p95Os6kRio7BFH9iij1xVeqZIf05GtMpq74tHNlT1NDl7SbN2PxnXdx31v4BblwKCZXreLRRZ
+ nZFU6O6EEhtsYj3y50U9qwpIAPHto_5N1Jq.UcmXNNZjxX7I2SBZYQr6Psu90P5JEl6W5dJFZnGD
+ l06WXW7GAc4ku7w7N4xAlgARyr7IA0OzalNLoDon_WPclWR3ADU2tmRO5Np5w9Polp_528FsZm_z
+ DfO.FVEPFSIDIf_Qr8aF_16heF.hPBdYUskMxNYFrC8EhmojFANOHNzUABNkcfhCnISOjXkd1ICq
+ uUyPZkY4dle024fO.tc6epLtJg6gkvn8WKz8WPy58nqwYgvBVGCOEfQSij0LxVInFldi6jjGG93E
+ VQOv3TzLYvBu6A1beMxyPMx9FBQnLrnyBENEsp_DjUNuUOcwiJ1Yyt2m23z1ug_4_NrONsFGRxLH
+ a3DOhQLKUfQ9mYkdxmmiz_uoTibTnRPHg6837JFGbz7nytmPODnciIB9xobO6fplNqVVd1c69T4w
+ 3q5HSYhdZmw5J6F.8cIKPNDOs1aRujtMrccbRSI.TC.SAgurRjNKQbgu1glAFjQsFcRTd1ysJZ9Z
+ 84SIq77BnFZCiCUy9LdlZ7fX815J2yjJnFRrsAyX9n5k3RJYR5cPkM36hu6hCK0LhdBcfyohT3LH
+ kUgnDvJh3.J4mk0LLZe_pUSfXFxSmlyu3GDo_xjuxGqIhNRxzAeBAdGwjOyJuHX3R8E.b.CO5vFz
+ n.Ym03WzdFzx_TfuMLgpnqVSUvHIkkiVrS.M51Jmvmg8RGonQhoTQK369SKTzLPZJ0HSbA7wxcHd
+ YB0SFFNlktOq8jjxc0la7H75NtvDn6_VYtZYPXg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:42:03 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp417.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3591437ae6288a942f86718ae111444e;
-          Mon, 26 Nov 2018 23:41:14 +0000 (UTC)
-Subject: [PATCH v5 19/38] capability: Initialize as LSM_ORDER_FIRST
+          by smtp426.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8d8cc73ed08030887d0e6a0460ee54dd;
+          Mon, 26 Nov 2018 23:42:00 +0000 (UTC)
+Subject: [PATCH v5 20/38] procfs: add smack subdir to attrs
 To:     James Morris <jmorris@namei.org>,
         LSM <linux-security-module@vger.kernel.org>,
         LKLM <linux-kernel@vger.kernel.org>,
@@ -63,8 +63,8 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
 References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <147e1a0c-3d18-c467-8f5a-6559cfcf818c@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:41:11 -0800
+Message-ID: <996e967a-5b42-8441-d3b9-b82efe6809f8@schaufler-ca.com>
+Date:   Mon, 26 Nov 2018 15:41:57 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -76,66 +76,258 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This converts capabilities to use the new LSM_ORDER_FIRST position.
+Back in 2007 I made what turned out to be a rather serious
+mistake in the implementation of the Smack security module.
+The SELinux module used an interface in /proc to manipulate
+the security context on processes. Rather than use a similar
+interface, I used the same interface. The AppArmor team did
+likewise. Now /proc/.../attr/current will tell you the
+security "context" of the process, but it will be different
+depending on the security module you're using.
 
+This patch provides a subdirectory in /proc/.../attr for
+Smack. Smack user space can use the "current" file in
+this subdirectory and never have to worry about getting
+SELinux attributes by mistake. Programs that use the
+old interface will continue to work (or fail, as the case
+may be) as before.
+
+The proposed S.A.R.A security module is dependent on
+the mechanism to create its own attr subdirectory.
+
+The original implementation is by Kees Cook.
+
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hooks.h | 2 --
- security/commoncap.c      | 9 ++++++++-
- security/security.c       | 5 -----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ Documentation/admin-guide/LSM/index.rst | 13 +++++--
+ fs/proc/base.c                          | 64 ++++++++++++++++++++++++++++-----
+ fs/proc/internal.h                      |  1 +
+ include/linux/security.h                | 15 +++++---
+ security/security.c                     | 24 ++++++++++---
+ 5 files changed, 96 insertions(+), 21 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 83858e3df9e5..15fc49ee41a1 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2092,6 +2092,4 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
- #define __lsm_ro_after_init	__ro_after_init
- #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index c980dfe9abf1..9842e21afd4a 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -17,9 +17,8 @@ MAC extensions, other extensions can be built using the LSM to provide
+ specific changes to system operation when these tweaks are not available
+ in the core functionality of Linux itself.
  
--extern void __init capability_add_hooks(void);
--
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 18a4fdf6f6eb..ec387535e597 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1363,10 +1363,17 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(vm_enough_memory, cap_vm_enough_memory),
+-Without a specific LSM built into the kernel, the default LSM will be the
+-Linux capabilities system. Most LSMs choose to extend the capabilities
+-system, building their checks on top of the defined capability hooks.
++The Linux capabilities modules will always be included. This may be
++followed by any number of "minor" modules and at most one "major" module.
+ For more details on capabilities, see ``capabilities(7)`` in the Linux
+ man-pages project.
+ 
+@@ -30,6 +29,14 @@ order in which checks are made. The capability module will always
+ be first, followed by any "minor" modules (e.g. Yama) and then
+ the one "major" module (e.g. SELinux) if there is one configured.
+ 
++Process attributes associated with "major" security modules should
++be accessed and maintained using the special files in ``/proc/.../attr``.
++A security module may maintain a module specific subdirectory there,
++named after the module. ``/proc/.../attr/smack`` is provided by the Smack
++security module and contains all its special files. The files directly
++in ``/proc/.../attr`` remain as legacy interfaces for modules that provide
++subdirectories.
++
+ .. toctree::
+    :maxdepth: 1
+ 
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ce3465479447..e133de4897df 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -140,9 +140,13 @@ struct pid_entry {
+ #define REG(NAME, MODE, fops)				\
+ 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
+ #define ONE(NAME, MODE, show)				\
+-	NOD(NAME, (S_IFREG|(MODE)), 			\
++	NOD(NAME, (S_IFREG|(MODE)),			\
+ 		NULL, &proc_single_file_operations,	\
+ 		{ .proc_show = show } )
++#define ATTR(LSM, NAME, MODE)				\
++	NOD(NAME, (S_IFREG|(MODE)),			\
++		NULL, &proc_pid_attr_operations,	\
++		{ .lsm = LSM })
+ 
+ /*
+  * Count the number of hardlinks for the pid_entry table, excluding the .
+@@ -2517,7 +2521,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+ 	if (!task)
+ 		return -ESRCH;
+ 
+-	length = security_getprocattr(task,
++	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
+ 				      (char*)file->f_path.dentry->d_name.name,
+ 				      &p);
+ 	put_task_struct(task);
+@@ -2566,7 +2570,9 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 	if (rv < 0)
+ 		goto out_free;
+ 
+-	rv = security_setprocattr(file->f_path.dentry->d_name.name, page, count);
++	rv = security_setprocattr(PROC_I(inode)->op.lsm,
++				  file->f_path.dentry->d_name.name, page,
++				  count);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
+ out_free:
+ 	kfree(page);
+@@ -2580,13 +2586,53 @@ static const struct file_operations proc_pid_attr_operations = {
+ 	.llseek		= generic_file_llseek,
  };
  
--void __init capability_add_hooks(void)
-+static int __init capability_init(void)
- {
- 	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
- 				"capability");
-+	return 0;
++#define LSM_DIR_OPS(LSM) \
++static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
++			     struct dir_context *ctx) \
++{ \
++	return proc_pident_readdir(filp, ctx, \
++				   LSM##_attr_dir_stuff, \
++				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct file_operations proc_##LSM##_attr_dir_ops = { \
++	.read		= generic_read_dir, \
++	.iterate	= proc_##LSM##_attr_dir_iterate, \
++	.llseek		= default_llseek, \
++}; \
++\
++static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
++				struct dentry *dentry, unsigned int flags) \
++{ \
++	return proc_pident_lookup(dir, dentry, \
++				  LSM##_attr_dir_stuff, \
++				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
++	.lookup		= proc_##LSM##_attr_dir_lookup, \
++	.getattr	= pid_getattr, \
++	.setattr	= proc_setattr, \
++}
++
++#ifdef CONFIG_SECURITY_SMACK
++static const struct pid_entry smack_attr_dir_stuff[] = {
++	ATTR("smack", "current",	0666),
++};
++LSM_DIR_OPS(smack);
++#endif
++
+ static const struct pid_entry attr_dir_stuff[] = {
+-	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
+-	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
++	ATTR(NULL, "current",		0666),
++	ATTR(NULL, "prev",		0444),
++	ATTR(NULL, "exec",		0666),
++	ATTR(NULL, "fscreate",		0666),
++	ATTR(NULL, "keycreate",		0666),
++	ATTR(NULL, "sockcreate",	0666),
++#ifdef CONFIG_SECURITY_SMACK
++	DIR("smack",			0555,
++	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
++#endif
+ };
+ 
+ static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 5185d7f6a51e..d4f9989063d0 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -81,6 +81,7 @@ union proc_op {
+ 	int (*proc_show)(struct seq_file *m,
+ 		struct pid_namespace *ns, struct pid *pid,
+ 		struct task_struct *task);
++	const char *lsm;
+ };
+ 
+ struct proc_inode {
+diff --git a/include/linux/security.h b/include/linux/security.h
+index d170a5b031f3..35691877c3e1 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -390,8 +390,10 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
+ int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
+ 			unsigned nsops, int alter);
+ void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+-int security_getprocattr(struct task_struct *p, char *name, char **value);
+-int security_setprocattr(const char *name, void *value, size_t size);
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++			 char **value);
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size);
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+@@ -1139,15 +1141,18 @@ static inline int security_sem_semop(struct kern_ipc_perm *sma,
+ 	return 0;
  }
  
-+DEFINE_LSM(capability) = {
-+	.name = "capability",
-+	.order = LSM_ORDER_FIRST,
-+	.init = capability_init,
-+};
-+
- #endif /* CONFIG_SECURITY */
+-static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
++static inline void security_d_instantiate(struct dentry *dentry,
++					  struct inode *inode)
+ { }
+ 
+-static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
++static inline int security_getprocattr(struct task_struct *p, const char *lsm,
++				       char *name, char **value)
+ {
+ 	return -EINVAL;
+ }
+ 
+-static inline int security_setprocattr(char *name, void *value, size_t size)
++static inline int security_setprocattr(const char *lsm, char *name,
++				       void *value, size_t size)
+ {
+ 	return -EINVAL;
+ }
 diff --git a/security/security.c b/security/security.c
-index 701507174f40..eab64bdc60fb 100644
+index eab64bdc60fb..81ff6a71e78e 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -277,11 +277,6 @@ int __init security_init(void)
- 	     i++)
- 		INIT_HLIST_HEAD(&list[i]);
+@@ -1472,14 +1472,30 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+ }
+ EXPORT_SYMBOL(security_d_instantiate);
  
--	/*
--	 * Load minor LSMs, with the capability module always first.
--	 */
--	capability_add_hooks();
--
- 	/* Load LSMs in specified order. */
- 	ordered_lsm_init();
+-int security_getprocattr(struct task_struct *p, char *name, char **value)
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++				char **value)
+ {
+-	return call_int_hook(getprocattr, -EINVAL, p, name, value);
++	struct security_hook_list *hp;
++
++	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		return hp->hook.getprocattr(p, name, value);
++	}
++	return -EINVAL;
+ }
  
+-int security_setprocattr(const char *name, void *value, size_t size)
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size)
+ {
+-	return call_int_hook(setprocattr, -EINVAL, name, value, size);
++	struct security_hook_list *hp;
++
++	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		return hp->hook.setprocattr(name, value, size);
++	}
++	return -EINVAL;
+ }
+ 
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb)
 -- 
 2.14.5
 
