@@ -2,74 +2,64 @@ Return-Path: <SRS0=duy0=OG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02812C43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 19:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F93C43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 20:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1A2208E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 19:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FF13208E4
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 20:19:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="uT7UM/sM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1A2208E4
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="jA6D8baU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF13208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbeK1G0Y (ORCPT
+        id S1725764AbeK1HSG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 01:26:24 -0500
-Received: from sonic315-20.consmr.mail.bf2.yahoo.com ([74.6.134.194]:40321
+        Wed, 28 Nov 2018 02:18:06 -0500
+Received: from sonic315-20.consmr.mail.bf2.yahoo.com ([74.6.134.194]:36174
         "EHLO sonic315-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726492AbeK1G0X (ORCPT
+        by vger.kernel.org with ESMTP id S1726403AbeK1HSG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 01:26:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543346846; bh=+dBEI8Hn5IB8yAPR3LCebCeRlNZbPUXpV+/zZmgg4eY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=uT7UM/sMJu0+jWUv57NJ90I227GATzMJTRq7+s/KVm07Gp43ENS6OWOTp+V12ZNW2zGG67kTpNS2CNYcow+Tij/iNhcxbebKT674yLAzi1rpa7GIo+TTH0iEeLMuvdVHTMhGQnhDDYrlIQfoZJc+vfxkeev2xuglORxtx0s+MMsj4SMfmLbetSgCGwHBzlYRMwHoGErUrElgHteGkAJLdrnB1/pfX6BLKAvX3kvQGnlCIE+YBoDwToiszWmNWwMlb1JS2o3QFk3H3BIqNAEnn9Mu9F/4G8GnM8dNhUA7VJkKuHAdcNg58smaXQhgYH35o9mHsqcRRgZQz2FKCkismQ==
-X-YMail-OSG: DiPcviwVM1mIauYp4vp05KSAU1OOuIUoY5cD0SiXc9RFjv5RSeLoFYusAi78GwC
- ZfBnc4tsrMUJ.QOK0fUj3eCltycWQfOPdBZKOJt8Ic1etGckUPP7ZgbUscpmJflponZy709TRt1L
- sNouSuEvcc34iRXdD5FwWSNS4YnyhhKCnxpVAgLb9EgfeKOHhPQ6wDU9_G5HllqkmzF5e7z8wIZe
- xi_bqQBcIY_J.wSeQeI65xiseCSzrKTzS0AA9vTemVqYYgksA6k.MRqf_Srb53rf.zmvnWqVtKif
- ZX3zL6_i3Lk_9o8fgyBzyWH.X8C6yPGUB_nSQoO77OPWRbk.ap58YZCWj_4_udYikza8MZXauaEP
- fQ1qQBrbhCK10Nnaysax9DRVP6AAj3W9ULa4NSzGodloU6V42KzaYbxDesNVpLsUev6j0_EVcbNp
- wNRt7ficgUkBRevwK0N4Zjdj7yQnp.ffzu_H4nr64UziKAaE63rQrt5x3HY86crRJ4jGrNgJBLAC
- 2kp9ttN7ohVa468hS1nmFM3mCWQHowXo_YQkfC7OJMdKJgsPkWwS_5bCXeCAl9Nahr_r2F3uqTko
- wSawwMIklHf1vgcAciMd82q41KEf1hafFfLuqUZSnJLyX1VxChoO5wc5o2xots7vr01BlBV26Woa
- o__WrZuavlhYZCpk1_wAnmZB.ntxY1B8eHX6WL9VeG.e4.q66mWjC0qTZpb688XULf4eDdPUpEht
- vastbd9Hkpk60WQB7excuejmRGCyp5m1J2psMKzJ08lIqyJ_XaLs5xM9hUyfoELZVXBf_5XAO96I
- LCjEMbpdWI6l2EGjROOrR8h.gOyaqLsk_03BoLBwYRvJOvi2HxElr8X3lgG2iMOXUlvPEBlQkNom
- q1.vsFYqZSIDM2_LtoBbk0bTT_j82cWjBjSGQJIi2q.QnUoxwXW2imOWSBEBPcjy4bgETTIe40Xt
- MtJqhas9kJMx8KEoTYuGfxTZvlTwk0K8b9dLhI8I3kXBrBkmu0.RtcDeNClawZwibpbFtbGTjl37
- Jms8PnX.OGgAWlPFr5PwzAyPZffT.c2IV3kUor8M0CODMYiek901PuufvKtpv7TwVGiTot9VskTR
- SMIyIQasXM8Qc_vb5qSd_rBljlcSA7I3P
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Tue, 27 Nov 2018 19:27:26 +0000
+        Wed, 28 Nov 2018 02:18:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543349941; bh=ZeW4A0WRiIY0RljImsQz7rtv1MTO/NfkEhixbHKV51s=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=jA6D8baUSaDQgSg2WDCNpeA8ZHqBstt5G/tNScEfNMkNI5G3Es58r1ua2dH1sc4e+B14tP1AX4kyriQfloyiUifdV/mZENhaK6aswgiHAfajGULG+MwIqYaTzk/Xof1mHBoiQJ3dP1uq+08SOKUIRzQGd2dJ4oVfo887aybnxkyEBy8K/hY3VBg0ByO4UlihuDbMoYuLFWniuic3/G2ZBoCcY3tOPtJYNHvehs4WUdP8FAdLu8o5UM2N68dwAp5hqQxO2nk/ybWZjjmVLiq1n+Wkkxcs6VsNvZn69bw7Pdec9xE7z3NFUq4z0l92u7rV4HG3Cobc8qiHZPLYAv52KQ==
+X-YMail-OSG: LEpw7t8VM1l3_mG.iV_Ry6rq9fapMvdUn8YajkcHmqEXqJNLfX6KvSln7W5PGSk
+ Ga1vTFjC8gJpHA6GKZHK7mE_qHox.f1NA4oWKBdtQCNO0laXDgfekb4CVOkOqEFOs1OXBYJ1aCm1
+ fhgXWVj9vBORw7MnAph1zYBZEE86YvzxUQ2X4OsrDcLygT721PhXnnVZzYdEAEzp65KV9x8MDMXg
+ WK7tUUrJgBlX_dPX0s6j3rsA0_0Nk1WcDqDKzs4MwljXrYl9uz3wp4q4aEwkXJjvb87AV0O84bqm
+ ud4yUDZhbjjm1I_EZtSnsyRFz4cQojKra9THz_eoA17pjU6_Pm3TTnjSgVZ55Ek0Tnel3GXNmxt8
+ U2fJoWjMHMIp8DS5Nc6VsGzG28LdFn0SMrW6fyCBLMkkIXM3bBg_p.QQ90EY6OdVt8Qml3th.ZxR
+ sG0Ex3aBrF4vMYfusvpcHNV7CRRHkK0EuO_jMlENSHo42OP5BGYIPrvtk3p6ey1Sah3CBFqWY70L
+ 8l0uRNvfviSLL8N5aQdQXhHWpyKZBcMjKemCZvzPeD1.LXY5mLq9TZfSk_M_nqhNJkkDuDW2s5ad
+ GLIk3QtR1z6H83hHsLK9ERbEXQbI212suoUw5hKRpVrnCqsrOC6cOIvXIzQ8aWOeyEKhTmAkDe7s
+ pJ2zSd5dIM7.UI8BVBeW7RUEhGAf0w1VbAcWOCTkSAJ2pFvWbmU3Da9atbKq3K772gaWw58PhOEf
+ Tcr8N95GD8s480obIFjHciE8pabnQB.widHe5on1XTHMxHC_.P0SlSLy87.9WM9ZbL0ZI9GiQ.Lc
+ RZ1t2oVKV4FZxpiGIdqg.mkajqE4DGoZkmVinhbB8fSMqsvR0Y2d8AvZEQqDN3JSdvCHNiFi51Yo
+ HlGkAsHGdD6IBOqyJS.9_F1gLvvd655Gw2.3Xho5kfWJ74Lm4.9IA1oAoeIkrZAao.u8Kz1c5Iby
+ V4Kr892EwpGzfa6kovURIJHUzc9SEkzVVGj5VZDyh6h_kX7x7a.._rGZuZMMqGT9yteq8Nsungig
+ rK8ZKtxh6H9JKxUNBLe_MWn5kZJNOZ7.jxCIOAGGi4oj5kTx7lW9_nZs_D69PWgWK08G6QGgLWs8
+ NIZ5U9QE4hD6XQoPQbPWO
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Tue, 27 Nov 2018 20:19:01 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp430.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c6c50bc68b81c3271bf3c24543d3fbd6;
-          Tue, 27 Nov 2018 19:27:25 +0000 (UTC)
-Subject: Re: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
-To:     Kees Cook <keescook@chromium.org>
+          by smtp401.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a85d5e5c7da857e3277d6788a8ed893e;
+          Tue, 27 Nov 2018 20:18:58 +0000 (UTC)
+Subject: Re: [RFC PATCH] smack: fix access permissions for keyring
+To:     Zoran Markovic <zmarkovic@sierrawireless.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
- <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com>
- <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <1539818744-30912-1-git-send-email-zmarkovic@sierrawireless.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <041a17b9-432d-97e1-c3a3-fbc9e3db13fc@schaufler-ca.com>
-Date:   Tue, 27 Nov 2018 11:27:15 -0800
+Message-ID: <922bb08b-60e5-d43a-d48e-5b54575efa8b@schaufler-ca.com>
+Date:   Tue, 27 Nov 2018 12:18:54 -0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
+In-Reply-To: <1539818744-30912-1-git-send-email-zmarkovic@sierrawireless.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -77,12 +67,61 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/26/2018 9:34 PM, Kees Cook wrote:
-> On Mon, Nov 26, 2018 at 3:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On 10/17/2018 4:25 PM, Zoran Markovic wrote:
+> Function smack_key_permission() only issues smack requests for the
+> following operations:
+>  - KEY_NEED_READ (issues MAY_READ)
+>  - KEY_NEED_WRITE (issues MAY_WRITE)
+>  - KEY_NEED_LINK (issues MAY_WRITE)
+>  - KEY_NEED_SETATTR (issues MAY_WRITE)
+> A blank smack request is issued in all other cases, resulting in
+> smack access being granted if there is any rule defined between
+> subject and object, or denied with -EACCES otherwise.
 >
-> Hmmm... the "From: Kees..." in the body is missing. Are you using "git
-> send-email"?
+> Request MAY_READ access for KEY_NEED_SEARCH and KEY_NEED_VIEW.
+> Fix the logic in the unlikely case when both MAY_READ and
+> MAY_WRITE are needed. Validate access permission field for valid
+> contents.
 
-Not for this posting. I will use it henceforth. I had some
-email configuration issues to work through.
+Do you have any test cases for this?
+
+> Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> ---
+>  security/smack/smack_lsm.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 340fc30..77e405f 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4326,6 +4326,12 @@ static int smack_key_permission(key_ref_t key_ref,
+>  	int request = 0;
+>  	int rc;
+>  
+> +	/*
+> +	 * Validate requested permissions
+> +	 */
+> +	if (perm & ~KEY_NEED_ALL)
+> +		return -EINVAL;
+> +
+>  	keyp = key_ref_to_ptr(key_ref);
+>  	if (keyp == NULL)
+>  		return -EINVAL;
+> @@ -4349,10 +4355,10 @@ static int smack_key_permission(key_ref_t key_ref,
+>  	ad.a.u.key_struct.key = keyp->serial;
+>  	ad.a.u.key_struct.key_desc = keyp->description;
+>  #endif
+> -	if (perm & KEY_NEED_READ)
+> -		request = MAY_READ;
+> +	if (perm & (KEY_NEED_READ | KEY_NEED_SEARCH | KEY_NEED_VIEW))
+> +		request |= MAY_READ;
+>  	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
+> -		request = MAY_WRITE;
+> +		request |= MAY_WRITE;
+>  	rc = smk_access(tkp, keyp->security, request, &ad);
+>  	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
+>  	return rc;
 
