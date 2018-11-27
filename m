@@ -2,79 +2,81 @@ Return-Path: <SRS0=duy0=OG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEF3C43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 23:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAE6C04EBA
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 23:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D3720851
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 23:15:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D3720851
+	by mail.kernel.org (Postfix) with ESMTP id A4CCF2086B
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 23:36:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4CCF2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbeK1KPJ (ORCPT
+        id S1726411AbeK1Kfv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 05:15:09 -0500
-Received: from mga06.intel.com ([134.134.136.31]:26999 "EHLO mga06.intel.com"
+        Wed, 28 Nov 2018 05:35:51 -0500
+Received: from mga07.intel.com ([134.134.136.100]:20131 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726068AbeK1KPI (ORCPT
+        id S1726312AbeK1Kfu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 05:15:08 -0500
+        Wed, 28 Nov 2018 05:35:50 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 15:15:39 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 15:36:18 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,288,1539673200"; 
-   d="scan'208";a="93162704"
+   d="scan'208";a="102043492"
 Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.96])
-  by orsmga007.jf.intel.com with ESMTP; 27 Nov 2018 15:15:39 -0800
-Date:   Tue, 27 Nov 2018 15:15:39 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 27 Nov 2018 15:36:17 -0800
+Date:   Tue, 27 Nov 2018 15:36:17 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH] selftests: add TPM 2.0 tests
-Message-ID: <20181127231539.GC26051@linux.intel.com>
-References: <20181127221059.25966-1-jarkko.sakkinen@linux.intel.com>
- <0929dfe2-83aa-ff39-e37e-35bc499aaa0a@intel.com>
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] tpm: add support for partial reads
+Message-ID: <20181127233617.GA1304@linux.intel.com>
+References: <154281183700.2093.10559851516194502797.stgit@tstruk-mobl1.jf.intel.com>
+ <20181121151838.GB16564@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0929dfe2-83aa-ff39-e37e-35bc499aaa0a@intel.com>
+In-Reply-To: <20181121151838.GB16564@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 27, 2018 at 02:34:39PM -0800, Tadeusz Struk wrote:
-> On 11/27/18 2:10 PM, Jarkko Sakkinen wrote:
-> > Added the tests that I've been using for testing TPM 2.0 functionality
-> > for long time but have out-of-tree so far residing in
+On Wed, Nov 21, 2018 at 05:18:38PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Nov 21, 2018 at 06:50:37AM -0800, Tadeusz Struk wrote:
+> > Currently to read a response from the TPM device an application needs
+> > provide big enough buffer for the whole response and read it in one go.
+> > The application doesn't know how big the response it beforehand so it
+> > always needs to maintain a 4K buffer and read the max (4K).
+> > In case if the user of the TSS library doesn't provide big enough
+> > buffer the TCTI spec says that the library should set the required
+> > size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
+> > application could allocate a bigger buffer and call receive again.
+> > To make it possible in the TSS library, this requires being able to do
+> > partial reads from the driver.
+> > The library would read the 10 bytes header first to get the actual size
+> > of the response from the header, and then read the rest of the response.
 > > 
-> > https://github.com/jsakkine-intel/tpm2-scripts
+> > This patch adds support for partial reads, i.e. the user can read the
+> > response in one or multiple reads, until the whole response is consumed.
+> > The user can also read only part of the response and ignore
+> > the rest by issuing a new write to send a new command.
 > > 
-> > Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> > Tadeusz: does not include your test. Better that you send them after
-> > this has been accepted to get proper SOB info.
+> > Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 > 
-> Sure I can follow up after this is merged.
-> Thanks,
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Hey, noticed that there was extra parentheses in open() for tpmrm0. Not
-a biggie, I fixed it in my tpm2-scripts tree, but when you actually go
-on to make the commit and send it here for review run both test_smoke.sh
-and test_space.sh.
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+Pushed.
 
 /Jarkko
