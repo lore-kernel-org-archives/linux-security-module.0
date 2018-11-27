@@ -2,96 +2,160 @@ Return-Path: <SRS0=duy0=OG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80327C04EBA
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 22:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9544FC43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 22:49:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50C1A208E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 22:34:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C1A208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A94620873
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 22:49:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuLZlArG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A94620873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeK1JeC (ORCPT
+        id S1726604AbeK1Jsb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 04:34:02 -0500
-Received: from mga01.intel.com ([192.55.52.88]:55125 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbeK1JeC (ORCPT
+        Wed, 28 Nov 2018 04:48:31 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46425 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbeK1Jsb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 04:34:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 14:34:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,288,1539673200"; 
-   d="scan'208";a="112538857"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.56])
-  by orsmga002.jf.intel.com with ESMTP; 27 Nov 2018 14:34:39 -0800
-Subject: Re: [PATCH] selftests: add TPM 2.0 tests
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
+        Wed, 28 Nov 2018 04:48:31 -0500
+Received: by mail-pl1-f194.google.com with SMTP id t13so16326954ply.13;
+        Tue, 27 Nov 2018 14:49:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=28kfNMT6RNOVuPhu+BrI2ezJ8GwHXxpYTt5CYfz40nc=;
+        b=PuLZlArGDTkniEGhlKWaJ3JjL807JjuEXJXQXo/f15WBleuwW+tbBJgdbmaACXozKc
+         FmaFZK67zKcK4RLWIwPeSrxjJgPk76yBH0tnbOr9UPOpGP7yl85BSZIqsCC/UPcW84f8
+         ujZNretBkK3uMnWTM07GVoWmPjLv7+2EUUuYKVv720KKA59lAi+JTCyfcNXQW7CPIpbd
+         mLJwrkaEitLPH0thBPOhVQk8I8MOT23OQ1mGtSTjv3V5pd2IuCL9T1C0r6QBWP3GbdLL
+         a6C9yzXnjllk9DTcH9ptzLYixOv9Dz7wapZQA934U6XVU/AiwCwl0W45ghew8Bcd8mMh
+         jLtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=28kfNMT6RNOVuPhu+BrI2ezJ8GwHXxpYTt5CYfz40nc=;
+        b=SqYj/8g6aJzAcw6QIT9dt5wTjSHTUEtNvpaeUFtI89gAh0+sf/7zlID/gSbJjIjG5W
+         5e6gFLCOUfTu3QeEQ6CyD176x+eMPkx117m1TR9OfeFxmufDEfMi/wrm5Ro4JdG8euQV
+         f5hsGsZnl8Z09MU3x5/Djh78CMS61aDySQm/eOR9FKsTixMCeVUVQ3NtAjwPKW3CVT7n
+         D6GsFBax2TYPVBnCkE5C/UZRFqFzU7F8ME4E/apw008ek+Ba8hiHkNoDMZhgogUJrfu4
+         sxxwotfVClDXzI4D3uqcjhL2plOkcGqzHqr7HrRR3+qi7rs+SuM9+DBOq8FyzOB/lZxn
+         OHGQ==
+X-Gm-Message-State: AA+aEWb4pPL0akj2P+vKJOTwaHA7Z31ejAsElR3CHtRHqV8M79KdymjD
+        vXqcuixVKFJJUS2z3cqTUmk=
+X-Google-Smtp-Source: AFSGD/XEPd3zQh3ypybv8rkc00pUyDMNHMyUvk9FeS93+x6Y9jynFpEPv4Y98klx63qe8IH7jE8mHA==
+X-Received: by 2002:a17:902:e101:: with SMTP id cc1-v6mr34948899plb.165.1543358945703;
+        Tue, 27 Nov 2018 14:49:05 -0800 (PST)
+Received: from gmail.com (cpe-98-150-136-16.hawaii.res.rr.com. [98.150.136.16])
+        by smtp.gmail.com with ESMTPSA id e14-v6sm5988102pfn.46.2018.11.27.14.49.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Nov 2018 14:49:04 -0800 (PST)
+Date:   Tue, 27 Nov 2018 12:49:00 -1000
+From:   Joey Pabalinas <joeypabalinas@gmail.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
         Shuah Khan <shuah@kernel.org>,
         open list <linux-kernel@vger.kernel.org>,
         "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
+        <linux-kselftest@vger.kernel.org>,
+        Joey Pabalinas <joeypabalinas@gmail.com>
+Subject: Re: [PATCH] selftests: add TPM 2.0 tests
+Message-ID: <20181127224900.fpbqujcsqwgxpwyq@gmail.com>
+Mail-Followup-To: Joey Pabalinas <joeypabalinas@gmail.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
 References: <20181127221059.25966-1-jarkko.sakkinen@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <0929dfe2-83aa-ff39-e37e-35bc499aaa0a@intel.com>
-Date:   Tue, 27 Nov 2018 14:34:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cixxykv7p6jttu3e"
+Content-Disposition: inline
 In-Reply-To: <20181127221059.25966-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/27/18 2:10 PM, Jarkko Sakkinen wrote:
+
+--cixxykv7p6jttu3e
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Nov 27, 2018 at 02:10:48PM -0800, Jarkko Sakkinen wrote:
 > Added the tests that I've been using for testing TPM 2.0 functionality
 > for long time but have out-of-tree so far residing in
-> 
+>=20
 > https://github.com/jsakkine-intel/tpm2-scripts
-> 
+>=20
 > Cc: Tadeusz Struk <tadeusz.struk@intel.com>
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> Tadeusz: does not include your test. Better that you send them after
-> this has been accepted to get proper SOB info.
 
-Sure I can follow up after this is merged.
-Thanks,
--- 
-Tadeusz
+Just one thing I didn't really understand:
+
+> +    def start_auth_session(self, session_type, name_alg =3D TPM2_ALG_SHA=
+1):
+> +        fmt =3D '>HII IIH16sHBHH'
+> +        cmd =3D struct.pack(fmt,
+> +                          TPM2_ST_NO_SESSIONS,
+> +                          struct.calcsize(fmt),
+> +                          TPM2_CC_START_AUTH_SESSION,
+> +                          TPM2_RH_NULL,
+> +                          TPM2_RH_NULL,
+> +                          16,
+> +                          '\0' * 16,
+> +                          0,
+> +                          session_type,
+> +                          TPM2_ALG_NULL,
+> +                          name_alg)
+> +
+> +        return struct.unpack('>I', self.send_cmd(cmd)[10:14])[0]
+> +
+> +    def __calc_pcr_digest(self, pcrs, bank_alg =3D TPM2_ALG_SHA1,
+> +                          digest_alg =3D TPM2_ALG_SHA1):
+> +        x =3D []
+
+Is there a reason for using `'\0' * 16` there instead of just 0?
+
+--=20
+Cheers,
+Joey Pabalinas
+
+--cixxykv7p6jttu3e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEENpTlWU2hUK/KMvHp2rGdfm9DtVIFAlv9ydsACgkQ2rGdfm9D
+tVJG2g/8DPPQ8Mt17gIFkwZ5htEJKnOHRgQF7iopCqkYwEbY/EDFflNsnmrSe5aS
+nl9ZBIqr/3NG5JKpnqOEIaPBLC6omChvwIfjOMjHyc3EUwOPEu3vWeofvvOVIxQK
+iJqiFKzHs9f2jZrpNZDeBlzPJnPyEqrWVz8rRZB242Xl0cLudmhGxrALCdSBXBW/
+QB0XDHb38X04h7/zpjEWqfELgrZEDCVhqvfkylM/CB/H1MHo/d1fI2vxK2N/bF1o
+fphW+eNB4/uZKZXHAvedp5mndNSbazY3aOnooxUpHnD7FsvHO9Oh1GB6TYjZhcQr
+wd4lnxbigNZQ7C+ps5d1vWRm5Y1K65wWjBkt1u96qFsXKZ57eFWFZ2MF3yahvl5V
+TliSHhGrqNVEH4PT5RpTqqdV6OLi5lJHfueIkpKZ++3HcJlm4b0fQfDlfYkHRw5Z
+0V53m2fRsPxsdglz5hLSr1qFtCkiZXVodHuP4YNjjKJgMdutGSW1zgo1imLGQLEF
+3h4xYqgMFADpmzeX1aoQqUC47st+aWE2r4j30jnlqB9+wGv+LdsYzJfRmJccyWIz
+6EYpqhUAJUdOzsqoweY9+NJknhToCStalj7nZhAzlrbtNCaUnWk5Yt3S2fs3VHJx
+rW5ZRrS7ZtJ1MXy2f3BQQRBUeBWjghgqw4f8eLw2SPEGeF5zEug=
+=Is49
+-----END PGP SIGNATURE-----
+
+--cixxykv7p6jttu3e--
