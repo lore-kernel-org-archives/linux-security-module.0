@@ -1,102 +1,179 @@
-Return-Path: <SRS0=4Wmn=OF=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=duy0=OG=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BADFC43441
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79638C43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 05:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E39820856
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Nov 2018 23:57:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F41F208E4
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 05:34:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="beqR9sWY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E39820856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bx4gPVm9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F41F208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeK0KxA (ORCPT
+        id S1728604AbeK0QbN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Nov 2018 05:53:00 -0500
-Received: from sonic302-28.consmr.mail.ne1.yahoo.com ([66.163.186.154]:45423
-        "EHLO sonic302-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727778AbeK0Kw7 (ORCPT
+        Tue, 27 Nov 2018 11:31:13 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:33874 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728599AbeK0QbM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Nov 2018 05:52:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543276626; bh=3u9R9GyCFBDGOshX42y2/d53w6/c/YWPzQ9YJX8JK0o=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=beqR9sWYG4P40la0QKd9DjfrtbGL2ravnp98JKuw+KDujbTyZjYpTRvXfGGbXdWuuiDvObjUBMIzs/f1vmDEThCbOqCF7MVNQLR71wpBZGUmkyjVR67TdR2xeXIXZJQU08HZ3d6+UaVbX4Qs35fTpRGsETnJTKcTluDVYWQ7IDBzbWNlz5/LpgM1y3JNng1FLoFqzyLzjSiwR/ifonQeCrPS5lPEsKA9Lg9PmGPQk5DgTOhUj0t8TAerJOl7CNtq0wJQEKd3BrjY2Pt5DiczbwJsxoaArbin/26chvnB1GjxDBXj7in9jD/uOr1Nj/f15yCByP0JM9uovEgrdhwuJA==
-X-YMail-OSG: wV_VxM4VM1mFVFV3WCrVT84wyUbUP3QxBitvUllHLQeqeglqbDAdsdE_kBk3XN7
- vRiMFuTDe.lMZCuYgYewvLVPzaCXuDrZ0cComlfVOomsMn7J6uCDPSLmQl5w6JtwmfiyS7OTn8yx
- j7hLAtxAgNiKa2fEDOp74hOoErWbELRBHFeNmnLIqCtfV4S.enBK851rAtwVkRP1iy_Oi7Daxz9l
- 6a9EqIXddwXM1JdUUQlDh9srV0peFhowR0aCq6OmEBXord7kMHH02lDPrPmi_7qKAt1gkQrtChN7
- voxu435cnpaexO01kSt40MeYZeKz4bTadP5kDdqQY2beB_r07LzqpKON4ItvWF_m018bD5vbn_mM
- f1BuIXJKekypSqPxXaMPWDY49aokcztTwi1W6F_ZHtWW7fqjI6x3XGYVgUN2PbQCqM1e5Int3W5U
- GTQ_RONiLlMdvOiiKgUl_RROeG9irn7USBn5O5MHdQ108inx43z5.t4srrGRW1XYB_Ff3npE5KrD
- lSp0ruOHoYH9N68QTNi3h4Cp5pSz9wIag1Goa5CAptG_ctvAvSsk.QpdfAGn_45O_hWDuZWlh9Pk
- cquWDNc8apC5fOStw1Uni1BYphnTOJ6aGi9n4RDUmDz4yZ775a7Zs3NXJK03wTfPVyNfbYQlOhbt
- Huc6hzEwFQzS3gBXsZh.VgEm0w2mEp8enmFLrvhLkPRikMdYEnY9Qr5NkbVZVuHHWvRVL8rAzAcx
- lGHX9jVmBjHnpw.h3sgd3i3hF9HVL4T51LPSkiv7y88lm_mBFGXI7xBVLDSduVbW3sodG9PtLbg1
- 0jnA7cpQFDZfI3uXKR1ruqaIRjlXI1sNEjrVwTpAV7CvQhoq7dNC6RClY3un4aVvDS_Ugv9H0Y5T
- MUW65_lWOMCLN_sacRbHmZ1L9xpitC7R9xfE0JrLgnciEM8PemIbRzir9HwLJkqpC6lf9W6GtODK
- aVjOS34jrWbt_B1h2.Ors.F77CBWihh7LTt1ZSZvapacuqDsOB9FHftmHCA2_d_Bzi.mZJKLjUt4
- Vkxxo34YRBnvPTDUJhYhN2FjDgH9FoEs3Ho4_Q95KoR8_VFmrMzbNmXN3mQP59jX3HNzYZGQ2yle
- RWfsq00BZyxPg96AfQEkSpLTrrs3dfmetl9htXw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Nov 2018 23:57:06 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp422.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 4ab9a22a8175d9218d86768033f8d9bd;
-          Mon, 26 Nov 2018 23:57:04 +0000 (UTC)
-Subject: [PATCH v5 38/38] TOMOYO: Update LSM flags to no longer be exclusive
-To:     James Morris <jmorris@namei.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>
-Cc:     John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
+        Tue, 27 Nov 2018 11:31:12 -0500
+Received: by mail-yb1-f193.google.com with SMTP id a67-v6so7031692ybg.1
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Nov 2018 21:34:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/omSkAw6P4Rj7FKfx5WJTuN6rcUIqdUCq/wshJQTtw0=;
+        b=Bx4gPVm9X1ZbEiUOLyAtfukRlonEjTcdM86nr32HpuBEtfrZiKkmk2U6iQTUB/v/H7
+         2uhOzByMV8JAEvAyQf6cX4xhGOXWWaGPIn3/4GqcW2e7HVDu6PFZa5rV3N3pWIAsKjYi
+         GEd0s5BXK1pk0hb3GsA0NmgH7GM0p6FikQ+hc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/omSkAw6P4Rj7FKfx5WJTuN6rcUIqdUCq/wshJQTtw0=;
+        b=odUW5Bfj0sCY9q6Xtq9b1ShT4dF0krq3yg9qG8SJPErMGqKmBas15K0TVnkXexajwr
+         SLLhSkqUUcCeWbpGoIpok3PUEEPIWvFqR9hbkurGnNfrmEf293CZSmKBamGug+F1TAoj
+         cL+y+tFF29H8nJ0114CR27re2A6UwgMFF+ZDJ6y6z/KHYktUqaCdfq3BVfLBwmH4mXju
+         6AXCdG9XHQMSczRxr0s0XbxwlIOJciXQehvqtwaKG6rUW6QUgcuXD5rKDstnK08A2dZQ
+         n3eLh1mL7H8t55AnMvdJkzmStlnz8XsmoDU/7/jt7Fnf78CQNJflE8kiNxiNue+XDVQJ
+         AMAA==
+X-Gm-Message-State: AA+aEWZZvY7ZHRZ371nS1o1NQKGCL3w39DKLqugxKi4e/CnsjfjMT35W
+        E4cIc3fgozrO5Fhqy34F26CHgv839o4=
+X-Google-Smtp-Source: AFSGD/VdLMda2tl5d14TeNUhzGjIOQ98KIV/0uVQgMLb1RfBTC1XItoyvkWI5KthyzbAyBK4U1lyBg==
+X-Received: by 2002:a25:ae51:: with SMTP id g17-v6mr27134040ybe.338.1543296869295;
+        Mon, 26 Nov 2018 21:34:29 -0800 (PST)
+Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
+        by smtp.gmail.com with ESMTPSA id n4sm692227ywc.89.2018.11.26.21.34.27
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Nov 2018 21:34:27 -0800 (PST)
+Received: by mail-yw1-f48.google.com with SMTP id i20so8634626ywc.5
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Nov 2018 21:34:27 -0800 (PST)
+X-Received: by 2002:a81:760b:: with SMTP id r11-v6mr30130739ywc.353.1543296866988;
+ Mon, 26 Nov 2018 21:34:26 -0800 (PST)
+MIME-Version: 1.0
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com> <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com>
+In-Reply-To: <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 26 Nov 2018 21:34:15 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
+Message-ID: <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
+Subject: Re: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Paul Moore <paul@paul-moore.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         Stephen Smalley <sds@tycho.nsa.gov>,
         Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <02dd3038-09e8-34e8-ed57-8888788d17d2@schaufler-ca.com>
-Date:   Mon, 26 Nov 2018 15:57:01 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-With blob sharing in place, TOMOYO is no longer an exclusive LSM, so it
-can operate separately now. Mark it as such.
+On Mon, Nov 26, 2018 at 3:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- security/tomoyo/tomoyo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmmm... the "From: Kees..." in the body is missing. Are you using "git
+send-email"?
 
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 9094cf41a247..066c0daf0efc 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -577,7 +577,7 @@ static int __init tomoyo_init(void)
- DEFINE_LSM(tomoyo) = {
- 	.name = "tomoyo",
- 	.enabled = &tomoyo_enabled,
--	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.blobs = &tomoyo_blob_sizes,
- 	.init = tomoyo_init,
- };
+>
+> This adds a flag for the current "major" LSMs to distinguish them when
+> we have a universal method for ordering all LSMs. It's called "legacy"
+> since the distinction of "major" will go away in the blob-sharing world.
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> ---
+>  include/linux/lsm_hooks.h  | 3 +++
+>  security/apparmor/lsm.c    | 1 +
+>  security/selinux/hooks.c   | 1 +
+>  security/smack/smack_lsm.c | 1 +
+>  security/tomoyo/tomoyo.c   | 1 +
+>  5 files changed, 7 insertions(+)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index aaeb7fa24dc4..63c0e102de20 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -2039,8 +2039,11 @@ extern char *lsm_names;
+>  extern void security_add_hooks(struct security_hook_list *hooks, int count,
+>                                 char *lsm);
+>
+> +#define LSM_FLAG_LEGACY_MAJOR  BIT(0)
+> +
+>  struct lsm_info {
+>         const char *name;       /* Required. */
+> +       unsigned long flags;    /* Optional: flags describing LSM */
+>         int (*init)(void);      /* Required. */
+>  };
+>
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 42446a216f3b..2edd35ca5044 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1728,5 +1728,6 @@ static int __init apparmor_init(void)
+>
+>  DEFINE_LSM(apparmor) = {
+>         .name = "apparmor",
+> +       .flags = LSM_FLAG_LEGACY_MAJOR,
+>         .init = apparmor_init,
+>  };
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 7ce683259357..56c6f1849c80 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -7209,6 +7209,7 @@ void selinux_complete_init(void)
+>     all processes and objects when they are created. */
+>  DEFINE_LSM(selinux) = {
+>         .name = "selinux",
+> +       .flags = LSM_FLAG_LEGACY_MAJOR,
+>         .init = selinux_init,
+>  };
+>
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 81fb4c1631e9..3639e55b1f4b 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -4891,5 +4891,6 @@ static __init int smack_init(void)
+>   */
+>  DEFINE_LSM(smack) = {
+>         .name = "smack",
+> +       .flags = LSM_FLAG_LEGACY_MAJOR,
+>         .init = smack_init,
+>  };
+> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+> index 1b5b5097efd7..09f7af130d3a 100644
+> --- a/security/tomoyo/tomoyo.c
+> +++ b/security/tomoyo/tomoyo.c
+> @@ -552,5 +552,6 @@ static int __init tomoyo_init(void)
+>
+>  DEFINE_LSM(tomoyo) = {
+>         .name = "tomoyo",
+> +       .flags = LSM_FLAG_LEGACY_MAJOR,
+>         .init = tomoyo_init,
+>  };
+> --
+> 2.14.5
+>
+>
+
+
 -- 
-2.14.5
-
-
+Kees Cook
