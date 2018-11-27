@@ -2,172 +2,87 @@ Return-Path: <SRS0=duy0=OG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 283CAC43441
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 13:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02812C43441
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 19:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF0DD208E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 13:51:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF0DD208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B1A2208E4
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 19:27:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="uT7UM/sM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B1A2208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbeK1Atm (ORCPT
+        id S1726393AbeK1G0Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Nov 2018 19:49:42 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46619 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727555AbeK1Atm (ORCPT
+        Wed, 28 Nov 2018 01:26:24 -0500
+Received: from sonic315-20.consmr.mail.bf2.yahoo.com ([74.6.134.194]:40321
+        "EHLO sonic315-20.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726492AbeK1G0X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Nov 2018 19:49:42 -0500
-Received: by mail-ot1-f68.google.com with SMTP id w25so20099915otm.13
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Nov 2018 05:51:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hi9iX299DQInLmJAtW0O641VhL4ev2inw/6dRwxQFJs=;
-        b=OcqDoTKacMRCxHgjvA6Iuamck5KB2aUFRTv8Kk7gimJY4umXCED49PU57fmcsFa+Gc
-         QhIno31QwXA2V2M5HvgGY15Ypy+YyPCMEINi4NN2EK9+hwUP7IWFNwGXfW+wQC0MkLOd
-         PKZxEnkMF584aOxLYKo3kxhykZ/f0wSBWJosnv8Rb9iRksyB3K8j81NBVLWc4qGgC0XV
-         CYn0GBLn4T4vV7Tk2M/sKJcH0QQ5ttGzxNCtAKKq5+gwDa9kBPqzNNhknKxcU38MCC2i
-         EbW7a84RhNX2qRkVOyyVLjoC6n2RQOkqwGdHH/DJ8mt2feCsrNFLEqI6JOyUVkJA9SEO
-         bZ2w==
-X-Gm-Message-State: AA+aEWbQDP95gmDr+Kpz34JK1QG32wec4hoMgfU8uC440CZij/rBX1VX
-        el1sMCEnu3ySQgr1AzxWUAC0lQDJFzb+Xxte2IUBMg==
-X-Google-Smtp-Source: AFSGD/UDcoixmjnUyxh5EzfsBxtQ71PdZ8mHdE7/ClPe90U6fIFnE6upOU7KnluvdE5WW5BhrW/bDS1IUOKpe3OgPdM=
-X-Received: by 2002:a9d:32c7:: with SMTP id u65mr17415964otb.236.1543326702007;
- Tue, 27 Nov 2018 05:51:42 -0800 (PST)
-MIME-Version: 1.0
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
- <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com> <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
-In-Reply-To: <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 27 Nov 2018 14:51:30 +0100
-Message-ID: <CAFqZXNvcYWNh2fmgY7wF8QOmRBfhaqqYAKG1kYFDcn496ah26Q@mail.gmail.com>
+        Wed, 28 Nov 2018 01:26:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543346846; bh=+dBEI8Hn5IB8yAPR3LCebCeRlNZbPUXpV+/zZmgg4eY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=uT7UM/sMJu0+jWUv57NJ90I227GATzMJTRq7+s/KVm07Gp43ENS6OWOTp+V12ZNW2zGG67kTpNS2CNYcow+Tij/iNhcxbebKT674yLAzi1rpa7GIo+TTH0iEeLMuvdVHTMhGQnhDDYrlIQfoZJc+vfxkeev2xuglORxtx0s+MMsj4SMfmLbetSgCGwHBzlYRMwHoGErUrElgHteGkAJLdrnB1/pfX6BLKAvX3kvQGnlCIE+YBoDwToiszWmNWwMlb1JS2o3QFk3H3BIqNAEnn9Mu9F/4G8GnM8dNhUA7VJkKuHAdcNg58smaXQhgYH35o9mHsqcRRgZQz2FKCkismQ==
+X-YMail-OSG: DiPcviwVM1mIauYp4vp05KSAU1OOuIUoY5cD0SiXc9RFjv5RSeLoFYusAi78GwC
+ ZfBnc4tsrMUJ.QOK0fUj3eCltycWQfOPdBZKOJt8Ic1etGckUPP7ZgbUscpmJflponZy709TRt1L
+ sNouSuEvcc34iRXdD5FwWSNS4YnyhhKCnxpVAgLb9EgfeKOHhPQ6wDU9_G5HllqkmzF5e7z8wIZe
+ xi_bqQBcIY_J.wSeQeI65xiseCSzrKTzS0AA9vTemVqYYgksA6k.MRqf_Srb53rf.zmvnWqVtKif
+ ZX3zL6_i3Lk_9o8fgyBzyWH.X8C6yPGUB_nSQoO77OPWRbk.ap58YZCWj_4_udYikza8MZXauaEP
+ fQ1qQBrbhCK10Nnaysax9DRVP6AAj3W9ULa4NSzGodloU6V42KzaYbxDesNVpLsUev6j0_EVcbNp
+ wNRt7ficgUkBRevwK0N4Zjdj7yQnp.ffzu_H4nr64UziKAaE63rQrt5x3HY86crRJ4jGrNgJBLAC
+ 2kp9ttN7ohVa468hS1nmFM3mCWQHowXo_YQkfC7OJMdKJgsPkWwS_5bCXeCAl9Nahr_r2F3uqTko
+ wSawwMIklHf1vgcAciMd82q41KEf1hafFfLuqUZSnJLyX1VxChoO5wc5o2xots7vr01BlBV26Woa
+ o__WrZuavlhYZCpk1_wAnmZB.ntxY1B8eHX6WL9VeG.e4.q66mWjC0qTZpb688XULf4eDdPUpEht
+ vastbd9Hkpk60WQB7excuejmRGCyp5m1J2psMKzJ08lIqyJ_XaLs5xM9hUyfoELZVXBf_5XAO96I
+ LCjEMbpdWI6l2EGjROOrR8h.gOyaqLsk_03BoLBwYRvJOvi2HxElr8X3lgG2iMOXUlvPEBlQkNom
+ q1.vsFYqZSIDM2_LtoBbk0bTT_j82cWjBjSGQJIi2q.QnUoxwXW2imOWSBEBPcjy4bgETTIe40Xt
+ MtJqhas9kJMx8KEoTYuGfxTZvlTwk0K8b9dLhI8I3kXBrBkmu0.RtcDeNClawZwibpbFtbGTjl37
+ Jms8PnX.OGgAWlPFr5PwzAyPZffT.c2IV3kUor8M0CODMYiek901PuufvKtpv7TwVGiTot9VskTR
+ SMIyIQasXM8Qc_vb5qSd_rBljlcSA7I3P
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Tue, 27 Nov 2018 19:27:26 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
+          by smtp430.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c6c50bc68b81c3271bf3c24543d3fbd6;
+          Tue, 27 Nov 2018 19:27:25 +0000 (UTC)
 Subject: Re: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
-To:     keescook@chromium.org
-Cc:     casey@schaufler-ca.com, s.mesoraca16@gmail.com,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        mic@digikod.net,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@tycho.nsa.gov>,
-        linux-fsdevel@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
-        adobriyan@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+ <ecb10f5c-7bbd-fb2e-4148-63290bc9a7ff@schaufler-ca.com>
+ <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <041a17b9-432d-97e1-c3a3-fbc9e3db13fc@schaufler-ca.com>
+Date:   Tue, 27 Nov 2018 11:27:15 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jJxjJoQmdsjy18z6N0fcSfpNTx60YnRESbOToHQG_2mdQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 27, 2018 at 2:27 PM Kees Cook <keescook@chromium.org> wrote:
+On 11/26/2018 9:34 PM, Kees Cook wrote:
 > On Mon, Nov 26, 2018 at 3:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
 > Hmmm... the "From: Kees..." in the body is missing. Are you using "git
 > send-email"?
 
-Not to mention that you are sending (only) to the old SELinux mailing
-list. The new list is at selinux@vger.kernel.org, see:
+Not for this posting. I will use it henceforth. I had some
+email configuration issues to work through.
 
-https://lore.kernel.org/selinux/8263f9fa-16f1-1d0a-e391-61d609e50d7d@tycho.nsa.gov/
-
->
-> >
-> > This adds a flag for the current "major" LSMs to distinguish them when
-> > we have a universal method for ordering all LSMs. It's called "legacy"
-> > since the distinction of "major" will go away in the blob-sharing world.
-> >
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Reviewed-by: John Johansen <john.johansen@canonical.com>
-> > ---
-> >  include/linux/lsm_hooks.h  | 3 +++
-> >  security/apparmor/lsm.c    | 1 +
-> >  security/selinux/hooks.c   | 1 +
-> >  security/smack/smack_lsm.c | 1 +
-> >  security/tomoyo/tomoyo.c   | 1 +
-> >  5 files changed, 7 insertions(+)
-> >
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index aaeb7fa24dc4..63c0e102de20 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -2039,8 +2039,11 @@ extern char *lsm_names;
-> >  extern void security_add_hooks(struct security_hook_list *hooks, int count,
-> >                                 char *lsm);
-> >
-> > +#define LSM_FLAG_LEGACY_MAJOR  BIT(0)
-> > +
-> >  struct lsm_info {
-> >         const char *name;       /* Required. */
-> > +       unsigned long flags;    /* Optional: flags describing LSM */
-> >         int (*init)(void);      /* Required. */
-> >  };
-> >
-> > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> > index 42446a216f3b..2edd35ca5044 100644
-> > --- a/security/apparmor/lsm.c
-> > +++ b/security/apparmor/lsm.c
-> > @@ -1728,5 +1728,6 @@ static int __init apparmor_init(void)
-> >
-> >  DEFINE_LSM(apparmor) = {
-> >         .name = "apparmor",
-> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
-> >         .init = apparmor_init,
-> >  };
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 7ce683259357..56c6f1849c80 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -7209,6 +7209,7 @@ void selinux_complete_init(void)
-> >     all processes and objects when they are created. */
-> >  DEFINE_LSM(selinux) = {
-> >         .name = "selinux",
-> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
-> >         .init = selinux_init,
-> >  };
-> >
-> > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> > index 81fb4c1631e9..3639e55b1f4b 100644
-> > --- a/security/smack/smack_lsm.c
-> > +++ b/security/smack/smack_lsm.c
-> > @@ -4891,5 +4891,6 @@ static __init int smack_init(void)
-> >   */
-> >  DEFINE_LSM(smack) = {
-> >         .name = "smack",
-> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
-> >         .init = smack_init,
-> >  };
-> > diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> > index 1b5b5097efd7..09f7af130d3a 100644
-> > --- a/security/tomoyo/tomoyo.c
-> > +++ b/security/tomoyo/tomoyo.c
-> > @@ -552,5 +552,6 @@ static int __init tomoyo_init(void)
-> >
-> >  DEFINE_LSM(tomoyo) = {
-> >         .name = "tomoyo",
-> > +       .flags = LSM_FLAG_LEGACY_MAJOR,
-> >         .init = tomoyo_init,
-> >  };
-> > --
-> > 2.14.5
-> >
-> >
->
->
-> --
-> Kees Cook
-> _______________________________________________
-> Selinux mailing list
-> Selinux@tycho.nsa.gov
-> To unsubscribe, send email to Selinux-leave@tycho.nsa.gov.
-> To get help, send an email containing "help" to Selinux-request@tycho.nsa.gov.
-
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
