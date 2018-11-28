@@ -2,277 +2,175 @@ Return-Path: <SRS0=GOq3=OH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B26C04EB8
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA254C04EB8
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 16:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF81B2133F
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF81B2133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B988D2086B
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 16:12:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B988D2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeK2Cyk (ORCPT
+        id S1728537AbeK2DOY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:54:40 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49682 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728300AbeK2Cyj (ORCPT
+        Wed, 28 Nov 2018 22:14:24 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38477 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728775AbeK2DOX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:54:39 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASFiIBo067808
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 10:52:32 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1ugqyysh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 10:52:31 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 28 Nov 2018 15:52:27 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 28 Nov 2018 15:52:23 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASFqM0328639398
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Nov 2018 15:52:22 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FCC04C044;
-        Wed, 28 Nov 2018 15:52:22 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B75E74C058;
-        Wed, 28 Nov 2018 15:52:20 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.103.235])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Nov 2018 15:52:20 +0000 (GMT)
-Subject: Re: [PATCH 4/7] efi: Add an EFI signature blob parser
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna Jain <nayna@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, jforbes@redhat.com,
-        seth.forshee@canonical.com, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au
-Date:   Wed, 28 Nov 2018 10:52:10 -0500
-In-Reply-To: <20181125151500.8298-5-nayna@linux.ibm.com>
-References: <20181125151500.8298-1-nayna@linux.ibm.com>
-         <20181125151500.8298-5-nayna@linux.ibm.com>
+        Wed, 28 Nov 2018 22:14:23 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a77so23026706oii.5
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 08:12:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eRBEwV4lXH2NqZ3dGXs+t0yBQpOod+4VI41GBdsFZp0=;
+        b=Hr34SOq+iApzzAdP6LqaeISq0BoiIi/kAFjd/NhfKADu/4gJ18fjnwz+ZXvMbQyx/p
+         mJIHh1MbAWRTznmFAEBekjcLuz5j7W+60bqG3Z7QzgTbirjPCb1URuuk7RK9Hab/gX4s
+         AnP5bx63mDPGwriC8xOQ5QHfIsLYeV7loB1WIgbs9gX8519vLK2GybEBQnDyZdK7wEJW
+         1zK6iSK7vnZcYVinMnyEQnrSe53X0OmLwPd4h1ny7w2w7YSC79a37nT8srri2BScYwOG
+         iuVyMDMFdS2lH1J563oeQCcO7on9h2AkIlZ8cYKx1coKhW1WpR7/J2hWZWLP2maf1mcy
+         72tg==
+X-Gm-Message-State: AA+aEWbuoq6fC28/Tn6PdeOL3d72IY8tjxla8PclafJwbCPSSRMqe9L+
+        02npPvKZpzL4FtK7WZ6T9+fzpyBrOoHXntsB9g74MQ==
+X-Google-Smtp-Source: AFSGD/VXGAKl818U1JfjPn1mt1FQTu+naRm4++rQlqGjL430CnU6Zze6IJcdpKlsn848CVmlEf4SYkAc+C4jS0VADW0=
+X-Received: by 2002:aca:5ac5:: with SMTP id o188-v6mr10985031oib.146.1543421531833;
+ Wed, 28 Nov 2018 08:12:11 -0800 (PST)
+MIME-Version: 1.0
+References: <20181116131202.26513-1-omosnace@redhat.com> <CAHC9VhTn9qz77PQ3mboaCsNzK9D8hjYFg9z5sCWr8Yb7W2Pqxg@mail.gmail.com>
+ <CAFqZXNsAHnV5RzwtONF0hJRy31qb4c=sajvaEkmEjjky4duEBA@mail.gmail.com>
+ <CAFqZXNvSdKYr998v3hEhZu4pRwuQs8Q7qRWPhOAtLAc9__Bs6w@mail.gmail.com>
+ <CAHC9VhTvuPvnkfgQhT4+AM3iEz4_p85QgShM_oXmpVtLKuq10Q@mail.gmail.com> <87r2f5fbw7.fsf@xmission.com>
+In-Reply-To: <87r2f5fbw7.fsf@xmission.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Wed, 28 Nov 2018 17:12:00 +0100
+Message-ID: <CAFqZXNsxH2TMU-ZxxfzvqPcwQ9FzUj1N3iS-7AVQ3JZvj2KEYA@mail.gmail.com>
+Subject: Re: [PATCH] selinux: always allow mounting submounts
+To:     "Eric W . Biederman" <ebiederm@xmission.com>
+Cc:     Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        linux-fsdevel@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112815-0016-0000-0000-0000022E0CB4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112815-0017-0000-0000-000032866B27
-Message-Id: <1543420330.3902.220.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811280138
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 2018-11-25 at 20:44 +0530, Nayna Jain wrote:
-> From: Dave Howells <dhowells@redhat.com>
-> 
-> Add a function to parse an EFI signature blob looking for elements of
-> interest. A list is made up of a series of sublists, where all the
-> elements in a sublist are of the same type, but sublists can be of
-> different types.
-> 
-> For each sublist encountered, the function pointed to by the
-> get_handler_for_guid argument is called with the type specifier GUID and
-> returns either a pointer to a function to handle elements of that type or
-> NULL if the type is not of interest.
-> 
-> If the sublist is of interest, each element is passed to the handler
-> function in turn.
+Hi Eric,
 
-There are a few checkpatch.pl warnings that need to be
-addressed, including the missing SPDX license.
+On Wed, Nov 28, 2018 at 4:42 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> Paul Moore <paul@paul-moore.com> writes:
+>
+> > On Wed, Nov 21, 2018 at 10:38 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >> On Wed, Nov 21, 2018 at 1:41 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >> > On Tue, Nov 20, 2018 at 11:09 PM Paul Moore <paul@paul-moore.com> wrote:
+> >> > > On Fri, Nov 16, 2018 at 8:12 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >> > > > If a superblock has the MS_SUBMOUNT flag set, we should always allow
+> >> > > > mounting it. These mounts are done automatically by the kernel either as
+> >> > > > part of mounting some parent mount (e.g. debugfs always mounts tracefs
+> >> > > > under "tracing" for compatibility) or they are mounted automatically as
+> >> > > > needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
+> >> > > > automounts are either an implicit consequence of the parent mount (which
+> >> > > > is already checked) or they can happen during regular accesses (where it
+> >> > > > doesn't make sense to check against the current task's context), the
+> >> > > > mount permission check should be skipped for them.
+> >> > > >
+> >> > > > Without this patch, attempts to access contents of an automounted
+> >> > > > directory can cause unexpected SELinux denials.
+> >> > > >
+> >> > > > In the current kernel tree, the MS_SUBMOUNT flag is set only via
+> >> > > > vfs_submount(), which is called only from the following places:
+> >> > > >  - AFS, when automounting special "symlinks" referencing other cells
+> >> > > >  - CIFS, when automounting "referrals"
+> >> > > >  - NFS, when automounting subtrees
+> >> > > >  - debugfs, when automounting tracefs
+> >> > > >
+> >> > > > In all cases the submounts are meant to be transparent to the user and
+> >> > > > it makes sense that if mounting the master is allowed, then so should be
+> >> > > > the automounts. Note that CAP_SYS_ADMIN capability checking is already
+> >> > > > skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
+> >> > > >  - sget_userns() in fs/super.c:
+> >> > > >         if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
+> >> > > >             !(type->fs_flags & FS_USERNS_MOUNT) &&
+> >> > > >             !capable(CAP_SYS_ADMIN))
+> >> > > >                 return ERR_PTR(-EPERM);
+> >> > > >  - sget() in fs/super.c:
+> >> > > >         /* Ensure the requestor has permissions over the target filesystem */
+> >> > > >         if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
+> >> > > >                 return ERR_PTR(-EPERM);
+> >> > > >
+> >> > > > Verified internally on patched RHEL 7.6 with a reproducer using
+> >> > > > NFS+httpd and selinux-tesuite.
+> >> > >
+> >> > > I think this all sounds reasonable, but please verify this with an
+> >> > > upstream kernel.  Upstream our focus is on the upstream kernel
+> >> > > (surprise!), downstream RHEL is your responsibility, not ours :)
+> >> >
+> >> > I tested on RHEL because that's what I can do most conveniently. I
+> >> > don't have a very good workflow/environment for complex testing on
+> >> > upstream right now. I don't expect the results to be any different on
+> >> > the upstream kernel, but I understand your concern. I have been
+> >> > thinking about some patch testing automation using Fedora Rawhide (I
+> >> > hope that's close enough to upstream at least :), so I guess it's time
+> >> > to get scriptin'...
+> >>
+> >> I have now tested it on Fedora Rawhide with a scratch kernel with this
+> >> patch applied [1] (x86_64 only). I ran the whole selinux-testsuite
+> >> with the submount test [2] and everything passed (except for the known
+> >> overlay failures and skipped binder test) ...
+> >
+> > Merged into selinux/next, thanks.
+>
+>
+> A few late comments on this.
+>
+> The change mentioned in fixes did not remove a SB_KERNMOUNT so I don't
+> see how it is a fix for that.  That change just added SB_SUBMOUNT so you
+> can test for and detect this situation.  Are you seeing something that I
+> am not in that change?
 
-Mimi
+No, you're right that this patch doesn't "fix" that commit in the
+usual sense (the bug has pretty much always been there). However, that
+commit is the one that introduces the SB_KERNMOUNT flag and thus this
+patch can be only applied on trees that have that commit. That's what
+I tried to communicate with the "Fixes:" tag. Maybe I abused it a
+little, but it is often used to guide backporting so I figured it
+would make sense like this.
 
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> ---
-> Changelog:
-> 
-> v0:
-> - removed the CONFIG EFI_SIGNATURE_LIST_PARSER
-> - moved efi_parser.c from certs to security/integrity/platform_certs
->   directory
-> 
->  include/linux/efi.h                            |   9 ++
->  security/integrity/Makefile                    |   3 +-
->  security/integrity/platform_certs/efi_parser.c | 112 +++++++++++++++++++++++++
->  3 files changed, 123 insertions(+), 1 deletion(-)
->  create mode 100644 security/integrity/platform_certs/efi_parser.c
-> 
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index 99cba6fe1234..2016145e2d6d 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1138,6 +1138,15 @@ extern int efi_memattr_apply_permissions(struct mm_struct *mm,
->  char * __init efi_md_typeattr_format(char *buf, size_t size,
->  				     const efi_memory_desc_t *md);
->  
-> +
-> +typedef void (*efi_element_handler_t)(const char *source,
-> +				      const void *element_data,
-> +				      size_t element_size);
-> +extern int __init parse_efi_signature_list(
-> +	const char *source,
-> +	const void *data, size_t size,
-> +	efi_element_handler_t (*get_handler_for_guid)(const efi_guid_t *));
-> +
->  /**
->   * efi_range_is_wc - check the WC bit on an address range
->   * @start: starting kvirt address
-> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-> index 046ffc1bb42d..6ee9058866cd 100644
-> --- a/security/integrity/Makefile
-> +++ b/security/integrity/Makefile
-> @@ -9,7 +9,8 @@ integrity-y := iint.o
->  integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
->  integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
->  integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
-> -integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
-> +integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
-> +						  platform_certs/efi_parser.o
->  
->  subdir-$(CONFIG_IMA)			+= ima
->  obj-$(CONFIG_IMA)			+= ima/
-> diff --git a/security/integrity/platform_certs/efi_parser.c b/security/integrity/platform_certs/efi_parser.c
-> new file mode 100644
-> index 000000000000..4e396f98f5c7
-> --- /dev/null
-> +++ b/security/integrity/platform_certs/efi_parser.c
-> @@ -0,0 +1,112 @@
-> +/* EFI signature/key/certificate list parser
-> + *
-> + * Copyright (C) 2012, 2016 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public Licence
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the Licence, or (at your option) any later version.
-> + */
-> +
-> +#define pr_fmt(fmt) "EFI: "fmt
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/err.h>
-> +#include <linux/efi.h>
-> +
-> +/**
-> + * parse_efi_signature_list - Parse an EFI signature list for certificates
-> + * @source: The source of the key
-> + * @data: The data blob to parse
-> + * @size: The size of the data blob
-> + * @get_handler_for_guid: Get the handler func for the sig type (or NULL)
-> + *
-> + * Parse an EFI signature list looking for elements of interest.  A list is
-> + * made up of a series of sublists, where all the elements in a sublist are of
-> + * the same type, but sublists can be of different types.
-> + *
-> + * For each sublist encountered, the @get_handler_for_guid function is called
-> + * with the type specifier GUID and returns either a pointer to a function to
-> + * handle elements of that type or NULL if the type is not of interest.
-> + *
-> + * If the sublist is of interest, each element is passed to the handler
-> + * function in turn.
-> + *
-> + * Error EBADMSG is returned if the list doesn't parse correctly and 0 is
-> + * returned if the list was parsed correctly.  No error can be returned from
-> + * the @get_handler_for_guid function or the element handler function it
-> + * returns.
-> + */
-> +int __init parse_efi_signature_list(
-> +	const char *source,
-> +	const void *data, size_t size,
-> +	efi_element_handler_t (*get_handler_for_guid)(const efi_guid_t *))
-> +{
-> +	efi_element_handler_t handler;
-> +	unsigned offs = 0;
-> +
-> +	pr_devel("-->%s(,%zu)\n", __func__, size);
-> +
-> +	while (size > 0) {
-> +		const efi_signature_data_t *elem;
-> +		efi_signature_list_t list;
-> +		size_t lsize, esize, hsize, elsize;
-> +
-> +		if (size < sizeof(list))
-> +			return -EBADMSG;
-> +
-> +		memcpy(&list, data, sizeof(list));
-> +		pr_devel("LIST[%04x] guid=%pUl ls=%x hs=%x ss=%x\n",
-> +			 offs,
-> +			 list.signature_type.b, list.signature_list_size,
-> +			 list.signature_header_size, list.signature_size);
-> +
-> +		lsize = list.signature_list_size;
-> +		hsize = list.signature_header_size;
-> +		esize = list.signature_size;
-> +		elsize = lsize - sizeof(list) - hsize;
-> +
-> +		if (lsize > size) {
-> +			pr_devel("<--%s() = -EBADMSG [overrun @%x]\n",
-> +				 __func__, offs);
-> +			return -EBADMSG;
-> +		}
-> +
-> +		if (lsize < sizeof(list) ||
-> +		    lsize - sizeof(list) < hsize ||
-> +		    esize < sizeof(*elem) ||
-> +		    elsize < esize ||
-> +		    elsize % esize != 0) {
-> +			pr_devel("- bad size combo @%x\n", offs);
-> +			return -EBADMSG;
-> +		}
-> +
-> +		handler = get_handler_for_guid(&list.signature_type);
-> +		if (!handler) {
-> +			data += lsize;
-> +			size -= lsize;
-> +			offs += lsize;
-> +			continue;
-> +		}
-> +
-> +		data += sizeof(list) + hsize;
-> +		size -= sizeof(list) + hsize;
-> +		offs += sizeof(list) + hsize;
-> +
-> +		for (; elsize > 0; elsize -= esize) {
-> +			elem = data;
-> +
-> +			pr_devel("ELEM[%04x]\n", offs);
-> +			handler(source,
-> +				&elem->signature_data,
-> +				esize - sizeof(*elem));
-> +
-> +			data += esize;
-> +			size -= esize;
-> +			offs += esize;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
+>
+> I expect what we need for the long term is to move sb_kern_mount except
+> for the security mount option bits into do_new_mount so security modules
+> don't have to perform funny checks because the security hook is in the
+> wrong place.
+>
+> Further as far as I can tell from reading the code every filesystem that
+> performs submounts except for nfs is broken.  As no one else calls
+> security_sb_clone_mnt_opts.  Instead the normal mnt_opts hooks are
+> called with no security mount options.
+>
+> Which leads me to point that smack doesn't even implement
+> sb_clone_mnt_opts so I expect smack gets the security mount options
+> wrong.
+>
+> Is it common to specify the security mount options on filesystems?
+> I see the code.  I see what needs to be done to keep them working.
+> (Commas in options names ick).  I don't understand how they are used and
+> how common they are.
+>
+> I care because the vfs is in the middle of some work to clean up this
+> side of mounting and at the very least I am review changes and spotting
+> bugs.  Understanding how the security mount options work from the
+> perspective of someone who actually uses them would be a real help.
+>
+> Eric
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
