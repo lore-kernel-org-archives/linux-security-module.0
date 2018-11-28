@@ -2,137 +2,158 @@ Return-Path: <SRS0=GOq3=OH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22FAC04EB8
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 12:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159D2C43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C52C52086B
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 12:17:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C52C52086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D0AEE2081C
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0AEE2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbeK1XTB (ORCPT
+        id S1728619AbeK2Cof (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 18:19:01 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32787 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728126AbeK1XTA (ORCPT
+        Wed, 28 Nov 2018 21:44:35 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:45345 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeK2Coe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 18:19:00 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id F07C594E01CCA;
-        Wed, 28 Nov 2018 12:17:28 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 28 Nov
- 2018 12:17:23 +0000
-Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-3-roberto.sassu@huawei.com>
- <20181116133851.GB4163@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
-Date:   Wed, 28 Nov 2018 13:17:22 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 28 Nov 2018 21:44:34 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gS1yt-0003lu-Ds; Wed, 28 Nov 2018 08:42:27 -0700
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gS1xb-0002el-U5; Wed, 28 Nov 2018 08:42:27 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     omosnace@redhat.com, selinux@vger.kernel.org,
+        trond.myklebust@primarydata.com, seth.forshee@canonical.com,
+        linux-fsdevel@vger.kernel.org,
+        <linux-security-module@vger.kernel.org>
+References: <20181116131202.26513-1-omosnace@redhat.com>
+        <CAHC9VhTn9qz77PQ3mboaCsNzK9D8hjYFg9z5sCWr8Yb7W2Pqxg@mail.gmail.com>
+        <CAFqZXNsAHnV5RzwtONF0hJRy31qb4c=sajvaEkmEjjky4duEBA@mail.gmail.com>
+        <CAFqZXNvSdKYr998v3hEhZu4pRwuQs8Q7qRWPhOAtLAc9__Bs6w@mail.gmail.com>
+        <CAHC9VhTvuPvnkfgQhT4+AM3iEz4_p85QgShM_oXmpVtLKuq10Q@mail.gmail.com>
+Date:   Wed, 28 Nov 2018 09:40:56 -0600
+In-Reply-To: <CAHC9VhTvuPvnkfgQhT4+AM3iEz4_p85QgShM_oXmpVtLKuq10Q@mail.gmail.com>
+        (Paul Moore's message of "Mon, 26 Nov 2018 18:25:30 -0500")
+Message-ID: <87r2f5fbw7.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20181116133851.GB4163@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-XM-SPF: eid=1gS1xb-0002el-U5;;;mid=<87r2f5fbw7.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19u0AHwr6AtWU9IeRWydkHOSSekSKb3kcQ=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH] selinux: always allow mounting submounts
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/16/2018 2:38 PM, Jarkko Sakkinen wrote:
-> On Wed, Nov 14, 2018 at 04:31:03PM +0100, Roberto Sassu wrote:
->> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
->> for a list of hash algorithms used for event logs and event log digests.
+Paul Moore <paul@paul-moore.com> writes:
+
+> On Wed, Nov 21, 2018 at 10:38 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>> On Wed, Nov 21, 2018 at 1:41 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>> > On Tue, Nov 20, 2018 at 11:09 PM Paul Moore <paul@paul-moore.com> wrote:
+>> > > On Fri, Nov 16, 2018 at 8:12 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>> > > > If a superblock has the MS_SUBMOUNT flag set, we should always allow
+>> > > > mounting it. These mounts are done automatically by the kernel either as
+>> > > > part of mounting some parent mount (e.g. debugfs always mounts tracefs
+>> > > > under "tracing" for compatibility) or they are mounted automatically as
+>> > > > needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
+>> > > > automounts are either an implicit consequence of the parent mount (which
+>> > > > is already checked) or they can happen during regular accesses (where it
+>> > > > doesn't make sense to check against the current task's context), the
+>> > > > mount permission check should be skipped for them.
+>> > > >
+>> > > > Without this patch, attempts to access contents of an automounted
+>> > > > directory can cause unexpected SELinux denials.
+>> > > >
+>> > > > In the current kernel tree, the MS_SUBMOUNT flag is set only via
+>> > > > vfs_submount(), which is called only from the following places:
+>> > > >  - AFS, when automounting special "symlinks" referencing other cells
+>> > > >  - CIFS, when automounting "referrals"
+>> > > >  - NFS, when automounting subtrees
+>> > > >  - debugfs, when automounting tracefs
+>> > > >
+>> > > > In all cases the submounts are meant to be transparent to the user and
+>> > > > it makes sense that if mounting the master is allowed, then so should be
+>> > > > the automounts. Note that CAP_SYS_ADMIN capability checking is already
+>> > > > skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
+>> > > >  - sget_userns() in fs/super.c:
+>> > > >         if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
+>> > > >             !(type->fs_flags & FS_USERNS_MOUNT) &&
+>> > > >             !capable(CAP_SYS_ADMIN))
+>> > > >                 return ERR_PTR(-EPERM);
+>> > > >  - sget() in fs/super.c:
+>> > > >         /* Ensure the requestor has permissions over the target filesystem */
+>> > > >         if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
+>> > > >                 return ERR_PTR(-EPERM);
+>> > > >
+>> > > > Verified internally on patched RHEL 7.6 with a reproducer using
+>> > > > NFS+httpd and selinux-tesuite.
+>> > >
+>> > > I think this all sounds reasonable, but please verify this with an
+>> > > upstream kernel.  Upstream our focus is on the upstream kernel
+>> > > (surprise!), downstream RHEL is your responsibility, not ours :)
+>> >
+>> > I tested on RHEL because that's what I can do most conveniently. I
+>> > don't have a very good workflow/environment for complex testing on
+>> > upstream right now. I don't expect the results to be any different on
+>> > the upstream kernel, but I understand your concern. I have been
+>> > thinking about some patch testing automation using Fedora Rawhide (I
+>> > hope that's close enough to upstream at least :), so I guess it's time
+>> > to get scriptin'...
 >>
->> However, according to TCG EFI Protocol Specification, these arrays have
->> variable sizes. Setting the array size to zero or 3 does not make any
->> difference, because the parser has to adjust the offset depending on the
->> actual array size to access structure members after the static arrays.
->>
->> Thus, this patch removes the declaration of TPM2_ACTIVE_PCR_BANKS and sets
->> the array size to zero.
->>
->> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
->> event log")
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> ---
->>   include/linux/tpm_eventlog.h | 5 ++---
->>   1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
->> index 20d9da77fc11..3d5d162f09cc 100644
->> --- a/include/linux/tpm_eventlog.h
->> +++ b/include/linux/tpm_eventlog.h
->> @@ -8,7 +8,6 @@
->>   #define TCG_EVENT_NAME_LEN_MAX	255
->>   #define MAX_TEXT_EVENT		1000	/* Max event string length */
->>   #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
->> -#define TPM2_ACTIVE_PCR_BANKS	3
->>   
->>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
->>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
->> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
->>   	u8 spec_errata;
->>   	u8 uintnsize;
->>   	u32 num_algs;
->> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
->> +	struct tcg_efi_specid_event_algs digest_sizes[0];
->>   	u8 vendor_info_size;
->>   	u8 vendor_info[0];
->>   } __packed;
->> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
->>   	u32 pcr_idx;
->>   	u32 event_type;
->>   	u32 count;
->> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
->> +	struct tpm2_digest digests[0];
->>   	struct tcg_event_field event;
->>   } __packed;
->>   
->> -- 
->> 2.17.1
->>
-> 
-> NAK for the same reason as last time.
-
-I added this comment to include/linux/tpm_eventlog.h:
-
-/*
-  * http://www.trustedcomputinggroup.org/tcg-efi-protocol-specification/
-  *
-  * Set the size of 'digest_sizes' and 'digests', members of 
-tcg_efi_specid_event
-  * and tcg_pcr_event2, to zero. Structures with variable-sized arrays 
-placed
-  * midway are not suitable for type casting.
-  */
-
-Is it ok?
-
-Thanks
-
-Roberto
+>> I have now tested it on Fedora Rawhide with a scratch kernel with this
+>> patch applied [1] (x86_64 only). I ran the whole selinux-testsuite
+>> with the submount test [2] and everything passed (except for the known
+>> overlay failures and skipped binder test) ...
+>
+> Merged into selinux/next, thanks.
 
 
-> /Jarkko
-> 
+A few late comments on this.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+The change mentioned in fixes did not remove a SB_KERNMOUNT so I don't
+see how it is a fix for that.  That change just added SB_SUBMOUNT so you
+can test for and detect this situation.  Are you seeing something that I
+am not in that change?
+
+I expect what we need for the long term is to move sb_kern_mount except
+for the security mount option bits into do_new_mount so security modules
+don't have to perform funny checks because the security hook is in the
+wrong place.
+
+Further as far as I can tell from reading the code every filesystem that
+performs submounts except for nfs is broken.  As no one else calls
+security_sb_clone_mnt_opts.  Instead the normal mnt_opts hooks are
+called with no security mount options.
+
+Which leads me to point that smack doesn't even implement
+sb_clone_mnt_opts so I expect smack gets the security mount options
+wrong.
+
+Is it common to specify the security mount options on filesystems?
+I see the code.  I see what needs to be done to keep them working.
+(Commas in options names ick).  I don't understand how they are used and
+how common they are.
+
+I care because the vfs is in the middle of some work to clean up this
+side of mounting and at the very least I am review changes and spotting
+bugs.  Understanding how the security mount options work from the
+perspective of someone who actually uses them would be a real help.
+
+Eric
