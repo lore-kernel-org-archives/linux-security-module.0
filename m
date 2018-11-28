@@ -2,57 +2,49 @@ Return-Path: <SRS0=GOq3=OH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9119CC04EB8
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 08:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F22FAC04EB8
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 12:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618FC208E7
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 08:40:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 618FC208E7
+	by mail.kernel.org (Postfix) with ESMTP id C52C52086B
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 12:17:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C52C52086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeK1Tli (ORCPT
+        id S1728157AbeK1XTB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 14:41:38 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32786 "EHLO huawei.com"
+        Wed, 28 Nov 2018 18:19:01 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32787 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727864AbeK1Tlh (ORCPT
+        id S1728126AbeK1XTA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 14:41:37 -0500
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 56B341CABD4B0;
-        Wed, 28 Nov 2018 08:40:45 +0000 (GMT)
+        Wed, 28 Nov 2018 18:19:00 -0500
+Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id F07C594E01CCA;
+        Wed, 28 Nov 2018 12:17:28 +0000 (GMT)
 Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 28 Nov
- 2018 08:40:38 +0000
-Subject: Re: [PATCH v5 6/7] tpm: ensure that the output of PCR read contains
- the correct digest size
+ (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 28 Nov
+ 2018 12:17:23 +0000
+Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
         <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        <stable@vger.kernel.org>
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
 References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-7-roberto.sassu@huawei.com>
- <20181116134153.GD4163@linux.intel.com>
- <05c7c936-da58-f386-0a43-69e96d6e18a8@huawei.com>
- <20181118073207.GC5897@linux.intel.com>
- <a259a629-def7-b538-2a54-8ca6bfbe772a@huawei.com>
- <20181119143357.GG8755@linux.intel.com>
- <ed2d769b-2917-7d8b-ff9c-16220fa17833@huawei.com>
- <20181119160702.GE13298@linux.intel.com>
+ <20181114153108.12907-3-roberto.sassu@huawei.com>
+ <20181116133851.GB4163@linux.intel.com>
 From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <d3102578-039e-519e-4ed1-f931f00b6846@huawei.com>
-Date:   Wed, 28 Nov 2018 09:40:37 +0100
+Message-ID: <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
+Date:   Wed, 28 Nov 2018 13:17:22 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181119160702.GE13298@linux.intel.com>
+In-Reply-To: <20181116133851.GB4163@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -62,52 +54,78 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/19/2018 5:07 PM, Jarkko Sakkinen wrote:
-> On Mon, Nov 19, 2018 at 04:09:34PM +0100, Roberto Sassu wrote:
->> On 11/19/2018 3:33 PM, Jarkko Sakkinen wrote:
->>> On Mon, Nov 19, 2018 at 09:14:00AM +0100, Roberto Sassu wrote:
->>>> On 11/18/2018 8:32 AM, Jarkko Sakkinen wrote:
->>>>> On Fri, Nov 16, 2018 at 05:06:48PM +0100, Roberto Sassu wrote:
->>>>>> On 11/16/2018 2:41 PM, Jarkko Sakkinen wrote:
->>>>>>> On Wed, Nov 14, 2018 at 04:31:07PM +0100, Roberto Sassu wrote:
->>>>>>>> This patch protects against data corruption that could happen in the bus,
->>>>>>>> by checking that that the digest size returned by the TPM during a PCR read
->>>>>>>> matches the size of the algorithm passed to tpm2_pcr_read().
->>>>>>>>
->>>>>>>> This check is performed after information about the PCR banks has been
->>>>>>>> retrieved.
->>>>>>>>
->>>>>>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>>>>>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>>>>>>> Cc: stable@vger.kernel.org
->>>>>>>
->>>>>>> Missing fixes tag.
->>>>>>
->>>>>> Before this patch set, tpm2_pcr_extend() always copied 20 bytes from the
->>>>>> output sent by the TPM.
->>>>>>
->>>>>> Roberto
->>>>>
->>>>> Aah, right, of course. Well the patch set is ATM somewhat broken because
->>>>> this would require a fixes tag that points to a patch insdie the patch
->>>>> set.
->>>>>
->>>>> Probably good way to fix the issue is to just merge this with the
->>>>> earlier commit.
->>>>
->>>> Unfortunately, it is not possible. The exact digest size has been
->>>> introduced with patch 5/7.
->>>
->>> I put this in simple terms: if I merge 5/7 the driver will be broken.
->>> Any commit in the patch set should not leave the tree in broken state.
+On 11/16/2018 2:38 PM, Jarkko Sakkinen wrote:
+> On Wed, Nov 14, 2018 at 04:31:03PM +0100, Roberto Sassu wrote:
+>> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
+>> for a list of hash algorithms used for event logs and event log digests.
 >>
->> Patch 6/7 does not fix patch 5/7. The check in patch 6/7 is not done for
->> the PCR read performed by patch 5/7, because the digest sizes are not
->> yet available.
+>> However, according to TCG EFI Protocol Specification, these arrays have
+>> variable sizes. Setting the array size to zero or 3 does not make any
+>> difference, because the parser has to adjust the offset depending on the
+>> actual array size to access structure members after the static arrays.
+>>
+>> Thus, this patch removes the declaration of TPM2_ACTIVE_PCR_BANKS and sets
+>> the array size to zero.
+>>
+>> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
+>> event log")
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> ---
+>>   include/linux/tpm_eventlog.h | 5 ++---
+>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+>> index 20d9da77fc11..3d5d162f09cc 100644
+>> --- a/include/linux/tpm_eventlog.h
+>> +++ b/include/linux/tpm_eventlog.h
+>> @@ -8,7 +8,6 @@
+>>   #define TCG_EVENT_NAME_LEN_MAX	255
+>>   #define MAX_TEXT_EVENT		1000	/* Max event string length */
+>>   #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
+>> -#define TPM2_ACTIVE_PCR_BANKS	3
+>>   
+>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
+>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
+>> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
+>>   	u8 spec_errata;
+>>   	u8 uintnsize;
+>>   	u32 num_algs;
+>> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
+>> +	struct tcg_efi_specid_event_algs digest_sizes[0];
+>>   	u8 vendor_info_size;
+>>   	u8 vendor_info[0];
+>>   } __packed;
+>> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
+>>   	u32 pcr_idx;
+>>   	u32 event_type;
+>>   	u32 count;
+>> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
+>> +	struct tpm2_digest digests[0];
+>>   	struct tcg_event_field event;
+>>   } __packed;
+>>   
+>> -- 
+>> 2.17.1
+>>
 > 
-> Ah, right. Point taken :-)
+> NAK for the same reason as last time.
 
-Should I keep CC: stable@vger.kernel.org?
+I added this comment to include/linux/tpm_eventlog.h:
+
+/*
+  * http://www.trustedcomputinggroup.org/tcg-efi-protocol-specification/
+  *
+  * Set the size of 'digest_sizes' and 'digests', members of 
+tcg_efi_specid_event
+  * and tcg_pcr_event2, to zero. Structures with variable-sized arrays 
+placed
+  * midway are not suitable for type casting.
+  */
+
+Is it ok?
+
+Thanks
 
 Roberto
 
