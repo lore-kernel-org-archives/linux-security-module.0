@@ -2,78 +2,78 @@ Return-Path: <SRS0=GOq3=OH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D24F0C43441
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B26C04EB8
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A091020989
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:46:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A091020989
+	by mail.kernel.org (Postfix) with ESMTP id AF81B2133F
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:52:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF81B2133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbeK2Cs4 (ORCPT
+        id S1727789AbeK2Cyk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:48:56 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44096 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728240AbeK2Csz (ORCPT
+        Wed, 28 Nov 2018 21:54:40 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49682 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728300AbeK2Cyj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:48:55 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASFi3Gk038241
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 10:46:49 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1wwa871d-1
+        Wed, 28 Nov 2018 21:54:39 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASFiIBo067808
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 10:52:32 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1ugqyysh-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 10:46:48 -0500
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 10:52:31 -0500
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 28 Nov 2018 15:46:46 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 28 Nov 2018 15:52:27 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 28 Nov 2018 15:46:41 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASFkeQK29294720
+        Wed, 28 Nov 2018 15:52:23 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASFqM0328639398
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Nov 2018 15:46:40 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C7250AE04D;
-        Wed, 28 Nov 2018 15:46:40 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20D1EAE051;
-        Wed, 28 Nov 2018 15:46:39 +0000 (GMT)
+        Wed, 28 Nov 2018 15:52:22 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FCC04C044;
+        Wed, 28 Nov 2018 15:52:22 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B75E74C058;
+        Wed, 28 Nov 2018 15:52:20 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.80.103.235])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Nov 2018 15:46:38 +0000 (GMT)
-Subject: Re: [PATCH 5/7] efi: Import certificates from UEFI Secure Boot
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Nov 2018 15:52:20 +0000 (GMT)
+Subject: Re: [PATCH 4/7] efi: Add an EFI signature blob parser
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Nayna Jain <nayna@linux.ibm.com>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        linux-integrity@vger.kernel.org
+        David Howells <dhowells@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
 Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jforbes@redhat.com, seth.forshee@canonical.com,
-        kexec@lists.infradead.org, keyrings@vger.kernel.org,
-        vgoyal@redhat.com, ebiederm@xmission.com, mpe@ellerman.id.au
-Date:   Wed, 28 Nov 2018 10:46:28 -0500
-In-Reply-To: <20181125151500.8298-6-nayna@linux.ibm.com>
+        linux-kernel <linux-kernel@vger.kernel.org>, jforbes@redhat.com,
+        seth.forshee@canonical.com, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
+        mpe@ellerman.id.au
+Date:   Wed, 28 Nov 2018 10:52:10 -0500
+In-Reply-To: <20181125151500.8298-5-nayna@linux.ibm.com>
 References: <20181125151500.8298-1-nayna@linux.ibm.com>
-         <20181125151500.8298-6-nayna@linux.ibm.com>
+         <20181125151500.8298-5-nayna@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 18112815-0020-0000-0000-000002EF1678
+x-cbid: 18112815-0016-0000-0000-0000022E0CB4
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112815-0021-0000-0000-0000213E712A
-Message-Id: <1543419988.3902.216.camel@linux.ibm.com>
+x-cbparentid: 18112815-0017-0000-0000-000032866B27
+Message-Id: <1543420330.3902.220.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -86,40 +86,193 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Sun, 2018-11-25 at 20:44 +0530, Nayna Jain wrote:
-> From: Josh Boyer <jwboyer@fedoraproject.org>
+> From: Dave Howells <dhowells@redhat.com>
 > 
-> New Patch Description:
-> ======================
+> Add a function to parse an EFI signature blob looking for elements of
+> interest. A list is made up of a series of sublists, where all the
+> elements in a sublist are of the same type, but sublists can be of
+> different types.
 > 
-> Secure Boot stores a list of allowed certificates in the 'db' variable.
-> This patch imports those certificates into the platform keyring. The shim
-> UEFI bootloader has a similar certificate list stored in the 'MokListRT'
-> variable. We import those as well.
+> For each sublist encountered, the function pointed to by the
+> get_handler_for_guid argument is called with the type specifier GUID and
+> returns either a pointer to a function to handle elements of that type or
+> NULL if the type is not of interest.
 > 
-> Secure Boot also maintains a list of disallowed certificates in the 'dbx'
-> variable. We load those certificates into the system blacklist keyring
-> and forbid any kernel signed with those from loading.
-> 
-> Original Patch Description:
-> ============================
-> 
-> Secure Boot stores a list of allowed certificates in the 'db' variable.
-> This imports those certificates into the system trusted keyring.  This
-> allows for a third party signing certificate to be used in conjunction
-> with signed modules. By importing the public certificate into the 'db'
-> variable, a user can allow a module signed with that certificate to
-> load. The shim UEFI bootloader has a similar certificate list stored
-> in the 'MokListRT' variable. We import those as well.
-> 
-> Secure Boot also maintains a list of disallowed certificates in the 'dbx'
-> variable. We load those certificates into the newly introduced system
-> blacklist keyring and forbid any module signed with those from loading and
-> forbid the use within the kernel of any key with a matching hash.
-> 
-> This facility is enabled by setting CONFIG_LOAD_UEFI_KEYS.
+> If the sublist is of interest, each element is passed to the handler
+> function in turn.
 
-There are quite a few checkpatch.pl warnings that need to be
+There are a few checkpatch.pl warnings that need to be
 addressed, including the missing SPDX license.
 
 Mimi
+
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> ---
+> Changelog:
+> 
+> v0:
+> - removed the CONFIG EFI_SIGNATURE_LIST_PARSER
+> - moved efi_parser.c from certs to security/integrity/platform_certs
+>   directory
+> 
+>  include/linux/efi.h                            |   9 ++
+>  security/integrity/Makefile                    |   3 +-
+>  security/integrity/platform_certs/efi_parser.c | 112 +++++++++++++++++++++++++
+>  3 files changed, 123 insertions(+), 1 deletion(-)
+>  create mode 100644 security/integrity/platform_certs/efi_parser.c
+> 
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index 99cba6fe1234..2016145e2d6d 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -1138,6 +1138,15 @@ extern int efi_memattr_apply_permissions(struct mm_struct *mm,
+>  char * __init efi_md_typeattr_format(char *buf, size_t size,
+>  				     const efi_memory_desc_t *md);
+>  
+> +
+> +typedef void (*efi_element_handler_t)(const char *source,
+> +				      const void *element_data,
+> +				      size_t element_size);
+> +extern int __init parse_efi_signature_list(
+> +	const char *source,
+> +	const void *data, size_t size,
+> +	efi_element_handler_t (*get_handler_for_guid)(const efi_guid_t *));
+> +
+>  /**
+>   * efi_range_is_wc - check the WC bit on an address range
+>   * @start: starting kvirt address
+> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+> index 046ffc1bb42d..6ee9058866cd 100644
+> --- a/security/integrity/Makefile
+> +++ b/security/integrity/Makefile
+> @@ -9,7 +9,8 @@ integrity-y := iint.o
+>  integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
+>  integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+>  integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+> -integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
+> +integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
+> +						  platform_certs/efi_parser.o
+>  
+>  subdir-$(CONFIG_IMA)			+= ima
+>  obj-$(CONFIG_IMA)			+= ima/
+> diff --git a/security/integrity/platform_certs/efi_parser.c b/security/integrity/platform_certs/efi_parser.c
+> new file mode 100644
+> index 000000000000..4e396f98f5c7
+> --- /dev/null
+> +++ b/security/integrity/platform_certs/efi_parser.c
+> @@ -0,0 +1,112 @@
+> +/* EFI signature/key/certificate list parser
+> + *
+> + * Copyright (C) 2012, 2016 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public Licence
+> + * as published by the Free Software Foundation; either version
+> + * 2 of the Licence, or (at your option) any later version.
+> + */
+> +
+> +#define pr_fmt(fmt) "EFI: "fmt
+> +#include <linux/module.h>
+> +#include <linux/printk.h>
+> +#include <linux/err.h>
+> +#include <linux/efi.h>
+> +
+> +/**
+> + * parse_efi_signature_list - Parse an EFI signature list for certificates
+> + * @source: The source of the key
+> + * @data: The data blob to parse
+> + * @size: The size of the data blob
+> + * @get_handler_for_guid: Get the handler func for the sig type (or NULL)
+> + *
+> + * Parse an EFI signature list looking for elements of interest.  A list is
+> + * made up of a series of sublists, where all the elements in a sublist are of
+> + * the same type, but sublists can be of different types.
+> + *
+> + * For each sublist encountered, the @get_handler_for_guid function is called
+> + * with the type specifier GUID and returns either a pointer to a function to
+> + * handle elements of that type or NULL if the type is not of interest.
+> + *
+> + * If the sublist is of interest, each element is passed to the handler
+> + * function in turn.
+> + *
+> + * Error EBADMSG is returned if the list doesn't parse correctly and 0 is
+> + * returned if the list was parsed correctly.  No error can be returned from
+> + * the @get_handler_for_guid function or the element handler function it
+> + * returns.
+> + */
+> +int __init parse_efi_signature_list(
+> +	const char *source,
+> +	const void *data, size_t size,
+> +	efi_element_handler_t (*get_handler_for_guid)(const efi_guid_t *))
+> +{
+> +	efi_element_handler_t handler;
+> +	unsigned offs = 0;
+> +
+> +	pr_devel("-->%s(,%zu)\n", __func__, size);
+> +
+> +	while (size > 0) {
+> +		const efi_signature_data_t *elem;
+> +		efi_signature_list_t list;
+> +		size_t lsize, esize, hsize, elsize;
+> +
+> +		if (size < sizeof(list))
+> +			return -EBADMSG;
+> +
+> +		memcpy(&list, data, sizeof(list));
+> +		pr_devel("LIST[%04x] guid=%pUl ls=%x hs=%x ss=%x\n",
+> +			 offs,
+> +			 list.signature_type.b, list.signature_list_size,
+> +			 list.signature_header_size, list.signature_size);
+> +
+> +		lsize = list.signature_list_size;
+> +		hsize = list.signature_header_size;
+> +		esize = list.signature_size;
+> +		elsize = lsize - sizeof(list) - hsize;
+> +
+> +		if (lsize > size) {
+> +			pr_devel("<--%s() = -EBADMSG [overrun @%x]\n",
+> +				 __func__, offs);
+> +			return -EBADMSG;
+> +		}
+> +
+> +		if (lsize < sizeof(list) ||
+> +		    lsize - sizeof(list) < hsize ||
+> +		    esize < sizeof(*elem) ||
+> +		    elsize < esize ||
+> +		    elsize % esize != 0) {
+> +			pr_devel("- bad size combo @%x\n", offs);
+> +			return -EBADMSG;
+> +		}
+> +
+> +		handler = get_handler_for_guid(&list.signature_type);
+> +		if (!handler) {
+> +			data += lsize;
+> +			size -= lsize;
+> +			offs += lsize;
+> +			continue;
+> +		}
+> +
+> +		data += sizeof(list) + hsize;
+> +		size -= sizeof(list) + hsize;
+> +		offs += sizeof(list) + hsize;
+> +
+> +		for (; elsize > 0; elsize -= esize) {
+> +			elem = data;
+> +
+> +			pr_devel("ELEM[%04x]\n", offs);
+> +			handler(source,
+> +				&elem->signature_data,
+> +				esize - sizeof(*elem));
+> +
+> +			data += esize;
+> +			size -= esize;
+> +			offs += esize;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
 
