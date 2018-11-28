@@ -2,158 +2,124 @@ Return-Path: <SRS0=GOq3=OH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159D2C43441
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D24F0C43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0AEE2081C
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:42:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0AEE2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id A091020989
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 15:46:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A091020989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbeK2Cof (ORCPT
+        id S1728217AbeK2Cs4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 21:44:35 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:45345 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbeK2Coe (ORCPT
+        Wed, 28 Nov 2018 21:48:56 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44096 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728240AbeK2Csz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 21:44:34 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gS1yt-0003lu-Ds; Wed, 28 Nov 2018 08:42:27 -0700
-Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gS1xb-0002el-U5; Wed, 28 Nov 2018 08:42:27 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     omosnace@redhat.com, selinux@vger.kernel.org,
-        trond.myklebust@primarydata.com, seth.forshee@canonical.com,
-        linux-fsdevel@vger.kernel.org,
-        <linux-security-module@vger.kernel.org>
-References: <20181116131202.26513-1-omosnace@redhat.com>
-        <CAHC9VhTn9qz77PQ3mboaCsNzK9D8hjYFg9z5sCWr8Yb7W2Pqxg@mail.gmail.com>
-        <CAFqZXNsAHnV5RzwtONF0hJRy31qb4c=sajvaEkmEjjky4duEBA@mail.gmail.com>
-        <CAFqZXNvSdKYr998v3hEhZu4pRwuQs8Q7qRWPhOAtLAc9__Bs6w@mail.gmail.com>
-        <CAHC9VhTvuPvnkfgQhT4+AM3iEz4_p85QgShM_oXmpVtLKuq10Q@mail.gmail.com>
-Date:   Wed, 28 Nov 2018 09:40:56 -0600
-In-Reply-To: <CAHC9VhTvuPvnkfgQhT4+AM3iEz4_p85QgShM_oXmpVtLKuq10Q@mail.gmail.com>
-        (Paul Moore's message of "Mon, 26 Nov 2018 18:25:30 -0500")
-Message-ID: <87r2f5fbw7.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gS1xb-0002el-U5;;;mid=<87r2f5fbw7.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19u0AHwr6AtWU9IeRWydkHOSSekSKb3kcQ=
-X-SA-Exim-Connect-IP: 67.3.154.154
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH] selinux: always allow mounting submounts
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Wed, 28 Nov 2018 21:48:55 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASFi3Gk038241
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 10:46:49 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1wwa871d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 10:46:48 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 28 Nov 2018 15:46:46 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 28 Nov 2018 15:46:41 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASFkeQK29294720
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Nov 2018 15:46:40 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C7250AE04D;
+        Wed, 28 Nov 2018 15:46:40 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20D1EAE051;
+        Wed, 28 Nov 2018 15:46:39 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.103.235])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Nov 2018 15:46:38 +0000 (GMT)
+Subject: Re: [PATCH 5/7] efi: Import certificates from UEFI Secure Boot
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        jforbes@redhat.com, seth.forshee@canonical.com,
+        kexec@lists.infradead.org, keyrings@vger.kernel.org,
+        vgoyal@redhat.com, ebiederm@xmission.com, mpe@ellerman.id.au
+Date:   Wed, 28 Nov 2018 10:46:28 -0500
+In-Reply-To: <20181125151500.8298-6-nayna@linux.ibm.com>
+References: <20181125151500.8298-1-nayna@linux.ibm.com>
+         <20181125151500.8298-6-nayna@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18112815-0020-0000-0000-000002EF1678
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112815-0021-0000-0000-0000213E712A
+Message-Id: <1543419988.3902.216.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811280138
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Paul Moore <paul@paul-moore.com> writes:
+On Sun, 2018-11-25 at 20:44 +0530, Nayna Jain wrote:
+> From: Josh Boyer <jwboyer@fedoraproject.org>
+> 
+> New Patch Description:
+> ======================
+> 
+> Secure Boot stores a list of allowed certificates in the 'db' variable.
+> This patch imports those certificates into the platform keyring. The shim
+> UEFI bootloader has a similar certificate list stored in the 'MokListRT'
+> variable. We import those as well.
+> 
+> Secure Boot also maintains a list of disallowed certificates in the 'dbx'
+> variable. We load those certificates into the system blacklist keyring
+> and forbid any kernel signed with those from loading.
+> 
+> Original Patch Description:
+> ============================
+> 
+> Secure Boot stores a list of allowed certificates in the 'db' variable.
+> This imports those certificates into the system trusted keyring.  This
+> allows for a third party signing certificate to be used in conjunction
+> with signed modules. By importing the public certificate into the 'db'
+> variable, a user can allow a module signed with that certificate to
+> load. The shim UEFI bootloader has a similar certificate list stored
+> in the 'MokListRT' variable. We import those as well.
+> 
+> Secure Boot also maintains a list of disallowed certificates in the 'dbx'
+> variable. We load those certificates into the newly introduced system
+> blacklist keyring and forbid any module signed with those from loading and
+> forbid the use within the kernel of any key with a matching hash.
+> 
+> This facility is enabled by setting CONFIG_LOAD_UEFI_KEYS.
 
-> On Wed, Nov 21, 2018 at 10:38 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->> On Wed, Nov 21, 2018 at 1:41 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->> > On Tue, Nov 20, 2018 at 11:09 PM Paul Moore <paul@paul-moore.com> wrote:
->> > > On Fri, Nov 16, 2018 at 8:12 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->> > > > If a superblock has the MS_SUBMOUNT flag set, we should always allow
->> > > > mounting it. These mounts are done automatically by the kernel either as
->> > > > part of mounting some parent mount (e.g. debugfs always mounts tracefs
->> > > > under "tracing" for compatibility) or they are mounted automatically as
->> > > > needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
->> > > > automounts are either an implicit consequence of the parent mount (which
->> > > > is already checked) or they can happen during regular accesses (where it
->> > > > doesn't make sense to check against the current task's context), the
->> > > > mount permission check should be skipped for them.
->> > > >
->> > > > Without this patch, attempts to access contents of an automounted
->> > > > directory can cause unexpected SELinux denials.
->> > > >
->> > > > In the current kernel tree, the MS_SUBMOUNT flag is set only via
->> > > > vfs_submount(), which is called only from the following places:
->> > > >  - AFS, when automounting special "symlinks" referencing other cells
->> > > >  - CIFS, when automounting "referrals"
->> > > >  - NFS, when automounting subtrees
->> > > >  - debugfs, when automounting tracefs
->> > > >
->> > > > In all cases the submounts are meant to be transparent to the user and
->> > > > it makes sense that if mounting the master is allowed, then so should be
->> > > > the automounts. Note that CAP_SYS_ADMIN capability checking is already
->> > > > skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
->> > > >  - sget_userns() in fs/super.c:
->> > > >         if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
->> > > >             !(type->fs_flags & FS_USERNS_MOUNT) &&
->> > > >             !capable(CAP_SYS_ADMIN))
->> > > >                 return ERR_PTR(-EPERM);
->> > > >  - sget() in fs/super.c:
->> > > >         /* Ensure the requestor has permissions over the target filesystem */
->> > > >         if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
->> > > >                 return ERR_PTR(-EPERM);
->> > > >
->> > > > Verified internally on patched RHEL 7.6 with a reproducer using
->> > > > NFS+httpd and selinux-tesuite.
->> > >
->> > > I think this all sounds reasonable, but please verify this with an
->> > > upstream kernel.  Upstream our focus is on the upstream kernel
->> > > (surprise!), downstream RHEL is your responsibility, not ours :)
->> >
->> > I tested on RHEL because that's what I can do most conveniently. I
->> > don't have a very good workflow/environment for complex testing on
->> > upstream right now. I don't expect the results to be any different on
->> > the upstream kernel, but I understand your concern. I have been
->> > thinking about some patch testing automation using Fedora Rawhide (I
->> > hope that's close enough to upstream at least :), so I guess it's time
->> > to get scriptin'...
->>
->> I have now tested it on Fedora Rawhide with a scratch kernel with this
->> patch applied [1] (x86_64 only). I ran the whole selinux-testsuite
->> with the submount test [2] and everything passed (except for the known
->> overlay failures and skipped binder test) ...
->
-> Merged into selinux/next, thanks.
+There are quite a few checkpatch.pl warnings that need to be
+addressed, including the missing SPDX license.
 
+Mimi
 
-A few late comments on this.
-
-The change mentioned in fixes did not remove a SB_KERNMOUNT so I don't
-see how it is a fix for that.  That change just added SB_SUBMOUNT so you
-can test for and detect this situation.  Are you seeing something that I
-am not in that change?
-
-I expect what we need for the long term is to move sb_kern_mount except
-for the security mount option bits into do_new_mount so security modules
-don't have to perform funny checks because the security hook is in the
-wrong place.
-
-Further as far as I can tell from reading the code every filesystem that
-performs submounts except for nfs is broken.  As no one else calls
-security_sb_clone_mnt_opts.  Instead the normal mnt_opts hooks are
-called with no security mount options.
-
-Which leads me to point that smack doesn't even implement
-sb_clone_mnt_opts so I expect smack gets the security mount options
-wrong.
-
-Is it common to specify the security mount options on filesystems?
-I see the code.  I see what needs to be done to keep them working.
-(Commas in options names ick).  I don't understand how they are used and
-how common they are.
-
-I care because the vfs is in the middle of some work to clean up this
-side of mounting and at the very least I am review changes and spotting
-bugs.  Understanding how the security mount options work from the
-perspective of someone who actually uses them would be a real help.
-
-Eric
