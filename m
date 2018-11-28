@@ -1,77 +1,124 @@
-Return-Path: <SRS0=duy0=OG=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=GOq3=OH=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C249C04EBA
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 23:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 402E7C43610
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 07:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6514020989
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Nov 2018 23:41:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6514020989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1134F2086B
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 07:50:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1134F2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbeK1Kke (ORCPT
+        id S1727280AbeK1SvZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 05:40:34 -0500
-Received: from mga03.intel.com ([134.134.136.65]:65071 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726286AbeK1Kke (ORCPT
+        Wed, 28 Nov 2018 13:51:25 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32785 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727268AbeK1SvY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 05:40:34 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2018 15:41:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,288,1539673200"; 
-   d="scan'208";a="94620352"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.96])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Nov 2018 15:41:01 -0800
-Date:   Tue, 27 Nov 2018 15:41:01 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "moderated list:ARM/Microchip (AT91) SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 00/17] Removed nested TPM operations
-Message-ID: <20181127234101.GA3150@linux.intel.com>
-References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
+        Wed, 28 Nov 2018 13:51:24 -0500
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 91678C7C568CE;
+        Wed, 28 Nov 2018 07:50:38 +0000 (GMT)
+Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 28 Nov
+ 2018 07:50:31 +0000
+Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181114153108.12907-1-roberto.sassu@huawei.com>
+ <20181114153108.12907-3-roberto.sassu@huawei.com>
+ <20181116133851.GB4163@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <5c4866e4-dee0-730c-f08b-8ea8d00dbd96@huawei.com>
+Date:   Wed, 28 Nov 2018 08:50:26 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181116133851.GB4163@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.144]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Nov 18, 2018 at 02:47:33PM +0200, Jarkko Sakkinen wrote:
-> [was Detach TPM space code out of the tpm_transmit() flow but the scope
->  expanded a bit.]
+On 11/16/2018 2:38 PM, Jarkko Sakkinen wrote:
+> On Wed, Nov 14, 2018 at 04:31:03PM +0100, Roberto Sassu wrote:
+>> tcg_efi_specid_event and tcg_pcr_event2 declaration contains static arrays
+>> for a list of hash algorithms used for event logs and event log digests.
+>>
+>> However, according to TCG EFI Protocol Specification, these arrays have
+>> variable sizes. Setting the array size to zero or 3 does not make any
+>> difference, because the parser has to adjust the offset depending on the
+>> actual array size to access structure members after the static arrays.
+>>
+>> Thus, this patch removes the declaration of TPM2_ACTIVE_PCR_BANKS and sets
+>> the array size to zero.
+>>
+>> Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware
+>> event log")
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> ---
+>>   include/linux/tpm_eventlog.h | 5 ++---
+>>   1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+>> index 20d9da77fc11..3d5d162f09cc 100644
+>> --- a/include/linux/tpm_eventlog.h
+>> +++ b/include/linux/tpm_eventlog.h
+>> @@ -8,7 +8,6 @@
+>>   #define TCG_EVENT_NAME_LEN_MAX	255
+>>   #define MAX_TEXT_EVENT		1000	/* Max event string length */
+>>   #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
+>> -#define TPM2_ACTIVE_PCR_BANKS	3
+>>   
+>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
+>>   #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
+>> @@ -90,7 +89,7 @@ struct tcg_efi_specid_event {
+>>   	u8 spec_errata;
+>>   	u8 uintnsize;
+>>   	u32 num_algs;
+>> -	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
+>> +	struct tcg_efi_specid_event_algs digest_sizes[0];
+>>   	u8 vendor_info_size;
+>>   	u8 vendor_info[0];
+>>   } __packed;
+>> @@ -117,7 +116,7 @@ struct tcg_pcr_event2 {
+>>   	u32 pcr_idx;
+>>   	u32 event_type;
+>>   	u32 count;
+>> -	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
+>> +	struct tpm2_digest digests[0];
+>>   	struct tcg_event_field event;
+>>   } __packed;
+>>   
+>> -- 
+>> 2.17.1
+>>
 > 
-> Make the changes necessary to detach TPM space code and TPM activation
-> code out of the tpm_transmit() flow because of both of these can cause
-> nested tpm_transmit() calls. The nesteds calls make the whole flow hard
-> to maintain, and thus, it is better to just fix things now before this
-> turns into a bigger mess.
+> NAK for the same reason as last time.
 
-I will take care to address the feedback from Tomas and Jason but won't
-yet try to push this into v4.21. It is a patch set, which is better to
-lie in linux-next before landing to a release. Probably will push the
-patches soon after my v4.21 PR to linux-next. Then they will get maximum
-time of exposure.
+No Fixes tag, or Fixes tag without newline?
 
-/Jarkko
+Roberto
+
+
+> /Jarkko
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
