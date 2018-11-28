@@ -2,175 +2,163 @@ Return-Path: <SRS0=GOq3=OH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA254C04EB8
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 16:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24867C43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 16:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B988D2086B
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 16:12:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B988D2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E8C592081B
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 16:45:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C592081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbeK2DOY (ORCPT
+        id S1729081AbeK2DsD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Nov 2018 22:14:24 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38477 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728775AbeK2DOX (ORCPT
+        Wed, 28 Nov 2018 22:48:03 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37710 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729083AbeK2DsD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Nov 2018 22:14:23 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a77so23026706oii.5
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 08:12:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eRBEwV4lXH2NqZ3dGXs+t0yBQpOod+4VI41GBdsFZp0=;
-        b=Hr34SOq+iApzzAdP6LqaeISq0BoiIi/kAFjd/NhfKADu/4gJ18fjnwz+ZXvMbQyx/p
-         mJIHh1MbAWRTznmFAEBekjcLuz5j7W+60bqG3Z7QzgTbirjPCb1URuuk7RK9Hab/gX4s
-         AnP5bx63mDPGwriC8xOQ5QHfIsLYeV7loB1WIgbs9gX8519vLK2GybEBQnDyZdK7wEJW
-         1zK6iSK7vnZcYVinMnyEQnrSe53X0OmLwPd4h1ny7w2w7YSC79a37nT8srri2BScYwOG
-         iuVyMDMFdS2lH1J563oeQCcO7on9h2AkIlZ8cYKx1coKhW1WpR7/J2hWZWLP2maf1mcy
-         72tg==
-X-Gm-Message-State: AA+aEWbuoq6fC28/Tn6PdeOL3d72IY8tjxla8PclafJwbCPSSRMqe9L+
-        02npPvKZpzL4FtK7WZ6T9+fzpyBrOoHXntsB9g74MQ==
-X-Google-Smtp-Source: AFSGD/VXGAKl818U1JfjPn1mt1FQTu+naRm4++rQlqGjL430CnU6Zze6IJcdpKlsn848CVmlEf4SYkAc+C4jS0VADW0=
-X-Received: by 2002:aca:5ac5:: with SMTP id o188-v6mr10985031oib.146.1543421531833;
- Wed, 28 Nov 2018 08:12:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20181116131202.26513-1-omosnace@redhat.com> <CAHC9VhTn9qz77PQ3mboaCsNzK9D8hjYFg9z5sCWr8Yb7W2Pqxg@mail.gmail.com>
- <CAFqZXNsAHnV5RzwtONF0hJRy31qb4c=sajvaEkmEjjky4duEBA@mail.gmail.com>
- <CAFqZXNvSdKYr998v3hEhZu4pRwuQs8Q7qRWPhOAtLAc9__Bs6w@mail.gmail.com>
- <CAHC9VhTvuPvnkfgQhT4+AM3iEz4_p85QgShM_oXmpVtLKuq10Q@mail.gmail.com> <87r2f5fbw7.fsf@xmission.com>
-In-Reply-To: <87r2f5fbw7.fsf@xmission.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Wed, 28 Nov 2018 17:12:00 +0100
-Message-ID: <CAFqZXNsxH2TMU-ZxxfzvqPcwQ9FzUj1N3iS-7AVQ3JZvj2KEYA@mail.gmail.com>
-Subject: Re: [PATCH] selinux: always allow mounting submounts
-To:     "Eric W . Biederman" <ebiederm@xmission.com>
-Cc:     Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
+        Wed, 28 Nov 2018 22:48:03 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wASGapgm002981
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 11:45:47 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p1x2gtgk1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Nov 2018 11:45:46 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 28 Nov 2018 16:45:44 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 28 Nov 2018 16:45:40 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wASGjd0J9568566
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Nov 2018 16:45:39 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9657A42042;
+        Wed, 28 Nov 2018 16:45:39 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 039964203F;
+        Wed, 28 Nov 2018 16:45:38 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.103.235])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Nov 2018 16:45:37 +0000 (GMT)
+Subject: Re: [PATCH 0/7] add platform/firmware keys support for kernel
+ verification by IMA
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        jforbes@redhat.com, seth.forshee@canonical.com,
+        kexec@lists.infradead.org, keyrings@vger.kernel.org,
+        vgoyal@redhat.com, ebiederm@xmission.com, mpe@ellerman.id.au
+Date:   Wed, 28 Nov 2018 11:45:27 -0500
+In-Reply-To: <20181125151500.8298-1-nayna@linux.ibm.com>
+References: <20181125151500.8298-1-nayna@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18112816-4275-0000-0000-000002E81C26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112816-4276-0000-0000-000037F55D5A
+Message-Id: <1543423527.3902.239.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811280144
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Eric,
+Hi Nayna,
 
-On Wed, Nov 28, 2018 at 4:42 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> Paul Moore <paul@paul-moore.com> writes:
->
-> > On Wed, Nov 21, 2018 at 10:38 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >> On Wed, Nov 21, 2018 at 1:41 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >> > On Tue, Nov 20, 2018 at 11:09 PM Paul Moore <paul@paul-moore.com> wrote:
-> >> > > On Fri, Nov 16, 2018 at 8:12 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >> > > > If a superblock has the MS_SUBMOUNT flag set, we should always allow
-> >> > > > mounting it. These mounts are done automatically by the kernel either as
-> >> > > > part of mounting some parent mount (e.g. debugfs always mounts tracefs
-> >> > > > under "tracing" for compatibility) or they are mounted automatically as
-> >> > > > needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
-> >> > > > automounts are either an implicit consequence of the parent mount (which
-> >> > > > is already checked) or they can happen during regular accesses (where it
-> >> > > > doesn't make sense to check against the current task's context), the
-> >> > > > mount permission check should be skipped for them.
-> >> > > >
-> >> > > > Without this patch, attempts to access contents of an automounted
-> >> > > > directory can cause unexpected SELinux denials.
-> >> > > >
-> >> > > > In the current kernel tree, the MS_SUBMOUNT flag is set only via
-> >> > > > vfs_submount(), which is called only from the following places:
-> >> > > >  - AFS, when automounting special "symlinks" referencing other cells
-> >> > > >  - CIFS, when automounting "referrals"
-> >> > > >  - NFS, when automounting subtrees
-> >> > > >  - debugfs, when automounting tracefs
-> >> > > >
-> >> > > > In all cases the submounts are meant to be transparent to the user and
-> >> > > > it makes sense that if mounting the master is allowed, then so should be
-> >> > > > the automounts. Note that CAP_SYS_ADMIN capability checking is already
-> >> > > > skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
-> >> > > >  - sget_userns() in fs/super.c:
-> >> > > >         if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
-> >> > > >             !(type->fs_flags & FS_USERNS_MOUNT) &&
-> >> > > >             !capable(CAP_SYS_ADMIN))
-> >> > > >                 return ERR_PTR(-EPERM);
-> >> > > >  - sget() in fs/super.c:
-> >> > > >         /* Ensure the requestor has permissions over the target filesystem */
-> >> > > >         if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
-> >> > > >                 return ERR_PTR(-EPERM);
-> >> > > >
-> >> > > > Verified internally on patched RHEL 7.6 with a reproducer using
-> >> > > > NFS+httpd and selinux-tesuite.
-> >> > >
-> >> > > I think this all sounds reasonable, but please verify this with an
-> >> > > upstream kernel.  Upstream our focus is on the upstream kernel
-> >> > > (surprise!), downstream RHEL is your responsibility, not ours :)
-> >> >
-> >> > I tested on RHEL because that's what I can do most conveniently. I
-> >> > don't have a very good workflow/environment for complex testing on
-> >> > upstream right now. I don't expect the results to be any different on
-> >> > the upstream kernel, but I understand your concern. I have been
-> >> > thinking about some patch testing automation using Fedora Rawhide (I
-> >> > hope that's close enough to upstream at least :), so I guess it's time
-> >> > to get scriptin'...
-> >>
-> >> I have now tested it on Fedora Rawhide with a scratch kernel with this
-> >> patch applied [1] (x86_64 only). I ran the whole selinux-testsuite
-> >> with the submount test [2] and everything passed (except for the known
-> >> overlay failures and skipped binder test) ...
-> >
-> > Merged into selinux/next, thanks.
->
->
-> A few late comments on this.
->
-> The change mentioned in fixes did not remove a SB_KERNMOUNT so I don't
-> see how it is a fix for that.  That change just added SB_SUBMOUNT so you
-> can test for and detect this situation.  Are you seeing something that I
-> am not in that change?
+On Sun, 2018-11-25 at 20:44 +0530, Nayna Jain wrote:
+> On secure boot enabled systems, a verified kernel may need to kexec
+> additional kernels. For example, it may be used as a bootloader needing
+> to kexec a target kernel or it may need to kexec a crashdump kernel.
+> In such cases, it may want to verify the signature of the next kernel
+> image.
+> 
+> It is possible that the new kernel image is signed with third party keys
+> which are stored as platform or firmware keys in the 'db' variable. The
+> kernel, however, can not directly verify these platform keys, and an
+> administrator may therefore not want to trust them for arbitrary usage.
+> In order to differentiate platform keys from other keys and provide the
+> necessary separation of trust the kernel needs an additional keyring to
+> store platform/firmware keys.
+> 
+> The secure boot key database is expected to store the keys as EFI
+> Signature List(ESL). The patch set uses David Howells and Josh Boyer's
+> patch to access and parse the ESL to extract the certificates and load
+> them onto the platform keyring.
+> 
+> The last patch in this patch set adds support for IMA-appraisal to
+> verify the kexec'ed kernel image based on keys stored in the platform
+> keyring.
+> 
+> Changelog:
+> 
+> v0:
+> - The original patches loaded the certificates onto the secondary
+>   trusted keyring. This patch set defines a new keyring named
+>   ".platform" and adds the certificates to this new keyring  
+> - removed CONFIG EFI_SIGNATURE_LIST_PARSER and LOAD_UEFI_KEYS
+> - moved files from certs/ to security/integrity/platform_certs/
 
-No, you're right that this patch doesn't "fix" that commit in the
-usual sense (the bug has pretty much always been there). However, that
-commit is the one that introduces the SB_KERNMOUNT flag and thus this
-patch can be only applied on trees that have that commit. That's what
-I tried to communicate with the "Fixes:" tag. Maybe I abused it a
-little, but it is often used to guide backporting so I figured it
-would make sense like this.
+This patch set is looking really good!  There are a couple of
+checkpatch.pl warnings that need to be addressed before these patches
+can be upstreamed.  I'd also like to see some Reviews/Acks for them as
+well.
 
->
-> I expect what we need for the long term is to move sb_kern_mount except
-> for the security mount option bits into do_new_mount so security modules
-> don't have to perform funny checks because the security hook is in the
-> wrong place.
->
-> Further as far as I can tell from reading the code every filesystem that
-> performs submounts except for nfs is broken.  As no one else calls
-> security_sb_clone_mnt_opts.  Instead the normal mnt_opts hooks are
-> called with no security mount options.
->
-> Which leads me to point that smack doesn't even implement
-> sb_clone_mnt_opts so I expect smack gets the security mount options
-> wrong.
->
-> Is it common to specify the security mount options on filesystems?
-> I see the code.  I see what needs to be done to keep them working.
-> (Commas in options names ick).  I don't understand how they are used and
-> how common they are.
->
-> I care because the vfs is in the middle of some work to clean up this
-> side of mounting and at the very least I am review changes and spotting
-> bugs.  Understanding how the security mount options work from the
-> perspective of someone who actually uses them would be a real help.
->
-> Eric
---
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+For the time being these patches are queued in the #next-integrity-
+queued branch.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.
+git/
+
+thanks!
+
+Mimi
+
+> 
+> Dave Howells (2):
+>   efi: Add EFI signature data types
+>   efi: Add an EFI signature blob parser
+> 
+> Josh Boyer (2):
+>   efi: Import certificates from UEFI Secure Boot
+>   efi: Allow the "db" UEFI variable to be suppressed
+> 
+> Nayna Jain (3):
+>   integrity: define a trusted platform keyring
+>   integrity: load certs to the platform keyring
+>   ima: support platform keyring for kernel appraisal
+> 
+>  include/linux/efi.h                                |  34 ++++
+>  security/integrity/Kconfig                         |  11 ++
+>  security/integrity/Makefile                        |   5 +
+>  security/integrity/digsig.c                        | 115 ++++++++----
+>  security/integrity/ima/ima_appraise.c              |  11 +-
+>  security/integrity/integrity.h                     |  23 ++-
+>  security/integrity/platform_certs/efi_parser.c     | 112 ++++++++++++
+>  security/integrity/platform_certs/load_uefi.c      | 192 +++++++++++++++++++++
+>  .../integrity/platform_certs/platform_keyring.c    |  62 +++++++
+>  9 files changed, 527 insertions(+), 38 deletions(-)
+>  create mode 100644 security/integrity/platform_certs/efi_parser.c
+>  create mode 100644 security/integrity/platform_certs/load_uefi.c
+>  create mode 100644 security/integrity/platform_certs/platform_keyring.c
+> 
+
