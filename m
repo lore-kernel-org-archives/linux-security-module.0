@@ -2,116 +2,170 @@ Return-Path: <SRS0=GOq3=OH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC23C43610
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 19:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 039F0C43441
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 23:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0734020864
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 19:19:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0734020864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B3A0A208E7
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Nov 2018 23:19:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvPnTkvN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3A0A208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeK2GWM (ORCPT
+        id S1726416AbeK2KXB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Nov 2018 01:22:12 -0500
-Received: from mga04.intel.com ([192.55.52.120]:10562 "EHLO mga04.intel.com"
+        Thu, 29 Nov 2018 05:23:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725772AbeK2GWL (ORCPT
+        id S1726382AbeK2KXA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Nov 2018 01:22:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Nov 2018 11:19:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,291,1539673200"; 
-   d="scan'208";a="288293120"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.96])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Nov 2018 11:19:30 -0800
-Date:   Wed, 28 Nov 2018 11:19:29 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] tpm: ensure that the output of PCR read contains
- the correct digest size
-Message-ID: <20181128191929.GB9023@linux.intel.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-7-roberto.sassu@huawei.com>
- <20181116134153.GD4163@linux.intel.com>
- <05c7c936-da58-f386-0a43-69e96d6e18a8@huawei.com>
- <20181118073207.GC5897@linux.intel.com>
- <a259a629-def7-b538-2a54-8ca6bfbe772a@huawei.com>
- <20181119143357.GG8755@linux.intel.com>
- <ed2d769b-2917-7d8b-ff9c-16220fa17833@huawei.com>
- <20181119160702.GE13298@linux.intel.com>
- <d3102578-039e-519e-4ed1-f931f00b6846@huawei.com>
+        Thu, 29 Nov 2018 05:23:00 -0500
+Received: from gmail.com (unknown [104.132.1.85])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBB25208E7;
+        Wed, 28 Nov 2018 23:19:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1543447183;
+        bh=G/mWoFapGnNvF++zuh02gB8xa9kZBEp+ubRIYqwRlQM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QvPnTkvNeT85/ABR9+d0CTd8KLFe4QHXPFt8Aq1ghEBaX6SfT2cWuxjclul13P+9G
+         7XWFwlMap/kjtI7qsjMaA36R/D2SWBG8kZW+0b0xYOP7dqp9JO4exDO+i5euLANyA9
+         XhKLuYCqchTwr8abeiFYpKAE7kfz9Y+de1McV5wc=
+Date:   Wed, 28 Nov 2018 15:19:41 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v2] KEYS: always initialize keyring_index_key::desc_len
+Message-ID: <20181128231940.GB131170@gmail.com>
+References: <000000000000a722550577796543@google.com>
+ <20181103015854.7380-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d3102578-039e-519e-4ed1-f931f00b6846@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181103015854.7380-1-ebiggers@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 28, 2018 at 09:40:37AM +0100, Roberto Sassu wrote:
-> On 11/19/2018 5:07 PM, Jarkko Sakkinen wrote:
-> > On Mon, Nov 19, 2018 at 04:09:34PM +0100, Roberto Sassu wrote:
-> > > On 11/19/2018 3:33 PM, Jarkko Sakkinen wrote:
-> > > > On Mon, Nov 19, 2018 at 09:14:00AM +0100, Roberto Sassu wrote:
-> > > > > On 11/18/2018 8:32 AM, Jarkko Sakkinen wrote:
-> > > > > > On Fri, Nov 16, 2018 at 05:06:48PM +0100, Roberto Sassu wrote:
-> > > > > > > On 11/16/2018 2:41 PM, Jarkko Sakkinen wrote:
-> > > > > > > > On Wed, Nov 14, 2018 at 04:31:07PM +0100, Roberto Sassu wrote:
-> > > > > > > > > This patch protects against data corruption that could happen in the bus,
-> > > > > > > > > by checking that that the digest size returned by the TPM during a PCR read
-> > > > > > > > > matches the size of the algorithm passed to tpm2_pcr_read().
-> > > > > > > > > 
-> > > > > > > > > This check is performed after information about the PCR banks has been
-> > > > > > > > > retrieved.
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > > 
-> > > > > > > > Missing fixes tag.
-> > > > > > > 
-> > > > > > > Before this patch set, tpm2_pcr_extend() always copied 20 bytes from the
-> > > > > > > output sent by the TPM.
-> > > > > > > 
-> > > > > > > Roberto
-> > > > > > 
-> > > > > > Aah, right, of course. Well the patch set is ATM somewhat broken because
-> > > > > > this would require a fixes tag that points to a patch insdie the patch
-> > > > > > set.
-> > > > > > 
-> > > > > > Probably good way to fix the issue is to just merge this with the
-> > > > > > earlier commit.
-> > > > > 
-> > > > > Unfortunately, it is not possible. The exact digest size has been
-> > > > > introduced with patch 5/7.
-> > > > 
-> > > > I put this in simple terms: if I merge 5/7 the driver will be broken.
-> > > > Any commit in the patch set should not leave the tree in broken state.
-> > > 
-> > > Patch 6/7 does not fix patch 5/7. The check in patch 6/7 is not done for
-> > > the PCR read performed by patch 5/7, because the digest sizes are not
-> > > yet available.
-> > 
-> > Ah, right. Point taken :-)
+On Fri, Nov 02, 2018 at 06:58:54PM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> Should I keep CC: stable@vger.kernel.org?
+> syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
+> called from construct_alloc_key() during sys_request_key(), because the
+> length of the key description was never calculated.
+> 
+> The problem is that we rely on ->desc_len being initialized by
+> search_process_keyrings(), specifically by search_nested_keyrings().
+> But, if the process isn't subscribed to any keyrings that never happens.
+> 
+> Fix it by always initializing keyring_index_key::desc_len as soon as the
+> description is set, like we already do in some places.
+> 
+> The following program reproduces the BUG_ON() when it's run as root and
+> no session keyring has been installed.  If it doesn't work, try removing
+> pam_keyinit.so from /etc/pam.d/login and rebooting.
+> 
+>     #include <stdlib.h>
+>     #include <unistd.h>
+>     #include <keyutils.h>
+> 
+>     int main(void)
+>     {
+>             int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
+> 
+>             keyctl_setperm(id, KEY_OTH_WRITE);
+>             setreuid(5000, 5000);
+>             request_key("user", "desc", "", id);
+>     }
+> 
+> Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
+> Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+> Cc: <stable@vger.kernel.org> # v3.13+
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> v2: In proc_keys_show(), assign index_key directly
+> 
+>  security/keys/keyring.c          | 4 +---
+>  security/keys/proc.c             | 3 +--
+>  security/keys/request_key.c      | 1 +
+>  security/keys/request_key_auth.c | 2 +-
+>  4 files changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+> index 41bcf57e96f21..99a55145ddcd2 100644
+> --- a/security/keys/keyring.c
+> +++ b/security/keys/keyring.c
+> @@ -661,9 +661,6 @@ static bool search_nested_keyrings(struct key *keyring,
+>  	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
+>  	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
+>  
+> -	if (ctx->index_key.description)
+> -		ctx->index_key.desc_len = strlen(ctx->index_key.description);
+> -
+>  	/* Check to see if this top-level keyring is what we are looking for
+>  	 * and whether it is valid or not.
+>  	 */
+> @@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyring,
+>  	struct keyring_search_context ctx = {
+>  		.index_key.type		= type,
+>  		.index_key.description	= description,
+> +		.index_key.desc_len	= strlen(description),
+>  		.cred			= current_cred(),
+>  		.match_data.cmp		= key_default_cmp,
+>  		.match_data.raw_data	= description,
+> diff --git a/security/keys/proc.c b/security/keys/proc.c
+> index 5af2934965d80..d38be9db2cc07 100644
+> --- a/security/keys/proc.c
+> +++ b/security/keys/proc.c
+> @@ -166,8 +166,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
+>  	int rc;
+>  
+>  	struct keyring_search_context ctx = {
+> -		.index_key.type		= key->type,
+> -		.index_key.description	= key->description,
+> +		.index_key		= key->index_key,
+>  		.cred			= m->file->f_cred,
+>  		.match_data.cmp		= lookup_user_key_possessed,
+>  		.match_data.raw_data	= key,
+> diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+> index 114f7408feee6..7385536986497 100644
+> --- a/security/keys/request_key.c
+> +++ b/security/keys/request_key.c
+> @@ -545,6 +545,7 @@ struct key *request_key_and_link(struct key_type *type,
+>  	struct keyring_search_context ctx = {
+>  		.index_key.type		= type,
+>  		.index_key.description	= description,
+> +		.index_key.desc_len	= strlen(description),
+>  		.cred			= current_cred(),
+>  		.match_data.cmp		= key_default_cmp,
+>  		.match_data.raw_data	= description,
+> diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+> index 424e1d90412ea..6797843154f03 100644
+> --- a/security/keys/request_key_auth.c
+> +++ b/security/keys/request_key_auth.c
+> @@ -246,7 +246,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
+>  	struct key *authkey;
+>  	key_ref_t authkey_ref;
+>  
+> -	sprintf(description, "%x", target_id);
+> +	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
+>  
+>  	authkey_ref = search_process_keyrings(&ctx);
+>  
+> -- 
+> 2.19.1
+> 
 
-Nope, my bad, sorry.
+Ping.  David, are you planning to apply this?
 
-/Jarkko
+- Eric
