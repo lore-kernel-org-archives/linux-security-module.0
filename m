@@ -3,61 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B89C64EB4
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Nov 2018 15:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B5BC04EB8
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Nov 2018 16:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A44320867
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Nov 2018 15:14:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A44320867
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C387B20868
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Nov 2018 16:09:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C387B20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbeLACYQ (ORCPT
+        id S1726970AbeLADTX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Nov 2018 21:24:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43520 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726558AbeLACYQ (ORCPT
+        Fri, 30 Nov 2018 22:19:23 -0500
+Received: from uphb19pa09.eemsg.mail.mil ([214.24.26.83]:36992 "EHLO
+        USFB19PA12.eemsg.mail.mil" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726572AbeLADTW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Nov 2018 21:24:16 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E1A20308FF03;
-        Fri, 30 Nov 2018 15:14:37 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (dhcp-192-212.str.redhat.com [10.33.192.212])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8E6C918E4B;
-        Fri, 30 Nov 2018 15:14:36 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@tycho.nsa.gov, linux-api@vger.kernel.org
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Security modules and sending signals within the same process
-Date:   Fri, 30 Nov 2018 16:14:27 +0100
-Message-ID: <87lg5asilo.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Fri, 30 Nov 2018 22:19:22 -0500
+X-Greylist: delayed 582 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Nov 2018 22:19:22 EST
+X-EEMSG-check-008: 234697024|USFB19PA12_EEMSG_MP8.csd.disa.mil
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by USFB19PA12.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 30 Nov 2018 15:59:52 +0000
+X-IronPort-AV: E=Sophos;i="5.56,299,1539648000"; 
+   d="scan'208";a="18307666"
+IronPort-PHdr: =?us-ascii?q?9a23=3AdG6AYxSG9dutnDSg2XD+m/JJMNpsv+yvbD5Q0Y?=
+ =?us-ascii?q?Iujvd0So/mwa67ZhOFt8tkgFKBZ4jH8fUM07OQ7/iwHzRYqb+681k6OKRWUB?=
+ =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
+ =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba9xIRmssQndqtQdjJd/JKo21h?=
+ =?us-ascii?q?bHuGZDdf5MxWNvK1KTnhL86dm18ZV+7SleuO8v+tBZX6nicKs2UbJXDDI9M2?=
+ =?us-ascii?q?Ao/8LrrgXMTRGO5nQHTGoblAdDDhXf4xH7WpfxtTb6tvZ41SKHM8D6Uaw4VD?=
+ =?us-ascii?q?K/5KpwVhTmlDkIOCI48GHPi8x/kqRboA66pxdix4LYeZyZOOZicq/Ye94VS3?=
+ =?us-ascii?q?BBXsJMXCJfBI2yYZYEA+4YMepGs4Xxol0Dpga8CwaxHuPi0iJGiGH43aM60O?=
+ =?us-ascii?q?ovHw/J0wMiEN0Sv3rZt8n1OaUIXOyp0KXFwzfOYvVL0jn98ojIdRUhrOmRU7?=
+ =?us-ascii?q?Jsb8XR0UkvGB3Djl6NtILlOima1uAJs2eF7+trSOWii3U6pAFquTWv2scthZ?=
+ =?us-ascii?q?XJhoIS0FzE8z55z5wvKd23T057f8epHZ1NvC+ZL4t7Wt4uTm5ntSogyrAKpI?=
+ =?us-ascii?q?S3cDYFxZg53RLTdvqKeJWS7B35TuaeOzJ4iWpgeLK4mhm971Ctyvb5VsmoyF?=
+ =?us-ascii?q?ZKqTdFksXUunANyRPT7s+HR+Nh/ki7wzaP1h3T6vpeLUAolavUN54hwrkqmp?=
+ =?us-ascii?q?oVrUvDBTP5lF/zjK+XckUo4umo6+L5bbX6vpKQKoB5hw7kPqkuh8CzG/o0Pw?=
+ =?us-ascii?q?cQU2SB5OiwzLjj8lf4QLVOgP02iK7ZsJXCKMQAu6G5GBRY0poj6hmjDzem18?=
+ =?us-ascii?q?4UnX8cLF1fYh6HgI/pO0/WLPDiEfi/m0iskCtsx/3eML3gDIvCLnnGkLj/Z7?=
+ =?us-ascii?q?Zw8FRcxxQuwtBf/Z1UFqsNL+70Wk/0rNbYFAM2MxSow+b7D9VwzpkRWXqXAq?=
+ =?us-ascii?q?CDKqPStFiI5vg0LumIZY8Voyr9K+M/6/7zlnA5hFkdfbW03ZcNdH+4GfFmKV?=
+ =?us-ascii?q?2DYXXwmtcBDXsKvg0mQezuiV2CVyNTZnmrU6In+D40FJ+mDZ3CRoCxgL2NxS?=
+ =?us-ascii?q?K7HppLaWBbDlCDD2zld5uLW/gSciKeOMxhnSIeVbinVYAh0QuitAjgy7poNu?=
+ =?us-ascii?q?DU4DEXtYr/1Nhp4O3ejQoy+iJwD8Sc1WGNUm51k3gWRz85wq9/u1ZxylSd3q?=
+ =?us-ascii?q?hihfxXC9hT6+lOUgcgOp7W1/Z6BMzqWgLdYteJT06rQtGnATE3U9IwzMYCbF?=
+ =?us-ascii?q?xlG9WjlR3DwSWqDKEPl7CRB5w77Ljc337vKMZ50XrG07Mhj1Y+SMtVKWKmnr?=
+ =?us-ascii?q?J/9xTUB4PRiUqZjaCqerkH0SHX7meDy3eBs1pCXAFtT6rPRWofaVfOrdTl+k?=
+ =?us-ascii?q?PCSKejCbQ/MgRb0sODK6tLasHujVVcXvvsJNPeY2fi01u3UDiMwamNZYyiRG?=
+ =?us-ascii?q?gc2SjHQBwKjA0S+HucHRIzCieovyTVCzk4URrme1vl6+x5slu/T1Qo1EeXZV?=
+ =?us-ascii?q?Bny6fz8RkQwbSYSvUOzvcftSw8sTRoDRO42N7LD9eouQVsZuNfbMk77VMB0n?=
+ =?us-ascii?q?jW80RmM5ihKb1yrkARfh4xvE700RhzTIJanoxiqHIs0Ro3ILqZ+E1Oeine3p?=
+ =?us-ascii?q?3qPLDTbG7o80OBcanTj2rC3c6W96FH0/Exr1HurUn9DUY522l22NlSlX2H79?=
+ =?us-ascii?q?PFCxREAsG5aVo+6xUv/+KSWSI6/Y6BkCQ2aaQ=3D?=
+X-IPAS-Result: =?us-ascii?q?A2COAACRXQFc/wHyM5BjHAEBAQQBAQcEAQGBVAQBAQsBg?=
+ =?us-ascii?q?VopgWiEIJQhTAYGgQgtiR+OPYFmOAGEQAKDNCI3Bg0BAwEBAQEBAQIBbCiCN?=
+ =?us-ascii?q?iQBgmIBBSMVQRALDgoCAiYCAlcGAQwIAQGCXj+BdQ2mM4EvhUCEbYELiw8Xe?=
+ =?us-ascii?q?IEHgTiCNgcuhEWDQIJXAo9wNpAPCZExBhiRH4h7kT4igVUrCAIYCCEPO4Jtg?=
+ =?us-ascii?q?iYXjjshA4E1AQGKfASCSQEB?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 30 Nov 2018 15:59:51 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wAUFxo8A028088;
+        Fri, 30 Nov 2018 10:59:50 -0500
+Subject: Re: Security modules and sending signals within the same process
+To:     Florian Weimer <fweimer@redhat.com>, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-api@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>
+References: <87lg5asilo.fsf@oldenburg.str.redhat.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <e754fa24-899b-f77e-f226-0f070ebad132@tycho.nsa.gov>
+Date:   Fri, 30 Nov 2018 11:02:15 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 30 Nov 2018 15:14:38 +0000 (UTC)
+In-Reply-To: <87lg5asilo.fsf@oldenburg.str.redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Is it guaranteed that tasks in the same thread group can always send
-signals to each other, irrespective of their respective credentials
-structs?
+On 11/30/18 10:14 AM, Florian Weimer wrote:
+> Is it guaranteed that tasks in the same thread group can always send
+> signals to each other, irrespective of their respective credentials
+> structs?
+> 
+> It's not clear to me whether this is always possible based on the
+> security_task_kill implementations I've examined.
+> 
+> I want to support per-thread setresuid/setresgid, but we also use
+> signals for inter-thread communication.  This is mainly for thread
+> cancellation; the setxgid stuff isn't needed for threads with private
+> credentials.  I wonder if I need to disable cancellation for threads
+> with such credentials.
 
-It's not clear to me whether this is always possible based on the
-security_task_kill implementations I've examined.
+(fixed selinux list address, which moved to vger)
 
-I want to support per-thread setresuid/setresgid, but we also use
-signals for inter-thread communication.  This is mainly for thread
-cancellation; the setxgid stuff isn't needed for threads with private
-credentials.  I wonder if I need to disable cancellation for threads
-with such credentials.
-
-Thanks,
-Florian
+Looks like commit 065add3941bd ("signals: check_kill_permission(): don't 
+check creds if same_thread_group()") skipped the uid-based checks if the 
+sender and target were in the same thread group, but not the security 
+hook call.  One could argue that the security hook call ought to be 
+skipped in that case as well using the same rationale given in that 
+commit.  Nothing appears to guarantee the property you state above for 
+security_task_kill implementations, although none of the in-tree users 
+are based on uids or gids so setresuid/setresgid shouldn't affect them.
