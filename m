@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E14A9C65BAE
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Nov 2018 19:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32994C65BAE
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Nov 2018 22:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AACC520834
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Nov 2018 19:45:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AACC520834
+	by mail.kernel.org (Postfix) with ESMTP id EBA892082F
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Nov 2018 22:18:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA892082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725790AbeLAGzt (ORCPT
+        id S1726489AbeLAJ3a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 1 Dec 2018 01:55:49 -0500
-Received: from mga07.intel.com ([134.134.136.100]:35692 "EHLO mga07.intel.com"
+        Sat, 1 Dec 2018 04:29:30 -0500
+Received: from mga02.intel.com ([134.134.136.20]:39004 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725749AbeLAGzt (ORCPT
+        id S1725867AbeLAJ3a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 1 Dec 2018 01:55:49 -0500
+        Sat, 1 Dec 2018 04:29:30 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 11:45:27 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Nov 2018 14:18:43 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,299,1539673200"; 
-   d="scan'208";a="114151013"
+X-IronPort-AV: E=Sophos;i="5.56,300,1539673200"; 
+   d="scan'208";a="294224132"
 Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.241.225.27])
-  by orsmga002.jf.intel.com with ESMTP; 30 Nov 2018 11:45:27 -0800
-Date:   Fri, 30 Nov 2018 11:45:27 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 30 Nov 2018 14:18:42 -0800
+Date:   Fri, 30 Nov 2018 14:18:43 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>
 Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
@@ -40,36 +40,42 @@ Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
 Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-Message-ID: <20181130194527.GB18584@linux.intel.com>
+Message-ID: <20181130221843.GA26088@linux.intel.com>
 References: <20181114153108.12907-1-roberto.sassu@huawei.com>
  <20181114153108.12907-3-roberto.sassu@huawei.com>
  <20181116133851.GB4163@linux.intel.com>
  <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
  <4a55ba02-87e6-9258-038e-e4c57f00f033@huawei.com>
  <20181130194149.GA18584@linux.intel.com>
+ <20181130194527.GB18584@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181130194149.GA18584@linux.intel.com>
+In-Reply-To: <20181130194527.GB18584@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 30, 2018 at 11:41:49AM -0800, Jarkko Sakkinen wrote:
-> Even after looking at the spec the last field does not make sense as the
-> event after digests and digests are not in union. It is just not right.
+On Fri, Nov 30, 2018 at 11:45:27AM -0800, Jarkko Sakkinen wrote:
+> On Fri, Nov 30, 2018 at 11:41:49AM -0800, Jarkko Sakkinen wrote:
+> > Even after looking at the spec the last field does not make sense as the
+> > event after digests and digests are not in union. It is just not right.
+> > 
+> > The comment does not fix that.
 > 
-> The comment does not fix that.
+> You should remove the last field and rename the struct as maybe
+> struct tcg_pcr_event2_head. If we ever need the very last field
+> we can create struct *_tail.
+> 
+> Not your fault but there is clear bug in the struct definition
+> that should be fixed in a commit of its own.
+> 
+> No new comments are needed.
 
-You should remove the last field and rename the struct as maybe
-struct tcg_pcr_event2_head. If we ever need the very last field
-we can create struct *_tail.
-
-Not your fault but there is clear bug in the struct definition
-that should be fixed in a commit of its own.
-
-No new comments are needed.
+I checked and did not find the field even used anywhere. Can you
+peer check this and then just remove it? And yeah maybe the struct
+should have _head suffix.
 
 /Jarkko
