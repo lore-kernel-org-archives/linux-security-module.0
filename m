@@ -2,82 +2,111 @@ Return-Path: <SRS0=6aHe=OM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8987C04EB9
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8398C04EBF
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Dec 2018 22:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 863C320850
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 863C320850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AFB42206B7
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Dec 2018 22:24:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dI1OGcUO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFB42206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbeLCRbb (ORCPT
+        id S1725981AbeLCWY3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Dec 2018 12:31:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:18443 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbeLCRba (ORCPT
+        Mon, 3 Dec 2018 17:24:29 -0500
+Received: from mail-pg1-f179.google.com ([209.85.215.179]:41240 "EHLO
+        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbeLCWY2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Dec 2018 12:31:30 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 09:31:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
-   d="scan'208";a="280564084"
-Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.10.74])
-  by orsmga005.jf.intel.com with ESMTP; 03 Dec 2018 09:31:24 -0800
-Date:   Mon, 3 Dec 2018 09:31:23 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
-Message-ID: <20181203173123.GB8813@linux.intel.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-3-roberto.sassu@huawei.com>
- <20181116133851.GB4163@linux.intel.com>
- <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
- <4a55ba02-87e6-9258-038e-e4c57f00f033@huawei.com>
- <20181130194149.GA18584@linux.intel.com>
- <20181130194527.GB18584@linux.intel.com>
- <95aa61ad-6319-8d9a-dc08-153d80402dfa@huawei.com>
+        Mon, 3 Dec 2018 17:24:28 -0500
+Received: by mail-pg1-f179.google.com with SMTP id 70so6359412pgh.8
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Dec 2018 14:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YNfAB/20tEl89R6fHi+iJdNymgMzz4I/etolfaEWJ4A=;
+        b=dI1OGcUOzGMR1D+FKbJYckj4DL+ZElbu6SqliWLkSVlTeaWYN8MQU/vQSCYVgN6vXX
+         WDehN54oD+oTxEjv9HH2hRSZE1/i+wZ0OWwp1mepslsGedL/ta31NyF+YYGpnMRrumJh
+         FLACzNcunLi853RtX8k3iLj+6lBG2iTQuPl7Xr9iT/f1AqLWcRWgjs8zVVCpFgZhpdzk
+         tvlxCJVKVCUmc44rVcDGafmWHI9/Y3+K7dNx5tH1j+0/8+SDn/VvdWxB87YKP4YOXqtD
+         ApqxvLvhv6KN0TJG14YCiCMYN2aPXeTycLUQeIL4k6dqAkvgOlnhXE3/K93vzBhHvFmM
+         B4LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YNfAB/20tEl89R6fHi+iJdNymgMzz4I/etolfaEWJ4A=;
+        b=lSojpcNdhgnSTbwZb8DdPAOZk7rrg4WyllKUbixjTuy87WPDw9e5pAwHXTu4QEWnNJ
+         PjkfZcaL3/mKHhTpTXGDpUFGd5jZNq8zqiN0vLuF/s4R9AHmzMcOz8Lo35LqtPZIETte
+         rJiBMENlJxOyeiNZBdAvT4D8GsdTkMuUndj26SR6epufMM0p3Hacw+GprxDkrYVS2owM
+         IJUxJ9x5Cvn9Y4mmDT4UjldFlmyE7X9wLkRHgzwDECS0DdE93+8pPGnQboq6hvKh1BGF
+         ULKVPDL0RDMkuKVCcmzkMBCMvVg8stCDk5Nqgp5Uq2JMN3xSbWb00u2qHbfbvIWwWEYX
+         1ucQ==
+X-Gm-Message-State: AA+aEWbX2lMn0hgLBPX6oF0X89HFWF2w/SfkzpRRydzQhn0rsN2r2fJd
+        Jy1WZpUd1eFivZdHVUzGyq/Vu9qVBjx30DnERufogihB
+X-Google-Smtp-Source: AFSGD/Xg3XSnLYkP0EL75/AeCbPKFC0Z/NpBq1E65/PDvmzd5LVW+blH1arC4UWg475I28jcq0BV4G7GFBTjiH+0s/o=
+X-Received: by 2002:a63:4342:: with SMTP id q63mr14789008pga.63.1543875868041;
+ Mon, 03 Dec 2018 14:24:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95aa61ad-6319-8d9a-dc08-153d80402dfa@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAKxm1-F9XOExo0F1QuR+ekHkpqCi+BVpMyAVRGN26t=Q1McB8g@mail.gmail.com>
+ <8a74fb14-47bf-3415-2742-bec56b19e6f6@schaufler-ca.com>
+In-Reply-To: <8a74fb14-47bf-3415-2742-bec56b19e6f6@schaufler-ca.com>
+From:   Tamir Carmeli <carmeli.tamir@gmail.com>
+Date:   Tue, 4 Dec 2018 00:23:51 +0200
+Message-ID: <CAKxm1-GmS5zYh3W_Fz+XxrrF37p-ciqno_2BwCjz=hqOn1Xvqw@mail.gmail.com>
+Subject: Re: LSM hook for module loading and unloading
+To:     casey@schaufler-ca.com
+Cc:     linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 03, 2018 at 10:59:10AM +0100, Roberto Sassu wrote:
-> On 11/30/2018 8:45 PM, Jarkko Sakkinen wrote:
-> > On Fri, Nov 30, 2018 at 11:41:49AM -0800, Jarkko Sakkinen wrote:
-> > > Even after looking at the spec the last field does not make sense as the
-> > > event after digests and digests are not in union. It is just not right.
-> > > 
-> > > The comment does not fix that.
-> > 
-> > You should remove the last field and rename the struct as maybe
-> > struct tcg_pcr_event2_head. If we ever need the very last field
-> > we can create struct *_tail.
-> > 
-> > Not your fault but there is clear bug in the struct definition
-> > that should be fixed in a commit of its own.
-> 
-> Given that I explain the problem in the new patch, I would also remove
-> TPM2_ACTIVE_PCR_BANKS in the same patch. Is it ok?
+Thanks for the reference for loadpin - I didn't know this module before.
 
-Yes.
+I understand that unloading a module is a pretty far-fetched security
+risk. I have one use case I think might be worth a shot: An exploit in
+the module unloading flow or in a vulnerable process that unloads a
+module enables an attacker to unload one of the iptable_filter modules
+before some user space process adds an ip filter, and by that, enables
+network traffic that otherwise would have been blocked.
 
-/Jarkko
+Again, this is pretty far fetched, but an attacker that unloads a
+module that contributes to the system security might hurt the system
+security.
+On Mon, Dec 3, 2018 at 6:13 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 12/1/2018 7:49 AM, Tamir Carmeli wrote:
+> > Hi,
+> > I believe that this is the right place to ask the question, but if it
+> > isn't please let me know of a better forum to ask.
+>
+> This is the right list.
+>
+> > Is there a reason why LSM hooks for kernel module deletion and loading
+> > don't exist? (for delete_module syscall and load_module kernel
+> > function)
+>
+> security_kernel_load_data() is the hook for loading.
+>
+> > Is there some design problem I'm not aware of, or whether the
+> > necessity hasn't come up from any of the mainline LSMs?
+>
+> No one has seen the need for a hook during unload.
+>
+> > I'm considering to write such patch, and I'd like to hear reasons for
+> > why it might be a bad idea.
+>
+> To what end? Look at the Loadpin security module in security/loadpin
+> for one approach to protecting module loading.
+>
+> > Thanks.
+>
