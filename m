@@ -2,91 +2,82 @@ Return-Path: <SRS0=6aHe=OM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C6BC04EB9
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Dec 2018 16:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8987C04EB9
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB7CE2082F
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 Dec 2018 16:13:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="JGkPuv+M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB7CE2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id 863C320850
+	for <linux-security-module@archiver.kernel.org>; Mon,  3 Dec 2018 17:31:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 863C320850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbeLCQNq (ORCPT
+        id S1726769AbeLCRbb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Dec 2018 11:13:46 -0500
-Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:44634
-        "EHLO sonic308-17.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726586AbeLCQNq (ORCPT
+        Mon, 3 Dec 2018 12:31:31 -0500
+Received: from mga04.intel.com ([192.55.52.120]:18443 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725868AbeLCRba (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Dec 2018 11:13:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543853618; bh=LhQXQ9BZZ/ZMCS/pwQbvIMnAz4UngjFxiY2xD1/ajPs=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=JGkPuv+MWSE7ARVAhYxc/o0m1lw0FglKV2ferYP4dp1pnGpufzUynvrdMo3+9bJEdzcwe1Ev/eZXWcMUGAX7fq2JPI9IfadxNQdX942LwzmaPo4hM02MLQWeG/cxmmvYq5JDD8cg9PFDZMJSJ5sur1ZSlOKyh2hsRWKRIWAyvU4jxxUK1qeOl2uHtB6JGYGqMuI5tAY+vY0JaN19EUk0QPKD5F3sxgwjRi5qQ70hClncHeJPON2heWD991NHH8Axu5bWI/LQtD9borb/bpknMUPGX2bx9ZbdPS+VQDoTGZiQQilpYt2FdrzQ4E4jKIZvwiv81v+coKz2FyCXx5SeFw==
-X-YMail-OSG: XmA6nYUVM1lj6ItdTl6rDFfF1Dk4RWTtnQnEE2mdX_RBstbsKG2SAZrjuwexZYz
- P6QmpWjMbDeIxpHSTspG.ir2Mb3pNSe.EOIWtZaZ_N5833UrP4oyZvzzj.mMvBcYlBCXqhqeX_Zs
- ciELjf9ja5kn17lPZm7xevTkuHPGWIAxlnl7G2QB70Jn1IVRuE9mTDtNcD7jjP_fW_jupW56Wt7d
- 6rkdfBk3nEWJAjWlq_oPbYgTaHadma9M8ayyaVzgs3MHtl6ghjYqD7yGVN96K3Qc551_UIxlZB.j
- HVmXXzLYVvEadVCCKTHhgpUXOlWp6EWQl1SsLoNeEUgzvfXJyncoYHrdcCCnH9dGG4.RLI9hys8i
- 45DH1G_E0.PwUWez6voh0lCpGbtA02Z9.l6ISLEfaKkQyxKTtHXCL6Xs7neyBTg5kYiefG5v8QIB
- jygAs.tZziQKFRj6jAtWVY5nuNXaTqUE2lyTnLinykf7f4mzQdS.qBbeER.EA_IT0mkLFaXE5UZS
- 7M2L6c.M9.W_yHhPnTIkq6Yvxl8gUSK7HWcy1gDDZFnk1Of7pc0ttbMvTH0cEV27_OFzrCpETAyb
- eypnHVen4ofYYl15wSyXZOrXY.1zwlym6MhlVOP2KmGm2PrVgWz0A2OKqGb7bJATBHfbhWc1bjTU
- aDpDm86m2dgOULFCCdD6kKSFyrl176H_ggu_jlD5ajQ1FLcaalodN_aGPuej_k0tYTHSyBO3sk2F
- F8Ko8_eqtvfXXKTlfILDqyu2IeZTtTKA8fy_9oEpu3JSLOr0icos0rwkNjlM.q86Xk5UkZUUndtp
- xoJhBZvhAwM8WHrYAsJf6_bRy.INoxAdKEMOOxprDt10Y3ADAzYNvDJnG6SAtK.6nneZsdd26psk
- gEvfv2TN91T3hhQtJczVP0ji.3qHHRCqgpORh92hYMLlANkTEWFo0crloac3zw3xIP708bXiL2T5
- cLqLyzORij1FED3byzflumt.argn3963Gb3y6BAqs8pibP3PSPxFXH5kKpozDvVnGvwj3ubAK7Hn
- MlYWmsoQV9937U3U.FqrgBzEIYoPK8FOP3x0lyOyA9BXLmcmudbGw3CItxfUhAYXWMIcGu4QDNHo
- n
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Mon, 3 Dec 2018 16:13:38 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp413.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 38a342a0a057460213820e97438570bb;
-          Mon, 03 Dec 2018 16:13:36 +0000 (UTC)
-Subject: Re: LSM hook for module loading and unloading
-To:     Tamir Carmeli <carmeli.tamir@gmail.com>,
-        linux-security-module@vger.kernel.org
-References: <CAKxm1-F9XOExo0F1QuR+ekHkpqCi+BVpMyAVRGN26t=Q1McB8g@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <8a74fb14-47bf-3415-2742-bec56b19e6f6@schaufler-ca.com>
-Date:   Mon, 3 Dec 2018 08:13:28 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 3 Dec 2018 12:31:30 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 09:31:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,311,1539673200"; 
+   d="scan'208";a="280564084"
+Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.10.74])
+  by orsmga005.jf.intel.com with ESMTP; 03 Dec 2018 09:31:24 -0800
+Date:   Mon, 3 Dec 2018 09:31:23 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v5 2/7] tpm: remove definition of TPM2_ACTIVE_PCR_BANKS
+Message-ID: <20181203173123.GB8813@linux.intel.com>
+References: <20181114153108.12907-1-roberto.sassu@huawei.com>
+ <20181114153108.12907-3-roberto.sassu@huawei.com>
+ <20181116133851.GB4163@linux.intel.com>
+ <1602133e-6a41-ea97-d985-6eca0831898d@huawei.com>
+ <4a55ba02-87e6-9258-038e-e4c57f00f033@huawei.com>
+ <20181130194149.GA18584@linux.intel.com>
+ <20181130194527.GB18584@linux.intel.com>
+ <95aa61ad-6319-8d9a-dc08-153d80402dfa@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKxm1-F9XOExo0F1QuR+ekHkpqCi+BVpMyAVRGN26t=Q1McB8g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95aa61ad-6319-8d9a-dc08-153d80402dfa@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/1/2018 7:49 AM, Tamir Carmeli wrote:
-> Hi,
-> I believe that this is the right place to ask the question, but if it
-> isn't please let me know of a better forum to ask.
+On Mon, Dec 03, 2018 at 10:59:10AM +0100, Roberto Sassu wrote:
+> On 11/30/2018 8:45 PM, Jarkko Sakkinen wrote:
+> > On Fri, Nov 30, 2018 at 11:41:49AM -0800, Jarkko Sakkinen wrote:
+> > > Even after looking at the spec the last field does not make sense as the
+> > > event after digests and digests are not in union. It is just not right.
+> > > 
+> > > The comment does not fix that.
+> > 
+> > You should remove the last field and rename the struct as maybe
+> > struct tcg_pcr_event2_head. If we ever need the very last field
+> > we can create struct *_tail.
+> > 
+> > Not your fault but there is clear bug in the struct definition
+> > that should be fixed in a commit of its own.
+> 
+> Given that I explain the problem in the new patch, I would also remove
+> TPM2_ACTIVE_PCR_BANKS in the same patch. Is it ok?
 
-This is the right list.
+Yes.
 
-> Is there a reason why LSM hooks for kernel module deletion and loading
-> don't exist? (for delete_module syscall and load_module kernel
-> function)
-
-security_kernel_load_data() is the hook for loading.
-
-> Is there some design problem I'm not aware of, or whether the
-> necessity hasn't come up from any of the mainline LSMs?
-
-No one has seen the need for a hook during unload.
-
-> I'm considering to write such patch, and I'd like to hear reasons for
-> why it might be a bad idea.
-
-To what end? Look at the Loadpin security module in security/loadpin
-for one approach to protecting module loading.
-
-> Thanks.
-
+/Jarkko
