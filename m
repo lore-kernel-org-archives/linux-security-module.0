@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADE8C65BB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6EEC04EB8
 	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B45B214DA
+	by mail.kernel.org (Postfix) with ESMTP id 040E62087F
 	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B45B214DA
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 040E62087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726036AbeLDHhZ (ORCPT
+        id S1726042AbeLDHh0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:37:25 -0500
-Received: from mga02.intel.com ([134.134.136.20]:63183 "EHLO mga02.intel.com"
+        Tue, 4 Dec 2018 02:37:26 -0500
+Received: from mga12.intel.com ([192.55.52.136]:55172 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726005AbeLDHhZ (ORCPT
+        id S1726035AbeLDHhZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 4 Dec 2018 02:37:25 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 23:37:22 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 23:37:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,313,1539673200"; 
-   d="scan'208";a="256618438"
+   d="scan'208";a="115858977"
 Received: from alison-desk.jf.intel.com (HELO alison-desk) ([10.54.74.53])
-  by orsmga004.jf.intel.com with ESMTP; 03 Dec 2018 23:37:22 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 03 Dec 2018 23:37:24 -0800
 From:   Alison Schofield <alison.schofield@intel.com>
 To:     dhowells@redhat.com, tglx@linutronix.de
 Cc:     jmorris@namei.org, mingo@redhat.com, hpa@zytor.com, bp@alien8.de,
@@ -41,9 +41,9 @@ Cc:     jmorris@namei.org, mingo@redhat.com, hpa@zytor.com, bp@alien8.de,
         dan.j.williams@intel.com, jarkko.sakkinen@intel.com,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-mm@kvack.org, x86@kernel.org
-Subject: [RFC v2 04/13] x86/mm: Add helper functions for MKTME memory encryption keys
-Date:   Mon,  3 Dec 2018 23:39:51 -0800
-Message-Id: <bd83f72d30ccfc7c1bc7ce9ab81bdf66e78a1d7d.1543903910.git.alison.schofield@intel.com>
+Subject: [RFC v2 08/13] mm: Use reference counting for encrypted VMAs
+Date:   Mon,  3 Dec 2018 23:39:55 -0800
+Message-Id: <985ba614d49986fdfc0397434fd1dd9eb5646c6f.1543903910.git.alison.schofield@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543903910.git.alison.schofield@intel.com>
 References: <cover.1543903910.git.alison.schofield@intel.com>
@@ -53,146 +53,62 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Define a global mapping structure to manage the mapping of userspace
-Keys to hardware KeyIDs in MKTME (Multi-Key Total Memory Encryption).
-Implement helper functions that access this mapping structure.
+The MKTME (Multi-Key Total Memory Encryption) Key Service needs
+a reference count on encrypted VMAs. This reference count is used
+to determine when a hardware encryption keyid is in use, which in
+turn, tells the key service what operations can be safely performed
+with this keyid.
 
-The helpers will be used by these MKTME API's:
- >  Key Service API: security/keys/mktme_keys.c
- >  encrypt_mprotect() system call: mm/mprotect.c
+The approach is:
+1) Increment/decrement the reference count during encrypt_mprotect()
+system call for initial or updated encryption on a VMA.
+
+2) Piggy back on the new vm_area_dup/free() helpers. If the VMAs being
+duplicated, or freed are encrypted, adjust the reference count.
 
 Signed-off-by: Alison Schofield <alison.schofield@intel.com>
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/include/asm/mktme.h | 12 ++++++
- arch/x86/mm/mktme.c          | 91 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 103 insertions(+)
+ arch/x86/mm/mktme.c | 2 ++
+ kernel/fork.c       | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
-index f05baa15e6f6..dbb49909d665 100644
---- a/arch/x86/include/asm/mktme.h
-+++ b/arch/x86/include/asm/mktme.h
-@@ -12,6 +12,18 @@ extern phys_addr_t mktme_keyid_mask;
- extern int mktme_nr_keyids;
- extern int mktme_keyid_shift;
- 
-+/* Manage mappings between hardware KeyIDs and userspace Keys */
-+extern int mktme_map_alloc(void);
-+extern void mktme_map_free(void);
-+extern void mktme_map_lock(void);
-+extern void mktme_map_unlock(void);
-+extern int mktme_map_mapped_keyids(void);
-+extern void mktme_map_set_keyid(int keyid, void *key);
-+extern void mktme_map_free_keyid(int keyid);
-+extern int mktme_map_keyid_from_key(void *key);
-+extern void *mktme_map_key_from_keyid(int keyid);
-+extern int mktme_map_get_free_keyid(void);
-+
- DECLARE_STATIC_KEY_FALSE(mktme_enabled_key);
- static inline bool mktme_enabled(void)
- {
 diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-index c81727540e7c..34224d4e3f45 100644
+index facf08f9cb74..55d34beb9b81 100644
 --- a/arch/x86/mm/mktme.c
 +++ b/arch/x86/mm/mktme.c
-@@ -40,6 +40,97 @@ int __vma_keyid(struct vm_area_struct *vma)
- 	return (prot & mktme_keyid_mask) >> mktme_keyid_shift;
+@@ -145,10 +145,12 @@ void mprotect_set_encrypt(struct vm_area_struct *vma, int newkeyid,
+ 	if (oldkeyid == newkeyid)
+ 		return;
+ 
++	vma_put_encrypt_ref(vma);
+ 	newprot = pgprot_val(vma->vm_page_prot);
+ 	newprot &= ~mktme_keyid_mask;
+ 	newprot |= (unsigned long)newkeyid << mktme_keyid_shift;
+ 	vma->vm_page_prot = __pgprot(newprot);
++	vma_get_encrypt_ref(vma);
+ 
+ 	/*
+ 	 * The VMA doesn't have any inherited pages.
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 07cddff89c7b..d12d27b50966 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -341,12 +341,14 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
+ 	if (new) {
+ 		*new = *orig;
+ 		INIT_LIST_HEAD(&new->anon_vma_chain);
++		vma_get_encrypt_ref(new);
+ 	}
+ 	return new;
  }
  
-+/*
-+ * struct mktme_map and the mktme_map_* functions manage the mapping
-+ * of userspace Keys to hardware KeyIDs. These are used by the MKTME Key
-+ * Service API and the encrypt_mprotect() system call.
-+ */
-+
-+struct mktme_mapping {
-+	struct mutex	lock;		/* protect this map & HW state */
-+	unsigned int	mapped_keyids;
-+	void		*key[];
-+};
-+
-+struct mktme_mapping *mktme_map;
-+
-+static inline long mktme_map_size(void)
-+{
-+	long size = 0;
-+
-+	size += sizeof(*mktme_map);
-+	size += sizeof(mktme_map->key[0]) * (mktme_nr_keyids + 1);
-+	return size;
-+}
-+
-+int mktme_map_alloc(void)
-+{
-+	mktme_map = kvzalloc(mktme_map_size(), GFP_KERNEL);
-+	if (!mktme_map)
-+		return 0;
-+	mutex_init(&mktme_map->lock);
-+	return 1;
-+}
-+
-+void mktme_map_free(void)
-+{
-+	kvfree(mktme_map);
-+}
-+
-+void mktme_map_lock(void)
-+{
-+	mutex_lock(&mktme_map->lock);
-+}
-+
-+void mktme_map_unlock(void)
-+{
-+	mutex_unlock(&mktme_map->lock);
-+}
-+
-+int mktme_map_mapped_keyids(void)
-+{
-+	return mktme_map->mapped_keyids;
-+}
-+
-+void mktme_map_set_keyid(int keyid, void *key)
-+{
-+	mktme_map->key[keyid] = key;
-+	mktme_map->mapped_keyids++;
-+}
-+
-+void mktme_map_free_keyid(int keyid)
-+{
-+	mktme_map->key[keyid] = 0;
-+	mktme_map->mapped_keyids--;
-+}
-+
-+int mktme_map_keyid_from_key(void *key)
-+{
-+	int i;
-+
-+	for (i = 1; i <= mktme_nr_keyids; i++)
-+		if (mktme_map->key[i] == key)
-+			return i;
-+	return 0;
-+}
-+
-+void *mktme_map_key_from_keyid(int keyid)
-+{
-+	return mktme_map->key[keyid];
-+}
-+
-+int mktme_map_get_free_keyid(void)
-+{
-+	int i;
-+
-+	if (mktme_map->mapped_keyids < mktme_nr_keyids) {
-+		for (i = 1; i <= mktme_nr_keyids; i++)
-+			if (mktme_map->key[i] == 0)
-+				return i;
-+	}
-+	return 0;
-+}
-+
- /* Prepare page to be used for encryption. Called from page allocator. */
- void __prep_encrypted_page(struct page *page, int order, int keyid, bool zero)
+ void vm_area_free(struct vm_area_struct *vma)
  {
++	vma_put_encrypt_ref(vma);
+ 	kmem_cache_free(vm_area_cachep, vma);
+ }
+ 
 -- 
 2.14.1
 
