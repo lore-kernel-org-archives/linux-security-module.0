@@ -2,36 +2,36 @@ Return-Path: <SRS0=nTNb=ON=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4853BC07E85
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D7EC04EBF
 	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E81C214D9
+	by mail.kernel.org (Postfix) with ESMTP id 93653214D9
 	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E81C214D9
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93653214D9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725983AbeLDHhZ (ORCPT
+        id S1726005AbeLDHhZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Tue, 4 Dec 2018 02:37:25 -0500
 Received: from mga03.intel.com ([134.134.136.65]:5832 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbeLDHhY (ORCPT
+        id S1726017AbeLDHhZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:37:24 -0500
+        Tue, 4 Dec 2018 02:37:25 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 23:37:24 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 23:37:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,313,1539673200"; 
-   d="scan'208";a="98463926"
+   d="scan'208";a="107105256"
 Received: from alison-desk.jf.intel.com (HELO alison-desk) ([10.54.74.53])
-  by orsmga008.jf.intel.com with ESMTP; 03 Dec 2018 23:37:22 -0800
+  by orsmga003.jf.intel.com with ESMTP; 03 Dec 2018 23:37:21 -0800
 From:   Alison Schofield <alison.schofield@intel.com>
 To:     dhowells@redhat.com, tglx@linutronix.de
 Cc:     jmorris@namei.org, mingo@redhat.com, hpa@zytor.com, bp@alien8.de,
@@ -41,76 +41,99 @@ Cc:     jmorris@namei.org, mingo@redhat.com, hpa@zytor.com, bp@alien8.de,
         dan.j.williams@intel.com, jarkko.sakkinen@intel.com,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-mm@kvack.org, x86@kernel.org
-Subject: [RFC v2 02/13] mm: Generalize the mprotect implementation to support extensions
-Date:   Mon,  3 Dec 2018 23:39:49 -0800
-Message-Id: <3389bc8e46479ba102f88c157aebd49b905ac289.1543903910.git.alison.schofield@intel.com>
+Subject: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+Date:   Mon,  3 Dec 2018 23:39:47 -0800
+Message-Id: <cover.1543903910.git.alison.schofield@intel.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1543903910.git.alison.schofield@intel.com>
-References: <cover.1543903910.git.alison.schofield@intel.com>
-In-Reply-To: <cover.1543903910.git.alison.schofield@intel.com>
-References: <cover.1543903910.git.alison.schofield@intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Today mprotect is implemented to support legacy mprotect behavior
-plus an extension for memory protection keys. Make it more generic
-so that it can support additional extensions in the future.
+Hi Thomas, David,
 
-This is done is preparation for adding a new system call for memory
-encyption keys. The intent is that the new encrypted mprotect will be
-another extension to legacy mprotect.
+Here is an updated RFC on the API's to support MKTME.
+(Multi-Key Total Memory Encryption)
 
-Change-Id: Ib09b9d1b605b12d0254d7fb4968dfcc8e3c79dd7
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- mm/mprotect.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+This RFC presents the 2 API additions to support the creation and
+usage of memory encryption keys:
+ 1) Kernel Key Service type "mktme"
+ 2) System call encrypt_mprotect()
 
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index df408956dccc..b57075e278fb 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -35,6 +35,8 @@
- 
- #include "internal.h"
- 
-+#define NO_KEY	-1
-+
- static unsigned long change_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
- 		unsigned long addr, unsigned long end, pgprot_t newprot,
- 		int dirty_accountable, int prot_numa)
-@@ -451,9 +453,9 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
- }
- 
- /*
-- * pkey==-1 when doing a legacy mprotect()
-+ * When pkey==NO_KEY we get legacy mprotect behavior here.
-  */
--static int do_mprotect_pkey(unsigned long start, size_t len,
-+static int do_mprotect_ext(unsigned long start, size_t len,
- 		unsigned long prot, int pkey)
- {
- 	unsigned long nstart, end, tmp, reqprot;
-@@ -577,7 +579,7 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
- SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
- 		unsigned long, prot)
- {
--	return do_mprotect_pkey(start, len, prot, -1);
-+	return do_mprotect_ext(start, len, prot, NO_KEY);
- }
- 
- #ifdef CONFIG_ARCH_HAS_PKEYS
-@@ -585,7 +587,7 @@ SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
- SYSCALL_DEFINE4(pkey_mprotect, unsigned long, start, size_t, len,
- 		unsigned long, prot, int, pkey)
- {
--	return do_mprotect_pkey(start, len, prot, pkey);
-+	return do_mprotect_ext(start, len, prot, pkey);
- }
- 
- SYSCALL_DEFINE2(pkey_alloc, unsigned long, flags, unsigned long, init_val)
+This patchset is built upon Kirill Shutemov's work for the core MKTME
+support.
+
+David: Please let me know if the changes made, based on your review,
+are reasonable. I don't think that the new changes touch key service
+specific areas (much).
+
+Thomas: Please provide feedback on encrypt_mprotect(). If not a
+review, then a direction check would be helpful.
+
+I picked up a few more 'CCs this time in get_maintainer!
+
+Thanks!
+Alison
+
+
+Changes in RFC2
+Add a preparser to mktme key service. (dhowells)
+Replace key serial no. with key struct point in mktme_map. (dhowells)
+Remove patch that inserts a special MKTME case in keyctl revoke. (dhowells)
+Updated key usage syntax in the documentation (Kai)
+Replaced NO_PKEY, NO_KEYID with a single constant NO_KEY. (Jarkko)
+Clarified comments in changelog and code. (Jarkko)
+Add clear, no-encrypt, and update key support.
+Add mktme_savekeys (Patch 12 ) to give kernel permission to save key data.
+Add cpu hotplug support. (Patch 13)
+
+Alison Schofield (13):
+  x86/mktme: Document the MKTME APIs
+  mm: Generalize the mprotect implementation to support extensions
+  syscall/x86: Wire up a new system call for memory encryption keys
+  x86/mm: Add helper functions for MKTME memory encryption keys
+  x86/mm: Set KeyIDs in encrypted VMAs
+  mm: Add the encrypt_mprotect() system call
+  x86/mm: Add helpers for reference counting encrypted VMAs
+  mm: Use reference counting for encrypted VMAs
+  mm: Restrict memory encryption to anonymous VMA's
+  keys/mktme: Add the MKTME Key Service type for memory encryption
+  keys/mktme: Program memory encryption keys on a system wide basis
+  keys/mktme: Save MKTME data if kernel cmdline parameter allows
+  keys/mktme: Support CPU Hotplug for MKTME keys
+
+ Documentation/admin-guide/kernel-parameters.rst |   1 +
+ Documentation/admin-guide/kernel-parameters.txt |  11 +
+ Documentation/x86/mktme/index.rst               |  11 +
+ Documentation/x86/mktme/mktme_demo.rst          |  53 +++
+ Documentation/x86/mktme/mktme_encrypt.rst       |  58 +++
+ Documentation/x86/mktme/mktme_keys.rst          | 109 +++++
+ Documentation/x86/mktme/mktme_overview.rst      |  60 +++
+ arch/x86/Kconfig                                |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl          |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl          |   1 +
+ arch/x86/include/asm/mktme.h                    |  25 +
+ arch/x86/mm/mktme.c                             | 179 ++++++++
+ fs/exec.c                                       |   4 +-
+ include/keys/mktme-type.h                       |  41 ++
+ include/linux/key.h                             |   2 +
+ include/linux/mm.h                              |  11 +-
+ include/linux/syscalls.h                        |   2 +
+ include/uapi/asm-generic/unistd.h               |   4 +-
+ kernel/fork.c                                   |   2 +
+ kernel/sys_ni.c                                 |   2 +
+ mm/mprotect.c                                   |  91 +++-
+ security/keys/Kconfig                           |  11 +
+ security/keys/Makefile                          |   1 +
+ security/keys/mktme_keys.c                      | 580 ++++++++++++++++++++++++
+ 24 files changed, 1249 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/x86/mktme/index.rst
+ create mode 100644 Documentation/x86/mktme/mktme_demo.rst
+ create mode 100644 Documentation/x86/mktme/mktme_encrypt.rst
+ create mode 100644 Documentation/x86/mktme/mktme_keys.rst
+ create mode 100644 Documentation/x86/mktme/mktme_overview.rst
+ create mode 100644 include/keys/mktme-type.h
+ create mode 100644 security/keys/mktme_keys.c
+
 -- 
 2.14.1
 
