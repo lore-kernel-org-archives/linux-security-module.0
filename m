@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE672C65BB3
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADE8C65BB8
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7668F21527
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7668F21527
+	by mail.kernel.org (Postfix) with ESMTP id 3B45B214DA
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B45B214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbeLDHh0 (ORCPT
+        id S1726036AbeLDHhZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:37:26 -0500
-Received: from mga14.intel.com ([192.55.52.115]:52443 "EHLO mga14.intel.com"
+        Tue, 4 Dec 2018 02:37:25 -0500
+Received: from mga02.intel.com ([134.134.136.20]:63183 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbeLDHh0 (ORCPT
+        id S1726005AbeLDHhZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Dec 2018 02:37:26 -0500
+        Tue, 4 Dec 2018 02:37:25 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 23:37:22 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 23:37:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,313,1539673200"; 
-   d="scan'208";a="97861634"
+   d="scan'208";a="256618438"
 Received: from alison-desk.jf.intel.com (HELO alison-desk) ([10.54.74.53])
-  by orsmga006.jf.intel.com with ESMTP; 03 Dec 2018 23:37:22 -0800
+  by orsmga004.jf.intel.com with ESMTP; 03 Dec 2018 23:37:22 -0800
 From:   Alison Schofield <alison.schofield@intel.com>
 To:     dhowells@redhat.com, tglx@linutronix.de
 Cc:     jmorris@namei.org, mingo@redhat.com, hpa@zytor.com, bp@alien8.de,
@@ -41,9 +41,9 @@ Cc:     jmorris@namei.org, mingo@redhat.com, hpa@zytor.com, bp@alien8.de,
         dan.j.williams@intel.com, jarkko.sakkinen@intel.com,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-mm@kvack.org, x86@kernel.org
-Subject: [RFC v2 01/13] x86/mktme: Document the MKTME APIs
-Date:   Mon,  3 Dec 2018 23:39:48 -0800
-Message-Id: <c2276bbbb19f3a28bd37c3dd6b1021e2d9a10916.1543903910.git.alison.schofield@intel.com>
+Subject: [RFC v2 04/13] x86/mm: Add helper functions for MKTME memory encryption keys
+Date:   Mon,  3 Dec 2018 23:39:51 -0800
+Message-Id: <bd83f72d30ccfc7c1bc7ce9ab81bdf66e78a1d7d.1543903910.git.alison.schofield@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543903910.git.alison.schofield@intel.com>
 References: <cover.1543903910.git.alison.schofield@intel.com>
@@ -53,348 +53,146 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This includes an overview, a section on each API: MTKME Keys and
-system call encrypt_mprotect(), and a demonstration program.
+Define a global mapping structure to manage the mapping of userspace
+Keys to hardware KeyIDs in MKTME (Multi-Key Total Memory Encryption).
+Implement helper functions that access this mapping structure.
 
-(Some of this info is destined for man pages.)
+The helpers will be used by these MKTME API's:
+ >  Key Service API: security/keys/mktme_keys.c
+ >  encrypt_mprotect() system call: mm/mprotect.c
 
-Change-Id: I34dc9ff1a1308c057ec4bb3e652c4d7ce6995606
 Signed-off-by: Alison Schofield <alison.schofield@intel.com>
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- Documentation/x86/mktme/index.rst          |  11 +++
- Documentation/x86/mktme/mktme_demo.rst     |  53 ++++++++++++++
- Documentation/x86/mktme/mktme_encrypt.rst  |  58 +++++++++++++++
- Documentation/x86/mktme/mktme_keys.rst     | 109 +++++++++++++++++++++++++++++
- Documentation/x86/mktme/mktme_overview.rst |  60 ++++++++++++++++
- 5 files changed, 291 insertions(+)
- create mode 100644 Documentation/x86/mktme/index.rst
- create mode 100644 Documentation/x86/mktme/mktme_demo.rst
- create mode 100644 Documentation/x86/mktme/mktme_encrypt.rst
- create mode 100644 Documentation/x86/mktme/mktme_keys.rst
- create mode 100644 Documentation/x86/mktme/mktme_overview.rst
+ arch/x86/include/asm/mktme.h | 12 ++++++
+ arch/x86/mm/mktme.c          | 91 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 103 insertions(+)
 
-diff --git a/Documentation/x86/mktme/index.rst b/Documentation/x86/mktme/index.rst
-new file mode 100644
-index 000000000000..8c556d04cbc4
---- /dev/null
-+++ b/Documentation/x86/mktme/index.rst
-@@ -0,0 +1,11 @@
+diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
+index f05baa15e6f6..dbb49909d665 100644
+--- a/arch/x86/include/asm/mktme.h
++++ b/arch/x86/include/asm/mktme.h
+@@ -12,6 +12,18 @@ extern phys_addr_t mktme_keyid_mask;
+ extern int mktme_nr_keyids;
+ extern int mktme_keyid_shift;
+ 
++/* Manage mappings between hardware KeyIDs and userspace Keys */
++extern int mktme_map_alloc(void);
++extern void mktme_map_free(void);
++extern void mktme_map_lock(void);
++extern void mktme_map_unlock(void);
++extern int mktme_map_mapped_keyids(void);
++extern void mktme_map_set_keyid(int keyid, void *key);
++extern void mktme_map_free_keyid(int keyid);
++extern int mktme_map_keyid_from_key(void *key);
++extern void *mktme_map_key_from_keyid(int keyid);
++extern int mktme_map_get_free_keyid(void);
 +
-+=============================================
-+Multi-Key Total Memory Encryption (MKTME) API
-+=============================================
+ DECLARE_STATIC_KEY_FALSE(mktme_enabled_key);
+ static inline bool mktme_enabled(void)
+ {
+diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
+index c81727540e7c..34224d4e3f45 100644
+--- a/arch/x86/mm/mktme.c
++++ b/arch/x86/mm/mktme.c
+@@ -40,6 +40,97 @@ int __vma_keyid(struct vm_area_struct *vma)
+ 	return (prot & mktme_keyid_mask) >> mktme_keyid_shift;
+ }
+ 
++/*
++ * struct mktme_map and the mktme_map_* functions manage the mapping
++ * of userspace Keys to hardware KeyIDs. These are used by the MKTME Key
++ * Service API and the encrypt_mprotect() system call.
++ */
 +
-+.. toctree::
++struct mktme_mapping {
++	struct mutex	lock;		/* protect this map & HW state */
++	unsigned int	mapped_keyids;
++	void		*key[];
++};
 +
-+   mktme_overview
-+   mktme_keys
-+   mktme_encrypt
-+   mktme_demo
-diff --git a/Documentation/x86/mktme/mktme_demo.rst b/Documentation/x86/mktme/mktme_demo.rst
-new file mode 100644
-index 000000000000..afd50772e65d
---- /dev/null
-+++ b/Documentation/x86/mktme/mktme_demo.rst
-@@ -0,0 +1,53 @@
-+Demonstration Program using MKTME API's
-+=======================================
++struct mktme_mapping *mktme_map;
 +
-+/* Compile with the keyutils library: cc -o mdemo mdemo.c -lkeyutils */
-+
-+#include <sys/mman.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <keyutils.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <unistd.h>
-+
-+#define PAGE_SIZE sysconf(_SC_PAGE_SIZE)
-+#define sys_encrypt_mprotect 335
-+
-+void main(void)
++static inline long mktme_map_size(void)
 +{
-+	char *options_CPU = "algorithm=aes-xts-128 type=cpu";
-+	long size = PAGE_SIZE;
-+        key_serial_t key;
-+	void *ptra;
-+	int ret;
++	long size = 0;
 +
-+        /* Allocate an MKTME Key */
-+	key = add_key("mktme", "testkey", options_CPU, strlen(options_CPU),
-+                      KEY_SPEC_THREAD_KEYRING);
-+
-+	if (key == -1) {
-+		printf("addkey FAILED\n");
-+		return;
-+	}
-+        /* Map a page of ANONYMOUS memory */
-+	ptra = mmap(NULL, size, PROT_NONE, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
-+	if (!ptra) {
-+		printf("failed to mmap");
-+		goto inval_key;
-+	}
-+        /* Encrypt that page of memory with the MKTME Key */
-+	ret = syscall(sys_encrypt_mprotect, ptra, size, PROT_NONE, key);
-+	if (ret)
-+		printf("mprotect error [%d]\n", ret);
-+
-+        /* Enjoy that page of encrypted memory */
-+
-+        /* Free the memory */
-+	ret = munmap(ptra, size);
-+
-+inval_key:
-+        /* Free the Key */
-+	if (keyctl(KEYCTL_INVALIDATE, key) == -1)
-+		printf("invalidate failed on key [%d]\n", key);
++	size += sizeof(*mktme_map);
++	size += sizeof(mktme_map->key[0]) * (mktme_nr_keyids + 1);
++	return size;
 +}
-diff --git a/Documentation/x86/mktme/mktme_encrypt.rst b/Documentation/x86/mktme/mktme_encrypt.rst
-new file mode 100644
-index 000000000000..ede5237183fc
---- /dev/null
-+++ b/Documentation/x86/mktme/mktme_encrypt.rst
-@@ -0,0 +1,58 @@
-+MKTME API: system call encrypt_mprotect()
-+=========================================
 +
-+Synopsis
-+--------
-+int encrypt_mprotect(void \*addr, size_t len, int prot, key_serial_t serial);
++int mktme_map_alloc(void)
++{
++	mktme_map = kvzalloc(mktme_map_size(), GFP_KERNEL);
++	if (!mktme_map)
++		return 0;
++	mutex_init(&mktme_map->lock);
++	return 1;
++}
 +
-+Where *key_serial_t serial* is the serial number of a key allocated
-+using the MKTME Key Service.
++void mktme_map_free(void)
++{
++	kvfree(mktme_map);
++}
 +
-+Description
-+-----------
-+    encrypt_mprotect() encrypts the memory pages containing any part
-+    of the address range in the interval specified by addr and len.
++void mktme_map_lock(void)
++{
++	mutex_lock(&mktme_map->lock);
++}
 +
-+    encrypt_mprotect() supports the legacy mprotect() behavior plus
-+    the enabling of memory encryption. That means that in addition
-+    to encrypting the memory, the protection flags will be updated
-+    as requested in the call.
++void mktme_map_unlock(void)
++{
++	mutex_unlock(&mktme_map->lock);
++}
 +
-+    The *addr* and *len* must be aligned to a page boundary.
++int mktme_map_mapped_keyids(void)
++{
++	return mktme_map->mapped_keyids;
++}
 +
-+    The caller must have *KEY_NEED_VIEW* permission on the key.
++void mktme_map_set_keyid(int keyid, void *key)
++{
++	mktme_map->key[keyid] = key;
++	mktme_map->mapped_keyids++;
++}
 +
-+    The range of memory that is to be protected must be mapped as
-+    *ANONYMOUS*.
++void mktme_map_free_keyid(int keyid)
++{
++	mktme_map->key[keyid] = 0;
++	mktme_map->mapped_keyids--;
++}
 +
-+Errors
-+------
-+    In addition to the Errors returned from legacy mprotect()
-+    encrypt_mprotect will return:
++int mktme_map_keyid_from_key(void *key)
++{
++	int i;
 +
-+    ENOKEY *serial* parameter does not represent a valid key.
++	for (i = 1; i <= mktme_nr_keyids; i++)
++		if (mktme_map->key[i] == key)
++			return i;
++	return 0;
++}
 +
-+    EINVAL *len* parameter is not page aligned.
++void *mktme_map_key_from_keyid(int keyid)
++{
++	return mktme_map->key[keyid];
++}
 +
-+    EACCES Caller does not have *KEY_NEED_VIEW* permission on the key.
++int mktme_map_get_free_keyid(void)
++{
++	int i;
 +
-+EXAMPLE
-+--------
-+  Allocate an MKTME Key::
-+        serial = add_key("mktme", "name", "type=cpu algorithm=aes-xts-128" @u
++	if (mktme_map->mapped_keyids < mktme_nr_keyids) {
++		for (i = 1; i <= mktme_nr_keyids; i++)
++			if (mktme_map->key[i] == 0)
++				return i;
++	}
++	return 0;
++}
 +
-+  Map ANONYMOUS memory::
-+        ptr = mmap(NULL, size, PROT_NONE, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
-+
-+  Protect memory::
-+        ret = syscall(SYS_encrypt_mprotect, ptr, size, PROT_READ|PROT_WRITE,
-+                      serial);
-+
-+  Use the encrypted memory
-+
-+  Free memory::
-+        ret = munmap(ptr, size);
-+
-+  Free the key resource::
-+        ret = keyctl(KEYCTL_INVALIDATE, serial);
-+
-diff --git a/Documentation/x86/mktme/mktme_keys.rst b/Documentation/x86/mktme/mktme_keys.rst
-new file mode 100644
-index 000000000000..5837909b2c54
---- /dev/null
-+++ b/Documentation/x86/mktme/mktme_keys.rst
-@@ -0,0 +1,109 @@
-+MKTME Key Service API
-+=====================
-+MKTME is a new key service type added to the Linux Kernel Key Service.
-+
-+The MKTME Key Service type is available when CONFIG_X86_INTEL_MKTME is
-+turned on in Intel platforms that support the MKTME feature.
-+
-+The MKTME Key Service type manages the allocation of hardware encryption
-+keys. Users can request an MKTME type key and then use that key to
-+encrypt memory with the encrypt_mprotect() system call.
-+
-+Usage
-+-----
-+    When using the Kernel Key Service to request an *mktme* key,
-+    specify the *payload* as follows:
-+
-+    type=
-+        *user*	User will supply the encryption key data. Use this
-+                type to directly program a hardware encryption key.
-+
-+        *cpu*	User requests a CPU generated encryption key.
-+                The CPU generates and assigns an ephemeral key.
-+
-+        *clear* User requests that a hardware encryption key be
-+                cleared. This will clear the encryption key from
-+                the hardware. On execution this hardware key gets
-+                TME behavior.
-+
-+        *no-encrypt*
-+                 User requests that hardware does not encrypt
-+                 memory when this key is in use.
-+
-+    algorithm=
-+        When type=user or type=cpu the algorithm field must be
-+        *aes-xts-128*
-+
-+        When type=clear or type=no-encrypt the algorithm field
-+        must not be present in the payload.
-+
-+    key=
-+        When type=user the user must supply a 128 bit encryption
-+        key as exactly 32 ASCII hexadecimal characters.
-+
-+	When type=cpu the user may optionally supply 128 bits of
-+        entropy for the CPU generated encryption key in this field.
-+        It must be exactly 32 ASCII hexadecimal characters.
-+
-+	When type=clear or type=no-encrypt this key field must
-+        not be present in the payload.
-+
-+    tweak=
-+	When type=user the user must supply a 128 bit tweak key
-+        as exactly 32 ASCII hexadecimal characters.
-+
-+	When type=cpu the user may optionally supply 128 bits of
-+        entropy for the CPU generated tweak key in this field. It
-+        must be exactly 32 ASCII hexadecimal characters.
-+
-+        When type=clear or type=no-encrypt the tweak field must
-+	not be present in the payload.
-+
-+ERRORS
-+------
-+    In addition to the Errors returned from the Kernel Key Service,
-+    add_key(2) or keyctl(1) commands, the MKTME Key Service type may
-+    return the following errors:
-+
-+    EINVAL for any payload specification that does not match the
-+           MKTME type payload as defined above.
-+    EACCES for access denied. MKTME key type uses capabilities to
-+           restrict the allocation of keys. CAP_SYS_RESOURCE is
-+           required, but it will accept the broader capability of
-+           CAP_SYS_ADMIN.  See capabilities(7).
-+
-+    ENOKEY if a hardware key cannot be allocated. Additional error
-+           messages will describe the hardware programming errors.
-+
-+EXAMPLES
-+--------
-+    Add a 'user' type key::
-+
-+        char \*options_USER = "type=user
-+                               algorithm=aes-xts-128
-+                               key=12345678912345671234567891234567
-+                               tweak=12345678912345671234567891234567";
-+
-+        key = add_key("mktme", "name", options_USER, strlen(options_USER),
-+                      KEY_SPEC_THREAD_KEYRING);
-+
-+    Add a 'cpu' type key::
-+
-+        char \*options_USER = "type=cpu algorithm=aes-xts-128";
-+
-+        key = add_key("mktme", "name", options_CPU, strlen(options_CPU),
-+                      KEY_SPEC_THREAD_KEYRING);
-+
-+    Update a key to 'Clear' type::
-+
-+        Note: This has the effect of clearing out the previously programmed
-+        encryption data in the hardware. Use this to clear the hardware slot
-+        prior to invalidating the key.
-+
-+        ret = keyctl(KEYCTL_UPDATE, key, "type=clear", strlen(options_CLEAR);
-+
-+    Add a "no-encrypt' type key::
-+
-+	key = add_key("mktme", "name", "no-encrypt", strlen(options_CPU),
-+		      KEY_SPEC_THREAD_KEYRING);
-+
-diff --git a/Documentation/x86/mktme/mktme_overview.rst b/Documentation/x86/mktme/mktme_overview.rst
-new file mode 100644
-index 000000000000..cc2c4a8320e7
---- /dev/null
-+++ b/Documentation/x86/mktme/mktme_overview.rst
-@@ -0,0 +1,60 @@
-+Overview
-+========
-+MKTME (Multi-Key Total Memory Encryption) is a technology that allows
-+memory encryption on Intel platforms. The main use case for the feature
-+is virtual machine isolation. The API should apply to a wide range of
-+use cases.
-+
-+Find the Intel Architecture Specification for MKTME here:
-+https://software.intel.com/sites/default/files/managed/a5/16/Multi-Key-Total-Memory-Encryption-Spec.pdf
-+
-+The Encryption Process
-+----------------------
-+Userspace will see MKTME encryption as a Step Process.
-+
-+Step 1: Use the MKTME Key Service API to allocate an encryption key.
-+
-+Step 2: Use the encrypt_mprotect() system call to protect memory
-+        with the encryption key obtained in Step 1.
-+
-+Definitions
-+-----------
-+Keys:	References to Keys in this document are to Userspace Keys.
-+	These keys are requested by users and jointly managed by the
-+	MKTME Key Service Type, and more broadly by the Kernel Key
-+        Service of which MKTME is a part.
-+
-+	This document does not intend to document KKS, but only the
-+	MKTME type of the KKS. The options of the KKS can be grouped
-+	into 2 classes for purposes of understanding how MKTME operates
-+	within the broader KKS.
-+
-+KeyIDs: References to KeyIDs in this document are to the hardware KeyID
-+	slots that are available on Intel Platforms. A KeyID is a
-+	numerical index into a software programmable slot in the Intel
-+	hardware. Refer to the Intel specification linked above for
-+	details on the implementation of MKTME in Intel platforms.
-+
-+Key<-->KeyID Mapping:
-+	The MKTME Key Service maintains a mapping between Keys and KeyIDS.
-+	This mapping is known only to the kernel. Userspace does not need
-+	to know which hardware KeyID slot it's Userspace Key has been
-+	assigned.
-+
-+Configuration
-+-------------
-+
-+CONFIG_X86_INTEL_MKTME
-+        MKTME is enabled by selecting CONFIG_X86_INTEL_MKTME on Intel
-+        platforms supporting the MKTME feature.
-+
-+mktme_savekeys
-+        mktme_savekeys is a kernel cmdline parameter.
-+
-+        This parameter allows the kernel to save the user specified
-+        MKTME key payload. Saving this payload means that the MKTME
-+        Key Service can always allow the addition of new physical
-+        packages. If the mktme_savekeys parameter is not present,
-+        users key data will not be saved, and new physical packages
-+        may only be added to the system if no user type MKTME keys
-+        are in use.
+ /* Prepare page to be used for encryption. Called from page allocator. */
+ void __prep_encrypted_page(struct page *page, int order, int keyid, bool zero)
+ {
 -- 
 2.14.1
 
