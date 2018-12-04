@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB0DC04EBF
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6B5C07E85
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 153602087F
+	by mail.kernel.org (Postfix) with ESMTP id E01252087F
 	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 153602087F
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E01252087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbeLDHh3 (ORCPT
+        id S1726053AbeLDHha (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Dec 2018 02:37:29 -0500
-Received: from mga17.intel.com ([192.55.52.151]:16867 "EHLO mga17.intel.com"
+        Tue, 4 Dec 2018 02:37:30 -0500
+Received: from mga03.intel.com ([134.134.136.65]:5832 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbeLDHh1 (ORCPT
+        id S1726027AbeLDHh1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 4 Dec 2018 02:37:27 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 23:37:26 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 23:37:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,313,1539673200"; 
-   d="scan'208";a="300822536"
+   d="scan'208";a="107105277"
 Received: from alison-desk.jf.intel.com (HELO alison-desk) ([10.54.74.53])
-  by fmsmga005.fm.intel.com with ESMTP; 03 Dec 2018 23:37:26 -0800
+  by orsmga003.jf.intel.com with ESMTP; 03 Dec 2018 23:37:26 -0800
 From:   Alison Schofield <alison.schofield@intel.com>
 To:     dhowells@redhat.com, tglx@linutronix.de
 Cc:     jmorris@namei.org, mingo@redhat.com, hpa@zytor.com, bp@alien8.de,
@@ -41,9 +41,9 @@ Cc:     jmorris@namei.org, mingo@redhat.com, hpa@zytor.com, bp@alien8.de,
         dan.j.williams@intel.com, jarkko.sakkinen@intel.com,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-mm@kvack.org, x86@kernel.org
-Subject: [RFC v2 10/13] keys/mktme: Add the MKTME Key Service type for memory encryption
-Date:   Mon,  3 Dec 2018 23:39:57 -0800
-Message-Id: <42d44fb5ddbbf7241a2494fc688e274ade641965.1543903910.git.alison.schofield@intel.com>
+Subject: [RFC v2 13/13] keys/mktme: Support CPU Hotplug for MKTME keys
+Date:   Mon,  3 Dec 2018 23:40:00 -0800
+Message-Id: <c14d24b09ee2ae37ea4106726ce8fe2aea31f6c7.1543903910.git.alison.schofield@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1543903910.git.alison.schofield@intel.com>
 References: <cover.1543903910.git.alison.schofield@intel.com>
@@ -53,469 +53,255 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-MKTME (Multi-Key Total Memory Encryption) is a technology that allows
-transparent memory encryption in upcoming Intel platforms. MKTME will
-support mulitple encryption domains, each having their own key. The main
-use case for the feature is virtual machine isolation. The API needs the
-flexibility to work for a wide range of uses.
+The MKTME (Multi-Key Memory Encryption Keys) hardware resides on each
+physical package. The kernel maintains one Key Table on each physical
+package and these Key Tables must all remain in sync.
+(From here on, package means physical package.)
 
-The MKTME key service type manages the addition and removal of the memory
-encryption keys. It maps Userspace Keys to hardware KeyIDs. It programs
-the hardware with the user requested encryption options.
+Although every CPU on that package has the ability to program the Key
+Table, the kernel uses one 'lead' cpu per package to program the Key
+Tables. Typically, keys are programmed one at a time, across all
+packages, as the 'add key' requests come in from userspace.
 
-The only supported encryption algorithm is AES-XTS 128.
+Some CPU hotplug scenarios are handled quite simply:
+>  Teardown a non lead CPU --> do nothing
+>  Teardown a lead CPU --> pick a new lead CPU
+>  Teardown a lead/last CPU of a package --> forget this package
+>  Startup a CPU in a known package --> do nothing
+>  Startup a CPU in a new package and no keys are programmed --> do nothing
 
-The MKTME key service is half of the MKTME API level solution. It pairs
-with a new memory encryption system call: encrypt_mprotect() that uses
-the keys to encrypt memory.
+Then there is the more interesting case for MKTME: a CPU is starting up
+for a new package and keys are programmed on the existing packages. The Key
+Table on the new package will need to be programmed to match the Key
+Tables on all existing packages.
 
-See Documentation/x86/mktme/mktme.rst
+The issue is whether or not the Key Service has the information it needs
+to program the new Key Table. To address this, a new kernel commandline
+parameter 'mktme_savekeys' was introduced in a previous patch. It allows
+the kernel to save the data needed to program keys, beyond their first
+add key request.
 
-Change-Id: Idda4af2beabb739c77719897affff183ee9fa716
+When 'mktme_savekeys' is not present, new packages may still be added
+if all currently programmed keys are not USER type. This means that
+CPU generated keys are an option for users not wanting to save key
+data, but who also want to support the addition of new packages.
+
+Change-Id: I219192fc59dd9f433963c4959f33d7f013c9f73a
 Signed-off-by: Alison Schofield <alison.schofield@intel.com>
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/Kconfig           |   1 +
- include/keys/mktme-type.h  |  41 ++++++
- security/keys/Kconfig      |  11 ++
- security/keys/Makefile     |   1 +
- security/keys/mktme_keys.c | 339 +++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 393 insertions(+)
- create mode 100644 include/keys/mktme-type.h
- create mode 100644 security/keys/mktme_keys.c
+ security/keys/mktme_keys.c | 135 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 126 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 7ac78e2856c7..c2e3bb5af077 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1531,6 +1531,7 @@ config X86_INTEL_MKTME
- 	bool "Intel Multi-Key Total Memory Encryption"
- 	select DYNAMIC_PHYSICAL_MASK
- 	select PAGE_EXTENSION
-+	select MKTME_KEYS
- 	depends on X86_64 && CPU_SUP_INTEL
- 	---help---
- 	  Say yes to enable support for Multi-Key Total Memory Encryption.
-diff --git a/include/keys/mktme-type.h b/include/keys/mktme-type.h
-new file mode 100644
-index 000000000000..c63c6568087f
---- /dev/null
-+++ b/include/keys/mktme-type.h
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/* Key service for Multi-KEY Total Memory Encryption */
-+
-+#ifndef _KEYS_MKTME_TYPE_H
-+#define _KEYS_MKTME_TYPE_H
-+
-+#include <linux/key.h>
-+
-+/*
-+ * The AES-XTS 128 encryption algorithm requires 128 bits for each
-+ * user supplied data key and tweak key.
-+ */
-+#define MKTME_AES_XTS_SIZE	16	/* 16 bytes, 128 bits */
-+
-+enum mktme_alg {
-+	MKTME_ALG_AES_XTS_128,
-+};
-+
-+const char *const mktme_alg_names[] = {
-+	[MKTME_ALG_AES_XTS_128]	= "aes-xts-128",
-+};
-+
-+enum mktme_type {
-+	MKTME_TYPE_ERROR = -1,
-+	MKTME_TYPE_USER,
-+	MKTME_TYPE_CPU,
-+	MKTME_TYPE_CLEAR,
-+	MKTME_TYPE_NO_ENCRYPT,
-+};
-+
-+const char *const mktme_type_names[] = {
-+	[MKTME_TYPE_USER]	= "user",
-+	[MKTME_TYPE_CPU]	= "cpu",
-+	[MKTME_TYPE_CLEAR]	= "clear",
-+	[MKTME_TYPE_NO_ENCRYPT]	= "no-encrypt",
-+};
-+
-+extern struct key_type key_type_mktme;
-+
-+#endif /* _KEYS_MKTME_TYPE_H */
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 6462e6654ccf..c36972113e67 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -101,3 +101,14 @@ config KEY_DH_OPERATIONS
- 	 in the kernel.
- 
- 	 If you are unsure as to whether this is required, answer N.
-+
-+config MKTME_KEYS
-+	bool "Multi-Key Total Memory Encryption Keys"
-+	depends on KEYS && X86_INTEL_MKTME
-+	help
-+	  This option provides support for Multi-Key Total Memory
-+	  Encryption (MKTME) on Intel platforms offering the feature.
-+	  MKTME allows userspace to manage the hardware encryption
-+	  keys through the kernel key services.
-+
-+	  If you are unsure as to whether this is required, answer N.
-diff --git a/security/keys/Makefile b/security/keys/Makefile
-index 9cef54064f60..94c84f10a857 100644
---- a/security/keys/Makefile
-+++ b/security/keys/Makefile
-@@ -30,3 +30,4 @@ obj-$(CONFIG_ASYMMETRIC_KEY_TYPE) += keyctl_pkey.o
- obj-$(CONFIG_BIG_KEYS) += big_key.o
- obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
- obj-$(CONFIG_ENCRYPTED_KEYS) += encrypted-keys/
-+obj-$(CONFIG_MKTME_KEYS) += mktme_keys.o
 diff --git a/security/keys/mktme_keys.c b/security/keys/mktme_keys.c
-new file mode 100644
-index 000000000000..e615eb58e600
---- /dev/null
+index e9c7d306cba1..fb4d4061d2f3 100644
+--- a/security/keys/mktme_keys.c
 +++ b/security/keys/mktme_keys.c
-@@ -0,0 +1,339 @@
-+// SPDX-License-Identifier: GPL-3.0
+@@ -86,21 +86,29 @@ static void mktme_program_package(void *hw_program_info)
+ 
+ /* Program a KeyID across the entire system. */
+ static int mktme_program_system(struct mktme_key_program *key_program,
+-				cpumask_var_t mktme_cpumask)
++				cpumask_var_t mktme_cpumask, int hotplug)
+ {
+ 	struct mktme_hw_program_info info = {
+ 		.key_program = key_program,
+ 		.status = MKTME_PROG_SUCCESS,
+ 	};
+-	get_online_cpus();
+-	on_each_cpu_mask(mktme_cpumask, mktme_program_package, &info, 1);
+-	put_online_cpus();
 +
-+/* Documentation/x86/mktme/mktme_keys.rst */
-+
-+#include <linux/cred.h>
-+#include <linux/cpu.h>
-+#include <linux/err.h>
-+#include <linux/init.h>
-+#include <linux/key.h>
-+#include <linux/key-type.h>
-+#include <linux/init.h>
-+#include <linux/parser.h>
-+#include <linux/random.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <asm/intel_pconfig.h>
-+#include <asm/mktme.h>
-+#include <keys/mktme-type.h>
-+#include <keys/user-type.h>
-+
-+#include "internal.h"
-+
-+struct kmem_cache *mktme_prog_cache;	/* Hardware programming cache */
-+
-+static const char * const mktme_program_err[] = {
-+	"KeyID was successfully programmed",	/* 0 */
-+	"Invalid KeyID programming command",	/* 1 */
-+	"Insufficient entropy",			/* 2 */
-+	"KeyID not valid",			/* 3 */
-+	"Invalid encryption algorithm chosen",	/* 4 */
-+	"Failure to access key table",		/* 5 */
-+};
-+
-+enum mktme_opt_id {
-+	OPT_ERROR = -1,
-+	OPT_TYPE,
-+	OPT_KEY,
-+	OPT_TWEAK,
-+	OPT_ALGORITHM,
-+};
-+
-+static const match_table_t mktme_token = {
-+	{OPT_TYPE, "type=%s"},
-+	{OPT_KEY, "key=%s"},
-+	{OPT_TWEAK, "tweak=%s"},
-+	{OPT_ALGORITHM, "algorithm=%s"},
-+	{OPT_ERROR, NULL}
-+};
-+
-+struct mktme_payload {
-+	u32		keyid_ctrl;	/* Command & Encryption Algorithm */
-+	u8		data_key[MKTME_AES_XTS_SIZE];
-+	u8		tweak_key[MKTME_AES_XTS_SIZE];
-+};
-+
-+/* Key Service Method called when Key is garbage collected. */
-+static void mktme_destroy_key(struct key *key)
-+{
-+	key_put_encrypt_ref(mktme_map_keyid_from_key(key));
-+}
-+
-+/* Copy the payload to the HW programming structure and program this KeyID */
-+static int mktme_program_keyid(int keyid, struct mktme_payload *payload)
-+{
-+	struct mktme_key_program *kprog = NULL;
-+	u8 kern_entropy[MKTME_AES_XTS_SIZE];
-+	int i, ret;
-+
-+	kprog = kmem_cache_zalloc(mktme_prog_cache, GFP_KERNEL);
-+	if (!kprog)
-+		return -ENOMEM;
-+
-+	/* Hardware programming requires cached aligned struct */
-+	kprog->keyid = keyid;
-+	kprog->keyid_ctrl = payload->keyid_ctrl;
-+	memcpy(kprog->key_field_1, payload->data_key, MKTME_AES_XTS_SIZE);
-+	memcpy(kprog->key_field_2, payload->tweak_key, MKTME_AES_XTS_SIZE);
-+
-+	/* Strengthen the entropy fields for CPU generated keys */
-+	if ((payload->keyid_ctrl & 0xff) == MKTME_KEYID_SET_KEY_RANDOM) {
-+		get_random_bytes(&kern_entropy, sizeof(kern_entropy));
-+		for (i = 0; i < (MKTME_AES_XTS_SIZE); i++) {
-+			kprog->key_field_1[i] ^= kern_entropy[i];
-+			kprog->key_field_2[i] ^= kern_entropy[i];
-+		}
++	if (!hotplug) {
++		get_online_cpus();
++		on_each_cpu_mask(mktme_cpumask, mktme_program_package,
++				 &info, 1);
++		put_online_cpus();
++	} else {
++		on_each_cpu_mask(mktme_cpumask, mktme_program_package,
++				 &info, 1);
 +	}
-+	ret = mktme_key_program(kprog);
-+	kmem_cache_free(mktme_prog_cache, kprog);
-+	return ret;
-+}
-+
-+/* Key Service Method to update an existing key. */
-+static int mktme_update_key(struct key *key,
-+			    struct key_preparsed_payload *prep)
+ 
+ 	return info.status;
+ }
+ 
+ /* Copy the payload to the HW programming structure and program this KeyID */
+-static int mktme_program_keyid(int keyid, struct mktme_payload *payload)
++static int mktme_program_keyid(int keyid, struct mktme_payload *payload,
++			       cpumask_var_t mask, int hotplug)
+ {
+ 	struct mktme_key_program *kprog = NULL;
+ 	u8 kern_entropy[MKTME_AES_XTS_SIZE];
+@@ -124,7 +132,7 @@ static int mktme_program_keyid(int keyid, struct mktme_payload *payload)
+ 			kprog->key_field_2[i] ^= kern_entropy[i];
+ 		}
+ 	}
+-	ret = mktme_program_system(kprog, mktme_leadcpus);
++	ret = mktme_program_system(kprog, mktme_leadcpus, hotplug);
+ 	kmem_cache_free(mktme_prog_cache, kprog);
+ 	return ret;
+ }
+@@ -173,7 +181,7 @@ static int mktme_update_key(struct key *key,
+ 	/* Forget if key was user type. */
+ 	clear_bit(keyid, mktme_bitmap_user_type);
+ 
+-	ret = mktme_program_keyid(keyid, payload);
++	ret = mktme_program_keyid(keyid, payload, mktme_leadcpus, 0);
+ 	if (ret != MKTME_PROG_SUCCESS) {
+ 		pr_debug("%s: %s\n", __func__, mktme_program_err[ret]);
+ 		ret = -ENOKEY;
+@@ -202,7 +210,7 @@ int mktme_instantiate_key(struct key *key, struct key_preparsed_payload *prep)
+ 		ret = -ENOKEY;
+ 		goto out;
+ 	}
+-	ret = mktme_program_keyid(keyid, payload);
++	ret = mktme_program_keyid(keyid, payload, mktme_leadcpus, 0);
+ 	if (ret != MKTME_PROG_SUCCESS) {
+ 		pr_debug("%s: %s\n", __func__, mktme_program_err[ret]);
+ 		ret = -ENOKEY;
+@@ -375,6 +383,10 @@ struct key_type key_type_mktme = {
+ 	.destroy	= mktme_destroy_key,
+ };
+ 
++/*
++ * Build mktme_leadcpus mask to include one cpu per physical package.
++ * The mask is used to program the Key Table on each physical package.
++ */
+ static int mktme_build_leadcpus_mask(void)
+ {
+ 	int online_cpu, mktme_cpu;
+@@ -397,6 +409,102 @@ static int mktme_build_leadcpus_mask(void)
+ 	return 0;
+ }
+ 
++/* A new packages Key Table is programmed with data saved in mktme_vault. */
++static int mktme_program_new_package(cpumask_var_t mask)
 +{
-+	struct mktme_payload *payload = prep->payload.data[0];
-+	int keyid, ref_count;
-+	int ret;
-+
-+	mktme_map_lock();
-+	keyid = mktme_map_keyid_from_key(key);
-+	if (keyid <= 0)
-+		return -EINVAL;
-+	/*
-+	 * ref_count will be at least one when we get here because the
-+	 * key already exists. If ref_count is not > 1, it is safe to
-+	 * update the key while holding the mktme_map_lock.
-+	 */
-+	ref_count = mktme_read_encrypt_ref(keyid);
-+	if (ref_count > 1) {
-+		pr_debug("mktme not updating keyid[%d] encrypt_count[%d]\n",
-+			 keyid, ref_count);
-+		return -EBUSY;
-+	}
-+	ret = mktme_program_keyid(keyid, payload);
-+	if (ret != MKTME_PROG_SUCCESS) {
-+		pr_debug("%s: %s\n", __func__, mktme_program_err[ret]);
-+		ret = -ENOKEY;
-+	}
-+	mktme_map_unlock();
-+	return ret;
-+}
-+
-+/* Key Service Method to create a new key. Payload is preparsed. */
-+int mktme_instantiate_key(struct key *key, struct key_preparsed_payload *prep)
-+{
-+	struct mktme_payload *payload = prep->payload.data[0];
++	struct key *key;
++	int hotplug = 1;
 +	int keyid, ret;
 +
++	/* When a KeyID slot is freed, it's corresponding Key is 0 */
++	for (keyid = 1; keyid <= mktme_nr_keyids; keyid++) {
++		key = mktme_map_key_from_keyid(keyid);
++		if (!key)
++			continue;
++		/* If one key fails to program, fail the entire package. */
++		ret = mktme_program_keyid(keyid, &mktme_vault[keyid],
++					  mask, hotplug);
++		if (ret != MKTME_PROG_SUCCESS) {
++			pr_debug("%s: %s\n", __func__, mktme_program_err[ret]);
++			ret = -ENOKEY;
++			break;
++		}
++	}
++	return ret;
++}
++
++static int mktme_hotplug_cpu_startup(unsigned int cpu)
++{
++	int lead_cpu, ret = 0;
++	cpumask_var_t newmask;
++	int pkgid = topology_physical_package_id(cpu);
++
 +	mktme_map_lock();
-+	keyid = mktme_map_get_free_keyid();
-+	if (keyid == 0) {
-+		ret = -ENOKEY;
-+		goto out;
++
++	/* Nothing to do if a lead CPU exists for this package. */
++	for_each_cpu(lead_cpu, mktme_leadcpus)
++		if (topology_physical_package_id(lead_cpu) == pkgid)
++			goto out_unlock;
++
++	/* No keys to program. Just add the new lead CPU to mask. */
++	if (!mktme_map_mapped_keyids())
++		goto out_add_cpu;
++
++	/* Keys need to be programmed. Confirm programming can be done. */
++	if (!mktme_savekeys &&
++	    (bitmap_weight(mktme_bitmap_user_type, mktme_nr_keyids))) {
++		ret = -EPERM;
++		goto out_unlock;
 +	}
-+	ret = mktme_program_keyid(keyid, payload);
-+	if (ret != MKTME_PROG_SUCCESS) {
-+		pr_debug("%s: %s\n", __func__, mktme_program_err[ret]);
-+		ret = -ENOKEY;
-+		goto out;
++
++	/* Program only this packages Key Table, not all Key Tables. */
++	if (!zalloc_cpumask_var(&newmask, GFP_KERNEL)) {
++		ret = -ENOMEM;
++		goto out_unlock;
 +	}
-+	mktme_map_set_keyid(keyid, key);
-+	key_get_encrypt_ref(keyid);
-+out:
++	cpumask_set_cpu(cpu, newmask);
++	ret = mktme_program_new_package(newmask);
++	if (ret < 0) {
++		free_cpumask_var(newmask);
++		goto out_unlock;
++	}
++
++	free_cpumask_var(newmask);
++out_add_cpu:
++	/* Make this cpu a lead cpu for all future Key programming requests. */
++	cpumask_set_cpu(cpu, mktme_leadcpus);
++out_unlock:
 +	mktme_map_unlock();
 +	return ret;
 +}
 +
-+/* Verify the user provided the needed arguments for the TYPE of Key */
-+static int mktme_check_options(struct mktme_payload *payload,
-+			       unsigned long token_mask, enum mktme_type type)
++static int mktme_hotplug_cpu_teardown(unsigned int cpu)
 +{
-+	if (!token_mask)
-+		return -EINVAL;
++	int pkgid, online_cpu;
 +
-+	switch (type) {
-+	case MKTME_TYPE_USER:
-+		if (test_bit(OPT_ALGORITHM, &token_mask))
-+			payload->keyid_ctrl |= MKTME_AES_XTS_128;
-+		else
-+			return -EINVAL;
-+
-+		if ((test_bit(OPT_KEY, &token_mask)) &&
-+		    (test_bit(OPT_TWEAK, &token_mask)))
-+			payload->keyid_ctrl |= MKTME_KEYID_SET_KEY_DIRECT;
-+		else
-+			return -EINVAL;
-+		break;
-+
-+	case MKTME_TYPE_CPU:
-+		if (test_bit(OPT_ALGORITHM, &token_mask))
-+			payload->keyid_ctrl |= MKTME_AES_XTS_128;
-+		else
-+			return -EINVAL;
-+
-+		payload->keyid_ctrl |= MKTME_KEYID_SET_KEY_RANDOM;
-+		break;
-+
-+	case MKTME_TYPE_CLEAR:
-+		payload->keyid_ctrl |= MKTME_KEYID_CLEAR_KEY;
-+		break;
-+
-+	case MKTME_TYPE_NO_ENCRYPT:
-+		payload->keyid_ctrl |= MKTME_KEYID_NO_ENCRYPT;
-+		break;
-+
-+	default:
-+		return -EINVAL;
++	mktme_map_lock();
++	/* Teardown cpu is not a lead cpu, nothing to do. */
++	if (!cpumask_test_and_clear_cpu(cpu, mktme_leadcpus))
++		goto out;
++	/*
++	 * Teardown cpu is a lead cpu. If the physical package
++	 * is still present, pick a new lead cpu. Beware: the
++	 * teardown cpu is still in the online_cpu mask. Do
++	 * not pick it again.
++	 */
++	pkgid = topology_physical_package_id(cpu);
++	for_each_online_cpu(online_cpu)
++		if (online_cpu != cpu &&
++		    pkgid == topology_physical_package_id(online_cpu)) {
++			cpumask_set_cpu(online_cpu, mktme_leadcpus);
++			break;
 +	}
++out:
++	mktme_map_unlock();
++	/* Teardowns always succeed. */
 +	return 0;
 +}
 +
-+/* Parse the options and store the key programming data in the payload. */
-+static int mktme_get_options(char *options, struct mktme_payload *payload)
-+{
-+	enum mktme_type type = MKTME_TYPE_ERROR;
-+	substring_t args[MAX_OPT_ARGS];
-+	unsigned long token_mask = 0;
-+	char *p = options;
-+	int ret, token;
+ /*
+  * Allocate the global mktme_map structure based on the available keyids.
+  * Create a cache for the hardware structure. Initialize the encrypt_count
+@@ -405,7 +513,7 @@ static int mktme_build_leadcpus_mask(void)
+  */
+ static int __init init_mktme(void)
+ {
+-	int ret;
++	int ret, cpuhp;
+ 
+ 	/* Verify keys are present */
+ 	if (!(mktme_nr_keyids > 0))
+@@ -433,10 +541,19 @@ static int __init init_mktme(void)
+ 	if (!mktme_vault)
+ 		goto free_bitmap;
+ 
++	cpuhp = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
++					  "keys/mktme_keys:online",
++					  mktme_hotplug_cpu_startup,
++					  mktme_hotplug_cpu_teardown);
++	if (cpuhp < 0)
++		goto free_vault;
 +
-+	while ((p = strsep(&options, " \t"))) {
-+		if (*p == '\0' || *p == ' ' || *p == '\t')
-+			continue;
-+		token = match_token(p, mktme_token, args);
-+		if (test_and_set_bit(token, &token_mask))
-+			return -EINVAL;
-+
-+		switch (token) {
-+		case OPT_KEY:
-+			ret = hex2bin(payload->data_key, args[0].from,
-+				      MKTME_AES_XTS_SIZE);
-+			if (ret < 0)
-+				return -EINVAL;
-+			break;
-+
-+		case OPT_TWEAK:
-+			ret = hex2bin(payload->tweak_key, args[0].from,
-+				      MKTME_AES_XTS_SIZE);
-+			if (ret < 0)
-+				return -EINVAL;
-+			break;
-+
-+		case OPT_TYPE:
-+			type = match_string(mktme_type_names,
-+					    ARRAY_SIZE(mktme_type_names),
-+					    args[0].from);
-+			if (type < 0)
-+				return -EINVAL;
-+			break;
-+
-+		case OPT_ALGORITHM:
-+			ret = match_string(mktme_alg_names,
-+					   ARRAY_SIZE(mktme_alg_names),
-+					   args[0].from);
-+			if (ret < 0)
-+				return -EINVAL;
-+			break;
-+
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+	return mktme_check_options(payload, token_mask, type);
-+}
-+
-+void mktme_free_preparsed_key(struct key_preparsed_payload *prep)
-+{
-+	kzfree(prep->payload.data[0]);
-+}
-+
-+/*
-+ * Key Service Method to preparse a payload before a key is created.
-+ * Check permissions and the options. Load the proposed key field
-+ * data into the payload for use by instantiate and update methods.
-+ */
-+int mktme_preparse_key(struct key_preparsed_payload *prep)
-+{
-+	struct mktme_payload *mktme_payload;
-+	size_t datalen = prep->datalen;
-+	char *options;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_RESOURCE) && !capable(CAP_SYS_ADMIN))
-+		return -EACCES;
-+
-+	if (datalen <= 0 || datalen > 1024 || !prep->data)
-+		return -EINVAL;
-+
-+	options = kmemdup(prep->data, datalen + 1, GFP_KERNEL);
-+	if (!options)
-+		return -ENOMEM;
-+
-+	options[datalen] = '\0';
-+
-+	mktme_payload = kzalloc(sizeof(*mktme_payload), GFP_KERNEL);
-+	if (!mktme_payload) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+	ret = mktme_get_options(options, mktme_payload);
-+	if (ret < 0)
-+		goto out;
-+
-+	prep->quotalen = sizeof(mktme_payload);
-+	prep->payload.data[0] = mktme_payload;
-+out:
-+	kzfree(options);
-+	return ret;
-+}
-+
-+struct key_type key_type_mktme = {
-+	.name		= "mktme",
-+	.preparse	= mktme_preparse_key,
-+	.free_preparse	= mktme_free_preparsed_key,
-+	.instantiate	= mktme_instantiate_key,
-+	.update		= mktme_update_key,
-+	.describe	= user_describe,
-+	.destroy	= mktme_destroy_key,
-+};
-+
-+/*
-+ * Allocate the global mktme_map structure based on the available keyids.
-+ * Create a cache for the hardware structure. Initialize the encrypt_count
-+ * array to track * VMA's per keyid. Once all that succeeds, register the
-+ * 'mktme' key type.
-+ */
-+static int __init init_mktme(void)
-+{
-+	int ret;
-+
-+	/* Verify keys are present */
-+	if (!(mktme_nr_keyids > 0))
-+		return -EINVAL;
-+
-+	if (!mktme_map_alloc())
-+		return -ENOMEM;
-+
-+	mktme_prog_cache = KMEM_CACHE(mktme_key_program, SLAB_PANIC);
-+	if (!mktme_prog_cache)
-+		goto free_map;
-+
-+	if (mktme_alloc_encrypt_array() < 0)
-+		goto free_cache;
-+
-+	ret = register_key_type(&key_type_mktme);
-+	if (!ret)
-+		return ret;			/* SUCCESS */
-+
-+	mktme_free_encrypt_array();
-+free_cache:
-+	kmem_cache_destroy(mktme_prog_cache);
-+free_map:
-+	mktme_map_free();
-+
-+	return -ENOMEM;
-+}
-+
-+late_initcall(init_mktme);
+ 	ret = register_key_type(&key_type_mktme);
+ 	if (!ret)
+ 		return ret;			/* SUCCESS */
+ 
++	cpuhp_remove_state_nocalls(cpuhp);
++free_vault:
+ 	kfree(mktme_vault);
+ free_bitmap:
+ 	bitmap_free(mktme_bitmap_user_type);
 -- 
 2.14.1
 
