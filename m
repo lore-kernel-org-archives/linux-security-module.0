@@ -2,88 +2,245 @@ Return-Path: <SRS0=nTNb=ON=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C24E2C04EB9
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 01:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17953C04EB8
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7703120850
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 01:51:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="XbE7w9dX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7703120850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id CBB302087F
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 07:37:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB302087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725992AbeLDBvy (ORCPT
+        id S1726020AbeLDHhZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 Dec 2018 20:51:54 -0500
-Received: from sonic308-18.consmr.mail.ne1.yahoo.com ([66.163.187.41]:38249
-        "EHLO sonic308-18.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725937AbeLDBvy (ORCPT
+        Tue, 4 Dec 2018 02:37:25 -0500
+Received: from mga12.intel.com ([192.55.52.136]:55172 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725983AbeLDHhY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 Dec 2018 20:51:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1543888313; bh=chU+0yHEO4+rr6/0R7LLlDpI7HCT5AthX1X7qDy4YkY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=XbE7w9dXN6FwrvseEHgFSneLUyt4IwjFhBu8RIpNjrdDErwnIVngmBkiCnTvmi7eiGngpqkwlqVuSQ58aTonesGd6GMIhRWgUoZ6o6R1Vdv0ivXdh38eFmY5fVbInh2CydDtJy8d+weGCdpxYPY7HcGVbatwUiHgO9Jm5WdOewziSvqC/5dPHWqmRnqnRsB1Ib3ee5KIMLWzkWA/YrCsMi3Rn2vi7gbVeI146OCJVJ/eCQGoATKtyTDzreg8ZGkeS/H9tGIuwFwDrsLpizjlKM8rEHZYhK+Xrt+BEqqeZ+Kwgej598Wqleq166eEgefq4TlVBdMe9GJ4B91tfLEoNA==
-X-YMail-OSG: 3Cwd_SQVM1nfD120dr.YOxzOniLEvtLhQNmy35QTHCWQwdM.NdwHVQ61swX3Eet
- Uj3sgOQ4cxpuxG6J4FRZ.tgK4m45w9_NSxePaPgaxCMpANy2Z9f92wqBm.u55TeRyEuzkHisbN4E
- cybFoqLEBet.xnj6SJoQ5JQVMBa3.gijaujjwbjQqnjDNGqSo_Fj8ycYst2ctDTAtT8kXQSoCmKU
- iPGa21koEWq2kTFWfOpXVVgGO2hBObTC6g6J8.9_v4FoTiu.b_M4dR.zsc8sMXBYFtDh3YDhmgGI
- Cem5zBlO_W.H_nBtMcWr_fEImtwEClUGvxPs5mcep1Iy3UaV3otZ1k9ye6um9hokUEBKRj_dUYTb
- 6h3HXTw0xrceQ8FdcSFi6eNhCC4TxarbxAieRmkLxVCuwB1AQcMcj5ZxP2UKtXH2xyBOHFzzDAoP
- A7FJQ30TdsKgkGDKwahGxCJVLHpEl9RiJdP.1QLz_lKDh0iefzTB_2IP.El.ZCdtgpYx7welm4o0
- DX72RVINoRAQ9OJOyKEWxXg_.X0XWQQYs8smtEwa77tf15cTkdkj1gqqSLSyR6ms6W_xn4S1.IGN
- qQ_CLRzTvSDqk1OjC4lR9teIhC4AL78_2nznvtxNNZsDQ_mWk9.fyV.d8W9YnMRIc2zpsE36Yylp
- 3TYb3zdDeysvZYztbyxer8rkjGKkuHCfxEZXzNmtZdNrtsfSt7FXn5kFYVpZVlIuUoYOgRHxwFKW
- 6vkkvp4CabJtyW5kYbpzKGuH3YRrXO6XX9P.Og.ev.LM.v8RpsDRzaC672UuqkfP9CmBSHEYWEYs
- gOa_60Zt91y8HXH_i0_Pb_vnzb9RvbyK9fx2B82Ljd87OXCWT_15wyeJ4yTeGy07IeAUz1E3sEWr
- HirSfEqi8JstVM_fjTA3eiR6yaR0RNBc0O6mSe.jqm8rjKg63Fk2ZyNWQGUFgsMgCkFyVf3CVTaj
- tlYmVtmpzjs.mh2u7SzzPKDwxo92O7GLtfGeMUohkDc.Kj61Z1AQ7_8pP_ISBqQLkaCxnmFoVEz4
- EOqcnM176YV_omPQUtEcOQtaLfkqb4AEFnLHwP84LcVnmRniYHat.G1G3sCm6pQ5nLvfhsv9oPwY
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Dec 2018 01:51:53 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp425.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c4f650866c23bb02590f3184c52f4ef4;
-          Tue, 04 Dec 2018 01:51:49 +0000 (UTC)
-Subject: Re: LSM hook for module loading and unloading
-To:     Tamir Carmeli <carmeli.tamir@gmail.com>
-Cc:     linux-security-module@vger.kernel.org
-References: <CAKxm1-F9XOExo0F1QuR+ekHkpqCi+BVpMyAVRGN26t=Q1McB8g@mail.gmail.com>
- <8a74fb14-47bf-3415-2742-bec56b19e6f6@schaufler-ca.com>
- <CAKxm1-GmS5zYh3W_Fz+XxrrF37p-ciqno_2BwCjz=hqOn1Xvqw@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <6ae11f52-bf6a-7763-99e0-d196d4e94dd3@schaufler-ca.com>
-Date:   Mon, 3 Dec 2018 17:51:48 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAKxm1-GmS5zYh3W_Fz+XxrrF37p-ciqno_2BwCjz=hqOn1Xvqw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Tue, 4 Dec 2018 02:37:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Dec 2018 23:37:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,313,1539673200"; 
+   d="scan'208";a="126888419"
+Received: from alison-desk.jf.intel.com (HELO alison-desk) ([10.54.74.53])
+  by fmsmga001.fm.intel.com with ESMTP; 03 Dec 2018 23:37:23 -0800
+From:   Alison Schofield <alison.schofield@intel.com>
+To:     dhowells@redhat.com, tglx@linutronix.de
+Cc:     jmorris@namei.org, mingo@redhat.com, hpa@zytor.com, bp@alien8.de,
+        luto@kernel.org, peterz@infradead.org,
+        kirill.shutemov@linux.intel.com, dave.hansen@intel.com,
+        kai.huang@intel.com, jun.nakajima@intel.com,
+        dan.j.williams@intel.com, jarkko.sakkinen@intel.com,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-mm@kvack.org, x86@kernel.org
+Subject: [RFC v2 06/13] mm: Add the encrypt_mprotect() system call
+Date:   Mon,  3 Dec 2018 23:39:53 -0800
+Message-Id: <0c5d9e96c75445ced3b22d9359a8cb3fa2b6f8ad.1543903910.git.alison.schofield@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1543903910.git.alison.schofield@intel.com>
+References: <cover.1543903910.git.alison.schofield@intel.com>
+In-Reply-To: <cover.1543903910.git.alison.schofield@intel.com>
+References: <cover.1543903910.git.alison.schofield@intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/3/2018 2:23 PM, Tamir Carmeli wrote:
-> Thanks for the reference for loadpin - I didn't know this module before.
->
-> I understand that unloading a module is a pretty far-fetched security
-> risk. I have one use case I think might be worth a shot: An exploit in
-> the module unloading flow or in a vulnerable process that unloads a
-> module enables an attacker to unload one of the iptable_filter modules
-> before some user space process adds an ip filter, and by that, enables
-> network traffic that otherwise would have been blocked.
+Implement memory encryption with a new system call that is an
+extension of the legacy mprotect() system call.
 
-How would a security module detect this case?
+In encrypt_mprotect the caller must pass a handle to a previously
+allocated and programmed encryption key. Validate the key and store
+the keyid bits in the vm_page_prot for each VMA in the protection
+range.
 
-> Again, this is pretty far fetched, but an attacker that unloads a
-> module that contributes to the system security might hurt the system
-> security.
+Signed-off-by: Alison Schofield <alison.schofield@intel.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ fs/exec.c           |  4 ++--
+ include/linux/key.h |  2 ++
+ include/linux/mm.h  |  3 ++-
+ mm/mprotect.c       | 63 +++++++++++++++++++++++++++++++++++++++++++++++------
+ 4 files changed, 62 insertions(+), 10 deletions(-)
 
-Without a user for the hook there'd be no reason to incorporate
-it. I would suggest that if you can come up with an way to detect
-and then prevent the attack you should look into adding that to
-loadpin.
+diff --git a/fs/exec.c b/fs/exec.c
+index fc281b738a98..a0946b23e2c5 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -752,8 +752,8 @@ int setup_arg_pages(struct linux_binprm *bprm,
+ 	vm_flags |= mm->def_flags;
+ 	vm_flags |= VM_STACK_INCOMPLETE_SETUP;
+ 
+-	ret = mprotect_fixup(vma, &prev, vma->vm_start, vma->vm_end,
+-			vm_flags);
++	ret = mprotect_fixup(vma, &prev, vma->vm_start, vma->vm_end, vm_flags,
++			     -1);
+ 	if (ret)
+ 		goto out_unlock;
+ 	BUG_ON(prev != vma);
+diff --git a/include/linux/key.h b/include/linux/key.h
+index e58ee10f6e58..fb8a7d5f6149 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -346,6 +346,8 @@ static inline key_serial_t key_serial(const struct key *key)
+ 
+ extern void key_set_timeout(struct key *, unsigned);
+ 
++extern key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
++				 key_perm_t perm);
+ /*
+  * The permissions required on a key that we're looking up.
+  */
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index e2d87e92ca74..09182d78e7b7 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1607,7 +1607,8 @@ extern unsigned long change_protection(struct vm_area_struct *vma, unsigned long
+ 			      int dirty_accountable, int prot_numa);
+ extern int mprotect_fixup(struct vm_area_struct *vma,
+ 			  struct vm_area_struct **pprev, unsigned long start,
+-			  unsigned long end, unsigned long newflags);
++			  unsigned long end, unsigned long newflags,
++			  int newkeyid);
+ 
+ /*
+  * doesn't attempt to fault and will return short.
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index b57075e278fb..ad8127dc9aac 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -28,6 +28,7 @@
+ #include <linux/ksm.h>
+ #include <linux/uaccess.h>
+ #include <linux/mm_inline.h>
++#include <linux/key.h>
+ #include <asm/pgtable.h>
+ #include <asm/cacheflush.h>
+ #include <asm/mmu_context.h>
+@@ -346,7 +347,8 @@ static int prot_none_walk(struct vm_area_struct *vma, unsigned long start,
+ 
+ int
+ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+-	unsigned long start, unsigned long end, unsigned long newflags)
++	       unsigned long start, unsigned long end, unsigned long newflags,
++	       int newkeyid)
+ {
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	unsigned long oldflags = vma->vm_flags;
+@@ -356,7 +358,14 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+ 	int error;
+ 	int dirty_accountable = 0;
+ 
+-	if (newflags == oldflags) {
++	/*
++	 * Flags match and Keyids match or we have NO_KEY.
++	 * This _fixup is usually called from do_mprotect_ext() except
++	 * for one special case: caller fs/exec.c/setup_arg_pages()
++	 * In that case, newkeyid is passed as -1 (NO_KEY).
++	 */
++	if (newflags == oldflags &&
++	    (newkeyid == vma_keyid(vma) || newkeyid == NO_KEY)) {
+ 		*pprev = vma;
+ 		return 0;
+ 	}
+@@ -422,6 +431,8 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+ 	}
+ 
+ success:
++	if (newkeyid != NO_KEY)
++		mprotect_set_encrypt(vma, newkeyid, start, end);
+ 	/*
+ 	 * vm_flags and vm_page_prot are protected by the mmap_sem
+ 	 * held in write mode.
+@@ -453,10 +464,15 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
+ }
+ 
+ /*
+- * When pkey==NO_KEY we get legacy mprotect behavior here.
++ * do_mprotect_ext() supports the legacy mprotect behavior plus extensions
++ * for Protection Keys and Memory Encryption Keys. These extensions are
++ * mutually exclusive and the behavior is:
++ *	(pkey==NO_KEY && keyid==NO_KEY) ==> legacy mprotect
++ *	(pkey is valid)  ==> legacy mprotect plus Protection Key extensions
++ *	(keyid is valid) ==> legacy mprotect plus Encryption Key extensions
+  */
+ static int do_mprotect_ext(unsigned long start, size_t len,
+-		unsigned long prot, int pkey)
++			   unsigned long prot, int pkey, int keyid)
+ {
+ 	unsigned long nstart, end, tmp, reqprot;
+ 	struct vm_area_struct *vma, *prev;
+@@ -554,7 +570,8 @@ static int do_mprotect_ext(unsigned long start, size_t len,
+ 		tmp = vma->vm_end;
+ 		if (tmp > end)
+ 			tmp = end;
+-		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags);
++		error = mprotect_fixup(vma, &prev, nstart, tmp, newflags,
++				       keyid);
+ 		if (error)
+ 			goto out;
+ 		nstart = tmp;
+@@ -579,7 +596,7 @@ static int do_mprotect_ext(unsigned long start, size_t len,
+ SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
+ 		unsigned long, prot)
+ {
+-	return do_mprotect_ext(start, len, prot, NO_KEY);
++	return do_mprotect_ext(start, len, prot, NO_KEY, NO_KEY);
+ }
+ 
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+@@ -587,7 +604,7 @@ SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
+ SYSCALL_DEFINE4(pkey_mprotect, unsigned long, start, size_t, len,
+ 		unsigned long, prot, int, pkey)
+ {
+-	return do_mprotect_ext(start, len, prot, pkey);
++	return do_mprotect_ext(start, len, prot, pkey, NO_KEY);
+ }
+ 
+ SYSCALL_DEFINE2(pkey_alloc, unsigned long, flags, unsigned long, init_val)
+@@ -636,3 +653,35 @@ SYSCALL_DEFINE1(pkey_free, int, pkey)
+ }
+ 
+ #endif /* CONFIG_ARCH_HAS_PKEYS */
++
++#ifdef CONFIG_X86_INTEL_MKTME
++
++SYSCALL_DEFINE4(encrypt_mprotect, unsigned long, start, size_t, len,
++		unsigned long, prot, key_serial_t, serial)
++{
++	key_ref_t key_ref;
++	struct key *key;
++	int ret, keyid;
++
++	if (!PAGE_ALIGNED(len))
++		return -EINVAL;
++
++	key_ref = lookup_user_key(serial, 0, KEY_NEED_VIEW);
++	if (IS_ERR(key_ref))
++		return PTR_ERR(key_ref);
++
++	key = key_ref_to_ptr(key_ref);
++	mktme_map_lock();
++	keyid = mktme_map_keyid_from_key(key);
++	if (!keyid) {
++		mktme_map_unlock();
++		key_ref_put(key_ref);
++		return -EINVAL;
++	}
++	ret = do_mprotect_ext(start, len, prot, NO_KEY, keyid);
++	mktme_map_unlock();
++	key_ref_put(key_ref);
++	return ret;
++}
++
++#endif /* CONFIG_X86_INTEL_MKTME */
+-- 
+2.14.1
 
