@@ -2,82 +2,96 @@ Return-Path: <SRS0=nTNb=ON=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39870C04EBF
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 22:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5A0C04EBF
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 23:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 043B120672
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 22:00:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 043B120672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id 93DC220850
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 Dec 2018 23:18:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93DC220850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725961AbeLDWAi (ORCPT
+        id S1725961AbeLDXSu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Dec 2018 17:00:38 -0500
-Received: from namei.org ([65.99.196.166]:57642 "EHLO namei.org"
+        Tue, 4 Dec 2018 18:18:50 -0500
+Received: from mga09.intel.com ([134.134.136.24]:14341 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbeLDWAh (ORCPT
+        id S1725875AbeLDXSu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Dec 2018 17:00:37 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wB4Lxkjh022787;
-        Tue, 4 Dec 2018 21:59:46 GMT
-Date:   Wed, 5 Dec 2018 08:59:45 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH v8 00/14] Appended signatures support for IMA appraisal
-In-Reply-To: <20181116200712.14154-1-bauerman@linux.ibm.com>
-Message-ID: <alpine.LRH.2.21.1812050855270.22148@namei.org>
-References: <20181116200712.14154-1-bauerman@linux.ibm.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Tue, 4 Dec 2018 18:18:50 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 15:18:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,316,1539673200"; 
+   d="scan'208";a="116067975"
+Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.183])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 Dec 2018 15:18:48 -0800
+Date:   Tue, 4 Dec 2018 15:18:48 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v6 1/7] tpm: dynamically allocate the allocated_banks
+ array
+Message-ID: <20181204231848.GA1233@linux.intel.com>
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+ <20181204082138.24600-2-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181204082138.24600-2-roberto.sassu@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 16 Nov 2018, Thiago Jung Bauermann wrote:
+On Tue, Dec 04, 2018 at 09:21:32AM +0100, Roberto Sassu wrote:
+> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
+> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
+> TPM2_Get_Capability(). One PCR bank with algorithm set to SHA1 is always
+> allocated for TPM 1.x.
 
-> On the OpenPOWER platform, secure boot and trusted boot are being
-> implemented using IMA for taking measurements and verifying signatures.
-> Since the kernel image on Power servers is an ELF binary, kernels are
-> signed using the scripts/sign-file tool and thus use the same signature
-> format as signed kernel modules.
-> 
-> This patch series adds support in IMA for verifying those signatures.
+...
 
-Are you saying you use IMA to verify kernels during boot?  From a Linux 
-bootloader?
+> +		for (j = 0; j < pcr_selection.size_of_select; j++)
+> +			if (pcr_selection.pcr_select[j])
+> +				break;
+> +
+> +		if (j < pcr_selection.size_of_select) {
+> +			chip->allocated_banks[nr_alloc_banks] = hash_alg;
+> +			nr_alloc_banks++;
+> +		}
+> +
 
-> It adds flexibility to OpenPOWER secure boot, because it allows it to boot
-> kernels with the signature appended to them as well as kernels where the
-> signature is stored in the IMA extended attribute.
+Why was this needed? Can CAP_PCRS return completely unallocated banks?
 
-Just to clarify, with these patches, IMA will be able to verify the 
-native form of signed kernel modules?  i.e. without xattrs at all, and 
-this will work with existing signed modules?
+Kind of out-of-context for the rest of the changes.
 
+Should this be a bug fix of its own because it looks like as this is a
+bug fix for existing code, and not a new feature? Just asking because
+I don't yet fully understand this change.
 
+Anyway, I believe that you can streamline this by:
 
--- 
-James Morris
-<jmorris@namei.org>
+/* Check that at least some of the PCRs have been allocated. This is
+ * required because CAP_PCRS ...
+ */
+if (memchr_inv(pcr_selection.pcr_select, 0, pcr_selection.size_of_select))
+	nr_allocated_banks++;
 
+[yeah, comment would be awesome about CAP_PCRS. Did not finish up the
+comment because I don't know the answer]
+
+In addition, it would be consistent to call the local variable also
+nr_allocated_banks (not nr_alloc_banks).
+
+/Jarkko
