@@ -6,69 +6,146 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE607C04EBF
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 00:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3195BC04EBF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 00:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8867F20834
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 00:14:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8867F20834
+	by mail.kernel.org (Postfix) with ESMTP id F19FC2081B
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 00:22:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19FC2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726031AbeLEAOS (ORCPT
+        id S1725979AbeLEAV5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Dec 2018 19:14:18 -0500
-Received: from mga17.intel.com ([192.55.52.151]:6775 "EHLO mga17.intel.com"
+        Tue, 4 Dec 2018 19:21:57 -0500
+Received: from mga04.intel.com ([192.55.52.120]:42057 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726001AbeLEAOS (ORCPT
+        id S1725906AbeLEAV5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Dec 2018 19:14:18 -0500
+        Tue, 4 Dec 2018 19:21:57 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 16:14:18 -0800
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 16:21:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,316,1539673200"; 
-   d="scan'208";a="107333350"
+   d="scan'208";a="107334755"
 Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.183])
-  by orsmga003.jf.intel.com with ESMTP; 04 Dec 2018 16:14:17 -0800
-Date:   Tue, 4 Dec 2018 16:14:17 -0800
+  by orsmga003.jf.intel.com with ESMTP; 04 Dec 2018 16:21:56 -0800
+Date:   Tue, 4 Dec 2018 16:21:55 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>
 Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v6 7/7] tpm: pass an array of tpm_bank_list structures to
- tpm_pcr_extend()
-Message-ID: <20181205001417.GF1233@linux.intel.com>
+Subject: Re: [PATCH v6 0/7] tpm: retrieve digest size of unknown algorithms
+ from TPM
+Message-ID: <20181205002155.GA12210@linux.intel.com>
 References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-8-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181204082138.24600-8-roberto.sassu@huawei.com>
+In-Reply-To: <20181204082138.24600-1-roberto.sassu@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 04, 2018 at 09:21:38AM +0100, Roberto Sassu wrote:
-> The new tpm_bank_list structure has been preferred to the tpm_digest
-> structure, to let the caller specify the size of the digest (which may be
-> unknown to the TPM driver).
+On Tue, Dec 04, 2018 at 09:21:31AM +0100, Roberto Sassu wrote:
+> Update
+> 
+> This version of the patch set includes an additional patch (7/7) which
+> modifies the definition of tpm_pcr_extend() and tpm2_pcr_extend(). The new
+> patch has been included to facilitate the review of the changes to support
+> TPM 2.0 crypto agility for reading/extending PCRs.
+> 
+> 
+> Original patch set description
+> 
+> The TPM driver currently relies on the crypto subsystem to determine the
+> digest size of supported TPM algorithms. In the future, TPM vendors might
+> implement new algorithms in their chips, and those algorithms might not
+> be supported by the crypto subsystem.
+> 
+> Usually, vendors provide patches for the new hardware, and likely
+> the crypto subsystem will be updated before the new algorithm is
+> introduced. However, old kernels might be updated later, after patches
+> are included in the mainline kernel. This would leave the opportunity
+> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+> are not extended.
+> 
+> This patch set provides a long term solution for this issue. If a TPM
+> algorithm is not known by the crypto subsystem, the TPM driver retrieves
+> the digest size from the TPM with a PCR read. All the PCR banks are
+> extended, even if the algorithm is not yet supported by the crypto
+> subsystem.
+> 
+> PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+> is stored in the tpm_chip structure and available for users of the TPM
+> driver.
+> 
+> Changelog
+> 
+> v5:
+> - rename digest_struct variable to digest
+> - add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+> - rename digest_size member of tpm_bank_list to extend_size
+> - change type of alg_id member of tpm_bank list from u8 to u16
+> - add missing semi-colon in pcrlock()
+> 
+> v4:
+> - rename active_banks to allocated_banks
+> - replace kmalloc_array() with kcalloc()
+> - increment nr_allocated_banks if at least one PCR in the bank is selected
+> - pass multiple digests to tpm_pcr_extend()
+> 
+> v3:
+> - remove end marker change
+> - replace active_banks static array with pointer to dynamic array
+> - remove TPM2_ACTIVE_PCR_BANKS
+> 
+> v2:
+> - change the end marker of the active_banks array
+> - check digest size from output of PCR read command
+> - remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+> 
+> v1:
+> - modify definition of tpm_pcr_read()
+> - move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+> 
+> Roberto Sassu (7):
+>   tpm: dynamically allocate the allocated_banks array
+>   tpm: add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+>   tpm: rename and export tpm2_digest and tpm2_algorithms
+>   tpm: modify tpm_pcr_read() definition to pass a TPM hash algorithm
+>   tpm: retrieve digest size of unknown algorithms with PCR read
+>   tpm: ensure that the output of PCR read contains the correct digest
+>     size
+>   tpm: pass an array of tpm_bank_list structures to tpm_pcr_extend()
+> 
+>  drivers/char/tpm/eventlog/tpm2.c    |  12 +--
+>  drivers/char/tpm/tpm-chip.c         |   1 +
+>  drivers/char/tpm/tpm-interface.c    |  36 +++----
+>  drivers/char/tpm/tpm.h              |  23 ++---
+>  drivers/char/tpm/tpm1-cmd.c         |  26 ++++-
+>  drivers/char/tpm/tpm2-cmd.c         | 154 +++++++++++++++++++++-------
+>  include/linux/tpm.h                 |  43 +++++++-
+>  include/linux/tpm_eventlog.h        |  19 +---
+>  security/integrity/ima/ima_crypto.c |  10 +-
+>  security/integrity/ima/ima_queue.c  |   5 +-
+>  security/keys/trusted.c             |   5 +-
+>  11 files changed, 220 insertions(+), 114 deletions(-)
+> 
+> -- 
+> 2.17.1
+> 
 
-Why is that? Didn't previous commit query these?
+Some generic stuff I noticed:
 
-> +struct tpm_bank_list {
-> +	u16 alg_id;
-> +	u16 extend_size;
-> +	const u8 *extend_array;
-> +};
-
-Naming is not good here. If this only for extending shouldn't that
-be in the structs name?
+* Use SHA1_DIGEST_SIZE, not TPM_DIGEST_SIZE. The latter is just
+  uninforming constant that we want to get rid off.
 
 /Jarkko
