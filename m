@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05332C04EBF
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E47FC04EBF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C989D2084C
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:53:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C989D2084C
+	by mail.kernel.org (Postfix) with ESMTP id 016E62084C
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:53:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 016E62084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbeLEIxT (ORCPT
+        id S1727182AbeLEIwG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:53:19 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:46460 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726889AbeLEIwH (ORCPT
+        Wed, 5 Dec 2018 03:52:06 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:33316 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726351AbeLEIwG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:52:07 -0500
+        Wed, 5 Dec 2018 03:52:06 -0500
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 5 Dec 2018 00:52:03 -0800
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 5 Dec 2018 00:52:02 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id D102B41391;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id D7E9C41396;
         Wed,  5 Dec 2018 00:52:04 -0800 (PST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -42,61 +42,98 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        Nadav Amit <namit@vmware.com>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v7 02/14] x86/jump_label: Use text_poke_early() during early init
-Date:   Tue, 4 Dec 2018 17:33:56 -0800
-Message-ID: <20181205013408.47725-3-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v7 03/14] x86/mm: temporary mm struct
+Date:   Tue, 4 Dec 2018 17:33:57 -0800
+Message-ID: <20181205013408.47725-4-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205013408.47725-1-namit@vmware.com>
 References: <20181205013408.47725-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There is no apparent reason not to use text_poke_early() while we are
-during early-init and we do not patch code that might be on the stack
-(i.e., we'll return to the middle of the patched code). This appears to
-be the case of jump-labels, so do so.
+From: Andy Lutomirski <luto@kernel.org>
 
-This is required for the next patches that would set a temporary mm for
-patching, which is initialized after some static-keys are
-enabled/disabled.
+Sometimes we want to set a temporary page-table entries (PTEs) in one of
+the cores, without allowing other cores to use - even speculatively -
+these mappings. There are two benefits for doing so:
 
-Cc: Andy Lutomirski <luto@kernel.org>
+(1) Security: if sensitive PTEs are set, temporary mm prevents their use
+in other cores. This hardens the security as it prevents exploding a
+dangling pointer to overwrite sensitive data using the sensitive PTE.
+
+(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
+remote page-tables.
+
+To do so a temporary mm_struct can be used. Mappings which are private
+for this mm can be set in the userspace part of the address-space.
+During the whole time in which the temporary mm is loaded, interrupts
+must be disabled.
+
+The first use-case for temporary PTEs, which will follow, is for poking
+the kernel text.
+
+[ Commit message was written by Nadav ]
+
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/jump_label.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/mmu_context.h | 32 ++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index aac0c1f7e354..ed5fe274a7d8 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 0ca50611e8ce..0141b7fa6d01 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -338,4 +338,36 @@ static inline unsigned long __get_current_cr3_fast(void)
+ 	return cr3;
+ }
  
--	if (early_boot_irqs_disabled)
-+	/*
-+	 * As long as we're UP and not yet marked RO, we can use
-+	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-+	 * SYSTEM_SCHEDULING before going either.
-+	 */
-+	if (system_state == SYSTEM_BOOTING)
- 		poker = text_poke_early;
- 
- 	if (type == JUMP_LABEL_JMP) {
++typedef struct {
++	struct mm_struct *prev;
++} temporary_mm_state_t;
++
++/*
++ * Using a temporary mm allows to set temporary mappings that are not accessible
++ * by other cores. Such mappings are needed to perform sensitive memory writes
++ * that override the kernel memory protections (e.g., W^X), without exposing the
++ * temporary page-table mappings that are required for these write operations to
++ * other cores.
++ *
++ * Context: The temporary mm needs to be used exclusively by a single core. To
++ *          harden security IRQs must be disabled while the temporary mm is
++ *          loaded, thereby preventing interrupt handler bugs from override the
++ *          kernel memory protection.
++ */
++static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
++{
++	temporary_mm_state_t state;
++
++	lockdep_assert_irqs_disabled();
++	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
++	switch_mm_irqs_off(NULL, mm, current);
++	return state;
++}
++
++static inline void unuse_temporary_mm(temporary_mm_state_t prev)
++{
++	lockdep_assert_irqs_disabled();
++	switch_mm_irqs_off(NULL, prev.prev, current);
++}
++
+ #endif /* _ASM_X86_MMU_CONTEXT_H */
 -- 
 2.17.1
 
