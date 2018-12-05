@@ -2,33 +2,32 @@ Return-Path: <SRS0=Kshx=OO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E47FC04EBF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA27FC07E85
 	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 016E62084C
+	by mail.kernel.org (Postfix) with ESMTP id B865A2084C
 	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:53:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 016E62084C
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B865A2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbeLEIwG (ORCPT
+        id S1727103AbeLEIwG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Wed, 5 Dec 2018 03:52:06 -0500
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:33316 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726351AbeLEIwG (ORCPT
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:46460 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726171AbeLEIwG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 5 Dec 2018 03:52:06 -0500
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 5 Dec 2018 00:52:02 -0800
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 5 Dec 2018 00:52:03 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id D7E9C41396;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id C33B441280;
         Wed,  5 Dec 2018 00:52:04 -0800 (PST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -42,98 +41,120 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
         Nadav Amit <namit@vmware.com>
-Subject: [PATCH v7 03/14] x86/mm: temporary mm struct
-Date:   Tue, 4 Dec 2018 17:33:57 -0800
-Message-ID: <20181205013408.47725-4-namit@vmware.com>
+Subject: [PATCH v7 00/14] x86/alternative: text_poke() enhancements
+Date:   Tue, 4 Dec 2018 17:33:54 -0800
+Message-ID: <20181205013408.47725-1-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181205013408.47725-1-namit@vmware.com>
-References: <20181205013408.47725-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Andy Lutomirski <luto@kernel.org>
+This patch-set addresses some issues that might affect the security and
+the correctness of code patching. It was originally small and mainly
+intended to remove the text-poking fixmap PTEs, which can cause PTEs
+cached in the TLB in remote cores for unbounded time.
 
-Sometimes we want to set a temporary page-table entries (PTEs) in one of
-the cores, without allowing other cores to use - even speculatively -
-these mappings. There are two benefits for doing so:
+It was then suggested by tglx and Andy that patching of modules can be
+simpler by making module code non-executable during setup. This opened a
+can of worms, since it required changes of kprobe and ftrace. Ftrace, it
+turns out, patches the code using a homegrown mechanism, so it made
+sense to make it use text_poke_*() instead. And then, module unloading
+seemed fragile and susceptible for attacks, so it required some
+attention as well.
 
-(1) Security: if sensitive PTEs are set, temporary mm prevents their use
-in other cores. This hardens the security as it prevents exploding a
-dangling pointer to overwrite sensitive data using the sensitive PTE.
+This whole story is to clarify two points: (a) this patch-set does *not*
+have a full threat-model in mind. It does harden security a bit by
+shortening the time-window in which writable executable mappings are
+set. Since it consolidates kernel code modifications, it may be used as
+a basis for some a future code integrity mechanism, a-la Microsoft's
+hypervisor enforced code integrity (HVCI). However, this patch-set does
+not provide HVCI-like security.
 
-(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-remote page-tables.
+Which leads me to (b) - the patch-set is big "enough" IMHO. Indeed,
+there are open security issues in the kernel when it comes to W^X.  But
+some people would want to use Andy's temporary mm-struct for other uses.
+So additional security hardening may be left for future patches.
 
-To do so a temporary mm_struct can be used. Mappings which are private
-for this mm can be set in the userspace part of the address-space.
-During the whole time in which the temporary mm is loaded, interrupts
-must be disabled.
+v6->v7:
+- Fix kprobes breakage [Rick Edgecombe]
+- Fix ftrace breakage [Rick Edgecombe]
+- Fix module unloading issues (setting X, race with patching)
 
-The first use-case for temporary PTEs, which will follow, is for poking
-the kernel text.
+v5->v6:
+- Panic if anything goes wrong when poking [peterZ]
 
-[ Commit message was written by Nadav ]
+v4->v5:
+- Fix Xen breakage [Damian Tometzki]
+- BUG_ON() when poking_mm initialization fails [peterZ]
+- Better comments on "x86/mm: temporary mm struct"
+- Cleaner removal of the custom poker
 
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/mmu_context.h | 32 ++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+v3->v4:
+- Setting modules as RO when loading [andy, tglx]
+- Adding text_poke_kgdb() to keep the text_mutex assertion [tglx]
+- Simpler logic to decide when to use early-poking [peterZ]
+- More cleanup
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 0ca50611e8ce..0141b7fa6d01 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -338,4 +338,36 @@ static inline unsigned long __get_current_cr3_fast(void)
- 	return cr3;
- }
- 
-+typedef struct {
-+	struct mm_struct *prev;
-+} temporary_mm_state_t;
-+
-+/*
-+ * Using a temporary mm allows to set temporary mappings that are not accessible
-+ * by other cores. Such mappings are needed to perform sensitive memory writes
-+ * that override the kernel memory protections (e.g., W^X), without exposing the
-+ * temporary page-table mappings that are required for these write operations to
-+ * other cores.
-+ *
-+ * Context: The temporary mm needs to be used exclusively by a single core. To
-+ *          harden security IRQs must be disabled while the temporary mm is
-+ *          loaded, thereby preventing interrupt handler bugs from override the
-+ *          kernel memory protection.
-+ */
-+static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
-+{
-+	temporary_mm_state_t state;
-+
-+	lockdep_assert_irqs_disabled();
-+	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	switch_mm_irqs_off(NULL, mm, current);
-+	return state;
-+}
-+
-+static inline void unuse_temporary_mm(temporary_mm_state_t prev)
-+{
-+	lockdep_assert_irqs_disabled();
-+	switch_mm_irqs_off(NULL, prev.prev, current);
-+}
-+
- #endif /* _ASM_X86_MMU_CONTEXT_H */
+v2->v3:
+- Remove the fallback path in text_poke() [peterZ]
+- poking_init() was broken due to the local variable poking_addr
+- Preallocate tables for the temporary-mm to avoid sleep-in-atomic
+- Prevent KASAN from yelling at text_poke()
+
+v1->v2:
+- Partial revert of 9222f606506c added to 1/6 [masami]
+- Added Masami's reviewed-by tag
+
+RFC->v1:
+- Added handling of error in get_locked_pte()
+- Remove lockdep assertion, clarify text_mutex use instead [masami]
+- Comment fix [peterz]
+- Removed remainders of text_poke return value [masami]
+- Use __weak for poking_init instead of macros [masami]
+- Simplify error handling in poking_init [masami]
+
+Andy Lutomirski (1):
+  x86/mm: temporary mm struct
+
+Nadav Amit (13):
+  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+  x86/jump_label: Use text_poke_early() during early init
+  fork: provide a function for copying init_mm
+  x86/alternative: initializing temporary mm for patching
+  x86/alternative: use temporary mm for text poking
+  x86/kgdb: avoid redundant comparison of patched code
+  x86/ftrace: Use text_poke_*() infrastructure
+  x86/kprobes: Instruction pages initialization enhancements
+  x86: avoid W^X being broken during modules loading
+  x86/jump-label: remove support for custom poker
+  x86/alternative: Remove the return value of text_poke_*()
+  module: Do not set nx for module memory before freeing
+  module: Prevent module removal racing with text_poke()
+
+ arch/x86/include/asm/fixmap.h        |   2 -
+ arch/x86/include/asm/mmu_context.h   |  32 +++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/text-patching.h |   7 +-
+ arch/x86/kernel/alternative.c        | 197 ++++++++++++++++++++-------
+ arch/x86/kernel/ftrace.c             |  74 ++++------
+ arch/x86/kernel/jump_label.c         |  19 ++-
+ arch/x86/kernel/kgdb.c               |  25 +---
+ arch/x86/kernel/kprobes/core.c       |  24 +++-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/mm/init_64.c                |  35 +++++
+ arch/x86/xen/mmu_pv.c                |   2 -
+ include/linux/filter.h               |   6 +
+ include/linux/sched/task.h           |   1 +
+ init/main.c                          |   3 +
+ kernel/fork.c                        |  24 +++-
+ kernel/module.c                      |  50 +++++--
+ 17 files changed, 349 insertions(+), 157 deletions(-)
+
 -- 
 2.17.1
 
