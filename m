@@ -2,98 +2,106 @@ Return-Path: <SRS0=Kshx=OO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC95C07E85
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 21:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA353C04EB9
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 22:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 876372133F
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 21:58:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="dXEDvEel"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 876372133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id 68914208E7
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 22:19:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68914208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728038AbeLEV6r (ORCPT
+        id S1727645AbeLEWTZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Dec 2018 16:58:47 -0500
-Received: from sonic312-28.consmr.mail.ne1.yahoo.com ([66.163.191.209]:45777
-        "EHLO sonic312-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727177AbeLEV6r (ORCPT
+        Wed, 5 Dec 2018 17:19:25 -0500
+Received: from mga01.intel.com ([192.55.52.88]:45357 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727436AbeLEWTZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Dec 2018 16:58:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544047125; bh=hSnsh+fGa9sW82HW1zgE+NRx74A5RFN4ktDxDWVJipA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=dXEDvEel1QARFUdYNVmh8raeoulj8/6DtzEdkdaLFcpbGohFWJsc1lNnTrN2mvlf23f6G6lRGGti3w+B3xFN3uoXT+9EorY9CSmch7gDvk1+N8c0OTGnikI4OydkPLT2X6pe1A6oGRn+znQs1hVn6142hfCwdq5D7mWN/xTU6p876RvOdULSmAu80gR0BqSc/595lakHrqVQTQg7fnVY8+L6CE3FtL/U/GIweYR27qF3RRaDzOMVgHfrqliijo0f+pmIFlD6Ec1acysGGmcVbjghUWWerOs4fj7ETDAKEGF/UDH+v65sPfPbO2JbKJOflb1s4e2aEYNbLZtrMdK6jg==
-X-YMail-OSG: 57JlH0oVM1kWazq4FsAo9pOVcJ5p17YHHQEMT0SJOITwP.tlFSAR7reZUOiv80c
- wXV04SjotuIMqptGbFVTFc2B_k6jHG11DBYdRYfptQxNxWEk8EaFcC_XkAxcwVQUIPzoc0HS72pv
- uweVN6mCDWQq4s6EylrNxtq5neKLekCVxHcYEtK6h5X7Vvy88TmNOzXgJqDP9VXLyuttosrW94xi
- 1SKUvteqlaxVAxFjbBzY0QopI1_qz_gmhv7DNpyutF6eFuH74NibBSgQSZm6jbPz7XDZtBEqA9BT
- hwsmmWsde2ydjBa4P4fGPFTpEwDaeyyCXqgjo662fDzMpwW8YhNjWz3a_X_dEXmA0Eseb6cvmjaq
- xmBOfaHvm9gxVum0lXRdkRAVC1jHdJlEJXj_i3TZOHADTCYoxmJBF5R5NtGzSqe34PJWZHxr7Uq4
- Je_.z4Vh50sWBTv_XKl37jghIgXu70_ZTu.VH_gvEROxHI2gHryORF2a7V8byKW7G8X4XC95zVv7
- iL34_TISmXdEOrr283Doqgbx8ZM5ioskr4_nUGV.O47RBrA8Ae56002UY8WMju2fWnOyTQXsI_kF
- qHTRL5Od12JfxnqBIy5HbvwgxXg0zBJixlrw76JmDupg_XD7mDOUza3QAOHMPCUFWYanWlp3Nyy1
- EeOLoKpWTRgKYm3w6eOKKew.a_QZ35cMkCJeYg8x1_wfx25RmmyM_viU_ZL_HIcvU2tFH7_Rd0RU
- BGn4fiwE6FwiX4rzKL9FCnuco_bqi4IK7dGDdxnhcEQm1F4hCBZ82aMdKNr_xZhkmoKRqEMJCE0A
- uRhTjg012nm9NQsYGdUfcG764g4QnNFnnhJa16t8i4f0F0Fx8r4yAZHxQjCmcT8u4Gnm2Aehpy__
- GKB5zIfK9ofJd9yekTeHRYEcPSLjlCXyQZZDP8oorqXw_3Mf5PF4oiJYwXiaD3c_Z2e5_kpIqWh_
- 54zn6T0Yd5MA9fnZ3kbYQZTNdpKAu3KcmLSMq6XQQ5.P.woHQHOHK8WojbMUUmfA0butB4vyvr6n
- N4p_ShmbSPhlDEEPqkXNJPGV2os0cmck_c39Qim2f5tsQIt0JC_pvUkoNSMPnxGm.CaYfIzLMDZn
- OVElk.JUK3Q--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Wed, 5 Dec 2018 21:58:45 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp406.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 862d5638bdfe479fabff1c6cfd7039ee;
-          Wed, 05 Dec 2018 21:58:44 +0000 (UTC)
-Subject: Re: linux-next: manual merge of the selinux tree with the vfs tree
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-next@vger.kernel.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, selinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>
-References: <20181127115246.00967523@canb.auug.org.au>
- <CAFqZXNs6XTOx2-EQ5P9bK3vPsPby7rzryHPqzqsVD9XsbsG20w@mail.gmail.com>
- <20181127225013.133adc7d@canb.auug.org.au>
- <CAHC9VhSFSxBc+-O=GQMkiyiQz3S+_ZreicLhsoAuvR-oq2mi6g@mail.gmail.com>
- <CAFqZXNuZCof=7CtyMq8JDyAgRmONYRZhhqr6bFVy9-F70-Uwrw@mail.gmail.com>
- <CAFqZXNu_=MxcX5jvX4y=5nrCqi7_btOGVccbH1NZ=xm3TGvaYQ@mail.gmail.com>
- <CAFqZXNv642dfT0PpB0M7sO5J90cAM7Luv0A8nX7JtEXqw=yu1w@mail.gmail.com>
- <CAFqZXNuv_mF8Yt50J3giZjxzZX_WwCOePZeEtmR-G_m+vRyPrQ@mail.gmail.com>
- <20181203215639.GV2217@ZenIV.linux.org.uk>
- <CAFqZXNvSOzyhnTUxF2mP4BTFMVQ8H1uh-Yyn2fH2K=4yRDX-tQ@mail.gmail.com>
- <20181205161601.GW2217@ZenIV.linux.org.uk>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <eae92504-4c1d-2430-4d5b-b5b1f4af45ce@schaufler-ca.com>
-Date:   Wed, 5 Dec 2018 13:58:41 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181205161601.GW2217@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Wed, 5 Dec 2018 17:19:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 14:19:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,319,1539673200"; 
+   d="scan'208";a="125429911"
+Received: from irsmsx107.ger.corp.intel.com ([163.33.3.99])
+  by fmsmga004.fm.intel.com with ESMTP; 05 Dec 2018 14:19:22 -0800
+Received: from irsmsx101.ger.corp.intel.com ([169.254.1.134]) by
+ IRSMSX107.ger.corp.intel.com ([169.254.10.79]) with mapi id 14.03.0415.000;
+ Wed, 5 Dec 2018 22:19:21 +0000
+From:   "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
+To:     "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Schofield, Alison" <alison.schofield@intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>
+CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>
+Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+Thread-Topic: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+Thread-Index: AQHUi6Q6VkrSspfrlUix6bu2w4w7sKVu9SmAgAHEq4A=
+Date:   Wed, 5 Dec 2018 22:19:20 +0000
+Message-ID: <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
+References: <cover.1543903910.git.alison.schofield@intel.com>
+         <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
+In-Reply-To: <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
+Accept-Language: fi-FI, en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.24.9.104]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C0A385B248C0EA4EA1FC987E003E176F@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/5/2018 8:16 AM, Al Viro wrote:
-> On Wed, Dec 05, 2018 at 10:37:56AM +0100, Ondrej Mosnacek wrote:
->
->> I just tested the Q28 branch rebased onto a recent Fedora rawhide
->> kernel (4.20.0-0.rc5.git0.1) and that code seems to be working fine.
-
-Not so good with Smack.
-
-	# mount -t tmpfs -o size=512m,smackfsroot=Pop tmpfs /mnt
-	# attr -S -g SMACK64 /mnt
-	Attribute "SMACK64" had a 1 byte value for /mnt:
-	_
-	#
-
-attr should have reported a 3 byte value "Pop".
-
+T24gVHVlLCAyMDE4LTEyLTA0IGF0IDExOjE5IC0wODAwLCBBbmR5IEx1dG9taXJza2kgd3JvdGU6
+DQo+IEknbSBub3QgVGhvbWFzLCBidXQgSSB0aGluayBpdCdzIHRoZSB3cm9uZyBkaXJlY3Rpb24u
+ICBBcyBpdCBzdGFuZHMsDQo+IGVuY3J5cHRfbXByb3RlY3QoKSBpcyBhbiBpbmNvbXBsZXRlIHZl
+cnNpb24gb2YgbXByb3RlY3QoKSAoc2luY2UgaXQncw0KPiBtaXNzaW5nIHRoZSBwcm90ZWN0aW9u
+IGtleSBzdXBwb3J0KSwgYW5kIGl0J3MgYWxzbyBmdW5jdGlvbmFsbHkganVzdA0KPiBNQURWX0RP
+TlRORUVELiAgSW4gb3RoZXIgd29yZHMsIHRoZSBzb2xlIHVzZXItdmlzaWJsZSBlZmZlY3QgYXBw
+ZWFycw0KPiB0byBiZSB0aGF0IHRoZSBleGlzdGluZyBwYWdlcyBhcmUgYmxvd24gYXdheS4gIFRo
+ZSBmYWN0IHRoYXQgaXQNCj4gY2hhbmdlcyB0aGUga2V5IGluIHVzZSBkb2Vzbid0IHNlZW0gdGVy
+cmlibHkgdXNlZnVsLCBzaW5jZSBpdCdzDQo+IGFub255bW91cyBtZW1vcnksIGFuZCB0aGUgbW9z
+dCBzZWN1cmUgY2hvaWNlIGlzIHRvIHVzZSBDUFUtbWFuYWdlZA0KPiBrZXlpbmcsIHdoaWNoIGFw
+cGVhcnMgdG8gYmUgdGhlIGRlZmF1bHQgYW55d2F5IG9uIFRNRSBzeXN0ZW1zLiAgSXQNCj4gYWxz
+byBoYXMgdG90YWxseSB1bmNsZWFyIHNlbWFudGljcyBXUlQgc3dhcCwgYW5kLCBvZmYgdGhlIHRv
+cCBvZiBteQ0KPiBoZWFkLCBpdCBsb29rcyBsaWtlIGl0IG1heSBoYXZlIHNlcmlvdXMgY2FjaGUt
+Y29oZXJlbmN5IGlzc3VlcyBhbmQNCj4gbGlrZSBzd2FwcGluZyB0aGUgcGFnZXMgbWlnaHQgY29y
+cnVwdCB0aGVtLCBib3RoIGJlY2F1c2UgdGhlcmUgYXJlIG5vDQo+IGZsdXNoZXMgYW5kIGJlY2F1
+c2UgdGhlIGRpcmVjdC1tYXAgYWxpYXMgbG9va3MgbGlrZSBpdCB3aWxsIHVzZSB0aGUNCj4gZGVm
+YXVsdCBrZXkgYW5kIHRoZXJlZm9yZSBhcHBlYXIgdG8gY29udGFpbiB0aGUgd3JvbmcgZGF0YS4N
+Cj4gDQo+IEkgd291bGQgcHJvcG9zZSBhIHZlcnkgZGlmZmVyZW50IGRpcmVjdGlvbjogZG9uJ3Qg
+dHJ5IHRvIHN1cHBvcnQgTUtUTUUNCj4gYXQgYWxsIGZvciBhbm9ueW1vdXMgbWVtb3J5LCBhbmQg
+aW5zdGVhZCBmaWd1cmUgb3V0IHRoZSBpbXBvcnRhbnQgdXNlDQo+IGNhc2VzIGFuZCBzdXBwb3J0
+IHRoZW0gZGlyZWN0bHkuICBUaGUgdXNlIGNhc2VzIHRoYXQgSSBjYW4gdGhpbmsgb2YNCj4gb2Zm
+IHRoZSB0b3Agb2YgbXkgaGVhZCBhcmU6DQo+IA0KPiAxLiBwbWVtLiAgVGhpcyBzaG91bGQgcHJv
+YmFibHkgdXNlIGEgdmVyeSBkaWZmZXJlbnQgQVBJLg0KPiANCj4gMi4gU29tZSBraW5kIG9mIFZN
+IGhhcmRlbmluZywgd2hlcmUgYSBWTSdzIG1lbW9yeSBjYW4gYmUgcHJvdGVjdGVkIGENCj4gbGl0
+dGxlIHRpbnkgYml0IGZyb20gdGhlIG1haW4ga2VybmVsLiAgQnV0IEkgZG9uJ3Qgc2VlIHdoeSB0
+aGlzIGlzIGFueQ0KPiBiZXR0ZXIgdGhhbiBYUE8gKGVYY2x1c2l2ZSBQYWdlLWZyYW1lIE93bmVy
+c2hpcCksIHdoaWNoIGJyaW5ncyB0bw0KPiBtaW5kOg0KDQpXaGF0IGlzIHRoZSB0aHJlYXQgbW9k
+ZWwgYW55d2F5IGZvciBBTUQgYW5kIEludGVsIHRlY2hub2xvZ2llcz8NCg0KRm9yIG1lIGl0IGxv
+b2tzIGxpa2UgdGhhdCB5b3UgY2FuIHJlYWQsIHdyaXRlIGFuZCBldmVuIHJlcGxheSANCmVuY3J5
+cHRlZCBwYWdlcyBib3RoIGluIFNNRSBhbmQgVE1FLiANCg0KL0phcmtrbw0K
