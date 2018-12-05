@@ -6,74 +6,69 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB781C07E85
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 00:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE607C04EBF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 00:14:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 812B52082B
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 00:09:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 812B52082B
+	by mail.kernel.org (Postfix) with ESMTP id 8867F20834
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 00:14:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8867F20834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725906AbeLEAJL (ORCPT
+        id S1726031AbeLEAOS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 Dec 2018 19:09:11 -0500
-Received: from mga18.intel.com ([134.134.136.126]:11155 "EHLO mga18.intel.com"
+        Tue, 4 Dec 2018 19:14:18 -0500
+Received: from mga17.intel.com ([192.55.52.151]:6775 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725904AbeLEAJL (ORCPT
+        id S1726001AbeLEAOS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 Dec 2018 19:09:11 -0500
-X-Amp-Result: UNSCANNABLE
+        Tue, 4 Dec 2018 19:14:18 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 16:09:11 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2018 16:14:18 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,316,1539673200"; 
-   d="scan'208";a="280977033"
+   d="scan'208";a="107333350"
 Received: from jsakkine-mobl1.jf.intel.com (HELO localhost) ([10.24.8.183])
-  by orsmga005.jf.intel.com with ESMTP; 04 Dec 2018 16:09:11 -0800
-Date:   Tue, 4 Dec 2018 16:09:10 -0800
+  by orsmga003.jf.intel.com with ESMTP; 04 Dec 2018 16:14:17 -0800
+Date:   Tue, 4 Dec 2018 16:14:17 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>
 Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v6 6/7] tpm: ensure that the output of PCR read contains
- the correct digest size
-Message-ID: <20181205000910.GE1233@linux.intel.com>
+Subject: Re: [PATCH v6 7/7] tpm: pass an array of tpm_bank_list structures to
+ tpm_pcr_extend()
+Message-ID: <20181205001417.GF1233@linux.intel.com>
 References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-7-roberto.sassu@huawei.com>
+ <20181204082138.24600-8-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181204082138.24600-7-roberto.sassu@huawei.com>
+In-Reply-To: <20181204082138.24600-8-roberto.sassu@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 04, 2018 at 09:21:37AM +0100, Roberto Sassu wrote:
->  	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
->  	digest_size = be16_to_cpu(out->digest_size);
-> -	if (digest_size > sizeof(digest->digest)) {
-> +	if (digest_size > sizeof(digest->digest) ||
-> +	    (!digest_size_ptr && digest_size != expected_digest_size)) {
->  		rc = -EINVAL;
->  		goto out;
->  	}
+On Tue, Dec 04, 2018 at 09:21:38AM +0100, Roberto Sassu wrote:
+> The new tpm_bank_list structure has been preferred to the tpm_digest
+> structure, to let the caller specify the size of the digest (which may be
+> unknown to the TPM driver).
 
-Just noticed this but you must squash 4-6 because applying only
-previous commits will result a broken tree. It will be much bigger
-commit but won't be broken.
+Why is that? Didn't previous commit query these?
 
-I think you should also feed min_rsp_body_length as you should be
-able to precalculate.
+> +struct tpm_bank_list {
+> +	u16 alg_id;
+> +	u16 extend_size;
+> +	const u8 *extend_array;
+> +};
 
-Last time I was asking why this isn't a bug fix. It is even for
-the existing code. The existing code should have a bug fix that
-checks that the received digest size so that it is the expected
-SHA1 size before we can apply this commit.
+Naming is not good here. If this only for extending shouldn't that
+be in the structs name?
 
 /Jarkko
