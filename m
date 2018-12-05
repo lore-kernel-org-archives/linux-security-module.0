@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4AEC65BB3
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2666C04EB9
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 902ED20850
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 902ED20850
+	by mail.kernel.org (Postfix) with ESMTP id 9380A20850
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 08:52:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9380A20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbeLEIwN (ORCPT
+        id S1727337AbeLEIwo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Dec 2018 03:52:13 -0500
+        Wed, 5 Dec 2018 03:52:44 -0500
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:46460 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727437AbeLEIwM (ORCPT
+        by vger.kernel.org with ESMTP id S1727409AbeLEIwL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Dec 2018 03:52:12 -0500
+        Wed, 5 Dec 2018 03:52:11 -0500
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Wed, 5 Dec 2018 00:52:03 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 2F837412B7;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 21D1941397;
         Wed,  5 Dec 2018 00:52:05 -0800 (PST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -43,12 +43,10 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v7 11/14] x86/jump-label: remove support for custom poker
-Date:   Tue, 4 Dec 2018 17:34:05 -0800
-Message-ID: <20181205013408.47725-12-namit@vmware.com>
+Subject: [PATCH v7 09/14] x86/kprobes: Instruction pages initialization enhancements
+Date:   Tue, 4 Dec 2018 17:34:03 -0800
+Message-ID: <20181205013408.47725-10-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181205013408.47725-1-namit@vmware.com>
 References: <20181205013408.47725-1-namit@vmware.com>
@@ -60,88 +58,67 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There are only two types of poking: early and breakpoint based. The use
-of a function pointer to perform poking complicates the code and is
-probably inefficient due to the use of indirect branches.
+This patch is a preparatory patch for a following patch that makes
+module allocated pages non-executable. The patch sets the page as
+executable after allocation.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
+In the future, we may get better protection of executables. For example,
+by using hypercalls to request the hypervisor to protect VM executable
+pages from modifications using nested page-tables. This would allow
+us to ensure the executable has not changed between allocation and
+its write-protection.
+
+While at it, do some small cleanup of what appears to be unnecessary
+masking.
+
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/jump_label.c | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+ arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index ed5fe274a7d8..994c13e2867d 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -39,7 +39,6 @@ static void bug_at(unsigned char *ip, int line)
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index c33b06f5faa4..ca0118d3b3e8 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -431,8 +431,20 @@ void *alloc_insn_page(void)
+ 	void *page;
  
- static void __ref __jump_label_transform(struct jump_entry *entry,
- 					 enum jump_label_type type,
--					 void *(*poker)(void *, const void *, size_t),
- 					 int init)
+ 	page = module_alloc(PAGE_SIZE);
+-	if (page)
+-		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
++	if (page == NULL)
++		return NULL;
++
++	/*
++	 * First make the page read-only, and then only then make it executable
++	 * to prevent it from being W+X in between.
++	 */
++	set_memory_ro((unsigned long)page, 1);
++
++	/*
++	 * TODO: Once additional kernel code protection mechanisms are set, ensure
++	 * that the page was not maliciously altered and it is still zeroed.
++	 */
++	set_memory_x((unsigned long)page, 1);
+ 
+ 	return page;
+ }
+@@ -440,8 +452,12 @@ void *alloc_insn_page(void)
+ /* Recover page to RW mode before releasing it */
+ void free_insn_page(void *page)
  {
- 	union jump_code_union jmp;
-@@ -52,14 +51,6 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
- 
--	/*
--	 * As long as we're UP and not yet marked RO, we can use
--	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
--	 * SYSTEM_SCHEDULING before going either.
--	 */
--	if (system_state == SYSTEM_BOOTING)
--		poker = text_poke_early;
--
- 	if (type == JUMP_LABEL_JMP) {
- 		if (init) {
- 			expect = default_nop; line = __LINE__;
-@@ -82,16 +73,17 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 		bug_at((void *)jump_entry_code(entry), line);
- 
- 	/*
--	 * Make text_poke_bp() a default fallback poker.
-+	 * As long as we're UP and not yet marked RO, we can use
-+	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-+	 * SYSTEM_SCHEDULING before going either.
- 	 *
- 	 * At the time the change is being done, just ignore whether we
- 	 * are doing nop -> jump or jump -> nop transition, and assume
- 	 * always nop being the 'currently valid' instruction
--	 *
- 	 */
--	if (poker) {
--		(*poker)((void *)jump_entry_code(entry), code,
--			 JUMP_LABEL_NOP_SIZE);
-+	if (init || system_state == SYSTEM_BOOTING) {
-+		text_poke_early((void *)jump_entry_code(entry), code,
-+				JUMP_LABEL_NOP_SIZE);
- 		return;
- 	}
- 
-@@ -103,7 +95,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
- 			       enum jump_label_type type)
- {
- 	mutex_lock(&text_mutex);
--	__jump_label_transform(entry, type, NULL, 0);
-+	__jump_label_transform(entry, type, 0);
- 	mutex_unlock(&text_mutex);
+-	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
+-	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
++	/*
++	 * First make the page non-executable, and then only then make it
++	 * writable to prevent it from being W+X in between.
++	 */
++	set_memory_nx((unsigned long)page, 1);
++	set_memory_rw((unsigned long)page, 1);
+ 	module_memfree(page);
  }
  
-@@ -133,7 +125,7 @@ __init_or_module void arch_jump_label_transform_static(struct jump_entry *entry,
- 			jlstate = JL_STATE_NO_UPDATE;
- 	}
- 	if (jlstate == JL_STATE_UPDATE)
--		__jump_label_transform(entry, type, text_poke_early, 1);
-+		__jump_label_transform(entry, type, 1);
- }
- 
- #endif
 -- 
 2.17.1
 
