@@ -2,126 +2,87 @@ Return-Path: <SRS0=Kshx=OO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C740C04EB9
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 19:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A09C04EBF
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 20:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3CF12081B
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 19:20:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3CF12081B
+	by mail.kernel.org (Postfix) with ESMTP id 59B8120989
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 Dec 2018 20:30:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B8120989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbeLETUY (ORCPT
+        id S1727889AbeLEUaU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Dec 2018 14:20:24 -0500
-Received: from mga01.intel.com ([192.55.52.88]:23240 "EHLO mga01.intel.com"
+        Wed, 5 Dec 2018 15:30:20 -0500
+Received: from mga09.intel.com ([134.134.136.24]:61883 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727402AbeLETUX (ORCPT
+        id S1727402AbeLEUaU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Dec 2018 14:20:23 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        Wed, 5 Dec 2018 15:30:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 11:20:22 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Dec 2018 12:30:19 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,319,1539673200"; 
-   d="scan'208";a="281222372"
-Received: from alison-desk.jf.intel.com ([10.54.74.53])
-  by orsmga005.jf.intel.com with ESMTP; 05 Dec 2018 11:20:22 -0800
-Date:   Wed, 5 Dec 2018 11:22:55 -0800
-From:   Alison Schofield <alison.schofield@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     dhowells@redhat.com, tglx@linutronix.de, jmorris@namei.org,
-        mingo@redhat.com, hpa@zytor.com, bp@alien8.de, luto@kernel.org,
-        peterz@infradead.org, kirill.shutemov@linux.intel.com,
-        dave.hansen@intel.com, kai.huang@intel.com, jun.nakajima@intel.com,
-        dan.j.williams@intel.com, jarkko.sakkinen@intel.com,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [RFC v2 01/13] x86/mktme: Document the MKTME APIs
-Message-ID: <20181205192255.GA988@alison-desk.jf.intel.com>
+   d="scan'208";a="127429670"
+Received: from irsmsx151.ger.corp.intel.com ([163.33.192.59])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Dec 2018 12:30:16 -0800
+Received: from irsmsx155.ger.corp.intel.com (163.33.192.3) by
+ IRSMSX151.ger.corp.intel.com (163.33.192.59) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 5 Dec 2018 20:30:16 +0000
+Received: from irsmsx101.ger.corp.intel.com ([169.254.1.134]) by
+ irsmsx155.ger.corp.intel.com ([169.254.14.44]) with mapi id 14.03.0415.000;
+ Wed, 5 Dec 2018 20:30:15 +0000
+From:   "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
+To:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Schofield, Alison" <alison.schofield@intel.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
+CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>
+Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+Thread-Topic: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+Thread-Index: AQHUi6Q6VkrSspfrlUix6bu2w4w7sKVwm1wA
+Date:   Wed, 5 Dec 2018 20:30:15 +0000
+Message-ID: <b7fa2f2337adadd24594d7e799c337a9c7eaf906.camel@intel.com>
 References: <cover.1543903910.git.alison.schofield@intel.com>
- <c2276bbbb19f3a28bd37c3dd6b1021e2d9a10916.1543903910.git.alison.schofield@intel.com>
- <4ED70A75-9A88-41B4-B595-87FB748772F9@amacapital.net>
+In-Reply-To: <cover.1543903910.git.alison.schofield@intel.com>
+Accept-Language: fi-FI, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.241.224.239]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3A8A9C5F0E0B8C4FB8F40BC9179B80DA@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4ED70A75-9A88-41B4-B595-87FB748772F9@amacapital.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 05, 2018 at 10:11:18AM -0800, Andy Lutomirski wrote:
-> 
-> 
-> > On Dec 3, 2018, at 11:39 PM, Alison Schofield <alison.schofield@intel.com> wrote:
-> 
-> I realize you’re writing code to expose hardware behavior, but I’m not sure this
-> really makes sense in this context.
-
-Your observation is accurate. The Usage defined here is very closely
-aligned to the Intel MKTME Architecture spec. That's a starting point,
-but not the ending point. We need to implement the feature set that
-makes sense. More below...
-
-> > +
-> > +    type=
-> > +        *user*    User will supply the encryption key data. Use this
-> > +                type to directly program a hardware encryption key.
-> > +
-> 
-> I think that “user” probably sense as a “key service” key, but I don’t think it is at all useful for non-persistent memory.  Even if we take for granted that MKTME for anonymous memory is useful at all, “cpu” seems to be better in all respects.
-> 
-> 
-> Perhaps support for “user” should be tabled until there’s a design for how to use this for pmem?  I imagine it would look quite a bit like dm-crypt.  Advanced pmem filesystems could plausibly use different keys for different files, I suppose.
-> 
-> If “user” is dropped, I think a lot of the complexity goes away. Hotplug becomes automatic, right?
-
-Dropping 'user' type removes a great deal of complexity.
-
-Let me follow up in 2 ways:
-1) Find out when MKTME support for pmem is required.
-2) Go back to the the requirements and get the justification for user
-type.
-
-> 
-> > +        *cpu*    User requests a CPU generated encryption key.
-> 
-> Okay, maybe, but it’s still unclear to me exactly what the intended benefit is, though.
-*cpu* is the RANDOM key generated by the cpu. If there were no other
-options, then this would be default, and go away.
-
-> > +        *clear* User requests that a hardware encryption key be
-> > +                cleared. This will clear the encryption key from
-> > +                the hardware. On execution this hardware key gets
-> > +                TME behavior.
-> > +
-> 
-> Why is this a key type?  Shouldn’t the API to select a key just have an option to ask for no key to be used?
-
-The *clear* key has been requested in order to clear/erase the users
-key data that has been programmed into a hardware slot. User does not
-want to leave a slot programmed with their encryption data when they
-are done with it.
-
-> > +        *no-encrypt*
-> > +                 User requests that hardware does not encrypt
-> > +                 memory when this key is in use.
-> 
-> Same as above.  If there’s a performance benefit, then there could be a way to ask for cleartext memory.  Similarly, some pmem users may want a way to keep their pmem unencrypted.
-
-So, this is the way to ask for cleartext memory.
-The entire system will be encrypted with the system wide TME Key.
-A subset of that will be protected with MKTME Keys.
-If user wants, no encrypt, this *no-encrypt* is the way to do it.
-
-Alison
-> 
-> —Andy
+T24gTW9uLCAyMDE4LTEyLTAzIGF0IDIzOjM5IC0wODAwLCBBbGlzb24gU2Nob2ZpZWxkIHdyb3Rl
+Og0KPiBIaSBUaG9tYXMsIERhdmlkLA0KPiANCj4gSGVyZSBpcyBhbiB1cGRhdGVkIFJGQyBvbiB0
+aGUgQVBJJ3MgdG8gc3VwcG9ydCBNS1RNRS4NCj4gKE11bHRpLUtleSBUb3RhbCBNZW1vcnkgRW5j
+cnlwdGlvbikNCj4gDQo+IFRoaXMgUkZDIHByZXNlbnRzIHRoZSAyIEFQSSBhZGRpdGlvbnMgdG8g
+c3VwcG9ydCB0aGUgY3JlYXRpb24gYW5kDQo+IHVzYWdlIG9mIG1lbW9yeSBlbmNyeXB0aW9uIGtl
+eXM6DQo+ICAxKSBLZXJuZWwgS2V5IFNlcnZpY2UgdHlwZSAibWt0bWUiDQo+ICAyKSBTeXN0ZW0g
+Y2FsbCBlbmNyeXB0X21wcm90ZWN0KCkNCj4gDQo+IFRoaXMgcGF0Y2hzZXQgaXMgYnVpbHQgdXBv
+biBLaXJpbGwgU2h1dGVtb3YncyB3b3JrIGZvciB0aGUgY29yZSBNS1RNRQ0KPiBzdXBwb3J0Lg0K
+DQpQbGVhc2UsIGV4cGxhaW4gd2hhdCBNS1RNRSBpcyByaWdodCBoZXJlLg0KDQpObyByZWZlcmVu
+Y2VzLCBubyBleHBsYW5hdGlvbnMuLi4gRXZlbiB3aXRoIGEgcmVmZXJlbmNlLCBhIHNob3J0DQpz
+dW1tYXJ5IHdvdWxkIGJlIHJlYWxseSBuaWNlIHRvIGhhdmUuDQoNCi9KYXJra28NCg==
