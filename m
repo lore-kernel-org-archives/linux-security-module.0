@@ -2,124 +2,119 @@ Return-Path: <SRS0=+ZQZ=OP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8DBC04EB8
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 08:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7E0C04EB8
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 08:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2DB20989
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 08:08:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2DB20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A636C20989
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 08:18:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A636C20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729183AbeLFIIt (ORCPT
+        id S1729038AbeLFIS1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Dec 2018 03:08:49 -0500
-Received: from mga12.intel.com ([192.55.52.136]:5241 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729062AbeLFIIt (ORCPT
+        Thu, 6 Dec 2018 03:18:27 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35420 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727575AbeLFIS1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:08:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 00:08:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,321,1539673200"; 
-   d="scan'208";a="299793587"
-Received: from irsmsx108.ger.corp.intel.com ([163.33.3.3])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Dec 2018 00:08:37 -0800
-Received: from irsmsx112.ger.corp.intel.com (10.108.20.5) by
- IRSMSX108.ger.corp.intel.com (163.33.3.3) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 6 Dec 2018 08:08:36 +0000
-Received: from irsmsx101.ger.corp.intel.com ([169.254.1.237]) by
- irsmsx112.ger.corp.intel.com ([169.254.1.252]) with mapi id 14.03.0415.000;
- Thu, 6 Dec 2018 08:08:36 +0000
-From:   "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
-To:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "Schofield, Alison" <alison.schofield@intel.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>
-CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>
-Subject: Re: [RFC v2 02/13] mm: Generalize the mprotect implementation to
- support extensions
-Thread-Topic: [RFC v2 02/13] mm: Generalize the mprotect implementation to
- support extensions
-Thread-Index: AQHUi6Q7tWai2B7TUk24ndXsgXq+D6VxXneA
-Date:   Thu, 6 Dec 2018 08:08:35 +0000
-Message-ID: <056ae50739536a0f6aea3d3c0f2706baa50178c4.camel@intel.com>
-References: <cover.1543903910.git.alison.schofield@intel.com>
-         <3389bc8e46479ba102f88c157aebd49b905ac289.1543903910.git.alison.schofield@intel.com>
-In-Reply-To: <3389bc8e46479ba102f88c157aebd49b905ac289.1543903910.git.alison.schofield@intel.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.254.207.188]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7145A7DA804676499A3393B3376851B8@intel.com>
-Content-Transfer-Encoding: base64
+        Thu, 6 Dec 2018 03:18:27 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB68936w177673
+        for <linux-security-module@vger.kernel.org>; Thu, 6 Dec 2018 03:18:26 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p6vyxqypw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Dec 2018 03:18:25 -0500
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Thu, 6 Dec 2018 08:18:25 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 6 Dec 2018 08:18:22 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB68ILjF18940126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 6 Dec 2018 08:18:21 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A208B205F;
+        Thu,  6 Dec 2018 08:18:21 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDD99B2066;
+        Thu,  6 Dec 2018 08:18:18 +0000 (GMT)
+Received: from [9.124.31.41] (unknown [9.124.31.41])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Dec 2018 08:18:18 +0000 (GMT)
+Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
+ TPM hash algorithm
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+ <20181204082138.24600-5-roberto.sassu@huawei.com>
+ <20181204234024.GC1233@linux.intel.com>
+From:   Nayna Jain <nayna@linux.ibm.com>
+Date:   Thu, 6 Dec 2018 13:44:58 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
+In-Reply-To: <20181204234024.GC1233@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18120608-2213-0000-0000-000003258CA2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010180; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01127715; UDB=6.00585774; IPR=6.00907847;
+ MB=3.00024475; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-06 08:18:24
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18120608-2214-0000-0000-00005C81385A
+Message-Id: <1e9f4b5a-c0fc-8be8-61f5-39166e948b01@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=914 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812060075
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gTW9uLCAyMDE4LTEyLTAzIGF0IDIzOjM5IC0wODAwLCBBbGlzb24gU2Nob2ZpZWxkIHdyb3Rl
-Og0KPiBUb2RheSBtcHJvdGVjdCBpcyBpbXBsZW1lbnRlZCB0byBzdXBwb3J0IGxlZ2FjeSBtcHJv
-dGVjdCBiZWhhdmlvcg0KPiBwbHVzIGFuIGV4dGVuc2lvbiBmb3IgbWVtb3J5IHByb3RlY3Rpb24g
-a2V5cy4gTWFrZSBpdCBtb3JlIGdlbmVyaWMNCj4gc28gdGhhdCBpdCBjYW4gc3VwcG9ydCBhZGRp
-dGlvbmFsIGV4dGVuc2lvbnMgaW4gdGhlIGZ1dHVyZS4NCj4gDQo+IFRoaXMgaXMgZG9uZSBpcyBw
-cmVwYXJhdGlvbiBmb3IgYWRkaW5nIGEgbmV3IHN5c3RlbSBjYWxsIGZvciBtZW1vcnkNCj4gZW5j
-eXB0aW9uIGtleXMuIFRoZSBpbnRlbnQgaXMgdGhhdCB0aGUgbmV3IGVuY3J5cHRlZCBtcHJvdGVj
-dCB3aWxsIGJlDQo+IGFub3RoZXIgZXh0ZW5zaW9uIHRvIGxlZ2FjeSBtcHJvdGVjdC4NCj4gDQo+
-IENoYW5nZS1JZDogSWIwOWI5ZDFiNjA1YjEyZDAyNTRkN2ZiNDk2OGRmY2M4ZTNjNzlkZDcNCg0K
-V2hhdCBpcyB0aGlzPz8NCg0KPiBTaWduZWQtb2ZmLWJ5OiBBbGlzb24gU2Nob2ZpZWxkIDxhbGlz
-b24uc2Nob2ZpZWxkQGludGVsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogS2lyaWxsIEEuIFNodXRl
-bW92IDxraXJpbGwuc2h1dGVtb3ZAbGludXguaW50ZWwuY29tPg0KPiAtLS0NCj4gIG1tL21wcm90
-ZWN0LmMgfCAxMCArKysrKystLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCsp
-LCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL21tL21wcm90ZWN0LmMgYi9tbS9t
-cHJvdGVjdC5jDQo+IGluZGV4IGRmNDA4OTU2ZGNjYy4uYjU3MDc1ZTI3OGZiIDEwMDY0NA0KPiAt
-LS0gYS9tbS9tcHJvdGVjdC5jDQo+ICsrKyBiL21tL21wcm90ZWN0LmMNCj4gQEAgLTM1LDYgKzM1
-LDggQEANCj4gIA0KPiAgI2luY2x1ZGUgImludGVybmFsLmgiDQo+ICANCj4gKyNkZWZpbmUgTk9f
-S0VZCS0xDQo+ICsNCj4gIHN0YXRpYyB1bnNpZ25lZCBsb25nIGNoYW5nZV9wdGVfcmFuZ2Uoc3Ry
-dWN0IHZtX2FyZWFfc3RydWN0ICp2bWEsIHBtZF90ICpwbWQsDQo+ICAJCXVuc2lnbmVkIGxvbmcg
-YWRkciwgdW5zaWduZWQgbG9uZyBlbmQsIHBncHJvdF90IG5ld3Byb3QsDQo+ICAJCWludCBkaXJ0
-eV9hY2NvdW50YWJsZSwgaW50IHByb3RfbnVtYSkNCj4gQEAgLTQ1MSw5ICs0NTMsOSBAQCBtcHJv
-dGVjdF9maXh1cChzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSwgc3RydWN0DQo+IHZtX2FyZWFf
-c3RydWN0ICoqcHByZXYsDQo+ICB9DQo+ICANCj4gIC8qDQo+IC0gKiBwa2V5PT0tMSB3aGVuIGRv
-aW5nIGEgbGVnYWN5IG1wcm90ZWN0KCkNCj4gKyAqIFdoZW4gcGtleT09Tk9fS0VZIHdlIGdldCBs
-ZWdhY3kgbXByb3RlY3QgYmVoYXZpb3IgaGVyZS4NCj4gICAqLw0KPiAtc3RhdGljIGludCBkb19t
-cHJvdGVjdF9wa2V5KHVuc2lnbmVkIGxvbmcgc3RhcnQsIHNpemVfdCBsZW4sDQo+ICtzdGF0aWMg
-aW50IGRvX21wcm90ZWN0X2V4dCh1bnNpZ25lZCBsb25nIHN0YXJ0LCBzaXplX3QgbGVuLA0KPiAg
-CQl1bnNpZ25lZCBsb25nIHByb3QsIGludCBwa2V5KQ0KPiAgew0KPiAgCXVuc2lnbmVkIGxvbmcg
-bnN0YXJ0LCBlbmQsIHRtcCwgcmVxcHJvdDsNCj4gQEAgLTU3Nyw3ICs1NzksNyBAQCBzdGF0aWMg
-aW50IGRvX21wcm90ZWN0X3BrZXkodW5zaWduZWQgbG9uZyBzdGFydCwgc2l6ZV90DQo+IGxlbiwN
-Cj4gIFNZU0NBTExfREVGSU5FMyhtcHJvdGVjdCwgdW5zaWduZWQgbG9uZywgc3RhcnQsIHNpemVf
-dCwgbGVuLA0KPiAgCQl1bnNpZ25lZCBsb25nLCBwcm90KQ0KPiAgew0KPiAtCXJldHVybiBkb19t
-cHJvdGVjdF9wa2V5KHN0YXJ0LCBsZW4sIHByb3QsIC0xKTsNCj4gKwlyZXR1cm4gZG9fbXByb3Rl
-Y3RfZXh0KHN0YXJ0LCBsZW4sIHByb3QsIE5PX0tFWSk7DQo+ICB9DQo+ICANCj4gICNpZmRlZiBD
-T05GSUdfQVJDSF9IQVNfUEtFWVMNCj4gQEAgLTU4NSw3ICs1ODcsNyBAQCBTWVNDQUxMX0RFRklO
-RTMobXByb3RlY3QsIHVuc2lnbmVkIGxvbmcsIHN0YXJ0LCBzaXplX3QsDQo+IGxlbiwNCj4gIFNZ
-U0NBTExfREVGSU5FNChwa2V5X21wcm90ZWN0LCB1bnNpZ25lZCBsb25nLCBzdGFydCwgc2l6ZV90
-LCBsZW4sDQo+ICAJCXVuc2lnbmVkIGxvbmcsIHByb3QsIGludCwgcGtleSkNCj4gIHsNCj4gLQly
-ZXR1cm4gZG9fbXByb3RlY3RfcGtleShzdGFydCwgbGVuLCBwcm90LCBwa2V5KTsNCj4gKwlyZXR1
-cm4gZG9fbXByb3RlY3RfZXh0KHN0YXJ0LCBsZW4sIHByb3QsIHBrZXkpOw0KPiAgfQ0KPiAgDQo+
-ICBTWVNDQUxMX0RFRklORTIocGtleV9hbGxvYywgdW5zaWduZWQgbG9uZywgZmxhZ3MsIHVuc2ln
-bmVkIGxvbmcsIGluaXRfdmFsKQ0KDQpXb3VsZCBzcXVhc2ggdGhpcyB3aGF0ZXZlciB0aGlzIGlz
-IHJlcXVpcmVkIGZvci4gVGhpcyBzcGxpdCBtYWtlcw0KcmV2aWV3IG1vcmUgY29tcGxleCAoSU1I
-TykuDQoNCi9KYXJra28NCg==
+
+On 12/05/2018 05:10 AM, Jarkko Sakkinen wrote:
+> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
+>> Currently the TPM driver allows other kernel subsystems to read only the
+>> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
+>> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
+>> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
+>> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
+>> the new parameter is expected to be always not NULL.
+>>
+>> Due to the API change, IMA functions have been modified.
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>
+> Mimi, Nayna, can you help with testing this (because of the IMA change)?
+
+Sure, I will try to do by end of my day tomorrow,
+
+Thanks & Regards,
+     - Nayna
+
+>
+> /Jarkko
+>
+
