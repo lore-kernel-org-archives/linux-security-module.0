@@ -5,56 +5,54 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FDAC64EB1
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 14:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB0AC67838
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 15:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B2A320989
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 14:59:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B2A320989
+	by mail.kernel.org (Postfix) with ESMTP id 3A3F120700
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 15:11:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A3F120700
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbeLFO7M (ORCPT
+        id S1725921AbeLFPLX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Dec 2018 09:59:12 -0500
-Received: from mga14.intel.com ([192.55.52.115]:47771 "EHLO mga14.intel.com"
+        Thu, 6 Dec 2018 10:11:23 -0500
+Received: from mga06.intel.com ([134.134.136.31]:56599 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbeLFO7L (ORCPT
+        id S1725862AbeLFPLX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Dec 2018 09:59:11 -0500
+        Thu, 6 Dec 2018 10:11:23 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 06:59:10 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 07:11:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,322,1539673200"; 
-   d="scan'208";a="105370606"
+   d="scan'208";a="105374446"
 Received: from jbdelcuv-mobl.amr.corp.intel.com (HELO [10.251.27.202]) ([10.251.27.202])
-  by fmsmga007.fm.intel.com with ESMTP; 06 Dec 2018 06:59:10 -0800
-Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
+  by fmsmga007.fm.intel.com with ESMTP; 06 Dec 2018 07:11:21 -0800
+Subject: Re: [RFC v2 10/13] keys/mktme: Add the MKTME Key Service type for
+ memory encryption
+To:     "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Schofield, Alison" <alison.schofield@intel.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
 Cc:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
         "peterz@infradead.org" <peterz@infradead.org>,
         "jmorris@namei.org" <jmorris@namei.org>,
         "Huang, Kai" <kai.huang@intel.com>,
         "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
         "Williams, Dan J" <dan.j.williams@intel.com>,
         "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
         "mingo@redhat.com" <mingo@redhat.com>,
         "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "Schofield, Alison" <alison.schofield@intel.com>,
         "Nakajima, Jun" <jun.nakajima@intel.com>
 References: <cover.1543903910.git.alison.schofield@intel.com>
- <20181204092550.GT11614@hirez.programming.kicks-ass.net>
- <20181204094647.tjsvwjgp3zq6yqce@black.fi.intel.com>
- <063026c66b599ba4ff0b30a5ecc7d2c716e4da5b.camel@intel.com>
- <20181206112255.4bbumbrf5nnz4t2z@kshutemo-mobl1>
+ <42d44fb5ddbbf7241a2494fc688e274ade641965.1543903910.git.alison.schofield@intel.com>
+ <a19a48ae1d6434a1764b02c2376a99130ce15174.camel@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -100,12 +98,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <a0a1e0d2-ef32-8378-5363-b730afc99c03@intel.com>
-Date:   Thu, 6 Dec 2018 06:59:10 -0800
+Message-ID: <986544e1-ffd1-1cd2-f0d3-4b1a4e8e8f3b@intel.com>
+Date:   Thu, 6 Dec 2018 07:11:21 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181206112255.4bbumbrf5nnz4t2z@kshutemo-mobl1>
+In-Reply-To: <a19a48ae1d6434a1764b02c2376a99130ce15174.camel@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -113,15 +111,25 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/6/18 3:22 AM, Kirill A. Shutemov wrote:
->> When you say "disable encryption to a page" does the encryption get
->> actually disabled or does the CPU just decrypt it transparently i.e.
->> what happens physically?
-> Yes, it gets disabled. Physically. It overrides TME encryption.
+On 12/6/18 12:51 AM, Sakkinen, Jarkko wrote:
+> On Mon, 2018-12-03 at 23:39 -0800, Alison Schofield wrote:
+>> MKTME (Multi-Key Total Memory Encryption) is a technology that allows
+>> transparent memory encryption in upcoming Intel platforms. MKTME will
+>> support mulitple encryption domains, each having their own key. The main
+>> use case for the feature is virtual machine isolation. The API needs the
+>> flexibility to work for a wide range of uses.
+> Some, maybe brutal, honesty (apologies)...
+> 
+> Have never really got the grip why either SME or TME would make
+> isolation any better. If you can break into hypervisor, you'll
+> have these tools availabe:
 
-I know MKTME itself has a runtime overhead and we expect it to have a
-performance impact in the low single digits.  Does TME have that
-overhead?  Presumably MKTME plus no-encryption is not expected to have
-the overhead.
+For systems using MKTME, the hypervisor is within the "trust boundary".
+ From what I've read, it is a bit _more_ trusted than with AMD's scheme.
 
-We should probably mention that in the changelogs too.
+But, yes, if you can mount a successful arbitrary code execution attack
+against the MKTME hypervisor, you can defeat MKTME's protections.  If
+the kernel creates non-encrypted mappings of memory that's being
+encrypted with MKTME, an arbitrary read primitive could also be a very
+valuable in defeating MKTME's protections.  That's why Andy is proposing
+doing something like eXclusive-Page-Frame-Ownership (google XPFO).
