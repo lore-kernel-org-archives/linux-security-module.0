@@ -2,131 +2,215 @@ Return-Path: <SRS0=+ZQZ=OP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD45C04EB9
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 00:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0593C65BB9
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 01:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8C0A2082B
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 00:08:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P0dVYOy+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8C0A2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 665D0214DE
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 01:09:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544058586;
+	bh=YA6e/PEWV/dzrCMXmrHj/b7kMxo2bbK03bHaG7f0Gtc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=GgQU1JBFhml3RO9KlJZZJ2mbZxAmlmNzxasdh+nJKZQDmybOwKpNDE4VayYP9dbHV
+	 Kucq/ba1EHq7xJwcDJ7NySnFdN3+LL+4kzCfq8/W4qFZLh21NZFWtNqnZ6Od7PVA2Z
+	 u9QE7coFzIAp3QLNAb5auaycMt+b5+YTJcXHnTSA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 665D0214DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbeLFAIc (ORCPT
+        id S1727741AbeLFBJp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Dec 2018 19:08:32 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:35790 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727762AbeLFAIc (ORCPT
+        Wed, 5 Dec 2018 20:09:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59656 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727514AbeLFBJp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Dec 2018 19:08:32 -0500
-Received: by mail-yb1-f196.google.com with SMTP id z2-v6so9723282ybj.2
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Dec 2018 16:08:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q7gSrNWEbVBq+sjJVUFXYPRA+Q77K5qNNIh9PPBqtlE=;
-        b=P0dVYOy+DOdDqmuFBsG3rUpVYN0K333uOusA+iO9mMbW8cKf2wTjUXNQywngpGzdQ0
-         jcF3VmQC00rYYMbS5h9MKA6YBzRY0iNvqskz0F1kEFkGerW0TKvOV+WbNzcHvYHyEwx6
-         0T9PPEZGiP41AS93l5feyvzzg8Bs+urWxecsA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q7gSrNWEbVBq+sjJVUFXYPRA+Q77K5qNNIh9PPBqtlE=;
-        b=Zy0khZ7s2w7HPatqJhb2fXo1ZL6MBcGIPbSPYyxKVppAvYb2PAKRwDuV7d/CNqCXuW
-         84kAhZ31egvtznuYPjNqPfaNWYjYdPrMigIiD1i6ffNc14r9qkS4VFvmycn+NDmLq8DC
-         HKWPFkIzTMza3L0UUOvglLCONn75eBD1bzgahxdk3tmTDblTf/nmGaoPPTkIifJFeh71
-         EAQAhDTs3ZKBuAmaqdxCEQSWHZ+DMLXOnx6Q58iT2xrAws/b+m7QLbHZIJkhqPA1Xzvu
-         SaMC5H/t2NjAz6b+1/EBEaqCfe3jVTvKRN7GSQ3VKijLcYmNor2F6bOs/PuYz6ODkeXl
-         o/pA==
-X-Gm-Message-State: AA+aEWYOTZuWYIeO+xUcTV8BJE7DuIhAqlNUMUV41uImhXN1gC5k5uUK
-        HdLKGnH5XTrWh/IJxGfzz7gB/9Ey2Ho=
-X-Google-Smtp-Source: AFSGD/WFql4dsEEbUQNP/e6VMnew38QHbaL7VejrX9hoLN2jeNDbMTIdq+kZMcX19wXtRMnTUTckvg==
-X-Received: by 2002:a25:2b05:: with SMTP id r5-v6mr25812302ybr.81.1544054911345;
-        Wed, 05 Dec 2018 16:08:31 -0800 (PST)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id w1sm6341243ywd.49.2018.12.05.16.08.29
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 05 Dec 2018 16:08:29 -0800 (PST)
-Received: by mail-yb1-f176.google.com with SMTP id j145so4812067ybg.11
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Dec 2018 16:08:29 -0800 (PST)
-X-Received: by 2002:a5b:2cd:: with SMTP id h13mr7617966ybp.403.1544054909131;
- Wed, 05 Dec 2018 16:08:29 -0800 (PST)
+        Wed, 5 Dec 2018 20:09:45 -0500
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C883821582
+        for <linux-security-module@vger.kernel.org>; Thu,  6 Dec 2018 01:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544058584;
+        bh=YA6e/PEWV/dzrCMXmrHj/b7kMxo2bbK03bHaG7f0Gtc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=UjCdWhq0KunrjyuUT+gxsE5BDqSl/SjOyNG/C8/CYzcDRah8LkTiiTtuV54g4l8iA
+         X1WJ3OAgYDCR52nCncnYN1mzdGt7god2jjg7KEk54JoXcvfa24tWMjRqN0wznAorZ5
+         njBf+kWv4zayfnM30iy+zB9AgvOiLcscmn/EZdhI=
+Received: by mail-wm1-f42.google.com with SMTP id n190so12699749wmd.0
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Dec 2018 17:09:43 -0800 (PST)
+X-Gm-Message-State: AA+aEWbKZGIx4D58X/JH38jenqp2fceXx+rnKM4RY5EsWAYgcBpu3uDf
+        tlhtzDrdWP6juX1e2UhdWppc4MMZsQE9464ddHoS0g==
+X-Google-Smtp-Source: AFSGD/U/D65akm8pRKQjY/6rP23p1rwDrq1DieqF3CxPU8lZpnUsPSKUuezh5g+76iFJ6rfuN1PG+a0kTp2NDf6/Q8Y=
+X-Received: by 2002:a7b:ce17:: with SMTP id m23mr18916495wmc.74.1544058582103;
+ Wed, 05 Dec 2018 17:09:42 -0800 (PST)
 MIME-Version: 1.0
-References: <CAJ-EccPiKPR-ZB+V=tTyAB3Gru2n_Pt4PFxEQf_3y_4c8g+TLg@mail.gmail.com>
- <20181121165409.54278-1-mortonm@chromium.org>
-In-Reply-To: <20181121165409.54278-1-mortonm@chromium.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 5 Dec 2018 16:08:16 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJCk8p_nkuutM0kPLhwibKEVoA6E=ZqT2r8jVK5H47ORQ@mail.gmail.com>
-Message-ID: <CAGXu5jJCk8p_nkuutM0kPLhwibKEVoA6E=ZqT2r8jVK5H47ORQ@mail.gmail.com>
-Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+References: <cover.1543903910.git.alison.schofield@intel.com>
+ <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com> <c610138f-32dd-a24c-dc52-4e0006a21409@intel.com>
+In-Reply-To: <c610138f-32dd-a24c-dc52-4e0006a21409@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 5 Dec 2018 17:09:30 -0800
+X-Gmail-Original-Message-ID: <CALCETrU34U3berTaEQbvNt0rfCdsjwj+xDb8x7bgAMFHEo=eUw@mail.gmail.com>
+Message-ID: <CALCETrU34U3berTaEQbvNt0rfCdsjwj+xDb8x7bgAMFHEo=eUw@mail.gmail.com>
+Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>, alison.schofield@intel.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        James Morris <jmorris@namei.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        kai.huang@intel.com, Jun Nakajima <jun.nakajima@intel.com>,
+        "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, X86 ML <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 21, 2018 at 8:54 AM <mortonm@chromium.org> wrote:
+On Wed, Dec 5, 2018 at 3:49 PM Dave Hansen <dave.hansen@intel.com> wrote:
 >
-> From: Micah Morton <mortonm@chromium.org>
+> On 12/4/18 11:19 AM, Andy Lutomirski wrote:
+> > I'm not Thomas, but I think it's the wrong direction.  As it stands,
+> > encrypt_mprotect() is an incomplete version of mprotect() (since it's
+> > missing the protection key support),
 >
-> SafeSetID gates the setid family of syscalls to restrict UID/GID
-> transitions from a given UID/GID to only those approved by a
-> system-wide whitelist. These restrictions also prohibit the given
-> UIDs/GIDs from obtaining auxiliary privileges associated with
-> CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
-> mappings. For now, only gating the set*uid family of syscalls is
-> supported, with support for set*gid coming in a future patch set.
+> I thought about this when I added mprotect_pkey().  We start with:
 >
-> Signed-off-by: Micah Morton <mortonm@chromium.org>
-> ---
+>         mprotect(addr, len, prot);
 >
-> Sending a patch developed against the 'next-general' branch of the
-> linux-security tree, since the previous patch versions wouldn't apply
-> cleanly to 'next-general'.
+> then
+>
+>         mprotect_pkey(addr, len, prot);
+>
+> then
+>
+>         mprotect_pkey_encrypt(addr, len, prot, key);
+>
+> That doesn't scale because we eventually have
+> mprotect_and_a_history_of_mm_features(). :)
+>
+> What I was hoping to see was them do this (apologies for the horrible
+> indentation:
+>
+>         ptr = mmap(..., PROT_NONE);
+>         mprotect_pkey(   addr, len, PROT_NONE, pkey);
+>         mprotect_encrypt(addr, len, PROT_NONE, keyid);
+>         mprotect(        addr, len, real_prot);
+>
+> The point is that you *can* stack these things and don't have to have an
+> mprotect_kitchen_sink() if you use PROT_NONE for intermediate
+> permissions during setup.
 
-I'm finally getting back around to this. Sorry for the delay!
+Sure, but then why call it mprotect at all?  How about:
 
-A few general process notes:
-- Please "version" your patches in the Subject (e.g. "[PATCH v3] LSM:
-add SafeSetID ..."). This helps track discussion.
-- Please include a "changes since last version below the first "---"
-line, to summarize what has changed. This makes review faster for
-people that have read a specific version but need to catch up (like
-me) :)
+mmap(..., PROT_NONE);
+mencrypt(..., keyid);
+mprotect_pkey(...);
 
-> +/*
-> + * TODO: Figuring out whether the current syscall number (saved on the kernel
-> + * stack) is one of the set*uid syscalls is an operation that requires checking
-> + * the number against arch-specific constants as seen below. The need for this
-> + * LSM to know about arch-specific syscall stuff is not ideal. Is it better to
-> + * implement an arch-specific function that gets called from this file and
-> + * update arch/Kconfig to mention that the HAVE_SAFESETID symbol should only be
-> + * selected for architectures that implement the function? Any other ideas?
-> + */
+But wouldn't this be much nicer:
 
-What would Stephen's solution for this problem end up looking like? I
-think avoiding the arch-specific-ness would be quite valuable.
+int fd = memfd_create(...);
+memfd_set_tme_key(fd, keyid);  /* fails if len != 0 */
+mmap(fd, ...);
 
-I think adding a capability for this isn't the way to go (there is a
-very painful history on adding capabilities). This feels much more
-like a good mapping to an LSM (it's narrowing a privilege) with a very
-specific policy.
+>
+> > and it's also functionally just MADV_DONTNEED.  In other words, the
+> > sole user-visible effect appears to be that the existing pages are
+> > blown away.  The fact that it changes the key in use doesn't seem
+> > terribly useful, since it's anonymous memory,
+>
+> It's functionally MADV_DONTNEED, plus a future promise that your writes
+> will never show up as plaintext on the DIMM.
 
--- 
-Kees Cook
+But that's mostly vacuous.  If I read the docs right, MKTME systems
+also support TME, so you *already* have that promise, unless the
+firmware totally blew it.  If we want a boot option to have the kernel
+use MKTME to forcibly encrypt everything regardless of what the TME
+MSRs say, I'd be entirely on board.  Heck, the implementation would be
+quite simple because we mostly reuse the SME code.
+
+>
+> We also haven't settled on the file-backed properties.  For file-backed,
+> my hope was that you could do:
+>
+>         ptr = mmap(fd, size, prot);
+>         printf("ciphertext: %x\n", *ptr);
+>         mprotect_encrypt(ptr, len, prot, keyid);
+>         printf("plaintext: %x\n", *ptr);
+
+Why would you ever want the plaintext?  Also, how does this work on a
+normal fs, where relocation of the file would cause the ciphertext to
+get lost?  It really seems to be that it should look more like
+dm-crypt where you encrypt a filesystem.  Maybe you'd just configure
+the pmem device to be encrypted before you mount it, or you'd get a
+new pmem-mktme device node instead.  This would also avoid some nasty
+multiple-copies-of-the-direct-map issue, since you'd only ever have
+one of them mapped.
+
+>
+> > The main implementation concern I have with this patch set is cache
+> > coherency and handling of the direct map.  Unless I missed something,
+> > you're not doing anything about the direct map, which means that you
+> > have RW aliases of the same memory with different keys.  For use case
+> > #2, this probably means that you need to either get rid of the direct
+> > map and make get_user_pages() fail, or you need to change the key on
+> > the direct map as well, probably using the pageattr.c code.
+>
+> The current, public hardware spec has a description of what's required
+> to maintain cache coherency.  Basically, you can keep as many mappings
+> of a physical page as you want, but only write to one mapping at a time,
+> and clflush the old one when you want to write to a new one.
+
+Surely you at least have to clflush the old mapping and then the new
+mapping, since the new mapping could have been speculatively read.
+
+> > Finally, If you're going to teach the kernel how to have some user
+> > pages that aren't in the direct map, you've essentially done XPO,
+> > which is nifty but expensive.  And I think that doing this gets you
+> > essentially all the benefit of MKTME for the non-pmem use case.  Why
+> > exactly would any software want to use anything other than a
+> > CPU-managed key for anything other than pmem?
+>
+> It is handy, for one, to let you "cluster" key usage.  If you have 5
+> Pepsi VMs and 5 Coke VMs, each Pepsi one using the same key and each
+> Coke one using the same key, you can boil it down to only 2 hardware
+> keyid slots that get used, and do this transparently.
+
+I understand this from a marketing perspective but not a security
+perspective.  Say I'm Coke and you've sold me some VMs that are
+"encrypted with a Coke-specific key and no other VMs get to use that
+key."  I can't think of *any* not-exceedingly-contrived attack in
+which this makes the slightest difference.  If Pepsi tries to attack
+Coke without MKTME, then they'll either need to get the hypervisor to
+leak Coke's data through the direct map or they'll have to find some
+way to corrupt a page table or use something like L1TF to read from a
+physical address Coke owns.  With MKTME, if they can read through the
+host direct map, then they'll get Coke's cleartext, and if they can
+corrupt a page table or use L1TF to read from your memory, they'll get
+Coke's cleartext.
+
+TME itself provides a ton of protection -- you can't just barge into
+the datacenter, refrigerate the DIMMs, walk away with them, and read
+off everyone's data.
+
+Am I missing something?
+
+>
+> But, I think what you're implying is that the security properties of
+> user-supplied keys can only be *worse* than using CPU-generated keys
+> (assuming the CPU does a good job generating it).  So, why bother
+> allowing user-specified keys in the first place?
+
+That too :)
