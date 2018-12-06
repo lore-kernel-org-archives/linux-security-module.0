@@ -7,120 +7,126 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D962CC04EB9
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 00:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD45C04EB9
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 00:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8197D2082B
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 00:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8C0A2082B
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 00:08:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="NE9kNXLN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8197D2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P0dVYOy+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8C0A2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbeLFAGf (ORCPT
+        id S1728156AbeLFAIc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 Dec 2018 19:06:35 -0500
-Received: from mail-eopbgr770041.outbound.protection.outlook.com ([40.107.77.41]:24704
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727762AbeLFAGf (ORCPT
+        Wed, 5 Dec 2018 19:08:32 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:35790 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727762AbeLFAIc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 Dec 2018 19:06:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kGLcF5U+lIJEYekF2D25WUx0lo8PWScOQJXNPvWHWZI=;
- b=NE9kNXLNUiegMoAB53+360eDYc6QV++QAIG4F2p28QKUtsTjX5XAcuqKZdLBGDEQBWYuCCpFIiRxSu4wZ8CNyCjTz6fKD9b/c29suQnE/0sl1nKN0oj/e7N+u4Ub83+7x/B6QifNFY5HFnqWFW+qMk9GzXQJrR3sFnu37cMYViA=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4934.namprd05.prod.outlook.com (52.135.235.205) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.14; Thu, 6 Dec 2018 00:06:30 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::9155:fea7:9c0c:68c7]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::9155:fea7:9c0c:68c7%3]) with mapi id 15.20.1425.006; Thu, 6 Dec 2018
- 00:06:30 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v7 08/14] x86/ftrace: Use text_poke_*() infrastructure
-Thread-Topic: [PATCH v7 08/14] x86/ftrace: Use text_poke_*() infrastructure
-Thread-Index: AQHUjHfOc0ECF8bvYEydiFdgoLXd4KVw1iOA
-Date:   Thu, 6 Dec 2018 00:06:30 +0000
-Message-ID: <25B84F01-DB4C-4957-9703-769CCC9794BB@vmware.com>
-References: <20181205013408.47725-1-namit@vmware.com>
- <20181205013408.47725-9-namit@vmware.com>
-In-Reply-To: <20181205013408.47725-9-namit@vmware.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4934;20:IZRlEzv+VtirWtqKgUnBxcge4yietqwyfswZXQU6kDNBrFW6bf1U9Vq1HuIQcfXDNmGhlNZouJTOnzVwe6WY+vGm8AS7rM5V524CItuCgWabo3RQum/gKR6piwRxNnsdkGQIhZxNezlGkEbo/Sb7Gs5bWIzrAHZCwrbGvIysSkE=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 67335493-aa57-4ce3-d2aa-08d65b0eacbc
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4934;
-x-ms-traffictypediagnostic: BYAPR05MB4934:
-x-microsoft-antispam-prvs: <BYAPR05MB493444F5C216D102B7FD5FE3D0A90@BYAPR05MB4934.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4934;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4934;
-x-forefront-prvs: 087894CD3C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(396003)(376002)(136003)(366004)(199004)(189003)(71190400001)(71200400001)(82746002)(7520500002)(8676002)(486006)(2906002)(316002)(186003)(478600001)(6486002)(229853002)(81166006)(81156014)(8936002)(105586002)(76176011)(54906003)(7736002)(110136005)(102836004)(66066001)(305945005)(53546011)(11346002)(446003)(26005)(68736007)(476003)(14454004)(2616005)(4326008)(86362001)(53936002)(6506007)(6116002)(3846002)(36756003)(256004)(97736004)(39060400002)(5660300001)(33656002)(6436002)(83716004)(99286004)(106356001)(6246003)(6512007)(7416002)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4934;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 67EdZ/0L3BVo06v3wophJ42oAjYoms//uqy3UbsiCqyBoGBMhwbE5sY+PLy4e01F63zHFx0MT7jdxUbOWIxn8LzvdHbLcJBJsUUBlxMfHR6jBotPwQ6IP3uhU3J06DDv8cw2u5Semxjppm68dxwx0XsFTy8sMNNLQPq06JDH4SIUIb3yt6bLBpy5AtzA4BTQC49pAgwY5rGjlBMCrhMuBm4mXvsp8CsKlpa+ogxBX6gx9SWu5ey1Fo+MDTEksHgMWTFEIfAIXUcOq8pP//edTsQNRK0y2vpo2l94gajEwA4wrM+HTJdmr8hDFn0zP5KdazisNLzQpBbAN+8uhfL2jJ7S9Uh3SnS3Zbvq1Gd+v9E=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4FED0091588BEB44A14EC09BA2519E95@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 5 Dec 2018 19:08:32 -0500
+Received: by mail-yb1-f196.google.com with SMTP id z2-v6so9723282ybj.2
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Dec 2018 16:08:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q7gSrNWEbVBq+sjJVUFXYPRA+Q77K5qNNIh9PPBqtlE=;
+        b=P0dVYOy+DOdDqmuFBsG3rUpVYN0K333uOusA+iO9mMbW8cKf2wTjUXNQywngpGzdQ0
+         jcF3VmQC00rYYMbS5h9MKA6YBzRY0iNvqskz0F1kEFkGerW0TKvOV+WbNzcHvYHyEwx6
+         0T9PPEZGiP41AS93l5feyvzzg8Bs+urWxecsA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q7gSrNWEbVBq+sjJVUFXYPRA+Q77K5qNNIh9PPBqtlE=;
+        b=Zy0khZ7s2w7HPatqJhb2fXo1ZL6MBcGIPbSPYyxKVppAvYb2PAKRwDuV7d/CNqCXuW
+         84kAhZ31egvtznuYPjNqPfaNWYjYdPrMigIiD1i6ffNc14r9qkS4VFvmycn+NDmLq8DC
+         HKWPFkIzTMza3L0UUOvglLCONn75eBD1bzgahxdk3tmTDblTf/nmGaoPPTkIifJFeh71
+         EAQAhDTs3ZKBuAmaqdxCEQSWHZ+DMLXOnx6Q58iT2xrAws/b+m7QLbHZIJkhqPA1Xzvu
+         SaMC5H/t2NjAz6b+1/EBEaqCfe3jVTvKRN7GSQ3VKijLcYmNor2F6bOs/PuYz6ODkeXl
+         o/pA==
+X-Gm-Message-State: AA+aEWYOTZuWYIeO+xUcTV8BJE7DuIhAqlNUMUV41uImhXN1gC5k5uUK
+        HdLKGnH5XTrWh/IJxGfzz7gB/9Ey2Ho=
+X-Google-Smtp-Source: AFSGD/WFql4dsEEbUQNP/e6VMnew38QHbaL7VejrX9hoLN2jeNDbMTIdq+kZMcX19wXtRMnTUTckvg==
+X-Received: by 2002:a25:2b05:: with SMTP id r5-v6mr25812302ybr.81.1544054911345;
+        Wed, 05 Dec 2018 16:08:31 -0800 (PST)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
+        by smtp.gmail.com with ESMTPSA id w1sm6341243ywd.49.2018.12.05.16.08.29
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Dec 2018 16:08:29 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id j145so4812067ybg.11
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Dec 2018 16:08:29 -0800 (PST)
+X-Received: by 2002:a5b:2cd:: with SMTP id h13mr7617966ybp.403.1544054909131;
+ Wed, 05 Dec 2018 16:08:29 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67335493-aa57-4ce3-d2aa-08d65b0eacbc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 00:06:30.2104
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4934
+References: <CAJ-EccPiKPR-ZB+V=tTyAB3Gru2n_Pt4PFxEQf_3y_4c8g+TLg@mail.gmail.com>
+ <20181121165409.54278-1-mortonm@chromium.org>
+In-Reply-To: <20181121165409.54278-1-mortonm@chromium.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 5 Dec 2018 16:08:16 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJCk8p_nkuutM0kPLhwibKEVoA6E=ZqT2r8jVK5H47ORQ@mail.gmail.com>
+Message-ID: <CAGXu5jJCk8p_nkuutM0kPLhwibKEVoA6E=ZqT2r8jVK5H47ORQ@mail.gmail.com>
+Subject: Re: [PATCH] LSM: add SafeSetID module that gates setid calls
+To:     Micah Morton <mortonm@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBPbiBEZWMgNCwgMjAxOCwgYXQgNTozNCBQTSwgTmFkYXYgQW1pdCA8bmFtaXRAdm13YXJlLmNv
-bT4gd3JvdGU6DQo+IA0KPiBBIGZvbGxvd2luZyBwYXRjaCBpcyBnb2luZyB0byBtYWtlIG1vZHVs
-ZSBhbGxvY2F0ZWQgbWVtb3J5DQo+IG5vbi1leGVjdXRhYmxlLiBUaGlzIHJlcXVpcmVzIHRvIG1v
-ZGlmeSBmdHJhY2UgYW5kIG1ha2UgdGhlIG1lbW9yeQ0KPiBleGVjdXRhYmxlIGFnYWluIGFmdGVy
-IGl0IGlzIGNvbmZpZ3VyZWQuDQo+IA0KPiBJbiBhZGRpdGlvbiwgdGhpcyBwYXRjaCBtYWtlcyBm
-dHJhY2UgdXNlIHRoZSBnZW5lcmFsIHRleHQgcG9raW5nDQo+IGluZnJhc3RydWN0dXJlIGluc3Rl
-YWQgZnRyYWNlJ3MgaG9tZWdyb3duIHRleHQgcGF0Y2hpbmcuIFRoaXMgcHJvdmlkZXMNCj4gdGhl
-IGFkdmFudGFnZXMgb2YgaGF2aW5nIHNsaWdodGx5ICJzYWZlciIgY29kZSBwYXRjaGluZyBhbmQg
-YXZvaWRpbmcNCj4gcmFjZXMgd2l0aCBtb2R1bGUgcmVtb3ZhbCBvciBvdGhlciBtZWNoYW5pc21z
-IHRoYXQgcGF0Y2ggdGhlIGtlcm5lbA0KPiBjb2RlLg0KPiANCj4gQ2M6IFN0ZXZlbiBSb3N0ZWR0
-IDxyb3N0ZWR0QGdvb2RtaXMub3JnPg0KPiBTaWduZWQtb2ZmLWJ5OiBOYWRhdiBBbWl0IDxuYW1p
-dEB2bXdhcmUuY29tPg0KPiAtLS0NCj4gYXJjaC94ODYva2VybmVsL2Z0cmFjZS5jIHwgNzQgKysr
-KysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAxIGZpbGUgY2hhbmdlZCwg
-MjMgaW5zZXJ0aW9ucygrKSwgNTEgZGVsZXRpb25zKC0pDQoNClN0ZXZlbiBSb3N0ZWR0IHBvaW50
-ZWQgdGhhdCB1c2luZyB0ZXh0X3Bva2UoKSBpbnN0ZWFkIG9mDQpwcm9iZV9rZXJuZWxfd3JpdGUo
-KSB3b3VsZCBpbnRyb2R1Y2UgY29uc2lkZXJhYmxlIG92ZXJoZWFkcy4gUnVubmluZzoNCg0KICAj
-IHRpbWUgeyBlY2hvIGZ1bmN0aW9uID4gY3VycmVudF90cmFjZXI7IH0gDQoNCnRha2VzIDAuMjRz
-IHdpdGhvdXQgdGhpcyBwYXRjaCBhbmQgMC43cyB3aXRoLiBJIGRvbuKAmXQga25vdyB3aGV0aGVy
-IHRvDQpjb25zaWRlciBpdCDigJxzbyBiYWTigJ0uIE9idmlvdXNseSB3ZSBjYW4gaW50cm9kdWNl
-IGEgYmF0Y2hpbmcgbWVjaGFuaXNtIGFuZC9vcg0KZG8gc29tZSBtaWNyby1vcHRpbWl6YXRpb24g
-KHRoZSBsYXR0ZXIgd2lsbCBub3QgYnV5IHVzIG11Y2ggdGhvdWdoKS4NCg0KQW55aG93LCBpbiB0
-aGUgbWVhbndoaWxlIFN0ZXZlbiBhc2tlZCB0aGF0IHdl4oCZbGwgbGVhdmUgb3V0IHRoZSBjaGFu
-Z2VzIGluDQp0aGlzIHBhdGNoLXNldCwgZXhjbHVkaW5nIHRoZSBzZXRfbWVtb3J5X3goKSB0aGF0
-IHdlIG5lZWQgYWZ0ZXIgY2FsbGluZw0KbW9kdWxlX2FsbG9jKCksIGFuZCBjb25zaWRlciB0aGVt
-IGxhdGVyLg0KDQo=
+On Wed, Nov 21, 2018 at 8:54 AM <mortonm@chromium.org> wrote:
+>
+> From: Micah Morton <mortonm@chromium.org>
+>
+> SafeSetID gates the setid family of syscalls to restrict UID/GID
+> transitions from a given UID/GID to only those approved by a
+> system-wide whitelist. These restrictions also prohibit the given
+> UIDs/GIDs from obtaining auxiliary privileges associated with
+> CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
+> mappings. For now, only gating the set*uid family of syscalls is
+> supported, with support for set*gid coming in a future patch set.
+>
+> Signed-off-by: Micah Morton <mortonm@chromium.org>
+> ---
+>
+> Sending a patch developed against the 'next-general' branch of the
+> linux-security tree, since the previous patch versions wouldn't apply
+> cleanly to 'next-general'.
+
+I'm finally getting back around to this. Sorry for the delay!
+
+A few general process notes:
+- Please "version" your patches in the Subject (e.g. "[PATCH v3] LSM:
+add SafeSetID ..."). This helps track discussion.
+- Please include a "changes since last version below the first "---"
+line, to summarize what has changed. This makes review faster for
+people that have read a specific version but need to catch up (like
+me) :)
+
+> +/*
+> + * TODO: Figuring out whether the current syscall number (saved on the kernel
+> + * stack) is one of the set*uid syscalls is an operation that requires checking
+> + * the number against arch-specific constants as seen below. The need for this
+> + * LSM to know about arch-specific syscall stuff is not ideal. Is it better to
+> + * implement an arch-specific function that gets called from this file and
+> + * update arch/Kconfig to mention that the HAVE_SAFESETID symbol should only be
+> + * selected for architectures that implement the function? Any other ideas?
+> + */
+
+What would Stephen's solution for this problem end up looking like? I
+think avoiding the arch-specific-ness would be quite valuable.
+
+I think adding a capability for this isn't the way to go (there is a
+very painful history on adding capabilities). This feels much more
+like a good mapping to an LSM (it's narrowing a privilege) with a very
+specific policy.
+
+-- 
+Kees Cook
