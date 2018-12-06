@@ -3,118 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7E0C04EB8
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 08:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6999AC04EB9
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 08:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A636C20989
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 08:18:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A636C20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 36F8520892
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 08:31:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36F8520892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729038AbeLFIS1 (ORCPT
+        id S1729079AbeLFIb3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Dec 2018 03:18:27 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35420 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727575AbeLFIS1 (ORCPT
+        Thu, 6 Dec 2018 03:31:29 -0500
+Received: from mga17.intel.com ([192.55.52.151]:31332 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727575AbeLFIb3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Dec 2018 03:18:27 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB68936w177673
-        for <linux-security-module@vger.kernel.org>; Thu, 6 Dec 2018 03:18:26 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p6vyxqypw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 06 Dec 2018 03:18:25 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Thu, 6 Dec 2018 08:18:25 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 6 Dec 2018 08:18:22 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB68ILjF18940126
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 6 Dec 2018 08:18:21 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A208B205F;
-        Thu,  6 Dec 2018 08:18:21 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDD99B2066;
-        Thu,  6 Dec 2018 08:18:18 +0000 (GMT)
-Received: from [9.124.31.41] (unknown [9.124.31.41])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  6 Dec 2018 08:18:18 +0000 (GMT)
-Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-5-roberto.sassu@huawei.com>
- <20181204234024.GC1233@linux.intel.com>
-From:   Nayna Jain <nayna@linux.ibm.com>
-Date:   Thu, 6 Dec 2018 13:44:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20181204234024.GC1233@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Thu, 6 Dec 2018 03:31:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 00:31:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,321,1539673200"; 
+   d="scan'208";a="127594493"
+Received: from irsmsx109.ger.corp.intel.com ([163.33.3.23])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Dec 2018 00:31:26 -0800
+Received: from irsmsx101.ger.corp.intel.com ([169.254.1.237]) by
+ IRSMSX109.ger.corp.intel.com ([169.254.13.38]) with mapi id 14.03.0415.000;
+ Thu, 6 Dec 2018 08:31:25 +0000
+From:   "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
+To:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Schofield, Alison" <alison.schofield@intel.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>
+CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>
+Subject: Re: [RFC v2 04/13] x86/mm: Add helper functions for MKTME memory
+ encryption keys
+Thread-Topic: [RFC v2 04/13] x86/mm: Add helper functions for MKTME memory
+ encryption keys
+Thread-Index: AQHUi6Q0XNLsLenuyU+ONMUFsdeag6VxZNaA
+Date:   Thu, 6 Dec 2018 08:31:24 +0000
+Message-ID: <6cabe09dd085f74a3111faebeb285cf0cac1146d.camel@intel.com>
+References: <cover.1543903910.git.alison.schofield@intel.com>
+         <bd83f72d30ccfc7c1bc7ce9ab81bdf66e78a1d7d.1543903910.git.alison.schofield@intel.com>
+In-Reply-To: <bd83f72d30ccfc7c1bc7ce9ab81bdf66e78a1d7d.1543903910.git.alison.schofield@intel.com>
+Accept-Language: fi-FI, en-US
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18120608-2213-0000-0000-000003258CA2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010180; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01127715; UDB=6.00585774; IPR=6.00907847;
- MB=3.00024475; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-06 08:18:24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120608-2214-0000-0000-00005C81385A
-Message-Id: <1e9f4b5a-c0fc-8be8-61f5-39166e948b01@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-06_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=914 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812060075
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.254.207.188]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <216ECE3FADEC4042AABDCAEF5A292CDA@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 12/05/2018 05:10 AM, Jarkko Sakkinen wrote:
-> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
->> Currently the TPM driver allows other kernel subsystems to read only the
->> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
->> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
->> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
->> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
->> the new parameter is expected to be always not NULL.
->>
->> Due to the API change, IMA functions have been modified.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
-> Mimi, Nayna, can you help with testing this (because of the IMA change)?
-
-Sure, I will try to do by end of my day tomorrow,
-
-Thanks & Regards,
-     - Nayna
-
->
-> /Jarkko
->
-
+T24gTW9uLCAyMDE4LTEyLTAzIGF0IDIzOjM5IC0wODAwLCBBbGlzb24gU2Nob2ZpZWxkIHdyb3Rl
+Og0KPiArZXh0ZXJuIGludCBta3RtZV9tYXBfYWxsb2Modm9pZCk7DQo+ICtleHRlcm4gdm9pZCBt
+a3RtZV9tYXBfZnJlZSh2b2lkKTsNCj4gK2V4dGVybiB2b2lkIG1rdG1lX21hcF9sb2NrKHZvaWQp
+Ow0KPiArZXh0ZXJuIHZvaWQgbWt0bWVfbWFwX3VubG9jayh2b2lkKTsNCj4gK2V4dGVybiBpbnQg
+bWt0bWVfbWFwX21hcHBlZF9rZXlpZHModm9pZCk7DQo+ICtleHRlcm4gdm9pZCBta3RtZV9tYXBf
+c2V0X2tleWlkKGludCBrZXlpZCwgdm9pZCAqa2V5KTsNCj4gK2V4dGVybiB2b2lkIG1rdG1lX21h
+cF9mcmVlX2tleWlkKGludCBrZXlpZCk7DQo+ICtleHRlcm4gaW50IG1rdG1lX21hcF9rZXlpZF9m
+cm9tX2tleSh2b2lkICprZXkpOw0KPiArZXh0ZXJuIHZvaWQgKm1rdG1lX21hcF9rZXlfZnJvbV9r
+ZXlpZChpbnQga2V5aWQpOw0KPiArZXh0ZXJuIGludCBta3RtZV9tYXBfZ2V0X2ZyZWVfa2V5aWQo
+dm9pZCk7DQoNCk5vIG5lZWQgZm9yIGV4dGVybiBrZXl3b3JkIGZvciBmdW5jdGlvbiBkZWNsYXJh
+dGlvbnMuIEl0IGlzDQpvbmx5IG5lZWRlZCBmb3IgdmFyaWFibGUgZGVjbGFyYXRpb25zLg0KDQo+
+ICsNCj4gIERFQ0xBUkVfU1RBVElDX0tFWV9GQUxTRShta3RtZV9lbmFibGVkX2tleSk7DQo+ICBz
+dGF0aWMgaW5saW5lIGJvb2wgbWt0bWVfZW5hYmxlZCh2b2lkKQ0KPiAgew0KPiBkaWZmIC0tZ2l0
+IGEvYXJjaC94ODYvbW0vbWt0bWUuYyBiL2FyY2gveDg2L21tL21rdG1lLmMNCj4gaW5kZXggYzgx
+NzI3NTQwZTdjLi4zNDIyNGQ0ZTNmNDUgMTAwNjQ0DQo+IC0tLSBhL2FyY2gveDg2L21tL21rdG1l
+LmMNCj4gKysrIGIvYXJjaC94ODYvbW0vbWt0bWUuYw0KPiBAQCAtNDAsNiArNDAsOTcgQEAgaW50
+IF9fdm1hX2tleWlkKHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKQ0KPiAgCXJldHVybiAocHJv
+dCAmIG1rdG1lX2tleWlkX21hc2spID4+IG1rdG1lX2tleWlkX3NoaWZ0Ow0KPiAgfQ0KPiAgDQo+
+ICsvKg0KPiArICogc3RydWN0IG1rdG1lX21hcCBhbmQgdGhlIG1rdG1lX21hcF8qIGZ1bmN0aW9u
+cyBtYW5hZ2UgdGhlIG1hcHBpbmcNCj4gKyAqIG9mIHVzZXJzcGFjZSBLZXlzIHRvIGhhcmR3YXJl
+IEtleUlEcy4gVGhlc2UgYXJlIHVzZWQgYnkgdGhlIE1LVE1FIEtleQ0KDQpXaGF0IGFyZSAidXNl
+cnNwYWNlIEtleXMiIGFueXdheSBhbmQgd2h5IEtleSBhbmQgbm90IGtleT8NCg0KPiArICogU2Vy
+dmljZSBBUEkgYW5kIHRoZSBlbmNyeXB0X21wcm90ZWN0KCkgc3lzdGVtIGNhbGwuDQo+ICsgKi8N
+Cj4gKw0KPiArc3RydWN0IG1rdG1lX21hcHBpbmcgew0KPiArCXN0cnVjdCBtdXRleAlsb2NrOwkJ
+LyogcHJvdGVjdCB0aGlzIG1hcCAmIEhXIHN0YXRlICovDQo+ICsJdW5zaWduZWQgaW50CW1hcHBl
+ZF9rZXlpZHM7DQo+ICsJdm9pZAkJKmtleVtdOw0KPiArfTsNCg0KUGVyc29uYWxseSwgSSBwcmVm
+ZXIgbm90IHRvIGFsaWduIHN0cnVjdCBmaWVsZHMgKEkgZG8gYWxpZ24gZW51bXMNCmJlY2F1c2Ug
+dGhlcmUgaXQgbWFrZXMgbW9yZSBzZW5zZSkgYXMgb2Z0ZW4geW91IGVuZCB1cCByZWFsaWduaW5n
+DQpldmVyeXRoaW5nLg0KDQpEb2N1bWVudGF0aW9uIHdvdWxkIGJyaW5nIG1vcmUgY2xhcml0eS4g
+Rm9yIGV4YW1wbGUsIHdoYXQgZG9lcyBrZXlbXQ0KY29udGFpbiwgd2h5IHRoZXJlIGlzIGEgbG9j
+ayBhbmQgd2hhdCBtYXBwZWRfa2V5aWRzIGZpZWxkIGNvbnRhaW5zPw0KDQovSmFya2tvDQo=
