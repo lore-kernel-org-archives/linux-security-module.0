@@ -2,48 +2,47 @@ Return-Path: <SRS0=+ZQZ=OP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14D1C04EBF
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 10:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E6BC04EBF
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 10:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76EE220989
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 10:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42884208E7
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 10:03:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WpsOaBir"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76EE220989
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V2UEIS5Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42884208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbeLFKB3 (ORCPT
+        id S1728245AbeLFKDn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Dec 2018 05:01:29 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50032 "EHLO
+        Thu, 6 Dec 2018 05:03:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:51198 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727763AbeLFKB3 (ORCPT
+        with ESMTP id S1727575AbeLFKDn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Dec 2018 05:01:29 -0500
+        Thu, 6 Dec 2018 05:03:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=afwQ0qh9MbNdNZ2OyRpkWK2h5apCJ6FvFvOC/iuZX2A=; b=WpsOaBirBGWPB2HmgU91YFISM
-        +S1TBRy/7Cn7VGJc+J4XtS5s/Xa1TyQVTiIfXWaWDS7PFcQPjgETC8SKznIJtsL3D3GRwAYq4mBxw
-        7UFPopAQFNfXgOROd+jwN/kyni1gewM6CUPX3+xpnQAUwMl1WJENctSlGblAkL8ZDnDpNvh49/GHW
-        O062VsxYKhZOcB7w8dJ8D4KNfxEPbOSHgqIKGQIxrR/Brz1gY5EWxtz0xH0bNMnMsxJFSUrFAzlYw
-        tRmtDZ4Tl+EJSmeb/eCAk8Mc9MCnQ9raIQFt5rLjclMXgqdHz3gODrnz+GK1/srb3Hhyqv9MHu1xL
-        wY07mfWkw==;
+         bh=HlaGWWi8LkZfqvCi2OdFYWS0HdAJJvaQ0rex+PNIDyo=; b=V2UEIS5YF021vFI58ictaGnxp
+        g5HPOaY9rAtn8EMcbq4NWDAomLwowHYsDcgR+Z7w2zySR87q7bKO4IRiCGiL7f69kXd6xDRq9UyUp
+        Mg/+chWT2r5dzN13N8WfVY6/5pgv+GqJJeYR2kegSYGUGYVJlV77iQumfCeQrn77Ry1AduIfFeFPs
+        s5+7CPj4d386BrDajQ8cquyLMdemoP+4uprDFqhPIwBatkyntaAk77JIw0MtabfCEWeI75ChVO3so
+        KhPKq2Ix1wsGZ205AAw1V/LohZYt5fdxaxZofnQhL5FT3jH+WJ2DK7QYhb9qA/N9L6LipNCVMUtQJ
+        ZrLaoruzg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gUqT4-00072a-2M; Thu, 06 Dec 2018 10:01:14 +0000
+        id 1gUqVO-0007bk-Pl; Thu, 06 Dec 2018 10:03:38 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 933EB200FBC3D; Thu,  6 Dec 2018 11:01:12 +0100 (CET)
-Date:   Thu, 6 Dec 2018 11:01:12 +0100
+        id 4D26C200FBC3D; Thu,  6 Dec 2018 11:03:37 +0100 (CET)
+Date:   Thu, 6 Dec 2018 11:03:37 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Nadav Amit <namit@vmware.com>
 Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
@@ -55,63 +54,26 @@ Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         linux_dti@icloud.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v7 14/14] module: Prevent module removal racing with
- text_poke()
-Message-ID: <20181206100112.GE13538@hirez.programming.kicks-ass.net>
+Subject: Re: [PATCH v7 00/14] x86/alternative: text_poke() enhancements
+Message-ID: <20181206100337.GF13538@hirez.programming.kicks-ass.net>
 References: <20181205013408.47725-1-namit@vmware.com>
- <20181205013408.47725-15-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181205013408.47725-15-namit@vmware.com>
+In-Reply-To: <20181205013408.47725-1-namit@vmware.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 04, 2018 at 05:34:08PM -0800, Nadav Amit wrote:
-> It seems dangerous to allow code modifications to take place
-> concurrently with module unloading. So take the text_mutex while the
-> memory of the module is freed.
+On Tue, Dec 04, 2018 at 05:33:54PM -0800, Nadav Amit wrote:
+> Which leads me to (b) - the patch-set is big "enough" IMHO. Indeed,
+> there are open security issues in the kernel when it comes to W^X.  But
+> some people would want to use Andy's temporary mm-struct for other uses.
+> So additional security hardening may be left for future patches.
 
-Fun detail, only x86 seems to actually take text_mutex while poking
-text.
+Yes, at the very least we should get the first 7 patches merged, since
+they work and clean up the text poking irrespective of all that W^X
+munging.
 
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> ---
->  kernel/module.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 57c5b23746e7..b45754961143 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -64,6 +64,7 @@
->  #include <linux/bsearch.h>
->  #include <linux/dynamic_debug.h>
->  #include <linux/audit.h>
-> +#include <linux/memory.h>
->  #include <uapi/linux/module.h>
->  #include "module-internal.h"
->  
-> @@ -2181,6 +2182,9 @@ static void free_module(struct module *mod)
->  	synchronize_sched();
->  	mutex_unlock(&module_mutex);
->  
-> +	/* Protect against patching of the module while it is being removed */
-> +	mutex_lock(&text_mutex);
-> +
->  	/* This may be empty, but that's OK */
->  	module_restore_mappings(&mod->init_layout);
->  	module_arch_freeing_init(mod);
-> @@ -2194,6 +2198,7 @@ static void free_module(struct module *mod)
->  	/* Finally, free the core (containing the module structure) */
->  	module_restore_mappings(&mod->core_layout);
->  	module_memfree(mod->core_layout.base);
-> +	mutex_unlock(&text_mutex);
->  }
->  
->  void *__symbol_get(const char *symbol)
-> -- 
-> 2.17.1
-> 
+(also, I think you lost my ACK)
