@@ -3,125 +3,164 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 364F2C65BAF
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 18:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A952C04EB8
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 19:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3E3821479
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 18:56:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="j6Xy78WX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3E3821479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 0960D20989
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 19:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544123459;
+	bh=7umUMcBtxO7CaTYFnaBTCHw67qHn4pGIqdlzip2mTXc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=dH0lFEaWpOxyICHTQiF+VgyKoxfsG3dxrUKCPMnU2F9tcXYKRUNQqnqaBIcnyFkB/
+	 7qJlQgwcupEAq+n4L1F7yMJfP0/xiQ7+dPzYO0xZSIBQakc4HeoCN6KrtihywvgVSP
+	 PYsO07TWkkeLb/WzZfNddh46PGEoVKZiPPIyXEgk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0960D20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbeLFS4U (ORCPT
+        id S1725928AbeLFTK6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:56:20 -0500
-Received: from mail-eopbgr800071.outbound.protection.outlook.com ([40.107.80.71]:53152
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725908AbeLFS4U (ORCPT
+        Thu, 6 Dec 2018 14:10:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725927AbeLFTK6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:56:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lrw7TZRi2J4aeGLogDH8fBlRcTU8fsNZuZ8fgl5rR4U=;
- b=j6Xy78WXSjIBnp+HynMyNpEMz9Mc2qyPihJQW64gmC07uPxXGIvAnSvrRWXqRFT0yJg8CmI2Kb6TPst6wLCuVzVYxXJvjpLic3kkTxOZA598EYK/3m3m+uKTZ4peDnVZP/o8VU+wcDbqX/foVWZR8udZZG4oTaOjDj2R1I9K2c4=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4325.namprd05.prod.outlook.com (52.135.202.25) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.13; Thu, 6 Dec 2018 18:56:14 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::9155:fea7:9c0c:68c7]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::9155:fea7:9c0c:68c7%3]) with mapi id 15.20.1425.006; Thu, 6 Dec 2018
- 18:56:14 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Andy Lutomirski <luto@kernel.org>
-CC:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "linux_dti@icloud.com" <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH v7 13/14] module: Do not set nx for module memory before
- freeing
-Thread-Topic: [PATCH v7 13/14] module: Do not set nx for module memory before
- freeing
-Thread-Index: AQHUjHgCm5HQo9wG+kmVhMEM5+sZ86VyEK8AgAABGIA=
-Date:   Thu, 6 Dec 2018 18:56:14 +0000
-Message-ID: <7B410C6F-A811-41DB-ADCE-4E4BF07CA96A@vmware.com>
-References: <20181205013408.47725-1-namit@vmware.com>
- <20181205013408.47725-14-namit@vmware.com>
- <CALCETrWZf5sNmXU=yP1ZHxiBi=Z9d3G5FnWH08PasniG1hs26g@mail.gmail.com>
-In-Reply-To: <CALCETrWZf5sNmXU=yP1ZHxiBi=Z9d3G5FnWH08PasniG1hs26g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4325;20:3rjaTuoqu+A0QLzAAkouoF0mdJCUV8KWB3ij0nEDpFvpaEg48q5xz7sQLyQtymG048MZkpCIAYLIkKLPZ30QkFr1MFJV5k9V5FVmymF8OuMeHG8sgZZ1QzzhhVdS9mkiKUDbpinOG1O4bNzCOmuT8c5pxD1ncH2GJcUHGVENjog=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a5cc12e5-8ece-4295-20a0-08d65bac7f61
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4325;
-x-ms-traffictypediagnostic: BYAPR05MB4325:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-microsoft-antispam-prvs: <BYAPR05MB4325C95EA6FFED139BECE0A8D0A90@BYAPR05MB4325.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4325;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4325;
-x-forefront-prvs: 087894CD3C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(366004)(346002)(39860400002)(199004)(189003)(82746002)(7416002)(186003)(76176011)(102836004)(71200400001)(8936002)(81166006)(81156014)(8676002)(66066001)(33656002)(316002)(6486002)(5660300001)(71190400001)(53546011)(86362001)(26005)(68736007)(99286004)(14454004)(11346002)(256004)(3846002)(478600001)(229853002)(6116002)(6506007)(446003)(83716004)(4326008)(6916009)(2616005)(476003)(7736002)(36756003)(2906002)(486006)(305945005)(39060400002)(25786009)(53936002)(54906003)(6246003)(106356001)(6512007)(6436002)(97736004)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4325;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: lrpYzDVK+DX1krpJW4FvOiRlt2M+zufONeh86s6B4vdzxPiiMJubCAs7YJfkD62+58clr8QiI6jCijEAq4zYbjp0rIfT/VTLtutInK0UqSx/OksSS+w/ZVv+DfL3MclWfu0TZJphgikVc5ZFufOKx8wFZpgbaDWPzyA3rL3nCM07UlD2aHRXEWii89ALZKyPSGvDZSezVtDdbtExq015pNCfmXF4gbaIKIJFETK11/aq9Cp4mKk+AHxjNDfxc6NnuhDKGe5NboZIh0Odt7Fkh2LZKYQ0XE2wLIZhWNeUldgZ3BgUpuG2gV3+SehPYOyJu150VaeayQeYuN+DYPpAnhLHoh5A6U5NEKtW9xJp7To=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0183567F9F5D6A44A513C76E780FED2A@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 6 Dec 2018 14:10:58 -0500
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A40B21708
+        for <linux-security-module@vger.kernel.org>; Thu,  6 Dec 2018 19:10:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544123457;
+        bh=7umUMcBtxO7CaTYFnaBTCHw67qHn4pGIqdlzip2mTXc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NqkJ5rmNiXxOJzwE9edNqawPswscufwFUyNvKi+xMu/V9VoYyTOPqVfbw/roSk+ds
+         n1vMGHCAYRC+Xa5kMKN5HkWjNN0e3vzBjtCPSDV4SJEV0Hf9YILvk1mqZmmNYcTSPt
+         LzBzgzZo7114RxILGGr2c9nV/2Va3pVsWGH5B/WU=
+Received: by mail-wr1-f48.google.com with SMTP id l9so1532599wrt.13
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Dec 2018 11:10:57 -0800 (PST)
+X-Gm-Message-State: AA+aEWaX7b0IGvKSM4NSbVxX0TUOIheqC68yRiibJuhWs9qQG2XkQjdP
+        n+d10TCJ2vPtWFVLVZ4wk43BUP/x+089rKt/tTkeSw==
+X-Google-Smtp-Source: AFSGD/UFDo2bc4aamynFPZljlxXSXEGPkbN2/3cZwLkSH7gvO5+38UhRl8/3v9kQiq4Llq10D6htbCz1DF3dVl3+Npg=
+X-Received: by 2002:a5d:5502:: with SMTP id b2mr27272736wrv.330.1544123455517;
+ Thu, 06 Dec 2018 11:10:55 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5cc12e5-8ece-4295-20a0-08d65bac7f61
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 18:56:14.7359
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4325
+References: <cover.1543903910.git.alison.schofield@intel.com>
+ <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
+ <c610138f-32dd-a24c-dc52-4e0006a21409@intel.com> <CALCETrU34U3berTaEQbvNt0rfCdsjwj+xDb8x7bgAMFHEo=eUw@mail.gmail.com>
+ <5e97e1bf-536c-ef73-576e-54145eee1ae9@intel.com>
+In-Reply-To: <5e97e1bf-536c-ef73-576e-54145eee1ae9@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 6 Dec 2018 11:10:43 -0800
+X-Gmail-Original-Message-ID: <CALCETrVPhay-ziRVjL9dDCwJQHhr4HfG5aGJzYh06k6HEMZTiQ@mail.gmail.com>
+Message-ID: <CALCETrVPhay-ziRVjL9dDCwJQHhr4HfG5aGJzYh06k6HEMZTiQ@mail.gmail.com>
+Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        James Morris <jmorris@namei.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        kai.huang@intel.com, Jun Nakajima <jun.nakajima@intel.com>,
+        "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBPbiBEZWMgNiwgMjAxOCwgYXQgMTA6NTIgQU0sIEFuZHkgTHV0b21pcnNraSA8bHV0b0BrZXJu
-ZWwub3JnPiB3cm90ZToNCj4gDQo+IE9uIFdlZCwgRGVjIDUsIDIwMTggYXQgMTI6NTIgQU0gTmFk
-YXYgQW1pdCA8bmFtaXRAdm13YXJlLmNvbT4gd3JvdGU6DQo+PiBXaGVuIG1vZHVsZSBtZW1vcnkg
-aXMgYWJvdXQgdG8gYmUgZnJlZWQsIHRoZXJlIGlzIG5vIGFwcGFyZW50IHJlYXNvbiB0bw0KPj4g
-bWFrZSBpdCAoYW5kIGl0cyBkYXRhKSBleGVjdXRhYmxlLCBidXQgdGhhdCdzIGV4YWN0bHkgd2hh
-dCBpcyBkb25lDQo+PiB0b2RheS4gVGhpcyBpcyBub3QgZWZmaWNpZW50IGFuZCBub3Qgc2VjdXJl
-Lg0KPj4gDQo+PiBUaGVyZSBhcmUgdmFyaW91cyB0aGVvcmllcyB3aHkgaXQgd2FzIGRvbmUsIGJ1
-dCBub25lIG9mIHRoZW0gc2VlbSBhcw0KPj4gc29tZXRoaW5nIHRoYXQgcmVhbGx5IHJlcXVpcmUg
-aXQgdG9kYXkuIG5pb3MyIHVzZXMga21hbGxvYyBmb3IgbW9kdWxlDQo+PiBtZW1vcnksIGJ1dCBh
-bnlob3cgaXQgZG9lcyBub3QgY2hhbmdlIHRoZSBQVEVzIG9mIHRoZSBtb2R1bGUgbWVtb3J5LiAg
-SW4NCj4+IHg4NiwgY2hhbmdpbmcgdm1hbGxvYydkIG1lbW9yeSBtYXBwaW5ncyBhbHNvIG1vZGlm
-aWVzIHRoZSBkaXJlY3QgbWFwcGluZw0KPj4gYWxpYXMsIGJ1dCB0aGUgTlgtYml0IGlzIG5vdCBt
-b2RpZmllZCBpbiBzdWNoIHdheS4NCj4+IA0KPj4gU28gbGV0J3MgcmVtb3ZlIGl0LiBBbmR5IHN1
-Z2dlc3RlZCB0aGF0IHRoZSBjaGFuZ2VzIG9mIHRoZSBQVEVzIGNhbiBiZQ0KPj4gYXZvaWRlZCAo
-ZXhjbHVkaW5nIHRoZSBkaXJlY3QtbWFwcGluZyBhbGlhcyksIHdoaWNoIGlzIHRydWUuIEhvd2V2
-ZXIsDQo+PiBpbiB4ODYgaXQgcmVxdWlyZXMgc29tZSBjbGVhbnVwIG9mIHRoZSBjb250aWd1b3Vz
-IHBhZ2UgYWxsb2NhdG9yLCB3aGljaA0KPj4gaXMgb3V0c2lkZSBvZiB0aGUgc2NvcGUgb2YgdGhp
-cyBwYXRjaC1zZXQuDQo+IA0KPiANCj4gSSdtIG9rYXkgd2l0aCB0aGlzLCBidXQgSSdkIGxpa2Ug
-dG8gc2VlIFJpY2sncyBzdHVmZiBnZXQgcmViYXNlZCBvbg0KPiB0b3Agb2YgaXQgYW5kIGNsZWFu
-IGl0IHVwIGZvciByZWFsLg0KDQpTb3JyeSBmb3IgbXkgbGF6aW5lc3MuIEl0IGp1c3Qgc2VlbXMg
-dGhhdCBldmVyeSBzbWFsbCB0aGluZyBJIHRvdWNoIGluDQpyZWdhcmQgdG8gV15YIG9yIHRleHRf
-cG9rZSgpIGlzIGJyb2tlbiwgYW5kIEkgbmVlZCB0byBmaW5pc2ggc29tZSBvdGhlcg0K4oCcY2hv
-cmVz4oCdIGZpcnN0Lg0KDQo=
+> On Dec 6, 2018, at 7:39 AM, Dave Hansen <dave.hansen@intel.com> wrote:
+
+>>>> the direct map as well, probably using the pageattr.c code.
+>>>
+>>> The current, public hardware spec has a description of what's required
+>>> to maintain cache coherency.  Basically, you can keep as many mappings
+>>> of a physical page as you want, but only write to one mapping at a time=
+,
+>>> and clflush the old one when you want to write to a new one.
+>>
+>> Surely you at least have to clflush the old mapping and then the new
+>> mapping, since the new mapping could have been speculatively read.
+>
+> Nope.  The coherency is "fine" unless you have writeback of an older
+> cacheline that blows away newer data.  CPUs that support MKTME are
+> guaranteed to never do writeback of the lines that could be established
+> speculatively or from prefetching.
+
+How is that sufficient?  Suppose I have some physical page mapped with
+keys 1 and 2. #1 is logically live and I write to it.  Then I prefetch
+or otherwise populate mapping 2 into the cache (in the S state,
+presumably).  Now I clflush mapping 1 and read 2.  It contains garbage
+in the cache, but the garbage in the cache is inconsistent with the
+garbage in memory.  This can=E2=80=99t be a good thing, even if no writebac=
+k
+occurs.
+
+I suppose the right fix is to clflush the old mapping and then to zero
+the new mapping.
+
+>
+>>>> Finally, If you're going to teach the kernel how to have some user
+>>>> pages that aren't in the direct map, you've essentially done XPO,
+>>>> which is nifty but expensive.  And I think that doing this gets you
+>>>> essentially all the benefit of MKTME for the non-pmem use case.  Why
+>>>> exactly would any software want to use anything other than a
+>>>> CPU-managed key for anything other than pmem?
+>>>
+>>> It is handy, for one, to let you "cluster" key usage.  If you have 5
+>>> Pepsi VMs and 5 Coke VMs, each Pepsi one using the same key and each
+>>> Coke one using the same key, you can boil it down to only 2 hardware
+>>> keyid slots that get used, and do this transparently.
+>>
+>> I understand this from a marketing perspective but not a security
+>> perspective.  Say I'm Coke and you've sold me some VMs that are
+>> "encrypted with a Coke-specific key and no other VMs get to use that
+>> key."  I can't think of *any* not-exceedingly-contrived attack in
+>> which this makes the slightest difference.  If Pepsi tries to attack
+>> Coke without MKTME, then they'll either need to get the hypervisor to
+>> leak Coke's data through the direct map or they'll have to find some
+>> way to corrupt a page table or use something like L1TF to read from a
+>> physical address Coke owns.  With MKTME, if they can read through the
+>> host direct map, then they'll get Coke's cleartext, and if they can
+>> corrupt a page table or use L1TF to read from your memory, they'll get
+>> Coke's cleartext.
+>
+> The design definitely has the hypervisor in the trust boundary.  If the
+> hypervisor is evil, or if someone evil compromises the hypervisor, MKTME
+> obviously provides less protection.
+>
+> I guess the question ends up being if this makes its protections weak
+> enough that we should not bother merging it in its current form.
+
+Indeed, but I=E2=80=99d ask another question too: I expect that MKTME is we=
+ak
+enough that it will be improved, and without seeing the improvement,
+it seems quite plausible that using the improvement will require
+radically reworking the kernel implementation.
+
+As a straw man, suppose we get a way to say =E2=80=9Cthis key may only be
+accessed through such-and-such VPID or by using a special new
+restricted facility for the hypervisor to request access=E2=80=9D.    Now w=
+e
+have some degree of serious protection, but it doesn=E2=80=99t work, by
+design, for anonymous memory.  Similarly, something that looks more
+like AMD's SEV would be very very awkward to support with anything
+like the current API proposal.
+
+>
+> I still have the homework assignment to go figure out why folks want the
+> protections as they stand.
