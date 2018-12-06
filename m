@@ -2,131 +2,114 @@ Return-Path: <SRS0=+ZQZ=OP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8B8C65BAF
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 16:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 835A9C65BAF
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 17:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F72E20659
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 16:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544113743;
-	bh=bGd4KhxCSa8pGVe5YJ9fBJ6q8AOdrQl3RWYTF7S5kIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yKP2oh7eGHKWDHG1LWQQvs6sEzA4LfzQhPQix42PkmdPJHf6KSXt6C0at4HTTLFae
-	 wBqTJr6hlxEACQ7No4Hgp9HWVBO8dZOi2aGkWjx72gXTVwEGC9Fu2cbXqgszHiV0nV
-	 Ee6Uyp3scXmkS4v5PUMvdatbLNefFppAz9nz0MOA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F72E20659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4589520850
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 17:28:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="oWZXu7kw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4589520850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725929AbeLFQ3C (ORCPT
+        id S1726005AbeLFR2q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Dec 2018 11:29:02 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37322 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbeLFQ3C (ORCPT
+        Thu, 6 Dec 2018 12:28:46 -0500
+Received: from mail-eopbgr720045.outbound.protection.outlook.com ([40.107.72.45]:61725
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725944AbeLFR2p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Dec 2018 11:29:02 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g67so1692743wmd.2;
-        Thu, 06 Dec 2018 08:29:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Xec3AbRr1ewYH1eTRNN7gm8e8fciqeRvXelwkD9Wghk=;
-        b=JJRgsAn4nIzv2GrnZSfxKeOfOg4wFt/aonskIS7bCRbaG4ODIpCdkjSVMSdLmSYCH1
-         viBWw+Uq52N6CtKXPw6+zBQTL64EIOCIOgYpIxCyBiqcyq9qFtBKSRJOzPiv2vLAPjen
-         IkWOhXeWUyGrBZ988n84ye+GcIpkTsbcEyoqLlMEj7rctcvDCzToubqSB2yp7q2HK4m7
-         9QXTTE8zRa1X3axlxK5cyMiPEj3PN3KoryA27EzY5u3yW43dbGwMkh8kSrDt/0jKgTAf
-         UQaZcWOt+BAdJk0U/2LGUIF7plP+tDRXa4amiiR2ck3jUuuj4VYpmiAcdW9O3Zlb3MkM
-         pnwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=Xec3AbRr1ewYH1eTRNN7gm8e8fciqeRvXelwkD9Wghk=;
-        b=GhZchcywbjr6lWXzS2HqHcwCgdjmuBn7hvOitigfo6cIzSk93lB4OPpTeFofBSKZW7
-         BWykT7UlFKj8cVNAbtLrciToIb30wRDN1ap/muqMAWDMAqiKcNqSX4LuRDRSUnm71PLs
-         eJ1vrPrNhlpB7ovn/dA/tg3hzd9dW2JdKeQyZIkRj3oLRK/RsupdcUlx0QYR40ZpSg6Y
-         q4camhEm2WmjNIlb9BhoLv5eg6yDch87Lzpu9tfwuPaumo8DlNZlY0u8JTOZLKM7iFBC
-         YVNUlhs7YLKCbCDf6WmAS+6oCFFw4GUsSk8LNhYq1oDECcHJS5OlKZ1XdVVjI4IsDqB0
-         yRfA==
-X-Gm-Message-State: AA+aEWZbG0PAqSCxRZB61oprxRtdVLf6SQXvMdHZzRlwenGT0otXg+L0
-        lsRBjbzSNyupKJL8UneeCbw=
-X-Google-Smtp-Source: AFSGD/UfNOSLjk5ZpLeUWpO0IgdYLw3Tivbmh8k3XJ4kNhvc6RFFR5MLAxzK2J0kQ93zvG7utfApwg==
-X-Received: by 2002:a1c:4108:: with SMTP id o8mr19618478wma.91.1544113740403;
-        Thu, 06 Dec 2018 08:29:00 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 14sm1966746wmv.36.2018.12.06.08.28.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 06 Dec 2018 08:28:59 -0800 (PST)
-Date:   Thu, 6 Dec 2018 17:28:57 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        Thu, 6 Dec 2018 12:28:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7XBQ+4SnQRlhRS5/OWwachcQtQlrzm2YxRqyT/qEnNc=;
+ b=oWZXu7kw/0tIuVo3HeIbFvDueaL8mWNVArG2mNGgwPdEIUxmi3moxud8PnV7zHK6DHatFTLN+z1c9lGDhmBGVYRGYam/6f4Ra7OozKQbyfvvfyR9sCT0f9vZgE+seC5gmlGybzRM8zWiezCcSeGJCfCYMYIdKu6NHFAxdY5S8nA=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4597.namprd05.prod.outlook.com (52.135.233.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.8; Thu, 6 Dec 2018 17:28:40 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::9155:fea7:9c0c:68c7]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::9155:fea7:9c0c:68c7%3]) with mapi id 15.20.1425.006; Thu, 6 Dec 2018
+ 17:28:40 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Ingo Molnar <mingo@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
         Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v7 08/14] x86/ftrace: Use text_poke_*() infrastructure
-Message-ID: <20181206162857.GA119243@gmail.com>
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v7 13/14] module: Do not set nx for module memory before
+ freeing
+Thread-Topic: [PATCH v7 13/14] module: Do not set nx for module memory before
+ freeing
+Thread-Index: AQHUjHgCm5HQo9wG+kmVhMEM5+sZ86VxezGAgAB+H4A=
+Date:   Thu, 6 Dec 2018 17:28:40 +0000
+Message-ID: <8CEBF480-E245-4F7E-A683-D95057CAFFF7@vmware.com>
 References: <20181205013408.47725-1-namit@vmware.com>
- <20181205013408.47725-9-namit@vmware.com>
- <25B84F01-DB4C-4957-9703-769CCC9794BB@vmware.com>
+ <20181205013408.47725-14-namit@vmware.com>
+ <20181206095715.GD13538@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181206095715.GD13538@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4597;20:yecqnb4W5fsycEQkTVk+zFSs/Mz16weOmByJElkxo1yJ3f/H5iLLGavjdw7D5ZLzfBzv+99mq5ONpMmH9Yfscv1lRAKGb8mlHJVnG3zBtyjH7eiMzMGifN2ZQqdrBlxZgJxeLOUjFXfXuliATv70Vc2X3WSyC5GSZqC5srUOrBQ=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 246abe56-4e2e-44e4-c8fc-08d65ba043aa
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4597;
+x-ms-traffictypediagnostic: BYAPR05MB4597:
+x-microsoft-antispam-prvs: <BYAPR05MB45978F55E260FD0E010BF705D0A90@BYAPR05MB4597.namprd05.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231455)(999002)(944501520)(52105112)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4597;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4597;
+x-forefront-prvs: 087894CD3C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(376002)(39860400002)(136003)(189003)(199004)(8676002)(6116002)(8936002)(54906003)(99286004)(36756003)(33656002)(2906002)(81166006)(81156014)(316002)(106356001)(76176011)(478600001)(53546011)(4326008)(6506007)(5660300001)(102836004)(2616005)(446003)(6916009)(6512007)(7416002)(26005)(256004)(6486002)(476003)(105586002)(6436002)(11346002)(14454004)(186003)(66066001)(83716004)(486006)(39060400002)(53936002)(86362001)(25786009)(6246003)(7736002)(229853002)(305945005)(71190400001)(71200400001)(97736004)(68736007)(3846002)(82746002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4597;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: hAy4Utu9SEL8gTre/Ah0eHCUXIq0HDthVFPrAbpj3gFBbgpbMfzj2fM07fw6lieR+AovhesR+mjPm+DGMeRG+YuyECf73KlNcR63E0ij2KRIJEE0cacYRiqCxy2eoCqBgq9YLj7rcUiGckw7ZFwU2D4/YIsYsp5lvxBuHlcfHGLxMP6/fhGD06DzyPT85VlYhx7HPqciu4nBHI9JES6xa22gyScu7EwUAWJZ0LtE1We6n1l22X+RjlXtzJ2Nnvsgnc4T6PywIUzjiM+7HDhJj/Gc9JQRD+iVP2DAQ9gNlKLmulU9pYplXRe+gqp0wBmZFDjfVE+LBDth0Q36kNVOUOc5wlxLrAbkFUFtSFTQ6zQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <16618B2CAF578949881C829868F3E8D3@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <25B84F01-DB4C-4957-9703-769CCC9794BB@vmware.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 246abe56-4e2e-44e4-c8fc-08d65ba043aa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2018 17:28:40.5633
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4597
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-* Nadav Amit <namit@vmware.com> wrote:
-
-> > On Dec 4, 2018, at 5:34 PM, Nadav Amit <namit@vmware.com> wrote:
-> > 
-> > A following patch is going to make module allocated memory
-> > non-executable. This requires to modify ftrace and make the memory
-> > executable again after it is configured.
-> > 
-> > In addition, this patch makes ftrace use the general text poking
-> > infrastructure instead ftrace's homegrown text patching. This provides
-> > the advantages of having slightly "safer" code patching and avoiding
-> > races with module removal or other mechanisms that patch the kernel
-> > code.
-> > 
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Signed-off-by: Nadav Amit <namit@vmware.com>
-> > ---
-> > arch/x86/kernel/ftrace.c | 74 +++++++++++++---------------------------
-> > 1 file changed, 23 insertions(+), 51 deletions(-)
-> 
-> Steven Rostedt pointed that using text_poke() instead of
-> probe_kernel_write() would introduce considerable overheads. Running:
-> 
->   # time { echo function > current_tracer; } 
-> 
-> takes 0.24s without this patch and 0.7s with. I don’t know whether to
-> consider it “so bad”. Obviously we can introduce a batching mechanism and/or
-> do some micro-optimization (the latter will not buy us much though).
-
-This should definitely not regress, so can we try the batching approach?
-
-Thanks,
-
-	Ingo
+PiBPbiBEZWMgNiwgMjAxOCwgYXQgMTo1NyBBTSwgUGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZy
+YWRlYWQub3JnPiB3cm90ZToNCj4gDQo+IE9uIFR1ZSwgRGVjIDA0LCAyMDE4IGF0IDA1OjM0OjA3
+UE0gLTA4MDAsIE5hZGF2IEFtaXQgd3JvdGU6DQo+IA0KPj4gU28gbGV0J3MgcmVtb3ZlIGl0LiBB
+bmR5IHN1Z2dlc3RlZCB0aGF0IHRoZSBjaGFuZ2VzIG9mIHRoZSBQVEVzIGNhbiBiZQ0KPj4gYXZv
+aWRlZCAoZXhjbHVkaW5nIHRoZSBkaXJlY3QtbWFwcGluZyBhbGlhcyksIHdoaWNoIGlzIHRydWUu
+IEhvd2V2ZXIsDQo+PiBpbiB4ODYgaXQgcmVxdWlyZXMgc29tZSBjbGVhbnVwIG9mIHRoZSBjb250
+aWd1b3VzIHBhZ2UgYWxsb2NhdG9yLCB3aGljaA0KPj4gaXMgb3V0c2lkZSBvZiB0aGUgc2NvcGUg
+b2YgdGhpcyBwYXRjaC1zZXQuDQo+IA0KPiBJIHRoaW5rIHg4Ni1jcGEgc3RhbmRzIGZvciBjaGFu
+Z2VfcGFnZV9hdHRyKCkgOi0pDQoNClRoYW5rcyAtIGl0IG1ha2VzIG11Y2ggbW9yZSBzZW5zZeKA
+piBJIHRvb2sgdGhlIGZpcnN0IHRoaW5nIHRoYXQgR29vZ2xlDQpzaG93ZWQuDQoNCg==
