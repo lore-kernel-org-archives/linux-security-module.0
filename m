@@ -2,180 +2,91 @@ Return-Path: <SRS0=+ZQZ=OP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF814C04EB8
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 18:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8531AC04EB8
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 18:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A086D20892
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 18:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544120808;
-	bh=p4Z8Z7b5X2ovRh4clK0IoLz45oV6YqmfXPdNaDaia0c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=YXgFZ3RFAobEihj4xnxyG3pd44UPElclG+rUFeO8MeBWcZXfD4yT1OcsaFGlGN37D
-	 SL9FuEscapD6ChtIf1fIpgK53Wc63xouCCMDo9ffpoCNqyDETx0dy9vN84YmoKpkWk
-	 tnTOk8QNjCX0lynUfJ/jmf5mEoObZZG2ftem+uaI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A086D20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 33CA020878
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 Dec 2018 18:38:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33CA020878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbeLFS0s (ORCPT
+        id S1725950AbeLFSij (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Dec 2018 13:26:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbeLFS0s (ORCPT
+        Thu, 6 Dec 2018 13:38:39 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32804 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725916AbeLFSij (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Dec 2018 13:26:48 -0500
-Received: from gmail.com (unknown [104.132.1.85])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D61020892;
-        Thu,  6 Dec 2018 18:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544120806;
-        bh=p4Z8Z7b5X2ovRh4clK0IoLz45oV6YqmfXPdNaDaia0c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ATxWtf2YodOhuHUnrQ7PJ5rlfcx2EcDvPo3v3G9VPZZafvr6o2AxPKeM63lOsLVjB
-         mjb0Qwf8mroMXCZ4gqvcACcTsKlteSHDj8kLdVSPLFC0iSrAsQzjKn6dgZQ7qhUmQg
-         73e/CPz+bVzd8VYPhsjh5rP9S7GpXR1/Lu9HxT4E=
-Date:   Thu, 6 Dec 2018 10:26:44 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v2] KEYS: always initialize keyring_index_key::desc_len
-Message-ID: <20181206182644.GB90507@gmail.com>
-References: <000000000000a722550577796543@google.com>
- <20181103015854.7380-1-ebiggers@kernel.org>
- <20181128231940.GB131170@gmail.com>
+        Thu, 6 Dec 2018 13:38:39 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 9A066FCF10B52;
+        Thu,  6 Dec 2018 18:38:35 +0000 (GMT)
+Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 6 Dec
+ 2018 18:38:30 +0000
+Subject: Re: [PATCH v6 7/7] tpm: pass an array of tpm_bank_list structures to
+ tpm_pcr_extend()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181204082138.24600-1-roberto.sassu@huawei.com>
+ <20181204082138.24600-8-roberto.sassu@huawei.com>
+ <20181205001417.GF1233@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <9d6e47d9-3b88-86f6-1b60-6652dfe8dc00@huawei.com>
+Date:   Thu, 6 Dec 2018 19:38:30 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181128231940.GB131170@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181205001417.GF1233@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.144]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 28, 2018 at 03:19:41PM -0800, Eric Biggers wrote:
-> On Fri, Nov 02, 2018 at 06:58:54PM -0700, Eric Biggers wrote:
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
-> > called from construct_alloc_key() during sys_request_key(), because the
-> > length of the key description was never calculated.
-> > 
-> > The problem is that we rely on ->desc_len being initialized by
-> > search_process_keyrings(), specifically by search_nested_keyrings().
-> > But, if the process isn't subscribed to any keyrings that never happens.
-> > 
-> > Fix it by always initializing keyring_index_key::desc_len as soon as the
-> > description is set, like we already do in some places.
-> > 
-> > The following program reproduces the BUG_ON() when it's run as root and
-> > no session keyring has been installed.  If it doesn't work, try removing
-> > pam_keyinit.so from /etc/pam.d/login and rebooting.
-> > 
-> >     #include <stdlib.h>
-> >     #include <unistd.h>
-> >     #include <keyutils.h>
-> > 
-> >     int main(void)
-> >     {
-> >             int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
-> > 
-> >             keyctl_setperm(id, KEY_OTH_WRITE);
-> >             setreuid(5000, 5000);
-> >             request_key("user", "desc", "", id);
-> >     }
-> > 
-> > Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
-> > Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-> > Cc: <stable@vger.kernel.org> # v3.13+
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
-> > ---
-> > 
-> > v2: In proc_keys_show(), assign index_key directly
-> > 
-> >  security/keys/keyring.c          | 4 +---
-> >  security/keys/proc.c             | 3 +--
-> >  security/keys/request_key.c      | 1 +
-> >  security/keys/request_key_auth.c | 2 +-
-> >  4 files changed, 4 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-> > index 41bcf57e96f21..99a55145ddcd2 100644
-> > --- a/security/keys/keyring.c
-> > +++ b/security/keys/keyring.c
-> > @@ -661,9 +661,6 @@ static bool search_nested_keyrings(struct key *keyring,
-> >  	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
-> >  	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
-> >  
-> > -	if (ctx->index_key.description)
-> > -		ctx->index_key.desc_len = strlen(ctx->index_key.description);
-> > -
-> >  	/* Check to see if this top-level keyring is what we are looking for
-> >  	 * and whether it is valid or not.
-> >  	 */
-> > @@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyring,
-> >  	struct keyring_search_context ctx = {
-> >  		.index_key.type		= type,
-> >  		.index_key.description	= description,
-> > +		.index_key.desc_len	= strlen(description),
-> >  		.cred			= current_cred(),
-> >  		.match_data.cmp		= key_default_cmp,
-> >  		.match_data.raw_data	= description,
-> > diff --git a/security/keys/proc.c b/security/keys/proc.c
-> > index 5af2934965d80..d38be9db2cc07 100644
-> > --- a/security/keys/proc.c
-> > +++ b/security/keys/proc.c
-> > @@ -166,8 +166,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
-> >  	int rc;
-> >  
-> >  	struct keyring_search_context ctx = {
-> > -		.index_key.type		= key->type,
-> > -		.index_key.description	= key->description,
-> > +		.index_key		= key->index_key,
-> >  		.cred			= m->file->f_cred,
-> >  		.match_data.cmp		= lookup_user_key_possessed,
-> >  		.match_data.raw_data	= key,
-> > diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-> > index 114f7408feee6..7385536986497 100644
-> > --- a/security/keys/request_key.c
-> > +++ b/security/keys/request_key.c
-> > @@ -545,6 +545,7 @@ struct key *request_key_and_link(struct key_type *type,
-> >  	struct keyring_search_context ctx = {
-> >  		.index_key.type		= type,
-> >  		.index_key.description	= description,
-> > +		.index_key.desc_len	= strlen(description),
-> >  		.cred			= current_cred(),
-> >  		.match_data.cmp		= key_default_cmp,
-> >  		.match_data.raw_data	= description,
-> > diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-> > index 424e1d90412ea..6797843154f03 100644
-> > --- a/security/keys/request_key_auth.c
-> > +++ b/security/keys/request_key_auth.c
-> > @@ -246,7 +246,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
-> >  	struct key *authkey;
-> >  	key_ref_t authkey_ref;
-> >  
-> > -	sprintf(description, "%x", target_id);
-> > +	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
-> >  
-> >  	authkey_ref = search_process_keyrings(&ctx);
-> >  
-> > -- 
-> > 2.19.1
-> > 
+On 12/5/2018 1:14 AM, Jarkko Sakkinen wrote:
+> On Tue, Dec 04, 2018 at 09:21:38AM +0100, Roberto Sassu wrote:
+>> The new tpm_bank_list structure has been preferred to the tpm_digest
+>> structure, to let the caller specify the size of the digest (which may be
+>> unknown to the TPM driver).
 > 
-> Ping.  David, are you planning to apply this?
+> Why is that? Didn't previous commit query these?
+
+Since the TPM driver pads/truncates the first digest passed by the
+caller to extend PCRs for which no digest was provided, it must know
+which amount of data it can use. It is possible that the algorithm of
+the first digest is unknown for the TPM driver, if the caller of
+tpm_pcr_extend() didn't check chip->allocated_banks.
+
+By requiring that the caller passes also the digest size, this problem
+does not arise. It seems reasonable to me to pass this information, as
+the caller calculated the digest and it should know the digest size.
+
+Roberto
+
+
+>> +struct tpm_bank_list {
+>> +	u16 alg_id;
+>> +	u16 extend_size;
+>> +	const u8 *extend_array;
+>> +};
 > 
-> - Eric
+> Naming is not good here. If this only for extending shouldn't that
+> be in the structs name?
+> 
+> /Jarkko
 > 
 
-Ping.
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
