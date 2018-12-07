@@ -2,97 +2,116 @@ Return-Path: <SRS0=YlXY=OQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A26BC07E85
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 23:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 539EFC07E85
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 23:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 445F320838
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 23:45:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445F320838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1761F2083D
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 23:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544226552;
+	bh=+F8d5KIATjvVOBmPmVYoR3a66b5Jf7WRJd+1EIdknrc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=oVTyb+rTP9qA1M0JSySaIgm3mHZxh5G7udWN5H8ZXggXlpaSensNwBbiF4lWgjcku
+	 CS1g6sUvSlmAxdcYTqntdSEjAnG4y2ibseRvm8tK+g7Lk10U8PDhdlkzU4+EbcTI1k
+	 ZTPi37A4S5TAffErvFIFlWM4f6VOwy0HTQR1yZMY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1761F2083D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbeLGXpU (ORCPT
+        id S1725791AbeLGXtL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Dec 2018 18:45:20 -0500
-Received: from mga09.intel.com ([134.134.136.24]:10790 "EHLO mga09.intel.com"
+        Fri, 7 Dec 2018 18:49:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbeLGXpU (ORCPT
+        id S1726047AbeLGXtL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Dec 2018 18:45:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 15:45:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,327,1539673200"; 
-   d="scan'208";a="105811823"
-Received: from irsmsx105.ger.corp.intel.com ([163.33.3.28])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Dec 2018 15:45:16 -0800
-Received: from irsmsx101.ger.corp.intel.com ([169.254.1.237]) by
- irsmsx105.ger.corp.intel.com ([169.254.7.247]) with mapi id 14.03.0415.000;
- Fri, 7 Dec 2018 23:45:15 +0000
-From:   "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
-To:     "kirill@shutemov.name" <kirill@shutemov.name>
-CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Schofield, Alison" <alison.schofield@intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>
-Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-Thread-Topic: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-Thread-Index: AQHUi6Q6VkrSspfrlUix6bu2w4w7sKVu9SmAgAHEq4CAAnbegIAAqD+AgAAdjgA=
-Date:   Fri, 7 Dec 2018 23:45:14 +0000
-Message-ID: <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com>
-References: <cover.1543903910.git.alison.schofield@intel.com>
-         <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
-         <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
-         <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1>
-         <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
-In-Reply-To: <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.254.201.141]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B14A143DE6497545AB154E1FB659B42E@intel.com>
-Content-Transfer-Encoding: base64
+        Fri, 7 Dec 2018 18:49:11 -0500
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8FAC21582
+        for <linux-security-module@vger.kernel.org>; Fri,  7 Dec 2018 23:49:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544226550;
+        bh=+F8d5KIATjvVOBmPmVYoR3a66b5Jf7WRJd+1EIdknrc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=XBRPhRmj2Ey/WWP1ZczWo9LOho5mKk5LqiTDrcFUzW6EiMKk7xiNVhXSG5RuTxfZs
+         8W3CvqGgsiL/z3ZLsiT56lDShTDo84J9Goijo0p0CGbtiP7BxpUA2nduRqFXC61mNG
+         SFGwcCbYhFVJ5ejdqYirEuE/y20ONCViE/BW+O5U=
+Received: by mail-wr1-f47.google.com with SMTP id j2so5321241wrw.1
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Dec 2018 15:49:09 -0800 (PST)
+X-Gm-Message-State: AA+aEWYapRPTd/isJmSnE3UY/GcYeH6izMfAJDBOp/KQsL22Z9fUpTkl
+        Tjd1JgtrF/Rhsc0rm273a89zR10lDBHKBjpXueizLg==
+X-Google-Smtp-Source: AFSGD/VZhr4OqrO/A/G3BPk6ijlEJpd2KHIxafsIWu2LmdEhQy1YK/p6M3pua7LZwDDgEEZaskch9WxWdUaS132ZwaI=
+X-Received: by 2002:adf:e08c:: with SMTP id c12mr3122973wri.199.1544226548221;
+ Fri, 07 Dec 2018 15:49:08 -0800 (PST)
 MIME-Version: 1.0
+References: <cover.1543903910.git.alison.schofield@intel.com>
+ <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
+ <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
+ <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1> <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
+ <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com>
+In-Reply-To: <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 7 Dec 2018 15:48:55 -0800
+X-Gmail-Original-Message-ID: <CALCETrXOkwZ-SmK1euy_ys=VvMx6dAGbTqPm-VW9jWw3TvoFag@mail.gmail.com>
+Message-ID: <CALCETrXOkwZ-SmK1euy_ys=VvMx6dAGbTqPm-VW9jWw3TvoFag@mail.gmail.com>
+Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+To:     "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        James Morris <jmorris@namei.org>, kai.huang@intel.com,
+        keyrings@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-MM <linux-mm@kvack.org>,
+        David Howells <dhowells@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gRnJpLCAyMDE4LTEyLTA3IGF0IDEzOjU5IC0wODAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6
-DQo+IE9uIEZyaSwgMjAxOC0xMi0wNyBhdCAxNDo1NyArMDMwMCwgS2lyaWxsIEEuIFNodXRlbW92
-IHdyb3RlOg0KPiA+ID4gV2hhdCBpcyB0aGUgdGhyZWF0IG1vZGVsIGFueXdheSBmb3IgQU1EIGFu
-ZCBJbnRlbCB0ZWNobm9sb2dpZXM/DQo+ID4gPiANCj4gPiA+IEZvciBtZSBpdCBsb29rcyBsaWtl
-IHRoYXQgeW91IGNhbiByZWFkLCB3cml0ZSBhbmQgZXZlbiByZXBsYXkgDQo+ID4gPiBlbmNyeXB0
-ZWQgcGFnZXMgYm90aCBpbiBTTUUgYW5kIFRNRS4gDQo+ID4gDQo+ID4gV2hhdCByZXBsYXkgYXR0
-YWNrIGFyZSB5b3UgdGFsa2luZyBhYm91dD8gTUtUTUUgdXNlcyBBRVMtWFRTIHdpdGggcGh5c2lj
-YWwNCj4gPiBhZGRyZXNzIHR3ZWFrLiBTbyB0aGUgZGF0YSBpcyB0aWVkIHRvIHRoZSBwbGFjZSBp
-biBwaHlzaWNhbCBhZGRyZXNzIHNwYWNlDQo+ID4gYW5kDQo+ID4gcmVwbGFjaW5nIG9uZSBlbmNy
-eXB0ZWQgcGFnZSB3aXRoIGFub3RoZXIgZW5jcnlwdGVkIHBhZ2UgZnJvbSBkaWZmZXJlbnQNCj4g
-PiBhZGRyZXNzIHdpbGwgcHJvZHVjZSBnYXJiYWdlIG9uIGRlY3J5cHRpb24uDQo+IA0KPiBKdXN0
-IHRyeWluZyB0byB1bmRlcnN0YW5kIGhvdyB0aGlzIHdvcmtzLg0KPiANCj4gU28geW91IHVzZSBw
-aHlzaWNhbCBhZGRyZXNzIGxpa2UgYSBub25jZS92ZXJzaW9uIGZvciB0aGUgcGFnZSBhbmQNCj4g
-dGh1cyBwcmV2ZW50IHJlcGxheT8gV2FzIG5vdCBhd2FyZSBvZiB0aGlzLg0KDQpUaGUgYnJ1dGFs
-IGZhY3QgaXMgdGhhdCBhIHBoeXNpY2FsIGFkZHJlc3MgaXMgYW4gYXN0cm9ub21pY2FsIHN0cmV0
-Y2gNCmZyb20gYSByYW5kb20gdmFsdWUgb3IgaW5jcmVhc2luZyBjb3VudGVyLiBUaHVzLCBpdCBp
-cyBmYWlyIHRvIHNheSB0aGF0DQpNS1RNRSBwcm92aWRlcyBvbmx5IG5haXZlIG1lYXN1cmVzIGFn
-YWluc3QgcmVwbGF5IGF0dGFja3MuLi4NCg0KL0phcmtrbw0K
+On Fri, Dec 7, 2018 at 3:45 PM Sakkinen, Jarkko
+<jarkko.sakkinen@intel.com> wrote:
+>
+> On Fri, 2018-12-07 at 13:59 -0800, Jarkko Sakkinen wrote:
+> > On Fri, 2018-12-07 at 14:57 +0300, Kirill A. Shutemov wrote:
+> > > > What is the threat model anyway for AMD and Intel technologies?
+> > > >
+> > > > For me it looks like that you can read, write and even replay
+> > > > encrypted pages both in SME and TME.
+> > >
+> > > What replay attack are you talking about? MKTME uses AES-XTS with physical
+> > > address tweak. So the data is tied to the place in physical address space
+> > > and
+> > > replacing one encrypted page with another encrypted page from different
+> > > address will produce garbage on decryption.
+> >
+> > Just trying to understand how this works.
+> >
+> > So you use physical address like a nonce/version for the page and
+> > thus prevent replay? Was not aware of this.
+>
+> The brutal fact is that a physical address is an astronomical stretch
+> from a random value or increasing counter. Thus, it is fair to say that
+> MKTME provides only naive measures against replay attacks...
+>
+
+And this is potentially a big deal, since there are much simpler
+replay attacks that can compromise the system.  For example, if I can
+replay the contents of a page table, I can write to freed memory.
+
+--Andy
