@@ -2,102 +2,91 @@ Return-Path: <SRS0=YlXY=OQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AD3C64EB1
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 14:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F9FC64EB1
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 21:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D8C20989
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 14:51:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D8C20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 20C5920837
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 21:59:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C5920837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726034AbeLGOvt (ORCPT
+        id S1726070AbeLGV7b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Dec 2018 09:51:49 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32805 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725998AbeLGOvt (ORCPT
+        Fri, 7 Dec 2018 16:59:31 -0500
+Received: from mga11.intel.com ([192.55.52.93]:54769 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726008AbeLGV7b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Dec 2018 09:51:49 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 39907AA92CB43;
-        Fri,  7 Dec 2018 14:51:42 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 7 Dec
- 2018 14:51:38 +0000
-Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <david.safford@ge.com>, <monty.wiseman@ge.com>,
-        <linux-integrity@vger.kernel.org>,
+        Fri, 7 Dec 2018 16:59:31 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 13:59:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,327,1539673200"; 
+   d="scan'208";a="302014389"
+Received: from irsmsx153.ger.corp.intel.com ([163.33.192.75])
+  by fmsmga005.fm.intel.com with ESMTP; 07 Dec 2018 13:59:28 -0800
+Received: from irsmsx101.ger.corp.intel.com ([169.254.1.237]) by
+ IRSMSX153.ger.corp.intel.com ([169.254.9.112]) with mapi id 14.03.0415.000;
+ Fri, 7 Dec 2018 21:59:27 +0000
+From:   "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
+To:     "kirill@shutemov.name" <kirill@shutemov.name>
+CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-5-roberto.sassu@huawei.com>
- <20181204234024.GC1233@linux.intel.com>
- <1544041904.4017.8.camel@linux.ibm.com>
- <1544125756.4017.70.camel@linux.ibm.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <2f6c0365-6c17-2da1-9f5b-3c8e5cc301b2@huawei.com>
-Date:   Fri, 7 Dec 2018 15:51:33 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <1544125756.4017.70.camel@linux.ibm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Schofield, Alison" <alison.schofield@intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>
+Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+Thread-Topic: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+Thread-Index: AQHUi6Q6VkrSspfrlUix6bu2w4w7sKVu9SmAgAHEq4CAAnbegIAAqD+A
+Date:   Fri, 7 Dec 2018 21:59:27 +0000
+Message-ID: <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
+References: <cover.1543903910.git.alison.schofield@intel.com>
+         <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
+         <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
+         <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1>
+In-Reply-To: <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1>
+Accept-Language: fi-FI, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.24.9.9]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0AA883A02E9D764DA7910B6F5FEDB45C@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/6/2018 8:49 PM, Mimi Zohar wrote:
-> On Wed, 2018-12-05 at 15:31 -0500, Mimi Zohar wrote:
->> On Tue, 2018-12-04 at 15:40 -0800, Jarkko Sakkinen wrote:
->>> On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
->>>> Currently the TPM driver allows other kernel subsystems to read only the
->>>> SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
->>>> tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
->>>> hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
->>>> RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
->>>> the new parameter is expected to be always not NULL.
->>>>
->>>> Due to the API change, IMA functions have been modified.
->>>>
->>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
->>>
->>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>>
->>> Mimi, Nayna, can you help with testing this (because of the IMA change)?
->>
->> It's up & running and the measurement list verifies against the TPM
->> PCR.  Although this system has two algorithms enabled, all of the PCRs
->> are allocated for one algorithm and none for the other.  I'm still
->> looking around for another system with PCR 10 enabled for multiple
->> algorithms.
-> 
-> PCRs for sha1 and sha256 algorithms are being updated and the
-> measurement list verifies against the SHA1 PCR-10.
-> 
-> Roberto, have you added support in ima-evm-utils to validate the other
-> banks?
-
-I modified IMA LTP.
-
-Roberto
-
-
-> Mimi
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+T24gRnJpLCAyMDE4LTEyLTA3IGF0IDE0OjU3ICswMzAwLCBLaXJpbGwgQS4gU2h1dGVtb3Ygd3Jv
+dGU6DQo+ID4gV2hhdCBpcyB0aGUgdGhyZWF0IG1vZGVsIGFueXdheSBmb3IgQU1EIGFuZCBJbnRl
+bCB0ZWNobm9sb2dpZXM/DQo+ID4gDQo+ID4gRm9yIG1lIGl0IGxvb2tzIGxpa2UgdGhhdCB5b3Ug
+Y2FuIHJlYWQsIHdyaXRlIGFuZCBldmVuIHJlcGxheSANCj4gPiBlbmNyeXB0ZWQgcGFnZXMgYm90
+aCBpbiBTTUUgYW5kIFRNRS4gDQo+IA0KPiBXaGF0IHJlcGxheSBhdHRhY2sgYXJlIHlvdSB0YWxr
+aW5nIGFib3V0PyBNS1RNRSB1c2VzIEFFUy1YVFMgd2l0aCBwaHlzaWNhbA0KPiBhZGRyZXNzIHR3
+ZWFrLiBTbyB0aGUgZGF0YSBpcyB0aWVkIHRvIHRoZSBwbGFjZSBpbiBwaHlzaWNhbCBhZGRyZXNz
+IHNwYWNlIGFuZA0KPiByZXBsYWNpbmcgb25lIGVuY3J5cHRlZCBwYWdlIHdpdGggYW5vdGhlciBl
+bmNyeXB0ZWQgcGFnZSBmcm9tIGRpZmZlcmVudA0KPiBhZGRyZXNzIHdpbGwgcHJvZHVjZSBnYXJi
+YWdlIG9uIGRlY3J5cHRpb24uDQoNCkp1c3QgdHJ5aW5nIHRvIHVuZGVyc3RhbmQgaG93IHRoaXMg
+d29ya3MuDQoNClNvIHlvdSB1c2UgcGh5c2ljYWwgYWRkcmVzcyBsaWtlIGEgbm9uY2UvdmVyc2lv
+biBmb3IgdGhlIHBhZ2UgYW5kDQp0aHVzIHByZXZlbnQgcmVwbGF5PyBXYXMgbm90IGF3YXJlIG9m
+IHRoaXMuDQoNCi9KYXJra28NCg==
