@@ -2,125 +2,114 @@ Return-Path: <SRS0=YlXY=OQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FA8C07E85
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 04:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5634BC07E85
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 06:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 283A32082D
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 04:23:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 283A32082D
+	by mail.kernel.org (Postfix) with ESMTP id 1AC7C20838
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 06:39:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC7C20838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725950AbeLGEX4 (ORCPT
+        id S1725950AbeLGGjZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 Dec 2018 23:23:56 -0500
-Received: from mga18.intel.com ([134.134.136.126]:37652 "EHLO mga18.intel.com"
+        Fri, 7 Dec 2018 01:39:25 -0500
+Received: from mga05.intel.com ([192.55.52.43]:58382 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbeLGEX4 (ORCPT
+        id S1725948AbeLGGjZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 Dec 2018 23:23:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        Fri, 7 Dec 2018 01:39:25 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 20:23:55 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Dec 2018 22:39:24 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,324,1539673200"; 
-   d="scan'208";a="281647264"
-Received: from smanjuna-mobl.amr.corp.intel.com (HELO [10.254.78.196]) ([10.254.78.196])
-  by orsmga005.jf.intel.com with ESMTP; 06 Dec 2018 20:23:54 -0800
-Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-To:     "Huang, Kai" <kai.huang@intel.com>,
-        "luto@kernel.org" <luto@kernel.org>
-Cc:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+   d="scan'208";a="116762644"
+Received: from makoli-mobl1.amr.corp.intel.com (HELO localhost) ([10.254.201.154])
+  by orsmga001.jf.intel.com with ESMTP; 06 Dec 2018 22:39:20 -0800
+Date:   Thu, 6 Dec 2018 22:39:19 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@intel.com>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "Schofield, Alison" <alison.schofield@intel.com>,
         "dhowells@redhat.com" <dhowells@redhat.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
         "Williams, Dan J" <dan.j.williams@intel.com>,
         "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
         "mingo@redhat.com" <mingo@redhat.com>,
-        "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Schofield, Alison" <alison.schofield@intel.com>,
+        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
         "Nakajima, Jun" <jun.nakajima@intel.com>
+Subject: Re: [RFC v2 12/13] keys/mktme: Save MKTME data if kernel cmdline
+ parameter allows
+Message-ID: <20181207063918.GB12969@intel.com>
 References: <cover.1543903910.git.alison.schofield@intel.com>
- <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
- <c610138f-32dd-a24c-dc52-4e0006a21409@intel.com>
- <CALCETrU34U3berTaEQbvNt0rfCdsjwj+xDb8x7bgAMFHEo=eUw@mail.gmail.com>
- <1544147742.28511.18.camel@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <7ac80308-1831-fe42-9c53-05f913cba403@intel.com>
-Date:   Thu, 6 Dec 2018 20:23:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ <c2668d6d260bff3c88440ad097eb1445ea005860.1543903910.git.alison.schofield@intel.com>
+ <1544148839.28511.28.camel@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1544147742.28511.18.camel@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544148839.28511.28.camel@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/6/18 5:55 PM, Huang, Kai wrote:
-> I think one usage of user-specified key is for NVDIMM, since CPU key
-> will be gone after machine reboot, therefore if NVDIMM is encrypted
-> by CPU key we are not able to retrieve it once shutdown/reboot, etc.
+On Thu, Dec 06, 2018 at 06:14:03PM -0800, Huang, Kai wrote:
+> On Mon, 2018-12-03 at 23:39 -0800, Alison Schofield wrote:
+> > MKTME (Multi-Key Total Memory Encryption) key payloads may include
+> > data encryption keys, tweak keys, and additional entropy bits. These
+> > are used to program the MKTME encryption hardware. By default, the
+> > kernel destroys this payload data once the hardware is programmed.
+> > 
+> > However, in order to fully support CPU Hotplug, saving the key data
+> > becomes important. The MKTME Key Service cannot allow a new physical
+> > package to come online unless it can program the new packages Key Table
+> > to match the Key Tables of all existing physical packages.
+> > 
+> > With CPU generated keys (a.k.a. random keys or ephemeral keys) the
+> > saving of user key data is not an issue. The kernel and MKTME hardware
+> > can generate strong encryption keys without recalling any user supplied
+> > data.
+> > 
+> > With USER directed keys (a.k.a. user type) saving the key programming
+> > data (data and tweak key) becomes an issue. The data and tweak keys
+> > are required to program those keys on a new physical package.
+> > 
+> > In preparation for adding CPU hotplug support:
+> > 
+> >    Add an 'mktme_vault' where key data is stored.
+> > 
+> >    Add 'mktme_savekeys' kernel command line parameter that directs
+> >    what key data can be stored. If it is not set, kernel does not
+> >    store users data key or tweak key.
+> > 
+> >    Add 'mktme_bitmap_user_type' to track when USER type keys are in
+> >    use. If no USER type keys are currently in use, a physical package
+> >    may be brought online, despite the absence of 'mktme_savekeys'.
+> 
+> Overall, I am not sure whether saving key is good idea, since it
+> breaks coldboot attack IMHO. We need to tradeoff between supporting
+> CPU hotplug and security. I am not sure whether supporting CPU hotplug
+> is that important, since for some other features such as SGX, we don't
+> support CPU hotplug anyway.
 
-I think we all agree that the NVDIMM uses are really useful.
+What is the application for saving the key anyway?
 
-But, these patches don't implement that.  So, if NVDIMMs are the only
-reasonable use case, we shouldn't merge these patches until we add
-NVDIMM support.
+With my current knowledge, I'm not even sure what is the application
+for user provided keys.
+
+/Jarkko
