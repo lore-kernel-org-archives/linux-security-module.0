@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E09C64EB1
-	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 20:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D43B6C04EB8
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 20:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A53482082D
-	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 20:31:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A53482082D
+	by mail.kernel.org (Postfix) with ESMTP id A24EC2082D
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 20:31:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24EC2082D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbeLHUbV (ORCPT
+        id S1726223AbeLHUbA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 8 Dec 2018 15:31:21 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42590 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726373AbeLHUbV (ORCPT
+        Sat, 8 Dec 2018 15:31:00 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36948 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726299AbeLHUa5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 8 Dec 2018 15:31:21 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB8KT0B8034899
-        for <linux-security-module@vger.kernel.org>; Sat, 8 Dec 2018 15:31:20 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p8b0jrpms-1
+        Sat, 8 Dec 2018 15:30:57 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB8KT7AD156304
+        for <linux-security-module@vger.kernel.org>; Sat, 8 Dec 2018 15:30:55 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2p8b1d0kdt-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Sat, 08 Dec 2018 15:31:20 -0500
+        for <linux-security-module@vger.kernel.org>; Sat, 08 Dec 2018 15:30:55 -0500
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Sat, 8 Dec 2018 20:31:17 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sat, 8 Dec 2018 20:30:53 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 8 Dec 2018 20:31:14 -0000
+        Sat, 8 Dec 2018 20:30:49 -0000
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB8KVDhE42139806
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB8KUmgc55312462
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 8 Dec 2018 20:31:13 GMT
+        Sat, 8 Dec 2018 20:30:49 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C97794C04A;
-        Sat,  8 Dec 2018 20:31:12 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D15A34C040;
+        Sat,  8 Dec 2018 20:30:48 +0000 (GMT)
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 839014C044;
-        Sat,  8 Dec 2018 20:31:09 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id BDB7F4C050;
+        Sat,  8 Dec 2018 20:30:45 +0000 (GMT)
 Received: from swastik.ibmuc.com (unknown [9.85.68.82])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat,  8 Dec 2018 20:31:09 +0000 (GMT)
+        Sat,  8 Dec 2018 20:30:45 +0000 (GMT)
 From:   Nayna Jain <nayna@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
@@ -58,17 +58,17 @@ Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
         dhowells@redhat.com, jforbes@redhat.com,
         seth.forshee@canonical.com, kexec@lists.infradead.org,
         keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v2 7/7] ima: Support platform keyring for kernel appraisal
-Date:   Sun,  9 Dec 2018 01:57:05 +0530
+        mpe@ellerman.id.au
+Subject: [PATCH v2 3/7] efi: Add EFI signature data types
+Date:   Sun,  9 Dec 2018 01:57:01 +0530
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20181208202705.18673-1-nayna@linux.ibm.com>
 References: <20181208202705.18673-1-nayna@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18120820-0020-0000-0000-000002F46E43
+x-cbid: 18120820-0012-0000-0000-000002D67D11
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120820-0021-0000-0000-00002144896C
-Message-Id: <20181208202705.18673-8-nayna@linux.ibm.com>
+x-cbparentid: 18120820-0013-0000-0000-0000210BEAF3
+Message-Id: <20181208202705.18673-4-nayna@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-08_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -80,60 +80,67 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On secure boot enabled systems, the bootloader verifies the kernel
-image and possibly the initramfs signatures based on a set of keys. A
-soft reboot(kexec) of the system, with the same kernel image and
-initramfs, requires access to the original keys to verify the
-signatures.
+From: Dave Howells <dhowells@redhat.com>
 
-This patch allows IMA-appraisal access to those original keys, now
-loaded on the platform keyring, needed for verifying the kernel image
-and initramfs signatures.
+Add the data types that are used for containing hashes, keys and
+certificates for cryptographic verification along with their corresponding
+type GUIDs.
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Nayna Jain <nayna@linux.ibm.com>
 Acked-by: Serge Hallyn <serge@hallyn.com>
-- replace 'rc' with 'xattr_len' when calling integrity_digsig_verify()
-with INTEGRITY_KEYRING_IMA for readability
-Suggested-by: Serge Hallyn <serge@hallyn.com>
 ---
 Changelog:
 
-v2:
-- replace 'rc' with 'xattr_len' when calling integrity_digsig_verify()
-with INTEGRITY_KEYRING_IMA for readability
+v0:
+- No changes
 
- security/integrity/ima/ima_appraise.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ include/linux/efi.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index deec1804a00a..e8f520450895 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -289,12 +289,21 @@ int ima_appraise_measurement(enum ima_hooks func,
- 	case EVM_IMA_XATTR_DIGSIG:
- 		set_bit(IMA_DIGSIG, &iint->atomic_flags);
- 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
--					     (const char *)xattr_value, rc,
-+					     (const char *)xattr_value,
-+					     xattr_len,
- 					     iint->ima_hash->digest,
- 					     iint->ima_hash->length);
- 		if (rc == -EOPNOTSUPP) {
- 			status = INTEGRITY_UNKNOWN;
--		} else if (rc) {
-+			break;
-+		}
-+		if (rc && func == KEXEC_KERNEL_CHECK)
-+			rc = integrity_digsig_verify(INTEGRITY_KEYRING_PLATFORM,
-+						     (const char *)xattr_value,
-+						     xattr_len,
-+						     iint->ima_hash->digest,
-+						     iint->ima_hash->length);
-+		if (rc) {
- 			cause = "invalid-signature";
- 			status = INTEGRITY_FAIL;
- 		} else {
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 845174e113ce..214516b29b36 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -663,6 +663,10 @@ void efi_native_runtime_setup(void);
+ #define EFI_IMAGE_SECURITY_DATABASE_GUID	EFI_GUID(0xd719b2cb, 0x3d3a, 0x4596,  0xa3, 0xbc, 0xda, 0xd0, 0x0e, 0x67, 0x65, 0x6f)
+ #define EFI_SHIM_LOCK_GUID			EFI_GUID(0x605dab50, 0xe046, 0x4300,  0xab, 0xb6, 0x3d, 0xd8, 0x10, 0xdd, 0x8b, 0x23)
+ 
++#define EFI_CERT_SHA256_GUID			EFI_GUID(0xc1c41626, 0x504c, 0x4092, 0xac, 0xa9, 0x41, 0xf9, 0x36, 0x93, 0x43, 0x28)
++#define EFI_CERT_X509_GUID			EFI_GUID(0xa5c059a1, 0x94e4, 0x4aa7, 0x87, 0xb5, 0xab, 0x15, 0x5c, 0x2b, 0xf0, 0x72)
++#define EFI_CERT_X509_SHA256_GUID		EFI_GUID(0x3bd2a492, 0x96c0, 0x4079, 0xb4, 0x20, 0xfc, 0xf9, 0x8e, 0xf1, 0x03, 0xed)
++
+ /*
+  * This GUID is used to pass to the kernel proper the struct screen_info
+  * structure that was populated by the stub based on the GOP protocol instance
+@@ -934,6 +938,27 @@ typedef struct {
+ 	efi_memory_desc_t entry[0];
+ } efi_memory_attributes_table_t;
+ 
++typedef struct  {
++	efi_guid_t signature_owner;
++	u8 signature_data[];
++} efi_signature_data_t;
++
++typedef struct {
++	efi_guid_t signature_type;
++	u32 signature_list_size;
++	u32 signature_header_size;
++	u32 signature_size;
++	u8 signature_header[];
++	/* efi_signature_data_t signatures[][] */
++} efi_signature_list_t;
++
++typedef u8 efi_sha256_hash_t[32];
++
++typedef struct {
++	efi_sha256_hash_t to_be_signed_hash;
++	efi_time_t time_of_revocation;
++} efi_cert_x509_sha256_t;
++
+ /*
+  * All runtime access to EFI goes through this structure:
+  */
 -- 
 2.13.6
 
