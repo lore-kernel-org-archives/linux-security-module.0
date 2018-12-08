@@ -1,69 +1,39 @@
-Return-Path: <SRS0=YlXY=OQ=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=lHsL=OR=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A89BC07E85
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 23:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DEEC07E85
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 01:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13F3520868
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 Dec 2018 23:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544226812;
-	bh=3Gt9hvf9FZJqk2BC20dGXauTReKTvwNpeI1Djtwo4qs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=FyosMaNr9JxDvWDbjXf8oEpCw41r2IDa04SVgn5eOwaPprFfAVwuYvofF9dLNtjWk
-	 AmEAH9uMUKtmJePAFDisC08A1uTe/eNNJK8gHK6knfeUTV4kOdd5fGvkHZ0cbsEorw
-	 rURGMTBT6I1X6YvuU+Ghahh/ZSf4hI+dzROlKm2A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F3520868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 32D1C20868
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 01:12:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D1C20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726070AbeLGXxb (ORCPT
+        id S1726091AbeLHBMB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Dec 2018 18:53:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58696 "EHLO mail.kernel.org"
+        Fri, 7 Dec 2018 20:12:01 -0500
+Received: from mga07.intel.com ([134.134.136.100]:9571 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbeLGXxb (ORCPT
+        id S1726065AbeLHBMB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Dec 2018 18:53:31 -0500
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D70CB214F1
-        for <linux-security-module@vger.kernel.org>; Fri,  7 Dec 2018 23:53:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544226810;
-        bh=3Gt9hvf9FZJqk2BC20dGXauTReKTvwNpeI1Djtwo4qs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tkzUiU6hQVawWr161oqZcGcCoNs4cGWvlg7UVEy07RIHHRqPmK5cG04X2Qaqh0npG
-         sZOvHZKVAgVPljk8gXCVvv4uMLT0m9spAWox93Q6x9vj7E/4qDsY6OL179+C2+6LKH
-         rqrvhzP7aO+p3mMJzS0JhSSn+plKbBNh2k7NVSgY=
-Received: by mail-wm1-f48.google.com with SMTP id y1so5843581wmi.3
-        for <linux-security-module@vger.kernel.org>; Fri, 07 Dec 2018 15:53:29 -0800 (PST)
-X-Gm-Message-State: AA+aEWbs188xqH6gbWW8iAgnYRiGnZ3z+KTD506GXOXV1fKo3NbVT2pR
-        y0DDKk0nNyD9G/QUyerf9GZXIyr5ABJcbOSrtw0bZw==
-X-Google-Smtp-Source: AFSGD/XqhK1lvo0VGAjvQyEAgvy0AmacluDKcpntgU9CTmID7+uUKMTCdS0iBOz7rE5FXTtNNmZ+t2Qd1lFBs/xSgQI=
-X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr4042733wmf.32.1544226808187;
- Fri, 07 Dec 2018 15:53:28 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1543903910.git.alison.schofield@intel.com>
- <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
- <c610138f-32dd-a24c-dc52-4e0006a21409@intel.com> <CALCETrU34U3berTaEQbvNt0rfCdsjwj+xDb8x7bgAMFHEo=eUw@mail.gmail.com>
- <1544147742.28511.18.camel@intel.com>
-In-Reply-To: <1544147742.28511.18.camel@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 7 Dec 2018 15:53:16 -0800
-X-Gmail-Original-Message-ID: <CALCETrWHqE-H1jTJY-ApuuLt5cyZ3N1UdgH+szgYm+7mUMZ2pg@mail.gmail.com>
-Message-ID: <CALCETrWHqE-H1jTJY-ApuuLt5cyZ3N1UdgH+szgYm+7mUMZ2pg@mail.gmail.com>
+        Fri, 7 Dec 2018 20:12:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 17:12:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,328,1539673200"; 
+   d="scan'208";a="105827972"
+Received: from slarson-mobl1.amr.corp.intel.com (HELO [10.251.28.76]) ([10.251.28.76])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Dec 2018 17:11:58 -0800
 Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-To:     kai.huang@intel.com
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+To:     Andy Lutomirski <luto@kernel.org>, kai.huang@intel.com
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         James Morris <jmorris@namei.org>,
         Peter Zijlstra <peterz@infradead.org>,
         keyrings@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
@@ -78,70 +48,78 @@ Cc:     Andrew Lutomirski <luto@kernel.org>,
         Borislav Petkov <bp@alien8.de>,
         Alison Schofield <alison.schofield@intel.com>,
         Jun Nakajima <jun.nakajima@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+References: <cover.1543903910.git.alison.schofield@intel.com>
+ <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
+ <c610138f-32dd-a24c-dc52-4e0006a21409@intel.com>
+ <CALCETrU34U3berTaEQbvNt0rfCdsjwj+xDb8x7bgAMFHEo=eUw@mail.gmail.com>
+ <1544147742.28511.18.camel@intel.com>
+ <CALCETrWHqE-H1jTJY-ApuuLt5cyZ3N1UdgH+szgYm+7mUMZ2pg@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
+ CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
+ 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
+ K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
+ VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
+ e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
+ ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
+ kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
+ rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
+ f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
+ mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
+ UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
+ sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
+ 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
+ cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
+ UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
+ db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
+ lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
+ kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
+ gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
+ AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
+ XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
+ e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
+ pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
+ YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
+ lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
+ M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
+ 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
+ 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
+ OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
+ ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
+ z5cecg==
+Message-ID: <5862ff39-e4ab-2a04-95be-84d2e8b67120@intel.com>
+Date:   Fri, 7 Dec 2018 17:11:58 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CALCETrWHqE-H1jTJY-ApuuLt5cyZ3N1UdgH+szgYm+7mUMZ2pg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Dec 6, 2018, at 5:55 PM, Huang, Kai <kai.huang@intel.com> wrote:
->
->
->>
->> TME itself provides a ton of protection -- you can't just barge into
->> the datacenter, refrigerate the DIMMs, walk away with them, and read
->> off everyone's data.
->>
->> Am I missing something?
->
-> I think we can make such assumption in most cases, but I think it's bette=
-r that we don't make any
-> assumption at all. For example, the admin of data center (or anyone) who =
-has physical access to
-> servers may do something malicious. I am not expert but there should be o=
-ther physical attack
-> methods besides coldboot attack, if the malicious employee can get physic=
-al access to server w/o
-> being detected.
->
->>
->>>
->>> But, I think what you're implying is that the security properties of
->>> user-supplied keys can only be *worse* than using CPU-generated keys
->>> (assuming the CPU does a good job generating it).  So, why bother
->>> allowing user-specified keys in the first place?
->>
->> That too :)
->
-> I think one usage of user-specified key is for NVDIMM, since CPU key will=
- be gone after machine
-> reboot, therefore if NVDIMM is encrypted by CPU key we are not able to re=
-trieve it once
-> shutdown/reboot, etc.
->
-> There are some other use cases that already require tenant to send key to=
- CSP. For example, the VM
-> image can be provided by tenant and encrypted by tenant's own key, and te=
-nant needs to send key to
-> CSP when asking CSP to run that encrypted image.
+On 12/7/18 3:53 PM, Andy Lutomirski wrote:
+> The third problem is the real show-stopper, though: this scheme
+> requires that the ciphertext go into predetermined physical
+> addresses, which would be a giant mess.
 
-
-I can imagine a few reasons why one would want to encrypt one=E2=80=99s ima=
-ge.
-For example, the CSP could issue a public key and state, or even
-attest, that the key is wrapped and locked to particular PCRs of their
-TPM or otherwise protected by an enclave that verifies that the key is
-only used to decrypt the image for the benefit of a hypervisor.
-
-I don=E2=80=99t see what MKTME has to do with this.  The only remotely
-plausible way I can see to use MKTME for this is to have the
-hypervisor load a TPM (or other enclave) protected key into an MKTME
-user key slot and to load customer-provided ciphertext into the
-corresponding physical memory (using an MKTME no-encrypt slot).  But
-this has three major problems.  First, it's effectively just a fancy
-way to avoid one AES pass over the data.  Second, sensible scheme for
-this type of VM image protection would use *authenticated* encryption
-or at least verify a signature, which MKTME can't do.  The third
-problem is the real show-stopper, though: this scheme requires that
-the ciphertext go into predetermined physical addresses, which would
-be a giant mess.
+There's a more fundamental problem than that.  The tweak fed into the
+actual AES-XTS operation is determined by the firmware, programmed into
+the memory controller, and is not visible to software.  So, not only
+would you need to put stuff at a fixed physical address, the tweaks can
+change from boot-to-boot, so whatever you did would only be good for one
+boot.
