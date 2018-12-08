@@ -5,121 +5,103 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DEEC07E85
-	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 01:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F823C07E85
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 01:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32D1C20868
-	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 01:12:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32D1C20868
+	by mail.kernel.org (Postfix) with ESMTP id 5D7CA2082D
+	for <linux-security-module@archiver.kernel.org>; Sat,  8 Dec 2018 01:33:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7CA2082D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726091AbeLHBMB (ORCPT
+        id S1726073AbeLHBdp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 Dec 2018 20:12:01 -0500
-Received: from mga07.intel.com ([134.134.136.100]:9571 "EHLO mga07.intel.com"
+        Fri, 7 Dec 2018 20:33:45 -0500
+Received: from mga11.intel.com ([192.55.52.93]:12489 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbeLHBMB (ORCPT
+        id S1726065AbeLHBdp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 Dec 2018 20:12:01 -0500
+        Fri, 7 Dec 2018 20:33:45 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 17:12:00 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Dec 2018 17:33:44 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,328,1539673200"; 
-   d="scan'208";a="105827972"
-Received: from slarson-mobl1.amr.corp.intel.com (HELO [10.251.28.76]) ([10.251.28.76])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Dec 2018 17:11:58 -0800
+   d="scan'208";a="105831969"
+Received: from pgsmsx103.gar.corp.intel.com ([10.221.44.82])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Dec 2018 17:33:41 -0800
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.210]) by
+ PGSMSX103.gar.corp.intel.com ([169.254.2.64]) with mapi id 14.03.0415.000;
+ Sat, 8 Dec 2018 09:33:40 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "kirill@shutemov.name" <kirill@shutemov.name>,
+        "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
+CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Schofield, Alison" <alison.schofield@intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>
 Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-To:     Andy Lutomirski <luto@kernel.org>, kai.huang@intel.com
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        keyrings@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>,
-        David Howells <dhowells@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Jun Nakajima <jun.nakajima@intel.com>
+Thread-Topic: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+Thread-Index: AQHUi6Q2qOY85E2yP0iMCMEcgHQzx6VubwyAgAHEsgCAAnbYgIAAqEOAgAAdjgCAAB5CAA==
+Date:   Sat, 8 Dec 2018 01:33:39 +0000
+Message-ID: <1544232812.28511.39.camel@intel.com>
 References: <cover.1543903910.git.alison.schofield@intel.com>
- <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
- <c610138f-32dd-a24c-dc52-4e0006a21409@intel.com>
- <CALCETrU34U3berTaEQbvNt0rfCdsjwj+xDb8x7bgAMFHEo=eUw@mail.gmail.com>
- <1544147742.28511.18.camel@intel.com>
- <CALCETrWHqE-H1jTJY-ApuuLt5cyZ3N1UdgH+szgYm+7mUMZ2pg@mail.gmail.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <5862ff39-e4ab-2a04-95be-84d2e8b67120@intel.com>
-Date:   Fri, 7 Dec 2018 17:11:58 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CALCETrWHqE-H1jTJY-ApuuLt5cyZ3N1UdgH+szgYm+7mUMZ2pg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+         <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
+         <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
+         <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1>
+         <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
+         <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com>
+In-Reply-To: <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.254.4.165]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <46E7BAFAD6900E49A15D0F2333E48D4E@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/7/18 3:53 PM, Andy Lutomirski wrote:
-> The third problem is the real show-stopper, though: this scheme
-> requires that the ciphertext go into predetermined physical
-> addresses, which would be a giant mess.
-
-There's a more fundamental problem than that.  The tweak fed into the
-actual AES-XTS operation is determined by the firmware, programmed into
-the memory controller, and is not visible to software.  So, not only
-would you need to put stuff at a fixed physical address, the tweaks can
-change from boot-to-boot, so whatever you did would only be good for one
-boot.
+T24gRnJpLCAyMDE4LTEyLTA3IGF0IDIzOjQ1ICswMDAwLCBTYWtraW5lbiwgSmFya2tvIHdyb3Rl
+Og0KPiBPbiBGcmksIDIwMTgtMTItMDcgYXQgMTM6NTkgLTA4MDAsIEphcmtrbyBTYWtraW5lbiB3
+cm90ZToNCj4gPiBPbiBGcmksIDIwMTgtMTItMDcgYXQgMTQ6NTcgKzAzMDAsIEtpcmlsbCBBLiBT
+aHV0ZW1vdiB3cm90ZToNCj4gPiA+ID4gV2hhdCBpcyB0aGUgdGhyZWF0IG1vZGVsIGFueXdheSBm
+b3IgQU1EIGFuZCBJbnRlbCB0ZWNobm9sb2dpZXM/DQo+ID4gPiA+IA0KPiA+ID4gPiBGb3IgbWUg
+aXQgbG9va3MgbGlrZSB0aGF0IHlvdSBjYW4gcmVhZCwgd3JpdGUgYW5kIGV2ZW4gcmVwbGF5IA0K
+PiA+ID4gPiBlbmNyeXB0ZWQgcGFnZXMgYm90aCBpbiBTTUUgYW5kIFRNRS4gDQo+ID4gPiANCj4g
+PiA+IFdoYXQgcmVwbGF5IGF0dGFjayBhcmUgeW91IHRhbGtpbmcgYWJvdXQ/IE1LVE1FIHVzZXMg
+QUVTLVhUUyB3aXRoIHBoeXNpY2FsDQo+ID4gPiBhZGRyZXNzIHR3ZWFrLiBTbyB0aGUgZGF0YSBp
+cyB0aWVkIHRvIHRoZSBwbGFjZSBpbiBwaHlzaWNhbCBhZGRyZXNzIHNwYWNlDQo+ID4gPiBhbmQN
+Cj4gPiA+IHJlcGxhY2luZyBvbmUgZW5jcnlwdGVkIHBhZ2Ugd2l0aCBhbm90aGVyIGVuY3J5cHRl
+ZCBwYWdlIGZyb20gZGlmZmVyZW50DQo+ID4gPiBhZGRyZXNzIHdpbGwgcHJvZHVjZSBnYXJiYWdl
+IG9uIGRlY3J5cHRpb24uDQo+ID4gDQo+ID4gSnVzdCB0cnlpbmcgdG8gdW5kZXJzdGFuZCBob3cg
+dGhpcyB3b3Jrcy4NCj4gPiANCj4gPiBTbyB5b3UgdXNlIHBoeXNpY2FsIGFkZHJlc3MgbGlrZSBh
+IG5vbmNlL3ZlcnNpb24gZm9yIHRoZSBwYWdlIGFuZA0KPiA+IHRodXMgcHJldmVudCByZXBsYXk/
+IFdhcyBub3QgYXdhcmUgb2YgdGhpcy4NCj4gDQo+IFRoZSBicnV0YWwgZmFjdCBpcyB0aGF0IGEg
+cGh5c2ljYWwgYWRkcmVzcyBpcyBhbiBhc3Ryb25vbWljYWwgc3RyZXRjaA0KPiBmcm9tIGEgcmFu
+ZG9tIHZhbHVlIG9yIGluY3JlYXNpbmcgY291bnRlci4gVGh1cywgaXQgaXMgZmFpciB0byBzYXkg
+dGhhdA0KPiBNS1RNRSBwcm92aWRlcyBvbmx5IG5haXZlIG1lYXN1cmVzIGFnYWluc3QgcmVwbGF5
+IGF0dGFja3MuLi4NCj4gDQo+IC9KYXJra28NCg0KQ3VycmVudGx5IHRoZXJlJ3Mgbm8gbm9uY2Ug
+dG8gcHJvdGVjdCBjYWNoZSBsaW5lIHNvIFRNRS9NS1RNRSBpcyBub3QgYWJsZSB0byBwcmV2ZW50
+IHJlcGxheSBhdHRhY2sNCnlvdSBtZW50aW9uZWQuIEN1cnJlbnRseSBNS1RNRSBvbmx5IGludm9s
+dmVzIEFFUy1YVFMtMTI4IGVuY3J5cHRpb24gYnV0IG5vdGhpbmcgZWxzZS4gQnV0IGxpa2UgSQ0K
+c2FpZCBpZiBJIHVuZGVyc3RhbmQgY29ycmVjdGx5IGV2ZW4gU0VWIGRvZXNuJ3QgaGF2ZSBpbnRl
+Z3JpdHkgcHJvdGVjdGlvbiBzbyBub3QgYWJsZSB0byBwcmV2ZW50DQpyZXBseSBhdHRhY2sgYXMg
+d2VsbC4NCg0KVGhhbmtzLA0KLUthaQ==
