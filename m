@@ -2,116 +2,116 @@ Return-Path: <SRS0=JAbS=OS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08145C67838
-	for <linux-security-module@archiver.kernel.org>; Sun,  9 Dec 2018 12:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 252FFC65BAF
+	for <linux-security-module@archiver.kernel.org>; Sun,  9 Dec 2018 18:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C92F020831
-	for <linux-security-module@archiver.kernel.org>; Sun,  9 Dec 2018 12:14:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92F020831
+	by mail.kernel.org (Postfix) with ESMTP id E48C720661
+	for <linux-security-module@archiver.kernel.org>; Sun,  9 Dec 2018 18:40:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48C720661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbeLIMOW (ORCPT
+        id S1726201AbeLISkS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 9 Dec 2018 07:14:22 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43080 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726118AbeLIMOW (ORCPT
+        Sun, 9 Dec 2018 13:40:18 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37258 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726219AbeLISkS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 9 Dec 2018 07:14:22 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB9CEHCk044900
-        for <linux-security-module@vger.kernel.org>; Sun, 9 Dec 2018 07:14:20 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2p8vghj1aa-1
+        Sun, 9 Dec 2018 13:40:18 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wB9Id7gI095242
+        for <linux-security-module@vger.kernel.org>; Sun, 9 Dec 2018 13:40:17 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2p8uqwcvws-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Sun, 09 Dec 2018 07:14:20 -0500
+        for <linux-security-module@vger.kernel.org>; Sun, 09 Dec 2018 13:40:17 -0500
 Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Sun, 9 Dec 2018 12:14:19 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 9 Dec 2018 18:40:15 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 9 Dec 2018 12:14:16 -0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB9CEF8M24051868
+        Sun, 9 Dec 2018 18:40:10 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wB9Ie9pN852324
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 9 Dec 2018 12:14:15 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3AAE4136053;
-        Sun,  9 Dec 2018 12:14:15 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B12FA13604F;
-        Sun,  9 Dec 2018 12:14:11 +0000 (GMT)
-Received: from [9.85.68.82] (unknown [9.85.68.82])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Sun,  9 Dec 2018 12:14:11 +0000 (GMT)
-Subject: Re: [PATCH v6 2/7] tpm: add _head suffix to tcg_efi_specid_event and
- tcg_pcr_event2
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        jarkko.sakkinen@linux.intel.com, david.safford@ge.com,
-        monty.wiseman@ge.com
-Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-3-roberto.sassu@huawei.com>
-From:   Nayna Jain <nayna@linux.ibm.com>
-Date:   Sun, 9 Dec 2018 17:40:49 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20181204082138.24600-3-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Sun, 9 Dec 2018 18:40:09 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17D6EAE057;
+        Sun,  9 Dec 2018 18:40:09 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 71F4BAE045;
+        Sun,  9 Dec 2018 18:40:07 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.88.113])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun,  9 Dec 2018 18:40:07 +0000 (GMT)
+Subject: Re: [PATCH v2 0/7] add platform/firmware keys support for kernel
+ verification by IMA
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        jforbes@redhat.com, seth.forshee@canonical.com,
+        kexec@lists.infradead.org, keyrings@vger.kernel.org,
+        vgoyal@redhat.com, ebiederm@xmission.com, mpe@ellerman.id.au
+Date:   Sun, 09 Dec 2018 13:39:56 -0500
+In-Reply-To: <20181208202705.18673-1-nayna@linux.ibm.com>
+References: <20181208202705.18673-1-nayna@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 18120912-8235-0000-0000-00000E35FAF8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010199; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01129234; UDB=6.00586685; IPR=6.00909365;
- MB=3.00024611; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-09 12:14:18
+x-cbid: 18120918-0028-0000-0000-0000032829AB
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18120912-8236-0000-0000-000043A47991
-Message-Id: <edb2a88c-3f28-59fe-ebc8-4358362c4c3d@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-09_04:,,
+x-cbparentid: 18120918-0029-0000-0000-000023E448D4
+Message-Id: <1544380796.3794.6.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-09_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=593 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812090117
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812090173
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi Nayna,
 
+On Sun, 2018-12-09 at 01:56 +0530, Nayna Jain wrote:
+> On secure boot enabled systems, a verified kernel may need to kexec
+> additional kernels. For example, it may be used as a bootloader needing
+> to kexec a target kernel or it may need to kexec a crashdump kernel.
+> In such cases, it may want to verify the signature of the next kernel
+> image.
+> 
+> It is possible that the new kernel image is signed with third party keys
+> which are stored as platform or firmware keys in the 'db' variable. The
+> kernel, however, can not directly verify these platform keys, and an
+> administrator may therefore not want to trust them for arbitrary usage.
+> In order to differentiate platform keys from other keys and provide the
+> necessary separation of trust the kernel needs an additional keyring to
+> store platform/firmware keys.
+> 
+> The secure boot key database is expected to store the keys as EFI
+> Signature List(ESL). The patch set uses David Howells and Josh Boyer's
+> patch to access and parse the ESL to extract the certificates and load
+> them onto the platform keyring.
+> 
+> The last patch in this patch set adds support for IMA-appraisal to
+> verify the kexec'ed kernel image based on keys stored in the platform
+> keyring.
 
-On 12/04/2018 01:51 PM, Roberto Sassu wrote:
-> TCG defines two structures, TCG_EfiSpecIDEventStruct and TCG_PCR_EVENT2,
-> which contain variable-sized arrays in the middle of the definition.
->
-> Since these structures are not suitable for type casting, this patch
-> removes structure members after the variable-sized arrays and adds the
-> _head suffix to the structure name, to indicate that the renamed structures
-> do not contain all fields defined by TCG.
->
-> Lastly, given that variable-sized arrays are now in the last position, and
-> given that the size of the arrays cannot be determined in advance, this
-> patch also sets the size of those arrays to zero and removes the definition
-> of TPM2_ACTIVE_PCR_BANKS.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Thanks!  This patch set is now in the #next-integrity branch.
 
+https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/
 
-Tested-by: Nayna Jain <nayna@linux.ibm.com>
-
-Thanks & Regards,
-     - Nayna
-
+Mimi
 
