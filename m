@@ -2,108 +2,93 @@ Return-Path: <SRS0=+97+=OT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28167C04EB8
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Dec 2018 16:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53549C5CFFE
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Dec 2018 17:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E99EC20821
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 Dec 2018 16:32:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99EC20821
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 130F32064D
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 Dec 2018 17:30:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="hC5VDccC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 130F32064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726209AbeLJQch (ORCPT
+        id S1727469AbeLJRat (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 Dec 2018 11:32:37 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29682 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726324AbeLJQch (ORCPT
+        Mon, 10 Dec 2018 12:30:49 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58412 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726687AbeLJRat (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 Dec 2018 11:32:37 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBAGTZ0U017884
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Dec 2018 11:32:35 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2p9sedg2q4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Dec 2018 11:32:35 -0500
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <kgold@linux.ibm.com>;
-        Mon, 10 Dec 2018 16:32:33 -0000
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 10 Dec 2018 16:32:30 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBAGWUJW29294684
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 10 Dec 2018 16:32:30 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E742AC605F;
-        Mon, 10 Dec 2018 16:32:29 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 953C0C605D;
-        Mon, 10 Dec 2018 16:32:29 +0000 (GMT)
-Received: from [9.2.202.70] (unknown [9.2.202.70])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Dec 2018 16:32:29 +0000 (GMT)
-Subject: Re: Documenting the proposal for TPM 2.0 security in the face of bus
- interposer attacks
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org,
+        Mon, 10 Dec 2018 12:30:49 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id E92AB8EE0E2;
+        Mon, 10 Dec 2018 09:30:48 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FARv9fhhzGgG; Mon, 10 Dec 2018 09:30:48 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 84C288EE0D3;
+        Mon, 10 Dec 2018 09:30:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1544463048;
+        bh=YpVj9ECOjNpr2cu/Y4fZhAyh3FjCRhfZKlkQycGbz54=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=hC5VDccC9T2S/QFbZGaWK51gG++If82lEqVXn6ocLRKFqkqcSlmTXh7ctIUP7LhMs
+         lpFJvxnSTiT5m0UCCvVvoleMIrgf3MbiIXYzZtQKgFx1qdAdH4JS1AFzIbj/06Ueqo
+         AikLFkPWmNeu+N1Y6d/tPX0uMsS1VaVaxZv1g3EI=
+Message-ID: <1544463047.2753.24.camel@HansenPartnership.com>
+Subject: Re: Documenting the proposal for TPM 2.0 security in the face of
+ bus interposer attacks
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Ken Goldman <kgold@linux.ibm.com>, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
+Date:   Mon, 10 Dec 2018 09:30:47 -0800
+In-Reply-To: <16c8baf7-e2a9-6e12-b736-a0e2384282ed@linux.ibm.com>
 References: <1542648844.2910.9.camel@HansenPartnership.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-Date:   Mon, 10 Dec 2018 11:33:04 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <1542648844.2910.9.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+         <16c8baf7-e2a9-6e12-b736-a0e2384282ed@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121016-8235-0000-0000-00000E368167
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010208; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01129798; UDB=6.00587025; IPR=6.00909932;
- MB=3.00024642; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-10 16:32:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121016-8236-0000-0000-000043A7A772
-Message-Id: <16c8baf7-e2a9-6e12-b736-a0e2384282ed@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-10_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=945 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812100148
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/19/2018 12:34 PM, James Bottomley wrote:
+On Mon, 2018-12-10 at 11:33 -0500, Ken Goldman wrote:
+> On 11/19/2018 12:34 PM, James Bottomley wrote:
+> 
+> > 2. At some point in time the attacker could reset the TPM, clearing
+> >     the PCRs and then send down their own measurements which would
+> >     effectively overwrite the boot time measurements the TPM has
+> >     already done.
+> > [snip]
+> > However, the second can only really be detected by relying
+> > on some sort of mechanism for protection which would change over
+> > TPM reset.
+> 
+> FYI: TPM 2.0 has a resetCount that can be used to detect, but not 
+> protect against, this attack.
 
-> 2. At some point in time the attacker could reset the TPM, clearing
->     the PCRs and then send down their own measurements which would
->     effectively overwrite the boot time measurements the TPM has
->     already done.
-> [snip]
-> However, the second can only really be detected by relying
-> on some sort of mechanism for protection which would change over TPM
-> reset.
+Yes, but that would be an additional check we'd have to do.  Using the
+NULL seed for salt means the HMAC and Encryption on commands instantly
+breaks if the TPM is reset.
 
-FYI: TPM 2.0 has a resetCount that can be used to detect, but not 
-protect against, this attack.
+> > Every TPM comes shipped with a couple of X.509 certificates for the
+> > primary endorsement key.  This document assumes that the Elliptic
+> > Curve version of the certificate exists at 01C00002, but will work
+> > equally well with the RSA certificate (at 01C00001).
+> 
+> A nit.  The RSA cert is at 01c00002.  The ECC cert is at 01c0000a.
 
-> Every TPM comes shipped with a couple of X.509 certificates for the
-> primary endorsement key.  This document assumes that the Elliptic
-> Curve version of the certificate exists at 01C00002, but will work
-> equally well with the RSA certificate (at 01C00001).
+Is this actually published somewhere? ... I was guessing from the TPM
+2.0 provisioning guide.
 
-A nit.  The RSA cert is at 01c00002.  The ECC cert is at 01c0000a.
+James
 
