@@ -2,65 +2,68 @@ Return-Path: <SRS0=nZhg=OU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBE3C67839
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 08:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA27C67839
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 10:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CC6A20849
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 08:31:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CC6A20849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 31DA32084A
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 10:42:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DA32084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbeLKIbp (ORCPT
+        id S1726202AbeLKKmY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Dec 2018 03:31:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57748 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726085AbeLKIbp (ORCPT
+        Tue, 11 Dec 2018 05:42:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46072 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726104AbeLKKmY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Dec 2018 03:31:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AE73CAF09;
-        Tue, 11 Dec 2018 08:31:43 +0000 (UTC)
-From:   Nikolay Borisov <nborisov@suse.com>
-To:     zohar@linux.vnet.ibm.com
-Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Nikolay Borisov <nborisov@suse.com>
-Subject: [PATCH] ima: Use inode_is_open_for_write
-Date:   Tue, 11 Dec 2018 10:31:40 +0200
-Message-Id: <20181211083140.21430-1-nborisov@suse.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 11 Dec 2018 05:42:24 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 17646368E7;
+        Tue, 11 Dec 2018 10:42:24 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-82.ams2.redhat.com [10.36.116.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 16E61608F7;
+        Tue, 11 Dec 2018 10:42:21 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: Security modules and sending signals within the same process
+References: <87lg5asilo.fsf@oldenburg.str.redhat.com>
+        <e754fa24-899b-f77e-f226-0f070ebad132@tycho.nsa.gov>
+Date:   Tue, 11 Dec 2018 11:42:20 +0100
+In-Reply-To: <e754fa24-899b-f77e-f226-0f070ebad132@tycho.nsa.gov> (Stephen
+        Smalley's message of "Fri, 30 Nov 2018 11:02:15 -0500")
+Message-ID: <87d0q8z6nn.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 11 Dec 2018 10:42:24 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the aptly named function rather than open coding the check. No
-functional changes.
+* Stephen Smalley:
 
-Signed-off-by: Nikolay Borisov <nborisov@suse.com>
----
- security/integrity/ima/ima_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Looks like commit 065add3941bd ("signals: check_kill_permission():
+> don't check creds if same_thread_group()") skipped the uid-based
+> checks if the sender and target were in the same thread group, but not
+> the security hook call.  One could argue that the security hook call
+> ought to be skipped in that case as well using the same rationale
+> given in that commit.  Nothing appears to guarantee the property you
+> state above for security_task_kill implementations, although none of
+> the in-tree users are based on uids or gids so setresuid/setresgid
+> shouldn't affect them.
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 1b88d58e1325..05fbf8a2fa42 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -103,7 +103,7 @@ static void ima_rdwr_violation_check(struct file *file,
- 	} else {
- 		if (must_measure)
- 			set_bit(IMA_MUST_MEASURE, &iint->atomic_flags);
--		if ((atomic_read(&inode->i_writecount) > 0) && must_measure)
-+		if (inode_is_open_for_write(inode) && must_measure)
- 			send_writers = true;
- 	}
- 
--- 
-2.17.1
+Okay, thanks, so it looks like I don't have to do anything special to
+support thread cancellation.
 
+Florian
