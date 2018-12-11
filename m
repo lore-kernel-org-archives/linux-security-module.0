@@ -2,31 +2,31 @@ Return-Path: <SRS0=nZhg=OU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=ham
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CCCC5CFFE
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71344C5CFFE
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7180220811
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:49:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7180220811
+	by mail.kernel.org (Postfix) with ESMTP id 44DE320870
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44DE320870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726340AbeLKSt3 (ORCPT
+        id S1726675AbeLKSxt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:49:29 -0500
-Received: from namei.org ([65.99.196.166]:59004 "EHLO namei.org"
+        Tue, 11 Dec 2018 13:53:49 -0500
+Received: from namei.org ([65.99.196.166]:59022 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726241AbeLKSt3 (ORCPT
+        id S1726432AbeLKSxt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:49:29 -0500
+        Tue, 11 Dec 2018 13:53:49 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBBIn05S012701;
-        Tue, 11 Dec 2018 18:49:00 GMT
-Date:   Wed, 12 Dec 2018 05:49:00 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBBIrUwe012883;
+        Tue, 11 Dec 2018 18:53:30 GMT
+Date:   Wed, 12 Dec 2018 05:53:30 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Nayna Jain <nayna@linux.ibm.com>
 cc:     linux-integrity@vger.kernel.org,
@@ -35,12 +35,12 @@ cc:     linux-integrity@vger.kernel.org,
         dhowells@redhat.com, jforbes@redhat.com,
         seth.forshee@canonical.com, kexec@lists.infradead.org,
         keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au, Josh Boyer <jwboyer@fedoraproject.org>
-Subject: Re: [PATCH v2 6/7] efi: Allow the "db" UEFI variable to be
- suppressed
-In-Reply-To: <20181208202705.18673-7-nayna@linux.ibm.com>
-Message-ID: <alpine.LRH.2.21.1812120548480.11653@namei.org>
-References: <20181208202705.18673-1-nayna@linux.ibm.com> <20181208202705.18673-7-nayna@linux.ibm.com>
+        mpe@ellerman.id.au
+Subject: Re: [PATCH v2 7/7] ima: Support platform keyring for kernel
+ appraisal
+In-Reply-To: <20181208202705.18673-8-nayna@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.1812120553170.11653@namei.org>
+References: <20181208202705.18673-1-nayna@linux.ibm.com> <20181208202705.18673-8-nayna@linux.ibm.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -50,21 +50,25 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 On Sun, 9 Dec 2018, Nayna Jain wrote:
 
-> From: Josh Boyer <jwboyer@fedoraproject.org>
+> On secure boot enabled systems, the bootloader verifies the kernel
+> image and possibly the initramfs signatures based on a set of keys. A
+> soft reboot(kexec) of the system, with the same kernel image and
+> initramfs, requires access to the original keys to verify the
+> signatures.
 > 
-> If a user tells shim to not use the certs/hashes in the UEFI db variable
-> for verification purposes, shim will set a UEFI variable called
-> MokIgnoreDB. Have the uefi import code look for this and ignore the db
-> variable if it is found.
+> This patch allows IMA-appraisal access to those original keys, now
+> loaded on the platform keyring, needed for verifying the kernel image
+> and initramfs signatures.
 > 
-> Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Acked-by: Nayna Jain <nayna@linux.ibm.com>
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > Acked-by: Serge Hallyn <serge@hallyn.com>
+> - replace 'rc' with 'xattr_len' when calling integrity_digsig_verify()
+> with INTEGRITY_KEYRING_IMA for readability
+> Suggested-by: Serge Hallyn <serge@hallyn.com>
 
 
 Reviewed-by: James Morris <james.morris@microsoft.com>
-
 
 -- 
 James Morris
