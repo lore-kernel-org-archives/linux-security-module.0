@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16040C6783C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7448C6783B
 	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD05E20851
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD88220672
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:47:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="M866abYQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD05E20851
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qUnb0x5L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD88220672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbeLKWru (ORCPT
+        id S1726365AbeLKWnc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:47:50 -0500
-Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:40977
-        "EHLO sonic308-17.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726358AbeLKWnc (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 11 Dec 2018 17:43:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568211; bh=ZlWCjSOSrH+yq5U3bHRSbrGC5WLOGr1E5Vzq7vDN9ik=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=M866abYQIiko6ni5d+dQ/xnG0V97dR9JzJYmRq3FeP4vbfjrTg4ywdz7cnaKEeX15b/qs+sE1+QI/wloKObj1Uhw9VoFIZBS4f8n65UNjSmBGAHhruivU7FVCj8Dj7hbwpqmsNYAflvjYPntQVkPvlFD6g5Y7qjFXGgW76rLPBuMbTq3OWeRgUxUA5kORTst2IQpcQtZr2j1B7knIUJkILJyN/YV9XT+I20WWNtIyh4H+SDVabIE90UE6e93znT17V/YmKCexPZUpXKoByKsPFMtW31d0PFBCfmgRGwOAwGMtrJGjjCUcPXmRXC+BQyTwG1TPoxPsPA9t4Kf0t/qiw==
-X-YMail-OSG: 7c.3x0AVM1nte80y3kWjrFYohqGJGvE6xCAcyyJ44Dxr4zLxR6jCeblaWeEF0my
- 5pF77c6hZ2YcZFQqOOlP3E3GiXDqwoVEo5x6GEcDMMgOtWvB6ZpeV7NAzlt5jCr7hjzrpxE.nJxJ
- 7QIzizwVKnYKZBc1n9tjJnSEo7ikhoX5cNNSvfi5EujmGR5tBYKusJTdNAYMPpx7d5wxkveCY5wv
- BZaE2TovjYLyeSdZJyjsAnL4aM0Xed7w6qLfj.FgZsEN0MxylLKkZXldZ.7n2ai6qb.4RG2BE3vB
- XUmxaI3O2uAiTJnx_umEIalwUJzZqLYEarHS3C1HiRSokhCfvqauIZILYNIiW02.P0LSUuj_qY1T
- Z6IsHchiy.RA_zE.JlSANOpReET7.sUZRqFXJxIfutvsjcohvRgoiPTHKe72U33D22.O.0UBr.vG
- sq.Qa4MxKgg9ILiSAs5qxleXlzD_xUZ2lJvFH4ntrewPKJkhmBhSHFv2yPjm4sXKI3MuA1UssZPh
- zrrh_Fws4xeQCciCYta1FqWIKUs2OfYSMlv.nrAQTBXCWzGGkiRNaPiSovzLQ6uGgEf4uWbQMbhk
- nRor3wn7BWj6GGnjDIAPxhcYmSAg47JIbtgOEFZXhrwqBfKsGs5ivEqxUOXp7Mz9yjKFU1Q_VgZ7
- vll5tnsVTY.rx0NBZZ__xzt17UZjXQniA76dFpDR9NW3QmDMEEkSnSshgWZj5mq4sowH4wRALlki
- .vEOLVZC_.jqpWYxgy6rJ2JEoWoGyAK.VJDgETTfXLo.IPpuJeNYI1TEUyWuCs9tfEp4yQaJ4qF2
- jP9VtT.TM3hlw.eqbW8AwI941yAZXWeP6hSlDqgyRtIPcffPW9NLnVX4zbkhVkIHWSPCB6dj9SM6
- .bVpJARULSSRbHs5kwtV4gTNNh6T29U_tAOFu4AIWCFm8QbsEj37Ol64EwjzWZrXdL23xB1jspeZ
- 02amgqgByK7.KkG61GZbO8EVFsw_XEgtkYw._2YYv76Bpmv9clbV8FXjrvxcDxaE.jb6Gp7mmL84
- .VcFMADwZOmwvCxmBuqWeIUpyYf3RUcNZMTUMwqw79rcYLsqBEOwiQywxiP0DBUExvkyR27oLwnD
- TNNi.1.utYm.vBajU6838FahR5Wgbh3RStb_lLg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:43:31 +0000
+Received: from sonic311-28.consmr.mail.ne1.yahoo.com ([66.163.188.209]:44309
+        "EHLO sonic311-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726345AbeLKWnb (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:43:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568210; bh=wFIQYZ3HEnVEK848nF65xZO1MyZAz7Uo0oMwuViToQY=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=qUnb0x5LDFV/elBxUF6Mijy9MyaAmQayyJSU1/gtwU9U8TVnIJynCvp3buk89bfEwbFQRiAHQG8I2Bs2GJPdrvoFDy7gdmSePpL/9q8Nm6YF089u8dzYV7KW555ZYsfpzvOZmUKqQYNTooNEHMSwBXcsT1iYACUH43z7ZVZDmiz5SU3MtBjwEDlY4joqEOKso9Wlat2tIsRElcFQYwsE2RQSH3dtjLdlw7bzI9OLATJlW8CVZd9Joo459GzL8c3QZ8MbEm3mxP1bmAfwPXn75YFMZq2k5YFW3eXc+M8ec9kA2Txm75Xdm4fLyLPTVhkPLBZbqhKy1e2CQEV9lNpapg==
+X-YMail-OSG: 9MVgeJkVM1nOQgjXi9JM_WPV.FbgXAwgESQR65NWGUdaEUUz.uuKvvmyRbzKE6A
+ 5AssK2h7XnynZy2hCQFL8GJjfuZkL2_YAUQ.j6qrP6SiN.n2I7TRH3JZCvAPeAiezMwxFn2br1d2
+ WvxmWLjRwNecFe2aJAwmk89D7zXakgqxYwpwEch5M9dDXPRl627hvS0weQGW5Anr.2SiV_yAu6fQ
+ yjQ1KQ.THxDOqhEqQGFxPWz1aATinwdZOKaUq5CKBBghAILTewPTd8U2ypCmOCX7zMySoY.vIHPY
+ TA5SxYHP_oBPFTKPTongpDhZrnGf4592i6XQ6BaTSHcYKu2BcBE.Ezpyl2X94Qp..b5vcvzVWIIK
+ I2AFz6CU__eQNaeXUA4yRxSadGTwbnea1rBcLev._NZvNlmUqDgJGvNj8i6se37ttEugnvrnsdCG
+ 0N8UJhs7irFqrjuXD.M8IOSGFDjD1qlmDSLZM7DtjT2oMfE1n3Nx97zbNfKGnOgIc75FsPpXSeVr
+ B3Vcgi8H.MvOMREj._alDgOJy8yOPfyxJAabZY8SukKx5vUODEuL4Hlxq.TY3hkNR8WJ0vTQAYGE
+ SbMVWhRnCkc1xWjeYJ3e1CdXw6Cw128isdJQU9vZAuYZ7_C7TQEo3VKzip23ISRFke3g9gj.YkIN
+ 9mopSzGYjnA1MqUAUsXw16OP1OjvZeJrFmgwdT1ZALtibfVh4SJLNtxNaN9OQCGZLqpvEp7gr08T
+ 8iQKkm.cWyU.LYVEUBHFOuPLtm21QSF8ablNbI4sMtUVM_Pb6sOKCCsq5yxXqoduuQCBD09M74Tq
+ hNYYH44F5tXF6evNtw6O2b9CMuvxYBKGosjKro7PqRWNk3TztbPrXeLhe0qHqRDjvWNb3DhUoK2Y
+ 4JeF5STMuFON3ituO11Hqceq2VKcB6tb3U43N6h3ULdkDwX.In_sMl_z4bBeC4JmxmJyX_4qFq.L
+ YZcu0HN5oIjv8_AUBo9B_ZVmhBXcx7Wwn5D2WaGHs5eIhIdzQuKSr4Au.84ZnyJpnLO2CQYOy5I6
+ hA2GrwUybnaAP_jv40Pbq4IJsZRqvqzMwm4q8jkgwE60MnRzvLfrVt4OwiCSgH8lX95hsSo11kbc
+ n5U7TST5efqOlNrqgu22OZgTiPAawuzeoB.8-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:43:30 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp422.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID db48327a3d58729724c38eee90dbab73;
-          Tue, 11 Dec 2018 22:43:29 +0000 (UTC)
+          Tue, 11 Dec 2018 22:43:30 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, selinux@vger.kernel.org
@@ -55,9 +55,9 @@ Cc:     john.johansen@canonical.com, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
         adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
         casey@schaufler-ca.com
-Subject: [PATCH v5 06/38] LSM: Introduce CONFIG_LSM
-Date:   Tue, 11 Dec 2018 14:42:42 -0800
-Message-Id: <20181211224314.22412-7-casey@schaufler-ca.com>
+Subject: [PATCH v5 07/38] LSM: Introduce "lsm=" for boottime LSM selection
+Date:   Tue, 11 Dec 2018 14:42:43 -0800
+Message-Id: <20181211224314.22412-8-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
 References: <20181211224314.22412-1-casey@schaufler-ca.com>
@@ -67,92 +67,84 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Kees Cook <keescook@chromium.org>
 
-This provides a way to declare LSM initialization order via the new
-CONFIG_LSM. Currently only non-major LSMs are recognized. This will
-be expanded in future patches.
+Provide a way to explicitly choose LSM initialization order via the new
+"lsm=" comma-separated list of LSMs.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/Kconfig    |  9 +++++++++
- security/security.c | 27 ++++++++++++++++++++++-----
- 2 files changed, 31 insertions(+), 5 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  4 ++++
+ security/Kconfig                                |  3 ++-
+ security/security.c                             | 14 +++++++++++++-
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 81d1d5a74728..ea33bcbaecb2 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2302,6 +2302,10 @@
+ 
+ 	lsm.debug	[SECURITY] Enable LSM initialization debugging output.
+ 
++	lsm=lsm1,...,lsmN
++			[SECURITY] Choose order of LSM initialization. This
++			overrides CONFIG_LSM.
++
+ 	machvec=	[IA-64] Force the use of a particular machine-vector
+ 			(machvec) in a generic kernel.
+ 			Example: machvec=hpzx1_swiotlb
 diff --git a/security/Kconfig b/security/Kconfig
-index d9aa521b5206..7de42bbacc28 100644
+index 7de42bbacc28..41aa0be6142f 100644
 --- a/security/Kconfig
 +++ b/security/Kconfig
-@@ -276,5 +276,14 @@ config DEFAULT_SECURITY
- 	default "apparmor" if DEFAULT_SECURITY_APPARMOR
- 	default "" if DEFAULT_SECURITY_DAC
+@@ -281,7 +281,8 @@ config LSM
+ 	default "integrity"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+-	  Any LSMs left off this list will be ignored.
++	  Any LSMs left off this list will be ignored. This can be
++	  controlled at boot with the "lsm=" parameter.
  
-+config LSM
-+	string "Ordered list of enabled LSMs"
-+	default "integrity"
-+	help
-+	  A comma-separated list of LSMs, in initialization order.
-+	  Any LSMs left off this list will be ignored.
-+
-+	  If unsure, leave this as the default.
-+
- endmenu
+ 	  If unsure, leave this as the default.
  
 diff --git a/security/security.c b/security/security.c
-index 4c193aba4531..96e0b7d057b0 100644
+index 96e0b7d057b0..38fc436e8b4b 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -48,6 +48,8 @@ char *lsm_names;
+@@ -47,6 +47,7 @@ char *lsm_names;
+ /* Boot-time LSM user choice */
  static __initdata char chosen_lsm[SECURITY_NAME_MAX + 1] =
  	CONFIG_DEFAULT_SECURITY;
++static __initdata const char *chosen_lsm_order;
  
-+static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
-+
- /* Ordered list of LSMs to initialize. */
- static __initdata struct lsm_info **ordered_lsms;
+ static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
  
-@@ -155,15 +157,30 @@ static void __init maybe_initialize_lsm(struct lsm_info *lsm)
- 	}
- }
- 
--/* Populate ordered LSMs list from single LSM name. */
-+/* Populate ordered LSMs list from comma-separated LSM name list. */
- static void __init ordered_lsm_parse(const char *order, const char *origin)
- {
- 	struct lsm_info *lsm;
-+	char *sep, *name, *next;
-+
-+	sep = kstrdup(order, GFP_KERNEL);
-+	next = sep;
-+	/* Walk the list, looking for matching LSMs. */
-+	while ((name = strsep(&next, ",")) != NULL) {
-+		bool found = false;
-+
-+		for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
-+			if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0 &&
-+			    strcmp(lsm->name, name) == 0) {
-+				append_ordered_lsm(lsm, origin);
-+				found = true;
-+			}
-+		}
- 
--	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
--		if (strcmp(lsm->name, order) == 0)
--			append_ordered_lsm(lsm, origin);
-+		if (!found)
-+			init_debug("%s ignored: %s\n", origin, name);
- 	}
-+	kfree(sep);
- }
- 
- static void __init ordered_lsm_init(void)
-@@ -173,7 +190,7 @@ static void __init ordered_lsm_init(void)
+@@ -190,7 +191,10 @@ static void __init ordered_lsm_init(void)
  	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
  				GFP_KERNEL);
  
--	ordered_lsm_parse("integrity", "builtin");
-+	ordered_lsm_parse(builtin_lsm_order, "builtin");
+-	ordered_lsm_parse(builtin_lsm_order, "builtin");
++	if (chosen_lsm_order)
++		ordered_lsm_parse(chosen_lsm_order, "cmdline");
++	else
++		ordered_lsm_parse(builtin_lsm_order, "builtin");
  
  	for (lsm = ordered_lsms; *lsm; lsm++)
  		maybe_initialize_lsm(*lsm);
+@@ -252,6 +256,14 @@ static int __init choose_lsm(char *str)
+ }
+ __setup("security=", choose_lsm);
+ 
++/* Explicitly choose LSM initialization order. */
++static int __init choose_lsm_order(char *str)
++{
++	chosen_lsm_order = str;
++	return 1;
++}
++__setup("lsm=", choose_lsm_order);
++
+ /* Enable LSM order debugging. */
+ static int __init enable_debug(char *str)
+ {
 -- 
 2.14.5
 
