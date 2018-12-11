@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D39C6783B
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40479C6783C
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9030F20672
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0AFE20672
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:44:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="MTSSMZQi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9030F20672
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="prTrZXqG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AFE20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeLKWoI (ORCPT
+        id S1726714AbeLKWoI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Tue, 11 Dec 2018 17:44:08 -0500
-Received: from sonic311-28.consmr.mail.ne1.yahoo.com ([66.163.188.209]:42928
-        "EHLO sonic311-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726691AbeLKWoH (ORCPT
+Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:34042
+        "EHLO sonic308-17.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726706AbeLKWoI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:44:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568246; bh=rtgbAY8v8bf2tMWocN4/v1BHGqtzr15pWf8snPHIIn8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=MTSSMZQiJGfO2lz3OCDx3mwrFNR7BZFxhpvp6he8a2kehNR4TfXnSpYlv/i0IPXDYhA6A6lD6u1e0lRak6VV+WfKi8g4IWdw+Kemt4CKhE1Cm/T46QClFGDPIlJ56IFYN1VLXTsthzhGh7Y6DQvL2aEj0aOf/n0zJ/zUW3BtwN/DSFlL2O7+wnGGQNjyjcJYtGsiehyjPdoa9QEPk9+Nt/RETB1UNkEeZ57z3j1yS8G1ZrudTHbEV8nHh2OuA3jjgBkBlJ3IaXiS9TlM8xNFASsEJojkSMmA8EAw+1kjMyXpuVqVQhXAf77QrYCEjNkusJtjec58aWutY20/FZuahQ==
-X-YMail-OSG: ODv9pKMVM1k5bhJQ17ZasrABywSFB0XI0VLo3BkVWEgONXM1uTRUaQOcwoYL1ys
- WYGcMXnme3BwY41bs7wJUl1gNL3QzRZqR9WhX0sMsUSFwrSnXqOJWq2sWfzvaKHYf2j93xNOpIJJ
- 0aVPPtq1fxDRII_KMAHNELdah52lWV2kWJgx.fwH2i.DT0aNaOi1YbG2xEGZOBgKzxJ..EwAXnFw
- qciDWbFR.w6uvp3uKv.Q6QM5p6lsk6h0yj7NLJbObqpmU4AW2WPZzqQDBcBrcHP0T_HGwzivPZh7
- _jnIDELvU70v5R8S1sPfzRLKnUlXjHe2p6XOoGfIwVTsE6UDuHjSGpCOZnLLzAbcybzi_N3fYYzJ
- y.WWloMNNkruxfMCAHuTtQsnj5cCN3XbYGkIwd8VhOjpZXXJdnLwZytDXIteroVEBoahRelyhbaV
- M6d4l4XYQ2wJiL0TSSFtnfAoDDRDxfjTugnwmUM46nJ23c9VplZZQz4DleuSwMQyHEd7b6FOv_WL
- UKSa812SJE50ualiS_YlZmf3_Y93NKWS95J2dXwMjWAIYRUPQNqS7pOs8ijDl_hyBbFy0e0vTddW
- 7N_N0Lzx9c10d.P71wbuLl_HCYJhnjgU0mQz_Wite8y95uLktqepGOGi48YZUDN57l9klyCgP0WD
- CpmOHWlRvh6mKRXQ7USwWyITUHUwA4TMViya2.Esepi07cPnidmdVap0os_wtUj5rjdGUYMhHU2N
- y3qyy7F12xOpLwW5TOlIAhCEBxBk4IxVAwz9fvahAm7Jt5oEH0hlgsMHkvE4beB395A.KWtQNM0B
- cTGty3ipS.Qe2w3ZUW35Uuv7WtIS_bqRNfMLYAWU7JwZ.0EDvfWMlheM62fQ6hdUYkI2F3ohW30V
- fdxf.QTWuQsQF6VGwLzj_BBiajmMiJ7nawDwVWlqNfVjaeopr_Y9c3cjx5VXI8tCmoMHaF1hs4AU
- gRpsloZWwlgCZlpfWy9fn00U6OQpia1nrUjUxo8LIhsgRmfwiTxJi0.dQEk1QldET165f6jL4FcD
- IY9DwaOxwGMlTySXvN1uKjR9iaGSiiZVxIpSwO1tUgXBfcZlw3IT_kazF_bx2_PJ8SIcadSzAGLh
- 3YHS86.OcyGpWXqRVRQmfcmib6X.MmKElvLj6rNxIpR0-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:44:06 +0000
+        Tue, 11 Dec 2018 17:44:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568246; bh=Il9GpnbV91+fys2zxOGbpdhryeWPuMQjgXeEO7Bfh2k=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=prTrZXqGqFzroyYtN+YEBDGdQnSIA3W/hmx83yDeGBfeAv4/BsYS/xCJ/2moR2Jp8UgpqSLZO0uHrY1DOX8QS21DsyyFHf1WSeRR3IFIJg1fjh3QhDZLFHrjOYc9nNdltM9UN5nOhYeBPEopUBsR4HnBaNz00klAn3IPJXg8K5NjtKGgc1uIGva5PP3L6lreGo2CB1ciqOqAaXA2qltYcXx3Ti34JltQek47lwxmHNMykxholCVtyzkUGGs8JgdJB0iSlkvKfdw+tbzFh7qJFmGClqmF4gZNVBUgoCBDp3GyWV5a7u32HRpLF8ZtFlxsZIJXb4un3I9Nd2LAWTl6lA==
+X-YMail-OSG: GULJ65IVM1lK.OjqGz8yqzFzTBJXMoEKqNyElswLU5IL9QqZIgQWc3Ar1PIXMQd
+ y4z7mx4uiMaPI_zM5PhTtKSo7U9njstHLyYY1qd4rC88I2EScqGp.C_0BblbfBINxlkq.QXLfqmE
+ J.VmGeOkGfN.A1V4MwTbWbKHBywNkifpIs.ZwV1bNGKX_TiSITqsjhOOLR0jAm23TsKXFyoIifNX
+ Bfp8P.nCvhD17cDiy_zAIBroN8K7PmVbGiyqLgLdmhw1anI.olzAVY8MaidTgNEBX.stGFx78hE8
+ fnL2qWQkcF4Fngku_A8l4IAQaZmTUEX3c.qH3Pd6dPf_lWW7cc7L5AAZlsiHCvSzDfr69xDL.tfI
+ IkpwaXF1SrMaVufm4jYQn82qRNavPfqi9rTYtGVJKyyyLkSws7vOjid53q9KRjxPZl_zEy0wYjq_
+ lI8K7hbA49Q9ecm9XR17KqhgLU3ZD_U4k8CeZHdesTHtgWd.ZqIo8xpY36Dn3wtC4P7x8QWSmnwP
+ rT.PjBNVbvTUOi9o1yYpznzvWAa6D1wA.XRh15e4I4XEAPGxZuYY0h0NPXfksGBehlSnCFzWziar
+ vC6m9YMAXvj2ygD9yRkUaxW76NjPope.7W.x.0pXzwTcdNVv5mSEjpxJyK_1G3n_7J8wc70zAcH8
+ 9fbCbFYYxaTZB1fMfNrnod_KL4Bl1d.SCY_6Unx8oB9DirmGas6NM3Kem026CGYpoe9PASXpM.IO
+ ptmUztRMJ3TK8btBztwBmQMRpMy4o5RwC0qfhlIYToplywEWgY1O.SLg5LqlQ2JtcIPisPVes7ce
+ z0W1oB.qWD0__7KMJz5yf4D_7lm0aAyU3ANLpNvjMO63M4pD1oBqDSnroT4pgfY1Rs8NQaflqW7z
+ OTwv_O.vga4D0HFiHWKIOSL5wgJP01DZSfSmx975f3x8oHA_k3vN.Z8U6heci1g1zljKA7X97EJz
+ X96JRcqHOcDpKU73WbY48hz85vfGJlzYDg2FvrKuFzcW3A_wAQb1BS4jPvadw9XnluERdURul1lb
+ IF_27fWcyogbmKH1wb4CYrk2yC50wY8h_.21PrNl3RawY3pZ8uI_m.hphUd9JFFokJ_9o9PKBu5p
+ kXwswsHIcmcL2e1xt6FoLnAFZ9pkZWBPvCnpROg7U0GI-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:44:06 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp411.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 6f4a30c5671782919fad3da3c826f035;
-          Tue, 11 Dec 2018 22:44:02 +0000 (UTC)
+          Tue, 11 Dec 2018 22:44:05 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, selinux@vger.kernel.org
@@ -55,9 +55,9 @@ Cc:     john.johansen@canonical.com, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
         adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
         casey@schaufler-ca.com
-Subject: [PATCH v5 34/38] LSM: Infrastructure management of the task security
-Date:   Tue, 11 Dec 2018 14:43:10 -0800
-Message-Id: <20181211224314.22412-35-casey@schaufler-ca.com>
+Subject: [PATCH v5 36/38] Smack: Abstract use of ipc security blobs
+Date:   Tue, 11 Dec 2018 14:43:12 -0800
+Message-Id: <20181211224314.22412-37-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
 References: <20181211224314.22412-1-casey@schaufler-ca.com>
@@ -65,229 +65,94 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Move management of the task_struct->security blob out
-of the individual security modules and into the security
-infrastructure. Instead of allocating the blobs from within
-the modules the modules tell the infrastructure how much
-space is required, and the space is allocated there.
-The only user of this blob is AppArmor. The AppArmor use
-is abstracted to avoid future conflict.
+Don't use the ipc->security pointer directly.
+Don't use the msg_msg->security pointer directly.
+Provide helper functions that provides the security blob pointers.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-[kees: adjusted for ordered init series]
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/lsm_hooks.h        |  2 ++
- security/apparmor/include/task.h | 18 +++-----------
- security/apparmor/lsm.c          | 15 +++--------
- security/security.c              | 54 +++++++++++++++++++++++++++++++++++++++-
- 4 files changed, 62 insertions(+), 27 deletions(-)
+ security/smack/smack.h     | 11 +++++++++++
+ security/smack/smack_lsm.c | 14 +++++++++-----
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 65440005ec92..243c7c6e181d 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2031,6 +2031,7 @@ struct lsm_blob_sizes {
- 	int	lbs_cred;
- 	int	lbs_file;
- 	int	lbs_inode;
-+	int	lbs_task;
- };
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index bf0abc35ca1c..0adddbeecc62 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -24,6 +24,7 @@
+ #include <linux/list.h>
+ #include <linux/rculist.h>
+ #include <linux/lsm_audit.h>
++#include <linux/msg.h>
  
  /*
-@@ -2106,6 +2107,7 @@ extern int lsm_inode_alloc(struct inode *inode);
+  * Use IPv6 port labeling if IPv6 is enabled and secmarks
+@@ -373,6 +374,16 @@ static inline struct inode_smack *smack_inode(const struct inode *inode)
+ 	return inode->i_security + smack_blob_sizes.lbs_inode;
+ }
  
- #ifdef CONFIG_SECURITY
- void __init lsm_early_cred(struct cred *cred);
-+void __init lsm_early_task(struct task_struct *task);
- #endif
- 
- #endif /* ! __LINUX_LSM_HOOKS_H */
-diff --git a/security/apparmor/include/task.h b/security/apparmor/include/task.h
-index 55edaa1d83f8..039c1e60887a 100644
---- a/security/apparmor/include/task.h
-+++ b/security/apparmor/include/task.h
-@@ -14,7 +14,10 @@
- #ifndef __AA_TASK_H
- #define __AA_TASK_H
- 
--#define task_ctx(X) ((X)->security)
-+static inline struct aa_task_ctx *task_ctx(struct task_struct *task)
++static inline struct smack_known **smack_msg_msg(const struct msg_msg *msg)
 +{
-+	return task->security;
++	return (struct smack_known **)&msg->security;
 +}
- 
++
++static inline struct smack_known **smack_ipc(const struct kern_ipc_perm *ipc)
++{
++	return (struct smack_known **)&ipc->security;
++}
++
  /*
-  * struct aa_task_ctx - information for current task label change
-@@ -36,17 +39,6 @@ int aa_set_current_hat(struct aa_label *label, u64 token);
- int aa_restore_previous_label(u64 cookie);
- struct aa_label *aa_get_task_label(struct task_struct *task);
+  * Is the directory transmuting?
+  */
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 9ff185af378a..ceda326a6e47 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2918,7 +2918,9 @@ static void smack_msg_msg_free_security(struct msg_msg *msg)
+  */
+ static struct smack_known *smack_of_ipc(struct kern_ipc_perm *isp)
+ {
+-	return (struct smack_known *)isp->security;
++	struct smack_known **blob = smack_ipc(isp);
++
++	return *blob;
+ }
  
--/**
-- * aa_alloc_task_ctx - allocate a new task_ctx
-- * @flags: gfp flags for allocation
-- *
-- * Returns: allocated buffer or NULL on failure
-- */
--static inline struct aa_task_ctx *aa_alloc_task_ctx(gfp_t flags)
--{
--	return kzalloc(sizeof(struct aa_task_ctx), flags);
--}
--
  /**
-  * aa_free_task_ctx - free a task_ctx
-  * @ctx: task_ctx to free (MAYBE NULL)
-@@ -57,8 +49,6 @@ static inline void aa_free_task_ctx(struct aa_task_ctx *ctx)
- 		aa_put_label(ctx->nnp);
- 		aa_put_label(ctx->previous);
- 		aa_put_label(ctx->onexec);
--
--		kzfree(ctx);
- 	}
- }
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 3ae8c902d740..83dc23f33a29 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -93,19 +93,14 @@ static void apparmor_task_free(struct task_struct *task)
+@@ -2929,9 +2931,9 @@ static struct smack_known *smack_of_ipc(struct kern_ipc_perm *isp)
+  */
+ static int smack_ipc_alloc_security(struct kern_ipc_perm *isp)
  {
+-	struct smack_known *skp = smk_of_current();
++	struct smack_known **blob = smack_ipc(isp);
  
- 	aa_free_task_ctx(task_ctx(task));
--	task_ctx(task) = NULL;
- }
- 
- static int apparmor_task_alloc(struct task_struct *task,
- 			       unsigned long clone_flags)
- {
--	struct aa_task_ctx *new = aa_alloc_task_ctx(GFP_KERNEL);
--
--	if (!new)
--		return -ENOMEM;
-+	struct aa_task_ctx *new = task_ctx(task);
- 
- 	aa_dup_task_ctx(new, task_ctx(current));
--	task_ctx(task) = new;
- 
- 	return 0;
- }
-@@ -1156,6 +1151,7 @@ static int apparmor_inet_conn_request(struct sock *sk, struct sk_buff *skb,
- struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
- 	.lbs_cred = sizeof(struct aa_task_ctx *),
- 	.lbs_file = sizeof(struct aa_file_ctx),
-+	.lbs_task = sizeof(struct aa_task_ctx),
- };
- 
- static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
-@@ -1486,15 +1482,10 @@ static int param_set_mode(const char *val, const struct kernel_param *kp)
- static int __init set_init_ctx(void)
- {
- 	struct cred *cred = (struct cred *)current->real_cred;
--	struct aa_task_ctx *ctx;
--
--	ctx = aa_alloc_task_ctx(GFP_KERNEL);
--	if (!ctx)
--		return -ENOMEM;
- 
- 	lsm_early_cred(cred);
-+	lsm_early_task(current);
- 	set_cred_label(cred, aa_get_label(ns_unconfined(root_ns)));
--	task_ctx(current) = ctx;
- 
- 	return 0;
- }
-diff --git a/security/security.c b/security/security.c
-index 0cc48072eb3b..d3d3963d7914 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -169,6 +169,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
- 	if (needed->lbs_inode && blob_sizes.lbs_inode == 0)
- 		blob_sizes.lbs_inode = sizeof(struct rcu_head);
- 	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
-+	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
- }
- 
- /* Prepare LSM for initialization. */
-@@ -292,6 +293,7 @@ static void __init ordered_lsm_init(void)
- 	init_debug("cred blob size     = %d\n", blob_sizes.lbs_cred);
- 	init_debug("file blob size     = %d\n", blob_sizes.lbs_file);
- 	init_debug("inode blob size    = %d\n", blob_sizes.lbs_inode);
-+	init_debug("task blob size     = %d\n", blob_sizes.lbs_task);
- 
- 	/*
- 	 * Create any kmem_caches needed for blobs
-@@ -515,6 +517,46 @@ int lsm_inode_alloc(struct inode *inode)
+-	isp->security = skp;
++	*blob = smk_of_current();
  	return 0;
  }
  
-+/**
-+ * lsm_task_alloc - allocate a composite task blob
-+ * @task: the task that needs a blob
-+ *
-+ * Allocate the task blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+int lsm_task_alloc(struct task_struct *task)
-+{
-+	if (blob_sizes.lbs_task == 0) {
-+		task->security = NULL;
-+		return 0;
-+	}
-+
-+	task->security = kzalloc(blob_sizes.lbs_task, GFP_KERNEL);
-+	if (task->security == NULL)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+/**
-+ * lsm_early_task - during initialization allocate a composite task blob
-+ * @task: the task that needs a blob
-+ *
-+ * Allocate the task blob for all the modules if it's not already there
-+ */
-+void __init lsm_early_task(struct task_struct *task)
-+{
-+	int rc;
-+
-+	if (task == NULL)
-+		panic("%s: task cred.\n", __func__);
-+	if (task->security != NULL)
-+		return;
-+	rc = lsm_task_alloc(task);
-+	if (rc)
-+		panic("%s: Early task alloc failed.\n", __func__);
-+}
-+
- /*
-  * Hook list operation macros.
-  *
-@@ -1346,12 +1388,22 @@ int security_file_open(struct file *file)
- 
- int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
+@@ -3243,7 +3245,8 @@ static int smack_msg_queue_msgrcv(struct kern_ipc_perm *isp, struct msg_msg *msg
+  */
+ static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
  {
--	return call_int_hook(task_alloc, 0, task, clone_flags);
-+	int rc = lsm_task_alloc(task);
-+
-+	if (rc)
-+		return rc;
-+	rc = call_int_hook(task_alloc, 0, task, clone_flags);
-+	if (unlikely(rc))
-+		security_task_free(task);
-+	return rc;
- }
- 
- void security_task_free(struct task_struct *task)
+-	struct smack_known *iskp = ipp->security;
++	struct smack_known **blob = smack_ipc(ipp);
++	struct smack_known *iskp = *blob;
+ 	int may = smack_flags_to_may(flag);
+ 	struct smk_audit_info ad;
+ 	int rc;
+@@ -3264,7 +3267,8 @@ static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
+  */
+ static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, u32 *secid)
  {
- 	call_void_hook(task_free, task);
-+
-+	kfree(task->security);
-+	task->security = NULL;
- }
+-	struct smack_known *iskp = ipp->security;
++	struct smack_known **blob = smack_ipc(ipp);
++	struct smack_known *iskp = *blob;
  
- int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+ 	*secid = iskp->smk_secid;
+ }
 -- 
 2.14.5
 
