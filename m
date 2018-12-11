@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40479C6783C
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F517C67870
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0AFE20672
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE79B20672
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:44:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="prTrZXqG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AFE20672
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="oNBH53JT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE79B20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeLKWoI (ORCPT
+        id S1726694AbeLKWoR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:44:08 -0500
-Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:34042
+        Tue, 11 Dec 2018 17:44:17 -0500
+Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:38204
         "EHLO sonic308-17.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726706AbeLKWoI (ORCPT
+        by vger.kernel.org with ESMTP id S1726697AbeLKWoI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 11 Dec 2018 17:44:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568246; bh=Il9GpnbV91+fys2zxOGbpdhryeWPuMQjgXeEO7Bfh2k=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=prTrZXqGqFzroyYtN+YEBDGdQnSIA3W/hmx83yDeGBfeAv4/BsYS/xCJ/2moR2Jp8UgpqSLZO0uHrY1DOX8QS21DsyyFHf1WSeRR3IFIJg1fjh3QhDZLFHrjOYc9nNdltM9UN5nOhYeBPEopUBsR4HnBaNz00klAn3IPJXg8K5NjtKGgc1uIGva5PP3L6lreGo2CB1ciqOqAaXA2qltYcXx3Ti34JltQek47lwxmHNMykxholCVtyzkUGGs8JgdJB0iSlkvKfdw+tbzFh7qJFmGClqmF4gZNVBUgoCBDp3GyWV5a7u32HRpLF8ZtFlxsZIJXb4un3I9Nd2LAWTl6lA==
-X-YMail-OSG: GULJ65IVM1lK.OjqGz8yqzFzTBJXMoEKqNyElswLU5IL9QqZIgQWc3Ar1PIXMQd
- y4z7mx4uiMaPI_zM5PhTtKSo7U9njstHLyYY1qd4rC88I2EScqGp.C_0BblbfBINxlkq.QXLfqmE
- J.VmGeOkGfN.A1V4MwTbWbKHBywNkifpIs.ZwV1bNGKX_TiSITqsjhOOLR0jAm23TsKXFyoIifNX
- Bfp8P.nCvhD17cDiy_zAIBroN8K7PmVbGiyqLgLdmhw1anI.olzAVY8MaidTgNEBX.stGFx78hE8
- fnL2qWQkcF4Fngku_A8l4IAQaZmTUEX3c.qH3Pd6dPf_lWW7cc7L5AAZlsiHCvSzDfr69xDL.tfI
- IkpwaXF1SrMaVufm4jYQn82qRNavPfqi9rTYtGVJKyyyLkSws7vOjid53q9KRjxPZl_zEy0wYjq_
- lI8K7hbA49Q9ecm9XR17KqhgLU3ZD_U4k8CeZHdesTHtgWd.ZqIo8xpY36Dn3wtC4P7x8QWSmnwP
- rT.PjBNVbvTUOi9o1yYpznzvWAa6D1wA.XRh15e4I4XEAPGxZuYY0h0NPXfksGBehlSnCFzWziar
- vC6m9YMAXvj2ygD9yRkUaxW76NjPope.7W.x.0pXzwTcdNVv5mSEjpxJyK_1G3n_7J8wc70zAcH8
- 9fbCbFYYxaTZB1fMfNrnod_KL4Bl1d.SCY_6Unx8oB9DirmGas6NM3Kem026CGYpoe9PASXpM.IO
- ptmUztRMJ3TK8btBztwBmQMRpMy4o5RwC0qfhlIYToplywEWgY1O.SLg5LqlQ2JtcIPisPVes7ce
- z0W1oB.qWD0__7KMJz5yf4D_7lm0aAyU3ANLpNvjMO63M4pD1oBqDSnroT4pgfY1Rs8NQaflqW7z
- OTwv_O.vga4D0HFiHWKIOSL5wgJP01DZSfSmx975f3x8oHA_k3vN.Z8U6heci1g1zljKA7X97EJz
- X96JRcqHOcDpKU73WbY48hz85vfGJlzYDg2FvrKuFzcW3A_wAQb1BS4jPvadw9XnluERdURul1lb
- IF_27fWcyogbmKH1wb4CYrk2yC50wY8h_.21PrNl3RawY3pZ8uI_m.hphUd9JFFokJ_9o9PKBu5p
- kXwswsHIcmcL2e1xt6FoLnAFZ9pkZWBPvCnpROg7U0GI-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568246; bh=MiP39d63uWalPr3Rc655IR8mZb4u4EGEgth5ub7YGA4=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=oNBH53JTHJ8t56E2qLMM45TlJSktC2VdT5kY8TvIpIpOzFpv9rwGH202vsejDoyfYytIYUAcVw6PrdXYiQPvzeANaH0bHGv5G0W5X5wNp3JtvrHeCovXuce77woESxtIZfpt6Ln4nTYHjS6j+AY+Y9MheqFrZfdTyX+HbXfPpghzES5iRoOVc188V10bQ6ds6LX0ErkS7lWXGb8lxB5OiP1A94ds7gKc2MKsE/D+B+D4MjyzVeqYuEZ4aY5Gv5RiFeMcEzP2I67V0NNoKNlfAwwL10n/Q6LJCuyQ7xdtzLE5pSoQC3HzGRa/rfi7Wc7sYSyRk6laI421TNT+4jlY2Q==
+X-YMail-OSG: VzNhbEEVM1l9vZ22wUELQBoBlz9hUf_IF7zSRxv8knnj6jmPH4CFbEFDWRgDnD4
+ .zE.SenDoaXKyxT77U3mrOErn2WB9Ce2BwDtrKaO1NR4lRCyl8CJQydJyUJ1XuZ4vtXb3LCXqDNl
+ pTwQoIdMrRDxZ3hUbdjfHcv8dqz1MDtnoZVRiygrC_ia1zmyWciYICCX23ya5LN_KOB5t8q6YAuJ
+ o.sX8DwLNdamcL5P_YlZ7CBEFqw9s7xtFAObiLWcMwnqihg0wm3YE7tMe1n6eb5A8nL6GUveXxnQ
+ Nt0QAdlwr7IJYcK7qg_M6eNoG8zQd9vdHJOPKxxWTDyaBGma22G.2_UEJueWnkfCMKCBIBHVeR.3
+ lhUZ224SDTvEPvrpWyOBrwt2U9CEsvMaelbugjit4d8LNFmjjuZaACjOD9tLhSouCp1Xt_JCE5_u
+ 9MnQaQC5.GlHZmyCzh7IBqMIMdVPD5Pm5D4X4JFYQKEEMzDBPbzp7B0893ozlWh_Vu27KQWLSb6E
+ wAFl6MVZYFlMV6IFQG_SZGRDRO7a7qXPP8q0eRS.cFcwbcYxa6uzKRCz_eET3TCyFQwLY6CNsjX0
+ yYlf0IWLOqkUDrMW.xPZLp6uRMTO0l5vQQyAnUhSWX1rvv8rXkDFdloAhORQSe1HIgznUUYdQ9Wt
+ 8E9cCBsVpmg8RgboW..nyMPuIRE58btmzc3z448aOIG1SXXMTuC3JgjBJ9Srd1N2mY2KkQnNuaac
+ GZEzKmO2UTr8bJ9_uj3Vebs9E9JxVmQKnbFOijPurfntvHCDUlBiZ_xiRsLQ0zwqf.8BWX9_Aisu
+ aP0x92N9rRM9QkRTlfijGPMQYyVFEMWP_ieLINpasasNAGoLOfpvfKchIqNnrDgEaXpppSwgJkHb
+ hh9NcFnfxTZZWJJaeeDUEKlS7dyMIM6cxEEk4Ew3q0WYwlc0zxBB3zYD2EExKv.KQvx9O7gwmkRQ
+ cJA6Sx71Y50DjaDnmMLpm_5xpj.St4PLyaZu7MjbzmxQ2osG4B1ULGhuyls_6Sc8KOpsYkLO5ZM0
+ u48EV_6s.3rHnOCdJhKxw9KQ0z5F_Ws5WQalhzsxqRGs.FEKmBtXXt9o5V1hZpp6aveQTtr3EeMG
+ rMLoF2yuo569cuIXKHdI6vFSsEg15rP0CZP5LFmisYU0-
 Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:44:06 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp411.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 6f4a30c5671782919fad3da3c826f035;
-          Tue, 11 Dec 2018 22:44:05 +0000 (UTC)
+          Tue, 11 Dec 2018 22:44:01 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, selinux@vger.kernel.org
@@ -55,9 +55,9 @@ Cc:     john.johansen@canonical.com, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
         adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
         casey@schaufler-ca.com
-Subject: [PATCH v5 36/38] Smack: Abstract use of ipc security blobs
-Date:   Tue, 11 Dec 2018 14:43:12 -0800
-Message-Id: <20181211224314.22412-37-casey@schaufler-ca.com>
+Subject: [PATCH v5 33/38] LSM: Infrastructure management of the inode security
+Date:   Tue, 11 Dec 2018 14:43:09 -0800
+Message-Id: <20181211224314.22412-34-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
 References: <20181211224314.22412-1-casey@schaufler-ca.com>
@@ -65,94 +65,433 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Don't use the ipc->security pointer directly.
-Don't use the msg_msg->security pointer directly.
-Provide helper functions that provides the security blob pointers.
+Move management of the inode->i_security blob out
+of the individual security modules and into the security
+infrastructure. Instead of allocating the blobs from within
+the modules the modules tell the infrastructure how much
+space is required, and the space is allocated there.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
+[kees: adjusted for ordered init series]
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/smack/smack.h     | 11 +++++++++++
- security/smack/smack_lsm.c | 14 +++++++++-----
- 2 files changed, 20 insertions(+), 5 deletions(-)
+ include/linux/lsm_hooks.h         |  3 ++
+ security/security.c               | 64 +++++++++++++++++++++++++++++++--
+ security/selinux/hooks.c          | 37 ++++---------------
+ security/selinux/include/objsec.h |  9 +++--
+ security/smack/smack.h            |  2 +-
+ security/smack/smack_lsm.c        | 76 +++++++++------------------------------
+ 6 files changed, 93 insertions(+), 98 deletions(-)
 
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index bf0abc35ca1c..0adddbeecc62 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -24,6 +24,7 @@
- #include <linux/list.h>
- #include <linux/rculist.h>
- #include <linux/lsm_audit.h>
-+#include <linux/msg.h>
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 64499c2d44cd..65440005ec92 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2030,6 +2030,7 @@ struct security_hook_list {
+ struct lsm_blob_sizes {
+ 	int	lbs_cred;
+ 	int	lbs_file;
++	int	lbs_inode;
+ };
  
  /*
-  * Use IPv6 port labeling if IPv6 is enabled and secmarks
-@@ -373,6 +374,16 @@ static inline struct inode_smack *smack_inode(const struct inode *inode)
- 	return inode->i_security + smack_blob_sizes.lbs_inode;
+@@ -2101,6 +2102,8 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ #define __lsm_ro_after_init	__ro_after_init
+ #endif /* CONFIG_SECURITY_WRITABLE_HOOKS */
+ 
++extern int lsm_inode_alloc(struct inode *inode);
++
+ #ifdef CONFIG_SECURITY
+ void __init lsm_early_cred(struct cred *cred);
+ #endif
+diff --git a/security/security.c b/security/security.c
+index 499842ece0fb..0cc48072eb3b 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -41,6 +41,7 @@ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+ static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
+ 
+ static struct kmem_cache *lsm_file_cache;
++static struct kmem_cache *lsm_inode_cache;
+ 
+ char *lsm_names;
+ static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init;
+@@ -161,6 +162,13 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+ 
+ 	lsm_set_blob_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
+ 	lsm_set_blob_size(&needed->lbs_file, &blob_sizes.lbs_file);
++	/*
++	 * The inode blob gets an rcu_head in addition to
++	 * what the modules might need.
++	 */
++	if (needed->lbs_inode && blob_sizes.lbs_inode == 0)
++		blob_sizes.lbs_inode = sizeof(struct rcu_head);
++	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
  }
  
-+static inline struct smack_known **smack_msg_msg(const struct msg_msg *msg)
-+{
-+	return (struct smack_known **)&msg->security;
-+}
-+
-+static inline struct smack_known **smack_ipc(const struct kern_ipc_perm *ipc)
-+{
-+	return (struct smack_known **)&ipc->security;
-+}
-+
- /*
-  * Is the directory transmuting?
-  */
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 9ff185af378a..ceda326a6e47 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2918,7 +2918,9 @@ static void smack_msg_msg_free_security(struct msg_msg *msg)
-  */
- static struct smack_known *smack_of_ipc(struct kern_ipc_perm *isp)
- {
--	return (struct smack_known *)isp->security;
-+	struct smack_known **blob = smack_ipc(isp);
-+
-+	return *blob;
- }
+ /* Prepare LSM for initialization. */
+@@ -283,6 +291,7 @@ static void __init ordered_lsm_init(void)
  
- /**
-@@ -2929,9 +2931,9 @@ static struct smack_known *smack_of_ipc(struct kern_ipc_perm *isp)
-  */
- static int smack_ipc_alloc_security(struct kern_ipc_perm *isp)
- {
--	struct smack_known *skp = smk_of_current();
-+	struct smack_known **blob = smack_ipc(isp);
+ 	init_debug("cred blob size     = %d\n", blob_sizes.lbs_cred);
+ 	init_debug("file blob size     = %d\n", blob_sizes.lbs_file);
++	init_debug("inode blob size    = %d\n", blob_sizes.lbs_inode);
  
--	isp->security = skp;
-+	*blob = smk_of_current();
+ 	/*
+ 	 * Create any kmem_caches needed for blobs
+@@ -291,6 +300,10 @@ static void __init ordered_lsm_init(void)
+ 		lsm_file_cache = kmem_cache_create("lsm_file_cache",
+ 						   blob_sizes.lbs_file, 0,
+ 						   SLAB_PANIC, NULL);
++	if (blob_sizes.lbs_inode)
++		lsm_inode_cache = kmem_cache_create("lsm_inode_cache",
++						    blob_sizes.lbs_inode, 0,
++						    SLAB_PANIC, NULL);
+ 
+ 	for (lsm = ordered_lsms; *lsm; lsm++)
+ 		initialize_lsm(*lsm);
+@@ -481,6 +494,27 @@ static int lsm_file_alloc(struct file *file)
  	return 0;
  }
  
-@@ -3243,7 +3245,8 @@ static int smack_msg_queue_msgrcv(struct kern_ipc_perm *isp, struct msg_msg *msg
-  */
- static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
- {
--	struct smack_known *iskp = ipp->security;
-+	struct smack_known **blob = smack_ipc(ipp);
-+	struct smack_known *iskp = *blob;
- 	int may = smack_flags_to_may(flag);
- 	struct smk_audit_info ad;
- 	int rc;
-@@ -3264,7 +3267,8 @@ static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
-  */
- static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, u32 *secid)
- {
--	struct smack_known *iskp = ipp->security;
-+	struct smack_known **blob = smack_ipc(ipp);
-+	struct smack_known *iskp = *blob;
++/**
++ * lsm_inode_alloc - allocate a composite inode blob
++ * @inode: the inode that needs a blob
++ *
++ * Allocate the inode blob for all the modules
++ *
++ * Returns 0, or -ENOMEM if memory can't be allocated.
++ */
++int lsm_inode_alloc(struct inode *inode)
++{
++	if (!lsm_inode_cache) {
++		inode->i_security = NULL;
++		return 0;
++	}
++
++	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, GFP_NOFS);
++	if (inode->i_security == NULL)
++		return -ENOMEM;
++	return 0;
++}
++
+ /*
+  * Hook list operation macros.
+  *
+@@ -727,14 +761,40 @@ EXPORT_SYMBOL(security_sb_parse_opts_str);
  
- 	*secid = iskp->smk_secid;
+ int security_inode_alloc(struct inode *inode)
+ {
+-	inode->i_security = NULL;
+-	return call_int_hook(inode_alloc_security, 0, inode);
++	int rc = lsm_inode_alloc(inode);
++
++	if (unlikely(rc))
++		return rc;
++	rc = call_int_hook(inode_alloc_security, 0, inode);
++	if (unlikely(rc))
++		security_inode_free(inode);
++	return rc;
++}
++
++static void inode_free_by_rcu(struct rcu_head *head)
++{
++	/*
++	 * The rcu head is at the start of the inode blob
++	 */
++	kmem_cache_free(lsm_inode_cache, head);
  }
+ 
+ void security_inode_free(struct inode *inode)
+ {
+ 	integrity_inode_free(inode);
+ 	call_void_hook(inode_free_security, inode);
++	/*
++	 * The inode may still be referenced in a path walk and
++	 * a call to security_inode_permission() can be made
++	 * after inode_free_security() is called. Ideally, the VFS
++	 * wouldn't do this, but fixing that is a much harder
++	 * job. For now, simply free the i_security via RCU, and
++	 * leave the current inode->i_security pointer intact.
++	 * The inode will be freed after the RCU grace period too.
++	 */
++	if (inode->i_security)
++		call_rcu((struct rcu_head *)inode->i_security,
++				inode_free_by_rcu);
+ }
+ 
+ int security_dentry_init_security(struct dentry *dentry, int mode,
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 3069e95d86e6..f0e7ac26f3a9 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -144,8 +144,6 @@ static int __init checkreqprot_setup(char *str)
+ }
+ __setup("checkreqprot=", checkreqprot_setup);
+ 
+-static struct kmem_cache *sel_inode_cache;
+-
+ /**
+  * selinux_secmark_enabled - Check to see if SECMARK is currently enabled
+  *
+@@ -241,13 +239,9 @@ static inline u32 task_sid(const struct task_struct *task)
+ 
+ static int inode_alloc_security(struct inode *inode)
+ {
+-	struct inode_security_struct *isec;
++	struct inode_security_struct *isec = selinux_inode(inode);
+ 	u32 sid = current_sid();
+ 
+-	isec = kmem_cache_zalloc(sel_inode_cache, GFP_NOFS);
+-	if (!isec)
+-		return -ENOMEM;
+-
+ 	spin_lock_init(&isec->lock);
+ 	INIT_LIST_HEAD(&isec->list);
+ 	isec->inode = inode;
+@@ -255,7 +249,6 @@ static int inode_alloc_security(struct inode *inode)
+ 	isec->sclass = SECCLASS_FILE;
+ 	isec->task_sid = sid;
+ 	isec->initialized = LABEL_INVALID;
+-	inode->i_security = isec;
+ 
+ 	return 0;
+ }
+@@ -333,19 +326,14 @@ static struct inode_security_struct *backing_inode_security(struct dentry *dentr
+ 	return selinux_inode(inode);
+ }
+ 
+-static void inode_free_rcu(struct rcu_head *head)
+-{
+-	struct inode_security_struct *isec;
+-
+-	isec = container_of(head, struct inode_security_struct, rcu);
+-	kmem_cache_free(sel_inode_cache, isec);
+-}
+-
+ static void inode_free_security(struct inode *inode)
+ {
+ 	struct inode_security_struct *isec = selinux_inode(inode);
+-	struct superblock_security_struct *sbsec = inode->i_sb->s_security;
++	struct superblock_security_struct *sbsec;
+ 
++	if (!isec)
++		return;
++	sbsec = inode->i_sb->s_security;
+ 	/*
+ 	 * As not all inode security structures are in a list, we check for
+ 	 * empty list outside of the lock to make sure that we won't waste
+@@ -361,17 +349,6 @@ static void inode_free_security(struct inode *inode)
+ 		list_del_init(&isec->list);
+ 		spin_unlock(&sbsec->isec_lock);
+ 	}
+-
+-	/*
+-	 * The inode may still be referenced in a path walk and
+-	 * a call to selinux_inode_permission() can be made
+-	 * after inode_free_security() is called. Ideally, the VFS
+-	 * wouldn't do this, but fixing that is a much harder
+-	 * job. For now, simply free the i_security via RCU, and
+-	 * leave the current inode->i_security pointer intact.
+-	 * The inode will be freed after the RCU grace period too.
+-	 */
+-	call_rcu(&isec->rcu, inode_free_rcu);
+ }
+ 
+ static int file_alloc_security(struct file *file)
+@@ -6840,6 +6817,7 @@ static void selinux_bpf_prog_free(struct bpf_prog_aux *aux)
+ struct lsm_blob_sizes selinux_blob_sizes __lsm_ro_after_init = {
+ 	.lbs_cred = sizeof(struct task_security_struct),
+ 	.lbs_file = sizeof(struct file_security_struct),
++	.lbs_inode = sizeof(struct inode_security_struct),
+ };
+ 
+ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+@@ -7091,9 +7069,6 @@ static __init int selinux_init(void)
+ 
+ 	default_noexec = !(VM_DATA_DEFAULT_FLAGS & VM_EXEC);
+ 
+-	sel_inode_cache = kmem_cache_create("selinux_inode_security",
+-					    sizeof(struct inode_security_struct),
+-					    0, SLAB_PANIC, NULL);
+ 	avc_init();
+ 
+ 	avtab_cache_init();
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index 26b4ff6b4d81..562fad58c56b 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -57,10 +57,7 @@ enum label_initialized {
+ 
+ struct inode_security_struct {
+ 	struct inode *inode;	/* back pointer to inode object */
+-	union {
+-		struct list_head list;	/* list of inode_security_struct */
+-		struct rcu_head rcu;	/* for freeing the inode_security_struct */
+-	};
++	struct list_head list;	/* list of inode_security_struct */
+ 	u32 task_sid;		/* SID of creating task */
+ 	u32 sid;		/* SID of this object */
+ 	u16 sclass;		/* security class of this object */
+@@ -173,7 +170,9 @@ static inline struct file_security_struct *selinux_file(const struct file *file)
+ static inline struct inode_security_struct *selinux_inode(
+ 						const struct inode *inode)
+ {
+-	return inode->i_security;
++	if (unlikely(!inode->i_security))
++		return NULL;
++	return inode->i_security + selinux_blob_sizes.lbs_inode;
+ }
+ 
+ #endif /* _SELINUX_OBJSEC_H_ */
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 436231dfae33..bf0abc35ca1c 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -370,7 +370,7 @@ static inline struct smack_known **smack_file(const struct file *file)
+ 
+ static inline struct inode_smack *smack_inode(const struct inode *inode)
+ {
+-	return inode->i_security;
++	return inode->i_security + smack_blob_sizes.lbs_inode;
+ }
+ 
+ /*
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index c086110cba80..9ff185af378a 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -288,24 +288,18 @@ static struct smack_known *smk_fetch(const char *name, struct inode *ip,
+ }
+ 
+ /**
+- * new_inode_smack - allocate an inode security blob
++ * init_inode_smack - initialize an inode security blob
++ * @isp: the blob to initialize
+  * @skp: a pointer to the Smack label entry to use in the blob
+  *
+- * Returns the new blob or NULL if there's no memory available
+  */
+-static struct inode_smack *new_inode_smack(struct smack_known *skp)
++static void init_inode_smack(struct inode *inode, struct smack_known *skp)
+ {
+-	struct inode_smack *isp;
+-
+-	isp = kmem_cache_zalloc(smack_inode_cache, GFP_NOFS);
+-	if (isp == NULL)
+-		return NULL;
++	struct inode_smack *isp = smack_inode(inode);
+ 
+ 	isp->smk_inode = skp;
+ 	isp->smk_flags = 0;
+ 	mutex_init(&isp->smk_lock);
+-
+-	return isp;
+ }
+ 
+ /**
+@@ -758,6 +752,13 @@ static int smack_set_mnt_opts(struct super_block *sb,
+ 	if (sp->smk_flags & SMK_SB_INITIALIZED)
+ 		return 0;
+ 
++	if (inode->i_security == NULL) {
++		int rc = lsm_inode_alloc(inode);
++
++		if (rc)
++			return rc;
++	}
++
+ 	if (!smack_privileged(CAP_MAC_ADMIN)) {
+ 		/*
+ 		 * Unprivileged mounts don't get to specify Smack values.
+@@ -826,17 +827,12 @@ static int smack_set_mnt_opts(struct super_block *sb,
+ 	/*
+ 	 * Initialize the root inode.
+ 	 */
+-	isp = smack_inode(inode);
+-	if (isp == NULL) {
+-		isp = new_inode_smack(sp->smk_root);
+-		if (isp == NULL)
+-			return -ENOMEM;
+-		inode->i_security = isp;
+-	} else
+-		isp->smk_inode = sp->smk_root;
++	init_inode_smack(inode, sp->smk_root);
+ 
+-	if (transmute)
++	if (transmute) {
++		isp = smack_inode(inode);
+ 		isp->smk_flags |= SMK_INODE_TRANSMUTE;
++	}
+ 
+ 	return 0;
+ }
+@@ -965,48 +961,10 @@ static int smack_inode_alloc_security(struct inode *inode)
+ {
+ 	struct smack_known *skp = smk_of_current();
+ 
+-	inode->i_security = new_inode_smack(skp);
+-	if (inode->i_security == NULL)
+-		return -ENOMEM;
++	init_inode_smack(inode, skp);
+ 	return 0;
+ }
+ 
+-/**
+- * smack_inode_free_rcu - Free inode_smack blob from cache
+- * @head: the rcu_head for getting inode_smack pointer
+- *
+- *  Call back function called from call_rcu() to free
+- *  the i_security blob pointer in inode
+- */
+-static void smack_inode_free_rcu(struct rcu_head *head)
+-{
+-	struct inode_smack *issp;
+-
+-	issp = container_of(head, struct inode_smack, smk_rcu);
+-	kmem_cache_free(smack_inode_cache, issp);
+-}
+-
+-/**
+- * smack_inode_free_security - free an inode blob using call_rcu()
+- * @inode: the inode with a blob
+- *
+- * Clears the blob pointer in inode using RCU
+- */
+-static void smack_inode_free_security(struct inode *inode)
+-{
+-	struct inode_smack *issp = smack_inode(inode);
+-
+-	/*
+-	 * The inode may still be referenced in a path walk and
+-	 * a call to smack_inode_permission() can be made
+-	 * after smack_inode_free_security() is called.
+-	 * To avoid race condition free the i_security via RCU
+-	 * and leave the current inode->i_security pointer intact.
+-	 * The inode will be freed after the RCU grace period too.
+-	 */
+-	call_rcu(&issp->smk_rcu, smack_inode_free_rcu);
+-}
+-
+ /**
+  * smack_inode_init_security - copy out the smack from an inode
+  * @inode: the newly created inode
+@@ -4626,6 +4584,7 @@ static int smack_dentry_create_files_as(struct dentry *dentry, int mode,
+ struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
+ 	.lbs_cred = sizeof(struct task_smack),
+ 	.lbs_file = sizeof(struct smack_known *),
++	.lbs_inode = sizeof(struct inode_smack),
+ };
+ 
+ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+@@ -4644,7 +4603,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_set_creds, smack_bprm_set_creds),
+ 
+ 	LSM_HOOK_INIT(inode_alloc_security, smack_inode_alloc_security),
+-	LSM_HOOK_INIT(inode_free_security, smack_inode_free_security),
+ 	LSM_HOOK_INIT(inode_init_security, smack_inode_init_security),
+ 	LSM_HOOK_INIT(inode_link, smack_inode_link),
+ 	LSM_HOOK_INIT(inode_unlink, smack_inode_unlink),
 -- 
 2.14.5
 
