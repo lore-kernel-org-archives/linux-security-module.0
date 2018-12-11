@@ -2,105 +2,84 @@ Return-Path: <SRS0=nZhg=OU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87016C07E85
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 13:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4A5C5CFFE
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5427820849
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 13:23:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5427820849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id F095820851
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:28:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F095820851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726274AbeLKNXn (ORCPT
+        id S1726907AbeLKS2L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:23:43 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58852 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726241AbeLKNXn (ORCPT
+        Tue, 11 Dec 2018 13:28:11 -0500
+Received: from namei.org ([65.99.196.166]:58920 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726664AbeLKS2L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:23:43 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBBDEnHT111745
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Dec 2018 08:23:42 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pab0jrupx-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Dec 2018 08:23:41 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 11 Dec 2018 13:23:40 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Dec 2018 13:23:36 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBBDNZHN2621918
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 13:23:35 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F40715204F;
-        Tue, 11 Dec 2018 13:23:34 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.104.28])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 326AE52054;
-        Tue, 11 Dec 2018 13:23:34 +0000 (GMT)
-Subject: Re: [PATCH] ima: Use inode_is_open_for_write
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nikolay Borisov <nborisov@suse.com>, zohar@linux.vnet.ibm.com
-Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Tue, 11 Dec 2018 08:23:23 -0500
-In-Reply-To: <20181211083140.21430-1-nborisov@suse.com>
-References: <20181211083140.21430-1-nborisov@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121113-4275-0000-0000-000002EF0187
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121113-4276-0000-0000-000037FC1FE2
-Message-Id: <1544534603.4028.1.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=714 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110121
+        Tue, 11 Dec 2018 13:28:11 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBBIRiau011806;
+        Tue, 11 Dec 2018 18:27:44 GMT
+Date:   Wed, 12 Dec 2018 05:27:44 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Nayna Jain <nayna@linux.ibm.com>
+cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
+        mpe@ellerman.id.au
+Subject: Re: [PATCH v2 1/7] integrity: Define a trusted platform keyring
+In-Reply-To: <20181208202705.18673-2-nayna@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.1812120527150.11653@namei.org>
+References: <20181208202705.18673-1-nayna@linux.ibm.com> <20181208202705.18673-2-nayna@linux.ibm.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2018-12-11 at 10:31 +0200, Nikolay Borisov wrote:
-> Use the aptly named function rather than open coding the check. No
-> functional changes.
-> 
-> Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+On Sun, 9 Dec 2018, Nayna Jain wrote:
 
-Thanks.  This patch is now in the #next-integrity branch.
-
-Mimi
-
-> ---
->  security/integrity/ima/ima_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On secure boot enabled systems, a verified kernel may need to kexec
+> additional kernels. For example, it may be used as a bootloader needing
+> to kexec a target kernel or it may need to kexec a crashdump kernel. In
+> such cases, it may want to verify the signature of the next kernel
+> image.
 > 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 1b88d58e1325..05fbf8a2fa42 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -103,7 +103,7 @@ static void ima_rdwr_violation_check(struct file *file,
->  	} else {
->  		if (must_measure)
->  			set_bit(IMA_MUST_MEASURE, &iint->atomic_flags);
-> -		if ((atomic_read(&inode->i_writecount) > 0) && must_measure)
-> +		if (inode_is_open_for_write(inode) && must_measure)
->  			send_writers = true;
->  	}
+> It is further possible that the kernel image is signed with third party
+> keys which are stored as platform or firmware keys in the 'db' variable.
+> The kernel, however, can not directly verify these platform keys, and an
+> administrator may therefore not want to trust them for arbitrary usage.
+> In order to differentiate platform keys from other keys and provide the
+> necessary separation of trust, the kernel needs an additional keyring to
+> store platform keys.
 > 
+> This patch creates the new keyring called ".platform" to isolate keys
+> provided by platform from keys by kernel. These keys are used to
+> facilitate signature verification during kexec. Since the scope of this
+> keyring is only the platform/firmware keys, it cannot be updated from
+> userspace.
+> 
+> This keyring can be enabled by setting CONFIG_INTEGRITY_PLATFORM_KEYRING.
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+
+
+Reviewed-by: James Morris <james.morris@microsoft.com>
+
+
+-- 
+James Morris
+<jmorris@namei.org>
 
