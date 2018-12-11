@@ -2,45 +2,49 @@ Return-Path: <SRS0=nZhg=OU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71344C5CFFE
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDA2C5CFFE
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44DE320870
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44DE320870
+	by mail.kernel.org (Postfix) with ESMTP id E6D272084E
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 18:57:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6D272084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbeLKSxt (ORCPT
+        id S1726452AbeLKS5s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:53:49 -0500
-Received: from namei.org ([65.99.196.166]:59022 "EHLO namei.org"
+        Tue, 11 Dec 2018 13:57:48 -0500
+Received: from namei.org ([65.99.196.166]:59046 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726432AbeLKSxt (ORCPT
+        id S1726340AbeLKS5s (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:53:49 -0500
+        Tue, 11 Dec 2018 13:57:48 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBBIrUwe012883;
-        Tue, 11 Dec 2018 18:53:30 GMT
-Date:   Wed, 12 Dec 2018 05:53:30 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBBIvSPJ013151;
+        Tue, 11 Dec 2018 18:57:28 GMT
+Date:   Wed, 12 Dec 2018 05:57:28 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Nayna Jain <nayna@linux.ibm.com>
-cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        dhowells@redhat.com, jforbes@redhat.com,
-        seth.forshee@canonical.com, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH v2 7/7] ima: Support platform keyring for kernel
- appraisal
-In-Reply-To: <20181208202705.18673-8-nayna@linux.ibm.com>
-Message-ID: <alpine.LRH.2.21.1812120553170.11653@namei.org>
-References: <20181208202705.18673-1-nayna@linux.ibm.com> <20181208202705.18673-8-nayna@linux.ibm.com>
+To:     Kees Cook <keescook@chromium.org>
+cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
+In-Reply-To: <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1812120556040.11653@namei.org>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com> <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -48,27 +52,18 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 9 Dec 2018, Nayna Jain wrote:
+On Tue, 4 Dec 2018, Kees Cook wrote:
 
-> On secure boot enabled systems, the bootloader verifies the kernel
-> image and possibly the initramfs signatures based on a set of keys. A
-> soft reboot(kexec) of the system, with the same kernel image and
-> initramfs, requires access to the original keys to verify the
-> signatures.
+> On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > v5: Include Kees Cook's rework of the lsm command
+> >     line interface. Stacking is not conditional.
 > 
-> This patch allows IMA-appraisal access to those original keys, now
-> loaded on the platform keyring, needed for verifying the kernel image
-> and initramfs signatures.
+> Can you resend this series with corrected "From:" lines in the body, etc?
 > 
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Acked-by: Serge Hallyn <serge@hallyn.com>
-> - replace 'rc' with 'xattr_len' when calling integrity_digsig_verify()
-> with INTEGRITY_KEYRING_IMA for readability
-> Suggested-by: Serge Hallyn <serge@hallyn.com>
+> Beyond that, I obviously like it. James, what's needed for this to move forward?
 
+If there are no outstanding issues, I plan to merge this for 4.21.
 
-Reviewed-by: James Morris <james.morris@microsoft.com>
 
 -- 
 James Morris
