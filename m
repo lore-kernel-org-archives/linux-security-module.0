@@ -4,35 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A7EC67839
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC54C6783B
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 170DC20672
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D2D820672
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:46:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DvBHUxdl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 170DC20672
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Hj9Fgv2B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2D820672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeLKWpw (ORCPT
+        id S1726333AbeLKWqI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:45:52 -0500
-Received: from sonic303-49.consmr.mail.ne1.yahoo.com ([66.163.188.175]:40963
-        "EHLO sonic303-49.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726849AbeLKWpv (ORCPT
+        Tue, 11 Dec 2018 17:46:08 -0500
+Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:34843
+        "EHLO sonic308-17.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726562AbeLKWny (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:45:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568350; bh=2uARvLb1q2zznR0LcReH3B1TK7Gvxnoz0sP/IEti4Co=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=DvBHUxdliBud1jxIa/Gau/OMOqwgpw8V9+egdLDdkDMUV97rcp35JNaZHVatjYnc8iB/JTfKykxT5Xgygn+y0I4kr/zoy2lGo9C/oSyDTgX8iUMZKOvd2wElLJyrzqoKd5CcxlBFkXzRGJEDqwFo8MsoQMohxkGptVf++GZK9TJWmquVUconYg8CXLlBz/d+hxcK+HsPhAxfVH+Vnj8JFA9ceg1/c2BgnkGhVAe/xORZO+MKVCYsZfOVKgwHNUxDygIwspLMZn69Hg8/6b0K3zOgdLzVAm8x8elVY871p6sT9ULy1nbYcu5N4PY6+kNWM01vy0qowswQrQ3firtQGQ==
-X-YMail-OSG: 1nLngaAVM1lv9XJh24xR8UVSp9RDXBFEO7WpWmTEEDFytfok7lqUCRnIBG6kYUI
- QhvHTqPqoJQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:45:50 +0000
+        Tue, 11 Dec 2018 17:43:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568231; bh=PBT9NIfIFWqve0jgHQc8SqCsASaMC4tLfOD1iemFqzE=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=Hj9Fgv2BK6BOQPCOoYDUfB4tmj4W3L1lGRX2NAf3zA+i9kBjgae4aj/2Otb9Qf3apKW5DFVkTKN33MLZ2aryahfpxNqvnCIXvA9nyCtgKSZHSxp1RoL57mw8LIwh2N6Ib/rU3o77jOl5XwaJ9duGn4GV4SPn3DUxJEYvFRxzvg6GFlMbAwMmow/7ABhxK9aTmsjkQpmat/PdzkOD3y6uLkEV3cjjz8QIUkHkxjQaKlLLGck12rhmzy/te3wk/nWUcsE2OnYOWdFLsNWiQt3WM6Hz5rtPqUsBdPQS0jFZU5yB6Jzu9kvaqKFJbmhkEqJAo6oweb0EkxES/f9pqyezPg==
+X-YMail-OSG: GFYM0dwVM1nBF2LyWlPECLqKVLs3YI.0Lzskt_B4WcwqBqe9vBHbj39Xk1QbLfz
+ zfFvlFUqn9Gd6WxUFRK6HFqRlvfzeQ34PDrwmV1w3GCxoZtgI.69B3XQnvbfJm3JeJDQVjuLryEC
+ 3HCTDrh0k1DrSJJ5jLybZ6gAB29h3.RZMcoUaZAZMZ6Mw_ze2inBXO4t8IvlznjgDm0xYGKIXVQL
+ lRDnfIJA1A12FaF_w7jR8LK4UD8OD6uK09ilcV69ZH5XvZO3dZD.F6uVd0GDd6irOTkm28L0sJ1t
+ YMRRf920119Z.Ini79ozHD6xMDKJTcbEa0qpEYwYDvH337kInUI2uvvjBbTriIn0CVVSds5foWms
+ S4yiMn1WzJwck_5UZTOCqTZndCsFpqaPuluA1eEmrECZFE66Ga5T3ucCvDSlMd.F7zP3ShHH7Xxc
+ _906RlgeVwVgo1Tp9JUwA9CClRURKvbIuLEH.TecgzyK28XDt.4UDnllGnd.ZeZsPc80S56j5SXM
+ GCXIJb2UZqMRyxhoLrAnTOTo8eLJ7FgW79dMk9C4YH.KVaqNVHJ.1mZp7S7BkmKC17nYYyGvPREI
+ RdES3V2ORakg5qDWS3ZPmeLgn5zMKR5YylRDMfUgAP6YjCJuvFJRNpsvsjH1mDSoB64NrG_NRl5o
+ o.iAzbOOjPJMOXO5r.78VCMqJS2ushazcnGUQ1TJ8RBgD8w9YDlrVAp8VMcu4ZbDn_ABceslahYB
+ LYvK8m5XHDYMaPiWA_uFLD.iPFpOeTGbugBECFIf0LZZy0qJTqzS1HulYXDX7012903mDOlbrdVb
+ dihLjMaoXMUVCJuwHvhMSkqvay6l.xhRWn7OxXoVHjrg_IeEWR_ZcY_WbhgcfocS3xq0N2m2SHw8
+ 2O22kQ.mtz0IPQS5QdZVZHXazI30PGxCWFE49qP9uCfd6Xwk.UtiITMahfkk83mkEZqTq88TcZbJ
+ Pcc.qELOp2gYXtVzr0.7OAKEWRNmKlsXk3rFueXLpP1_djUKw._4F.qtjLwj3EHTbezFBLAfsHD7
+ Pz.4NjX6py23Jvs69hGHEjPlB0votRo1pHN7Hu5vwhWQyOpH155Y4DKlcRF4gsqgpACEifAkXHio
+ 80hWLnqYcoMemFIbqHybd1cgho9qrBfvSBrN9kg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:43:51 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp415.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8f4847c15ff2a33ea2e557120f9f24e5;
-          Tue, 11 Dec 2018 22:43:48 +0000 (UTC)
+          Tue, 11 Dec 2018 22:43:46 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, selinux@vger.kernel.org
@@ -41,9 +55,9 @@ Cc:     john.johansen@canonical.com, keescook@chromium.org,
         linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
         adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
         casey@schaufler-ca.com
-Subject: [PATCH v5 22/38] SELinux: Abstract use of cred security blob
-Date:   Tue, 11 Dec 2018 14:42:58 -0800
-Message-Id: <20181211224314.22412-23-casey@schaufler-ca.com>
+Subject: [PATCH v5 20/38] procfs: add smack subdir to attrs
+Date:   Tue, 11 Dec 2018 14:42:56 -0800
+Message-Id: <20181211224314.22412-21-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
 References: <20181211224314.22412-1-casey@schaufler-ca.com>
@@ -51,287 +65,258 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Don't use the cred->security pointer directly.
-Provide a helper function that provides the security blob pointer.
+Back in 2007 I made what turned out to be a rather serious
+mistake in the implementation of the Smack security module.
+The SELinux module used an interface in /proc to manipulate
+the security context on processes. Rather than use a similar
+interface, I used the same interface. The AppArmor team did
+likewise. Now /proc/.../attr/current will tell you the
+security "context" of the process, but it will be different
+depending on the security module you're using.
+
+This patch provides a subdirectory in /proc/.../attr for
+Smack. Smack user space can use the "current" file in
+this subdirectory and never have to worry about getting
+SELinux attributes by mistake. Programs that use the
+old interface will continue to work (or fail, as the case
+may be) as before.
+
+The proposed S.A.R.A security module is dependent on
+the mechanism to create its own attr subdirectory.
+
+The original implementation is by Kees Cook.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-[kees: adjusted for ordered init series]
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/selinux/hooks.c          | 54 +++++++++++++++++++--------------------
- security/selinux/include/objsec.h |  5 ++++
- security/selinux/xfrm.c           |  4 +--
- 3 files changed, 34 insertions(+), 29 deletions(-)
+ Documentation/admin-guide/LSM/index.rst | 13 +++++--
+ fs/proc/base.c                          | 64 ++++++++++++++++++++++++++++-----
+ fs/proc/internal.h                      |  1 +
+ include/linux/security.h                | 15 +++++---
+ security/security.c                     | 24 ++++++++++---
+ 5 files changed, 96 insertions(+), 21 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index edd5b8dd3e56..24b6b459fa2a 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -225,7 +225,7 @@ static inline u32 cred_sid(const struct cred *cred)
- {
- 	const struct task_security_struct *tsec;
+diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
+index c980dfe9abf1..9842e21afd4a 100644
+--- a/Documentation/admin-guide/LSM/index.rst
++++ b/Documentation/admin-guide/LSM/index.rst
+@@ -17,9 +17,8 @@ MAC extensions, other extensions can be built using the LSM to provide
+ specific changes to system operation when these tweaks are not available
+ in the core functionality of Linux itself.
  
--	tsec = cred->security;
-+	tsec = selinux_cred(cred);
- 	return tsec->sid;
- }
+-Without a specific LSM built into the kernel, the default LSM will be the
+-Linux capabilities system. Most LSMs choose to extend the capabilities
+-system, building their checks on top of the defined capability hooks.
++The Linux capabilities modules will always be included. This may be
++followed by any number of "minor" modules and at most one "major" module.
+ For more details on capabilities, see ``capabilities(7)`` in the Linux
+ man-pages project.
  
-@@ -461,7 +461,7 @@ static int may_context_mount_sb_relabel(u32 sid,
- 			struct superblock_security_struct *sbsec,
- 			const struct cred *cred)
- {
--	const struct task_security_struct *tsec = cred->security;
-+	const struct task_security_struct *tsec = selinux_cred(cred);
- 	int rc;
+@@ -30,6 +29,14 @@ order in which checks are made. The capability module will always
+ be first, followed by any "minor" modules (e.g. Yama) and then
+ the one "major" module (e.g. SELinux) if there is one configured.
  
- 	rc = avc_has_perm(&selinux_state,
-@@ -480,7 +480,7 @@ static int may_context_mount_inode_relabel(u32 sid,
- 			struct superblock_security_struct *sbsec,
- 			const struct cred *cred)
- {
--	const struct task_security_struct *tsec = cred->security;
-+	const struct task_security_struct *tsec = selinux_cred(cred);
- 	int rc;
- 	rc = avc_has_perm(&selinux_state,
- 			  tsec->sid, sbsec->sid, SECCLASS_FILESYSTEM,
-@@ -1951,7 +1951,7 @@ static int may_create(struct inode *dir,
- 		      struct dentry *dentry,
- 		      u16 tclass)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct inode_security_struct *dsec;
- 	struct superblock_security_struct *sbsec;
- 	u32 sid, newsid;
-@@ -1973,7 +1973,7 @@ static int may_create(struct inode *dir,
- 	if (rc)
- 		return rc;
++Process attributes associated with "major" security modules should
++be accessed and maintained using the special files in ``/proc/.../attr``.
++A security module may maintain a module specific subdirectory there,
++named after the module. ``/proc/.../attr/smack`` is provided by the Smack
++security module and contains all its special files. The files directly
++in ``/proc/.../attr`` remain as legacy interfaces for modules that provide
++subdirectories.
++
+ .. toctree::
+    :maxdepth: 1
  
--	rc = selinux_determine_inode_label(current_security(), dir,
-+	rc = selinux_determine_inode_label(selinux_cred(current_cred()), dir,
- 					   &dentry->d_name, tclass, &newsid);
- 	if (rc)
- 		return rc;
-@@ -2480,8 +2480,8 @@ static int selinux_bprm_set_creds(struct linux_binprm *bprm)
- 	if (bprm->called_set_creds)
- 		return 0;
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ce3465479447..e133de4897df 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -140,9 +140,13 @@ struct pid_entry {
+ #define REG(NAME, MODE, fops)				\
+ 	NOD(NAME, (S_IFREG|(MODE)), NULL, &fops, {})
+ #define ONE(NAME, MODE, show)				\
+-	NOD(NAME, (S_IFREG|(MODE)), 			\
++	NOD(NAME, (S_IFREG|(MODE)),			\
+ 		NULL, &proc_single_file_operations,	\
+ 		{ .proc_show = show } )
++#define ATTR(LSM, NAME, MODE)				\
++	NOD(NAME, (S_IFREG|(MODE)),			\
++		NULL, &proc_pid_attr_operations,	\
++		{ .lsm = LSM })
  
--	old_tsec = current_security();
--	new_tsec = bprm->cred->security;
-+	old_tsec = selinux_cred(current_cred());
-+	new_tsec = selinux_cred(bprm->cred);
- 	isec = inode_security(inode);
+ /*
+  * Count the number of hardlinks for the pid_entry table, excluding the .
+@@ -2517,7 +2521,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+ 	if (!task)
+ 		return -ESRCH;
  
- 	/* Default to the current task SID. */
-@@ -2645,7 +2645,7 @@ static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
- 	struct rlimit *rlim, *initrlim;
- 	int rc, i;
+-	length = security_getprocattr(task,
++	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
+ 				      (char*)file->f_path.dentry->d_name.name,
+ 				      &p);
+ 	put_task_struct(task);
+@@ -2566,7 +2570,9 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 	if (rv < 0)
+ 		goto out_free;
  
--	new_tsec = bprm->cred->security;
-+	new_tsec = selinux_cred(bprm->cred);
- 	if (new_tsec->sid == new_tsec->osid)
- 		return;
- 
-@@ -2688,7 +2688,7 @@ static void selinux_bprm_committing_creds(struct linux_binprm *bprm)
-  */
- static void selinux_bprm_committed_creds(struct linux_binprm *bprm)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct itimerval itimer;
- 	u32 osid, sid;
- 	int rc, i;
-@@ -2991,7 +2991,7 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
- 	u32 newsid;
- 	int rc;
- 
--	rc = selinux_determine_inode_label(current_security(),
-+	rc = selinux_determine_inode_label(selinux_cred(current_cred()),
- 					   d_inode(dentry->d_parent), name,
- 					   inode_mode_to_security_class(mode),
- 					   &newsid);
-@@ -3011,14 +3011,14 @@ static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
- 	int rc;
- 	struct task_security_struct *tsec;
- 
--	rc = selinux_determine_inode_label(old->security,
-+	rc = selinux_determine_inode_label(selinux_cred(old),
- 					   d_inode(dentry->d_parent), name,
- 					   inode_mode_to_security_class(mode),
- 					   &newsid);
- 	if (rc)
- 		return rc;
- 
--	tsec = new->security;
-+	tsec = selinux_cred(new);
- 	tsec->create_sid = newsid;
- 	return 0;
- }
-@@ -3028,7 +3028,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
- 				       const char **name,
- 				       void **value, size_t *len)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct superblock_security_struct *sbsec;
- 	u32 newsid, clen;
- 	int rc;
-@@ -3038,7 +3038,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
- 
- 	newsid = tsec->create_sid;
- 
--	rc = selinux_determine_inode_label(current_security(),
-+	rc = selinux_determine_inode_label(selinux_cred(current_cred()),
- 		dir, qstr,
- 		inode_mode_to_security_class(inode->i_mode),
- 		&newsid);
-@@ -3500,7 +3500,7 @@ static int selinux_inode_copy_up(struct dentry *src, struct cred **new)
- 			return -ENOMEM;
- 	}
- 
--	tsec = new_creds->security;
-+	tsec = selinux_cred(new_creds);
- 	/* Get label from overlay inode and set it in create_sid */
- 	selinux_inode_getsecid(d_inode(src), &sid);
- 	tsec->create_sid = sid;
-@@ -3920,7 +3920,7 @@ static int selinux_cred_alloc_blank(struct cred *cred, gfp_t gfp)
-  */
- static void selinux_cred_free(struct cred *cred)
- {
--	struct task_security_struct *tsec = cred->security;
-+	struct task_security_struct *tsec = selinux_cred(cred);
- 
- 	/*
- 	 * cred->security == NULL if security_cred_alloc_blank() or
-@@ -3940,7 +3940,7 @@ static int selinux_cred_prepare(struct cred *new, const struct cred *old,
- 	const struct task_security_struct *old_tsec;
- 	struct task_security_struct *tsec;
- 
--	old_tsec = old->security;
-+	old_tsec = selinux_cred(old);
- 
- 	tsec = kmemdup(old_tsec, sizeof(struct task_security_struct), gfp);
- 	if (!tsec)
-@@ -3955,8 +3955,8 @@ static int selinux_cred_prepare(struct cred *new, const struct cred *old,
-  */
- static void selinux_cred_transfer(struct cred *new, const struct cred *old)
- {
--	const struct task_security_struct *old_tsec = old->security;
--	struct task_security_struct *tsec = new->security;
-+	const struct task_security_struct *old_tsec = selinux_cred(old);
-+	struct task_security_struct *tsec = selinux_cred(new);
- 
- 	*tsec = *old_tsec;
- }
-@@ -3972,7 +3972,7 @@ static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
-  */
- static int selinux_kernel_act_as(struct cred *new, u32 secid)
- {
--	struct task_security_struct *tsec = new->security;
-+	struct task_security_struct *tsec = selinux_cred(new);
- 	u32 sid = current_sid();
- 	int ret;
- 
-@@ -3997,7 +3997,7 @@ static int selinux_kernel_act_as(struct cred *new, u32 secid)
- static int selinux_kernel_create_files_as(struct cred *new, struct inode *inode)
- {
- 	struct inode_security_struct *isec = inode_security(inode);
--	struct task_security_struct *tsec = new->security;
-+	struct task_security_struct *tsec = selinux_cred(new);
- 	u32 sid = current_sid();
- 	int ret;
- 
-@@ -4546,7 +4546,7 @@ static int sock_has_perm(struct sock *sk, u32 perms)
- static int selinux_socket_create(int family, int type,
- 				 int protocol, int kern)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	u32 newsid;
- 	u16 secclass;
- 	int rc;
-@@ -4566,7 +4566,7 @@ static int selinux_socket_create(int family, int type,
- static int selinux_socket_post_create(struct socket *sock, int family,
- 				      int type, int protocol, int kern)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct inode_security_struct *isec = inode_security_novalidate(SOCK_INODE(sock));
- 	struct sk_security_struct *sksec;
- 	u16 sclass = socket_type_to_security_class(family, type, protocol);
-@@ -5444,7 +5444,7 @@ static int selinux_secmark_relabel_packet(u32 sid)
- 	const struct task_security_struct *__tsec;
- 	u32 tsid;
- 
--	__tsec = current_security();
-+	__tsec = selinux_cred(current_cred());
- 	tsid = __tsec->sid;
- 
- 	return avc_has_perm(&selinux_state,
-@@ -6381,7 +6381,7 @@ static int selinux_getprocattr(struct task_struct *p,
- 	unsigned len;
- 
- 	rcu_read_lock();
--	__tsec = __task_cred(p)->security;
-+	__tsec = selinux_cred(__task_cred(p));
- 
- 	if (current != p) {
- 		error = avc_has_perm(&selinux_state,
-@@ -6504,7 +6504,7 @@ static int selinux_setprocattr(const char *name, void *value, size_t size)
- 	   operation.  See selinux_bprm_set_creds for the execve
- 	   checks and may_create for the file creation checks. The
- 	   operation will then fail if the context is not permitted. */
--	tsec = new->security;
-+	tsec = selinux_cred(new);
- 	if (!strcmp(name, "exec")) {
- 		tsec->exec_sid = sid;
- 	} else if (!strcmp(name, "fscreate")) {
-@@ -6633,7 +6633,7 @@ static int selinux_key_alloc(struct key *k, const struct cred *cred,
- 	if (!ksec)
- 		return -ENOMEM;
- 
--	tsec = cred->security;
-+	tsec = selinux_cred(cred);
- 	if (tsec->keycreate_sid)
- 		ksec->sid = tsec->keycreate_sid;
- 	else
-diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index cc5e26b0161b..734b6833bdff 100644
---- a/security/selinux/include/objsec.h
-+++ b/security/selinux/include/objsec.h
-@@ -158,4 +158,9 @@ struct bpf_security_struct {
- 	u32 sid;  /*SID of bpf obj creater*/
+-	rv = security_setprocattr(file->f_path.dentry->d_name.name, page, count);
++	rv = security_setprocattr(PROC_I(inode)->op.lsm,
++				  file->f_path.dentry->d_name.name, page,
++				  count);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
+ out_free:
+ 	kfree(page);
+@@ -2580,13 +2586,53 @@ static const struct file_operations proc_pid_attr_operations = {
+ 	.llseek		= generic_file_llseek,
  };
  
-+static inline struct task_security_struct *selinux_cred(const struct cred *cred)
-+{
-+	return cred->security;
++#define LSM_DIR_OPS(LSM) \
++static int proc_##LSM##_attr_dir_iterate(struct file *filp, \
++			     struct dir_context *ctx) \
++{ \
++	return proc_pident_readdir(filp, ctx, \
++				   LSM##_attr_dir_stuff, \
++				   ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct file_operations proc_##LSM##_attr_dir_ops = { \
++	.read		= generic_read_dir, \
++	.iterate	= proc_##LSM##_attr_dir_iterate, \
++	.llseek		= default_llseek, \
++}; \
++\
++static struct dentry *proc_##LSM##_attr_dir_lookup(struct inode *dir, \
++				struct dentry *dentry, unsigned int flags) \
++{ \
++	return proc_pident_lookup(dir, dentry, \
++				  LSM##_attr_dir_stuff, \
++				  ARRAY_SIZE(LSM##_attr_dir_stuff)); \
++} \
++\
++static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
++	.lookup		= proc_##LSM##_attr_dir_lookup, \
++	.getattr	= pid_getattr, \
++	.setattr	= proc_setattr, \
 +}
 +
- #endif /* _SELINUX_OBJSEC_H_ */
-diff --git a/security/selinux/xfrm.c b/security/selinux/xfrm.c
-index 91dc3783ed94..8ffe7e1053c4 100644
---- a/security/selinux/xfrm.c
-+++ b/security/selinux/xfrm.c
-@@ -79,7 +79,7 @@ static int selinux_xfrm_alloc_user(struct xfrm_sec_ctx **ctxp,
- 				   gfp_t gfp)
- {
- 	int rc;
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
- 	struct xfrm_sec_ctx *ctx = NULL;
- 	u32 str_len;
++#ifdef CONFIG_SECURITY_SMACK
++static const struct pid_entry smack_attr_dir_stuff[] = {
++	ATTR("smack", "current",	0666),
++};
++LSM_DIR_OPS(smack);
++#endif
++
+ static const struct pid_entry attr_dir_stuff[] = {
+-	REG("current",    S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("prev",       S_IRUGO,	   proc_pid_attr_operations),
+-	REG("exec",       S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("fscreate",   S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("keycreate",  S_IRUGO|S_IWUGO, proc_pid_attr_operations),
+-	REG("sockcreate", S_IRUGO|S_IWUGO, proc_pid_attr_operations),
++	ATTR(NULL, "current",		0666),
++	ATTR(NULL, "prev",		0444),
++	ATTR(NULL, "exec",		0666),
++	ATTR(NULL, "fscreate",		0666),
++	ATTR(NULL, "keycreate",		0666),
++	ATTR(NULL, "sockcreate",	0666),
++#ifdef CONFIG_SECURITY_SMACK
++	DIR("smack",			0555,
++	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
++#endif
+ };
  
-@@ -138,7 +138,7 @@ static void selinux_xfrm_free(struct xfrm_sec_ctx *ctx)
-  */
- static int selinux_xfrm_delete(struct xfrm_sec_ctx *ctx)
- {
--	const struct task_security_struct *tsec = current_security();
-+	const struct task_security_struct *tsec = selinux_cred(current_cred());
+ static int proc_attr_dir_readdir(struct file *file, struct dir_context *ctx)
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 5185d7f6a51e..d4f9989063d0 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -81,6 +81,7 @@ union proc_op {
+ 	int (*proc_show)(struct seq_file *m,
+ 		struct pid_namespace *ns, struct pid *pid,
+ 		struct task_struct *task);
++	const char *lsm;
+ };
  
- 	if (!ctx)
- 		return 0;
+ struct proc_inode {
+diff --git a/include/linux/security.h b/include/linux/security.h
+index d170a5b031f3..35691877c3e1 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -390,8 +390,10 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
+ int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
+ 			unsigned nsops, int alter);
+ void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+-int security_getprocattr(struct task_struct *p, char *name, char **value);
+-int security_setprocattr(const char *name, void *value, size_t size);
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++			 char **value);
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size);
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+@@ -1139,15 +1141,18 @@ static inline int security_sem_semop(struct kern_ipc_perm *sma,
+ 	return 0;
+ }
+ 
+-static inline void security_d_instantiate(struct dentry *dentry, struct inode *inode)
++static inline void security_d_instantiate(struct dentry *dentry,
++					  struct inode *inode)
+ { }
+ 
+-static inline int security_getprocattr(struct task_struct *p, char *name, char **value)
++static inline int security_getprocattr(struct task_struct *p, const char *lsm,
++				       char *name, char **value)
+ {
+ 	return -EINVAL;
+ }
+ 
+-static inline int security_setprocattr(char *name, void *value, size_t size)
++static inline int security_setprocattr(const char *lsm, char *name,
++				       void *value, size_t size)
+ {
+ 	return -EINVAL;
+ }
+diff --git a/security/security.c b/security/security.c
+index eab64bdc60fb..81ff6a71e78e 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1472,14 +1472,30 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+ }
+ EXPORT_SYMBOL(security_d_instantiate);
+ 
+-int security_getprocattr(struct task_struct *p, char *name, char **value)
++int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
++				char **value)
+ {
+-	return call_int_hook(getprocattr, -EINVAL, p, name, value);
++	struct security_hook_list *hp;
++
++	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		return hp->hook.getprocattr(p, name, value);
++	}
++	return -EINVAL;
+ }
+ 
+-int security_setprocattr(const char *name, void *value, size_t size)
++int security_setprocattr(const char *lsm, const char *name, void *value,
++			 size_t size)
+ {
+-	return call_int_hook(setprocattr, -EINVAL, name, value, size);
++	struct security_hook_list *hp;
++
++	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
++		if (lsm != NULL && strcmp(lsm, hp->lsm))
++			continue;
++		return hp->hook.setprocattr(name, value, size);
++	}
++	return -EINVAL;
+ }
+ 
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb)
 -- 
 2.14.5
 
