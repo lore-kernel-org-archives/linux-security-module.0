@@ -2,101 +2,132 @@ Return-Path: <SRS0=nZhg=OU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A36EC6783B
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 21:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02072C67839
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17FF02086D
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 21:46:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17FF02086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BCCCA20672
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:43:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="eRQFQuGc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCCCA20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbeLKVqg (ORCPT
+        id S1726219AbeLKWn2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:46:36 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60080 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726136AbeLKVqg (ORCPT
+        Tue, 11 Dec 2018 17:43:28 -0500
+Received: from sonic308-17.consmr.mail.ne1.yahoo.com ([66.163.187.40]:40577
+        "EHLO sonic308-17.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726276AbeLKWn1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:46:36 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBBLi4LF141896
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Dec 2018 16:46:35 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pajuyexdf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Dec 2018 16:46:35 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <kgold@linux.ibm.com>;
-        Tue, 11 Dec 2018 21:46:34 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Dec 2018 21:46:31 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBBLkUYE20119642
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 21:46:30 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AD942AE05C;
-        Tue, 11 Dec 2018 21:46:30 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86D28AE063;
-        Tue, 11 Dec 2018 21:46:30 +0000 (GMT)
-Received: from [9.74.8.180] (unknown [9.74.8.180])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Dec 2018 21:46:30 +0000 (GMT)
-Subject: Re: Documenting the proposal for TPM 2.0 security in the face of bus
- interposer attacks
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <1542648844.2910.9.camel@HansenPartnership.com>
- <16c8baf7-e2a9-6e12-b736-a0e2384282ed@linux.ibm.com>
- <1544463047.2753.24.camel@HansenPartnership.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-Date:   Tue, 11 Dec 2018 16:47:05 -0500
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <1544463047.2753.24.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121121-2213-0000-0000-000003295EAE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130383; UDB=6.00587374; IPR=6.00910516;
- MB=3.00024658; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-11 21:46:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121121-2214-0000-0000-00005C915680
-Message-Id: <5be63677-43bb-73dd-29db-876976e16d41@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=902 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110191
+        Tue, 11 Dec 2018 17:43:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568206; bh=ieQHIxYO98CPw1EUXfmqp0bOZIm9J19Fh09JZ7LQgB8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=eRQFQuGcyZghqdupBpXYiPgrqB+y2vGEcArRJGqskEbjVg24wOGTR6fW6P2yYuV0oPpjbtmWm+oMPErb+pcVkNWpWwvvf+VcOUTWyuNRvbpdXMzDVLeGWSZZZOU+9+E0rvVp9ma4ZLQZusgE5KmZ3A7cb5MDyQf4kLtE+1uAz1paX/gbO9De7VzD1Cs4zRAcjZgJQ/pdBWH6mDb8IBl2/zsdLejKH7MI91IGEpvTYmYbvWidCP5qnTaFL21mUKGTzkGtJbOspE3KXDOQHQWG2/jDkxt6eLHb64iCto/Tj3Xpb5z6J0nXls6tqZsqJWVHTJ3ssqAwsHviienEQhnC4Q==
+X-YMail-OSG: ENYqozwVM1lH_QwafVp2OrogqWa4lElzn3.grfBT4mdAEvBn32aHIuTdGOLrBv2
+ hFSsYX7F6zsb.Qly35jADevDun.jtC17NDkcjO8qFIJlInKgpBY4RwAfpYfoFbYWzSLENuLMIZLO
+ ONxz7dgKik3Iag1A5K_i0aqCvvQvYY_vsW2RcSPWraKT_11Y2VAAq5Sv8SLVK2tqo.o6WVRPwGAe
+ enm5IupFBDLq4j.EQ25udNUN0tt0JRlTXutuY_0Ob8yRBLuVSx9TfbgqaNF9Mc_5cQV5TZscA_dn
+ gCyPF8JgFKM9EN6PDZXykIr5gIyiUpFtqqzIpRFzEDtVhDAy5mIoHJTCx2WmYS4kWtV3sOf0ALqq
+ 0JzVAJKaBEyFixeHbU8aWLeNvEU8QLzAgW3UwbaFJ.50iZL42HL0kNZJbWYgEIkvqwGeBt6KGtB5
+ JChfxxa21_LXV7AQPHAg_VXzCWdL4iqWpZDZQg7kqkqd3lsMzYlp9yKaXtQzov_RwUiy.F_ewe2v
+ gNKyhGXO6WHrHH0phNT1hJew07LP1_e3R5UueOvEe3c.5tyoWkb3bcIpIt6XYKTTNg8VTK8dXh6Z
+ 9qf7VuFnOUAazDBdSzWakEf10Y5haJuZMXOnGnvgPXWw7QTKAWn1qUEwlFctswdM3rZdNxY8P1G1
+ ZXRiF3JawYlIhJgB9CNhBVrJJuCdXP3udMkUtCayYYo.wXLaZo5b4xIHdWzhDH_ldIMcrXR3AVGL
+ ikQ4kolJM_H2q2EfzeWO9UO3TF0HT1qxlh7llbf0O862TpVTbz42KnNxiww6Bk8Na6iOXGsgKPuZ
+ Giy9zuyrSkkCk_IArLcEFOqN.QriTCyJ2GE6YFvXXfCkvKCu9vWjUPEUeugDoUYdSgaaozqwiT5e
+ YQLjk_Eto6QO6vn_PQtib.BS.qF4Uyg7q0MdLPHXXR2..APMrvypqhV240wJyIuO38mlH7Kmk_rn
+ nQCu02uUGZrDW897z_E3W5YkpKGOsa6lysDXzriPv9osDd1.6s8OOEeNQbg32STkDuYRQoiwXE1L
+ zGIOL0EKrWbxhs.TNFvSbTTXqBXqXdfiBd8pZ8w5euDSDpzL6vw4d_T6QJb7auJvK.1ZJzhOmZ6X
+ XCqLWkb8Xc6ZKyD12qYcPpV8OOt6.qcWJxF9APdE1I1lOew--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:43:26 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
+          by smtp422.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID db48327a3d58729724c38eee90dbab73;
+          Tue, 11 Dec 2018 22:43:26 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Cc:     john.johansen@canonical.com, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
+        adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
+        casey@schaufler-ca.com
+Subject: [PATCH v5 02/38] LSM: Provide separate ordered initialization
+Date:   Tue, 11 Dec 2018 14:42:38 -0800
+Message-Id: <20181211224314.22412-3-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
+References: <20181211224314.22412-1-casey@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/10/2018 12:30 PM, James Bottomley wrote:
->> A nit.  The RSA cert is at 01c00002.  The ECC cert is at 01c0000a.
-> Is this actually published somewhere? ... I was guessing from the TPM
-> 2.0 provisioning guide.
+From: Kees Cook <keescook@chromium.org>
 
-Yes.
+This provides a place for ordered LSMs to be initialized, separate from
+the "major" LSMs. This is mainly a copy/paste from major_lsm_init() to
+ordered_lsm_init(), but it will change drastically in later patches.
 
-The certificates, including the handles, are standardized
-in the Infrastructure WG document: TCG EK Credential Profile
-For TPM Family 2.0.
+What is not obvious in the patch is that this change moves the integrity
+LSM from major_lsm_init() into ordered_lsm_init(), since it is not marked
+with the LSM_FLAG_LEGACY_MAJOR. As it is the only LSM in the "ordered"
+list, there is no reordering yet created.
 
-This document also explains how to recreate the EKs from standard templates.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+Reviewed-by: John Johansen <john.johansen@canonical.com>
+---
+ security/security.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/security/security.c b/security/security.c
+index 04d173eb93f6..0688dfd57e95 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -52,12 +52,30 @@ static __initdata bool debug;
+ 			pr_info(__VA_ARGS__);			\
+ 	} while (0)
+ 
++static void __init ordered_lsm_init(void)
++{
++	struct lsm_info *lsm;
++	int ret;
++
++	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) != 0)
++			continue;
++
++		init_debug("initializing %s\n", lsm->name);
++		ret = lsm->init();
++		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
++	}
++}
++
+ static void __init major_lsm_init(void)
+ {
+ 	struct lsm_info *lsm;
+ 	int ret;
+ 
+ 	for (lsm = __start_lsm_info; lsm < __end_lsm_info; lsm++) {
++		if ((lsm->flags & LSM_FLAG_LEGACY_MAJOR) == 0)
++			continue;
++
+ 		init_debug("initializing %s\n", lsm->name);
+ 		ret = lsm->init();
+ 		WARN(ret, "%s failed to initialize: %d\n", lsm->name, ret);
+@@ -87,6 +105,9 @@ int __init security_init(void)
+ 	yama_add_hooks();
+ 	loadpin_add_hooks();
+ 
++	/* Load LSMs in specified order. */
++	ordered_lsm_init();
++
+ 	/*
+ 	 * Load all the remaining security modules.
+ 	 */
+-- 
+2.14.5
 
