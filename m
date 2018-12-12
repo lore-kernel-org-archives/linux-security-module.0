@@ -2,83 +2,93 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA54C67839
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 18:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92424C67839
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 18:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D93CA2084E
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 18:29:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D93CA2084E
+	by mail.kernel.org (Postfix) with ESMTP id 5A69B2084E
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 18:32:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A69B2084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbeLLS3R (ORCPT
+        id S1728072AbeLLScL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:29:17 -0500
-Received: from mga14.intel.com ([192.55.52.115]:36134 "EHLO mga14.intel.com"
+        Wed, 12 Dec 2018 13:32:11 -0500
+Received: from mga01.intel.com ([192.55.52.88]:59089 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727888AbeLLS3Q (ORCPT
+        id S1727748AbeLLScL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:29:16 -0500
+        Wed, 12 Dec 2018 13:32:11 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 10:29:16 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 10:32:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,345,1539673200"; 
-   d="scan'208";a="127337981"
+   d="scan'208";a="101024909"
 Received: from hekner-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.170])
-  by fmsmga004.fm.intel.com with ESMTP; 12 Dec 2018 10:29:11 -0800
-Date:   Wed, 12 Dec 2018 20:29:10 +0200
+  by orsmga008.jf.intel.com with ESMTP; 12 Dec 2018 10:32:06 -0800
+Date:   Wed, 12 Dec 2018 20:32:04 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Nayna Jain <nayna@linux.ibm.com>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
-        david.safford@ge.com, monty.wiseman@ge.com,
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v6 4/7] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-Message-ID: <20181212182910.GJ6333@linux.intel.com>
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v6 1/7] tpm: dynamically allocate the allocated_banks
+ array
+Message-ID: <20181212183204.GK6333@linux.intel.com>
 References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-5-roberto.sassu@huawei.com>
- <20181204234024.GC1233@linux.intel.com>
- <1e9f4b5a-c0fc-8be8-61f5-39166e948b01@linux.ibm.com>
+ <20181204082138.24600-2-roberto.sassu@huawei.com>
+ <20181204231848.GA1233@linux.intel.com>
+ <9193bc05-8222-f0d6-9ad8-a2a7eaf1a34c@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1e9f4b5a-c0fc-8be8-61f5-39166e948b01@linux.ibm.com>
+In-Reply-To: <9193bc05-8222-f0d6-9ad8-a2a7eaf1a34c@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 06, 2018 at 01:44:58PM +0530, Nayna Jain wrote:
+On Thu, Dec 06, 2018 at 06:56:33PM +0100, Roberto Sassu wrote:
+> 2 PCR selections
+>     hash TPM_ALG_SHA1
+>     TPMS_PCR_SELECTION length 3
+>     ff ff ff
+>     hash TPM_ALG_SHA256
+>     TPMS_PCR_SELECTION length 3
+>     00 00 00
 > 
-> On 12/05/2018 05:10 AM, Jarkko Sakkinen wrote:
-> > On Tue, Dec 04, 2018 at 09:21:35AM +0100, Roberto Sassu wrote:
-> > > Currently the TPM driver allows other kernel subsystems to read only the
-> > > SHA1 PCR bank. This patch modifies the parameters of tpm_pcr_read() and
-> > > tpm2_pcr_read() to pass a tpm_digest structure, which contains the desired
-> > > hash algorithm. Also, since commit 125a22105410 ("tpm: React correctly to
-> > > RC_TESTING from TPM 2.0 self tests") removed the call to tpm2_pcr_read(),
-> > > the new parameter is expected to be always not NULL.
-> > > 
-> > > Due to the API change, IMA functions have been modified.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > 
-> > Mimi, Nayna, can you help with testing this (because of the IMA change)?
-> 
-> Sure, I will try to do by end of my day tomorrow,
+> The pcr_select fields - "ff ff ff" and "00 00 00" - are bit masks for
+> the enabled PCRs. The SHA1 bank is enabled for all PCRs (0-23), while
+> the SHA256 bank is not enabled.
 
-Awesome, thank you.
+Uh, thanks. Can you add a note to the commit message?
+
+ 
+> > 
+> > /* Check that at least some of the PCRs have been allocated. This is
+> >   * required because CAP_PCRS ...
+> >   */
+> > if (memchr_inv(pcr_selection.pcr_select, 0, pcr_selection.size_of_select))
+> > 	nr_allocated_banks++;
+> > 
+> > [yeah, comment would be awesome about CAP_PCRS. Did not finish up the
+> > comment because I don't know the answer]
+> > 
+> > In addition, it would be consistent to call the local variable also
+> > nr_allocated_banks (not nr_alloc_banks).
+> 
+> Unfortunately, I exceed the limit of characters per line.
+
+Not sure what you mean?
 
 /Jarkko
