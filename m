@@ -2,36 +2,36 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F9AC65BAF
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C2EC65BAF
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72AF620849
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72AF620849
+	by mail.kernel.org (Postfix) with ESMTP id 2115120849
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2115120849
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbeLLIeW (ORCPT
+        id S1726741AbeLLIek (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:34:22 -0500
-Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:33456 "EHLO
+        Wed, 12 Dec 2018 03:34:40 -0500
+Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:44079 "EHLO
         smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeLLIeW (ORCPT
+        with ESMTP id S1726242AbeLLIee (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:34:22 -0500
-Received: from smtp8.infomaniak.ch (smtp8.infomaniak.ch [83.166.132.38])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8HfHl022346
+        Wed, 12 Dec 2018 03:34:34 -0500
+Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
+        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8HkJd022559
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 09:17:42 +0100
+        Wed, 12 Dec 2018 09:17:46 +0100
 Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
         (authenticated bits=0)
-        by smtp8.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8Hdkr032831;
-        Wed, 12 Dec 2018 09:17:39 +0100
+        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8HkTd061382;
+        Wed, 12 Dec 2018 09:17:46 +0100
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -51,9 +51,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
-Date:   Wed, 12 Dec 2018 09:17:08 +0100
-Message-Id: <20181212081712.32347-2-mic@digikod.net>
+Subject: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file executability through O_MAYEXEC
+Date:   Wed, 12 Dec 2018 09:17:10 +0100
+Message-Id: <20181212081712.32347-4-mic@digikod.net>
 X-Mailer: git-send-email 2.20.0.rc2
 In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
 References: <20181212081712.32347-1-mic@digikod.net>
@@ -66,115 +66,172 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When the O_MAYEXEC flag is passed, sys_open() may be subject to
-additional restrictions depending on a security policy implemented by an
-LSM through the inode_permission hook.
+Enable to either propagate the mount options from the underlying VFS
+mount to prevent execution, or to propagate the file execute permission.
+This may allow a script interpreter to check execution permissions
+before reading commands from a file.
 
-The underlying idea is to be able to restrict scripts interpretation
-according to a policy defined by the system administrator.  For this to
-be possible, script interpreters must use the O_MAYEXEC flag
-appropriately.  To be fully effective, these interpreters also need to
-handle the other ways to execute code (for which the kernel can't help):
-command line parameters (e.g., option -e for Perl), module loading
-(e.g., option -m for Python), stdin, file sourcing, environment
-variables, configuration files...  According to the threat model, it may
-be acceptable to allow some script interpreters (e.g. Bash) to interpret
-commands from stdin, may it be a TTY or a pipe, because it may not be
-enough to (directly) perform syscalls.
+The main goal is to be able to protect the kernel by restricting
+arbitrary syscalls that an attacker could perform with a crafted binary
+or certain script languages.  It also improves multilevel isolation
+by reducing the ability of an attacker to use side channels with
+specific code.  These restrictions can natively be enforced for ELF
+binaries (with the noexec mount option) but require this kernel
+extension to properly handle scripts (e.g., Python, Perl).
 
-A simple security policy implementation is available in a following
-patch for Yama.
-
-This is an updated subset of the patch initially written by Vincent
-Strubel for CLIP OS:
-https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-This patch has been used for more than 10 years with customized script
-interpreters.  Some examples can be found here:
-https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+Add a new sysctl kernel.yama.open_mayexec_enforce to control this
+behavior.  A following patch adds documentation.
 
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
 Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
 ---
- fs/fcntl.c                       | 2 +-
- fs/open.c                        | 4 ++++
- include/linux/fcntl.h            | 2 +-
- include/linux/fs.h               | 2 ++
- include/uapi/asm-generic/fcntl.h | 3 +++
- 5 files changed, 11 insertions(+), 2 deletions(-)
+ security/yama/Kconfig    |  3 +-
+ security/yama/yama_lsm.c | 82 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 83 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 083185174c6d..6c85c4d0c006 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1031,7 +1031,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
- 		HWEIGHT32(
- 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC | __FMODE_NONOTIFY));
-diff --git a/fs/open.c b/fs/open.c
-index 0285ce7dbd51..75479b79a58f 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -974,6 +974,10 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
- 	if (flags & O_APPEND)
- 		acc_mode |= MAY_APPEND;
- 
-+	/* Check execution permissions on open. */
-+	if (flags & O_MAYEXEC)
-+		acc_mode |= MAY_OPENEXEC;
-+
- 	op->acc_mode = acc_mode;
- 
- 	op->intent = flags & O_PATH ? 0 : LOOKUP_OPEN;
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index 27dc7a60693e..1fc00cabe9ab 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -9,7 +9,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_MAYEXEC)
- 
- #ifndef force_o_largefile
- #define force_o_largefile() (BITS_PER_LONG != 32)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c95c0807471f..584c9329ad78 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -94,6 +94,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- #define MAY_CHDIR		0x00000040
- /* called from RCU mode, don't block */
- #define MAY_NOT_BLOCK		0x00000080
-+/* the inode is opened with O_MAYEXEC */
-+#define MAY_OPENEXEC		0x00000100
- 
+diff --git a/security/yama/Kconfig b/security/yama/Kconfig
+index 96b27405558a..9457619fabd5 100644
+--- a/security/yama/Kconfig
++++ b/security/yama/Kconfig
+@@ -5,7 +5,8 @@ config SECURITY_YAMA
+ 	help
+ 	  This selects Yama, which extends DAC support with additional
+ 	  system-wide security settings beyond regular Linux discretionary
+-	  access controls. Currently available is ptrace scope restriction.
++	  access controls. Currently available are ptrace scope restriction and
++	  enforcement of the O_MAYEXEC open flag.
+ 	  Like capabilities, this security module stacks with other LSMs.
+ 	  Further information can be found in
+ 	  Documentation/admin-guide/LSM/Yama.rst.
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index ffda91a4a1aa..120664e94ee5 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -1,10 +1,12 @@
  /*
-  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 9dc0bf0c5a6e..cbb9425d6e7c 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -97,6 +97,9 @@
- #define O_NDELAY	O_NONBLOCK
- #endif
+  * Yama Linux Security Module
+  *
+- * Author: Kees Cook <keescook@chromium.org>
++ * Authors: Kees Cook <keescook@chromium.org>
++ *          Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+  *
+  * Copyright (C) 2010 Canonical, Ltd.
+  * Copyright (C) 2011 The Chromium OS Authors.
++ * Copyright (C) 2018 ANSSI
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2, as
+@@ -28,7 +30,14 @@
+ #define YAMA_SCOPE_CAPABILITY	2
+ #define YAMA_SCOPE_NO_ATTACH	3
  
-+/* command execution from file is intended, check exec permissions */
-+#define O_MAYEXEC	040000000
++#define YAMA_OMAYEXEC_ENFORCE_NONE	0
++#define YAMA_OMAYEXEC_ENFORCE_MOUNT	(1 << 0)
++#define YAMA_OMAYEXEC_ENFORCE_FILE	(1 << 1)
++#define _YAMA_OMAYEXEC_LAST		YAMA_OMAYEXEC_ENFORCE_FILE
++#define _YAMA_OMAYEXEC_MASK		((_YAMA_OMAYEXEC_LAST << 1) - 1)
 +
- #define F_DUPFD		0	/* dup */
- #define F_GETFD		1	/* get close_on_exec */
- #define F_SETFD		2	/* set/clear close_on_exec */
+ static int ptrace_scope = YAMA_SCOPE_RELATIONAL;
++static int open_mayexec_enforce = YAMA_OMAYEXEC_ENFORCE_NONE;
+ 
+ /* describe a ptrace relationship for potential exception */
+ struct ptrace_relation {
+@@ -423,7 +432,40 @@ int yama_ptrace_traceme(struct task_struct *parent)
+ 	return rc;
+ }
+ 
++/**
++ * yama_inode_permission - check O_MAYEXEC permission before accessing an inode
++ * @inode: inode structure to check
++ * @mask: permission mask
++ *
++ * Return 0 if access is permitted, -EACCES otherwise.
++ */
++int yama_inode_permission(struct inode *inode, int mask)
++{
++	if (!(mask & MAY_OPENEXEC))
++		return 0;
++	/*
++	 * Match regular files and directories to make it easier to
++	 * modify script interpreters.
++	 */
++	if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
++		return 0;
++
++	if ((open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_MOUNT) &&
++			!(mask & MAY_EXECMOUNT))
++		return -EACCES;
++
++	/*
++	 * May prefer acl_permission_check() instead of generic_permission(),
++	 * to not be bypassable with CAP_DAC_READ_SEARCH.
++	 */
++	if (open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_FILE)
++		return generic_permission(inode, MAY_EXEC);
++
++	return 0;
++}
++
+ static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(inode_permission, yama_inode_permission),
+ 	LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
+ 	LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
+ 	LSM_HOOK_INIT(task_prctl, yama_task_prctl),
+@@ -447,6 +489,37 @@ static int yama_dointvec_minmax(struct ctl_table *table, int write,
+ 	return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
+ }
+ 
++static int yama_dointvec_bitmask_macadmin(struct ctl_table *table, int write,
++					  void __user *buffer, size_t *lenp,
++					  loff_t *ppos)
++{
++	int error;
++
++	if (write) {
++		struct ctl_table table_copy;
++		int tmp_mayexec_enforce;
++
++		if (!capable(CAP_MAC_ADMIN))
++			return -EPERM;
++		tmp_mayexec_enforce = *((int *)table->data);
++		table_copy = *table;
++		/* do not erase open_mayexec_enforce */
++		table_copy.data = &tmp_mayexec_enforce;
++		error = proc_dointvec(&table_copy, write, buffer, lenp, ppos);
++		if (error)
++			return error;
++		if ((tmp_mayexec_enforce | _YAMA_OMAYEXEC_MASK) !=
++				_YAMA_OMAYEXEC_MASK)
++			return -EINVAL;
++		*((int *)table->data) = tmp_mayexec_enforce;
++	} else {
++		error = proc_dointvec(table, write, buffer, lenp, ppos);
++		if (error)
++			return error;
++	}
++	return 0;
++}
++
+ static int zero;
+ static int max_scope = YAMA_SCOPE_NO_ATTACH;
+ 
+@@ -466,6 +539,13 @@ static struct ctl_table yama_sysctl_table[] = {
+ 		.extra1         = &zero,
+ 		.extra2         = &max_scope,
+ 	},
++	{
++		.procname       = "open_mayexec_enforce",
++		.data           = &open_mayexec_enforce,
++		.maxlen         = sizeof(int),
++		.mode           = 0644,
++		.proc_handler   = yama_dointvec_bitmask_macadmin,
++	},
+ 	{ }
+ };
+ static void __init yama_init_sysctl(void)
 -- 
 2.20.0.rc2
 
