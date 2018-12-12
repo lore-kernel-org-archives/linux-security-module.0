@@ -2,93 +2,70 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92424C67839
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 18:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 712C8C65BAF
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 19:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A69B2084E
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 18:32:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A69B2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D4E6620851
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 19:33:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E6620851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbeLLScL (ORCPT
+        id S1726242AbeLLTd0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:32:11 -0500
-Received: from mga01.intel.com ([192.55.52.88]:59089 "EHLO mga01.intel.com"
+        Wed, 12 Dec 2018 14:33:26 -0500
+Received: from namei.org ([65.99.196.166]:51308 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727748AbeLLScL (ORCPT
+        id S1726235AbeLLTd0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:32:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 10:32:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,345,1539673200"; 
-   d="scan'208";a="101024909"
-Received: from hekner-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.170])
-  by orsmga008.jf.intel.com with ESMTP; 12 Dec 2018 10:32:06 -0800
-Date:   Wed, 12 Dec 2018 20:32:04 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v6 1/7] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20181212183204.GK6333@linux.intel.com>
-References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-2-roberto.sassu@huawei.com>
- <20181204231848.GA1233@linux.intel.com>
- <9193bc05-8222-f0d6-9ad8-a2a7eaf1a34c@huawei.com>
+        Wed, 12 Dec 2018 14:33:26 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBCJXKEO029554;
+        Wed, 12 Dec 2018 19:33:20 GMT
+Date:   Thu, 13 Dec 2018 06:33:20 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
+In-Reply-To: <d0910aed-5e4e-201d-f452-fa61e87183c5@i-love.sakura.ne.jp>
+Message-ID: <alpine.LRH.2.21.1812130632120.29507@namei.org>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com> <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com> <alpine.LRH.2.21.1812120556040.11653@namei.org> <d0910aed-5e4e-201d-f452-fa61e87183c5@i-love.sakura.ne.jp>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9193bc05-8222-f0d6-9ad8-a2a7eaf1a34c@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 06, 2018 at 06:56:33PM +0100, Roberto Sassu wrote:
-> 2 PCR selections
->     hash TPM_ALG_SHA1
->     TPMS_PCR_SELECTION length 3
->     ff ff ff
->     hash TPM_ALG_SHA256
->     TPMS_PCR_SELECTION length 3
->     00 00 00
+On Wed, 12 Dec 2018, Tetsuo Handa wrote:
+
+> On 2018/12/12 3:57, James Morris wrote:
+> > On Tue, 4 Dec 2018, Kees Cook wrote:
+> > 
+> >> On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >>> v5: Include Kees Cook's rework of the lsm command
+> >>>     line interface. Stacking is not conditional.
+> >>
+> >> Can you resend this series with corrected "From:" lines in the body, etc?
+> >>
+> >> Beyond that, I obviously like it. James, what's needed for this to move forward?
+> > 
+> > If there are no outstanding issues, I plan to merge this for 4.21.
+> > 
 > 
-> The pcr_select fields - "ff ff ff" and "00 00 00" - are bit masks for
-> the enabled PCRs. The SHA1 bank is enabled for all PCRs (0-23), while
-> the SHA256 bank is not enabled.
+> Then, can we send it to linux-next.git shortly
+> so that we can have some time for testing by syzbot?
 
-Uh, thanks. Can you add a note to the commit message?
+It's best to let the 4.20 cycle complete (so as not to confuse things 
+there) and then merge it for next in -rc1.
 
- 
-> > 
-> > /* Check that at least some of the PCRs have been allocated. This is
-> >   * required because CAP_PCRS ...
-> >   */
-> > if (memchr_inv(pcr_selection.pcr_select, 0, pcr_selection.size_of_select))
-> > 	nr_allocated_banks++;
-> > 
-> > [yeah, comment would be awesome about CAP_PCRS. Did not finish up the
-> > comment because I don't know the answer]
-> > 
-> > In addition, it would be consistent to call the local variable also
-> > nr_allocated_banks (not nr_alloc_banks).
-> 
-> Unfortunately, I exceed the limit of characters per line.
 
-Not sure what you mean?
+-- 
+James Morris
+<jmorris@namei.org>
 
-/Jarkko
