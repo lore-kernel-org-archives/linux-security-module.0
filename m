@@ -2,96 +2,96 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5048DC65BAF
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 15:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D877EC67839
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 159512080F
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 15:31:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159512080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9B8642084E
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:06:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Bx2K1QWc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B8642084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbeLLPbs (ORCPT
+        id S1727830AbeLLQGL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:31:48 -0500
-Received: from mga12.intel.com ([192.55.52.136]:36531 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726281AbeLLPbs (ORCPT
+        Wed, 12 Dec 2018 11:06:11 -0500
+Received: from sonic307-9.consmr.mail.bf2.yahoo.com ([74.6.134.48]:40570 "EHLO
+        sonic307-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727845AbeLLQGK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:31:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 07:31:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,344,1539673200"; 
-   d="scan'208";a="109813373"
-Received: from irsmsx108.ger.corp.intel.com ([163.33.3.3])
-  by orsmga003.jf.intel.com with ESMTP; 12 Dec 2018 07:31:44 -0800
-Received: from irsmsx101.ger.corp.intel.com ([169.254.1.237]) by
- IRSMSX108.ger.corp.intel.com ([169.254.11.26]) with mapi id 14.03.0415.000;
- Wed, 12 Dec 2018 15:31:42 +0000
-From:   "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
-To:     "kirill@shutemov.name" <kirill@shutemov.name>
-CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Schofield, Alison" <alison.schofield@intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>
-Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-Thread-Topic: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-Thread-Index: AQHUi6Q6VkrSspfrlUix6bu2w4w7sKVu9SmAgAHEq4CAAnbegIAAqD+AgAAdjgCAB1HFgA==
-Date:   Wed, 12 Dec 2018 15:31:41 +0000
-Message-ID: <655394650664715c39ef242689fbc8af726f09c3.camel@intel.com>
-References: <cover.1543903910.git.alison.schofield@intel.com>
-         <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
-         <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
-         <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1>
-         <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
-         <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com>
-In-Reply-To: <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.249.254.170]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6454B892ACB3F249A8B4ED5C50148AB2@intel.com>
-Content-Transfer-Encoding: base64
+        Wed, 12 Dec 2018 11:06:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544630769; bh=AAyDaqBwEWrHzXrCEtlpl306HHAwsgI0AAHJccOhSfc=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Bx2K1QWc0JV1Ji+5i52w22o0H1dZA9g8VnvfUTjBDvwIoY1sNELSH06P9aPFs6xHLekdqwpSKtT95UZ2c33kbzFQMjmBbJlSzWQxKqdBI6eZdgnfGAa71tzz7YvkjQSnU18IiVSTHIxi1Qef6+/GLvini9+Ag1Yf3lvU1tV9q8+gaT8N6BIylBZFz0RXaODVkgsVAaMWoNrColh/DYpXMeb5rxdNSkejixJzmp3pG2HvLXGFXxT1v0e/TgmQrNzOu2XXSEFJK8njMmXMqqHvkbsPoV1updg51Q32O36LiIVgSC2QXhtGM3SxiOsb0sreL6RXR4+XkUjaU4RaO7EPXg==
+X-YMail-OSG: IbcGqDIVM1kijcQXooZJ0yH02tUHUPsz2kYwHQ7cPD3k9xvzETfaR06USKMfUwr
+ OgcpJGMjVc.UPi5zLc_mF2_NEZ5lYfzjaC31MDc8tsCaI6GaXOfTn_jE7RfxjPBKUS6nbWyXRrIJ
+ uUmCVUtUQuI.mnGyMX5RhmN2Vd6By_576QkN.PQo.qlLYIvfkykQ9uHSPl9qeIURefqKWdyE142y
+ u4kjHhyXoWt8P4_2.nALhZvdETPH8jB0CJCbuQrwvTjZUMla0A9GxRAlXI3Z8mx9JDJ8UsXQwzVV
+ 3AMaZVNb5p8Oc3vLYLeFfUxj4.h_vE1Uj8klJZAQqQPVA9KYGzwWUxbxxqmgndyN4yUFQjMudf7C
+ JesLSQrsDfTFKX5EI9dZ2qWqbghYur8AHkZ9eqr7d_0DmsjJXKXcv3O8.zsKJSYr52SmF1rV1_c1
+ YlE328iZOfMMDzs5ybmSbDd.N33vNOlQ9DfbILuAbafGwc_H.pbX9Iorzj5oIf5kDPqPRkLx2XQB
+ qWYETZGX5YP.Y0kVYqEPU.01LAv32.meHh8v.FzlGHyhKFZbU6b868GUODyKAgMKbzyNvOkM5B1E
+ BAeM4TTFzjNGfzhhHb_4FCmcIPhW0eO3Vo4R6FxTx69N8H8hJIE5x_JQgqvlIvpwRmwm8D_gLO3q
+ HN2URR1T2iRoXRxOrfXammZJxKUHB5XV1B.C5zUONbdTDgYqCTv8MTCq0l3mm8zWQzDPSXsN7izt
+ 1bqoLGiaBjo0kjEmnnJgOFnO56BEAYrHKbhXMO7rdjRxU1S_xiul74R9So3rL5aPKlXPahYBueoI
+ aPB5UZ4jJt9moueIGJ3F2wsr9k.RTk__gedMJM.WgN570Cg1fju2brdsMKgYC0U8Vz2j.DdgEBLH
+ RnPYtvsyVqTA0xCZ3U.twGq21roux56tRySrg80TXHsYTWrPwQd52Byo7qv0TfjmGn4W48JCDQ1U
+ ei3XsMjnA04aI5KwuiCn5P45fDhZ8ASLGhb6buFqe3rxrseq.1WzdOVbtplFYLnYquiHBjhqIQge
+ v61esofMkdsiM3UMoHLnoqNpaCqHH50NnKJVtLyBvGhic8AM8kgq5iY35OZwUytNbn.pEYy1LHk9
+ b7HY_nwtJpBjefylHekSey7JuHVgWcUyVz.5R
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Wed, 12 Dec 2018 16:06:09 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
+          by smtp410.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fe2a1506230eb1105a50167d41a8a69f;
+          Wed, 12 Dec 2018 16:06:07 +0000 (UTC)
+Subject: [PATCH v5 38/38] TOMOYO: Update LSM flags to no longer be exclusive
+To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Cc:     john.johansen@canonical.com, keescook@chromium.org,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
+        adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com
+References: <20181211224314.22412-1-casey@schaufler-ca.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <68432944-ad46-5b8f-09ba-cb956a479d49@schaufler-ca.com>
+Date:   Wed, 12 Dec 2018 08:05:56 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gRnJpLCAyMDE4LTEyLTA3IGF0IDE1OjQ1IC0wODAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6
-DQo+IFRoZSBicnV0YWwgZmFjdCBpcyB0aGF0IGEgcGh5c2ljYWwgYWRkcmVzcyBpcyBhbiBhc3Ry
-b25vbWljYWwgc3RyZXRjaA0KPiBmcm9tIGEgcmFuZG9tIHZhbHVlIG9yIGluY3JlYXNpbmcgY291
-bnRlci4gVGh1cywgaXQgaXMgZmFpciB0byBzYXkgdGhhdA0KPiBNS1RNRSBwcm92aWRlcyBvbmx5
-IG5haXZlIG1lYXN1cmVzIGFnYWluc3QgcmVwbGF5IGF0dGFja3MuLi4NCg0KSSdsbCB0cnkgdG8g
-c3VtbWFyaXplIGhvdyBJIHVuZGVyc3RhbmQgdGhlIGhpZ2ggbGV2ZWwgc2VjdXJpdHkNCm1vZGVs
-IG9mIE1LVE1FIGJlY2F1c2UgKHdvdWxkIGJlIGdvb2QgaWRlYSB0byBkb2N1bWVudCBpdCkuDQoN
-CkFzc3VtcHRpb25zOg0KDQoxLiBUaGUgaHlwZXJ2aXNvciBoYXMgbm90IGJlZW4gaW5maWx0cmF0
-ZWQuDQoyLiBUaGUgaHlwZXJ2aXNvciBkb2VzIG5vdCBsZWFrIHNlY3JldHMuDQoNCldoZW4gKDEp
-IGFuZCAoMikgaG9sZCBbMV0sIHdlIGhhcmRlbiBWTXMgaW4gdHdvIGRpZmZlcmVudCB3YXlzOg0K
-DQpBLiBWTXMgY2Fubm90IGxlYWsgZGF0YSB0byBlYWNoIG90aGVyIG9yIGNhbiB0aGV5IHdpdGgg
-TDFURiB3aGVuIEhUDQogICBpcyBlbmFibGVkPw0KQi4gUHJvdGVjdHMgYWdhaW5zdCBjb2xkIGJv
-b3QgYXR0YWNrcy4NCg0KSXNuJ3QgdGhpcyB3aGF0IHRoaXMgYWJvdXQgaW4gdGhlIG51dHNoZWxs
-IHJvdWdobHk/DQoNClsxXSBYUEZPIGNvdWxkIHBvdGVudGlhbGx5IGJlIGFuIG9wdC1pbiBmZWF0
-dXJlIHRoYXQgcmVkdWNlcyB0aGUNCiAgICBkYW1hZ2Ugd2hlbiBlaXRoZXIgb2YgdGhlc2UgYXNz
-dW1wdGlvbnMgaGFzIGJlZW4gYnJva2VuLg0KDQovSmFya2tvDQo=
+From: Kees Cook <keescook@chromium.org>
+
+With blob sharing in place, TOMOYO is no longer an exclusive LSM, so it
+can operate separately now. Mark it as such.
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ security/tomoyo/tomoyo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 9094cf41a247..066c0daf0efc 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -577,7 +577,7 @@ static int __init tomoyo_init(void)
+ DEFINE_LSM(tomoyo) = {
+ 	.name = "tomoyo",
+ 	.enabled = &tomoyo_enabled,
+-	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
++	.flags = LSM_FLAG_LEGACY_MAJOR,
+ 	.blobs = &tomoyo_blob_sizes,
+ 	.init = tomoyo_init,
+ };
+-- 
+2.14.5
+
+
