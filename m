@@ -2,110 +2,130 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED856C67839
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAB3C67839
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:30:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 758FB2084E
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:29:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="nrSs59j4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 758FB2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
+	by mail.kernel.org (Postfix) with ESMTP id 5A6692084E
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:30:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544632202;
+	bh=GM9SLJsyHGF+xcKhqyBZkYpoDbDXyH+fiJtaUXw9dBA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=qWPeGrBRH6qdzMZTB6vjSSHJElXy167KE+slwTmKTeV6onpke/JJ976H2CLwcnH/3
+	 HqoKMJdvjTSWr+7pAaR2f+hddfp5Ont0RSTxDdy7eSm6AdXrg3FepricsgHLfQbaZP
+	 Ak65cKe08W5LJjoFmutldZ8spXDHwGh4foT2YPXc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6692084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbeLLQ3x (ORCPT
+        id S1727909AbeLLQaB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:29:53 -0500
-Received: from mail-40133.protonmail.ch ([185.70.40.133]:12792 "EHLO
-        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727880AbeLLQ3w (ORCPT
+        Wed, 12 Dec 2018 11:30:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43126 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727845AbeLLQaA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:29:52 -0500
-Date:   Wed, 12 Dec 2018 16:29:47 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=default; t=1544632189;
-        bh=awWrFloh4DrDSwCiHywdoy1L7wdWXOkQqJ6DbzyafBM=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=nrSs59j4PnnEBNJWqyWArJvndNsbxWss4IV77OeveMSbKkodJylHD9PtT5RiwtdHj
-         pqUZ8i2GdI9/mreEYfuRab9/Ayf3R2rhvFaIX0cUiaJdhfSEckpejCZBZZRK8b0gDj
-         KQm7yVVJ4+fpfYVCYgRLa85e0/vKirkgxHbbLZ0M=
-To:     =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-From:   Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
-Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
-Message-ID: <ML-sxPRwNNExkZHkXghYN7e3VrhuZXYLjFv-aniX8qbjcde2GfHMBaI4B3A7IoUEfycQcWCPuxATkYHOz--FqMjH1KRwxMxBCb6Q-1IsKTM=@protonmail.ch>
-In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
-References: <20181212081712.32347-1-mic@digikod.net>
-Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
+        Wed, 12 Dec 2018 11:30:00 -0500
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF3AF20989
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 16:29:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544632199;
+        bh=GM9SLJsyHGF+xcKhqyBZkYpoDbDXyH+fiJtaUXw9dBA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KOy9MvAUR5jqGHStOI/V5OJ2cVJRqlGSvQIyu0ycwItk6SJ8aPPsH2t6qRuVIkp3Q
+         4Nz47h7JOGrt/7D5bj0lQ5hIrc8MiW6Qb4W1l03MJhI/aGBG4FvZeTEwLdaNyazueh
+         nqyF9x1NaDhzqgX+Xhp+5d7u8pl0aVGKAC4t3ZGY=
+Received: by mail-wm1-f50.google.com with SMTP id n190so6442306wmd.0
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 08:29:59 -0800 (PST)
+X-Gm-Message-State: AA+aEWZWRRLr1u1DDQXhJ9hvUL58q+kvZlwSq+j/4jfVTyW9gLX0fA5C
+        ARaB/wiFciW8Y690pELDmW64fuFf8+GIa9eYXTeH0g==
+X-Google-Smtp-Source: AFSGD/WxKgxWj3BtKdNyuy2LLh43uvcSlQxzMyxZaOvXOIb3m9G6EVaJ/+IMWlVJYzWFBgH819FSYwFkxy0yCkRDzW0=
+X-Received: by 2002:a1c:aa0f:: with SMTP id t15mr6811704wme.108.1544632198130;
+ Wed, 12 Dec 2018 08:29:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <cover.1543903910.git.alison.schofield@intel.com>
+ <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
+ <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
+ <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1> <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
+ <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com> <655394650664715c39ef242689fbc8af726f09c3.camel@intel.com>
+In-Reply-To: <655394650664715c39ef242689fbc8af726f09c3.camel@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 12 Dec 2018 08:29:45 -0800
+X-Gmail-Original-Message-ID: <CALCETrVztbuRUnp9MUz-Pp85NhY2htNZHGszS+mU_oWoXK3u6A@mail.gmail.com>
+Message-ID: <CALCETrVztbuRUnp9MUz-Pp85NhY2htNZHGszS+mU_oWoXK3u6A@mail.gmail.com>
+Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+To:     "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        James Morris <jmorris@namei.org>, kai.huang@intel.com,
+        keyrings@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux-MM <linux-mm@kvack.org>,
+        David Howells <dhowells@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wednesday, December 12, 2018 9:17 AM, Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
+On Wed, Dec 12, 2018 at 7:31 AM Sakkinen, Jarkko
+<jarkko.sakkinen@intel.com> wrote:
+>
+> On Fri, 2018-12-07 at 15:45 -0800, Jarkko Sakkinen wrote:
+> > The brutal fact is that a physical address is an astronomical stretch
+> > from a random value or increasing counter. Thus, it is fair to say that
+> > MKTME provides only naive measures against replay attacks...
+>
+> I'll try to summarize how I understand the high level security
+> model of MKTME because (would be good idea to document it).
+>
+> Assumptions:
+>
+> 1. The hypervisor has not been infiltrated.
+> 2. The hypervisor does not leak secrets.
+>
+> When (1) and (2) hold [1], we harden VMs in two different ways:
+>
+> A. VMs cannot leak data to each other or can they with L1TF when HT
+>    is enabled?
 
-> Hi,
->
-> The goal of this patch series is to control script interpretation. A
-> new O_MAYEXEC flag used by sys_open() is added to enable userland script
-> interpreter to delegate to the kernel (and thus the system security
-> policy) the permission to interpret scripts or other files containing
-> what can be seen as commands.
->
-> The security policy is the responsibility of an LSM. A basic
-> system-wide policy is implemented with Yama and configurable through a
-> sysctl.
->
-> The initial idea come from CLIP OS and the original implementation has
-> been used for more than 10 years:
-> https://github.com/clipos-archive/clipos4_doc
->
-> An introduction to O_MAYEXEC was given at the Linux Security Summit
-> Europe 2018 - Linux Kernel Security Contributions by ANSSI:
-> https://www.youtube.com/watch?v=3DchNjCRtPKQY&t=3D17m15s
-> The "write xor execute" principle was explained at Kernel Recipes 2018 -
-> CLIP OS: a defense-in-depth OS:
-> https://www.youtube.com/watch?v=3DPjRE0uBtkHU&t=3D11m14s
->
-> This patch series can be applied on top of v4.20-rc6. This can be
-> tested with CONFIG_SECURITY_YAMA. I would really appreciate
-> constructive comments on this RFC.
->
-> Regards,
->
+I strongly suspect that, on L1TF-vulnerable CPUs, MKTME provides no
+protection whatsoever.  It sounds like MKTME is implemented in the
+memory controller -- as far as the rest of the CPU and the cache
+hierarchy are concerned, the MKTME key selction bits are just part of
+the physical address.  So an attack like L1TF that leaks a cacheline
+that's selected by physical address will leak the cleartext if the key
+selection bits are set correctly.
 
-Are various interpreters upstreams interested in adding support
-for O_MAYEXEC if it land in kernel? Did you contacted them about this?
+(I suppose that, if the attacker needs to brute-force the physical
+address, then MKTME makes it a bit harder because the effective
+physical address space is larger.)
 
-Jordan
+> B. Protects against cold boot attacks.
 
+TME does this, AFAIK.  MKTME does, too, unless the "user" mode is
+used, in which case the protection is weaker.
+
+>
+> Isn't this what this about in the nutshell roughly?
+>
+> [1] XPFO could potentially be an opt-in feature that reduces the
+>     damage when either of these assumptions has been broken.
+>
+> /Jarkko
