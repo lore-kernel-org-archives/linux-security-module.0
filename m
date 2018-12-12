@@ -6,36 +6,49 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809D4C6783B
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C22C67839
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5192520870
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:40:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5192520870
+	by mail.kernel.org (Postfix) with ESMTP id D7EBA20851
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:41:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7EBA20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbeLLXkV (ORCPT
+        id S1726278AbeLLXk7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:40:21 -0500
-Received: from namei.org ([65.99.196.166]:51438 "EHLO namei.org"
+        Wed, 12 Dec 2018 18:40:59 -0500
+Received: from namei.org ([65.99.196.166]:51466 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbeLLXkV (ORCPT
+        id S1726214AbeLLXk7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:40:21 -0500
+        Wed, 12 Dec 2018 18:40:59 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBCNbGV4007647;
-        Wed, 12 Dec 2018 23:37:16 GMT
-Date:   Thu, 13 Dec 2018 10:37:16 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBCNeWxU007768;
+        Wed, 12 Dec 2018 23:40:32 GMT
+Date:   Thu, 13 Dec 2018 10:40:32 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Paul Moore <paul@paul-moore.com>
-cc:     selinux@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org, mszeredi@redhat.com,
-        bfields@fieldses.org
-Subject: Re: SELinux testsuite failure in overlayfs with v4.20-rc kernels
-In-Reply-To: <CAHC9VhTGF3SxRh0iTMhqFYExh3HrKVn7Wnko-_hb+y+6BmCRaQ@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1812131036590.7600@namei.org>
-References: <alpine.LRH.2.21.1812130915190.5053@namei.org> <CAHC9VhTGF3SxRh0iTMhqFYExh3HrKVn7Wnko-_hb+y+6BmCRaQ@mail.gmail.com>
+To:     Florian Weimer <fweimer@redhat.com>
+cc:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+In-Reply-To: <87lg4upkpv.fsf@oldenburg2.str.redhat.com>
+Message-ID: <alpine.LRH.2.21.1812131039400.7600@namei.org>
+References: <20181212081712.32347-1-mic@digikod.net> <alpine.LRH.2.21.1812130642250.29507@namei.org> <87lg4upkpv.fsf@oldenburg2.str.redhat.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -43,12 +56,19 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 12 Dec 2018, Paul Moore wrote:
+On Wed, 12 Dec 2018, Florian Weimer wrote:
 
-> I would much prefer if Miklos sent the revert, but if he doesn't send
-> the revert by the end of the week, I'm going to send one next week.
+> * James Morris:
+> 
+> > If you're depending on the script interpreter to flag that the user may 
+> > execute code, this seems to be equivalent in security terms to depending 
+> > on the user.  e.g. what if the user uses ptrace and clears O_MAYEXEC?
+> 
+> The argument I've heard is this: Using ptrace (and adding the +x
+> attribute) are auditable events.
 
-The revert was posted today.
+I guess you could also preload a modified libc which strips the flag.
+
 
 -- 
 James Morris
