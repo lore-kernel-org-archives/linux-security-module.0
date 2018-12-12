@@ -2,123 +2,124 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED905C65BAF
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 190A4C65BAF
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 17:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B84312084E
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:44:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B84312084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CE7682080F
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 17:01:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="Ph/RkYFS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7682080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbeLLQoB (ORCPT
+        id S1727691AbeLLRBA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:44:01 -0500
-Received: from mga09.intel.com ([134.134.136.24]:17655 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbeLLQoB (ORCPT
+        Wed, 12 Dec 2018 12:01:00 -0500
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:50040 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727681AbeLLRA7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:44:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 08:43:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,344,1539673200"; 
-   d="scan'208";a="109830574"
-Received: from irsmsx107.ger.corp.intel.com ([163.33.3.99])
-  by orsmga003.jf.intel.com with ESMTP; 12 Dec 2018 08:43:56 -0800
-Received: from irsmsx111.ger.corp.intel.com (10.108.20.4) by
- IRSMSX107.ger.corp.intel.com (163.33.3.99) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 12 Dec 2018 16:43:56 +0000
-Received: from irsmsx101.ger.corp.intel.com ([169.254.1.237]) by
- irsmsx111.ger.corp.intel.com ([169.254.2.183]) with mapi id 14.03.0415.000;
- Wed, 12 Dec 2018 16:43:55 +0000
-From:   "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
-To:     "luto@kernel.org" <luto@kernel.org>
-CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
+        Wed, 12 Dec 2018 12:00:59 -0500
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 02B7DD0006B;
+        Wed, 12 Dec 2018 18:01:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1544634066;
+        bh=PGQIfl8GvoOs1KqhFUvGy6lVfeojWfWYhz5V40aZpE4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=Ph/RkYFSEdsJ4++lI5qLDDZdMG1C1S6JQeFJOud5umJUer1+Aaze6y3zUKMwIxXXx
+         JDeBkS4r3nl2u2jwYAxNqkbp6MlRJewHdi9rmMz5vJvzr8Nl4f+0zRe72vwsrUHYc2
+         FDJWuGTpwsugXGEMKFliheCe4aCNBhi+AJqPGOvJ/yertoUPer5SKpore4AqQRV5/3
+         r5yTCgLBPUKWiiV8dFtR/bn5FBh93kSq+24YNL32eShjmjsA5qwR6m1flvj7yN8Bx1
+         NfziqZgwIYMhKwfXE2LK0a5Sm/f7KWV+T7ZvhgvR1KTd3V+805WZGxLVRI3vvJhq//
+         8fRwnG5ZFPDXg==
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+To:     Jordan Glover <Golden_Miller83@protonmail.ch>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "kirill@shutemov.name" <kirill@shutemov.name>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Schofield, Alison" <alison.schofield@intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>
-Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-Thread-Topic: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-Thread-Index: AQHUi6Q6VkrSspfrlUix6bu2w4w7sKVu9SmAgAHEq4CAAnbegIAAqD+AgAAdjgCAB1HFgIAAEDuAgAAD8gA=
-Date:   Wed, 12 Dec 2018 16:43:54 +0000
-Message-ID: <42cb695e947e2c98a989285778d56a241fe67e7f.camel@intel.com>
-References: <cover.1543903910.git.alison.schofield@intel.com>
-         <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
-         <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
-         <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1>
-         <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
-         <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com>
-         <655394650664715c39ef242689fbc8af726f09c3.camel@intel.com>
-         <CALCETrVztbuRUnp9MUz-Pp85NhY2htNZHGszS+mU_oWoXK3u6A@mail.gmail.com>
-In-Reply-To: <CALCETrVztbuRUnp9MUz-Pp85NhY2htNZHGszS+mU_oWoXK3u6A@mail.gmail.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.249.254.170]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <87DD9A480BEDC748BA363349C285C8C1@intel.com>
-Content-Transfer-Encoding: base64
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <ML-sxPRwNNExkZHkXghYN7e3VrhuZXYLjFv-aniX8qbjcde2GfHMBaI4B3A7IoUEfycQcWCPuxATkYHOz--FqMjH1KRwxMxBCb6Q-1IsKTM=@protonmail.ch>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <7c498761-7d74-956c-01df-1c8f39c10519@ssi.gouv.fr>
+Date:   Wed, 12 Dec 2018 18:01:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <ML-sxPRwNNExkZHkXghYN7e3VrhuZXYLjFv-aniX8qbjcde2GfHMBaI4B3A7IoUEfycQcWCPuxATkYHOz--FqMjH1KRwxMxBCb6Q-1IsKTM=@protonmail.ch>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gV2VkLCAyMDE4LTEyLTEyIGF0IDA4OjI5IC0wODAwLCBBbmR5IEx1dG9taXJza2kgd3JvdGU6
-DQo+IE9uIFdlZCwgRGVjIDEyLCAyMDE4IGF0IDc6MzEgQU0gU2Fra2luZW4sIEphcmtrbw0KPiA8
-amFya2tvLnNha2tpbmVuQGludGVsLmNvbT4gd3JvdGU6DQo+ID4gT24gRnJpLCAyMDE4LTEyLTA3
-IGF0IDE1OjQ1IC0wODAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6DQo+ID4gPiBUaGUgYnJ1dGFs
-IGZhY3QgaXMgdGhhdCBhIHBoeXNpY2FsIGFkZHJlc3MgaXMgYW4gYXN0cm9ub21pY2FsIHN0cmV0
-Y2gNCj4gPiA+IGZyb20gYSByYW5kb20gdmFsdWUgb3IgaW5jcmVhc2luZyBjb3VudGVyLiBUaHVz
-LCBpdCBpcyBmYWlyIHRvIHNheSB0aGF0DQo+ID4gPiBNS1RNRSBwcm92aWRlcyBvbmx5IG5haXZl
-IG1lYXN1cmVzIGFnYWluc3QgcmVwbGF5IGF0dGFja3MuLi4NCj4gPiANCj4gPiBJJ2xsIHRyeSB0
-byBzdW1tYXJpemUgaG93IEkgdW5kZXJzdGFuZCB0aGUgaGlnaCBsZXZlbCBzZWN1cml0eQ0KPiA+
-IG1vZGVsIG9mIE1LVE1FIGJlY2F1c2UgKHdvdWxkIGJlIGdvb2QgaWRlYSB0byBkb2N1bWVudCBp
-dCkuDQo+ID4gDQo+ID4gQXNzdW1wdGlvbnM6DQo+ID4gDQo+ID4gMS4gVGhlIGh5cGVydmlzb3Ig
-aGFzIG5vdCBiZWVuIGluZmlsdHJhdGVkLg0KPiA+IDIuIFRoZSBoeXBlcnZpc29yIGRvZXMgbm90
-IGxlYWsgc2VjcmV0cy4NCj4gPiANCj4gPiBXaGVuICgxKSBhbmQgKDIpIGhvbGQgWzFdLCB3ZSBo
-YXJkZW4gVk1zIGluIHR3byBkaWZmZXJlbnQgd2F5czoNCj4gPiANCj4gPiBBLiBWTXMgY2Fubm90
-IGxlYWsgZGF0YSB0byBlYWNoIG90aGVyIG9yIGNhbiB0aGV5IHdpdGggTDFURiB3aGVuIEhUDQo+
-ID4gICAgaXMgZW5hYmxlZD8NCj4gDQo+IEkgc3Ryb25nbHkgc3VzcGVjdCB0aGF0LCBvbiBMMVRG
-LXZ1bG5lcmFibGUgQ1BVcywgTUtUTUUgcHJvdmlkZXMgbm8NCj4gcHJvdGVjdGlvbiB3aGF0c29l
-dmVyLiAgSXQgc291bmRzIGxpa2UgTUtUTUUgaXMgaW1wbGVtZW50ZWQgaW4gdGhlDQo+IG1lbW9y
-eSBjb250cm9sbGVyIC0tIGFzIGZhciBhcyB0aGUgcmVzdCBvZiB0aGUgQ1BVIGFuZCB0aGUgY2Fj
-aGUNCj4gaGllcmFyY2h5IGFyZSBjb25jZXJuZWQsIHRoZSBNS1RNRSBrZXkgc2VsY3Rpb24gYml0
-cyBhcmUganVzdCBwYXJ0IG9mDQo+IHRoZSBwaHlzaWNhbCBhZGRyZXNzLiAgU28gYW4gYXR0YWNr
-IGxpa2UgTDFURiB0aGF0IGxlYWtzIGEgY2FjaGVsaW5lDQo+IHRoYXQncyBzZWxlY3RlZCBieSBw
-aHlzaWNhbCBhZGRyZXNzIHdpbGwgbGVhayB0aGUgY2xlYXJ0ZXh0IGlmIHRoZSBrZXkNCj4gc2Vs
-ZWN0aW9uIGJpdHMgYXJlIHNldCBjb3JyZWN0bHkuDQo+IA0KPiAoSSBzdXBwb3NlIHRoYXQsIGlm
-IHRoZSBhdHRhY2tlciBuZWVkcyB0byBicnV0ZS1mb3JjZSB0aGUgcGh5c2ljYWwNCj4gYWRkcmVz
-cywgdGhlbiBNS1RNRSBtYWtlcyBpdCBhIGJpdCBoYXJkZXIgYmVjYXVzZSB0aGUgZWZmZWN0aXZl
-DQo+IHBoeXNpY2FsIGFkZHJlc3Mgc3BhY2UgaXMgbGFyZ2VyLikNCj4gDQo+ID4gQi4gUHJvdGVj
-dHMgYWdhaW5zdCBjb2xkIGJvb3QgYXR0YWNrcy4NCj4gDQo+IFRNRSBkb2VzIHRoaXMsIEFGQUlL
-LiAgTUtUTUUgZG9lcywgdG9vLCB1bmxlc3MgdGhlICJ1c2VyIiBtb2RlIGlzDQo+IHVzZWQsIGlu
-IHdoaWNoIGNhc2UgdGhlIHByb3RlY3Rpb24gaXMgd2Vha2VyLg0KPiANCj4gPiBJc24ndCB0aGlz
-IHdoYXQgdGhpcyBhYm91dCBpbiB0aGUgbnV0c2hlbGwgcm91Z2hseT8NCj4gPiANCj4gPiBbMV0g
-WFBGTyBjb3VsZCBwb3RlbnRpYWxseSBiZSBhbiBvcHQtaW4gZmVhdHVyZSB0aGF0IHJlZHVjZXMg
-dGhlDQo+ID4gICAgIGRhbWFnZSB3aGVuIGVpdGhlciBvZiB0aGVzZSBhc3N1bXB0aW9ucyBoYXMg
-YmVlbiBicm9rZW4uDQoNClRoaXMgYWxsIHNob3VsZCBiZSBzdW1tYXJpemVkIGluIHRoZSBkb2N1
-bWVudGF0aW9uIChoaWdoLWxldmVsIG1vZGVsDQphbmQgY29ybmVyIGNhc2VzKS4NCg0KL0phcmtr
-bw0K
+
+Le 12/12/2018 à 17:29, Jordan Glover a écrit :
+> On Wednesday, December 12, 2018 9:17 AM, Mickaël Salaün <mic@digikod.net> wrote:
+> 
+>> Hi,
+>>
+>> The goal of this patch series is to control script interpretation. A
+>> new O_MAYEXEC flag used by sys_open() is added to enable userland script
+>> interpreter to delegate to the kernel (and thus the system security
+>> policy) the permission to interpret scripts or other files containing
+>> what can be seen as commands.
+>>
+>> The security policy is the responsibility of an LSM. A basic
+>> system-wide policy is implemented with Yama and configurable through a
+>> sysctl.
+>>
+>> The initial idea come from CLIP OS and the original implementation has
+>> been used for more than 10 years:
+>> https://github.com/clipos-archive/clipos4_doc
+>>
+>> An introduction to O_MAYEXEC was given at the Linux Security Summit
+>> Europe 2018 - Linux Kernel Security Contributions by ANSSI:
+>> https://www.youtube.com/watch?v=chNjCRtPKQY&t=17m15s
+>> The "write xor execute" principle was explained at Kernel Recipes 2018 -
+>> CLIP OS: a defense-in-depth OS:
+>> https://www.youtube.com/watch?v=PjRE0uBtkHU&t=11m14s
+>>
+>> This patch series can be applied on top of v4.20-rc6. This can be
+>> tested with CONFIG_SECURITY_YAMA. I would really appreciate
+>> constructive comments on this RFC.
+>>
+>> Regards,
+>>
+> 
+> Are various interpreters upstreams interested in adding support
+> for O_MAYEXEC if it land in kernel? Did you contacted them about this?
+
+I think the first step is to be OK on the kernel side. We will then be
+able to help upstream interpreters implement this feature. It should be
+OK because the behavior doesn't change by default, i.e. if the sysadmin
+doesn't configure (and test) the whole system. Some examples of modified
+interpreters can be found at
+https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+.
+
+ Mickaël
