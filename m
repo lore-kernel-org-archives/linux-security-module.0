@@ -2,130 +2,123 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAB3C67839
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED905C65BAF
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A6692084E
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544632202;
-	bh=GM9SLJsyHGF+xcKhqyBZkYpoDbDXyH+fiJtaUXw9dBA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=qWPeGrBRH6qdzMZTB6vjSSHJElXy167KE+slwTmKTeV6onpke/JJ976H2CLwcnH/3
-	 HqoKMJdvjTSWr+7pAaR2f+hddfp5Ont0RSTxDdy7eSm6AdXrg3FepricsgHLfQbaZP
-	 Ak65cKe08W5LJjoFmutldZ8spXDHwGh4foT2YPXc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6692084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B84312084E
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:44:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B84312084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbeLLQaB (ORCPT
+        id S1727676AbeLLQoB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:30:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43126 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 11:44:01 -0500
+Received: from mga09.intel.com ([134.134.136.24]:17655 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727845AbeLLQaA (ORCPT
+        id S1726358AbeLLQoB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:30:00 -0500
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF3AF20989
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 16:29:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544632199;
-        bh=GM9SLJsyHGF+xcKhqyBZkYpoDbDXyH+fiJtaUXw9dBA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KOy9MvAUR5jqGHStOI/V5OJ2cVJRqlGSvQIyu0ycwItk6SJ8aPPsH2t6qRuVIkp3Q
-         4Nz47h7JOGrt/7D5bj0lQ5hIrc8MiW6Qb4W1l03MJhI/aGBG4FvZeTEwLdaNyazueh
-         nqyF9x1NaDhzqgX+Xhp+5d7u8pl0aVGKAC4t3ZGY=
-Received: by mail-wm1-f50.google.com with SMTP id n190so6442306wmd.0
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 08:29:59 -0800 (PST)
-X-Gm-Message-State: AA+aEWZWRRLr1u1DDQXhJ9hvUL58q+kvZlwSq+j/4jfVTyW9gLX0fA5C
-        ARaB/wiFciW8Y690pELDmW64fuFf8+GIa9eYXTeH0g==
-X-Google-Smtp-Source: AFSGD/WxKgxWj3BtKdNyuy2LLh43uvcSlQxzMyxZaOvXOIb3m9G6EVaJ/+IMWlVJYzWFBgH819FSYwFkxy0yCkRDzW0=
-X-Received: by 2002:a1c:aa0f:: with SMTP id t15mr6811704wme.108.1544632198130;
- Wed, 12 Dec 2018 08:29:58 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1543903910.git.alison.schofield@intel.com>
- <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
- <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
- <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1> <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
- <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com> <655394650664715c39ef242689fbc8af726f09c3.camel@intel.com>
-In-Reply-To: <655394650664715c39ef242689fbc8af726f09c3.camel@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 12 Dec 2018 08:29:45 -0800
-X-Gmail-Original-Message-ID: <CALCETrVztbuRUnp9MUz-Pp85NhY2htNZHGszS+mU_oWoXK3u6A@mail.gmail.com>
-Message-ID: <CALCETrVztbuRUnp9MUz-Pp85NhY2htNZHGszS+mU_oWoXK3u6A@mail.gmail.com>
+        Wed, 12 Dec 2018 11:44:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 08:43:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,344,1539673200"; 
+   d="scan'208";a="109830574"
+Received: from irsmsx107.ger.corp.intel.com ([163.33.3.99])
+  by orsmga003.jf.intel.com with ESMTP; 12 Dec 2018 08:43:56 -0800
+Received: from irsmsx111.ger.corp.intel.com (10.108.20.4) by
+ IRSMSX107.ger.corp.intel.com (163.33.3.99) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 12 Dec 2018 16:43:56 +0000
+Received: from irsmsx101.ger.corp.intel.com ([169.254.1.237]) by
+ irsmsx111.ger.corp.intel.com ([169.254.2.183]) with mapi id 14.03.0415.000;
+ Wed, 12 Dec 2018 16:43:55 +0000
+From:   "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
+To:     "luto@kernel.org" <luto@kernel.org>
+CC:     "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "kirill@shutemov.name" <kirill@shutemov.name>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Schofield, Alison" <alison.schofield@intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>
 Subject: Re: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
-To:     "Sakkinen, Jarkko" <jarkko.sakkinen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        James Morris <jmorris@namei.org>, kai.huang@intel.com,
-        keyrings@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux-MM <linux-mm@kvack.org>,
-        David Howells <dhowells@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Jun Nakajima <jun.nakajima@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Thread-Topic: [RFC v2 00/13] Multi-Key Total Memory Encryption API (MKTME)
+Thread-Index: AQHUi6Q6VkrSspfrlUix6bu2w4w7sKVu9SmAgAHEq4CAAnbegIAAqD+AgAAdjgCAB1HFgIAAEDuAgAAD8gA=
+Date:   Wed, 12 Dec 2018 16:43:54 +0000
+Message-ID: <42cb695e947e2c98a989285778d56a241fe67e7f.camel@intel.com>
+References: <cover.1543903910.git.alison.schofield@intel.com>
+         <CALCETrUqqQiHR_LJoKB2JE6hCZ-e7LiFprEhmo-qoegDZJ9uYQ@mail.gmail.com>
+         <0a21eadd05b245f762f7d536d8fdf579c113a9bc.camel@intel.com>
+         <20181207115713.ia5jbrx5e3osaqxi@kshutemo-mobl1>
+         <fd94ec722edc45008097a39d0c84a5d7134641c7.camel@intel.com>
+         <19c539f8c6c9b34974e4cb4f268eb64fe7ba4297.camel@intel.com>
+         <655394650664715c39ef242689fbc8af726f09c3.camel@intel.com>
+         <CALCETrVztbuRUnp9MUz-Pp85NhY2htNZHGszS+mU_oWoXK3u6A@mail.gmail.com>
+In-Reply-To: <CALCETrVztbuRUnp9MUz-Pp85NhY2htNZHGszS+mU_oWoXK3u6A@mail.gmail.com>
+Accept-Language: fi-FI, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.249.254.170]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <87DD9A480BEDC748BA363349C285C8C1@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 12, 2018 at 7:31 AM Sakkinen, Jarkko
-<jarkko.sakkinen@intel.com> wrote:
->
-> On Fri, 2018-12-07 at 15:45 -0800, Jarkko Sakkinen wrote:
-> > The brutal fact is that a physical address is an astronomical stretch
-> > from a random value or increasing counter. Thus, it is fair to say that
-> > MKTME provides only naive measures against replay attacks...
->
-> I'll try to summarize how I understand the high level security
-> model of MKTME because (would be good idea to document it).
->
-> Assumptions:
->
-> 1. The hypervisor has not been infiltrated.
-> 2. The hypervisor does not leak secrets.
->
-> When (1) and (2) hold [1], we harden VMs in two different ways:
->
-> A. VMs cannot leak data to each other or can they with L1TF when HT
->    is enabled?
-
-I strongly suspect that, on L1TF-vulnerable CPUs, MKTME provides no
-protection whatsoever.  It sounds like MKTME is implemented in the
-memory controller -- as far as the rest of the CPU and the cache
-hierarchy are concerned, the MKTME key selction bits are just part of
-the physical address.  So an attack like L1TF that leaks a cacheline
-that's selected by physical address will leak the cleartext if the key
-selection bits are set correctly.
-
-(I suppose that, if the attacker needs to brute-force the physical
-address, then MKTME makes it a bit harder because the effective
-physical address space is larger.)
-
-> B. Protects against cold boot attacks.
-
-TME does this, AFAIK.  MKTME does, too, unless the "user" mode is
-used, in which case the protection is weaker.
-
->
-> Isn't this what this about in the nutshell roughly?
->
-> [1] XPFO could potentially be an opt-in feature that reduces the
->     damage when either of these assumptions has been broken.
->
-> /Jarkko
+T24gV2VkLCAyMDE4LTEyLTEyIGF0IDA4OjI5IC0wODAwLCBBbmR5IEx1dG9taXJza2kgd3JvdGU6
+DQo+IE9uIFdlZCwgRGVjIDEyLCAyMDE4IGF0IDc6MzEgQU0gU2Fra2luZW4sIEphcmtrbw0KPiA8
+amFya2tvLnNha2tpbmVuQGludGVsLmNvbT4gd3JvdGU6DQo+ID4gT24gRnJpLCAyMDE4LTEyLTA3
+IGF0IDE1OjQ1IC0wODAwLCBKYXJra28gU2Fra2luZW4gd3JvdGU6DQo+ID4gPiBUaGUgYnJ1dGFs
+IGZhY3QgaXMgdGhhdCBhIHBoeXNpY2FsIGFkZHJlc3MgaXMgYW4gYXN0cm9ub21pY2FsIHN0cmV0
+Y2gNCj4gPiA+IGZyb20gYSByYW5kb20gdmFsdWUgb3IgaW5jcmVhc2luZyBjb3VudGVyLiBUaHVz
+LCBpdCBpcyBmYWlyIHRvIHNheSB0aGF0DQo+ID4gPiBNS1RNRSBwcm92aWRlcyBvbmx5IG5haXZl
+IG1lYXN1cmVzIGFnYWluc3QgcmVwbGF5IGF0dGFja3MuLi4NCj4gPiANCj4gPiBJJ2xsIHRyeSB0
+byBzdW1tYXJpemUgaG93IEkgdW5kZXJzdGFuZCB0aGUgaGlnaCBsZXZlbCBzZWN1cml0eQ0KPiA+
+IG1vZGVsIG9mIE1LVE1FIGJlY2F1c2UgKHdvdWxkIGJlIGdvb2QgaWRlYSB0byBkb2N1bWVudCBp
+dCkuDQo+ID4gDQo+ID4gQXNzdW1wdGlvbnM6DQo+ID4gDQo+ID4gMS4gVGhlIGh5cGVydmlzb3Ig
+aGFzIG5vdCBiZWVuIGluZmlsdHJhdGVkLg0KPiA+IDIuIFRoZSBoeXBlcnZpc29yIGRvZXMgbm90
+IGxlYWsgc2VjcmV0cy4NCj4gPiANCj4gPiBXaGVuICgxKSBhbmQgKDIpIGhvbGQgWzFdLCB3ZSBo
+YXJkZW4gVk1zIGluIHR3byBkaWZmZXJlbnQgd2F5czoNCj4gPiANCj4gPiBBLiBWTXMgY2Fubm90
+IGxlYWsgZGF0YSB0byBlYWNoIG90aGVyIG9yIGNhbiB0aGV5IHdpdGggTDFURiB3aGVuIEhUDQo+
+ID4gICAgaXMgZW5hYmxlZD8NCj4gDQo+IEkgc3Ryb25nbHkgc3VzcGVjdCB0aGF0LCBvbiBMMVRG
+LXZ1bG5lcmFibGUgQ1BVcywgTUtUTUUgcHJvdmlkZXMgbm8NCj4gcHJvdGVjdGlvbiB3aGF0c29l
+dmVyLiAgSXQgc291bmRzIGxpa2UgTUtUTUUgaXMgaW1wbGVtZW50ZWQgaW4gdGhlDQo+IG1lbW9y
+eSBjb250cm9sbGVyIC0tIGFzIGZhciBhcyB0aGUgcmVzdCBvZiB0aGUgQ1BVIGFuZCB0aGUgY2Fj
+aGUNCj4gaGllcmFyY2h5IGFyZSBjb25jZXJuZWQsIHRoZSBNS1RNRSBrZXkgc2VsY3Rpb24gYml0
+cyBhcmUganVzdCBwYXJ0IG9mDQo+IHRoZSBwaHlzaWNhbCBhZGRyZXNzLiAgU28gYW4gYXR0YWNr
+IGxpa2UgTDFURiB0aGF0IGxlYWtzIGEgY2FjaGVsaW5lDQo+IHRoYXQncyBzZWxlY3RlZCBieSBw
+aHlzaWNhbCBhZGRyZXNzIHdpbGwgbGVhayB0aGUgY2xlYXJ0ZXh0IGlmIHRoZSBrZXkNCj4gc2Vs
+ZWN0aW9uIGJpdHMgYXJlIHNldCBjb3JyZWN0bHkuDQo+IA0KPiAoSSBzdXBwb3NlIHRoYXQsIGlm
+IHRoZSBhdHRhY2tlciBuZWVkcyB0byBicnV0ZS1mb3JjZSB0aGUgcGh5c2ljYWwNCj4gYWRkcmVz
+cywgdGhlbiBNS1RNRSBtYWtlcyBpdCBhIGJpdCBoYXJkZXIgYmVjYXVzZSB0aGUgZWZmZWN0aXZl
+DQo+IHBoeXNpY2FsIGFkZHJlc3Mgc3BhY2UgaXMgbGFyZ2VyLikNCj4gDQo+ID4gQi4gUHJvdGVj
+dHMgYWdhaW5zdCBjb2xkIGJvb3QgYXR0YWNrcy4NCj4gDQo+IFRNRSBkb2VzIHRoaXMsIEFGQUlL
+LiAgTUtUTUUgZG9lcywgdG9vLCB1bmxlc3MgdGhlICJ1c2VyIiBtb2RlIGlzDQo+IHVzZWQsIGlu
+IHdoaWNoIGNhc2UgdGhlIHByb3RlY3Rpb24gaXMgd2Vha2VyLg0KPiANCj4gPiBJc24ndCB0aGlz
+IHdoYXQgdGhpcyBhYm91dCBpbiB0aGUgbnV0c2hlbGwgcm91Z2hseT8NCj4gPiANCj4gPiBbMV0g
+WFBGTyBjb3VsZCBwb3RlbnRpYWxseSBiZSBhbiBvcHQtaW4gZmVhdHVyZSB0aGF0IHJlZHVjZXMg
+dGhlDQo+ID4gICAgIGRhbWFnZSB3aGVuIGVpdGhlciBvZiB0aGVzZSBhc3N1bXB0aW9ucyBoYXMg
+YmVlbiBicm9rZW4uDQoNClRoaXMgYWxsIHNob3VsZCBiZSBzdW1tYXJpemVkIGluIHRoZSBkb2N1
+bWVudGF0aW9uIChoaWdoLWxldmVsIG1vZGVsDQphbmQgY29ybmVyIGNhc2VzKS4NCg0KL0phcmtr
+bw0K
