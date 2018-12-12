@@ -3,69 +3,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 712C8C65BAF
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 19:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB51C65BAF
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 19:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4E6620851
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 19:33:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E6620851
+	by mail.kernel.org (Postfix) with ESMTP id 566322084E
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 19:52:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 566322084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbeLLTd0 (ORCPT
+        id S1727848AbeLLTwS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 14:33:26 -0500
-Received: from namei.org ([65.99.196.166]:51308 "EHLO namei.org"
+        Wed, 12 Dec 2018 14:52:18 -0500
+Received: from namei.org ([65.99.196.166]:51332 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726235AbeLLTd0 (ORCPT
+        id S1726440AbeLLTwS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 14:33:26 -0500
+        Wed, 12 Dec 2018 14:52:18 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBCJXKEO029554;
-        Wed, 12 Dec 2018 19:33:20 GMT
-Date:   Thu, 13 Dec 2018 06:33:20 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBCJprLZ030130;
+        Wed, 12 Dec 2018 19:51:53 GMT
+Date:   Thu, 13 Dec 2018 06:51:53 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
-In-Reply-To: <d0910aed-5e4e-201d-f452-fa61e87183c5@i-love.sakura.ne.jp>
-Message-ID: <alpine.LRH.2.21.1812130632120.29507@namei.org>
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com> <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com> <alpine.LRH.2.21.1812120556040.11653@namei.org> <d0910aed-5e4e-201d-f452-fa61e87183c5@i-love.sakura.ne.jp>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
+Message-ID: <alpine.LRH.2.21.1812130642250.29507@namei.org>
+References: <20181212081712.32347-1-mic@digikod.net>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/mixed; BOUNDARY="1665246916-1625860249-1544644091=:29507"
+Content-ID: <alpine.LRH.2.21.1812130649470.29507@namei.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 12 Dec 2018, Tetsuo Handa wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> On 2018/12/12 3:57, James Morris wrote:
-> > On Tue, 4 Dec 2018, Kees Cook wrote:
-> > 
-> >> On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >>> v5: Include Kees Cook's rework of the lsm command
-> >>>     line interface. Stacking is not conditional.
-> >>
-> >> Can you resend this series with corrected "From:" lines in the body, etc?
-> >>
-> >> Beyond that, I obviously like it. James, what's needed for this to move forward?
-> > 
-> > If there are no outstanding issues, I plan to merge this for 4.21.
-> > 
+--1665246916-1625860249-1544644091=:29507
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.LRH.2.21.1812130649471.29507@namei.org>
+
+On Wed, 12 Dec 2018, Mickaël Salaün wrote:
+
+> Hi,
 > 
-> Then, can we send it to linux-next.git shortly
-> so that we can have some time for testing by syzbot?
+> The goal of this patch series is to control script interpretation.  A
+> new O_MAYEXEC flag used by sys_open() is added to enable userland script
+> interpreter to delegate to the kernel (and thus the system security
+> policy) the permission to interpret scripts or other files containing
+> what can be seen as commands.
+> 
+> The security policy is the responsibility of an LSM.  A basic
+> system-wide policy is implemented with Yama and configurable through a
+> sysctl.
 
-It's best to let the 4.20 cycle complete (so as not to confuse things 
-there) and then merge it for next in -rc1.
+If you're depending on the script interpreter to flag that the user may 
+execute code, this seems to be equivalent in security terms to depending 
+on the user.  e.g. what if the user uses ptrace and clears O_MAYEXEC?
+
+ 
+
 
 
 -- 
 James Morris
 <jmorris@namei.org>
-
+--1665246916-1625860249-1544644091=:29507--
