@@ -1,148 +1,118 @@
-Return-Path: <SRS0=nZhg=OU=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E800C67839
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F77C04EB8
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 08:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D43D120672
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 Dec 2018 22:48:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="WCL6SN0e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43D120672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id A25972086D
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 08:33:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A25972086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbeLKWsa (ORCPT
+        id S1726809AbeLLIdr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:48:30 -0500
-Received: from sonic316-27.consmr.mail.ne1.yahoo.com ([66.163.187.153]:44296
-        "EHLO sonic316-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726201AbeLKWn0 (ORCPT
+        Wed, 12 Dec 2018 03:33:47 -0500
+Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:55862 "EHLO
+        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeLLIdq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:43:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544568205; bh=WT5A35EHIXDk4c6XxSfr7BOxdAICWJo3sRrzhtAFt40=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=WCL6SN0ed/rykvI+CC53zp6lYNEw7acT6UsZ8wv/Ai6R3qB8719/I8rlvAfNtOjTSBz10UGkFVDOjNbPg33brC+4E1PDXTyRf2tGvXSGARbXlwGUKy85KmejGDy0SlrpOUaQChg011yxoDjEr+OFY8jouqOUyS0WIXrBrwV8C8moCA9+9CNM9HsV54z46B0e4E5FCBntc9gXru+il8TRi1XvAxpyhntjej/4pNsmm6OvuKgGb8MW3k8b81moA6bujNtPKLKg1YZOq5u2wRt+eeHbgJOtiPtdi3v5R9PGAwrMUnGtJcPWpUee1Vi73cfUlca4WDc1MNXMmJO5iazFNQ==
-X-YMail-OSG: 6zt4hPoVM1ljIDxM4Z0xkdmtw0fRx4cgUSfmtnnCOBvLBqd8tXdlRE0nNzMYQFY
- NwMz_kR5Wxb4PHnepdXiplWkXPJEVld_Bwl3.2D0Dhpwj2WjRQPrmspCvdsnVzlfyCte94wSTXsY
- 61jlgF9Hi6UACMxQNgafHgrzWYqKNSnqTUw8Ke2Itj6jGEtMbnRmC7yiHAjmcvfs8fgW3a2Jpef8
- E1VPusijMjbWa.tm3FOLLAr.xURE6D_rgMcwEBHRedrfV8RGKzfTlRBbjouWNr9lQWCwQAkA9Uwh
- rdZBB5VeFDVfIh2zkH37VCyobWsn_ke3JwvWyUq_T9JKfSTEIxFa2AlgUI4hUPYnAVP.Xc_Q9dEu
- 0JpQVV82eI8FA93IGsnkoX9Zzn_7FfuK6S8nXHy9VxM525vjxBQUqqepmNTgE2di7AMNWyGvbRVL
- 8eBOhhM0937U2DWIFUMNNThNPVI4Vi0W4PrWrfIsYSThGWEeLaAd7NfZXdmqirFyOFjrcArAvjJg
- SlA48QaC2qQIh4cff9tqd6jsxnUhBFai0vf1BiN8zlEk8zlQq1voyow79xgA5wjUm02POl.NasVV
- 9aHtRJgIaLTkLGRbGQWUIFRqb2luywe5YrCqmalqeetBl1k674chB.RcTaDH53xWNy1kC5q958JB
- fiEOsLLORvqO.5ztFCE5fQ2mbJ7ckjhbMOadxISAXQmjv76tCdqXrbdRO6Voqy3KOwjHWv2jDsHZ
- HKkpQPJJwveqUq63n.FfHtn1qSFZNLLaMSl.UIG0WMGC73T.BrLYtr3oUR9op0EdC1fnxZmGZtt9
- 1wUFjhZSM01s0L8wNTI9238bmOLKUpBStovPqQ4.xLqMI5qrZoT3SnHJ7qe9mvdT5ybnRbIoJkt_
- 3NFjeFx1mjBcsoPlbUn4hwrtUNPax7jhJr2CpWioiF3WuygaypjNyjlt8ssclnnU9fJEiTuRhHXj
- 9PvrMG3Yg3i31PjmtU2xXQJYnF41MljDMsjlNqWU0JcE1uewYjxvEeHXYEmCUf.z1S3J5Nd57rsT
- cY4YZa..Bop_aZH6SRb7nOFXmW1rTTkcQS9DfVd..SaKrr_DObc3JRCT17Vb4P6f953mBcwPEpW8
- RyISazgIf5OTkpg6pTbh7O9ChWofSfOpnNlr3YvID
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Dec 2018 22:43:25 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp422.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID db48327a3d58729724c38eee90dbab73;
-          Tue, 11 Dec 2018 22:43:25 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Cc:     john.johansen@canonical.com, keescook@chromium.org,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
-        adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com,
-        casey@schaufler-ca.com
-Subject: [PATCH v5 01/38] LSM: Introduce LSM_FLAG_LEGACY_MAJOR
-Date:   Tue, 11 Dec 2018 14:42:37 -0800
-Message-Id: <20181211224314.22412-2-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
-References: <20181211224314.22412-1-casey@schaufler-ca.com>
+        Wed, 12 Dec 2018 03:33:46 -0500
+X-Greylist: delayed 942 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Dec 2018 03:33:45 EST
+Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
+        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8Hjjk022496
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Dec 2018 09:17:45 +0100
+Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        (authenticated bits=0)
+        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8HgY8061207;
+        Wed, 12 Dec 2018 09:17:43 +0100
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH v1 2/5] fs: Add a MAY_EXECMOUNT flag to infer the noexec mount propertie
+Date:   Wed, 12 Dec 2018 09:17:09 +0100
+Message-Id: <20181212081712.32347-3-mic@digikod.net>
+X-Mailer: git-send-email 2.20.0.rc2
+In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
+References: <20181212081712.32347-1-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Kees Cook <keescook@chromium.org>
+An LSM doesn't get path information related to an access request to open
+an inode.  This new (internal) MAY_EXECMOUNT flag enables an LSM to
+check if the underlying mount point of an inode is marked as executable.
+This is useful to implement a security policy taking advantage of the
+noexec mount option.
 
-This adds a flag for the current "major" LSMs to distinguish them when
-we have a universal method for ordering all LSMs. It's called "legacy"
-since the distinction of "major" will go away in the blob-sharing world.
+This flag is set according to path_noexec(), which checks if a mount
+point is mounted with MNT_NOEXEC or if the underlying superblock is
+SB_I_NOEXEC.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
 ---
- include/linux/lsm_hooks.h  | 3 +++
- security/apparmor/lsm.c    | 1 +
- security/selinux/hooks.c   | 1 +
- security/smack/smack_lsm.c | 1 +
- security/tomoyo/tomoyo.c   | 1 +
- 5 files changed, 7 insertions(+)
+ fs/namei.c         | 2 ++
+ include/linux/fs.h | 2 ++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index aaeb7fa24dc4..63c0e102de20 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -2039,8 +2039,11 @@ extern char *lsm_names;
- extern void security_add_hooks(struct security_hook_list *hooks, int count,
- 				char *lsm);
+diff --git a/fs/namei.c b/fs/namei.c
+index 0cab6494978c..de4f33b3f464 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2970,6 +2970,8 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+ 		break;
+ 	}
  
-+#define LSM_FLAG_LEGACY_MAJOR	BIT(0)
-+
- struct lsm_info {
- 	const char *name;	/* Required. */
-+	unsigned long flags;	/* Optional: flags describing LSM */
- 	int (*init)(void);	/* Required. */
- };
++	/* Pass the mount point executability. */
++	acc_mode |= path_noexec(path) ? 0 : MAY_EXECMOUNT;
+ 	error = inode_permission(inode, MAY_OPEN | acc_mode);
+ 	if (error)
+ 		return error;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 584c9329ad78..083a31b8068e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -96,6 +96,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define MAY_NOT_BLOCK		0x00000080
+ /* the inode is opened with O_MAYEXEC */
+ #define MAY_OPENEXEC		0x00000100
++/* the mount point is marked as executable */
++#define MAY_EXECMOUNT		0x00000200
  
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 42446a216f3b..2edd35ca5044 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1728,5 +1728,6 @@ static int __init apparmor_init(void)
- 
- DEFINE_LSM(apparmor) = {
- 	.name = "apparmor",
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.init = apparmor_init,
- };
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 7ce683259357..56c6f1849c80 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7209,6 +7209,7 @@ void selinux_complete_init(void)
-    all processes and objects when they are created. */
- DEFINE_LSM(selinux) = {
- 	.name = "selinux",
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.init = selinux_init,
- };
- 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 81fb4c1631e9..3639e55b1f4b 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4891,5 +4891,6 @@ static __init int smack_init(void)
-  */
- DEFINE_LSM(smack) = {
- 	.name = "smack",
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.init = smack_init,
- };
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 1b5b5097efd7..09f7af130d3a 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -552,5 +552,6 @@ static int __init tomoyo_init(void)
- 
- DEFINE_LSM(tomoyo) = {
- 	.name = "tomoyo",
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.init = tomoyo_init,
- };
+ /*
+  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
 -- 
-2.14.5
+2.20.0.rc2
 
