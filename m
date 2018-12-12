@@ -2,436 +2,251 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0069CC65BAF
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA30C65BAF
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 14:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD6DF20849
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD6DF20849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+	by mail.kernel.org (Postfix) with ESMTP id 169FF20839
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 14:35:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="TJQyItkJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 169FF20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbeLLIe4 (ORCPT
+        id S1726358AbeLLOfe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:34:56 -0500
-Received: from smtp-sh.infomaniak.ch ([128.65.195.4]:40538 "EHLO
-        smtp-sh.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbeLLIe4 (ORCPT
+        Wed, 12 Dec 2018 09:35:34 -0500
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:63385 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbeLLOfe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:34:56 -0500
-Received: from smtp5.infomaniak.ch (smtp5.infomaniak.ch [83.166.132.18])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8Hnvb022715
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 09:17:49 +0100
-Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
-        (authenticated bits=0)
-        by smtp5.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8HlF8056457;
-        Wed, 12 Dec 2018 09:17:47 +0100
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Wed, 12 Dec 2018 09:35:34 -0500
+X-Greylist: delayed 434 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Dec 2018 09:35:33 EST
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id A4D92D0006C;
+        Wed, 12 Dec 2018 15:28:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1544624905;
+        bh=RURSNJxH3uXwyQWATCTsAZKmp59Lkaus4CuUmJ0TlvE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=TJQyItkJ40LvGdtGynmQhqS0iZOUMxq7wKc2iW3rOl/SnArM1DjIQhViE8hEc05R6
+         +NhQg/FC6q3qypYP2rvu/iTNS0YQUEw4cbnObozOuMYCnNLAf8kKnjdZMpVEUSDCP7
+         gmOoyxPn5wxmXwCesK+MNY74QJknnGfPMU8tpxBlrHE886J31wsHeMDFjnFGiDdZDc
+         wTSZHd4/yhlKzHXnFXGdy/8PPkerTzmDRNpwYFbZd6Gv/7x4ktvkhxJaqgAS5egMWI
+         c5gtPTJcS2u5UiaHVptbcoo5z7QXhBfJJkRYXViF1+n+Hta1/bLiHwwbolC8LKLjyY
+         wCrqVt2Lh4MlA==
+Subject: Re: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file
+ executability through O_MAYEXEC
+To:     <linux-kernel@vger.kernel.org>
+CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
         Al Viro <viro@zeniv.linux.org.uk>,
         James Morris <jmorris@namei.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         Matthew Garrett <mjg59@google.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
         <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
         Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
         Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
         Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH v1 4/5] selftest/yama: Add tests for O_MAYEXEC enforcing
-Date:   Wed, 12 Dec 2018 09:17:11 +0100
-Message-Id: <20181212081712.32347-5-mic@digikod.net>
-X-Mailer: git-send-email 2.20.0.rc2
-In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
 References: <20181212081712.32347-1-mic@digikod.net>
+ <20181212081712.32347-4-mic@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <13fe4508-f0c0-66c7-8aab-8b3ccef5caa2@ssi.gouv.fr>
+Date:   Wed, 12 Dec 2018 15:28:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20181212081712.32347-4-mic@digikod.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Test propagation of noexec mount points or file executability through
-files open with or without O_MAYEXEC.
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
-Cc: Shuah Khan <shuah@kernel.org>
----
- MAINTAINERS                                  |   1 +
- tools/testing/selftests/Makefile             |   1 +
- tools/testing/selftests/yama/.gitignore      |   1 +
- tools/testing/selftests/yama/Makefile        |  19 ++
- tools/testing/selftests/yama/config          |   2 +
- tools/testing/selftests/yama/test_omayexec.c | 276 +++++++++++++++++++
- 6 files changed, 300 insertions(+)
- create mode 100644 tools/testing/selftests/yama/.gitignore
- create mode 100644 tools/testing/selftests/yama/Makefile
- create mode 100644 tools/testing/selftests/yama/config
- create mode 100644 tools/testing/selftests/yama/test_omayexec.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8119141a926f..a1d01a81b283 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16591,6 +16591,7 @@ M:	Kees Cook <keescook@chromium.org>
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git yama/tip
- S:	Supported
- F:	security/yama/
-+F:	tools/testing/selftests/yama/
- F:	Documentation/admin-guide/LSM/Yama.rst
- 
- YEALINK PHONE DRIVER
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index f0017c831e57..608f31167aa6 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -46,6 +46,7 @@ endif
- TARGETS += user
- TARGETS += vm
- TARGETS += x86
-+TARGETS += yama
- TARGETS += zram
- #Please keep the TARGETS list alphabetically sorted
- # Run "make quicktest=1 run_tests" or
-diff --git a/tools/testing/selftests/yama/.gitignore b/tools/testing/selftests/yama/.gitignore
-new file mode 100644
-index 000000000000..6e8d5cfb48d0
---- /dev/null
-+++ b/tools/testing/selftests/yama/.gitignore
-@@ -0,0 +1 @@
-+/test_omayexec
-diff --git a/tools/testing/selftests/yama/Makefile b/tools/testing/selftests/yama/Makefile
-new file mode 100644
-index 000000000000..d411f1615b60
---- /dev/null
-+++ b/tools/testing/selftests/yama/Makefile
-@@ -0,0 +1,19 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+all:
-+
-+include ../lib.mk
-+
-+.PHONY: all clean
-+
-+BINARIES := test_omayexec
-+CFLAGS += -Wl,-no-as-needed -Wall -Werror
-+LDFLAGS += -lcap
-+
-+test_omayexec: test_omayexec.c ../kselftest_harness.h
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@
-+
-+TEST_PROGS += $(BINARIES)
-+EXTRA_CLEAN := $(BINARIES)
-+
-+all: $(BINARIES)
-diff --git a/tools/testing/selftests/yama/config b/tools/testing/selftests/yama/config
-new file mode 100644
-index 000000000000..9d375bfc465b
---- /dev/null
-+++ b/tools/testing/selftests/yama/config
-@@ -0,0 +1,2 @@
-+CONFIG_SECURITY=y
-+CONFIG_SECURITY_YAMA=y
-diff --git a/tools/testing/selftests/yama/test_omayexec.c b/tools/testing/selftests/yama/test_omayexec.c
-new file mode 100644
-index 000000000000..7d41097f0e89
---- /dev/null
-+++ b/tools/testing/selftests/yama/test_omayexec.c
-@@ -0,0 +1,276 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Yama tests - O_MAYEXEC
-+ *
-+ * Copyright © 2018 ANSSI
-+ *
-+ * Author: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
-+ */
-+
-+#include <errno.h>
-+#include <fcntl.h> /* O_CLOEXEC */
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h> /* strlen */
-+#include <sys/capability.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h> /* mkdir */
-+#include <unistd.h> /* unlink, rmdir */
-+
-+#include "../kselftest_harness.h"
-+
-+#ifndef O_MAYEXEC
-+#define O_MAYEXEC      040000000
-+#endif
-+
-+#define SYSCTL_MAYEXEC	"/proc/sys/kernel/yama/open_mayexec_enforce"
-+
-+#define BIN_DIR		"./test-mount"
-+#define BIN_PATH	BIN_DIR "/file"
-+#define DIR_PATH	BIN_DIR "/directory"
-+
-+#define ALLOWED		1
-+#define DENIED		0
-+
-+static void test_omx(struct __test_metadata *_metadata,
-+		const char *const path, const int exec_allowed)
-+{
-+	int fd;
-+
-+	/* without O_MAYEXEC */
-+	fd = open(path, O_RDONLY | O_CLOEXEC);
-+	ASSERT_NE(-1, fd);
-+	EXPECT_FALSE(close(fd));
-+
-+	/* with O_MAYEXEC */
-+	fd = open(path, O_RDONLY | O_CLOEXEC | O_MAYEXEC);
-+	if (exec_allowed) {
-+		/* open should succeed */
-+		ASSERT_NE(-1, fd);
-+		EXPECT_FALSE(close(fd));
-+	} else {
-+		/* open should return EACCES */
-+		ASSERT_EQ(-1, fd);
-+		ASSERT_EQ(EACCES, errno);
-+	}
-+}
-+
-+static void ignore_dac(struct __test_metadata *_metadata, int override)
-+{
-+	cap_t caps;
-+	const cap_value_t cap_val[2] = {
-+		CAP_DAC_OVERRIDE,
-+		CAP_DAC_READ_SEARCH,
-+	};
-+
-+	caps = cap_get_proc();
-+	ASSERT_TRUE(!!caps);
-+	ASSERT_FALSE(cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_val,
-+				override ? CAP_SET : CAP_CLEAR));
-+	ASSERT_FALSE(cap_set_proc(caps));
-+	EXPECT_FALSE(cap_free(caps));
-+}
-+
-+static void test_dir_file(struct __test_metadata *_metadata,
-+		const char *const dir_path, const char *const file_path,
-+		const int exec_allowed, const int only_file_perm)
-+{
-+	if (only_file_perm) {
-+		/* test as root */
-+		ignore_dac(_metadata, 1);
-+		/* always allowed because of generic_permission() use */
-+		test_omx(_metadata, dir_path, ALLOWED);
-+	}
-+
-+	/* without bypass */
-+	ignore_dac(_metadata, 0);
-+	test_omx(_metadata, dir_path, exec_allowed);
-+	test_omx(_metadata, file_path, exec_allowed);
-+}
-+
-+static void sysctl_write(struct __test_metadata *_metadata,
-+		const char *path, const char *value)
-+{
-+	int fd;
-+	size_t len_value;
-+	ssize_t len_wrote;
-+
-+	fd = open(path, O_WRONLY | O_CLOEXEC);
-+	ASSERT_NE(-1, fd);
-+	len_value = strlen(value);
-+	len_wrote = write(fd, value, len_value);
-+	ASSERT_EQ(len_wrote, len_value);
-+	EXPECT_FALSE(close(fd));
-+}
-+
-+static void create_workspace(struct __test_metadata *_metadata,
-+		int mount_exec, int file_exec)
-+{
-+	int fd;
-+
-+	/*
-+	 * Cleanup previous workspace if any error previously happened (don't
-+	 * check errors).
-+	 */
-+	umount(BIN_DIR);
-+	rmdir(BIN_DIR);
-+
-+	/* create a clean mount point */
-+	ASSERT_FALSE(mkdir(BIN_DIR, 00700));
-+	ASSERT_FALSE(mount("test", BIN_DIR, "tmpfs",
-+				MS_MGC_VAL | (mount_exec ? 0 : MS_NOEXEC),
-+				"mode=0700,size=4k"));
-+
-+	/* create a test file */
-+	fd = open(BIN_PATH, O_CREAT | O_RDONLY | O_CLOEXEC,
-+			file_exec ? 00500 : 00400);
-+	ASSERT_NE(-1, fd);
-+	EXPECT_NE(-1, close(fd));
-+
-+	/* create a test directory */
-+	ASSERT_FALSE(mkdir(DIR_PATH, file_exec ? 00500 : 00400));
-+}
-+
-+static void delete_workspace(struct __test_metadata *_metadata)
-+{
-+	ignore_dac(_metadata, 1);
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "0");
-+
-+	/* no need to unlink BIN_PATH nor DIR_PATH */
-+	ASSERT_FALSE(umount(BIN_DIR));
-+	ASSERT_FALSE(rmdir(BIN_DIR));
-+}
-+
-+FIXTURE_DATA(mount_exec_file_exec) { };
-+
-+FIXTURE_SETUP(mount_exec_file_exec)
-+{
-+	create_workspace(_metadata, 1, 1);
-+}
-+
-+FIXTURE_TEARDOWN(mount_exec_file_exec)
-+{
-+	delete_workspace(_metadata);
-+}
-+
-+TEST_F(mount_exec_file_exec, mount)
-+{
-+	/* enforce mount exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "1");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED, 0);
-+}
-+
-+TEST_F(mount_exec_file_exec, file)
-+{
-+	/* enforce file exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "2");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED, 0);
-+}
-+
-+TEST_F(mount_exec_file_exec, mount_file)
-+{
-+	/* enforce mount and file exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "3");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED, 0);
-+}
-+
-+FIXTURE_DATA(mount_exec_file_noexec) { };
-+
-+FIXTURE_SETUP(mount_exec_file_noexec)
-+{
-+	create_workspace(_metadata, 1, 0);
-+}
-+
-+FIXTURE_TEARDOWN(mount_exec_file_noexec)
-+{
-+	delete_workspace(_metadata);
-+}
-+
-+TEST_F(mount_exec_file_noexec, mount)
-+{
-+	/* enforce mount exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "1");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED, 0);
-+}
-+
-+TEST_F(mount_exec_file_noexec, file)
-+{
-+	/* enforce file exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "2");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED, 1);
-+}
-+
-+TEST_F(mount_exec_file_noexec, mount_file)
-+{
-+	/* enforce mount and file exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "3");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED, 1);
-+}
-+
-+FIXTURE_DATA(mount_noexec_file_exec) { };
-+
-+FIXTURE_SETUP(mount_noexec_file_exec)
-+{
-+	create_workspace(_metadata, 0, 1);
-+}
-+
-+FIXTURE_TEARDOWN(mount_noexec_file_exec)
-+{
-+	delete_workspace(_metadata);
-+}
-+
-+TEST_F(mount_noexec_file_exec, mount)
-+{
-+	/* enforce mount exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "1");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED, 0);
-+}
-+
-+TEST_F(mount_noexec_file_exec, file)
-+{
-+	/* enforce file exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "2");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, ALLOWED, 0);
-+}
-+
-+TEST_F(mount_noexec_file_exec, mount_file)
-+{
-+	/* enforce mount and file exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "3");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED, 0);
-+}
-+
-+FIXTURE_DATA(mount_noexec_file_noexec) { };
-+
-+FIXTURE_SETUP(mount_noexec_file_noexec)
-+{
-+	create_workspace(_metadata, 0, 0);
-+}
-+
-+FIXTURE_TEARDOWN(mount_noexec_file_noexec)
-+{
-+	delete_workspace(_metadata);
-+}
-+
-+TEST_F(mount_noexec_file_noexec, mount)
-+{
-+	/* enforce mount exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "1");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED, 0);
-+}
-+
-+TEST_F(mount_noexec_file_noexec, file)
-+{
-+	/* enforce file exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "2");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED, 1);
-+}
-+
-+TEST_F(mount_noexec_file_noexec, mount_file)
-+{
-+	/* enforce mount and file exec check */
-+	sysctl_write(_metadata, SYSCTL_MAYEXEC, "3");
-+	test_dir_file(_metadata, DIR_PATH, BIN_PATH, DENIED, 0);
-+}
-+
-+TEST_HARNESS_MAIN
--- 
-2.20.0.rc2
+Le 12/12/2018 à 09:17, Mickaël Salaün a écrit :
+> Enable to either propagate the mount options from the underlying VFS
+> mount to prevent execution, or to propagate the file execute permission.
+> This may allow a script interpreter to check execution permissions
+> before reading commands from a file.
+> 
+> The main goal is to be able to protect the kernel by restricting
+> arbitrary syscalls that an attacker could perform with a crafted binary
+> or certain script languages.  It also improves multilevel isolation
+> by reducing the ability of an attacker to use side channels with
+> specific code.  These restrictions can natively be enforced for ELF
+> binaries (with the noexec mount option) but require this kernel
+> extension to properly handle scripts (e.g., Python, Perl).
+> 
+> Add a new sysctl kernel.yama.open_mayexec_enforce to control this
+> behavior.  A following patch adds documentation.
+> 
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+> ---
+>  security/yama/Kconfig    |  3 +-
+>  security/yama/yama_lsm.c | 82 +++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 83 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/yama/Kconfig b/security/yama/Kconfig
+> index 96b27405558a..9457619fabd5 100644
+> --- a/security/yama/Kconfig
+> +++ b/security/yama/Kconfig
+> @@ -5,7 +5,8 @@ config SECURITY_YAMA
+>  	help
+>  	  This selects Yama, which extends DAC support with additional
+>  	  system-wide security settings beyond regular Linux discretionary
+> -	  access controls. Currently available is ptrace scope restriction.
+> +	  access controls. Currently available are ptrace scope restriction and
+> +	  enforcement of the O_MAYEXEC open flag.
+>  	  Like capabilities, this security module stacks with other LSMs.
+>  	  Further information can be found in
+>  	  Documentation/admin-guide/LSM/Yama.rst.
+> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+> index ffda91a4a1aa..120664e94ee5 100644
+> --- a/security/yama/yama_lsm.c
+> +++ b/security/yama/yama_lsm.c
+> @@ -1,10 +1,12 @@
+>  /*
+>   * Yama Linux Security Module
+>   *
+> - * Author: Kees Cook <keescook@chromium.org>
+> + * Authors: Kees Cook <keescook@chromium.org>
+> + *          Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+>   *
+>   * Copyright (C) 2010 Canonical, Ltd.
+>   * Copyright (C) 2011 The Chromium OS Authors.
+> + * Copyright (C) 2018 ANSSI
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2, as
+> @@ -28,7 +30,14 @@
+>  #define YAMA_SCOPE_CAPABILITY	2
+>  #define YAMA_SCOPE_NO_ATTACH	3
+>  
+> +#define YAMA_OMAYEXEC_ENFORCE_NONE	0
+> +#define YAMA_OMAYEXEC_ENFORCE_MOUNT	(1 << 0)
+> +#define YAMA_OMAYEXEC_ENFORCE_FILE	(1 << 1)
+> +#define _YAMA_OMAYEXEC_LAST		YAMA_OMAYEXEC_ENFORCE_FILE
+> +#define _YAMA_OMAYEXEC_MASK		((_YAMA_OMAYEXEC_LAST << 1) - 1)
+> +
+>  static int ptrace_scope = YAMA_SCOPE_RELATIONAL;
+> +static int open_mayexec_enforce = YAMA_OMAYEXEC_ENFORCE_NONE;
+>  
+>  /* describe a ptrace relationship for potential exception */
+>  struct ptrace_relation {
+> @@ -423,7 +432,40 @@ int yama_ptrace_traceme(struct task_struct *parent)
+>  	return rc;
+>  }
+>  
+> +/**
+> + * yama_inode_permission - check O_MAYEXEC permission before accessing an inode
+> + * @inode: inode structure to check
+> + * @mask: permission mask
+> + *
+> + * Return 0 if access is permitted, -EACCES otherwise.
+> + */
+> +int yama_inode_permission(struct inode *inode, int mask)
+> +{
+> +	if (!(mask & MAY_OPENEXEC))
+> +		return 0;
+> +	/*
+> +	 * Match regular files and directories to make it easier to
+> +	 * modify script interpreters.
+> +	 */
+> +	if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
+> +		return 0;
 
+I forgot to mention that these checks do not handle fifos. This is
+relevant in a threat model targeting persistent attacks (and with
+additional protections/restrictions).
+
+> +
+> +	if ((open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_MOUNT) &&
+> +			!(mask & MAY_EXECMOUNT))
+> +		return -EACCES;
+> +
+> +	/*
+> +	 * May prefer acl_permission_check() instead of generic_permission(),
+> +	 * to not be bypassable with CAP_DAC_READ_SEARCH.
+> +	 */
+> +	if (open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_FILE)
+> +		return generic_permission(inode, MAY_EXEC);
+> +
+> +	return 0;
+> +}
+> +
+>  static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
+> +	LSM_HOOK_INIT(inode_permission, yama_inode_permission),
+>  	LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
+>  	LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
+>  	LSM_HOOK_INIT(task_prctl, yama_task_prctl),
+> @@ -447,6 +489,37 @@ static int yama_dointvec_minmax(struct ctl_table *table, int write,
+>  	return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
+>  }
+>  
+> +static int yama_dointvec_bitmask_macadmin(struct ctl_table *table, int write,
+> +					  void __user *buffer, size_t *lenp,
+> +					  loff_t *ppos)
+> +{
+> +	int error;
+> +
+> +	if (write) {
+> +		struct ctl_table table_copy;
+> +		int tmp_mayexec_enforce;
+> +
+> +		if (!capable(CAP_MAC_ADMIN))
+> +			return -EPERM;
+> +		tmp_mayexec_enforce = *((int *)table->data);
+> +		table_copy = *table;
+> +		/* do not erase open_mayexec_enforce */
+> +		table_copy.data = &tmp_mayexec_enforce;
+> +		error = proc_dointvec(&table_copy, write, buffer, lenp, ppos);
+> +		if (error)
+> +			return error;
+> +		if ((tmp_mayexec_enforce | _YAMA_OMAYEXEC_MASK) !=
+> +				_YAMA_OMAYEXEC_MASK)
+> +			return -EINVAL;
+> +		*((int *)table->data) = tmp_mayexec_enforce;
+> +	} else {
+> +		error = proc_dointvec(table, write, buffer, lenp, ppos);
+> +		if (error)
+> +			return error;
+> +	}
+> +	return 0;
+> +}
+> +
+>  static int zero;
+>  static int max_scope = YAMA_SCOPE_NO_ATTACH;
+>  
+> @@ -466,6 +539,13 @@ static struct ctl_table yama_sysctl_table[] = {
+>  		.extra1         = &zero,
+>  		.extra2         = &max_scope,
+>  	},
+> +	{
+> +		.procname       = "open_mayexec_enforce",
+> +		.data           = &open_mayexec_enforce,
+> +		.maxlen         = sizeof(int),
+> +		.mode           = 0644,
+> +		.proc_handler   = yama_dointvec_bitmask_macadmin,
+> +	},
+>  	{ }
+>  };
+>  static void __init yama_init_sysctl(void)
+> 
