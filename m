@@ -2,96 +2,110 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D877EC67839
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED856C67839
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B8642084E
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:06:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 758FB2084E
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 16:29:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Bx2K1QWc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B8642084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="nrSs59j4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 758FB2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbeLLQGL (ORCPT
+        id S1727882AbeLLQ3x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:06:11 -0500
-Received: from sonic307-9.consmr.mail.bf2.yahoo.com ([74.6.134.48]:40570 "EHLO
-        sonic307-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727845AbeLLQGK (ORCPT
+        Wed, 12 Dec 2018 11:29:53 -0500
+Received: from mail-40133.protonmail.ch ([185.70.40.133]:12792 "EHLO
+        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727880AbeLLQ3w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:06:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544630769; bh=AAyDaqBwEWrHzXrCEtlpl306HHAwsgI0AAHJccOhSfc=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Bx2K1QWc0JV1Ji+5i52w22o0H1dZA9g8VnvfUTjBDvwIoY1sNELSH06P9aPFs6xHLekdqwpSKtT95UZ2c33kbzFQMjmBbJlSzWQxKqdBI6eZdgnfGAa71tzz7YvkjQSnU18IiVSTHIxi1Qef6+/GLvini9+Ag1Yf3lvU1tV9q8+gaT8N6BIylBZFz0RXaODVkgsVAaMWoNrColh/DYpXMeb5rxdNSkejixJzmp3pG2HvLXGFXxT1v0e/TgmQrNzOu2XXSEFJK8njMmXMqqHvkbsPoV1updg51Q32O36LiIVgSC2QXhtGM3SxiOsb0sreL6RXR4+XkUjaU4RaO7EPXg==
-X-YMail-OSG: IbcGqDIVM1kijcQXooZJ0yH02tUHUPsz2kYwHQ7cPD3k9xvzETfaR06USKMfUwr
- OgcpJGMjVc.UPi5zLc_mF2_NEZ5lYfzjaC31MDc8tsCaI6GaXOfTn_jE7RfxjPBKUS6nbWyXRrIJ
- uUmCVUtUQuI.mnGyMX5RhmN2Vd6By_576QkN.PQo.qlLYIvfkykQ9uHSPl9qeIURefqKWdyE142y
- u4kjHhyXoWt8P4_2.nALhZvdETPH8jB0CJCbuQrwvTjZUMla0A9GxRAlXI3Z8mx9JDJ8UsXQwzVV
- 3AMaZVNb5p8Oc3vLYLeFfUxj4.h_vE1Uj8klJZAQqQPVA9KYGzwWUxbxxqmgndyN4yUFQjMudf7C
- JesLSQrsDfTFKX5EI9dZ2qWqbghYur8AHkZ9eqr7d_0DmsjJXKXcv3O8.zsKJSYr52SmF1rV1_c1
- YlE328iZOfMMDzs5ybmSbDd.N33vNOlQ9DfbILuAbafGwc_H.pbX9Iorzj5oIf5kDPqPRkLx2XQB
- qWYETZGX5YP.Y0kVYqEPU.01LAv32.meHh8v.FzlGHyhKFZbU6b868GUODyKAgMKbzyNvOkM5B1E
- BAeM4TTFzjNGfzhhHb_4FCmcIPhW0eO3Vo4R6FxTx69N8H8hJIE5x_JQgqvlIvpwRmwm8D_gLO3q
- HN2URR1T2iRoXRxOrfXammZJxKUHB5XV1B.C5zUONbdTDgYqCTv8MTCq0l3mm8zWQzDPSXsN7izt
- 1bqoLGiaBjo0kjEmnnJgOFnO56BEAYrHKbhXMO7rdjRxU1S_xiul74R9So3rL5aPKlXPahYBueoI
- aPB5UZ4jJt9moueIGJ3F2wsr9k.RTk__gedMJM.WgN570Cg1fju2brdsMKgYC0U8Vz2j.DdgEBLH
- RnPYtvsyVqTA0xCZ3U.twGq21roux56tRySrg80TXHsYTWrPwQd52Byo7qv0TfjmGn4W48JCDQ1U
- ei3XsMjnA04aI5KwuiCn5P45fDhZ8ASLGhb6buFqe3rxrseq.1WzdOVbtplFYLnYquiHBjhqIQge
- v61esofMkdsiM3UMoHLnoqNpaCqHH50NnKJVtLyBvGhic8AM8kgq5iY35OZwUytNbn.pEYy1LHk9
- b7HY_nwtJpBjefylHekSey7JuHVgWcUyVz.5R
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Wed, 12 Dec 2018 16:06:09 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp410.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fe2a1506230eb1105a50167d41a8a69f;
-          Wed, 12 Dec 2018 16:06:07 +0000 (UTC)
-Subject: [PATCH v5 38/38] TOMOYO: Update LSM flags to no longer be exclusive
-To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Cc:     john.johansen@canonical.com, keescook@chromium.org,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
-        adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com
-References: <20181211224314.22412-1-casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <68432944-ad46-5b8f-09ba-cb956a479d49@schaufler-ca.com>
-Date:   Wed, 12 Dec 2018 08:05:56 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Dec 2018 11:29:52 -0500
+Date:   Wed, 12 Dec 2018 16:29:47 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
+        s=default; t=1544632189;
+        bh=awWrFloh4DrDSwCiHywdoy1L7wdWXOkQqJ6DbzyafBM=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
+         Feedback-ID:From;
+        b=nrSs59j4PnnEBNJWqyWArJvndNsbxWss4IV77OeveMSbKkodJylHD9PtT5RiwtdHj
+         pqUZ8i2GdI9/mreEYfuRab9/Ayf3R2rhvFaIX0cUiaJdhfSEckpejCZBZZRK8b0gDj
+         KQm7yVVJ4+fpfYVCYgRLa85e0/vKirkgxHbbLZ0M=
+To:     =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+From:   Jordan Glover <Golden_Miller83@protonmail.ch>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+Message-ID: <ML-sxPRwNNExkZHkXghYN7e3VrhuZXYLjFv-aniX8qbjcde2GfHMBaI4B3A7IoUEfycQcWCPuxATkYHOz--FqMjH1KRwxMxBCb6Q-1IsKTM=@protonmail.ch>
+In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
+References: <20181212081712.32347-1-mic@digikod.net>
+Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
 MIME-Version: 1.0
-In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Kees Cook <keescook@chromium.org>
+On Wednesday, December 12, 2018 9:17 AM, Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
 
-With blob sharing in place, TOMOYO is no longer an exclusive LSM, so it
-can operate separately now. Mark it as such.
+> Hi,
+>
+> The goal of this patch series is to control script interpretation. A
+> new O_MAYEXEC flag used by sys_open() is added to enable userland script
+> interpreter to delegate to the kernel (and thus the system security
+> policy) the permission to interpret scripts or other files containing
+> what can be seen as commands.
+>
+> The security policy is the responsibility of an LSM. A basic
+> system-wide policy is implemented with Yama and configurable through a
+> sysctl.
+>
+> The initial idea come from CLIP OS and the original implementation has
+> been used for more than 10 years:
+> https://github.com/clipos-archive/clipos4_doc
+>
+> An introduction to O_MAYEXEC was given at the Linux Security Summit
+> Europe 2018 - Linux Kernel Security Contributions by ANSSI:
+> https://www.youtube.com/watch?v=3DchNjCRtPKQY&t=3D17m15s
+> The "write xor execute" principle was explained at Kernel Recipes 2018 -
+> CLIP OS: a defense-in-depth OS:
+> https://www.youtube.com/watch?v=3DPjRE0uBtkHU&t=3D11m14s
+>
+> This patch series can be applied on top of v4.20-rc6. This can be
+> tested with CONFIG_SECURITY_YAMA. I would really appreciate
+> constructive comments on this RFC.
+>
+> Regards,
+>
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- security/tomoyo/tomoyo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Are various interpreters upstreams interested in adding support
+for O_MAYEXEC if it land in kernel? Did you contacted them about this?
 
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 9094cf41a247..066c0daf0efc 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -577,7 +577,7 @@ static int __init tomoyo_init(void)
- DEFINE_LSM(tomoyo) = {
- 	.name = "tomoyo",
- 	.enabled = &tomoyo_enabled,
--	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.blobs = &tomoyo_blob_sizes,
- 	.init = tomoyo_init,
- };
--- 
-2.14.5
-
+Jordan
 
