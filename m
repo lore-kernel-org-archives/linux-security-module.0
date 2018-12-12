@@ -2,53 +2,45 @@ Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C22C67839
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1526C67839
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7EBA20851
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:41:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7EBA20851
+	by mail.kernel.org (Postfix) with ESMTP id 91F5120870
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:42:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F5120870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbeLLXk7 (ORCPT
+        id S1728121AbeLLXmu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:40:59 -0500
-Received: from namei.org ([65.99.196.166]:51466 "EHLO namei.org"
+        Wed, 12 Dec 2018 18:42:50 -0500
+Received: from namei.org ([65.99.196.166]:51486 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbeLLXk7 (ORCPT
+        id S1726214AbeLLXmu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:40:59 -0500
+        Wed, 12 Dec 2018 18:42:50 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBCNeWxU007768;
-        Wed, 12 Dec 2018 23:40:32 GMT
-Date:   Thu, 13 Dec 2018 10:40:32 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBCNgRB8007873;
+        Wed, 12 Dec 2018 23:42:28 GMT
+Date:   Thu, 13 Dec 2018 10:42:27 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Florian Weimer <fweimer@redhat.com>
-cc:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>
+cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        John Johansen <john.johansen@canonical.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        =?ISO-8859-15?Q?Philippe_Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
-In-Reply-To: <87lg4upkpv.fsf@oldenburg2.str.redhat.com>
-Message-ID: <alpine.LRH.2.21.1812131039400.7600@namei.org>
-References: <20181212081712.32347-1-mic@digikod.net> <alpine.LRH.2.21.1812130642250.29507@namei.org> <87lg4upkpv.fsf@oldenburg2.str.redhat.com>
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-ima-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH 0/5] security: remove needless usage of module header
+In-Reply-To: <1544387793-32309-1-git-send-email-paul.gortmaker@windriver.com>
+Message-ID: <alpine.LRH.2.21.1812131041490.7600@namei.org>
+References: <1544387793-32309-1-git-send-email-paul.gortmaker@windriver.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -56,19 +48,18 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 12 Dec 2018, Florian Weimer wrote:
+On Sun, 9 Dec 2018, Paul Gortmaker wrote:
 
-> * James Morris:
-> 
-> > If you're depending on the script interpreter to flag that the user may 
-> > execute code, this seems to be equivalent in security terms to depending 
-> > on the user.  e.g. what if the user uses ptrace and clears O_MAYEXEC?
-> 
-> The argument I've heard is this: Using ptrace (and adding the +x
-> attribute) are auditable events.
+> Paul Gortmaker (5):
+>   security: audit and remove any unnecessary uses of module.h
+>   keys: remove needless modular infrastructure from ecryptfs_format
+>   security: fs: make inode explicitly non-modular
+>   security: integrity: make evm_main explicitly non-modular
+>   security: integrity: make ima_main explicitly non-modular
 
-I guess you could also preload a modified libc which strips the flag.
-
+All applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+and next-general
 
 -- 
 James Morris
