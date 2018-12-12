@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BAFC67839
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:38:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 809D4C6783B
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A30AC20870
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:38:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A30AC20870
+	by mail.kernel.org (Postfix) with ESMTP id 5192520870
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:40:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5192520870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726254AbeLLXir (ORCPT
+        id S1726278AbeLLXkV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:38:47 -0500
-Received: from namei.org ([65.99.196.166]:51430 "EHLO namei.org"
+        Wed, 12 Dec 2018 18:40:21 -0500
+Received: from namei.org ([65.99.196.166]:51438 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbeLLXir (ORCPT
+        id S1726214AbeLLXkV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:38:47 -0500
+        Wed, 12 Dec 2018 18:40:21 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBCNZdEC007574;
-        Wed, 12 Dec 2018 23:35:39 GMT
-Date:   Thu, 13 Dec 2018 10:35:39 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBCNbGV4007647;
+        Wed, 12 Dec 2018 23:37:16 GMT
+Date:   Thu, 13 Dec 2018 10:37:16 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Paul Moore <paul@paul-moore.com>
 cc:     selinux@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
@@ -34,7 +34,7 @@ cc:     selinux@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
         bfields@fieldses.org
 Subject: Re: SELinux testsuite failure in overlayfs with v4.20-rc kernels
 In-Reply-To: <CAHC9VhTGF3SxRh0iTMhqFYExh3HrKVn7Wnko-_hb+y+6BmCRaQ@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1812131034330.7515@namei.org>
+Message-ID: <alpine.LRH.2.21.1812131036590.7600@namei.org>
 References: <alpine.LRH.2.21.1812130915190.5053@namei.org> <CAHC9VhTGF3SxRh0iTMhqFYExh3HrKVn7Wnko-_hb+y+6BmCRaQ@mail.gmail.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
@@ -45,13 +45,10 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 On Wed, 12 Dec 2018, Paul Moore wrote:
 
-> This is a known problem, see the archive link below, with Miklos
-> promising to send a revert to Linus for v4.20.  I just pinged him
-> earlier this week to remind him, but I haven't heard back yet and I
-> don't see anything in Linus' tree.
+> I would much prefer if Miklos sent the revert, but if he doesn't send
+> the revert by the end of the week, I'm going to send one next week.
 
-Ahh, looks like the mailing list change meant my mail filters weren't 
-separating the SELinux postings out for me and I missed these.
+The revert was posted today.
 
 -- 
 James Morris
