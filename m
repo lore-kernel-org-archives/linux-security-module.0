@@ -2,55 +2,46 @@ Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4976DC67839
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 03:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD9E7C67839
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 05:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CC9A20851
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 03:02:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gB/wt+5I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CC9A20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9E8A620672
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 05:13:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E8A620672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbeLMDCe (ORCPT
+        id S1726618AbeLMFNr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 22:02:34 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45556 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbeLMDCe (ORCPT
+        Thu, 13 Dec 2018 00:13:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49638 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726593AbeLMFNr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 22:02:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=wkjviKf3aN2mLDkPF2pxE5QaInJ9Yf6kITrXLVMxCPw=; b=gB/wt+5Im+cEhdT9AemjcOfZgN
-        Am+dd4FhSjE6bAz1t0Kj8e0CCLIOY+aojdW69PA0iFtcde0CWfM8BDMuELOKQtL/FF8WO7WwNr/zF
-        rJueWqQVAA/bg+FMm/FfpbTmTBqM8/0RDr6UxB6f/9FqoXa3D6+Oj+WWzWdA7/nvaZGUMkJwTCWJ9
-        rKVS13MR5qHNp/U4eHK/73A5HZ3ai/CwpR4NtmwjMD497WTi3aMHOpBC3GSrS7iG92wnBdAWDsssG
-        lh+XRq62T7WqeR4cB/dPkGY98P59txz7nJwcxG7c3hxS5yn2Itvq4ZXyHhNPIzlO0mzUOGl+DUGsI
-        bdwp70Tw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gXHGe-0006LC-Ht; Thu, 13 Dec 2018 03:02:28 +0000
-Date:   Wed, 12 Dec 2018 19:02:28 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
+        Thu, 13 Dec 2018 00:13:47 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0D00E307D843;
+        Thu, 13 Dec 2018 05:13:46 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-82.ams2.redhat.com [10.36.116.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D2CB05D717;
+        Thu, 13 Dec 2018 05:13:40 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         Matthew Garrett <mjg59@google.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
         <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
         Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
         Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
@@ -59,31 +50,40 @@ Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
-Message-ID: <20181213030228.GM6830@bombadil.infradead.org>
 References: <20181212081712.32347-1-mic@digikod.net>
+        <alpine.LRH.2.21.1812130642250.29507@namei.org>
+        <87lg4upkpv.fsf@oldenburg2.str.redhat.com>
+        <alpine.LRH.2.21.1812131039400.7600@namei.org>
+Date:   Thu, 13 Dec 2018 06:13:39 +0100
+In-Reply-To: <alpine.LRH.2.21.1812131039400.7600@namei.org> (James Morris's
+        message of "Thu, 13 Dec 2018 10:40:32 +1100 (AEDT)")
+Message-ID: <87ftv2ovp8.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 13 Dec 2018 05:13:47 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 12, 2018 at 09:17:07AM +0100, Mickaël Salaün wrote:
-> The goal of this patch series is to control script interpretation.  A
-> new O_MAYEXEC flag used by sys_open() is added to enable userland script
-> interpreter to delegate to the kernel (and thus the system security
-> policy) the permission to interpret scripts or other files containing
-> what can be seen as commands.
+* James Morris:
 
-I don't have a problem with the concept, but we're running low on O_ bits.
-Does this have to be done before the process gets a file descriptor,
-or could we have a new syscall?  Since we're going to be changing the
-interpreters anyway, it doesn't seem like too much of an imposition to
-ask them to use:
+> On Wed, 12 Dec 2018, Florian Weimer wrote:
+>
+>> * James Morris:
+>> 
+>> > If you're depending on the script interpreter to flag that the user may 
+>> > execute code, this seems to be equivalent in security terms to depending 
+>> > on the user.  e.g. what if the user uses ptrace and clears O_MAYEXEC?
+>> 
+>> The argument I've heard is this: Using ptrace (and adding the +x
+>> attribute) are auditable events.
+>
+> I guess you could also preload a modified libc which strips the flag.
 
-	int verify_for_exec(int fd)
+My understanding is that this new libc would have to come somewhere, and
+making it executable would be an auditable even as well.
 
-instead of adding an O_MAYEXEC.
+Thanks,
+Florian
