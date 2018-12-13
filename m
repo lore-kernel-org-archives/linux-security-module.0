@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D95C6786C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F5AC67872
 	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 02:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F0620851
+	by mail.kernel.org (Postfix) with ESMTP id 6020B20879
 	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 02:12:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F0620851
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6020B20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbeLMCLY (ORCPT
+        id S1726526AbeLMCMf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:11:24 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50580 "EHLO
+        Wed, 12 Dec 2018 21:12:35 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48656 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726797AbeLMCLY (ORCPT
+        by vger.kernel.org with ESMTP id S1726869AbeLMCLh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:11:24 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD23qHu134716
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:11:23 -0500
+        Wed, 12 Dec 2018 21:11:37 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD23jwv025189
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:11:36 -0500
 Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb9t03v7s-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbbktf21s-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:11:22 -0500
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:11:36 -0500
 Received: from localhost
         by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 13 Dec 2018 02:11:22 -0000
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        Thu, 13 Dec 2018 02:11:35 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
         by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 02:11:17 -0000
+        Thu, 13 Dec 2018 02:11:29 -0000
 Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD2BFAd8585356
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD2BSx122020116
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 02:11:15 GMT
+        Thu, 13 Dec 2018 02:11:28 GMT
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BCE32C6061;
-        Thu, 13 Dec 2018 02:11:15 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 55033C6057;
+        Thu, 13 Dec 2018 02:11:28 +0000 (GMT)
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8346FC605B;
-        Thu, 13 Dec 2018 02:11:11 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id CBABFC6066;
+        Thu, 13 Dec 2018 02:11:22 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.80.227.60])
         by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Dec 2018 02:11:11 +0000 (GMT)
+        Thu, 13 Dec 2018 02:11:22 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -68,118 +68,54 @@ Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v9 05/14] integrity: Introduce integrity_keyring_from_id()
-Date:   Thu, 13 Dec 2018 00:08:58 -0200
+Subject: [PATCH v9 07/14] integrity: Select CONFIG_KEYS instead of depending on it
+Date:   Thu, 13 Dec 2018 00:09:00 -0200
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181213020907.13601-1-bauerman@linux.ibm.com>
 References: <20181213020907.13601-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18121302-0020-0000-0000-00000E98FB5E
+x-cbid: 18121302-0020-0000-0000-00000E98FB61
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010217; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000270; SDB=6.01130951; UDB=6.00587714; IPR=6.00911085;
- MB=3.00024674; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 02:11:21
+ MB=3.00024674; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 02:11:33
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121302-0021-0000-0000-000064081C8B
-Message-Id: <20181213020907.13601-6-bauerman@linux.ibm.com>
+x-cbparentid: 18121302-0021-0000-0000-000064081CAC
+Message-Id: <20181213020907.13601-8-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=879 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1812130017
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-IMA will need to obtain the keyring used to verify file signatures so that
-it can verify the module-style signature appended to files.
+This avoids a dependency cycle in soon-to-be-introduced
+CONFIG_IMA_APPRAISE_MODSIG: it will select CONFIG_MODULE_SIG_FORMAT
+which in turn selects CONFIG_KEYS. Kconfig then complains that
+CONFIG_INTEGRITY_SIGNATURE depends on CONFIG_KEYS.
 
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/integrity/digsig.c    | 28 +++++++++++++++++++++-------
- security/integrity/integrity.h |  6 ++++++
- 2 files changed, 27 insertions(+), 7 deletions(-)
+ security/integrity/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 71c3200521d6..bbfa3085d1b5 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -44,11 +44,10 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
- #define restrict_link_to_ima restrict_link_by_builtin_trusted
- #endif
+diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+index 4b4d2aeef539..176905bef20a 100644
+--- a/security/integrity/Kconfig
++++ b/security/integrity/Kconfig
+@@ -17,8 +17,8 @@ if INTEGRITY
  
--int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
--			    const char *digest, int digestlen)
-+struct key *integrity_keyring_from_id(const unsigned int id)
- {
--	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
--		return -EINVAL;
-+	if (id >= INTEGRITY_KEYRING_MAX)
-+		return ERR_PTR(-EINVAL);
- 
- 	if (!keyring[id]) {
- 		keyring[id] =
-@@ -57,17 +56,32 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
- 			int err = PTR_ERR(keyring[id]);
- 			pr_err("no %s keyring: %d\n", keyring_name[id], err);
- 			keyring[id] = NULL;
--			return err;
-+			return ERR_PTR(err);
- 		}
- 	}
- 
-+	return keyring[id];
-+}
-+
-+int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
-+			    const char *digest, int digestlen)
-+{
-+	struct key *keyring;
-+
-+	if (siglen < 2)
-+		return -EINVAL;
-+
-+	keyring = integrity_keyring_from_id(id);
-+	if (IS_ERR(keyring))
-+		return PTR_ERR(keyring);
-+
- 	switch (sig[1]) {
- 	case 1:
- 		/* v1 API expect signature without xattr type */
--		return digsig_verify(keyring[id], sig + 1, siglen - 1,
-+		return digsig_verify(keyring, sig + 1, siglen - 1,
- 				     digest, digestlen);
- 	case 2:
--		return asymmetric_verify(keyring[id], sig, siglen,
-+		return asymmetric_verify(keyring, sig, siglen,
- 					 digest, digestlen);
- 	}
- 
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 2bf0fc51752b..6f657260a964 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -155,6 +155,7 @@ extern struct dentry *integrity_dir;
- 
- #ifdef CONFIG_INTEGRITY_SIGNATURE
- 
-+struct key *integrity_keyring_from_id(const unsigned int id);
- int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
- 			    const char *digest, int digestlen);
- 
-@@ -164,6 +165,11 @@ int __init integrity_load_cert(const unsigned int id, const char *source,
- 			       const void *data, size_t len, key_perm_t perm);
- #else
- 
-+static inline struct key *integrity_keyring_from_id(const unsigned int id)
-+{
-+	return ERR_PTR(-EINVAL);
-+}
-+
- static inline int integrity_digsig_verify(const unsigned int id,
- 					  const char *sig, int siglen,
- 					  const char *digest, int digestlen)
+ config INTEGRITY_SIGNATURE
+ 	bool "Digital signature verification using multiple keyrings"
+-	depends on KEYS
+ 	default n
++	select KEYS
+ 	select SIGNATURE
+ 	help
+ 	  This option enables digital signature verification support
 
