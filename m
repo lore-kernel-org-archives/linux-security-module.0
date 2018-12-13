@@ -2,56 +2,55 @@ Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6AEC67839
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 02:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D95C6786C
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 02:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D35D420851
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 02:12:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D35D420851
+	by mail.kernel.org (Postfix) with ESMTP id 32F0620851
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 02:12:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F0620851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbeLMCM0 (ORCPT
+        id S1726792AbeLMCLY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:12:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57406 "EHLO
+        Wed, 12 Dec 2018 21:11:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50580 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727134AbeLMCMK (ORCPT
+        by vger.kernel.org with ESMTP id S1726797AbeLMCLY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:12:10 -0500
+        Wed, 12 Dec 2018 21:11:24 -0500
 Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD23sej134871
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:12:10 -0500
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb9t03w74-1
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD23qHu134716
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:11:23 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb9t03v7s-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:12:09 -0500
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:11:22 -0500
 Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 13 Dec 2018 02:12:09 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 13 Dec 2018 02:11:22 -0000
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 02:12:04 -0000
+        Thu, 13 Dec 2018 02:11:17 -0000
 Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD2C2FU27066396
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD2BFAd8585356
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 02:12:02 GMT
+        Thu, 13 Dec 2018 02:11:15 GMT
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8CDB2C605B;
-        Thu, 13 Dec 2018 02:12:02 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id BCE32C6061;
+        Thu, 13 Dec 2018 02:11:15 +0000 (GMT)
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6AA92C6059;
-        Thu, 13 Dec 2018 02:11:58 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 8346FC605B;
+        Thu, 13 Dec 2018 02:11:11 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.80.227.60])
         by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Dec 2018 02:11:58 +0000 (GMT)
+        Thu, 13 Dec 2018 02:11:11 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
@@ -69,24 +68,24 @@ Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>,
         "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH v9 13/14] ima: Write modsig to the measurement list
-Date:   Thu, 13 Dec 2018 00:09:06 -0200
+Subject: [PATCH v9 05/14] integrity: Introduce integrity_keyring_from_id()
+Date:   Thu, 13 Dec 2018 00:08:58 -0200
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181213020907.13601-1-bauerman@linux.ibm.com>
 References: <20181213020907.13601-1-bauerman@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18121302-0036-0000-0000-00000A69BCB8
+x-cbid: 18121302-0020-0000-0000-00000E98FB5E
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010217; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000270; SDB=6.01130951; UDB=6.00587714; IPR=6.00911085;
- MB=3.00024674; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 02:12:08
+ MB=3.00024674; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 02:11:21
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121302-0037-0000-0000-000049F4A901
-Message-Id: <20181213020907.13601-14-bauerman@linux.ibm.com>
+x-cbparentid: 18121302-0021-0000-0000-000064081C8B
+Message-Id: <20181213020907.13601-6-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1812130017
@@ -94,93 +93,93 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add modsig support to the "sig" template field, allowing the the contents
-of the modsig to be included in the measurement list.
+IMA will need to obtain the keyring used to verify file signatures so that
+it can verify the module-style signature appended to files.
 
-Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/integrity/ima/ima.h              |  7 +++++++
- security/integrity/ima/ima_modsig.c       | 13 +++++++++++++
- security/integrity/ima/ima_template_lib.c | 15 ++++++++++++++-
- 3 files changed, 34 insertions(+), 1 deletion(-)
+ security/integrity/digsig.c    | 28 +++++++++++++++++++++-------
+ security/integrity/integrity.h |  6 ++++++
+ 2 files changed, 27 insertions(+), 7 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 40a6ddfdd9ea..55f8ef65cab4 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -318,6 +318,7 @@ int ima_read_collect_modsig(enum ima_hooks func, const void *buf,
- 			    int *xattr_len);
- int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr, enum hash_algo *algo,
- 			const u8 **hash, u8 *len);
-+int ima_modsig_serialize_data(struct evm_ima_xattr_data **data, int *data_len);
- void ima_free_xattr_data(struct evm_ima_xattr_data *hdr);
- #else
- static inline bool ima_hook_supports_modsig(enum ima_hooks func)
-@@ -340,6 +341,12 @@ static inline int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr,
- 	return -EOPNOTSUPP;
- }
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 71c3200521d6..bbfa3085d1b5 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -44,11 +44,10 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+ #define restrict_link_to_ima restrict_link_by_builtin_trusted
+ #endif
  
-+static inline int ima_modsig_serialize_data(struct evm_ima_xattr_data **data,
-+					    int *data_len)
-+{
-+	return -EOPNOTSUPP;
+-int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+-			    const char *digest, int digestlen)
++struct key *integrity_keyring_from_id(const unsigned int id)
+ {
+-	if (id >= INTEGRITY_KEYRING_MAX || siglen < 2)
+-		return -EINVAL;
++	if (id >= INTEGRITY_KEYRING_MAX)
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (!keyring[id]) {
+ 		keyring[id] =
+@@ -57,17 +56,32 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			int err = PTR_ERR(keyring[id]);
+ 			pr_err("no %s keyring: %d\n", keyring_name[id], err);
+ 			keyring[id] = NULL;
+-			return err;
++			return ERR_PTR(err);
+ 		}
+ 	}
+ 
++	return keyring[id];
 +}
 +
- static inline void ima_free_xattr_data(struct evm_ima_xattr_data *hdr)
- {
- 	kfree(hdr);
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-index 587b79a9afef..0424f844c4c3 100644
---- a/security/integrity/ima/ima_modsig.c
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -190,6 +190,19 @@ int ima_get_modsig_hash(struct evm_ima_xattr_data *hdr, enum hash_algo *algo,
- 	return pkcs7_get_digest(modsig->pkcs7_msg, hash, len);
- }
- 
-+int ima_modsig_serialize_data(struct evm_ima_xattr_data **data, int *data_len)
++int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
++			    const char *digest, int digestlen)
 +{
-+	struct modsig_hdr *modsig = (struct modsig_hdr *) *data;
++	struct key *keyring;
 +
-+	if (!*data || (*data)->type != IMA_MODSIG)
++	if (siglen < 2)
 +		return -EINVAL;
 +
-+	*data = &modsig->raw_pkcs7;
-+	*data_len = modsig->raw_pkcs7_len;
++	keyring = integrity_keyring_from_id(id);
++	if (IS_ERR(keyring))
++		return PTR_ERR(keyring);
 +
-+	return 0;
+ 	switch (sig[1]) {
+ 	case 1:
+ 		/* v1 API expect signature without xattr type */
+-		return digsig_verify(keyring[id], sig + 1, siglen - 1,
++		return digsig_verify(keyring, sig + 1, siglen - 1,
+ 				     digest, digestlen);
+ 	case 2:
+-		return asymmetric_verify(keyring[id], sig, siglen,
++		return asymmetric_verify(keyring, sig, siglen,
+ 					 digest, digestlen);
+ 	}
+ 
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 2bf0fc51752b..6f657260a964 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -155,6 +155,7 @@ extern struct dentry *integrity_dir;
+ 
+ #ifdef CONFIG_INTEGRITY_SIGNATURE
+ 
++struct key *integrity_keyring_from_id(const unsigned int id);
+ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			    const char *digest, int digestlen);
+ 
+@@ -164,6 +165,11 @@ int __init integrity_load_cert(const unsigned int id, const char *source,
+ 			       const void *data, size_t len, key_perm_t perm);
+ #else
+ 
++static inline struct key *integrity_keyring_from_id(const unsigned int id)
++{
++	return ERR_PTR(-EINVAL);
 +}
 +
- int ima_modsig_verify(struct key *keyring, const void *hdr)
- {
- 	const struct modsig_hdr *modsig = (const struct modsig_hdr *) hdr;
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 36d175816894..417cd153ba60 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -411,10 +411,23 @@ int ima_eventsig_init(struct ima_event_data *event_data,
- 		      struct ima_field_data *field_data)
- {
- 	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
-+	int xattr_len = event_data->xattr_len;
- 
- 	if (!is_signed(xattr_value))
- 		return 0;
- 
--	return ima_write_template_field_data(xattr_value, event_data->xattr_len,
-+	/*
-+	 * The xattr_value for IMA_MODSIG is a runtime structure containing
-+	 * pointers. Get its raw data instead.
-+	 */
-+	if (xattr_value->type == IMA_MODSIG) {
-+		int rc;
-+
-+		rc = ima_modsig_serialize_data(&xattr_value, &xattr_len);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	return ima_write_template_field_data(xattr_value, xattr_len,
- 					     DATA_FMT_HEX, field_data);
- }
+ static inline int integrity_digsig_verify(const unsigned int id,
+ 					  const char *sig, int siglen,
+ 					  const char *digest, int digestlen)
 
