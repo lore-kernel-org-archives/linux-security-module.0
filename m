@@ -2,194 +2,156 @@ Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC2FC65BAE
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 14:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E24C67839
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 14:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C54E920645
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 14:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544710227;
-	bh=SSWtJydgAT1VIU1V2HZUv33F7SJctJF2ncli7OfWFOQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OBB7jfqKyj5LKY/ffXmIYJdPwqEfyIfVqrWOduU7lAud1tg6fbGOdtVCK0H+rnFQ3
-	 2jnvDuXx591p3NEBBT1QCn9Bn/nZ3LFMqfOBi+OwHrVDRh0vTHWcASjwjUVxGRIoZJ
-	 2LXxSFBCEATZYGNE0n09QXVorDuuYi+s1Bv9urSs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C54E920645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7356F20851
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 14:23:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="Q7K+FECm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7356F20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728517AbeLMOKW (ORCPT
+        id S1728591AbeLMOXC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:10:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727720AbeLMOKW (ORCPT
+        Thu, 13 Dec 2018 09:23:02 -0500
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:51575 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727618AbeLMOXC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:10:22 -0500
-Received: from linux-8ccs (p5DE45A67.dip0.t-ipconnect.de [93.228.90.103])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91FDA2086D;
-        Thu, 13 Dec 2018 14:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544710220;
-        bh=SSWtJydgAT1VIU1V2HZUv33F7SJctJF2ncli7OfWFOQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZOuhypgqy+brjCnFoNs8MojU6a/Cdy++6vjYA4O+gsdTIVA3QVy+arpdsjE8Iv7fi
-         IsMsa6H3WjdgvhGiUa2KDhzu7H65oNgpc0p4DaOkqr3gdTglYeaT889xP3tlydk5kD
-         8baQXkUowvIEmcLwHDGRpyie7Ui+h0GmJkHjMRAc=
-Date:   Thu, 13 Dec 2018 15:10:13 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH v7 13/14] module: Do not set nx for module memory before
- freeing
-Message-ID: <20181213141013.GA16819@linux-8ccs>
-References: <20181205013408.47725-1-namit@vmware.com>
- <20181205013408.47725-14-namit@vmware.com>
+        Thu, 13 Dec 2018 09:23:02 -0500
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 4CFEDD0006B;
+        Thu, 13 Dec 2018 15:23:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1544710987;
+        bh=XY7N8nFQJpFTTaSbi7mbOH98oOcm1qN4ImvLJfHG3mk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=Q7K+FECmey2To1EhVIxM5xdJPI5oFKzSvY9kybvDrmTKKcEy+yAUC/yATqGyOg61Z
+         /DqhI5iYpxBocjiLzBWB3tcA450HFW0KrQyxCCKmBMFu7n3yJk7F2cWEXja1rrXJWB
+         h7kVrF+w0mtVsmmgGBpjRa4gz6hGaxW6QT60txGUuPW4Bbx08GsoPwA7ucGkFpUCdb
+         BJyG5w3uyjNU+lxRTv1oaH5TaB5ONL1C5opA1NqT4IFiRrK8fhQxFbddU48fnYsCoT
+         e2GZ3CNiEysBm/im8RO8WToyF2cCdeP6t1xzso2+vqcob6ApgOU1jCckbYeym22QCU
+         LYjR2swD6fP/Q==
+Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on
+ sys_open()
+To:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Jan Kara <jack@suse.cz>
+CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <sgrubb@redhat.com>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <20181212081712.32347-2-mic@digikod.net>
+ <20181212144306.GA19945@quack2.suse.cz>
+ <20181213094658.GA996@lithium.mbobrowski.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <22489759-076e-206a-e367-c13202f05eea@ssi.gouv.fr>
+Date:   Thu, 13 Dec 2018 15:23:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181205013408.47725-14-namit@vmware.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181213094658.GA996@lithium.mbobrowski.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-+++ Nadav Amit [04/12/18 17:34 -0800]:
->When module memory is about to be freed, there is no apparent reason to
->make it (and its data) executable, but that's exactly what is done
->today. This is not efficient and not secure.
->
->There are various theories why it was done, but none of them seem as
->something that really require it today. nios2 uses kmalloc for module
->memory, but anyhow it does not change the PTEs of the module memory.  In
->x86, changing vmalloc'd memory mappings also modifies the direct mapping
->alias, but the NX-bit is not modified in such way.
->
->So let's remove it. Andy suggested that the changes of the PTEs can be
->avoided (excluding the direct-mapping alias), which is true. However,
->in x86 it requires some cleanup of the contiguous page allocator, which
->is outside of the scope of this patch-set.
->
->Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>
->Cc: Will Deacon <will.deacon@arm.com>
->Cc: Andy Lutomirski <luto@kernel.org>
->Signed-off-by: Nadav Amit <namit@vmware.com>
 
-[ Thanks Andrea Parri for the cc ]
+On 13/12/2018 10:47, Matthew Bobrowski wrote:
+> On Wed, Dec 12, 2018 at 03:43:06PM +0100, Jan Kara wrote:
+>>> When the O_MAYEXEC flag is passed, sys_open() may be subject to
+>>> additional restrictions depending on a security policy implemented by an
+>>> LSM through the inode_permission hook.
+>>>
+>>> The underlying idea is to be able to restrict scripts interpretation
+>>> according to a policy defined by the system administrator.  For this to
+>>> be possible, script interpreters must use the O_MAYEXEC flag
+>>> appropriately.  To be fully effective, these interpreters also need to
+>>> handle the other ways to execute code (for which the kernel can't help):
+>>> command line parameters (e.g., option -e for Perl), module loading
+>>> (e.g., option -m for Python), stdin, file sourcing, environment
+>>> variables, configuration files...  According to the threat model, it may
+>>> be acceptable to allow some script interpreters (e.g. Bash) to interpret
+>>> commands from stdin, may it be a TTY or a pipe, because it may not be
+>>> enough to (directly) perform syscalls.
+>>>
+>>> A simple security policy implementation is available in a following
+>>> patch for Yama.
+>>>
+>>> This is an updated subset of the patch initially written by Vincent
+>>> Strubel for CLIP OS:
+>>> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+>>> This patch has been used for more than 10 years with customized script
+>>> interpreters.  Some examples can be found here:
+>>> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+>>>
+>>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>>> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+>>> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+>>> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+>>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+>>
+>> ...
+>>
+>>> diff --git a/fs/open.c b/fs/open.c
+>>> index 0285ce7dbd51..75479b79a58f 100644
+>>> --- a/fs/open.c
+>>> +++ b/fs/open.c
+>>> @@ -974,6 +974,10 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
+>>>  	if (flags & O_APPEND)
+>>>  		acc_mode |= MAY_APPEND;
+>>>  
+>>> +	/* Check execution permissions on open. */
+>>> +	if (flags & O_MAYEXEC)
+>>> +		acc_mode |= MAY_OPENEXEC;
+>>> +
+>>>  	op->acc_mode = acc_mode;
+>>>  
+>>>  	op->intent = flags & O_PATH ? 0 : LOOKUP_OPEN;
+>>
+>> I don't feel experienced enough in security to tell whether we want this
+>> functionality or not. But if we do this, shouldn't we also set FMODE_EXEC
+>> on the resulting struct file? That way also security_file_open() can be
+>> used to arbitrate such executable opens and in particular
+>> fanotify permission event FAN_OPEN_EXEC will get properly generated which I
+>> guess is desirable (support for it is sitting in my tree waiting for the
+>> merge window) - adding some audit people involved in FAN_OPEN_EXEC to
+>> CC. Just an idea...
+> 
+> If I'm understanding this patch series correctly, without an enforced LSM
+> policy there's realistically no added benefit from a security perspective,
+> right?
 
-Regarding the patch subject, don't you mean "Do not make module
-memory executable" or "Do not unset nx" instead of "Do not set nx"?
-Hm, these double negatives are confusing :-)
+That's correct. The kernel knows the semantic but the enforcement is
+delegated to an LSM and its policy.
 
-I think this also needs to be done in the load_module() error path.
-See the bug_cleanup label. There, module_disable_{ro,nx}() are called
-before module deallocation.
+> Also, I'm in agreement with what Jan has mentioned in regards to setting
+> the __FMODE_EXEC flag when O_MAYEXEC has been specified. This is something that
+> would work quite nicely in conjunction with some of the new file access
+> notification events.
 
-I am not sure why all this was made executable before freeing in the
-first place.  Tried to dig through the commit history and the first
-commit that introduced this behavior was 448694a1d50 ("module: undo
-module RONX protection correctly"). There, the behavior was changed
-from W+NX to W+X before releasing the module. But AFAIK from the
-changelog, there was no real technical reason behind it, it stemmed
-out of the complaint of code asymmetry :-/
-
-Jessica
-
->---
-> kernel/module.c | 35 ++++++++++++++++++++++-------------
-> 1 file changed, 22 insertions(+), 13 deletions(-)
->
->diff --git a/kernel/module.c b/kernel/module.c
->index 7cb207249437..57c5b23746e7 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -2027,20 +2027,29 @@ void set_all_modules_text_ro(void)
-> 	mutex_unlock(&module_mutex);
-> }
->
->-static void disable_ro_nx(const struct module_layout *layout)
->+static void module_restore_mappings(const struct module_layout *layout)
-> {
->-	if (rodata_enabled) {
->-		frob_text(layout, set_memory_rw);
->-		frob_rodata(layout, set_memory_rw);
->-		frob_ro_after_init(layout, set_memory_rw);
->-	}
->-	frob_rodata(layout, set_memory_x);
->-	frob_ro_after_init(layout, set_memory_x);
->-	frob_writable_data(layout, set_memory_x);
->+	/*
->+	 * First, make the mappings of the code non-executable to prevent
->+	 * transient W+X mappings from being set when the text is set as RW.
->+	 */
->+	frob_text(layout, set_memory_nx);
->+
->+	if (!rodata_enabled)
->+		return;
->+
->+	/*
->+	 * Second, set the memory as writable. Although the module memory is
->+	 * about to be freed, these calls are required (at least on x86) to
->+	 * restore the direct map to its "correct" state.
->+	 */
->+	frob_text(layout, set_memory_rw);
->+	frob_rodata(layout, set_memory_rw);
->+	frob_ro_after_init(layout, set_memory_rw);
-> }
->
-> #else
->-static void disable_ro_nx(const struct module_layout *layout) { }
->+static void module_restore_mappings(const struct module_layout *layout) { }
-> static void module_enable_nx(const struct module *mod) { }
-> static void module_disable_nx(const struct module *mod) { }
-> #endif
->@@ -2173,7 +2182,7 @@ static void free_module(struct module *mod)
-> 	mutex_unlock(&module_mutex);
->
-> 	/* This may be empty, but that's OK */
->-	disable_ro_nx(&mod->init_layout);
->+	module_restore_mappings(&mod->init_layout);
-> 	module_arch_freeing_init(mod);
-> 	module_memfree(mod->init_layout.base);
-> 	kfree(mod->args);
->@@ -2183,7 +2192,7 @@ static void free_module(struct module *mod)
-> 	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
->
-> 	/* Finally, free the core (containing the module structure) */
->-	disable_ro_nx(&mod->core_layout);
->+	module_restore_mappings(&mod->core_layout);
-> 	module_memfree(mod->core_layout.base);
-> }
->
->@@ -3507,7 +3516,7 @@ static noinline int do_init_module(struct module *mod)
-> #endif
-> 	module_enable_ro(mod, true);
-> 	mod_tree_remove_init(mod);
->-	disable_ro_nx(&mod->init_layout);
->+	module_restore_mappings(&mod->init_layout);
-> 	module_arch_freeing_init(mod);
-> 	mod->init_layout.base = NULL;
-> 	mod->init_layout.size = 0;
->-- 
->2.17.1
->
+OK, I will add it in the next patch series (for the new FAN_OPEN_EXEC
+support).
