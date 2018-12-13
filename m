@@ -2,109 +2,141 @@ Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C3EC67872
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 17:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B02E9C67839
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 20:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1CB720879
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 17:44:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cknB3/Rf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CB720879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 54C4820672
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 20:20:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C4820672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbeLMRoM (ORCPT
+        id S1727160AbeLMUUk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:44:12 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57254 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729208AbeLMRoM (ORCPT
+        Thu, 13 Dec 2018 15:20:40 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36784 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727343AbeLMUUj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Dec 2018 12:44:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=vHGUuj0rnCXK7jCzmngG9EdSGcppwG64C2WaGQxemxQ=; b=cknB3/RfhMcgP/LryCBIdo1cOp
-        Feqy1/knxhUX8eAa3sORC/FcKvArI4TbXYZ1aklrDdcXirP9YOAr5Q7G/r8Lk9KD1D0emIc9+EUH7
-        +2Ib50F4sxDSQi82OL7/W4CBDLlchqmeWJporWm809fLYmDvK+vu/Jy+bnIFlGrRzYErC5I6fGzqc
-        ZXpkOflllvTR+KUMdZa0myJZ0oKfImIYq4p9/OAv3rewao99cH2xjRuzwNs+2vKYzAmg9CQBEmMJE
-        swKz9k8fF6xjH0MWSZdjGmGr1XllQ+Od0BU4CX+18Bi7bJHjKioedp1AczQ4XEj86G1gj3//Tanr4
-        B4m+/tCA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gXV1s-00082H-FV; Thu, 13 Dec 2018 17:44:08 +0000
-Date:   Thu, 13 Dec 2018 09:44:08 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
-Message-ID: <20181213174408.GS6830@bombadil.infradead.org>
-References: <20181212081712.32347-1-mic@digikod.net>
- <20181213030228.GM6830@bombadil.infradead.org>
- <374ea88c-edc5-f1a6-3637-748635e1e7df@ssi.gouv.fr>
- <20181213171310.GR6830@bombadil.infradead.org>
- <ba523381-1b98-a8bf-ee5b-94a71caee48c@ssi.gouv.fr>
+        Thu, 13 Dec 2018 15:20:39 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBDKJ6oi064150
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Dec 2018 15:20:39 -0500
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbug28dqu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Dec 2018 15:20:38 -0500
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <kgold@linux.ibm.com>;
+        Thu, 13 Dec 2018 20:20:38 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Dec 2018 20:20:35 -0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBDKKYQU27197522
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Dec 2018 20:20:34 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 428C2C6057;
+        Thu, 13 Dec 2018 20:20:34 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0B75C6055;
+        Thu, 13 Dec 2018 20:20:23 +0000 (GMT)
+Received: from [9.2.202.49] (unknown [9.2.202.49])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Dec 2018 20:20:23 +0000 (GMT)
+Subject: Re: [PATCH v4 1/6] tpm: dynamically allocate active_banks array
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-2-roberto.sassu@huawei.com>
+ <98482eee-6e91-1666-1ce2-cfa94a33efc2@linux.ibm.com>
+ <da2ef557-3041-a1ca-47cb-fd7ab92876aa@huawei.com>
+From:   Ken Goldman <kgold@linux.ibm.com>
+Date:   Thu, 13 Dec 2018 15:21:01 -0500
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <da2ef557-3041-a1ca-47cb-fd7ab92876aa@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ba523381-1b98-a8bf-ee5b-94a71caee48c@ssi.gouv.fr>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18121320-0036-0000-0000-00000A6A3314
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010220; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000271; SDB=6.01131314; UDB=6.00587932; IPR=6.00911446;
+ MB=3.00024682; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 20:20:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121320-0037-0000-0000-000049F82CEB
+Message-Id: <47a8bee4-404a-9fff-f85c-0c323eaa6ad5@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812130174
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 13, 2018 at 06:36:15PM +0100, Mickaël Salaün wrote:
-> On 13/12/2018 18:13, Matthew Wilcox wrote:
-> > On Thu, Dec 13, 2018 at 04:17:29PM +0100, Mickaël Salaün wrote:
-> >> Adding a new syscall for this simple use case seems excessive. I think
-> > 
-> > We have somewhat less than 400 syscalls today.  We have 20 O_ bits defined.
-> > Obviously there's a lower practical limit on syscalls, but in principle
-> > we could have up to 2^32 syscalls, and there are only 12 O_ bits remaining.
-> > 
-> >> that the open/openat syscall familly are the right place to do an atomic
-> >> open and permission check, the same way the kernel does for other file
-> >> access. Moreover, it will be easier to patch upstream interpreters
-> >> without the burden of handling a (new) syscall that may not exist on the
-> >> running system, whereas unknown open flags are ignored.
-> > 
-> > Ah, but that's the problem.  The interpreter can see an -ENOSYS response
-> > and handle it appropriately.  If the flag is silently ignored, the
-> > interpreter has no idea whether it can do a racy check or whether to
-> > skip even trying to do the check.
+On 11/7/2018 4:41 AM, Roberto Sassu wrote:
+> On 11/7/2018 7:14 AM, Nayna Jain wrote:
 > 
-> Right, but the interpreter should interpret the script if the open with
-> O_MAYEXEC succeed (but not otherwise): it may be because the flag is
-> known by the kernel and the system policy allow this call, or because
-> the (old) kernel doesn't known about this flag (which is fine and needed
-> for backward compatibility). The script interpretation must not failed
-> if the kernel doesn't support O_MAYEXEC, it is then useless for the
-> interpreter to do any additional check.
+> In the TPM Commands specification (section 30.2.1), I found:
+> 
+> TPM_CAP_PCRS â€“ Returns the current allocation of PCR in a
+> TPML_PCR_SELECTION.
+> 
+> You mentioned:
+> 
+> #TPM_RC_SIZE response code when count is greater
+> than the possible number of banks
+> 
+> but TPML_PCR_SELECTION is provided by the TPM.
+> 
+> Roberto
+> 
+> 
+[snip]
+>>
+>>
+>> As per my understanding, the count in the TPML_PCR_SELECTION represent 
+>> the number of possible banks and not the number of active banks.
+>> TCG Structures Spec for TPM 2.0 - Table 102 mentions this as 
+>> explanation of #TPM_RC_SIZE.
 
-If that's the way interpreters want to work, then that's fine.  They
-can just call the verify() syscall and ignore the -ENOSYS.  Done.
+FYI: This was clarified in the TCG's TPM work group today.  TPM_CAP_PCRS 
+returns:
 
-Or somebody who cares very, very deeply can change the interpreter to
-decline to run any scripts if the kernel returns -ENOSYS.
+The TPML_PCR_SELECTION must include a TPMS_PCR_SELECTION for each PCR 
+bank in which there is at least one allocated PCR. The 
+TPML_PCR_SELECTION may return a TPMS_PCR_SELECTION for each implemented 
+PCR bank.  The TPML_PCR_SELECTION may return a TPMS_PCR_SELECTION for 
+each implemented hash algorithm.
+
+Also:
+
+The TPM doesn't use the term "active banks"
+
+Allocated = a bank that has at least one PCR bit set in the selection 
+bitmap.
+
+Supported or implemented banks = the number of PCR banks that can be 
+allocated, based on the TPM hardware.
+
+Hash algorithms = The hash algorithms supported by the TPM
+
+For example, the TPM may support 3 hash algorithms and 2 PCR banks, and 
+have 1 bank allocated.
+
+
+
+
