@@ -2,174 +2,139 @@ Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6789C65BAE
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 09:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C0FC65BAE
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 10:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7005A2087F
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 09:47:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mbobrowski-org.20150623.gappssmtp.com header.i=@mbobrowski-org.20150623.gappssmtp.com header.b="xYRXxJ6o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7005A2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mbobrowski.org
+	by mail.kernel.org (Postfix) with ESMTP id E91BB2086D
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 10:32:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E91BB2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727599AbeLMJrT (ORCPT
+        id S1728500AbeLMKcn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:47:19 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46825 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbeLMJrT (ORCPT
+        Thu, 13 Dec 2018 05:32:43 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32810 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728499AbeLMKcn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:47:19 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w7so791593pgp.13
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Dec 2018 01:47:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mbobrowski-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=4aEx2uXuUdlX3c27Y0gll5OHSNh1td7UGwzbaC++S30=;
-        b=xYRXxJ6oRdaIZRcZ4AuLpmrIunJ2pMdNfZRMZjSRygHF9pvAWY9eah2oh43Xy2D6cR
-         z4e163m+FzsNg+6VpUOC5wFheqw/nTCoM8X9zrY52bxioP6Zt/PmK+hP+Q8f9qj9pxwC
-         brVBqWWZUWpPamlf4PzEnQ7C/qoF5fP4BF+1FGYlYXW04IvRF11Ty64To4P3fUCy2R6j
-         1n/36eZD95qz0EPH1fgoVJXtoOWKRcokvQV60oO7hkupjMNu5LYu071FLKZDj2szFAht
-         HG9oKxiEpiYSDmVWx9viTtUchY72MUQ0k7rPzmn5M7rJCcpMfOXN2gB2wX3zi7gOhpmp
-         yoiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=4aEx2uXuUdlX3c27Y0gll5OHSNh1td7UGwzbaC++S30=;
-        b=kSkHzL4yjM8ol/XQT0Ks7R6p6gCs94iUCh23R0XhaVU1WRuWGy3kk5I63XmYfPR/J+
-         m4Gc+WIXkCjKnMyAHD20iVQ+egiP3t/zWwWEghZb0al8iwNtGYKXArRb1y/uaAbtLnHU
-         ZxzOQo77kd/BWLnzxZiWY578hqpoN3suiRYUAdeSdJDYO0KAdkCT0YyladfFihmaJxHf
-         EuWIdEcfvAftmnBS2ixVaB+BWp6HsPCmcwpXbf9/xACmsTVeGqEQaMkmbB91oS9tWcbp
-         FVwn/+hud0GEne04iSAZLpKdeVBPWZy4/n8bF2G/CA3q5bCrUz025HByQoyY8O4P2P2o
-         jzKA==
-X-Gm-Message-State: AA+aEWZZ+aJlyXXldLcrHfg2tQXRNAoUWZfnTHYzOdE8SrrDMGnPlTxV
-        m9CwjrWQVzlcXp/Uv7tt8vCP
-X-Google-Smtp-Source: AFSGD/WMbJehOwf06/UZWSkxrL7D0shfZBwMNGtMHP0ioqH56GlvIGwaNXCUnsUqXQg6ICClw3lQzA==
-X-Received: by 2002:aa7:8608:: with SMTP id p8mr23822549pfn.125.1544694437798;
-        Thu, 13 Dec 2018 01:47:17 -0800 (PST)
-Received: from lithium.mbobrowski.org ([103.230.158.220])
-        by smtp.gmail.com with ESMTPSA id k191sm1613621pgd.9.2018.12.13.01.47.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 01:47:17 -0800 (PST)
-Date:   Thu, 13 Dec 2018 20:47:02 +1100
-From:   Matthew Bobrowski <mbobrowski@mbobrowski.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, sgrubb@redhat.com
-Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-Message-ID: <20181213094658.GA996@lithium.mbobrowski.org>
-References: <20181212081712.32347-1-mic@digikod.net>
- <20181212081712.32347-2-mic@digikod.net>
- <20181212144306.GA19945@quack2.suse.cz>
+        Thu, 13 Dec 2018 05:32:43 -0500
+Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id AFF53D9B1D27C;
+        Thu, 13 Dec 2018 10:32:35 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 13 Dec 2018 10:32:28 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v7 0/5] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Thu, 13 Dec 2018 11:29:40 +0100
+Message-ID: <20181213102945.30946-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181212144306.GA19945@quack2.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 12, 2018 at 03:43:06PM +0100, Jan Kara wrote:
-> > When the O_MAYEXEC flag is passed, sys_open() may be subject to
-> > additional restrictions depending on a security policy implemented by an
-> > LSM through the inode_permission hook.
-> > 
-> > The underlying idea is to be able to restrict scripts interpretation
-> > according to a policy defined by the system administrator.  For this to
-> > be possible, script interpreters must use the O_MAYEXEC flag
-> > appropriately.  To be fully effective, these interpreters also need to
-> > handle the other ways to execute code (for which the kernel can't help):
-> > command line parameters (e.g., option -e for Perl), module loading
-> > (e.g., option -m for Python), stdin, file sourcing, environment
-> > variables, configuration files...  According to the threat model, it may
-> > be acceptable to allow some script interpreters (e.g. Bash) to interpret
-> > commands from stdin, may it be a TTY or a pipe, because it may not be
-> > enough to (directly) perform syscalls.
-> > 
-> > A simple security policy implementation is available in a following
-> > patch for Yama.
-> > 
-> > This is an updated subset of the patch initially written by Vincent
-> > Strubel for CLIP OS:
-> > https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> > This patch has been used for more than 10 years with customized script
-> > interpreters.  Some examples can be found here:
-> > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
-> > 
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> > Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-> > Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
-> > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
-> 
-> ...
-> 
-> > diff --git a/fs/open.c b/fs/open.c
-> > index 0285ce7dbd51..75479b79a58f 100644
-> > --- a/fs/open.c
-> > +++ b/fs/open.c
-> > @@ -974,6 +974,10 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
-> >  	if (flags & O_APPEND)
-> >  		acc_mode |= MAY_APPEND;
-> >  
-> > +	/* Check execution permissions on open. */
-> > +	if (flags & O_MAYEXEC)
-> > +		acc_mode |= MAY_OPENEXEC;
-> > +
-> >  	op->acc_mode = acc_mode;
-> >  
-> >  	op->intent = flags & O_PATH ? 0 : LOOKUP_OPEN;
-> 
-> I don't feel experienced enough in security to tell whether we want this
-> functionality or not. But if we do this, shouldn't we also set FMODE_EXEC
-> on the resulting struct file? That way also security_file_open() can be
-> used to arbitrate such executable opens and in particular
-> fanotify permission event FAN_OPEN_EXEC will get properly generated which I
-> guess is desirable (support for it is sitting in my tree waiting for the
-> merge window) - adding some audit people involved in FAN_OPEN_EXEC to
-> CC. Just an idea...
+Update
 
-If I'm understanding this patch series correctly, without an enforced LSM
-policy there's realistically no added benefit from a security perspective,
-right? Also, I'm in agreement with what Jan has mentioned in regards to setting
-the __FMODE_EXEC flag when O_MAYEXEC has been specified. This is something that
-would work quite nicely in conjunction with some of the new file access
-notification events.
+This version of the patch set includes an additional patch (7/7) which
+modifies the definition of tpm_pcr_extend() and tpm2_pcr_extend(). The new
+patch has been included to facilitate the review of the changes to support
+TPM 2.0 crypto agility for reading/extending PCRs.
 
-Rather than setting it on the resulting struct file, couldn't they simply
-incorporate it as part of op->open_flags when flags & O_MAYEXEC? Not entirely
-sure whether this is what you actually meant or not though? Pretty much the
-same as a call to exec(2)/execat(2) when it builds its open_flags.
+
+Original patch set description
+
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
+
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
+
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
+
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
+
+Changelog
+
+v6:
+- squash patches 4-6
+- rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
+  members to size and data
+- add comment in tpm2_init_bank_info()
+
+v5:
+- rename digest_struct variable to digest
+- add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+- rename digest_size member of tpm_bank_list to extend_size
+- change type of alg_id member of tpm_bank_list from u8 to u16
+- add missing semi-colon in pcrlock()
+
+v4:
+- rename active_banks to allocated_banks
+- replace kmalloc_array() with kcalloc()
+- increment nr_allocated_banks if at least one PCR in the bank is selected
+- pass multiple digests to tpm_pcr_extend()
+
+v3:
+- remove end marker change
+- replace active_banks static array with pointer to dynamic array
+- remove TPM2_ACTIVE_PCR_BANKS
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+Roberto Sassu (5):
+  tpm: dynamically allocate the allocated_banks array
+  tpm: add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
+
+ drivers/char/tpm/eventlog/tpm2.c    |  12 +--
+ drivers/char/tpm/tpm-chip.c         |   1 +
+ drivers/char/tpm/tpm-interface.c    |  36 +++----
+ drivers/char/tpm/tpm.h              |  22 ++--
+ drivers/char/tpm/tpm1-cmd.c         |  25 ++++-
+ drivers/char/tpm/tpm2-cmd.c         | 157 +++++++++++++++++++++-------
+ include/linux/tpm.h                 |  43 +++++++-
+ include/linux/tpm_eventlog.h        |  19 +---
+ security/integrity/ima/ima_crypto.c |  10 +-
+ security/integrity/ima/ima_queue.c  |   5 +-
+ security/keys/trusted.c             |   5 +-
+ 11 files changed, 223 insertions(+), 112 deletions(-)
 
 -- 
-Matthew Bobrowski
+2.17.1
+
