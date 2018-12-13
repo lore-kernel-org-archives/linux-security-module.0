@@ -5,63 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23804C65BAE
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 11:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB10C65BAE
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 11:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7BBF20870
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 11:04:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7BBF20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E541320880
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 11:27:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E541320880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbeLMLEo (ORCPT
+        id S1728728AbeLML1F convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:04:44 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52328 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728576AbeLMLEo (ORCPT
+        Thu, 13 Dec 2018 06:27:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728611AbeLML1F (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:04:44 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBDB4JpB050016
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Dec 2018 06:04:43 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbku8fgqg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Dec 2018 06:04:42 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 13 Dec 2018 11:04:40 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 11:04:34 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBDB4XSJ9109794
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 11:04:34 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB46F4204C;
-        Thu, 13 Dec 2018 11:04:33 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AD4584203F;
-        Thu, 13 Dec 2018 11:04:31 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.105.18])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Dec 2018 11:04:31 +0000 (GMT)
-Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Thu, 13 Dec 2018 06:27:05 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 59B637F3E8;
+        Thu, 13 Dec 2018 11:27:04 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-82.ams2.redhat.com [10.36.116.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E57D960A9C;
+        Thu, 13 Dec 2018 11:26:57 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        =?utf-8?Q?Micka=C3=ABl_Sala?= =?utf-8?Q?=C3=BCn?= 
+        <mic@digikod.net>, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
         James Morris <jmorris@namei.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         Matthew Garrett <mjg59@google.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
         <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
         Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
         Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
@@ -69,52 +50,32 @@ Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Date:   Thu, 13 Dec 2018 06:04:20 -0500
-In-Reply-To: <20181213030228.GM6830@bombadil.infradead.org>
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
 References: <20181212081712.32347-1-mic@digikod.net>
-         <20181213030228.GM6830@bombadil.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121311-0028-0000-0000-00000329E889
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121311-0029-0000-0000-000023E63243
-Message-Id: <1544699060.6703.11.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812130100
+        <20181213030228.GM6830@bombadil.infradead.org>
+        <1544699060.6703.11.camel@linux.ibm.com>
+Date:   Thu, 13 Dec 2018 12:26:56 +0100
+In-Reply-To: <1544699060.6703.11.camel@linux.ibm.com> (Mimi Zohar's message of
+        "Thu, 13 Dec 2018 06:04:20 -0500")
+Message-ID: <874lbhoef3.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 13 Dec 2018 11:27:04 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2018-12-12 at 19:02 -0800, Matthew Wilcox wrote:
-> On Wed, Dec 12, 2018 at 09:17:07AM +0100, Mickaël Salaün wrote:
-> > The goal of this patch series is to control script interpretation.  A
-> > new O_MAYEXEC flag used by sys_open() is added to enable userland script
-> > interpreter to delegate to the kernel (and thus the system security
-> > policy) the permission to interpret scripts or other files containing
-> > what can be seen as commands.
-> 
-> I don't have a problem with the concept, but we're running low on O_ bits.
-> Does this have to be done before the process gets a file descriptor,
-> or could we have a new syscall?  Since we're going to be changing the
-> interpreters anyway, it doesn't seem like too much of an imposition to
-> ask them to use:
-> 
-> 	int verify_for_exec(int fd)
-> 
-> instead of adding an O_MAYEXEC.
+* Mimi Zohar:
 
-The indication needs to be set during file open, before the open
-returns to the caller.  This is the point where ima_file_check()
-verifies the file's signature.  On failure, access to the file is
-denied.
+> The indication needs to be set during file open, before the open
+> returns to the caller.  This is the point where ima_file_check()
+> verifies the file's signature.  On failure, access to the file is
+> denied.
 
-Mimi
+Does this verification happen for open with O_PATH?
 
+Thanks,
+Florian
