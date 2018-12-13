@@ -1,67 +1,132 @@
-Return-Path: <SRS0=0itc=OV=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1526C67839
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F32C67872
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 00:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91F5120870
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 Dec 2018 23:42:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91F5120870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id AD40E20870
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 00:16:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD40E20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbeLLXmu (ORCPT
+        id S1728111AbeLMAQW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:42:50 -0500
-Received: from namei.org ([65.99.196.166]:51486 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbeLLXmu (ORCPT
+        Wed, 12 Dec 2018 19:16:22 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49616 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726994AbeLMAQW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:42:50 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBCNgRB8007873;
-        Wed, 12 Dec 2018 23:42:28 GMT
-Date:   Thu, 13 Dec 2018 10:42:27 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Paul Gortmaker <paul.gortmaker@windriver.com>
-cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-ima-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH 0/5] security: remove needless usage of module header
-In-Reply-To: <1544387793-32309-1-git-send-email-paul.gortmaker@windriver.com>
-Message-ID: <alpine.LRH.2.21.1812131041490.7600@namei.org>
-References: <1544387793-32309-1-git-send-email-paul.gortmaker@windriver.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 12 Dec 2018 19:16:22 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD0ECid088314
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 19:16:21 -0500
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbap5dahm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 19:16:20 -0500
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Thu, 13 Dec 2018 00:16:20 -0000
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Dec 2018 00:16:16 -0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD0GEYR25559180
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Dec 2018 00:16:14 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AEF09C605F;
+        Thu, 13 Dec 2018 00:16:14 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3F9BCC6059;
+        Thu, 13 Dec 2018 00:16:01 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.80.227.60])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Thu, 13 Dec 2018 00:16:00 +0000 (GMT)
+References: <20181208202705.18673-2-nayna@linux.ibm.com> <20181209044849.825-1-nayna@linux.ibm.com>
+User-agent: mu4e 1.0; emacs 26.1
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
+        mpe@ellerman.id.au
+Subject: Re: [PATCH v2 1/7] integrity: Define a trusted platform keyring
+In-reply-to: <20181209044849.825-1-nayna@linux.ibm.com>
+Date:   Wed, 12 Dec 2018 22:15:56 -0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18121300-0012-0000-0000-000016E9057D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010216; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01130913; UDB=6.00587691; IPR=6.00911046;
+ MB=3.00024673; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 00:16:19
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121300-0013-0000-0000-0000556F38C5
+Message-Id: <871s6mffib.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812130000
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 9 Dec 2018, Paul Gortmaker wrote:
 
-> Paul Gortmaker (5):
->   security: audit and remove any unnecessary uses of module.h
->   keys: remove needless modular infrastructure from ecryptfs_format
->   security: fs: make inode explicitly non-modular
->   security: integrity: make evm_main explicitly non-modular
->   security: integrity: make ima_main explicitly non-modular
+Nayna Jain <nayna@linux.ibm.com> writes:
 
-All applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-and next-general
+> On secure boot enabled systems, a verified kernel may need to kexec
+> additional kernels. For example, it may be used as a bootloader needing
+> to kexec a target kernel or it may need to kexec a crashdump kernel. In
+> such cases, it may want to verify the signature of the next kernel
+> image.
+>
+> It is further possible that the kernel image is signed with third party
+> keys which are stored as platform or firmware keys in the 'db' variable.
+> The kernel, however, can not directly verify these platform keys, and an
+> administrator may therefore not want to trust them for arbitrary usage.
+> In order to differentiate platform keys from other keys and provide the
+> necessary separation of trust, the kernel needs an additional keyring to
+> store platform keys.
+>
+> This patch creates the new keyring called ".platform" to isolate keys
+> provided by platform from keys by kernel. These keys are used to
+> facilitate signature verification during kexec. Since the scope of this
+> keyring is only the platform/firmware keys, it cannot be updated from
+> userspace.
+>
+> This keyring can be enabled by setting CONFIG_INTEGRITY_PLATFORM_KEYRING.
+>
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+> ---
+>  security/integrity/Kconfig                         | 11 +++++
+>  security/integrity/Makefile                        |  1 +
+>  security/integrity/digsig.c                        | 48 +++++++++++++++-------
+>  security/integrity/integrity.h                     |  3 +-
+>  .../integrity/platform_certs/platform_keyring.c    | 35 ++++++++++++++++
+>  5 files changed, 83 insertions(+), 15 deletions(-)
+>  create mode 100644 security/integrity/platform_certs/platform_keyring.c
+
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 
 -- 
-James Morris
-<jmorris@namei.org>
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
