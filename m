@@ -2,47 +2,55 @@ Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB10C65BAE
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 11:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236CCC65BAE
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 12:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E541320880
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 11:27:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E541320880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DF0EA2087F
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 12:16:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U0v7yaA5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF0EA2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbeLML1F convert rfc822-to-8bit (ORCPT
+        id S1728910AbeLMMQu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:27:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54258 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728611AbeLML1F (ORCPT
+        Thu, 13 Dec 2018 07:16:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47792 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728806AbeLMMQu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:27:05 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 59B637F3E8;
-        Thu, 13 Dec 2018 11:27:04 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-116-82.ams2.redhat.com [10.36.116.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E57D960A9C;
-        Thu, 13 Dec 2018 11:26:57 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
+        Thu, 13 Dec 2018 07:16:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4ZXtW55JAa/vg3hQkSbYV2kNZlrL5oduqPKvGV7TOe0=; b=U0v7yaA5V9wVYtvPRItgV/9ZUY
+        US6ZjDY/ysvQOu15Y3/azoIN4C0QCObr9ZWszHqkM1ZcF0aOW7+FA/q2SjXv4Khz3tmknei2qrrSH
+        tAltIO3mgfQeLH5UD+52ZXFMHgTQNVz24x90l7Nb+WLyjkuO+4ZY5VArrMOtvpSR2ZnPkv+Bw3Q2M
+        5cOyOg3CvX3E1Gn12ctQm63+qeCJ9jPQOSGIMpGMdUlXm/SPfBYaJUXmWOOixVN1o6eg0AZ5KUtf2
+        IbL4KjwryqD9vigGzf8sRYhwVqNtJdoN3oGcizaG76TwznbWNSyenbBGXowAUSJkX4FKXXTuO6qqt
+        PeYnujiw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXPv4-0002z1-75; Thu, 13 Dec 2018 12:16:46 +0000
+Date:   Thu, 13 Dec 2018 04:16:46 -0800
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        =?utf-8?Q?Micka=C3=ABl_Sala?= =?utf-8?Q?=C3=BCn?= 
-        <mic@digikod.net>, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         James Morris <jmorris@namei.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         Matthew Garrett <mjg59@google.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
         <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
         Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
         Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
@@ -51,31 +59,37 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+Message-ID: <20181213121645.GN6830@bombadil.infradead.org>
 References: <20181212081712.32347-1-mic@digikod.net>
-        <20181213030228.GM6830@bombadil.infradead.org>
-        <1544699060.6703.11.camel@linux.ibm.com>
-Date:   Thu, 13 Dec 2018 12:26:56 +0100
-In-Reply-To: <1544699060.6703.11.camel@linux.ibm.com> (Mimi Zohar's message of
-        "Thu, 13 Dec 2018 06:04:20 -0500")
-Message-ID: <874lbhoef3.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+ <20181213030228.GM6830@bombadil.infradead.org>
+ <1544699060.6703.11.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 13 Dec 2018 11:27:04 +0000 (UTC)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544699060.6703.11.camel@linux.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Mimi Zohar:
-
+On Thu, Dec 13, 2018 at 06:04:20AM -0500, Mimi Zohar wrote:
+> > I don't have a problem with the concept, but we're running low on O_ bits.
+> > Does this have to be done before the process gets a file descriptor,
+> > or could we have a new syscall?  Since we're going to be changing the
+> > interpreters anyway, it doesn't seem like too much of an imposition to
+> > ask them to use:
+> > 
+> > 	int verify_for_exec(int fd)
+> > 
+> > instead of adding an O_MAYEXEC.
+> 
 > The indication needs to be set during file open, before the open
-> returns to the caller. Â This is the point where ima_file_check()
-> verifies the file's signature. Â On failure, access to the file is
+> returns to the caller.  This is the point where ima_file_check()
+> verifies the file's signature.  On failure, access to the file is
 > denied.
 
-Does this verification happen for open with O_PATH?
-
-Thanks,
-Florian
+I understand that's what happens today, but do we need to do it that way?
+There's no harm in the interpreter having an fd to a file if it knows
+not to execute it.  This is different from a program opening a file and
+having the LSM deny access to it because it violates the security model.
