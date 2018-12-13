@@ -2,125 +2,118 @@ Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE12C67839
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 00:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E50C67839
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 01:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7914620811
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 00:20:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7914620811
+	by mail.kernel.org (Postfix) with ESMTP id 07AA420870
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 01:42:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AA420870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeLMAUJ (ORCPT
+        id S1726396AbeLMBmg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 19:20:09 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45060 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726983AbeLMAUI (ORCPT
+        Wed, 12 Dec 2018 20:42:36 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53412 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726372AbeLMBmg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 19:20:08 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD0IpF4147040
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 19:20:07 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pbbt7a4v2-1
+        Wed, 12 Dec 2018 20:42:36 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD1cxn1093826
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 20:42:35 -0500
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbb227ate-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 19:20:07 -0500
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 20:42:34 -0500
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 13 Dec 2018 00:20:06 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 13 Dec 2018 01:42:34 -0000
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 00:20:02 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD0K1wV18022650
+        Thu, 13 Dec 2018 01:42:32 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD1gUCI20512930
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 00:20:01 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BBF68AE060;
-        Thu, 13 Dec 2018 00:20:01 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78C67AE05C;
-        Thu, 13 Dec 2018 00:19:58 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.80.227.60])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Thu, 13 Dec 2018 00:19:58 +0000 (GMT)
-References: <20181208202705.18673-1-nayna@linux.ibm.com> <20181208202705.18673-8-nayna@linux.ibm.com>
-User-agent: mu4e 1.0; emacs 26.1
+        Thu, 13 Dec 2018 01:42:30 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 836817805E;
+        Thu, 13 Dec 2018 01:42:30 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B82AA7805C;
+        Thu, 13 Dec 2018 01:42:28 +0000 (GMT)
+Received: from morokweng.localdomain.com (unknown [9.80.227.60])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Dec 2018 01:42:28 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Nayna Jain <nayna@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        dhowells@redhat.com, jforbes@redhat.com,
-        seth.forshee@canonical.com, kexec@lists.infradead.org,
-        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH v2 7/7] ima: Support platform keyring for kernel appraisal
-In-reply-to: <20181208202705.18673-8-nayna@linux.ibm.com>
-Date:   Wed, 12 Dec 2018 22:19:56 -0200
-MIME-Version: 1.0
-Content-Type: text/plain
+To:     linux-security-module@vger.kernel.org
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH] integrity: Remove references to module keyring
+Date:   Wed, 12 Dec 2018 23:39:09 -0200
+X-Mailer: git-send-email 2.17.2
 X-TM-AS-GCONF: 00
-x-cbid: 18121300-0052-0000-0000-000003664475
+x-cbid: 18121301-0016-0000-0000-00000963A1B5
 X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010216; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130914; UDB=6.00587692; IPR=6.00911047;
- MB=3.00024673; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 00:20:06
+X-IBM-SpamModules-Versions: BY=3.00010217; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01130942; UDB=6.00587708; IPR=6.00911075;
+ MB=3.00024674; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 01:42:33
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121300-0053-0000-0000-00005F156D44
-Message-Id: <87y38ue0r7.fsf@morokweng.localdomain>
+x-cbparentid: 18121301-0017-0000-0000-000041628DA9
+Message-Id: <20181213013909.25737-1-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812130001
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812130013
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From what I can tell, it has never been used.
 
-Nayna Jain <nayna@linux.ibm.com> writes:
+Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+---
+ security/integrity/digsig.c    | 1 -
+ security/integrity/integrity.h | 5 ++---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-> On secure boot enabled systems, the bootloader verifies the kernel
-> image and possibly the initramfs signatures based on a set of keys. A
-> soft reboot(kexec) of the system, with the same kernel image and
-> initramfs, requires access to the original keys to verify the
-> signatures.
->
-> This patch allows IMA-appraisal access to those original keys, now
-> loaded on the platform keyring, needed for verifying the kernel image
-> and initramfs signatures.
->
-> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Acked-by: Serge Hallyn <serge@hallyn.com>
-> - replace 'rc' with 'xattr_len' when calling integrity_digsig_verify()
-> with INTEGRITY_KEYRING_IMA for readability
-> Suggested-by: Serge Hallyn <serge@hallyn.com>
-> ---
-> Changelog:
->
-> v2:
-> - replace 'rc' with 'xattr_len' when calling integrity_digsig_verify()
-> with INTEGRITY_KEYRING_IMA for readability
->
->  security/integrity/ima/ima_appraise.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-
-With the change to only access the platform keyring when it is enabled:
-
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index c5585e75d5d9..1ff8eab7bc8c 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -34,7 +34,6 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+ 	".evm",
+ 	".ima",
+ #endif
+-	"_module",
+ 	".platform",
+ };
+ 
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index aafa1266e3d5..26c415c3f879 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -152,9 +152,8 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+ 
+ #define INTEGRITY_KEYRING_EVM		0
+ #define INTEGRITY_KEYRING_IMA		1
+-#define INTEGRITY_KEYRING_MODULE	2
+-#define INTEGRITY_KEYRING_PLATFORM	3
+-#define INTEGRITY_KEYRING_MAX		4
++#define INTEGRITY_KEYRING_PLATFORM	2
++#define INTEGRITY_KEYRING_MAX		3
+ 
+ extern struct dentry *integrity_dir;
+ 
 
