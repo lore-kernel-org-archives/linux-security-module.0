@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5695BC65BAE
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 14:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0944C67839
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 15:17:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A1E220870
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 14:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9355420870
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 15:17:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="R1LLWeuF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A1E220870
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="qJOY8rrX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9355420870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728836AbeLMO5L (ORCPT
+        id S1729181AbeLMPRY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:57:11 -0500
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:54644 "EHLO
+        Thu, 13 Dec 2018 10:17:24 -0500
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:57048 "EHLO
         smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727618AbeLMO5L (ORCPT
+        with ESMTP id S1727618AbeLMPRY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:57:11 -0500
+        Thu, 13 Dec 2018 10:17:24 -0500
 Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 2B833D0006B;
-        Thu, 13 Dec 2018 15:57:17 +0100 (CET)
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 8B35CD0006B;
+        Thu, 13 Dec 2018 16:17:30 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1544713037;
-        bh=hmviYkZAUzSSN4VTzvQLUSCMhOsq6DYKpUiHzI6rReA=;
+        s=20160407; t=1544714250;
+        bh=EuHsQ6GWc5Tr1uLB3uYwH7N2PEOAZlS73ksHrDAeF7I=;
         h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=R1LLWeuFQXYicPyde+2L/5l1lnaFYwDfgRmEBw3E9WCmmCD6EgbN+Z6ZzJO73skY/
-         WDLTEhYl0+oC3tiRw9wkRp4Web7BQeev58BsJpf+2Sz9/rWiuTl6ArElznFhvALliz
-         k8WToO2CpmKORRXoZpFPemas/nO9etlNaSKND0yE76qsYk2tuyvgclN/h5x7PGqBVj
-         jjlI7zoFsB1oMVgHUKPn74Vd2NhvkLTpX7hTekaIOBQdwcgLuyWRtb+gq+QcYQffg9
-         DeDbusb/qwDu9nx18FzQAERzupwa9lp3FE/j3uZeDH/QZLSquDUh/HrBDfeA03E9/j
-         tcixwdWCiP4cQ==
+        b=qJOY8rrX9R0loICN/+LuPkbU3OvJbhY8HFfhiTZH+chZISDjn8Ne4fDNMml/1xIAo
+         OduGR46t4GbNgamspNNkw7Krv0IvKyLnKvfh9vWbt6OjLh8xM70KOPdkHw9YBGxMZw
+         AlQcM8dHWFRuQ3ddBjVArp4U2RVHlACmANXKSAypn+7vyYIzOkjU64+TLeG20hxvU3
+         2muBIE7loR2C0imVHGZlzwYpViafP+UVXUM1XF/jPIJvuFI/6bOe50BcrH9Ub8NNGY
+         I17iR5MIVhRxerIAI4OiqLYjWJfwPR+NB2a9MwNJiq4NwRDDnwkWph0PRbUTiQTzHo
+         SKSrgXXvHhRXg==
 Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
-To:     Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>
-CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+To:     Matthew Wilcox <willy@infradead.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         Matthew Garrett <mjg59@google.com>,
@@ -57,50 +57,44 @@ CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
         <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 References: <20181212081712.32347-1-mic@digikod.net>
- <alpine.LRH.2.21.1812130642250.29507@namei.org>
- <87lg4upkpv.fsf@oldenburg2.str.redhat.com>
- <alpine.LRH.2.21.1812131039400.7600@namei.org>
- <87ftv2ovp8.fsf@oldenburg2.str.redhat.com>
+ <20181213030228.GM6830@bombadil.infradead.org>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <21824ed9-0fe4-85dd-bdd2-d4426e97233d@ssi.gouv.fr>
-Date:   Thu, 13 Dec 2018 15:57:15 +0100
+Message-ID: <374ea88c-edc5-f1a6-3637-748635e1e7df@ssi.gouv.fr>
+Date:   Thu, 13 Dec 2018 16:17:29 +0100
 User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
  Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <87ftv2ovp8.fsf@oldenburg2.str.redhat.com>
+In-Reply-To: <20181213030228.GM6830@bombadil.infradead.org>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 13/12/2018 06:13, Florian Weimer wrote:
-> * James Morris:
+On 13/12/2018 04:02, Matthew Wilcox wrote:
+> On Wed, Dec 12, 2018 at 09:17:07AM +0100, Mickaël Salaün wrote:
+>> The goal of this patch series is to control script interpretation.  A
+>> new O_MAYEXEC flag used by sys_open() is added to enable userland script
+>> interpreter to delegate to the kernel (and thus the system security
+>> policy) the permission to interpret scripts or other files containing
+>> what can be seen as commands.
 > 
->> On Wed, 12 Dec 2018, Florian Weimer wrote:
->>
->>> * James Morris:
->>>
->>>> If you're depending on the script interpreter to flag that the user may 
->>>> execute code, this seems to be equivalent in security terms to depending 
->>>> on the user.  e.g. what if the user uses ptrace and clears O_MAYEXEC?
-
-This security mechanism makes sense in an hardened system where the user
-is not allowed to import and execute new file (write xor execute
-policy). This can be enforced with appropriate mount points a more
-advanced access control policy.
-
->>>
->>> The argument I've heard is this: Using ptrace (and adding the +x
->>> attribute) are auditable events.
->>
->> I guess you could also preload a modified libc which strips the flag.
+> I don't have a problem with the concept, but we're running low on O_ bits.
+> Does this have to be done before the process gets a file descriptor,
+> or could we have a new syscall?  Since we're going to be changing the
+> interpreters anyway, it doesn't seem like too much of an imposition to
+> ask them to use:
 > 
-> My understanding is that this new libc would have to come somewhere, and
-> making it executable would be an auditable even as well.
+> 	int verify_for_exec(int fd)
+> 
+> instead of adding an O_MAYEXEC.
+> 
 
-Auditing is a possible use case as well, but the W^X idea is to deny use
-of libraries which are not in an executable mount point, i.e. only
-execute trusted code.
+Adding a new syscall for this simple use case seems excessive. I think
+that the open/openat syscall familly are the right place to do an atomic
+open and permission check, the same way the kernel does for other file
+access. Moreover, it will be easier to patch upstream interpreters
+without the burden of handling a (new) syscall that may not exist on the
+running system, whereas unknown open flags are ignored.
