@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2365CC67839
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 07:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503D6C67872
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 08:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E47E520873
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 07:57:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47E520873
+	by mail.kernel.org (Postfix) with ESMTP id 15FE120672
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 08:14:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15FE120672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbeLMH5d (ORCPT
+        id S1727042AbeLMIOc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Dec 2018 02:57:33 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32808 "EHLO huawei.com"
+        Thu, 13 Dec 2018 03:14:32 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32809 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726500AbeLMH5d (ORCPT
+        id S1726995AbeLMIOc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Dec 2018 02:57:33 -0500
+        Thu, 13 Dec 2018 03:14:32 -0500
 Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 1779B5AF6435B;
-        Thu, 13 Dec 2018 07:57:30 +0000 (GMT)
+        by Forcepoint Email with ESMTP id 467A8686D2701;
+        Thu, 13 Dec 2018 08:14:29 +0000 (GMT)
 Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
  (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 13 Dec
- 2018 07:57:22 +0000
-Subject: Re: [PATCH v6 7/7] tpm: pass an array of tpm_bank_list structures to
- tpm_pcr_extend()
+ 2018 08:14:24 +0000
+Subject: Re: [PATCH v6 1/7] tpm: dynamically allocate the allocated_banks
+ array
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
         <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Nayna Jain <nayna@linux.ibm.com>
 References: <20181204082138.24600-1-roberto.sassu@huawei.com>
- <20181204082138.24600-8-roberto.sassu@huawei.com>
- <20181205001417.GF1233@linux.intel.com>
- <9d6e47d9-3b88-86f6-1b60-6652dfe8dc00@huawei.com>
- <20181212182734.GH6333@linux.intel.com>
+ <20181204082138.24600-2-roberto.sassu@huawei.com>
+ <20181204231848.GA1233@linux.intel.com>
+ <9193bc05-8222-f0d6-9ad8-a2a7eaf1a34c@huawei.com>
+ <20181212183204.GK6333@linux.intel.com>
 From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <ae012b83-af66-6dfe-6131-e08507c3372e@huawei.com>
-Date:   Thu, 13 Dec 2018 08:57:17 +0100
+Message-ID: <54e552fa-9f20-60e4-5ac9-38c567243737@huawei.com>
+Date:   Thu, 13 Dec 2018 09:14:23 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181212182734.GH6333@linux.intel.com>
+In-Reply-To: <20181212183204.GK6333@linux.intel.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -57,44 +58,49 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/12/2018 7:27 PM, Jarkko Sakkinen wrote:
-> On Thu, Dec 06, 2018 at 07:38:30PM +0100, Roberto Sassu wrote:
->> On 12/5/2018 1:14 AM, Jarkko Sakkinen wrote:
->>> On Tue, Dec 04, 2018 at 09:21:38AM +0100, Roberto Sassu wrote:
->>>> The new tpm_bank_list structure has been preferred to the tpm_digest
->>>> structure, to let the caller specify the size of the digest (which may be
->>>> unknown to the TPM driver).
+On 12/12/2018 7:32 PM, Jarkko Sakkinen wrote:
+> On Thu, Dec 06, 2018 at 06:56:33PM +0100, Roberto Sassu wrote:
+>> 2 PCR selections
+>>      hash TPM_ALG_SHA1
+>>      TPMS_PCR_SELECTION length 3
+>>      ff ff ff
+>>      hash TPM_ALG_SHA256
+>>      TPMS_PCR_SELECTION length 3
+>>      00 00 00
+>>
+>> The pcr_select fields - "ff ff ff" and "00 00 00" - are bit masks for
+>> the enabled PCRs. The SHA1 bank is enabled for all PCRs (0-23), while
+>> the SHA256 bank is not enabled.
+> 
+> Uh, thanks. Can you add a note to the commit message?
+
+Ok.
+
+
 >>>
->>> Why is that? Didn't previous commit query these?
+>>> /* Check that at least some of the PCRs have been allocated. This is
+>>>    * required because CAP_PCRS ...
+>>>    */
+>>> if (memchr_inv(pcr_selection.pcr_select, 0, pcr_selection.size_of_select))
+>>> 	nr_allocated_banks++;
+>>>
+>>> [yeah, comment would be awesome about CAP_PCRS. Did not finish up the
+>>> comment because I don't know the answer]
+>>>
+>>> In addition, it would be consistent to call the local variable also
+>>> nr_allocated_banks (not nr_alloc_banks).
 >>
->> Since the TPM driver pads/truncates the first digest passed by the
->> caller to extend PCRs for which no digest was provided, it must know
->> which amount of data it can use. It is possible that the algorithm of
->> the first digest is unknown for the TPM driver, if the caller of
->> tpm_pcr_extend() didn't check chip->allocated_banks.
->>
->> By requiring that the caller passes also the digest size, this problem
->> does not arise. It seems reasonable to me to pass this information, as
->> the caller calculated the digest and it should know the digest size.
+>> Unfortunately, I exceed the limit of characters per line.
 > 
-> OK. I noticed something other things that look to alarming:
-> 
-> 1. The function does not fail if alg_id is not found. This will go
->     silent.
+> Not sure what you mean?
 
-It is intentional. If alg_id is not found, the PCR is extended with the
-first digest passed by the caller of tpm_pcr_extend(). If no digest was
-provided, the PCR is extended with 0s. This is done to prevent that
-PCRs in unused banks are extended later with fake measurements.
+---
+-		chip->allocated_banks[nr_alloc_banks] = hash_alg;
++		chip->allocated_banks[nr_alloc_banks].alg_id = hash_alg;
+---
 
-
-> 2. The function does not fail if there is a mismatch with the digest
->     sizes.
-
-The data passed by the caller of tpm_pcr_extend() is copied to
-dummy_hash, which has the maximum length. Then, tpm2_pcr_extend() takes
-from dummy_hash as many bytes as needed, depending on the current
-algorithm.
+If I use nr_allocated_banks, the line above (see patch 5/7) exceeds the
+limit of 80 characters.
 
 Roberto
 
