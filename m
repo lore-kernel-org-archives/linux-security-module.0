@@ -2,94 +2,536 @@ Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8D0C65BAE
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 22:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 245CDC65BAE
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 22:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B79662075B
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 22:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5B8B2086D
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 22:29:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="popxbgXz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B79662075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VYPAxZEs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B8B2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbeLMWNb (ORCPT
+        id S1726900AbeLMW3m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:13:31 -0500
-Received: from sonic305-10.consmr.mail.bf2.yahoo.com ([74.6.133.49]:38699 "EHLO
-        sonic305-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726457AbeLMWNb (ORCPT
+        Thu, 13 Dec 2018 17:29:42 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:39191 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726581AbeLMW3l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:13:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544739209; bh=4OF/TROwl7RBk3p2UCe+eBf6CV+ERPuHPQ0/+jBDSII=; h=To:Cc:From:Subject:Date:From:Subject; b=popxbgXztqQl3p+gYr7jUWM6ZpTpsrNUKkLE/glvmJvwgTPvvSGS7uZC/r070VEf6+CRP4qlt82q/9bEWrfaexr2jMjwIwWRKe+pB5bAT30+kFecSqnLYzMOi5dDAOC+q++5ZDpkLqhisFH8C9diRZDC1zmwJgVH1ekwMdrGBRkgiHFEK5uF5Wn3+cyy3CGdaZK3raXDwt1jjjNihZExK7qxXKNiAXTkGczjOwE+3vetOgEun5NJvi2aMoyqINh4VTR4X5LXsmFbU0piDlfO8CtGd+AuowL6pmXkCT/q8/Xgt95ASGPnKIO8nb3UJNj9jLAmf+LB6cwv2V9aBq9dQg==
-X-YMail-OSG: wCGxS7wVM1m5i7ogFqhdQuHUAWgZrNF8_wRtIJBPjU6kgKpeoYwDpSwDnJEmTEr
- VMYqNHFrSIO4gqiwtWWjrbJsQyM0uucS337Hw9gWn6.DIBlRIGW6385Kh.5.FInFXEpXH6lBvNl8
- rsfAwhTwW2kwZGihF04QVeQRfz4Sw6CXeQFib7eT4lvHusWuBoqQz0Oqol9hd2D.weK0Sj1dCV0X
- IwkwYcThksTSKl6PwzCNDJv8wB4FvmFeA68lce4pECXqiyCWWmBadd3daQOnIBqo8ah9LdVseBpz
- v5uGShD8tJXKaW6vu12xdVgz.cMaeIeq95l4F7CS.fc15fhEjAxnc1D664YjdyNCIjJ.jZ3JZjdQ
- kryfFxXrj0QgdLRUEvuPLNSGAdr833NdR7rbfTzoIN9KX.PSvHCLO5Z51qYIHRIqKjXYlRAnmevl
- j5LbrWfVcyxlz4ELeMDQUVN5d25BGvtJCYxKygtS40C_tFJAaTIcZTNxTnzDVG4OadV1KYP1QbI3
- Xem.0Z3jgTNyQXHXgpjnoMSpLHXjwqRVfsD5EPcG0mt1QJ4jfHeXHlpG7XROUXL.CaLixA9hpSCo
- wJT5rtvMwSzee3BnU2uL.zmfXG3OF947g3e_hub.pH3BrDHdkO1gukhXsbqgwwrmjRqQ0zZEsby3
- 2lJN7wSC4F4sp7bfQGdNsH4NqpVhXoJMv6iu1jceI6kRvsUP3dOmgOrly__J1_06wdTyaXM7oA4u
- TbtkSmjaa3i4FN3eB59k_VfplsRqZkX8BsAP0Vc14XVXGlXsN5Zmj_kgt0F0U3ip0l60vUYAT72f
- pN2C7SOHwBQkZ_EStir7_ZF5wZJy96i8GFddkOmIT9LjmpF1.5sj2ldRXxdjU7LC5GVDp37INoSh
- HVpS8_W_1hKQhvjZXSzqVIQU3lhUAxP7MnNnUkItcY9meR08_xhHjjGq5pU3azitw9LJo.6kmOcQ
- tXgiRh67yWW9c2xYgbWMutpjMeeYFcjMRdE.A74lrSgZiM5Mo.yTJ6BNR_sKd7b8BVUvStFSn5qL
- 1yGdpxgDikpu1Ed4IdBCh5szPyNU0pquYuJBmNtZ4AV5HhrsB8dBWQEF1es7rtFuF8ebfNTve.ec
- 31wnLrkCKCVmCEFuffgqEg0VqeXoEVzwN9v2.Qunuc6FZrhTlXYw-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.bf2.yahoo.com with HTTP; Thu, 13 Dec 2018 22:13:29 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp405.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID e68fee55dcea247f6141ee24c87f325d;
-          Thu, 13 Dec 2018 22:13:26 +0000 (UTC)
-To:     James Morris <jmorris@namei.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        =?UTF-8?Q?Jos=c3=a9_Bollo?= <jobol@nonadev.net>,
-        Zoran Markovic <zmarkovic@sierrawireless.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PULL] Smack: Changes for 4.21
-Message-ID: <8f3fc078-e6ba-afc5-be96-444117ac9d7f@schaufler-ca.com>
-Date:   Thu, 13 Dec 2018 14:13:22 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 13 Dec 2018 17:29:41 -0500
+Received: by mail-yb1-f196.google.com with SMTP id h10so1485587ybp.6
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Dec 2018 14:29:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=hCp4lEnVDBUVQ2yszF+4gAj8qj9bQKzMSMOqISDxymo=;
+        b=VYPAxZEsupNAlIaDrxEVyakS8Y4xXNDxfolGJOLSmwjCdEVjulKF5+YMKgGZ83UnwO
+         EnixAjHaSI+UQ2KrWd0rthr7F23p3UG1BwcB5NURgmUszoQLEC26rsuKcAuARH6ZNWpV
+         8KgP0d7gDdmT3x0+tDQA9ijdnR9ydSO6UGid8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=hCp4lEnVDBUVQ2yszF+4gAj8qj9bQKzMSMOqISDxymo=;
+        b=WhIyIRJW2b63wM0YfYBGwtffz+OapLKRkshTtbakLhpH6WkQ1a1izk0afUhTZ8ep1S
+         V0OkouUgic5hCBGYhfkKUccrWOz3Hmtt2SLDWxwo3mN4TiFGjGZXKSDbGYZLG/YHAT3q
+         ky/X5IPVAdKQvYuIotxUnIF2aJCkUUw2rP3PmmyVatPJfMnHwcTf+KM690jJG3i+htXJ
+         uZZZ3UNom+cFP99VfzIzWtspk3oMp0ZAHQtEGYVNxdfXOBQLatVtIBR19BVY9954sVVz
+         Muz+rSFke1b9XXG1wo+yEKUIgqRa3uoDMWKOmlEXNHZuxAE2Dze4rZhI8QA5vV8VA1zk
+         AjyA==
+X-Gm-Message-State: AA+aEWbSI6YuxFssnNC/K/vvxhBWJZfq/EsIIYsCvCysWhiMXieBdRaE
+        GmpOpeTG8xz68nAuGsMYR1k5jsTJlfTKJ4biyhBAUkIhBcU=
+X-Google-Smtp-Source: AFSGD/WAmaIVA+76nJxfs8FG6LsueDLxNZ/RHPqoh+6/LHBCVbSTKT7la7EQ9xl7VVtjy1GHsz5ajP8jescdSFRe8DA=
+X-Received: by 2002:a25:1486:: with SMTP id 128-v6mr635038ybu.97.1544740180332;
+ Thu, 13 Dec 2018 14:29:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <f0a0dcb8-5659-904b-5cff-09bb36704799@tycho.nsa.gov> <20181119185444.13211-1-mortonm@chromium.org>
+In-Reply-To: <20181119185444.13211-1-mortonm@chromium.org>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Thu, 13 Dec 2018 14:29:29 -0800
+Message-ID: <CAJ-EccPVjViSxCP=036Y+_DiA88XFBAc_+g984nq51tg+EfG5A@mail.gmail.com>
+Subject: Re: [PATCH] [PATCH] LSM: generalize flag passing to security_capable
+To:     jmorris@namei.org, serge@hallyn.com,
+        Kees Cook <keescook@chromium.org>, casey@schaufler-ca.com,
+        sds@tycho.nsa.gov, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-James, I have two Smack patches for 4.21. One Jose's patch adds
-missing documentation and Zoran's fleshes out the access checks
-on keyrings.
+Any comments on this patch? If not, could it get merged at some point?
 
-The following changes since commit 26b76320a8a550472bbb8f42257df83fcb8d8df6:
-
-  Merge tag 'v4.20-rc2' into next-general (2018-11-12 09:07:41 -0800)
-
-are available in the Git repository at:
-
-  https://github.com/cschaufler/next-smack smack-for-4.21-a
-
-for you to fetch changes up to 55b078f031f556ea18963bd808e79a1dfaa4be44:
-
-  Smack: Improve Documentation (2018-12-13 13:31:01 -0800)
-
-----------------------------------------------------------------
-José Bollo (1):
-      Smack: Improve Documentation
-
-Zoran Markovic (1):
-      smack: fix access permissions for keyring
-
- Documentation/admin-guide/LSM/Smack.rst |  4 ++++
- security/smack/smack_lsm.c              | 12 +++++++++---
- 2 files changed, 13 insertions(+), 3 deletions(-)
-
+I booted a Linux kernel with the changes compiled in and verified with
+print statements that the code works properly AFAICT.
+On Mon, Nov 19, 2018 at 10:54 AM <mortonm@chromium.org> wrote:
+>
+> From: Micah Morton <mortonm@chromium.org>
+>
+> This patch provides a general mechanism for passing flags to the
+> security_capable LSM hook. It replaces the specific 'audit' flag that is
+> used to tell security_capable whether it should log an audit message for
+> the given capability check. The reason for generalizing this flag
+> passing is so we can add an additional flag that signifies whether
+> security_capable is being called by a setid syscall (which is needed by
+> the proposed SafeSetID LSM). This generalization could also support
+> passing down the inode for CAP_DAC_OVERRIDE/READ_SEARCH checks so that
+> authorization could happen on a per-file basis for specific files rather
+> than all or nothing.
+>
+> Signed-off-by: Micah Morton <mortonm@chromium.org>
+> ---
+>
+> Developed against the 'next-general' branch.
+>
+> @Stephen: is this the approach you had in mind for modifying the
+> callers of ns_capable?
+>
+>  include/linux/lsm_hooks.h     |  8 ++++---
+>  include/linux/security.h      | 35 ++++++++++++++++++++----------
+>  kernel/capability.c           | 41 +++++++++++++++++++++++++++--------
+>  kernel/seccomp.c              |  7 ++++--
+>  security/apparmor/lsm.c       |  4 ++--
+>  security/commoncap.c          | 27 ++++++++++++++++-------
+>  security/security.c           | 14 +++++-------
+>  security/selinux/hooks.c      | 13 ++++++-----
+>  security/smack/smack_access.c |  5 ++++-
+>  9 files changed, 103 insertions(+), 51 deletions(-)
+>
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index aaeb7fa24dc4..02422592cc83 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -1270,7 +1270,7 @@
+>   *     @cred contains the credentials to use.
+>   *     @ns contains the user namespace we want the capability in
+>   *     @cap contains the capability <include/linux/capability.h>.
+> - *     @audit contains whether to write an audit message or not
+> + *     @opts contains options for the capable check <include/linux/security.h>
+>   *     Return 0 if the capability is granted for @tsk.
+>   * @syslog:
+>   *     Check permission before accessing the kernel message ring or changing
+> @@ -1446,8 +1446,10 @@ union security_list_options {
+>                         const kernel_cap_t *effective,
+>                         const kernel_cap_t *inheritable,
+>                         const kernel_cap_t *permitted);
+> -       int (*capable)(const struct cred *cred, struct user_namespace *ns,
+> -                       int cap, int audit);
+> +       int (*capable)(const struct cred *cred,
+> +                       struct user_namespace *ns,
+> +                       int cap,
+> +                       struct security_capable_opts *opts);
+>         int (*quotactl)(int cmds, int type, int id, struct super_block *sb);
+>         int (*quota_on)(struct dentry *dentry);
+>         int (*syslog)(int type);
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index d170a5b031f3..b60621e93faf 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -58,6 +58,13 @@ struct mm_struct;
+>  #define SECURITY_CAP_NOAUDIT 0
+>  #define SECURITY_CAP_AUDIT 1
+>
+> +struct security_capable_opts {
+> +       /* If capable should audit the security request */
+> +       bool log_audit_message;
+> +       /* If capable is being called from a setid syscall */
+> +       bool in_setid;
+> +};
+> +
+>  /* LSM Agnostic defines for sb_set_mnt_opts */
+>  #define SECURITY_LSM_NATIVE_LABELS     1
+>
+> @@ -72,7 +79,7 @@ enum lsm_event {
+>
+>  /* These functions are in security/commoncap.c */
+>  extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
+> -                      int cap, int audit);
+> +                      int cap, struct security_capable_opts *opts);
+>  extern int cap_settime(const struct timespec64 *ts, const struct timezone *tz);
+>  extern int cap_ptrace_access_check(struct task_struct *child, unsigned int mode);
+>  extern int cap_ptrace_traceme(struct task_struct *parent);
+> @@ -180,6 +187,13 @@ static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
+>         return kernel_load_data_str[id];
+>  }
+>
+> +/* init a security_capable_opts struct with default values */
+> +static inline void init_security_capable_opts(struct security_capable_opts* opts)
+> +{
+> +       opts->log_audit_message = true;
+> +       opts->in_setid = false;
+> +}
+> +
+>  #ifdef CONFIG_SECURITY
+>
+>  struct security_mnt_opts {
+> @@ -233,10 +247,10 @@ int security_capset(struct cred *new, const struct cred *old,
+>                     const kernel_cap_t *effective,
+>                     const kernel_cap_t *inheritable,
+>                     const kernel_cap_t *permitted);
+> -int security_capable(const struct cred *cred, struct user_namespace *ns,
+> -                       int cap);
+> -int security_capable_noaudit(const struct cred *cred, struct user_namespace *ns,
+> -                            int cap);
+> +int security_capable(const struct cred *cred,
+> +                      struct user_namespace *ns,
+> +                      int cap,
+> +                      struct security_capable_opts *opts);
+>  int security_quotactl(int cmds, int type, int id, struct super_block *sb);
+>  int security_quota_on(struct dentry *dentry);
+>  int security_syslog(int type);
+> @@ -492,14 +506,11 @@ static inline int security_capset(struct cred *new,
+>  }
+>
+>  static inline int security_capable(const struct cred *cred,
+> -                                  struct user_namespace *ns, int cap)
+> +                                  struct user_namespace *ns,
+> +                                  int cap,
+> +                                  struct security_capable_opts *opts)
+>  {
+> -       return cap_capable(cred, ns, cap, SECURITY_CAP_AUDIT);
+> -}
+> -
+> -static inline int security_capable_noaudit(const struct cred *cred,
+> -                                          struct user_namespace *ns, int cap) {
+> -       return cap_capable(cred, ns, cap, SECURITY_CAP_NOAUDIT);
+> +       return cap_capable(cred, ns, cap, opts);
+>  }
+>
+>  static inline int security_quotactl(int cmds, int type, int id,
+> diff --git a/kernel/capability.c b/kernel/capability.c
+> index 1e1c0236f55b..d8ff27e6e7c4 100644
+> --- a/kernel/capability.c
+> +++ b/kernel/capability.c
+> @@ -297,9 +297,12 @@ bool has_ns_capability(struct task_struct *t,
+>                        struct user_namespace *ns, int cap)
+>  {
+>         int ret;
+> +       struct security_capable_opts opts;
+> +
+> +       init_security_capable_opts(&opts);
+>
+>         rcu_read_lock();
+> -       ret = security_capable(__task_cred(t), ns, cap);
+> +       ret = security_capable(__task_cred(t), ns, cap, &opts);
+>         rcu_read_unlock();
+>
+>         return (ret == 0);
+> @@ -338,9 +341,13 @@ bool has_ns_capability_noaudit(struct task_struct *t,
+>                                struct user_namespace *ns, int cap)
+>  {
+>         int ret;
+> +       struct security_capable_opts opts;
+> +
+> +       init_security_capable_opts(&opts);
+> +       opts.log_audit_message = false;
+>
+>         rcu_read_lock();
+> -       ret = security_capable_noaudit(__task_cred(t), ns, cap);
+> +       ret = security_capable(__task_cred(t), ns, cap, &opts);
+>         rcu_read_unlock();
+>
+>         return (ret == 0);
+> @@ -363,7 +370,9 @@ bool has_capability_noaudit(struct task_struct *t, int cap)
+>         return has_ns_capability_noaudit(t, &init_user_ns, cap);
+>  }
+>
+> -static bool ns_capable_common(struct user_namespace *ns, int cap, bool audit)
+> +static bool ns_capable_common(struct user_namespace *ns,
+> +                             int cap,
+> +                             struct security_capable_opts *opts)
+>  {
+>         int capable;
+>
+> @@ -372,8 +381,7 @@ static bool ns_capable_common(struct user_namespace *ns, int cap, bool audit)
+>                 BUG();
+>         }
+>
+> -       capable = audit ? security_capable(current_cred(), ns, cap) :
+> -                         security_capable_noaudit(current_cred(), ns, cap);
+> +       capable = security_capable(current_cred(), ns, cap, opts);
+>         if (capable == 0) {
+>                 current->flags |= PF_SUPERPRIV;
+>                 return true;
+> @@ -394,7 +402,10 @@ static bool ns_capable_common(struct user_namespace *ns, int cap, bool audit)
+>   */
+>  bool ns_capable(struct user_namespace *ns, int cap)
+>  {
+> -       return ns_capable_common(ns, cap, true);
+> +       struct security_capable_opts opts;
+> +
+> +       init_security_capable_opts(&opts);
+> +       return ns_capable_common(ns, cap, &opts);
+>  }
+>  EXPORT_SYMBOL(ns_capable);
+>
+> @@ -412,7 +423,11 @@ EXPORT_SYMBOL(ns_capable);
+>   */
+>  bool ns_capable_noaudit(struct user_namespace *ns, int cap)
+>  {
+> -       return ns_capable_common(ns, cap, false);
+> +       struct security_capable_opts opts;
+> +
+> +       init_security_capable_opts(&opts);
+> +       opts.log_audit_message = false;
+> +       return ns_capable_common(ns, cap, &opts);
+>  }
+>  EXPORT_SYMBOL(ns_capable_noaudit);
+>
+> @@ -448,10 +463,13 @@ EXPORT_SYMBOL(capable);
+>  bool file_ns_capable(const struct file *file, struct user_namespace *ns,
+>                      int cap)
+>  {
+> +       struct security_capable_opts opts;
+> +
+>         if (WARN_ON_ONCE(!cap_valid(cap)))
+>                 return false;
+>
+> -       if (security_capable(file->f_cred, ns, cap) == 0)
+> +       init_security_capable_opts(&opts);
+> +       if (security_capable(file->f_cred, ns, cap, &opts) == 0)
+>                 return true;
+>
+>         return false;
+> @@ -500,10 +518,15 @@ bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns)
+>  {
+>         int ret = 0;  /* An absent tracer adds no restrictions */
+>         const struct cred *cred;
+> +       struct security_capable_opts opts;
+> +
+> +       init_security_capable_opts(&opts);
+> +       opts.log_audit_message = false;
+> +
+>         rcu_read_lock();
+>         cred = rcu_dereference(tsk->ptracer_cred);
+>         if (cred)
+> -               ret = security_capable_noaudit(cred, ns, CAP_SYS_PTRACE);
+> +               ret = security_capable(cred, ns, CAP_SYS_PTRACE, &opts);
+>         rcu_read_unlock();
+>         return (ret == 0);
+>  }
+> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+> index f2ae2324c232..eed0e34c1bc2 100644
+> --- a/kernel/seccomp.c
+> +++ b/kernel/seccomp.c
+> @@ -370,12 +370,15 @@ static struct seccomp_filter *seccomp_prepare_filter(struct sock_fprog *fprog)
+>         struct seccomp_filter *sfilter;
+>         int ret;
+>         const bool save_orig = IS_ENABLED(CONFIG_CHECKPOINT_RESTORE);
+> +       struct security_capable_opts opts;
+>
+>         if (fprog->len == 0 || fprog->len > BPF_MAXINSNS)
+>                 return ERR_PTR(-EINVAL);
+>
+>         BUG_ON(INT_MAX / fprog->len < sizeof(struct sock_filter));
+>
+> +       init_security_capable_opts(&opts);
+> +       opts.log_audit_message = false;
+>         /*
+>          * Installing a seccomp filter requires that the task has
+>          * CAP_SYS_ADMIN in its namespace or be running with no_new_privs.
+> @@ -383,8 +386,8 @@ static struct seccomp_filter *seccomp_prepare_filter(struct sock_fprog *fprog)
+>          * behavior of privileged children.
+>          */
+>         if (!task_no_new_privs(current) &&
+> -           security_capable_noaudit(current_cred(), current_user_ns(),
+> -                                    CAP_SYS_ADMIN) != 0)
+> +           security_capable(current_cred(), current_user_ns(),
+> +                                    CAP_SYS_ADMIN, &opts) != 0)
+>                 return ERR_PTR(-EACCES);
+>
+>         /* Allocate a new seccomp_filter */
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 42446a216f3b..3be87dfd5e57 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -176,14 +176,14 @@ static int apparmor_capget(struct task_struct *target, kernel_cap_t *effective,
+>  }
+>
+>  static int apparmor_capable(const struct cred *cred, struct user_namespace *ns,
+> -                           int cap, int audit)
+> +                           int cap, struct security_capable_opts *opts)
+>  {
+>         struct aa_label *label;
+>         int error = 0;
+>
+>         label = aa_get_newest_cred_label(cred);
+>         if (!unconfined(label))
+> -               error = aa_capable(label, cap, audit);
+> +               error = aa_capable(label, cap, opts->log_audit_message);
+>         aa_put_label(label);
+>
+>         return error;
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 18a4fdf6f6eb..93fbb0dd70d6 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -69,7 +69,7 @@ static void warn_setuid_and_fcaps_mixed(const char *fname)
+>   * kernel's capable() and has_capability() returns 1 for this case.
+>   */
+>  int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
+> -               int cap, int audit)
+> +               int cap, struct security_capable_opts *opts)
+>  {
+>         struct user_namespace *ns = targ_ns;
+>
+> @@ -223,12 +223,14 @@ int cap_capget(struct task_struct *target, kernel_cap_t *effective,
+>   */
+>  static inline int cap_inh_is_capped(void)
+>  {
+> +       struct security_capable_opts opts;
+>
+> +       init_security_capable_opts(&opts);
+>         /* they are so limited unless the current task has the CAP_SETPCAP
+>          * capability
+>          */
+>         if (cap_capable(current_cred(), current_cred()->user_ns,
+> -                       CAP_SETPCAP, SECURITY_CAP_AUDIT) == 0)
+> +                       CAP_SETPCAP, &opts) == 0)
+>                 return 0;
+>         return 1;
+>  }
+> @@ -1174,6 +1176,7 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  {
+>         const struct cred *old = current_cred();
+>         struct cred *new;
+> +       struct security_capable_opts opts;
+>
+>         switch (option) {
+>         case PR_CAPBSET_READ:
+> @@ -1204,13 +1207,15 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>          * capability-based-privilege environment.
+>          */
+>         case PR_SET_SECUREBITS:
+> +               init_security_capable_opts(&opts);
+>                 if ((((old->securebits & SECURE_ALL_LOCKS) >> 1)
+>                      & (old->securebits ^ arg2))                        /*[1]*/
+>                     || ((old->securebits & SECURE_ALL_LOCKS & ~arg2))   /*[2]*/
+>                     || (arg2 & ~(SECURE_ALL_LOCKS | SECURE_ALL_BITS))   /*[3]*/
+>                     || (cap_capable(current_cred(),
+> -                                   current_cred()->user_ns, CAP_SETPCAP,
+> -                                   SECURITY_CAP_AUDIT) != 0)           /*[4]*/
+> +                                   current_cred()->user_ns,
+> +                                   CAP_SETPCAP,
+> +                                   &opts) != 0)                        /*[4]*/
+>                         /*
+>                          * [1] no changing of bits that are locked
+>                          * [2] no unlocking of locks
+> @@ -1304,10 +1309,14 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  int cap_vm_enough_memory(struct mm_struct *mm, long pages)
+>  {
+>         int cap_sys_admin = 0;
+> +       struct security_capable_opts opts;
+>
+> -       if (cap_capable(current_cred(), &init_user_ns, CAP_SYS_ADMIN,
+> -                       SECURITY_CAP_NOAUDIT) == 0)
+> +       init_security_capable_opts(&opts);
+> +       opts.log_audit_message = false;
+> +
+> +       if (cap_capable(current_cred(), &init_user_ns, CAP_SYS_ADMIN, &opts) == 0)
+>                 cap_sys_admin = 1;
+> +
+>         return cap_sys_admin;
+>  }
+>
+> @@ -1323,10 +1332,12 @@ int cap_vm_enough_memory(struct mm_struct *mm, long pages)
+>  int cap_mmap_addr(unsigned long addr)
+>  {
+>         int ret = 0;
+> +       struct security_capable_opts opts;
+>
+> +        init_security_capable_opts(&opts);
+>         if (addr < dac_mmap_min_addr) {
+> -               ret = cap_capable(current_cred(), &init_user_ns, CAP_SYS_RAWIO,
+> -                                 SECURITY_CAP_AUDIT);
+> +               ret = cap_capable(current_cred(), &init_user_ns,
+> +                                               CAP_SYS_RAWIO, &opts);
+>                 /* set PF_SUPERPRIV if it turns out we allow the low mmap */
+>                 if (ret == 0)
+>                         current->flags |= PF_SUPERPRIV;
+> diff --git a/security/security.c b/security/security.c
+> index 04d173eb93f6..bbc400a90c34 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -294,16 +294,12 @@ int security_capset(struct cred *new, const struct cred *old,
+>                                 effective, inheritable, permitted);
+>  }
+>
+> -int security_capable(const struct cred *cred, struct user_namespace *ns,
+> -                    int cap)
+> +int security_capable(const struct cred *cred,
+> +                    struct user_namespace *ns,
+> +                    int cap,
+> +                    struct security_capable_opts *opts)
+>  {
+> -       return call_int_hook(capable, 0, cred, ns, cap, SECURITY_CAP_AUDIT);
+> -}
+> -
+> -int security_capable_noaudit(const struct cred *cred, struct user_namespace *ns,
+> -                            int cap)
+> -{
+> -       return call_int_hook(capable, 0, cred, ns, cap, SECURITY_CAP_NOAUDIT);
+> +       return call_int_hook(capable, 0, cred, ns, cap, opts);
+>  }
+>
+>  int security_quotactl(int cmds, int type, int id, struct super_block *sb)
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 7ce683259357..ebd36adc8856 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -2316,9 +2316,10 @@ static int selinux_capset(struct cred *new, const struct cred *old,
+>   */
+>
+>  static int selinux_capable(const struct cred *cred, struct user_namespace *ns,
+> -                          int cap, int audit)
+> +                          int cap, struct security_capable_opts *opts)
+>  {
+> -       return cred_has_capability(cred, cap, audit, ns == &init_user_ns);
+> +       return cred_has_capability(cred, cap, opts->log_audit_message,
+> +                                                       ns == &init_user_ns);
+>  }
+>
+>  static int selinux_quotactl(int cmds, int type, int id, struct super_block *sb)
+> @@ -3245,11 +3246,13 @@ static int selinux_inode_getattr(const struct path *path)
+>  static bool has_cap_mac_admin(bool audit)
+>  {
+>         const struct cred *cred = current_cred();
+> -       int cap_audit = audit ? SECURITY_CAP_AUDIT : SECURITY_CAP_NOAUDIT;
+> +       struct security_capable_opts opts;
+>
+> -       if (cap_capable(cred, &init_user_ns, CAP_MAC_ADMIN, cap_audit))
+> +       init_security_capable_opts(&opts);
+> +       opts.log_audit_message = audit ? true : false;
+> +       if (cap_capable(cred, &init_user_ns, CAP_MAC_ADMIN, &opts))
+>                 return false;
+> -       if (cred_has_capability(cred, CAP_MAC_ADMIN, cap_audit, true))
+> +       if (cred_has_capability(cred, CAP_MAC_ADMIN, opts.log_audit_message, true))
+>                 return false;
+>         return true;
+>  }
+> diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
+> index 9a4c0ad46518..eca364b697d7 100644
+> --- a/security/smack/smack_access.c
+> +++ b/security/smack/smack_access.c
+> @@ -639,8 +639,11 @@ bool smack_privileged_cred(int cap, const struct cred *cred)
+>         struct smack_known *skp = tsp->smk_task;
+>         struct smack_known_list_elem *sklep;
+>         int rc;
+> +       struct security_capable_opts opts;
+>
+> -       rc = cap_capable(cred, &init_user_ns, cap, SECURITY_CAP_AUDIT);
+> +       init_security_capable_opts(&opts);
+> +
+> +       rc = cap_capable(cred, &init_user_ns, cap, &opts);
+>         if (rc)
+>                 return false;
+>
+> --
+> 2.19.1.1215.g8438c0b245-goog
+>
