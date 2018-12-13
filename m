@@ -2,118 +2,262 @@ Return-Path: <SRS0=Wiv6=OW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E50C67839
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 01:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBE5C6786C
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 02:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07AA420870
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 01:42:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07AA420870
+	by mail.kernel.org (Postfix) with ESMTP id EF09C20879
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 Dec 2018 02:11:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF09C20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbeLMBmg (ORCPT
+        id S1726431AbeLMCK4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 Dec 2018 20:42:36 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53412 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726372AbeLMBmg (ORCPT
+        Wed, 12 Dec 2018 21:10:56 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41154 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726405AbeLMCK4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 Dec 2018 20:42:36 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD1cxn1093826
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 20:42:35 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbb227ate-1
+        Wed, 12 Dec 2018 21:10:56 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD23iMn035761
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:10:55 -0500
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbamj9x78-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 20:42:34 -0500
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Dec 2018 21:10:54 -0500
 Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 13 Dec 2018 01:42:34 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Thu, 13 Dec 2018 02:10:54 -0000
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 01:42:32 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD1gUCI20512930
+        Thu, 13 Dec 2018 02:10:49 -0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD2Aljr13500514
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 01:42:30 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 836817805E;
-        Thu, 13 Dec 2018 01:42:30 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B82AA7805C;
-        Thu, 13 Dec 2018 01:42:28 +0000 (GMT)
+        Thu, 13 Dec 2018 02:10:47 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4430BC605A;
+        Thu, 13 Dec 2018 02:10:47 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E531C6069;
+        Thu, 13 Dec 2018 02:10:32 +0000 (GMT)
 Received: from morokweng.localdomain.com (unknown [9.80.227.60])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Dec 2018 01:42:28 +0000 (GMT)
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Dec 2018 02:10:32 +0000 (GMT)
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>,
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jessica Yu <jeyu@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
         Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH] integrity: Remove references to module keyring
-Date:   Wed, 12 Dec 2018 23:39:09 -0200
+Subject: [PATCH v9 00/14] Appended signatures support for IMA appraisal
+Date:   Thu, 13 Dec 2018 00:08:53 -0200
 X-Mailer: git-send-email 2.17.2
 X-TM-AS-GCONF: 00
-x-cbid: 18121301-0016-0000-0000-00000963A1B5
+x-cbid: 18121302-0004-0000-0000-000014C1686A
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010217; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130942; UDB=6.00587708; IPR=6.00911075;
- MB=3.00024674; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 01:42:33
+ PH=3.00000004; SC=3.00000270; SDB=6.01130951; UDB=6.00587714; IPR=6.00911084;
+ MB=3.00024674; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 02:10:53
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121301-0017-0000-0000-000041628DA9
-Message-Id: <20181213013909.25737-1-bauerman@linux.ibm.com>
+x-cbparentid: 18121302-0005-0000-0000-000089D51DF7
+Message-Id: <20181213020907.13601-1-bauerman@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812130013
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812130017
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From what I can tell, it has never been used.
+Hello,
 
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- security/integrity/digsig.c    | 1 -
- security/integrity/integrity.h | 5 ++---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+This version is basically about tidying up the code to make it clearer. Most
+of the changes are in patches 11 and 14.
 
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index c5585e75d5d9..1ff8eab7bc8c 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -34,7 +34,6 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
- 	".evm",
- 	".ima",
- #endif
--	"_module",
- 	".platform",
- };
- 
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index aafa1266e3d5..26c415c3f879 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -152,9 +152,8 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- 
- #define INTEGRITY_KEYRING_EVM		0
- #define INTEGRITY_KEYRING_IMA		1
--#define INTEGRITY_KEYRING_MODULE	2
--#define INTEGRITY_KEYRING_PLATFORM	3
--#define INTEGRITY_KEYRING_MAX		4
-+#define INTEGRITY_KEYRING_PLATFORM	2
-+#define INTEGRITY_KEYRING_MAX		3
- 
- extern struct dentry *integrity_dir;
- 
+There are two functional changes: one is modifying the list of hooks allowed
+to use modsig to allow verifying signed modules and disallow verifying
+firmware, and the other is to use the platform keyring as fallback for kexec
+kernel verification.
+
+The changelog below has the details. The patches apply on today's
+linux-integrity/next-integrity.
+
+Original cover letter:
+
+On the OpenPOWER platform, secure boot and trusted boot are being
+implemented using IMA for taking measurements and verifying signatures.
+Since the kernel image on Power servers is an ELF binary, kernels are
+signed using the scripts/sign-file tool and thus use the same signature
+format as signed kernel modules.
+
+This patch series adds support in IMA for verifying those signatures.
+It adds flexibility to OpenPOWER secure boot, because it allows it to boot
+kernels with the signature appended to them as well as kernels where the
+signature is stored in the IMA extended attribute.
+
+Changes since v8:
+- Patch "MODSIGN: Export module signature definitions"
+  - Renamed validate_module_sig() to mod_check_sig(). (Suggested by
+    Mimi Zohar).
+
+- Patch "integrity: Introduce struct evm_xattr"
+  - Added comment mentioning that the evm_xattr usage is limited to HMAC
+    before the structure definition. (Suggested by Mimi Zohar)
+
+- Patch "ima: Add modsig appraise_type option for module-style appended
+         signatures"
+  - Added MODULE_CHECK to whitelist of hooks allowed to use modsig, and
+    removed FIRMWARE_CHECK. (Suggested by Mimi Zohar and James Morris)
+
+- Patch "ima: Implement support for module-style appended signatures"
+  - Moved call to ima_modsig_verify() from ima_appraise_measurement() to
+    integrity_digsig_verify(). (Suggested by Mimi Zohar)
+  - Renamed ima_read_modsig() to ima_read_collect_modsig() and made it force
+    PKCS7 code to calculate the file hash. (Suggested by Mimi Zohar)
+  - Build sign-file tool if IMA_APPRAISE_MODSIG is enabled.
+  - Check whether the signing key is in the platform keyring as a fallback
+    for the KEXEC_KERNEL hook. (Suggested by Mimi Zohar)
+
+- Patch "ima: Store the measurement again when appraising a modsig"
+  - In process_measurement(), when a new measurement needs to be stored
+    re-add IMA_MEASURE flag when the modsig is read rather than changing the
+    if condition when calling ima_store_measurement(). (Suggested by Mimi
+    Zohar)
+  - Check whether ima_template has "sig" and "d-sig" fields at
+    initialization rather than at the first time the check is needed.
+    (suggested by Mimi Zohar)
+
+Changes since v7:
+- Patch "MODSIGN: Export module signature definitions"
+  - Added module name parameter to validate_module_sig() so that it can be
+    shown in error messages.
+
+- Patch "integrity: Introduce struct evm_xattr"
+  - Dropped use of struct evm_xattr in evm_update_evmxattr() and
+    evm_verify_hmac(). It's not needed there anymore because of changes
+    to support portable EVM signatures.
+
+Changes since v6:
+
+- Patch "PKCS#7: Introduce pkcs7_get_message_sig() and verify_pkcs7_message_sig()"
+  - Retitled to "PKCS#7: Refactor verify_pkcs7_signature() and
+    add pkcs7_get_message_sig()"
+  - Reworded description to clarify why the refactoring is needed.
+    The code is unchanged. (Suggested by Mimi Zohar)
+  - Added Mimi Zohar's Reviewed-by.
+
+- Patch "PKCS#7: Introduce pkcs7_get_digest()"
+  - Added Mimi Zohar's Reviewed-by.
+
+- Patch "integrity: Introduce integrity_keyring_from_id"
+  - Added Mimi Zohar's Signed-off-by.
+
+- Patch "integrity: Introduce asymmetric_sig_has_known_key()"
+  - Added Mimi Zohar's Signed-off-by.
+
+- Patch "integrity: Select CONFIG_KEYS instead of depending on it"
+  - Added Mimi Zohar's Signed-off-by.
+
+- Patch "ima: Introduce is_ima_sig()"
+  - Renamed function to is_signed() (suggested by Mimi Zohar).
+
+- Patch "ima: Add functions to read and verify a modsig signature"
+  - Changed stubs for the !CONFIG_IMA_APPRAISE_MODSIG to return -EOPNOTSUPP
+    instead of -ENOTSUPP, since the latter isn't defined in uapi headers.
+  - Moved functions to the patches which use them and dropped this patch
+    (suggested by Mimi Zohar).
+
+- Patch "ima: Implement support for module-style appended signatures"
+  - Prevent reading and writing of IMA_MODSIG xattr in ima_read_xattr()
+    and ima_inode_setxattr().
+  - Simplify code in process_measurement() which decides whether to try
+    reading a modsig (suggested by Mimi Zohar).
+  - Moved some functions from patch "ima: Add functions to read and verify
+    a modsig signature" into this patch.
+
+- Patch "ima: Add new "d-sig" template field"
+  - New patch containing code from patch "ima: Write modsig to the measurement list"
+    (Suggested by Mimi Zohar).
+
+- Patch "ima: Write modsig to the measurement list"
+  - Moved some functions from patch "ima: Add functions to read and verify
+    a modsig signature" into this patch.
+  - Moved code related to d-sig support to new patch.
+
+- Patch "ima: Store the measurement again when appraising a modsig"
+  - New patch.
+
+Thiago Jung Bauermann (14):
+  MODSIGN: Export module signature definitions
+  PKCS#7: Refactor verify_pkcs7_signature() and add
+    pkcs7_get_message_sig()
+  PKCS#7: Introduce pkcs7_get_digest()
+  integrity: Introduce struct evm_xattr
+  integrity: Introduce integrity_keyring_from_id()
+  integrity: Introduce asymmetric_sig_has_known_key()
+  integrity: Select CONFIG_KEYS instead of depending on it
+  ima: Introduce is_signed()
+  ima: Export func_tokens
+  ima: Add modsig appraise_type option for module-style appended
+    signatures
+  ima: Implement support for module-style appended signatures
+  ima: Add new "d-sig" template field
+  ima: Write modsig to the measurement list
+  ima: Store the measurement again when appraising a modsig
+
+ Documentation/ABI/testing/ima_policy      |   6 +-
+ Documentation/security/IMA-templates.rst  |   5 +
+ certs/system_keyring.c                    |  61 ++++--
+ crypto/asymmetric_keys/pkcs7_parser.c     |  16 ++
+ crypto/asymmetric_keys/pkcs7_verify.c     |  27 +++
+ include/crypto/pkcs7.h                    |   5 +
+ include/linux/module.h                    |   3 -
+ include/linux/module_signature.h          |  47 +++++
+ include/linux/verification.h              |  10 +
+ init/Kconfig                              |   6 +-
+ kernel/Makefile                           |   2 +-
+ kernel/module.c                           |   1 +
+ kernel/module_signing.c                   |  82 ++++----
+ scripts/Makefile                          |   4 +-
+ security/integrity/Kconfig                |   2 +-
+ security/integrity/digsig.c               |  31 ++-
+ security/integrity/digsig_asymmetric.c    |  44 +++--
+ security/integrity/evm/evm_main.c         |   8 +-
+ security/integrity/ima/Kconfig            |  13 ++
+ security/integrity/ima/Makefile           |   1 +
+ security/integrity/ima/ima.h              |  62 ++++++
+ security/integrity/ima/ima_api.c          |   9 +-
+ security/integrity/ima/ima_appraise.c     |  82 +++++++-
+ security/integrity/ima/ima_main.c         |  29 ++-
+ security/integrity/ima/ima_modsig.c       | 229 ++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c       |  81 ++++++--
+ security/integrity/ima/ima_template.c     |  28 ++-
+ security/integrity/ima/ima_template_lib.c |  49 ++++-
+ security/integrity/ima/ima_template_lib.h |   2 +
+ security/integrity/integrity.h            |  40 +++-
+ 30 files changed, 861 insertions(+), 124 deletions(-)
+ create mode 100644 include/linux/module_signature.h
+ create mode 100644 security/integrity/ima/ima_modsig.c
 
