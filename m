@@ -2,34 +2,37 @@ Return-Path: <SRS0=7rH2=O2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE01C43387
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Dec 2018 19:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D20C43387
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Dec 2018 19:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04381206A2
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 Dec 2018 19:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2778F206A2
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 Dec 2018 19:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732463AbeLQTdF (ORCPT
+        id S2389263AbeLQTdz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 Dec 2018 14:33:05 -0500
-Received: from namei.org ([65.99.196.166]:52204 "EHLO namei.org"
+        Mon, 17 Dec 2018 14:33:55 -0500
+Received: from namei.org ([65.99.196.166]:52214 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbeLQTdF (ORCPT
+        id S2387846AbeLQTdz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 Dec 2018 14:33:05 -0500
+        Mon, 17 Dec 2018 14:33:55 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBHJX3Q6029623;
-        Mon, 17 Dec 2018 19:33:03 GMT
-Date:   Tue, 18 Dec 2018 06:33:03 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBHJXj01029677;
+        Mon, 17 Dec 2018 19:33:45 GMT
+Date:   Tue, 18 Dec 2018 06:33:45 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [GIT PULL] tpmdd updates for Linux v4.21
-In-Reply-To: <20181217132033.GA31729@linux.intel.com>
-Message-ID: <alpine.LRH.2.21.1812180632420.29218@namei.org>
-References: <20181217132033.GA31729@linux.intel.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+cc:     linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] integrity: Remove references to module keyring
+In-Reply-To: <20181213013909.25737-1-bauerman@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.1812180633290.29218@namei.org>
+References: <20181213013909.25737-1-bauerman@linux.ibm.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -37,18 +40,49 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 17 Dec 2018, Jarkko Sakkinen wrote:
+On Wed, 12 Dec 2018, Thiago Jung Bauermann wrote:
 
-> Hi James,
+> >From what I can tell, it has never been used.
 > 
-> v4.21 updates:
-> 
-> * Support for partial reads of /dev/tpm0.
-> * Clean up for TPM 1.x code: move the commands to tpm1-cmd.c and make
->   everything to use the same data structure for building TPM commands
->   i.e. struct tpm_buf.
+> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 
-Pulled to next-tpm and next-testing.
+Mimi, can I add your acked-by?
+
+
+> ---
+>  security/integrity/digsig.c    | 1 -
+>  security/integrity/integrity.h | 5 ++---
+>  2 files changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index c5585e75d5d9..1ff8eab7bc8c 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -34,7 +34,6 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+>  	".evm",
+>  	".ima",
+>  #endif
+> -	"_module",
+>  	".platform",
+>  };
+>  
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index aafa1266e3d5..26c415c3f879 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -152,9 +152,8 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+>  
+>  #define INTEGRITY_KEYRING_EVM		0
+>  #define INTEGRITY_KEYRING_IMA		1
+> -#define INTEGRITY_KEYRING_MODULE	2
+> -#define INTEGRITY_KEYRING_PLATFORM	3
+> -#define INTEGRITY_KEYRING_MAX		4
+> +#define INTEGRITY_KEYRING_PLATFORM	2
+> +#define INTEGRITY_KEYRING_MAX		3
+>  
+>  extern struct dentry *integrity_dir;
+>  
+> 
 
 -- 
 James Morris
