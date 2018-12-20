@@ -3,266 +3,281 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E5CC43387
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7181AC43387
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Dec 2018 15:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0CC3217D8
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 Dec 2018 14:55:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FEB721852
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 Dec 2018 15:21:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbeLTOzH (ORCPT
+        id S2387657AbeLTPV2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 Dec 2018 09:55:07 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62203 "EHLO mga04.intel.com"
+        Thu, 20 Dec 2018 10:21:28 -0500
+Received: from mga17.intel.com ([192.55.52.151]:41907 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbeLTOzG (ORCPT
+        id S1729693AbeLTPV2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 Dec 2018 09:55:06 -0500
+        Thu, 20 Dec 2018 10:21:28 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 06:55:05 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2018 07:21:27 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,377,1539673200"; 
-   d="scan'208";a="285293790"
+   d="scan'208";a="119978740"
 Received: from unknown (HELO localhost) ([10.249.254.232])
-  by orsmga005.jf.intel.com with ESMTP; 20 Dec 2018 06:55:01 -0800
-Date:   Thu, 20 Dec 2018 16:55:00 +0200
+  by FMSMGA003.fm.intel.com with ESMTP; 20 Dec 2018 07:21:23 -0800
+Date:   Thu, 20 Dec 2018 17:21:22 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>
 Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20181220145500.GA10652@linux.intel.com>
+Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()
+Message-ID: <20181220152122.GB10652@linux.intel.com>
 References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
+ <20181213102945.30946-6-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181213102945.30946-2-roberto.sassu@huawei.com>
+In-Reply-To: <20181213102945.30946-6-roberto.sassu@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
-> This patch renames active_banks (member of tpm_chip) to allocated_banks,
-> stores the number of allocated PCR banks in nr_allocated_banks (new member
-> of tpm_chip), and replaces the static array with a pointer to a dynamically
-> allocated array.
+On Thu, Dec 13, 2018 at 11:29:45AM +0100, Roberto Sassu wrote:
+> Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
 > 
-> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
-> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
-> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
-> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
-> case, the bank is not included in chip->allocated_banks, to avoid that TPM
-> driver users unnecessarily calculate a digest for that bank.
+> This patch modifies the definition of tpm_pcr_extend() to allow other
+> kernel subsystems to pass a digest for each algorithm supported by the TPM.
+> All digests are processed by the TPM in one operation.
 > 
-> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
+> If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
+> the TPM driver extends the remaining PCR banks with the first digest
+> passed as an argument to the function.
 > 
-> As a consequence of the introduction of nr_allocated_banks,
-> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
-> is equal to zero.
+> The new tpm_extend digest structure has been preferred to the tpm_digest
+> structure, to let the caller specify the size of the digest (which may be
+> unknown to the TPM driver).
+> 
+> Due to the API change, ima_pcr_extend() and pcrlock() have been modified.
 > 
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  drivers/char/tpm/tpm-chip.c      |  1 +
->  drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
->  drivers/char/tpm/tpm.h           |  3 ++-
->  drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
->  drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
->  5 files changed, 47 insertions(+), 19 deletions(-)
+>  drivers/char/tpm/tpm-interface.c   | 24 +++++---------------
+>  drivers/char/tpm/tpm.h             |  5 +++--
+>  drivers/char/tpm/tpm1-cmd.c        | 13 ++++++++---
+>  drivers/char/tpm/tpm2-cmd.c        | 35 +++++++++++++++++++++---------
+>  include/linux/tpm.h                | 13 ++++++++---
+>  security/integrity/ima/ima_queue.c |  5 ++++-
+>  security/keys/trusted.c            |  5 ++++-
+>  7 files changed, 62 insertions(+), 38 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 32db84683c40..ce851c62bb68 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
->  	kfree(chip->log.bios_event_log);
->  	kfree(chip->work_space.context_buf);
->  	kfree(chip->work_space.session_buf);
-> +	kfree(chip->allocated_banks);
->  	kfree(chip);
->  }
->  
 > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index d9439f9abe78..7b80919228be 100644
+> index eb7c79ca8a94..911fea19e408 100644
 > --- a/drivers/char/tpm/tpm-interface.c
 > +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->  int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+> @@ -478,42 +478,30 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+>   * tpm_pcr_extend - extend a PCR value in SHA1 bank.
+>   * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+>   * @pcr_idx:	the PCR to be retrieved
+> - * @hash:	the hash value used to extend the PCR value
+> + * @count:	number of tpm_extend_digest structures
+> + * @digests:	array of tpm_extend_digest structures used to extend PCRs
+>   *
+>   * Note: with TPM 2.0 extends also those banks for which no digest was
+>   * specified in order to prevent malicious use of those PCR banks.
+>   *
+>   * Return: same as with tpm_transmit_cmd()
+>   */
+> -int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+> +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> +		   const struct tpm_extend_digest *digests)
+
+Remove const. Document how @digests is used  like the special meaning
+of the first index. I faintly remember asking this last time.
+
 >  {
 >  	int rc;
-> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> -	u32 count = 0;
-> +	struct tpm2_digest *digest_list;
->  	int i;
+> -	struct tpm_digest *digest_list;
+> -	int i;
 >  
 >  	chip = tpm_find_get_ops(chip);
-> @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+>  	if (!chip)
 >  		return -ENODEV;
 >  
 >  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> -		memset(digest_list, 0, sizeof(digest_list));
-> +		digest_list = kcalloc(chip->nr_allocated_banks,
-> +				      sizeof(*digest_list), GFP_KERNEL);
-> +		if (!digest_list)
-> +			return -ENOMEM;
-
-You could preallocate digest list and place it to struct tpm_chip
-instead of doing it everytime tpm_pcr_extend() called.
-
->  
-> -		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
-> -			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
-> -			digest_list[i].alg_id = chip->active_banks[i];
-> +		for (i = 0; i < chip->nr_allocated_banks; i++) {
-> +			digest_list[i].alg_id = chip->allocated_banks[i];
->  			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-> -			count++;
->  		}
->  
-> -		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
-> +		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
-> +				     digest_list);
-> +		kfree(digest_list);
+> -		digest_list = kcalloc(chip->nr_allocated_banks,
+> -				      sizeof(*digest_list), GFP_KERNEL);
+> -		if (!digest_list)
+> -			return -ENOMEM;
+> -
+> -		for (i = 0; i < chip->nr_allocated_banks; i++) {
+> -			digest_list[i].alg_id = chip->allocated_banks[i].alg_id;
+> -			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+> -		}
+> -
+> -		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
+> -				     digest_list);
+> -		kfree(digest_list);
+> +		rc = tpm2_pcr_extend(chip, pcr_idx, count, digests);
 >  		tpm_put_ops(chip);
 >  		return rc;
 >  	}
+>  
+> -	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
+> +	rc = tpm1_pcr_extend(chip, pcr_idx, count, digests,
+>  			     "attempting extend a PCR value");
+
+The validation is missing that the provided array has only one element
+and the algorithm is SHA1. Could be done also inside tpm1_pcr_extend()
+but what you are doing to that function does not make any sense so
+better to do it here.
+
+>  	tpm_put_ops(chip);
+>  	return rc;
 > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index f27d1f38a93d..6b94306ab7c5 100644
+> index 64d93d26087f..6b446504d2fe 100644
 > --- a/drivers/char/tpm/tpm.h
 > +++ b/drivers/char/tpm/tpm.h
-> @@ -257,7 +257,8 @@ struct tpm_chip {
->  	const struct attribute_group *groups[3];
->  	unsigned int groups_cnt;
->  
-> -	u16 active_banks[7];
-> +	u32 nr_allocated_banks;
-> +	u16 *allocated_banks;
->  #ifdef CONFIG_ACPI
->  	acpi_handle acpi_dev_handle;
->  	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+> @@ -504,7 +504,8 @@ int tpm1_auto_startup(struct tpm_chip *chip);
+>  int tpm1_do_selftest(struct tpm_chip *chip);
+>  int tpm1_get_timeouts(struct tpm_chip *chip);
+>  unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+> -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+> +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> +		    const struct tpm_extend_digest *digests,
+>  		    const char *log_msg);
+>  int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+>  ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+> @@ -551,7 +552,7 @@ int tpm2_get_timeouts(struct tpm_chip *chip);
+>  int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+>  		  struct tpm_digest *digest, u16 *digest_size_ptr);
+>  int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> -		    struct tpm_digest *digests);
+> +		    const struct tpm_extend_digest *digests);
+>  int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+>  void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+>  			    unsigned int flags);
 > diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> index 6f306338953b..0874743ca96d 100644
+> index 8b70a7f884a7..04ee10284b8c 100644
 > --- a/drivers/char/tpm/tpm1-cmd.c
 > +++ b/drivers/char/tpm/tpm1-cmd.c
-> @@ -709,6 +709,16 @@ int tpm1_auto_startup(struct tpm_chip *chip)
->  		goto out;
->  	}
+> @@ -449,12 +449,20 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+>  }
 >  
-> +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
-> +					GFP_KERNEL);
-> +	if (!chip->allocated_banks) {
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
+>  #define TPM_ORD_PCR_EXTEND 20
+> -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+> +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> +		    const struct tpm_extend_digest *digests,
+>  		    const char *log_msg)
+>  {
+>  	struct tpm_buf buf;
+> +	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+> +	const u8 *hash;
+>  	int rc;
+>  
+> +	hash = dummy_hash;
+> +	if (count)
+> +		memcpy(dummy_hash, digests[0].data,
+> +		       min(digests[0].size, (u16)sizeof(dummy_hash)));
 > +
-> +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
-> +	chip->nr_allocated_banks = 1;
-> +
->  	return rc;
->  out:
->  	if (rc > 0)
+
+You copy memory from one place to another without any good reason to do
+so. My suggestion is just not to change tpm1_pcr_extend() at all.
+
+>  	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
+>  	if (rc)
+>  		return rc;
+> @@ -743,7 +751,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+>   */
+>  int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+>  {
+> -	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+>  	struct tpm_buf buf;
+>  	unsigned int try;
+>  	int rc;
+> @@ -751,7 +758,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+>  
+>  	/* for buggy tpm, flush pcrs with extend to selected dummy */
+>  	if (tpm_suspend_pcr)
+> -		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
+> +		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, 0, NULL,
+>  				     "extending dummy pcr before suspend");
+>  
+>  	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
 > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index a6bec13afa69..245669a7aba5 100644
+> index 6ce5173cf0e5..77b5808270c6 100644
 > --- a/drivers/char/tpm/tpm2-cmd.c
 > +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -234,7 +234,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->  	int i;
->  	int j;
->  
-> -	if (count > ARRAY_SIZE(chip->active_banks))
-> +	if (count > chip->nr_allocated_banks)
->  		return -EINVAL;
->  
->  	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
-> @@ -825,11 +825,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	void *marker;
->  	void *end;
->  	void *pcr_select_offset;
-> -	unsigned int count;
->  	u32 sizeof_pcr_selection;
-> +	u32 nr_possible_banks;
-> +	u32 nr_alloc_banks = 0;
-> +	u16 hash_alg;
->  	u32 rsp_len;
+> @@ -247,21 +247,22 @@ struct tpm2_null_auth_area {
+>   *
+>   * @chip:	TPM chip to use.
+>   * @pcr_idx:	index of the PCR.
+> - * @count:	number of digests passed.
+> - * @digests:	list of pcr banks and corresponding digest values to extend.
+> + * @count:	number of tpm_extend_digest passed.
+> + * @digests:	array of tpm_extend_digest with digest values to extend.
+>   *
+>   * Return: Same as with tpm_transmit_cmd.
+>   */
+
+The documentation about @digests.
+
+>  int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+> -		    struct tpm_digest *digests)
+> +		    const struct tpm_extend_digest *digests)
+>  {
+>  	struct tpm_buf buf;
+>  	struct tpm2_null_auth_area auth_area;
+> +	const struct tpm_extend_digest *digest;
+> +	u8 dummy_hash[SHA512_DIGEST_SIZE] = { 0 };
+> +	const u8 *hash;
 >  	int rc;
->  	int i = 0;
+>  	int i;
+> -
+> -	if (count > chip->nr_allocated_banks)
+> -		return -EINVAL;
 > +	int j;
 >  
->  	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+>  	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
 >  	if (rc)
-> @@ -844,11 +847,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	if (rc)
->  		goto out;
->  
-> -	count = be32_to_cpup(
-> +	nr_possible_banks = be32_to_cpup(
->  		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
->  
-> -	if (count > ARRAY_SIZE(chip->active_banks)) {
-> -		rc = -ENODEV;
-> +	chip->allocated_banks = kcalloc(nr_possible_banks,
-> +					sizeof(*chip->allocated_banks),
-> +					GFP_KERNEL);
-> +	if (!chip->allocated_banks) {
-> +		rc = -ENOMEM;
->  		goto out;
->  	}
->  
-> @@ -857,7 +863,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
->  	end = &buf.data[rsp_len];
->  
-> -	for (i = 0; i < count; i++) {
-> +	for (i = 0; i < nr_possible_banks; i++) {
->  		pcr_select_offset = marker +
->  			offsetof(struct tpm2_pcr_selection, size_of_select);
->  		if (pcr_select_offset >= end) {
-> @@ -866,17 +872,25 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
->  		}
->  
->  		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
-> -		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
-> +		hash_alg = be16_to_cpu(pcr_selection.hash_alg);
+> @@ -277,11 +278,25 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+>  	tpm_buf_append_u32(&buf, sizeof(struct tpm2_null_auth_area));
+>  	tpm_buf_append(&buf, (const unsigned char *)&auth_area,
+>  		       sizeof(auth_area));
+> -	tpm_buf_append_u32(&buf, count);
+> +	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
 > +
-> +		for (j = 0; j < pcr_selection.size_of_select; j++)
-> +			if (pcr_selection.pcr_select[j])
+> +	if (count)
+> +		memcpy(dummy_hash, digests[0].data, digests[0].size);
+> +
+> +	for (i = 0; i < chip->nr_allocated_banks; i++) {
+> +		tpm_buf_append_u16(&buf, chip->allocated_banks[i].alg_id);
+> +
+> +		hash = dummy_hash;
+> +		for (j = 0; j < count; j++) {
+> +			digest = digests + j;
+> +
+> +			if (digest->alg_id == chip->allocated_banks[i].alg_id) {
+> +				hash = digest->data;
 > +				break;
-> +
-> +		if (j < pcr_selection.size_of_select) {
-> +			chip->allocated_banks[nr_alloc_banks] = hash_alg;
-> +			nr_alloc_banks++;
-> +		}
 
-The same comment as before: you should use memchr_inv() here.
+I think the whole design is just wrong. I did re-read your response to
+v6 again and I'm very sorry, but I just don't get this. Caller has all
+the information (from struct tpm_chip) to give the correct data. This
+function should validate that data (check algorithm ID and that's it).
 
-> +
->  		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
->  			sizeof(pcr_selection.size_of_select) +
->  			pcr_selection.size_of_select;
->  		marker = marker + sizeof_pcr_selection;
->  	}
->  
-> +	chip->nr_allocated_banks = nr_alloc_banks;
->  out:
-> -	if (i < ARRAY_SIZE(chip->active_banks))
-> -		chip->active_banks[i] = TPM2_ALG_ERROR;
-> -
->  	tpm_buf_destroy(&buf);
->  
->  	return rc;
-> -- 
-> 2.17.1
-> 
+Extending with the dummy hash should be done by the caller when
+preparing the array, not baked into this function. This kind of also
+makes obvious that we don't need this new struct. There should never be
+a local variable (whose size is BTW randomly chosen) called dummy_hash.
 
 /Jarkko
