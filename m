@@ -2,93 +2,58 @@ Return-Path: <SRS0=GrjI=O7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C33DC43387
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Dec 2018 18:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CB0C43387
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Dec 2018 19:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CA9821908
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 Dec 2018 18:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3486C21939
+	for <linux-security-module@archiver.kernel.org>; Sat, 22 Dec 2018 19:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392005AbeLVSbP (ORCPT
+        id S1732431AbeLVTek (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 22 Dec 2018 13:31:15 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42517 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391986AbeLVSbO (ORCPT
+        Sat, 22 Dec 2018 14:34:40 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59192 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730700AbeLVTek (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 22 Dec 2018 13:31:14 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gagNi-0007IB-TD; Sat, 22 Dec 2018 12:27:50 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        Sat, 22 Dec 2018 14:34:40 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gan2e-0006oK-Sw; Sat, 22 Dec 2018 19:34:32 +0000
+Date:   Sat, 22 Dec 2018 19:34:32 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] smack: fix two memory leaks in smack_add_opt
-Date:   Sat, 22 Dec 2018 12:27:50 +0000
-Message-Id: <20181222122750.13075-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        linux-security-module@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] smack: fix two memory leaks in smack_add_opt
+Message-ID: <20181222193432.GC2217@ZenIV.linux.org.uk>
+References: <20181222122750.13075-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181222122750.13075-1-colin.king@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sat, Dec 22, 2018 at 12:27:50PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently if s is null or when returning via the error exit label
+> out_opt_err leaks of the allocated opts can occur. Fix the leak
+> on the null s case by checking s is null before the allocation. Fix
+> the leak on the exit path by checking if opts was allocated by
+> kfree'ing opts.
+> 
+> Detected by CoverityScan, CID#1475953 ("Resource leak")
+> 
+> Fixes: b2130173efae ("smack: take the guts of smack_parse_opts_str() into a new helper")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Currently if s is null or when returning via the error exit label
-out_opt_err leaks of the allocated opts can occur. Fix the leak
-on the null s case by checking s is null before the allocation. Fix
-the leak on the exit path by checking if opts was allocated by
-kfree'ing opts.
-
-Detected by CoverityScan, CID#1475953 ("Resource leak")
-
-Fixes: b2130173efae ("smack: take the guts of smack_parse_opts_str() into a new helper")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/smack/smack_lsm.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 84f72116a027..b5dc520adaa2 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -604,13 +604,13 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
- {
- 	struct smack_mnt_opts *opts = *mnt_opts;
- 
-+	if (!s)
-+		return -ENOMEM;
- 	if (!opts) {
- 		opts = kzalloc(sizeof(struct smack_mnt_opts), GFP_KERNEL);
- 		if (!opts)
- 			return -ENOMEM;
- 	}
--	if (!s)
--		return -ENOMEM;
- 
- 	switch (token) {
- 	case Opt_fsdefault:
-@@ -644,6 +644,8 @@ static int smack_add_opt(int token, const char *s, void **mnt_opts)
- 
- out_opt_err:
- 	pr_warn("Smack: duplicate mount options\n");
-+	if (opts != *mnt_opts)
-+		kfree(opts);
- 	return -EINVAL;
- }
- 
--- 
-2.19.1
-
+There's a better fix in local tree, will go into -next tonight.
