@@ -4,76 +4,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BFCC43387
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Dec 2018 04:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97134C43387
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Dec 2018 04:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A116220B1F
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 Dec 2018 04:16:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65F3B20B1F
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 Dec 2018 04:18:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbeLaEQ0 (ORCPT
+        id S1726876AbeLaESj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 30 Dec 2018 23:16:26 -0500
-Received: from namei.org ([65.99.196.166]:53796 "EHLO namei.org"
+        Sun, 30 Dec 2018 23:18:39 -0500
+Received: from namei.org ([65.99.196.166]:53804 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726131AbeLaEQ0 (ORCPT
+        id S1726856AbeLaESj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 30 Dec 2018 23:16:26 -0500
+        Sun, 30 Dec 2018 23:18:39 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBV4GPUw001788;
-        Mon, 31 Dec 2018 04:16:25 GMT
-Date:   Mon, 31 Dec 2018 15:16:25 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id wBV4IchJ001884;
+        Mon, 31 Dec 2018 04:18:38 GMT
+Date:   Mon, 31 Dec 2018 15:18:38 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] security: Smack changes for v4.21
-Message-ID: <alpine.LRH.2.21.1812311515150.1435@namei.org>
+Subject: [GIT PULL] security: TPM changes for v4.21
+Message-ID: <alpine.LRH.2.21.1812311516290.1435@namei.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="1665246916-996557093-1546229750=:1435"
-Content-ID: <alpine.LRH.2.21.1812311516100.1435@namei.org>
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From Jarkko:
 
---1665246916-996557093-1546229750=:1435
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-ID: <alpine.LRH.2.21.1812311516101.1435@namei.org>
+"
+* Support for partial reads of /dev/tpm0.
+* Clean up for TPM 1.x code: move the commands to tpm1-cmd.c and make
+  everything to use the same data structure for building TPM commands
+  i.e. struct tpm_buf.
+"
 
-From Casey:
 
-"I have two Smack patches for 4.21. One Jose's patch adds
-missing documentation and Zoran's fleshes out the access checks
-on keyrings."
+The following changes since commit 8bd8ea195f6d135a8d85201116314eb5237ad7e7:
 
-The following changes since commit 1072bd678547f8663cfb81a22fdb50c589e4976e:
-
-  security: fs: make inode explicitly non-modular (2018-12-12 14:58:51 -0800)
+  Merge tag 'v4.20-rc7' into next-general (2018-12-17 11:24:28 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-smack
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
 
-for you to fetch changes up to 20bb4cb4fb9fb994d757932abc4404cf0f0f56cc:
+for you to fetch changes up to 0db51ef26e87845d1748c363702585e2f0a06266:
 
-  Merge branch 'smack-for-4.21-a' of https://github.com/cschaufler/next-smack into next-smack (2018-12-13 19:30:33 -0800)
+  Merge tag 'tpmdd-next-20181217' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm (2018-12-17 11:31:58 -0800)
 
 ----------------------------------------------------------------
 James Morris (1):
-      Merge branch 'smack-for-4.21-a' of https://github.com/cschaufler/next-smack into next-smack
+      Merge tag 'tpmdd-next-20181217' of git://git.infradead.org/users/jjs/linux-tpmdd into next-tpm
 
-José Bollo (1):
-      Smack: Improve Documentation
+Tadeusz Struk (1):
+      tpm: add support for partial reads
 
-Zoran Markovic (1):
-      smack: fix access permissions for keyring
+Tomas Winkler (24):
+      tpm: tpm_i2c_nuvoton: use correct command duration for TPM 2.x
+      tpm2: add new tpm2 commands according to TCG 1.36
+      tpm: sort objects in the Makefile
+      tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c
+      tpm: add tpm_calc_ordinal_duration() wrapper
+      tpm: factor out tpm_get_timeouts()
+      tpm: move tpm1_pcr_extend to tpm1-cmd.c
+      tpm: move tpm_getcap to tpm1-cmd.c
+      tpm: factor out tpm1_get_random into tpm1-cmd.c
+      tpm: move tpm 1.x selftest code from tpm-interface.c tpm1-cmd.c
+      tpm: factor out tpm 1.x pm suspend flow into tpm1-cmd.c
+      tpm: factor out tpm_startup function
+      tpm: add tpm_auto_startup() into tpm-interface.c
+      tpm: tpm-interface.c drop unused macros
+      tpm: tpm-space.c remove unneeded semicolon
+      tpm: tpm1: rewrite tpm1_get_random() using tpm_buf structure
+      tpm1: implement tpm1_pcr_read_dev() using tpm_buf structure
+      tpm1: rename tpm1_pcr_read_dev to tpm1_pcr_read()
+      tpm1: reimplement SAVESTATE using tpm_buf
+      tpm1: reimplement tpm1_continue_selftest() using tpm_buf
+      tpm: use u32 instead of int for PCR index
+      tpm: tpm_try_transmit() refactor error flow.
+      tpm: fix kdoc for tpm2_flush_context_cmd()
+      tpm: tpm_ibmvtpm: fix kdoc warnings
 
- Documentation/admin-guide/LSM/Smack.rst |  4 ++++
- security/smack/smack_lsm.c              | 12 +++++++++---
- 2 files changed, 13 insertions(+), 3 deletions(-)
---1665246916-996557093-1546229750=:1435--
+ drivers/char/tpm/Makefile            |  16 +-
+ drivers/char/tpm/st33zp24/st33zp24.c |   2 +-
+ drivers/char/tpm/tpm-chip.c          |  11 +-
+ drivers/char/tpm/tpm-dev-common.c    |  52 ++-
+ drivers/char/tpm/tpm-dev.h           |   5 +-
+ drivers/char/tpm/tpm-interface.c     | 832 +++--------------------------------
+ drivers/char/tpm/tpm-sysfs.c         |  52 +--
+ drivers/char/tpm/tpm.h               |  97 ++--
+ drivers/char/tpm/tpm1-cmd.c          | 781 ++++++++++++++++++++++++++++++++
+ drivers/char/tpm/tpm2-cmd.c          | 308 +++++++------
+ drivers/char/tpm/tpm2-space.c        |   2 +-
+ drivers/char/tpm/tpm_i2c_nuvoton.c   |  11 +-
+ drivers/char/tpm/tpm_ibmvtpm.c       |   6 +-
+ drivers/char/tpm/tpm_tis_core.c      |  10 +-
+ include/linux/tpm.h                  |  11 +-
+ security/integrity/ima/ima_crypto.c  |   5 +-
+ 16 files changed, 1133 insertions(+), 1068 deletions(-)
+ create mode 100644 drivers/char/tpm/tpm1-cmd.c
