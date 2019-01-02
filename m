@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E459C43387
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Jan 2019 19:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E803C43387
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Jan 2019 19:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24E7B218DE
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Jan 2019 19:10:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E741C218DE
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Jan 2019 19:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546456214;
-	bh=IJ+U1cZ+JyB6do2X+4DwkOoYAp5NuyRi1TvvWnGfHE0=;
+	s=default; t=1546456222;
+	bh=lDpZp/BYGQ38YPWhaBOjGY8oKLrvBNO2VNdbvbcJPYU=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=u0oPTKmfcacRyxCMuLdPeU0eYZ4s3cY7cXh4pgg9jPLgP4BjIr25lC8BHTw2Mjgfs
-	 kxCVFnAAfJb2mVr7ZrEGT4YfsLo4+3evemzaBU23lUAKVt7y9/cmzsUB9a33pz4sld
-	 CWWaSdAJf6/7GhFFkRzpCCBquU3MdLtx8MWZeqdU=
+	b=xeIBg9BMuar+6nK16TTUMgpvOTGfAs6hOQByJRuSFhBdC6RwTNShitqv6VtIYmpyQ
+	 +LHmMCHnuJcb6JDE3DXxkWU8Zcl+vkJS9qPWp9W8SCFdzF27COTlJ7EyOMTH2z61xb
+	 QfoSMLeCO5XhOGARCdoeYCSGv+g3KwH4RSkP4SVk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbfABTKI (ORCPT
+        id S1728926AbfABTKO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Jan 2019 14:10:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32972 "EHLO mail.kernel.org"
+        Wed, 2 Jan 2019 14:10:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728858AbfABTKF (ORCPT
+        id S1726104AbfABTKE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Jan 2019 14:10:05 -0500
-Subject: Re: [GIT PULL] security: TPM changes for v4.21
+        Wed, 2 Jan 2019 14:10:04 -0500
+Subject: Re: [GIT PULL] security: Smack changes for v4.21
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1546456204;
-        bh=IJ+U1cZ+JyB6do2X+4DwkOoYAp5NuyRi1TvvWnGfHE0=;
+        bh=lDpZp/BYGQ38YPWhaBOjGY8oKLrvBNO2VNdbvbcJPYU=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=uuq++T6gHhCu25daLCbslVEXJBLs685h1jZ54muwuwsZRsu0j8zH/bM8embRZUKF2
-         dT1UnwQu4HgiUonJ5VyAReDRtrEGezUzcGD2BlU6r+3Jh8WbT/4rZYncSeu2QPnW7I
-         IM/69oCYvKN8JF7/OtDlomVLE6vS6Akk8Qrg6JlM=
+        b=mmQM7WtfkYK7BW/+tHd69qi4FPD3TH6K0nNJugagxvSOUfnD1xKYf7yFwGKoS+gMJ
+         tSD9cCUKXdvZAUaRJZGn1Meqgi5Fzyq4KWr3QrZJCOK5Hn05uimREqWRHbSWYMZGMs
+         3RQg1SP5uVDvsus0myTEP4zZg8zwohVYDi8RWdAQ=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <alpine.LRH.2.21.1812311516290.1435@namei.org>
-References: <alpine.LRH.2.21.1812311516290.1435@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1812311515150.1435@namei.org>
+References: <alpine.LRH.2.21.1812311515150.1435@namei.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1812311516290.1435@namei.org>
+X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1812311515150.1435@namei.org>
 X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
- next-tpm
-X-PR-Tracked-Commit-Id: 0db51ef26e87845d1748c363702585e2f0a06266
+ next-smack
+X-PR-Tracked-Commit-Id: 20bb4cb4fb9fb994d757932abc4404cf0f0f56cc
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 74673fc50babc9be22b32c4ce697fceb51c7671a
-Message-Id: <20190102191004.32204.86682.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+X-PR-Merge-Commit-Id: 19f2e267a5d0d26282a64f8f788c482852c95324
+Message-Id: <20190102191004.32204.54269.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
 Date:   Wed, 02 Jan 2019 19:10:04 +0000
 To:     James Morris <jmorris@namei.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -55,12 +55,12 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 31 Dec 2018 15:18:38 +1100 (AEDT):
+The pull request you sent on Mon, 31 Dec 2018 15:16:25 +1100 (AEDT):
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-smack
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/74673fc50babc9be22b32c4ce697fceb51c7671a
+https://git.kernel.org/torvalds/c/19f2e267a5d0d26282a64f8f788c482852c95324
 
 Thank you!
 
