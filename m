@@ -2,74 +2,69 @@ Return-Path: <SRS0=JDBg=PM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6E4C43387
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Jan 2019 00:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08351C43387
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Jan 2019 21:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1801221872
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Jan 2019 00:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D489B2087F
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Jan 2019 21:09:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfADAzq (ORCPT
+        id S1726229AbfADVJl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Jan 2019 19:55:46 -0500
-Received: from mxhk.zte.com.cn ([63.217.80.70]:30512 "EHLO mxhk.zte.com.cn"
+        Fri, 4 Jan 2019 16:09:41 -0500
+Received: from mga05.intel.com ([192.55.52.43]:6772 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726003AbfADAzq (ORCPT
+        id S1726074AbfADVJk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Jan 2019 19:55:46 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id D55A6DB7B348FC543D89;
-        Fri,  4 Jan 2019 08:55:43 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x040tZd5006249;
-        Fri, 4 Jan 2019 08:55:35 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019010408560931-20345232 ;
-          Fri, 4 Jan 2019 08:56:09 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     paul@paul-moore.com, sds@tycho.nsa.gov, eparis@parisplace.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH]  security/selinux/hooks: remove unneeded semicolon
-Date:   Fri, 4 Jan 2019 17:19:07 +0800
-Message-Id: <1546593547-24406-1-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-01-04 08:56:09,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-01-04 08:55:19,
-        Serialize complete at 2019-01-04 08:55:19
-X-MAIL: mse01.zte.com.cn x040tZd5006249
+        Fri, 4 Jan 2019 16:09:40 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Jan 2019 13:09:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,439,1539673200"; 
+   d="scan'208";a="133026728"
+Received: from mbakkere-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.235])
+  by fmsmga004.fm.intel.com with ESMTP; 04 Jan 2019 13:09:37 -0800
+Date:   Fri, 4 Jan 2019 23:09:36 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Joey Pabalinas <joeypabalinas@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH] selftests: add TPM 2.0 tests
+Message-ID: <20190104210936.GA6582@linux.intel.com>
+References: <20181127221059.25966-1-jarkko.sakkinen@linux.intel.com>
+ <20181127224900.fpbqujcsqwgxpwyq@gmail.com>
+ <20181127225307.3wc3gd7zmfauie6i@gmail.com>
+ <20181127231348.GB26051@linux.intel.com>
+ <20181205003342.GA20846@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181205003342.GA20846@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Remove unneeded semicolon.
+On Tue, Dec 04, 2018 at 04:33:42PM -0800, Jarkko Sakkinen wrote:
+> On Tue, Nov 27, 2018 at 03:13:48PM -0800, Jarkko Sakkinen wrote:
+> > Thank you! Would be good to have these merged to the kernel tree so that
+> > one can include both functionality and test case when needed to the
+> > patch set.
+> 
+> Should I include this to v4.21 tpmdd PR?
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- security/selinux/hooks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Still bit puzzled how to move this forward...
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index a67459e..73c679e 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -1263,7 +1263,7 @@ static void selinux_write_opts(struct seq_file *m,
- 		default:
- 			BUG();
- 			return;
--		};
-+		}
- 		/* we need a comma before each option */
- 		seq_putc(m, ',');
- 		seq_puts(m, prefix);
--- 
-1.8.3.1
-
+/Jarkko
