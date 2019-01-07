@@ -2,101 +2,187 @@ Return-Path: <SRS0=eMAe=PP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDE3C43387
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jan 2019 21:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE18C43387
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jan 2019 21:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2D512089F
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jan 2019 21:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 407DB2089F
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jan 2019 21:53:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="rkiHpKAK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbfAGVpd (ORCPT
+        id S1727119AbfAGVxX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Jan 2019 16:45:33 -0500
-Received: from namei.org ([65.99.196.166]:54908 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726535AbfAGVpd (ORCPT
+        Mon, 7 Jan 2019 16:53:23 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:46295 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbfAGVxX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Jan 2019 16:45:33 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x07LjMY9016724;
-        Mon, 7 Jan 2019 21:45:22 GMT
-Date:   Tue, 8 Jan 2019 08:45:22 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Mon, 7 Jan 2019 16:53:23 -0500
+Received: by mail-yb1-f194.google.com with SMTP id n16so764251ybg.13
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Jan 2019 13:53:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3ihpYysV7r1UoHl/0ejXOEq8g6731AzB2PM1+Cvg2Kk=;
+        b=rkiHpKAKAHcU+nls5ju49i6OLK/vbHYaVlbCwFjsmuPmDAhaVcSUtRcXQWKfA//7tB
+         +LbLFCGQyVS7/lIXQ2NVXi9Y7Zff35J13dN54XQ3vP8parrz+pYdb1gYW/OPEhGR/byH
+         IQ6JlrxLKcQJOXG1zNn98FIiZAQsWDv/+jeEFMkNSQzzdvr8rkOORbm4kTogZN3F8TAk
+         FoWyUptbk6M1d9UUY3SNMHMtdM2AUijH69aMGHKv30HJCySy4R8Cd/liVoXKvdc0SpoJ
+         1JvyOeyW8Uq6o7XvMefHfMXv7YJWBMu08YXGejFknDmSjL0ii864nRub85IXDllV8mbU
+         peQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3ihpYysV7r1UoHl/0ejXOEq8g6731AzB2PM1+Cvg2Kk=;
+        b=d7l2d8v5IPY/+EGiKljDQmT+qpcGmtu8RX8A7sHmjH1SL2k1xWzfrHS4S3zGZ5rHLh
+         o2fT3SXLhm1Ukku/x1GE7pV+Tw3kIvbVDHuDgyRVEKnHcZxNq6eCLcyBh4rWCBXgOEWq
+         C4SCo4DyZ+PIGmi+jdPKUwvkkn18abtIKlTYqNyECy+3jmuFQEm5BtKb6tz0Z0r3bCnM
+         msIpfQ/suf5D6QxZDSedFLCAVvocTI2Dai7572ktxc1OuvUGG8XRFfLTiUMeCbgycasH
+         xFXNpasCPe+GriE13yxRFXSg8K+P3O/uuvy4Rzmnoh4aU9muNznakaMb1+qmZXxppdC2
+         lY0A==
+X-Gm-Message-State: AJcUukf7aYwNQinvVdBF0UD7QRXgyIneV48Wy8rx/EQEm5tJ9WPq2+IC
+        orgSd17T5HI4cg1LdbyRWIAnlQ==
+X-Google-Smtp-Source: ALg8bN5rs5dGvgTewKZIDsveH6E3785I3EEZnSneWEsZDvSGWc4MSDVQBl4HQ7jbTKnqPqBXPdu4bg==
+X-Received: by 2002:a25:3a84:: with SMTP id h126mr26846169yba.87.1546898001731;
+        Mon, 07 Jan 2019 13:53:21 -0800 (PST)
+Received: from cisco ([2601:282:901:dd7b:c092:9114:ac14:211f])
+        by smtp.gmail.com with ESMTPSA id h145sm26469437ywc.72.2019.01.07.13.53.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Jan 2019 13:53:21 -0800 (PST)
+Date:   Mon, 7 Jan 2019 14:53:19 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ingo Molnar <mingo@kernel.org>, James Morris <jmorris@namei.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: [GIT PULL] security: general updates for v4.21
-In-Reply-To: <1546137859.4069.59.camel@linux.ibm.com>
-Message-ID: <alpine.LRH.2.21.1901080840080.2451@namei.org>
-References: <alpine.LRH.2.21.1812250652420.2714@namei.org>  <CAHk-=wiUaA4sZ=8UnT+q6eXE29K+XGVX=kZPR6gG-Z4UhO3p+Q@mail.gmail.com>  <alpine.LRH.2.21.1812291406530.29722@namei.org>  <CAHk-=wh4sL5mO1J+yzngonBvjO9ZwL_kA0a2e51rE9TzVjAA4g@mail.gmail.com> 
- <alpine.LRH.2.21.1812291505480.31477@namei.org>  <CAHk-=wh+6WrC_W7ZCjMDPaZm9SuuRjoTe8Buq123CfRvTyu0wA@mail.gmail.com>  <45d180c5-a174-7eef-9e23-83b819f8abd6@schaufler-ca.com> <1546137859.4069.59.camel@linux.ibm.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [GIT PULL] security: seccomp changes for v4.21
+Message-ID: <20190107215319.GD29009@cisco>
+References: <alpine.LRH.2.21.1812311511360.1435@namei.org>
+ <20190107101540.GA87402@gmail.com>
+ <CAGXu5jLYe_H_BF5SK2GWjYL9P7RJ9t0oadjDNnDL7UTXfb_Jfw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-1077201687-1546897523=:2451"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jLYe_H_BF5SK2GWjYL9P7RJ9t0oadjDNnDL7UTXfb_Jfw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Hi,
 
---1665246916-1077201687-1546897523=:2451
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-On Sat, 29 Dec 2018, Mimi Zohar wrote:
-
-> On Sat, 2018-12-29 at 10:34 -0800, Casey Schaufler wrote:
-> > On 12/28/2018 8:15 PM, Linus Torvalds wrote:
-> > > On Fri, Dec 28, 2018 at 8:09 PM James Morris <jmorris@namei.org> wrote:
-> > >> Yep, I understand what you mean. I can't find the discussion from several
-> > >> years ago, but developers asked to be able to work with more current
-> > >> kernels, and I recall you saying that if you want to do this, merge to a
-> > >> specific -rc tag at least.
-> > > If people really want it, maybe the merge can state that explicit
-> > > thing, as it is I'm trying to push back on empty merges that don't
-> > > explain why they even exist.
+On Mon, Jan 07, 2019 at 01:09:09PM -0800, Kees Cook wrote:
+> On Mon, Jan 7, 2019 at 2:15 AM Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> >
+> > * James Morris <jmorris@namei.org> wrote:
+> >
+> > > From Kees:
 > > >
-> > >                   Linus
-> > 
-> > The security tree tends to get changed from multiple directions,
-> > most of which aren't based out of the security sub-system. The mount
-> > rework from David is an excellent example. It gets hit just about
-> > any time there's a significant VFS or networking change. Keeping
-> > it current has helped find issues much earlier in the process.
+> > > "- Add SECCOMP_RET_USER_NOTIF
+> > >
+> > > - seccomp fixes for sparse warnings and s390 build (Tycho)"
+> > >
+> > >
+> > >
+> > > The following changes since commit 1072bd678547f8663cfb81a22fdb50c589e4976e:
+> > >
+> > >   security: fs: make inode explicitly non-modular (2018-12-12 14:58:51 -0800)
+> > >
+> > > are available in the Git repository at:
+> > >
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-seccomp
+> > >
+> > > for you to fetch changes up to 55b8cbe470d103b44104c64dbf89e5cad525d4e0:
+> > >
+> > >   Merge tag 'seccomp-next-part2' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-seccomp (2018-12-17 11:36:26 -0800)
+> > >
+> > > ----------------------------------------------------------------
+> > > James Morris (2):
+> > >       Merge tag 'seccomp-next' of https://git.kernel.org/.../kees/linux into next-seccomp
+> > >       Merge tag 'seccomp-next-part2' of https://git.kernel.org/.../kees/linux into next-seccomp
+> > >
+> > > Tycho Andersen (6):
+> > >       seccomp: hoist struct seccomp_data recalculation higher
+> > >       seccomp: switch system call argument type to void *
+> > >       seccomp: add a return code to trap to userspace
+> > >       samples: add an example of seccomp user trap
+> > >       seccomp: fix poor type promotion
+> > >       seccomp, s390: fix build for syscall type change
+> > >
+> > >  Documentation/ioctl/ioctl-number.txt           |   1 +
+> > >  Documentation/userspace-api/seccomp_filter.rst |  84 +++++
+> > >  arch/s390/kernel/compat_wrapper.c              |   2 +-
+> > >  include/linux/seccomp.h                        |   9 +-
+> > >  include/linux/syscalls.h                       |   2 +-
+> > >  include/uapi/linux/seccomp.h                   |  40 ++-
+> > >  kernel/seccomp.c                               | 467 ++++++++++++++++++++++++-
+> > >  samples/seccomp/.gitignore                     |   1 +
+> > >  samples/seccomp/Makefile                       |   7 +-
+> > >  samples/seccomp/user-trap.c                    | 375 ++++++++++++++++++++
+> > >  tools/testing/selftests/seccomp/seccomp_bpf.c  | 447 ++++++++++++++++++++++-
+> > >  11 files changed, 1411 insertions(+), 24 deletions(-)
+> > >  create mode 100644 samples/seccomp/user-trap.c
+> >
+> > 32-bit x86 allyesconfig doesn't build:
+> >
+> >  /usr/bin/ld: i386:x86-64 architecture of input file `samples/seccomp/user-trap.o' is incompatible with i386 output
+> >  /usr/bin/ld: samples/seccomp/user-trap.o: file class ELFCLASS64 incompatible with ELFCLASS32
+> >  /usr/bin/ld: final link failed: File in wrong format
+> >  collect2: error: ld returned 1 exit status
+> >  scripts/Makefile.host:99: recipe for target 'samples/seccomp/user-trap' failed
+> >  make[2]: *** [samples/seccomp/user-trap] Error 1
+> >
+> > Is this a known regression?
 > 
-> Agreed, the security subsystem is different than other subsystems.  In
-> addition to VFS changes, are key changes.  Changes in other subsystems
-> do affect the LSMs/integrity.
+> That looks like something is busted in the samples Makefile? Tycho,
+> are you able to reproduce this?
 
-Yep, I agree that if we get too far behind Linus then changes in things 
-like overlayfs (a recent example) may subtly break LSM and we don't see 
-this in the actual security development trees.  In theory these things 
-will be picked up in next testing, although not everything spends long 
-enough in next.
+Given that the samples build only happens when CROSS_COMPILE is not
+set, I'll see about digging up a 32-bit box. But I think the patch
+below should fix it, I'll send it out when I actually get it tested.
 
+Sorry for the breakage!
 
-And it's not necessarily changes to security code, it can be apparently 
-unrelated changes in the VFS or other subsystems which impact security 
-semantics.
-
-> Included in this open window are a number of LSM changes, which were
-> not posted on the LSM mailing list and are not being upstreamed via
-> the LSMs.
-
-If you see changes doing this, please call them out. Any changes to LSM 
-need to be cc'd at least to the LSM mailing list.
+Tycho
 
 
+From b53b390ab554ef6e5b995ac050718fd62ed0803e Mon Sep 17 00:00:00 2001
+From: Tycho Andersen <tycho@tycho.ws>
+Date: Mon, 7 Jan 2019 14:46:34 -0700
+Subject: [PATCH] samples/seccomp: fix 32-bit build
+
+Both the .o and the actual executable need to be built with -m32 in order
+to link correctly.
+
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+Reported-by: Ingo Molnar <mingo@kernel.org>
+---
+ samples/seccomp/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
+index 4920903c8009..a5607668a5c7 100644
+--- a/samples/seccomp/Makefile
++++ b/samples/seccomp/Makefile
+@@ -37,6 +37,7 @@ HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
+ HOSTLDLIBS_bpf-direct += $(MFLAG)
+ HOSTLDLIBS_bpf-fancy += $(MFLAG)
+ HOSTLDLIBS_dropper += $(MFLAG)
++HOSTLDLIBS_user-trap.o += $(MFLAG)
+ HOSTLDLIBS_user-trap += $(MFLAG)
+ endif
+ always := $(hostprogs-m)
 -- 
-James Morris
-<jmorris@namei.org>
+2.19.1
 
---1665246916-1077201687-1546897523=:2451--
