@@ -2,140 +2,146 @@ Return-Path: <SRS0=eMAe=PP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AEBC43387
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jan 2019 10:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE55C43387
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jan 2019 10:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 331D520854
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jan 2019 10:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 987592087F
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jan 2019 10:15:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546856147;
+	bh=vJMWAsOKip4geW5B7WXYGQhkH4I9qzadf0nL6f5EzEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Va504J60Thi3TrOySBwHWab2Yx5XIB57e73iGJgHsik2ezDhXva6YDgDWdYd18GAi
+	 ZgdyCTXn3uTexeoq3D03emk4CIQmWf80Z0ATtG3IzKYZ6B2mMZXXrlxHHe25L3c6g9
+	 3q7IhPyh1u8yh16gODkkxqBeaSI+61T/hEgxOIsM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbfAGKGr (ORCPT
+        id S1726673AbfAGKPr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Jan 2019 05:06:47 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32818 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726453AbfAGKGr (ORCPT
+        Mon, 7 Jan 2019 05:15:47 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45350 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfAGKPq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Jan 2019 05:06:47 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id EC413F9CFFC653B95D1C;
-        Mon,  7 Jan 2019 10:06:45 +0000 (GMT)
-Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 7 Jan
- 2019 10:06:38 +0000
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
- <20181220145500.GA10652@linux.intel.com>
- <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
- <20181222000321.GB8954@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
-Date:   Mon, 7 Jan 2019 11:06:33 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 7 Jan 2019 05:15:46 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t6so42530324wrr.12;
+        Mon, 07 Jan 2019 02:15:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yWirVjqGb8oxtQKBz5VYdknzBxnaGsefnIlvvHeuY7g=;
+        b=iJYPV0FwUrMRQan3NlPP/Dst6utgocQVSR7jieBqzJK4szthcTcKSK0rEd28CMiJXm
+         GPT8G+0qn3xPqL12BeNqeNb24a2EetfcKN+kJ5LCnPhp8rRJLdSItOY3Gcc7/blpdieU
+         1NXGHYswV1ngjxtg0dAp/uK+UWP/YeIy0S+v4cu3mJoA0kPUoFgdVtvvKcFb0ED/HPbi
+         g65SjOztI80SAYFZ5NTvS6VGsrzaE9Z3oYFOjwBm0zpaWoNWKyqjIeWBq+Fr3i4Kb6yD
+         3caflwBsHyUb33nG8Okuq4QdVWqR4A7xkWL+H2mqNn0Ac3gMoi21eqOumQrbWhyKLuPz
+         koUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yWirVjqGb8oxtQKBz5VYdknzBxnaGsefnIlvvHeuY7g=;
+        b=GEcoulZK+/Li8NIYkxz/W6OCuFk2ZIBnLyGfd46n+U4OtIb580EcsdHmm5uJkYk/jn
+         g8rFlZfan8oYzYAOK4J/4XSgKtVNj5n5MZKV4HtJ8bQDhv0uxj+NX9xdAsn3yYjs+vPm
+         d6qrgGNKnPhCsQoli/aD+Gj6RcUy8eGsmudy7am6LcN9NAMZI1kTgge9q61t6GLOVhQ6
+         QIeWB9xY61EqG7HxaqG1ZxnZ67vO1BoqNCZEPUfKrcb8MwgusGL4EU3vF1ozDmwOUUPj
+         aN5jHbueuJNn/6w8ieri2vXKGEXdYZv9NANJBEt8mjMFr8roI272XaVa3iKX1EsHMnCP
+         0fHg==
+X-Gm-Message-State: AJcUukdewMb1DbyqsM25Ltzdc4Nfp9q0n9HCcW76AwESsoIXcGaTgvAO
+        4Dd/ZoYd1hCyWWMw+zCcrKI=
+X-Google-Smtp-Source: ALg8bN6mOGCzKj1vVKC4YulHWhkzP3JaidsEdXVOuz5Q6ZZZbocR3cgrs9cqXBxPqruE+ajd6pYAEg==
+X-Received: by 2002:a5d:418b:: with SMTP id m11mr47463365wrp.8.1546856143892;
+        Mon, 07 Jan 2019 02:15:43 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id u204sm6847662wmu.30.2019.01.07.02.15.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 07 Jan 2019 02:15:43 -0800 (PST)
+Date:   Mon, 7 Jan 2019 11:15:40 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [GIT PULL] security: seccomp changes for v4.21
+Message-ID: <20190107101540.GA87402@gmail.com>
+References: <alpine.LRH.2.21.1812311511360.1435@namei.org>
 MIME-Version: 1.0
-In-Reply-To: <20181222000321.GB8954@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.149]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1812311511360.1435@namei.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/22/2018 1:03 AM, Jarkko Sakkinen wrote:
-> On Fri, Dec 21, 2018 at 10:40:09AM +0100, Roberto Sassu wrote:
->> On 12/20/2018 3:55 PM, Jarkko Sakkinen wrote:
->>> On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
->>>> This patch renames active_banks (member of tpm_chip) to allocated_banks,
->>>> stores the number of allocated PCR banks in nr_allocated_banks (new member
->>>> of tpm_chip), and replaces the static array with a pointer to a dynamically
->>>> allocated array.
->>>>
->>>> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
->>>> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
->>>> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
->>>> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
->>>> case, the bank is not included in chip->allocated_banks, to avoid that TPM
->>>> driver users unnecessarily calculate a digest for that bank.
->>>>
->>>> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
->>>>
->>>> As a consequence of the introduction of nr_allocated_banks,
->>>> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
->>>> is equal to zero.
->>>>
->>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>>> ---
->>>>    drivers/char/tpm/tpm-chip.c      |  1 +
->>>>    drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
->>>>    drivers/char/tpm/tpm.h           |  3 ++-
->>>>    drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
->>>>    drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
->>>>    5 files changed, 47 insertions(+), 19 deletions(-)
->>>>
->>>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->>>> index 32db84683c40..ce851c62bb68 100644
->>>> --- a/drivers/char/tpm/tpm-chip.c
->>>> +++ b/drivers/char/tpm/tpm-chip.c
->>>> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
->>>>    	kfree(chip->log.bios_event_log);
->>>>    	kfree(chip->work_space.context_buf);
->>>>    	kfree(chip->work_space.session_buf);
->>>> +	kfree(chip->allocated_banks);
->>>>    	kfree(chip);
->>>>    }
->>>> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->>>> index d9439f9abe78..7b80919228be 100644
->>>> --- a/drivers/char/tpm/tpm-interface.c
->>>> +++ b/drivers/char/tpm/tpm-interface.c
->>>> @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->>>>    int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->>>>    {
->>>>    	int rc;
->>>> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
->>>> -	u32 count = 0;
->>>> +	struct tpm2_digest *digest_list;
->>>>    	int i;
->>>>    	chip = tpm_find_get_ops(chip);
->>>> @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->>>>    		return -ENODEV;
->>>>    	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->>>> -		memset(digest_list, 0, sizeof(digest_list));
->>>> +		digest_list = kcalloc(chip->nr_allocated_banks,
->>>> +				      sizeof(*digest_list), GFP_KERNEL);
->>>> +		if (!digest_list)
->>>> +			return -ENOMEM;
->>>
->>> You could preallocate digest list and place it to struct tpm_chip
->>> instead of doing it everytime tpm_pcr_extend() called.
->>
->> This part will be removed with patch 5/5.
+
+* James Morris <jmorris@namei.org> wrote:
+
+> From Kees:
 > 
-> Even if it did, it does not make this patch unbroken.
-
-Can two calls to tpm_pcr_extend() be executed at the same time?
-
-If yes, the digest list should be protected by a mutex.
-
-Roberto
-
-
-> /Jarkko
+> "- Add SECCOMP_RET_USER_NOTIF
 > 
+> - seccomp fixes for sparse warnings and s390 build (Tycho)"
+> 
+> 
+> 
+> The following changes since commit 1072bd678547f8663cfb81a22fdb50c589e4976e:
+> 
+>   security: fs: make inode explicitly non-modular (2018-12-12 14:58:51 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-seccomp
+> 
+> for you to fetch changes up to 55b8cbe470d103b44104c64dbf89e5cad525d4e0:
+> 
+>   Merge tag 'seccomp-next-part2' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-seccomp (2018-12-17 11:36:26 -0800)
+> 
+> ----------------------------------------------------------------
+> James Morris (2):
+>       Merge tag 'seccomp-next' of https://git.kernel.org/.../kees/linux into next-seccomp
+>       Merge tag 'seccomp-next-part2' of https://git.kernel.org/.../kees/linux into next-seccomp
+> 
+> Tycho Andersen (6):
+>       seccomp: hoist struct seccomp_data recalculation higher
+>       seccomp: switch system call argument type to void *
+>       seccomp: add a return code to trap to userspace
+>       samples: add an example of seccomp user trap
+>       seccomp: fix poor type promotion
+>       seccomp, s390: fix build for syscall type change
+> 
+>  Documentation/ioctl/ioctl-number.txt           |   1 +
+>  Documentation/userspace-api/seccomp_filter.rst |  84 +++++
+>  arch/s390/kernel/compat_wrapper.c              |   2 +-
+>  include/linux/seccomp.h                        |   9 +-
+>  include/linux/syscalls.h                       |   2 +-
+>  include/uapi/linux/seccomp.h                   |  40 ++-
+>  kernel/seccomp.c                               | 467 ++++++++++++++++++++++++-
+>  samples/seccomp/.gitignore                     |   1 +
+>  samples/seccomp/Makefile                       |   7 +-
+>  samples/seccomp/user-trap.c                    | 375 ++++++++++++++++++++
+>  tools/testing/selftests/seccomp/seccomp_bpf.c  | 447 ++++++++++++++++++++++-
+>  11 files changed, 1411 insertions(+), 24 deletions(-)
+>  create mode 100644 samples/seccomp/user-trap.c
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+32-bit x86 allyesconfig doesn't build:
+
+ /usr/bin/ld: i386:x86-64 architecture of input file `samples/seccomp/user-trap.o' is incompatible with i386 output
+ /usr/bin/ld: samples/seccomp/user-trap.o: file class ELFCLASS64 incompatible with ELFCLASS32
+ /usr/bin/ld: final link failed: File in wrong format
+ collect2: error: ld returned 1 exit status
+ scripts/Makefile.host:99: recipe for target 'samples/seccomp/user-trap' failed
+ make[2]: *** [samples/seccomp/user-trap] Error 1
+
+Is this a known regression?
+
+Thanks,
+
+	Ingo
