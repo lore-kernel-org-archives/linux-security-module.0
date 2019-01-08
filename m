@@ -2,106 +2,106 @@ Return-Path: <SRS0=cuGm=PQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 243C7C43387
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B685FC43387
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 23:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE66820665
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:56:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 827E92084D
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 23:05:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZMGC2lRL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729784AbfAHV4p (ORCPT
+        id S1729181AbfAHXF0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jan 2019 16:56:45 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55350 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729566AbfAHV4p (ORCPT
+        Tue, 8 Jan 2019 18:05:26 -0500
+Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:45038
+        "EHLO sonic313-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727772AbfAHXF0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jan 2019 16:56:45 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08Li3q3127727
-        for <linux-security-module@vger.kernel.org>; Tue, 8 Jan 2019 16:56:43 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvyxjbt9r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 08 Jan 2019 16:56:43 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 8 Jan 2019 21:56:41 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 8 Jan 2019 21:56:37 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08LuaZp64094332
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 21:56:37 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E29A3A405C;
-        Tue,  8 Jan 2019 21:56:36 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C5D8A405B;
-        Tue,  8 Jan 2019 21:56:36 +0000 (GMT)
-Received: from dhcp-9-31-102-82.watson.ibm.com (unknown [9.31.102.82])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  8 Jan 2019 21:56:35 +0000 (GMT)
-Subject: Re: [GIT PULL] security: general updates for v4.21
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     James Morris <jmorris@namei.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date:   Tue, 08 Jan 2019 16:56:35 -0500
-In-Reply-To: <alpine.LRH.2.21.1901080840080.2451@namei.org>
-References: <alpine.LRH.2.21.1812250652420.2714@namei.org>
-          <CAHk-=wiUaA4sZ=8UnT+q6eXE29K+XGVX=kZPR6gG-Z4UhO3p+Q@mail.gmail.com>
-          <alpine.LRH.2.21.1812291406530.29722@namei.org>
-          <CAHk-=wh4sL5mO1J+yzngonBvjO9ZwL_kA0a2e51rE9TzVjAA4g@mail.gmail.com>
-          <alpine.LRH.2.21.1812291505480.31477@namei.org>
-          <CAHk-=wh+6WrC_W7ZCjMDPaZm9SuuRjoTe8Buq123CfRvTyu0wA@mail.gmail.com>
-          <45d180c5-a174-7eef-9e23-83b819f8abd6@schaufler-ca.com>
-         <1546137859.4069.59.camel@linux.ibm.com>
-         <alpine.LRH.2.21.1901080840080.2451@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010821-0016-0000-0000-000002422A2E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010821-0017-0000-0000-0000329C402E
-Message-Id: <1546984595.19931.158.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=724 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901080166
+        Tue, 8 Jan 2019 18:05:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1546988725; bh=nYwpBKP6IDLQh5uWUaxgaeOzbe9Bo+t0A6ErmpwOazc=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ZMGC2lRLkD/a/KlNKhfD37bX+++SwW8ffmzH8qdjGtVqQqgoudwlgGRS3xFTJVr9OJJ2iAzomoqag2cpsHLwAeMs377jRacvYvZw9JE1QcP0FJNUQMSfqGtaEyFh6VItGynxvvCGxGB7TwPq0MopRmJUwHLV2ifH6gyhkE9jir/wuaBuUy16kF0DB7UitlButZ+sYVJFLqVSOkaizj8T3RGMS+TFjnZxQk7dpcozCiIfIclgBn+lNhYuM0Oax+r6zGzs4bsMrR+R7PZKIMEuVwZp41yUKPWKQZAbPShY1zBWvYLjf2nApKrLirreJj5BYEHH9mVnMTvUEiFergymuQ==
+X-YMail-OSG: seWxL1QVM1ntO_QAz5SaDt8nAxX3ZQ1Dh2tD2nER0b3jk5KSeFdAH2ZmewbIaFP
+ Slx_z3GOJkeatIusDgdM.wywIElt3nbmKDarOcqSFWaAQ1mr8418_UEL15C4icNvkQDzA.dtAjwq
+ WiPRrKJN2Zl4KRbpYhCzpHMeGVo5OSE5Haawljf4Hr4o5BA1ZgCowKxSxWanAs8v0nifW9cfqmXi
+ X7U55O1TgrMfTf5EMpj1r35uacWFuL6dLSJHaJEx0q75DealjzXt4MNsKW9WLzAfzd9IK7brqw3P
+ dRsoWbBbBVQarozU6wasv._lhi80wHFzQPKfbyHbRsqs7gHDIuj5lMUrn5WMAyhzaup0eGsHQrV6
+ zg3p9TSive9m9zl.MZ70mPWrz6yYSxpn1Q47WbPS4c8cyluH48oxhncaF5sLFO43JLW0SHGvtPLE
+ Mvd_w5LPR.p67DKQM2AkHNZI2GDYIuWTOr4XiXJOzHk4i2MHKqjV5LiKFQ5ZikzGE6wbLcRSAaAU
+ X_uXjK0w1He3sA_GCCsx31v5_w4SZbHc1t.GmSNEOwJqu9464vpeHi1oT3TJ.QdFgWaJ6qDOCzGh
+ pL3USEuFZnhkVnSUO1aMHR_C2Wgg5uG8W7DvSITr0cMdI0AYGg9nm5pOZbYr2lvxq1_dg.LTc3Sd
+ qlutO2iue_sGTrJgmBFypHok8vgd7tE4ml5lq3N708KyuQl92LOdK6oRQea2ehnCNv8T.UJ0B7JU
+ dXB6DeCcRpQ6mb6pqdSlXeo7UdqZMy.Sk_UEQR4wVorEIce7F_5IfhYaZ0vg5j0_35HhBjijQPhW
+ B7ombGSQyfrXWSSGifZWqZmxyjZrawnwdkHyln3koldvoUgWBD3dAoK_RUePFzwNgOsFM2XK75H7
+ uL6kbx5h7DmYg8LOYeITVTzqCii7CyxwLdlJSI.lFqfJ7DgrcVDNXPzws0VQnRjl0AYulXArdbtM
+ qDW9ksF1tlEbcnxfDJEWfQAPURr0hGM0XARQdz3oyFypXPMfC1U79wEo99wYMHK7FK0_cnq9BdvY
+ d5XQfnILuXnswSmabcPCt7J32rJI1Rvr2TLcmeNotrw.gvdM.YuG2hzhzMbv.A499w9kSZu11qVZ
+ dgT9mH66TTtmrWSj3FpoEnr9z0bDv8sFsmA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Tue, 8 Jan 2019 23:05:25 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
+          by smtp432.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c27692f2203900284add210af0c02032;
+          Tue, 08 Jan 2019 23:05:20 +0000 (UTC)
+Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+ <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com>
+ <alpine.LRH.2.21.1812120556040.11653@namei.org>
+ <CAGXu5j+bx7nJBMdFYigYnJFRyCvz0NAxfiWF8yP9EhRESLnn+Q@mail.gmail.com>
+ <CAGXu5jJOGKAFrFF7HSPnqLpLz0no2Ae_z0TkWPeRt1WWqhqFOA@mail.gmail.com>
+ <alpine.LRH.2.21.1901090805121.24546@namei.org>
+ <2cd724a9-3735-1be3-4a42-facb264e70dc@schaufler-ca.com>
+ <CAGXu5jLQ8z8+oNcT=dTKHewC_bBPa9LuFuS1w1EejYh92vsvXA@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <7671ab97-d4e1-eb60-781f-ade40f559e02@schaufler-ca.com>
+Date:   Tue, 8 Jan 2019 15:05:16 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jLQ8z8+oNcT=dTKHewC_bBPa9LuFuS1w1EejYh92vsvXA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2019-01-08 at 08:45 +1100, James Morris wrote:
+On 1/8/2019 1:42 PM, Kees Cook wrote:
+> On Tue, Jan 8, 2019 at 1:37 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 1/8/2019 1:05 PM, James Morris wrote:
+>>> On Mon, 7 Jan 2019, Kees Cook wrote:
+>>>
+>>>> On Tue, Dec 11, 2018 at 1:19 PM Kees Cook <keescook@chromium.org> wrote:
+>>>>> On Tue, Dec 11, 2018 at 10:57 AM James Morris <jmorris@namei.org> wrote:
+>>>>>> On Tue, 4 Dec 2018, Kees Cook wrote:
+>>>>>>
+>>>>>>> On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>>>>> v5: Include Kees Cook's rework of the lsm command
+>>>>>>>>     line interface. Stacking is not conditional.
+>>>>>>> Can you resend this series with corrected "From:" lines in the body, etc?
+>>>>>>>
+>>>>>>> Beyond that, I obviously like it. James, what's needed for this to move forward?
+>>>>>> If there are no outstanding issues, I plan to merge this for 4.21.
+>>>>> Yeah, it looks good to me. (Excepting getting the authorship sorted.)
+>>>> I didn't see this actually get merged? Was there something that needed
+>>>> fixing? Should I send you a direct pull request for v5.1?
+>>> Yep, please send a new pull request.
+>> Do you want it as is or rebased on 5.0-rc1?
+> I've rebased to 5.0-rc1, did some light (re)testing, and sent a pull request...
 
-> > Included in this open window are a number of LSM changes, which were
-> > not posted on the LSM mailing list and are not being upstreamed via
-> > the LSMs.
-> 
-> If you see changes doing this, please call them out. Any changes to LSM 
-> need to be cc'd at least to the LSM mailing list.
+Thank you.
 
-Sure.  I'm referring to Al's match_token() and other changes, which I
-only learned about when Linus reviewed Eric Bigger's patch "KEYS: fix
-parsing invalid pkey info string".
-
-169d68efb03b selinux: switch away from match_token()
-c3300aaf95fb smack: get rid of match_token()
-
-Mimi
 
