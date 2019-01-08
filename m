@@ -2,179 +2,221 @@ Return-Path: <SRS0=cuGm=PQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDE2C43387
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 13:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C5BC43387
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 15:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D90B620827
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 13:29:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="d9CwV737"
+	by mail.kernel.org (Postfix) with ESMTP id 946B620685
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 15:18:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbfAHN3c (ORCPT
+        id S1727857AbfAHPSX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:29:32 -0500
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:60000 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727654AbfAHN3c (ORCPT
+        Tue, 8 Jan 2019 10:18:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40754 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727484AbfAHPSX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jan 2019 08:29:32 -0500
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id D4B12D0006F;
-        Tue,  8 Jan 2019 14:29:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1546954176;
-        bh=XmNbVTXzFtbP+Mqfud8yrCx8TLq29RKGAXwDt1ZPKf8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=d9CwV737+I60XmspBx4UBDzjQ06DwdMZApGsJpUHeYhAuoPQgeofCR51x43kbxOeF
-         hDAIwoHxi5pf9vBDJ8LsOn9wcp64R4pkhKIVUGo9H/VjvAkLE0+sokyxF/A/1oM8Po
-         ZiUFbZm1Yg+Y33OLq1FKlKbBPyFp91XD9rhAZJ3lAaZr49pYzeX3qojUSS0M67ajnM
-         svVWhRIgPSgAMvmKznD9AWJP7tUjl4CguGSLT5s76YBWm7zGBxZ/VDTkhatneky1E6
-         JgS0PeJa0oQqsNSk8UKp935OrzUSJd8MI5x6nADcHUwQa1Dcn3rxjC2dnzWw3lYgol
-         r6dplZS2MjyiQ==
-Subject: Re: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file
- executability through O_MAYEXEC
-To:     Jann Horn <jannh@google.com>
-CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        <zohar@linux.ibm.com>, <philippe.trebuchet@ssi.gouv.fr>,
-        <shuah@kernel.org>, <thibaut.sautereau@ssi.gouv.fr>,
-        <vincent.strubel@ssi.gouv.fr>, <yves-alexis.perez@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
+        Tue, 8 Jan 2019 10:18:23 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08FEIP1141955
+        for <linux-security-module@vger.kernel.org>; Tue, 8 Jan 2019 10:18:21 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvx77gk6t-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Jan 2019 10:18:21 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 8 Jan 2019 15:18:18 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 8 Jan 2019 15:18:15 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08FID5F7471528
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Jan 2019 15:18:13 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A90C742041;
+        Tue,  8 Jan 2019 15:18:13 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8FCB24204C;
+        Tue,  8 Jan 2019 15:18:11 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.90.168])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Jan 2019 15:18:11 +0000 (GMT)
+Subject: Re: [RFC PATCH 1/1] KEYS, integrity: Link .platform keyring to
+ .secondary_trusted_keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>
-References: <20181212081712.32347-1-mic@digikod.net>
- <20181212081712.32347-4-mic@digikod.net>
- <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
- <f13bf750-f418-343c-baa6-9eee6e0f5e19@ssi.gouv.fr>
- <CAG48ez00CpXOOJPLgpQd_e0gG2KgYb1p8bwssA8FDOugHTxRAA@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <0f7d39f8-035b-8566-94c9-ea836b280e24@ssi.gouv.fr>
-Date:   Tue, 8 Jan 2019 14:29:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAG48ez00CpXOOJPLgpQd_e0gG2KgYb1p8bwssA8FDOugHTxRAA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Tue, 08 Jan 2019 10:18:00 -0500
+In-Reply-To: <20190108081247.2266-2-kasong@redhat.com>
+References: <20190108081247.2266-1-kasong@redhat.com>
+         <20190108081247.2266-2-kasong@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19010815-0012-0000-0000-000002E3FC54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010815-0013-0000-0000-0000211B09D9
+Message-Id: <1546960680.19931.114.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901080124
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+[Cc'ing the LSM and integrity mailing lists]
 
-On 03/01/2019 12:17, Jann Horn wrote:
-> On Thu, Dec 13, 2018 at 3:49 PM Mickaël Salaün
-> <mickael.salaun@ssi.gouv.fr> wrote:
->> On 12/12/2018 18:09, Jann Horn wrote:
->>> On Wed, Dec 12, 2018 at 9:18 AM Mickaël Salaün <mic@digikod.net> wrote:
->>>> Enable to either propagate the mount options from the underlying VFS
->>>> mount to prevent execution, or to propagate the file execute permission.
->>>> This may allow a script interpreter to check execution permissions
->>>> before reading commands from a file.
->>>>
->>>> The main goal is to be able to protect the kernel by restricting
->>>> arbitrary syscalls that an attacker could perform with a crafted binary
->>>> or certain script languages.  It also improves multilevel isolation
->>>> by reducing the ability of an attacker to use side channels with
->>>> specific code.  These restrictions can natively be enforced for ELF
->>>> binaries (with the noexec mount option) but require this kernel
->>>> extension to properly handle scripts (e.g., Python, Perl).
->>>>
->>>> Add a new sysctl kernel.yama.open_mayexec_enforce to control this
->>>> behavior.  A following patch adds documentation.
-> [...]
->>>> +{
->>>> +       if (!(mask & MAY_OPENEXEC))
->>>> +               return 0;
->>>> +       /*
->>>> +        * Match regular files and directories to make it easier to
->>>> +        * modify script interpreters.
->>>> +        */
->>>> +       if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
->>>> +               return 0;
->>>
->>> So files are subject to checks, but loading code from things like
->>> sockets is always fine?
->>
->> As I said in a previous email, these checks do not handle fifo either.
->> This is relevant in a threat model targeting persistent attacks (and
->> with additional protections/restrictions). We may want to only whitelist
->> fifo, but I don't get how a socket is relevant here. Can you please clarify?
+Repeating my comment on PATCH 0/1 here with the expanded set of
+mailing lists.
+
+The builtin and secondary keyrings have a signature change of trust
+rooted in the signed kernel image.  Adding the pre-boot keys to the
+secondary keyring breaks that signature chain of trust.
+
+Please do NOT add the pre-boot "platform" keys to the secondary
+keyring.
+
+Mimi
+
+
+On Tue, 2019-01-08 at 16:12 +0800, Kairui Song wrote:
+> Currently kexec may need to verify the kerne image, and the kernel image
+> could be signed with third part keys which are provided by paltform or
+> firmware (eg. stored in MokListRT EFI variable). And the same time,
+> kexec_file_load will only verify the image agains .builtin_trusted_keys
+> or .secondary_trusted_keys according to configuration, but there is no
+> way for kexec_file_load to verify the image against any third part keys
+> mentioned above.
 > 
-> I don't think that there's a security problem here. I just think it's
-> weird to have the extra check when it seems to me like it isn't really
-> necessary - nobody is going to want to execute a socket or fifo
-> anyway, right?
-
-Right, the fifo whitelisting should answer your concern then.
-
+> In ea93102f3224 ('integrity: Define a trusted platform keyring') a
+> .platform keyring is introduced to store the keys provided by platform
+> or firmware. And with a few following commits including 15ea0e1e3e185
+> ('efi: Import certificates from UEFI Secure Boot'), now keys required to
+> verify the image is being imported to .paltform keyring, and later
+> IMA-appraisal could access the keyring and verify the image.
 > 
->>>
->>>> +       if ((open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_MOUNT) &&
->>>> +                       !(mask & MAY_EXECMOUNT))
->>>> +               return -EACCES;
->>>> +
->>>> +       /*
->>>> +        * May prefer acl_permission_check() instead of generic_permission(),
->>>> +        * to not be bypassable with CAP_DAC_READ_SEARCH.
->>>> +        */
->>>> +       if (open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_FILE)
->>>> +               return generic_permission(inode, MAY_EXEC);
->>>> +
->>>> +       return 0;
->>>> +}
->>>> +
->>>>  static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
->>>> +       LSM_HOOK_INIT(inode_permission, yama_inode_permission),
->>>>         LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
->>>>         LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
->>>>         LSM_HOOK_INIT(task_prctl, yama_task_prctl),
->>>> @@ -447,6 +489,37 @@ static int yama_dointvec_minmax(struct ctl_table *table, int write,
->>>>         return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
->>>>  }
->>>>
->>>> +static int yama_dointvec_bitmask_macadmin(struct ctl_table *table, int write,
->>>> +                                         void __user *buffer, size_t *lenp,
->>>> +                                         loff_t *ppos)
->>>> +{
->>>> +       int error;
->>>> +
->>>> +       if (write) {
->>>> +               struct ctl_table table_copy;
->>>> +               int tmp_mayexec_enforce;
->>>> +
->>>> +               if (!capable(CAP_MAC_ADMIN))
->>>> +                       return -EPERM;
->>>
->>> Don't put capable() checks in sysctls, it doesn't work.
->>>
->>
->> I tested it and the root user can indeed open the file even if the
->> process doesn't have CAP_MAC_ADMIN, however writing in the sysctl file
->> is denied. Btw there is a similar check in the previous function
->> (yama_dointvec_minmax).
+> This patch links the .platform keyring to .secondary_trusted_keys so
+> kexec_file_load could also leverage the .platform keyring to verify the
+> kernel image.
 > 
-> It's still wrong. If an attacker without CAP_MAC_ADMIN opens the
-> sysctl file, then passes the file descriptor to a setcap binary that
-> has CAP_MAC_ADMIN as stdout/stderr, and the setcap binary writes to
-> it, then the capable() check is bypassed. (But of course, to open the
-> sysctl file in the first place, you'd need to be root (uid 0), so the
-> check doesn't really matter.)
+> Signed-off-by: Kairui Song <kasong@redhat.com>
+> ---
+>  certs/system_keyring.c          | 30 ++++++++++++++++++++++++++++++
+>  include/keys/platform_keyring.h | 12 ++++++++++++
+>  security/integrity/digsig.c     |  7 +++++++
+>  3 files changed, 49 insertions(+)
+>  create mode 100644 include/keys/platform_keyring.h
+> 
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 81728717523d..dcef0259e149 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -18,12 +18,14 @@
+>  #include <linux/verification.h>
+>  #include <keys/asymmetric-type.h>
+>  #include <keys/system_keyring.h>
+> +#include <keys/platform_keyring.h>
+>  #include <crypto/pkcs7.h>
+>  
+>  static struct key *builtin_trusted_keys;
+>  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+>  static struct key *secondary_trusted_keys;
+>  #endif
+> +static struct key *platform_keys = NULL;
+>  
+>  extern __initconst const u8 system_certificate_list[];
+>  extern __initconst const unsigned long system_certificate_list_size;
+> @@ -67,6 +69,12 @@ int restrict_link_by_builtin_and_secondary_trusted(
+>  		/* Allow the builtin keyring to be added to the secondary */
+>  		return 0;
+>  
+> +	if (type == &key_type_keyring &&
+> +	    dest_keyring == secondary_trusted_keys &&
+> +	    payload == &platform_keys->payload)
+> +		/* Allow the platform keyring to be added to the secondary */
+> +		return 0;
+> +
+>  	return restrict_link_by_signature(dest_keyring, type, payload,
+>  					  secondary_trusted_keys);
+>  }
+> @@ -188,6 +196,28 @@ static __init int load_system_certificate_list(void)
+>  }
+>  late_initcall(load_system_certificate_list);
+>  
+> +#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING) && defined(CONFIG_SECONDARY_TRUSTED_KEYRING)
+> +
+> +/*
+> + * Link .platform keyring to .secondary_trusted_key keyring
+> + */
+> +static __init int load_platform_certificate_list(void)
+> +{
+> +	int ret = 0;
+> +	platform_keys = integrity_get_platform_keyring();
+> +	if (!platform_keys) {
+> +		return 0;
+> +	}
+> +	ret = key_link(secondary_trusted_keys, platform_keys);
+> +	if (ret < 0) {
+> +		pr_err("Failed to link platform keyring: %d", ret);
+> +	}
+> +	return 0;
+> +}
+> +late_initcall(load_platform_certificate_list);
+> +
+> +#endif
+> +
+>  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+>  
+>  /**
+> diff --git a/include/keys/platform_keyring.h b/include/keys/platform_keyring.h
+> new file mode 100644
+> index 000000000000..4f92ed6c0b42
+> --- /dev/null
+> +++ b/include/keys/platform_keyring.h
+> @@ -0,0 +1,12 @@
+> +#ifndef _KEYS_PLATFORM_KEYRING_H
+> +#define _KEYS_PLATFORM_KEYRING_H
+> +
+> +#include <linux/key.h>
+> +
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +
+> +extern const struct key* __init integrity_get_platform_keyring(void);
+> +
+> +#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
+> +
+> +#endif /* _KEYS_SYSTEM_KEYRING_H */
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index f45d6edecf99..397758d4f12d 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -176,3 +176,10 @@ int __init integrity_load_cert(const unsigned int id, const char *source,
+>  	pr_info("Loading X.509 certificate: %s\n", source);
+>  	return integrity_add_key(id, data, len, perm);
+>  }
+> +
+> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> +struct key* __init integrity_get_platform_keyring(void)
+> +{
+> +	return keyring[INTEGRITY_KEYRING_PLATFORM];
+> +}
+> +#endif
 
-I agree with you that a confused deputy attack may uses file
-descriptors, but I don't see how the current sysctl API may be used to
-check the process capability at open time. Anyway, on a properly
-configured system, especially one leveraging Linux capabilities (e.g.
-CLIP OS), root processes may not have CAP_SYS_ADMIN. Moreover, SUID or
-fcap binaries may not be available to an attacker (e.g. in a container).
