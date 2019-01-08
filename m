@@ -2,106 +2,130 @@ Return-Path: <SRS0=cuGm=PQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B685FC43387
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 23:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE954C43387
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 23:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 827E92084D
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 23:05:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBDDC214C6
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 23:31:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZMGC2lRL"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RINc9Z/o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729181AbfAHXF0 (ORCPT
+        id S1728469AbfAHXbI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jan 2019 18:05:26 -0500
-Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:45038
-        "EHLO sonic313-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727772AbfAHXF0 (ORCPT
+        Tue, 8 Jan 2019 18:31:08 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:39994 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728112AbfAHXbG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jan 2019 18:05:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1546988725; bh=nYwpBKP6IDLQh5uWUaxgaeOzbe9Bo+t0A6ErmpwOazc=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ZMGC2lRLkD/a/KlNKhfD37bX+++SwW8ffmzH8qdjGtVqQqgoudwlgGRS3xFTJVr9OJJ2iAzomoqag2cpsHLwAeMs377jRacvYvZw9JE1QcP0FJNUQMSfqGtaEyFh6VItGynxvvCGxGB7TwPq0MopRmJUwHLV2ifH6gyhkE9jir/wuaBuUy16kF0DB7UitlButZ+sYVJFLqVSOkaizj8T3RGMS+TFjnZxQk7dpcozCiIfIclgBn+lNhYuM0Oax+r6zGzs4bsMrR+R7PZKIMEuVwZp41yUKPWKQZAbPShY1zBWvYLjf2nApKrLirreJj5BYEHH9mVnMTvUEiFergymuQ==
-X-YMail-OSG: seWxL1QVM1ntO_QAz5SaDt8nAxX3ZQ1Dh2tD2nER0b3jk5KSeFdAH2ZmewbIaFP
- Slx_z3GOJkeatIusDgdM.wywIElt3nbmKDarOcqSFWaAQ1mr8418_UEL15C4icNvkQDzA.dtAjwq
- WiPRrKJN2Zl4KRbpYhCzpHMeGVo5OSE5Haawljf4Hr4o5BA1ZgCowKxSxWanAs8v0nifW9cfqmXi
- X7U55O1TgrMfTf5EMpj1r35uacWFuL6dLSJHaJEx0q75DealjzXt4MNsKW9WLzAfzd9IK7brqw3P
- dRsoWbBbBVQarozU6wasv._lhi80wHFzQPKfbyHbRsqs7gHDIuj5lMUrn5WMAyhzaup0eGsHQrV6
- zg3p9TSive9m9zl.MZ70mPWrz6yYSxpn1Q47WbPS4c8cyluH48oxhncaF5sLFO43JLW0SHGvtPLE
- Mvd_w5LPR.p67DKQM2AkHNZI2GDYIuWTOr4XiXJOzHk4i2MHKqjV5LiKFQ5ZikzGE6wbLcRSAaAU
- X_uXjK0w1He3sA_GCCsx31v5_w4SZbHc1t.GmSNEOwJqu9464vpeHi1oT3TJ.QdFgWaJ6qDOCzGh
- pL3USEuFZnhkVnSUO1aMHR_C2Wgg5uG8W7DvSITr0cMdI0AYGg9nm5pOZbYr2lvxq1_dg.LTc3Sd
- qlutO2iue_sGTrJgmBFypHok8vgd7tE4ml5lq3N708KyuQl92LOdK6oRQea2ehnCNv8T.UJ0B7JU
- dXB6DeCcRpQ6mb6pqdSlXeo7UdqZMy.Sk_UEQR4wVorEIce7F_5IfhYaZ0vg5j0_35HhBjijQPhW
- B7ombGSQyfrXWSSGifZWqZmxyjZrawnwdkHyln3koldvoUgWBD3dAoK_RUePFzwNgOsFM2XK75H7
- uL6kbx5h7DmYg8LOYeITVTzqCii7CyxwLdlJSI.lFqfJ7DgrcVDNXPzws0VQnRjl0AYulXArdbtM
- qDW9ksF1tlEbcnxfDJEWfQAPURr0hGM0XARQdz3oyFypXPMfC1U79wEo99wYMHK7FK0_cnq9BdvY
- d5XQfnILuXnswSmabcPCt7J32rJI1Rvr2TLcmeNotrw.gvdM.YuG2hzhzMbv.A499w9kSZu11qVZ
- dgT9mH66TTtmrWSj3FpoEnr9z0bDv8sFsmA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Tue, 8 Jan 2019 23:05:25 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp432.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID c27692f2203900284add210af0c02032;
-          Tue, 08 Jan 2019 23:05:20 +0000 (UTC)
-Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
- <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com>
- <alpine.LRH.2.21.1812120556040.11653@namei.org>
- <CAGXu5j+bx7nJBMdFYigYnJFRyCvz0NAxfiWF8yP9EhRESLnn+Q@mail.gmail.com>
- <CAGXu5jJOGKAFrFF7HSPnqLpLz0no2Ae_z0TkWPeRt1WWqhqFOA@mail.gmail.com>
- <alpine.LRH.2.21.1901090805121.24546@namei.org>
- <2cd724a9-3735-1be3-4a42-facb264e70dc@schaufler-ca.com>
- <CAGXu5jLQ8z8+oNcT=dTKHewC_bBPa9LuFuS1w1EejYh92vsvXA@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <7671ab97-d4e1-eb60-781f-ade40f559e02@schaufler-ca.com>
-Date:   Tue, 8 Jan 2019 15:05:16 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 8 Jan 2019 18:31:06 -0500
+Received: by mail-vs1-f66.google.com with SMTP id z3so3621692vsf.7
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Jan 2019 15:31:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fj1hGcIq46+n7srV6RvX7Dt1TPMiykx9jEzwUwjBvIY=;
+        b=RINc9Z/oBU9n/IiWeg9VoFbkVbXqBq4w0FD27eLdMWabbZLjrmSBNFOsGpEFa8A/bR
+         oYiqTw2sln/Iowse0uRNjuG2y4+5aTOizsgcRPXrqzqsZY6a6Z+un43x6oNHNJO1rgLh
+         z61iNZSHdc4T96fhOcPNU3UmZiId8PLEGRMso=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fj1hGcIq46+n7srV6RvX7Dt1TPMiykx9jEzwUwjBvIY=;
+        b=bHx9eNCtvFRvY2QkUprIQpeHUgsVmxgYgUQ2UnaQf1GjOWuRHqFZU3S1jUzAMxxQpA
+         /WnBsR9TzGIDk1NJmS065Vb4XlhkSL7dOlnhkt41VPVijhL06L4yFBjJJf3aonFlpCwF
+         UUvSPJOBVDPSg9bQTPiNdDYECqDuhKmt6KIU45UZy6Kmyy8+5RHNXprCyTrLMfxndpjt
+         /ak3xL291YZsj+GqBdzHDWaDC8rURu0iNYsJOHVMyAMTYAaDXFOv3juGIWh0Q1BgHG1D
+         03EAO+H2DzD1pCgLffTD9CsjKe2ixBrcNgEXfWBKgMl1QldxbqZKhSfoMVOSSCG44fSB
+         bt5w==
+X-Gm-Message-State: AJcUukfpRJ6vN7+Ct8aZrtd3w7bjYEVvMIfghUZ1hm5tyn64rdxXqocF
+        fUf7bRTSqemO7tf5E+C4ligRp0KbThQ=
+X-Google-Smtp-Source: ALg8bN6N+6D2LVFJ45feUx+Cm6m+TqAeMPynAVa5J4FT8jG/8O5EauxSzinU3OBz1paiEkNq0eRBCA==
+X-Received: by 2002:a67:df04:: with SMTP id s4mr1455776vsk.212.1546990265024;
+        Tue, 08 Jan 2019 15:31:05 -0800 (PST)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
+        by smtp.gmail.com with ESMTPSA id b131sm28187965vkf.45.2019.01.08.15.31.01
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 15:31:02 -0800 (PST)
+Received: by mail-vk1-f172.google.com with SMTP id d201so1285390vka.0
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Jan 2019 15:31:01 -0800 (PST)
+X-Received: by 2002:a1f:3d10:: with SMTP id k16mr1401233vka.13.1546990261237;
+ Tue, 08 Jan 2019 15:31:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLQ8z8+oNcT=dTKHewC_bBPa9LuFuS1w1EejYh92vsvXA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20181212081712.32347-1-mic@digikod.net> <20181212081712.32347-4-mic@digikod.net>
+ <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
+ <f13bf750-f418-343c-baa6-9eee6e0f5e19@ssi.gouv.fr> <CAG48ez00CpXOOJPLgpQd_e0gG2KgYb1p8bwssA8FDOugHTxRAA@mail.gmail.com>
+ <0f7d39f8-035b-8566-94c9-ea836b280e24@ssi.gouv.fr>
+In-Reply-To: <0f7d39f8-035b-8566-94c9-ea836b280e24@ssi.gouv.fr>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 8 Jan 2019 15:30:49 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jKHPE6WfbXpiwzm=vRbgJ-rCePxsrYmVzZ1+RURp-6nJg@mail.gmail.com>
+Message-ID: <CAGXu5jKHPE6WfbXpiwzm=vRbgJ-rCePxsrYmVzZ1+RURp-6nJg@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file
+ executability through O_MAYEXEC
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>
+Cc:     Jann Horn <jannh@google.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        philippe.trebuchet@ssi.gouv.fr, Shuah Khan <shuah@kernel.org>,
+        thibaut.sautereau@ssi.gouv.fr, vincent.strubel@ssi.gouv.fr,
+        Perez Yves-Alexis <yves-alexis.perez@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/8/2019 1:42 PM, Kees Cook wrote:
-> On Tue, Jan 8, 2019 at 1:37 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 1/8/2019 1:05 PM, James Morris wrote:
->>> On Mon, 7 Jan 2019, Kees Cook wrote:
->>>
->>>> On Tue, Dec 11, 2018 at 1:19 PM Kees Cook <keescook@chromium.org> wrote:
->>>>> On Tue, Dec 11, 2018 at 10:57 AM James Morris <jmorris@namei.org> wrote:
->>>>>> On Tue, 4 Dec 2018, Kees Cook wrote:
->>>>>>
->>>>>>> On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>>>>> v5: Include Kees Cook's rework of the lsm command
->>>>>>>>     line interface. Stacking is not conditional.
->>>>>>> Can you resend this series with corrected "From:" lines in the body, etc?
->>>>>>>
->>>>>>> Beyond that, I obviously like it. James, what's needed for this to move forward?
->>>>>> If there are no outstanding issues, I plan to merge this for 4.21.
->>>>> Yeah, it looks good to me. (Excepting getting the authorship sorted.)
->>>> I didn't see this actually get merged? Was there something that needed
->>>> fixing? Should I send you a direct pull request for v5.1?
->>> Yep, please send a new pull request.
->> Do you want it as is or rebased on 5.0-rc1?
-> I've rebased to 5.0-rc1, did some light (re)testing, and sent a pull request...
+On Tue, Jan 8, 2019 at 5:29 AM Micka=C3=ABl Sala=C3=BCn
+<mickael.salaun@ssi.gouv.fr> wrote:
+>
+>
+> On 03/01/2019 12:17, Jann Horn wrote:
+> > On Thu, Dec 13, 2018 at 3:49 PM Micka=C3=ABl Sala=C3=BCn
+> > <mickael.salaun@ssi.gouv.fr> wrote:
+> >> On 12/12/2018 18:09, Jann Horn wrote:
+> >>> On Wed, Dec 12, 2018 at 9:18 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod=
+.net> wrote:
+> >>>> Enable to either propagate the mount options from the underlying VFS
+> >>>> mount to prevent execution, or to propagate the file execute permiss=
+ion.
+> >>>> This may allow a script interpreter to check execution permissions
+> >>>> before reading commands from a file.
+> >>>>
+> >>>> The main goal is to be able to protect the kernel by restricting
+> >>>> arbitrary syscalls that an attacker could perform with a crafted bin=
+ary
+> >>>> or certain script languages.  It also improves multilevel isolation
+> >>>> by reducing the ability of an attacker to use side channels with
+> >>>> specific code.  These restrictions can natively be enforced for ELF
+> >>>> binaries (with the noexec mount option) but require this kernel
+> >>>> extension to properly handle scripts (e.g., Python, Perl).
 
-Thank you.
+I like this idea, but I think it shouldn't live in Yama (since it is
+currently intended to be a ptrace-policy-only LSM). It was
+_originally_ designed to do various DAC improvements, but the
+agreement was that those should live directly in the VFS instead (i.e.
+the symlink, hardlink and now fifo and regular file defenses).
 
+This should likely go in similarly. (But if not, it could also be its own L=
+SM.)
 
+--=20
+Kees Cook
