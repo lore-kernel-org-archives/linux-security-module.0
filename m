@@ -2,139 +2,185 @@ Return-Path: <SRS0=cuGm=PQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCA3C43387
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C2DC43387
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF7C20883
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8900B2070B
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:35:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m1jQUEw6"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NWVEkflu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729863AbfAHVMJ (ORCPT
+        id S1729507AbfAHVfI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jan 2019 16:12:09 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:33265 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729857AbfAHVMH (ORCPT
+        Tue, 8 Jan 2019 16:35:08 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38057 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729053AbfAHVfI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jan 2019 16:12:07 -0500
-Received: by mail-ua1-f67.google.com with SMTP id t8so1759609uap.0
-        for <linux-security-module@vger.kernel.org>; Tue, 08 Jan 2019 13:12:05 -0800 (PST)
+        Tue, 8 Jan 2019 16:35:08 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so2552847pfi.5
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Jan 2019 13:35:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d3yd9D37qc6JkHvOXsqsDpNI+Gs7w2ansAKhkfNPYkQ=;
-        b=m1jQUEw6q81E5DJnpX9Bi50bdMo3bQ783+zQzPbIDROzuE2KV/3MSJjqJc16ITLvHP
-         mp98HXB0eok6EICYWssiLxSUYqtYFqtW9mPPvxrVe/Xsp//AWIIUp6FOjFqCyjpeJKcL
-         ImzuG+niwzj4xxJzZt6f12U8av3gGFfgqmdoo=
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=iyJoBe3sQ1g2k/YakZ2KTAU/l/VCXCfZ7ONR0Zw987U=;
+        b=NWVEkflu7bnnh9Pde5GbgKCYHz/CMZeOVvS+rlUYthaXoxbx/q03W4qxVL68OXoCq6
+         3Do2THtYYl6I7AmWhouall/Z13F3YCW5bh+JHvBXTQILG+A4YbQEljS5LyKNHdGz4T+v
+         SRBIf4O0MWaARrYpv8YknJ5wOl4EDOQKSovUI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d3yd9D37qc6JkHvOXsqsDpNI+Gs7w2ansAKhkfNPYkQ=;
-        b=YrBswYfMkbhzRWNH0R5MH1riEGWDw+B7bw7t5o8Rs1c24X5BdspojXqc12T9z1CGQK
-         FX8NKEXjIVKwsrEmZmkClCJZOyfTBYPGfeX1Y2seEfw3gIpt/F3OeevBwFN1LrA7G5Ht
-         F1hzWVBmcDEM/7xLByTOefXD7NhpqQXK89hQUU30ekNxM64YQgqNSHA5f+j2TkrJshlW
-         20hZ3v0dc4979tSIAKsQ3F+8jUcPC+dRvTPfB9nev6SesniSVAjX8E125DZbcgbXPUFe
-         BSSuDfuwWVc04U1K740L70vnzIBNtt9chP1wDZtE1teFpk7Q5o25xvJFXPZTfzAgcyO5
-         Vo/Q==
-X-Gm-Message-State: AJcUukdfuR5rHSWvQ9lajNfygzz8orYAWuQYmkUWtvJtGpDTR0PpprPr
-        M5t6vbKbx0mcCSVdnieLhmKNfz3bTJI=
-X-Google-Smtp-Source: ALg8bN5DKsmheq8mfz03Pw8lgI1dwCYqa3sHOVpvduGwJdvfQAGiMm2qRXIU0JsUkS+4OM805w7nMA==
-X-Received: by 2002:ab0:740a:: with SMTP id r10mr1144615uap.14.1546981924825;
-        Tue, 08 Jan 2019 13:12:04 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id a187sm40081951vkf.26.2019.01.08.13.12.03
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 13:12:03 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id x28so3377732vsh.12
-        for <linux-security-module@vger.kernel.org>; Tue, 08 Jan 2019 13:12:03 -0800 (PST)
-X-Received: by 2002:a67:e15e:: with SMTP id o30mr1425746vsl.66.1546981922995;
- Tue, 08 Jan 2019 13:12:02 -0800 (PST)
-MIME-Version: 1.0
-References: <alpine.LRH.2.21.1901090803120.24546@namei.org>
-In-Reply-To: <alpine.LRH.2.21.1901090803120.24546@namei.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=iyJoBe3sQ1g2k/YakZ2KTAU/l/VCXCfZ7ONR0Zw987U=;
+        b=JthxscPckHOl5yYi7caWk0n6wtOBY2bQ8a+f2V8rd2ilB9zS+tt6twIh279cvg8we4
+         r0TSPEeh71o2WqhMexCx9V64WFKLjVfWIXsUmI1hQceu4oJ4B/cD97j2ALrgd+jnQ4nC
+         qs6Jeo9XXA5N65kiufQCPHjtR78/hS16S3uW355mqEzsI2SuO0MBlbXq0k7ZGXlQjNpS
+         MKiRKCxz/x+FIy1yiTnE8C5NvIpOx1SpILUkmje3uO/+W/nkG/VfXi5aNVkvm2TCNews
+         oWfbhaISXZdh2vHqTr45yrRsl/dsFwDAiwk0QCwy0rpBKxq1EQGr6eSgYYiDII9EJ4QC
+         dxVg==
+X-Gm-Message-State: AJcUukcf/33q/CtZm5PIDD2/eo6pTzt27Fd0JMiNG1oikbg+apemEAjI
+        TWxWSuejpVog9PTi/WNrpQYbYA==
+X-Google-Smtp-Source: ALg8bN5+off+7sUT4lR2EWRRm2sfcL51bRS00BjcBCBwWcUj3L527qnVrb+Fsd7GfSqguz0Dos2NoQ==
+X-Received: by 2002:a63:4b25:: with SMTP id y37mr834622pga.181.1546983306707;
+        Tue, 08 Jan 2019 13:35:06 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id t12sm109578212pfi.45.2019.01.08.13.35.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 13:35:05 -0800 (PST)
+Date:   Tue, 8 Jan 2019 13:35:04 -0800
 From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 8 Jan 2019 13:11:51 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+wvi9t-oHf4cX999aYWMhmTJ1zA1mKuNQEB_n5ixiC5w@mail.gmail.com>
-Message-ID: <CAGXu5j+wvi9t-oHf4cX999aYWMhmTJ1zA1mKuNQEB_n5ixiC5w@mail.gmail.com>
-Subject: Re: [GIT PULL] seccomp: build fix for v5.0-rc2
 To:     James Morris <jmorris@namei.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Ingo Molnar <mingo@elte.hu>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Subject: [GIT PULL] blob-stacking updates for security-next
+Message-ID: <20190108213504.GA32901@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This was already picked up by x86-urgent...
+Hi James,
+
+Please pull these blob-stacking changes for security-next.
+
+Thanks!
 
 -Kees
 
-On Tue, Jan 8, 2019 at 1:04 PM James Morris <jmorris@namei.org> wrote:
->
-> Please pull this fix for a build regression in seccomp.
->
-> The following changes since commit 7b55851367136b1efd84d98fea81ba57a98304cf:
->
->   fork: record start_time late (2019-01-08 09:40:53 -0800)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.0-rc1
->
-> for you to fetch changes up to cba54b44d0be4eb66dbc7709e1f3f0d65e851f69:
->
->   samples/seccomp: fix 32-bit build (2019-01-08 13:00:00 -0800)
->
-> ----------------------------------------------------------------
->
-> Tycho Andersen (1):
->       samples/seccomp: fix 32-bit build
->
->  samples/seccomp/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> ---
->
-> commit cba54b44d0be4eb66dbc7709e1f3f0d65e851f69
-> Author: Tycho Andersen <tycho@tycho.ws>
-> Date:   Mon Jan 7 14:46:34 2019 -0700
->
->     samples/seccomp: fix 32-bit build
->
->     Both the .o and the actual executable need to be built with -m32 in order
->     to link correctly.
->
->     Fixes: fec7b6690541 ("samples: add an example of seccomp user trap")
->
->     Signed-off-by: Tycho Andersen <tycho@tycho.ws>
->     Reported-by: Ingo Molnar <mingo@kernel.org>
->     Signed-off-by: James Morris <james.morris@microsoft.com>
->
-> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-> index 4920903c8009..a5607668a5c7 100644
-> --- a/samples/seccomp/Makefile
-> +++ b/samples/seccomp/Makefile
-> @@ -37,6 +37,7 @@ HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
->  HOSTLDLIBS_bpf-direct += $(MFLAG)
->  HOSTLDLIBS_bpf-fancy += $(MFLAG)
->  HOSTLDLIBS_dropper += $(MFLAG)
-> +HOSTLDLIBS_user-trap.o += $(MFLAG)
->  HOSTLDLIBS_user-trap += $(MFLAG)
->  endif
->  always := $(hostprogs-m)
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/blob-stacking-security-next
+
+for you to fetch changes up to a5e2fe7ede1268d2f80fe49ca1f717d0e3750995:
+
+  TOMOYO: Update LSM flags to no longer be exclusive (2019-01-08 13:18:45 -0800)
+
+----------------------------------------------------------------
+LSM: Module stacking for SARA and Landlock
+
+The combined series of LSM refactoring and addition of blob-sharing for
+SARA and Landlock.
+
+----------------------------------------------------------------
+Casey Schaufler (19):
+      LSM: Add all exclusive LSMs to ordered initialization
+      procfs: add smack subdir to attrs
+      Smack: Abstract use of cred security blob
+      SELinux: Abstract use of cred security blob
+      SELinux: Remove cred security blob poisoning
+      SELinux: Remove unused selinux_is_enabled
+      AppArmor: Abstract use of cred security blob
+      TOMOYO: Abstract use of cred security blob
+      Infrastructure management of the cred security blob
+      SELinux: Abstract use of file security blob
+      Smack: Abstract use of file security blob
+      LSM: Infrastructure management of the file security
+      SELinux: Abstract use of inode security blob
+      Smack: Abstract use of inode security blob
+      LSM: Infrastructure management of the inode security
+      LSM: Infrastructure management of the task security
+      SELinux: Abstract use of ipc security blobs
+      Smack: Abstract use of ipc security blobs
+      LSM: Infrastructure management of the ipc security blob
+
+Kees Cook (19):
+      LSM: Introduce LSM_FLAG_LEGACY_MAJOR
+      LSM: Provide separate ordered initialization
+      LSM: Plumb visibility into optional "enabled" state
+      LSM: Lift LSM selection out of individual LSMs
+      LSM: Build ordered list of LSMs to initialize
+      LSM: Introduce CONFIG_LSM
+      LSM: Introduce "lsm=" for boottime LSM selection
+      LSM: Tie enabling logic to presence in ordered list
+      LSM: Prepare for reorganizing "security=" logic
+      LSM: Refactor "security=" in terms of enable/disable
+      LSM: Separate idea of "major" LSM from "exclusive" LSM
+      apparmor: Remove SECURITY_APPARMOR_BOOTPARAM_VALUE
+      selinux: Remove SECURITY_SELINUX_BOOTPARAM_VALUE
+      LSM: Split LSM preparation from initialization
+      LoadPin: Initialize as ordered LSM
+      Yama: Initialize as ordered LSM
+      LSM: Introduce enum lsm_order
+      capability: Initialize as LSM_ORDER_FIRST
+      TOMOYO: Update LSM flags to no longer be exclusive
+
+ Documentation/admin-guide/LSM/index.rst         |  13 +-
+ Documentation/admin-guide/kernel-parameters.txt |   4 +
+ fs/proc/base.c                                  |  64 ++-
+ fs/proc/internal.h                              |   1 +
+ include/linux/cred.h                            |   1 -
+ include/linux/lsm_hooks.h                       |  40 +-
+ include/linux/security.h                        |  15 +-
+ include/linux/selinux.h                         |  35 --
+ kernel/cred.c                                   |  13 -
+ security/Kconfig                                |  41 +-
+ security/apparmor/Kconfig                       |  16 -
+ security/apparmor/domain.c                      |   2 +-
+ security/apparmor/include/cred.h                |  16 +-
+ security/apparmor/include/file.h                |   5 +-
+ security/apparmor/include/lib.h                 |   4 +
+ security/apparmor/include/task.h                |  18 +-
+ security/apparmor/lsm.c                         |  65 ++-
+ security/apparmor/task.c                        |   6 +-
+ security/commoncap.c                            |   9 +-
+ security/loadpin/loadpin.c                      |   8 +-
+ security/security.c                             | 635 +++++++++++++++++++++---
+ security/selinux/Kconfig                        |  15 -
+ security/selinux/Makefile                       |   2 +-
+ security/selinux/exports.c                      |  23 -
+ security/selinux/hooks.c                        | 345 ++++---------
+ security/selinux/include/audit.h                |   3 -
+ security/selinux/include/objsec.h               |  38 +-
+ security/selinux/selinuxfs.c                    |   4 +-
+ security/selinux/ss/services.c                  |   1 -
+ security/selinux/xfrm.c                         |   4 +-
+ security/smack/smack.h                          |  44 +-
+ security/smack/smack_access.c                   |   4 +-
+ security/smack/smack_lsm.c                      | 316 ++++--------
+ security/smack/smackfs.c                        |  18 +-
+ security/tomoyo/common.h                        |  22 +-
+ security/tomoyo/domain.c                        |   4 +-
+ security/tomoyo/securityfs_if.c                 |  15 +-
+ security/tomoyo/tomoyo.c                        |  49 +-
+ security/yama/yama_lsm.c                        |   8 +-
+ 39 files changed, 1133 insertions(+), 793 deletions(-)
+ delete mode 100644 include/linux/selinux.h
+ delete mode 100644 security/selinux/exports.c
 
 -- 
 Kees Cook
