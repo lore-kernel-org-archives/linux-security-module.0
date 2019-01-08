@@ -2,185 +2,98 @@ Return-Path: <SRS0=cuGm=PQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C2DC43387
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49828C43387
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8900B2070B
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16FF020883
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 21:37:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NWVEkflu"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZwLy5z3t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbfAHVfI (ORCPT
+        id S1730324AbfAHVhw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jan 2019 16:35:08 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38057 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729053AbfAHVfI (ORCPT
+        Tue, 8 Jan 2019 16:37:52 -0500
+Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:33292
+        "EHLO sonic313-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730319AbfAHVhw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jan 2019 16:35:08 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q1so2552847pfi.5
-        for <linux-security-module@vger.kernel.org>; Tue, 08 Jan 2019 13:35:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=iyJoBe3sQ1g2k/YakZ2KTAU/l/VCXCfZ7ONR0Zw987U=;
-        b=NWVEkflu7bnnh9Pde5GbgKCYHz/CMZeOVvS+rlUYthaXoxbx/q03W4qxVL68OXoCq6
-         3Do2THtYYl6I7AmWhouall/Z13F3YCW5bh+JHvBXTQILG+A4YbQEljS5LyKNHdGz4T+v
-         SRBIf4O0MWaARrYpv8YknJ5wOl4EDOQKSovUI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=iyJoBe3sQ1g2k/YakZ2KTAU/l/VCXCfZ7ONR0Zw987U=;
-        b=JthxscPckHOl5yYi7caWk0n6wtOBY2bQ8a+f2V8rd2ilB9zS+tt6twIh279cvg8we4
-         r0TSPEeh71o2WqhMexCx9V64WFKLjVfWIXsUmI1hQceu4oJ4B/cD97j2ALrgd+jnQ4nC
-         qs6Jeo9XXA5N65kiufQCPHjtR78/hS16S3uW355mqEzsI2SuO0MBlbXq0k7ZGXlQjNpS
-         MKiRKCxz/x+FIy1yiTnE8C5NvIpOx1SpILUkmje3uO/+W/nkG/VfXi5aNVkvm2TCNews
-         oWfbhaISXZdh2vHqTr45yrRsl/dsFwDAiwk0QCwy0rpBKxq1EQGr6eSgYYiDII9EJ4QC
-         dxVg==
-X-Gm-Message-State: AJcUukcf/33q/CtZm5PIDD2/eo6pTzt27Fd0JMiNG1oikbg+apemEAjI
-        TWxWSuejpVog9PTi/WNrpQYbYA==
-X-Google-Smtp-Source: ALg8bN5+off+7sUT4lR2EWRRm2sfcL51bRS00BjcBCBwWcUj3L527qnVrb+Fsd7GfSqguz0Dos2NoQ==
-X-Received: by 2002:a63:4b25:: with SMTP id y37mr834622pga.181.1546983306707;
-        Tue, 08 Jan 2019 13:35:06 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id t12sm109578212pfi.45.2019.01.08.13.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 08 Jan 2019 13:35:05 -0800 (PST)
-Date:   Tue, 8 Jan 2019 13:35:04 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        Tue, 8 Jan 2019 16:37:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1546983471; bh=4gGLfs8Da9xg7fdVU51mrUWTmIlUtC0PvY3sTLbKPik=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ZwLy5z3twJacaNUxL0LmwjcgaWnNuJraIEuAy6RQXXLWpkxVB8u0wAv9rlR7ju8OE8vSFWJD0kLCPJHwx1eh4fD/3+0IpTGtW1zHP++j8xapXmB3/tGXnkyfa/NVfFciEcfeEdoQVuHJGkLJ8nnxycYN5IucVFzLBpNBMNKbZrfCSKw1F34pB6ehYA5XPYW8K498+FxyL+eNWer8BMLZ5NVk2JF7Xt8IZNnVKo/WViXMMxospzxeWUv8VqAiPJdAnu2+gmbDYr4Y03tdzjzQjuJbc7ThT2PV9QZDVFIgaJGVed8kEnBFJ/kMJ6bgZuEMhcelq/bhExedokaw7zrjbA==
+X-YMail-OSG: dt9_IA0VM1mXyEbxplzicdrl3zWXIFnvOGFT5Xk2KXhIhsg8KQLqy3.91HPS_JM
+ kqi7FdgCGg..czcuQdSIugo82W4cSZSmPoEZmjA5I4Bxg8h2IiJUd6QsEFVHrQFrqkBjtCsnxkRq
+ eye0.poY62PDszFv.dDL1O3nwlt_U8_UyEuvHF_DgMt_21SdYxJklWeLBlYgYPIbIQGNAHNSo0.D
+ THK243zVLTuwjzxEa6F0zfZ6o2cgRuqfrJwZ9ZQNCCx8VGfdOjx.cGZujndvZY223oyysF6BB6tJ
+ my67UghRTMIkingPcRmXHl_i.nORynomIDpY5ul8EpmZBCFxb598vxScihn.7ynU3COG4aQQPcdX
+ IFnG8E7OEv6fUBE5ETSbKMqzPLGx1Q0OzlZgJfkHOiPKYQTOlGOtd666fGLx0ktiZb5S7VlDlAYs
+ V8X_7YjbV8qicvx9RJtkkOf4CYkOVqG8WiGxI10u7YqWbrBUF_lzUXJ.X0vPOz2Ax8gJFJXXHLA0
+ BqjxQsX4_WYKIx_i6Pq186keXhGHem65Six.m1J7aBJo7H.1CIvK8OkY.4LNMcuN6j9XFXuTuxkP
+ trT6tOVWgJGRWcDwfxwpMil_yeSsXSCrE63JXYoTbUdjNKaQP6jKb4UmmcAsSSJcwxSiaYj02Diq
+ jrQ.JNt8aTE2KGcx8Sqpxf2.zSrCpbVpLr8hGET8OQpBh7Pv0.TdD4uTgYC0R1VT46flPCpEO9Oh
+ IlSM.4WpxToWdpicyxDvJS7h1hBQdurx7kt95AzhmMOp_tuZYIrKTh6gPFe.ChzrbdMIg3eDZD7D
+ FfQMsFg_vBsbC8TKBTW22w9MIYiEW7snTikYgSIKtrJ0ig3XvxBJRacqKKDPNJrGHzBM.Gjskh2B
+ p9O3x.T371SR.9P7PXAioLERhFG2pUIygwc.aZpCXO5.y7VZfJXmcNLnK5ehfM4tmKCCwTNrXk.5
+ 6ioXrjtZ120KlYuYGvrEnuUAbzIHdGhUPpImLR9mYhHwMAKLPQZxRNZ7KoKiy_2OClrwnnviZvcC
+ 0i9fddL0U4Z.LIbiIzmJ4JA505LEAM1qtrM2keu6jyftm5mShRZ7tuBIO7LQX4SodW1DLOyKVa9W
+ b0snehKnZmrTPNxnyIMecQEJprCryQzC_9fFgHPec_Mc-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Tue, 8 Jan 2019 21:37:51 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
+          by smtp423.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d5b6cdb001787338e2d275f3df3a03e8;
+          Tue, 08 Jan 2019 21:37:47 +0000 (UTC)
+Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
+To:     James Morris <jmorris@namei.org>, Kees Cook <keescook@chromium.org>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
         John Johansen <john.johansen@canonical.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
         Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Subject: [GIT PULL] blob-stacking updates for security-next
-Message-ID: <20190108213504.GA32901@beast>
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+ <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com>
+ <alpine.LRH.2.21.1812120556040.11653@namei.org>
+ <CAGXu5j+bx7nJBMdFYigYnJFRyCvz0NAxfiWF8yP9EhRESLnn+Q@mail.gmail.com>
+ <CAGXu5jJOGKAFrFF7HSPnqLpLz0no2Ae_z0TkWPeRt1WWqhqFOA@mail.gmail.com>
+ <alpine.LRH.2.21.1901090805121.24546@namei.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <2cd724a9-3735-1be3-4a42-facb264e70dc@schaufler-ca.com>
+Date:   Tue, 8 Jan 2019 13:37:41 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.21.1901090805121.24546@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi James,
+On 1/8/2019 1:05 PM, James Morris wrote:
+> On Mon, 7 Jan 2019, Kees Cook wrote:
+>
+>> On Tue, Dec 11, 2018 at 1:19 PM Kees Cook <keescook@chromium.org> wrote:
+>>> On Tue, Dec 11, 2018 at 10:57 AM James Morris <jmorris@namei.org> wrote:
+>>>> On Tue, 4 Dec 2018, Kees Cook wrote:
+>>>>
+>>>>> On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>>> v5: Include Kees Cook's rework of the lsm command
+>>>>>>     line interface. Stacking is not conditional.
+>>>>> Can you resend this series with corrected "From:" lines in the body, etc?
+>>>>>
+>>>>> Beyond that, I obviously like it. James, what's needed for this to move forward?
+>>>> If there are no outstanding issues, I plan to merge this for 4.21.
+>>> Yeah, it looks good to me. (Excepting getting the authorship sorted.)
+>> I didn't see this actually get merged? Was there something that needed
+>> fixing? Should I send you a direct pull request for v5.1?
+> Yep, please send a new pull request.
 
-Please pull these blob-stacking changes for security-next.
+Do you want it as is or rebased on 5.0-rc1?
 
-Thanks!
-
--Kees
-
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/blob-stacking-security-next
-
-for you to fetch changes up to a5e2fe7ede1268d2f80fe49ca1f717d0e3750995:
-
-  TOMOYO: Update LSM flags to no longer be exclusive (2019-01-08 13:18:45 -0800)
-
-----------------------------------------------------------------
-LSM: Module stacking for SARA and Landlock
-
-The combined series of LSM refactoring and addition of blob-sharing for
-SARA and Landlock.
-
-----------------------------------------------------------------
-Casey Schaufler (19):
-      LSM: Add all exclusive LSMs to ordered initialization
-      procfs: add smack subdir to attrs
-      Smack: Abstract use of cred security blob
-      SELinux: Abstract use of cred security blob
-      SELinux: Remove cred security blob poisoning
-      SELinux: Remove unused selinux_is_enabled
-      AppArmor: Abstract use of cred security blob
-      TOMOYO: Abstract use of cred security blob
-      Infrastructure management of the cred security blob
-      SELinux: Abstract use of file security blob
-      Smack: Abstract use of file security blob
-      LSM: Infrastructure management of the file security
-      SELinux: Abstract use of inode security blob
-      Smack: Abstract use of inode security blob
-      LSM: Infrastructure management of the inode security
-      LSM: Infrastructure management of the task security
-      SELinux: Abstract use of ipc security blobs
-      Smack: Abstract use of ipc security blobs
-      LSM: Infrastructure management of the ipc security blob
-
-Kees Cook (19):
-      LSM: Introduce LSM_FLAG_LEGACY_MAJOR
-      LSM: Provide separate ordered initialization
-      LSM: Plumb visibility into optional "enabled" state
-      LSM: Lift LSM selection out of individual LSMs
-      LSM: Build ordered list of LSMs to initialize
-      LSM: Introduce CONFIG_LSM
-      LSM: Introduce "lsm=" for boottime LSM selection
-      LSM: Tie enabling logic to presence in ordered list
-      LSM: Prepare for reorganizing "security=" logic
-      LSM: Refactor "security=" in terms of enable/disable
-      LSM: Separate idea of "major" LSM from "exclusive" LSM
-      apparmor: Remove SECURITY_APPARMOR_BOOTPARAM_VALUE
-      selinux: Remove SECURITY_SELINUX_BOOTPARAM_VALUE
-      LSM: Split LSM preparation from initialization
-      LoadPin: Initialize as ordered LSM
-      Yama: Initialize as ordered LSM
-      LSM: Introduce enum lsm_order
-      capability: Initialize as LSM_ORDER_FIRST
-      TOMOYO: Update LSM flags to no longer be exclusive
-
- Documentation/admin-guide/LSM/index.rst         |  13 +-
- Documentation/admin-guide/kernel-parameters.txt |   4 +
- fs/proc/base.c                                  |  64 ++-
- fs/proc/internal.h                              |   1 +
- include/linux/cred.h                            |   1 -
- include/linux/lsm_hooks.h                       |  40 +-
- include/linux/security.h                        |  15 +-
- include/linux/selinux.h                         |  35 --
- kernel/cred.c                                   |  13 -
- security/Kconfig                                |  41 +-
- security/apparmor/Kconfig                       |  16 -
- security/apparmor/domain.c                      |   2 +-
- security/apparmor/include/cred.h                |  16 +-
- security/apparmor/include/file.h                |   5 +-
- security/apparmor/include/lib.h                 |   4 +
- security/apparmor/include/task.h                |  18 +-
- security/apparmor/lsm.c                         |  65 ++-
- security/apparmor/task.c                        |   6 +-
- security/commoncap.c                            |   9 +-
- security/loadpin/loadpin.c                      |   8 +-
- security/security.c                             | 635 +++++++++++++++++++++---
- security/selinux/Kconfig                        |  15 -
- security/selinux/Makefile                       |   2 +-
- security/selinux/exports.c                      |  23 -
- security/selinux/hooks.c                        | 345 ++++---------
- security/selinux/include/audit.h                |   3 -
- security/selinux/include/objsec.h               |  38 +-
- security/selinux/selinuxfs.c                    |   4 +-
- security/selinux/ss/services.c                  |   1 -
- security/selinux/xfrm.c                         |   4 +-
- security/smack/smack.h                          |  44 +-
- security/smack/smack_access.c                   |   4 +-
- security/smack/smack_lsm.c                      | 316 ++++--------
- security/smack/smackfs.c                        |  18 +-
- security/tomoyo/common.h                        |  22 +-
- security/tomoyo/domain.c                        |   4 +-
- security/tomoyo/securityfs_if.c                 |  15 +-
- security/tomoyo/tomoyo.c                        |  49 +-
- security/yama/yama_lsm.c                        |   8 +-
- 39 files changed, 1133 insertions(+), 793 deletions(-)
- delete mode 100644 include/linux/selinux.h
- delete mode 100644 security/selinux/exports.c
-
--- 
-Kees Cook
