@@ -2,195 +2,179 @@ Return-Path: <SRS0=cuGm=PQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7A2C43387
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 06:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDE2C43387
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 13:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F400120700
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 06:46:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546929972;
-	bh=s9Y+vON5n3XJuO1ua+CzxoGW6MpI6RaNzinuVQo44nY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fsvAUnRPa5CH2zx6yxJWJW07r+74xeYgo3BzVYYCsJ982yBY5L12R/0cbaz0NOqCt
-	 gu2vHS6bcX9mbk+6DtuiP/jI0+D3qcoayjXw6ZOtrdWPDwwDx+jr9VMMbe3e+Cjtay
-	 o5cyXt/67ERva15yUJXrCi0Ae9pZ3phcFF/QMTSw=
+	by mail.kernel.org (Postfix) with ESMTP id D90B620827
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jan 2019 13:29:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="d9CwV737"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbfAHGqL (ORCPT
+        id S1728256AbfAHN3c (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jan 2019 01:46:11 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46767 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727484AbfAHGqL (ORCPT
+        Tue, 8 Jan 2019 08:29:32 -0500
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:60000 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727654AbfAHN3c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jan 2019 01:46:11 -0500
-Received: by mail-wr1-f66.google.com with SMTP id l9so2824044wrt.13;
-        Mon, 07 Jan 2019 22:46:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zuK6HkvO3B0uEU3KzgvHIbJGzGat93NWoCNGd01DmDs=;
-        b=oXLZTAeg2YzwMHECCqZHhGhTr4qBcxNkv6/MWZZdmQX/sidNu6juGKb55DcgOeP4V8
-         0v02Oc/XczilCxkJ384z7TGkXIBbyXdzI1m9TTrZ24c6ieyjvtIxuFgp46F/jyrkMGKJ
-         JTpmVt1i+bM4YI0BdlXjtcPOKnT0WNdxm4b8FtXPd30RfJ4iTFvlx9O94sM0Ivra17HI
-         23WNVdU01z0N4QPM/ReZs1pt3ivYAQnD47v5esrOJ+rqTO2o4pVEo9d9BXp8ic/UxEnQ
-         w2TjWpQUSgO/SYGmIKTCLLpOWbFekl9gdYsUtBCKtRx4GzTfj/7Vy6wwvQYgVsxvMiUD
-         S5zA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zuK6HkvO3B0uEU3KzgvHIbJGzGat93NWoCNGd01DmDs=;
-        b=nuHPlDtgiuZq2mwHJIGFe529KfrrckD4PJawnKF2+J5WSIIjcZ5B5odBFD5X0vEDV1
-         m83AficLc3CMJ02ZuDPLLmEVo1zJ0IGSHiWYAuRiy4hp1d68Gmxh1aYARO9JEYqyLnD2
-         qr4nACCpMmyDeh/aI0r4C6Jkeis5mq9ZY7dcHVPcYS/QSawNconPjkd5x461dmLcI+pU
-         ZblTYWhUCU7JNUFzhSaxuuJ16CNcMthkWfgxuMnho29+nadsSV+TslC4d7NfR44Gb+8K
-         lNikPnZ29a125pv9TZKwZ3AHj/YbsiLIwvpTRtPTd3BWKRD2hHK2zw+lGgPZKwrgA5rn
-         k6Cw==
-X-Gm-Message-State: AJcUukcNZ0XkixHqTNXTc/pHVxQnVoBwS8t+KmLnmfjNALZXZy6GiH8T
-        8FcozwtGjKeAm4P7FkV/Ry0=
-X-Google-Smtp-Source: ALg8bN6LNBIYg8x94z43YyepipvGoic7Zru/DSjJOLz3gvv38gGN9EV1SUa2Qz17hltcc9KV40ZPgQ==
-X-Received: by 2002:a5d:664a:: with SMTP id f10mr401487wrw.311.1546929968407;
-        Mon, 07 Jan 2019 22:46:08 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 3sm9292758wmw.46.2019.01.07.22.46.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 22:46:07 -0800 (PST)
-Date:   Tue, 8 Jan 2019 07:46:05 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
+        Tue, 8 Jan 2019 08:29:32 -0500
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id D4B12D0006F;
+        Tue,  8 Jan 2019 14:29:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1546954176;
+        bh=XmNbVTXzFtbP+Mqfud8yrCx8TLq29RKGAXwDt1ZPKf8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=d9CwV737+I60XmspBx4UBDzjQ06DwdMZApGsJpUHeYhAuoPQgeofCR51x43kbxOeF
+         hDAIwoHxi5pf9vBDJ8LsOn9wcp64R4pkhKIVUGo9H/VjvAkLE0+sokyxF/A/1oM8Po
+         ZiUFbZm1Yg+Y33OLq1FKlKbBPyFp91XD9rhAZJ3lAaZr49pYzeX3qojUSS0M67ajnM
+         svVWhRIgPSgAMvmKznD9AWJP7tUjl4CguGSLT5s76YBWm7zGBxZ/VDTkhatneky1E6
+         JgS0PeJa0oQqsNSk8UKp935OrzUSJd8MI5x6nADcHUwQa1Dcn3rxjC2dnzWw3lYgol
+         r6dplZS2MjyiQ==
+Subject: Re: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file
+ executability through O_MAYEXEC
+To:     Jann Horn <jannh@google.com>
+CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         James Morris <jmorris@namei.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
+        <zohar@linux.ibm.com>, <philippe.trebuchet@ssi.gouv.fr>,
+        <shuah@kernel.org>, <thibaut.sautereau@ssi.gouv.fr>,
+        <vincent.strubel@ssi.gouv.fr>, <yves-alexis.perez@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [GIT PULL] security: seccomp changes for v4.21
-Message-ID: <20190108064605.GB102319@gmail.com>
-References: <alpine.LRH.2.21.1812311511360.1435@namei.org>
- <20190107101540.GA87402@gmail.com>
- <CAGXu5jLYe_H_BF5SK2GWjYL9P7RJ9t0oadjDNnDL7UTXfb_Jfw@mail.gmail.com>
- <20190107215319.GD29009@cisco>
+        <linux-fsdevel@vger.kernel.org>, Andy Lutomirski <luto@kernel.org>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <20181212081712.32347-4-mic@digikod.net>
+ <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
+ <f13bf750-f418-343c-baa6-9eee6e0f5e19@ssi.gouv.fr>
+ <CAG48ez00CpXOOJPLgpQd_e0gG2KgYb1p8bwssA8FDOugHTxRAA@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <0f7d39f8-035b-8566-94c9-ea836b280e24@ssi.gouv.fr>
+Date:   Tue, 8 Jan 2019 14:29:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190107215319.GD29009@cisco>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAG48ez00CpXOOJPLgpQd_e0gG2KgYb1p8bwssA8FDOugHTxRAA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-* Tycho Andersen <tycho@tycho.ws> wrote:
+On 03/01/2019 12:17, Jann Horn wrote:
+> On Thu, Dec 13, 2018 at 3:49 PM Mickaël Salaün
+> <mickael.salaun@ssi.gouv.fr> wrote:
+>> On 12/12/2018 18:09, Jann Horn wrote:
+>>> On Wed, Dec 12, 2018 at 9:18 AM Mickaël Salaün <mic@digikod.net> wrote:
+>>>> Enable to either propagate the mount options from the underlying VFS
+>>>> mount to prevent execution, or to propagate the file execute permission.
+>>>> This may allow a script interpreter to check execution permissions
+>>>> before reading commands from a file.
+>>>>
+>>>> The main goal is to be able to protect the kernel by restricting
+>>>> arbitrary syscalls that an attacker could perform with a crafted binary
+>>>> or certain script languages.  It also improves multilevel isolation
+>>>> by reducing the ability of an attacker to use side channels with
+>>>> specific code.  These restrictions can natively be enforced for ELF
+>>>> binaries (with the noexec mount option) but require this kernel
+>>>> extension to properly handle scripts (e.g., Python, Perl).
+>>>>
+>>>> Add a new sysctl kernel.yama.open_mayexec_enforce to control this
+>>>> behavior.  A following patch adds documentation.
+> [...]
+>>>> +{
+>>>> +       if (!(mask & MAY_OPENEXEC))
+>>>> +               return 0;
+>>>> +       /*
+>>>> +        * Match regular files and directories to make it easier to
+>>>> +        * modify script interpreters.
+>>>> +        */
+>>>> +       if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
+>>>> +               return 0;
+>>>
+>>> So files are subject to checks, but loading code from things like
+>>> sockets is always fine?
+>>
+>> As I said in a previous email, these checks do not handle fifo either.
+>> This is relevant in a threat model targeting persistent attacks (and
+>> with additional protections/restrictions). We may want to only whitelist
+>> fifo, but I don't get how a socket is relevant here. Can you please clarify?
+> 
+> I don't think that there's a security problem here. I just think it's
+> weird to have the extra check when it seems to me like it isn't really
+> necessary - nobody is going to want to execute a socket or fifo
+> anyway, right?
 
-> Hi,
-> 
-> On Mon, Jan 07, 2019 at 01:09:09PM -0800, Kees Cook wrote:
-> > On Mon, Jan 7, 2019 at 2:15 AM Ingo Molnar <mingo@kernel.org> wrote:
-> > >
-> > >
-> > > * James Morris <jmorris@namei.org> wrote:
-> > >
-> > > > From Kees:
-> > > >
-> > > > "- Add SECCOMP_RET_USER_NOTIF
-> > > >
-> > > > - seccomp fixes for sparse warnings and s390 build (Tycho)"
-> > > >
-> > > >
-> > > >
-> > > > The following changes since commit 1072bd678547f8663cfb81a22fdb50c589e4976e:
-> > > >
-> > > >   security: fs: make inode explicitly non-modular (2018-12-12 14:58:51 -0800)
-> > > >
-> > > > are available in the Git repository at:
-> > > >
-> > > >   git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-seccomp
-> > > >
-> > > > for you to fetch changes up to 55b8cbe470d103b44104c64dbf89e5cad525d4e0:
-> > > >
-> > > >   Merge tag 'seccomp-next-part2' of https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux into next-seccomp (2018-12-17 11:36:26 -0800)
-> > > >
-> > > > ----------------------------------------------------------------
-> > > > James Morris (2):
-> > > >       Merge tag 'seccomp-next' of https://git.kernel.org/.../kees/linux into next-seccomp
-> > > >       Merge tag 'seccomp-next-part2' of https://git.kernel.org/.../kees/linux into next-seccomp
-> > > >
-> > > > Tycho Andersen (6):
-> > > >       seccomp: hoist struct seccomp_data recalculation higher
-> > > >       seccomp: switch system call argument type to void *
-> > > >       seccomp: add a return code to trap to userspace
-> > > >       samples: add an example of seccomp user trap
-> > > >       seccomp: fix poor type promotion
-> > > >       seccomp, s390: fix build for syscall type change
-> > > >
-> > > >  Documentation/ioctl/ioctl-number.txt           |   1 +
-> > > >  Documentation/userspace-api/seccomp_filter.rst |  84 +++++
-> > > >  arch/s390/kernel/compat_wrapper.c              |   2 +-
-> > > >  include/linux/seccomp.h                        |   9 +-
-> > > >  include/linux/syscalls.h                       |   2 +-
-> > > >  include/uapi/linux/seccomp.h                   |  40 ++-
-> > > >  kernel/seccomp.c                               | 467 ++++++++++++++++++++++++-
-> > > >  samples/seccomp/.gitignore                     |   1 +
-> > > >  samples/seccomp/Makefile                       |   7 +-
-> > > >  samples/seccomp/user-trap.c                    | 375 ++++++++++++++++++++
-> > > >  tools/testing/selftests/seccomp/seccomp_bpf.c  | 447 ++++++++++++++++++++++-
-> > > >  11 files changed, 1411 insertions(+), 24 deletions(-)
-> > > >  create mode 100644 samples/seccomp/user-trap.c
-> > >
-> > > 32-bit x86 allyesconfig doesn't build:
-> > >
-> > >  /usr/bin/ld: i386:x86-64 architecture of input file `samples/seccomp/user-trap.o' is incompatible with i386 output
-> > >  /usr/bin/ld: samples/seccomp/user-trap.o: file class ELFCLASS64 incompatible with ELFCLASS32
-> > >  /usr/bin/ld: final link failed: File in wrong format
-> > >  collect2: error: ld returned 1 exit status
-> > >  scripts/Makefile.host:99: recipe for target 'samples/seccomp/user-trap' failed
-> > >  make[2]: *** [samples/seccomp/user-trap] Error 1
-> > >
-> > > Is this a known regression?
-> > 
-> > That looks like something is busted in the samples Makefile? Tycho,
-> > are you able to reproduce this?
-> 
-> Given that the samples build only happens when CROSS_COMPILE is not
-> set, I'll see about digging up a 32-bit box. But I think the patch
-> below should fix it, I'll send it out when I actually get it tested.
-> 
-> Sorry for the breakage!
-> 
-> Tycho
-> 
-> 
-> From b53b390ab554ef6e5b995ac050718fd62ed0803e Mon Sep 17 00:00:00 2001
-> From: Tycho Andersen <tycho@tycho.ws>
-> Date: Mon, 7 Jan 2019 14:46:34 -0700
-> Subject: [PATCH] samples/seccomp: fix 32-bit build
-> 
-> Both the .o and the actual executable need to be built with -m32 in order
-> to link correctly.
-> 
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> Reported-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  samples/seccomp/Makefile | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-> index 4920903c8009..a5607668a5c7 100644
-> --- a/samples/seccomp/Makefile
-> +++ b/samples/seccomp/Makefile
-> @@ -37,6 +37,7 @@ HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
->  HOSTLDLIBS_bpf-direct += $(MFLAG)
->  HOSTLDLIBS_bpf-fancy += $(MFLAG)
->  HOSTLDLIBS_dropper += $(MFLAG)
-> +HOSTLDLIBS_user-trap.o += $(MFLAG)
+Right, the fifo whitelisting should answer your concern then.
 
-That did the trick - thanks!
+> 
+>>>
+>>>> +       if ((open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_MOUNT) &&
+>>>> +                       !(mask & MAY_EXECMOUNT))
+>>>> +               return -EACCES;
+>>>> +
+>>>> +       /*
+>>>> +        * May prefer acl_permission_check() instead of generic_permission(),
+>>>> +        * to not be bypassable with CAP_DAC_READ_SEARCH.
+>>>> +        */
+>>>> +       if (open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_FILE)
+>>>> +               return generic_permission(inode, MAY_EXEC);
+>>>> +
+>>>> +       return 0;
+>>>> +}
+>>>> +
+>>>>  static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
+>>>> +       LSM_HOOK_INIT(inode_permission, yama_inode_permission),
+>>>>         LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
+>>>>         LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
+>>>>         LSM_HOOK_INIT(task_prctl, yama_task_prctl),
+>>>> @@ -447,6 +489,37 @@ static int yama_dointvec_minmax(struct ctl_table *table, int write,
+>>>>         return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
+>>>>  }
+>>>>
+>>>> +static int yama_dointvec_bitmask_macadmin(struct ctl_table *table, int write,
+>>>> +                                         void __user *buffer, size_t *lenp,
+>>>> +                                         loff_t *ppos)
+>>>> +{
+>>>> +       int error;
+>>>> +
+>>>> +       if (write) {
+>>>> +               struct ctl_table table_copy;
+>>>> +               int tmp_mayexec_enforce;
+>>>> +
+>>>> +               if (!capable(CAP_MAC_ADMIN))
+>>>> +                       return -EPERM;
+>>>
+>>> Don't put capable() checks in sysctls, it doesn't work.
+>>>
+>>
+>> I tested it and the root user can indeed open the file even if the
+>> process doesn't have CAP_MAC_ADMIN, however writing in the sysctl file
+>> is denied. Btw there is a similar check in the previous function
+>> (yama_dointvec_minmax).
+> 
+> It's still wrong. If an attacker without CAP_MAC_ADMIN opens the
+> sysctl file, then passes the file descriptor to a setcap binary that
+> has CAP_MAC_ADMIN as stdout/stderr, and the setcap binary writes to
+> it, then the capable() check is bypassed. (But of course, to open the
+> sysctl file in the first place, you'd need to be root (uid 0), so the
+> check doesn't really matter.)
 
-	Ingo
+I agree with you that a confused deputy attack may uses file
+descriptors, but I don't see how the current sysctl API may be used to
+check the process capability at open time. Anyway, on a properly
+configured system, especially one leveraging Linux capabilities (e.g.
+CLIP OS), root processes may not have CAP_SYS_ADMIN. Moreover, SUID or
+fcap binaries may not be available to an attacker (e.g. in a container).
