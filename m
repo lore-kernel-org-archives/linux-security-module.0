@@ -2,123 +2,144 @@ Return-Path: <SRS0=tCoi=PR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C14FC43387
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jan 2019 13:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 885F7C43612
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jan 2019 14:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09BB420859
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jan 2019 13:41:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="RoMGK8Hv"
+	by mail.kernel.org (Postfix) with ESMTP id 60E1620859
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jan 2019 14:08:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbfAINlI (ORCPT
+        id S1731019AbfAIOH7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:41:08 -0500
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:63276 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729603AbfAINlI (ORCPT
+        Wed, 9 Jan 2019 09:07:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52836 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730652AbfAIOH7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:41:08 -0500
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id E9262D0006C;
-        Wed,  9 Jan 2019 14:41:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1547041274;
-        bh=H2Is0Q2VN22XBooqXUOSb5VIZ4HVQHkcukWlRAPTp1s=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=RoMGK8HvWM8GNKEsVGubLVPZIHc4Q2DRA/jnTE33DG16oWnu89Iag+oHvOzc73KBq
-         b06HqB02wINgPuFcY6UVLlNRae0QZn1dTVoJEGiOo4lsOYNgEXY2ZyMKVh+kT3kCaR
-         2yqJD9P3CIRKKHhqQ7uNFm4faithFGxt5t6oC6+c/y30yVZKM2fessSiTt+0G5aQv6
-         jRUP918avPzGx/TvZEwF1ERmLzifNulJYFGenTZ46kvf+OK+JWLZjvYV2FTxM7Z+Z+
-         CO85JFozPsqq7z/2i0etRkdyZCTQ5Vtj4hUnXvN3YRqV45p8SBhDpyg67mcy1hT9zY
-         MgqHBlwMSpkag==
-Subject: Re: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file
- executability through O_MAYEXEC
-To:     Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>
-CC:     Jann Horn <jannh@google.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        <thibaut.sautereau@ssi.gouv.fr>, <vincent.strubel@ssi.gouv.fr>,
-        Perez Yves-Alexis <yves-alexis.perez@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
+        Wed, 9 Jan 2019 09:07:59 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09E4Ff2081873
+        for <linux-security-module@vger.kernel.org>; Wed, 9 Jan 2019 09:07:58 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwhr8ab2c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Jan 2019 09:07:57 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 9 Jan 2019 14:07:55 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 14:07:50 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09E7mXN47448156
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 14:07:48 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6FD32AE063;
+        Wed,  9 Jan 2019 14:07:48 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BC7DFAE05F;
+        Wed,  9 Jan 2019 14:07:46 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.106.104])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 14:07:46 +0000 (GMT)
+Subject: Re: [RFC PATCH 1/1] KEYS, integrity: Link .platform keyring to
+ .secondary_trusted_keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-References: <20181212081712.32347-1-mic@digikod.net>
- <20181212081712.32347-4-mic@digikod.net>
- <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
- <f13bf750-f418-343c-baa6-9eee6e0f5e19@ssi.gouv.fr>
- <CAG48ez00CpXOOJPLgpQd_e0gG2KgYb1p8bwssA8FDOugHTxRAA@mail.gmail.com>
- <0f7d39f8-035b-8566-94c9-ea836b280e24@ssi.gouv.fr>
- <CAGXu5jKHPE6WfbXpiwzm=vRbgJ-rCePxsrYmVzZ1+RURp-6nJg@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <58c59dbb-ae6b-ce06-d679-175b3ed6f652@ssi.gouv.fr>
-Date:   Wed, 9 Jan 2019 14:41:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKHPE6WfbXpiwzm=vRbgJ-rCePxsrYmVzZ1+RURp-6nJg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        kexec@lists.infradead.org
+Date:   Wed, 09 Jan 2019 09:07:36 -0500
+In-Reply-To: <20190109013356.GA2610@dhcp-128-65.nay.redhat.com>
+References: <20190108081247.2266-1-kasong@redhat.com>
+         <20190108081247.2266-2-kasong@redhat.com>
+         <1546960680.19931.114.camel@linux.ibm.com>
+         <20190109013356.GA2610@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19010914-0008-0000-0000-000002AE5E88
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010914-0009-0000-0000-0000221A60A4
+Message-Id: <1547042856.19931.229.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090119
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 09/01/2019 00:30, Kees Cook wrote:
-> On Tue, Jan 8, 2019 at 5:29 AM Mickaël Salaün
-> <mickael.salaun@ssi.gouv.fr> wrote:
->>
->>
->> On 03/01/2019 12:17, Jann Horn wrote:
->>> On Thu, Dec 13, 2018 at 3:49 PM Mickaël Salaün
->>> <mickael.salaun@ssi.gouv.fr> wrote:
->>>> On 12/12/2018 18:09, Jann Horn wrote:
->>>>> On Wed, Dec 12, 2018 at 9:18 AM Mickaël Salaün <mic@digikod.net> wrote:
->>>>>> Enable to either propagate the mount options from the underlying VFS
->>>>>> mount to prevent execution, or to propagate the file execute permission.
->>>>>> This may allow a script interpreter to check execution permissions
->>>>>> before reading commands from a file.
->>>>>>
->>>>>> The main goal is to be able to protect the kernel by restricting
->>>>>> arbitrary syscalls that an attacker could perform with a crafted binary
->>>>>> or certain script languages.  It also improves multilevel isolation
->>>>>> by reducing the ability of an attacker to use side channels with
->>>>>> specific code.  These restrictions can natively be enforced for ELF
->>>>>> binaries (with the noexec mount option) but require this kernel
->>>>>> extension to properly handle scripts (e.g., Python, Perl).
+On Wed, 2019-01-09 at 09:33 +0800, Dave Young wrote:
+> CC kexec list
+> On 01/08/19 at 10:18am, Mimi Zohar wrote:
+> > [Cc'ing the LSM and integrity mailing lists]
+> > 
+> > Repeating my comment on PATCH 0/1 here with the expanded set of
+> > mailing lists.
+> > 
+> > The builtin and secondary keyrings have a signature change of trust
+> > rooted in the signed kernel image.  Adding the pre-boot keys to the
+> > secondary keyring breaks that signature chain of trust.
+> > 
+> > Please do NOT add the pre-boot "platform" keys to the secondary
+> > keyring.
 > 
-> I like this idea, but I think it shouldn't live in Yama (since it is
-> currently intended to be a ptrace-policy-only LSM). It was
-> _originally_ designed to do various DAC improvements, but the
-> agreement was that those should live directly in the VFS instead (i.e.
-> the symlink, hardlink and now fifo and regular file defenses).
+> If we regard kexec as a bootloader, it sounds natural to use the
+> platform key to verify the signature with kexec_file_load syscall.
 > 
-> This should likely go in similarly. (But if not, it could also be its own LSM.)
+> It will be hard for user to manually sign a kernel and import the key
+> then to reuse kexec_file_load.
+
+This is really a generic topic, not limited to kexec, which should be
+discussed.  Let's defer this discussion for now.
+
 > 
+> I think we do not care if platform key can be added to secondary or not,
+> any suggestions how can kexec_file to use the platform key?
 
-I think that Yama is quite handy and make sense here, but I'm fine
-putting this knob elsewhere. However, I was thinking, for a future patch
-series, to add another sysctl to lock this choice, i.e. generalizing the
-way Yama can lock the ptrace_scope.
+I assume the problem is accessing the keyring id.
 
-What matter here is the ability for an LSM to use this O_MAYEXEC flag.
-Yama is a good place to showcase this feature and I think it is cleaner
-to leverage the LSM framework to put new (optional) security features. I
-can easily create a new LSM but it would be pretty similar to Yama...
-What do you think about it James and Al?
+Instead of defining a function to return the keyring id, as below,
+define a function that sets a variable with the keyring id.
+ platform_keyring_init() would call that function to set the variable.
 
-Side question: wouldn't it be better to use a 0600 mode (instead of
-0644) for this kind of sysctl?
+Similar to builtin_trusted_keys and secondary_trusted_keys, define a
+variable named platform_trusted_keys.
+
+[snip]
+
+> > > diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> > > index f45d6edecf99..397758d4f12d 100644
+> > > --- a/security/integrity/digsig.c
+> > > +++ b/security/integrity/digsig.c
+> > > @@ -176,3 +176,10 @@ int __init integrity_load_cert(const unsigned int id, const char *source,
+> > >  	pr_info("Loading X.509 certificate: %s\n", source);
+> > >  	return integrity_add_key(id, data, len, perm);
+> > >  }
+> > > +
+> > > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> > > +struct key* __init integrity_get_platform_keyring(void)
+> > > +{
+> > > +	return keyring[INTEGRITY_KEYRING_PLATFORM];
+> > > +}
+> > > +#endif
+
+Mimi
+
