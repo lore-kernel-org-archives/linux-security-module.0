@@ -6,67 +6,67 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F77C43612
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jan 2019 22:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93605C43387
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jan 2019 22:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C6B820685
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jan 2019 22:11:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CD4020685
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jan 2019 22:11:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfAIWL1 (ORCPT
+        id S1726674AbfAIWLq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Jan 2019 17:11:27 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49958 "EHLO
+        Wed, 9 Jan 2019 17:11:46 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59192 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727617AbfAIWLS (ORCPT
+        by vger.kernel.org with ESMTP id S1727202AbfAIWLN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Jan 2019 17:11:18 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09MAO01141996
-        for <linux-security-module@vger.kernel.org>; Wed, 9 Jan 2019 17:11:17 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwsdvr9j4-1
+        Wed, 9 Jan 2019 17:11:13 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09M9lRJ117598
+        for <linux-security-module@vger.kernel.org>; Wed, 9 Jan 2019 17:11:12 -0500
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwru0srr9-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Jan 2019 17:11:16 -0500
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Jan 2019 17:11:12 -0500
 Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-security-module@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
-        Wed, 9 Jan 2019 22:11:16 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 9 Jan 2019 22:11:11 -0000
+Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Jan 2019 22:11:13 -0000
+        Wed, 9 Jan 2019 22:11:08 -0000
 Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09MBCvP14942338
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09MB7we15400982
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 22:11:12 GMT
+        Wed, 9 Jan 2019 22:11:07 GMT
 Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 568EFBE71A;
-        Wed,  9 Jan 2019 22:11:12 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id C308DBE71C;
+        Wed,  9 Jan 2019 22:11:07 +0000 (GMT)
 Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EDE94BE73C;
-        Wed,  9 Jan 2019 22:11:11 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 6C4F5BE704;
+        Wed,  9 Jan 2019 22:11:07 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Jan 2019 22:11:11 +0000 (GMT)
+        Wed,  9 Jan 2019 22:11:07 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
 To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Stefan Berger <stefanb@linux.vnet.ibm.com>
-Subject: [PATCH 4/5] tpm: ppi: Possibly show command parameter if TPM PPI 1.3 is used
-Date:   Wed,  9 Jan 2019 17:11:02 -0500
+Subject: [PATCH 1/5] tpm: ppi: pass function revision ID to tpm_eval_dsm()
+Date:   Wed,  9 Jan 2019 17:10:59 -0500
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
 References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19010922-0016-0000-0000-000009725C24
+x-cbid: 19010922-0036-0000-0000-00000A783D21
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010375; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000274; SDB=6.01144159; UDB=6.00595717; IPR=6.00924421;
- MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 22:11:15
+ MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 22:11:10
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010922-0017-0000-0000-000041B5FFFB
-Message-Id: <20190109221103.1897677-5-stefanb@linux.vnet.ibm.com>
+x-cbparentid: 19010922-0037-0000-0000-00004A4858FD
+Message-Id: <20190109221103.1897677-2-stefanb@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_11:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -78,81 +78,80 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-TPM PPI 1.3 introduces an additional optional command parameter
-that may be needed for some commands. Display the parameter if the
-command requires such a parameter. Only command 23 needs one.
+Since we will need to pass different function revision numbers
+to tpm_eval_dsm, convert this function now to take the function revision
+as an additional parameter.
 
 Signed-off-by: Stefan Berger <stefanb@linux.vnet.ibm.com>
 ---
- drivers/char/tpm/tpm_ppi.c | 32 ++++++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm_ppi.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
-index 72182b415c76..ab61ee208125 100644
+index 86dd8521feef..90b69aeadc99 100644
 --- a/drivers/char/tpm/tpm_ppi.c
 +++ b/drivers/char/tpm/tpm_ppi.c
-@@ -21,6 +21,7 @@
- #include "tpm.h"
+@@ -38,12 +38,11 @@ static const guid_t tpm_ppi_guid =
  
- #define TPM_PPI_REVISION_1	1
-+#define TPM_PPI_REVISION_2	2
- #define TPM_PPI_FN_VERSION	1
- #define TPM_PPI_FN_SUBREQ	2
- #define TPM_PPI_FN_GETREQ	3
-@@ -36,6 +37,11 @@ static const guid_t tpm_ppi_guid =
- 	GUID_INIT(0x3DDDFAA6, 0x361B, 0x4EB4,
- 		  0xA4, 0x24, 0x8D, 0x10, 0x08, 0x9D, 0x16, 0x53);
- 
-+static bool tpm_ppi_req_has_parameter(u64 req)
-+{
-+	return req == 23;
-+}
-+
  static inline union acpi_object *
  tpm_eval_dsm(acpi_handle ppi_handle, int func, acpi_object_type type,
- 	     union acpi_object *argv4, u64 rev)
-@@ -59,9 +65,14 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
- 	ssize_t size = -EINVAL;
- 	union acpi_object *obj;
+-	     union acpi_object *argv4)
++	     union acpi_object *argv4, u64 rev)
+ {
+ 	BUG_ON(!ppi_handle);
+ 	return acpi_evaluate_dsm_typed(ppi_handle, &tpm_ppi_guid,
+-				       TPM_PPI_REVISION_ID,
+-				       func, argv4, type);
++				       rev, func, argv4, type);
+ }
+ 
+ static ssize_t tpm_show_ppi_version(struct device *dev,
+@@ -62,7 +61,7 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
  	struct tpm_chip *chip = to_tpm_chip(dev);
-+	u64 rev = TPM_PPI_REVISION_2;
-+	u64 req;
-+
-+	if (strcmp(chip->ppi_version, "1.2") < 0)
-+		rev = TPM_PPI_REVISION_1;
  
  	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETREQ,
--			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_1);
-+			   ACPI_TYPE_PACKAGE, NULL, rev);
+-			   ACPI_TYPE_PACKAGE, NULL);
++			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID);
  	if (!obj)
  		return -ENXIO;
  
-@@ -71,7 +82,24 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
- 	 * error. The second is pending TPM operation requested by the OS, 0
- 	 * means none and >0 means operation value.
- 	 */
--	if (obj->package.count == 2 &&
-+	if (obj->package.count == 3 &&
-+	    obj->package.elements[0].type == ACPI_TYPE_INTEGER &&
-+	    obj->package.elements[1].type == ACPI_TYPE_INTEGER &&
-+	    obj->package.elements[2].type == ACPI_TYPE_INTEGER) {
-+		if (obj->package.elements[0].integer.value)
-+			size = -EFAULT;
-+		else {
-+			req = obj->package.elements[1].integer.value;
-+			if (tpm_ppi_req_has_parameter(req))
-+				size = scnprintf(buf, PAGE_SIZE,
-+						"%llu %llu\n",
-+					req,
-+					obj->package.elements[2].integer.value);
-+			else
-+				size = scnprintf(buf, PAGE_SIZE,
-+						"%llu\n", req);
-+		}
-+	} else if (obj->package.count == 2 &&
- 	    obj->package.elements[0].type == ACPI_TYPE_INTEGER &&
- 	    obj->package.elements[1].type == ACPI_TYPE_INTEGER) {
- 		if (obj->package.elements[0].integer.value)
+@@ -126,7 +125,7 @@ static ssize_t tpm_store_ppi_request(struct device *dev,
+ 	}
+ 
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, func, ACPI_TYPE_INTEGER,
+-			   &argv4);
++			   &argv4, TPM_PPI_REVISION_ID);
+ 	if (!obj) {
+ 		return -ENXIO;
+ 	} else {
+@@ -170,7 +169,7 @@ static ssize_t tpm_show_ppi_transition_action(struct device *dev,
+ 	if (strcmp(chip->ppi_version, "1.2") < 0)
+ 		obj = &tmp;
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETACT,
+-			   ACPI_TYPE_INTEGER, obj);
++			   ACPI_TYPE_INTEGER, obj, TPM_PPI_REVISION_ID);
+ 	if (!obj) {
+ 		return -ENXIO;
+ 	} else {
+@@ -196,7 +195,7 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+ 
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETRSP,
+-			   ACPI_TYPE_PACKAGE, NULL);
++			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID);
+ 	if (!obj)
+ 		return -ENXIO;
+ 
+@@ -272,7 +271,8 @@ static ssize_t show_ppi_operations(acpi_handle dev_handle, char *buf, u32 start,
+ 	for (i = start; i <= end; i++) {
+ 		tmp.integer.value = i;
+ 		obj = tpm_eval_dsm(dev_handle, TPM_PPI_FN_GETOPR,
+-				   ACPI_TYPE_INTEGER, &argv);
++				   ACPI_TYPE_INTEGER, &argv,
++				   TPM_PPI_REVISION_ID);
+ 		if (!obj) {
+ 			return -ENOMEM;
+ 		} else {
 -- 
 2.17.1
 
