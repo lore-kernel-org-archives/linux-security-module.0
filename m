@@ -4,65 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 542F9C43612
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 01:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27527C43387
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 01:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273EC20872
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 01:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E96442173B
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 01:59:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="ClvvaPny"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="nmWCcgFH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728930AbfAKB5a (ORCPT
+        id S1729299AbfAKB7A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:57:30 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40157 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728225AbfAKB5a (ORCPT
+        Thu, 10 Jan 2019 20:59:00 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45151 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728703AbfAKB67 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:57:30 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n18-v6so11532976lji.7
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Jan 2019 17:57:29 -0800 (PST)
+        Thu, 10 Jan 2019 20:58:59 -0500
+Received: by mail-lf1-f68.google.com with SMTP id b20so9681767lfa.12
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Jan 2019 17:58:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hscE/JZej9f3YLwX0dLd86JZIHcT7l6BrwwT9w3M78o=;
-        b=ClvvaPnyc4vI3padnYMXc8L0MXoIH/eAegyeZW/tE+BBqI9Ss90l0fOBgMlj1MAfja
-         uIp55UQ5IAse/bbjr0pVjpEyMX9YwAq/6gJstP18onU4B/wArO39aK/5vZiTtpHGSyNd
-         jrSTtf7UMrrMHXFIfhreI7kQDZnO4DqBuwKL6ZXbXOEZd82CtyCpN2Yh7jg1XAEqGTC4
-         nk/HalHzvWrXgaFoMEVBnzop3iR4E6x0NTj2WmqnifZQeiiov2c1jK4L52gWJKY//Ud7
-         6SXAKYToIxWAMwkuvoXY57ETsc4Ve9BalMHEVXiek7w6+zRYjI/i96zGUhSGOiM79++M
-         rIxw==
+        bh=biEXveIIWlHYRnTiNlQ6xr1FRYJ4Al3pBDVlp4lnCEY=;
+        b=nmWCcgFHln68V/K71WmR/JQwXFjx3RT8L8yjftoRCSy6RSeweS2hKMNRy5weCJb0tl
+         SI1Bc1+zIZbYwpYUnonhUhZe+CUXJAfIBg30NSoNcdPvPtmTwRXVUfE4gLULPchZH6/p
+         UUadrktGLxxWVhNnQiBL3r16I0wR/93DiJvgDISW4qXIhYqEauvgVv9bFrLox9dORuj1
+         71l84ZeKRDxiKXODLzb28Txef36Z7XY2XOb+XRIdGSq7HEnrhC1B0cSdGAktP57+VLuN
+         F0jFjd8WaeN8oh4zAMF7d9Jsh7GxKjhTkdArjAZIQxJt0q+zduXQY+zHWgEo5blmWPoG
+         x5LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hscE/JZej9f3YLwX0dLd86JZIHcT7l6BrwwT9w3M78o=;
-        b=fgtTVCUnQ/q+ts/qcLUKfOZjMg7z7MrSYTHhGan/23M6vUyvC24IdyxJvSrQcmybo1
-         m78/xJgmXOEma3XvEODXtcfdcB9yJv+N3bfmN/jCZIrnc+1CXchcayt3M06MWiJJY2x8
-         518CfLIxWpInr+wK77aZQ2MnGzW88aPLDo13Jauu02qON5/16f5Xf/qX2tTyG5bQDcU5
-         Xv3zhHW9WS9EMdOIeCPP9Qm/uwbtPDqo9CRTPayhYVIhvrjVikT3Y/cjg6RIVfZBvq7l
-         3xTXml0yNAHPqSZtT8bDR/VYk3MkDndrkjq754iBYWOMCC2dQTvgOLP0+e0Hfw62ZsZ8
-         WqCw==
-X-Gm-Message-State: AJcUukdIlzLVdvn6e8a1cWKL9BrZv58Vjqrlig/F1SRJERQ/5LUFoAsC
-        tS7FCfO3UJPoSlEEpxu+EU0VmGWEImaRBXL7E2Sc
-X-Google-Smtp-Source: ALg8bN6SBM29paG7MbH7+0Ry1H4CevYRgdSzOtWLkGEt+UPEii0lfDLwp907WLzAyF2el6TAPFS2fIRjuY/GZ4v15uo=
-X-Received: by 2002:a2e:834a:: with SMTP id l10-v6mr7047287ljh.42.1547171848068;
- Thu, 10 Jan 2019 17:57:28 -0800 (PST)
+        bh=biEXveIIWlHYRnTiNlQ6xr1FRYJ4Al3pBDVlp4lnCEY=;
+        b=IImQvH+rWdF7oQLhbbFyYXZjwRru/AevC1JGWLZsj7tzeSX2iAfrwLe4+3/JlGCVSi
+         pnSVKGsVHmp5XFXKgu9uXvIjZSVs7c03e1aOmMlEk+FY8pd/jVso54mKHKo1wCVEFuWi
+         i8YVm2lMBjpzewFOV9ABHyV7g2/V0oD/tcTLaZuZszVm71RZl2VeisYPvZ+dioMvEUh0
+         xomtd/ZE1PMqerkqsy3JKrXWCHpHZEwXck5nxP+ShvFAVsMpWAOolkFRwOABKzjA0zPL
+         BTnQ0DbNL6XYoWBds9nO4VBNJOYoeNYrC/Ad8SXab7FyWEw9CK2hM5Cq41qv6o9Wkwij
+         uPYg==
+X-Gm-Message-State: AJcUukeSbHC4NVcK1hd9QAQyFCVSGtiOk//qZFr4OSIzDrmbPAwUt7aD
+        JvVEj5yAOxPPo5o/Ma3wz1jnKIMbsb+tznYuDpR7
+X-Google-Smtp-Source: ALg8bN5riWmItiRrPT+BRNzXK+OMPgRewKUfQn6tBhmnC7tNjZu3FwOq2fNrdWd7aSIS/Bh68BJVs9NNu1CVSk1wbl4=
+X-Received: by 2002:a19:6719:: with SMTP id b25mr6594750lfc.38.1547171937741;
+ Thu, 10 Jan 2019 17:58:57 -0800 (PST)
 MIME-Version: 1.0
-References: <20190109162830.8309-1-omosnace@redhat.com> <20190109162830.8309-2-omosnace@redhat.com>
- <cbe734fb-cd91-57a8-0de5-f4f0f8a1a2cd@schaufler-ca.com>
-In-Reply-To: <cbe734fb-cd91-57a8-0de5-f4f0f8a1a2cd@schaufler-ca.com>
+References: <20190109091028.24485-1-omosnace@redhat.com> <20190109091028.24485-3-omosnace@redhat.com>
+ <f14d46d2-26f3-2c62-963d-7736a82a78b4@tycho.nsa.gov>
+In-Reply-To: <f14d46d2-26f3-2c62-963d-7736a82a78b4@tycho.nsa.gov>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Jan 2019 20:57:17 -0500
-Message-ID: <CAHC9VhS6pGycbT1GET5CHjxgYCDu1KCrcPtcF0n==1oH15kAVA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] LSM: Add new hook for generic node initialization
-To:     Casey Schaufler <casey@schaufler-ca.com>
+Date:   Thu, 10 Jan 2019 20:58:46 -0500
+Message-ID: <CAHC9VhSzvrkowdOdhkh6yWJLii8_p16CVz=-D7dRfLEhYmzqjQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] selinux: Implement the object_init_security hook
+To:     Stephen Smalley <sds@tycho.nsa.gov>
 Cc:     Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
-        Stephen Smalley <sds@tycho.nsa.gov>,
         linux-security-module@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
@@ -72,49 +71,84 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 9, 2019 at 12:08 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 1/9/2019 8:28 AM, Ondrej Mosnacek wrote:
-> > This patch introduces a new security hook that is intended for
-> > initializing the security data for newly created pseudo filesystem
-> > objects (such as kernfs nodes) that provide a way of storing a
-> > non-default security context, but need to operate independently from
-> > mounts.
-> >
-> > The main motivation is to allow kernfs nodes to inherit the context of
-> > the parent under SELinux, similar to the behavior of
-> > security_inode_init_security(). Other LSMs may implement their own logic
-> > for handling the creation of new nodes.
+On Wed, Jan 9, 2019 at 9:38 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 1/9/19 4:10 AM, Ondrej Mosnacek wrote:
+> > The hook applies the same logic as selinux_determine_inode_label(), with
+> > the exception of the super_block handling, which will be enforced on the
+> > actual inodes by other hooks.
 > >
 > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >  include/linux/lsm_hooks.h | 30 ++++++++++++++++++++++++++++++
-> >  include/linux/security.h  | 14 ++++++++++++++
-> >  security/security.c       | 10 ++++++++++
-> >  3 files changed, 54 insertions(+)
-> >
-> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> > index aaeb7fa24dc4..3a2399d7721f 100644
-> > --- a/include/linux/lsm_hooks.h
-> > +++ b/include/linux/lsm_hooks.h
-> > @@ -429,6 +429,31 @@
-> >   *   to abort the copy up. Note that the caller is responsible for reading
-> >   *   and writing the xattrs as this hook is merely a filter.
-> >   *
-> > + * Security hooks for special file-like objects
-> > + *
-> > + * @object_init_security:
 >
-> I don't like the name. There are too many things that are "objects"
-> for this to be meaningful. I also dislike seeing names like
-> security_object_init_security. How about init_from_parent? If there's
-> never a chance that it will be used anywhere but with kernfs, it could
-> be kernfs_node_init. The existing set of hook names are sufficiently
-> confusing without adding to the mystery.
+> Reviewed-by: Stephen Smalley <sds@tycho.nsa.gov>
 
-I like the naming similarity with inode_init_security(), that seems
-helpful.  Although I somewhat understand you concern about the generic
-"object".  Could you live with kernfs_init_security()?  If another fs
-adopts it, we could always changing the name later if needed.
+Looks good to me too.
+
+> > ---
+> >   security/selinux/hooks.c | 41 ++++++++++++++++++++++++++++++++++++++++
+> >   1 file changed, 41 insertions(+)
+> >
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 7ce012d9ec51..29c038513504 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -3526,6 +3526,45 @@ static int selinux_inode_copy_up_xattr(const char *name)
+> >       return -EOPNOTSUPP;
+> >   }
+> >
+> > +/* file-like object operations */
+> > +
+> > +/* Used e.g. for kernfs_node for newly created nodes */
+> > +static int selinux_object_init_security(void *parent_ctx, u32 parent_ctxlen,
+> > +                                     const struct qstr *qstr, u16 mode,
+> > +                                     void **ctx, u32 *ctxlen)
+> > +{
+> > +     const struct task_security_struct *tsec = current_security();
+> > +     u32 parent_sid, newsid, clen;
+> > +     int rc;
+> > +     char *context;
+> > +
+> > +     rc = security_context_to_sid(&selinux_state, parent_ctx, parent_ctxlen,
+> > +                                  &parent_sid, GFP_KERNEL);
+> > +     if (rc)
+> > +             return rc;
+> > +
+> > +     if (tsec->create_sid) {
+> > +             newsid = tsec->create_sid;
+> > +     } else {
+> > +             u16 secclass = inode_mode_to_security_class(mode);
+> > +
+> > +             rc = security_transition_sid(&selinux_state, tsec->sid,
+> > +                                          parent_sid, secclass, qstr,
+> > +                                          &newsid);
+> > +             if (rc)
+> > +                     return rc;
+> > +     }
+> > +
+> > +     rc = security_sid_to_context_force(&selinux_state, newsid,
+> > +                                        &context, &clen);
+> > +     if (rc)
+> > +             return rc;
+> > +
+> > +     *ctx = context;
+> > +     *ctxlen = clen;
+> > +     return 0;
+> > +}
+> > +
+> >   /* file security operations */
+> >
+> >   static int selinux_revalidate_file_permission(struct file *file, int mask)
+> > @@ -6965,6 +7004,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+> >       LSM_HOOK_INIT(inode_copy_up, selinux_inode_copy_up),
+> >       LSM_HOOK_INIT(inode_copy_up_xattr, selinux_inode_copy_up_xattr),
+> >
+> > +     LSM_HOOK_INIT(object_init_security, selinux_object_init_security),
+> > +
+> >       LSM_HOOK_INIT(file_permission, selinux_file_permission),
+> >       LSM_HOOK_INIT(file_alloc_security, selinux_file_alloc_security),
+> >       LSM_HOOK_INIT(file_free_security, selinux_file_free_security),
+> >
+>
+
 
 -- 
 paul moore
