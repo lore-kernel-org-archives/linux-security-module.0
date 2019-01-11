@@ -2,96 +2,108 @@ Return-Path: <SRS0=b8Ih=PT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C65CC43387
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 17:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CBDC43387
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 17:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3198A20836
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 17:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDD4820874
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 17:44:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="B8AEb7U3"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eFlA+VWt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732174AbfAKR3l (ORCPT
+        id S1733244AbfAKRop (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Jan 2019 12:29:41 -0500
-Received: from sonic306-9.consmr.mail.bf2.yahoo.com ([74.6.132.48]:32835 "EHLO
-        sonic306-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729423AbfAKR3l (ORCPT
+        Fri, 11 Jan 2019 12:44:45 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:42363 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731396AbfAKRop (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Jan 2019 12:29:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1547227779; bh=ddYnozeCksRkFe7n3I7xLUK/K9qy+lww0wvNY7WJ0jg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=B8AEb7U35qMYhQw+Omzng5CskxEsEuMNvWWvWtWZihTLMiJKgCrwYDkqpaqZyEK57JyoEfkyeZLN+AbTNYo593yuM9Ql0gWPIrZFPUTdeEbKllyD+4aMq2Beo2U54azSGjHe+6H2z6jre2Fcp+fr9CTYaard7Dp0BnKzQ261ZN2HAs38swQYpR3hDps+pdSBX4rcHK+QZvm7F60aCXaMoc1MRF6UGMPc2nc4KM2t9xxiL4fVLGerPW9IBeT16G2FMHfyCyEcq1kIWaRTuQxfNDTtk5HPi+x6Mq7Hp7HoIJDdaiEEDl+mA/rAwl8UED+rf1+d9ZJNvDxkvPYdZ0s7vA==
-X-YMail-OSG: J6RB2JEVM1lfJSRVMH7lI0sm.xhW4JMVYpEpLLGim2xq3ndkNrAwiuTf7w8d.Ok
- cC05o9hy4K7fhlL0CbxANr17HpiOnGecFVADHuPAm_s2bIQfW69Lw46X_KGBKPjCUyibIFR9XrLf
- E7_zbmJykmZcin8nO0LEJtWZrzn4Rkz3HDLZIHdWhsJqgs8TkngvKV5z3Tzvhr6tXYqnUvdfLBmz
- CXQ9Z3CJKfrnsZ0PoQ6Uk51XgNPfCnnKpk0N5UZuzpghfJDED_bEShBcA8y5qKgo1M6UAH9aTqul
- 3zXZqoGafmqWWK8NCnvv9SRP24UxWE.1IMOyQwK_0WEIYOlNU5L2SYaVgROLKLh8BJH4AZEgpkKL
- iwogE064Ay.dsmmM6UjkJB5VOT8DuGqH.sfM1x0CZiuKgzXQQxhsr4sC7NBmvB.eDlrvVBnyPwjV
- vhsR9coZ1ueFWk9rNhwgdVuM2_48g1BKdLkmWd8Ewz.NAl6EsQ3Xgwn44k1H_UwoqOdu_.U71xHC
- HB9rigIx3psMXOetK6cjxSXr_HHnAAg4HAHTyJcPsL6Skof2klIJqBhPrcT_fJb8608V3z3A7crl
- his3SCBaDkWUUUfjitNCusyEjld09TnA6Zk1eiEqwe884VrQxMQPUHP_jx5Ujzl42AfD3qWE.b1X
- yhrHEzGl29A5gKF48uAjcRMkm4StlB3_3dLXauYXIhAmXEtFW_9LGa3GVavkxQQTRcPQObRFcUnp
- DW9pyxjjS9w885zF0U9aT71GtRRIU37c6GDuCSy_BBm7q9OtxkGMPx3n3hdDXovx43NGItqKF9.X
- m_vrNK38995t83siW.b5vtTZ3xhIoDbD03zE_e6.FLij5QncNzEftxZT4tK7mQv6vayDRqSGTHx.
- geGTq5yv.1FOl3f61XnkWIl5a6w7jDCGd.EmBD2jp1gyUG7tzdXfvXZpfILWtbxeTCyuX7vrvG0P
- ZHOnav9Z6ojwvMRzqBKU.KEsnHpXKZylBDio6x1IADEe5Poar9OR0gWn5sgSl7uRX7YLtKx6hXXs
- ot60Ohh86v9Xge6Y5sKiNUGY8mlG9PoXRQ6yy.X_nrB5X74ApyE90.oHqW08RWmQmjwti.8cjIUy
- EEZwZOBv6QvaC.wBnO8aatsB.LSzYIVOJ6V3Ap7_Q1bq4pJUSOOUDrdQG2F1AlcujjEGpt1osQA-
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.bf2.yahoo.com with HTTP; Fri, 11 Jan 2019 17:29:39 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp428.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 77a2e25944ae44607f3b50eba103d1d3;
-          Fri, 11 Jan 2019 17:29:39 +0000 (UTC)
-Subject: Re: [GIT PULL] blob-stacking updates for security-next
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?= =?UTF-8?Q?n?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <20190108213504.GA32901@beast>
- <ce79cdd5-3020-8901-a5a4-ec42005734fd@I-love.SAKURA.ne.jp>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <c38efdfa-4302-8c63-e11e-7ea6a3f85035@schaufler-ca.com>
-Date:   Fri, 11 Jan 2019 09:29:36 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Fri, 11 Jan 2019 12:44:45 -0500
+Received: by mail-ua1-f66.google.com with SMTP id d21so5011409uap.9
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Jan 2019 09:44:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yhPHEUfPUCrDKGrPGgzuqWfsLsIum47WxAHy3+MQ7SE=;
+        b=eFlA+VWtVnh4Gsj4mq3qWk9KAzrQyRv23sng5IOUtcdsD8Ef1pv+Rojx3b3dUO5IXn
+         kkFg7OV5dEVQHiFObAxG3+kS/5C61xM68bH6z2A3kQtf1dDgEDnLxaBrZuesrkaxaY4Y
+         NhpmNc97CuWwJPdE02KXcNFj3h/61wxYHXGE8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yhPHEUfPUCrDKGrPGgzuqWfsLsIum47WxAHy3+MQ7SE=;
+        b=Kw8euEq1s4uiTgcqey7VxZVN+NtMVSmD+ijNQC0mGyUSOFmpR1gtLOWeBikkJglhDt
+         0PmokSYdw9cTI0CopuRSzlyog1kx4T8lxlPpxyOzQZRQSstwBS3jnvYXW/qG2bBgRRmt
+         bQRlz8VeOlFHBLgaAlzvwev+U5eHPe2FXLg6W1vsgH2+KpEczl1/qWKsUfoEsILLSgxj
+         oMYLmLFQ8lnY/bydwsiYb82EM9FIaJP/TgpCXgoK0ETDTjdiQdSuHC4pFHXFZd2FaAtP
+         8CLjvttMwEtlRc45e4xPBVgAKnQuVkZKY1ISXy21Qmtctwl8kE0jQUZajHhNlhKtGw2q
+         6XEg==
+X-Gm-Message-State: AJcUukfeC2YWMbxa8E7U1upclCOYjsEL+BNKfGoVwmeR36c2OME8MM41
+        GZKQmsTuebftb2NDPnexJ6gnUJh3wt0=
+X-Google-Smtp-Source: ALg8bN6a0Hwdh9/7qocpB/nBXRW+3MHp7HhmiYEvQK8h7ykSbfiDhZ0rp/Ga7BBmma6WS/BkWnzp+Q==
+X-Received: by 2002:ab0:31d5:: with SMTP id e21mr5918694uan.107.1547228682913;
+        Fri, 11 Jan 2019 09:44:42 -0800 (PST)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id j95sm48006210uad.6.2019.01.11.09.44.41
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 09:44:42 -0800 (PST)
+Received: by mail-vs1-f46.google.com with SMTP id b74so9703522vsd.9
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Jan 2019 09:44:41 -0800 (PST)
+X-Received: by 2002:a67:2c13:: with SMTP id s19mr6372762vss.172.1547228681471;
+ Fri, 11 Jan 2019 09:44:41 -0800 (PST)
 MIME-Version: 1.0
+References: <20190108213504.GA32901@beast> <ce79cdd5-3020-8901-a5a4-ec42005734fd@I-love.SAKURA.ne.jp>
 In-Reply-To: <ce79cdd5-3020-8901-a5a4-ec42005734fd@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 11 Jan 2019 09:44:29 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLrdMVGKaR_mm+DCeTakypK2W9c2oeGqE8ch6CgK9i9bA@mail.gmail.com>
+Message-ID: <CAGXu5jLrdMVGKaR_mm+DCeTakypK2W9c2oeGqE8ch6CgK9i9bA@mail.gmail.com>
+Subject: Re: [GIT PULL] blob-stacking updates for security-next
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/11/2019 2:38 AM, Tetsuo Handa wrote:
+On Fri, Jan 11, 2019 at 2:38 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
 > On 2019/01/09 6:35, Kees Cook wrote:
->> Hi James,
->>
->> Please pull these blob-stacking changes for security-next.
->>
->> Thanks!
->>
->> -Kees
->>
->> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
->>
->>   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
->>
->> are available in the Git repository at:
->>
->>   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/blob-stacking-security-next
->>
->> for you to fetch changes up to a5e2fe7ede1268d2f80fe49ca1f717d0e3750995:
->>
->>   TOMOYO: Update LSM flags to no longer be exclusive (2019-01-08 13:18:45 -0800)
->>
+> > Hi James,
+> >
+> > Please pull these blob-stacking changes for security-next.
+> >
+> > Thanks!
+> >
+> > -Kees
+> >
+> > The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+> >
+> >   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+> >
+> > are available in the Git repository at:
+> >
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/blob-stacking-security-next
+> >
+> > for you to fetch changes up to a5e2fe7ede1268d2f80fe49ca1f717d0e3750995:
+> >
+> >   TOMOYO: Update LSM flags to no longer be exclusive (2019-01-08 13:18:45 -0800)
+> >
+>
 > And syzbot already found a bug.
 > This is occurring immediately after memory allocation failure for cred object.
 > We need to be prepared for free() function being called when alloc() function failed.
@@ -112,7 +124,7 @@ On 1/11/2019 2:38 AM, Tetsuo Handa wrote:
 > [   60.185347][ T8010]  do_syscall_64+0x1a3/0x800
 > [   60.206747][ T8010]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-I'm staring at the code and trying to see what this is telling me.
-There is a failure check immediately after the allocation. If any
-of the modules fail in their hooks, the whole thing is freed.
+Are there more details on this crash report?
 
+-- 
+Kees Cook
