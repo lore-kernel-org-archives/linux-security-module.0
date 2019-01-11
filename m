@@ -2,151 +2,101 @@ Return-Path: <SRS0=b8Ih=PT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B02A7C43387
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 09:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4C5C43387
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 10:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 888DF20874
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 09:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6718B20874
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 10:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731063AbfAKJnE (ORCPT
+        id S1729039AbfAKKiv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:43:04 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:50910 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729413AbfAKJnE (ORCPT
+        Fri, 11 Jan 2019 05:38:51 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:13466 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728596AbfAKKiv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:43:04 -0500
-Received: by mail-io1-f69.google.com with SMTP id p4so12428876iod.17
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Jan 2019 01:43:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=amx2XkG7aagwdb19rKeBE0GTMn22phY3lhhHTOZ/2zI=;
-        b=k1MmFB5jFPH5L98oVgzJRPBZAPypNDYOkVZ2DsD8hxBYPDm50YCxk1Md+gKS6k0m0O
-         xcuaIcymYxoMnRwmzjphio+wD3a7P+WdJ8Uzsw0HUR6SWq/vvcpWEo5Dn4fHNP7mzXp4
-         yAukcpfHavf+Xqb/KQsRJ9kj19VnYa7IH1N5dGbVr36b+XwJ9rGTgiHvkolvyDUhasSd
-         nxVpmgzytytBWVH6bGsxlDALZlX8MF621uIGrTpeBqL6vaOHyhzT4oL4lMjDR5lrU5pJ
-         LGRO8sHTNT7vp0n0AwRtFZBFYw/29w0Vj6nGeaojoqLvTfetnWBxnZgJO+2xke3AM8O9
-         IBGw==
-X-Gm-Message-State: AJcUukdPAIuGG8cJG4uucvdryO8ms9opp1uJnAXlQ79PMY4qGDFAchGg
-        vh4/co5gY8WNkgxZYJ2uhlaMqcWuhsjwKi2GON/L8I/rylm5
-X-Google-Smtp-Source: ALg8bN4+1VV1EisRCssXb0AeokcDq3r/7VStvIWDF16UUvJbZYpCYbrGh5PcNxSQNlBsBTXjoumsE5FbvLAuiTDXcqQNdDlTwNI4
-MIME-Version: 1.0
-X-Received: by 2002:a02:4596:: with SMTP id o22mr7382302jad.12.1547199783588;
- Fri, 11 Jan 2019 01:43:03 -0800 (PST)
-Date:   Fri, 11 Jan 2019 01:43:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007f604f057f2b8509@google.com>
-Subject: WARNING in apparmor_cred_free
-From:   syzbot <syzbot+69ca07954461f189e808@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, john.johansen@canonical.com,
+        Fri, 11 Jan 2019 05:38:51 -0500
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0BAcXig049434;
+        Fri, 11 Jan 2019 19:38:33 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
+ Fri, 11 Jan 2019 19:38:33 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0BAcXpt049430
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 11 Jan 2019 19:38:33 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: [GIT PULL] blob-stacking updates for security-next
+To:     Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        John Johansen <john.johansen@canonical.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?= =?UTF-8?Q?n?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+References: <20190108213504.GA32901@beast>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <ce79cdd5-3020-8901-a5a4-ec42005734fd@I-love.SAKURA.ne.jp>
+Date:   Fri, 11 Jan 2019 19:38:33 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190108213504.GA32901@beast>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On 2019/01/09 6:35, Kees Cook wrote:
+> Hi James,
+> 
+> Please pull these blob-stacking changes for security-next.
+> 
+> Thanks!
+> 
+> -Kees
+> 
+> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+> 
+>   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/blob-stacking-security-next
+> 
+> for you to fetch changes up to a5e2fe7ede1268d2f80fe49ca1f717d0e3750995:
+> 
+>   TOMOYO: Update LSM flags to no longer be exclusive (2019-01-08 13:18:45 -0800)
+> 
 
-syzbot found the following crash on:
+And syzbot already found a bug.
+This is occurring immediately after memory allocation failure for cred object.
+We need to be prepared for free() function being called when alloc() function failed.
 
-HEAD commit:    b808822a75a3 Add linux-next specific files for 20190111
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=179c22f7400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c052ead0aed5001b
-dashboard link: https://syzkaller.appspot.com/bug?extid=69ca07954461f189e808
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162d947f400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=139f6c37400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+69ca07954461f189e808@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-AppArmor WARN cred_label: ((!blob)):
-WARNING: CPU: 0 PID: 0 at security/apparmor/include/cred.h:30 cred_label  
-security/apparmor/include/cred.h:30 [inline]
-WARNING: CPU: 0 PID: 0 at security/apparmor/include/cred.h:30  
-apparmor_cred_free+0x12f/0x1a0 security/apparmor/lsm.c:62
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.0.0-rc1-next-20190111 #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  panic+0x2cb/0x65c kernel/panic.c:214
-  __warn.cold+0x20/0x48 kernel/panic.c:571
-  report_bug+0x263/0x2b0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  fixup_bug arch/x86/kernel/traps.c:173 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-RIP: 0010:cred_label security/apparmor/include/cred.h:30 [inline]
-RIP: 0010:apparmor_cred_free+0x12f/0x1a0 security/apparmor/lsm.c:62
-Code: 7c 88 48 c7 c7 00 d0 7c 88 e8 fd 70 f2 fd 0f 0b eb a9 e8 54 3f 29 fe  
-48 c7 c6 c0 df 7c 88 48 c7 c7 00 d0 7c 88 e8 e1 70 f2 fd <0f> 0b 48 b8 00  
-00 00 00 00 fc ff df 80 38 00 75 4a 4c 8b 2c 25 00
-RSP: 0018:ffff8880ae6079f8 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000100 RSI: ffffffff81687fa6 RDI: 0000000000000006
-RBP: ffff8880ae607a18 R08: ffffffff8987dec0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880a86b3100
-R13: ffff8880a86b3100 R14: ffff8880a86b3188 R15: dffffc0000000000
-  security_cred_free+0x4b/0xf0 security/security.c:1490
-  put_cred_rcu+0x21f/0x6e0 kernel/cred.c:118
-  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2486 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2799 [inline]
-  rcu_core+0xc4a/0x1680 kernel/rcu/tree.c:2780
-  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x180/0x1d0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:native_safe_halt+0x2/0x10 arch/x86/include/asm/irqflags.h:58
-Code: ff ff ff 48 89 c7 48 89 45 d8 e8 79 6f d0 f9 48 8b 45 d8 e9 ce fe ff  
-ff 48 89 df e8 68 6f d0 f9 eb 82 90 90 90 90 90 90 fb f4 <c3> 0f 1f 00 66  
-2e 0f 1f 84 00 00 00 00 00 f4 c3 90 90 90 90 90 90
-RSP: 0018:ffffffff89807c60 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
-RAX: 1ffffffff1325061 RBX: 1ffffffff1300f8f RCX: 0000000000000000
-RDX: dffffc0000000000 RSI: 0000000000000001 RDI: ffffffff8987e73c
-RBP: ffffffff89807d20 R08: ffffffff8987dec0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffffffff89807cf8 R14: 0000000000000000 R15: ffffffff899282f8
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
-  default_idle_call+0x36/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x386/0x5d0 kernel/sched/idle.c:262
-  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
-  rest_init+0x245/0x37b init/main.c:442
-  arch_call_rest_init+0xe/0x1b
-  start_kernel+0x882/0x8bd init/main.c:742
-  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
-  x86_64_start_kernel+0x77/0x7b arch/x86/kernel/head64.c:451
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+[   59.992498][ T8010] FAULT_INJECTION: forcing a failure.
+[   59.992498][ T8010] name failslab, interval 1, probability 0, space 0, times 1
+[   60.005214][ T8010] CPU: 0 PID: 8010 Comm: syz-executor178 Not tainted 5.0.0-rc1-next-20190111 #10
+[   60.014337][ T8010] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+[   60.024383][ T8010] Call Trace:
+[   60.027657][ T8010]  dump_stack+0x1db/0x2d0
+[   60.063731][ T8010]  should_fail.cold+0xa/0x14
+[   60.089894][ T8010]  __should_failslab+0x121/0x190
+[   60.094810][ T8010]  should_failslab+0x9/0x14
+[   60.099411][ T8010]  __kmalloc+0x2dc/0x740
+[   60.124293][ T8010]  security_prepare_creds+0x123/0x190
+[   60.129644][ T8010]  prepare_creds+0x3c4/0x510
+[   60.149852][ T8010]  __x64_sys_capset+0x58c/0x9b0
+[   60.185347][ T8010]  do_syscall_64+0x1a3/0x800
+[   60.206747][ T8010]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
