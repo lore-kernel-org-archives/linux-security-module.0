@@ -2,198 +2,112 @@ Return-Path: <SRS0=b8Ih=PT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA710C43387
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 02:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3E1C43387
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 07:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 707AC20879
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 02:45:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="PFSM4NWa"
+	by mail.kernel.org (Postfix) with ESMTP id B835220870
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 07:09:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547190580;
+	bh=1DkYafFXfMIX69gNMzX0Yy9uyrr7GLTYTIJyItOnrks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=XsVHwNMxMyOR/aE4diLwgoB75XkpGYXqd65AYU5wjRTSkMgUrHBWQuQcCPoa2VuQb
+	 uId++nXX+XVY7fPmXc/hpTRCCtqlqkIlWgsGBvGjv76YGyXnnQuSgL480mkiGo0jqt
+	 QTQ7MdcvOe+gYme9Ex7Cigikqu8A1dc0d7sItc0I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbfAKCpL (ORCPT
+        id S1728031AbfAKHJk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jan 2019 21:45:11 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40965 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729997AbfAKCpL (ORCPT
+        Fri, 11 Jan 2019 02:09:40 -0500
+Received: from mail-wm1-f53.google.com ([209.85.128.53]:36145 "EHLO
+        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbfAKHJj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jan 2019 21:45:11 -0500
-Received: by mail-lf1-f65.google.com with SMTP id c16so9767770lfj.8
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Jan 2019 18:45:09 -0800 (PST)
+        Fri, 11 Jan 2019 02:09:39 -0500
+Received: by mail-wm1-f53.google.com with SMTP id p6so1287688wmc.1;
+        Thu, 10 Jan 2019 23:09:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5bs79uMTiQGQS8mM81p4ZxEjwh++Wjj5W0EFvt1DQ14=;
-        b=PFSM4NWaFZqG521K6D0on5pQKT0cQ1Xw8CEKEsTFByEG1u9nL/0hPzqKyKhNObMR7J
-         p6gZosxqWKhcrbgHjdV6OFUwbn4wpF6Eh34XZO46j0MSKB+q1PNtdzykS92a19rx8BJC
-         iuAx/0UXsQZ9rIPA9+LyQwDoFwcp45onchVmA8HA/Ug9MvmRTTWxuy1rpvzbPXUY3pEv
-         Qv7m8ITTcud1m5XLOaAn6fdjxZ4rTK8A1DNPtYYhxVmNluT8Xjn6MLLU/79/AHfCiZR/
-         bwcMUcRWs+lmOEBtaxRUzZ4PfO6xnZB1Ko3q0ynBnrHus2HY7ZDfmrb7QybL8oqJrIr+
-         w09Q==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yXXJR2k7BkPE9cXHh5TruFsxgDYpyyyhOKTAXbRFNME=;
+        b=YHuz5CRxpgjbh/4bMoV5YMoV4lHCV32OXVI0MfKMFb0KDspNyfd1mT6sSPmAyZjZKw
+         ZwjmAjdRgwFXDo3V6E2JrQBEiJueJ0apvLHAaOiC8TMIO+YWiLTPWRAFlUwG0i0ibE25
+         lrLZJDBcVZxrhwbi890DPOcIYkEVahc1fPg4hJU+K+ifoM2aBEvSujj0AWu3EM50dCPc
+         wTumQsTDTQG6+SYQ9iIDDxDZT08SZ/EweuXJIV6LTPdqp3R0zDFSeiEPW8XjbZT2CsJh
+         POfKb6b2qWcxiUQ0zJQlwza3G0TQbFnAMFB0i4UFqfqa0l4W3omj7qJX6AmOklg3yyCL
+         VVBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5bs79uMTiQGQS8mM81p4ZxEjwh++Wjj5W0EFvt1DQ14=;
-        b=DSbWc3J3n+qw2D3MJcXZfG9cmaVsrJlZFmxh8O+Td7OCszVZblpgmnSqOXdyaexIxv
-         OfMk3KminTeKpfDknPM2x9ixqVKijqXci+WXFLW+FG9zui4EiZ8eoKYWcmEjexEdEMSS
-         xL7iP8DgIiTYnpNaxq70YPky5pZYbCx+CQ0sRUIjAmxS48M2Zhq1Qmo6/7ukqV3EiIN6
-         dZl7eIh4fgycGoNxb9oCKCaWzQvhT5QBCZ8vR+8VPQAjycxY7pADY7U00yPHlwTYc23L
-         GiBLNESx5/KwMsoYFAb+inD7QcBhr+1F/Ix5XM9P+aeTAPTTdUPbEBTZ68H3untX3l2C
-         r3TQ==
-X-Gm-Message-State: AJcUukcpS3z1jh1g2ceNyBDjSy7yWfMZDFzzMOffH6zka81QdlW7m+7a
-        yEMvdWXw5tcCP3iJ079mnja1Zqhc3JkDcVJm3pNh
-X-Google-Smtp-Source: ALg8bN4NT4Tb40p2qARK6rn7u69+4VfZyJs/+PXRy/xhtc21Yx3enacskuNJhjZStWyLL9TwLOfuufqu8NdBLeerEis=
-X-Received: by 2002:a19:6719:: with SMTP id b25mr6616896lfc.38.1547173245974;
- Thu, 10 Jan 2019 18:20:45 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yXXJR2k7BkPE9cXHh5TruFsxgDYpyyyhOKTAXbRFNME=;
+        b=O59x7PoGb0nr2YwX2CRQzWHUexzpng3/93BIKai3W1ebsWjtZ4OqbuxUvdumqDq7g2
+         fVIpv2zvlkv3/bth00L8ySYFfgB2bD4GJy3LXLSn/pZ2qUnqFyFxWLoSXGNkAf/OSFcH
+         H+Dt7hiZ95f8p57r0xw43EzLb9IcsY06xLlQoZ8FU0nndg5gabGY+cXsl3VzZvidXPsT
+         zFihtXYR3IEpEC2md8UnkJn1sEOnRClC3KMtGOGVpUhuAIHXw7RqAGNVHcxGZWnENbfs
+         MWOHNtKwogCpbM2la4/V5fg5ul8EL3b3Wg9PIras9/+7pvs4KniEz1zlKkAh+WJtPePg
+         5mCg==
+X-Gm-Message-State: AJcUukdMPTu4EXR5JIQGgn58J8o3VXsVe3a+O53ipheoQtitzhX0pPVX
+        nWCtbp3thq2SdJsvHgMTkuI=
+X-Google-Smtp-Source: ALg8bN7ND50Qul7gnmerUDxxDUeC+jrZwzswChxXpKkQIZLF7mp1c+UMXYjW90ShUEE1gxlCtifhyg==
+X-Received: by 2002:a1c:544f:: with SMTP id p15mr1070958wmi.37.1547190577942;
+        Thu, 10 Jan 2019 23:09:37 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 143sm33143526wml.14.2019.01.10.23.09.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 23:09:36 -0800 (PST)
+Date:   Fri, 11 Jan 2019 08:09:34 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Ingo Molnar <mingo@elte.hu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [GIT PULL] seccomp: build fix for v5.0-rc2
+Message-ID: <20190111070934.GA92116@gmail.com>
+References: <alpine.LRH.2.21.1901090803120.24546@namei.org>
+ <CAGXu5j+wvi9t-oHf4cX999aYWMhmTJ1zA1mKuNQEB_n5ixiC5w@mail.gmail.com>
+ <20190109065916.GA29753@gmail.com>
+ <20190110031839.GD28330@cisco>
 MIME-Version: 1.0
-References: <20190109162830.8309-1-omosnace@redhat.com> <fbdcf8ef-1587-18f2-3293-452d62305ab3@schaufler-ca.com>
- <f7312dd2-ea86-51ab-652d-2df39faf52c7@tycho.nsa.gov> <ef22910a-4922-5f66-b7c5-7a7c1dbad8e6@schaufler-ca.com>
- <93d310a7-0bce-dccd-8136-c659a460e084@tycho.nsa.gov> <1062e181-16fa-66b8-a48c-786edcb9deb7@schaufler-ca.com>
- <2612c523-084a-7652-58ca-9e062b80138e@tycho.nsa.gov>
-In-Reply-To: <2612c523-084a-7652-58ca-9e062b80138e@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Jan 2019 21:20:34 -0500
-Message-ID: <CAHC9VhRWfaju_pL8US=gyTn-qu+iF1Nc_71OqGMiJSY6bOwg5Q@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Allow initializing the kernfs node's secctx based
- on its parent
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110031839.GD28330@cisco>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 10, 2019 at 2:36 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 1/10/19 12:54 PM, Casey Schaufler wrote:
-> > Resending after email configuration repair.
-> >
-> > On 1/10/2019 6:15 AM, Stephen Smalley wrote:
-> >> On 1/9/19 5:03 PM, Casey Schaufler wrote:
-> >>> On 1/9/2019 12:37 PM, Stephen Smalley wrote:
-> >>>> On 1/9/19 12:19 PM, Casey Schaufler wrote:
-> >>>>> On 1/9/2019 8:28 AM, Ondrej Mosnacek wrote:
-> >>>>>> Changes in v2:
-> >>>>>> - add docstring for the new hook in union security_list_options
-> >>>>>> - initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
-> >>>>>>      implemented
-> >>>>>> v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnac=
-e@redhat.com/T/
-> >>>>>>
-> >>>>>> This series adds a new security hook that allows to initialize the=
- security
-> >>>>>> context of kernfs properly, taking into account the parent context=
-. Kernfs
-> >>>>>> nodes require special handling here, since they are not bound to s=
-pecific
-> >>>>>> inodes/superblocks, but instead represent the backing tree structu=
-re that
-> >>>>>> is used to build the VFS tree when the kernfs tree is mounted.
-> >>>>>>
-> >>>>>> The kernfs nodes initially do not store any security context and r=
-ely on
-> >>>>>> the LSM to assign some default context to inodes created over them=
-.
-> >>>>>
-> >>>>> This seems like a bug in kernfs. Why doesn't kernfs adhere to the u=
-sual
-> >>>>> and expected filesystem behavior?
-> >>>>
-> >>>> sysfs / kernfs didn't support xattrs at all when we first added supp=
-ort for setting security contexts to it, so originally all sysfs / kernfs i=
-nodes had a single security context, and we only required separate storage =
-for the inodes that were explicitly labeled by userspace.
-> >>>>
-> >>>> Later kernfs grew support for trusted.* xattrs using simple_xattrs b=
-ut the existing security.* support was left mostly unchanged.
-> >>>
-> >>> OK, so as I said, this seems like a bug in kernfs.
-> >>>
-> >>>>
-> >>>>>
-> >>>>>> Kernfs
-> >>>>>> inodes, however, allow setting an explicit context via the *setxat=
-tr(2)
-> >>>>>> syscalls, in which case the context is stored inside the kernfs no=
-de's
-> >>>>>> metadata.
-> >>>>>>
-> >>>>>> SELinux (and possibly other LSMs) initialize the context of newly =
-created
-> >>>>>> FS objects based on the parent object's context (usually the child=
- inherits
-> >>>>>> the parent's context, unless the policy dictates otherwise).
-> >>>>>
-> >>>>> An LSM might use information about the parent other than the "conte=
-xt".
-> >>>>> Smack, for example, uses an attribute SMACK64TRANSMUTE from the par=
-ent
-> >>>>> to determine whether the Smack label of the new object should be ta=
-ken
-> >>>>> from the parent or the process. Passing the "context" of the parent=
- is
-> >>>>> insufficient for Smack.
-> >>>>
-> >>>> IIUC, this would involve switching the handling of security.* xattrs=
- in kernfs over to use simple_xattrs too (so that we can store multiple suc=
-h attributes), and then pass the entire simple_xattrs list or at least anyt=
-hing with a security.* prefix when initializing a new node or refreshing an=
- existing inode.  Then the security module could extract any security.* att=
-ributes of interest for use in determining the label of new inodes and in r=
-efreshing the label of an inode.
-> >>>
-> >>> Right. But I'll point out that there is nothing to prevent an
-> >>> LSM from using inode information outside of the xattrs (e.g. uids)
-> >>> to determine the security state it wants to give a new object.
-> >>
-> >> If that's a real concern, the hook could pass the ia_iattr structure i=
-n addition to the simple_xattrs list and the security module could use any =
-inode attributes it likes in making the decision.  Effectively it would be =
-passing the entire kernfs_iattrs structure, but probably not directly since=
- that definition is presently private to kernfs.
-> >
-> > Yes, it's a real concern. And no, just passing all of the kernfs intern=
-al data
-> > out in j-random formats does not pass muster. Al Viro was commenting th=
-e other
-> > day on how bad the LSM infrastructure interfaces are. The original prop=
-osal here
-> > is already big, cluttered and inadequate. Adding more to it to make up =
-for its
-> > shortcomings should be sending up red flags
->
-> I don't quite see how the original patch set or hook can be called big
-> and cluttered.  Switching the handling of security xattrs in kernfs to
-> use simple_xattrs (a natural and seemingly straightforward cleanup) and
-> passing the entire simple_xattrs list to the hook interface would allow
-> you to support SMACK64TRANSMUTE, which was the one actual inadequacy you
-> identified.  You claim that someone might need/want the parent uid/gid
-> too, but there are no in-tree security modules that do so nor any
-> submitted AFAIK, and if that situation arises, all we need to do to
-> support it is to add the iattrs.  Obviously they can all be wrapped up
-> in some larger structure if desired. At that point the security modules
-> would have access to all of the inode attributes supported by kernfs.
 
-I'm with Stephen on this; if Ondrej changes it over to simple_xattrs
-as described above so that Smack would have what it needs, I don't see
-why we should hold off on this.
+* Tycho Andersen <tycho@tycho.ws> wrote:
 
-Everything we are talking about is a kernel internal issue, we can
-change it as needed to take into account new LSMs or new functionality
-in existing LSMs.
+> On Wed, Jan 09, 2019 at 07:59:16AM +0100, Ingo Molnar wrote:
+> > 
+> > * Kees Cook <keescook@chromium.org> wrote:
+> > 
+> > > This was already picked up by x86-urgent...
+> > > 
+> > > -Kees
+> > 
+> > I'm fine with both routes - if Linus pulls this I'll zap the x86/urgent 
+> > one.
+> 
+> The patches are different actually. I've confirmed the one in
+> x86/urgent is correct, and this one is from the initial thread where I
+> was just guessing. The difference is HOSTCFLAGS vs. HOSTLDFLAGS for .o
+> files. So I think we should drop this and just keep the one in
+> x86/urgent.
 
-Ondrej, a gentle reminder that it would be nice to have a simple
-selinux-testsuite test to make sure we are labeling
-kernfs-based/cgroup files correctly.
+Ok - will send this to Linus now.
 
---=20
-paul moore
-www.paul-moore.com
+Thanks,
+
+	Ingo
