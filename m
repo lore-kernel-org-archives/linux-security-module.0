@@ -2,151 +2,151 @@ Return-Path: <SRS0=b8Ih=PT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F2BC43612
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 07:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B02A7C43387
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 09:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C57DC214C6
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 07:53:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 888DF20874
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 09:43:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfAKHxP (ORCPT
+        id S1731063AbfAKJnE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Jan 2019 02:53:15 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32820 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725805AbfAKHxP (ORCPT
+        Fri, 11 Jan 2019 04:43:04 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:50910 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729413AbfAKJnE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Jan 2019 02:53:15 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id B8AEF1B1BBDEA273A450;
-        Fri, 11 Jan 2019 07:53:12 +0000 (GMT)
-Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 11 Jan
- 2019 07:53:05 +0000
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
- <20181220145500.GA10652@linux.intel.com>
- <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
- <20181222000321.GB8954@linux.intel.com>
- <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
- <20190110173845.GG6589@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <32ec194b-811e-fe83-3937-bb82ffad55a7@huawei.com>
-Date:   Fri, 11 Jan 2019 08:53:00 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 11 Jan 2019 04:43:04 -0500
+Received: by mail-io1-f69.google.com with SMTP id p4so12428876iod.17
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Jan 2019 01:43:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=amx2XkG7aagwdb19rKeBE0GTMn22phY3lhhHTOZ/2zI=;
+        b=k1MmFB5jFPH5L98oVgzJRPBZAPypNDYOkVZ2DsD8hxBYPDm50YCxk1Md+gKS6k0m0O
+         xcuaIcymYxoMnRwmzjphio+wD3a7P+WdJ8Uzsw0HUR6SWq/vvcpWEo5Dn4fHNP7mzXp4
+         yAukcpfHavf+Xqb/KQsRJ9kj19VnYa7IH1N5dGbVr36b+XwJ9rGTgiHvkolvyDUhasSd
+         nxVpmgzytytBWVH6bGsxlDALZlX8MF621uIGrTpeBqL6vaOHyhzT4oL4lMjDR5lrU5pJ
+         LGRO8sHTNT7vp0n0AwRtFZBFYw/29w0Vj6nGeaojoqLvTfetnWBxnZgJO+2xke3AM8O9
+         IBGw==
+X-Gm-Message-State: AJcUukdPAIuGG8cJG4uucvdryO8ms9opp1uJnAXlQ79PMY4qGDFAchGg
+        vh4/co5gY8WNkgxZYJ2uhlaMqcWuhsjwKi2GON/L8I/rylm5
+X-Google-Smtp-Source: ALg8bN4+1VV1EisRCssXb0AeokcDq3r/7VStvIWDF16UUvJbZYpCYbrGh5PcNxSQNlBsBTXjoumsE5FbvLAuiTDXcqQNdDlTwNI4
 MIME-Version: 1.0
-In-Reply-To: <20190110173845.GG6589@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.149]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a02:4596:: with SMTP id o22mr7382302jad.12.1547199783588;
+ Fri, 11 Jan 2019 01:43:03 -0800 (PST)
+Date:   Fri, 11 Jan 2019 01:43:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007f604f057f2b8509@google.com>
+Subject: WARNING in apparmor_cred_free
+From:   syzbot <syzbot+69ca07954461f189e808@syzkaller.appspotmail.com>
+To:     jmorris@namei.org, john.johansen@canonical.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/10/2019 6:38 PM, Jarkko Sakkinen wrote:
-> On Mon, Jan 07, 2019 at 11:06:33AM +0100, Roberto Sassu wrote:
->> On 12/22/2018 1:03 AM, Jarkko Sakkinen wrote:
->>> On Fri, Dec 21, 2018 at 10:40:09AM +0100, Roberto Sassu wrote:
->>>> On 12/20/2018 3:55 PM, Jarkko Sakkinen wrote:
->>>>> On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
->>>>>> This patch renames active_banks (member of tpm_chip) to allocated_banks,
->>>>>> stores the number of allocated PCR banks in nr_allocated_banks (new member
->>>>>> of tpm_chip), and replaces the static array with a pointer to a dynamically
->>>>>> allocated array.
->>>>>>
->>>>>> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
->>>>>> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
->>>>>> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
->>>>>> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
->>>>>> case, the bank is not included in chip->allocated_banks, to avoid that TPM
->>>>>> driver users unnecessarily calculate a digest for that bank.
->>>>>>
->>>>>> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
->>>>>>
->>>>>> As a consequence of the introduction of nr_allocated_banks,
->>>>>> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
->>>>>> is equal to zero.
->>>>>>
->>>>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>>>> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>>>>> ---
->>>>>>     drivers/char/tpm/tpm-chip.c      |  1 +
->>>>>>     drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
->>>>>>     drivers/char/tpm/tpm.h           |  3 ++-
->>>>>>     drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
->>>>>>     drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
->>>>>>     5 files changed, 47 insertions(+), 19 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->>>>>> index 32db84683c40..ce851c62bb68 100644
->>>>>> --- a/drivers/char/tpm/tpm-chip.c
->>>>>> +++ b/drivers/char/tpm/tpm-chip.c
->>>>>> @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
->>>>>>     	kfree(chip->log.bios_event_log);
->>>>>>     	kfree(chip->work_space.context_buf);
->>>>>>     	kfree(chip->work_space.session_buf);
->>>>>> +	kfree(chip->allocated_banks);
->>>>>>     	kfree(chip);
->>>>>>     }
->>>>>> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->>>>>> index d9439f9abe78..7b80919228be 100644
->>>>>> --- a/drivers/char/tpm/tpm-interface.c
->>>>>> +++ b/drivers/char/tpm/tpm-interface.c
->>>>>> @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->>>>>>     int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->>>>>>     {
->>>>>>     	int rc;
->>>>>> -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
->>>>>> -	u32 count = 0;
->>>>>> +	struct tpm2_digest *digest_list;
->>>>>>     	int i;
->>>>>>     	chip = tpm_find_get_ops(chip);
->>>>>> @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->>>>>>     		return -ENODEV;
->>>>>>     	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->>>>>> -		memset(digest_list, 0, sizeof(digest_list));
->>>>>> +		digest_list = kcalloc(chip->nr_allocated_banks,
->>>>>> +				      sizeof(*digest_list), GFP_KERNEL);
->>>>>> +		if (!digest_list)
->>>>>> +			return -ENOMEM;
->>>>>
->>>>> You could preallocate digest list and place it to struct tpm_chip
->>>>> instead of doing it everytime tpm_pcr_extend() called.
->>>>
->>>> This part will be removed with patch 5/5.
->>>
->>> Even if it did, it does not make this patch unbroken.
->>
->> Can two calls to tpm_pcr_extend() be executed at the same time?
->>
->> If yes, the digest list should be protected by a mutex.
-> 
-> Good question: the answer is no. Mutex locking is done inside the
-> transmit flow ATM.
+Hello,
 
-But data are copied before the mutex is locked. Can't a second call
-overwrite chip->preallocated_digest_list while the first call is still
-writing it?
+syzbot found the following crash on:
 
-Roberto
+HEAD commit:    b808822a75a3 Add linux-next specific files for 20190111
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=179c22f7400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c052ead0aed5001b
+dashboard link: https://syzkaller.appspot.com/bug?extid=69ca07954461f189e808
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=162d947f400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=139f6c37400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+69ca07954461f189e808@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+AppArmor WARN cred_label: ((!blob)):
+WARNING: CPU: 0 PID: 0 at security/apparmor/include/cred.h:30 cred_label  
+security/apparmor/include/cred.h:30 [inline]
+WARNING: CPU: 0 PID: 0 at security/apparmor/include/cred.h:30  
+apparmor_cred_free+0x12f/0x1a0 security/apparmor/lsm.c:62
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.0.0-rc1-next-20190111 #10
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  panic+0x2cb/0x65c kernel/panic.c:214
+  __warn.cold+0x20/0x48 kernel/panic.c:571
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  fixup_bug arch/x86/kernel/traps.c:173 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:cred_label security/apparmor/include/cred.h:30 [inline]
+RIP: 0010:apparmor_cred_free+0x12f/0x1a0 security/apparmor/lsm.c:62
+Code: 7c 88 48 c7 c7 00 d0 7c 88 e8 fd 70 f2 fd 0f 0b eb a9 e8 54 3f 29 fe  
+48 c7 c6 c0 df 7c 88 48 c7 c7 00 d0 7c 88 e8 e1 70 f2 fd <0f> 0b 48 b8 00  
+00 00 00 00 fc ff df 80 38 00 75 4a 4c 8b 2c 25 00
+RSP: 0018:ffff8880ae6079f8 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000100 RSI: ffffffff81687fa6 RDI: 0000000000000006
+RBP: ffff8880ae607a18 R08: ffffffff8987dec0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880a86b3100
+R13: ffff8880a86b3100 R14: ffff8880a86b3188 R15: dffffc0000000000
+  security_cred_free+0x4b/0xf0 security/security.c:1490
+  put_cred_rcu+0x21f/0x6e0 kernel/cred.c:118
+  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2486 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2799 [inline]
+  rcu_core+0xc4a/0x1680 kernel/rcu/tree.c:2780
+  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x180/0x1d0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:native_safe_halt+0x2/0x10 arch/x86/include/asm/irqflags.h:58
+Code: ff ff ff 48 89 c7 48 89 45 d8 e8 79 6f d0 f9 48 8b 45 d8 e9 ce fe ff  
+ff 48 89 df e8 68 6f d0 f9 eb 82 90 90 90 90 90 90 fb f4 <c3> 0f 1f 00 66  
+2e 0f 1f 84 00 00 00 00 00 f4 c3 90 90 90 90 90 90
+RSP: 0018:ffffffff89807c60 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+RAX: 1ffffffff1325061 RBX: 1ffffffff1300f8f RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000001 RDI: ffffffff8987e73c
+RBP: ffffffff89807d20 R08: ffffffff8987dec0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: ffffffff89807cf8 R14: 0000000000000000 R15: ffffffff899282f8
+  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
+  default_idle_call+0x36/0x90 kernel/sched/idle.c:93
+  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+  do_idle+0x386/0x5d0 kernel/sched/idle.c:262
+  cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
+  rest_init+0x245/0x37b init/main.c:442
+  arch_call_rest_init+0xe/0x1b
+  start_kernel+0x882/0x8bd init/main.c:742
+  x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
+  x86_64_start_kernel+0x77/0x7b arch/x86/kernel/head64.c:451
+  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-> /Jarkko
-> 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
