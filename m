@@ -2,280 +2,198 @@ Return-Path: <SRS0=b8Ih=PT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E29C43444
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 02:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA710C43387
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 02:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8AF020872
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 02:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 707AC20879
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jan 2019 02:45:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="stPbXBkt"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="PFSM4NWa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729482AbfAKCIg (ORCPT
+        id S1729999AbfAKCpL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jan 2019 21:08:36 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44536 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728387AbfAKCIf (ORCPT
+        Thu, 10 Jan 2019 21:45:11 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40965 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729997AbfAKCpL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jan 2019 21:08:35 -0500
-Received: by mail-lf1-f66.google.com with SMTP id z13so9714848lfe.11
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Jan 2019 18:08:33 -0800 (PST)
+        Thu, 10 Jan 2019 21:45:11 -0500
+Received: by mail-lf1-f65.google.com with SMTP id c16so9767770lfj.8
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Jan 2019 18:45:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NhZdovnTgZKkkGT1/pMtCVtaCubiTiMFRVFWsnY7Gw0=;
-        b=stPbXBktrgsNiIJ52M/09WNwi6qNW6wM/BAEF8tZncufjtzSgYBXOxaCEiTMWsQD5O
-         CVjonijW5IaxYOYFo43/n5mbA/eYdcgpoHGM4knBZZn0hAybt2cDDlblShf/2SlTZ19C
-         raew/ZWRzBVsTt+ZTT5N3L7kTuDqeE6AsRg9IgE7Y0zFI7xkX9ofnS36Otbg981Op9Kr
-         mMGMrrP81FPlxapzS0hbMCIIcohiW+V0gAt1UFZcIz4wY1FtufURPTWGoymc2Apmzs3X
-         n11Dj5wTvpcrCwqmJ3OzSxLIauIt+QDW9DsL5k0SmoAuaynpNSCJSMthcJP0MXHChMYn
-         ovNg==
+         :cc:content-transfer-encoding;
+        bh=5bs79uMTiQGQS8mM81p4ZxEjwh++Wjj5W0EFvt1DQ14=;
+        b=PFSM4NWaFZqG521K6D0on5pQKT0cQ1Xw8CEKEsTFByEG1u9nL/0hPzqKyKhNObMR7J
+         p6gZosxqWKhcrbgHjdV6OFUwbn4wpF6Eh34XZO46j0MSKB+q1PNtdzykS92a19rx8BJC
+         iuAx/0UXsQZ9rIPA9+LyQwDoFwcp45onchVmA8HA/Ug9MvmRTTWxuy1rpvzbPXUY3pEv
+         Qv7m8ITTcud1m5XLOaAn6fdjxZ4rTK8A1DNPtYYhxVmNluT8Xjn6MLLU/79/AHfCiZR/
+         bwcMUcRWs+lmOEBtaxRUzZ4PfO6xnZB1Ko3q0ynBnrHus2HY7ZDfmrb7QybL8oqJrIr+
+         w09Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NhZdovnTgZKkkGT1/pMtCVtaCubiTiMFRVFWsnY7Gw0=;
-        b=IedIjbJCTK4j+wujz1cKFigxeA5fnEdL9gQ66sBk6IvZ1v9q8NtHcMMHbEfaItP4+L
-         xiD+eU6QMRdKKbtJ8HBuHVoNjELGHpA5aNrwVWtLUBjlzglnMJ0/YcQkQtPGl8qhVn8g
-         CoHx/PYSvQrThE/NuhwrxIgIXcEvM085tA4854/nZWPOEQTxydYzQg459idWbtO41wyf
-         8OOWMAZuQW4xy7sQycL5hl4Y57qo1wk4vw2+Mk0n8nbsaFV4Lts/wwBHb33zD5yaKTQT
-         rMsZUFtL79dwlwXIAw5yYhSe/Wnb7SrWxWxHJtH6U/doflYNOssUSNOhM+7f3ePTq494
-         aDKg==
-X-Gm-Message-State: AJcUukea1hK8xnOLnSK3DsqMIerhUJ/ICUaMYK7tC90u9EA68pZYF2wP
-        yK9CHB1OFx8LF4NA1IqD/JaeWaYfU2pXqc+LJfKJ
-X-Google-Smtp-Source: ALg8bN7zjOtDgZLRVzLYjT8r7lFbXMPGUmJyNkCAbgSRQc7DdfZ77/9dZN3QakhHyk5pLlRIbv6fOkgBD+jR0n7Ftq0=
-X-Received: by 2002:a19:f115:: with SMTP id p21mr6809533lfh.20.1547172512466;
- Thu, 10 Jan 2019 18:08:32 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5bs79uMTiQGQS8mM81p4ZxEjwh++Wjj5W0EFvt1DQ14=;
+        b=DSbWc3J3n+qw2D3MJcXZfG9cmaVsrJlZFmxh8O+Td7OCszVZblpgmnSqOXdyaexIxv
+         OfMk3KminTeKpfDknPM2x9ixqVKijqXci+WXFLW+FG9zui4EiZ8eoKYWcmEjexEdEMSS
+         xL7iP8DgIiTYnpNaxq70YPky5pZYbCx+CQ0sRUIjAmxS48M2Zhq1Qmo6/7ukqV3EiIN6
+         dZl7eIh4fgycGoNxb9oCKCaWzQvhT5QBCZ8vR+8VPQAjycxY7pADY7U00yPHlwTYc23L
+         GiBLNESx5/KwMsoYFAb+inD7QcBhr+1F/Ix5XM9P+aeTAPTTdUPbEBTZ68H3untX3l2C
+         r3TQ==
+X-Gm-Message-State: AJcUukcpS3z1jh1g2ceNyBDjSy7yWfMZDFzzMOffH6zka81QdlW7m+7a
+        yEMvdWXw5tcCP3iJ079mnja1Zqhc3JkDcVJm3pNh
+X-Google-Smtp-Source: ALg8bN4NT4Tb40p2qARK6rn7u69+4VfZyJs/+PXRy/xhtc21Yx3enacskuNJhjZStWyLL9TwLOfuufqu8NdBLeerEis=
+X-Received: by 2002:a19:6719:: with SMTP id b25mr6616896lfc.38.1547173245974;
+ Thu, 10 Jan 2019 18:20:45 -0800 (PST)
 MIME-Version: 1.0
-References: <20190109091028.24485-1-omosnace@redhat.com> <20190109091028.24485-4-omosnace@redhat.com>
- <ea48be7a-1319-36ca-adfb-89c00f822a4b@tycho.nsa.gov>
-In-Reply-To: <ea48be7a-1319-36ca-adfb-89c00f822a4b@tycho.nsa.gov>
+References: <20190109162830.8309-1-omosnace@redhat.com> <fbdcf8ef-1587-18f2-3293-452d62305ab3@schaufler-ca.com>
+ <f7312dd2-ea86-51ab-652d-2df39faf52c7@tycho.nsa.gov> <ef22910a-4922-5f66-b7c5-7a7c1dbad8e6@schaufler-ca.com>
+ <93d310a7-0bce-dccd-8136-c659a460e084@tycho.nsa.gov> <1062e181-16fa-66b8-a48c-786edcb9deb7@schaufler-ca.com>
+ <2612c523-084a-7652-58ca-9e062b80138e@tycho.nsa.gov>
+In-Reply-To: <2612c523-084a-7652-58ca-9e062b80138e@tycho.nsa.gov>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Jan 2019 21:08:21 -0500
-Message-ID: <CAHC9VhQ860x2Qf4QA=kvLSRj6Cooi5RT5Usc6CRDDaQrDVE9fQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] kernfs: Initialize security of newly created nodes
+Date:   Thu, 10 Jan 2019 21:20:34 -0500
+Message-ID: <CAHC9VhRWfaju_pL8US=gyTn-qu+iF1Nc_71OqGMiJSY6bOwg5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Allow initializing the kernfs node's secctx based
+ on its parent
 To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 9, 2019 at 10:42 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 1/9/19 4:10 AM, Ondrej Mosnacek wrote:
-> > Use the new security_object_init_security() hook to allow LSMs to
-> > possibly assign a non-default security context to newly created nodes
-> > based on the context of their parent node.
+On Thu, Jan 10, 2019 at 2:36 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On 1/10/19 12:54 PM, Casey Schaufler wrote:
+> > Resending after email configuration repair.
 > >
-> > This fixes an issue with cgroupfs under SELinux, where newly created
-> > cgroup subdirectories would not inherit its parent's context if it had
-> > been set explicitly to a non-default value (other than the genfs context
-> > specified by the policy). This can be reproduced as follows:
+> > On 1/10/2019 6:15 AM, Stephen Smalley wrote:
+> >> On 1/9/19 5:03 PM, Casey Schaufler wrote:
+> >>> On 1/9/2019 12:37 PM, Stephen Smalley wrote:
+> >>>> On 1/9/19 12:19 PM, Casey Schaufler wrote:
+> >>>>> On 1/9/2019 8:28 AM, Ondrej Mosnacek wrote:
+> >>>>>> Changes in v2:
+> >>>>>> - add docstring for the new hook in union security_list_options
+> >>>>>> - initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
+> >>>>>>      implemented
+> >>>>>> v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnac=
+e@redhat.com/T/
+> >>>>>>
+> >>>>>> This series adds a new security hook that allows to initialize the=
+ security
+> >>>>>> context of kernfs properly, taking into account the parent context=
+. Kernfs
+> >>>>>> nodes require special handling here, since they are not bound to s=
+pecific
+> >>>>>> inodes/superblocks, but instead represent the backing tree structu=
+re that
+> >>>>>> is used to build the VFS tree when the kernfs tree is mounted.
+> >>>>>>
+> >>>>>> The kernfs nodes initially do not store any security context and r=
+ely on
+> >>>>>> the LSM to assign some default context to inodes created over them=
+.
+> >>>>>
+> >>>>> This seems like a bug in kernfs. Why doesn't kernfs adhere to the u=
+sual
+> >>>>> and expected filesystem behavior?
+> >>>>
+> >>>> sysfs / kernfs didn't support xattrs at all when we first added supp=
+ort for setting security contexts to it, so originally all sysfs / kernfs i=
+nodes had a single security context, and we only required separate storage =
+for the inodes that were explicitly labeled by userspace.
+> >>>>
+> >>>> Later kernfs grew support for trusted.* xattrs using simple_xattrs b=
+ut the existing security.* support was left mostly unchanged.
+> >>>
+> >>> OK, so as I said, this seems like a bug in kernfs.
+> >>>
+> >>>>
+> >>>>>
+> >>>>>> Kernfs
+> >>>>>> inodes, however, allow setting an explicit context via the *setxat=
+tr(2)
+> >>>>>> syscalls, in which case the context is stored inside the kernfs no=
+de's
+> >>>>>> metadata.
+> >>>>>>
+> >>>>>> SELinux (and possibly other LSMs) initialize the context of newly =
+created
+> >>>>>> FS objects based on the parent object's context (usually the child=
+ inherits
+> >>>>>> the parent's context, unless the policy dictates otherwise).
+> >>>>>
+> >>>>> An LSM might use information about the parent other than the "conte=
+xt".
+> >>>>> Smack, for example, uses an attribute SMACK64TRANSMUTE from the par=
+ent
+> >>>>> to determine whether the Smack label of the new object should be ta=
+ken
+> >>>>> from the parent or the process. Passing the "context" of the parent=
+ is
+> >>>>> insufficient for Smack.
+> >>>>
+> >>>> IIUC, this would involve switching the handling of security.* xattrs=
+ in kernfs over to use simple_xattrs too (so that we can store multiple suc=
+h attributes), and then pass the entire simple_xattrs list or at least anyt=
+hing with a security.* prefix when initializing a new node or refreshing an=
+ existing inode.  Then the security module could extract any security.* att=
+ributes of interest for use in determining the label of new inodes and in r=
+efreshing the label of an inode.
+> >>>
+> >>> Right. But I'll point out that there is nothing to prevent an
+> >>> LSM from using inode information outside of the xattrs (e.g. uids)
+> >>> to determine the security state it wants to give a new object.
+> >>
+> >> If that's a real concern, the hook could pass the ia_iattr structure i=
+n addition to the simple_xattrs list and the security module could use any =
+inode attributes it likes in making the decision.  Effectively it would be =
+passing the entire kernfs_iattrs structure, but probably not directly since=
+ that definition is presently private to kernfs.
 > >
-> >      # mkdir /sys/fs/cgroup/unified/test
-> >      # chcon -R system_u:object_r:cgroup_t:s0:c123 /sys/fs/cgroup/unified/test
-> >      # ls -lZ /sys/fs/cgroup/unified
-> >      total 0
-> >      -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0      0 Jan  8 05:00 cgroup.controllers
-> >      -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0      0 Jan  8 05:00 cgroup.max.depth
-> >      -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0      0 Jan  8 05:00 cgroup.max.descendants
-> >      -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0      0 Jan  8 05:00 cgroup.procs
-> >      -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0      0 Jan  8 05:00 cgroup.stat
-> >      -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0      0 Jan  8 05:00 cgroup.subtree_control
-> >      -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0      0 Jan  8 05:00 cgroup.threads
-> >      drwxr-xr-x.  2 root root system_u:object_r:cgroup_t:s0      0 Jan  8 04:54 init.scope
-> >      drwxr-xr-x. 25 root root system_u:object_r:cgroup_t:s0      0 Jan  8 04:54 system.slice
-> >      drwxr-xr-x.  2 root root system_u:object_r:cgroup_t:s0:c123 0 Jan  8 04:59 test
-> >      drwxr-xr-x.  3 root root system_u:object_r:cgroup_t:s0      0 Jan  8 04:55 user.slice
-> >      # mkdir /sys/fs/cgroup/unified/test/subdir
-> >
-> > Actual result:
-> >
-> >      # ls -ldZ /sys/fs/cgroup/unified/test/subdir
-> >      drwxr-xr-x. 2 root root system_u:object_r:cgroup_t:s0 0 Jan  8 05:10 /sys/fs/cgroup/unified/test/subdir
-> >
-> > Expected result:
-> >
-> >      # ls -ldZ /sys/fs/cgroup/unified/test/subdir
-> >      drwxr-xr-x. 2 root root unconfined_u:object_r:cgroup_t:s0:c123 0 Jan  8 05:10 /sys/fs/cgroup/unified/test/subdir
-> >
-> > Link: https://github.com/SELinuxProject/selinux-kernel/issues/39
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > Yes, it's a real concern. And no, just passing all of the kernfs intern=
+al data
+> > out in j-random formats does not pass muster. Al Viro was commenting th=
+e other
+> > day on how bad the LSM infrastructure interfaces are. The original prop=
+osal here
+> > is already big, cluttered and inadequate. Adding more to it to make up =
+for its
+> > shortcomings should be sending up red flags
 >
-> Reviewed-by: Stephen Smalley <sds@tycho.nsa.gov>
+> I don't quite see how the original patch set or hook can be called big
+> and cluttered.  Switching the handling of security xattrs in kernfs to
+> use simple_xattrs (a natural and seemingly straightforward cleanup) and
+> passing the entire simple_xattrs list to the hook interface would allow
+> you to support SMACK64TRANSMUTE, which was the one actual inadequacy you
+> identified.  You claim that someone might need/want the parent uid/gid
+> too, but there are no in-tree security modules that do so nor any
+> submitted AFAIK, and if that situation arises, all we need to do to
+> support it is to add the iattrs.  Obviously they can all be wrapped up
+> in some larger structure if desired. At that point the security modules
+> would have access to all of the inode attributes supported by kernfs.
 
-Looks okay to me as well.
+I'm with Stephen on this; if Ondrej changes it over to simple_xattrs
+as described above so that Smack would have what it needs, I don't see
+why we should hold off on this.
 
-Some part of me wonders if it might be smart to check for non-NULL
-secdata being returned from kernfs_node_setsecdata and doing a WARN.
-Maybe I'm overly pessimistic, but I'm pretty sure
-kernfs_node_init_security() will get improperly used at some point.
-At least we have a comment to *maybe* warn future abusers.
+Everything we are talking about is a kernel internal issue, we can
+change it as needed to take into account new LSMs or new functionality
+in existing LSMs.
 
-> > ---
-> >   fs/kernfs/dir.c             | 49 ++++++++++++++++++++++++++++++++++---
-> >   fs/kernfs/inode.c           |  9 +++----
-> >   fs/kernfs/kernfs-internal.h |  4 +++
-> >   3 files changed, 54 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-> > index 4ca0b5c18192..8a678a934f65 100644
-> > --- a/fs/kernfs/dir.c
-> > +++ b/fs/kernfs/dir.c
-> > @@ -15,6 +15,7 @@
-> >   #include <linux/slab.h>
-> >   #include <linux/security.h>
-> >   #include <linux/hash.h>
-> > +#include <linux/stringhash.h>
-> >
-> >   #include "kernfs-internal.h"
-> >
-> > @@ -617,7 +618,43 @@ struct kernfs_node *kernfs_node_from_dentry(struct dentry *dentry)
-> >       return NULL;
-> >   }
-> >
-> > -static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
-> > +static int kernfs_node_init_security(struct kernfs_node *parent,
-> > +                                  struct kernfs_node *kn, umode_t mode)
-> > +{
-> > +     struct kernfs_iattrs *attrs;
-> > +     struct qstr q;
-> > +     void *ctx;
-> > +     u32 ctxlen;
-> > +     int ret;
-> > +
-> > +     /* If parent has no explicit context set, leave child unset as well */
-> > +     if (!parent->iattr)
-> > +             return 0;
-> > +     if (!parent->iattr->ia_secdata || !parent->iattr->ia_secdata_len)
-> > +             return 0;
-> > +
-> > +     q.name = kn->name;
-> > +     q.hash_len = hashlen_string(parent, kn->name);
-> > +
-> > +     ret = security_object_init_security(parent->iattr->ia_secdata,
-> > +                                         parent->iattr->ia_secdata_len,
-> > +                                         &q, (u16)mode, &ctx, &ctxlen);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     attrs = kernfs_iattrs(kn);
-> > +     if (!attrs) {
-> > +             security_release_secctx(ctx, ctxlen);
-> > +             return -ENOMEM;
-> > +     }
-> > +
-> > +     kernfs_node_setsecdata(attrs, &ctx, &ctxlen);
-> > +     /* The inode is fresh, so the returned ctx is always NULL. */
-> > +     return 0;
-> > +}
-> > +
-> > +static struct kernfs_node *__kernfs_new_node(struct kernfs_node *parent,
-> > +                                          struct kernfs_root *root,
-> >                                            const char *name, umode_t mode,
-> >                                            kuid_t uid, kgid_t gid,
-> >                                            unsigned flags)
-> > @@ -674,6 +711,12 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
-> >                       goto err_out3;
-> >       }
-> >
-> > +     if (parent) {
-> > +             ret = kernfs_node_init_security(parent, kn, mode);
-> > +             if (ret)
-> > +                     goto err_out3;
-> > +     }
-> > +
-> >       return kn;
-> >
-> >    err_out3:
-> > @@ -692,7 +735,7 @@ struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
-> >   {
-> >       struct kernfs_node *kn;
-> >
-> > -     kn = __kernfs_new_node(kernfs_root(parent),
-> > +     kn = __kernfs_new_node(parent, kernfs_root(parent),
-> >                              name, mode, uid, gid, flags);
-> >       if (kn) {
-> >               kernfs_get(parent);
-> > @@ -962,7 +1005,7 @@ struct kernfs_root *kernfs_create_root(struct kernfs_syscall_ops *scops,
-> >       INIT_LIST_HEAD(&root->supers);
-> >       root->next_generation = 1;
-> >
-> > -     kn = __kernfs_new_node(root, "", S_IFDIR | S_IRUGO | S_IXUGO,
-> > +     kn = __kernfs_new_node(NULL, root, "", S_IFDIR | S_IRUGO | S_IXUGO,
-> >                              GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
-> >                              KERNFS_DIR);
-> >       if (!kn) {
-> > diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-> > index 80cebcd94c90..e6db8d23437b 100644
-> > --- a/fs/kernfs/inode.c
-> > +++ b/fs/kernfs/inode.c
-> > @@ -31,7 +31,7 @@ static const struct inode_operations kernfs_iops = {
-> >       .listxattr      = kernfs_iop_listxattr,
-> >   };
-> >
-> > -static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
-> > +struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
-> >   {
-> >       static DEFINE_MUTEX(iattr_mutex);
-> >       struct kernfs_iattrs *ret;
-> > @@ -135,8 +135,8 @@ out:
-> >       return error;
-> >   }
-> >
-> > -static int kernfs_node_setsecdata(struct kernfs_iattrs *attrs, void **secdata,
-> > -                               u32 *secdata_len)
-> > +void kernfs_node_setsecdata(struct kernfs_iattrs *attrs, void **secdata,
-> > +                         u32 *secdata_len)
-> >   {
-> >       void *old_secdata;
-> >       size_t old_secdata_len;
-> > @@ -149,7 +149,6 @@ static int kernfs_node_setsecdata(struct kernfs_iattrs *attrs, void **secdata,
-> >
-> >       *secdata = old_secdata;
-> >       *secdata_len = old_secdata_len;
-> > -     return 0;
-> >   }
-> >
-> >   ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size)
-> > @@ -365,7 +364,7 @@ static int kernfs_security_xattr_set(const struct xattr_handler *handler,
-> >               return error;
-> >
-> >       mutex_lock(&kernfs_mutex);
-> > -     error = kernfs_node_setsecdata(attrs, &secdata, &secdata_len);
-> > +     kernfs_node_setsecdata(attrs, &secdata, &secdata_len);
-> >       mutex_unlock(&kernfs_mutex);
-> >
-> >       if (secdata)
-> > diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-> > index 3d83b114bb08..f6fb2df24c30 100644
-> > --- a/fs/kernfs/kernfs-internal.h
-> > +++ b/fs/kernfs/kernfs-internal.h
-> > @@ -92,6 +92,10 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
-> >   ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size);
-> >   int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
-> >
-> > +struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn);
-> > +void kernfs_node_setsecdata(struct kernfs_iattrs *attrs, void **secdata,
-> > +                         u32 *secdata_len);
-> > +
-> >   /*
-> >    * dir.c
-> >    */
-> >
->
+Ondrej, a gentle reminder that it would be nice to have a simple
+selinux-testsuite test to make sure we are labeling
+kernfs-based/cgroup files correctly.
 
-
--- 
+--=20
 paul moore
 www.paul-moore.com
