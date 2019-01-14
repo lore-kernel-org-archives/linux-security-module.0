@@ -2,145 +2,101 @@ Return-Path: <SRS0=nGf1=PW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D139C43612
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Jan 2019 19:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E28CC43387
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4896020659
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Jan 2019 19:51:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E3312064C
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Jan 2019 20:18:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tl7N9JoK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfANTvy (ORCPT
+        id S1726961AbfANUSH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Jan 2019 14:51:54 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60588 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726796AbfANTvy (ORCPT
+        Mon, 14 Jan 2019 15:18:07 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43510 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726875AbfANUSH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Jan 2019 14:51:54 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0EJmpZI075181
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Jan 2019 14:51:53 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q0x5d73xv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Jan 2019 14:51:52 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Mon, 14 Jan 2019 19:51:51 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 14 Jan 2019 19:51:49 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0EJpmaF22610058
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 14 Jan 2019 19:51:48 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F930AE063;
-        Mon, 14 Jan 2019 19:51:48 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 45E18AE068;
-        Mon, 14 Jan 2019 19:51:48 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 14 Jan 2019 19:51:48 +0000 (GMT)
-Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
-To:     "Safford, David (GE Global Research)" <david.safford@ge.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Mon, 14 Jan 2019 14:51:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Mon, 14 Jan 2019 15:18:07 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10so349416wrs.10;
+        Mon, 14 Jan 2019 12:18:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EnUk7Vfdk/xAtPXiFSxFZAr/2Ww8OZUZk/tQppj/ZsE=;
+        b=Tl7N9JoKz9qxCeOiMJ7uR/aL4XfuGYqrDEc5HxJ79R8D7ufHXmLqoKW/kcwpH9fsS+
+         8+btMry+Gg2yPcbzfAX4j+OzToyL+RRgiObEQDgMtZqfrB2Ysbujy1+Ofzkr/Mshvhis
+         hA88n/weKQrRbS1bDlw39JKb9qFhIHKcR6yCaoWfPt61PVQubye2n/ny+HxN6TCbPW9k
+         3iFPGC3KMN49cmJwkiqGfbiuQwJNa9T7ggCcTmaP9CTDhzWhbc9BATPBzOAxVvWX6ZRb
+         2hkVya3McFJeZRGweRAP/jWOAyDAp7EEo1QELIq54ox//DKITmllLG+/ui6RC1wpr4NT
+         kXgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=EnUk7Vfdk/xAtPXiFSxFZAr/2Ww8OZUZk/tQppj/ZsE=;
+        b=GbqNjflYs2+0FH/+ajZnie28QnwuexBPtRXZ52Q9SfigA9NlkC3nKgwEzElbhSDLY1
+         NcS91fYxHHFg9JlgpEpDOr2QSBMhtgry/Q6JWQH8Nge7GVEyC1qGYZQT7G97C0dgNpx2
+         gbqO8LVrsX6f2AaxnRQ8d2MPu6PIW0+o7xOSZ+e1c6HgiFRWzkknjDDWLsah3dSDYQjy
+         z9wkBVMyZ1/TF4wJoG62Efglcvg87cFOzcqWm3WKNVubYMgCEOpOTi1mHGKAGZVd3nrO
+         DjHLO7afIAnxE2WgJbONVla/dsR2nFlx6QdLA6uExgRA8tmFFajUW4EEKjg7jr6WT4fE
+         +UHQ==
+X-Gm-Message-State: AJcUukfmvwaKbLR+WfjpoifVw149oPUJwUWLByv74DyECCNqzam/HqzG
+        FnxIJei0fzU8WesSmBWH/yo=
+X-Google-Smtp-Source: ALg8bN5NR290pUaF4gsZNeBkaXdp3qB0bfUDKPnKofybnSIAipjrsOmSpRJnzJ/UU93s57Rxc92XWw==
+X-Received: by 2002:a5d:56d2:: with SMTP id m18mr166855wrw.113.1547497085317;
+        Mon, 14 Jan 2019 12:18:05 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id c12sm70875285wrs.82.2019.01.14.12.18.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Jan 2019 12:18:04 -0800 (PST)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 4C11511422AD; Mon, 14 Jan 2019 21:18:03 +0100 (CET)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] security: keys: annotate implicit fall through
+Date:   Mon, 14 Jan 2019 21:17:23 +0100
+Message-Id: <20190114201725.13289-1-malat@debian.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19011419-2213-0000-0000-0000033D4DCA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010405; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01146483; UDB=6.00597126; IPR=6.00926769;
- MB=3.00025124; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-14 19:51:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011419-2214-0000-0000-00005CF88ED7
-Message-Id: <268c3238-b4fe-ef9f-d656-4d34479ec481@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-14_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901140152
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/11/19 3:28 PM, Safford, David (GE Global Research) wrote:
->> -----Original Message-----
->> From: linux-integrity-owner@vger.kernel.org <linux-integrity-
->> owner@vger.kernel.org> On Behalf Of Stefan Berger
->> Sent: Wednesday, January 09, 2019 5:11 PM
->> To: linux-integrity@vger.kernel.org; jarkko.sakkinen@linux.intel.com
->> Cc: linux-security-module@vger.kernel.org; linux-kernel@vger.kernel.org;
->> Stefan Berger <stefanb@linux.vnet.ibm.com>
->> Subject: EXT: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
->>
->> This series of patches extends the TPM subsystem's PPI support to support
->> TPM PPI revision 1.3 where more commands are supported (up to 101) and
->> the TPM 2 command code '23' takes an additional parameter.
->>
->> For the command code '23' see this document here on document page 39:
->> https://trustedcomputinggroup.org/wp-content/uploads/Physical-
->> Presence-Interface_1-30_0-52.pdf
->>
->>     Stefan
-> You might mention that this is an important feature, as on at least some
-> systems, ppi function 23 is the only way to enable/disable PCR banks.
+There is a plan to build the kernel with -Wimplicit-fallthrough and
+this place in the code produced a warning (W=1).
 
-'The only way' depends on how good or bad the firmware support for this 
-is. SeaBIOS will have a menu item that lets one toggle the activation of 
-the PCR banks in the firmware menu -- assuming my patch makes it 
-upstream :-)
+This commit remove the following warning:
 
+  security/keys/keyring.c:248:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
->
-> I have tested this patch set on my HP Spectre laptop, and I am finally
-> able to turn the sha-1 bank on and off. Much appreciated!
->
-> Tested-by: David Safford <david.safford@ge.com>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ security/keys/keyring.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-Thanks.
-
-
-     Stefan
-
-
->
->> Stefan Berger (5):
->>    tpm: ppi: pass function revision ID to tpm_eval_dsm()
->>    tpm: ppi: rename TPM_PPI_REVISION_ID to TPM_PPI_REVISION_1
->>    tpm: ppi: Display up to 101 operations as define for version 1.3
->>    tpm: ppi: Possibly show command parameter if TPM PPI 1.3 is used
->>    tpm: ppi: Enable submission of optional command parameter for PPI 1.3
->>
->>   drivers/char/tpm/tpm_ppi.c | 78 ++++++++++++++++++++++++++++--------
->> --
->>   1 file changed, 58 insertions(+), 20 deletions(-)
->>
->> --
->> 2.17.1
-
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index eadebb92986a..b1ff07d9ce37 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -246,6 +246,7 @@ static unsigned long keyring_get_key_chunk(const void *data, int level)
+ 				    (ASSOC_ARRAY_KEY_CHUNK_SIZE - 8));
+ 		n--;
+ 		offset = 1;
++		/* fall through */
+ 	default:
+ 		offset += sizeof(chunk) - 1;
+ 		offset += (level - 3) * sizeof(chunk);
+-- 
+2.19.2
 
