@@ -2,122 +2,118 @@ Return-Path: <SRS0=ihUA=PX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8821AC43444
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 19:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31300C43387
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 19:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5592E20656
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 19:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00B9E20656
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 19:53:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="aDmPsjwn"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BHD0ef7D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731899AbfAOTwp (ORCPT
+        id S2389496AbfAOTxQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:52:45 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35616 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731874AbfAOTwo (ORCPT
+        Tue, 15 Jan 2019 14:53:16 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:36197 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731900AbfAOTxQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:52:44 -0500
-Received: by mail-lf1-f68.google.com with SMTP id e26so3024385lfc.2
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Jan 2019 11:52:43 -0800 (PST)
+        Tue, 15 Jan 2019 14:53:16 -0500
+Received: by mail-vs1-f65.google.com with SMTP id v205so2432145vsc.3
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Jan 2019 11:53:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3AU24S+YzPMy9EhsY1e5c5P1gdmUxxFSVGKgC+A0fFo=;
-        b=aDmPsjwntNCGE4a/0CiSnS/x/IeJc75soxR5dDmJZ58pgtu34Q1v267WKSGJW/BYaS
-         //WjNPz4w0kG6ZCK6uox6uhgXq0W27e4myzcZvKJdWL+lVWZ12jNnSmBnYVTeLoOxGGC
-         TDTXQ4SfxryTYN0bk3Nrl/N0e1PzI+Usjp/qwXNtWFyMZegIS/fhst5isFkBvElYjwYk
-         Wfr9DqLQP2bblP9RjhleYEyIoeHl+rxaMAMktiURgIN1SglUIUJwwdZ4JlZeQJ6g6pzv
-         e1/vv82u25Hd26ULhfXEZycbTPy8RPTTCmP+xruRyBdpDjM5LUBwOjiveqs5ypF1zTCL
-         wS8Q==
+        bh=owdvvF72YCKJl9fy1n4MyIvVXtc4orQsDW63SKN0R5g=;
+        b=BHD0ef7DhtO0Y/li0Q99uv1qG+CIkT0b1ojBYb0zlzypWA6E04aZdL2tzZ2qeAp+jT
+         wIZqp3z239YndDGgURUgj2KePERYWhQ4YTuwaESYtyINdivRFIZJ7Z7WRu/DreyhZtf5
+         XYF4JfSL0Tc2BDIes2HkwqH4CYxOHkVyslJs0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3AU24S+YzPMy9EhsY1e5c5P1gdmUxxFSVGKgC+A0fFo=;
-        b=ZUSZoCh4tM9BskCLJj1KuNyrajDXD0ZBb+h+Idm/HC/i9XCApzjGIiH9M3EQXJj+/M
-         j4xQtewJYyyInNRoFSEh+ve3/lAHhxlSnbsk/MMRL2ZkOldflxOteqvjmxYCI0OS1YHw
-         a/YrWbmdLc6LCmGGz70E+88zBhdRDhsKLhqNkAwewm/nA7S5L1qWyruww84DZwOR23ZP
-         t6PfIq49svtZvN4jVJPOprKcqq1M4347pU4X+M7fruzbxVkrpZLJHYDLMdyc4fn36O1O
-         0cwS5GBG1+qmdGNFxKGSwRC+5W0+PbdOG8BCv7H4gaoWPCx/APSOQp8p685TefNYB1qL
-         ZdUQ==
-X-Gm-Message-State: AJcUukf/Nj3cwJLyd7i6JXrkKtDcKXqjUt304WsiKKXkXR/+/tAGMpfq
-        fS02BXmxR8bDU/uzmh30FGeTTHBvQPoMljRZ3LeW
-X-Google-Smtp-Source: ALg8bN5tYX/YVY8JGkKH2LfQikK5YwSt3BFSQaS3T5VlgyW//KFGvHvLi+Iy9T2f0pptWiKugriBr/LG5pDc7IOu01Q=
-X-Received: by 2002:a19:5402:: with SMTP id i2mr4023804lfb.128.1547581962295;
- Tue, 15 Jan 2019 11:52:42 -0800 (PST)
+        bh=owdvvF72YCKJl9fy1n4MyIvVXtc4orQsDW63SKN0R5g=;
+        b=CdgNYJFEQOxxQmbuGe+TvniPehJpJkkIDtrzN2KUldHSSuNn54ZWp1VD54D5maOHnX
+         50JCHwEUW1y8gbsd9BmbPfz+9VVTladBlS18QWidclzXbndvhW3xLzOXfYFNKgtxMcSr
+         yJ3rY3BWR52M/1uAN5p4nW0kWGhvH7uCZy//4DY/MbvH06OQFd+t0dOYWGS6G7SN1Jmx
+         HwzYlENvS9sg6CqnxnYOINxQWD8rBYwD3lC6Zm7UYEV9naxEAxz2q1ayLWAN8yWE28oB
+         B8d/Dluxuw0w4sSK0fzK17AKFizNrTohreEXwkaUm/tUDq7uPYro0o5CglixhY2inhe3
+         Vh0w==
+X-Gm-Message-State: AJcUukd2mkfVo61Nza6iFad7kws+VJp1nYPcXR3D75hIVBJ1KVZUjoJK
+        EP+1SKwhHea6aNqzGizcd/T01FwNIE0=
+X-Google-Smtp-Source: ALg8bN46rgOoOpzbmncnCYb/Rlwu6TT1hNRC+cOcxivBbur1br+6BJOZD6Opy0euhQPpeByC1Uz2+g==
+X-Received: by 2002:a67:2d0b:: with SMTP id t11mr2223988vst.211.1547581994403;
+        Tue, 15 Jan 2019 11:53:14 -0800 (PST)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id e34sm1170739uah.7.2019.01.15.11.53.12
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Jan 2019 11:53:13 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id h78so2411247vsi.6
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Jan 2019 11:53:12 -0800 (PST)
+X-Received: by 2002:a67:e15e:: with SMTP id o30mr2362016vsl.66.1547581992467;
+ Tue, 15 Jan 2019 11:53:12 -0800 (PST)
 MIME-Version: 1.0
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net> <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com>
-In-Reply-To: <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 15 Jan 2019 14:52:30 -0500
-Message-ID: <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Nazarov Sergey <s-nazarov@yandex.ru>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        netdev@vger.kernel.org
+References: <CAGXu5jJCk8p_nkuutM0kPLhwibKEVoA6E=ZqT2r8jVK5H47ORQ@mail.gmail.com>
+ <20190111171302.26152-1-mortonm@chromium.org> <CAGXu5jKiFDD25TUnt7s_zFv7sjrt8avjeZgBKUBVzQ-er+xdkg@mail.gmail.com>
+ <CAJ-EccOoR4+WsjHC=ZGE8NgLiwGC0jO89ETx_wtB4QW9dE-tRQ@mail.gmail.com>
+In-Reply-To: <CAJ-EccOoR4+WsjHC=ZGE8NgLiwGC0jO89ETx_wtB4QW9dE-tRQ@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 15 Jan 2019 11:53:00 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jKzp0jKKJ7aa7hcEUZHhP5s5Eev0prBP3EDuHKahV15hA@mail.gmail.com>
+Message-ID: <CAGXu5jKzp0jKKJ7aa7hcEUZHhP5s5Eev0prBP3EDuHKahV15hA@mail.gmail.com>
+Subject: Re: [PATCH v2] LSM: add SafeSetID module that gates setid calls
+To:     Micah Morton <mortonm@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 15, 2019 at 12:55 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 1/15/2019 9:06 AM, Nazarov Sergey wrote:
-> > Hello!
-> > Security modules (selinux, smack) use icmp_send for discarded incorrectly labeled network packets.
-> > This could be on TCP level too (security_sock_rcv_skb -> cipso_v4_error for INET stream connection, for example).
-> > icmp_send calls ip_option_echo, which uses IPCB to take compiled IP options.
-> > After moving IP header data to the end of the struct tcp_skb_cb (since 3.18 kernel), this could lead to
-> > kernel memory corruption when IP options copying.
+On Tue, Jan 15, 2019 at 11:49 AM Micah Morton <mortonm@chromium.org> wrote:
+> On Mon, Jan 14, 2019 at 4:38 PM Kees Cook <keescook@chromium.org> wrote:
+> > On Fri, Jan 11, 2019 at 9:13 AM <mortonm@chromium.org> wrote:
+> > > From: Micah Morton <mortonm@chromium.org>
+> > > +static void setuid_policy_violation(kuid_t parent, kuid_t child)
+> > > +{
+> > > +       pr_warn("UID transition (%d -> %d) blocked",
+> > > +               __kuid_val(parent),
+> > > +               __kuid_val(child));
+> > > +        /*
+> > > +         * Kill this process to avoid potential security vulnerabilities
+> > > +         * that could arise from a missing whitelist entry preventing a
+> > > +         * privileged process from dropping to a lesser-privileged one.
+> > > +         */
+> > > +        do_exit(SIGKILL);
+> >
+> > I think I asked earlier if this should be an unblockable signal raise
+> > instead of a do_exit(). I don't remember if that got answered?
 >
-> Can you explain how that corruption might occur?
-> Do you have a test case?
+> Could you elaborate on this a bit, or share a pointer to some code/doc
+> that explains the difference? I don't recall this point being raised
+> before (might have missed it), and I'm no expert on the different
+> approaches to killing a process in this way.
 
-Thanks for pointing this out Nazarov.
+Sure! So, do_exit() is a big hammer, and skips a lot of clean-up-like
+things (for example, this will skip core dumping, if it was desired by
+the process, etc). It certainly has its place (and this may be it),
+but I think it would be more sensible to use:
 
-Presumably we are going to hit a problem whenever icmp_send is called
-from outside the IP layer in the stack.  We fixed a similar problem a
-few years back with 04f81f0154e4 ("cipso: don't use IPCB() to locate
-the CIPSO IP option").
+force_sig(SIGKILL, current);
 
-I've CC'd netdev, as I'm guessing they will have some thoughts on
-this, but my initial reaction is that your proposed patch isn't as
-generic as it should be for code that lives in icmp_send().  I suspect
-the safe thing to do would be to call ip_options_compile() again on
-skb_in and build a local copy of the ip_options struct that could then
-be used in the call to __ip_options_echo(); the code could either live
-in icmp_send() or some new ip_options_echo() variant
-(ip_options_echo_safe()?  I dunno).  Unfortunately, calling
-ip_options_compile() is going to add some overhead, and may be a
-non-starter for the netdev folks, but this is error path code, so it
-might be acceptable.  Hopefully the netdev folks will have some
-better, more clever suggestions.
-
-> > This patch fix a bug, but I'm not sure, that this is a best solution. Perhaps someone more familiar with the
-> > linux TCP/IP stack will offer a better one.
-> > Thanks.
-> >
-> > --- a/net/ipv4/icmp.c
-> > +++ b/net/ipv4/icmp.c
-> > @@ -679,7 +679,8 @@ void icmp_send(struct sk_buff *skb_in, i
-> >                                         iph->tos;
-> >       mark = IP4_REPLY_MARK(net, skb_in->mark);
-> >
-> > -     if (ip_options_echo(&icmp_param->replyopts.opt.opt, skb_in))
-> > +     if (__ip_options_echo(&icmp_param->replyopts.opt.opt, skb_in,
-> > +                     ip_hdr(skb_in)->protocol == IPPROTO_TCP ? &TCP_SKB_CB(skb_in)->header.h4.opt : &IPCB(skb_in)->opt))
-> >               goto out_unlock;
-> >
-> >
-
-
+and then the regular processing continues after this, and the kernel
+will check for pending signals before returning to userspace. Though
+please check this with strace to make sure the bad setuid() call never
+returns... if it does, then I've got this wrong and do_exit() really
+is appropriate here.
 
 -- 
-paul moore
-www.paul-moore.com
+Kees Cook
