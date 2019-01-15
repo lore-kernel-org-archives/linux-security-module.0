@@ -2,583 +2,122 @@ Return-Path: <SRS0=ihUA=PX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8AEBC43387
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 19:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8821AC43444
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 19:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8336E20859
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 19:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5592E20656
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 19:52:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nMnDiCDM"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="aDmPsjwn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389484AbfAOTtt (ORCPT
+        id S1731899AbfAOTwp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Jan 2019 14:49:49 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:44459 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728745AbfAOTts (ORCPT
+        Tue, 15 Jan 2019 14:52:45 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35616 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731874AbfAOTwo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Jan 2019 14:49:48 -0500
-Received: by mail-yb1-f193.google.com with SMTP id e1so1523505ybn.11
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Jan 2019 11:49:47 -0800 (PST)
+        Tue, 15 Jan 2019 14:52:44 -0500
+Received: by mail-lf1-f68.google.com with SMTP id e26so3024385lfc.2
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Jan 2019 11:52:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=L7EL2TNhINmn3Sz3nO2ml3dfgwzaQyGKM+mokf4mU2c=;
-        b=nMnDiCDM+r8cie4hPdK5ZKXZFutrPpIe/qGKvS8sQ7FqRv5tgTnsVfdl9hS2Y0HO+W
-         0AZSPwEhpovi5qU3GHkhFchFumFM+AnZi4bkvG3grTYpjbTc73LHZ6FAcPeRlpxM38OL
-         sKFF2neuewztT9wqKn0/Kcudl2v279KiHjysA=
+        bh=3AU24S+YzPMy9EhsY1e5c5P1gdmUxxFSVGKgC+A0fFo=;
+        b=aDmPsjwntNCGE4a/0CiSnS/x/IeJc75soxR5dDmJZ58pgtu34Q1v267WKSGJW/BYaS
+         //WjNPz4w0kG6ZCK6uox6uhgXq0W27e4myzcZvKJdWL+lVWZ12jNnSmBnYVTeLoOxGGC
+         TDTXQ4SfxryTYN0bk3Nrl/N0e1PzI+Usjp/qwXNtWFyMZegIS/fhst5isFkBvElYjwYk
+         Wfr9DqLQP2bblP9RjhleYEyIoeHl+rxaMAMktiURgIN1SglUIUJwwdZ4JlZeQJ6g6pzv
+         e1/vv82u25Hd26ULhfXEZycbTPy8RPTTCmP+xruRyBdpDjM5LUBwOjiveqs5ypF1zTCL
+         wS8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=L7EL2TNhINmn3Sz3nO2ml3dfgwzaQyGKM+mokf4mU2c=;
-        b=tla0V8QVAk4onVJO8Dhmv1RXz+enPKDBoQqeAwq2wI27+gRIAd/5O8UNRk8HFQRm5x
-         SQpvNza3GNKe1NcF6wfmjyHHPyoZ3QSKTAlUJ4bPZil5tLR59jyhySnHA5OEWWoao5NF
-         Wh7yfG7rGN1hbs/mU9k8HAXhMF9ZrFEmTwzyAVZRoWFhVVemrxwPYFcouWEB90cvkoGu
-         qpOd+4/FV5AkafK3rKdGduuWNEfQ+ihuaP55+jq6G4+FcDPD+fcCocKW4IknnfWJ5S/M
-         ZcvfNmkDuNt3AEf5nOB4MORfUVcDwGclEuFG+gK4ByCpOj2+WChreR5n7sF1wEtupYpA
-         wcOA==
-X-Gm-Message-State: AJcUukeFWD0NiEHKMGIj/y36LdfLrZMp2Z5tmLAcA1sHxdeYunpW8z+n
-        fm8/Sd3PNYsMe2GNoQHmW1WkwA1OOmT0XEe/63fogV0lXBk=
-X-Google-Smtp-Source: ALg8bN6wNluXZiRsHQPNIyWhhLWu4749V6rXXXGohVCPmyF+rabMwzTfzRfNXu46Ydv5RbpCgjkdhNQHb78iBlLU/SI=
-X-Received: by 2002:a25:4a86:: with SMTP id x128mr4589119yba.140.1547581786513;
- Tue, 15 Jan 2019 11:49:46 -0800 (PST)
+        bh=3AU24S+YzPMy9EhsY1e5c5P1gdmUxxFSVGKgC+A0fFo=;
+        b=ZUSZoCh4tM9BskCLJj1KuNyrajDXD0ZBb+h+Idm/HC/i9XCApzjGIiH9M3EQXJj+/M
+         j4xQtewJYyyInNRoFSEh+ve3/lAHhxlSnbsk/MMRL2ZkOldflxOteqvjmxYCI0OS1YHw
+         a/YrWbmdLc6LCmGGz70E+88zBhdRDhsKLhqNkAwewm/nA7S5L1qWyruww84DZwOR23ZP
+         t6PfIq49svtZvN4jVJPOprKcqq1M4347pU4X+M7fruzbxVkrpZLJHYDLMdyc4fn36O1O
+         0cwS5GBG1+qmdGNFxKGSwRC+5W0+PbdOG8BCv7H4gaoWPCx/APSOQp8p685TefNYB1qL
+         ZdUQ==
+X-Gm-Message-State: AJcUukf/Nj3cwJLyd7i6JXrkKtDcKXqjUt304WsiKKXkXR/+/tAGMpfq
+        fS02BXmxR8bDU/uzmh30FGeTTHBvQPoMljRZ3LeW
+X-Google-Smtp-Source: ALg8bN5tYX/YVY8JGkKH2LfQikK5YwSt3BFSQaS3T5VlgyW//KFGvHvLi+Iy9T2f0pptWiKugriBr/LG5pDc7IOu01Q=
+X-Received: by 2002:a19:5402:: with SMTP id i2mr4023804lfb.128.1547581962295;
+ Tue, 15 Jan 2019 11:52:42 -0800 (PST)
 MIME-Version: 1.0
-References: <CAGXu5jJCk8p_nkuutM0kPLhwibKEVoA6E=ZqT2r8jVK5H47ORQ@mail.gmail.com>
- <20190111171302.26152-1-mortonm@chromium.org> <CAGXu5jKiFDD25TUnt7s_zFv7sjrt8avjeZgBKUBVzQ-er+xdkg@mail.gmail.com>
-In-Reply-To: <CAGXu5jKiFDD25TUnt7s_zFv7sjrt8avjeZgBKUBVzQ-er+xdkg@mail.gmail.com>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Tue, 15 Jan 2019 11:49:35 -0800
-Message-ID: <CAJ-EccOoR4+WsjHC=ZGE8NgLiwGC0jO89ETx_wtB4QW9dE-tRQ@mail.gmail.com>
-Subject: Re: [PATCH v2] LSM: add SafeSetID module that gates setid calls
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net> <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com>
+In-Reply-To: <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 15 Jan 2019 14:52:30 -0500
+Message-ID: <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
+Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Nazarov Sergey <s-nazarov@yandex.ru>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 14, 2019 at 4:38 PM Kees Cook <keescook@chromium.org> wrote:
+On Tue, Jan 15, 2019 at 12:55 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 1/15/2019 9:06 AM, Nazarov Sergey wrote:
+> > Hello!
+> > Security modules (selinux, smack) use icmp_send for discarded incorrectly labeled network packets.
+> > This could be on TCP level too (security_sock_rcv_skb -> cipso_v4_error for INET stream connection, for example).
+> > icmp_send calls ip_option_echo, which uses IPCB to take compiled IP options.
+> > After moving IP header data to the end of the struct tcp_skb_cb (since 3.18 kernel), this could lead to
+> > kernel memory corruption when IP options copying.
 >
-> On Fri, Jan 11, 2019 at 9:13 AM <mortonm@chromium.org> wrote:
+> Can you explain how that corruption might occur?
+> Do you have a test case?
+
+Thanks for pointing this out Nazarov.
+
+Presumably we are going to hit a problem whenever icmp_send is called
+from outside the IP layer in the stack.  We fixed a similar problem a
+few years back with 04f81f0154e4 ("cipso: don't use IPCB() to locate
+the CIPSO IP option").
+
+I've CC'd netdev, as I'm guessing they will have some thoughts on
+this, but my initial reaction is that your proposed patch isn't as
+generic as it should be for code that lives in icmp_send().  I suspect
+the safe thing to do would be to call ip_options_compile() again on
+skb_in and build a local copy of the ip_options struct that could then
+be used in the call to __ip_options_echo(); the code could either live
+in icmp_send() or some new ip_options_echo() variant
+(ip_options_echo_safe()?  I dunno).  Unfortunately, calling
+ip_options_compile() is going to add some overhead, and may be a
+non-starter for the netdev folks, but this is error path code, so it
+might be acceptable.  Hopefully the netdev folks will have some
+better, more clever suggestions.
+
+> > This patch fix a bug, but I'm not sure, that this is a best solution. Perhaps someone more familiar with the
+> > linux TCP/IP stack will offer a better one.
+> > Thanks.
 > >
-> > From: Micah Morton <mortonm@chromium.org>
+> > --- a/net/ipv4/icmp.c
+> > +++ b/net/ipv4/icmp.c
+> > @@ -679,7 +679,8 @@ void icmp_send(struct sk_buff *skb_in, i
+> >                                         iph->tos;
+> >       mark = IP4_REPLY_MARK(net, skb_in->mark);
 > >
-> > SafeSetID gates the setid family of syscalls to restrict UID/GID
-> > transitions from a given UID/GID to only those approved by a
-> > system-wide whitelist. These restrictions also prohibit the given
-> > UIDs/GIDs from obtaining auxiliary privileges associated with
-> > CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
-> > mappings. For now, only gating the set*uid family of syscalls is
-> > supported, with support for set*gid coming in a future patch set.
+> > -     if (ip_options_echo(&icmp_param->replyopts.opt.opt, skb_in))
+> > +     if (__ip_options_echo(&icmp_param->replyopts.opt.opt, skb_in,
+> > +                     ip_hdr(skb_in)->protocol == IPPROTO_TCP ? &TCP_SKB_CB(skb_in)->header.h4.opt : &IPCB(skb_in)->opt))
+> >               goto out_unlock;
 > >
-> > Signed-off-by: Micah Morton <mortonm@chromium.org>
-> > ---
-> > Changes since the last patch set: Rebase after commit
-> > a35ce66b801631823fc78c8a78d104f9c0976867 got applied to next-general.
-> > As a result of that commit, we can remove the changes in arch/ and the
-> > setuid_syscall function in lsm.c, since this code no longer needs to do
-> > arch-specific operations to see if security_capable is being called from
-> > a setid syscall. Instead, we add the ns_capable_insetid function and
-> > call it from the setid syscalls in kernel/sys.c (rather than calling the
-> > original ns_capable function), which allows us to signal to the
-> > security_capable hooks whether the hook is being called from within a
-> > setid syscall.
->
-> I would split this patch into two halfs: the "no op" change that
-> "marks" all the setid call sites in the first patch, then the LSM
-> itself in the second patch.
-
-Done.
-
->
-> > +bool ns_capable_insetid(struct user_namespace *ns, int cap)
-> > +{
-> > +       return ns_capable_common(ns, cap, CAP_OPT_INSETID);
-> > +}
-> > +EXPORT_SYMBOL(ns_capable_insetid);
->
-> Since we have the noaudit helper still, using this one seems fine to
-> me. I might bikeshed the name to "ns_capable_setid()". If others don't
-> want a new helper, then it should be fine to just change the callsites
-> to the direct ns_capable_common(ns, cap, CAP_OPT_INSETID).
-
-Done.
-
->
-> > +static int safesetid_security_capable(const struct cred *cred,
-> > +                                     struct user_namespace *ns,
-> > +                                     int cap,
-> > +                                     unsigned int opts)
-> > +{
-> > +       if (cap == CAP_SETUID &&
-> > +           check_setuid_policy_hashtable_key(cred->uid)) {
-> > +               if (!(opts & CAP_OPT_INSETID)) {
-> > +                       /*
-> > +                        * Deny if we're not in a set*uid() syscall to avoid
-> > +                        * giving powers gated by CAP_SETUID that are related
-> > +                        * to functionality other than calling set*uid() (e.g.
-> > +                        * allowing user to set up userns uid mappings).
-> > +                        */
-> > +                       pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions",
-> > +                               __kuid_val(cred->uid));
-> > +                       return -1;
-> > +                }
-> > +       }
-> > +       return 0;
-> > +}
->
-> Much cleaner than the per-arch syscall tests. :)
->
-> > +static void setuid_policy_violation(kuid_t parent, kuid_t child)
-> > +{
-> > +       pr_warn("UID transition (%d -> %d) blocked",
-> > +               __kuid_val(parent),
-> > +               __kuid_val(child));
-> > +        /*
-> > +         * Kill this process to avoid potential security vulnerabilities
-> > +         * that could arise from a missing whitelist entry preventing a
-> > +         * privileged process from dropping to a lesser-privileged one.
-> > +         */
-> > +        do_exit(SIGKILL);
->
-> I think I asked earlier if this should be an unblockable signal raise
-> instead of a do_exit(). I don't remember if that got answered?
-
-Could you elaborate on this a bit, or share a pointer to some code/doc
-that explains the difference? I don't recall this point being raised
-before (might have missed it), and I'm no expert on the different
-approaches to killing a process in this way.
-
->
-> > +}
-> > +
-> > +static int check_uid_transition(kuid_t parent, kuid_t child)
-> > +{
-> > +       if (check_setuid_policy_hashtable_key_value(parent, child))
-> > +               return 0;
-> > +       setuid_policy_violation(parent, child);
-> > +       return -1;
-> > +}
->
-> Any reason not to just collapse setuid_policy_violation() into this function?
-
-Done.
-
->
-> > +
-> > +/*
-> > + * Check whether there is either an exception for user under old cred struct to
-> > + * set*uid to user under new cred struct, or the UID transition is allowed (by
-> > + * Linux set*uid rules) even without CAP_SETUID.
-> > + */
-> > +static int safesetid_task_fix_setuid(struct cred *new,
-> > +                                    const struct cred *old,
-> > +                                    int flags)
-> > +{
-> > +
-> > +       /* Do nothing if there are no setuid restrictions for this UID. */
-> > +       if (!check_setuid_policy_hashtable_key(old->uid))
-> > +               return 0;
-> > +
-> > +       switch (flags) {
-> > +       case LSM_SETID_RE:
-> > +               /*
-> > +                * Users for which setuid restrictions exist can only set the
-> > +                * real UID to the real UID or the effective UID, unless an
-> > +                * explicit whitelist policy allows the transition.
-> > +                */
-> > +               if (!uid_eq(old->uid, new->uid) &&
-> > +                       !uid_eq(old->euid, new->uid)) {
-> > +                       return check_uid_transition(old->uid, new->uid);
-> > +               }
-> > +               /*
-> > +                * Users for which setuid restrictions exist can only set the
-> > +                * effective UID to the real UID, the effective UID, or the
-> > +                * saved set-UID, unless an explicit whitelist policy allows
-> > +                * the transition.
-> > +                */
-> > +               if (!uid_eq(old->uid, new->euid) &&
-> > +                       !uid_eq(old->euid, new->euid) &&
-> > +                       !uid_eq(old->suid, new->euid)) {
-> > +                       return check_uid_transition(old->euid, new->euid);
-> > +               }
-> > +               break;
-> > +       case LSM_SETID_ID:
-> > +               /*
-> > +                * Users for which setuid restrictions exist cannot change the
-> > +                * real UID or saved set-UID unless an explicit whitelist
-> > +                * policy allows the transition.
-> > +                */
-> > +               if (!uid_eq(old->uid, new->uid))
-> > +                       return check_uid_transition(old->uid, new->uid);
-> > +               if (!uid_eq(old->suid, new->suid))
-> > +                       return check_uid_transition(old->suid, new->suid);
-> > +               break;
-> > +       case LSM_SETID_RES:
-> > +               /*
-> > +                * Users for which setuid restrictions exist cannot change the
-> > +                * real UID, effective UID, or saved set-UID to anything but
-> > +                * one of: the current real UID, the current effective UID or
-> > +                * the current saved set-user-ID unless an explicit whitelist
-> > +                * policy allows the transition.
-> > +                */
-> > +               if (!uid_eq(new->uid, old->uid) &&
-> > +                       !uid_eq(new->uid, old->euid) &&
-> > +                       !uid_eq(new->uid, old->suid)) {
-> > +                       return check_uid_transition(old->uid, new->uid);
-> > +               }
-> > +               if (!uid_eq(new->euid, old->uid) &&
-> > +                       !uid_eq(new->euid, old->euid) &&
-> > +                       !uid_eq(new->euid, old->suid)) {
-> > +                       return check_uid_transition(old->euid, new->euid);
-> > +               }
-> > +               if (!uid_eq(new->suid, old->uid) &&
-> > +                       !uid_eq(new->suid, old->euid) &&
-> > +                       !uid_eq(new->suid, old->suid)) {
-> > +                       return check_uid_transition(old->suid, new->suid);
-> > +               }
-> > +               break;
-> > +       case LSM_SETID_FS:
-> > +               /*
-> > +                * Users for which setuid restrictions exist cannot change the
-> > +                * filesystem UID to anything but one of: the current real UID,
-> > +                * the current effective UID or the current saved set-UID
-> > +                * unless an explicit whitelist policy allows the transition.
-> > +                */
-> > +               if (!uid_eq(new->fsuid, old->uid)  &&
-> > +                       !uid_eq(new->fsuid, old->euid)  &&
-> > +                       !uid_eq(new->fsuid, old->suid) &&
-> > +                       !uid_eq(new->fsuid, old->fsuid)) {
-> > +                       return check_uid_transition(old->fsuid, new->fsuid);
-> > +               }
-> > +               break;
-> > +       }
-> > +       return 0;
-> > +}
-> > +
-> > +int add_safesetid_whitelist_entry(kuid_t parent, kuid_t child)
-> > +{
-> > +       struct entry *new;
-> > +
-> > +       /* Return if entry already exists */
-> > +       if (check_setuid_policy_hashtable_key_value(parent, child))
-> > +               return 0;
-> > +
-> > +       new = kzalloc(sizeof(struct entry), GFP_KERNEL);
-> > +       if (!new)
-> > +               return -ENOMEM;
-> > +       new->parent_kuid = __kuid_val(parent);
-> > +       new->child_kuid = __kuid_val(child);
-> > +       spin_lock(&safesetid_whitelist_hashtable_spinlock);
-> > +       hash_add_rcu(safesetid_whitelist_hashtable,
-> > +                    &new->next,
-> > +                    __kuid_val(parent));
-> > +       spin_unlock(&safesetid_whitelist_hashtable_spinlock);
-> > +       return 0;
-> > +}
-> > +
-> > +void flush_safesetid_whitelist_entries(void)
-> > +{
-> > +       struct entry *entry;
-> > +       struct hlist_node *hlist_node;
-> > +       unsigned int bkt_loop_cursor;
-> > +       HLIST_HEAD(free_list);
-> > +
-> > +       /*
-> > +        * Could probably use hash_for_each_rcu here instead, but this should
-> > +        * be fine as well.
-> > +        */
-> > +       spin_lock(&safesetid_whitelist_hashtable_spinlock);
-> > +       hash_for_each_safe(safesetid_whitelist_hashtable, bkt_loop_cursor,
-> > +                          hlist_node, entry, next) {
-> > +               hash_del_rcu(&entry->next);
-> > +               hlist_add_head(&entry->dlist, &free_list);
-> > +       }
-> > +       spin_unlock(&safesetid_whitelist_hashtable_spinlock);
-> > +       synchronize_rcu();
-> > +       hlist_for_each_entry_safe(entry, hlist_node, &free_list, dlist) {
-> > +               hlist_del(&entry->dlist);
-> > +               kfree(entry);
-> > +       }
-> > +}
-> > +
-> > +static struct security_hook_list safesetid_security_hooks[] = {
-> > +       LSM_HOOK_INIT(task_fix_setuid, safesetid_task_fix_setuid),
-> > +       LSM_HOOK_INIT(capable, safesetid_security_capable)
-> > +};
-> > +
-> > +static int __init safesetid_security_init(void)
-> > +{
-> > +       security_add_hooks(safesetid_security_hooks,
-> > +                          ARRAY_SIZE(safesetid_security_hooks), "safesetid");
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +DEFINE_LSM(safesetid_security_init) = {
-> > +       .init = safesetid_security_init,
-> > +};
-> > diff --git a/security/safesetid/lsm.h b/security/safesetid/lsm.h
-> > new file mode 100644
-> > index 000000000000..bf78af9bf314
-> > --- /dev/null
-> > +++ b/security/safesetid/lsm.h
-> > @@ -0,0 +1,30 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * SafeSetID Linux Security Module
-> > + *
-> > + * Author: Micah Morton <mortonm@chromium.org>
-> > + *
-> > + * Copyright (C) 2018 The Chromium OS Authors.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2, as
-> > + * published by the Free Software Foundation.
-> > + *
-> > + */
-> > +#ifndef _SAFESETID_H
-> > +#define _SAFESETID_H
-> > +
-> > +#include <linux/types.h>
-> > +
-> > +/* Function type. */
-> > +enum safesetid_whitelist_file_write_type {
-> > +       SAFESETID_WHITELIST_ADD, /* Add whitelist policy. */
-> > +       SAFESETID_WHITELIST_FLUSH, /* Flush whitelist policies. */
-> > +};
-> > +
-> > +/* Add entry to safesetid whitelist to allow 'parent' to setid to 'child'. */
-> > +int add_safesetid_whitelist_entry(kuid_t parent, kuid_t child);
-> > +
-> > +void flush_safesetid_whitelist_entries(void);
-> > +
-> > +#endif /* _SAFESETID_H */
-> > diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-> > new file mode 100644
-> > index 000000000000..ff5fcf2c1b37
-> > --- /dev/null
-> > +++ b/security/safesetid/securityfs.c
-> > @@ -0,0 +1,189 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * SafeSetID Linux Security Module
-> > + *
-> > + * Author: Micah Morton <mortonm@chromium.org>
-> > + *
-> > + * Copyright (C) 2018 The Chromium OS Authors.
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2, as
-> > + * published by the Free Software Foundation.
-> > + *
-> > + */
-> > +#include <linux/security.h>
-> > +#include <linux/cred.h>
-> > +
-> > +#include "lsm.h"
-> > +
-> > +static struct dentry *safesetid_policy_dir;
-> > +
-> > +struct safesetid_file_entry {
-> > +       const char *name;
-> > +       enum safesetid_whitelist_file_write_type type;
-> > +       struct dentry *dentry;
-> > +};
-> > +
-> > +static struct safesetid_file_entry safesetid_files[] = {
-> > +       {.name = "add_whitelist_policy",
-> > +        .type = SAFESETID_WHITELIST_ADD},
-> > +       {.name = "flush_whitelist_policies",
-> > +        .type = SAFESETID_WHITELIST_FLUSH},
-> > +};
-> > +
-> > +/*
-> > + * In the case the input buffer contains one or more invalid UIDs, the kuid_t
-> > + * variables pointed to by 'parent' and 'child' will get updated but this
-> > + * function will return an error.
-> > + */
-> > +static int parse_safesetid_whitelist_policy(const char __user *buf,
-> > +                                           size_t len,
-> > +                                           kuid_t *parent,
-> > +                                           kuid_t *child)
-> > +{
-> > +       char *kern_buf;
-> > +       char *parent_buf;
-> > +       char *child_buf;
-> > +       const char separator[] = ":";
-> > +       int ret;
-> > +       size_t first_substring_length;
-> > +       long parsed_parent;
-> > +       long parsed_child;
-> > +
-> > +       /* Duplicate string from user memory and NULL-terminate */
-> > +       kern_buf = memdup_user_nul(buf, len);
-> > +       if (IS_ERR(kern_buf))
-> > +               return PTR_ERR(kern_buf);
-> > +
-> > +       /*
-> > +        * Format of |buf| string should be <UID>:<UID>.
-> > +        * Find location of ":" in kern_buf (copied from |buf|).
-> > +        */
-> > +       first_substring_length = strcspn(kern_buf, separator);
-> > +       if (first_substring_length == 0 || first_substring_length == len) {
-> > +               ret = -EINVAL;
-> > +               goto free_kern;
-> > +       }
-> > +
-> > +       parent_buf = kmemdup_nul(kern_buf, first_substring_length, GFP_KERNEL);
-> > +       if (!parent_buf) {
-> > +               ret = -ENOMEM;
-> > +               goto free_kern;
-> > +       }
-> > +
-> > +       ret = kstrtol(parent_buf, 0, &parsed_parent);
-> > +       if (ret)
-> > +               goto free_both;
-> > +
-> > +       child_buf = kern_buf + first_substring_length + 1;
-> > +       ret = kstrtol(child_buf, 0, &parsed_child);
-> > +       if (ret)
-> > +               goto free_both;
-> > +
-> > +       *parent = make_kuid(current_user_ns(), parsed_parent);
-> > +       if (!uid_valid(*parent)) {
-> > +               ret = -EINVAL;
-> > +               goto free_both;
-> > +       }
-> > +
-> > +       *child = make_kuid(current_user_ns(), parsed_child);
-> > +       if (!uid_valid(*child)) {
-> > +               ret = -EINVAL;
-> > +               goto free_both;
-> > +       }
-> > +
-> > +free_both:
-> > +       kfree(parent_buf);
-> > +free_kern:
-> > +       kfree(kern_buf);
-> > +       return ret;
-> > +}
-> > +
-> > +static ssize_t safesetid_file_write(struct file *file,
-> > +                                   const char __user *buf,
-> > +                                   size_t len,
-> > +                                   loff_t *ppos)
-> > +{
-> > +       struct safesetid_file_entry *file_entry =
-> > +               file->f_inode->i_private;
-> > +       kuid_t parent;
-> > +       kuid_t child;
-> > +       int ret;
-> > +
-> > +       if (!ns_capable(current_user_ns(), CAP_SYS_ADMIN))
->
-> Maybe CAP_MAC_ADMIN instead of (the overloaded) CAP_SYS_ADMIN?
-
-Makes sense. Done.
-
->
-> > +               return -EPERM;
-> > +
-> > +       if (*ppos != 0)
-> > +               return -EINVAL;
-> > +
-> > +       if (file_entry->type == SAFESETID_WHITELIST_FLUSH) {
-> > +               flush_safesetid_whitelist_entries();
-> > +               return len;
-> > +       }
-> > +
-> > +       /*
-> > +        * If we get to here, must be the case that file_entry->type equals
-> > +        * SAFESETID_WHITELIST_ADD
->
-> It seems a bit silly with only two options here, but it'll change for
-> gids, yes? How about just building a switch() around file_entry->type
-> instead and avoid needing to refactor this later?
-
-Yes, there will likely be more entries when gids are introduced. Done.
-
->
-> > +        */
-> > +       ret = parse_safesetid_whitelist_policy(buf, len, &parent,
-> > +                                                        &child);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       ret = add_safesetid_whitelist_entry(parent, child);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       /* Return len on success so caller won't keep trying to write */
-> > +       return len;
-> > +}
-> > +
-> > +static const struct file_operations safesetid_file_fops = {
-> > +       .write = safesetid_file_write,
-> > +};
-> > +
-> > +static void safesetid_shutdown_securityfs(void)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i = 0; i < ARRAY_SIZE(safesetid_files); ++i) {
-> > +               struct safesetid_file_entry *entry =
-> > +                       &safesetid_files[i];
-> > +               securityfs_remove(entry->dentry);
-> > +               entry->dentry = NULL;
-> > +       }
-> > +
-> > +       securityfs_remove(safesetid_policy_dir);
-> > +       safesetid_policy_dir = NULL;
-> > +}
-> > +
-> > +static int __init safesetid_init_securityfs(void)
-> > +{
-> > +       int i;
-> > +       int ret;
-> > +
-> > +       safesetid_policy_dir = securityfs_create_dir("safesetid", NULL);
-> > +       if (!safesetid_policy_dir) {
-> > +               ret = PTR_ERR(safesetid_policy_dir);
-> > +               goto error;
-> > +       }
-> > +
-> > +       for (i = 0; i < ARRAY_SIZE(safesetid_files); ++i) {
-> > +               struct safesetid_file_entry *entry =
-> > +                       &safesetid_files[i];
-> > +               entry->dentry = securityfs_create_file(
-> > +                       entry->name, 0200, safesetid_policy_dir,
-> > +                       entry, &safesetid_file_fops);
-> > +               if (IS_ERR(entry->dentry)) {
-> > +                       ret = PTR_ERR(entry->dentry);
-> > +                       goto error;
-> > +               }
-> > +       }
-> > +
-> > +       return 0;
-> > +
-> > +error:
-> > +       safesetid_shutdown_securityfs();
-> > +       return ret;
-> > +}
-> > +fs_initcall(safesetid_init_securityfs);
-> > --
-> > 2.20.1.97.g81188d93c3-goog
 > >
->
-> But overall, it looks good to me. :)
->
-> --
-> Kees Cook
+
+
+
+-- 
+paul moore
+www.paul-moore.com
