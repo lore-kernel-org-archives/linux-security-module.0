@@ -2,90 +2,190 @@ Return-Path: <SRS0=ihUA=PX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B24C43612
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 17:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D22C43387
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 18:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 322A920859
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 17:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C799A20859
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jan 2019 18:04:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BR8q8Xpu"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WOWZCfyE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731080AbfAORz1 (ORCPT
+        id S1731200AbfAOSE1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Jan 2019 12:55:27 -0500
-Received: from sonic304-28.consmr.mail.gq1.yahoo.com ([98.137.68.209]:41211
-        "EHLO sonic304-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728073AbfAORz1 (ORCPT
+        Tue, 15 Jan 2019 13:04:27 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:44861 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728510AbfAOSE1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Jan 2019 12:55:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1547574924; bh=NXExawMpIvsIXkCLNqXtDk6tIpkOfQd2tV9ORn/8Apk=; h=Subject:To:References:Cc:From:Date:In-Reply-To:From:Subject; b=BR8q8Xpuls5G/wJg6ANc2sxlZ3GiyTCVJ7+WRc3DsqWCegf+eH/b5CImU1J9M0T6OHkb+IKOXp5sLNC2g/+iCnH95jGpZEEcLz839BqZO1/O4NwTfwV0X2FIp12VOlOPXZgSgJa8tm2iiDa1sRTxgtzAaz6egHBNkTcyTB9znr5rKKq/DROPQXlkIhTkQU9VyFVjfL+iyrZTqGvSNt8Q9znqY2Ggg5wRnkOKxamoji7ZjexBXdYWe8L7NSBO/m0VMdMRnA6363NSjUJERv/hx0qGytaOOU/eG+rGSkUnDo/LrNWbg8If2p1anJnOl7H0f2w/UpoKmw6eeXBDyRZQIw==
-X-YMail-OSG: 73C8rTgVM1kfrN4se41RHdA8Aj5dB0r5WfV8CR4hR2Wr.q0Uy08HFJiNGXCZN3f
- PR65SlIfZXa0yzFPGR1lptRTVRRlHmybuYTmejwE_YyWpohtIgf8KJeUBWGgnWnP19jmFAf8wKOP
- HmZO2blP9JVSgVMygKQKr043ZlIFwjl49s4CV_1pOsKyz7M_WZP31Pww6Oj.3P7pw2u_xZS2I8UH
- oC4cgTGra_cQGWJxcTZukZxTh9Q_UWSjwskKgughEM_L8b21Kosv2zCf5ZYcXkL8RzgMrFeZCboz
- Zez4amHicpgqnb.6r7I64ZnCyI_0.6BvGwkZSZL97PIQVnkEs5gLfUAi93tO1LsVdj9HDfkFx3Ym
- YRR1lcrT33lSU1uSizjr9_u.J7X8d6XEofvcLvjg391WNUmeUqWKgKQWiyFa5.CY57Si6wZtUPk7
- IHXa_WYPQypt3nyTgXIhtJ8KRb0WCb7wcNKb5MOpucz.VzlAiqFiMODlC0lZ3xg0OI6kZNXWKwei
- dTLZi8evg3cBGFcG8ngVx5.rPm9FUpP3J6W8ykQAIi66_Go0_Pp3aH24c.tQjLAI_QLLNhjmfN1V
- z6JfcmiQEIDb9UsETVlbQZa499gL6d.M8oBXNMHRY6GN2B5wQUTO3WCG7wHSs7z1piVeX7U0K2Zw
- dWfPLVweDeS_bkB7WAQT91uTyZ8Bem4gpxT.Cy2OgmWssTgWOkNKzg2QzdVYiy29gahUY9ZmTFmP
- pNb6sObJQhUrJHL1Vihc43pprISmIkHcaTB2u2ofSXRGCu6Xf_u3ijYqf898NDzz6pSzhnpnwU9j
- PSegTY0fDAAOMMgEwFrGXp.jrpNOpi.uLCgPQEOzqc3E4mRLrnSBi5pgsw3.ac8PgXtXmtNW8k9c
- y.LehedCmxQWRWXpfsxGD2Od3B6D4M__RZcrhZUORYZnyevQ2rxVRwRU2xtoNr858m6r2Xn6qZMN
- VQlivaexTryunpbTMDeTnV2offixJYNyi8nw5vco25Dun071dz_VJrnBXG_TDvOv6jWnP2aBIoec
- WghIejoc1hej9QYSSh0CB5y5b6LfoT28wpl716z7In5q95BNKknS96lRQzqTr2f1FwR1Qw.CVYNH
- oFQiJ.P0UNyctOvY9IQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.gq1.yahoo.com with HTTP; Tue, 15 Jan 2019 17:55:24 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.102]) ([67.169.65.224])
-          by smtp401.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 5a44982ba947d9cf88a497ad0d039bb3;
-          Tue, 15 Jan 2019 17:55:21 +0000 (UTC)
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
-To:     Nazarov Sergey <s-nazarov@yandex.ru>,
+        Tue, 15 Jan 2019 13:04:27 -0500
+Received: by mail-io1-f72.google.com with SMTP id v8so2595741ioh.11
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Jan 2019 10:04:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=u8yorHj8h/57xjAaoPMbj15fC7Mdy0qjHl4fjT0M0Tc=;
+        b=WOWZCfyEqdwcezEfpwnCib99I7pZKNv7RaHDYR9U2j+uaqubvbx+L8cpyXFX5YHkSj
+         n2qsGotyAbUaMseRAa9yw/ubFI8kdd6UlnLLPoBoAEn9sre4suRWxMHXjK1Rh5YehID7
+         v7nbTk8ykfitCKOTHhYruwzriGen74pQUHUro=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=u8yorHj8h/57xjAaoPMbj15fC7Mdy0qjHl4fjT0M0Tc=;
+        b=PnV5kSmhq2LaJ4bJhwDono8pBm7ezWWSTERVSMnekH+gk98HsODF+eztUfLpgeoh3H
+         VVQsVXeGY3mNtxuSiS7pFN7SBoIf6/sYgq1vRhKRF+ecBCJU+cMTjpTcHbrg5ljGCnPI
+         y/dzf8PiobSzfBtx9GAphR+qcLrd0YzSOmrNa/7nfoCMXoqLYbkIPLqbbhegc3KvL3Hr
+         OmAGKae6tdalkrICp6WiD2HMwUyqq98QPNDpRCydjFY5XS+Iy/FHYyUbVCjtLov6XMdV
+         3DOuhrM7uEYRbHQj5KsPMUkREr1vIrKGBWmcbRiv5MfPIANDapL+Co/8d3Sutnoz0JA8
+         lJ+A==
+X-Gm-Message-State: AJcUukejfKWHIbmFZxNqSX617oGQ6JSvcr8WckvYh4aJuPrwieGa9n6u
+        fSIVvnYvzuIuxl8J2CZtcEU+23J0aCaQ7Wb4
+X-Google-Smtp-Source: ALg8bN48TZwH70Jms8m8M8BX3BjX+l0J7T0awm2yOxEVPP7OAzAB8p9eK/44I8vK4u6u8O6uwtMlFIWVLW3xrUDK
+X-Received: by 2002:a24:6852:: with SMTP id v79mr3109220itb.29.1547575466337;
+ Tue, 15 Jan 2019 10:04:26 -0800 (PST)
+Date:   Tue, 15 Jan 2019 10:04:21 -0800
+In-Reply-To: <CAGXu5jKiFDD25TUnt7s_zFv7sjrt8avjeZgBKUBVzQ-er+xdkg@mail.gmail.com>
+Message-Id: <20190115180421.102209-1-mortonm@chromium.org>
+Mime-Version: 1.0
+References: <CAGXu5jKiFDD25TUnt7s_zFv7sjrt8avjeZgBKUBVzQ-er+xdkg@mail.gmail.com>
+X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+Subject: [PATCH v3 1/2] LSM: mark all set*uid call sites in kernel/sys.c
+From:   mortonm@chromium.org
+To:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        casey@schaufler-ca.com, sds@tycho.nsa.gov,
         linux-security-module@vger.kernel.org
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
-Cc:     Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com>
-Date:   Tue, 15 Jan 2019 09:55:12 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Cc:     Micah Morton <mortonm@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/15/2019 9:06 AM, Nazarov Sergey wrote:
-> Hello!
-> Security modules (selinux, smack) use icmp_send for discarded incorrectly labeled network packets.
-> This could be on TCP level too (security_sock_rcv_skb -> cipso_v4_error for INET stream connection, for example).
-> icmp_send calls ip_option_echo, which uses IPCB to take compiled IP options.
-> After moving IP header data to the end of the struct tcp_skb_cb (since 3.18 kernel), this could lead to
-> kernel memory corruption when IP options copying.
+From: Micah Morton <mortonm@chromium.org>
 
-Can you explain how that corruption might occur?
-Do you have a test case?
+This change ensures that the set*uid family of syscalls in kernel/sys.c
+(setreuid, setuid, setresuid, setfsuid) all call ns_capable_common with
+the CAP_OPT_INSETID flag, so capability checks in the security_capable
+hook can know whether they are being called from within a set*uid
+syscall. This change is a no-op by itself, but is needed for the
+proposed SafeSetID LSM.
 
-> This patch fix a bug, but I'm not sure, that this is a best solution. Perhaps someone more familiar with the
-> linux TCP/IP stack will offer a better one.
-> Thanks.
->
-> --- a/net/ipv4/icmp.c
-> +++ b/net/ipv4/icmp.c
-> @@ -679,7 +679,8 @@ void icmp_send(struct sk_buff *skb_in, i
->  					  iph->tos;
->  	mark = IP4_REPLY_MARK(net, skb_in->mark);
->  
-> -	if (ip_options_echo(&icmp_param->replyopts.opt.opt, skb_in))
-> +	if (__ip_options_echo(&icmp_param->replyopts.opt.opt, skb_in,
-> +			ip_hdr(skb_in)->protocol == IPPROTO_TCP ? &TCP_SKB_CB(skb_in)->header.h4.opt : &IPCB(skb_in)->opt))
->  		goto out_unlock;
->
->
+Signed-off-by: Micah Morton <mortonm@chromium.org>
+---
+These changes used to be part of the main SafeSetID LSM patch set.
+
+ include/linux/capability.h |  5 +++++
+ kernel/capability.c        | 19 +++++++++++++++++++
+ kernel/sys.c               | 10 +++++-----
+ 3 files changed, 29 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index f640dcbc880c..c3f9a4d558a0 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -209,6 +209,7 @@ extern bool has_ns_capability_noaudit(struct task_struct *t,
+ extern bool capable(int cap);
+ extern bool ns_capable(struct user_namespace *ns, int cap);
+ extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
++extern bool ns_capable_setid(struct user_namespace *ns, int cap);
+ #else
+ static inline bool has_capability(struct task_struct *t, int cap)
+ {
+@@ -240,6 +241,10 @@ static inline bool ns_capable_noaudit(struct user_namespace *ns, int cap)
+ {
+ 	return true;
+ }
++static inline bool ns_capable_setid(struct user_namespace *ns, int cap)
++{
++	return true;
++}
+ #endif /* CONFIG_MULTIUSER */
+ extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode);
+ extern bool capable_wrt_inode_uidgid(const struct inode *inode, int cap);
+diff --git a/kernel/capability.c b/kernel/capability.c
+index 7718d7dcadc7..e0734ace5bc2 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -417,6 +417,25 @@ bool ns_capable_noaudit(struct user_namespace *ns, int cap)
+ }
+ EXPORT_SYMBOL(ns_capable_noaudit);
+ 
++/**
++ * ns_capable_setid - Determine if the current task has a superior capability
++ * in effect, while signalling that this check is being done from within a
++ * setid syscall.
++ * @ns:  The usernamespace we want the capability in
++ * @cap: The capability to be tested for
++ *
++ * Return true if the current task has the given superior capability currently
++ * available for use, false if not.
++ *
++ * This sets PF_SUPERPRIV on the task if the capability is available on the
++ * assumption that it's about to be used.
++ */
++bool ns_capable_setid(struct user_namespace *ns, int cap)
++{
++	return ns_capable_common(ns, cap, CAP_OPT_INSETID);
++}
++EXPORT_SYMBOL(ns_capable_setid);
++
+ /**
+  * capable - Determine if the current task has a superior capability in effect
+  * @cap: The capability to be tested for
+diff --git a/kernel/sys.c b/kernel/sys.c
+index a48cbf1414b8..a98061c1a124 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -516,7 +516,7 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
+ 		new->uid = kruid;
+ 		if (!uid_eq(old->uid, kruid) &&
+ 		    !uid_eq(old->euid, kruid) &&
+-		    !ns_capable(old->user_ns, CAP_SETUID))
++		    !ns_capable_setid(old->user_ns, CAP_SETUID))
+ 			goto error;
+ 	}
+ 
+@@ -525,7 +525,7 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
+ 		if (!uid_eq(old->uid, keuid) &&
+ 		    !uid_eq(old->euid, keuid) &&
+ 		    !uid_eq(old->suid, keuid) &&
+-		    !ns_capable(old->user_ns, CAP_SETUID))
++		    !ns_capable_setid(old->user_ns, CAP_SETUID))
+ 			goto error;
+ 	}
+ 
+@@ -584,7 +584,7 @@ long __sys_setuid(uid_t uid)
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+-	if (ns_capable(old->user_ns, CAP_SETUID)) {
++	if (ns_capable_setid(old->user_ns, CAP_SETUID)) {
+ 		new->suid = new->uid = kuid;
+ 		if (!uid_eq(kuid, old->uid)) {
+ 			retval = set_user(new);
+@@ -646,7 +646,7 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+ 	old = current_cred();
+ 
+ 	retval = -EPERM;
+-	if (!ns_capable(old->user_ns, CAP_SETUID)) {
++	if (!ns_capable_setid(old->user_ns, CAP_SETUID)) {
+ 		if (ruid != (uid_t) -1        && !uid_eq(kruid, old->uid) &&
+ 		    !uid_eq(kruid, old->euid) && !uid_eq(kruid, old->suid))
+ 			goto error;
+@@ -814,7 +814,7 @@ long __sys_setfsuid(uid_t uid)
+ 
+ 	if (uid_eq(kuid, old->uid)  || uid_eq(kuid, old->euid)  ||
+ 	    uid_eq(kuid, old->suid) || uid_eq(kuid, old->fsuid) ||
+-	    ns_capable(old->user_ns, CAP_SETUID)) {
++	    ns_capable_setid(old->user_ns, CAP_SETUID)) {
+ 		if (!uid_eq(kuid, old->fsuid)) {
+ 			new->fsuid = kuid;
+ 			if (security_task_fix_setuid(new, old, LSM_SETID_FS) == 0)
+-- 
+2.20.1.97.g81188d93c3-goog
+
