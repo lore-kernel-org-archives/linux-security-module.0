@@ -6,56 +6,53 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D726C43387
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3DDFC43444
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5478E20652
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE1A620675
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:54:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731542AbfAPVtU (ORCPT
+        id S1731499AbfAPVyV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:49:20 -0500
-Received: from mga09.intel.com ([134.134.136.24]:30556 "EHLO mga09.intel.com"
+        Wed, 16 Jan 2019 16:54:21 -0500
+Received: from mga07.intel.com ([134.134.136.100]:39281 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730479AbfAPVtU (ORCPT
+        id S1731095AbfAPVyV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:49:20 -0500
+        Wed, 16 Jan 2019 16:54:21 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 13:49:20 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 13:54:20 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="115223041"
+   d="scan'208";a="115223766"
 Received: from lhaqq1-mobl2.amr.corp.intel.com (HELO localhost) ([10.249.254.231])
-  by fmsmga007.fm.intel.com with ESMTP; 16 Jan 2019 13:49:16 -0800
-Date:   Wed, 16 Jan 2019 23:49:14 +0200
+  by fmsmga007.fm.intel.com with ESMTP; 16 Jan 2019 13:54:17 -0800
+Date:   Wed, 16 Jan 2019 23:54:16 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] tpm: ppi: Possibly show command parameter if TPM PPI
- 1.3 is used
-Message-ID: <20190116214914.GF25803@linux.intel.com>
+Subject: Re: [PATCH 5/5] tpm: ppi: Enable submission of optional command
+ parameter for PPI 1.3
+Message-ID: <20190116215416.GG25803@linux.intel.com>
 References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <20190109221103.1897677-5-stefanb@linux.vnet.ibm.com>
+ <20190109221103.1897677-6-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190109221103.1897677-5-stefanb@linux.vnet.ibm.com>
+In-Reply-To: <20190109221103.1897677-6-stefanb@linux.vnet.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 09, 2019 at 05:11:02PM -0500, Stefan Berger wrote:
-> +			if (tpm_ppi_req_has_parameter(req))
-> +				size = scnprintf(buf, PAGE_SIZE,
-> +						"%llu %llu\n",
-> +					req,
-> +					obj->package.elements[2].integer.value);
+On Wed, Jan 09, 2019 at 05:11:03PM -0500, Stefan Berger wrote:
+> +		if (sscanf(buf, "%llu %llu", &tmp[0].integer.value,
+> +					     &tmp[1].integer.value) != 2)
 
-The alignment here is somewhat broken.
+The alignment is broken here.
 
 /Jarkko
