@@ -2,85 +2,137 @@ Return-Path: <SRS0=9+Rk=PY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7498CC43387
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02308C43612
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A3220840
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBF83206C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:23:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfAPVOx (ORCPT
+        id S1728619AbfAPVXt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:14:53 -0500
-Received: from namei.org ([65.99.196.166]:56382 "EHLO namei.org"
+        Wed, 16 Jan 2019 16:23:49 -0500
+Received: from mga11.intel.com ([192.55.52.93]:32207 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726924AbfAPVOx (ORCPT
+        id S1728230AbfAPVXt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:14:53 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x0GLEjAL007529;
-        Wed, 16 Jan 2019 21:14:45 GMT
-Date:   Thu, 17 Jan 2019 08:14:45 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-cc:     John Johansen <john.johansen@canonical.com>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-Subject: Re: WARNING in apparmor_cred_free
-In-Reply-To: <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1901170814170.7422@namei.org>
-References: <0000000000007f604f057f2b8509@google.com> <6213e783-4377-489d-cdfb-1a83f4497076@schaufler-ca.com> <b0d2811e-87e4-21d4-c33a-2d2012a906cc@canonical.com> <2ccf6281-3f4b-a94a-ed71-31905e583fa6@schaufler-ca.com> <234c868b-4521-0707-a135-d8c24bc179bd@schaufler-ca.com>
- <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 16 Jan 2019 16:23:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 13:23:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
+   d="scan'208";a="135247557"
+Received: from lhaqq1-mobl2.amr.corp.intel.com (HELO localhost) ([10.249.254.231])
+  by fmsmga002.fm.intel.com with ESMTP; 16 Jan 2019 13:23:44 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v10 00/17] Remove nested TPM operations
+Date:   Wed, 16 Jan 2019 23:23:25 +0200
+Message-Id: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 11 Jan 2019, Casey Schaufler wrote:
+Make the changes necessary to detach TPM space code and TPM activation
+code out of the tpm_transmit() flow because of both of these can cause
+nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+to maintain, and thus, it is better to just fix things now before this
+turns into a bigger mess.
 
-> >From 47134986133c822e1d88860fa2b108f92c97a7ff Mon Sep 17 00:00:00 2001
-> From: Casey Schaufler <casey@schaufler-ca.com>
-> Date: Fri, 11 Jan 2019 17:31:50 -0800
-> Subject: [PATCH 1/2] LSM: Check for NULL cred-security on free
-> 
-> Check that the cred security blob has been set before trying
-> to clean it up. There is a case during credential initialization
-> that could result in this.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+v10:
+* Use void pointers to avoid unnecessary casts in functions paramaters
+  where it makes sense.
 
-JJ: does this fix the problem?
+v9:
+* Fixed again tpm_try_get_ops().
+* Added missing reviewed-by's.
 
-> ---
->  security/security.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index a618e22df5c6..7bffc86d4e87 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1477,6 +1477,13 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
->  
->  void security_cred_free(struct cred *cred)
->  {
-> +	/*
-> +	 * There is a failure case in prepare_creds() that
-> +	 * may result in a call here with ->security being NULL.
-> +	 */
-> +	if (unlikely(cred->security == NULL))
-> +		return;
-> +
->  	call_void_hook(cred_free, cred);
->  
->  	kfree(cred->security);
-> 
+v8:
+* Re-add the check for ret < 0 after calling tpm_try_transmit() that
+  was dropped by mistake while moving code.
+* Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
+  fails.
+
+v7:
+*  Reorganize series so that more trivial and self-contained changes are
+   in the head.
+
+v6:
+* When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
+  the TPM header was incorrectly declared as struct tpm_input_header.
+* Fix return value in tpm_validate_command().
+
+v5:
+* Add the missing rev's from Stefan Berger.
+
+v4:
+* Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+* Fix error handling flow in tpm_try_transmit().
+* Replace struct tpm_input_header and struct tpm_output_header with
+  struct tpm_header.
+
+v3:
+* Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
+* Move TPM power gating code and locking to tpm_try_get_ops() and
+  tpm_put_ops().
+* Call power gating code directly in tpm_chip_register() and
+  tpm2_del_space().
+
+v2:
+* Print tpm2_commit_space() error inside tpm2_commit_space()
+* Error code was not printed when recv() callback failed. It is
+  fixed in this version.
+* Added a patch that removes @space from tpm_transmit().
+* Fixed a regression in earlier series. Forgot to amend the change
+  from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
+Jarkko Sakkinen (17):
+  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+  tpm: fix invalid return value in pubek_show()
+  tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+  tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+  tpm: declare struct tpm_header
+  tpm: access command header through struct in tpm_try_transmit()
+  tpm: encapsulate tpm_dev_transmit()
+  tpm: call tpm2_flush_space() on error in tpm_try_transmit()
+  tpm: clean up tpm_try_transmit() error handling flow
+  tpm: move tpm_validate_commmand() to tpm2-space.c
+  tpm: move TPM space code out of tpm_transmit()
+  tpm: remove @space from tpm_transmit()
+  tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+  tpm: remove TPM_TRANSMIT_UNLOCKED flag
+  tpm: introduce tpm_chip_start() and tpm_chip_stop()
+  tpm: take TPM chip power gating out of tpm_transmit()
+  tpm: remove @flags from tpm_transmit()
+
+ drivers/char/tpm/tpm-chip.c       | 109 ++++++++++++
+ drivers/char/tpm/tpm-dev-common.c |  45 ++++-
+ drivers/char/tpm/tpm-interface.c  | 264 ++++++------------------------
+ drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
+ drivers/char/tpm/tpm.h            |  64 +++-----
+ drivers/char/tpm/tpm1-cmd.c       |  28 +---
+ drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+ drivers/char/tpm/tpm2-space.c     |  91 +++++++---
+ drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+ drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+ drivers/char/tpm/xen-tpmfront.c   |   2 +-
+ 11 files changed, 409 insertions(+), 421 deletions(-)
 
 -- 
-James Morris
-<jmorris@namei.org>
+2.19.1
 
