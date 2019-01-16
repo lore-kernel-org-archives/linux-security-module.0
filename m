@@ -2,90 +2,108 @@ Return-Path: <SRS0=9+Rk=PY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02407C43387
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 17:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E21C43387
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 18:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C819720840
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 17:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E66A020866
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 18:31:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oc+Zg9qc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbfAPRkI (ORCPT
+        id S1728901AbfAPSbM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 12:40:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50672 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727464AbfAPRkI (ORCPT
+        Wed, 16 Jan 2019 13:31:12 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34050 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728489AbfAPSbM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 12:40:08 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5D624C002960;
-        Wed, 16 Jan 2019 17:40:07 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.162])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DDE551C959;
-        Wed, 16 Jan 2019 17:40:04 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 16 Jan 2019 18:40:07 +0100 (CET)
-Date:   Wed, 16 Jan 2019 18:40:04 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Kees Cook <keescook@chromium.org>,
+        Wed, 16 Jan 2019 13:31:12 -0500
+Received: by mail-pg1-f196.google.com with SMTP id j10so3201440pga.1
+        for <linux-security-module@vger.kernel.org>; Wed, 16 Jan 2019 10:31:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=dHSazQ7qGm2UKIzzWog2IYg+72OPhXPfMJM+TsIBw6g=;
+        b=oc+Zg9qcwExCefgBVQow/0OPvZrOxpfIcZvPTxksMyF90W8LF+6GOyjKGCdvgmJ12Q
+         jzKxp/kb7S4ZMWNM62beUsxiJfgkAm45XtHaen6iTR4nsvRCWwMMzEDRj4gjL0YGobPw
+         hX9u4qUWL0PLptWpT8icrFMYvigBZfY+qLs3Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=dHSazQ7qGm2UKIzzWog2IYg+72OPhXPfMJM+TsIBw6g=;
+        b=OjCXHzbkvSukNGQNZ6gmCvXlDZpFAYlI6kozSwWUx2q15txlh62OsbMq00AELuWiuz
+         osfCaUYkZgIggFZg9jEdBpZ6v6pCqXJybz3RA0O4cJj+ni5PIcFHtXf4PMDFpRnytoCT
+         GapxbK8D7rDJfWJBHK/zwqowqFF9vOuPSx9I+oM4HveRLWQCorV27djcPpocwzod9NLj
+         +g92DBKEBePFulz9bfue68Tz9w9Pf0cd4CokNFqRWRf95jBBtaHOz3wrppdcFkRVmUrU
+         ZMKq7HK3YfoH/eNRwkP5aMgOnQwCYcOmGk62A8O9QmJfjILK0OAjc9mGYInLLkv2Dr/U
+         gCPQ==
+X-Gm-Message-State: AJcUukevOEU0Q2/JtRiNaTXhJX7p5kby5c8OYdv+WpTil1x/H+PgYZZm
+        K0SdtY81Z0Kze1KjF73xuFSAoA==
+X-Google-Smtp-Source: ALg8bN6+uVFaQoD6XHZsdht80UFBlRjUJK3eIohahgUokfNwQYcjryhsNsFyFJut7DcwqlRhK8Fo5A==
+X-Received: by 2002:a63:2784:: with SMTP id n126mr10315231pgn.48.1547663471587;
+        Wed, 16 Jan 2019 10:31:11 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id 184sm9071194pfe.106.2019.01.16.10.31.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 16 Jan 2019 10:31:10 -0800 (PST)
+Date:   Wed, 16 Jan 2019 10:31:09 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        James Morris <jmorris@namei.org>,
         LKML <linux-kernel@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
+        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
         syzkaller-bugs@googlegroups.com
-Subject: Re: yama: unsafe usage of ptrace_relation->tracer
-Message-ID: <20190116174003.GB20060@redhat.com>
-References: <20181022134634.GA7358@redhat.com>
- <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
- <20181025111355.GA3725@redhat.com>
- <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
- <20181025121709.GD3725@redhat.com>
- <20181025130129.GE3725@redhat.com>
- <CAGXu5jJDkt0vR28Rzhi2gmb=9S7BwWkiMuVrN98AOABgngYY4A@mail.gmail.com>
- <20181029122356.GA29883@redhat.com>
- <20181029150546.GA30959@redhat.com>
- <0fc3493d-a50e-f386-20a8-28d348c19544@I-love.SAKURA.ne.jp>
+Subject: [PATCH] Yama: Check for pid death before checking ancestry
+Message-ID: <20190116183109.GA21722@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0fc3493d-a50e-f386-20a8-28d348c19544@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 16 Jan 2019 17:40:07 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 01/10, Tetsuo Handa wrote:
->
-> syzbot is hitting this problem as of linux-next-20190110.
-> When a patch will be proposed?
+It's possible that a pid has died before we take the rcu lock, in which
+case we can't walk the ancestry list as it may be detached. Instead, check
+for death first before doing the walk.
 
-Well. I have already suggested the patch below several times. It won't fix all
-problems in this code (I forgot the details but iirc ptracer_exception_found()
-is broken too, task_is_descendant() should be cleanuped, may be something else),
-but probably this trivial fix makes sense for the start?
+Reported-by: syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com
+Fixes: 2d514487faf1 ("security: Yama LSM")
+Cc: stable@vger.kernel.org
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+James, can you please send this to Linus in your -fixes tree?
+---
+ security/yama/yama_lsm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Oleg.
-
-
---- x/security/yama/yama_lsm.c
-+++ x/security/yama/yama_lsm.c
-@@ -368,7 +368,8 @@ static int yama_ptrace_access_check(stru
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index ffda91a4a1aa..02514fe558b4 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -368,7 +368,9 @@ static int yama_ptrace_access_check(struct task_struct *child,
  			break;
  		case YAMA_SCOPE_RELATIONAL:
  			rcu_read_lock();
 -			if (!task_is_descendant(current, child) &&
-+			if (!pid_alive(child) ||
-+			    !task_is_descendant(current, child) &&
++			if (!pid_alive(child))
++				rc = -EPERM;
++			if (!rc && !task_is_descendant(current, child) &&
  			    !ptracer_exception_found(current, child) &&
  			    !ns_capable(__task_cred(child)->user_ns, CAP_SYS_PTRACE))
  				rc = -EPERM;
+-- 
+2.17.1
 
+
+-- 
+Kees Cook
