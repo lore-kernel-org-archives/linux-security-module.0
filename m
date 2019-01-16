@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C6F0C43612
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449D4C43387
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9C6C206C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:24:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F475206C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 21:25:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729757AbfAPVYu (ORCPT
+        id S1729833AbfAPVY6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 16:24:50 -0500
-Received: from mga14.intel.com ([192.55.52.115]:26392 "EHLO mga14.intel.com"
+        Wed, 16 Jan 2019 16:24:58 -0500
+Received: from mga02.intel.com ([134.134.136.20]:42964 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729670AbfAPVYs (ORCPT
+        id S1729761AbfAPVY6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 16:24:48 -0500
+        Wed, 16 Jan 2019 16:24:58 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 13:24:48 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 13:24:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,487,1539673200"; 
-   d="scan'208";a="135247864"
+   d="scan'208";a="135247911"
 Received: from lhaqq1-mobl2.amr.corp.intel.com (HELO localhost) ([10.249.254.231])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Jan 2019 13:24:42 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 16 Jan 2019 13:24:50 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -38,10 +38,11 @@ Cc:     linux-security-module@vger.kernel.org,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         Nayna Jain <nayna@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v10 09/17] tpm: clean up tpm_try_transmit() error handling flow
-Date:   Wed, 16 Jan 2019 23:23:34 +0200
-Message-Id: <20190116212342.24524-10-jarkko.sakkinen@linux.intel.com>
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: [PATCH v10 10/17] tpm: move tpm_validate_commmand() to tpm2-space.c
+Date:   Wed, 16 Jan 2019 23:23:35 +0200
+Message-Id: <20190116212342.24524-11-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
 References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
@@ -51,129 +52,245 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Move locking, locality handling and power management to tpm_transmit()
-in order to simplify the flow.
+Move tpm_validate_command() to tpm2-space.c and make it part of the
+tpm2_prepare_space() flow. Make cc resolution as part of the TPM space
+functionality in order to detach it from rest of the tpm_transmit()
+flow.
 
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 Tested-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- drivers/char/tpm/tpm-interface.c | 71 ++++++++++++++++----------------
- 1 file changed, 35 insertions(+), 36 deletions(-)
+ drivers/char/tpm/tpm-interface.c | 70 +++++++-------------------------
+ drivers/char/tpm/tpm.h           |  9 ++--
+ drivers/char/tpm/tpm2-space.c    | 52 +++++++++++++++++++++---
+ 3 files changed, 67 insertions(+), 64 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 2c409d19a9b9..60d4dcb355a6 100644
+index 60d4dcb355a6..87709e27c67c 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -167,7 +167,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	ssize_t len = 0;
+@@ -62,45 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ }
+ EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+ 
+-static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space *space,
+-				const void *cmd, size_t len)
+-{
+-	const struct tpm_header *header = cmd;
+-	int i;
+-	u32 cc;
+-	u32 attrs;
+-	unsigned int nr_handles;
+-
+-	if (len < TPM_HEADER_SIZE)
+-		return -EINVAL;
+-
+-	if (!space)
+-		return 0;
+-
+-	if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->nr_commands) {
+-		cc = be32_to_cpu(header->ordinal);
+-
+-		i = tpm2_find_cc(chip, cc);
+-		if (i < 0) {
+-			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
+-				cc);
+-			return -EOPNOTSUPP;
+-		}
+-
+-		attrs = chip->cc_attrs_tbl[i];
+-		nr_handles =
+-			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
+-		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
+-			goto err_len;
+-	}
+-
+-	return 0;
+-err_len:
+-	dev_dbg(&chip->dev,
+-		"%s: insufficient command length %zu", __func__, len);
+-	return -EINVAL;
+-}
+-
+ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
+ {
+ 	int rc;
+@@ -168,20 +129,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
  	u32 count, ordinal;
  	unsigned long stop;
--	bool need_locality;
  
- 	rc = tpm_validate_command(chip, space, buf, bufsiz);
- 	if (rc == -EINVAL)
-@@ -197,30 +196,9 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
+-	rc = tpm_validate_command(chip, space, buf, bufsiz);
+-	if (rc == -EINVAL)
+-		return rc;
+-	/*
+-	 * If the command is not implemented by the TPM, synthesize a
+-	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
+-	 */
+-	if (rc == -EOPNOTSUPP) {
+-		header->length = cpu_to_be32(sizeof(*header));
+-		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
+-		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
+-						  TSS2_RESMGR_TPM_RC_LAYER);
+-		return sizeof(*header);
+-	}
++	if (bufsiz < TPM_HEADER_SIZE)
++		return -EINVAL;
+ 
+ 	if (bufsiz > TPM_BUFSIZE)
+ 		bufsiz = TPM_BUFSIZE;
+@@ -196,7 +145,18 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
  		return -E2BIG;
  	}
  
--	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
--		mutex_lock(&chip->tpm_mutex);
--
--	if (chip->ops->clk_enable != NULL)
--		chip->ops->clk_enable(chip, true);
--
--	/* Store the decision as chip->locality will be changed. */
--	need_locality = chip->locality == -1;
--
--	if (need_locality) {
--		rc = tpm_request_locality(chip, flags);
--		if (rc < 0) {
--			need_locality = false;
--			goto out_locality;
--		}
--	}
--
--	rc = tpm_cmd_ready(chip, flags);
--	if (rc)
--		goto out_locality;
--
- 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+-	rc = tpm2_prepare_space(chip, space, ordinal, buf);
++	rc = tpm2_prepare_space(chip, space, buf, bufsiz);
++	/*
++	 * If the command is not implemented by the TPM, synthesize a
++	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
++	 */
++	if (rc == -EOPNOTSUPP) {
++		header->length = cpu_to_be32(sizeof(*header));
++		header->tag = cpu_to_be16(TPM2_ST_NO_SESSIONS);
++		header->return_code = cpu_to_be32(TPM2_RC_COMMAND_CODE |
++						  TSS2_RESMGR_TPM_RC_LAYER);
++		return sizeof(*header);
++	}
  	if (rc)
--		goto out_idle;
-+		return rc;
+ 		return rc;
  
- 	rc = chip->ops->send(chip, buf, count);
- 	if (rc < 0) {
-@@ -269,19 +247,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
+@@ -245,7 +205,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (rc)
+ 		tpm2_flush_space(chip);
  	else
- 		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+-		rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
++		rc = tpm2_commit_space(chip, space, buf, &len);
  
--out_idle:
--	/* may fail but do not override previous error value in rc */
--	tpm_go_idle(chip, flags);
--
--out_locality:
--	if (need_locality)
--		tpm_relinquish_locality(chip, flags);
--
--	if (chip->ops->clk_enable != NULL)
--		chip->ops->clk_enable(chip, false);
--
--	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
--		mutex_unlock(&chip->tpm_mutex);
  	return rc ? rc : len;
  }
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 6eb67ccad2a3..e84333259e28 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -264,6 +264,7 @@ struct tpm_chip {
+ #endif /* CONFIG_ACPI */
  
-@@ -311,6 +276,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	/* space for header and handles */
- 	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
- 	unsigned int delay_msec = TPM2_DURATION_SHORT;
-+	bool has_locality = false;
- 	u32 rc = 0;
- 	ssize_t ret;
- 	const size_t save_size = min(space ? sizeof(save) : TPM_HEADER_SIZE,
-@@ -326,7 +292,40 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
- 	memcpy(save, buf, save_size);
+ 	struct tpm_space work_space;
++	u32 last_cc;
+ 	u32 nr_commands;
+ 	u32 *cc_attrs_tbl;
  
- 	for (;;) {
-+		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
-+		    !(flags & TPM_TRANSMIT_NESTED))
-+			mutex_lock(&chip->tpm_mutex);
+@@ -577,10 +578,10 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+ int tpm2_init_space(struct tpm_space *space);
+ void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
+ void tpm2_flush_space(struct tpm_chip *chip);
+-int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+-		       u8 *cmd);
+-int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+-		      u32 cc, void *buf, size_t *bufsiz);
++int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
++		       size_t cmdsiz);
++int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, void *buf,
++		      size_t *bufsiz);
+ 
+ int tpm_bios_log_setup(struct tpm_chip *chip);
+ void tpm_bios_log_teardown(struct tpm_chip *chip);
+diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+index 5d6487575074..88f6d0df5c3d 100644
+--- a/drivers/char/tpm/tpm2-space.c
++++ b/drivers/char/tpm/tpm2-space.c
+@@ -264,14 +264,55 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
+ 	return 0;
+ }
+ 
+-int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+-		       u8 *cmd)
++static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space *space,
++				const void *cmd, size_t len)
++{
++	const struct tpm_header *header = (const void *)cmd;
++	int i;
++	u32 cc;
++	u32 attrs;
++	unsigned int nr_handles;
 +
-+		if (chip->ops->clk_enable != NULL)
-+			chip->ops->clk_enable(chip, true);
++	if (len < TPM_HEADER_SIZE)
++		return -EINVAL;
 +
-+		if (chip->locality == -1) {
-+			ret = tpm_request_locality(chip, flags);
-+			if (ret)
-+				goto out_locality;
-+			has_locality = true;
++	if (chip->nr_commands) {
++		cc = be32_to_cpu(header->ordinal);
++
++		i = tpm2_find_cc(chip, cc);
++		if (i < 0) {
++			dev_dbg(&chip->dev, "0x%04X is an invalid command\n",
++				cc);
++			return -EOPNOTSUPP;
 +		}
 +
-+		ret = tpm_cmd_ready(chip, flags);
-+		if (ret)
-+			goto out_locality;
++		attrs = chip->cc_attrs_tbl[i];
++		nr_handles =
++			4 * ((attrs >> TPM2_CC_ATTR_CHANDLES) & GENMASK(2, 0));
++		if (len < TPM_HEADER_SIZE + 4 * nr_handles)
++			goto err_len;
++	}
 +
- 		ret = tpm_try_transmit(chip, space, buf, bufsiz, flags);
++	return cc;
++err_len:
++	dev_dbg(&chip->dev, "%s: insufficient command length %zu", __func__,
++		len);
++	return -EINVAL;
++}
 +
-+		/* This may fail but do not override ret. */
-+		tpm_go_idle(chip, flags);
++int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
++		       size_t cmdsiz)
+ {
+ 	int rc;
++	int cc;
+ 
+ 	if (!space)
+ 		return 0;
+ 
++	cc = tpm_validate_command(chip, space, cmd, cmdsiz);
++	if (cc < 0)
++		return cc;
 +
-+out_locality:
-+		if (has_locality)
-+			tpm_relinquish_locality(chip, flags);
-+
-+		if (chip->ops->clk_enable != NULL)
-+			chip->ops->clk_enable(chip, false);
-+
-+		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
-+		    !(flags & TPM_TRANSMIT_NESTED))
-+			mutex_unlock(&chip->tpm_mutex);
-+
- 		if (ret < 0)
- 			break;
- 		rc = be32_to_cpu(header->return_code);
+ 	memcpy(&chip->work_space.context_tbl, &space->context_tbl,
+ 	       sizeof(space->context_tbl));
+ 	memcpy(&chip->work_space.session_tbl, &space->session_tbl,
+@@ -291,6 +332,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32 cc,
+ 		return rc;
+ 	}
+ 
++	chip->last_cc = cc;
+ 	return 0;
+ }
+ 
+@@ -490,7 +532,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
+ }
+ 
+ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+-		      u32 cc, void *buf, size_t *bufsiz)
++		      void *buf, size_t *bufsiz)
+ {
+ 	struct tpm_header *header = buf;
+ 	int rc;
+@@ -498,13 +540,13 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (!space)
+ 		return 0;
+ 
+-	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
++	rc = tpm2_map_response_header(chip, chip->last_cc, buf, *bufsiz);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+ 		goto out;
+ 	}
+ 
+-	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
++	rc = tpm2_map_response_body(chip, chip->last_cc, buf, *bufsiz);
+ 	if (rc) {
+ 		tpm2_flush_space(chip);
+ 		goto out;
 -- 
 2.19.1
 
