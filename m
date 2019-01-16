@@ -6,57 +6,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1248C43387
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 05:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C332C43387
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 05:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 880C22082F
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 05:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DA282082F
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 05:40:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbfAPFie (ORCPT
+        id S1732612AbfAPFk5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 00:38:34 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2234 "EHLO huawei.com"
+        Wed, 16 Jan 2019 00:40:57 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2236 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726225AbfAPFie (ORCPT
+        id S1730832AbfAPFk4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 00:38:34 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 26DEABC0A3F21A2AF186;
-        Wed, 16 Jan 2019 13:38:32 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 16 Jan 2019 13:38:25 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        Wed, 16 Jan 2019 00:40:56 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id B81A4DAA9291EE2DB4D1;
+        Wed, 16 Jan 2019 13:40:49 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Wed, 16 Jan 2019
+ 13:40:43 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <jmorris@namei.org>, <serge@hallyn.com>
+CC:     <linux-kernel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
+        YueHaibing <yuehaibing@huawei.com>
 Subject: [PATCH -next] LSM: Make some functions static
-Date:   Wed, 16 Jan 2019 05:44:32 +0000
-Message-ID: <1547617472-60140-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Date:   Wed, 16 Jan 2019 13:33:53 +0800
+Message-ID: <20190116053353.29320-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
 X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fixes the following sparse warnings:
+Fix the follow sparse warning:
 
-security/security.c:533:5: warning:
- symbol 'lsm_task_alloc' was not declared. Should it be static?
-security/security.c:554:5: warning:
- symbol 'lsm_ipc_alloc' was not declared. Should it be static?
-security/security.c:575:5: warning:
- symbol 'lsm_msg_msg_alloc' was not declared. Should it be static?
+security/security.c:533:5: warning: symbol 'lsm_task_alloc' was not declared. Should it be static?
+security/security.c:554:5: warning: symbol 'lsm_ipc_alloc' was not declared. Should it be static?
+security/security.c:575:5: warning: symbol 'lsm_msg_msg_alloc' was not declared. Should it be static?
 
-Fixes: f4ad8f2c4076 ("LSM: Infrastructure management of the task security")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
  security/security.c | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
@@ -92,6 +85,7 @@ index 9a98c52..750d3f3 100644
  {
  	if (blob_sizes.lbs_msg_msg == 0) {
  		mp->security = NULL;
-
+-- 
+2.7.0
 
 
