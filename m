@@ -6,30 +6,37 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8506C43387
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 22:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB925C43387
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 22:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BEA320652
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 22:31:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82F1320652
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 22:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733195AbfAPWbd (ORCPT
+        id S1732994AbfAPWgl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:31:33 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52322 "EHLO
+        Wed, 16 Jan 2019 17:36:41 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52369 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732911AbfAPWbd (ORCPT
+        with ESMTP id S1732911AbfAPWgk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:31:33 -0500
+        Wed, 16 Jan 2019 17:36:40 -0500
 Received: from static-50-53-47-167.bvtn.or.frontiernet.net ([50.53.47.167] helo=[192.168.192.153])
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
         (Exim 4.76)
         (envelope-from <john.johansen@canonical.com>)
-        id 1gjtic-0006db-44; Wed, 16 Jan 2019 22:31:30 +0000
-Subject: Re: [PATCH] security/apparmor/domain: use PTR_ERR_OR_ZERO
-To:     Peng Hao <peng.hao2@zte.com.cn>, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1546593430-24355-1-git-send-email-peng.hao2@zte.com.cn>
+        id 1gjtna-0006om-4T; Wed, 16 Jan 2019 22:36:38 +0000
+Subject: Re: WARNING in apparmor_cred_free
+To:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com
+References: <0000000000007f604f057f2b8509@google.com>
+ <6213e783-4377-489d-cdfb-1a83f4497076@schaufler-ca.com>
+ <b0d2811e-87e4-21d4-c33a-2d2012a906cc@canonical.com>
+ <2ccf6281-3f4b-a94a-ed71-31905e583fa6@schaufler-ca.com>
+ <234c868b-4521-0707-a135-d8c24bc179bd@schaufler-ca.com>
+ <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
+ <alpine.LRH.2.21.1901170814170.7422@namei.org>
 From:   John Johansen <john.johansen@canonical.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
@@ -75,12 +82,12 @@ Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
  qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
  IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
 Organization: Canonical
-Message-ID: <82ead100-3f36-5928-703d-28281c6b5353@canonical.com>
-Date:   Wed, 16 Jan 2019 14:31:26 -0800
+Message-ID: <81e41439-7b32-45cf-465a-19dd14f6f3ef@canonical.com>
+Date:   Wed, 16 Jan 2019 14:36:34 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1546593430-24355-1-git-send-email-peng.hao2@zte.com.cn>
+In-Reply-To: <alpine.LRH.2.21.1901170814170.7422@namei.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -88,53 +95,49 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/4/19 1:17 AM, Peng Hao wrote:
-> The variable 'new' may be NULL, so use PTR_ERR_OR_ZERO instead
-> of PTR_ERR.
+On 1/16/19 1:14 PM, James Morris wrote:
+> On Fri, 11 Jan 2019, Casey Schaufler wrote:
 > 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-
-yep that is a problem unfortunately the fix isn't quite right
-we don't want to return 0 for an error here. Instead we can
-do
-
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 08c88de0ffda..11975ec8d566 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -1444,7 +1444,10 @@ int aa_change_profile(const char *fqname, int flags)
- 			new = aa_label_merge(label, target, GFP_KERNEL);
- 		if (IS_ERR_OR_NULL(new)) {
- 			info = "failed to build target label";
--			error = PTR_ERR(new);
-+			if (!new)
-+				error = -ENOMEM;
-+			else
-+				error = PTR_ERR(new);
- 			new = NULL;
- 			perms.allow = 0;
- 			goto audit;
-
-
-I have pulled your patch into my apparmor tree with the above revision
-
-
-> ---
->  security/apparmor/domain.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >From 47134986133c822e1d88860fa2b108f92c97a7ff Mon Sep 17 00:00:00 2001
+>> From: Casey Schaufler <casey@schaufler-ca.com>
+>> Date: Fri, 11 Jan 2019 17:31:50 -0800
+>> Subject: [PATCH 1/2] LSM: Check for NULL cred-security on free
+>>
+>> Check that the cred security blob has been set before trying
+>> to clean it up. There is a case during credential initialization
+>> that could result in this.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 08c88de..7663589 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -1444,7 +1444,7 @@ int aa_change_profile(const char *fqname, int flags)
->  			new = aa_label_merge(label, target, GFP_KERNEL);
->  		if (IS_ERR_OR_NULL(new)) {
->  			info = "failed to build target label";
-> -			error = PTR_ERR(new);
-> +			error = PTR_ERR_OR_ZERO(new);
->  			new = NULL;
->  			perms.allow = 0;
->  			goto audit;
+> JJ: does this fix the problem?
+> 
+
+sorry for not responding earlier, yes it does.
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+
+>> ---
+>>  security/security.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/security/security.c b/security/security.c
+>> index a618e22df5c6..7bffc86d4e87 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -1477,6 +1477,13 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp)
+>>  
+>>  void security_cred_free(struct cred *cred)
+>>  {
+>> +	/*
+>> +	 * There is a failure case in prepare_creds() that
+>> +	 * may result in a call here with ->security being NULL.
+>> +	 */
+>> +	if (unlikely(cred->security == NULL))
+>> +		return;
+>> +
+>>  	call_void_hook(cred_free, cred);
+>>  
+>>  	kfree(cred->security);
+>>
 > 
 
