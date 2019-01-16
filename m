@@ -2,37 +2,38 @@ Return-Path: <SRS0=9+Rk=PY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B6BC43387
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 23:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE53AC43387
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 23:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A5BD206C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 23:30:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8240420675
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 23:44:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbfAPXaM (ORCPT
+        id S1727721AbfAPXoY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 18:30:12 -0500
-Received: from namei.org ([65.99.196.166]:56526 "EHLO namei.org"
+        Wed, 16 Jan 2019 18:44:24 -0500
+Received: from namei.org ([65.99.196.166]:56538 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726994AbfAPXaM (ORCPT
+        id S1727477AbfAPXoY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 18:30:12 -0500
+        Wed, 16 Jan 2019 18:44:24 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x0GNU11t015924;
-        Wed, 16 Jan 2019 23:30:01 GMT
-Date:   Thu, 17 Jan 2019 10:30:01 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x0GNiHdP017131;
+        Wed, 16 Jan 2019 23:44:17 GMT
+Date:   Thu, 17 Jan 2019 10:44:17 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
 To:     Casey Schaufler <casey@schaufler-ca.com>
 cc:     John Johansen <john.johansen@canonical.com>,
+        linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, serge@hallyn.com
 Subject: Re: WARNING in apparmor_cred_free
-In-Reply-To: <546a62d3-29a9-f8cf-09f7-ab760b50dc19@schaufler-ca.com>
-Message-ID: <alpine.LRH.2.21.1901171029450.15082@namei.org>
+In-Reply-To: <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1901171043140.16197@namei.org>
 References: <0000000000007f604f057f2b8509@google.com> <6213e783-4377-489d-cdfb-1a83f4497076@schaufler-ca.com> <b0d2811e-87e4-21d4-c33a-2d2012a906cc@canonical.com> <2ccf6281-3f4b-a94a-ed71-31905e583fa6@schaufler-ca.com> <234c868b-4521-0707-a135-d8c24bc179bd@schaufler-ca.com>
- <546a62d3-29a9-f8cf-09f7-ab760b50dc19@schaufler-ca.com>
+ <99cd1f6b-682e-7d1f-35ad-b9092d46323f@schaufler-ca.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -42,45 +43,24 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 On Fri, 11 Jan 2019, Casey Schaufler wrote:
 
-> >From 1a2a99f3cfd069baf9aa0ef91529558bcbe64c14 Mon Sep 17 00:00:00 2001
+> >From 47134986133c822e1d88860fa2b108f92c97a7ff Mon Sep 17 00:00:00 2001
 > From: Casey Schaufler <casey@schaufler-ca.com>
-> Date: Fri, 11 Jan 2019 17:37:56 -0800
-> Subject: [PATCH 2/2] AppArmor: Fix credential blob assertions
+> Date: Fri, 11 Jan 2019 17:31:50 -0800
+> Subject: [PATCH 1/2] LSM: Check for NULL cred-security on free
 > 
-> The assertions for NULL credential blobs don't take blob
-> offsetting into account. Check the raw data, not th eoffset value.
+> Check that the cred security blob has been set before trying
+> to clean it up. There is a case during credential initialization
+> that could result in this.
 > 
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-JJ: can you ack this if it loogs good to you?
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.0-rc2
 
-> ---
->  security/apparmor/include/cred.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
-> index b9504a05fddc..29cef1b5687c 100644
-> --- a/security/apparmor/include/cred.h
-> +++ b/security/apparmor/include/cred.h
-> @@ -27,7 +27,7 @@ static inline struct aa_label *cred_label(const struct cred *cred)
->  {
->  	struct aa_label **blob = cred->security + apparmor_blob_sizes.lbs_cred;
->  
-> -	AA_BUG(!blob);
-> +	AA_BUG(!cred->security);
->  	return *blob;
->  }
->  
-> @@ -36,7 +36,7 @@ static inline void set_cred_label(const struct cred *cred,
->  {
->  	struct aa_label **blob = cred->security + apparmor_blob_sizes.lbs_cred;
->  
-> -	AA_BUG(!blob);
-> +	AA_BUG(!cred->security);
->  	*blob = label;
->  }
->  
-> 
+
+NOTE: For patches which you are submitting for inclusion, start a new 
+thread and include [PATCH] in the subject line.
+
 
 -- 
 James Morris
