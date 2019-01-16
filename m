@@ -2,94 +2,69 @@ Return-Path: <SRS0=9+Rk=PY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 777DCC43387
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 05:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ABFC43612
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 06:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4890820840
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 05:45:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24BFC20859
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 06:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547618403;
+	bh=UxpPFcg8quuJKampHUxj7fYMcATihsz78UiYaLUAYjI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=uU+DcCqAomH8cv/7aas0oWSocWlfk8qhBjbDZinMMqM/vdsl3nid3wG7/kiUmZoxh
+	 SDBBQAmNYQZhjVeAh2b/8a723sOVzpG2JWEKrlb/C4Z4+GTnpad2eGgVoS+RRPLA1Y
+	 N8TCD/gAvSC2osMfI7MVLqAVR7KEMpDMT3X4MktU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732695AbfAPFpl (ORCPT
+        id S1732931AbfAPGAC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 00:45:41 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:32930 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732611AbfAPFpl (ORCPT
+        Wed, 16 Jan 2019 01:00:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50154 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732578AbfAPGAC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 00:45:41 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EA8DDCB66FA50CDC83C3;
-        Wed, 16 Jan 2019 13:45:38 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Wed, 16 Jan 2019
- 13:45:37 +0800
-Subject: Re: [PATCH -next] LSM: Make some functions static
-To:     <jmorris@namei.org>, <serge@hallyn.com>
-References: <20190116053353.29320-1-yuehaibing@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <d638d4db-3706-46a7-fe65-66e96ac6e8d7@huawei.com>
-Date:   Wed, 16 Jan 2019 13:45:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
-MIME-Version: 1.0
-In-Reply-To: <20190116053353.29320-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        Wed, 16 Jan 2019 01:00:02 -0500
+Subject: Re: [GIT PULL] SELinux fixes for v5.0 (#1)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547618401;
+        bh=UxpPFcg8quuJKampHUxj7fYMcATihsz78UiYaLUAYjI=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=v0VzdBzQXf+CyT2AxtgSNiRce3ljT0odNyW4O5XvGhVNIoh3vapqGUxk5+NLwFxbf
+         CTq6o4KuCo89hR93UZPnVaUA/PBpf8VNgSSEuUd+82PCzgkQs55IsgVi+oohOtjAWF
+         mQt+yHdWuRq+dyl+ZJdtY0IAj+gzuqy+Y7hcMudo=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhSOqYnEPUJhcXTg4yAMw3c1+EOt9CE77JoJkdcz1MJNsA@mail.gmail.com>
+References: <CAHC9VhSOqYnEPUJhcXTg4yAMw3c1+EOt9CE77JoJkdcz1MJNsA@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhSOqYnEPUJhcXTg4yAMw3c1+EOt9CE77JoJkdcz1MJNsA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20190115
+X-PR-Tracked-Commit-Id: 5b0e7310a2a33c06edc7eb81ffc521af9b2c5610
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 47bfa6d9dc8c060bf56554a465c9031e286d2f80
+Message-Id: <154761840177.28714.17165635207206358246.pr-tracker-bot@kernel.org>
+Date:   Wed, 16 Jan 2019 06:00:01 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Pls ignore this duplicated patch.
+The pull request you sent on Tue, 15 Jan 2019 17:24:58 -0500:
 
-On 2019/1/16 13:33, YueHaibing wrote:
-> Fix the follow sparse warning:
-> 
-> security/security.c:533:5: warning: symbol 'lsm_task_alloc' was not declared. Should it be static?
-> security/security.c:554:5: warning: symbol 'lsm_ipc_alloc' was not declared. Should it be static?
-> security/security.c:575:5: warning: symbol 'lsm_msg_msg_alloc' was not declared. Should it be static?
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  security/security.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/security.c b/security/security.c
-> index 9a98c52..750d3f3 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -530,7 +530,7 @@ int lsm_inode_alloc(struct inode *inode)
->   *
->   * Returns 0, or -ENOMEM if memory can't be allocated.
->   */
-> -int lsm_task_alloc(struct task_struct *task)
-> +static int lsm_task_alloc(struct task_struct *task)
->  {
->  	if (blob_sizes.lbs_task == 0) {
->  		task->security = NULL;
-> @@ -551,7 +551,7 @@ int lsm_task_alloc(struct task_struct *task)
->   *
->   * Returns 0, or -ENOMEM if memory can't be allocated.
->   */
-> -int lsm_ipc_alloc(struct kern_ipc_perm *kip)
-> +static int lsm_ipc_alloc(struct kern_ipc_perm *kip)
->  {
->  	if (blob_sizes.lbs_ipc == 0) {
->  		kip->security = NULL;
-> @@ -572,7 +572,7 @@ int lsm_ipc_alloc(struct kern_ipc_perm *kip)
->   *
->   * Returns 0, or -ENOMEM if memory can't be allocated.
->   */
-> -int lsm_msg_msg_alloc(struct msg_msg *mp)
-> +static int lsm_msg_msg_alloc(struct msg_msg *mp)
->  {
->  	if (blob_sizes.lbs_msg_msg == 0) {
->  		mp->security = NULL;
-> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20190115
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/47bfa6d9dc8c060bf56554a465c9031e286d2f80
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
