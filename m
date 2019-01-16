@@ -2,132 +2,87 @@ Return-Path: <SRS0=9+Rk=PY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC63BC43612
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 22:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B6BC43387
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 23:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37A8206C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 22:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A5BD206C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jan 2019 23:30:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbfAPWwU (ORCPT
+        id S1727204AbfAPXaM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 17:52:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53604 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729297AbfAPWwT (ORCPT
+        Wed, 16 Jan 2019 18:30:12 -0500
+Received: from namei.org ([65.99.196.166]:56526 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726994AbfAPXaM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 17:52:19 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0GMmive123404
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Jan 2019 17:52:18 -0500
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q2ck9ae5k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Jan 2019 17:52:18 -0500
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Wed, 16 Jan 2019 22:52:17 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 16 Jan 2019 22:52:13 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0GMqCsY20381776
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 16 Jan 2019 22:52:12 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78F1AC6061;
-        Wed, 16 Jan 2019 22:52:12 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7E9D7C606E;
-        Wed, 16 Jan 2019 22:52:09 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.80.211.227])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Wed, 16 Jan 2019 22:52:09 +0000 (GMT)
-References: <20190116213102.25268-1-jarkko.sakkinen@linux.intel.com>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Shuah Khan <shuah@kernel.org>,
-        Tadeusz Struk <tadeusz.struk@intel.com>
-Subject: Re: [PATCH,RESEND] selftests: add TPM 2.0 tests
-In-reply-to: <20190116213102.25268-1-jarkko.sakkinen@linux.intel.com>
-Date:   Wed, 16 Jan 2019 20:52:03 -0200
+        Wed, 16 Jan 2019 18:30:12 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x0GNU11t015924;
+        Wed, 16 Jan 2019 23:30:01 GMT
+Date:   Thu, 17 Jan 2019 10:30:01 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+cc:     John Johansen <john.johansen@canonical.com>,
+        linux-security-module@vger.kernel.org, serge@hallyn.com
+Subject: Re: WARNING in apparmor_cred_free
+In-Reply-To: <546a62d3-29a9-f8cf-09f7-ab760b50dc19@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.1901171029450.15082@namei.org>
+References: <0000000000007f604f057f2b8509@google.com> <6213e783-4377-489d-cdfb-1a83f4497076@schaufler-ca.com> <b0d2811e-87e4-21d4-c33a-2d2012a906cc@canonical.com> <2ccf6281-3f4b-a94a-ed71-31905e583fa6@schaufler-ca.com> <234c868b-4521-0707-a135-d8c24bc179bd@schaufler-ca.com>
+ <546a62d3-29a9-f8cf-09f7-ab760b50dc19@schaufler-ca.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19011622-0004-0000-0000-000014D3F603
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010420; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01147494; UDB=6.00597738; IPR=6.00927789;
- MB=3.00025163; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-16 22:52:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011622-0005-0000-0000-00008A3FFD2E
-Message-Id: <87r2dcqkq4.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-16_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=718 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901160182
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, 11 Jan 2019, Casey Schaufler wrote:
 
-Hello,
+> >From 1a2a99f3cfd069baf9aa0ef91529558bcbe64c14 Mon Sep 17 00:00:00 2001
+> From: Casey Schaufler <casey@schaufler-ca.com>
+> Date: Fri, 11 Jan 2019 17:37:56 -0800
+> Subject: [PATCH 2/2] AppArmor: Fix credential blob assertions
+> 
+> The assertions for NULL credential blobs don't take blob
+> offsetting into account. Check the raw data, not th eoffset value.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> writes:
+JJ: can you ack this if it loogs good to you?
 
-> Added the tests that I've been using for testing TPM 2.0 functionality
-> for long time but have out-of-tree so far residing in
->
-> https://github.com/jsakkine-intel/tpm2-scripts
->
-> Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Acked-By: Joey Pabalinas <joeypabalinas@gmail.com>
 > ---
->  tools/testing/selftests/Makefile           |   1 +
->  tools/testing/selftests/tpm2/Makefile      |   3 +
->  tools/testing/selftests/tpm2/test_smoke.sh |   4 +
->  tools/testing/selftests/tpm2/test_space.sh |   4 +
->  tools/testing/selftests/tpm2/tpm2.py       | 696 +++++++++++++++++++++
->  tools/testing/selftests/tpm2/tpm2_tests.py | 227 +++++++
->  6 files changed, 935 insertions(+)
->  create mode 100644 tools/testing/selftests/tpm2/Makefile
->  create mode 100755 tools/testing/selftests/tpm2/test_smoke.sh
->  create mode 100755 tools/testing/selftests/tpm2/test_space.sh
->  create mode 100644 tools/testing/selftests/tpm2/tpm2.py
->  create mode 100644 tools/testing/selftests/tpm2/tpm2_tests.py
->
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index 1a2bd15c5b6e..e4556132cbc4 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -47,6 +47,7 @@ TARGETS += sysctl
->  ifneq (1, $(quicktest))
->  TARGETS += timers
->  endif
-> +TARGETS += tpm
-
-This should be tpm2, right?
-
->  TARGETS += user
->  TARGETS += vm
->  TARGETS += x86
+>  security/apparmor/include/cred.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/apparmor/include/cred.h b/security/apparmor/include/cred.h
+> index b9504a05fddc..29cef1b5687c 100644
+> --- a/security/apparmor/include/cred.h
+> +++ b/security/apparmor/include/cred.h
+> @@ -27,7 +27,7 @@ static inline struct aa_label *cred_label(const struct cred *cred)
+>  {
+>  	struct aa_label **blob = cred->security + apparmor_blob_sizes.lbs_cred;
+>  
+> -	AA_BUG(!blob);
+> +	AA_BUG(!cred->security);
+>  	return *blob;
+>  }
+>  
+> @@ -36,7 +36,7 @@ static inline void set_cred_label(const struct cred *cred,
+>  {
+>  	struct aa_label **blob = cred->security + apparmor_blob_sizes.lbs_cred;
+>  
+> -	AA_BUG(!blob);
+> +	AA_BUG(!cred->security);
+>  	*blob = label;
+>  }
+>  
+> 
 
 -- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+James Morris
+<jmorris@namei.org>
 
