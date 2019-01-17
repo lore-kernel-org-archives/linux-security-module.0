@@ -2,137 +2,182 @@ Return-Path: <SRS0=7rO8=PZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3559FC43612
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 16:38:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCBBC43612
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 17:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3E0B20851
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 16:38:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="Cltdg5ZJ"
+	by mail.kernel.org (Postfix) with ESMTP id 16D4E20859
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 17:41:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728728AbfAQQiB (ORCPT
+        id S1728673AbfAQRln (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Jan 2019 11:38:01 -0500
-Received: from upbd19pa12.eemsg.mail.mil ([214.24.27.87]:31703 "EHLO
-        upbd19pa12.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726854AbfAQQiB (ORCPT
+        Thu, 17 Jan 2019 12:41:43 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53544 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729140AbfAQRln (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Jan 2019 11:38:01 -0500
-X-EEMSG-check-017: 182453021|UPBD19PA12_EEMSG_MP12.csd.disa.mil
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by upbd19pa12.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 17 Jan 2019 16:37:54 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1547743074; x=1579279074;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=ExqSTP7dHPREs1Kx11in364X3aory7Q7qTK1CTknpgU=;
-  b=Cltdg5ZJCE+1/A9uSLfxWz+CVjn8J+imqZqfMSaKRT7uO4ugQfSqQZk0
-   lZYHqRRj0bGhQ/Ap7qu8t8Cl9RvFP5Lp/BGyuax0An+xB83KNaOnntt4/
-   7gQmu7GWjvJP9jRyfg43gexCytmu+x9ZJ5T3X1kgyJQ1ZYGnw8BgyL+q3
-   N0ZyM26KAdHkVtC+PdHuqe5XaSlLYCUaKG6/6CHl3ubTGUt7fE+EE/hVP
-   ke0NXjtHE/oPXcF8/944Y5FRjc0dXhacMTMHWbUDaadDkejril+FjbR2+
-   YuXUZkd2D7wZOtbZ64rWFSlpSxOOtzfpVZUDUB78+JBzSVLQsUNsTkcDv
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.56,489,1539648000"; 
-   d="scan'208";a="19627353"
-IronPort-PHdr: =?us-ascii?q?9a23=3ANNaF+hxv5rRVS9HXCy+O+j09IxM/srCxBDY+r6?=
- =?us-ascii?q?Qd0ukXLvad9pjvdHbS+e9qxAeQG9mDu7Qc06L/iOPJYSQ4+5GPsXQPItRndi?=
- =?us-ascii?q?QuroEopTEmG9OPEkbhLfTnPGQQFcVGU0J5rTngaRAGUMnxaEfPrXKs8DUcBg?=
- =?us-ascii?q?vwNRZvJuTyB4Xek9m72/q99pHPYAhEniaxba9vJxiqsAvdsdUbj5F/Iagr0B?=
- =?us-ascii?q?vJpXVIe+VSxWx2IF+Yggjx6MSt8pN96ipco/0u+dJOXqX8ZKQ4UKdXDC86PG?=
- =?us-ascii?q?Av5c3krgfMQA2S7XYBSGoWkx5IAw/Y7BHmW5r6ryX3uvZh1CScIMb7Vq4/Vy?=
- =?us-ascii?q?i84Kh3SR/okCYHOCA/8GHLkcx7kaZXrAu8qxBj34LYZYeYO/RkfqPZYNgUW2?=
- =?us-ascii?q?xPUMhMXCBFG4+wcZcDA+8HMO1FrYfyukEOoAOjCweyCuPhyjxGiHH40qI10e?=
- =?us-ascii?q?suDQ7I0Rc8H98NqnnYsMn5OakQXO2z0aLGzS/Db/RT2Trl9YbIbg4uoemMXb?=
- =?us-ascii?q?1ud8ra1FQhFwbfgVWUrYzqITOU3fkKvmiA8uVgTvmii3Inqg5tojivwd0gio?=
- =?us-ascii?q?/Sho0P0FzE+iJ5wJgsKNC+VUV1YsakHYNNuyyVOIZ6WMMvT3xytCokxbAKp4?=
- =?us-ascii?q?S3cDUMxZ863RDQceaHfJKN4h/7UeaRJip3i2x9dbKkghay7VCgyurhVsmoyF?=
- =?us-ascii?q?pKrjRKkt3Ltn0Vyxzc8NKHSvpg/ke6wzqPywDS5f1EIUAzj6bbLYIuwqUsmZ?=
- =?us-ascii?q?YJtETDHyv2lF33jK+QaEok5vCl5/nob7jpvJORN5J4hhvgPqkhhMCzG/k0Ph?=
- =?us-ascii?q?ALX2eB+OS80LPj/Vf+QLVPlvA2ibTWsIvBKMQHpq+2Hw9V0oE55xa5FDepys?=
- =?us-ascii?q?4UnXYALFJbYB6HlZTmO0nSIPDkCveym0iskDVwyvDFILLhGJPNIWbHkLv7er?=
- =?us-ascii?q?Z98UFcwhIpzd9D/5JUFq0BIPXrV0Dsut3XFBs5Mxe0w+v8EtVyyJ4RWWKVDa?=
- =?us-ascii?q?+FKq/drViI5uc3KemWeIAVoCr9K+Qi5/P2in85nFgdfbKv3ZQNdH+3AO9rI1?=
- =?us-ascii?q?+HbnXxgtcOC3sKshAiQ+ztjV2ISSRTaGqqX6Ig+jE7D5qrDZzdSYCpgbyB2j?=
- =?us-ascii?q?q7H5JNa2BYBVCDD23oe5+HW/gSciKSJNFukjgeWbimUY8h2gmktBXmxLp/Mu?=
- =?us-ascii?q?rU5ioYuIr71Ndv+u3TkQo/9SRuAMSA12GBVmR0nmQPRz8swq9zu1ByylCG0a?=
- =?us-ascii?q?JgmfxXCcRT5+9VUgc9LZPcy+16C9bvWgPOZ9uJU0ipTcm7ATErT9Ix398Pb1?=
- =?us-ascii?q?94G9Wlkx/Dwi6qDKEOmryVC5w77Ljc02LyJ8lj0XbG0rcuj108TstIL22mib?=
- =?us-ascii?q?Z19xLPCI7Rj0WZi6GqeLwT3C7X6miDwmmOvEFDXQ50UKXFW20fZ0TYrdT++0?=
- =?us-ascii?q?PCSaKhBq47MgtAzs6CLLFGatrzjVVJXP3jIsjRY3qtm2esAhaF3reMbIvse2?=
- =?us-ascii?q?UA0yTREUYEkxsO8nmYKwgxGCOhrnnADDxhC13veVng8epgp3OhSE870QWKY1?=
- =?us-ascii?q?dm17qv9R4fneacRO8L3rIYpCchrC15E0qy39LMDNqAuhJhfL5HbNMj71dIy3?=
- =?us-ascii?q?jZuxZ+PpO+NaBigEARcwBts0PpzRV3BdYIrc9/kH4o0Qw6Ca+fmAdddRub0I?=
- =?us-ascii?q?r2N7mRLXP9qlTnR6fQ21zamOmf/rwPoKA0tFznpwGBDEcu83x7ldJS1i3PyI?=
- =?us-ascii?q?/NCV8pTZ/pUksxvyN/rrXebzh1s5jYzlVwIKK0tXnEwNtvC+w7nEXzN+xDOb?=
- =?us-ascii?q?+JQVehW/YRANKjfalzwQCk?=
-X-IPAS-Result: =?us-ascii?q?A2BKAAARrkBc/wHyM5BjGgEBAQEBAgEBAQEHAgEBAQGBZ?=
- =?us-ascii?q?YFbKYE1M4Qok31MAQEBAQEBBoE1iTCQSTgBhEACglgiOBIBAwEBAQEBAQIBb?=
- =?us-ascii?q?CiCOikBgmcBBSMPAQVBEAsOCgICJgICVwYBDAgBAYJfP4F1DawBgS+FQ4Rxg?=
- =?us-ascii?q?QuLNBd4gQeBOIJrhFqDMIJXAolOhzaQMloJkg0GGIFlhSqKfIoAkmshgVYrC?=
- =?us-ascii?q?AIYCCEPgyiCJheOPCEDgTUBAYdfgk0BAQ?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 17 Jan 2019 16:37:53 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x0HGbphK023995;
-        Thu, 17 Jan 2019 11:37:51 -0500
-Subject: Re: [PATCH 0/3] Allow initializing the kernfs node's secctx based on
- its parent
-To:     Tejun Heo <tj@kernel.org>, Daniel Walsh <dwalsh@redhat.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-References: <20190109091028.24485-1-omosnace@redhat.com>
- <20190111205053.GV2509588@devbig004.ftw2.facebook.com>
- <CAFqZXNu-bHGmUi80UiyW3djcbedycC+0KUyiQuv9-8b+WmrYuA@mail.gmail.com>
- <CAFqZXNsxVpxXHQ4qOZQpnpck24O5ofskLgU-B0ahbDK8MgxGCA@mail.gmail.com>
- <64977013-e2a5-809d-7a3f-bffbda9276aa@redhat.com>
- <20190117161521.GA50184@devbig004.ftw2.facebook.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <46abb960-f047-c2eb-96a8-72114cc44c86@tycho.nsa.gov>
-Date:   Thu, 17 Jan 2019 11:39:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190117161521.GA50184@devbig004.ftw2.facebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 17 Jan 2019 12:41:43 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0HHXkXp089468
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Jan 2019 12:41:42 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q2u5m184d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Jan 2019 12:41:42 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Thu, 17 Jan 2019 17:41:41 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 17 Jan 2019 17:41:38 -0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0HHfbjf8060994
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Jan 2019 17:41:38 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D817A28059;
+        Thu, 17 Jan 2019 17:41:37 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C128428065;
+        Thu, 17 Jan 2019 17:41:37 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 17 Jan 2019 17:41:37 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v2 2/5] tpm: ppi: rename TPM_PPI_REVISION_ID to TPM_PPI_REVISION_ID_1
+Date:   Thu, 17 Jan 2019 12:41:32 -0500
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20190117174135.2117937-1-stefanb@linux.ibm.com>
+References: <20190117174135.2117937-1-stefanb@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19011717-0052-0000-0000-0000037A06D1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010425; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000275; SDB=6.01147865; UDB=6.00597964; IPR=6.00928163;
+ MB=3.00025175; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-17 17:41:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011717-0053-0000-0000-00005F80BC89
+Message-Id: <20190117174135.2117937-3-stefanb@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901170125
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/17/19 11:15 AM, Tejun Heo wrote:
-> Hello,
-> 
-> On Thu, Jan 17, 2019 at 10:01:23AM -0500, Daniel Walsh wrote:
->> The above comment is correct.  We want to be able to run a container
->> where we hand it control over a limited subdir of the cgroups hierachy.
->> We can currently do this and label the content correctly, but when
->> subdirs of the directory get created by processes inside the container
->> they do not get the correct label.  For example we add a label like
->> system_u:object_r:container_file_t:s0 to a directory but when the
->> process inside of the container creates a fd within this directory the
->> kernel says the label is the default label for cgroups
->> system_u:object_r:cgroup_t:s0.  This forces us to write looser policy
->> that from an SELinux point of view allows a process within the container
->> to write anywhere on the cgroup file system, rather then just the
->> designated directories.
-> 
-> Can you please go into a bit more details on why the existing
-> cgroup delegation model isn't enough?
+TPM PPI 1.3 introduces a function revision 2 for some functions. So,
+rename the existing TPM_PPI_REVISION_ID to TPM_PPI_REVISION_ID_1.
 
-I would hazard a guess that it is because the existing cgroup delegation 
-model is based on user IDs and discretionary access control (DAC), 
-whereas they are using per-container SELinux security contexts and 
-mandatory access control (MAC) to enforce the separation of containers 
-irrespective of UID and DAC.  Optimally both would be supported by 
-cgroup, as DAC and MAC have different properties and use cases.
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Tested-by: David Safford <david.safford@ge.com>
+---
+ drivers/char/tpm/tpm_ppi.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
+index 90b69aeadc99..88ecdae1df03 100644
+--- a/drivers/char/tpm/tpm_ppi.c
++++ b/drivers/char/tpm/tpm_ppi.c
+@@ -20,7 +20,7 @@
+ #include <linux/acpi.h>
+ #include "tpm.h"
+ 
+-#define TPM_PPI_REVISION_ID	1
++#define TPM_PPI_REVISION_ID_1	1
+ #define TPM_PPI_FN_VERSION	1
+ #define TPM_PPI_FN_SUBREQ	2
+ #define TPM_PPI_FN_GETREQ	3
+@@ -61,7 +61,7 @@ static ssize_t tpm_show_ppi_request(struct device *dev,
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+ 
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETREQ,
+-			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID);
++			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID_1);
+ 	if (!obj)
+ 		return -ENXIO;
+ 
+@@ -103,7 +103,7 @@ static ssize_t tpm_store_ppi_request(struct device *dev,
+ 	 * version 1.1
+ 	 */
+ 	if (acpi_check_dsm(chip->acpi_dev_handle, &tpm_ppi_guid,
+-			   TPM_PPI_REVISION_ID, 1 << TPM_PPI_FN_SUBREQ2))
++			   TPM_PPI_REVISION_ID_1, 1 << TPM_PPI_FN_SUBREQ2))
+ 		func = TPM_PPI_FN_SUBREQ2;
+ 
+ 	/*
+@@ -125,7 +125,7 @@ static ssize_t tpm_store_ppi_request(struct device *dev,
+ 	}
+ 
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, func, ACPI_TYPE_INTEGER,
+-			   &argv4, TPM_PPI_REVISION_ID);
++			   &argv4, TPM_PPI_REVISION_ID_1);
+ 	if (!obj) {
+ 		return -ENXIO;
+ 	} else {
+@@ -169,7 +169,7 @@ static ssize_t tpm_show_ppi_transition_action(struct device *dev,
+ 	if (strcmp(chip->ppi_version, "1.2") < 0)
+ 		obj = &tmp;
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETACT,
+-			   ACPI_TYPE_INTEGER, obj, TPM_PPI_REVISION_ID);
++			   ACPI_TYPE_INTEGER, obj, TPM_PPI_REVISION_ID_1);
+ 	if (!obj) {
+ 		return -ENXIO;
+ 	} else {
+@@ -195,7 +195,7 @@ static ssize_t tpm_show_ppi_response(struct device *dev,
+ 	struct tpm_chip *chip = to_tpm_chip(dev);
+ 
+ 	obj = tpm_eval_dsm(chip->acpi_dev_handle, TPM_PPI_FN_GETRSP,
+-			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID);
++			   ACPI_TYPE_PACKAGE, NULL, TPM_PPI_REVISION_ID_1);
+ 	if (!obj)
+ 		return -ENXIO;
+ 
+@@ -263,7 +263,7 @@ static ssize_t show_ppi_operations(acpi_handle dev_handle, char *buf, u32 start,
+ 		"User not required",
+ 	};
+ 
+-	if (!acpi_check_dsm(dev_handle, &tpm_ppi_guid, TPM_PPI_REVISION_ID,
++	if (!acpi_check_dsm(dev_handle, &tpm_ppi_guid, TPM_PPI_REVISION_ID_1,
+ 			    1 << TPM_PPI_FN_GETOPR))
+ 		return -EPERM;
+ 
+@@ -272,7 +272,7 @@ static ssize_t show_ppi_operations(acpi_handle dev_handle, char *buf, u32 start,
+ 		tmp.integer.value = i;
+ 		obj = tpm_eval_dsm(dev_handle, TPM_PPI_FN_GETOPR,
+ 				   ACPI_TYPE_INTEGER, &argv,
+-				   TPM_PPI_REVISION_ID);
++				   TPM_PPI_REVISION_ID_1);
+ 		if (!obj) {
+ 			return -ENOMEM;
+ 		} else {
+@@ -338,12 +338,13 @@ void tpm_add_ppi(struct tpm_chip *chip)
+ 		return;
+ 
+ 	if (!acpi_check_dsm(chip->acpi_dev_handle, &tpm_ppi_guid,
+-			    TPM_PPI_REVISION_ID, 1 << TPM_PPI_FN_VERSION))
++			    TPM_PPI_REVISION_ID_1, 1 << TPM_PPI_FN_VERSION))
+ 		return;
+ 
+ 	/* Cache PPI version string. */
+ 	obj = acpi_evaluate_dsm_typed(chip->acpi_dev_handle, &tpm_ppi_guid,
+-				      TPM_PPI_REVISION_ID, TPM_PPI_FN_VERSION,
++				      TPM_PPI_REVISION_ID_1,
++				      TPM_PPI_FN_VERSION,
+ 				      NULL, ACPI_TYPE_STRING);
+ 	if (obj) {
+ 		strlcpy(chip->ppi_version, obj->string.pointer,
+-- 
+2.13.6
+
