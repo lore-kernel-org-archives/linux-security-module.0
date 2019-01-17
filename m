@@ -2,71 +2,114 @@ Return-Path: <SRS0=7rO8=PZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D711C43387
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 13:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DEFC43612
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 16:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5F0720652
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 13:22:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rDjP3gJF"
+	by mail.kernel.org (Postfix) with ESMTP id E6D6620856
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 16:15:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547741727;
+	bh=HIfnWvjJx1XbbbnFAkh/KOSTB2ZU7DTZKtdKA1Ftftg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eeTzu6t7YRyRTpVr7k8Vw1Fq784Q6rFXEVUGKtS3TsU1mAg+Q30sFlmebZ5DwO+nz
+	 9IkekE7TG0RHUFQxgLt5ajPXQFl4eEM98Na54A12X1BosZrQtjXK5Z1vkW+ioT2vh9
+	 hBhhD8WDJgIOdXpbRnHV/rw2DZ3zLM/ZB6Hw9AOE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfAQNWB (ORCPT
+        id S1728722AbfAQQP0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Jan 2019 08:22:01 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48734 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbfAQNWB (ORCPT
+        Thu, 17 Jan 2019 11:15:26 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:35935 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728587AbfAQQPZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Jan 2019 08:22:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DkHpwPUi2K8KLiBMzJ7UNF+DC//E0zU2Ao0R/H52uDU=; b=rDjP3gJFlCgLvwC3eBantO51y
-        7KgH1OlVwLWaJCxp+P8Zhp4cWWbNF1frTAEki237yiApjS7vG36hJSicIiJyZkYMnNrc4OWDhHdjF
-        AR5h/gvbAzvogtpEjJ2KzlWhajzDeK3sx0RAL3eU3SmFpp4awnzN5lx6Cc5O710Iyxf+guVMXkNwr
-        HfPZRWFk6CMBM0wuMcBfJElRyndfEIT0cAsaaJKg+cKvu1v8DFHKGRRWDRUCyx99nw1A64fyRRSb8
-        Puw2gi38jxqbnZF1XWBQsLvG/NEUaUsUS+xLFQjalysGanTQGvCiJTtV7X6NotjZYkS6TjutpdiMY
-        2052e2Dbg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gk7br-0001cf-Mg; Thu, 17 Jan 2019 13:21:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7073C2026562B; Thu, 17 Jan 2019 14:21:26 +0100 (CET)
-Date:   Thu, 17 Jan 2019 14:21:26 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com
-Subject: Re: [PATCH 00/17] Merge text_poke fixes and executable lockdowns
-Message-ID: <20190117132126.GI10486@hirez.programming.kicks-ass.net>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+        Thu, 17 Jan 2019 11:15:25 -0500
+Received: by mail-yb1-f194.google.com with SMTP id a190so3211301ybg.3;
+        Thu, 17 Jan 2019 08:15:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RqL0AEOOBDO3n45l+z2WTVuBS8xl6jVyCQzl3EMFoow=;
+        b=Fl6LDEEB5XmogMl5LiLRgs7JXcWSvByTi+ef8+DHWWpuEuT8tAxmDuZjeWI9x5heiv
+         Ttt2knqPOu2ave85iu/FkuXl7tqo8CaLU4gN55gVBD2s/lbjRabQlD00eLVnKe27jzeG
+         EB+wqmRqNC3Va/8x0nE/f68YWpGPOWKhPREXipgCdGTZ+fFE1d8O12Jk2GYqAMIghlAk
+         H3htO3NSCuKvvuEmuQdGY+PvaTylQRkOkTaf21mTDJdNHDy2sooNS0PSSxrsOgopZ3JP
+         BvEvsNSXYRNYcEQ+vGRkqtk73NmgeRHIQwHmLv8L4NZiMIu8PheWjjhpg1XPDPc1W6Zs
+         DJIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=RqL0AEOOBDO3n45l+z2WTVuBS8xl6jVyCQzl3EMFoow=;
+        b=Oi2NVb5jgtTYI/MjwnY/ahI24OxjQYz/BCUGTOLQz4ekj2MqFEHEbrZbWlg4zxN76G
+         mqNWcISkRHWdLhKAaZKGNvkg9Rui6DWwKeYEkAWhqjZez3ZJ7QZsJVWcN2bbNJLIAeT6
+         zx4XgCWxcfbEmg9d9Hj5PYplwR/sipUbzM8gumVG0M6tx99LMh8StpIJbLvKMPmICYy2
+         alLykSXif9mdog8dxQNwEG1BfnqM0sJtpUOuFDY6l4217Jg/hn3wppkeRkLetC9Nah/Q
+         dquncFSKvS17/4yVGMrvEy25k24AbhyljjXOMIFllSzAb254HVkdGHUZuLyKSUt+wBjP
+         aSkg==
+X-Gm-Message-State: AJcUukfJejBeE2fMO2zlQIuHLIZejtuyj81zawFr4xUl+OBj05b+Zhat
+        cy6Y4YM2d3zdxJY+wit7ZFQ=
+X-Google-Smtp-Source: ALg8bN62O9M6awgXozA782ttAFtFs74TJPWdsLOuQE4ktvb74Vv0ftusuvTmD04VzYOPsqD4BXvyCg==
+X-Received: by 2002:a25:424b:: with SMTP id p72mr2483857yba.19.1547741724232;
+        Thu, 17 Jan 2019 08:15:24 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:106a])
+        by smtp.gmail.com with ESMTPSA id f203sm873514ywf.105.2019.01.17.08.15.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 17 Jan 2019 08:15:23 -0800 (PST)
+Date:   Thu, 17 Jan 2019 08:15:21 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Daniel Walsh <dwalsh@redhat.com>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH 0/3] Allow initializing the kernfs node's secctx based on
+ its parent
+Message-ID: <20190117161521.GA50184@devbig004.ftw2.facebook.com>
+References: <20190109091028.24485-1-omosnace@redhat.com>
+ <20190111205053.GV2509588@devbig004.ftw2.facebook.com>
+ <CAFqZXNu-bHGmUi80UiyW3djcbedycC+0KUyiQuv9-8b+WmrYuA@mail.gmail.com>
+ <CAFqZXNsxVpxXHQ4qOZQpnpck24O5ofskLgU-B0ahbDK8MgxGCA@mail.gmail.com>
+ <64977013-e2a5-809d-7a3f-bffbda9276aa@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <64977013-e2a5-809d-7a3f-bffbda9276aa@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hello,
 
+On Thu, Jan 17, 2019 at 10:01:23AM -0500, Daniel Walsh wrote:
+> The above comment is correct.  We want to be able to run a container
+> where we hand it control over a limited subdir of the cgroups hierachy. 
+> We can currently do this and label the content correctly, but when
+> subdirs of the directory get created by processes inside the container
+> they do not get the correct label.  For example we add a label like
+> system_u:object_r:container_file_t:s0 to a directory but when the
+> process inside of the container creates a fd within this directory the
+> kernel says the label is the default label for cgroups
+> system_u:object_r:cgroup_t:s0.  This forces us to write looser policy
+> that from an SELinux point of view allows a process within the container
+> to write anywhere on the cgroup file system, rather then just the
+> designated directories.
 
-1-7,11-12
+Can you please go into a bit more details on why the existing
+cgroup delegation model isn't enough?
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Thanks.
+
+-- 
+tejun
