@@ -2,155 +2,71 @@ Return-Path: <SRS0=7rO8=PZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DFDC43387
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A03C43387
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 03:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C3EF205C9
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 00:36:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52A4E205C9
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 03:40:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725889AbfAQAgK (ORCPT
+        id S1728074AbfAQDkY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:36:10 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42206 "EHLO mga05.intel.com"
+        Wed, 16 Jan 2019 22:40:24 -0500
+Received: from namei.org ([65.99.196.166]:56592 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729776AbfAQAdg (ORCPT
+        id S1727973AbfAQDkY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:33:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="292166007"
-Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:34 -0800
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH 00/17] Merge text_poke fixes and executable lockdowns
-Date:   Wed, 16 Jan 2019 16:32:42 -0800
-Message-Id: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 16 Jan 2019 22:40:24 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x0H3eMuJ028638;
+        Thu, 17 Jan 2019 03:40:22 GMT
+Date:   Thu, 17 Jan 2019 14:40:22 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] Security subsystem fixes for v5.0-rc3
+Message-ID: <alpine.LRH.2.21.1901171437560.28339@namei.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patchset improves several overlapping issues around stale TLB
-entries and W^X violations. It is combined from a slightly tweaked
-"x86/alternative: text_poke() enhancements v7" [1] and a next version of
-the "Don’t leave executable TLB entries to freed pages v2" [2]
-patchsets that were conflicting.
+Please pull these fixes for the security subsystem.
 
-The related issues that this fixes:
-1. Fixmap PTEs that are used for patching are available for access from
-   other cores and might be exploited. They are not even flushed from
-   the TLB in remote cores, so the risk is even higher. Address this
-   issue by introducing a temporary mm that is only used during
-   patching. Unfortunately, due to init ordering, fixmap is still used
-   during boot-time patching. Future patches can eliminate the need for
-   it.
-2. Missing lockdep assertion to ensure text_mutex is taken. It is
-   actually not always taken, so fix the instances that were found not
-   to take the lock (although they should be safe even without taking
-   the lock).
-3. Module_alloc returning memory that is RWX until a module is finished
-   loading.
-4. Sometimes when memory is freed via the module subsystem, an
-   executable permissioned TLB entry can remain to a freed page. If the
-   page is re-used to back an address that will receive data from
-   userspace, it can result in user data being mapped as executable in
-   the kernel. The root of this behavior is vfree lazily flushing the
-   TLB, but not lazily freeing the underlying pages.
+The first (by Casey actually) fixes a regression introduced with the LSM 
+stacking changes.
 
-The new changes from "Don’t leave executable TLB entries to freed pages
-v2":
- - Add support for case of hibernate trying to save an unmapped page
-   on the directmap. (Ard Biesheuvel)
- - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
- - Avoid changing deferred free code by moving modules init free to work
-   queue (Andy Lutomirski)
- - Plug in new flag for kprobes and ftrace
- - More arch generic names for set_pages functions (Ard Biesheuvel)
- - Fix for TLB not always flushing the directmap (Nadav Amit)
- 
-New changes from from "x86/alternative: text_poke() enhancements v7"
- - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
- - Remove text_poke usage from ftrace (Nadav)
- 
-[1] https://lkml.org/lkml/2018/12/5/200
-[2] https://lkml.org/lkml/2018/12/11/1571
 
-Andy Lutomirski (1):
-  x86/mm: temporary mm struct
+The following changes since commit 7939f8beecf1cfb10d255be65bfbd3793fae82a1:
 
-Nadav Amit (12):
-  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-  x86/jump_label: Use text_poke_early() during early init
-  fork: provide a function for copying init_mm
-  x86/alternative: initializing temporary mm for patching
-  x86/alternative: use temporary mm for text poking
-  x86/kgdb: avoid redundant comparison of patched code
-  x86/ftrace: set trampoline pages as executable
-  x86/kprobes: Instruction pages initialization enhancements
-  x86: avoid W^X being broken during modules loading
-  x86/jump-label: remove support for custom poker
-  x86/alternative: Remove the return value of text_poke_*()
-  module: Prevent module removal racing with text_poke()
+  Merge tag 'trace-v5.0-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace (2019-01-16 05:28:26 +1200)
 
-Rick Edgecombe (4):
-  Add set_alias_ function and x86 implementation
-  mm: Make hibernate handle unmapped pages
-  vmalloc: New flags for safe vfree on special perms
-  Plug in new special vfree flag
+are available in the Git repository at:
 
- arch/Kconfig                         |   4 +
- arch/x86/Kconfig                     |   1 +
- arch/x86/include/asm/fixmap.h        |   2 -
- arch/x86/include/asm/mmu_context.h   |  32 +++++
- arch/x86/include/asm/pgtable.h       |   3 +
- arch/x86/include/asm/set_memory.h    |   3 +
- arch/x86/include/asm/text-patching.h |   7 +-
- arch/x86/kernel/alternative.c        | 197 ++++++++++++++++++++-------
- arch/x86/kernel/ftrace.c             |  15 +-
- arch/x86/kernel/jump_label.c         |  19 ++-
- arch/x86/kernel/kgdb.c               |  25 +---
- arch/x86/kernel/kprobes/core.c       |  19 ++-
- arch/x86/kernel/module.c             |   2 +-
- arch/x86/mm/init_64.c                |  36 +++++
- arch/x86/mm/pageattr.c               |  16 ++-
- arch/x86/xen/mmu_pv.c                |   2 -
- include/linux/filter.h               |  18 +--
- include/linux/mm.h                   |  18 +--
- include/linux/sched/task.h           |   1 +
- include/linux/set_memory.h           |  10 ++
- include/linux/vmalloc.h              |  13 ++
- init/main.c                          |   3 +
- kernel/bpf/core.c                    |   1 -
- kernel/fork.c                        |  24 +++-
- kernel/module.c                      |  87 ++++++------
- mm/page_alloc.c                      |   6 +-
- mm/vmalloc.c                         | 122 ++++++++++++++---
- 27 files changed, 497 insertions(+), 189 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.0-rc2
 
--- 
-2.17.1
+for you to fetch changes up to a5795fd38ee8194451ba3f281f075301a3696ce2:
+
+  LSM: Check for NULL cred-security on free (2019-01-16 15:41:11 -0800)
+
+----------------------------------------------------------------
+James Morris (1):
+      LSM: Check for NULL cred-security on free
+
+Kees Cook (1):
+      Yama: Check for pid death before checking ancestry
+
+Tycho Andersen (1):
+      seccomp: fix UAF in user-trap code
+
+ kernel/seccomp.c         | 4 ++++
+ security/security.c      | 7 +++++++
+ security/yama/yama_lsm.c | 4 +++-
+ 3 files changed, 14 insertions(+), 1 deletion(-)
+
 
