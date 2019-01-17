@@ -2,173 +2,114 @@ Return-Path: <SRS0=7rO8=PZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A91FC43387
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 21:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E13CC43387
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 22:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 142CB20851
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 21:44:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/at1foR"
+	by mail.kernel.org (Postfix) with ESMTP id 2B4FC20855
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 22:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfAQVn7 (ORCPT
+        id S1728476AbfAQWQu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Jan 2019 16:43:59 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44609 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfAQVn7 (ORCPT
+        Thu, 17 Jan 2019 17:16:50 -0500
+Received: from mga02.intel.com ([134.134.136.20]:35205 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728461AbfAQWQu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Jan 2019 16:43:59 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u6so5452316pfh.11;
-        Thu, 17 Jan 2019 13:43:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=j/YjH2gW8sjo78VY49dxoRISJ580wMBefMMOJmwxNxI=;
-        b=b/at1foR8Zn7AJ/HgdQ8lRzqfG2rx8ui//d+tMeliWzapg622K31UeIUyP1Pq53LNl
-         gSr/FdRE/MDGSGnyzGVPDf4nDoekNvE+QSVa/9jL21l8Wcv+iOtFXZ87XFhCeQhU7pfv
-         Al9f7VS8NjQIWsGffawWq1EzftOMMegdfiZaK8BA6UO7yUn7gPIdDurJ2IDyUKXTDic4
-         CH4KaO0BMomZhzpv2pKS8wt4Os0+zU7i9GFHczoMsYV7A9UF2rSo7YihUuJvA4UM7tEn
-         0nYmsCs7PDj/xMvdnzMnVI4pabYqLXVvMxhad9WDJFUGNd92Dhkki3TZ+xawNY6lkC73
-         hzjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=j/YjH2gW8sjo78VY49dxoRISJ580wMBefMMOJmwxNxI=;
-        b=IoMU5A/VE5QujtEmCVWE2mVJpDzbXKILofzaNDGq03vUFeX6b6HLJOLCbH63sMwTi5
-         7m1nd/KsGsDVTXHNwO2nrtLDvxvwMaQtSfijqBFrbCRoQRgORbt/z3C2+IL0C+TV3B5i
-         LlZ4OwboWHY8FsKUuRx5fuP6UvfGLCtRYXCfV1CjxFjxpWaKYX1/vqntVBWwJSt30QHl
-         bXzewYEm0WlQlHWCOxlrt66l8TB7rjxubnv24OAWu3m9v4a9AYJ12G/2Yrm3Am0eo04c
-         HB7I8rDPGz96ZASJdoCryjGHhXtVzLB0UOfpTdneLNXLxBPAY9kxMRUfjBslK3gdgija
-         UQBg==
-X-Gm-Message-State: AJcUukcFpGbDv4n95L3tPn6U3m3XIzna88PToKAMBleVKD+wPR1+ZA5G
-        g6tHD5d543z48n0tzBF0F9k=
-X-Google-Smtp-Source: ALg8bN6HOGsNqvq4jCAfpx6c2TfadH5Og/wDdaHfpQzFTSVApGZshSnGe2dN62tUEyextyulbxth8w==
-X-Received: by 2002:a65:4142:: with SMTP id x2mr14564989pgp.356.1547761437190;
-        Thu, 17 Jan 2019 13:43:57 -0800 (PST)
-Received: from [10.33.115.182] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id o13sm4133028pfk.57.2019.01.17.13.43.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 13:43:56 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH 06/17] x86/alternative: use temporary mm for text poking
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <CALCETrXQ6uxzB3JvO14sEyMA21RcWCbwicL4nUdPBG8KAunxwg@mail.gmail.com>
-Date:   Thu, 17 Jan 2019 13:43:54 -0800
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Thu, 17 Jan 2019 17:16:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jan 2019 14:16:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,489,1539673200"; 
+   d="scan'208";a="312758669"
+Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
+  by fmsmga005.fm.intel.com with ESMTP; 17 Jan 2019 14:16:48 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.62]) by
+ ORSMSX107.amr.corp.intel.com ([169.254.1.32]) with mapi id 14.03.0415.000;
+ Thu, 17 Jan 2019 14:16:48 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "pavel@ucw.cz" <pavel@ucw.cz>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
         "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B8C39C5A-A669-4F80-9BAE-7C11A4379ECF@gmail.com>
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux_dti@icloud.com" <linux_dti@icloud.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 14/17] mm: Make hibernate handle unmapped pages
+Thread-Topic: [PATCH 14/17] mm: Make hibernate handle unmapped pages
+Thread-Index: AQHUrfxTlKrIPpA6H0a8MvhHJCQ6Z6Wzu1IAgADTb4A=
+Date:   Thu, 17 Jan 2019 22:16:47 +0000
+Message-ID: <b224d88d91a5c45c44e176ea06dea558a8939ccf.camel@intel.com>
 References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
- <20190117003259.23141-7-rick.p.edgecombe@intel.com>
- <CALCETrUMAsXoZogEJg7ssv0CO56vzBV2C7VotmWcwNM7iH9Wqw@mail.gmail.com>
- <CALCETrXQ6uxzB3JvO14sEyMA21RcWCbwicL4nUdPBG8KAunxwg@mail.gmail.com>
-To:     Andy Lutomirski <luto@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+         <20190117003259.23141-15-rick.p.edgecombe@intel.com>
+         <20190117093950.GA17930@amd>
+In-Reply-To: <20190117093950.GA17930@amd>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.79]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D73C986B5765A64C9EB296CBE671BE1A@intel.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Jan 17, 2019, at 12:47 PM, Andy Lutomirski <luto@kernel.org> wrote:
->=20
-> On Thu, Jan 17, 2019 at 12:27 PM Andy Lutomirski <luto@kernel.org> =
-wrote:
->> On Wed, Jan 16, 2019 at 4:33 PM Rick Edgecombe
->> <rick.p.edgecombe@intel.com> wrote:
->>> From: Nadav Amit <namit@vmware.com>
->>>=20
->>> text_poke() can potentially compromise the security as it sets =
-temporary
->>> PTEs in the fixmap. These PTEs might be used to rewrite the kernel =
-code
->>> from other cores accidentally or maliciously, if an attacker gains =
-the
->>> ability to write onto kernel memory.
->>=20
->> i think this may be sufficient, but barely.
->>=20
->>> +       pte_clear(poking_mm, poking_addr, ptep);
->>> +
->>> +       /*
->>> +        * __flush_tlb_one_user() performs a redundant TLB flush =
-when PTI is on,
->>> +        * as it also flushes the corresponding "user" address =
-spaces, which
->>> +        * does not exist.
->>> +        *
->>> +        * Poking, however, is already very inefficient since it =
-does not try to
->>> +        * batch updates, so we ignore this problem for the time =
-being.
->>> +        *
->>> +        * Since the PTEs do not exist in other kernel =
-address-spaces, we do
->>> +        * not use __flush_tlb_one_kernel(), which when PTI is on =
-would cause
->>> +        * more unwarranted TLB flushes.
->>> +        *
->>> +        * There is a slight anomaly here: the PTE is a =
-supervisor-only and
->>> +        * (potentially) global and we use __flush_tlb_one_user() =
-but this
->>> +        * should be fine.
->>> +        */
->>> +       __flush_tlb_one_user(poking_addr);
->>> +       if (cross_page_boundary) {
->>> +               pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + =
-1);
->>> +               __flush_tlb_one_user(poking_addr + PAGE_SIZE);
->>> +       }
->>=20
->> In principle, another CPU could still have the old translation.  Your
->> mutex probably makes this impossible, but it makes me nervous.
->> Ideally you'd use flush_tlb_mm_range(), but I guess you can't do that
->> with IRQs off.  Hmm.  I think you should add an inc_mm_tlb_gen() =
-here.
->> Arguably, if you did that, you could omit the flushes, but maybe
->> that's silly.
->>=20
->> If we start getting new users of use_temporary_mm(), we should give
->> some serious thought to the SMP semantics.
->>=20
->> Also, you're using PAGE_KERNEL.  Please tell me that the global bit
->> isn't set in there.
->=20
-> Much better solution: do unuse_temporary_mm() and *then*
-> flush_tlb_mm_range().  This is entirely non-sketchy and should be just
-> about optimal, too.
-
-This solution sounds nice and clean. The fact the global-bit was set =
-didn=E2=80=99t
-matter before (since __flush_tlb_one_user would get rid of it no matter
-what), but would matter now, so I=E2=80=99ll change it too.
-
-Thanks!
-
-Nadav
-
+T24gVGh1LCAyMDE5LTAxLTE3IGF0IDEwOjM5ICswMTAwLCBQYXZlbCBNYWNoZWsgd3JvdGU6DQo+
+IEhpIQ0KPiANCj4gPiBGb3IgYXJjaGl0ZWN0dXJlcyB3aXRoIENPTkZJR19BUkNIX0hBU19TRVRf
+QUxJQVMsIHBhZ2VzIGNhbiBiZSB1bm1hcHBlZA0KPiA+IGJyaWVmbHkgb24gdGhlIGRpcmVjdG1h
+cCwgZXZlbiB3aGVuIENPTkZJR19ERUJVR19QQUdFQUxMT0MgaXMgbm90DQo+ID4gY29uZmlndXJl
+ZC4NCj4gPiBTbyB0aGlzIGNoYW5nZXMga2VybmVsX21hcF9wYWdlcyBhbmQga2VybmVsX3BhZ2Vf
+cHJlc2VudCB0byBiZSBkZWZpbmVkIHdoZW4NCj4gPiBDT05GSUdfQVJDSF9IQVNfU0VUX0FMSUFT
+IGlzIGRlZmluZWQgYXMgd2VsbC4gSXQgYWxzbyBjaGFuZ2VzIHBsYWNlcw0KPiA+IChwYWdlX2Fs
+bG9jLmMpIHdoZXJlIHRob3NlIGZ1bmN0aW9ucyBhcmUgYXNzdW1lZCB0byBvbmx5IGJlIGltcGxl
+bWVudGVkIHdoZW4NCj4gPiBDT05GSUdfREVCVUdfUEFHRUFMTE9DIGlzIGRlZmluZWQuDQo+IA0K
+PiBXaGljaCBhcmNoaXRlY3R1cmVzIGFyZSB0aGF0Pw0KPiANCj4gU2hvdWxkIHRoaXMgYmUgbWVy
+Z2VkIHRvIHRoZSBwYXRjaCB3aGVyZSBIQVNfU0VUX0FMSUFTIGlzIGludHJvZHVjZWQ/IFdlDQo+
+IGRvbid0IHdhbnQgYnJva2VuIGhpYmVybmF0aW9uIGluIGJldHdlZW4uLi4uDQpUaGFua3MgZm9y
+IHRha2luZyBhIGxvb2suIEl0IHdhcyBhZGRlZCBmb3IgeDg2IGZvciBwYXRjaCAxMyBpbiB0aGlz
+IHBhdGNoc2V0IGFuZA0KdGhlcmUgd2FzIGludGVyZXN0IGV4cHJlc3NlZCBmb3IgYWRkaW5nIGZv
+ciBhcm02NC4gSWYgeW91IGRpZG4ndCBnZXQgdGhlIHdob2xlDQpzZXQgYW5kIHdhbnQgdG8gc2Vl
+IGxldCBtZSBrbm93IGFuZCBJIGNhbiBzZW5kIGl0Lg0KDQo+IA0KPiA+IC0jaWZkZWYgQ09ORklH
+X0RFQlVHX1BBR0VBTExPQw0KPiA+ICBleHRlcm4gYm9vbCBfZGVidWdfcGFnZWFsbG9jX2VuYWJs
+ZWQ7DQo+ID4gLWV4dGVybiB2b2lkIF9fa2VybmVsX21hcF9wYWdlcyhzdHJ1Y3QgcGFnZSAqcGFn
+ZSwgaW50IG51bXBhZ2VzLCBpbnQNCj4gPiBlbmFibGUpOw0KPiA+ICANCj4gPiAgc3RhdGljIGlu
+bGluZSBib29sIGRlYnVnX3BhZ2VhbGxvY19lbmFibGVkKHZvaWQpDQo+ID4gIHsNCj4gPiAtCXJl
+dHVybiBfZGVidWdfcGFnZWFsbG9jX2VuYWJsZWQ7DQo+ID4gKwlyZXR1cm4gSVNfRU5BQkxFRChD
+T05GSUdfREVCVUdfUEFHRUFMTE9DKSAmJiBfZGVidWdfcGFnZWFsbG9jX2VuYWJsZWQ7DQo+ID4g
+IH0NCj4gDQo+IFRoaXMgd2lsbCBicmVhayBidWlsZCBBRkFJQ1QuIF9kZWJ1Z19wYWdlYWxsb2Nf
+ZW5hYmxlZCB2YXJpYWJsZSBkb2VzDQo+IG5vdCBleGlzdCBpbiAhQ09ORklHX0RFQlVHX1BBR0VB
+TExPQyBjYXNlLg0KPiANCj4gCQkJCQkJCQkJUGF2ZWwNCkFmdGVyIGFkZGluZyBpbiB0aGUgQ09O
+RklHX0FSQ0hfSEFTX1NFVF9BTElBUyBjb25kaXRpb24gdG8gdGhlIGlmZGVmcyBpbiB0aGlzDQph
+cmVhIGl0IGxvb2tlZCBhIGxpdHRsZSBoYXJkIHRvIHJlYWQgdG8gbWUsIHNvIEkgbW92ZWQgZGVi
+dWdfcGFnZWFsbG9jX2VuYWJsZWQNCmFuZCBleHRlcm4gYm9vbCBfZGVidWdfcGFnZWFsbG9jX2Vu
+YWJsZWQgb3V0c2lkZSB0byBtYWtlIGl0IGVhc2llci4gSSB0aGluayB5b3UNCmFyZSByaWdodCwg
+dGhlIGFjdHVhbCBub24tZXh0ZXJuIHZhcmlhYmxlIGNhbiBub3QgYmUgdGhlcmUsIGJ1dCB0aGUg
+cmVmZXJlbmNlDQpoZXJlIGdldHMgb3B0aW1pemVkIG91dCBpbiB0aGF0IGNhc2UuDQoNCkp1c3Qg
+ZG91YmxlIGNoZWNrZWQgYW5kIGl0IGJ1aWxkcyBmb3IgYm90aCBDT05GSUdfREVCVUdfUEFHRUFM
+TE9DPW4gYW5kDQpDT05GSUdfREVCVUdfUEFHRUFMTE9DPXkgZm9yIG1lLg0KDQpUaGFua3MsDQoN
+ClJpY2sNCg==
