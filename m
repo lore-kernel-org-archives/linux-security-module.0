@@ -2,68 +2,111 @@ Return-Path: <SRS0=7rO8=PZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AC7C43387
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 08:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C31C43444
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 09:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773D420855
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 08:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547714103;
-	bh=S8sU3WonOz7UVOUX68Tbu5GytoTC+GbkX/g2tckfAbQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=ejwl/qIkfZXJb0OdpvRUxkp0uUA3b9+N7apEU622iMeHl1AxmXFdXbic/yV+NKv/E
-	 ZxRZOy/GbMpVzQKeK0/HE/+b8/tUAoQdLZMGGi/qdSxKYSdOGzk8uacOvXOpVFDLTB
-	 QInY11wTveuuSEkZ2No3bTWJatCLyd0U2y61NTfg=
+	by mail.kernel.org (Postfix) with ESMTP id 956D22054F
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 09:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfAQIfD (ORCPT
+        id S1726632AbfAQJjz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:35:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbfAQIfC (ORCPT
+        Thu, 17 Jan 2019 04:39:55 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36834 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfAQJjy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Jan 2019 03:35:02 -0500
-Subject: Re: [GIT PULL] Security subsystem fixes for v5.0-rc3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547714102;
-        bh=S8sU3WonOz7UVOUX68Tbu5GytoTC+GbkX/g2tckfAbQ=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ppHVdnGDya59ByHH4YUQCnvPc2vJB9uoY5AnaapFaf/IXeGgGRGBeyfINQ6nq+jFO
-         t4w/KK85qXPZt9DXouWWakVL02EpBgIF9TqhCrE54ienQ+uSe94lSon6O+Yr9Okhfp
-         ljn0EVtN6gsQUfO7+JQzxyH1pbaaBkmvcGU40+lg=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <alpine.LRH.2.21.1901171437560.28339@namei.org>
-References: <alpine.LRH.2.21.1901171437560.28339@namei.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1901171437560.28339@namei.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
- fixes-v5.0-rc2
-X-PR-Tracked-Commit-Id: a5795fd38ee8194451ba3f281f075301a3696ce2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7fbfee7c80ded94278f109aae4063741c323294a
-Message-Id: <154771410207.32649.15344082153613065266.pr-tracker-bot@kernel.org>
-Date:   Thu, 17 Jan 2019 08:35:02 +0000
-To:     James Morris <jmorris@namei.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+        Thu, 17 Jan 2019 04:39:54 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 27DBF807A7; Thu, 17 Jan 2019 10:39:46 +0100 (CET)
+Date:   Thu, 17 Jan 2019 10:39:50 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 14/17] mm: Make hibernate handle unmapped pages
+Message-ID: <20190117093950.GA17930@amd>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+ <20190117003259.23141-15-rick.p.edgecombe@intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+Content-Disposition: inline
+In-Reply-To: <20190117003259.23141-15-rick.p.edgecombe@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Thu, 17 Jan 2019 14:40:22 +1100 (AEDT):
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.0-rc2
+--jRHKVT23PllUwdXP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7fbfee7c80ded94278f109aae4063741c323294a
+Hi!
 
-Thank you!
+> For architectures with CONFIG_ARCH_HAS_SET_ALIAS, pages can be unmapped
+> briefly on the directmap, even when CONFIG_DEBUG_PAGEALLOC is not configu=
+red.
+> So this changes kernel_map_pages and kernel_page_present to be defined wh=
+en
+> CONFIG_ARCH_HAS_SET_ALIAS is defined as well. It also changes places
+> (page_alloc.c) where those functions are assumed to only be implemented w=
+hen
+> CONFIG_DEBUG_PAGEALLOC is defined.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Which architectures are that?
+
+Should this be merged to the patch where HAS_SET_ALIAS is introduced? We
+don't want broken hibernation in between....
+
+
+> -#ifdef CONFIG_DEBUG_PAGEALLOC
+>  extern bool _debug_pagealloc_enabled;
+> -extern void __kernel_map_pages(struct page *page, int numpages, int enab=
+le);
+> =20
+>  static inline bool debug_pagealloc_enabled(void)
+>  {
+> -	return _debug_pagealloc_enabled;
+> +	return IS_ENABLED(CONFIG_DEBUG_PAGEALLOC) && _debug_pagealloc_enabled;
+>  }
+
+This will break build AFAICT. _debug_pagealloc_enabled variable does
+not exist in !CONFIG_DEBUG_PAGEALLOC case.
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--jRHKVT23PllUwdXP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxATWYACgkQMOfwapXb+vLhEwCfboaaFJileFziF32t0acTiuuz
+dewAn0oneo6RWHmnu+B3dnprdMW4dCOy
+=4kpb
+-----END PGP SIGNATURE-----
+
+--jRHKVT23PllUwdXP--
