@@ -2,98 +2,68 @@ Return-Path: <SRS0=7rO8=PZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 734ADC43444
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 08:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8AC7C43387
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 08:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 406E220657
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 08:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 773D420855
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 08:35:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547714103;
+	bh=S8sU3WonOz7UVOUX68Tbu5GytoTC+GbkX/g2tckfAbQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=ejwl/qIkfZXJb0OdpvRUxkp0uUA3b9+N7apEU622iMeHl1AxmXFdXbic/yV+NKv/E
+	 ZxRZOy/GbMpVzQKeK0/HE/+b8/tUAoQdLZMGGi/qdSxKYSdOGzk8uacOvXOpVFDLTB
+	 QInY11wTveuuSEkZ2No3bTWJatCLyd0U2y61NTfg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbfAQIVk (ORCPT
+        id S1727590AbfAQIfD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Jan 2019 03:21:40 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:48010 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728722AbfAQIVk (ORCPT
+        Thu, 17 Jan 2019 03:35:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726986AbfAQIfC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Jan 2019 03:21:40 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D3CC279F4F8F9EBAEDAE;
-        Thu, 17 Jan 2019 16:21:36 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Thu, 17 Jan 2019
- 16:21:35 +0800
-Subject: Re: [PATCH -next] evm: remove set but not used variable 'xattr'
-To:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <1544867636-59276-1-git-send-email-yuehaibing@huawei.com>
- <1544868370-83459-1-git-send-email-yuehaibing@huawei.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <9bdb64b6-501e-cd37-d4ab-a041ac25e738@huawei.com>
-Date:   Thu, 17 Jan 2019 16:21:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
-MIME-Version: 1.0
-In-Reply-To: <1544868370-83459-1-git-send-email-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        Thu, 17 Jan 2019 03:35:02 -0500
+Subject: Re: [GIT PULL] Security subsystem fixes for v5.0-rc3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547714102;
+        bh=S8sU3WonOz7UVOUX68Tbu5GytoTC+GbkX/g2tckfAbQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=ppHVdnGDya59ByHH4YUQCnvPc2vJB9uoY5AnaapFaf/IXeGgGRGBeyfINQ6nq+jFO
+         t4w/KK85qXPZt9DXouWWakVL02EpBgIF9TqhCrE54ienQ+uSe94lSon6O+Yr9Okhfp
+         ljn0EVtN6gsQUfO7+JQzxyH1pbaaBkmvcGU40+lg=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <alpine.LRH.2.21.1901171437560.28339@namei.org>
+References: <alpine.LRH.2.21.1901171437560.28339@namei.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1901171437560.28339@namei.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+ fixes-v5.0-rc2
+X-PR-Tracked-Commit-Id: a5795fd38ee8194451ba3f281f075301a3696ce2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7fbfee7c80ded94278f109aae4063741c323294a
+Message-Id: <154771410207.32649.15344082153613065266.pr-tracker-bot@kernel.org>
+Date:   Thu, 17 Jan 2019 08:35:02 +0000
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-ping...
+The pull request you sent on Thu, 17 Jan 2019 14:40:22 +1100 (AEDT):
 
-On 2018/12/15 18:06, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> security/integrity/evm/evm_main.c: In function 'init_evm':
-> security/integrity/evm/evm_main.c:566:21: warning:
->  variable 'xattr' set but not used [-Wunused-but-set-variable]
-> 
-> It never used since commit 21af76631476 ("EVM: turn evm_config_xattrnames
-> into a list")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  security/integrity/evm/evm_main.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-> index 5ecaa3d..b6d9f14 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -563,7 +563,6 @@ static int __init init_evm(void)
->  {
->  	int error;
->  	struct list_head *pos, *q;
-> -	struct xattr_list *xattr;
->  
->  	evm_init_config();
->  
-> @@ -580,11 +579,8 @@ static int __init init_evm(void)
->  error:
->  	if (error != 0) {
->  		if (!list_empty(&evm_config_xattrnames)) {
-> -			list_for_each_safe(pos, q, &evm_config_xattrnames) {
-> -				xattr = list_entry(pos, struct xattr_list,
-> -						   list);
-> +			list_for_each_safe(pos, q, &evm_config_xattrnames)
->  				list_del(pos);
-> -			}
->  		}
->  	}
-> 
-> 
-> 
-> 
-> .
-> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.0-rc2
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7fbfee7c80ded94278f109aae4063741c323294a
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
