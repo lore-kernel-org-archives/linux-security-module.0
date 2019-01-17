@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A15C43444
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E96C43444
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A074205C9
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1B892077B
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 00:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbfAQAdy (ORCPT
+        id S1728923AbfAQAeG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jan 2019 19:33:54 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42209 "EHLO mga05.intel.com"
+        Wed, 16 Jan 2019 19:34:06 -0500
+Received: from mga11.intel.com ([192.55.52.93]:47095 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729898AbfAQAdx (ORCPT
+        id S1730163AbfAQAdp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jan 2019 19:33:53 -0500
+        Wed, 16 Jan 2019 19:33:45 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:36 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2019 16:33:37 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,488,1539673200"; 
-   d="scan'208";a="292166022"
+   d="scan'208";a="292166062"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:35 -0800
+  by orsmga005.jf.intel.com with ESMTP; 16 Jan 2019 16:33:36 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -43,12 +43,10 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH 05/17] x86/alternative: initializing temporary mm for patching
-Date:   Wed, 16 Jan 2019 16:32:47 -0800
-Message-Id: <20190117003259.23141-6-rick.p.edgecombe@intel.com>
+Subject: [PATCH 17/17] module: Prevent module removal racing with text_poke()
+Date:   Wed, 16 Jan 2019 16:32:59 -0800
+Message-Id: <20190117003259.23141-18-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
 References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
@@ -58,149 +56,46 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Nadav Amit <namit@vmware.com>
 
-To prevent improper use of the PTEs that are used for text patching, we
-want to use a temporary mm struct. We initailize it by copying the init
-mm.
+It seems dangerous to allow code modifications to take place
+concurrently with module unloading. So take the text_mutex while the
+memory of the module is freed.
 
-The address that will be used for patching is taken from the lower area
-that is usually used for the task memory. Doing so prevents the need to
-frequently synchronize the temporary-mm (e.g., when BPF programs are
-installed), since different PGDs are used for the task memory.
-
-Finally, we randomize the address of the PTEs to harden against exploits
-that use these PTEs.
-
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/pgtable.h       |  3 +++
- arch/x86/include/asm/text-patching.h |  2 ++
- arch/x86/kernel/alternative.c        |  3 +++
- arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
- init/main.c                          |  3 +++
- 5 files changed, 47 insertions(+)
+ kernel/module.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 40616e805292..e8f630d9a2ed 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1021,6 +1021,9 @@ static inline void __meminit init_trampoline_default(void)
- 	/* Default trampoline pgd value */
- 	trampoline_pgd_entry = init_top_pgt[pgd_index(__PAGE_OFFSET)];
- }
-+
-+void __init poking_init(void);
-+
- # ifdef CONFIG_RANDOMIZE_MEMORY
- void __meminit init_trampoline(void);
- # else
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index f8fc8e86cf01..a75eed841eed 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
-+extern __ro_after_init struct mm_struct *poking_mm;
-+extern __ro_after_init unsigned long poking_addr;
+diff --git a/kernel/module.c b/kernel/module.c
+index 1af5c8e19086..90cfc4988d98 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -64,6 +64,7 @@
+ #include <linux/bsearch.h>
+ #include <linux/dynamic_debug.h>
+ #include <linux/audit.h>
++#include <linux/memory.h>
+ #include <uapi/linux/module.h>
+ #include "module-internal.h"
  
- #endif /* _ASM_X86_TEXT_PATCHING_H */
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index c6a3a10a2fd5..57fdde308bb6 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
- 	return addr;
+@@ -2157,6 +2158,9 @@ static void free_module(struct module *mod)
+ 	synchronize_rcu();
+ 	mutex_unlock(&module_mutex);
+ 
++	/* Protect against patching of the module while it is being removed */
++	mutex_lock(&text_mutex);
++
+ 	/* This may be empty, but that's OK */
+ 	module_arch_freeing_init(mod);
+ 	module_memfree(mod->init_layout.base);
+@@ -2168,6 +2172,7 @@ static void free_module(struct module *mod)
+ 
+ 	/* Finally, free the core (containing the module structure) */
+ 	module_memfree(mod->core_layout.base);
++	mutex_unlock(&text_mutex);
  }
  
-+__ro_after_init struct mm_struct *poking_mm;
-+__ro_after_init unsigned long poking_addr;
-+
- static void *__text_poke(void *addr, const void *opcode, size_t len)
- {
- 	unsigned long flags;
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index bccff68e3267..125c8c48aa24 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -53,6 +53,7 @@
- #include <asm/init.h>
- #include <asm/uv/uv.h>
- #include <asm/setup.h>
-+#include <asm/text-patching.h>
- 
- #include "mm_internal.h"
- 
-@@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
- 	return memory_block_size_probed;
- }
- 
-+/*
-+ * Initialize an mm_struct to be used during poking and a pointer to be used
-+ * during patching.
-+ */
-+void __init poking_init(void)
-+{
-+	spinlock_t *ptl;
-+	pte_t *ptep;
-+
-+	poking_mm = copy_init_mm();
-+	BUG_ON(!poking_mm);
-+
-+	/*
-+	 * Randomize the poking address, but make sure that the following page
-+	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
-+	 * and adjust the address if the PMD ends after the first one.
-+	 */
-+	poking_addr = TASK_UNMAPPED_BASE;
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
-+		poking_addr += (kaslr_get_random_long("Poking") & PAGE_MASK) %
-+			(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
-+
-+	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
-+		poking_addr += PAGE_SIZE;
-+
-+	/*
-+	 * We need to trigger the allocation of the page-tables that will be
-+	 * needed for poking now. Later, poking may be performed in an atomic
-+	 * section, which might cause allocation to fail.
-+	 */
-+	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
-+	BUG_ON(!ptep);
-+	pte_unmap_unlock(ptep, ptl);
-+}
-+
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
- /*
-  * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
-diff --git a/init/main.c b/init/main.c
-index e2e80ca3165a..f5947ba53bb4 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -496,6 +496,8 @@ void __init __weak thread_stack_cache_init(void)
- 
- void __init __weak mem_encrypt_init(void) { }
- 
-+void __init __weak poking_init(void) { }
-+
- bool initcall_debug;
- core_param(initcall_debug, initcall_debug, bool, 0644);
- 
-@@ -730,6 +732,7 @@ asmlinkage __visible void __init start_kernel(void)
- 	taskstats_init_early();
- 	delayacct_init();
- 
-+	poking_init();
- 	check_bugs();
- 
- 	acpi_subsystem_init();
+ void *__symbol_get(const char *symbol)
 -- 
 2.17.1
 
