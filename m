@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67DCC43612
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 06:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F60AC43444
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 07:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3BE620856
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 06:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E265E20859
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Jan 2019 07:54:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547707889;
-	bh=3pFFsGboE3NeLPavibg9ccKIbA+KASAPuMJu0N0lT6Q=;
+	s=default; t=1547711669;
+	bh=cLP9keXKzq/STJJ9tRlQcp79axKCXQ+ZALqsEKW8f/s=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=sLPF2fLc9AMl7oVMEvCExjJTJhPtpKcynCUSBHhdguWAitUMKUASEfd0HR4JfFabj
-	 hlCpXv1p4QgrS2QnaVClteNQBzzGbHfkWAFW2k5cE20YtXTjz8NzC4rvXgrQtQCfe5
-	 xo+nbCfYDr7hGyupJAl/FHgDupRDnty6jsG8FkC8=
+	b=blEzUsvZd5TRGXeXBID/zhX0sUluuAVI2/5bDzU1cD+ZAaxItSChk4IXSX6h5wD6E
+	 E77TBAlbAOZuM0FU135HihnpORW9+YlwiUCRZu1f8faVO5NBZahwgrwPwfweDZzrPF
+	 DnM2Y+WDFqmYUllNIEoRr68cbPRccySlQlmlvVT8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfAQGv3 (ORCPT
+        id S1727954AbfAQHy2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Jan 2019 01:51:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54636 "EHLO mail.kernel.org"
+        Thu, 17 Jan 2019 02:54:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726875AbfAQGv3 (ORCPT
+        id S1727910AbfAQHy2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Jan 2019 01:51:29 -0500
+        Thu, 17 Jan 2019 02:54:28 -0500
 Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71EF320657;
-        Thu, 17 Jan 2019 06:51:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50D1420851;
+        Thu, 17 Jan 2019 07:54:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547707887;
-        bh=3pFFsGboE3NeLPavibg9ccKIbA+KASAPuMJu0N0lT6Q=;
+        s=default; t=1547711667;
+        bh=cLP9keXKzq/STJJ9tRlQcp79axKCXQ+ZALqsEKW8f/s=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Cqou7RJ3WeQX6iJzoKHW5+b2gpIS04SgaKTwdmeJ5A9/3XwKxow/eifoYpAI/sPut
-         OXT0khucqzxmOza+R+KqGRFPpQPHHhyjd/7eR27j8XdLZmKTIACaO6T3fgKfhVvx8S
-         SYQmovRKQVmaa7u7PqZTAF16vidRUWol3+nPyV1Y=
-Date:   Thu, 17 Jan 2019 15:51:22 +0900
+        b=JXwnKx5QBw8EpzdBL49P38f8BWGU3Wf5+pKVZ/yfrILgpobZtHIUuPodUl9Pfjxpu
+         C1Y2/iRtNlPDcSm6flBGNvYOyhVPaPtV3gbcXv7KcJJI4opgn1r3Ty3Y57Vxut/Q4n
+         6eGzscFlphc0FInZg2RxLKwpltZxF6TGXjv2pKVY=
+Date:   Thu, 17 Jan 2019 16:54:22 +0900
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
 Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
@@ -54,14 +54,13 @@ Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH 09/17] x86/kprobes: Instruction pages initialization
- enhancements
-Message-Id: <20190117155122.46058c707d6d07237ad913d0@kernel.org>
-In-Reply-To: <20190117003259.23141-10-rick.p.edgecombe@intel.com>
+        Nadav Amit <namit@vmware.com>
+Subject: Re: [PATCH 17/17] module: Prevent module removal racing with
+ text_poke()
+Message-Id: <20190117165422.d33d1af83db8716e24960a3c@kernel.org>
+In-Reply-To: <20190117003259.23141-18-rick.p.edgecombe@intel.com>
 References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-        <20190117003259.23141-10-rick.p.edgecombe@intel.com>
+        <20190117003259.23141-18-rick.p.edgecombe@intel.com>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -70,81 +69,57 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 16 Jan 2019 16:32:51 -0800
+On Wed, 16 Jan 2019 16:32:59 -0800
 Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
 
 > From: Nadav Amit <namit@vmware.com>
 > 
-> This patch is a preparatory patch for a following patch that makes
-> module allocated pages non-executable. The patch sets the page as
-> executable after allocation.
+> It seems dangerous to allow code modifications to take place
+> concurrently with module unloading. So take the text_mutex while the
+> memory of the module is freed.
+
+At that point, since the module itself is removed from module list,
+it seems no actual harm. Or would you have any concern?
+
+Thank you,
+
 > 
-> In the future, we may get better protection of executables. For example,
-> by using hypercalls to request the hypervisor to protect VM executable
-> pages from modifications using nested page-tables. This would allow
-> us to ensure the executable has not changed between allocation and
-> its write-protection.
-> 
-> While at it, do some small cleanup of what appears to be unnecessary
-> masking.
-> 
-
-OK, then this should be done.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you!
-
-
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
 > Signed-off-by: Nadav Amit <namit@vmware.com>
 > Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 > ---
->  arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
->  1 file changed, 20 insertions(+), 4 deletions(-)
+>  kernel/module.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-> index 4ba75afba527..fac692e36833 100644
-> --- a/arch/x86/kernel/kprobes/core.c
-> +++ b/arch/x86/kernel/kprobes/core.c
-> @@ -431,8 +431,20 @@ void *alloc_insn_page(void)
->  	void *page;
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 1af5c8e19086..90cfc4988d98 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -64,6 +64,7 @@
+>  #include <linux/bsearch.h>
+>  #include <linux/dynamic_debug.h>
+>  #include <linux/audit.h>
+> +#include <linux/memory.h>
+>  #include <uapi/linux/module.h>
+>  #include "module-internal.h"
 >  
->  	page = module_alloc(PAGE_SIZE);
-> -	if (page)
-> -		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
-> +	if (page == NULL)
-> +		return NULL;
-> +
-> +	/*
-> +	 * First make the page read-only, and then only then make it executable
-> +	 * to prevent it from being W+X in between.
-> +	 */
-> +	set_memory_ro((unsigned long)page, 1);
-> +
-> +	/*
-> +	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-> +	 * that the page was not maliciously altered and it is still zeroed.
-> +	 */
-> +	set_memory_x((unsigned long)page, 1);
+> @@ -2157,6 +2158,9 @@ static void free_module(struct module *mod)
+>  	synchronize_rcu();
+>  	mutex_unlock(&module_mutex);
 >  
->  	return page;
->  }
-> @@ -440,8 +452,12 @@ void *alloc_insn_page(void)
->  /* Recover page to RW mode before releasing it */
->  void free_insn_page(void *page)
->  {
-> -	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
-> -	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-> +	/*
-> +	 * First make the page non-executable, and then only then make it
-> +	 * writable to prevent it from being W+X in between.
-> +	 */
-> +	set_memory_nx((unsigned long)page, 1);
-> +	set_memory_rw((unsigned long)page, 1);
->  	module_memfree(page);
+> +	/* Protect against patching of the module while it is being removed */
+> +	mutex_lock(&text_mutex);
+> +
+>  	/* This may be empty, but that's OK */
+>  	module_arch_freeing_init(mod);
+>  	module_memfree(mod->init_layout.base);
+> @@ -2168,6 +2172,7 @@ static void free_module(struct module *mod)
+>  
+>  	/* Finally, free the core (containing the module structure) */
+>  	module_memfree(mod->core_layout.base);
+> +	mutex_unlock(&text_mutex);
 >  }
 >  
+>  void *__symbol_get(const char *symbol)
 > -- 
 > 2.17.1
 > 
