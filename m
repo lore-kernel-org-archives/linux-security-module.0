@@ -2,146 +2,108 @@ Return-Path: <SRS0=wNUX=P2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD157C43444
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 01:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ECC4C43612
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 02:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABEB72087E
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 01:15:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epnDOoDP"
+	by mail.kernel.org (Postfix) with ESMTP id 680D420883
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 02:31:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbfARBPc (ORCPT
+        id S1725934AbfARCbs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Jan 2019 20:15:32 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41584 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbfARBPc (ORCPT
+        Thu, 17 Jan 2019 21:31:48 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60374 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725992AbfARCbs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Jan 2019 20:15:32 -0500
-Received: by mail-pg1-f194.google.com with SMTP id m1so5228373pgq.8;
-        Thu, 17 Jan 2019 17:15:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nfJ8xS7Q4/2eN93Hqyw2Vxt0we5DRJFkV8HYkEezqLo=;
-        b=epnDOoDPCYmQOrRqrJQDp6hqSyVOqA0OACC2E+Ypn35v71FNxBed0ZH8UKd8f1psrB
-         kJs41dfmRvph0F9K7JaapS1CHnzIy2vKVy9qkAUllNemr9yxSw8C6DunC3RMPtVKvwlR
-         LOUcswMxytdeBueSBzD9P3zQeg6E9vFeE7IXhdHzF98pMEvyF812GWg0Ji2Qhgu86q3R
-         apfvAxMV3yN41Y8OKaxw2fHOrIZBMQTkEg72xsNxSei7Pjwor+U9qnFFUH5nqhyesWHN
-         kkoMYn3Ji7E8+iDqmxNIFglZ+aX99ecIENnM9cTC8a6aNiLvGg2zZ4Vr4QvgYhw+2hLX
-         /yVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=nfJ8xS7Q4/2eN93Hqyw2Vxt0we5DRJFkV8HYkEezqLo=;
-        b=Kw+Gr65rTOFdDiaTLTXE8HHyaV/ntAtYKEFzuNG0qIAOgbq9RUFLWHfOXpQGyK+3h9
-         9b0Z1W2CwdwIB3Q32m9ytLMm/r7upYnkqyX8NON6N0m9RCNdetWHueUv9ttXu17Eo33Z
-         jVzOK5Nl2bzDHq8VvzlpmzexlvoxXnpIO6vD7puxFXUNNqpTPI1oviq3N9fC0lzHpnDO
-         86urxWipYRXvtVSm877kE9NN0+WZuV0QTA03T280fFaLPSU+jGAIRFceyxRgHDzF4Vnt
-         6Z3gAd8cMRRaT5gOZn3LoGJXd+ih47qyRP6Y1MTGYtV3iE3zoPhWH4VvOFB26stjpUph
-         mkhw==
-X-Gm-Message-State: AJcUukfQMnvtd5zS7KLn5mI3dI4j32L1SKzjFdBDwihM5w2Fx5dBPAcv
-        5ycUUBYMCxUFkgtcHR7L5o4=
-X-Google-Smtp-Source: ALg8bN5AQhFbL8A26bYpIKqbPXZPdnzW7UXtqw5Th4jK4eVuovdHK0vo/XXSzX+oHLDUBlskz3aYQA==
-X-Received: by 2002:a63:1204:: with SMTP id h4mr15579607pgl.51.1547774130020;
-        Thu, 17 Jan 2019 17:15:30 -0800 (PST)
-Received: from [10.33.115.182] ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id r6sm6866962pgk.91.2019.01.17.17.15.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Jan 2019 17:15:29 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH 17/17] module: Prevent module removal racing with
- text_poke()
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <e865e051-be79-adce-7275-72abf2173bdb@zytor.com>
-Date:   Thu, 17 Jan 2019 17:15:27 -0800
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        ard.biesheuvel@linaro.org, kristen@linux.intel.com,
-        deneen.t.dock@intel.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <69EA2C81-826F-46BA-8D80-241C39B0B70B@gmail.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
- <20190117003259.23141-18-rick.p.edgecombe@intel.com>
- <20190117165422.d33d1af83db8716e24960a3c@kernel.org>
- <e865e051-be79-adce-7275-72abf2173bdb@zytor.com>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Thu, 17 Jan 2019 21:31:48 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0I2TJ3c111617
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Jan 2019 21:31:47 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q361j847s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 17 Jan 2019 21:31:46 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 18 Jan 2019 02:31:45 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 18 Jan 2019 02:31:42 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0I2Vfja5177704
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 18 Jan 2019 02:31:41 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69F7EA4057;
+        Fri, 18 Jan 2019 02:31:41 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8B1E1A4069;
+        Fri, 18 Jan 2019 02:31:40 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.65])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 18 Jan 2019 02:31:40 +0000 (GMT)
+Subject: Re: evm_inode_init_security and module stacking
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Cc:     LSM <linux-security-module@vger.kernel.org>
+Date:   Thu, 17 Jan 2019 21:31:29 -0500
+In-Reply-To: <f1a86814-716a-d02d-42ce-8ef64d680feb@schaufler-ca.com>
+References: <f1a86814-716a-d02d-42ce-8ef64d680feb@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011802-0028-0000-0000-0000033AB637
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011802-0029-0000-0000-000023F7E367
+Message-Id: <1547778689.3982.20.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-18_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=782 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901180018
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Jan 17, 2019, at 3:58 PM, H. Peter Anvin <hpa@zytor.com> wrote:
->=20
-> On 1/16/19 11:54 PM, Masami Hiramatsu wrote:
->> On Wed, 16 Jan 2019 16:32:59 -0800
->> Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
->>=20
->>> From: Nadav Amit <namit@vmware.com>
->>>=20
->>> It seems dangerous to allow code modifications to take place
->>> concurrently with module unloading. So take the text_mutex while the
->>> memory of the module is freed.
->>=20
->> At that point, since the module itself is removed from module list,
->> it seems no actual harm. Or would you have any concern?
->=20
-> The issue isn't the module list, but rather when it is safe to free =
-the
-> contents, so we don't clobber anything. We absolutely need to enforce
-> that we can't text_poke() something that might have already been =
-freed.
->=20
-> That being said, we *also* really would prefer to enforce that we =
-can't
-> text_poke() memory that doesn't actually contain code; as far as I can
-> tell we don't currently do that check.
+On Thu, 2019-01-17 at 16:47 -0800, Casey Schaufler wrote:
+> security_inode_init_security() currently calls at most one
+> of selinux_inode_init_security() and smack_inode_init_security().
+> It then sends the result to evm_inode_init_security to create
+> the security.evm attribute. This isn't going to work on a system
+> that has both SELinux and Smack.
 
-Yes, that what the mutex was supposed to achieve. It=E2=80=99s not =
-supposed just
-to check whether it is a code page, but also that it is the same code
-page that you wanted to patch.=20
+Calculating security.evm based on multiple xattrs sounded really
+familiar.  Looking back at the git log, 9d8f13ba3f48 ("security: new
+security_inode_init_security API adds function callback") addressed
+filesystems wanting to be able to write all the xattrs at the same
+time and prepared for multiple LSM xattr support.
 
-> This, again, is a good use for a separate mm context. We can enforce
-> that that context will only ever contain valid page mappings for =
-actual
-> code pages.
+> I see two options:
+> 	- create security.evm with the information from all
+> 	  security modules that provide inode_init_security hooks
+> 	- create a separate attribute for each module,
+> 	  security.evm-selinux and security.evm-smack in the
+> 	  current case.
+> 
+> How would you like to have it work? I am agnostic, although the
+> separate attributes would be easier for the infrastructure.
 
-This will not tell you that you have the *right* code-page. The module
-notifiers help to do so, since they synchronize the text poking with
-the module removal.
+Having separate attributes for each LSM module would require re-
+calculating the hmac for each one, any time any of the other file
+metadata changed.  That doesn't sound like a good idea.
 
-> (Note: in my proposed algorithm, with a separate mm, replace INVLPG =
-with
-> switching CR3 if we have to do a rollback or roll forward in the
-> breakpoint handler.)
+Mimi
 
-I really need to read your patches more carefully to see what you mean.
 
-Anyhow, so what do you prefer? I=E2=80=99m ok with either one:
-	1. Keep this patch
-	2. Remove this patch and change into a comment on text_poke()
-	3. Just drop the patch
 
