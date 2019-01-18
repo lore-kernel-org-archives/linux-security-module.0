@@ -2,86 +2,126 @@ Return-Path: <SRS0=wNUX=P2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 336C1C07EBF
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 17:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BC2C5AC81
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 17:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10AB720850
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 17:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8636520850
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 17:17:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="jHguP4jd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbfARRRP (ORCPT
+        id S1728489AbfARRRw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Jan 2019 12:17:15 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:52760 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728295AbfARRRP (ORCPT
+        Fri, 18 Jan 2019 12:17:52 -0500
+Received: from mail-it1-f180.google.com ([209.85.166.180]:51327 "EHLO
+        mail-it1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728385AbfARRRw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Jan 2019 12:17:15 -0500
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0IHHAaH098390;
-        Sat, 19 Jan 2019 02:17:10 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
- Sat, 19 Jan 2019 02:17:10 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0IHHASp098382
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 19 Jan 2019 02:17:10 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] tomoyo: Swicth from cred->security to
- task_struct->security.
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org
-References: <1547806711-13571-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <ae8a9cbb-bca6-f850-d4c4-6abe61a4d9bf@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <c1455a86-2444-9e60-23be-a98a77f87fa5@i-love.sakura.ne.jp>
-Date:   Sat, 19 Jan 2019 02:17:10 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 18 Jan 2019 12:17:52 -0500
+Received: by mail-it1-f180.google.com with SMTP id w18so7770071ite.1
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Jan 2019 09:17:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4K8R6Q51eEdWnsPEoc47hm+xUdIWKo4UDb1MW0Y/pyg=;
+        b=jHguP4jdbEhee/Iaa1EoaRThqqQci4/0PVMLcsdpMRZ3Bwyy46rCaNEgzLLh127XKD
+         JzWVQYfFWjV7A0ryv8E97PeaNWH8j90dpWybUaqT1DlMnUgNRNpym7lVwcg+47ANmdRY
+         ojTuY1KhiuRIevNRiolGme28Q9X6PlprIeKMSO4X2WIGWBzxO7UWat6MUGuHoDVvzTT1
+         yzG1vmXVleDAEmGzSKiZT8n1QuoMLGbuPVw+n6/z5OiG/rOMH2x0hoJPsa0z7wRIofD4
+         XTOLR+1s/YXqUtnBS1SKl1Mwb8y9IVblUzFWb8sPNMrBYfJcfuXrMOHqvvEv/iGKzX+6
+         sYfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4K8R6Q51eEdWnsPEoc47hm+xUdIWKo4UDb1MW0Y/pyg=;
+        b=qpWQv4FwF+gv2afttNnaK+NzlXmrhnhwhuu+hoFXOzImrkWSacUJDfdeHbsdP/APi8
+         neJcTM1etl3Q2cwVVKZLcpYiLcLsBkNaPH/H5oDTyX0+hxguPPzxP4qyz0unQIS07hQq
+         aJbjJLnwMtob3bYO2bXR/sgMd8W5amiTXn6xwM135tXdC3Dhr3wpt2zrBkZLYNc2lZP5
+         nbSlIkgpSX9dXPV0/domd9C3ytxKuMLW7EXssPw4AvWrVNWHGxQwDf0uI0T1xWPFw52S
+         oTGO+IiWDjQTzWtrQMivm//o127USzb26TTkVf+FFUH9QLNJJchhqLgyjKWL0SXFi9eQ
+         ec7w==
+X-Gm-Message-State: AJcUukfwrJjLdkOXQfOYhPnOZ6516TYFuRS4NfLfRLpQICYZHa+ZQcFn
+        z5hx9FDfvOExpBMfvtOgGJn8b9rVH3q12HObxvwL8IM=
+X-Google-Smtp-Source: ALg8bN6Xl9IgCzpTdXPjLC8lYgLCnxVL+bJ4rR7golRJjLRuGqUBcN4q3A79Qj1Wj3P8POhh3/HIVzyV8TmKdyhLCTQ=
+X-Received: by 2002:a24:67c6:: with SMTP id u189mr11444539itc.106.1547831868660;
+ Fri, 18 Jan 2019 09:17:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <ae8a9cbb-bca6-f850-d4c4-6abe61a4d9bf@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
+ <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
+ <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com> <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net>
+In-Reply-To: <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 18 Jan 2019 12:17:37 -0500
+Message-ID: <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
+Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
+To:     Nazarov Sergey <s-nazarov@yandex.ru>
+Cc:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/01/19 2:01, Casey Schaufler wrote:
->> -/**
->> - * tomoyo_real_domain - Get "struct tomoyo_domain_info" for specified thread.
->> - *
->> - * @task: Pointer to "struct task_struct".
->> + * @task - Pointer to "struct task_struct".
->>   *
->>   * Returns pointer to "struct tomoyo_security" for specified thread.
->>   */
->> -static inline struct tomoyo_domain_info *tomoyo_real_domain(struct task_struct
->> -							    *task)
->> +static inline struct tomoyo_security *tomoyo_security(struct task_struct *task)
-> 
-> Could you use tomoyo_task() instead of tomoyo_security()?
+On Fri, Jan 18, 2019 at 11:34 AM Nazarov Sergey <s-nazarov@yandex.ru> wrote:
+> Hi, Paul!
+> I don't like this. As you said, fix any calls to icmp_send is a trivial.
+> But in cipso_v4_optptr, we repeating the work already done, and in cipso_v4_error
+> we will need to do even more again.
 
-Possible. But tomoyo_task() might be more confusing because it sounds like
-"struct task_struct" when it actually returns "struct task_struct"->security.
+Yes, this is extra overhead, but it is in an error path so I'm not
+overly concerned about the performance impact on the given connection.
 
-Isn't tomoyo_task_security() better if I rename?
+I will admit that it isn't an ideal solution from a LSM/NetLabel
+perspective, but historically the netdev folks have not been overly
+receptive to changes which negatively impact the core network stack
+regardless of how important it may be for the LSMs.  If we could
+modify icmp_send() so that it works regardless of the caller's
+location in the stack, that would be great, I'm just not sure it would
+be deemed acceptable.  I suggested the approach I did because I think
+that has the best chance of getting merged.
 
-> To the extent that it's been possible I've worked to add
-> consistency in the security modules, and this breaks it.
+Regardless, I would encourage you to put together a patch and post it
+for review, I think that's the best way to get a response.  If you
+aren't able, or aren't comfortable, submitting a patch please let me
+know.
 
-Do you want me to rename
+> Any code, working with IP header data on several
+> levels of TCP/IP stack need to do this again and again. Is looks too overloaded!
+> In my opinion, this is a problem of TCP/IP stack design, comes from standing
+> compiled IP header data in different places at different stack layers.
+> May be better to add some flag or pointer to struct sk_buff?
+> But, I think, we need netdev developers advice for this.
+> Regards, Sergey.
+>
+> 18.01.2019, 17:53, "Paul Moore" <paul@paul-moore.com>:
+> > On Tue, Jan 15, 2019 at 2:52 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > It's been a few days now with no comments from the netdev folks, so I
+> > think it's probably best to start putting together a RFC patch for
+> > review/comment. Nazarov, would you like to do that? If not, that's
+> > okay, just let me know.
+> >
+> > I'm still concerned about calling ip_options_compile() in icmp_send()
+> > and I'm thinking we might be better off to add a new ip_options
+> > parameter to icmp_send(); if the parameter is NULL we behave as we do
+> > today, but if it is non-NULL we use the given ip_options parameter in
+> > place of calling ip_options_echo(). With that change in place, we
+> > would need to update cipso_v4_error() to do the extra work of calling
+> > ip_options_compile() and __ip_options_echo(). There looks to be maybe
+> > a dozen (or two?) existing icmp_send() callers, but it should be
+> > pretty trivial to update them to pass NULL for the new parameter.
+> >
+> > What do you think?
 
-/* Structure for "struct task_struct"->security. */
-struct tomoyo_security {
-	struct tomoyo_domain_info *domain_info;
-	struct tomoyo_domain_info *old_domain_info;
-};
-
-to "struct tomoyo_task" or "struct tomoyo_task_security" as well?
+-- 
+paul moore
+www.paul-moore.com
