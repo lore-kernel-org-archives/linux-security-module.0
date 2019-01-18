@@ -2,125 +2,196 @@ Return-Path: <SRS0=wNUX=P2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A40C43612
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 08:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A70ACC43387
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 10:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FCBA20883
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 08:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547799821;
-	bh=K7VO4sQhq9Lz/cT7sxYUU6aQfIt/J4uyoa54bfE9ZNI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=l512PIZptIxABI8GUrbWgeRaeKvFlTcgd1kYjGOemB/258n4sVhovpf9jfTO37h8l
-	 Sk+FiFc2J0xwzajOgYSW5k2bAb85rWAGhE5lU3Z8JAyfmsfD7QK2oCMo//TQa74Lie
-	 VpcZtZZ9+soKbSaNFyG6GGnakjXm6vpN+dH88ojE=
+	by mail.kernel.org (Postfix) with ESMTP id 81C8520823
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 10:17:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbfARIXk (ORCPT
+        id S1726896AbfARKRM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Jan 2019 03:23:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727332AbfARIXk (ORCPT
+        Fri, 18 Jan 2019 05:17:12 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:55451 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfARKRL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Jan 2019 03:23:40 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0D632086D;
-        Fri, 18 Jan 2019 08:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547799819;
-        bh=K7VO4sQhq9Lz/cT7sxYUU6aQfIt/J4uyoa54bfE9ZNI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TJTLspX2ht0ZK6L4AV1a55UC44H7nGO+55iUj+hroq9SXpq+KKgNnz9yzNUe0BLLl
-         sO5cYfS9zSBgWne1iP4RxDZhh7p4eFTobSDc8Sa1gj0DGfS9zF0DdXtxXMB+Nh9kNa
-         5MoBJkbtOdUvpB3x7kOZTYjEB+K1UWoFMvvXXMgQ=
-Date:   Fri, 18 Jan 2019 17:23:34 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "deneen.t.dock@intel.com" <deneen.t.dock@intel.com>
-Subject: Re: [PATCH 17/17] module: Prevent module removal racing with
- text_poke()
-Message-Id: <20190118172334.d7b1bcd580c3f6c4ed388160@kernel.org>
-In-Reply-To: <B48C6E93-AD57-4FF8-BBE8-887A5E965793@vmware.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-        <20190117003259.23141-18-rick.p.edgecombe@intel.com>
-        <20190117165422.d33d1af83db8716e24960a3c@kernel.org>
-        <B48C6E93-AD57-4FF8-BBE8-887A5E965793@vmware.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
+        Fri, 18 Jan 2019 05:17:11 -0500
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0IAH1Ik057057;
+        Fri, 18 Jan 2019 19:17:01 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Fri, 18 Jan 2019 19:17:01 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0IAGquv056876
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 18 Jan 2019 19:17:01 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-security-module@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] LSM: Make lsm_early_cred() and lsm_early_task() local functions.
+Date:   Fri, 18 Jan 2019 19:15:59 +0900
+Message-Id: <1547806559-12097-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 17 Jan 2019 18:07:03 +0000
-Nadav Amit <namit@vmware.com> wrote:
+Since current->cred == current->real_cred when ordered_lsm_init()
+is called, and lsm_early_cred()/lsm_early_task() need to be called
+between the amount of required bytes is determined and module specific
+initialization function is called, we can move these calls from
+individual modules to ordered_lsm_init().
 
-> > On Jan 16, 2019, at 11:54 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > 
-> > On Wed, 16 Jan 2019 16:32:59 -0800
-> > Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
-> > 
-> >> From: Nadav Amit <namit@vmware.com>
-> >> 
-> >> It seems dangerous to allow code modifications to take place
-> >> concurrently with module unloading. So take the text_mutex while the
-> >> memory of the module is freed.
-> > 
-> > At that point, since the module itself is removed from module list,
-> > it seems no actual harm. Or would you have any concern?
-> 
-> So it appears that you are right and all the users of text_poke() and
-> text_poke_bp() do install module notifiers, and remove the module from their
-> internal data structure when they are done (*). As long as they prevent
-> text_poke*() to be called concurrently (e.g., using jump_label_lock()),
-> everything is fine.
-> 
-> Having said that, the question is whether you “trust” text_poke*() users to
-> do so. text_poke() description does not day explicitly that you need to
-> prevent modules from being removed.
-> 
-> What do you say?
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ include/linux/lsm_hooks.h  |  5 -----
+ security/apparmor/lsm.c    |  2 --
+ security/security.c        | 27 +++++++++++----------------
+ security/selinux/hooks.c   |  1 -
+ security/smack/smack_lsm.c |  2 --
+ security/tomoyo/tomoyo.c   |  1 -
+ 6 files changed, 11 insertions(+), 27 deletions(-)
 
-I agreed, but in that case, this is just a fool proof. I think we should
-prevent this kind of bug by review, and should comment it on text_poke(),
-instead of locking text_mutex.
-
-What I thought was even if we take text_mutex here, such user can modify
-the (released) module code right after we exit this section.
-
-Maybe we'd better make text_poke() more smart?
-
-> (*) I am not sure about kgdb, but it probably does not matter much
-
-I think we don't need to care about kgdb. It is a tool which should be able
-to shoot your feet and we can not prevent it. Only expert can avoid it. :)
-
-Thank you,
-
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index c753d06..b3e94bc 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -2133,9 +2133,4 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ 
+ extern int lsm_inode_alloc(struct inode *inode);
+ 
+-#ifdef CONFIG_SECURITY
+-void __init lsm_early_cred(struct cred *cred);
+-void __init lsm_early_task(struct task_struct *task);
+-#endif
+-
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index dff7f94..49d664d 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1484,8 +1484,6 @@ static int __init set_init_ctx(void)
+ {
+ 	struct cred *cred = (struct cred *)current->real_cred;
+ 
+-	lsm_early_cred(cred);
+-	lsm_early_task(current);
+ 	set_cred_label(cred, aa_get_label(ns_unconfined(root_ns)));
+ 
+ 	return 0;
+diff --git a/security/security.c b/security/security.c
+index 9a98c52..8c09334 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -278,6 +278,9 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
+ 	kfree(sep);
+ }
+ 
++static void __init lsm_early_cred(struct cred *cred);
++static void __init lsm_early_task(struct task_struct *task);
++
+ static void __init ordered_lsm_init(void)
+ {
+ 	struct lsm_info **lsm;
+@@ -312,6 +315,8 @@ static void __init ordered_lsm_init(void)
+ 						    blob_sizes.lbs_inode, 0,
+ 						    SLAB_PANIC, NULL);
+ 
++	lsm_early_cred((struct cred *) current->cred);
++	lsm_early_task(current);
+ 	for (lsm = ordered_lsms; *lsm; lsm++)
+ 		initialize_lsm(*lsm);
+ 
+@@ -465,17 +470,12 @@ static int lsm_cred_alloc(struct cred *cred, gfp_t gfp)
+  * lsm_early_cred - during initialization allocate a composite cred blob
+  * @cred: the cred that needs a blob
+  *
+- * Allocate the cred blob for all the modules if it's not already there
++ * Allocate the cred blob for all the modules
+  */
+-void __init lsm_early_cred(struct cred *cred)
++static void __init lsm_early_cred(struct cred *cred)
+ {
+-	int rc;
++	int rc = lsm_cred_alloc(cred, GFP_KERNEL);
+ 
+-	if (cred == NULL)
+-		panic("%s: NULL cred.\n", __func__);
+-	if (cred->security != NULL)
+-		return;
+-	rc = lsm_cred_alloc(cred, GFP_KERNEL);
+ 	if (rc)
+ 		panic("%s: Early cred alloc failed.\n", __func__);
+ }
+@@ -589,17 +589,12 @@ int lsm_msg_msg_alloc(struct msg_msg *mp)
+  * lsm_early_task - during initialization allocate a composite task blob
+  * @task: the task that needs a blob
+  *
+- * Allocate the task blob for all the modules if it's not already there
++ * Allocate the task blob for all the modules
+  */
+-void __init lsm_early_task(struct task_struct *task)
++static void __init lsm_early_task(struct task_struct *task)
+ {
+-	int rc;
++	int rc = lsm_task_alloc(task);
+ 
+-	if (task == NULL)
+-		panic("%s: task cred.\n", __func__);
+-	if (task->security != NULL)
+-		return;
+-	rc = lsm_task_alloc(task);
+ 	if (rc)
+ 		panic("%s: Early task alloc failed.\n", __func__);
+ }
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 2332243..d0fa81c 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -209,7 +209,6 @@ static void cred_init_security(void)
+ 	struct cred *cred = (struct cred *) current->real_cred;
+ 	struct task_security_struct *tsec;
+ 
+-	lsm_early_cred(cred);
+ 	tsec = selinux_cred(cred);
+ 	tsec->osid = tsec->sid = SECINITSID_KERNEL;
+ }
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index a326cd9..fa98394 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4772,8 +4772,6 @@ static __init int smack_init(void)
+ 	if (!smack_inode_cache)
+ 		return -ENOMEM;
+ 
+-	lsm_early_cred(cred);
+-
+ 	/*
+ 	 * Set the security state for the initial task.
+ 	 */
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 066c0da..2b3eee0 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -566,7 +566,6 @@ static int __init tomoyo_init(void)
+ 	/* register ourselves with the security framework */
+ 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
+ 	printk(KERN_INFO "TOMOYO Linux initialized\n");
+-	lsm_early_cred(cred);
+ 	blob = tomoyo_cred(cred);
+ 	*blob = &tomoyo_kernel_domain;
+ 	tomoyo_mm_init();
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+1.8.3.1
+
