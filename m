@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7871DC07EBF
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 19:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 575FAC07EBF
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 19:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 514C02087E
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 19:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F80A2087E
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 19:47:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729227AbfARTpu (ORCPT
+        id S1729284AbfARTr1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Jan 2019 14:45:50 -0500
-Received: from namei.org ([65.99.196.166]:56878 "EHLO namei.org"
+        Fri, 18 Jan 2019 14:47:27 -0500
+Received: from namei.org ([65.99.196.166]:56890 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728738AbfARTpu (ORCPT
+        id S1729277AbfARTr1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Jan 2019 14:45:50 -0500
+        Fri, 18 Jan 2019 14:47:27 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x0IJjgZq001208;
-        Fri, 18 Jan 2019 19:45:42 GMT
-Date:   Sat, 19 Jan 2019 06:45:42 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x0IJlFwC001291;
+        Fri, 18 Jan 2019 19:47:15 GMT
+Date:   Sat, 19 Jan 2019 06:47:15 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] LSM: Make lsm_early_cred() and lsm_early_task() local
- functions.
-In-Reply-To: <1547806559-12097-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <alpine.LRH.2.21.1901190645290.581@namei.org>
-References: <1547806559-12097-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] LSM: Make some functions static
+In-Reply-To: <1547617472-60140-1-git-send-email-weiyongjun1@huawei.com>
+Message-ID: <alpine.LRH.2.21.1901190647060.581@namei.org>
+References: <1547617472-60140-1-git-send-email-weiyongjun1@huawei.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -41,19 +41,22 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 18 Jan 2019, Tetsuo Handa wrote:
+On Wed, 16 Jan 2019, Wei Yongjun wrote:
 
-> Since current->cred == current->real_cred when ordered_lsm_init()
-> is called, and lsm_early_cred()/lsm_early_task() need to be called
-> between the amount of required bytes is determined and module specific
-> initialization function is called, we can move these calls from
-> individual modules to ordered_lsm_init().
+> Fixes the following sparse warnings:
 > 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> security/security.c:533:5: warning:
+>  symbol 'lsm_task_alloc' was not declared. Should it be static?
+> security/security.c:554:5: warning:
+>  symbol 'lsm_ipc_alloc' was not declared. Should it be static?
+> security/security.c:575:5: warning:
+>  symbol 'lsm_msg_msg_alloc' was not declared. Should it be static?
+> 
+> Fixes: f4ad8f2c4076 ("LSM: Infrastructure management of the task security")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
 Applied to
 git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-
 
 -- 
 James Morris
