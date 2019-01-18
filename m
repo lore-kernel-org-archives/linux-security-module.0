@@ -2,134 +2,64 @@ Return-Path: <SRS0=wNUX=P2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B7EC43444
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 13:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E053BC43387
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 14:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BFAC20896
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 13:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547818376;
-	bh=tpgEN9hei0cSu0QMQUqt+S7kCVpdIeY4bfLSCWtjoow=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=kf97RedKxDlnMrIT6uqXvzWEBOcuDEAOVlohbA8Wcr5sDjJGGz8sRtPM+dkAq+ZiH
-	 EmEzE43SQXb8PQqdKm+8A73GYOgtkXzrtEr56nCCY7f9f88M8T26FGrzLHI9jjgKCw
-	 0ROdVLuCPKeCzq07AhaQE4KvUGin9mdzh11nK7Ow=
+	by mail.kernel.org (Postfix) with ESMTP id BA9E12086D
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 14:26:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfARNc4 (ORCPT
+        id S1727423AbfARO0F (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Jan 2019 08:32:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52730 "EHLO mail.kernel.org"
+        Fri, 18 Jan 2019 09:26:05 -0500
+Received: from mga18.intel.com ([134.134.136.126]:64202 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726593AbfARNcz (ORCPT
+        id S1727285AbfARO0F (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Jan 2019 08:32:55 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59DCD2087E;
-        Fri, 18 Jan 2019 13:32:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547818374;
-        bh=tpgEN9hei0cSu0QMQUqt+S7kCVpdIeY4bfLSCWtjoow=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fBVvlOZZ5mQwo37cY+fAmLunV89dmC5wJtpM+DIDjGgbZH9utKqAyiRKjZ5z2Fmv4
-         lrG7ZyTvrWVl02rdpJKgVpJahDqkSyn78MvC3Ro6P1HSYpL2gZ0C83mA6zyTWhO4DA
-         bbuj6objZP4Rb/Rgyu2ZeGlJtSkaY6ZUCMItmw4U=
-Date:   Fri, 18 Jan 2019 22:32:49 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        ard.biesheuvel@linaro.org, kristen@linux.intel.com,
-        deneen.t.dock@intel.com
-Subject: Re: [PATCH 17/17] module: Prevent module removal racing with
- text_poke()
-Message-Id: <20190118223249.94436b58fbf5f9592d92dfca@kernel.org>
-In-Reply-To: <69EA2C81-826F-46BA-8D80-241C39B0B70B@gmail.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-        <20190117003259.23141-18-rick.p.edgecombe@intel.com>
-        <20190117165422.d33d1af83db8716e24960a3c@kernel.org>
-        <e865e051-be79-adce-7275-72abf2173bdb@zytor.com>
-        <69EA2C81-826F-46BA-8D80-241C39B0B70B@gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-2022-JP
-Content-Transfer-Encoding: 7bit
+        Fri, 18 Jan 2019 09:26:05 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 06:26:04 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
+   d="scan'208";a="311539442"
+Received: from unknown (HELO localhost) ([10.249.254.249])
+  by fmsmga006.fm.intel.com with ESMTP; 18 Jan 2019 06:26:02 -0800
+Date:   Fri, 18 Jan 2019 16:25:59 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190118142559.GA4080@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 17 Jan 2019 17:15:27 -0800
-Nadav Amit <nadav.amit@gmail.com> wrote:
+I get this on a Geminilake NUC after rebasing my maintainer trees:
 
-> > On Jan 17, 2019, at 3:58 PM, H. Peter Anvin <hpa@zytor.com> wrote:
-> > 
-> > On 1/16/19 11:54 PM, Masami Hiramatsu wrote:
-> >> On Wed, 16 Jan 2019 16:32:59 -0800
-> >> Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
-> >> 
-> >>> From: Nadav Amit <namit@vmware.com>
-> >>> 
-> >>> It seems dangerous to allow code modifications to take place
-> >>> concurrently with module unloading. So take the text_mutex while the
-> >>> memory of the module is freed.
-> >> 
-> >> At that point, since the module itself is removed from module list,
-> >> it seems no actual harm. Or would you have any concern?
-> > 
-> > The issue isn't the module list, but rather when it is safe to free the
-> > contents, so we don't clobber anything. We absolutely need to enforce
-> > that we can't text_poke() something that might have already been freed.
-> > 
-> > That being said, we *also* really would prefer to enforce that we can't
-> > text_poke() memory that doesn't actually contain code; as far as I can
-> > tell we don't currently do that check.
-> 
-> Yes, that what the mutex was supposed to achieve. It’s not supposed just
-> to check whether it is a code page, but also that it is the same code
-> page that you wanted to patch. 
-> 
-> > This, again, is a good use for a separate mm context. We can enforce
-> > that that context will only ever contain valid page mappings for actual
-> > code pages.
-> 
-> This will not tell you that you have the *right* code-page. The module
-> notifiers help to do so, since they synchronize the text poking with
-> the module removal.
-> 
-> > (Note: in my proposed algorithm, with a separate mm, replace INVLPG with
-> > switching CR3 if we have to do a rollback or roll forward in the
-> > breakpoint handler.)
-> 
-> I really need to read your patches more carefully to see what you mean.
-> 
-> Anyhow, so what do you prefer? I’m ok with either one:
-> 	1. Keep this patch
-> 	2. Remove this patch and change into a comment on text_poke()
-> 	3. Just drop the patch
+tpm tpm0: A TPM error (-1) occurred attempting the self test
 
-I would prefer 2. so at least we should add a comment to text_poke().
+I checked the latest commit ID from drivers/char/tpm to make sure
+that I did not put anything broken to my last PR [1]. It works
+without issues.
 
-Thank you,
+In addition [2] gives me an empty diff.
 
+Something outside of the TPM driver must have happened that breaks
+the driver. Any ideas?
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+[1] commit 9488585b21bef0df1217e510c7134905d1d376a7
+[2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master drivers/char/tpm/
+
+/Jarkko
