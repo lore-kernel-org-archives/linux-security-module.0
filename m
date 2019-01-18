@@ -2,296 +2,95 @@ Return-Path: <SRS0=wNUX=P2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8A8C43444
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 15:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA47C43387
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 16:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B28820883
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 15:13:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3826E20850
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 16:34:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="dFiNELfJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfARPNC (ORCPT
+        id S1727779AbfARQep (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Jan 2019 10:13:02 -0500
-Received: from mga17.intel.com ([192.55.52.151]:37283 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727406AbfARPNC (ORCPT
+        Fri, 18 Jan 2019 11:34:45 -0500
+Received: from forward501o.mail.yandex.net ([37.140.190.203]:53295 "EHLO
+        forward501o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727776AbfARQep (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Jan 2019 10:13:02 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jan 2019 07:13:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,491,1539673200"; 
-   d="scan'208";a="135782396"
-Received: from unknown (HELO localhost) ([10.249.254.249])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Jan 2019 07:12:56 -0800
-Date:   Fri, 18 Jan 2019 17:12:53 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()
-Message-ID: <20190118151253.GH4080@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-6-roberto.sassu@huawei.com>
- <20181220152122.GB10652@linux.intel.com>
- <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
+        Fri, 18 Jan 2019 11:34:45 -0500
+Received: from mxback19o.mail.yandex.net (mxback19o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::70])
+        by forward501o.mail.yandex.net (Yandex) with ESMTP id 77D111E801E4;
+        Fri, 18 Jan 2019 19:34:42 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback19o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id eHslFpwSWV-Yf9KhTnu;
+        Fri, 18 Jan 2019 19:34:41 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1547829281;
+        bh=1Y5YsmaBSWrEKkSMALBpgh8vRyyyRdlnpS05fll6xJo=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
+        b=dFiNELfJqOVcafqWfwuQV+DjNRVT7siyeFJeBNNapcph7LSOOTaIs3HQiYxVz931L
+         f4o0ue8rMJAqdXvB8vQ9fEcdVSK6hiaE/ykBK5fEp+116H2SM/oJaQWJ7YXaz8D/rr
+         005VpoYG11pUvghuQrU018Q84ie2sNPb3DyyfoHw=
+Authentication-Results: mxback19o.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by sas1-fed4e4c8a570.qloud-c.yandex.net with HTTP;
+        Fri, 18 Jan 2019 19:34:41 +0300
+From:   Nazarov Sergey <s-nazarov@yandex.ru>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
+References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
+         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com> <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
+Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Fri, 18 Jan 2019 19:34:41 +0300
+Message-Id: <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 17, 2019 at 08:59:00AM +0100, Roberto Sassu wrote:
-> On 12/20/2018 4:21 PM, Jarkko Sakkinen wrote:
-> > On Thu, Dec 13, 2018 at 11:29:45AM +0100, Roberto Sassu wrote:
-> > > Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
-> > > 
-> > > This patch modifies the definition of tpm_pcr_extend() to allow other
-> > > kernel subsystems to pass a digest for each algorithm supported by the TPM.
-> > > All digests are processed by the TPM in one operation.
-> > > 
-> > > If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
-> > > the TPM driver extends the remaining PCR banks with the first digest
-> > > passed as an argument to the function.
-> > > 
-> > > The new tpm_extend digest structure has been preferred to the tpm_digest
-> > > structure, to let the caller specify the size of the digest (which may be
-> > > unknown to the TPM driver).
-> > > 
-> > > Due to the API change, ima_pcr_extend() and pcrlock() have been modified.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >   drivers/char/tpm/tpm-interface.c   | 24 +++++---------------
-> > >   drivers/char/tpm/tpm.h             |  5 +++--
-> > >   drivers/char/tpm/tpm1-cmd.c        | 13 ++++++++---
-> > >   drivers/char/tpm/tpm2-cmd.c        | 35 +++++++++++++++++++++---------
-> > >   include/linux/tpm.h                | 13 ++++++++---
-> > >   security/integrity/ima/ima_queue.c |  5 ++++-
-> > >   security/keys/trusted.c            |  5 ++++-
-> > >   7 files changed, 62 insertions(+), 38 deletions(-)
-> > > 
-> > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > index eb7c79ca8a94..911fea19e408 100644
-> > > --- a/drivers/char/tpm/tpm-interface.c
-> > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > @@ -478,42 +478,30 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-> > >    * tpm_pcr_extend - extend a PCR value in SHA1 bank.
-> > >    * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-> > >    * @pcr_idx:	the PCR to be retrieved
-> > > - * @hash:	the hash value used to extend the PCR value
-> > > + * @count:	number of tpm_extend_digest structures
-> > > + * @digests:	array of tpm_extend_digest structures used to extend PCRs
-> > >    *
-> > >    * Note: with TPM 2.0 extends also those banks for which no digest was
-> > >    * specified in order to prevent malicious use of those PCR banks.
-> > >    *
-> > >    * Return: same as with tpm_transmit_cmd()
-> > >    */
-> > > -int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > > +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > +		   const struct tpm_extend_digest *digests)
-> > 
-> > Remove const. Document how @digests is used  like the special meaning
-> > of the first index. I faintly remember asking this last time.
-> > 
-> > >   {
-> > >   	int rc;
-> > > -	struct tpm_digest *digest_list;
-> > > -	int i;
-> > >   	chip = tpm_find_get_ops(chip);
-> > >   	if (!chip)
-> > >   		return -ENODEV;
-> > >   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> > > -		digest_list = kcalloc(chip->nr_allocated_banks,
-> > > -				      sizeof(*digest_list), GFP_KERNEL);
-> > > -		if (!digest_list)
-> > > -			return -ENOMEM;
-> > > -
-> > > -		for (i = 0; i < chip->nr_allocated_banks; i++) {
-> > > -			digest_list[i].alg_id = chip->allocated_banks[i].alg_id;
-> > > -			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
-> > > -		}
-> > > -
-> > > -		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
-> > > -				     digest_list);
-> > > -		kfree(digest_list);
-> > > +		rc = tpm2_pcr_extend(chip, pcr_idx, count, digests);
-> > >   		tpm_put_ops(chip);
-> > >   		return rc;
-> > >   	}
-> > > -	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
-> > > +	rc = tpm1_pcr_extend(chip, pcr_idx, count, digests,
-> > >   			     "attempting extend a PCR value");
-> > 
-> > The validation is missing that the provided array has only one element
-> > and the algorithm is SHA1. Could be done also inside tpm1_pcr_extend()
-> > but what you are doing to that function does not make any sense so
-> > better to do it here.
-> > 
-> > >   	tpm_put_ops(chip);
-> > >   	return rc;
-> > > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> > > index 64d93d26087f..6b446504d2fe 100644
-> > > --- a/drivers/char/tpm/tpm.h
-> > > +++ b/drivers/char/tpm/tpm.h
-> > > @@ -504,7 +504,8 @@ int tpm1_auto_startup(struct tpm_chip *chip);
-> > >   int tpm1_do_selftest(struct tpm_chip *chip);
-> > >   int tpm1_get_timeouts(struct tpm_chip *chip);
-> > >   unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
-> > > -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
-> > > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > +		    const struct tpm_extend_digest *digests,
-> > >   		    const char *log_msg);
-> > >   int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-> > >   ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
-> > > @@ -551,7 +552,7 @@ int tpm2_get_timeouts(struct tpm_chip *chip);
-> > >   int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
-> > >   		  struct tpm_digest *digest, u16 *digest_size_ptr);
-> > >   int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > -		    struct tpm_digest *digests);
-> > > +		    const struct tpm_extend_digest *digests);
-> > >   int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
-> > >   void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
-> > >   			    unsigned int flags);
-> > > diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-> > > index 8b70a7f884a7..04ee10284b8c 100644
-> > > --- a/drivers/char/tpm/tpm1-cmd.c
-> > > +++ b/drivers/char/tpm/tpm1-cmd.c
-> > > @@ -449,12 +449,20 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
-> > >   }
-> > >   #define TPM_ORD_PCR_EXTEND 20
-> > > -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
-> > > +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > +		    const struct tpm_extend_digest *digests,
-> > >   		    const char *log_msg)
-> > >   {
-> > >   	struct tpm_buf buf;
-> > > +	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
-> > > +	const u8 *hash;
-> > >   	int rc;
-> > > +	hash = dummy_hash;
-> > > +	if (count)
-> > > +		memcpy(dummy_hash, digests[0].data,
-> > > +		       min(digests[0].size, (u16)sizeof(dummy_hash)));
-> > > +
-> > 
-> > You copy memory from one place to another without any good reason to do
-> > so. My suggestion is just not to change tpm1_pcr_extend() at all.
-> > 
-> > >   	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-> > >   	if (rc)
-> > >   		return rc;
-> > > @@ -743,7 +751,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
-> > >    */
-> > >   int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
-> > >   {
-> > > -	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
-> > >   	struct tpm_buf buf;
-> > >   	unsigned int try;
-> > >   	int rc;
-> > > @@ -751,7 +758,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
-> > >   	/* for buggy tpm, flush pcrs with extend to selected dummy */
-> > >   	if (tpm_suspend_pcr)
-> > > -		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
-> > > +		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, 0, NULL,
-> > >   				     "extending dummy pcr before suspend");
-> > >   	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
-> > > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> > > index 6ce5173cf0e5..77b5808270c6 100644
-> > > --- a/drivers/char/tpm/tpm2-cmd.c
-> > > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > > @@ -247,21 +247,22 @@ struct tpm2_null_auth_area {
-> > >    *
-> > >    * @chip:	TPM chip to use.
-> > >    * @pcr_idx:	index of the PCR.
-> > > - * @count:	number of digests passed.
-> > > - * @digests:	list of pcr banks and corresponding digest values to extend.
-> > > + * @count:	number of tpm_extend_digest passed.
-> > > + * @digests:	array of tpm_extend_digest with digest values to extend.
-> > >    *
-> > >    * Return: Same as with tpm_transmit_cmd.
-> > >    */
-> > 
-> > The documentation about @digests.
-> > 
-> > >   int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > > -		    struct tpm_digest *digests)
-> > > +		    const struct tpm_extend_digest *digests)
-> > >   {
-> > >   	struct tpm_buf buf;
-> > >   	struct tpm2_null_auth_area auth_area;
-> > > +	const struct tpm_extend_digest *digest;
-> > > +	u8 dummy_hash[SHA512_DIGEST_SIZE] = { 0 };
-> > > +	const u8 *hash;
-> > >   	int rc;
-> > >   	int i;
-> > > -
-> > > -	if (count > chip->nr_allocated_banks)
-> > > -		return -EINVAL;
-> > > +	int j;
-> > >   	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
-> > >   	if (rc)
-> > > @@ -277,11 +278,25 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-> > >   	tpm_buf_append_u32(&buf, sizeof(struct tpm2_null_auth_area));
-> > >   	tpm_buf_append(&buf, (const unsigned char *)&auth_area,
-> > >   		       sizeof(auth_area));
-> > > -	tpm_buf_append_u32(&buf, count);
-> > > +	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
-> > > +
-> > > +	if (count)
-> > > +		memcpy(dummy_hash, digests[0].data, digests[0].size);
-> > > +
-> > > +	for (i = 0; i < chip->nr_allocated_banks; i++) {
-> > > +		tpm_buf_append_u16(&buf, chip->allocated_banks[i].alg_id);
-> > > +
-> > > +		hash = dummy_hash;
-> > > +		for (j = 0; j < count; j++) {
-> > > +			digest = digests + j;
-> > > +
-> > > +			if (digest->alg_id == chip->allocated_banks[i].alg_id) {
-> > > +				hash = digest->data;
-> > > +				break;
-> > 
-> > I think the whole design is just wrong. I did re-read your response to
-> > v6 again and I'm very sorry, but I just don't get this. Caller has all
-> > the information (from struct tpm_chip) to give the correct data. This
-> > function should validate that data (check algorithm ID and that's it).
-> 
-> The question is if checking tpm->allocated_banks is a strict
-> requirement, or we can allow callers to use the algorithm they are
-> currently using, without further modifications.
+Hi, Paul!
+I don't like this. As you said, fix any calls to icmp_send is a trivial.
+But in cipso_v4_optptr, we repeating the work already done, and in cipso_v4_error
+we will need to do even more again. Any code, working with IP header data on several
+levels of TCP/IP stack need to do this again and again. Is looks too overloaded!
+In my opinion, this is a problem of TCP/IP stack design, comes from standing
+compiled IP header data in different places at different stack layers.
+May be better to add some flag or pointer to struct sk_buff?
+But, I think, we need netdev developers advice for this.
+Regards, Sergey.
 
-If you want to know what is available, you can use that array.
-
-> > Extending with the dummy hash should be done by the caller when
-> > preparing the array, not baked into this function. This kind of also
-> > makes obvious that we don't need this new struct. There should never be
-> > a local variable (whose size is BTW randomly chosen) called dummy_hash.
-> 
-> This means duplicating the code for each caller. Currently, this work is
-> done by the TPM driver.
-
-It is better than fix the usage pattern like this. Not only that, but
-this somewhat complicated behavior now completely undocumented in the
-function description.
-
-You are making strong assumptions how some other subsystem might use
-extend operation. I will rather accept redundancy and consider
-consolidation later when there are two clients. Rather keep the TPM
-provided function simple and stupid.
-
-/Jarkko
+18.01.2019, 17:53, "Paul Moore" <paul@paul-moore.com>:
+> On Tue, Jan 15, 2019 at 2:52 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> It's been a few days now with no comments from the netdev folks, so I
+> think it's probably best to start putting together a RFC patch for
+> review/comment. Nazarov, would you like to do that? If not, that's
+> okay, just let me know.
+>
+> I'm still concerned about calling ip_options_compile() in icmp_send()
+> and I'm thinking we might be better off to add a new ip_options
+> parameter to icmp_send(); if the parameter is NULL we behave as we do
+> today, but if it is non-NULL we use the given ip_options parameter in
+> place of calling ip_options_echo(). With that change in place, we
+> would need to update cipso_v4_error() to do the extra work of calling
+> ip_options_compile() and __ip_options_echo(). There looks to be maybe
+> a dozen (or two?) existing icmp_send() callers, but it should be
+> pretty trivial to update them to pass NULL for the new parameter.
+>
+> What do you think?
+>
+>
+> --
+> paul moore
+> www.paul-moore.com
