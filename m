@@ -2,482 +2,138 @@ Return-Path: <SRS0=wNUX=P2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DE7C43387
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 14:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBB57C43444
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F1A20657
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 14:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB30D2087E
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jan 2019 14:53:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="XjoS2t+L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfAROuC (ORCPT
+        id S1728022AbfAROxq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Jan 2019 09:50:02 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:29987 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbfAROuC (ORCPT
+        Fri, 18 Jan 2019 09:53:46 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39227 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727790AbfAROxp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Jan 2019 09:50:02 -0500
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0IEnrvN002341;
-        Fri, 18 Jan 2019 23:49:53 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Fri, 18 Jan 2019 23:49:53 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0IEniqw002237
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 18 Jan 2019 23:49:53 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     linux-security-module@vger.kernel.org
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH v2] tomoyo: Swicth from cred->security to task_struct->security.
-Date:   Fri, 18 Jan 2019 23:49:47 +0900
-Message-Id: <1547822987-9401-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1547806711-13571-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-References: <1547806711-13571-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        Fri, 18 Jan 2019 09:53:45 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t9-v6so11861448ljh.6
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Jan 2019 06:53:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PpZe3pdqYJrV9gZcM+ikCK2IVNmbxJ98lnifRbr6ttk=;
+        b=XjoS2t+L4DdceYTn1d69FrZSWXJ0CIxMGjii/g1rpufiiDqqCLl+oRfI+vlytKqQLD
+         Itx/PQqPtZXZPsJrErZxMf1YjcleyX9ytK/rv3SyvymGdmiCsuBLHMYr4BdCiJqIUoUO
+         HpaZjqF/tdAomdrI7zGNW4t5pPnX++LO0uLFGuICPJ259hqfc1p92RB9CrpyaYCJpfX3
+         b6ZPnmF6g1mojzertkR+AeAMZOr47xuV+WxTmOoBBW7wW3okavzOBaQ5S+UCAxG9W+Ih
+         k6ABI9RuvSR7IwSipRRhn2rm8IjXKL+E3H0gY0NcjaJLDRfiap6t3RMTI1PIYEYZf+it
+         3obg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PpZe3pdqYJrV9gZcM+ikCK2IVNmbxJ98lnifRbr6ttk=;
+        b=d5bRjBzgutAd48nlod5yHut5g8J0aNY6FRYd95edCQ8m3iQ12jnKWGCXnxEmQ4n7bR
+         Y5/kqV7XZr99OMxkXABvkopnruECOdjgbse/X6LjU9ymawlYa1/brKGWETY6JXa4NYhe
+         Pp6cQ18EbrtKLZNzPapUFhCItIvjlLE6ousQ6y6lk3liwNbxYEJZ48EsTeFNeSN1mJ4Q
+         QPb2IrNhwQoMwbSHJxFbUJdUGh8wy6eJ5cJJTPOAPx8G9SuiCRsqEQYcP7uqYE/UuoBa
+         q3tkwnYZzhEeY5pNzBAFrPd4dfdEeB4P0FTW7t2MondhKmOBlkMw2AYyagQj2DcI8You
+         xWew==
+X-Gm-Message-State: AJcUukdztywkI7nLUkNhYQJ9cDWigqJ5IVC8G5bNH3B8EFh5Gw80SK9i
+        76bFzoQtWJVl+PlU5wneQEkwW7M47ypFIsczOiP1
+X-Google-Smtp-Source: ALg8bN4s1QS6DIhypX4qF7IGy/bFO8+mR9tmChTfbeX8KqP1TZ030DTykIvuNp6D1fgAPRwxCOjL9EfdLy9XpPINN6g=
+X-Received: by 2002:a2e:834a:: with SMTP id l10-v6mr11985852ljh.42.1547823222623;
+ Fri, 18 Jan 2019 06:53:42 -0800 (PST)
+MIME-Version: 1.0
+References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
+ <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
+In-Reply-To: <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 18 Jan 2019 09:53:31 -0500
+Message-ID: <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
+Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
+To:     Nazarov Sergey <s-nazarov@yandex.ru>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        netdev@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-TOMOYO security module is designed to use "struct task_struct"->security
-in order to allow per "struct task_struct" tracking without being disturbed
-by unable to update "struct cred"->security due to override mechanism.
+On Tue, Jan 15, 2019 at 2:52 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Tue, Jan 15, 2019 at 12:55 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > On 1/15/2019 9:06 AM, Nazarov Sergey wrote:
+> > > Hello!
+> > > Security modules (selinux, smack) use icmp_send for discarded incorrectly labeled network packets.
+> > > This could be on TCP level too (security_sock_rcv_skb -> cipso_v4_error for INET stream connection, for example).
+> > > icmp_send calls ip_option_echo, which uses IPCB to take compiled IP options.
+> > > After moving IP header data to the end of the struct tcp_skb_cb (since 3.18 kernel), this could lead to
+> > > kernel memory corruption when IP options copying.
+> >
+> > Can you explain how that corruption might occur?
+> > Do you have a test case?
+>
+> Thanks for pointing this out Nazarov.
+>
+> Presumably we are going to hit a problem whenever icmp_send is called
+> from outside the IP layer in the stack.  We fixed a similar problem a
+> few years back with 04f81f0154e4 ("cipso: don't use IPCB() to locate
+> the CIPSO IP option").
+>
+> I've CC'd netdev, as I'm guessing they will have some thoughts on
+> this, but my initial reaction is that your proposed patch isn't as
+> generic as it should be for code that lives in icmp_send().  I suspect
+> the safe thing to do would be to call ip_options_compile() again on
+> skb_in and build a local copy of the ip_options struct that could then
+> be used in the call to __ip_options_echo(); the code could either live
+> in icmp_send() or some new ip_options_echo() variant
+> (ip_options_echo_safe()?  I dunno).  Unfortunately, calling
+> ip_options_compile() is going to add some overhead, and may be a
+> non-starter for the netdev folks, but this is error path code, so it
+> might be acceptable.  Hopefully the netdev folks will have some
+> better, more clever suggestions.
 
-Now that infrastructure-managed security blob is ready, this patch updates
-TOMOYO to use "struct task_struct"->security.
+It's been a few days now with no comments from the netdev folks, so I
+think it's probably best to start putting together a RFC patch for
+review/comment.  Nazarov, would you like to do that?  If not, that's
+okay, just let me know.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- security/tomoyo/common.c        |   4 +-
- security/tomoyo/common.h        |  43 ++++--------
- security/tomoyo/domain.c        |  11 +--
- security/tomoyo/securityfs_if.c |  22 +++---
- security/tomoyo/tomoyo.c        | 149 +++++++++++++++++++++-------------------
- 5 files changed, 108 insertions(+), 121 deletions(-)
+I'm still concerned about calling ip_options_compile() in icmp_send()
+and I'm thinking we might be better off to add a new ip_options
+parameter to icmp_send(); if the parameter is NULL we behave as we do
+today, but if it is non-NULL we use the given ip_options parameter in
+place of calling ip_options_echo().  With that change in place, we
+would need to update cipso_v4_error() to do the extra work of calling
+ip_options_compile() and __ip_options_echo().  There looks to be maybe
+a dozen (or two?) existing icmp_send() callers, but it should be
+pretty trivial to update them to pass NULL for the new parameter.
 
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index c598aa0..877cf8a 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -986,7 +986,7 @@ static bool tomoyo_select_domain(struct tomoyo_io_buffer *head,
- 		else
- 			p = find_task_by_vpid(pid);
- 		if (p)
--			domain = tomoyo_real_domain(p);
-+			domain = tomoyo_security(p)->domain_info;
- 		rcu_read_unlock();
- 	} else if (!strncmp(data, "domain=", 7)) {
- 		if (tomoyo_domain_def(data + 7))
-@@ -1668,7 +1668,7 @@ static void tomoyo_read_pid(struct tomoyo_io_buffer *head)
- 	else
- 		p = find_task_by_vpid(pid);
- 	if (p)
--		domain = tomoyo_real_domain(p);
-+		domain = tomoyo_security(p)->domain_info;
- 	rcu_read_unlock();
- 	if (!domain)
- 		return;
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index 4fc1729..f19ed53f 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -686,7 +686,7 @@ struct tomoyo_domain_info {
- 	u8 group;          /* Group number to use.   */
- 	bool is_deleted;   /* Delete flag.           */
- 	bool flags[TOMOYO_MAX_DOMAIN_INFO_FLAGS];
--	atomic_t users; /* Number of referring credentials. */
-+	atomic_t users; /* Number of referring tasks. */
- };
- 
- /*
-@@ -913,6 +913,12 @@ struct tomoyo_policy_namespace {
- 	const char *name;
- };
- 
-+/* Structure for "struct task_struct"->security. */
-+struct tomoyo_security {
-+	struct tomoyo_domain_info *domain_info;
-+	struct tomoyo_domain_info *old_domain_info;
-+};
-+
- /********** Function prototypes. **********/
- 
- bool tomoyo_address_matches_group(const bool is_ipv6, const __be32 *address,
-@@ -1021,6 +1027,7 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
- struct tomoyo_condition *tomoyo_get_condition(struct tomoyo_acl_param *param);
- struct tomoyo_domain_info *tomoyo_assign_domain(const char *domainname,
- 						const bool transit);
-+struct tomoyo_domain_info *tomoyo_domain(void);
- struct tomoyo_domain_info *tomoyo_find_domain(const char *domainname);
- struct tomoyo_group *tomoyo_get_group(struct tomoyo_acl_param *param,
- 				      const u8 idx);
-@@ -1200,41 +1207,15 @@ static inline void tomoyo_put_group(struct tomoyo_group *group)
- }
- 
- /**
-- * tomoyo_cred - Get a pointer to the tomoyo cred security blob
-- * @cred - the relevant cred
-- *
-- * Returns pointer to the tomoyo cred blob.
-- */
--static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
--{
--	return cred->security + tomoyo_blob_sizes.lbs_cred;
--}
--
--/**
-- * tomoyo_domain - Get "struct tomoyo_domain_info" for current thread.
-+ * tomoyo_security - Get "struct tomoyo_security" for specified thread.
-  *
-- * Returns pointer to "struct tomoyo_domain_info" for current thread.
-- */
--static inline struct tomoyo_domain_info *tomoyo_domain(void)
--{
--	struct tomoyo_domain_info **blob = tomoyo_cred(current_cred());
--
--	return *blob;
--}
--
--/**
-- * tomoyo_real_domain - Get "struct tomoyo_domain_info" for specified thread.
-- *
-- * @task: Pointer to "struct task_struct".
-+ * @task - Pointer to "struct task_struct".
-  *
-  * Returns pointer to "struct tomoyo_security" for specified thread.
-  */
--static inline struct tomoyo_domain_info *tomoyo_real_domain(struct task_struct
--							    *task)
-+static inline struct tomoyo_security *tomoyo_security(struct task_struct *task)
- {
--	struct tomoyo_domain_info **blob = tomoyo_cred(get_task_cred(task));
--
--	return *blob;
-+	return task->security + tomoyo_blob_sizes.lbs_task;
- }
- 
- /**
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index b7469fd..05f470e 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -678,7 +678,6 @@ static int tomoyo_environ(struct tomoyo_execve *ee)
-  */
- int tomoyo_find_next_domain(struct linux_binprm *bprm)
- {
--	struct tomoyo_domain_info **blob;
- 	struct tomoyo_domain_info *old_domain = tomoyo_domain();
- 	struct tomoyo_domain_info *domain = NULL;
- 	const char *original_name = bprm->filename;
-@@ -843,9 +842,13 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
- 	if (!domain)
- 		domain = old_domain;
- 	/* Update reference count on "struct tomoyo_domain_info". */
--	atomic_inc(&domain->users);
--	blob = tomoyo_cred(bprm->cred);
--	*blob = domain;
-+	{
-+		struct tomoyo_security *s = tomoyo_security(current);
-+
-+		s->old_domain_info = s->domain_info;
-+		s->domain_info = domain;
-+		atomic_inc(&domain->users);
-+	}
- 	kfree(exename.name);
- 	if (!retval) {
- 		ee->r.domain = domain;
-diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs_if.c
-index 768dff9..2bf634c 100644
---- a/security/tomoyo/securityfs_if.c
-+++ b/security/tomoyo/securityfs_if.c
-@@ -67,21 +67,15 @@ static ssize_t tomoyo_write_self(struct file *file, const char __user *buf,
- 			if (!new_domain) {
- 				error = -ENOENT;
- 			} else {
--				struct cred *cred = prepare_creds();
--				if (!cred) {
--					error = -ENOMEM;
--				} else {
--					struct tomoyo_domain_info **blob;
--					struct tomoyo_domain_info *old_domain;
-+				struct tomoyo_security *s =
-+					tomoyo_security(current);
-+				struct tomoyo_domain_info *old_domain =
-+					s->domain_info;
- 
--					blob = tomoyo_cred(cred);
--					old_domain = *blob;
--					*blob = new_domain;
--					atomic_inc(&new_domain->users);
--					atomic_dec(&old_domain->users);
--					commit_creds(cred);
--					error = 0;
--				}
-+				s->domain_info = new_domain;
-+				atomic_inc(&new_domain->users);
-+				atomic_dec(&old_domain->users);
-+				error = 0;
- 			}
- 		}
- 		tomoyo_read_unlock(idx);
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 2b3eee0..d36ec24 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -9,19 +9,19 @@
- #include "common.h"
- 
- /**
-- * tomoyo_cred_alloc_blank - Target for security_cred_alloc_blank().
-+ * tomoyo_domain - Get "struct tomoyo_domain_info" for current thread.
-  *
-- * @new: Pointer to "struct cred".
-- * @gfp: Memory allocation flags.
-- *
-- * Returns 0.
-+ * Returns pointer to "struct tomoyo_domain_info" for current thread.
-  */
--static int tomoyo_cred_alloc_blank(struct cred *new, gfp_t gfp)
-+struct tomoyo_domain_info *tomoyo_domain(void)
- {
--	struct tomoyo_domain_info **blob = tomoyo_cred(new);
-+	struct tomoyo_security *s = tomoyo_security(current);
- 
--	*blob = NULL;
--	return 0;
-+	if (s->old_domain_info && !current->in_execve) {
-+		atomic_dec(&s->old_domain_info->users);
-+		s->old_domain_info = NULL;
-+	}
-+	return s->domain_info;
- }
- 
- /**
-@@ -36,85 +36,56 @@ static int tomoyo_cred_alloc_blank(struct cred *new, gfp_t gfp)
- static int tomoyo_cred_prepare(struct cred *new, const struct cred *old,
- 			       gfp_t gfp)
- {
--	struct tomoyo_domain_info **old_blob = tomoyo_cred(old);
--	struct tomoyo_domain_info **new_blob = tomoyo_cred(new);
--	struct tomoyo_domain_info *domain;
--
--	domain = *old_blob;
--	*new_blob = domain;
-+	/* Restore old_domain_info saved by previous execve() request. */
-+	struct tomoyo_security *s = tomoyo_security(current);
- 
--	if (domain)
--		atomic_inc(&domain->users);
-+	if (s->old_domain_info && !current->in_execve) {
-+		atomic_dec(&s->domain_info->users);
-+		s->domain_info = s->old_domain_info;
-+		s->old_domain_info = NULL;
-+	}
- 	return 0;
- }
- 
- /**
-- * tomoyo_cred_transfer - Target for security_transfer_creds().
-+ * tomoyo_bprm_committed_creds - Target for security_bprm_committed_creds().
-  *
-- * @new: Pointer to "struct cred".
-- * @old: Pointer to "struct cred".
-- */
--static void tomoyo_cred_transfer(struct cred *new, const struct cred *old)
--{
--	tomoyo_cred_prepare(new, old, 0);
--}
--
--/**
-- * tomoyo_cred_free - Target for security_cred_free().
-- *
-- * @cred: Pointer to "struct cred".
-+ * @bprm: Pointer to "struct linux_binprm".
-  */
--static void tomoyo_cred_free(struct cred *cred)
-+static void tomoyo_bprm_committed_creds(struct linux_binprm *bprm)
- {
--	struct tomoyo_domain_info **blob = tomoyo_cred(cred);
--	struct tomoyo_domain_info *domain = *blob;
-+	/* Clear old_domain_info saved by execve() request. */
-+	struct tomoyo_security *s = tomoyo_security(current);
- 
--	if (domain)
--		atomic_dec(&domain->users);
-+	atomic_dec(&s->old_domain_info->users);
-+	s->old_domain_info = NULL;
- }
- 
-+#ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
- /**
-  * tomoyo_bprm_set_creds - Target for security_bprm_set_creds().
-  *
-  * @bprm: Pointer to "struct linux_binprm".
-  *
-- * Returns 0 on success, negative value otherwise.
-+ * Returns 0.
-  */
- static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
- {
--	struct tomoyo_domain_info **blob;
--	struct tomoyo_domain_info *domain;
--
- 	/*
- 	 * Do only if this function is called for the first time of an execve
- 	 * operation.
- 	 */
- 	if (bprm->called_set_creds)
- 		return 0;
--#ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
- 	/*
- 	 * Load policy if /sbin/tomoyo-init exists and /sbin/init is requested
- 	 * for the first time.
- 	 */
- 	if (!tomoyo_policy_loaded)
- 		tomoyo_load_policy(bprm->filename);
--#endif
--	/*
--	 * Release reference to "struct tomoyo_domain_info" stored inside
--	 * "bprm->cred->security". New reference to "struct tomoyo_domain_info"
--	 * stored inside "bprm->cred->security" will be acquired later inside
--	 * tomoyo_find_next_domain().
--	 */
--	blob = tomoyo_cred(bprm->cred);
--	domain = *blob;
--	atomic_dec(&domain->users);
--	/*
--	 * Tell tomoyo_bprm_check_security() is called for the first time of an
--	 * execve operation.
--	 */
--	*blob = NULL;
- 	return 0;
- }
-+#endif
- 
- /**
-  * tomoyo_bprm_check_security - Target for security_bprm_check().
-@@ -125,16 +96,13 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
-  */
- static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
- {
--	struct tomoyo_domain_info **blob;
--	struct tomoyo_domain_info *domain;
-+	struct tomoyo_security *s = tomoyo_security(current);
- 
--	blob = tomoyo_cred(bprm->cred);
--	domain = *blob;
- 	/*
- 	 * Execute permission is checked against pathname passed to do_execve()
- 	 * using current domain.
- 	 */
--	if (!domain) {
-+	if (!s->old_domain_info) {
- 		const int idx = tomoyo_read_lock();
- 		const int err = tomoyo_find_next_domain(bprm);
- 		tomoyo_read_unlock(idx);
-@@ -143,8 +111,8 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
- 	/*
- 	 * Read permission is checked against interpreters using next domain.
- 	 */
--	return tomoyo_check_open_permission(domain, &bprm->file->f_path,
--					    O_RDONLY);
-+	return tomoyo_check_open_permission(s->domain_info,
-+					    &bprm->file->f_path, O_RDONLY);
- }
- 
- /**
-@@ -510,19 +478,60 @@ static int tomoyo_socket_sendmsg(struct socket *sock, struct msghdr *msg,
- }
- 
- struct lsm_blob_sizes tomoyo_blob_sizes __lsm_ro_after_init = {
--	.lbs_cred = sizeof(struct tomoyo_domain_info *),
-+	.lbs_task = sizeof(struct tomoyo_security),
- };
- 
-+/**
-+ * tomoyo_task_alloc - Target for security_task_alloc().
-+ *
-+ * @task:  Pointer to "struct task_struct".
-+ * @flags: clone() flags.
-+ *
-+ * Returns 0.
-+ */
-+static int tomoyo_task_alloc(struct task_struct *task,
-+			     unsigned long clone_flags)
-+{
-+	struct tomoyo_security *old = tomoyo_security(current);
-+	struct tomoyo_security *new = tomoyo_security(task);
-+
-+	new->domain_info = old->domain_info;
-+	atomic_inc(&new->domain_info->users);
-+	new->old_domain_info = NULL;
-+	return 0;
-+}
-+
-+/**
-+ * tomoyo_task_free - Target for security_task_free().
-+ *
-+ * @task: Pointer to "struct task_struct".
-+ */
-+static void tomoyo_task_free(struct task_struct *task)
-+{
-+	struct tomoyo_security *s = tomoyo_security(task);
-+
-+	if (s->domain_info) {
-+		atomic_dec(&s->domain_info->users);
-+		s->domain_info = NULL;
-+	}
-+	if (s->old_domain_info) {
-+		atomic_dec(&s->old_domain_info->users);
-+		s->old_domain_info = NULL;
-+	}
-+}
-+
- /*
-  * tomoyo_security_ops is a "struct security_operations" which is used for
-  * registering TOMOYO.
-  */
- static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
--	LSM_HOOK_INIT(cred_alloc_blank, tomoyo_cred_alloc_blank),
- 	LSM_HOOK_INIT(cred_prepare, tomoyo_cred_prepare),
--	LSM_HOOK_INIT(cred_transfer, tomoyo_cred_transfer),
--	LSM_HOOK_INIT(cred_free, tomoyo_cred_free),
-+	LSM_HOOK_INIT(bprm_committed_creds, tomoyo_bprm_committed_creds),
-+	LSM_HOOK_INIT(task_alloc, tomoyo_task_alloc),
-+	LSM_HOOK_INIT(task_free, tomoyo_task_free),
-+#ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
- 	LSM_HOOK_INIT(bprm_set_creds, tomoyo_bprm_set_creds),
-+#endif
- 	LSM_HOOK_INIT(bprm_check_security, tomoyo_bprm_check_security),
- 	LSM_HOOK_INIT(file_fcntl, tomoyo_file_fcntl),
- 	LSM_HOOK_INIT(file_open, tomoyo_file_open),
-@@ -560,14 +569,14 @@ struct lsm_blob_sizes tomoyo_blob_sizes __lsm_ro_after_init = {
-  */
- static int __init tomoyo_init(void)
- {
--	struct cred *cred = (struct cred *) current_cred();
--	struct tomoyo_domain_info **blob;
-+	struct tomoyo_security *s = tomoyo_security(current);
- 
- 	/* register ourselves with the security framework */
- 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
- 	printk(KERN_INFO "TOMOYO Linux initialized\n");
--	blob = tomoyo_cred(cred);
--	*blob = &tomoyo_kernel_domain;
-+	s->domain_info = &tomoyo_kernel_domain;
-+	atomic_inc(&tomoyo_kernel_domain.users);
-+	s->old_domain_info = NULL;
- 	tomoyo_mm_init();
- 
- 	return 0;
+What do you think?
+
+> > > This patch fix a bug, but I'm not sure, that this is a best solution. Perhaps someone more familiar with the
+> > > linux TCP/IP stack will offer a better one.
+> > > Thanks.
+> > >
+> > > --- a/net/ipv4/icmp.c
+> > > +++ b/net/ipv4/icmp.c
+> > > @@ -679,7 +679,8 @@ void icmp_send(struct sk_buff *skb_in, i
+> > >                                         iph->tos;
+> > >       mark = IP4_REPLY_MARK(net, skb_in->mark);
+> > >
+> > > -     if (ip_options_echo(&icmp_param->replyopts.opt.opt, skb_in))
+> > > +     if (__ip_options_echo(&icmp_param->replyopts.opt.opt, skb_in,
+> > > +                     ip_hdr(skb_in)->protocol == IPPROTO_TCP ? &TCP_SKB_CB(skb_in)->header.h4.opt : &IPCB(skb_in)->opt))
+> > >               goto out_unlock;
+> > >
+> > >
+
 -- 
-1.8.3.1
-
+paul moore
+www.paul-moore.com
