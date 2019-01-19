@@ -2,191 +2,482 @@ Return-Path: <SRS0=4ySK=P3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0252C61CE4
-	for <linux-security-module@archiver.kernel.org>; Sat, 19 Jan 2019 12:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB52C61CE4
+	for <linux-security-module@archiver.kernel.org>; Sat, 19 Jan 2019 14:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E082086A
-	for <linux-security-module@archiver.kernel.org>; Sat, 19 Jan 2019 12:53:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JWQE3y0i"
+	by mail.kernel.org (Postfix) with ESMTP id 8D49E2084C
+	for <linux-security-module@archiver.kernel.org>; Sat, 19 Jan 2019 14:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbfASMxg (ORCPT
+        id S1728137AbfASOL6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 19 Jan 2019 07:53:36 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41130 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727995AbfASMxg (ORCPT
+        Sat, 19 Jan 2019 09:11:58 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:35858 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728125AbfASOL6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 19 Jan 2019 07:53:36 -0500
-Received: by mail-io1-f66.google.com with SMTP id s22so13036479ioc.8
-        for <linux-security-module@vger.kernel.org>; Sat, 19 Jan 2019 04:53:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X0jS3Ea4Hr7Ud89ivD07Xggv5SuwPdsq1/FiSsFTnrI=;
-        b=JWQE3y0i3TxzUFZvgGr2Woi20qzTNQkLgaaooQnP2TExtsEI8V8EoR01v64/Zt8a7t
-         fH8e2axup4bjzlLCFISwO46S/KfUl9J4DYtR1ehg/fN6oU4J52m5PancxdbvTSwUw+s4
-         /aq4zQn7pExdjXdVAEJEi/qT8ed2Z43YmWaHQRk1rk63jJYL5SktW1r+BqE94z0ax4JO
-         du8II6fRUmw4awtJjKhs2gPAsFac+f46swV1bEYd7BkXHTjGp9PXe4t7KddviV8adDWm
-         zILlgcgOqx+gfWKfu2loI7nt7mZiSL8Sfhv/znayXg0jalN8iAc8RJFtDCVWJW4j0ADD
-         S+Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X0jS3Ea4Hr7Ud89ivD07Xggv5SuwPdsq1/FiSsFTnrI=;
-        b=n8AbFlkTCjW9rXA1BXSNBHMMuqV3ETfG+Dhz56cRh5p4+7jHxwchHjN4B+APJBmpeq
-         7NsAhHSIBwWW0fBmqwtshIwiUhfuJkEHzH/AHBfMasPf3mdBok/Czch+8GcEl+r5GTS1
-         wV3mHcuETxAV8oNJ5cZWC/H9Y9LJ8qdIOwRFeF8SC10sCuY2h+gFTDOygqkVUTBRh9E2
-         52AXGwP78gM6CEyUhuY2lmcKg5l9jZ7xjaTIRrV9GMj4bfkAkCD/yBjGcpykuCmXETtc
-         /hnwpQlvBbMWz5B8XD1ZnMvB6qiY4Km6Dv86f0TPPTQFScCUrNZ3zKAb0b9QBcq6z/b6
-         0h8w==
-X-Gm-Message-State: AJcUukdSAnoSnFWcGIjSQC4zqjnBYJR9hJ9eLBlGdpE+oAEdYC9ipD7+
-        qKS/Zy+sXT9bN2vhHld2CZns/4fNlpbyFS5bfIWBCJgqjwk=
-X-Google-Smtp-Source: ALg8bN5DyifWTDAQuERG2RkYKjmjDob1qBNJ+6OQ5phzZZDNKLRPJ5MVwA+QVALfyaCjDD3/Es5SY+Y7U0fBHYttceY=
-X-Received: by 2002:a6b:fa01:: with SMTP id p1mr11765105ioh.271.1547902414815;
- Sat, 19 Jan 2019 04:53:34 -0800 (PST)
-MIME-Version: 1.0
-References: <0000000000009ef2bf057fcee913@google.com>
-In-Reply-To: <0000000000009ef2bf057fcee913@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 19 Jan 2019 13:53:23 +0100
-Message-ID: <CACT4Y+YmtMqqFP6TXcQ997skYQ8BX5nsL5grEFh3+K+LSLxKvg@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in rw_verify_area
-To:     syzbot <syzbot+3d95205bfac60602a727@syzkaller.appspotmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 19 Jan 2019 09:11:58 -0500
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0JEBmm4002764;
+        Sat, 19 Jan 2019 23:11:48 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Sat, 19 Jan 2019 23:11:48 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0JEBaum002652
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 19 Jan 2019 23:11:47 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     linux-security-module@vger.kernel.org
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH v3] tomoyo: Swicth from cred->security to task_struct->security.
+Date:   Sat, 19 Jan 2019 23:11:40 +0900
+Message-Id: <1547907100-10438-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1547822987-9401-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+References: <1547822987-9401-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jan 19, 2019 at 1:39 PM syzbot
-<syzbot+3d95205bfac60602a727@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    9673b4aa71ca Add linux-next specific files for 20190118
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10c2097f400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4086e03c3128165
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3d95205bfac60602a727
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a02f6f400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c4dc28c00000
+TOMOYO security module is designed to use "struct task_struct"->security
+in order to allow per "struct task_struct" tracking without being disturbed
+by unable to update "struct cred"->security due to override mechanism.
 
-+Ingo, Peter
+Now that infrastructure-managed security blob is ready, this patch updates
+TOMOYO to use "struct task_struct"->security.
 
-Looks like another problem with scheduler as the repro uses
-perf_event_open and sched_setattr.
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ security/tomoyo/common.c        |   4 +-
+ security/tomoyo/common.h        |  45 ++++--------
+ security/tomoyo/domain.c        |  11 +--
+ security/tomoyo/securityfs_if.c |  21 ++----
+ security/tomoyo/tomoyo.c        | 149 +++++++++++++++++++++-------------------
+ 5 files changed, 108 insertions(+), 122 deletions(-)
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+3d95205bfac60602a727@syzkaller.appspotmail.com
->
-> hrtimer: interrupt took 39380 ns
-> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> rcu:    (detected by 0, t=10502 jiffies, g=5593, q=4)
-> rcu: All QSes seen, last rcu_preempt kthread activity 10503
-> (4295058157-4295047654), jiffies_till_next_fqs=1, root ->qsmask 0x0
-> syz-executor570 R  running task    23848  7948   7931 0x00000000
-> Call Trace:
->   <IRQ>
->   sched_show_task kernel/sched/core.c:5296 [inline]
->   sched_show_task.cold+0x271/0x2d3 kernel/sched/core.c:5271
->   print_other_cpu_stall.cold+0x7f2/0x8bb kernel/rcu/tree.c:1324
->   check_cpu_stall kernel/rcu/tree.c:1452 [inline]
->   rcu_pending kernel/rcu/tree.c:3114 [inline]
->   rcu_sched_clock_irq+0xf36/0x1380 kernel/rcu/tree.c:2555
->   update_process_times+0x32/0x80 kernel/time/timer.c:1635
->   tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
->   tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
->   __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
->   __hrtimer_run_queues+0x3a7/0x1050 kernel/time/hrtimer.c:1451
->   hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
->   local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
->   smp_apic_timer_interrupt+0x18d/0x760 arch/x86/kernel/apic/apic.c:1060
->   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
->   </IRQ>
-> RIP: 0010:__sanitizer_cov_trace_pc+0x26/0x50 kernel/kcov.c:101
-> Code: 46 df ff ff 55 48 89 e5 48 8b 75 08 65 48 8b 04 25 40 ee 01 00 65 8b
-> 15 a8 b4 7f 7e 81 e2 00 01 1f 00 75 2b 8b 90 e0 12 00 00 <83> fa 02 75 20
-> 48 8b 88 e8 12 00 00 8b 80 e4 12 00 00 48 8b 11 48
-> RSP: 0018:ffff88808d0bf460 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-> RAX: ffff888092ba00c0 RBX: ffff888097e1bc80 RCX: ffffffff835a5f5c
-> RDX: 0000000000000000 RSI: ffffffff835a5bf6 RDI: 0000000000000005
-> RBP: ffff88808d0bf460 R08: ffff888092ba00c0 R09: ffffed1015cc5b90
-> R10: ffffed1015cc5b8f R11: ffff8880ae62dc7b R12: ffff88821bc94bb0
-> R13: ffff88821bc94bb0 R14: ffff8880a3586958 R15: ffff88808d0bf5f0
->   aa_file_perm+0x226/0x1180 security/apparmor/file.c:615
->   common_file_perm+0x1cb/0x820 security/apparmor/lsm.c:459
->   apparmor_file_permission+0x25/0x30 security/apparmor/lsm.c:472
->   security_file_permission+0x7e/0x320 security/security.c:1326
->   rw_verify_area+0x110/0x360 fs/read_write.c:391
->   do_iter_write+0x100/0x610 fs/read_write.c:951
->   vfs_iter_write+0x77/0xb0 fs/read_write.c:969
->   iter_file_splice_write+0x885/0xfc0 fs/splice.c:749
->   do_splice_from fs/splice.c:851 [inline]
->   direct_splice_actor+0x126/0x1a0 fs/splice.c:1023
->   splice_direct_to_actor+0x3be/0x9d0 fs/splice.c:978
->   do_splice_direct+0x2c7/0x420 fs/splice.c:1066
->   do_sendfile+0x61a/0xe60 fs/read_write.c:1436
->   __do_sys_sendfile64 fs/read_write.c:1491 [inline]
->   __se_sys_sendfile64 fs/read_write.c:1483 [inline]
->   __x64_sys_sendfile64+0x15a/0x240 fs/read_write.c:1483
->   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x446a19
-> Code: e8 dc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 4b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007fc79f06bda8 EFLAGS: 00000297 ORIG_RAX: 0000000000000028
-> RAX: ffffffffffffffda RBX: 00000000006dcc38 RCX: 0000000000446a19
-> RDX: 0000000020000380 RSI: 0000000000000003 RDI: 0000000000000003
-> RBP: 00000000006dcc30 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00008080fffffffe R11: 0000000000000297 R12: 00000000006dcc3c
-> R13: 00008080fffffffe R14: 00007fc79f06c9c0 R15: 00000000006dcd2c
-> rcu: rcu_preempt kthread starved for 10583 jiffies! g5593 f0x2
-> RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-> rcu: RCU grace-period kthread stack dump:
-> rcu_preempt     R  running task    25832    10      2 0x80000000
-> Call Trace:
->   context_switch kernel/sched/core.c:2834 [inline]
->   __schedule+0x897/0x1e60 kernel/sched/core.c:3475
->   schedule+0xfe/0x350 kernel/sched/core.c:3519
->   schedule_timeout+0x14a/0x250 kernel/time/timer.c:1803
->   rcu_gp_fqs_loop+0x6d4/0x980 kernel/rcu/tree.c:1982
->   rcu_gp_kthread+0x2bb/0xc10 kernel/rcu/tree.c:2139
->   kthread+0x357/0x430 kernel/kthread.c:247
->   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-> sched: RT throttling activated
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000009ef2bf057fcee913%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index c598aa0..6936def 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -986,7 +986,7 @@ static bool tomoyo_select_domain(struct tomoyo_io_buffer *head,
+ 		else
+ 			p = find_task_by_vpid(pid);
+ 		if (p)
+-			domain = tomoyo_real_domain(p);
++			domain = tomoyo_task(p)->domain_info;
+ 		rcu_read_unlock();
+ 	} else if (!strncmp(data, "domain=", 7)) {
+ 		if (tomoyo_domain_def(data + 7))
+@@ -1668,7 +1668,7 @@ static void tomoyo_read_pid(struct tomoyo_io_buffer *head)
+ 	else
+ 		p = find_task_by_vpid(pid);
+ 	if (p)
+-		domain = tomoyo_real_domain(p);
++		domain = tomoyo_task(p)->domain_info;
+ 	rcu_read_unlock();
+ 	if (!domain)
+ 		return;
+diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
+index 4fc1729..cfd075c 100644
+--- a/security/tomoyo/common.h
++++ b/security/tomoyo/common.h
+@@ -686,7 +686,7 @@ struct tomoyo_domain_info {
+ 	u8 group;          /* Group number to use.   */
+ 	bool is_deleted;   /* Delete flag.           */
+ 	bool flags[TOMOYO_MAX_DOMAIN_INFO_FLAGS];
+-	atomic_t users; /* Number of referring credentials. */
++	atomic_t users; /* Number of referring tasks. */
+ };
+ 
+ /*
+@@ -913,6 +913,12 @@ struct tomoyo_policy_namespace {
+ 	const char *name;
+ };
+ 
++/* Structure for "struct task_struct"->security. */
++struct tomoyo_task {
++	struct tomoyo_domain_info *domain_info;
++	struct tomoyo_domain_info *old_domain_info;
++};
++
+ /********** Function prototypes. **********/
+ 
+ bool tomoyo_address_matches_group(const bool is_ipv6, const __be32 *address,
+@@ -1021,6 +1027,7 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
+ struct tomoyo_condition *tomoyo_get_condition(struct tomoyo_acl_param *param);
+ struct tomoyo_domain_info *tomoyo_assign_domain(const char *domainname,
+ 						const bool transit);
++struct tomoyo_domain_info *tomoyo_domain(void);
+ struct tomoyo_domain_info *tomoyo_find_domain(const char *domainname);
+ struct tomoyo_group *tomoyo_get_group(struct tomoyo_acl_param *param,
+ 				      const u8 idx);
+@@ -1200,41 +1207,15 @@ static inline void tomoyo_put_group(struct tomoyo_group *group)
+ }
+ 
+ /**
+- * tomoyo_cred - Get a pointer to the tomoyo cred security blob
+- * @cred - the relevant cred
+- *
+- * Returns pointer to the tomoyo cred blob.
+- */
+-static inline struct tomoyo_domain_info **tomoyo_cred(const struct cred *cred)
+-{
+-	return cred->security + tomoyo_blob_sizes.lbs_cred;
+-}
+-
+-/**
+- * tomoyo_domain - Get "struct tomoyo_domain_info" for current thread.
++ * tomoyo_task - Get "struct tomoyo_task" for specified thread.
+  *
+- * Returns pointer to "struct tomoyo_domain_info" for current thread.
+- */
+-static inline struct tomoyo_domain_info *tomoyo_domain(void)
+-{
+-	struct tomoyo_domain_info **blob = tomoyo_cred(current_cred());
+-
+-	return *blob;
+-}
+-
+-/**
+- * tomoyo_real_domain - Get "struct tomoyo_domain_info" for specified thread.
++ * @task - Pointer to "struct task_struct".
+  *
+- * @task: Pointer to "struct task_struct".
+- *
+- * Returns pointer to "struct tomoyo_security" for specified thread.
++ * Returns pointer to "struct tomoyo_task" for specified thread.
+  */
+-static inline struct tomoyo_domain_info *tomoyo_real_domain(struct task_struct
+-							    *task)
++static inline struct tomoyo_task *tomoyo_task(struct task_struct *task)
+ {
+-	struct tomoyo_domain_info **blob = tomoyo_cred(get_task_cred(task));
+-
+-	return *blob;
++	return task->security + tomoyo_blob_sizes.lbs_task;
+ }
+ 
+ /**
+diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
+index b7469fd..39abf3a 100644
+--- a/security/tomoyo/domain.c
++++ b/security/tomoyo/domain.c
+@@ -678,7 +678,6 @@ static int tomoyo_environ(struct tomoyo_execve *ee)
+  */
+ int tomoyo_find_next_domain(struct linux_binprm *bprm)
+ {
+-	struct tomoyo_domain_info **blob;
+ 	struct tomoyo_domain_info *old_domain = tomoyo_domain();
+ 	struct tomoyo_domain_info *domain = NULL;
+ 	const char *original_name = bprm->filename;
+@@ -843,9 +842,13 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
+ 	if (!domain)
+ 		domain = old_domain;
+ 	/* Update reference count on "struct tomoyo_domain_info". */
+-	atomic_inc(&domain->users);
+-	blob = tomoyo_cred(bprm->cred);
+-	*blob = domain;
++	{
++		struct tomoyo_task *s = tomoyo_task(current);
++
++		s->old_domain_info = s->domain_info;
++		s->domain_info = domain;
++		atomic_inc(&domain->users);
++	}
+ 	kfree(exename.name);
+ 	if (!retval) {
+ 		ee->r.domain = domain;
+diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs_if.c
+index 768dff9..338872f 100644
+--- a/security/tomoyo/securityfs_if.c
++++ b/security/tomoyo/securityfs_if.c
+@@ -67,21 +67,14 @@ static ssize_t tomoyo_write_self(struct file *file, const char __user *buf,
+ 			if (!new_domain) {
+ 				error = -ENOENT;
+ 			} else {
+-				struct cred *cred = prepare_creds();
+-				if (!cred) {
+-					error = -ENOMEM;
+-				} else {
+-					struct tomoyo_domain_info **blob;
+-					struct tomoyo_domain_info *old_domain;
++				struct tomoyo_task *s = tomoyo_task(current);
++				struct tomoyo_domain_info *old_domain =
++					s->domain_info;
+ 
+-					blob = tomoyo_cred(cred);
+-					old_domain = *blob;
+-					*blob = new_domain;
+-					atomic_inc(&new_domain->users);
+-					atomic_dec(&old_domain->users);
+-					commit_creds(cred);
+-					error = 0;
+-				}
++				s->domain_info = new_domain;
++				atomic_inc(&new_domain->users);
++				atomic_dec(&old_domain->users);
++				error = 0;
+ 			}
+ 		}
+ 		tomoyo_read_unlock(idx);
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 2b3eee0..c2ab657 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -9,19 +9,19 @@
+ #include "common.h"
+ 
+ /**
+- * tomoyo_cred_alloc_blank - Target for security_cred_alloc_blank().
++ * tomoyo_domain - Get "struct tomoyo_domain_info" for current thread.
+  *
+- * @new: Pointer to "struct cred".
+- * @gfp: Memory allocation flags.
+- *
+- * Returns 0.
++ * Returns pointer to "struct tomoyo_domain_info" for current thread.
+  */
+-static int tomoyo_cred_alloc_blank(struct cred *new, gfp_t gfp)
++struct tomoyo_domain_info *tomoyo_domain(void)
+ {
+-	struct tomoyo_domain_info **blob = tomoyo_cred(new);
++	struct tomoyo_task *s = tomoyo_task(current);
+ 
+-	*blob = NULL;
+-	return 0;
++	if (s->old_domain_info && !current->in_execve) {
++		atomic_dec(&s->old_domain_info->users);
++		s->old_domain_info = NULL;
++	}
++	return s->domain_info;
+ }
+ 
+ /**
+@@ -36,85 +36,56 @@ static int tomoyo_cred_alloc_blank(struct cred *new, gfp_t gfp)
+ static int tomoyo_cred_prepare(struct cred *new, const struct cred *old,
+ 			       gfp_t gfp)
+ {
+-	struct tomoyo_domain_info **old_blob = tomoyo_cred(old);
+-	struct tomoyo_domain_info **new_blob = tomoyo_cred(new);
+-	struct tomoyo_domain_info *domain;
+-
+-	domain = *old_blob;
+-	*new_blob = domain;
++	/* Restore old_domain_info saved by previous execve() request. */
++	struct tomoyo_task *s = tomoyo_task(current);
+ 
+-	if (domain)
+-		atomic_inc(&domain->users);
++	if (s->old_domain_info && !current->in_execve) {
++		atomic_dec(&s->domain_info->users);
++		s->domain_info = s->old_domain_info;
++		s->old_domain_info = NULL;
++	}
+ 	return 0;
+ }
+ 
+ /**
+- * tomoyo_cred_transfer - Target for security_transfer_creds().
++ * tomoyo_bprm_committed_creds - Target for security_bprm_committed_creds().
+  *
+- * @new: Pointer to "struct cred".
+- * @old: Pointer to "struct cred".
+- */
+-static void tomoyo_cred_transfer(struct cred *new, const struct cred *old)
+-{
+-	tomoyo_cred_prepare(new, old, 0);
+-}
+-
+-/**
+- * tomoyo_cred_free - Target for security_cred_free().
+- *
+- * @cred: Pointer to "struct cred".
++ * @bprm: Pointer to "struct linux_binprm".
+  */
+-static void tomoyo_cred_free(struct cred *cred)
++static void tomoyo_bprm_committed_creds(struct linux_binprm *bprm)
+ {
+-	struct tomoyo_domain_info **blob = tomoyo_cred(cred);
+-	struct tomoyo_domain_info *domain = *blob;
++	/* Clear old_domain_info saved by execve() request. */
++	struct tomoyo_task *s = tomoyo_task(current);
+ 
+-	if (domain)
+-		atomic_dec(&domain->users);
++	atomic_dec(&s->old_domain_info->users);
++	s->old_domain_info = NULL;
+ }
+ 
++#ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
+ /**
+  * tomoyo_bprm_set_creds - Target for security_bprm_set_creds().
+  *
+  * @bprm: Pointer to "struct linux_binprm".
+  *
+- * Returns 0 on success, negative value otherwise.
++ * Returns 0.
+  */
+ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
+ {
+-	struct tomoyo_domain_info **blob;
+-	struct tomoyo_domain_info *domain;
+-
+ 	/*
+ 	 * Do only if this function is called for the first time of an execve
+ 	 * operation.
+ 	 */
+ 	if (bprm->called_set_creds)
+ 		return 0;
+-#ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
+ 	/*
+ 	 * Load policy if /sbin/tomoyo-init exists and /sbin/init is requested
+ 	 * for the first time.
+ 	 */
+ 	if (!tomoyo_policy_loaded)
+ 		tomoyo_load_policy(bprm->filename);
+-#endif
+-	/*
+-	 * Release reference to "struct tomoyo_domain_info" stored inside
+-	 * "bprm->cred->security". New reference to "struct tomoyo_domain_info"
+-	 * stored inside "bprm->cred->security" will be acquired later inside
+-	 * tomoyo_find_next_domain().
+-	 */
+-	blob = tomoyo_cred(bprm->cred);
+-	domain = *blob;
+-	atomic_dec(&domain->users);
+-	/*
+-	 * Tell tomoyo_bprm_check_security() is called for the first time of an
+-	 * execve operation.
+-	 */
+-	*blob = NULL;
+ 	return 0;
+ }
++#endif
+ 
+ /**
+  * tomoyo_bprm_check_security - Target for security_bprm_check().
+@@ -125,16 +96,13 @@ static int tomoyo_bprm_set_creds(struct linux_binprm *bprm)
+  */
+ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
+ {
+-	struct tomoyo_domain_info **blob;
+-	struct tomoyo_domain_info *domain;
++	struct tomoyo_task *s = tomoyo_task(current);
+ 
+-	blob = tomoyo_cred(bprm->cred);
+-	domain = *blob;
+ 	/*
+ 	 * Execute permission is checked against pathname passed to do_execve()
+ 	 * using current domain.
+ 	 */
+-	if (!domain) {
++	if (!s->old_domain_info) {
+ 		const int idx = tomoyo_read_lock();
+ 		const int err = tomoyo_find_next_domain(bprm);
+ 		tomoyo_read_unlock(idx);
+@@ -143,8 +111,8 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
+ 	/*
+ 	 * Read permission is checked against interpreters using next domain.
+ 	 */
+-	return tomoyo_check_open_permission(domain, &bprm->file->f_path,
+-					    O_RDONLY);
++	return tomoyo_check_open_permission(s->domain_info,
++					    &bprm->file->f_path, O_RDONLY);
+ }
+ 
+ /**
+@@ -510,19 +478,60 @@ static int tomoyo_socket_sendmsg(struct socket *sock, struct msghdr *msg,
+ }
+ 
+ struct lsm_blob_sizes tomoyo_blob_sizes __lsm_ro_after_init = {
+-	.lbs_cred = sizeof(struct tomoyo_domain_info *),
++	.lbs_task = sizeof(struct tomoyo_task),
+ };
+ 
++/**
++ * tomoyo_task_alloc - Target for security_task_alloc().
++ *
++ * @task:  Pointer to "struct task_struct".
++ * @flags: clone() flags.
++ *
++ * Returns 0.
++ */
++static int tomoyo_task_alloc(struct task_struct *task,
++			     unsigned long clone_flags)
++{
++	struct tomoyo_task *old = tomoyo_task(current);
++	struct tomoyo_task *new = tomoyo_task(task);
++
++	new->domain_info = old->domain_info;
++	atomic_inc(&new->domain_info->users);
++	new->old_domain_info = NULL;
++	return 0;
++}
++
++/**
++ * tomoyo_task_free - Target for security_task_free().
++ *
++ * @task: Pointer to "struct task_struct".
++ */
++static void tomoyo_task_free(struct task_struct *task)
++{
++	struct tomoyo_task *s = tomoyo_task(task);
++
++	if (s->domain_info) {
++		atomic_dec(&s->domain_info->users);
++		s->domain_info = NULL;
++	}
++	if (s->old_domain_info) {
++		atomic_dec(&s->old_domain_info->users);
++		s->old_domain_info = NULL;
++	}
++}
++
+ /*
+  * tomoyo_security_ops is a "struct security_operations" which is used for
+  * registering TOMOYO.
+  */
+ static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
+-	LSM_HOOK_INIT(cred_alloc_blank, tomoyo_cred_alloc_blank),
+ 	LSM_HOOK_INIT(cred_prepare, tomoyo_cred_prepare),
+-	LSM_HOOK_INIT(cred_transfer, tomoyo_cred_transfer),
+-	LSM_HOOK_INIT(cred_free, tomoyo_cred_free),
++	LSM_HOOK_INIT(bprm_committed_creds, tomoyo_bprm_committed_creds),
++	LSM_HOOK_INIT(task_alloc, tomoyo_task_alloc),
++	LSM_HOOK_INIT(task_free, tomoyo_task_free),
++#ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
+ 	LSM_HOOK_INIT(bprm_set_creds, tomoyo_bprm_set_creds),
++#endif
+ 	LSM_HOOK_INIT(bprm_check_security, tomoyo_bprm_check_security),
+ 	LSM_HOOK_INIT(file_fcntl, tomoyo_file_fcntl),
+ 	LSM_HOOK_INIT(file_open, tomoyo_file_open),
+@@ -560,14 +569,14 @@ struct lsm_blob_sizes tomoyo_blob_sizes __lsm_ro_after_init = {
+  */
+ static int __init tomoyo_init(void)
+ {
+-	struct cred *cred = (struct cred *) current_cred();
+-	struct tomoyo_domain_info **blob;
++	struct tomoyo_task *s = tomoyo_task(current);
+ 
+ 	/* register ourselves with the security framework */
+ 	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
+ 	printk(KERN_INFO "TOMOYO Linux initialized\n");
+-	blob = tomoyo_cred(cred);
+-	*blob = &tomoyo_kernel_domain;
++	s->domain_info = &tomoyo_kernel_domain;
++	atomic_inc(&tomoyo_kernel_domain.users);
++	s->old_domain_info = NULL;
+ 	tomoyo_mm_init();
+ 
+ 	return 0;
+-- 
+1.8.3.1
+
