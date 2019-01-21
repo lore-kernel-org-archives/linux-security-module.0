@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F8FC282DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Jan 2019 08:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA9BC282DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Jan 2019 09:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6B820823
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Jan 2019 08:11:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FBDF2084A
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Jan 2019 09:58:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbfAUILd (ORCPT
+        id S1727240AbfAUJ6d (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Jan 2019 03:11:33 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32830 "EHLO huawei.com"
+        Mon, 21 Jan 2019 04:58:33 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32831 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727137AbfAUILd (ORCPT
+        id S1725977AbfAUJ6d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Jan 2019 03:11:33 -0500
+        Mon, 21 Jan 2019 04:58:33 -0500
 Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id B33AF7609158E95A7EFA;
-        Mon, 21 Jan 2019 08:11:31 +0000 (GMT)
+        by Forcepoint Email with ESMTP id 878BCE6829AA0D7687F8;
+        Mon, 21 Jan 2019 09:58:31 +0000 (GMT)
 Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
  (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 21 Jan
- 2019 08:11:25 +0000
+ 2019 09:58:22 +0000
 Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest structures
  to tpm_pcr_extend()
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
@@ -40,8 +40,8 @@ References: <20181213102945.30946-1-roberto.sassu@huawei.com>
  <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
  <20190118151253.GH4080@linux.intel.com>
 From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <a4728854-b326-2575-9d22-85566e75869f@huawei.com>
-Date:   Mon, 21 Jan 2019 09:11:21 +0100
+Message-ID: <de1cd369-c06c-0107-80cc-fe3967799849@huawei.com>
+Date:   Mon, 21 Jan 2019 10:58:22 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
@@ -296,20 +296,55 @@ On 1/18/2019 4:12 PM, Jarkko Sakkinen wrote:
 > consolidation later when there are two clients. Rather keep the TPM
 > provided function simple and stupid.
 
-Ok, if I understood it correctly, every caller of tpm_pcr_extend() will 
-pass an array of tpm_digest structures.
+I just found that your requirement does not match Mimi's requirements:
 
-I will not introduce a new structure, as the caller has to use
-algorithms from chip->allocated_banks and passing the digest size is not
-necessary.
+---
+ > The caller of tpm_pcr_extend() could pass a subset of the allocated
+ > banks, but the TPM driver extends all banks as before.
 
-tpm_pcr_extend() will reject incomplete arrays (one or more algorithms
-are missing). To simplify even more tpm_pcr_extend(), I assume and check
-that passed algorithms are in the same order as those in
-chip->allocated_banks.
+Agreed, there should be a clear division.
 
-I will remove the 'count' parameter from tpm_pcr_extend(), as the number
-of tpm_digest structures will be always chip->nr_allocated_banks.
+1) The caller shouldn't need to know anything about the chip->info.
+2) The TPM driver should not rely on the caller to supply all the
+hashes, but verify that all allocated banks are being extended.
+---
+
+See https://lkml.org/lkml/2018/11/19/603.
+
+
+Also, if callers should be able to retrieve the list of supported
+algorithms from the TPM, I should move the tpm_chip definition to
+include/linux/tpm.h or introduce a new function that returns them.
+
+However, you said that this shouldn't be done now:
+
+---
+ > > > @@ -1048,16 +1047,22 @@ int tpm_pcr_extend(struct tpm_chip *chip, 
+int pcr_idx, const u8 *hash)
+ > > >   		return -ENODEV;
+ > >
+ > > Should take digest_list as input. Probably callers could re-use the
+ > > same digest_list array multiple times?
+ > >
+ > > Move struct tpm_chip to include/linux/tpm.h so that the caller can 
+query
+ > > nr_active_banks and active_banks and can create the digest array by
+ > > itself. Lets do this right at once now that this is being restructured.
+ >
+ > I have to move also other structures and #define. Wouldn't be better to
+ > introduce a new function to pass to the caller active_banks and
+ > nr_active_banks?
+
+Revisited. I think it is fine how it is for now and we reconsider
+later. Only thing I want to remark is that use should use kcalloc()
+instead of kalloc_array() + memset().
+---
+
+See https://lkml.org/lkml/2018/11/13/1059.
+
+How we should proceed?
+
+Thanks
 
 Roberto
 
