@@ -2,121 +2,146 @@ Return-Path: <SRS0=9r3I=P6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDDBC282C0
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 02:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AF3C282C5
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 08:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B60072085A
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 02:58:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="H7jiZuvN"
+	by mail.kernel.org (Postfix) with ESMTP id 3D9672084C
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 08:49:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfAVC6k (ORCPT
+        id S1727163AbfAVItM convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Jan 2019 21:58:40 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33135 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726435AbfAVC6j (ORCPT
+        Tue, 22 Jan 2019 03:49:12 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40450 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbfAVItM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Jan 2019 21:58:39 -0500
-Received: by mail-pl1-f196.google.com with SMTP id z23so10724671plo.0
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Jan 2019 18:58:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=a5JfqlRB8d08NKHQ+Y2k/1n98WJrQMCzg/lSbr2I8jw=;
-        b=H7jiZuvNlmrsmsLRVoiGjfJl6Uks7DwBqHRkA187HLSisqMf9WsYOxOF4pBMWDH2KG
-         +8XImc0RJEpceRF7rASvUOUd/KBej57Vx7xmzuwdssHhseilOyhOWC97enmx39eLMPE4
-         Wr/LkQ/uuK0uByOophBICWTp1SWGSqVNXrM8BSViYcCPZaEq9x/nTfWJt1KS9zexzJxf
-         ZDJKGFDGuHwxR5evZT65ktGkYoXYKiU+Z+nkcqN1iPsipzK807UVNPlohnla1UL1OStY
-         p3NKSlhVTCRPuX5aa4jykNDWxQVVeVYflUbNcqaMQiDflNEcZ/lBtAnl9zTMHdOoLODo
-         TNVw==
+        Tue, 22 Jan 2019 03:49:12 -0500
+Received: by mail-oi1-f196.google.com with SMTP id t204so16746741oie.7
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Jan 2019 00:49:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a5JfqlRB8d08NKHQ+Y2k/1n98WJrQMCzg/lSbr2I8jw=;
-        b=CH7yy5wu9Gh0q1hTe1dMN5aG0BRTS/Ygosr+ghqt0iBqilOGAl73lukVMNRwJMNhs6
-         7ReVY1UoWgjZAaIOel2zfeHdl8lTOr+D2a0r9yh7wsmFivfctTP6w3VPGVSX/3dMKNh2
-         ije6sFEpOy9AYisU3Z47oNo0eWmPAHe0NDToO5MESwTDLa4pIJNPhj/Wnr+w8BKzViV+
-         xaY2caq3HjnAjmVHj0h+jzaAuFleLdCNXfye3TmjNx+f6wvCbfuwrpzLngWAxrj1Laty
-         bNpd/dSA3uOEtvdtvjf3jO2sQtyfvhA0nYYASjdN8/DaP08VsU2E2uaw8xkqkamPByrn
-         xFXQ==
-X-Gm-Message-State: AJcUukdNYoX58QsKwGD4u8NbHUUagw/+ij2Izsi/7sykCNRyTz5W0WuU
-        TvPGc3igED6eL8pLrnpyZCSwlA==
-X-Google-Smtp-Source: ALg8bN4wyPYsjMkaKjzfjXGhOOAvMtYPcKW1KeikiTh+2ogPqrLu4Suavr2RXc+e7+ekyacT8eBF+A==
-X-Received: by 2002:a17:902:1008:: with SMTP id b8mr31402866pla.252.1548125918903;
-        Mon, 21 Jan 2019 18:58:38 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id v191sm33180592pgb.77.2019.01.21.18.58.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 21 Jan 2019 18:58:37 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1glmGq-0004YG-T5; Mon, 21 Jan 2019 19:58:36 -0700
-Date:   Mon, 21 Jan 2019 19:58:36 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190122025836.GH25163@ziepe.ca>
-References: <20190118142559.GA4080@linux.intel.com>
- <1547849358.2794.90.camel@HansenPartnership.com>
- <20190120160413.GB30478@linux.intel.com>
- <20190122010218.GA26713@linux.intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7s7qNyiJXTKmSzwi/lTvEMRuzR/r3j0DmiFM0tXsm8o=;
+        b=oRknOjALK9pD27Yq+Y00iFcrwqquXLaQXSGV3exJavNxSQNqEqIjqtSXsQcUEIIJYJ
+         Bt4LB4RMoixhAgE6CSHU1jApvyo+Qe0dnqFq1cl+/lv8OIupRLQVXKbJBztcke4hJjcp
+         WQWE/L9XsnPt2EBi8JUyXansfRTitLx9hwhvIhDH+nDxJUBdxuJYeCfcNMwNFj/bEUBs
+         gvY01E/DttJvG14xvwNw8It62XzC0e9BdxA9L7wblBjq8FGBY0pTY5qBpbaqXBwEs0dQ
+         U+4aPlKHXIHlQrpzkmg6EsAGMiYEfW/OYCERz3/HJcFFD9jabZcrFbyMU9Z7OSjNEN80
+         7+AA==
+X-Gm-Message-State: AJcUukfFtOnaKPUKaiJlxQm6s3BQb6IqMt8qDJvIQdi6eaEfdkNip3Js
+        KFb9j5tG0uVCgGOHh5qL9v8EG1FAklePyRXDZoDiaQ==
+X-Google-Smtp-Source: ALg8bN7wavOuxerF8r0MAjQurGa3dMgMIsxFq65tEauqm6OUco17Bd/w/2mz4WM7dXmbVYGP18upJZBLJ2XtWXtQ53I=
+X-Received: by 2002:aca:3b43:: with SMTP id i64mr7945440oia.156.1548146951424;
+ Tue, 22 Jan 2019 00:49:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122010218.GA26713@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190109162830.8309-1-omosnace@redhat.com> <fbdcf8ef-1587-18f2-3293-452d62305ab3@schaufler-ca.com>
+ <f7312dd2-ea86-51ab-652d-2df39faf52c7@tycho.nsa.gov> <ef22910a-4922-5f66-b7c5-7a7c1dbad8e6@schaufler-ca.com>
+ <93d310a7-0bce-dccd-8136-c659a460e084@tycho.nsa.gov> <1062e181-16fa-66b8-a48c-786edcb9deb7@schaufler-ca.com>
+ <CAFqZXNsxfjwDaCWDrqxP736y_3Jm-r=twaHtkkTDtMuym774Jw@mail.gmail.com>
+In-Reply-To: <CAFqZXNsxfjwDaCWDrqxP736y_3Jm-r=twaHtkkTDtMuym774Jw@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 22 Jan 2019 09:49:01 +0100
+Message-ID: <CAFqZXNsm2+79gMTqhxoZuPgibxfhSjJXu8742o7Ho7Yrf=2QCw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Allow initializing the kernfs node's secctx based
+ on its parent
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 22, 2019 at 03:02:18AM +0200, Jarkko Sakkinen wrote:
-> On Sun, Jan 20, 2019 at 06:04:13PM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Jan 18, 2019 at 02:09:18PM -0800, James Bottomley wrote:
-> > > On Fri, 2019-01-18 at 16:25 +0200, Jarkko Sakkinen wrote:
-> > > > I get this on a Geminilake NUC after rebasing my maintainer trees:
-> > > > 
-> > > > tpm tpm0: A TPM error (-1) occurred attempting the self test
-> > > > 
-> > > > I checked the latest commit ID from drivers/char/tpm to make sure
-> > > > that I did not put anything broken to my last PR [1]. It works
-> > > > without issues.
-> > > > 
-> > > > In addition [2] gives me an empty diff.
-> > > > 
-> > > > Something outside of the TPM driver must have happened that breaks
-> > > > the driver. Any ideas?
-> > > > 
-> > > > [1] commit 9488585b21bef0df1217e510c7134905d1d376a7
-> > > > [2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master
-> > > > drivers/char/tpm/
-> > > 
-> > > I'm afraid you're going to have to bisect to find the offending in-
-> > > kernel commit, which is going to be painful since it seems to depend on
-> > > physical hardware.  My first instinct is that we're getting a zero
-> > > length read somewhere, but I still can't see anything in the merge
-> > > window that would cause that behaviour.
-> > 
-> > Yeah, I've started to bisect it (still 9 rounds to go).
-> 
-> Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
-> preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
+On Mon, Jan 14, 2019 at 10:01 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Thu, Jan 10, 2019 at 6:55 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > Resending after email configuration repair.
+> >
+> > On 1/10/2019 6:15 AM, Stephen Smalley wrote:
+> > > On 1/9/19 5:03 PM, Casey Schaufler wrote:
+> > >> On 1/9/2019 12:37 PM, Stephen Smalley wrote:
+> > >>> On 1/9/19 12:19 PM, Casey Schaufler wrote:
+> > >>>> On 1/9/2019 8:28 AM, Ondrej Mosnacek wrote:
+> > >>>>> Changes in v2:
+> > >>>>> - add docstring for the new hook in union security_list_options
+> > >>>>> - initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
+> > >>>>>     implemented
+> > >>>>> v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnace@redhat.com/T/
+> > >>>>>
+> > >>>>> This series adds a new security hook that allows to initialize the security
+> > >>>>> context of kernfs properly, taking into account the parent context. Kernfs
+> > >>>>> nodes require special handling here, since they are not bound to specific
+> > >>>>> inodes/superblocks, but instead represent the backing tree structure that
+> > >>>>> is used to build the VFS tree when the kernfs tree is mounted.
+> > >>>>>
+> > >>>>> The kernfs nodes initially do not store any security context and rely on
+> > >>>>> the LSM to assign some default context to inodes created over them.
+> > >>>>
+> > >>>> This seems like a bug in kernfs. Why doesn't kernfs adhere to the usual
+> > >>>> and expected filesystem behavior?
+> > >>>
+> > >>> sysfs / kernfs didn't support xattrs at all when we first added support for setting security contexts to it, so originally all sysfs / kernfs inodes had a single security context, and we only required separate storage for the inodes that were explicitly labeled by userspace.
+> > >>>
+> > >>> Later kernfs grew support for trusted.* xattrs using simple_xattrs but the existing security.* support was left mostly unchanged.
+> > >>
+> > >> OK, so as I said, this seems like a bug in kernfs.
+> > >>
+> > >>>
+> > >>>>
+> > >>>>> Kernfs
+> > >>>>> inodes, however, allow setting an explicit context via the *setxattr(2)
+> > >>>>> syscalls, in which case the context is stored inside the kernfs node's
+> > >>>>> metadata.
+> > >>>>>
+> > >>>>> SELinux (and possibly other LSMs) initialize the context of newly created
+> > >>>>> FS objects based on the parent object's context (usually the child inherits
+> > >>>>> the parent's context, unless the policy dictates otherwise).
+> > >>>>
+> > >>>> An LSM might use information about the parent other than the "context".
+> > >>>> Smack, for example, uses an attribute SMACK64TRANSMUTE from the parent
+> > >>>> to determine whether the Smack label of the new object should be taken
+> > >>>> from the parent or the process. Passing the "context" of the parent is
+> > >>>> insufficient for Smack.
+> > >>>
+> > >>> IIUC, this would involve switching the handling of security.* xattrs in kernfs over to use simple_xattrs too (so that we can store multiple such attributes), and then pass the entire simple_xattrs list or at least anything with a security.* prefix when initializing a new node or refreshing an existing inode.  Then the security module could extract any security.* attributes of interest for use in determining the label of new inodes and in refreshing the label of an inode.
+>
+> I actually had a patch to do just that at one point because I thought
+> for a while that it would be required to call
+> security_inode_init_security() (which I had tried to somehow force
+> into the kernfs node creation at some point), but then I realized it
+> is not actually needed (although would make thing a bit nicer) and put
+> it away... I will try to dig it out and reuse here.
 
-This changes the IO access pattern in memcpy_to/fromio.. Presumably
-CRB HW doesn't like the new 4 byte move? Swap each one in crb to
-memcpy to confirm..
+Okay, now that I tried to do this with full xattr support I ran into a
+problem. Along with converting kernfs to use simple_xattrs for
+security attributes, I removed the call to
+security_inode_notifysecctx() from kernfs_refresh_inode(), as it no
+longer makes sense (kernfs doesn't know which attribute contains the
+context; the LSM should now be able to pull it out via
+vfs_getxattr()). However, SELinux now doesn't set the right security
+context in the selinux_d_instantiate() hook, because the policy tells
+it to use genfs, not xattr.
 
-If the HW requires particular access patterns you can't use
-memcpy_to/fromio
+So... I'm not sure how to fix this. Setting fs_use_xattr for cgroupfs
+in the policy won't work, because then all nodes will be unlabeled_t
+by default. Maybe we could patch the genfs case in
+inode_doinit_with_dentry() to try fetching the xattr first? I'm not
+very confident about touching that part of the code, so I would
+welcome some advice here.
 
-Jason
+This is the code I have so far, in case it helps:
+https://gitlab.com/omos/linux-public/compare/selinux-next...selinux-fix-cgroupfs-v8
+
+Thanks,
+
+-- 
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
