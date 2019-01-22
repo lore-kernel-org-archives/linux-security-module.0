@@ -2,271 +2,76 @@ Return-Path: <SRS0=9r3I=P6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4295C282C3
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 16:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 398DEC282C3
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 16:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5792D21019
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 16:49:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="JmmI1VAL"
+	by mail.kernel.org (Postfix) with ESMTP id 0A3ED21726
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 16:55:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729337AbfAVQtQ (ORCPT
+        id S1729495AbfAVQzT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Jan 2019 11:49:16 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43742 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729324AbfAVQtQ (ORCPT
+        Tue, 22 Jan 2019 11:55:19 -0500
+Received: from mga01.intel.com ([192.55.52.88]:20217 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728719AbfAVQzS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Jan 2019 11:49:16 -0500
-Received: by mail-lf1-f67.google.com with SMTP id u18so18564605lff.10
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Jan 2019 08:49:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=W7Wpv/4iLgNw7f7oCJ0+7IbRi5sRctWW8WMe3Ae3M98=;
-        b=JmmI1VALhwceJA4QdE3sqSAlOazg3D9qZ9st+ffsvDAnJXWt1M987N8WLgeYEV1C4E
-         5+cxJoeXOTPCfwAIuAYjvIMJgcgiq88eHIXt+VQbcbX3RKMn8lmoz0yOZnJWCiliKBro
-         8wEodl6/hhiVpwqYYeMCehjOKhlzCjcrqTd2MotUDFAJlzvQz8bw8AlBimbwiBVTeIjf
-         MAPOoC1DwbJVGam9yImueXidGdrGXRNZn2Zr1fXs1PspngvMIz63ZCd3k20U01ljG0xl
-         jTJQhv3aalFYXvwWDP1EtLUXzF/a/keWy8PHs9Q374HNjX+cMdTaiejc7kum3KyCuz0s
-         S9lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=W7Wpv/4iLgNw7f7oCJ0+7IbRi5sRctWW8WMe3Ae3M98=;
-        b=B6ki1QRYf4eHGr7c1xKip4PguhuqdJW1qK/YdAoHmFErEZTWUi+A/bzWG+4Scb3zZY
-         ZRirabHD/Bg/Lsg03D4VjNv4Ee+iY/0cL0KCTe8HF3gjk777yWea2flBZJHPhOZxgzI6
-         h7trks8v8Q2jYu5joKiOy9BpmD44Uy08UMCTx9/bKRpEnWsCPcZCKa60ro3aJE1xpRNR
-         uYJp2Dt0Af9eW6ANIBnPpWwh1FRc7A3Ij3t48mWVXiHIgcXPqmeWJnr6ssfQFPJzrFuZ
-         3A804+U15fZIMtsHeEnx6nxe6gGTsNE+sqzwLFqnQEyz6v2+fNBypmkNi8aT1dvBW6q0
-         yd5Q==
-X-Gm-Message-State: AJcUukfSDm2XDjleO3N4y/AM9DzuVYRVza8Kdl07drVQyNdAb0OnBF4k
-        +D2Iq/R5hnBRtWYaAi+EKjcGbt37W2Xsau5S8K1V
-X-Google-Smtp-Source: ALg8bN7yUIuX890rg7pP8rOw/YbA/czlh6ciEs1iupPZw5iOEfGrveJOhJ0F1zuszwc5pHfEw0Fgkbf86ymDA/oW3as=
-X-Received: by 2002:a19:c995:: with SMTP id z143mr18843123lff.79.1548175753501;
- Tue, 22 Jan 2019 08:49:13 -0800 (PST)
+        Tue, 22 Jan 2019 11:55:18 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 08:55:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,507,1539673200"; 
+   d="scan'208";a="118530896"
+Received: from mlapinsx-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.154])
+  by fmsmga008.fm.intel.com with ESMTP; 22 Jan 2019 08:55:11 -0800
+Date:   Tue, 22 Jan 2019 18:55:09 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        Matthew Garrett <matthewgarrett@google.com>
+Subject: Re: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()
+Message-ID: <20190122165509.GA3687@linux.intel.com>
+References: <20181213102945.30946-1-roberto.sassu@huawei.com>
+ <20181213102945.30946-6-roberto.sassu@huawei.com>
+ <20181220152122.GB10652@linux.intel.com>
+ <c6a3f3e4-bd9d-d060-9ee1-f84310857ba0@huawei.com>
+ <20190118151253.GH4080@linux.intel.com>
+ <de1cd369-c06c-0107-80cc-fe3967799849@huawei.com>
+ <20190121123739.GD9423@linux.intel.com>
+ <e97d1377-b8d8-6ecb-4c7f-1b08235c6864@huawei.com>
 MIME-Version: 1.0
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
- <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
- <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
- <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
- <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net>
-In-Reply-To: <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 22 Jan 2019 11:49:02 -0500
-Message-ID: <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
-To:     Nazarov Sergey <s-nazarov@yandex.ru>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e97d1377-b8d8-6ecb-4c7f-1b08235c6864@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 21, 2019 at 12:11 PM Nazarov Sergey <s-nazarov@yandex.ru> wrote:
-> 18.01.2019, 20:17, "Paul Moore" <paul@paul-moore.com>:
-> > Yes, this is extra overhead, but it is in an error path so I'm not
-> > overly concerned about the performance impact on the given connection.
-> >
-> > I will admit that it isn't an ideal solution from a LSM/NetLabel
-> > perspective, but historically the netdev folks have not been overly
-> > receptive to changes which negatively impact the core network stack
-> > regardless of how important it may be for the LSMs. If we could
-> > modify icmp_send() so that it works regardless of the caller's
-> > location in the stack, that would be great, I'm just not sure it would
-> > be deemed acceptable. I suggested the approach I did because I think
-> > that has the best chance of getting merged.
-> >
-> > Regardless, I would encourage you to put together a patch and post it
-> > for review, I think that's the best way to get a response. If you
-> > aren't able, or aren't comfortable, submitting a patch please let me
-> > know.
-> > --
-> > paul moore
-> > www.paul-moore.com
->
-> May be something like that?
->
-> [PATCH 1/2] Add IP options parameter to icmp_send
-> ---
->  include/net/icmp.h    |    9 ++++++++-
->  net/ipv4/icmp.c       |    7 ++++---
->  2 files changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/include/net/icmp.h b/include/net/icmp.h
-> index 6ac3a5b..e0f709d 100644
-> --- a/include/net/icmp.h
-> +++ b/include/net/icmp.h
-> @@ -22,6 +22,7 @@
->
->  #include <net/inet_sock.h>
->  #include <net/snmp.h>
-> +#include <net/ip.h>
->
->  struct icmp_err {
->    int          errno;
-> @@ -39,7 +40,13 @@ struct icmp_err {
->  struct sk_buff;
->  struct net;
->
-> -void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info);
-> +void __icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info,
-> +                const struct ip_options *opt);
-> +static inline void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info)
-> +{
-> +       __icmp_send(skb_in, type, code, info, &IPCB(skb_in)->opt);
-> +}
-> +
->  int icmp_rcv(struct sk_buff *skb);
->  int icmp_err(struct sk_buff *skb, u32 info);
->  int icmp_init(void);
-> diff --git a/net/ipv4/icmp.c b/net/ipv4/icmp.c
-> index 065997f..3f24414 100644
-> --- a/net/ipv4/icmp.c
-> +++ b/net/ipv4/icmp.c
-> @@ -570,7 +570,8 @@ static void icmp_reply(struct icmp_bxm *icmp_param, struct sk_buff *skb)
->   *                     MUST reply to only the first fragment.
->   */
->
-> -void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info)
-> +void __icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info,
-> +                const struct ip_options *opt)
->  {
->         struct iphdr *iph;
->         int room;
-> @@ -691,7 +692,7 @@ void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info)
->                                           iph->tos;
->         mark = IP4_REPLY_MARK(net, skb_in->mark);
->
-> -       if (ip_options_echo(net, &icmp_param.replyopts.opt.opt, skb_in))
-> +       if (__ip_options_echo(net, &icmp_param.replyopts.opt.opt, skb_in, opt))
->                 goto out_unlock;
->
->
-> @@ -742,7 +743,7 @@ void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info)
->         local_bh_enable();
->  out:;
->  }
-> -EXPORT_SYMBOL(icmp_send);
-> +EXPORT_SYMBOL(__icmp_send);
+On Mon, Jan 21, 2019 at 02:50:49PM +0100, Roberto Sassu wrote:
+> On 1/21/2019 1:37 PM, Jarkko Sakkinen wrote:
+> > 3. The would be nothing wrong exposing struct tpm_chip in
+> >     include/linux/tpm.h. I would be totally fine with that.
+> 
+> Should I do it in a separate patch (before 5/5)?
 
-This looks reasonable, and I think this should be acceptable to the
-netdev folks.  Although a minor heads-up that somebody might object to
-icmp_send() no longer being exported.
+Yes.
 
-More below...
+> Is it fine to call tpm_default_chip() only in pcrlock() for trusted
+> keys?
 
-> ---
-> [PATCH 2/2] Extract IP options in cipso_v4_error
-> ---
->  include/net/ip.h      |    2 ++
->  net/ipv4/cipso_ipv4.c |   11 +++++++++--
->  net/ipv4/ip_options.c |   22 +++++++++++++++++-----
->  3 files changed, 28 insertions(+), 7 deletions(-)
->
-> diff --git a/include/net/ip.h b/include/net/ip.h
-> index 8866bfc..f0e8d06 100644
-> --- a/include/net/ip.h
-> +++ b/include/net/ip.h
-> @@ -667,6 +667,8 @@ static inline int ip_options_echo(struct net *net, struct ip_options *dopt,
->  }
->
->  void ip_options_fragment(struct sk_buff *skb);
-> +int __ip_options_compile(struct net *net, struct ip_options *opt,
-> +                        struct sk_buff *skb, __be32 *info);
->  int ip_options_compile(struct net *net, struct ip_options *opt,
->                        struct sk_buff *skb);
->  int ip_options_get(struct net *net, struct ip_options_rcu **optp,
-> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> index 777fa3b..86599e9 100644
-> --- a/net/ipv4/cipso_ipv4.c
-> +++ b/net/ipv4/cipso_ipv4.c
-> @@ -1735,13 +1735,20 @@ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option)
->   */
->  void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway)
->  {
-> +       unsigned char optbuf[sizeof(struct ip_options) + 40];
-> +       struct ip_options *opt = (struct ip_options *)optbuf;
-> +
->         if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
->                 return;
->
-> +       opt->optlen = ip_hdr(skb)->ihl*4 - sizeof(struct iphdr);
-> +       if (__ip_options_compile(dev_net(skb->dev), opt, skb, NULL))
-> +               return;
+I think you should get the reference in init_trusted() (similar pattern
+as in IMA).
 
-I would suggest adding a comment to the code above explaining that
-this is necessary because we might be called above the IP layer and we
-can't safely use IPCB() here.
-
->         if (gateway)
-> -               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0);
-> +               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0, opt);
->         else
-> -               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0);
-> +               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0, opt);
->  }
->
->  /**
-> diff --git a/net/ipv4/ip_options.c b/net/ipv4/ip_options.c
-> index ed194d4..32a3504 100644
-> --- a/net/ipv4/ip_options.c
-> +++ b/net/ipv4/ip_options.c
-> @@ -251,8 +251,9 @@ static void spec_dst_fill(__be32 *spec_dst, struct sk_buff *skb)
->   * If opt == NULL, then skb->data should point to IP header.
->   */
->
-> -int ip_options_compile(struct net *net,
-> -                      struct ip_options *opt, struct sk_buff *skb)
-> +int __ip_options_compile(struct net *net,
-> +                        struct ip_options *opt, struct sk_buff *skb,
-> +                        __be32 *info)
->  {
->         __be32 spec_dst = htonl(INADDR_ANY);
->         unsigned char *pp_ptr = NULL;
-> @@ -468,11 +469,22 @@ int ip_options_compile(struct net *net,
->                 return 0;
->
->  error:
-> -       if (skb) {
-> -               icmp_send(skb, ICMP_PARAMETERPROB, 0, htonl((pp_ptr-iph)<<24));
-> -       }
-> +       if (info)
-> +               *info = htonl((pp_ptr-iph)<<24);
->         return -EINVAL;
->  }
-> +
-> +int ip_options_compile(struct net *net,
-> +                      struct ip_options *opt, struct sk_buff *skb)
-> +{
-> +       int ret;
-> +       __be32 info;
-> +
-> +       ret = __ip_options_compile(net, opt, skb, &info);
-> +       if (ret != 0 && skb)
-> +               icmp_send(skb, ICMP_PARAMETERPROB, 0, info);
-> +       return ret;
-> +}
->  EXPORT_SYMBOL(ip_options_compile);
-
-Granted I'm looking at this rather quickly, so I may be missing
-something, but why the changes to ip_options_compile()?  Couldn't you
-simply set opt->data manually (set the ptr) in cipso_v4_error() before
-calling ip_options_compile() and arrive at the same result without
-having to modify ip_options_compile()?  I suppose there is the rtable
-value to worry about, but ip_options_echo() should take care of that,
-yes?  No?
-
--- 
-paul moore
-www.paul-moore.com
+/Jarkko
