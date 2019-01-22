@@ -2,93 +2,110 @@ Return-Path: <SRS0=9r3I=P6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84557C282C5
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 12:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B489C282C3
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 13:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 558EB21721
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 12:10:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C01120870
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 13:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbfAVMKe (ORCPT
+        id S1728390AbfAVN3e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Jan 2019 07:10:34 -0500
-Received: from mga11.intel.com ([192.55.52.93]:20141 "EHLO mga11.intel.com"
+        Tue, 22 Jan 2019 08:29:34 -0500
+Received: from mga01.intel.com ([192.55.52.88]:3672 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728093AbfAVMKe (ORCPT
+        id S1727936AbfAVN3d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Jan 2019 07:10:34 -0500
+        Tue, 22 Jan 2019 08:29:33 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 04:10:33 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 05:29:33 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,506,1539673200"; 
-   d="scan'208";a="140281306"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.115])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Jan 2019 04:10:32 -0800
-Date:   Tue, 22 Jan 2019 14:10:31 +0200
+   d="scan'208";a="293447219"
+Received: from fflynn-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.153])
+  by orsmga005.jf.intel.com with ESMTP; 22 Jan 2019 05:29:30 -0800
+Date:   Tue, 22 Jan 2019 15:29:28 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] tpm: ppi: Enable submission of optional command
- parameter for PPI 1.3
-Message-ID: <20190122121031.GD7514@linux.intel.com>
-References: <20190117174135.2117937-1-stefanb@linux.ibm.com>
- <20190117174135.2117937-6-stefanb@linux.ibm.com>
- <20190122120159.GC7514@linux.intel.com>
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190122132910.GA2720@linux.intel.com>
+References: <20190118142559.GA4080@linux.intel.com>
+ <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com>
+ <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122120159.GC7514@linux.intel.com>
+In-Reply-To: <20190122025836.GH25163@ziepe.ca>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 22, 2019 at 02:01:59PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Jan 17, 2019 at 12:41:35PM -0500, Stefan Berger wrote:
-> > This patch enables a user to specify the additional optional command
-> > parameter by writing it into the request file:
+On Mon, Jan 21, 2019 at 07:58:36PM -0700, Jason Gunthorpe wrote:
+> On Tue, Jan 22, 2019 at 03:02:18AM +0200, Jarkko Sakkinen wrote:
+> > On Sun, Jan 20, 2019 at 06:04:13PM +0200, Jarkko Sakkinen wrote:
+> > > On Fri, Jan 18, 2019 at 02:09:18PM -0800, James Bottomley wrote:
+> > > > On Fri, 2019-01-18 at 16:25 +0200, Jarkko Sakkinen wrote:
+> > > > > I get this on a Geminilake NUC after rebasing my maintainer trees:
+> > > > > 
+> > > > > tpm tpm0: A TPM error (-1) occurred attempting the self test
+> > > > > 
+> > > > > I checked the latest commit ID from drivers/char/tpm to make sure
+> > > > > that I did not put anything broken to my last PR [1]. It works
+> > > > > without issues.
+> > > > > 
+> > > > > In addition [2] gives me an empty diff.
+> > > > > 
+> > > > > Something outside of the TPM driver must have happened that breaks
+> > > > > the driver. Any ideas?
+> > > > > 
+> > > > > [1] commit 9488585b21bef0df1217e510c7134905d1d376a7
+> > > > > [2] git diff 9488585b21bef0df1217e510c7134905d1d376a7 master
+> > > > > drivers/char/tpm/
+> > > > 
+> > > > I'm afraid you're going to have to bisect to find the offending in-
+> > > > kernel commit, which is going to be painful since it seems to depend on
+> > > > physical hardware.  My first instinct is that we're getting a zero
+> > > > length read somewhere, but I still can't see anything in the merge
+> > > > window that would cause that behaviour.
+> > > 
+> > > Yeah, I've started to bisect it (still 9 rounds to go).
 > > 
-> >    # echo "23 16" > request
-> >    # cat request
-> >    23 16
-> > 
-> > For backwards compatibility:
-> > 
-> > If only 1 parameter is given then we assume this is the operation request
-> > number.
-> > 
-> >    # echo "5" > request
-> >    # cat request
-> >    5
-> > 
-> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Tested-by: David Safford <david.safford@ge.com>
+> > Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
+> > preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
 > 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> This changes the IO access pattern in memcpy_to/fromio.. Presumably
+> CRB HW doesn't like the new 4 byte move? Swap each one in crb to
+> memcpy to confirm..
+> 
+> If the HW requires particular access patterns you can't use
+> memcpy_to/fromio
 
-Oops, sorry, this was meant for 4/5, so please ignore that.
+Did not have time to look at the commit at all but your deduction
+is correct. I know it without testing.
 
-The goto statement in tpm_store_ppi_request() is a bit messy as you
-jump between branches. Definitely works, but very unreadable.
+Memory controller will feed 1's on unaligned read from IO memory,
+and as we can see from the TPM header, this change causes two of
+those:
 
-To get around it, you could change the branching as
-
-if (strcmp(chip->ppi_version, "1.3") == 0 &&
-    sscanf(buf, "%llu %llu", &tmp[0].integer.value,
-	   &tmp[1].integer.value) == 2) {
-	/* ... */
-} else if (strcmp(chip->ppi_version, "1.2") == 0) {
-	/* ... */
-} else {
-	/* ... */
-}
+struct tpm_output_header {
+	__be16	tag;
+	__be32	length;
+	__be32	return_code;
+} __packed;
 
 /Jarkko
