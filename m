@@ -4,61 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA4DC282C3
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 12:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3D4C282C5
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 12:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37BB720855
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 12:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34FAC20855
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jan 2019 12:02:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbfAVMBh (ORCPT
+        id S1728360AbfAVMCC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Jan 2019 07:01:37 -0500
-Received: from mga03.intel.com ([134.134.136.65]:2863 "EHLO mga03.intel.com"
+        Tue, 22 Jan 2019 07:02:02 -0500
+Received: from mga18.intel.com ([134.134.136.126]:19029 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728052AbfAVMBh (ORCPT
+        id S1728254AbfAVMCC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Jan 2019 07:01:37 -0500
+        Tue, 22 Jan 2019 07:02:02 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 04:01:36 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Jan 2019 04:02:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,506,1539673200"; 
-   d="scan'208";a="140280031"
+   d="scan'208";a="140280105"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.115])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Jan 2019 04:01:34 -0800
-Date:   Tue, 22 Jan 2019 14:01:33 +0200
+  by fmsmga001.fm.intel.com with ESMTP; 22 Jan 2019 04:02:00 -0800
+Date:   Tue, 22 Jan 2019 14:01:59 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Stefan Berger <stefanb@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] tpm: ppi: Possibly show command parameter if TPM
- PPI 1.3 is used
-Message-ID: <20190122120133.GB7514@linux.intel.com>
+Subject: Re: [PATCH v2 5/5] tpm: ppi: Enable submission of optional command
+ parameter for PPI 1.3
+Message-ID: <20190122120159.GC7514@linux.intel.com>
 References: <20190117174135.2117937-1-stefanb@linux.ibm.com>
- <20190117174135.2117937-5-stefanb@linux.ibm.com>
+ <20190117174135.2117937-6-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190117174135.2117937-5-stefanb@linux.ibm.com>
+In-Reply-To: <20190117174135.2117937-6-stefanb@linux.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 17, 2019 at 12:41:34PM -0500, Stefan Berger wrote:
-> TPM PPI 1.3 introduces an additional optional command parameter
-> that may be needed for some commands. Display the parameter if the
-> command requires such a parameter. Only command 23 needs one.
-> 
-> The PPI request file will show output like this then:
+On Thu, Jan 17, 2019 at 12:41:35PM -0500, Stefan Berger wrote:
+> This patch enables a user to specify the additional optional command
+> parameter by writing it into the request file:
 > 
 >    # echo "23 16" > request
 >    # cat request
 >    23 16
+> 
+> For backwards compatibility:
+> 
+> If only 1 parameter is given then we assume this is the operation request
+> number.
 > 
 >    # echo "5" > request
 >    # cat request
