@@ -2,115 +2,74 @@ Return-Path: <SRS0=bfYL=P7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E56C282C0
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 19:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BE5C282C0
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 19:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5211218A1
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 19:18:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P1Evooh0"
+	by mail.kernel.org (Postfix) with ESMTP id 622E121855
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 19:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726126AbfAWTSF (ORCPT
+        id S1725996AbfAWTfF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Jan 2019 14:18:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42446 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbfAWTSF (ORCPT
+        Wed, 23 Jan 2019 14:35:05 -0500
+Received: from namei.org ([65.99.196.166]:48100 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725976AbfAWTfE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Jan 2019 14:18:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9TxsPBM3jjXfVOkRBw/Td/M3gJ46TOrrJlMH4ZHJ0Lc=; b=P1Evooh0cZ31Vg3yJPMvCI5MF
-        CC4YBr/I1nCsU/rqUkDI1fV8Fvg4YGT43qI7wCHMpuOgMf5qtqld9gwF6JfYnCnFyVXQIJBqZqxKf
-        +bXh52Xuy8K9WkZlAHjLkFnoR0xSu90bX6HTDIw0irhqObr4H6eqbtd9kXiAye23pHVJO/RKrVfJm
-        wNphHaylDyKMeEoKt11LT9KvYUcIlkJ+556RxfH9Qpm4xmKK7vzyStJCyhZGt5UbGBf76tLO7MXgw
-        ofEKY62IMmhGnvY/zNmeOv+oxFFrJlpF+/pDa+gmT7EiT+uBtsSwuxI3eWvobtIa9Y2+jQCIFGt9g
-        vqukkVMFw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gmO2E-0001t7-R4; Wed, 23 Jan 2019 19:18:02 +0000
-Date:   Wed, 23 Jan 2019 11:18:02 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>, dev@openvswitch.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com,
-        intel-wired-lan@lists.osuosl.org, linux-fsdevel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, Laura Abbott <labbott@redhat.com>,
-        linux-kbuild@vger.kernel.org,
-        Alexander Popov <alex.popov@linux.com>
-Subject: Re: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of
- switches
-Message-ID: <20190123191802.GB15311@bombadil.infradead.org>
-References: <20190123110349.35882-1-keescook@chromium.org>
- <20190123110349.35882-2-keescook@chromium.org>
- <20190123115829.GA31385@kroah.com>
- <874l9z31c5.fsf@intel.com>
+        Wed, 23 Jan 2019 14:35:04 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x0NJYxWe030060;
+        Wed, 23 Jan 2019 19:34:59 GMT
+Date:   Thu, 24 Jan 2019 06:34:59 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+cc:     linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3] tomoyo: Swicth from cred->security to
+ task_struct->security.
+In-Reply-To: <765b2ad7-a6a6-617a-5270-c41b1fe43ad4@I-love.SAKURA.ne.jp>
+Message-ID: <alpine.LRH.2.21.1901240634380.28095@namei.org>
+References: <1547822987-9401-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp> <1547907100-10438-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp> <765b2ad7-a6a6-617a-5270-c41b1fe43ad4@I-love.SAKURA.ne.jp>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <874l9z31c5.fsf@intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 23, 2019 at 04:17:30PM +0200, Jani Nikula wrote:
-> Can't have:
-> 
-> 	switch (i) {
-> 		int j;
-> 	case 0:
->         	/* ... */
-> 	}
-> 
-> because it can't be turned into:
-> 
-> 	switch (i) {
-> 		int j = 0; /* not valid C */
-> 	case 0:
->         	/* ... */
-> 	}
-> 
-> but can have e.g.:
-> 
-> 	switch (i) {
-> 	case 0:
-> 		{
-> 			int j = 0;
-> 	        	/* ... */
-> 		}
-> 	}
-> 
-> I think Kees' approach of moving such variable declarations to the
-> enclosing block scope is better than adding another nesting block.
+On Wed, 23 Jan 2019, Tetsuo Handa wrote:
 
-Another nesting level would be bad, but I think this is OK:
+> Hello.
+> 
+> This is effectively a pull request, for I don't maintain a git tree.
+> If no questions, please apply to linux-security.git#next-general.
 
-	switch (i) {
-	case 0: {
-		int j = 0;
-        	/* ... */
-	}
-	case 1: {
-		void *p = q;
-		/* ... */
-	}
-	}
+Patches are perfectly fine, just include me in the To: line and say that 
+you want it applied.
 
-I can imagine Kees' patch might have a bad effect on stack consumption,
-unless GCC can be relied on to be smart enough to notice the
-non-overlapping liveness of the vriables and use the same stack slots
-for both.
+
+> 
+> On 2019/01/19 23:11, Tetsuo Handa wrote:
+> > TOMOYO security module is designed to use "struct task_struct"->security
+> > in order to allow per "struct task_struct" tracking without being disturbed
+> > by unable to update "struct cred"->security due to override mechanism.
+> > 
+> > Now that infrastructure-managed security blob is ready, this patch updates
+> > TOMOYO to use "struct task_struct"->security.
+> > 
+> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > ---
+> >  security/tomoyo/common.c        |   4 +-
+> >  security/tomoyo/common.h        |  45 ++++--------
+> >  security/tomoyo/domain.c        |  11 +--
+> >  security/tomoyo/securityfs_if.c |  21 ++----
+> >  security/tomoyo/tomoyo.c        | 149 +++++++++++++++++++++-------------------
+> >  5 files changed, 108 insertions(+), 122 deletions(-)
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
+
