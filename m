@@ -2,143 +2,90 @@ Return-Path: <SRS0=bfYL=P7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 191EEC282C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 18:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29271C282C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 19:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC66721855
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 18:56:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IquwkO95"
+	by mail.kernel.org (Postfix) with ESMTP id 06A0B218A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 19:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726166AbfAWS4M (ORCPT
+        id S1726277AbfAWTAH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Jan 2019 13:56:12 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46932 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbfAWS4I (ORCPT
+        Wed, 23 Jan 2019 14:00:07 -0500
+Received: from mga18.intel.com ([134.134.136.126]:31046 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725896AbfAWTAG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Jan 2019 13:56:08 -0500
-Received: by mail-vs1-f65.google.com with SMTP id n10so1934534vso.13
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Jan 2019 10:56:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Ireb14swxzh/kGO0PaPMQde96Q1mT+0FNq7POlr1RtA=;
-        b=IquwkO95q/UwwPMizwgMyjj4ev3XxDyhR/G3JHGEMCF3sSBM1iMANjExCpcvgLzlnG
-         c0k6jUJJgFMV5g0qmbSVJ021AH6TGBxq+8XWJcUoxP8kLv+OEHJYUwpGc+sctoUZRDos
-         hIzip/irtCZpPPkUNHJdcUGvO4CqxO0BooUhg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ireb14swxzh/kGO0PaPMQde96Q1mT+0FNq7POlr1RtA=;
-        b=HYP1JFX7RtwjBfb7waL1uQ4pxoE+Vx7ctXMhOXKPiM5/uFmL60T3wJjn/UXuOCG5ph
-         ueC//zbcFVSvPa6+JE9vWuF8mXns3fnWljxfLHZjM2DToyebSzIDU2Wvk4MDQISbw7MF
-         1D+yfXU7fh2BRBHJROHeDQNOPS0WKuJhfiJcKOtSLMxOx3saH8NbixhL7cAC0wG0/xfd
-         yA5wKhkfkjloVWH0uoZK0z+07tKKX9+cgFjqP8yZukYc1E/IOY5mpqcfdAvG9II5kcxh
-         QtFV0nFAzjf5lheu6C95H/2jRxSfAnzWtqUOXwbFZ7txeVnVwSzvu4l9BCQSAxP2YSj/
-         s3Rg==
-X-Gm-Message-State: AJcUukfroTN/XSlWGToUTjmErglH9nSuENoAq0YmWyOy4nZ8TzWo7yav
-        LGsWo7xHTdaGQfrJpPGqN97v0NVhsm0=
-X-Google-Smtp-Source: ALg8bN683zvHf+LU1XQ64yHfUJk0MpX/4x0Xj+e8VcQcNvIlYewJ+00zzcLOW7AI7CaiTA73KWpSxA==
-X-Received: by 2002:a67:3694:: with SMTP id d20mr1485868vsi.151.1548269766811;
-        Wed, 23 Jan 2019 10:56:06 -0800 (PST)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id k200sm63268333vke.9.2019.01.23.10.56.05
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 10:56:05 -0800 (PST)
-Received: by mail-ua1-f54.google.com with SMTP id e16so1076258uam.12
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Jan 2019 10:56:05 -0800 (PST)
-X-Received: by 2002:ab0:470d:: with SMTP id h13mr1375354uac.122.1548269764744;
- Wed, 23 Jan 2019 10:56:04 -0800 (PST)
+        Wed, 23 Jan 2019 14:00:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 11:00:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,512,1539673200"; 
+   d="scan'208";a="131760729"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga001.jf.intel.com with ESMTP; 23 Jan 2019 11:00:03 -0800
+Received: from fmsmsx102.amr.corp.intel.com (10.18.124.200) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 23 Jan 2019 10:59:51 -0800
+Received: from HASMSX109.ger.corp.intel.com (10.184.198.21) by
+ FMSMSX102.amr.corp.intel.com (10.18.124.200) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 23 Jan 2019 10:59:51 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.155]) by
+ hasmsx109.ger.corp.intel.com ([169.254.3.105]) with mapi id 14.03.0415.000;
+ Wed, 23 Jan 2019 20:59:48 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: RE: [PATCH v10 00/17] Remove nested TPM operations
+Thread-Topic: [PATCH v10 00/17] Remove nested TPM operations
+Thread-Index: AQHUreHHpwNI+OEb4EipFSW6DRZudqW9E3qAgAAJKACAACHQMA==
+Date:   Wed, 23 Jan 2019 18:59:48 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA818C6@hasmsx108.ger.corp.intel.com>
+References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
+ <20190123182057.GA24212@linux.intel.com>
+ <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
+In-Reply-To: <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTRhNGM3YzktYjY2Ni00MjU1LTlkOWYtYmNkZmIzNzJhNGU0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVkFkbGVid1hPaTRTdmlNc2hMNXRwT2Mrb2Z2QlFGdGtkcUpyS1FHOTVIeFB1XC9cL0ZUWmFYd1RjWHhCVko4ZzNPIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.254.153.236]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190123110349.35882-1-keescook@chromium.org> <20190123110349.35882-2-keescook@chromium.org>
- <20190123115829.GA31385@kroah.com> <874l9z31c5.fsf@intel.com>
- <000001d4b32a$845e06e0$8d1a14a0$@211mainstreet.net> <87va2f1int.fsf@intel.com>
-In-Reply-To: <87va2f1int.fsf@intel.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 24 Jan 2019 07:55:51 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jJUxHtFq0rBJ9FwzMcZDWnusPUauC_=MaOz7H0_PF25jQ@mail.gmail.com>
-Message-ID: <CAGXu5jJUxHtFq0rBJ9FwzMcZDWnusPUauC_=MaOz7H0_PF25jQ@mail.gmail.com>
-Subject: Re: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of switches
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Edwin Zimmerman <edwin@211mainstreet.net>,
-        Greg KH <gregkh@linuxfoundation.org>, dev@openvswitch.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Network Development <netdev@vger.kernel.org>,
-        intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>, Linux-MM <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        intel-wired-lan@lists.osuosl.org,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Laura Abbott <labbott@redhat.com>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Alexander Popov <alex.popov@linux.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 24, 2019 at 4:44 AM Jani Nikula <jani.nikula@linux.intel.com> w=
-rote:
->
-> On Wed, 23 Jan 2019, Edwin Zimmerman <edwin@211mainstreet.net> wrote:
-> > On Wed, 23 Jan 2019, Jani Nikula <jani.nikula@linux.intel.com> wrote:
-> >> On Wed, 23 Jan 2019, Greg KH <gregkh@linuxfoundation.org> wrote:
-> >> > On Wed, Jan 23, 2019 at 03:03:47AM -0800, Kees Cook wrote:
-> >> >> Variables declared in a switch statement before any case statements
-> >> >> cannot be initialized, so move all instances out of the switches.
-> >> >> After this, future always-initialized stack variables will work
-> >> >> and not throw warnings like this:
-> >> >>
-> >> >> fs/fcntl.c: In function =E2=80=98send_sigio_to_task=E2=80=99:
-> >> >> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswi=
-tch-unreachable]
-> >> >>    siginfo_t si;
-> >> >>              ^~
-> >> >
-> >> > That's a pain, so this means we can't have any new variables in { }
-> >> > scope except for at the top of a function?
-
-Just in case this wasn't clear: no, it's just the switch statement
-before the first "case". I cannot imagine how bad it would be if we
-couldn't have block-scoped variables! Heh. :)
-
-> >> >
-> >> > That's going to be a hard thing to keep from happening over time, as
-> >> > this is valid C :(
-> >>
-> >> Not all valid C is meant to be used! ;)
-> >
-> > Very true.  The other thing to keep in mind is the burden of enforcing
-> > a prohibition on a valid C construct like this.  It seems to me that
-> > patch reviewers and maintainers have enough to do without forcing them
-> > to watch for variable declarations in switch statements.  Automating
-> > this prohibition, should it be accepted, seems like a good idea to me.
->
-> Considering that the treewide diffstat to fix this is:
->
->  18 files changed, 45 insertions(+), 46 deletions(-)
->
-> and using the gcc plugin in question will trigger the switch-unreachable
-> warning, I think we're good. There'll probably be the occasional
-> declarations that pass through, and will get fixed afterwards.
-
-Yeah, that was my thinking as well: it's a rare use, and we get a
-warning when it comes up.
-
-Thanks!
-
---=20
-Kees Cook
+PiANCj4gT24gMS8yMy8xOSAxOjIwIFBNLCBKYXJra28gU2Fra2luZW4gd3JvdGU6DQo+ID4gT24g
+V2VkLCBKYW4gMTYsIDIwMTkgYXQgMTE6MjM6MjVQTSArMDIwMCwgSmFya2tvIFNha2tpbmVuIHdy
+b3RlOg0KPiA+PiBNYWtlIHRoZSBjaGFuZ2VzIG5lY2Vzc2FyeSB0byBkZXRhY2ggVFBNIHNwYWNl
+IGNvZGUgYW5kIFRQTQ0KPiA+PiBhY3RpdmF0aW9uIGNvZGUgb3V0IG9mIHRoZSB0cG1fdHJhbnNt
+aXQoKSBmbG93IGJlY2F1c2Ugb2YgYm90aCBvZg0KPiA+PiB0aGVzZSBjYW4gY2F1c2UgbmVzdGVk
+IHRwbV90cmFuc21pdCgpIGNhbGxzLiBUaGUgbmVzdGVkcyBjYWxscyBtYWtlDQo+ID4+IHRoZSB3
+aG9sZSBmbG93IGhhcmQgdG8gbWFpbnRhaW4sIGFuZCB0aHVzLCBpdCBpcyBiZXR0ZXIgdG8ganVz
+dCBmaXgNCj4gPj4gdGhpbmdzIG5vdyBiZWZvcmUgdGhpcyB0dXJucyBpbnRvIGEgYmlnZ2VyIG1l
+c3MuDQo+ID4gQW55IHJlYXNvbnMgbm90IHRvIG1lcmdlIHRoaXMgc29vbj8NCj4gDQo+IEkgc3Vw
+cG9zZSB2MTAgaGFzbid0IGNoYW5nZWQgYW55dGhpbmcgc2lnbmluZmljYXQuIFNvLCBub3QgZnJv
+bSBteSBwZXJzcGVjdGl2ZS4NCj4gV2VyZSB5b3Ugd2FpdGluZyBmb3IgbW9yZSBSZXZpZXdlZC1i
+eSdzPw0KPiANCkknbSBva2F5LCBpbiB0aGVvcnkgSSd2ZSBjbGVhbmVkIGFsbCBteSBjb25jZXJu
+IHJlZ2FyZGluZyBpZGxlIGFuZCBsb2NhbGl0eSAuIEknbSBqdXN0IHdhbnQgZG8gZmV3IG1vcmUg
+dGVzdHMgb24gU3VuZGF5Lg0KDQpUaGFua3MNClRvbWFzDQoNCg0K
