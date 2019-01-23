@@ -2,128 +2,64 @@ Return-Path: <SRS0=bfYL=P7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EEEC282C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BCDC41518
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 18:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E42142085A
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 16:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43E7B218A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 18:21:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfAWQuj (ORCPT
+        id S1726040AbfAWSVD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Jan 2019 11:50:39 -0500
-Received: from mga18.intel.com ([134.134.136.126]:19565 "EHLO mga18.intel.com"
+        Wed, 23 Jan 2019 13:21:03 -0500
+Received: from mga11.intel.com ([192.55.52.93]:27594 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfAWQuh (ORCPT
+        id S1726140AbfAWSVD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Jan 2019 11:50:37 -0500
-X-Amp-Result: UNSCANNABLE
+        Wed, 23 Jan 2019 13:21:03 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 08:50:36 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 10:21:03 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,512,1539673200"; 
-   d="asc'?scan'208";a="312849120"
-Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
-  by fmsmga006.fm.intel.com with ESMTP; 23 Jan 2019 08:50:36 -0800
-Message-ID: <7d8a6120ea335d74c41a5fba3754518ea60e936e.camel@intel.com>
-Subject: Re: [Intel-wired-lan] [PATCH 1/3] treewide: Lift switch variables
- out of switches
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Cc:     dev@openvswitch.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com,
-        intel-wired-lan@lists.osuosl.org, linux-fsdevel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, Laura Abbott <labbott@redhat.com>,
-        linux-kbuild@vger.kernel.org,
-        Alexander Popov <alex.popov@linux.com>
-Date:   Wed, 23 Jan 2019 08:51:38 -0800
-In-Reply-To: <20190123110349.35882-2-keescook@chromium.org>
-References: <20190123110349.35882-1-keescook@chromium.org>
-         <20190123110349.35882-2-keescook@chromium.org>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ckUn9AFZsnGNoWsnxDog"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
+   d="scan'208";a="312874309"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.156])
+  by fmsmga006.fm.intel.com with ESMTP; 23 Jan 2019 10:20:58 -0800
+Date:   Wed, 23 Jan 2019 20:20:57 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
+Message-ID: <20190123182057.GA24212@linux.intel.com>
+References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Jan 16, 2019 at 11:23:25PM +0200, Jarkko Sakkinen wrote:
+> Make the changes necessary to detach TPM space code and TPM activation
+> code out of the tpm_transmit() flow because of both of these can cause
+> nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+> to maintain, and thus, it is better to just fix things now before this
+> turns into a bigger mess.
 
---=-ckUn9AFZsnGNoWsnxDog
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Any reasons not to merge this soon?
 
-On Wed, 2019-01-23 at 03:03 -0800, Kees Cook wrote:
-> Variables declared in a switch statement before any case statements
-> cannot be initialized, so move all instances out of the switches.
-> After this, future always-initialized stack variables will work
-> and not throw warnings like this:
->=20
-> fs/fcntl.c: In function =E2=80=98send_sigio_to_task=E2=80=99:
-> fs/fcntl.c:738:13: warning: statement will never be executed [-
-> Wswitch-unreachable]
->    siginfo_t si;
->              ^~
->=20
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-
-Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-
-For the e1000 changes.
-
-> ---
->  arch/x86/xen/enlighten_pv.c                   |  7 ++++---
->  drivers/char/pcmcia/cm4000_cs.c               |  2 +-
->  drivers/char/ppdev.c                          | 20 ++++++++---------
-> --
->  drivers/gpu/drm/drm_edid.c                    |  4 ++--
->  drivers/gpu/drm/i915/intel_display.c          |  2 +-
->  drivers/gpu/drm/i915/intel_pm.c               |  4 ++--
->  drivers/net/ethernet/intel/e1000/e1000_main.c |  3 ++-
->  drivers/tty/n_tty.c                           |  3 +--
->  drivers/usb/gadget/udc/net2280.c              |  5 ++---
->  fs/fcntl.c                                    |  3 ++-
->  mm/shmem.c                                    |  5 +++--
->  net/core/skbuff.c                             |  4 ++--
->  net/ipv6/ip6_gre.c                            |  4 ++--
->  net/ipv6/ip6_tunnel.c                         |  4 ++--
->  net/openvswitch/flow_netlink.c                |  7 +++----
->  security/tomoyo/common.c                      |  3 ++-
->  security/tomoyo/condition.c                   |  7 ++++---
->  security/tomoyo/util.c                        |  4 ++--
->  18 files changed, 45 insertions(+), 46 deletions(-)
-
-
---=-ckUn9AFZsnGNoWsnxDog
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlxIm5oACgkQ5W/vlVpL
-7c6nHA/+I5AUD+yELZtkueGqZrZ0E/i+TX7+2pxKNRieTprDcNtILryQEfP4XrvX
-r7X4QwfM9Rfmrlr1WcZrQW2LVn+uuflivdbtCmE0ZX4iBnIhAoeguyZ6+hInlbDY
-oN+TzAFm96uYB70bOnyqutGVBKfMkazDXiVtqzbu+7HAMWFnQFFzKX6/o+eL0/Np
-1qBQP1okUj2dM/ujfQKLxWQu8IupAI5nDeucqFsscZO1Yh/g9IjOyClDUGSXAyBO
-Xr67/lCCAt1/Z0GkqN+HElzbtjokp0xitLFF9MyOkmrHiHKcvD62I4OJ97OXlFuF
-YXvwIg6/9NfVhGgh/k8z6xAAB9JDIZ0rb5yezcdu1FqSYVrAyzI4tmD+l3fS7zyr
-AnHaQ4tTzsmj0T70bz1wooR2oOnyA2MhVhGUfPXNER24TaApApki5eqydsVPpsMk
-3gukrduJogzBL2AVMTp780UAj2WnHYsJhso62fYOPT0huDhAsIWaqcuVi5Fs0o94
-b9t84vtQG5NHFEBmaaaVdFhB9+Tw3sOHh+nglVzHm3UZNHcFi+lEgxjtV6cTcm0C
-1oIX6J17KkZPxkOf0ENU8Cj/gnvNRF/ZhkDPe0r1bMYnL8w0WxB/rCSPQfWD/F5r
-bdTuBQbV5MKBc4evjKtB1mFUYD9WrOMIbPjMo9pkJ0XQuttdthc=
-=MB+1
------END PGP SIGNATURE-----
-
---=-ckUn9AFZsnGNoWsnxDog--
-
+/Jarkko
