@@ -3,122 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3596C282C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 14:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DB3C282C5
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 14:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF81C20870
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 14:22:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F38121850
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 14:59:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726173AbfAWOWB convert rfc822-to-8bit (ORCPT
+        id S1725951AbfAWO7O convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Jan 2019 09:22:01 -0500
-Received: from mga01.intel.com ([192.55.52.88]:50595 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726126AbfAWOWB (ORCPT
+        Wed, 23 Jan 2019 09:59:14 -0500
+Received: from mail.emypeople.net ([216.220.167.73]:40833 "EHLO
+        mail.emypeople.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfAWO7N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Jan 2019 09:22:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 06:22:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,511,1539673200"; 
-   d="scan'208";a="140626236"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.172])
-  by fmsmga001.fm.intel.com with ESMTP; 23 Jan 2019 06:21:56 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     dev@openvswitch.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        netdev@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-mm@kvack.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com,
-        intel-wired-lan@lists.osuosl.org, linux-fsdevel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, Laura Abbott <labbott@redhat.com>,
-        linux-kbuild@vger.kernel.org,
-        Alexander Popov <alex.popov@linux.com>
-Subject: Re: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of switches
-In-Reply-To: <874l9z31c5.fsf@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Wed, 23 Jan 2019 09:59:13 -0500
+X-Greylist: delayed 726 seconds by postgrey-1.27 at vger.kernel.org; Wed, 23 Jan 2019 09:59:12 EST
+Received: from Shop7 ([166.182.241.35])
+        by mail.emypeople.net (12.1.1 build 4 DEB9 x64) with ASMTP id 201901230947053176;
+        Wed, 23 Jan 2019 09:47:05 -0500
+From:   "Edwin Zimmerman" <edwin@211mainstreet.net>
+To:     "'Jani Nikula'" <jani.nikula@linux.intel.com>,
+        "'Greg KH'" <gregkh@linuxfoundation.org>,
+        "'Kees Cook'" <keescook@chromium.org>
+Cc:     <dev@openvswitch.org>,
+        "'Ard Biesheuvel'" <ard.biesheuvel@linaro.org>,
+        <netdev@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-mm@kvack.org>,
+        <linux-security-module@vger.kernel.org>,
+        <kernel-hardening@lists.openwall.com>,
+        <intel-wired-lan@lists.osuosl.org>,
+        <linux-fsdevel@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
+        "'Laura Abbott'" <labbott@redhat.com>,
+        <linux-kbuild@vger.kernel.org>,
+        "'Alexander Popov'" <alex.popov@linux.com>
 References: <20190123110349.35882-1-keescook@chromium.org> <20190123110349.35882-2-keescook@chromium.org> <20190123115829.GA31385@kroah.com> <874l9z31c5.fsf@intel.com>
-Date:   Wed, 23 Jan 2019 16:23:39 +0200
-Message-ID: <871s53311w.fsf@intel.com>
+In-Reply-To: <874l9z31c5.fsf@intel.com>
+Subject: RE: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of switches
+Date:   Wed, 23 Jan 2019 09:47:06 -0500
+Message-ID: <000001d4b32a$845e06e0$8d1a14a0$@211mainstreet.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain;
+        charset="utf-8"
 Content-Transfer-Encoding: 8BIT
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQK1qhpX7cEQ8qlEpLW6qt3JZ7VVWQH3EeYfAWqRE0oCq0D606PKlQEg
+Content-Language: en-us
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 On Wed, 23 Jan 2019, Jani Nikula <jani.nikula@linux.intel.com> wrote:
 > On Wed, 23 Jan 2019, Greg KH <gregkh@linuxfoundation.org> wrote:
->> On Wed, Jan 23, 2019 at 03:03:47AM -0800, Kees Cook wrote:
->>> Variables declared in a switch statement before any case statements
->>> cannot be initialized, so move all instances out of the switches.
->>> After this, future always-initialized stack variables will work
->>> and not throw warnings like this:
->>> 
->>> fs/fcntl.c: In function ‘send_sigio_to_task’:
->>> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-unreachable]
->>>    siginfo_t si;
->>>              ^~
->>
->> That's a pain, so this means we can't have any new variables in { }
->> scope except for at the top of a function?
->>
->> That's going to be a hard thing to keep from happening over time, as
->> this is valid C :(
->
+> > On Wed, Jan 23, 2019 at 03:03:47AM -0800, Kees Cook wrote:
+> >> Variables declared in a switch statement before any case statements
+> >> cannot be initialized, so move all instances out of the switches.
+> >> After this, future always-initialized stack variables will work
+> >> and not throw warnings like this:
+> >>
+> >> fs/fcntl.c: In function ‘send_sigio_to_task’:
+> >> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-unreachable]
+> >>    siginfo_t si;
+> >>              ^~
+> >
+> > That's a pain, so this means we can't have any new variables in { }
+> > scope except for at the top of a function?
+> >
+> > That's going to be a hard thing to keep from happening over time, as
+> > this is valid C :(
+> 
 > Not all valid C is meant to be used! ;)
->
-> Anyway, I think you're mistaking the limitation to arbitrary blocks
-> while it's only about the switch block IIUC.
->
-> Can't have:
->
-> 	switch (i) {
-> 		int j;
-> 	case 0:
->         	/* ... */
-> 	}
->
-> because it can't be turned into:
->
-> 	switch (i) {
-> 		int j = 0; /* not valid C */
-> 	case 0:
->         	/* ... */
-> 	}
->
-> but can have e.g.:
->
-> 	switch (i) {
-> 	case 0:
-> 		{
-> 			int j = 0;
-> 	        	/* ... */
-> 		}
-> 	}
->
-> I think Kees' approach of moving such variable declarations to the
-> enclosing block scope is better than adding another nesting block.
 
-PS. The patch is
+Very true.  The other thing to keep in mind is the burden of enforcing a prohibition on a valid C construct like this.  
+It seems to me that patch reviewers and maintainers have enough to do without forcing them to watch for variable
+declarations in switch statements.  Automating this prohibition, should it be accepted, seems like a good idea to me.
 
-Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+-Edwin Zimmerman
 
-and the drivers/gpu/drm/i915/* parts are
-
-Acked-by: Jani Nikula <jani.nikula@intel.com>
-
-for merging via whichever tree is appropriate. (There'll be minor
-conflicts with in-flight work in our -next tree, but no biggie.)
-
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
