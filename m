@@ -2,118 +2,150 @@ Return-Path: <SRS0=bfYL=P7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9668C282C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 20:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8421DC282C0
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 20:43:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4D5321872
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 20:11:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EB7021872
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 20:43:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L8GygvYw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbfAWULH (ORCPT
+        id S1726256AbfAWUnC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Jan 2019 15:11:07 -0500
-Received: from mga18.intel.com ([134.134.136.126]:37380 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbfAWULG (ORCPT
+        Wed, 23 Jan 2019 15:43:02 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:34034 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbfAWUnC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Jan 2019 15:11:06 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Jan 2019 12:11:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,513,1539673200"; 
-   d="scan'208";a="112117495"
-Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.156])
-  by orsmga008.jf.intel.com with ESMTP; 23 Jan 2019 12:11:01 -0800
-Date:   Wed, 23 Jan 2019 22:11:00 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        tomas.winkler@intel.com
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190123201100.GA21074@linux.intel.com>
-References: <20190118142559.GA4080@linux.intel.com>
- <1547849358.2794.90.camel@HansenPartnership.com>
- <20190120160413.GB30478@linux.intel.com>
- <20190122010218.GA26713@linux.intel.com>
- <20190122025836.GH25163@ziepe.ca>
- <20190122132910.GA2720@linux.intel.com>
- <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
- <20190123153638.GA8727@linux.intel.com>
+        Wed, 23 Jan 2019 15:43:02 -0500
+Received: by mail-ua1-f65.google.com with SMTP id c24so1213754uak.1
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Jan 2019 12:43:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rFCkOF2gK3wr1UB995eD+/CTWS4iazBBfFIZUEffwxc=;
+        b=L8GygvYwk5FYD+Ce0ML1TRQbDfEIv0oR+ZZMDgwVJntrdffAzAT1EMjtnCS4Vm7kGF
+         9dyJBTPuJm07cjZsS/xzizI42KQnMArMr2N3CLtPSslUeR/3lApJBdvCmKdyWI0HKF0C
+         Vq7eIyo8gjyd5kPrv1YhbaPvpYIMVU0STBBf4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rFCkOF2gK3wr1UB995eD+/CTWS4iazBBfFIZUEffwxc=;
+        b=Ai4BeujcBwbtpTHDqyyvGvI2C0ma1S5q0sJ4Vvr+TuRjMZKNl6Sw6lDE1eJyH/Cpsu
+         1GyyqXMX0WP9cW4SUJXbzkzIVpp/1hOWggypaqoo0INVzfxn1kPL3XJkO8wtx95xrEKX
+         QKxq6Jnmv3vfN7AE4KoM+FpzHdytpfP8WV4VvePZAJhsAhtCUfqkfqWqVlAQMQ3tm1P+
+         VZeeuWKkMsj6dLAi/OIB5ZrBylM0rhcPicnlhgV2UTGS5m6p9LvRtuQ8j4BrcA691+TI
+         fDNr9pVYdVAhbw9bnDMpmtQ3CsHd8CJTjm87HfR7IJsvgZ5JPhsIGSd79tk5B+W5rDRs
+         O2eA==
+X-Gm-Message-State: AJcUukdrOXvsmbT2KAqdx35oFJFUcGSsfsMOzicUqmVx9ZnuEEBV/ira
+        iHDZD+OyC5Q+ENEJMaSRD5F3DF9OOBI=
+X-Google-Smtp-Source: ALg8bN6VKeCIowVb1uI/BVN+FoXF8MPL+r36DdU66o6DkFnDjgKcrydEv1tMBPyUIkaTmFKJFe9JVw==
+X-Received: by 2002:ab0:2385:: with SMTP id b5mr1568218uan.73.1548276180669;
+        Wed, 23 Jan 2019 12:43:00 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id g195sm49862555vka.5.2019.01.23.12.43.00
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Jan 2019 12:43:00 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id p74so2185893vsc.0
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Jan 2019 12:43:00 -0800 (PST)
+X-Received: by 2002:a67:e199:: with SMTP id e25mr1560245vsl.188.1548275782895;
+ Wed, 23 Jan 2019 12:36:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123153638.GA8727@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190123110349.35882-1-keescook@chromium.org> <20190123110349.35882-2-keescook@chromium.org>
+ <20190123115829.GA31385@kroah.com> <874l9z31c5.fsf@intel.com> <20190123191802.GB15311@bombadil.infradead.org>
+In-Reply-To: <20190123191802.GB15311@bombadil.infradead.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 24 Jan 2019 09:36:11 +1300
+X-Gmail-Original-Message-ID: <CAGXu5jLNvHVhbyr5Cbyoe8o0ARv52sU-NEpD+u2UYfESM3ofCw@mail.gmail.com>
+Message-ID: <CAGXu5jLNvHVhbyr5Cbyoe8o0ARv52sU-NEpD+u2UYfESM3ofCw@mail.gmail.com>
+Subject: Re: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of switches
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>, dev@openvswitch.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Network Development <netdev@vger.kernel.org>,
+        intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, Linux-MM <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        intel-wired-lan@lists.osuosl.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Alexander Popov <alex.popov@linux.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 23, 2019 at 05:36:38PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Jan 23, 2019 at 07:26:42AM +1300, Linus Torvalds wrote:
-> > On Wed, Jan 23, 2019 at 2:29 AM Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > >
-> > > > >
-> > > > > Fails on commit 170d13ca3a2fdaaa0283399247631b76b441cca2. Still works on
-> > > > > preceding commit a959dc88f9c8900296ccf13e2f3e1cbc555a8917.
-> > > >
-> > > > This changes the IO access pattern in memcpy_to/fromio.. Presumably
-> > > > CRB HW doesn't like the new 4 byte move? Swap each one in crb to
-> > > > memcpy to confirm..
-> > > >
-> > > > If the HW requires particular access patterns you can't use
-> > > > memcpy_to/fromio
-> > >
-> > > Did not have time to look at the commit at all but your deduction
-> > > is correct. I know it without testing.
-> > >
-> > > Memory controller will feed 1's on unaligned read from IO memory,
-> > > and as we can see from the TPM header, this change causes two of
-> > > those:
-> > 
-> > Funky. But how did it work before then?
-> > 
-> > The new memcpy_fromio() is designed to have _predictable_ access
-> > patterns. Not necessarily the best, but at least consistent.
-> > 
-> > Prevously, we used whatever random "memcpy()" implementation we
-> > happened to pick, which *could* be aligned (particularly "rep movsb" -
-> > absolutely horrible performance for MMIO, but by doing IO one byte at
-> > a time it was certainly aligned ;), but most of our x86 memcpy
-> > implementations don't actually try all that hard to align the source.
-> > And the manual version will actually copy things *backwards* for some
-> > cases.
-> > 
-> > Is it just that this particular hardware always happened to trigger
-> > the ERMS case (ie "rep movsb")?
-> 
-> This is the particular snippet in question:
-> 
-> memcpy_fromio(buf, priv->rsp, 6);
-> expected = be32_to_cpup((__be32 *) &buf[2]);
-> if (expected > count || expected < 6)
-> 	return -EIO;
-> 
-> memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
-> 
-> I guess it did in the first memcpy_fromio operation since it is less
-> than a quad word, right? Not sure why the 2nd memcpy_fromio() operation
-> has worked, though.
+On Thu, Jan 24, 2019 at 8:18 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Wed, Jan 23, 2019 at 04:17:30PM +0200, Jani Nikula wrote:
+> > Can't have:
+> >
+> >       switch (i) {
+> >               int j;
+> >       case 0:
+> >               /* ... */
+> >       }
+> >
+> > because it can't be turned into:
+> >
+> >       switch (i) {
+> >               int j = 0; /* not valid C */
+> >       case 0:
+> >               /* ... */
+> >       }
+> >
+> > but can have e.g.:
+> >
+> >       switch (i) {
+> >       case 0:
+> >               {
+> >                       int j = 0;
+> >                       /* ... */
+> >               }
+> >       }
+> >
+> > I think Kees' approach of moving such variable declarations to the
+> > enclosing block scope is better than adding another nesting block.
+>
+> Another nesting level would be bad, but I think this is OK:
+>
+>         switch (i) {
+>         case 0: {
+>                 int j = 0;
+>                 /* ... */
+>         }
+>         case 1: {
+>                 void *p = q;
+>                 /* ... */
+>         }
+>         }
+>
+> I can imagine Kees' patch might have a bad effect on stack consumption,
+> unless GCC can be relied on to be smart enough to notice the
+> non-overlapping liveness of the vriables and use the same stack slots
+> for both.
 
-And I wonder why 32-bit has worked before.
+GCC is reasonable at this. The main issue, though, was most of these
+places were using the variables in multiple case statements, so they
+couldn't be limited to a single block (or they'd need to be manually
+repeated in each block, which is even more ugly, IMO).
 
-Tomas, you've been more involved with ME and fTPM runs there. Do you
-have any clues where this could be rooted?
+Whatever the consensus, I'm happy to tweak the patch.
 
-/Jarkko
+Thanks!
+
+-- 
+Kees Cook
