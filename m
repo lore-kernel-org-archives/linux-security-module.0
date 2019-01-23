@@ -2,54 +2,55 @@ Return-Path: <SRS0=bfYL=P7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EF8C282C0
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 11:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD94C282C0
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 11:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00EB21726
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 11:04:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 937A521019
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jan 2019 11:04:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wr6sF2dn"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cShFyyzP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbfAWLER (ORCPT
+        id S1727429AbfAWLEd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Jan 2019 06:04:17 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46853 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727582AbfAWLEP (ORCPT
+        Wed, 23 Jan 2019 06:04:33 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34638 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727600AbfAWLER (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Jan 2019 06:04:15 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t13so991328ply.13
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Jan 2019 03:04:15 -0800 (PST)
+        Wed, 23 Jan 2019 06:04:17 -0500
+Received: by mail-pl1-f194.google.com with SMTP id w4so1020182plz.1
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Jan 2019 03:04:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eOH0evUuoYnXDQzpGOjj3b0HOCtKjXfnS8BAvgmzoB0=;
-        b=Wr6sF2dnqShAFPTeXkP0pt6mBKUJKO97OmiEruwT4K55nJajA+h03gbSSobjz2XPfv
-         dmHCD/XalktgqQ0IiUYMC5jVtzQxKJiJoguJ4OOCavlkG9DFAMd11Miq++jy+d12pAW9
-         urv3sOXBGTMXSshhkP6/iBRMUbWJT7/wXVNA4=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JO0vE/vFJiS4gzSeqeVbyVV3LiMkmvtrdh6Lf0qdc2s=;
+        b=cShFyyzPSMdUXoOJVfMLqeNzdV+YrRJK6IXF4kAh8ZTXzNNuKV/QvBxjTT5icsuwrY
+         UI9Ov5OKi9yenNcIWuqxwc6xavsJbYXtmKINI3hGjpxMiNapqnei3zZlr1cZX+6R9/tU
+         8QMPkn/5RJa8oKDZcAJajxEhmkLrtvUk25PMA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eOH0evUuoYnXDQzpGOjj3b0HOCtKjXfnS8BAvgmzoB0=;
-        b=N9ROPxjc/Il+VMbb5IiYW2BvREB5ntFyZhNZVc7Ovc1dqavnFqvPRYpeXe3a8/zFl3
-         oYbJtvV/I68uQRl9G6cCFRapRAvEae0nynZm4RCBeWBHWlQZFfTKeV0UtGwvKKT0sJlo
-         WzL0SCJXVslAPEImJISzgow3rRAW1PxjVNV0JpdSxooIHgUGmZbw9Jrp07a20Q0Debrv
-         dJWF0vaiE6pIf9wmR2qXLaza5kjKtVlFJ2eiBe5z99yQJV6XfGW6+uqtNHcX3OambtRa
-         IF8WBSo0SBgoGCIWqVAtyz9OSczlxz4Cn02TICyD1jajf7TtOUu42xzR9ERNa4OEpYYT
-         mr9Q==
-X-Gm-Message-State: AJcUuke2FxhEmiPSuasUvedhqiMT5xL7JcvigVbFnq4oZHCG2WuPVp/Q
-        KRAPyITosSnyEoofuHUzrfDXCQ==
-X-Google-Smtp-Source: ALg8bN4MaWR5XqsDsgdWgLwpfKZxt4LUG4ZZGKgogh3VDQfDjkiUg54eL3BLTvjTOGXKhvj7c+hNuQ==
-X-Received: by 2002:a17:902:714c:: with SMTP id u12mr1770044plm.234.1548241455187;
-        Wed, 23 Jan 2019 03:04:15 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JO0vE/vFJiS4gzSeqeVbyVV3LiMkmvtrdh6Lf0qdc2s=;
+        b=n5UNrm6NxkBMPzZ5xKnmVEWrVttyw1HqmaDE/b8uUBHA/A8xfRxbwYPv21LvyzNPXR
+         km3PhlhRIIoUFJCQOwlDib6NnYpB/qRb3yAGkBrWeY+D+uXXEy0LEIgwwYnXmPBlN/LM
+         HXYi+snWKhf2WYbAchx1uNgpfVnEqYez1B/sjeNnEHAiSdv/52ixWfikXqY3GpDsvSAY
+         P4/ktN63VOCoCd0CYtOovS/4MjZN6/7bM/0dnAz0/xQmbEeJkjoTCFPTPFc6TT31pnmC
+         HnCuCa3kby1sZTOCmf3k0BQyulqZg5UMy2DAAwk+UFPc2EAHeq9T3+FnjT1eOZGwjYKF
+         QZgQ==
+X-Gm-Message-State: AJcUukdSz2giqIY9CBTGIYafg5wNboLD26+F3VlAAS7GGXXp171aD9a+
+        yGgtqXPXMbfu4wLLZyH18RkTbA==
+X-Google-Smtp-Source: ALg8bN6/BGw8B1OP0mS7q6FPiu4ppk8p8QOO9dHknhYA8VVGQHUkP+l6TrWW+pGtZS5VbAttBUYaFw==
+X-Received: by 2002:a17:902:346:: with SMTP id 64mr1790469pld.337.1548241456456;
+        Wed, 23 Jan 2019 03:04:16 -0800 (PST)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id n186sm23207263pfn.137.2019.01.23.03.04.12
+        by smtp.gmail.com with ESMTPSA id l74sm29941153pfb.145.2019.01.23.03.04.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Wed, 23 Jan 2019 03:04:12 -0800 (PST)
 From:   Kees Cook <keescook@chromium.org>
@@ -65,10 +66,12 @@ Cc:     Kees Cook <keescook@chromium.org>,
         dev@openvswitch.org, linux-kbuild@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         kernel-hardening@lists.openwall.com
-Subject: [PATCH 0/3] gcc-plugins: Introduce stackinit plugin
-Date:   Wed, 23 Jan 2019 03:03:46 -0800
-Message-Id: <20190123110349.35882-1-keescook@chromium.org>
+Subject: [PATCH 1/3] treewide: Lift switch variables out of switches
+Date:   Wed, 23 Jan 2019 03:03:47 -0800
+Message-Id: <20190123110349.35882-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190123110349.35882-1-keescook@chromium.org>
+References: <20190123110349.35882-1-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -76,62 +79,447 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This adds a new plugin "stackinit" that attempts to perform unconditional
-initialization of all stack variables[1]. It has wider effects than
-GCC_PLUGIN_STRUCTLEAK_BYREF_ALL=y since BYREF_ALL does not consider
-non-structures. A notable weakness is that padding bytes in many cases
-remain uninitialized since GCC treats these bytes as "undefined". I'm
-hoping we can improve the compiler (or the plugin) to cover that too.
-(It's worth noting that BYREF_ALL actually does handle the padding --
-I think this is due to the different method of detecting if initialization
-is needed.)
+Variables declared in a switch statement before any case statements
+cannot be initialized, so move all instances out of the switches.
+After this, future always-initialized stack variables will work
+and not throw warnings like this:
 
-Included is a tree-wide change to move switch variables up and out of
-their switch and into the top-level variable declarations.
+fs/fcntl.c: In function ‘send_sigio_to_task’:
+fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-unreachable]
+   siginfo_t si;
+             ^~
 
-Included is a set of test cases for evaluating stack initialization,
-which checks for padding, different types, etc.
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ arch/x86/xen/enlighten_pv.c                   |  7 ++++---
+ drivers/char/pcmcia/cm4000_cs.c               |  2 +-
+ drivers/char/ppdev.c                          | 20 ++++++++-----------
+ drivers/gpu/drm/drm_edid.c                    |  4 ++--
+ drivers/gpu/drm/i915/intel_display.c          |  2 +-
+ drivers/gpu/drm/i915/intel_pm.c               |  4 ++--
+ drivers/net/ethernet/intel/e1000/e1000_main.c |  3 ++-
+ drivers/tty/n_tty.c                           |  3 +--
+ drivers/usb/gadget/udc/net2280.c              |  5 ++---
+ fs/fcntl.c                                    |  3 ++-
+ mm/shmem.c                                    |  5 +++--
+ net/core/skbuff.c                             |  4 ++--
+ net/ipv6/ip6_gre.c                            |  4 ++--
+ net/ipv6/ip6_tunnel.c                         |  4 ++--
+ net/openvswitch/flow_netlink.c                |  7 +++----
+ security/tomoyo/common.c                      |  3 ++-
+ security/tomoyo/condition.c                   |  7 ++++---
+ security/tomoyo/util.c                        |  4 ++--
+ 18 files changed, 45 insertions(+), 46 deletions(-)
 
-Feedback welcome! :)
-
--Kees
-
-[1] https://lkml.kernel.org/r/CA+55aFykZL+cSBJjBBts7ebEFfyGPdMzTmLSxKnT_29=j942dA@mail.gmail.com
-
-Kees Cook (3):
-  treewide: Lift switch variables out of switches
-  gcc-plugins: Introduce stackinit plugin
-  lib: Introduce test_stackinit module
-
- arch/x86/xen/enlighten_pv.c                   |   7 +-
- drivers/char/pcmcia/cm4000_cs.c               |   2 +-
- drivers/char/ppdev.c                          |  20 +-
- drivers/gpu/drm/drm_edid.c                    |   4 +-
- drivers/gpu/drm/i915/intel_display.c          |   2 +-
- drivers/gpu/drm/i915/intel_pm.c               |   4 +-
- drivers/net/ethernet/intel/e1000/e1000_main.c |   3 +-
- drivers/tty/n_tty.c                           |   3 +-
- drivers/usb/gadget/udc/net2280.c              |   5 +-
- fs/fcntl.c                                    |   3 +-
- lib/Kconfig.debug                             |   9 +
- lib/Makefile                                  |   1 +
- lib/test_stackinit.c                          | 327 ++++++++++++++++++
- mm/shmem.c                                    |   5 +-
- net/core/skbuff.c                             |   4 +-
- net/ipv6/ip6_gre.c                            |   4 +-
- net/ipv6/ip6_tunnel.c                         |   4 +-
- net/openvswitch/flow_netlink.c                |   7 +-
- scripts/Makefile.gcc-plugins                  |   6 +
- scripts/gcc-plugins/Kconfig                   |   9 +
- scripts/gcc-plugins/gcc-common.h              |  11 +-
- scripts/gcc-plugins/stackinit_plugin.c        |  79 +++++
- security/tomoyo/common.c                      |   3 +-
- security/tomoyo/condition.c                   |   7 +-
- security/tomoyo/util.c                        |   4 +-
- 25 files changed, 484 insertions(+), 49 deletions(-)
- create mode 100644 lib/test_stackinit.c
- create mode 100644 scripts/gcc-plugins/stackinit_plugin.c
-
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index c54a493e139a..a79d4b548a08 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -907,14 +907,15 @@ static u64 xen_read_msr_safe(unsigned int msr, int *err)
+ static int xen_write_msr_safe(unsigned int msr, unsigned low, unsigned high)
+ {
+ 	int ret;
++#ifdef CONFIG_X86_64
++	unsigned which;
++	u64 base;
++#endif
+ 
+ 	ret = 0;
+ 
+ 	switch (msr) {
+ #ifdef CONFIG_X86_64
+-		unsigned which;
+-		u64 base;
+-
+ 	case MSR_FS_BASE:		which = SEGBASE_FS; goto set;
+ 	case MSR_KERNEL_GS_BASE:	which = SEGBASE_GS_USER; goto set;
+ 	case MSR_GS_BASE:		which = SEGBASE_GS_KERNEL; goto set;
+diff --git a/drivers/char/pcmcia/cm4000_cs.c b/drivers/char/pcmcia/cm4000_cs.c
+index 7a4eb86aedac..7211dc0e6f4f 100644
+--- a/drivers/char/pcmcia/cm4000_cs.c
++++ b/drivers/char/pcmcia/cm4000_cs.c
+@@ -663,6 +663,7 @@ static void monitor_card(struct timer_list *t)
+ {
+ 	struct cm4000_dev *dev = from_timer(dev, t, timer);
+ 	unsigned int iobase = dev->p_dev->resource[0]->start;
++	unsigned char flags0;
+ 	unsigned short s;
+ 	struct ptsreq ptsreq;
+ 	int i, atrc;
+@@ -731,7 +732,6 @@ static void monitor_card(struct timer_list *t)
+ 	}
+ 
+ 	switch (dev->mstate) {
+-		unsigned char flags0;
+ 	case M_CARDOFF:
+ 		DEBUGP(4, dev, "M_CARDOFF\n");
+ 		flags0 = inb(REG_FLAGS0(iobase));
+diff --git a/drivers/char/ppdev.c b/drivers/char/ppdev.c
+index 1ae77b41050a..d77c97e4f996 100644
+--- a/drivers/char/ppdev.c
++++ b/drivers/char/ppdev.c
+@@ -359,14 +359,19 @@ static int pp_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	struct pp_struct *pp = file->private_data;
+ 	struct parport *port;
+ 	void __user *argp = (void __user *)arg;
++	struct ieee1284_info *info;
++	unsigned char reg;
++	unsigned char mask;
++	int mode;
++	s32 time32[2];
++	s64 time64[2];
++	struct timespec64 ts;
++	int ret;
+ 
+ 	/* First handle the cases that don't take arguments. */
+ 	switch (cmd) {
+ 	case PPCLAIM:
+ 	    {
+-		struct ieee1284_info *info;
+-		int ret;
+-
+ 		if (pp->flags & PP_CLAIMED) {
+ 			dev_dbg(&pp->pdev->dev, "you've already got it!\n");
+ 			return -EINVAL;
+@@ -517,15 +522,6 @@ static int pp_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 
+ 	port = pp->pdev->port;
+ 	switch (cmd) {
+-		struct ieee1284_info *info;
+-		unsigned char reg;
+-		unsigned char mask;
+-		int mode;
+-		s32 time32[2];
+-		s64 time64[2];
+-		struct timespec64 ts;
+-		int ret;
+-
+ 	case PPRSTATUS:
+ 		reg = parport_read_status(port);
+ 		if (copy_to_user(argp, &reg, sizeof(reg)))
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index b506e3622b08..8f93956c1628 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -3942,12 +3942,12 @@ static void drm_edid_to_eld(struct drm_connector *connector, struct edid *edid)
+ 		}
+ 
+ 		for_each_cea_db(cea, i, start, end) {
++			int sad_count;
++
+ 			db = &cea[i];
+ 			dbl = cea_db_payload_len(db);
+ 
+ 			switch (cea_db_tag(db)) {
+-				int sad_count;
+-
+ 			case AUDIO_BLOCK:
+ 				/* Audio Data Block, contains SADs */
+ 				sad_count = min(dbl / 3, 15 - total_sad_count);
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 3da9c0f9e948..aa1c2ebea456 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -11341,6 +11341,7 @@ static bool check_digital_port_conflicts(struct drm_atomic_state *state)
+ 	drm_for_each_connector_iter(connector, &conn_iter) {
+ 		struct drm_connector_state *connector_state;
+ 		struct intel_encoder *encoder;
++		unsigned int port_mask;
+ 
+ 		connector_state = drm_atomic_get_new_connector_state(state, connector);
+ 		if (!connector_state)
+@@ -11354,7 +11355,6 @@ static bool check_digital_port_conflicts(struct drm_atomic_state *state)
+ 		WARN_ON(!connector_state->crtc);
+ 
+ 		switch (encoder->type) {
+-			unsigned int port_mask;
+ 		case INTEL_OUTPUT_DDI:
+ 			if (WARN_ON(!HAS_DDI(to_i915(dev))))
+ 				break;
+diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
+index a26b4eddda25..c135fdec96b3 100644
+--- a/drivers/gpu/drm/i915/intel_pm.c
++++ b/drivers/gpu/drm/i915/intel_pm.c
+@@ -478,9 +478,9 @@ static void vlv_get_fifo_size(struct intel_crtc_state *crtc_state)
+ 	struct vlv_fifo_state *fifo_state = &crtc_state->wm.vlv.fifo_state;
+ 	enum pipe pipe = crtc->pipe;
+ 	int sprite0_start, sprite1_start;
++	uint32_t dsparb, dsparb2, dsparb3;
+ 
+ 	switch (pipe) {
+-		uint32_t dsparb, dsparb2, dsparb3;
+ 	case PIPE_A:
+ 		dsparb = I915_READ(DSPARB);
+ 		dsparb2 = I915_READ(DSPARB2);
+@@ -1944,6 +1944,7 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
+ 	const struct vlv_fifo_state *fifo_state =
+ 		&crtc_state->wm.vlv.fifo_state;
+ 	int sprite0_start, sprite1_start, fifo_size;
++	uint32_t dsparb, dsparb2, dsparb3;
+ 
+ 	if (!crtc_state->fifo_changed)
+ 		return;
+@@ -1969,7 +1970,6 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
+ 	spin_lock(&dev_priv->uncore.lock);
+ 
+ 	switch (crtc->pipe) {
+-		uint32_t dsparb, dsparb2, dsparb3;
+ 	case PIPE_A:
+ 		dsparb = I915_READ_FW(DSPARB);
+ 		dsparb2 = I915_READ_FW(DSPARB2);
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
+index 8fe9af0e2ab7..041062736845 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_main.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
+@@ -3140,8 +3140,9 @@ static netdev_tx_t e1000_xmit_frame(struct sk_buff *skb,
+ 
+ 		hdr_len = skb_transport_offset(skb) + tcp_hdrlen(skb);
+ 		if (skb->data_len && hdr_len == len) {
++			unsigned int pull_size;
++
+ 			switch (hw->mac_type) {
+-				unsigned int pull_size;
+ 			case e1000_82544:
+ 				/* Make sure we have room to chop off 4 bytes,
+ 				 * and that the end alignment will work out to
+diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
+index 5dc9686697cf..eafb39157281 100644
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -634,6 +634,7 @@ static size_t __process_echoes(struct tty_struct *tty)
+ 	while (MASK(ldata->echo_commit) != MASK(tail)) {
+ 		c = echo_buf(ldata, tail);
+ 		if (c == ECHO_OP_START) {
++			unsigned int num_chars, num_bs;
+ 			unsigned char op;
+ 			int no_space_left = 0;
+ 
+@@ -652,8 +653,6 @@ static size_t __process_echoes(struct tty_struct *tty)
+ 			op = echo_buf(ldata, tail + 1);
+ 
+ 			switch (op) {
+-				unsigned int num_chars, num_bs;
+-
+ 			case ECHO_OP_ERASE_TAB:
+ 				if (MASK(ldata->echo_commit) == MASK(tail + 2))
+ 					goto not_yet_stored;
+diff --git a/drivers/usb/gadget/udc/net2280.c b/drivers/usb/gadget/udc/net2280.c
+index e7dae5379e04..2b275a574e94 100644
+--- a/drivers/usb/gadget/udc/net2280.c
++++ b/drivers/usb/gadget/udc/net2280.c
+@@ -2854,16 +2854,15 @@ static void ep_clear_seqnum(struct net2280_ep *ep)
+ static void handle_stat0_irqs_superspeed(struct net2280 *dev,
+ 		struct net2280_ep *ep, struct usb_ctrlrequest r)
+ {
++	struct net2280_ep *e;
+ 	int tmp = 0;
++	u16 status;
+ 
+ #define	w_value		le16_to_cpu(r.wValue)
+ #define	w_index		le16_to_cpu(r.wIndex)
+ #define	w_length	le16_to_cpu(r.wLength)
+ 
+ 	switch (r.bRequest) {
+-		struct net2280_ep *e;
+-		u16 status;
+-
+ 	case USB_REQ_SET_CONFIGURATION:
+ 		dev->addressed_state = !w_value;
+ 		goto usb3_delegate;
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 083185174c6d..0640b64ecdc2 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -725,6 +725,8 @@ static void send_sigio_to_task(struct task_struct *p,
+ 			       struct fown_struct *fown,
+ 			       int fd, int reason, enum pid_type type)
+ {
++	kernel_siginfo_t si;
++
+ 	/*
+ 	 * F_SETSIG can change ->signum lockless in parallel, make
+ 	 * sure we read it once and use the same value throughout.
+@@ -735,7 +737,6 @@ static void send_sigio_to_task(struct task_struct *p,
+ 		return;
+ 
+ 	switch (signum) {
+-		kernel_siginfo_t si;
+ 		default:
+ 			/* Queue a rt signal with the appropriate fd as its
+ 			   value.  We use SI_SIGIO as the source, not 
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 6ece1e2fe76e..0b02624dd8b2 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1721,6 +1721,9 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 		swap_free(swap);
+ 
+ 	} else {
++		loff_t i_size;
++		pgoff_t off;
++
+ 		if (vma && userfaultfd_missing(vma)) {
+ 			*fault_type = handle_userfault(vmf, VM_UFFD_MISSING);
+ 			return 0;
+@@ -1734,8 +1737,6 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
+ 		if (shmem_huge == SHMEM_HUGE_FORCE)
+ 			goto alloc_huge;
+ 		switch (sbinfo->huge) {
+-			loff_t i_size;
+-			pgoff_t off;
+ 		case SHMEM_HUGE_NEVER:
+ 			goto alloc_nohuge;
+ 		case SHMEM_HUGE_WITHIN_SIZE:
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 26d848484912..7597b3fc9d21 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -4506,9 +4506,9 @@ static __sum16 *skb_checksum_setup_ip(struct sk_buff *skb,
+ 				      typeof(IPPROTO_IP) proto,
+ 				      unsigned int off)
+ {
+-	switch (proto) {
+-		int err;
++	int err;
+ 
++	switch (proto) {
+ 	case IPPROTO_TCP:
+ 		err = skb_maybe_pull_tail(skb, off + sizeof(struct tcphdr),
+ 					  off + MAX_TCP_HDR_LEN);
+diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
+index b1be67ca6768..9aee1add46c0 100644
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -427,9 +427,11 @@ static int ip6gre_err(struct sk_buff *skb, struct inet6_skb_parm *opt,
+ 		       u8 type, u8 code, int offset, __be32 info)
+ {
+ 	struct net *net = dev_net(skb->dev);
++	struct ipv6_tlv_tnl_enc_lim *tel;
+ 	const struct ipv6hdr *ipv6h;
+ 	struct tnl_ptk_info tpi;
+ 	struct ip6_tnl *t;
++	__u32 teli;
+ 
+ 	if (gre_parse_header(skb, &tpi, NULL, htons(ETH_P_IPV6),
+ 			     offset) < 0)
+@@ -442,8 +444,6 @@ static int ip6gre_err(struct sk_buff *skb, struct inet6_skb_parm *opt,
+ 		return -ENOENT;
+ 
+ 	switch (type) {
+-		struct ipv6_tlv_tnl_enc_lim *tel;
+-		__u32 teli;
+ 	case ICMPV6_DEST_UNREACH:
+ 		net_dbg_ratelimited("%s: Path to destination invalid or inactive!\n",
+ 				    t->parms.name);
+diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
+index 0c6403cf8b52..94ccc7a9037b 100644
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -478,10 +478,12 @@ ip6_tnl_err(struct sk_buff *skb, __u8 ipproto, struct inet6_skb_parm *opt,
+ 	struct net *net = dev_net(skb->dev);
+ 	u8 rel_type = ICMPV6_DEST_UNREACH;
+ 	u8 rel_code = ICMPV6_ADDR_UNREACH;
++	struct ipv6_tlv_tnl_enc_lim *tel;
+ 	__u32 rel_info = 0;
+ 	struct ip6_tnl *t;
+ 	int err = -ENOENT;
+ 	int rel_msg = 0;
++	__u32 mtu, teli;
+ 	u8 tproto;
+ 	__u16 len;
+ 
+@@ -501,8 +503,6 @@ ip6_tnl_err(struct sk_buff *skb, __u8 ipproto, struct inet6_skb_parm *opt,
+ 	err = 0;
+ 
+ 	switch (*type) {
+-		struct ipv6_tlv_tnl_enc_lim *tel;
+-		__u32 mtu, teli;
+ 	case ICMPV6_DEST_UNREACH:
+ 		net_dbg_ratelimited("%s: Path to destination invalid or inactive!\n",
+ 				    t->parms.name);
+diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
+index 691da853bef5..dee2f9516ae8 100644
+--- a/net/openvswitch/flow_netlink.c
++++ b/net/openvswitch/flow_netlink.c
+@@ -2652,8 +2652,11 @@ static int validate_set(const struct nlattr *a,
+ 			u8 mac_proto, __be16 eth_type, bool masked, bool log)
+ {
+ 	const struct nlattr *ovs_key = nla_data(a);
++	const struct ovs_key_ipv4 *ipv4_key;
++	const struct ovs_key_ipv6 *ipv6_key;
+ 	int key_type = nla_type(ovs_key);
+ 	size_t key_len;
++	int err;
+ 
+ 	/* There can be only one key in a action */
+ 	if (nla_total_size(nla_len(ovs_key)) != nla_len(a))
+@@ -2671,10 +2674,6 @@ static int validate_set(const struct nlattr *a,
+ 		return -EINVAL;
+ 
+ 	switch (key_type) {
+-	const struct ovs_key_ipv4 *ipv4_key;
+-	const struct ovs_key_ipv6 *ipv6_key;
+-	int err;
+-
+ 	case OVS_KEY_ATTR_PRIORITY:
+ 	case OVS_KEY_ATTR_SKB_MARK:
+ 	case OVS_KEY_ATTR_CT_MARK:
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index c598aa00d5e3..bedbd0518153 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -1583,8 +1583,9 @@ static void tomoyo_read_domain(struct tomoyo_io_buffer *head)
+ 	list_for_each_cookie(head->r.domain, &tomoyo_domain_list) {
+ 		struct tomoyo_domain_info *domain =
+ 			list_entry(head->r.domain, typeof(*domain), list);
++		u8 i;
++
+ 		switch (head->r.step) {
+-			u8 i;
+ 		case 0:
+ 			if (domain->is_deleted &&
+ 			    !head->r.print_this_domain_only)
+diff --git a/security/tomoyo/condition.c b/security/tomoyo/condition.c
+index 8d0e1b9c9c57..c10d903febe5 100644
+--- a/security/tomoyo/condition.c
++++ b/security/tomoyo/condition.c
+@@ -787,10 +787,11 @@ bool tomoyo_condition(struct tomoyo_request_info *r,
+ 		/* Check string expressions. */
+ 		if (right == TOMOYO_NAME_UNION) {
+ 			const struct tomoyo_name_union *ptr = names_p++;
++			struct tomoyo_path_info *symlink;
++			struct tomoyo_execve *ee;
++			struct file *file;
++
+ 			switch (left) {
+-				struct tomoyo_path_info *symlink;
+-				struct tomoyo_execve *ee;
+-				struct file *file;
+ 			case TOMOYO_SYMLINK_TARGET:
+ 				symlink = obj ? obj->symlink_target : NULL;
+ 				if (!symlink ||
+diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
+index badffc8271c8..8e2bb36df37b 100644
+--- a/security/tomoyo/util.c
++++ b/security/tomoyo/util.c
+@@ -668,6 +668,8 @@ static bool tomoyo_file_matches_pattern2(const char *filename,
+ {
+ 	while (filename < filename_end && pattern < pattern_end) {
+ 		char c;
++		int i, j;
++
+ 		if (*pattern != '\\') {
+ 			if (*filename++ != *pattern++)
+ 				return false;
+@@ -676,8 +678,6 @@ static bool tomoyo_file_matches_pattern2(const char *filename,
+ 		c = *filename;
+ 		pattern++;
+ 		switch (*pattern) {
+-			int i;
+-			int j;
+ 		case '?':
+ 			if (c == '/') {
+ 				return false;
 -- 
 2.17.1
 
