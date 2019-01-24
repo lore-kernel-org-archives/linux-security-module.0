@@ -2,169 +2,108 @@ Return-Path: <SRS0=u3U2=QA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04B3C282C0
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 02:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A77C41518
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 08:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C82902184C
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 02:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1D42218A4
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 08:10:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548317437;
+	bh=mVuhrQqk7Q0zWlxIFBTAwmH57rC+LNUGq0bYNV+P8nY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=oCKCdx0wpmkVMpeqHCPH4U5h4KOj5Hwcmq7Uc5xOBxRY9nJzfhTdW4c3Pu68RewCb
+	 6EVjlaw4eddE2tg56Dkkd7XC1I8tiQML54picnKEZbSstHtII3eqi+TpXNOTqvqlnA
+	 AsV6a8ZQEv8WLAmLt7FrFHVMykdiUlZVTE8Hwnmg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726517AbfAXChN (ORCPT
+        id S1727264AbfAXIK2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Jan 2019 21:37:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45984 "EHLO mx1.redhat.com"
+        Thu, 24 Jan 2019 03:10:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726366AbfAXChN (ORCPT
+        id S1726046AbfAXIK2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Jan 2019 21:37:13 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 24 Jan 2019 03:10:28 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D58AC58E54;
-        Thu, 24 Jan 2019 02:37:12 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-23.phx2.redhat.com [10.3.112.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A4C451001F4A;
-        Thu, 24 Jan 2019 02:37:05 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 8738621872;
+        Thu, 24 Jan 2019 08:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548317427;
+        bh=mVuhrQqk7Q0zWlxIFBTAwmH57rC+LNUGq0bYNV+P8nY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZEkD/omuTC/6WRsTLYnibk+sJ8XC+aSzvbF+D1UtelBBhWFwJCz4p3BgG898PP/WK
+         EQqKpEKsH1ZCIh3xFKyM4r1WaPA8pegt/aOxYMcbdJRPPz7va8v2Z7lHYQ/DD8I6Zc
+         TL6esem5HPhSos0hjBMX2YhzVQlPCdBuq/WP6cMI=
+Date:   Thu, 24 Jan 2019 09:10:24 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Edwin Zimmerman <edwin@211mainstreet.net>, dev@openvswitch.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Network Development <netdev@vger.kernel.org>,
+        intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Steve Grubb <sgrubb@redhat.com>,
-        Eric Paris <eparis@redhat.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak103 V1] audit: add support for fcaps v3
-Date:   Wed, 23 Jan 2019 21:36:25 -0500
-Message-Id: <f8348d1e67d66e8e5d42e3bdfbda7e88139f2d31.1548297089.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 24 Jan 2019 02:37:12 +0000 (UTC)
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, Linux-MM <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        intel-wired-lan@lists.osuosl.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Alexander Popov <alex.popov@linux.com>
+Subject: Re: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of
+ switches
+Message-ID: <20190124081024.GA1108@kroah.com>
+References: <20190123110349.35882-1-keescook@chromium.org>
+ <20190123110349.35882-2-keescook@chromium.org>
+ <20190123115829.GA31385@kroah.com>
+ <874l9z31c5.fsf@intel.com>
+ <000001d4b32a$845e06e0$8d1a14a0$@211mainstreet.net>
+ <87va2f1int.fsf@intel.com>
+ <CAGXu5jJUxHtFq0rBJ9FwzMcZDWnusPUauC_=MaOz7H0_PF25jQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXu5jJUxHtFq0rBJ9FwzMcZDWnusPUauC_=MaOz7H0_PF25jQ@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-V3 namespaced file capabilities were introduced in
-commit 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
+On Thu, Jan 24, 2019 at 07:55:51AM +1300, Kees Cook wrote:
+> On Thu, Jan 24, 2019 at 4:44 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> >
+> > On Wed, 23 Jan 2019, Edwin Zimmerman <edwin@211mainstreet.net> wrote:
+> > > On Wed, 23 Jan 2019, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> > >> On Wed, 23 Jan 2019, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >> > On Wed, Jan 23, 2019 at 03:03:47AM -0800, Kees Cook wrote:
+> > >> >> Variables declared in a switch statement before any case statements
+> > >> >> cannot be initialized, so move all instances out of the switches.
+> > >> >> After this, future always-initialized stack variables will work
+> > >> >> and not throw warnings like this:
+> > >> >>
+> > >> >> fs/fcntl.c: In function ‘send_sigio_to_task’:
+> > >> >> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-unreachable]
+> > >> >>    siginfo_t si;
+> > >> >>              ^~
+> > >> >
+> > >> > That's a pain, so this means we can't have any new variables in { }
+> > >> > scope except for at the top of a function?
+> 
+> Just in case this wasn't clear: no, it's just the switch statement
+> before the first "case". I cannot imagine how bad it would be if we
+> couldn't have block-scoped variables! Heh. :)
 
-Add support for these by adding the "frootid" field to the existing
-fcaps fields in the NAME and BPRM_FCAPS records.
+Sorry, it was not clear at first glance.  So no more objection from me
+for this change.
 
-Please see github issue
-https://github.com/linux-audit/audit-kernel/issues/103
-
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
-Passes audit-testsuite.
-
- include/linux/capability.h | 5 +++--
- kernel/audit.c             | 6 ++++--
- kernel/audit.h             | 1 +
- kernel/auditsc.c           | 4 ++++
- security/commoncap.c       | 2 ++
- 5 files changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/capability.h b/include/linux/capability.h
-index f640dcbc880c..f6bb691547fd 100644
---- a/include/linux/capability.h
-+++ b/include/linux/capability.h
-@@ -14,7 +14,7 @@
- #define _LINUX_CAPABILITY_H
- 
- #include <uapi/linux/capability.h>
--
-+#include <linux/uidgid.h>
- 
- #define _KERNEL_CAPABILITY_VERSION _LINUX_CAPABILITY_VERSION_3
- #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
-@@ -25,11 +25,12 @@
- 	__u32 cap[_KERNEL_CAPABILITY_U32S];
- } kernel_cap_t;
- 
--/* exact same as vfs_cap_data but in cpu endian and always filled completely */
-+/* exact same as vfs_ns_cap_data but in cpu endian and always filled completely */
- struct cpu_vfs_cap_data {
- 	__u32 magic_etc;
- 	kernel_cap_t permitted;
- 	kernel_cap_t inheritable;
-+	kuid_t rootid;
- };
- 
- #define _USER_CAP_HEADER_SIZE  (sizeof(struct __user_cap_header_struct))
-diff --git a/kernel/audit.c b/kernel/audit.c
-index ca55ccb46b76..6f5eeb658ccb 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -2083,8 +2083,9 @@ static void audit_log_fcaps(struct audit_buffer *ab, struct audit_names *name)
- {
- 	audit_log_cap(ab, "cap_fp", &name->fcap.permitted);
- 	audit_log_cap(ab, "cap_fi", &name->fcap.inheritable);
--	audit_log_format(ab, " cap_fe=%d cap_fver=%x",
--			 name->fcap.fE, name->fcap_ver);
-+	audit_log_format(ab, " cap_fe=%d cap_fver=%x cap_frootid=%d",
-+			 name->fcap.fE, name->fcap_ver,
-+			 from_kuid(&init_user_ns, name->fcap.rootid));
- }
- 
- static inline int audit_copy_fcaps(struct audit_names *name,
-@@ -2103,6 +2104,7 @@ static inline int audit_copy_fcaps(struct audit_names *name,
- 	name->fcap.permitted = caps.permitted;
- 	name->fcap.inheritable = caps.inheritable;
- 	name->fcap.fE = !!(caps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
-+	name->fcap.rootid = caps.rootid;
- 	name->fcap_ver = (caps.magic_etc & VFS_CAP_REVISION_MASK) >>
- 				VFS_CAP_REVISION_SHIFT;
- 
-diff --git a/kernel/audit.h b/kernel/audit.h
-index 6ffb70575082..deefdbe61a47 100644
---- a/kernel/audit.h
-+++ b/kernel/audit.h
-@@ -69,6 +69,7 @@ struct audit_cap_data {
- 		kernel_cap_t	effective;	/* effective set of process */
- 	};
- 	kernel_cap_t		ambient;
-+	kuid_t			rootid;
- };
- 
- /* When fs/namei.c:getname() is called, we store the pointer in name and bump
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index b585ceb2f7a2..461c52eff870 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -1358,6 +1358,9 @@ static void audit_log_exit(void)
- 			audit_log_cap(ab, "pi", &axs->new_pcap.inheritable);
- 			audit_log_cap(ab, "pe", &axs->new_pcap.effective);
- 			audit_log_cap(ab, "pa", &axs->new_pcap.ambient);
-+			audit_log_format(ab, " frootid=%d",
-+					 from_kuid(&init_user_ns,
-+						   axs->fcap.rootid));
- 			break; }
- 
- 		}
-@@ -2355,6 +2358,7 @@ int __audit_log_bprm_fcaps(struct linux_binprm *bprm,
- 	ax->fcap.permitted = vcaps.permitted;
- 	ax->fcap.inheritable = vcaps.inheritable;
- 	ax->fcap.fE = !!(vcaps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
-+	ax->fcap.rootid = vcaps.rootid;
- 	ax->fcap_ver = (vcaps.magic_etc & VFS_CAP_REVISION_MASK) >> VFS_CAP_REVISION_SHIFT;
- 
- 	ax->old_pcap.permitted   = old->cap_permitted;
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 232db019f051..c097f3568001 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -643,6 +643,8 @@ int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data
- 	cpu_caps->permitted.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
- 	cpu_caps->inheritable.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
- 
-+	cpu_caps->rootid = rootkuid;
-+
- 	return 0;
- }
- 
--- 
-1.8.3.1
-
+greg k-h
