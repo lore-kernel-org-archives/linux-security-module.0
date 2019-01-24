@@ -2,114 +2,158 @@ Return-Path: <SRS0=u3U2=QA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D91D3C282C3
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 14:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B29C282C3
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 15:52:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C6A218A2
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 14:46:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="HAUO4T4Y"
+	by mail.kernel.org (Postfix) with ESMTP id 24FD2218AF
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 15:52:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbfAXOqI (ORCPT
+        id S1728490AbfAXPvz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Jan 2019 09:46:08 -0500
-Received: from forward500o.mail.yandex.net ([37.140.190.195]:50280 "EHLO
-        forward500o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728164AbfAXOqI (ORCPT
+        Thu, 24 Jan 2019 10:51:55 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32835 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727755AbfAXPvz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Jan 2019 09:46:08 -0500
-Received: from mxback2g.mail.yandex.net (mxback2g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:163])
-        by forward500o.mail.yandex.net (Yandex) with ESMTP id 3463A6030D;
-        Thu, 24 Jan 2019 17:46:04 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback2g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id mevHjtWUfI-k39KnQiB;
-        Thu, 24 Jan 2019 17:46:03 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1548341163;
-        bh=n+9VbUolva67vVoc3RWHlRtYSx0t/rHf/LwF4KxSnyk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
-        b=HAUO4T4YbK8WSb8+MaI+5QuD8NUu0vtNsAFQHiJtNv2a+asKmnuOkJKvgWa5mDf2+
-         T4zvkivhBGZj692TG6JdJ56O9I/g6t0cIi0VLbbYqiWVhxXIUXZbymQ6k+LvHUf6Qt
-         /kBY4D4lH6cRBEKrVW8UHvLXQMf7RpZNf1iOlav8=
-Authentication-Results: mxback2g.mail.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by sas2-7b909973f402.qloud-c.yandex.net with HTTP;
-        Thu, 24 Jan 2019 17:46:03 +0300
-From:   Nazarov Sergey <s-nazarov@yandex.ru>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "linux-security-module@vger.kernel.org" 
+        Thu, 24 Jan 2019 10:51:55 -0500
+Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 51DE211277A33AA7BC1C;
+        Thu, 24 Jan 2019 15:51:53 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.140)
+ by smtpsuk.huawei.com (10.201.108.45) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 24 Jan 2019 15:51:45 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>,
+        <matthewgarrett@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
-         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
-         <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
-         <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
-         <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
-         <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
+        <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v8 0/7] tpm: retrieve digest size of unknown algorithms from TPM
+Date:   Thu, 24 Jan 2019 16:49:03 +0100
+Message-ID: <20190124154910.29948-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Thu, 24 Jan 2019 17:46:03 +0300
-Message-Id: <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net>
-Content-Transfer-Encoding: 7bit
 Content-Type: text/plain
+X-Originating-IP: [10.204.65.140]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-22.01.2019, 20:48, "Paul Moore" <paul@paul-moore.com>:
->
-> Yes, exactly. If you don't pass the skb it shouldn't attempt to call
-> icmp_send() in case of error.
->
-> --
-> paul moore
-> www.paul-moore.com
+Update
 
-You are right, sorry. We can do that without ip_options_compile modification.
-Simplified patch 2:
----
- net/ipv4/cipso_ipv4.c |   18 ++++++++++++++++--
- 1 files changed, 16 insertions(+), 2 deletions(-)
+This version of the patch set includes three additional patches (5-7/7)
+that allow users of the TPM driver to provide a digest for each PCR bank to
+tpm_pcr_extend(). The new patches have been included to facilitate the
+review of all the changes to support TPM 2.0 crypto agility for reading and
+extending PCRs.
 
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index 777fa3b..a4ed0a4 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1735,13 +1735,27 @@ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option)
-  */
- void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway)
- {
-+       unsigned char optbuf[sizeof(struct ip_options) + 40];
-+       struct ip_options *opt = (struct ip_options *)optbuf;
-+
-        if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
-                return;
- 
-+       /* 
-+        * We might be called above the IP layer,
-+        * so we can not use icmp_send and IPCB here.
-+        */
-+
-+       memset(opt, 0, sizeof(struct ip_options));
-+       opt->optlen = ip_hdr(skb)->ihl*4 - sizeof(struct iphdr);
-+       memcpy(opt->__data, (unsigned char *)&(ip_hdr(skb)[1]), opt->optlen);
-+       if (ip_options_compile(dev_net(skb->dev), opt, NULL))
-+               return;
-+
-        if (gateway)
--               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0);
-+               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0, opt);
-        else
--               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0);
-+               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0, opt);
- }
- 
- /**
+
+Original patch set description
+
+The TPM driver currently relies on the crypto subsystem to determine the
+digest size of supported TPM algorithms. In the future, TPM vendors might
+implement new algorithms in their chips, and those algorithms might not
+be supported by the crypto subsystem.
+
+Usually, vendors provide patches for the new hardware, and likely
+the crypto subsystem will be updated before the new algorithm is
+introduced. However, old kernels might be updated later, after patches
+are included in the mainline kernel. This would leave the opportunity
+for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+are not extended.
+
+This patch set provides a long term solution for this issue. If a TPM
+algorithm is not known by the crypto subsystem, the TPM driver retrieves
+the digest size from the TPM with a PCR read. All the PCR banks are
+extended, even if the algorithm is not yet supported by the crypto
+subsystem.
+
+PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+is stored in the tpm_chip structure and available for users of the TPM
+driver.
+
+Changelog
+
+v7:
+- use memchr_inv() in tpm2_get_pcr_allocation()
+- add patch to move tpm_chip to include/linux/tpm.h
+- add patch to set the tpm_chip argument in trusted.c to a pointer from
+  tpm_default_chip()
+- remove definition of tpm_extend_digest
+- remove code in tpm2_pcr_extend() to extend unused PCR banks with the
+  first digest passed by the caller of tpm_pcr_extend()
+- remove count parameter from tpm_pcr_extend() and tpm2_pcr_extend()
+- remove padding of SHA1 digest in tpm_pcr_extend()
+- pre-allocate and initialize array of tpm_digest structures in
+  security/keys/trusted.c and security/integrity/ima/ima_init.c 
+
+v6:
+- squash patches 4-6
+- rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
+  members to size and data
+- add comment in tpm2_init_bank_info()
+
+v5:
+- rename digest_struct variable to digest
+- add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+- rename digest_size member of tpm_bank_list to extend_size
+- change type of alg_id member of tpm_bank_list from u8 to u16
+- add missing semi-colon in pcrlock()
+
+v4:
+- rename active_banks to allocated_banks
+- replace kmalloc_array() with kcalloc()
+- increment nr_allocated_banks if at least one PCR in the bank is selected
+- pass multiple digests to tpm_pcr_extend()
+
+v3:
+- remove end marker change
+- replace active_banks static array with pointer to dynamic array
+- remove TPM2_ACTIVE_PCR_BANKS
+
+v2:
+- change the end marker of the active_banks array
+- check digest size from output of PCR read command
+- remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+
+v1:
+- modify definition of tpm_pcr_read()
+- move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+
+
+Roberto Sassu (7):
+  tpm: dynamically allocate the allocated_banks array
+  tpm: add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+  tpm: rename and export tpm2_digest and tpm2_algorithms
+  tpm: retrieve digest size of unknown algorithms with PCR read
+  tpm: move tpm_chip definition to include/linux/tpm.h
+  KEYS: trusted: explicitly use tpm_chip structure from
+    tpm_default_chip()
+  tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
+
+ drivers/char/tpm/eventlog/tpm2.c    |  12 +--
+ drivers/char/tpm/tpm-chip.c         |   1 +
+ drivers/char/tpm/tpm-interface.c    |  38 ++++----
+ drivers/char/tpm/tpm.h              | 114 +----------------------
+ drivers/char/tpm/tpm1-cmd.c         |  12 +++
+ drivers/char/tpm/tpm2-cmd.c         | 139 ++++++++++++++++++++--------
+ include/linux/tpm.h                 | 131 +++++++++++++++++++++++++-
+ include/linux/tpm_eventlog.h        |  19 +---
+ security/integrity/ima/ima.h        |   1 +
+ security/integrity/ima/ima_crypto.c |  10 +-
+ security/integrity/ima/ima_init.c   |  22 +++++
+ security/integrity/ima/ima_queue.c  |   6 +-
+ security/keys/trusted.c             |  76 +++++++++++----
+ 13 files changed, 359 insertions(+), 222 deletions(-)
+
+-- 
+2.17.1
 
