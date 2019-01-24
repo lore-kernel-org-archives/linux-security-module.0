@@ -2,504 +2,114 @@ Return-Path: <SRS0=u3U2=QA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F12D5C282C6
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 12:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D91D3C282C3
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 14:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3906218AD
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 12:58:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C6A218A2
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jan 2019 14:46:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="HAUO4T4Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfAXM6f convert rfc822-to-8bit (ORCPT
+        id S1728332AbfAXOqI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:58:35 -0500
-Received: from mail.emypeople.net ([216.220.167.73]:40611 "EHLO
-        mail.emypeople.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbfAXM6f (ORCPT
+        Thu, 24 Jan 2019 09:46:08 -0500
+Received: from forward500o.mail.yandex.net ([37.140.190.195]:50280 "EHLO
+        forward500o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728164AbfAXOqI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:58:35 -0500
-Received: from Shop7 ([166.182.241.35])
-        by mail.emypeople.net (12.1.1 build 4 DEB9 x64) with ASMTP id 201901240758306826;
-        Thu, 24 Jan 2019 07:58:30 -0500
-From:   "Edwin Zimmerman" <edwin@211mainstreet.net>
-To:     "'Kees Cook'" <keescook@chromium.org>,
-        <linux-kernel@vger.kernel.org>
-Cc:     "'Ard Biesheuvel'" <ard.biesheuvel@linaro.org>,
-        "'Laura Abbott'" <labbott@redhat.com>,
-        "'Alexander Popov'" <alex.popov@linux.com>,
-        <xen-devel@lists.xenproject.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <intel-gfx@lists.freedesktop.org>,
-        <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <dev@openvswitch.org>,
-        <linux-kbuild@vger.kernel.org>,
+        Thu, 24 Jan 2019 09:46:08 -0500
+Received: from mxback2g.mail.yandex.net (mxback2g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:163])
+        by forward500o.mail.yandex.net (Yandex) with ESMTP id 3463A6030D;
+        Thu, 24 Jan 2019 17:46:04 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback2g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id mevHjtWUfI-k39KnQiB;
+        Thu, 24 Jan 2019 17:46:03 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1548341163;
+        bh=n+9VbUolva67vVoc3RWHlRtYSx0t/rHf/LwF4KxSnyk=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
+        b=HAUO4T4YbK8WSb8+MaI+5QuD8NUu0vtNsAFQHiJtNv2a+asKmnuOkJKvgWa5mDf2+
+         T4zvkivhBGZj692TG6JdJ56O9I/g6t0cIi0VLbbYqiWVhxXIUXZbymQ6k+LvHUf6Qt
+         /kBY4D4lH6cRBEKrVW8UHvLXQMf7RpZNf1iOlav8=
+Authentication-Results: mxback2g.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by sas2-7b909973f402.qloud-c.yandex.net with HTTP;
+        Thu, 24 Jan 2019 17:46:03 +0300
+From:   Nazarov Sergey <s-nazarov@yandex.ru>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        <kernel-hardening@lists.openwall.com>
-References: <20190123110349.35882-1-keescook@chromium.org> <20190123110349.35882-2-keescook@chromium.org>
-In-Reply-To: <20190123110349.35882-2-keescook@chromium.org>
-Subject: RE: [PATCH 1/3] treewide: Lift switch variables out of switches
-Date:   Thu, 24 Jan 2019 07:58:32 -0500
-Message-ID: <000501d4b3e4$83dd2290$8b9767b0$@211mainstreet.net>
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
+References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
+         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
+         <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
+         <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
+         <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
+         <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
+Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 15.0
-Content-Language: en-us
-Thread-Index: AQK1qhpX7cEQ8qlEpLW6qt3JZ7VVWQH3EeYfo+y7j7A=
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Thu, 24 Jan 2019 17:46:03 +0300
+Message-Id: <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wednesday, January 23, 2019 6:04 AM, Kees Cook wrote
-> 
-> Variables declared in a switch statement before any case statements
-> cannot be initialized, so move all instances out of the switches.
-> After this, future always-initialized stack variables will work
-> and not throw warnings like this:
-> 
-> fs/fcntl.c: In function ‘send_sigio_to_task’:
-> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-unreachable]
->    siginfo_t si;
->              ^~
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-
-Reviewed by: Edwin Zimmerman <edwin@211mainstreet.net>
-
-> ---
->  arch/x86/xen/enlighten_pv.c                   |  7 ++++---
->  drivers/char/pcmcia/cm4000_cs.c               |  2 +-
->  drivers/char/ppdev.c                          | 20 ++++++++-----------
->  drivers/gpu/drm/drm_edid.c                    |  4 ++--
->  drivers/gpu/drm/i915/intel_display.c          |  2 +-
->  drivers/gpu/drm/i915/intel_pm.c               |  4 ++--
->  drivers/net/ethernet/intel/e1000/e1000_main.c |  3 ++-
->  drivers/tty/n_tty.c                           |  3 +--
->  drivers/usb/gadget/udc/net2280.c              |  5 ++---
->  fs/fcntl.c                                    |  3 ++-
->  mm/shmem.c                                    |  5 +++--
->  net/core/skbuff.c                             |  4 ++--
->  net/ipv6/ip6_gre.c                            |  4 ++--
->  net/ipv6/ip6_tunnel.c                         |  4 ++--
->  net/openvswitch/flow_netlink.c                |  7 +++----
->  security/tomoyo/common.c                      |  3 ++-
->  security/tomoyo/condition.c                   |  7 ++++---
->  security/tomoyo/util.c                        |  4 ++--
->  18 files changed, 45 insertions(+), 46 deletions(-)
-> 
-> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> index c54a493e139a..a79d4b548a08 100644
-> --- a/arch/x86/xen/enlighten_pv.c
-> +++ b/arch/x86/xen/enlighten_pv.c
-> @@ -907,14 +907,15 @@ static u64 xen_read_msr_safe(unsigned int msr, int *err)
->  static int xen_write_msr_safe(unsigned int msr, unsigned low, unsigned high)
->  {
->  	int ret;
-> +#ifdef CONFIG_X86_64
-> +	unsigned which;
-> +	u64 base;
-> +#endif
-> 
->  	ret = 0;
-> 
->  	switch (msr) {
->  #ifdef CONFIG_X86_64
-> -		unsigned which;
-> -		u64 base;
-> -
->  	case MSR_FS_BASE:		which = SEGBASE_FS; goto set;
->  	case MSR_KERNEL_GS_BASE:	which = SEGBASE_GS_USER; goto set;
->  	case MSR_GS_BASE:		which = SEGBASE_GS_KERNEL; goto set;
-> diff --git a/drivers/char/pcmcia/cm4000_cs.c b/drivers/char/pcmcia/cm4000_cs.c
-> index 7a4eb86aedac..7211dc0e6f4f 100644
-> --- a/drivers/char/pcmcia/cm4000_cs.c
-> +++ b/drivers/char/pcmcia/cm4000_cs.c
-> @@ -663,6 +663,7 @@ static void monitor_card(struct timer_list *t)
->  {
->  	struct cm4000_dev *dev = from_timer(dev, t, timer);
->  	unsigned int iobase = dev->p_dev->resource[0]->start;
-> +	unsigned char flags0;
->  	unsigned short s;
->  	struct ptsreq ptsreq;
->  	int i, atrc;
-> @@ -731,7 +732,6 @@ static void monitor_card(struct timer_list *t)
->  	}
-> 
->  	switch (dev->mstate) {
-> -		unsigned char flags0;
->  	case M_CARDOFF:
->  		DEBUGP(4, dev, "M_CARDOFF\n");
->  		flags0 = inb(REG_FLAGS0(iobase));
-> diff --git a/drivers/char/ppdev.c b/drivers/char/ppdev.c
-> index 1ae77b41050a..d77c97e4f996 100644
-> --- a/drivers/char/ppdev.c
-> +++ b/drivers/char/ppdev.c
-> @@ -359,14 +359,19 @@ static int pp_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->  	struct pp_struct *pp = file->private_data;
->  	struct parport *port;
->  	void __user *argp = (void __user *)arg;
-> +	struct ieee1284_info *info;
-> +	unsigned char reg;
-> +	unsigned char mask;
-> +	int mode;
-> +	s32 time32[2];
-> +	s64 time64[2];
-> +	struct timespec64 ts;
-> +	int ret;
-> 
->  	/* First handle the cases that don't take arguments. */
->  	switch (cmd) {
->  	case PPCLAIM:
->  	    {
-> -		struct ieee1284_info *info;
-> -		int ret;
-> -
->  		if (pp->flags & PP_CLAIMED) {
->  			dev_dbg(&pp->pdev->dev, "you've already got it!\n");
->  			return -EINVAL;
-> @@ -517,15 +522,6 @@ static int pp_do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> 
->  	port = pp->pdev->port;
->  	switch (cmd) {
-> -		struct ieee1284_info *info;
-> -		unsigned char reg;
-> -		unsigned char mask;
-> -		int mode;
-> -		s32 time32[2];
-> -		s64 time64[2];
-> -		struct timespec64 ts;
-> -		int ret;
-> -
->  	case PPRSTATUS:
->  		reg = parport_read_status(port);
->  		if (copy_to_user(argp, &reg, sizeof(reg)))
-> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> index b506e3622b08..8f93956c1628 100644
-> --- a/drivers/gpu/drm/drm_edid.c
-> +++ b/drivers/gpu/drm/drm_edid.c
-> @@ -3942,12 +3942,12 @@ static void drm_edid_to_eld(struct drm_connector *connector, struct edid *edid)
->  		}
-> 
->  		for_each_cea_db(cea, i, start, end) {
-> +			int sad_count;
-> +
->  			db = &cea[i];
->  			dbl = cea_db_payload_len(db);
-> 
->  			switch (cea_db_tag(db)) {
-> -				int sad_count;
-> -
->  			case AUDIO_BLOCK:
->  				/* Audio Data Block, contains SADs */
->  				sad_count = min(dbl / 3, 15 - total_sad_count);
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index 3da9c0f9e948..aa1c2ebea456 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -11341,6 +11341,7 @@ static bool check_digital_port_conflicts(struct drm_atomic_state *state)
->  	drm_for_each_connector_iter(connector, &conn_iter) {
->  		struct drm_connector_state *connector_state;
->  		struct intel_encoder *encoder;
-> +		unsigned int port_mask;
-> 
->  		connector_state = drm_atomic_get_new_connector_state(state, connector);
->  		if (!connector_state)
-> @@ -11354,7 +11355,6 @@ static bool check_digital_port_conflicts(struct drm_atomic_state *state)
->  		WARN_ON(!connector_state->crtc);
-> 
->  		switch (encoder->type) {
-> -			unsigned int port_mask;
->  		case INTEL_OUTPUT_DDI:
->  			if (WARN_ON(!HAS_DDI(to_i915(dev))))
->  				break;
-> diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
-> index a26b4eddda25..c135fdec96b3 100644
-> --- a/drivers/gpu/drm/i915/intel_pm.c
-> +++ b/drivers/gpu/drm/i915/intel_pm.c
-> @@ -478,9 +478,9 @@ static void vlv_get_fifo_size(struct intel_crtc_state *crtc_state)
->  	struct vlv_fifo_state *fifo_state = &crtc_state->wm.vlv.fifo_state;
->  	enum pipe pipe = crtc->pipe;
->  	int sprite0_start, sprite1_start;
-> +	uint32_t dsparb, dsparb2, dsparb3;
-> 
->  	switch (pipe) {
-> -		uint32_t dsparb, dsparb2, dsparb3;
->  	case PIPE_A:
->  		dsparb = I915_READ(DSPARB);
->  		dsparb2 = I915_READ(DSPARB2);
-> @@ -1944,6 +1944,7 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
->  	const struct vlv_fifo_state *fifo_state =
->  		&crtc_state->wm.vlv.fifo_state;
->  	int sprite0_start, sprite1_start, fifo_size;
-> +	uint32_t dsparb, dsparb2, dsparb3;
-> 
->  	if (!crtc_state->fifo_changed)
->  		return;
-> @@ -1969,7 +1970,6 @@ static void vlv_atomic_update_fifo(struct intel_atomic_state *state,
->  	spin_lock(&dev_priv->uncore.lock);
-> 
->  	switch (crtc->pipe) {
-> -		uint32_t dsparb, dsparb2, dsparb3;
->  	case PIPE_A:
->  		dsparb = I915_READ_FW(DSPARB);
->  		dsparb2 = I915_READ_FW(DSPARB2);
-> diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-> index 8fe9af0e2ab7..041062736845 100644
-> --- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-> +++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-> @@ -3140,8 +3140,9 @@ static netdev_tx_t e1000_xmit_frame(struct sk_buff *skb,
-> 
->  		hdr_len = skb_transport_offset(skb) + tcp_hdrlen(skb);
->  		if (skb->data_len && hdr_len == len) {
-> +			unsigned int pull_size;
-> +
->  			switch (hw->mac_type) {
-> -				unsigned int pull_size;
->  			case e1000_82544:
->  				/* Make sure we have room to chop off 4 bytes,
->  				 * and that the end alignment will work out to
-> diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-> index 5dc9686697cf..eafb39157281 100644
-> --- a/drivers/tty/n_tty.c
-> +++ b/drivers/tty/n_tty.c
-> @@ -634,6 +634,7 @@ static size_t __process_echoes(struct tty_struct *tty)
->  	while (MASK(ldata->echo_commit) != MASK(tail)) {
->  		c = echo_buf(ldata, tail);
->  		if (c == ECHO_OP_START) {
-> +			unsigned int num_chars, num_bs;
->  			unsigned char op;
->  			int no_space_left = 0;
-> 
-> @@ -652,8 +653,6 @@ static size_t __process_echoes(struct tty_struct *tty)
->  			op = echo_buf(ldata, tail + 1);
-> 
->  			switch (op) {
-> -				unsigned int num_chars, num_bs;
-> -
->  			case ECHO_OP_ERASE_TAB:
->  				if (MASK(ldata->echo_commit) == MASK(tail + 2))
->  					goto not_yet_stored;
-> diff --git a/drivers/usb/gadget/udc/net2280.c b/drivers/usb/gadget/udc/net2280.c
-> index e7dae5379e04..2b275a574e94 100644
-> --- a/drivers/usb/gadget/udc/net2280.c
-> +++ b/drivers/usb/gadget/udc/net2280.c
-> @@ -2854,16 +2854,15 @@ static void ep_clear_seqnum(struct net2280_ep *ep)
->  static void handle_stat0_irqs_superspeed(struct net2280 *dev,
->  		struct net2280_ep *ep, struct usb_ctrlrequest r)
->  {
-> +	struct net2280_ep *e;
->  	int tmp = 0;
-> +	u16 status;
-> 
->  #define	w_value		le16_to_cpu(r.wValue)
->  #define	w_index		le16_to_cpu(r.wIndex)
->  #define	w_length	le16_to_cpu(r.wLength)
-> 
->  	switch (r.bRequest) {
-> -		struct net2280_ep *e;
-> -		u16 status;
-> -
->  	case USB_REQ_SET_CONFIGURATION:
->  		dev->addressed_state = !w_value;
->  		goto usb3_delegate;
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 083185174c6d..0640b64ecdc2 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -725,6 +725,8 @@ static void send_sigio_to_task(struct task_struct *p,
->  			       struct fown_struct *fown,
->  			       int fd, int reason, enum pid_type type)
->  {
-> +	kernel_siginfo_t si;
-> +
->  	/*
->  	 * F_SETSIG can change ->signum lockless in parallel, make
->  	 * sure we read it once and use the same value throughout.
-> @@ -735,7 +737,6 @@ static void send_sigio_to_task(struct task_struct *p,
->  		return;
-> 
->  	switch (signum) {
-> -		kernel_siginfo_t si;
->  		default:
->  			/* Queue a rt signal with the appropriate fd as its
->  			   value.  We use SI_SIGIO as the source, not
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 6ece1e2fe76e..0b02624dd8b2 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1721,6 +1721,9 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
->  		swap_free(swap);
-> 
->  	} else {
-> +		loff_t i_size;
-> +		pgoff_t off;
-> +
->  		if (vma && userfaultfd_missing(vma)) {
->  			*fault_type = handle_userfault(vmf, VM_UFFD_MISSING);
->  			return 0;
-> @@ -1734,8 +1737,6 @@ static int shmem_getpage_gfp(struct inode *inode, pgoff_t index,
->  		if (shmem_huge == SHMEM_HUGE_FORCE)
->  			goto alloc_huge;
->  		switch (sbinfo->huge) {
-> -			loff_t i_size;
-> -			pgoff_t off;
->  		case SHMEM_HUGE_NEVER:
->  			goto alloc_nohuge;
->  		case SHMEM_HUGE_WITHIN_SIZE:
-> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> index 26d848484912..7597b3fc9d21 100644
-> --- a/net/core/skbuff.c
-> +++ b/net/core/skbuff.c
-> @@ -4506,9 +4506,9 @@ static __sum16 *skb_checksum_setup_ip(struct sk_buff *skb,
->  				      typeof(IPPROTO_IP) proto,
->  				      unsigned int off)
->  {
-> -	switch (proto) {
-> -		int err;
-> +	int err;
-> 
-> +	switch (proto) {
->  	case IPPROTO_TCP:
->  		err = skb_maybe_pull_tail(skb, off + sizeof(struct tcphdr),
->  					  off + MAX_TCP_HDR_LEN);
-> diff --git a/net/ipv6/ip6_gre.c b/net/ipv6/ip6_gre.c
-> index b1be67ca6768..9aee1add46c0 100644
-> --- a/net/ipv6/ip6_gre.c
-> +++ b/net/ipv6/ip6_gre.c
-> @@ -427,9 +427,11 @@ static int ip6gre_err(struct sk_buff *skb, struct inet6_skb_parm *opt,
->  		       u8 type, u8 code, int offset, __be32 info)
->  {
->  	struct net *net = dev_net(skb->dev);
-> +	struct ipv6_tlv_tnl_enc_lim *tel;
->  	const struct ipv6hdr *ipv6h;
->  	struct tnl_ptk_info tpi;
->  	struct ip6_tnl *t;
-> +	__u32 teli;
-> 
->  	if (gre_parse_header(skb, &tpi, NULL, htons(ETH_P_IPV6),
->  			     offset) < 0)
-> @@ -442,8 +444,6 @@ static int ip6gre_err(struct sk_buff *skb, struct inet6_skb_parm *opt,
->  		return -ENOENT;
-> 
->  	switch (type) {
-> -		struct ipv6_tlv_tnl_enc_lim *tel;
-> -		__u32 teli;
->  	case ICMPV6_DEST_UNREACH:
->  		net_dbg_ratelimited("%s: Path to destination invalid or inactive!\n",
->  				    t->parms.name);
-> diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
-> index 0c6403cf8b52..94ccc7a9037b 100644
-> --- a/net/ipv6/ip6_tunnel.c
-> +++ b/net/ipv6/ip6_tunnel.c
-> @@ -478,10 +478,12 @@ ip6_tnl_err(struct sk_buff *skb, __u8 ipproto, struct inet6_skb_parm *opt,
->  	struct net *net = dev_net(skb->dev);
->  	u8 rel_type = ICMPV6_DEST_UNREACH;
->  	u8 rel_code = ICMPV6_ADDR_UNREACH;
-> +	struct ipv6_tlv_tnl_enc_lim *tel;
->  	__u32 rel_info = 0;
->  	struct ip6_tnl *t;
->  	int err = -ENOENT;
->  	int rel_msg = 0;
-> +	__u32 mtu, teli;
->  	u8 tproto;
->  	__u16 len;
-> 
-> @@ -501,8 +503,6 @@ ip6_tnl_err(struct sk_buff *skb, __u8 ipproto, struct inet6_skb_parm *opt,
->  	err = 0;
-> 
->  	switch (*type) {
-> -		struct ipv6_tlv_tnl_enc_lim *tel;
-> -		__u32 mtu, teli;
->  	case ICMPV6_DEST_UNREACH:
->  		net_dbg_ratelimited("%s: Path to destination invalid or inactive!\n",
->  				    t->parms.name);
-> diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
-> index 691da853bef5..dee2f9516ae8 100644
-> --- a/net/openvswitch/flow_netlink.c
-> +++ b/net/openvswitch/flow_netlink.c
-> @@ -2652,8 +2652,11 @@ static int validate_set(const struct nlattr *a,
->  			u8 mac_proto, __be16 eth_type, bool masked, bool log)
->  {
->  	const struct nlattr *ovs_key = nla_data(a);
-> +	const struct ovs_key_ipv4 *ipv4_key;
-> +	const struct ovs_key_ipv6 *ipv6_key;
->  	int key_type = nla_type(ovs_key);
->  	size_t key_len;
-> +	int err;
-> 
->  	/* There can be only one key in a action */
->  	if (nla_total_size(nla_len(ovs_key)) != nla_len(a))
-> @@ -2671,10 +2674,6 @@ static int validate_set(const struct nlattr *a,
->  		return -EINVAL;
-> 
->  	switch (key_type) {
-> -	const struct ovs_key_ipv4 *ipv4_key;
-> -	const struct ovs_key_ipv6 *ipv6_key;
-> -	int err;
-> -
->  	case OVS_KEY_ATTR_PRIORITY:
->  	case OVS_KEY_ATTR_SKB_MARK:
->  	case OVS_KEY_ATTR_CT_MARK:
-> diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-> index c598aa00d5e3..bedbd0518153 100644
-> --- a/security/tomoyo/common.c
-> +++ b/security/tomoyo/common.c
-> @@ -1583,8 +1583,9 @@ static void tomoyo_read_domain(struct tomoyo_io_buffer *head)
->  	list_for_each_cookie(head->r.domain, &tomoyo_domain_list) {
->  		struct tomoyo_domain_info *domain =
->  			list_entry(head->r.domain, typeof(*domain), list);
-> +		u8 i;
-> +
->  		switch (head->r.step) {
-> -			u8 i;
->  		case 0:
->  			if (domain->is_deleted &&
->  			    !head->r.print_this_domain_only)
-> diff --git a/security/tomoyo/condition.c b/security/tomoyo/condition.c
-> index 8d0e1b9c9c57..c10d903febe5 100644
-> --- a/security/tomoyo/condition.c
-> +++ b/security/tomoyo/condition.c
-> @@ -787,10 +787,11 @@ bool tomoyo_condition(struct tomoyo_request_info *r,
->  		/* Check string expressions. */
->  		if (right == TOMOYO_NAME_UNION) {
->  			const struct tomoyo_name_union *ptr = names_p++;
-> +			struct tomoyo_path_info *symlink;
-> +			struct tomoyo_execve *ee;
-> +			struct file *file;
-> +
->  			switch (left) {
-> -				struct tomoyo_path_info *symlink;
-> -				struct tomoyo_execve *ee;
-> -				struct file *file;
->  			case TOMOYO_SYMLINK_TARGET:
->  				symlink = obj ? obj->symlink_target : NULL;
->  				if (!symlink ||
-> diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
-> index badffc8271c8..8e2bb36df37b 100644
-> --- a/security/tomoyo/util.c
-> +++ b/security/tomoyo/util.c
-> @@ -668,6 +668,8 @@ static bool tomoyo_file_matches_pattern2(const char *filename,
->  {
->  	while (filename < filename_end && pattern < pattern_end) {
->  		char c;
-> +		int i, j;
-> +
->  		if (*pattern != '\\') {
->  			if (*filename++ != *pattern++)
->  				return false;
-> @@ -676,8 +678,6 @@ static bool tomoyo_file_matches_pattern2(const char *filename,
->  		c = *filename;
->  		pattern++;
->  		switch (*pattern) {
-> -			int i;
-> -			int j;
->  		case '?':
->  			if (c == '/') {
->  				return false;
+22.01.2019, 20:48, "Paul Moore" <paul@paul-moore.com>:
+>
+> Yes, exactly. If you don't pass the skb it shouldn't attempt to call
+> icmp_send() in case of error.
+>
 > --
-> 2.17.1
+> paul moore
+> www.paul-moore.com
+
+You are right, sorry. We can do that without ip_options_compile modification.
+Simplified patch 2:
+---
+ net/ipv4/cipso_ipv4.c |   18 ++++++++++++++++--
+ 1 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index 777fa3b..a4ed0a4 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1735,13 +1735,27 @@ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option)
+  */
+ void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway)
+ {
++       unsigned char optbuf[sizeof(struct ip_options) + 40];
++       struct ip_options *opt = (struct ip_options *)optbuf;
++
+        if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
+                return;
+ 
++       /* 
++        * We might be called above the IP layer,
++        * so we can not use icmp_send and IPCB here.
++        */
++
++       memset(opt, 0, sizeof(struct ip_options));
++       opt->optlen = ip_hdr(skb)->ihl*4 - sizeof(struct iphdr);
++       memcpy(opt->__data, (unsigned char *)&(ip_hdr(skb)[1]), opt->optlen);
++       if (ip_options_compile(dev_net(skb->dev), opt, NULL))
++               return;
++
+        if (gateway)
+-               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0);
++               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0, opt);
+        else
+-               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0);
++               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0, opt);
+ }
+ 
+ /**
 
