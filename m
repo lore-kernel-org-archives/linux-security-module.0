@@ -2,124 +2,96 @@ Return-Path: <SRS0=R80q=QB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB925C282C0
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 21:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A46C282C0
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 21:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 791E6218A6
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 21:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7B5B218A6
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 21:07:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="N+KIcnU6"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lc/aFiHf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbfAYVFN (ORCPT
+        id S1726361AbfAYVHJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Jan 2019 16:05:13 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42463 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfAYVFN (ORCPT
+        Fri, 25 Jan 2019 16:07:09 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:40045 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726262AbfAYVHJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Jan 2019 16:05:13 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so7890269lfh.9
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Jan 2019 13:05:11 -0800 (PST)
+        Fri, 25 Jan 2019 16:07:09 -0500
+Received: by mail-yw1-f67.google.com with SMTP id g194so4455925ywe.7
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Jan 2019 13:07:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hu/MeQhwAjDC2cBj8mJ130DCkTsDhsy/SLjkjYI8toU=;
-        b=N+KIcnU6gUJAw/059IUODzNkSzS5rbo7ClhBCqaspuBBV32TVhQadD+3Lza77DHNhg
-         ypTaK1/UgmVP4DTiUqa5aZ8nM1VAaUFrGPofLST35B/0aLdY4k7Qga5XaE88VtU5PHCo
-         d3OduJYXCwan/xvDO+t2EsZucQp+f0FtBg3st8aMUna4UHR6fFb4kjTbIVbtgC19aHz6
-         lXnqPOZxDhS40XrYDib2dDMtaS+H45DEXLwpwdTDwvMikS3UkoS/3bp1vUIqKuq0wxOd
-         a/ES9lp4QLaB9kpQnZlyc5Sfen5BR9B0K4reGfXKOLT3MROYpZCNJ1NJDKkCRr4UIIlH
-         Tulw==
+        bh=VU+UpXMzZomlvxxPc5lgQd3Ft+LreTWWRPjLSHYDhDE=;
+        b=lc/aFiHf+x17zX/HEvx71/dF6Eq1qE7Vw2p/Y38MTAMFPVrD1zTRhjJ5+iWyYOTVMv
+         ylNQERYr+RyXJQQlbHZLJ7vngHz8vn2jKsym1+Aw/nHKmYcGdHfTxxQSUN2JxuVKJUFg
+         CC/nSWWrAx5PdgizEKfHMOxAJsgDT1uEQGWg4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hu/MeQhwAjDC2cBj8mJ130DCkTsDhsy/SLjkjYI8toU=;
-        b=Ga4ok4QVpW35HxrimvuvUZQpWZimOeCilhaV5X75KdaSjN6rkVxgxlXPOllgSrBbiT
-         75otMA34FltzG7JYi0EBnFXkpwhADT8SEhNvrcBF29ZJN4Vp6ZWIPC/jwZek+MuGYvpX
-         aB8XGrr61Jj6mOsis79x4sOlod1jLLXCIGsUW+S3IFvJ4xoJDkMQpkAU03irJI1jNpyi
-         M1c5t/iDC2uN+1Fz+jcxk+kVX88gixZO9T5cCS4xzruJvBx98VdAwTbcf6I75Cw45nvF
-         LgWkYGa1/DmGyDNwQXBR1sMQ3j9smIb4qecNKoWcSnfDHMcbR0dmF1khHiMUDeG6PBRB
-         GkdA==
-X-Gm-Message-State: AJcUukdq+ZaNFdOtFUNsCiHwPMvszNStXe43LJDBhaS6yxE3GqFYILAV
-        D/+Glur0QV0k2Yad3sjzjllQAqJUPVynOMbkE7aV
-X-Google-Smtp-Source: ALg8bN777t/RH0pwcJS+1HDmQSbaDtoLJRzJH+97aG4PC6YhGRyCgvvSADAB7EiY9tTNTyscXhU7RkU9k7igsMbZGkM=
-X-Received: by 2002:a19:d619:: with SMTP id n25mr8938148lfg.91.1548450310789;
- Fri, 25 Jan 2019 13:05:10 -0800 (PST)
+        bh=VU+UpXMzZomlvxxPc5lgQd3Ft+LreTWWRPjLSHYDhDE=;
+        b=EYsxFojt7W6DnbKLIOGADFigIzeK616mUOkgKwB13KvEktkBwSToOL48E8qWjKTPj+
+         27ai9bp6ntX+vTqRnuSEUiUvzZ0T4Txs3T9zJY/ayS1wByAKgt86uZsRtXVhu5dP3Qi8
+         ZZcdJuXbvZ76wEQCrOEnOFlQgdIP77hfN3oP1Sy5+Qjc9R/UobxmhCGuC1pA8pKe+WbP
+         AMNvo+dS2NepBrYVLpKwsMbTvUqDIEnT8Bfp7+atBQA4Ks502i/Bhuow+r9eajszsEm4
+         XWyUqgl/wfc723OQmHTfOveqBBr8LMmL4YDJmXarWzMl59c6JpKqwYUSPst35dy/NmXl
+         fMJA==
+X-Gm-Message-State: AJcUukeC8TYyKD6pn6R7T8gQSFn6V3ApOWuD+9bW+CG4Jio9lztowN3x
+        W2U1z6V6JdX52sGgrhAB0AwGJ+z1WzK9ScRO6j1R6w==
+X-Google-Smtp-Source: ALg8bN4nzbZ9eTEUWAt34+M+KZ4kLrnerAbSLgV0Jmgx2sK9YxnU4eesoEkLMK/K4IEKUrOcvIPF+m6DB0bP/vpmOOA=
+X-Received: by 2002:a81:c709:: with SMTP id m9mr11854942ywi.322.1548450428476;
+ Fri, 25 Jan 2019 13:07:08 -0800 (PST)
 MIME-Version: 1.0
-References: <f8348d1e67d66e8e5d42e3bdfbda7e88139f2d31.1548297089.git.rgb@redhat.com>
-In-Reply-To: <f8348d1e67d66e8e5d42e3bdfbda7e88139f2d31.1548297089.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 25 Jan 2019 16:04:59 -0500
-Message-ID: <CAHC9VhS7idW3VabOQmjTdTXAtwp5_MwPannwUMLVQ+kunVjeVg@mail.gmail.com>
-Subject: Re: [PATCH ghak103 V1] audit: add support for fcaps v3
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Eric Paris <eparis@redhat.com>, Serge Hallyn <serge@hallyn.com>
+References: <CAGXu5j+V61YOk7oAEw3Fm5rOxQAmy2-3QqOZaOP_FROLBUk2Qg@mail.gmail.com>
+ <20190116154606.92331-1-mortonm@chromium.org> <alpine.LRH.2.21.1901260714380.27585@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1901260714380.27585@namei.org>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Fri, 25 Jan 2019 13:06:57 -0800
+Message-ID: <CAJ-EccMc3Xz0DZAm_u09VvTzWRzhrf9x0SpJKX=4FR6NYwqkpQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] LSM: add SafeSetID module that gates setid calls
+To:     James Morris <jmorris@namei.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 23, 2019 at 9:37 PM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> V3 namespaced file capabilities were introduced in
-> commit 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
->
-> Add support for these by adding the "frootid" field to the existing
-> fcaps fields in the NAME and BPRM_FCAPS records.
->
-> Please see github issue
-> https://github.com/linux-audit/audit-kernel/issues/103
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
-> Passes audit-testsuite.
->
->  include/linux/capability.h | 5 +++--
->  kernel/audit.c             | 6 ++++--
->  kernel/audit.h             | 1 +
->  kernel/auditsc.c           | 4 ++++
->  security/commoncap.c       | 2 ++
->  5 files changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index f640dcbc880c..f6bb691547fd 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -14,7 +14,7 @@
->  #define _LINUX_CAPABILITY_H
->
->  #include <uapi/linux/capability.h>
-> -
-> +#include <linux/uidgid.h>
->
->  #define _KERNEL_CAPABILITY_VERSION _LINUX_CAPABILITY_VERSION_3
->  #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
-> @@ -25,11 +25,12 @@
->         __u32 cap[_KERNEL_CAPABILITY_U32S];
->  } kernel_cap_t;
->
-> -/* exact same as vfs_cap_data but in cpu endian and always filled completely */
-> +/* exact same as vfs_ns_cap_data but in cpu endian and always filled completely */
+Thanks!
 
-Removed "exact" from the comment above so it fits an 80 char line
-width.  Please watch for this in your patches, I care a lot about line
-widths.
-
-Otherwise as long as Serge is happy with the capabilities bits, I'm
-happy with the audit bits; merged.
-
---
-paul moore
-www.paul-moore.com
+On Fri, Jan 25, 2019 at 12:15 PM James Morris <jmorris@namei.org> wrote:
+>
+> On Wed, 16 Jan 2019, mortonm@chromium.org wrote:
+>
+> > From: Micah Morton <mortonm@chromium.org>
+> >
+> > SafeSetID gates the setid family of syscalls to restrict UID/GID
+> > transitions from a given UID/GID to only those approved by a
+> > system-wide whitelist. These restrictions also prohibit the given
+> > UIDs/GIDs from obtaining auxiliary privileges associated with
+> > CAP_SET{U/G}ID, such as allowing a user to set up user namespace UID
+> > mappings. For now, only gating the set*uid family of syscalls is
+> > supported, with support for set*gid coming in a future patch set.
+> >
+> > Signed-off-by: Micah Morton <mortonm@chromium.org>
+> > Acked-by: Kees Cook <keescook@chromium.org>
+>
+> Both applied to
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+>
+>
+> --
+> James Morris
+> <jmorris@namei.org>
+>
