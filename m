@@ -2,172 +2,186 @@ Return-Path: <SRS0=R80q=QB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A09C282C3
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 03:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F47C282C0
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 03:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F612084A
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 03:21:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB8E221855
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 03:43:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbfAYDVC (ORCPT
+        id S1728704AbfAYDnJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:21:02 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:52676 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726271AbfAYDVC (ORCPT
+        Thu, 24 Jan 2019 22:43:09 -0500
+Received: from gateway30.websitewelcome.com ([50.116.127.1]:22909 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726304AbfAYDnJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:21:02 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id DBF63C8A; Thu, 24 Jan 2019 21:20:59 -0600 (CST)
-Date:   Thu, 24 Jan 2019 21:20:59 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Eric Paris <eparis@redhat.com>, Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak103 V1] audit: add support for fcaps v3
-Message-ID: <20190125032059.GA10044@mail.hallyn.com>
-References: <f8348d1e67d66e8e5d42e3bdfbda7e88139f2d31.1548297089.git.rgb@redhat.com>
+        Thu, 24 Jan 2019 22:43:09 -0500
+X-Greylist: delayed 1500 seconds by postgrey-1.27 at vger.kernel.org; Thu, 24 Jan 2019 22:43:08 EST
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 048CF6A8F
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Jan 2019 20:56:41 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id mrfcgvd8miQermrfdgEh9v; Thu, 24 Jan 2019 20:56:41 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=33912 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gmrfc-000vHu-2W; Thu, 24 Jan 2019 20:56:40 -0600
+Date:   Thu, 24 Jan 2019 20:56:39 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] security: mark expected switch fall-throughs
+Message-ID: <20190125025639.GA13946@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f8348d1e67d66e8e5d42e3bdfbda7e88139f2d31.1548297089.git.rgb@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gmrfc-000vHu-2W
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:33912
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 23, 2019 at 09:36:25PM -0500, Richard Guy Briggs wrote:
-> V3 namespaced file capabilities were introduced in
-> commit 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
-> 
-> Add support for these by adding the "frootid" field to the existing
-> fcaps fields in the NAME and BPRM_FCAPS records.
-> 
-> Please see github issue
-> https://github.com/linux-audit/audit-kernel/issues/103
-> 
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Looks like good info to have,
+This patch fixes the following warnings:
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
-> ---
-> Passes audit-testsuite.
-> 
->  include/linux/capability.h | 5 +++--
->  kernel/audit.c             | 6 ++++--
->  kernel/audit.h             | 1 +
->  kernel/auditsc.c           | 4 ++++
->  security/commoncap.c       | 2 ++
->  5 files changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index f640dcbc880c..f6bb691547fd 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -14,7 +14,7 @@
->  #define _LINUX_CAPABILITY_H
->  
->  #include <uapi/linux/capability.h>
-> -
-> +#include <linux/uidgid.h>
->  
->  #define _KERNEL_CAPABILITY_VERSION _LINUX_CAPABILITY_VERSION_3
->  #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
-> @@ -25,11 +25,12 @@
->  	__u32 cap[_KERNEL_CAPABILITY_U32S];
->  } kernel_cap_t;
->  
-> -/* exact same as vfs_cap_data but in cpu endian and always filled completely */
-> +/* exact same as vfs_ns_cap_data but in cpu endian and always filled completely */
->  struct cpu_vfs_cap_data {
->  	__u32 magic_etc;
->  	kernel_cap_t permitted;
->  	kernel_cap_t inheritable;
-> +	kuid_t rootid;
->  };
->  
->  #define _USER_CAP_HEADER_SIZE  (sizeof(struct __user_cap_header_struct))
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index ca55ccb46b76..6f5eeb658ccb 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2083,8 +2083,9 @@ static void audit_log_fcaps(struct audit_buffer *ab, struct audit_names *name)
->  {
->  	audit_log_cap(ab, "cap_fp", &name->fcap.permitted);
->  	audit_log_cap(ab, "cap_fi", &name->fcap.inheritable);
-> -	audit_log_format(ab, " cap_fe=%d cap_fver=%x",
-> -			 name->fcap.fE, name->fcap_ver);
-> +	audit_log_format(ab, " cap_fe=%d cap_fver=%x cap_frootid=%d",
-> +			 name->fcap.fE, name->fcap_ver,
-> +			 from_kuid(&init_user_ns, name->fcap.rootid));
->  }
->  
->  static inline int audit_copy_fcaps(struct audit_names *name,
-> @@ -2103,6 +2104,7 @@ static inline int audit_copy_fcaps(struct audit_names *name,
->  	name->fcap.permitted = caps.permitted;
->  	name->fcap.inheritable = caps.inheritable;
->  	name->fcap.fE = !!(caps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
-> +	name->fcap.rootid = caps.rootid;
->  	name->fcap_ver = (caps.magic_etc & VFS_CAP_REVISION_MASK) >>
->  				VFS_CAP_REVISION_SHIFT;
->  
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index 6ffb70575082..deefdbe61a47 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -69,6 +69,7 @@ struct audit_cap_data {
->  		kernel_cap_t	effective;	/* effective set of process */
->  	};
->  	kernel_cap_t		ambient;
-> +	kuid_t			rootid;
->  };
->  
->  /* When fs/namei.c:getname() is called, we store the pointer in name and bump
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index b585ceb2f7a2..461c52eff870 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -1358,6 +1358,9 @@ static void audit_log_exit(void)
->  			audit_log_cap(ab, "pi", &axs->new_pcap.inheritable);
->  			audit_log_cap(ab, "pe", &axs->new_pcap.effective);
->  			audit_log_cap(ab, "pa", &axs->new_pcap.ambient);
-> +			audit_log_format(ab, " frootid=%d",
-> +					 from_kuid(&init_user_ns,
-> +						   axs->fcap.rootid));
->  			break; }
->  
->  		}
-> @@ -2355,6 +2358,7 @@ int __audit_log_bprm_fcaps(struct linux_binprm *bprm,
->  	ax->fcap.permitted = vcaps.permitted;
->  	ax->fcap.inheritable = vcaps.inheritable;
->  	ax->fcap.fE = !!(vcaps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
-> +	ax->fcap.rootid = vcaps.rootid;
->  	ax->fcap_ver = (vcaps.magic_etc & VFS_CAP_REVISION_MASK) >> VFS_CAP_REVISION_SHIFT;
->  
->  	ax->old_pcap.permitted   = old->cap_permitted;
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 232db019f051..c097f3568001 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -643,6 +643,8 @@ int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data
->  	cpu_caps->permitted.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
->  	cpu_caps->inheritable.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
->  
-> +	cpu_caps->rootid = rootkuid;
-> +
->  	return 0;
->  }
->  
-> -- 
-> 1.8.3.1
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ security/apparmor/domain.c                | 2 +-
+ security/integrity/ima/ima_appraise.c     | 1 +
+ security/integrity/ima/ima_policy.c       | 4 ++++
+ security/integrity/ima/ima_template_lib.c | 1 +
+ security/smack/smack_lsm.c                | 3 +--
+ 5 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 726910bba84b..c7c619578095 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
+ 			stack = NULL;
+ 			break;
+ 		}
+-		/* fall through to X_NAME */
++		/* fall through - to X_NAME */
+ 	case AA_X_NAME:
+ 		if (xindex & AA_X_CHILD)
+ 			/* released by caller */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index a2baa85ea2f5..57daf30fb7d4 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
+ 		break;
+ 	case CREDS_CHECK:
+ 		iint->ima_creds_status = status;
++		/* fall through */
+ 	case FILE_CHECK:
+ 	case POST_SETATTR:
+ 		iint->ima_file_status = status;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8bc8a1c8cb3f..122797023bdb 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -938,10 +938,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 		case Opt_uid_gt:
+ 		case Opt_euid_gt:
+ 			entry->uid_op = &uid_gt;
++			/* fall through */
+ 		case Opt_uid_lt:
+ 		case Opt_euid_lt:
+ 			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
+ 				entry->uid_op = &uid_lt;
++			/* fall through */
+ 		case Opt_uid_eq:
+ 		case Opt_euid_eq:
+ 			uid_token = (token == Opt_uid_eq) ||
+@@ -970,9 +972,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			break;
+ 		case Opt_fowner_gt:
+ 			entry->fowner_op = &uid_gt;
++			/* fall through */
+ 		case Opt_fowner_lt:
+ 			if (token == Opt_fowner_lt)
+ 				entry->fowner_op = &uid_lt;
++			/* fall through */
+ 		case Opt_fowner_eq:
+ 			ima_log_string_op(ab, "fowner", args[0].from,
+ 					  entry->fowner_op);
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 43752002c222..513b457ae900 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+ 		/* skip ':' and '\0' */
+ 		buf_ptr += 2;
+ 		buflen -= buf_ptr - field_data->data;
++		/* fall through */
+ 	case DATA_FMT_DIGEST:
+ 	case DATA_FMT_HEX:
+ 		if (!buflen)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index fa98394a40d0..127aa6c58e34 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3391,13 +3391,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+ 		 */
+ 		final = &smack_known_star;
+ 		/*
+-		 * Fall through.
+-		 *
+ 		 * If a smack value has been set we want to use it,
+ 		 * but since tmpfs isn't giving us the opportunity
+ 		 * to set mount options simulate setting the
+ 		 * superblock default.
+ 		 */
++		/* Fall through */
+ 	default:
+ 		/*
+ 		 * This isn't an understood special case.
+-- 
+2.20.1
+
