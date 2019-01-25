@@ -2,206 +2,196 @@ Return-Path: <SRS0=R80q=QB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1576EC282C0
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 12:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50F5C282C6
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 15:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54782146E
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 12:37:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77845218CD
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 15:52:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZkbKahUs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbfAYMhb (ORCPT
+        id S1726126AbfAYPwK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Jan 2019 07:37:31 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43668 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727895AbfAYMhb (ORCPT
+        Fri, 25 Jan 2019 10:52:10 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:32796 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbfAYPwJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Jan 2019 07:37:31 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0PCY28n071907
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Jan 2019 07:37:30 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7yq98xnc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Jan 2019 07:37:30 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 25 Jan 2019 12:37:27 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 25 Jan 2019 12:37:24 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0PCbNb559768958
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 25 Jan 2019 12:37:23 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0D11AE051;
-        Fri, 25 Jan 2019 12:37:23 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 368B6AE045;
-        Fri, 25 Jan 2019 12:37:22 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.54])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Jan 2019 12:37:22 +0000 (GMT)
-Subject: Re: [PATCH] security: mark expected switch fall-throughs
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
+        Fri, 25 Jan 2019 10:52:09 -0500
+Received: by mail-yw1-f66.google.com with SMTP id p65so4083408ywe.0
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Jan 2019 07:52:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=lro4u7JxdQTWISDmD00Oe4kWaPf+DLhskqy5jnkTtdk=;
+        b=ZkbKahUsR5dEJjJv3lcfUqMogLGb1Yfgk0nOTXQAHey9pyGBKveAy+6CvBkMQ+jqmq
+         gBekcp1yPnnO2hfaavbIenj+oG23q6wSvfXxhAuRvL422hi53VfQeGCgR2s26D6uP8r2
+         op1lEhUe9sT0iNNpGNokDu1pPwPLXFjqLWqRI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=lro4u7JxdQTWISDmD00Oe4kWaPf+DLhskqy5jnkTtdk=;
+        b=hBDTPGLsqp116Hhyim+eNpf+eiayL//TPWeXjXtDEXhkSlaavGqMgTs/1fuL55EQPv
+         pH5YSrjquCvbHx0pXSYcGou9DR0GIx4tZOIjDEGjC5bV848nl6KNuowOKLm7pzaYFoXN
+         YoM4q+sTpUv4Es3d/Jyp/r+C48cVrw+MAXbR2xsUmZw5Yum5ttz15FaW1wgizRiCjJpC
+         mfgcc58jv8je8fGBI+fJTVYgUjgXp6gm5kDpPdtM7qZrgxXsF0eULakGC1VrwuZsY6ur
+         KMBCROhT9ZO0reSnShTYE5iVaAkRw3HvX751cCIqNrRARkVsv75/DIDZbkxzzJ1KdVYR
+         yvww==
+X-Gm-Message-State: AJcUukckvCdybe7g8mIm3FEKh87uzH0rgbs/vpSl7E4N4Rm+8TbnyLy+
+        dsUrVDyVPiIRVK1ey2XNXO7SVfo4ck9Sgs53WfmATi0xiEE=
+X-Google-Smtp-Source: ALg8bN47XbSJXvm9XgSQOTYaaqEPAXAMaUM2P8jKuTR70kJGZ0D45GWdPnVeA/USXFqYg6v1CgMCEO27chQF1dSp9lQ=
+X-Received: by 2002:a0d:cf04:: with SMTP id r4mr11352811ywd.283.1548431528672;
+ Fri, 25 Jan 2019 07:52:08 -0800 (PST)
+MIME-Version: 1.0
+References: <CAJ-EccM-uiYybMcLNfwJjJcVHRPb6b=BdhotBYVBV_j5stxxzA@mail.gmail.com>
+ <20190122224209.222480-1-mortonm@chromium.org>
+In-Reply-To: <20190122224209.222480-1-mortonm@chromium.org>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Fri, 25 Jan 2019 07:51:57 -0800
+Message-ID: <CAJ-EccPTayPqZ9_sM+nB2SnGDcrJ2fLwVV7bbLFs9=AvrAAhmQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] LSM: add SafeSetID module that gates setid calls
+To:     James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Matthew Garrett <mjg59@google.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Date:   Fri, 25 Jan 2019 07:37:11 -0500
-In-Reply-To: <20190125025639.GA13946@embeddedor>
-References: <20190125025639.GA13946@embeddedor>
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012512-0012-0000-0000-000002ECE912
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012512-0013-0000-0000-000021242109
-Message-Id: <1548419831.3971.117.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-25_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901250103
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2019-01-24 at 20:56 -0600, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warnings:
-> 
-> security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Patch set 1 of 2 was "Reviewed-by: Kees Cook <keescook@chromium.org>"
+as well -- forgot to add that in the commit message above.
 
-Other than the one question in ima_appraise.c, the rest of the IMA
-changes are fine.
-
-Mimi
-
+On Tue, Jan 22, 2019 at 2:42 PM <mortonm@chromium.org> wrote:
+>
+> From: Micah Morton <mortonm@chromium.org>
+>
+> This change ensures that the set*uid family of syscalls in kernel/sys.c
+> (setreuid, setuid, setresuid, setfsuid) all call ns_capable_common with
+> the CAP_OPT_INSETID flag, so capability checks in the security_capable
+> hook can know whether they are being called from within a set*uid
+> syscall. This change is a no-op by itself, but is needed for the
+> proposed SafeSetID LSM.
+>
+> Signed-off-by: Micah Morton <mortonm@chromium.org>
 > ---
->  security/apparmor/domain.c                | 2 +-
->  security/integrity/ima/ima_appraise.c     | 1 +
->  security/integrity/ima/ima_policy.c       | 4 ++++
->  security/integrity/ima/ima_template_lib.c | 1 +
->  security/smack/smack_lsm.c                | 3 +--
->  5 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 726910bba84b..c7c619578095 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
->  			stack = NULL;
->  			break;
->  		}
-> -		/* fall through to X_NAME */
-> +		/* fall through - to X_NAME */
->  	case AA_X_NAME:
->  		if (xindex & AA_X_CHILD)
->  			/* released by caller */
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index a2baa85ea2f5..57daf30fb7d4 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
->  		break;
->  	case CREDS_CHECK:
->  		iint->ima_creds_status = status;
-> +		/* fall through */
-
-Matthew, is this right?
-
->  	case FILE_CHECK:
->  	case POST_SETATTR:
->  		iint->ima_file_status = status;
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 8bc8a1c8cb3f..122797023bdb 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -938,10 +938,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  		case Opt_uid_gt:
->  		case Opt_euid_gt:
->  			entry->uid_op = &uid_gt;
-> +			/* fall through */
->  		case Opt_uid_lt:
->  		case Opt_euid_lt:
->  			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
->  				entry->uid_op = &uid_lt;
-> +			/* fall through */
->  		case Opt_uid_eq:
->  		case Opt_euid_eq:
->  			uid_token = (token == Opt_uid_eq) ||
-> @@ -970,9 +972,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  			break;
->  		case Opt_fowner_gt:
->  			entry->fowner_op = &uid_gt;
-> +			/* fall through */
->  		case Opt_fowner_lt:
->  			if (token == Opt_fowner_lt)
->  				entry->fowner_op = &uid_lt;
-> +			/* fall through */
->  		case Opt_fowner_eq:
->  			ima_log_string_op(ab, "fowner", args[0].from,
->  					  entry->fowner_op);
-> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-> index 43752002c222..513b457ae900 100644
-> --- a/security/integrity/ima/ima_template_lib.c
-> +++ b/security/integrity/ima/ima_template_lib.c
-> @@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
->  		/* skip ':' and '\0' */
->  		buf_ptr += 2;
->  		buflen -= buf_ptr - field_data->data;
-> +		/* fall through */
->  	case DATA_FMT_DIGEST:
->  	case DATA_FMT_HEX:
->  		if (!buflen)
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index fa98394a40d0..127aa6c58e34 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -3391,13 +3391,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
->  		 */
->  		final = &smack_known_star;
->  		/*
-> -		 * Fall through.
-> -		 *
->  		 * If a smack value has been set we want to use it,
->  		 * but since tmpfs isn't giving us the opportunity
->  		 * to set mount options simulate setting the
->  		 * superblock default.
->  		 */
-> +		/* Fall through */
->  	default:
->  		/*
->  		 * This isn't an understood special case.
-
+> These changes used to be part of the main SafeSetID LSM patch set.
+>
+>  include/linux/capability.h |  5 +++++
+>  kernel/capability.c        | 19 +++++++++++++++++++
+>  kernel/sys.c               | 10 +++++-----
+>  3 files changed, 29 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/linux/capability.h b/include/linux/capability.h
+> index f640dcbc880c..c3f9a4d558a0 100644
+> --- a/include/linux/capability.h
+> +++ b/include/linux/capability.h
+> @@ -209,6 +209,7 @@ extern bool has_ns_capability_noaudit(struct task_struct *t,
+>  extern bool capable(int cap);
+>  extern bool ns_capable(struct user_namespace *ns, int cap);
+>  extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
+> +extern bool ns_capable_setid(struct user_namespace *ns, int cap);
+>  #else
+>  static inline bool has_capability(struct task_struct *t, int cap)
+>  {
+> @@ -240,6 +241,10 @@ static inline bool ns_capable_noaudit(struct user_namespace *ns, int cap)
+>  {
+>         return true;
+>  }
+> +static inline bool ns_capable_setid(struct user_namespace *ns, int cap)
+> +{
+> +       return true;
+> +}
+>  #endif /* CONFIG_MULTIUSER */
+>  extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode);
+>  extern bool capable_wrt_inode_uidgid(const struct inode *inode, int cap);
+> diff --git a/kernel/capability.c b/kernel/capability.c
+> index 7718d7dcadc7..e0734ace5bc2 100644
+> --- a/kernel/capability.c
+> +++ b/kernel/capability.c
+> @@ -417,6 +417,25 @@ bool ns_capable_noaudit(struct user_namespace *ns, int cap)
+>  }
+>  EXPORT_SYMBOL(ns_capable_noaudit);
+>
+> +/**
+> + * ns_capable_setid - Determine if the current task has a superior capability
+> + * in effect, while signalling that this check is being done from within a
+> + * setid syscall.
+> + * @ns:  The usernamespace we want the capability in
+> + * @cap: The capability to be tested for
+> + *
+> + * Return true if the current task has the given superior capability currently
+> + * available for use, false if not.
+> + *
+> + * This sets PF_SUPERPRIV on the task if the capability is available on the
+> + * assumption that it's about to be used.
+> + */
+> +bool ns_capable_setid(struct user_namespace *ns, int cap)
+> +{
+> +       return ns_capable_common(ns, cap, CAP_OPT_INSETID);
+> +}
+> +EXPORT_SYMBOL(ns_capable_setid);
+> +
+>  /**
+>   * capable - Determine if the current task has a superior capability in effect
+>   * @cap: The capability to be tested for
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index a48cbf1414b8..a98061c1a124 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -516,7 +516,7 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
+>                 new->uid = kruid;
+>                 if (!uid_eq(old->uid, kruid) &&
+>                     !uid_eq(old->euid, kruid) &&
+> -                   !ns_capable(old->user_ns, CAP_SETUID))
+> +                   !ns_capable_setid(old->user_ns, CAP_SETUID))
+>                         goto error;
+>         }
+>
+> @@ -525,7 +525,7 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
+>                 if (!uid_eq(old->uid, keuid) &&
+>                     !uid_eq(old->euid, keuid) &&
+>                     !uid_eq(old->suid, keuid) &&
+> -                   !ns_capable(old->user_ns, CAP_SETUID))
+> +                   !ns_capable_setid(old->user_ns, CAP_SETUID))
+>                         goto error;
+>         }
+>
+> @@ -584,7 +584,7 @@ long __sys_setuid(uid_t uid)
+>         old = current_cred();
+>
+>         retval = -EPERM;
+> -       if (ns_capable(old->user_ns, CAP_SETUID)) {
+> +       if (ns_capable_setid(old->user_ns, CAP_SETUID)) {
+>                 new->suid = new->uid = kuid;
+>                 if (!uid_eq(kuid, old->uid)) {
+>                         retval = set_user(new);
+> @@ -646,7 +646,7 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
+>         old = current_cred();
+>
+>         retval = -EPERM;
+> -       if (!ns_capable(old->user_ns, CAP_SETUID)) {
+> +       if (!ns_capable_setid(old->user_ns, CAP_SETUID)) {
+>                 if (ruid != (uid_t) -1        && !uid_eq(kruid, old->uid) &&
+>                     !uid_eq(kruid, old->euid) && !uid_eq(kruid, old->suid))
+>                         goto error;
+> @@ -814,7 +814,7 @@ long __sys_setfsuid(uid_t uid)
+>
+>         if (uid_eq(kuid, old->uid)  || uid_eq(kuid, old->euid)  ||
+>             uid_eq(kuid, old->suid) || uid_eq(kuid, old->fsuid) ||
+> -           ns_capable(old->user_ns, CAP_SETUID)) {
+> +           ns_capable_setid(old->user_ns, CAP_SETUID)) {
+>                 if (!uid_eq(kuid, old->fsuid)) {
+>                         new->fsuid = kuid;
+>                         if (security_task_fix_setuid(new, old, LSM_SETID_FS) == 0)
+> --
+> 2.20.1.97.g81188d93c3-goog
+>
