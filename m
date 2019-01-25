@@ -2,157 +2,187 @@ Return-Path: <SRS0=R80q=QB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E428C282C6
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 01:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0007C282C6
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 03:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 194CC218CD
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 01:05:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E4932083B
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 03:14:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sweZFUxy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfAYBFX (ORCPT
+        id S1728365AbfAYDOE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Jan 2019 20:05:23 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37605 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728024AbfAYBFX (ORCPT
+        Thu, 24 Jan 2019 22:14:04 -0500
+Received: from sonic312-28.consmr.mail.bf2.yahoo.com ([74.6.128.90]:44190 "EHLO
+        sonic312-28.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728362AbfAYDOD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Jan 2019 20:05:23 -0500
-Received: by mail-qt1-f196.google.com with SMTP id t33so9011805qtt.4
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Jan 2019 17:05:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6z/fHP5/ilN8QbHMM/7kZXl6+veIrNyjFA9+zA4zaik=;
-        b=pLCF0TPVvvmdF7cYqR5WZM4DinHkCIca+AySh8h3owZ326kicvxfwIN9hxRjJL56AH
-         nKI4o8xO1TwREcioyV3XLBQm4CeelJDlEV76m301U9FyxiB98K+SNY/tTcGaOJZHWqkr
-         LIDGVBvPoB1CxJP44e0jhEW6hoJRUP0MDb25WJ/mBBI3+D3lBzd1dMXViw+2CXdekdmM
-         dYYDx8J8bMoa5xucQzISS2LfURYoZNGar9UFSfdsrCaBCxeW1R5CFnzNIXD3W8fLBanm
-         3W4e/lE85x3n026ihWLWaMZA2nyMmobTkwJ8fTKC2M+viTZU2ERAx+1ww1Qk9X/zt6cj
-         k7sg==
-X-Gm-Message-State: AJcUukcrMxxW7f5y6t6PIM8nnaeMlP0Znbwa2zJM+3H7jLU+SojI2mzg
-        KTlSFMelAEtLJaWEgGOVexecfA==
-X-Google-Smtp-Source: ALg8bN5pvy1aV6x2BV/MwJOYIn0FSPCBOsSfdSEjegXEOQwiLJ6MyCtxIUFbpjPYQmjZMGO9e39fHQ==
-X-Received: by 2002:a0c:ef03:: with SMTP id t3mr8177008qvr.148.1548378322026;
-        Thu, 24 Jan 2019 17:05:22 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id q54sm76147530qtb.64.2019.01.24.17.05.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 17:05:21 -0800 (PST)
-Date:   Thu, 24 Jan 2019 18:05:19 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
-Message-ID: <20190125010519.4tqcno4iaha4ww7r@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
+        Thu, 24 Jan 2019 22:14:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1548386042; bh=w8ta0RrtTEnHTNvflMGm2gLEJJUhaEuuAVTXf9p/XFk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=sweZFUxy1MilKcOQ3wr551PC40XtOk7gmb8oTOo12P5C7GN22IDJ4ucdeUbPkQYl7Zoqsm/pA96lDjSAp7s8IAPTKXvaunrwy/ps2vgNVyJGaIKDnR2oEg91u4UOH92QmmelD/FTVbiyHv6fxwwx6dGueqMZsGQSWJPqyVL+QUrHb6BU7il2VWlrjRZSLnk7e6f7OKQ4PHgS131pq7ieRIDPRTQzWdNT7kIn8FVUe9Cv0FHqwjuIacGaPA2eiL0vZLcAGSFoJV9JF22pqz/9t5Y1FkEXG51FT9w7wPXQmX5OAj2Wuv3DXscnnJYCYHLBVo/Qqqmy7HEnDNwRWrgirQ==
+X-YMail-OSG: mhXClJgVM1n4WLvaUG7axCwoOZUklJgYhB0fnJy2wZKcqDfICXkMhquab6emxlo
+ ipeGRnOKApJ9uRCj15L1nj0PqnPgXPXOWccoDZfQRGRyo_.meOJrYO1ZTkEPkkJ.g4kczH9w3NEX
+ 89.X2G2uux3vRGc3nHTAsQ8w7o4fWrOjlwT9TH2odRhcgxc8.XsH_mV.sae8nDDwGoZ3i23fb6NE
+ Woi1dWFo3frdHHKLI5sdo7GuDrsbkTnTw6jz3U.YiUjqyJ3TevrRGhe0jMgs0bSbeGE5Ywaayq76
+ wORwotWBU..QgmAWGaNqh1ENBGkF73UDSiWo8tj6FqeTPNzblkPuQbkqF9RfmL7Sm.F8bV5sEfSX
+ EPgMvSNO.9xlwU2cHMg7_7DiZCxSNF5tNCr54AhGTgAfB7.wrAvDAVqBufvAAYesWS4fgY88.CKz
+ ctkf.vxdIc_4bTIgs8mSezgX7M3ietcIT0ltSLatdwv9_MaBlsHHFNgAr9.t1dP6AIWHEUmVOXuw
+ p8ozghsynmOMMDltrhq4Gf.An4qv0nP.y7ypWVgKvh5LMbdDru5fcmhrr66SbrebFkbmoFofpgxX
+ OtJxiNRWdIdYz.P.8YeZkLgqxyXwYvm0vFRpfhMzv80uOWuQqKfwsPn3.WsjGW0_R9Bcqhkcgf8i
+ Fr5GLs7fIuL7JU.P79szoSrMXbcMfXaGULplXa86MEZvppwBEzuF956ztqdAvl.XQIcjHSkmaTQJ
+ ZFLxs.dxcpDYz3WuTGt1KdHDJ1oZuLTRAbxGmtEDkKYmFu0ToeATnS7uJzVwOxP7QbTu6CKa_IMj
+ retjVKxuNZQ6fg_czxTvzBjUacLGAfsoOrc2Q_5p9yIVbfYCqbF8yjkCA098Irp.P3.KtcSqjWCD
+ Vy0pur54SW6PmBAHfzFX8KeZs4bbbqcBmE7PSF3iAM5pV3QvEQPY3_YarWQGcDKCP28odDmZMM3G
+ zZeOaC3slIP.7Xqdgz0KbJsImCXQWU8f8eWdt3UdMTBopkIeClucCcXMqeaSGM1a6My53.1RwVLx
+ xFPPBb18w4QSYOlbH9UTXmpEYplgRI10HQdQHkPQY5HLUoDMtJrzGQXC142KJsKqqgkKJeiDDsjx
+ ZFM.W9xBEdwPDk_kt7lznbWn85tILOlc0nv.AqZYF
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.bf2.yahoo.com with HTTP; Fri, 25 Jan 2019 03:14:02 +0000
+Received: from 202.36.179.100 (EHLO [10.193.2.218]) ([202.36.179.100])
+          by smtp417.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fbf0cee7abaadf9895f2ada916badca5;
+          Fri, 25 Jan 2019 03:14:01 +0000 (UTC)
+Subject: Re: [PATCH] security: mark expected switch fall-throughs
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+References: <20190125025639.GA13946@embeddedor>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
+Date:   Thu, 24 Jan 2019 19:13:58 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190125025639.GA13946@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed Jan 16 19, Jarkko Sakkinen wrote:
->Make the changes necessary to detach TPM space code and TPM activation
->code out of the tpm_transmit() flow because of both of these can cause
->nested tpm_transmit() calls. The nesteds calls make the whole flow hard
->to maintain, and thus, it is better to just fix things now before this
->turns into a bigger mess.
+On 1/24/2019 6:56 PM, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 >
->v10:
->* Use void pointers to avoid unnecessary casts in functions paramaters
->  where it makes sense.
+> This patch fixes the following warnings:
 >
->v9:
->* Fixed again tpm_try_get_ops().
->* Added missing reviewed-by's.
+> security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 >
->v8:
->* Re-add the check for ret < 0 after calling tpm_try_transmit() that
->  was dropped by mistake while moving code.
->* Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
->  fails.
+> Warning level 3 was used: -Wimplicit-fallthrough=3
 >
->v7:
->*  Reorganize series so that more trivial and self-contained changes are
->   in the head.
+> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
 >
->v6:
->* When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
->  the TPM header was incorrectly declared as struct tpm_input_header.
->* Fix return value in tpm_validate_command().
->
->v5:
->* Add the missing rev's from Stefan Berger.
->
->v4:
->* Return 0 from pcrs_show() when tpm1_pcr_read() fails.
->* Fix error handling flow in tpm_try_transmit().
->* Replace struct tpm_input_header and struct tpm_output_header with
->  struct tpm_header.
->
->v3:
->* Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
->* Move TPM power gating code and locking to tpm_try_get_ops() and
->  tpm_put_ops().
->* Call power gating code directly in tpm_chip_register() and
->  tpm2_del_space().
->
->v2:
->* Print tpm2_commit_space() error inside tpm2_commit_space()
->* Error code was not printed when recv() callback failed. It is
->  fixed in this version.
->* Added a patch that removes @space from tpm_transmit().
->* Fixed a regression in earlier series. Forgot to amend the change
->  from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
->Jarkko Sakkinen (17):
->  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
->  tpm: fix invalid return value in pubek_show()
->  tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
->  tpm: print tpm2_commit_space() error inside tpm2_commit_space()
->  tpm: declare struct tpm_header
->  tpm: access command header through struct in tpm_try_transmit()
->  tpm: encapsulate tpm_dev_transmit()
->  tpm: call tpm2_flush_space() on error in tpm_try_transmit()
->  tpm: clean up tpm_try_transmit() error handling flow
->  tpm: move tpm_validate_commmand() to tpm2-space.c
->  tpm: move TPM space code out of tpm_transmit()
->  tpm: remove @space from tpm_transmit()
->  tpm: use tpm_try_get_ops() in tpm-sysfs.c.
->  tpm: remove TPM_TRANSMIT_UNLOCKED flag
->  tpm: introduce tpm_chip_start() and tpm_chip_stop()
->  tpm: take TPM chip power gating out of tpm_transmit()
->  tpm: remove @flags from tpm_transmit()
->
-> drivers/char/tpm/tpm-chip.c       | 109 ++++++++++++
-> drivers/char/tpm/tpm-dev-common.c |  45 ++++-
-> drivers/char/tpm/tpm-interface.c  | 264 ++++++------------------------
-> drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
-> drivers/char/tpm/tpm.h            |  64 +++-----
-> drivers/char/tpm/tpm1-cmd.c       |  28 +---
-> drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
-> drivers/char/tpm/tpm2-space.c     |  91 +++++++---
-> drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
-> drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
-> drivers/char/tpm/xen-tpmfront.c   |   2 +-
-> 11 files changed, 409 insertions(+), 421 deletions(-)
->
->-- 
->2.19.1
->
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
+Ug. It can't be part of a greater comment? Grumble.
+
+> ---
+>  security/apparmor/domain.c                | 2 +-
+>  security/integrity/ima/ima_appraise.c     | 1 +
+>  security/integrity/ima/ima_policy.c       | 4 ++++
+>  security/integrity/ima/ima_template_lib.c | 1 +
+>  security/smack/smack_lsm.c                | 3 +--
+>  5 files changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index 726910bba84b..c7c619578095 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
+>  			stack = NULL;
+>  			break;
+>  		}
+> -		/* fall through to X_NAME */
+> +		/* fall through - to X_NAME */
+>  	case AA_X_NAME:
+>  		if (xindex & AA_X_CHILD)
+>  			/* released by caller */
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index a2baa85ea2f5..57daf30fb7d4 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
+>  		break;
+>  	case CREDS_CHECK:
+>  		iint->ima_creds_status = status;
+> +		/* fall through */
+>  	case FILE_CHECK:
+>  	case POST_SETATTR:
+>  		iint->ima_file_status = status;
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 8bc8a1c8cb3f..122797023bdb 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -938,10 +938,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  		case Opt_uid_gt:
+>  		case Opt_euid_gt:
+>  			entry->uid_op = &uid_gt;
+> +			/* fall through */
+>  		case Opt_uid_lt:
+>  		case Opt_euid_lt:
+>  			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
+>  				entry->uid_op = &uid_lt;
+> +			/* fall through */
+>  		case Opt_uid_eq:
+>  		case Opt_euid_eq:
+>  			uid_token = (token == Opt_uid_eq) ||
+> @@ -970,9 +972,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  			break;
+>  		case Opt_fowner_gt:
+>  			entry->fowner_op = &uid_gt;
+> +			/* fall through */
+>  		case Opt_fowner_lt:
+>  			if (token == Opt_fowner_lt)
+>  				entry->fowner_op = &uid_lt;
+> +			/* fall through */
+>  		case Opt_fowner_eq:
+>  			ima_log_string_op(ab, "fowner", args[0].from,
+>  					  entry->fowner_op);
+> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+> index 43752002c222..513b457ae900 100644
+> --- a/security/integrity/ima/ima_template_lib.c
+> +++ b/security/integrity/ima/ima_template_lib.c
+> @@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+>  		/* skip ':' and '\0' */
+>  		buf_ptr += 2;
+>  		buflen -= buf_ptr - field_data->data;
+> +		/* fall through */
+>  	case DATA_FMT_DIGEST:
+>  	case DATA_FMT_HEX:
+>  		if (!buflen)
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index fa98394a40d0..127aa6c58e34 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -3391,13 +3391,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+>  		 */
+>  		final = &smack_known_star;
+>  		/*
+> -		 * Fall through.
+> -		 *
+>  		 * If a smack value has been set we want to use it,
+>  		 * but since tmpfs isn't giving us the opportunity
+>  		 * to set mount options simulate setting the
+>  		 * superblock default.
+>  		 */
+> +		/* Fall through */
+>  	default:
+>  		/*
+>  		 * This isn't an understood special case.
