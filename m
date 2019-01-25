@@ -2,138 +2,128 @@ Return-Path: <SRS0=R80q=QB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3FFC282C0
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 16:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D079C282C2
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 18:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99C64218CD
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 16:46:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 106A5218CD
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jan 2019 18:28:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="p+9RrB0o"
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="ZpBf3Yp7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbfAYQqB (ORCPT
+        id S1726630AbfAYS2R (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:46:01 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33273 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726361AbfAYQqB (ORCPT
+        Fri, 25 Jan 2019 13:28:17 -0500
+Received: from mail-eopbgr730069.outbound.protection.outlook.com ([40.107.73.69]:31616
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726604AbfAYS2M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:46:01 -0500
-Received: by mail-lf1-f68.google.com with SMTP id i26so7423799lfc.0
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Jan 2019 08:45:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TUBTBhsoEod0r+sPpZj9kpX0Q0Wrx8sRS3fdt8CKxGc=;
-        b=p+9RrB0oR52i0OvEXY0QyExAG2XuSqMRCUQn0rrKiHD0PgL5CQUxzQeOzGBFEPqmQz
-         82mE4gdKo4r5rgZ6FTfDwa/9o7vVm1PKfKTBOGaZHPL4cCpyGkYQCnjiednC2NmhE/5J
-         7t/kKLHbMLtxh3RJW3OLZYnbshFYUFqtRpZW/qtbmoYTHaQpLX1DWLNhJeBZhqKqfzKO
-         WtHZZJP0sbvFQsjOM3CmpCpHCBewbxek0lDWgwgoNNJonaPMvvtfG6DW9RzWXbyyauqM
-         9LSiNjQXaMmO/IpiWlFgTaUhrZyOA0SKUu8ZUmEozEncw0PXwN2EBEXZwd5xtXVtrhop
-         7I7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TUBTBhsoEod0r+sPpZj9kpX0Q0Wrx8sRS3fdt8CKxGc=;
-        b=N+mQB9Gat6v4a0ZvN9OpGiLRtflFn+t0mANNi4Qk++o8r5/ROeYuzkK5brXQZnqKMy
-         RnNAr1fmx7WBQgQ0pNhsBoHU5xYhsNWByYOrvNkln0Wca7NTuheZENuhioSGdc/yvjsA
-         i1a4+bKt+wEJDd3BSJlVOv2WeWdyzGRFMopaGeVtqpGqmAiZXVrMqvYeojwtkqD/JOgW
-         PIa7+su8gvgY8AP55XNR61lpDRzgX4nf5QJpgtBsdG7//NsKcL2xPgtx0iCCVKQWx/id
-         kIUK3Tho6SXFhXQ69M+mH7uUIWccNyfbUwvVZ4INhRZw/xxRrrfbrGjNj9nOEyQXqW9D
-         AM1g==
-X-Gm-Message-State: AJcUuke+bCKR0vlq06no1JCdwbq4LWfckzeITeXnMvB+r5Fyy1xZOB+y
-        VcRlwkfgN8VrrpWFJ//CJP+nacKMmF4+84GNsuWW
-X-Google-Smtp-Source: ALg8bN4+Y+aYnJRDyelJmS00jvlxMtDpkz6K2smhwQKLYoaVxlnHEaIJXnd/Xm6FwgezbiPCD/gswdxduAYWTcxlemU=
-X-Received: by 2002:a19:4287:: with SMTP id p129mr9428851lfa.135.1548434758604;
- Fri, 25 Jan 2019 08:45:58 -0800 (PST)
+        Fri, 25 Jan 2019 13:28:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dIxjOtEjuG2D2m+9rIi/IKN04MBhzhwT0LdROfxWZoI=;
+ b=ZpBf3Yp7eF8BbXH3dtSLfGCax0+FlzGLozGIxyK4VZ3fH8IrsZm79ZZg3wuvPMAIdirfhxk7oR7oTMxP00zaGv8pxFyGFC9I5a1mLT5XtLmswHzUh//OMU2KoDpvZNUHZiX8enffDl4Qr+q4GYigvPhm44kJ2cD8z+Scgtqj3o8=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB5224.namprd05.prod.outlook.com (20.177.231.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.10; Fri, 25 Jan 2019 18:28:04 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::99ab:18fb:f393:df31]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::99ab:18fb:f393:df31%3]) with mapi id 15.20.1580.004; Fri, 25 Jan 2019
+ 18:28:04 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "deneen.t.dock@intel.com" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 01/17] Fix "x86/alternatives: Lockdep-enforce text_mutex
+ in text_poke*()"
+Thread-Topic: [PATCH 01/17] Fix "x86/alternatives: Lockdep-enforce text_mutex
+ in text_poke*()"
+Thread-Index: AQHUrfxOhBIE3CgBbEWQpABmYJlN26W/xVsAgACWFQA=
+Date:   Fri, 25 Jan 2019 18:28:04 +0000
+Message-ID: <BEFCBDFB-F08F-441D-8BCC-07E5F448D9D2@vmware.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+ <20190117003259.23141-2-rick.p.edgecombe@intel.com>
+ <20190125093052.GA27998@zn.tnic>
+In-Reply-To: <20190125093052.GA27998@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [66.170.99.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5224;20:Pje6rlC6Kt02/zcptylGM0QtQoXzVKL6+Tpcn28Bw6m8bsB6QsxS5/iaYP+Otyceh8FBzUIp028BaptEZu5Ipgu9r8OurWg5pfvpYrFWXhtxJoKb6ePgQzx7ju/zKVvzXbN7/lEc/x2hK1mWXcUAxFbAwad95vfaj21RPCO1Mhg=
+x-ms-office365-filtering-correlation-id: 5cf9e50c-ff6e-4bf2-c88d-08d682f2d86d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5224;
+x-ms-traffictypediagnostic: BYAPR05MB5224:
+x-microsoft-antispam-prvs: <BYAPR05MB52248BA540DF518DCF649E66D09B0@BYAPR05MB5224.namprd05.prod.outlook.com>
+x-forefront-prvs: 0928072091
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(39860400002)(396003)(376002)(366004)(189003)(199004)(4326008)(68736007)(83716004)(82746002)(7416002)(102836004)(53936002)(256004)(14444005)(6512007)(39060400002)(71200400001)(6486002)(97736004)(53546011)(71190400001)(6246003)(6436002)(6506007)(33656002)(6116002)(3846002)(186003)(99286004)(14454004)(7736002)(305945005)(8936002)(478600001)(36756003)(2906002)(2616005)(476003)(81166006)(446003)(81156014)(26005)(6916009)(86362001)(11346002)(8676002)(54906003)(25786009)(316002)(105586002)(66066001)(229853002)(486006)(106356001)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5224;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: r/JxOACK6cl+DYjXzDfbf4sVKKgIGSI/uY/MTunAKwlBLoRSp6lUQot4yxqEzsf8bd8hx9cOelzA7Quy5AtS+bVS+Q/Y3tsbXOstFfPpK6UHCf15ILKd9nDnnFG6rFKFd0CnHELrm8B2EnZbEK3x6N7pHD6C51mTNq/kyZJqkBiYrH4mEJkpcp1PXOqbgcLKnsO1ftE3yQvCZP1VGTCDopCGSx5pvLW/QpjBS5YKNYOmUScrc3Q9hvBvnTBf7WXISIYonp4uN9v/l0N+62n2hKlp2WQKab9NJxv7Afe8KjoEMHYBFlazlFmh3WIxYjv5D6rTm4gGawj4nmBDnXF6h28s3C46hreEMLAVLiJulCrxHF+qNjTAX+gCxZf8lcMU9+W9Tyt/6yF8w0T7ItVW/eWdqaHDlMvsPsjkv4wSEBY=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <40B2A33442F0754AA96DF64BE91FBD02@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
- <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
- <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
- <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
- <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
- <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
- <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net>
-In-Reply-To: <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 25 Jan 2019 11:45:47 -0500
-Message-ID: <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
-To:     Nazarov Sergey <s-nazarov@yandex.ru>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5cf9e50c-ff6e-4bf2-c88d-08d682f2d86d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2019 18:28:04.0871
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5224
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 24, 2019 at 9:46 AM Nazarov Sergey <s-nazarov@yandex.ru> wrote:
-> 22.01.2019, 20:48, "Paul Moore" <paul@paul-moore.com>:
-> >
-> > Yes, exactly. If you don't pass the skb it shouldn't attempt to call
-> > icmp_send() in case of error.
-> >
-> > --
-> > paul moore
-> > www.paul-moore.com
->
-> You are right, sorry. We can do that without ip_options_compile modification.
-> Simplified patch 2:
-> ---
->  net/ipv4/cipso_ipv4.c |   18 ++++++++++++++++--
->  1 files changed, 16 insertions(+), 2 deletions(-)
->
-> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> index 777fa3b..a4ed0a4 100644
-> --- a/net/ipv4/cipso_ipv4.c
-> +++ b/net/ipv4/cipso_ipv4.c
-> @@ -1735,13 +1735,27 @@ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option)
->   */
->  void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway)
->  {
-> +       unsigned char optbuf[sizeof(struct ip_options) + 40];
-> +       struct ip_options *opt = (struct ip_options *)optbuf;
-> +
->         if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
->                 return;
->
-> +       /*
-> +        * We might be called above the IP layer,
-> +        * so we can not use icmp_send and IPCB here.
-> +        */
-> +
-> +       memset(opt, 0, sizeof(struct ip_options));
-> +       opt->optlen = ip_hdr(skb)->ihl*4 - sizeof(struct iphdr);
-
-Hmm, I think the above calculation should take into account the actual
-length of the IP options, and not just the max size (calculate it
-based on iphdr->ihl).
-
-Beyond that fix, I think it's time to put together a proper patchset
-and post it to the lists for formal review/merging.
-
-Thanks for your work on this.
-
-> +       memcpy(opt->__data, (unsigned char *)&(ip_hdr(skb)[1]), opt->optlen);
-> +       if (ip_options_compile(dev_net(skb->dev), opt, NULL))
-> +               return;
-> +
->         if (gateway)
-> -               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0);
-> +               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0, opt);
->         else
-> -               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0);
-> +               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0, opt);
->  }
-
--- 
-paul moore
-www.paul-moore.com
+PiBPbiBKYW4gMjUsIDIwMTksIGF0IDE6MzAgQU0sIEJvcmlzbGF2IFBldGtvdiA8YnBAYWxpZW44
+LmRlPiB3cm90ZToNCj4gDQo+IE9uIFdlZCwgSmFuIDE2LCAyMDE5IGF0IDA0OjMyOjQzUE0gLTA4
+MDAsIFJpY2sgRWRnZWNvbWJlIHdyb3RlOg0KPj4gRnJvbTogTmFkYXYgQW1pdCA8bmFtaXRAdm13
+YXJlLmNvbT4NCj4+IA0KPj4gdGV4dF9tdXRleCBpcyBjdXJyZW50bHkgZXhwZWN0ZWQgdG8gYmUg
+aGVsZCBiZWZvcmUgdGV4dF9wb2tlKCkgaXMNCj4+IGNhbGxlZCwgYnV0IHdlIGtnZGIgZG9lcyBu
+b3QgdGFrZSB0aGUgbXV0ZXgsIGFuZCBpbnN0ZWFkICpzdXBwb3NlZGx5Kg0KPj4gZW5zdXJlcyB0
+aGUgbG9jayBpcyBub3QgdGFrZW4gYW5kIHdpbGwgbm90IGJlIGFjcXVpcmVkIGJ5IGFueSBvdGhl
+ciBjb3JlDQo+PiB3aGlsZSB0ZXh0X3Bva2UoKSBpcyBydW5uaW5nLg0KPj4gDQo+PiBUaGUgcmVh
+c29uIGZvciB0aGUgInN1cHBvc2VkbHkiIGNvbW1lbnQgaXMgdGhhdCBpdCBpcyBub3QgZW50aXJl
+bHkgY2xlYXINCj4+IHRoYXQgdGhpcyB3b3VsZCBiZSB0aGUgY2FzZSBpZiBnZGJfZG9fcm91bmR1
+cCBpcyB6ZXJvLg0KPiANCj4gSSBndWVzcyB0aGF0IHZhcmlhYmxlIG5hbWUgaXMgImtnZGJfZG9f
+cm91bmR1cOKAnSA/DQoNClllcy4gV2lsbCBmaXguDQoNCj4gDQo+PiBUaGlzIHBhdGNoIGNyZWF0
+ZXMgdHdvIHdyYXBwZXIgZnVuY3Rpb25zLCB0ZXh0X3Bva2UoKSBhbmQNCj4gDQo+IEF2b2lkIGhh
+dmluZyAiVGhpcyBwYXRjaCIgb3IgIlRoaXMgY29tbWl0IiBpbiB0aGUgY29tbWl0IG1lc3NhZ2Uu
+IEl0IGlzDQo+IHRhdXRvbG9naWNhbGx5IHVzZWxlc3MuDQo+IA0KPiBBbHNvLCBkbw0KPiANCj4g
+JCBnaXQgZ3JlcCAnVGhpcyBwYXRjaCcgRG9jdW1lbnRhdGlvbi9wcm9jZXNzDQo+IA0KPiBmb3Ig
+bW9yZSBkZXRhaWxzLg0KDQpPay4NCg0KPj4gDQo+PiArdm9pZCAqdGV4dF9wb2tlX2tnZGIodm9p
+ZCAqYWRkciwgY29uc3Qgdm9pZCAqb3Bjb2RlLCBzaXplX3QgbGVuKQ0KPiANCj4gdGV4dF9wb2tl
+X3VubG9ja2VkKCkgSSBndWVzcy4gSSBkb24ndCB0aGluayBrZ2RiIGlzIHRoYXQgc3BlY2lhbCB0
+aGF0IGl0DQo+IG5lZWRzIGl0cyBvd24gZnVuY3Rpb24gZmxhdm9yLg0KDQpUZ2x4IHN1Z2dlc3Rl
+ZCB0aGlzIG5hbWluZyB0byBwcmV2ZW50IGFueW9uZSBmcm9tIG1pc3VzaW5nIHRleHRfcG9rZV9r
+ZGdiKCkuDQpUaGlzIGlzIGEgdmVyeSBzcGVjaWZpYyB1c2UtY2FzZSB0aGF0IG5vYm9keSBlbHNl
+IHNob3VsZCBuZWVkLg0KDQpSZWdhcmRzLA0KTmFkYXY=
