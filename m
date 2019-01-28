@@ -4,41 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04968C282C8
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8D9C282CF
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 17:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C662521741
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5821020989
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 17:20:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694925;
-	bh=Hfq9lfohhxRFEaFqQhiIQwfoydMry/33CK9vV5rh1OE=;
+	s=default; t=1548696044;
+	bh=41BvhBWtOTeFFGZmfcU5CdTz8ga1TmWQcE1yi7m43YU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=p04lSJkiwgWzw/JWDRx6BnGHB6w6mkQ9yJirNGhAmJa0BTLGosFr5wdTXzIcyWt5V
-	 4cd1RMBcPm9E5ZXPIptGibPEMd7TSB3JuFdebOqY641J8/ReOnCrAEYks9o13SO3j0
-	 NT0F9Ek9X2X2IMPDLTtXQLY5iwULhc/gwHFBa1JI=
+	b=WrelTjKdvCnU/gVvGUY7URgiL12A0I0YCGKjhG3YToTLYB+7a0vniS1Diu/4aWpni
+	 2JA5oLp6AdBrpdDHRj4rvnjT52YZmJxnvhWtrt3Cizaf1J0SEVy8lRcD0PaVHBNEKs
+	 //jXBgkBgcA36/tz9ajXaUoXeO+n5mzqUNpuLrPE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387673AbfA1QO5 (ORCPT
+        id S1731553AbfA1QEW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:14:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44436 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:04:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732968AbfA1QOy (ORCPT
+        id S1731550AbfA1QEV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:14:54 -0500
+        Mon, 28 Jan 2019 11:04:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50EB220879;
-        Mon, 28 Jan 2019 16:14:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9C7A2184D;
+        Mon, 28 Jan 2019 16:04:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692093;
-        bh=Hfq9lfohhxRFEaFqQhiIQwfoydMry/33CK9vV5rh1OE=;
+        s=default; t=1548691461;
+        bh=41BvhBWtOTeFFGZmfcU5CdTz8ga1TmWQcE1yi7m43YU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Izl0UFiSFZFh4Ncpc3eBOv+5CFCHhB1LX7B39IzbHVdr7YPegvR5RlCDUQpOxh6/q
-         t1Agvh6mNDSK5vhteK1hZQ3TSdKnmhjlf42LSDK71ZP7WsVGiJVSjt9QD1UtSwyF3A
-         8joG6CuopKk7qbO0T26NbtpmIP2ao7Z8gsy+ZFmU=
+        b=1AhmUYpkDxx/6bZSQGRIhNnxwYokQ5zlxFbkaTzGJfBNxYxFy7ZQDTxOQZuOta+d6
+         LqOFIqWNQ2PNS9+FLd4wXxeuRE8lP34ckl0Sc9quQ7ItHmRKJZsGuP0DTvi+wAo9n2
+         vObX+b2VfaqTsU9V+nETsohUKL9keBDoUThJ2Hz0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Zoran Markovic <zmarkovic@sierrawireless.com>,
@@ -47,12 +48,12 @@ Cc:     Zoran Markovic <zmarkovic@sierrawireless.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 064/170] smack: fix access permissions for keyring
-Date:   Mon, 28 Jan 2019 11:10:14 -0500
-Message-Id: <20190128161200.55107-64-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 100/258] smack: fix access permissions for keyring
+Date:   Mon, 28 Jan 2019 10:56:46 -0500
+Message-Id: <20190128155924.51521-100-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
-References: <20190128161200.55107-1-sashal@kernel.org>
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -90,10 +91,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index c8fd5c10b7c6..0d5ce7190b17 100644
+index 70d3066e69fe..017c47eb795e 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -4356,6 +4356,12 @@ static int smack_key_permission(key_ref_t key_ref,
+@@ -4333,6 +4333,12 @@ static int smack_key_permission(key_ref_t key_ref,
  	int request = 0;
  	int rc;
  
@@ -106,7 +107,7 @@ index c8fd5c10b7c6..0d5ce7190b17 100644
  	keyp = key_ref_to_ptr(key_ref);
  	if (keyp == NULL)
  		return -EINVAL;
-@@ -4375,10 +4381,10 @@ static int smack_key_permission(key_ref_t key_ref,
+@@ -4356,10 +4362,10 @@ static int smack_key_permission(key_ref_t key_ref,
  	ad.a.u.key_struct.key = keyp->serial;
  	ad.a.u.key_struct.key_desc = keyp->description;
  #endif
