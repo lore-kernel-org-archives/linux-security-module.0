@@ -2,83 +2,125 @@ Return-Path: <SRS0=3eDG=QE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D89AFC282C8
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 13:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 893CCC282CF
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7933A20880
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 13:17:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="aRk6N3zC"
+	by mail.kernel.org (Postfix) with ESMTP id 5A74F20663
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548693135;
+	bh=t7heJ8OzTmswUO9H+/IrsZg47198KdFvP3EOPbuvgCE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=SEIAse7hcaIZv6J8VTyK8Zmkp8Uv+x3LpQG7YRO3N0pb64Wj6uqvP1M+ZVsF95rj3
+	 bsDnG0mEoC7i7fvJVPfwVVWI00w3Tnnassa5o5wCLuXXCiuAWuuAomDyRudq+8YtWp
+	 4Cz4/3k+B4hr6Du+BoSNBEu+UT3V1tltQFWho6yo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfA1NRx (ORCPT
+        id S2389396AbfA1QcJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:17:53 -0500
-Received: from forward500j.mail.yandex.net ([5.45.198.250]:53143 "EHLO
-        forward500j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726647AbfA1NRw (ORCPT
+        Mon, 28 Jan 2019 11:32:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390305AbfA1Q06 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:17:52 -0500
-X-Greylist: delayed 413 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Jan 2019 08:17:50 EST
-Received: from mxback17j.mail.yandex.net (mxback17j.mail.yandex.net [IPv6:2a02:6b8:0:1619::93])
-        by forward500j.mail.yandex.net (Yandex) with ESMTP id 898AB11C15A3;
-        Mon, 28 Jan 2019 16:10:55 +0300 (MSK)
-Received: from unknown (unknown [::1])
-        by mxback17j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id IbtJOM6kfU-AsYCDF1Z;
-        Mon, 28 Jan 2019 16:10:54 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1548681054;
-        bh=nAwxL3SDlj1+u9HZn84u2Qjn5WFkptW9nWo7kJ9zNRk=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
-        b=aRk6N3zC6P1cU/07KQuUJz92UJxfM/WL+cVY5n82ZGRAxikZVxeuOchzdeTDRGsLE
-         VqJfbWg1ZraGEZS44Vs1GHuN4WsG4bFCzrFipPNOpb/02Nd4j5yTDiamXnxH9ETzxO
-         edzRQE18WmHg1wTRLcr1dq6oRJpw0KiXQpV/9jf8=
-Authentication-Results: mxback17j.mail.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by iva5-0acfc31d2b43.qloud-c.yandex.net with HTTP;
-        Mon, 28 Jan 2019 16:10:54 +0300
-From:   Nazarov Sergey <s-nazarov@yandex.ru>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
-         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
-         <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
-         <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
-         <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
-         <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
-         <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net> <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
+        Mon, 28 Jan 2019 11:26:58 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 703662171F;
+        Mon, 28 Jan 2019 16:26:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692818;
+        bh=t7heJ8OzTmswUO9H+/IrsZg47198KdFvP3EOPbuvgCE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ze7rASXj9RqUazHATCZfZtt5yCC+rGsh0e6eUXJqb13sh3+mfGnfbqOpJnjcFp2YC
+         zR6RUztzNzygIzGWf6E+0n7yuLV4wAF64vp8E1Spw+fsoVO0AH47eM4k01ugozos7O
+         dicMT7RE8kmx8NzaMtnYEaEGSMZqL03+hKpa8aQc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Zoran Markovic <zmarkovic@sierrawireless.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 21/61] smack: fix access permissions for keyring
+Date:   Mon, 28 Jan 2019 11:25:43 -0500
+Message-Id: <20190128162623.59854-21-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
+References: <20190128162623.59854-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Mon, 28 Jan 2019 16:10:54 +0300
-Message-Id: <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-25.01.2019, 19:46, "Paul Moore" <paul@paul-moore.com>:
-> Hmm, I think the above calculation should take into account the actual
-> length of the IP options, and not just the max size (calculate it
-> based on iphdr->ihl).
->
-> Beyond that fix, I think it's time to put together a proper patchset
-> and post it to the lists for formal review/merging.
->
-> Thanks for your work on this.
->
-> --
-> paul moore
-> www.paul-moore.com
+From: Zoran Markovic <zmarkovic@sierrawireless.com>
 
-Where we can take actual IP options length? Sorry, I'm not so familiar with linux network stack.
-And also, ip_options_compile could change IP options data (SSRR, LSRR, RR, TIMESTAMP options),
-so, we can't use ip_options_compile again for these options. Am I right?
+[ Upstream commit 5b841bfab695e3b8ae793172a9ff7990f99cc3e2 ]
+
+Function smack_key_permission() only issues smack requests for the
+following operations:
+ - KEY_NEED_READ (issues MAY_READ)
+ - KEY_NEED_WRITE (issues MAY_WRITE)
+ - KEY_NEED_LINK (issues MAY_WRITE)
+ - KEY_NEED_SETATTR (issues MAY_WRITE)
+A blank smack request is issued in all other cases, resulting in
+smack access being granted if there is any rule defined between
+subject and object, or denied with -EACCES otherwise.
+
+Request MAY_READ access for KEY_NEED_SEARCH and KEY_NEED_VIEW.
+Fix the logic in the unlikely case when both MAY_READ and
+MAY_WRITE are needed. Validate access permission field for valid
+contents.
+
+Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/smack/smack_lsm.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 59350f6b7e8d..e36976ed38e4 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3847,6 +3847,12 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	int request = 0;
+ 	int rc;
+ 
++	/*
++	 * Validate requested permissions
++	 */
++	if (perm & ~KEY_NEED_ALL)
++		return -EINVAL;
++
+ 	keyp = key_ref_to_ptr(key_ref);
+ 	if (keyp == NULL)
+ 		return -EINVAL;
+@@ -3866,10 +3872,10 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	ad.a.u.key_struct.key = keyp->serial;
+ 	ad.a.u.key_struct.key_desc = keyp->description;
+ #endif
+-	if (perm & KEY_NEED_READ)
+-		request = MAY_READ;
++	if (perm & (KEY_NEED_READ | KEY_NEED_SEARCH | KEY_NEED_VIEW))
++		request |= MAY_READ;
+ 	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
+-		request = MAY_WRITE;
++		request |= MAY_WRITE;
+ 	rc = smk_access(tkp, keyp->security, request, &ad);
+ 	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
+ 	return rc;
+-- 
+2.19.1
+
