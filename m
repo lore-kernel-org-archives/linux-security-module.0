@@ -2,107 +2,105 @@ Return-Path: <SRS0=3eDG=QE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35153C282D0
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 22:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C0EAC282CF
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 22:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 062C821738
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 22:18:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 679672148E
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 22:33:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="pVGF+MyI"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bG3QcuDC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfA1WSz (ORCPT
+        id S1726779AbfA1WdY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jan 2019 17:18:55 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45238 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfA1WSz (ORCPT
+        Mon, 28 Jan 2019 17:33:24 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:35738 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726693AbfA1WdX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jan 2019 17:18:55 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s5-v6so15669728ljd.12
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Jan 2019 14:18:53 -0800 (PST)
+        Mon, 28 Jan 2019 17:33:23 -0500
+Received: by mail-yb1-f194.google.com with SMTP id 64so2991635ybs.2
+        for <linux-security-module@vger.kernel.org>; Mon, 28 Jan 2019 14:33:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=m7Gs7bTAwClf5KxYna9Vewiot580IUcIoS/C4VroQj0=;
-        b=pVGF+MyIyAJ8WyCraAGurY1wEkFM3NfO3p5OQ2PaHiL5NhC5lBqSb4djOUEhYmcQv/
-         UHJ2BAND6mkYAanUwKd3J4Vd5RszkpIwlIWXZpOhAQcKHbkl64HvxHSYNisrZNPv/Fsz
-         LiUZFM2LxKoHyIgYVUq9C+e4z77YZGm/aCj2SrECNLZ97TunG3JroVm03meqYZAUq6p7
-         zVkfquY5BZlD8QUibD4mz/nFJ1a5os8cC+x0jn1frDOPbgdxLIYm69AmYhjWJQ0khdw0
-         qhnyKrou0Y1AQwbNdpLYBDjp1XSflsCL9JmCSRQZYoK3jwvyKDaJKdQMkNdr0z8iXy2/
-         K/tA==
+        bh=U1RPKRUV2AU4z/ZEGpXMul2En7X+8ucTqjgs3T7MuKk=;
+        b=bG3QcuDCLcExcnd5oXGm80993j03M0/qB/r7IUP76DABlt4mDxYTL4c4GiUAzjvISD
+         27znRZBw+zwxOkuQReeMBXk+ifmOcJTt1ZmmD26wph/H1BoGXxLL2UgHKqQhpXCc5ECU
+         2q2JY992MNeqgjY1f4xPSkObZkIN/HP2ygu8I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=m7Gs7bTAwClf5KxYna9Vewiot580IUcIoS/C4VroQj0=;
-        b=Rw/PXf71UY8VTz3ybg65OfKYzpIwyUOrCEufF73d5E196hYdzh3ed2jGJuRmSUAAWN
-         5yt4d8OCFF3rBSimXQg0/NnAD5Ej4us8PxbEHui972cgQ7kPzybeRJMmlhm0xt6zJSOh
-         uPOXdJjJAiIwOtuVwe0J8+P84kD+Lhudn4rMqc4kZL936oGg3cHYmgwFKXyI9inn755M
-         8E9XQ2yiZhAwQ8Ot6Gx7MVlKi7mALvA1noDdD9OoDTChUVjWnnhBsWfIrD/Y3iJp0R4c
-         d1otfxUB0vCaXvS58Q/VEop37Ht7XuBdJxeuN+GdVpsAT3JmGK0yiqoXUyz86k+S0zgj
-         kusg==
-X-Gm-Message-State: AJcUukdn/IxXWlv4t3b7591UrhFf9GBrs+euiwLHOyN0FqvUz4NouBCE
-        VRaZMrL1/pGoa8P7WuTI+6YF1jDd2VfH695/OHxQ
-X-Google-Smtp-Source: ALg8bN7F3AwxqmyO1KLKgaxhG/J7lNs744zjDF1omCIYf7PBoTX0rhXMDQDmT/1bjZyMvHdtokYrY3Hfef6a7LWtulI=
-X-Received: by 2002:a2e:9c87:: with SMTP id x7-v6mr17654893lji.196.1548713932777;
- Mon, 28 Jan 2019 14:18:52 -0800 (PST)
+        bh=U1RPKRUV2AU4z/ZEGpXMul2En7X+8ucTqjgs3T7MuKk=;
+        b=tAzkC1Y0aq1Nea+qFPIws4qsSJThaxtOK/cdJ9rvx9Yt50HZU9uFhsCj+RU/Zy6BHP
+         cjK+hcc3WUkwP2t7iCiea5jL4p+zOzNQhZO+vqJk7ACRjbkXiy8yi3AYn7PILPrsUPYo
+         NfL6XA7sx6OxZaOhMh/0Dg49oivcUBHP/kB5bf+SE4iNP+TouzvEMENFku6LsdfB1S/T
+         AIFGrZomZRjkNeNm6H8xZ/1BjugnmNblVn0NzZDad/CQ0sFPI7rfRUpSw8X9++jWmW82
+         6W1M7pf2zrY4RG9SJ1IOg073C8UuCkYxxqwjJcWEQ/dgTwZ5qHw2FiZoH+HViv6+puSE
+         XzUA==
+X-Gm-Message-State: AJcUukdVpMKJSpMZvm2N4zL+hQxcf6D43YMI5gs2S/OdOAnczLB5LXNz
+        QVs5HM0m+suC5WKIBbTuX5/rlPihsCkY75kV9+VgLg==
+X-Google-Smtp-Source: ALg8bN4dmnQ9pzrT5adKFtK2QwJTsi4lq/3bcY3KCNQO2D3JfRGqMbj1HreK6uHdnpB9Ig3PgtbRR9dAai/O/CUnDkc=
+X-Received: by 2002:a25:35c3:: with SMTP id c186mr14274696yba.464.1548714803112;
+ Mon, 28 Jan 2019 14:33:23 -0800 (PST)
 MIME-Version: 1.0
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
- <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
- <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
- <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
- <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
- <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
- <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net> <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
- <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net>
-In-Reply-To: <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 28 Jan 2019 17:18:41 -0500
-Message-ID: <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
-To:     Nazarov Sergey <s-nazarov@yandex.ru>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
+References: <CAGXu5j+V61YOk7oAEw3Fm5rOxQAmy2-3QqOZaOP_FROLBUk2Qg@mail.gmail.com>
+ <20190116154606.92331-1-mortonm@chromium.org> <alpine.LRH.2.21.1901260714380.27585@namei.org>
+ <CAJ-EccMc3Xz0DZAm_u09VvTzWRzhrf9x0SpJKX=4FR6NYwqkpQ@mail.gmail.com>
+ <CAJ-EccMAb-OX3R6mk4me0x6dS2bQw=yZrpKmF7JpzHDWSX5e4g@mail.gmail.com>
+ <CAGXu5jKLdcadm30NwpquX1iGJRsjZY-A5grc65BC64B96RE_Eg@mail.gmail.com> <CAJ-EccM3BzUUS0CZuhAcj47+KR57JwvhLWiQoc86LWb87wWBcg@mail.gmail.com>
+In-Reply-To: <CAJ-EccM3BzUUS0CZuhAcj47+KR57JwvhLWiQoc86LWb87wWBcg@mail.gmail.com>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Mon, 28 Jan 2019 14:33:11 -0800
+Message-ID: <CAJ-EccPpb_544TgW3YtcT=ptGDwTxx=KOMBdLtqUNim7ynuCdQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] LSM: add SafeSetID module that gates setid calls
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 28, 2019 at 8:10 AM Nazarov Sergey <s-nazarov@yandex.ru> wrote:
-> 25.01.2019, 19:46, "Paul Moore" <paul@paul-moore.com>:
-> > Hmm, I think the above calculation should take into account the actual
-> > length of the IP options, and not just the max size (calculate it
-> > based on iphdr->ihl).
+FWIW, I've now done a manual test of this LSMs functionality on a
+Linux VM built from the next-general branch. Adding policies, policy
+enforcement by the LSM, and flushing policies all worked as intended.
+
+So there hopefully won't be any more surprises.
+
+On Mon, Jan 28, 2019 at 12:19 PM Micah Morton <mortonm@chromium.org> wrote:
+>
+> On Mon, Jan 28, 2019 at 11:56 AM Kees Cook <keescook@chromium.org> wrote:
 > >
-> > Beyond that fix, I think it's time to put together a proper patchset
-> > and post it to the lists for formal review/merging.
+> > On Tue, Jan 29, 2019 at 8:47 AM Micah Morton <mortonm@chromium.org> wrote:
+> > >
+> > > I'm getting the following crash when booting after compiling a kernel
+> > > with this LSM enabled, so I'll have to figure out what is going on.
+> > > All the "core" functionality of this LSM has been tested thoroughly
+> > > (we're already using this LSM on ChromeOS), but looks like there's
+> > > some debugging of the initialization that still needs to be done.
 > >
-> > Thanks for your work on this.
+> >
+> > +DEFINE_LSM(safesetid_security_init) = {
+> > +       .init = safesetid_security_init,
+> > +};
+> >
+> > I think this is from not having:
+> >
+> > .name = "safesetid",
+>
+> That fixed it for me! Thanks
+>
+> >
+> > I missed that in the review, sorry!
 > >
 > > --
-> > paul moore
-> > www.paul-moore.com
->
-> Where we can take actual IP options length? Sorry, I'm not so familiar with linux network stack.
-
-I'm the one who needs to apologize; you're doing it correctly.  Not
-sure what I was thinking there, sorry about that.
-
-> And also, ip_options_compile could change IP options data (SSRR, LSRR, RR, TIMESTAMP options),
-> so, we can't use ip_options_compile again for these options. Am I right?
-
-If we don't pass a skb into ip_options_compile(), meaning both "skb"
-and "rt" will be NULL, then I don't believe the option data will
-change.  Am I missing something?
-
--- 
-paul moore
-www.paul-moore.com
+> > Kees Cook
