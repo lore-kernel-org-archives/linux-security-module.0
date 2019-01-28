@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8D9C282CF
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 17:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 742C2C282CF
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 17:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5821020989
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 17:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 455D120881
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jan 2019 17:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696044;
-	bh=41BvhBWtOTeFFGZmfcU5CdTz8ga1TmWQcE1yi7m43YU=;
+	s=default; t=1548697469;
+	bh=aXXqICXzWm3XoJwuL9xLgK1+C7i2nE2gjwKSJ0LPjEw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WrelTjKdvCnU/gVvGUY7URgiL12A0I0YCGKjhG3YToTLYB+7a0vniS1Diu/4aWpni
-	 2JA5oLp6AdBrpdDHRj4rvnjT52YZmJxnvhWtrt3Cizaf1J0SEVy8lRcD0PaVHBNEKs
-	 //jXBgkBgcA36/tz9ajXaUoXeO+n5mzqUNpuLrPE=
+	b=grgXWLYI2lu6fDGe2TeoM72O9RN5hD+GgQOEAO+Z1yI7KvvQwiGYzSPFkXbpnbuWm
+	 Uk8JLOR8/fzHirAIAU/P5WlnpvUZYHmiW2sjUXprySBcBSpygQuJy6OTtH0X8Jh1qZ
+	 mXetJYeMp2DcKBi1BNOl1W5L9EtQpPx7hq00LAYA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731553AbfA1QEW (ORCPT
+        id S1728148AbfA1PtD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:04:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49864 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:49:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731550AbfA1QEV (ORCPT
+        id S1727586AbfA1PtC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:04:21 -0500
+        Mon, 28 Jan 2019 10:49:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9C7A2184D;
-        Mon, 28 Jan 2019 16:04:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A82720880;
+        Mon, 28 Jan 2019 15:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691461;
-        bh=41BvhBWtOTeFFGZmfcU5CdTz8ga1TmWQcE1yi7m43YU=;
+        s=default; t=1548690541;
+        bh=aXXqICXzWm3XoJwuL9xLgK1+C7i2nE2gjwKSJ0LPjEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1AhmUYpkDxx/6bZSQGRIhNnxwYokQ5zlxFbkaTzGJfBNxYxFy7ZQDTxOQZuOta+d6
-         LqOFIqWNQ2PNS9+FLd4wXxeuRE8lP34ckl0Sc9quQ7ItHmRKJZsGuP0DTvi+wAo9n2
-         vObX+b2VfaqTsU9V+nETsohUKL9keBDoUThJ2Hz0=
+        b=Q8Y0dbZFpc7U2M95td1rWfrYaV7Y0oPq97wRnZ+a2Bd832xFxXKrFkIRu0LyFUmxi
+         z02ERM19J/QNn9cpD7k21K3xaOsYPm+IxvxkLWy9RUehYlp/iWiK6SYX6ryarG3/el
+         xTL9NrbRAmeA28/LaNQQMlKpfjyFvkIleM67UaF8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Zoran Markovic <zmarkovic@sierrawireless.com>,
@@ -48,12 +48,12 @@ Cc:     Zoran Markovic <zmarkovic@sierrawireless.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 100/258] smack: fix access permissions for keyring
-Date:   Mon, 28 Jan 2019 10:56:46 -0500
-Message-Id: <20190128155924.51521-100-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 117/304] smack: fix access permissions for keyring
+Date:   Mon, 28 Jan 2019 10:40:34 -0500
+Message-Id: <20190128154341.47195-117-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
-References: <20190128155924.51521-1-sashal@kernel.org>
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -91,7 +91,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 70d3066e69fe..017c47eb795e 100644
+index 81fb4c1631e9..cd720c06b78c 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
 @@ -4333,6 +4333,12 @@ static int smack_key_permission(key_ref_t key_ref,
