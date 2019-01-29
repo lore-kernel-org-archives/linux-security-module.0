@@ -2,79 +2,105 @@ Return-Path: <SRS0=8CgQ=QF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D15B3C282D0
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 07:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3315DC169C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 11:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 954D22177E
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 07:23:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="Mj7zZe+l"
+	by mail.kernel.org (Postfix) with ESMTP id 0346B20844
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 11:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725767AbfA2HXf (ORCPT
+        id S1725808AbfA2LcH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jan 2019 02:23:35 -0500
-Received: from forward501o.mail.yandex.net ([37.140.190.203]:34708 "EHLO
-        forward501o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725554AbfA2HXe (ORCPT
+        Tue, 29 Jan 2019 06:32:07 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:16434 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfA2LcH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jan 2019 02:23:34 -0500
-Received: from mxback15o.mail.yandex.net (mxback15o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::66])
-        by forward501o.mail.yandex.net (Yandex) with ESMTP id 66B3C1E803CE;
-        Tue, 29 Jan 2019 10:23:31 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback15o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id MvDyFWlBz6-NTkOq2SE;
-        Tue, 29 Jan 2019 10:23:30 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1548746610;
-        bh=WtQ7gdzi44CTthlHJ9m5L0x76EU4jNUXdRdghWsgNb8=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
-        b=Mj7zZe+lR4uaDgordXu7FXtUMkXFdDic7h2wMz7Mtn1N6DqBIXYBPRt+EYCeMrpxW
-         GpO+7z5cR2neXwfAXVx4iLnt9+3ngaAvQ859Kdhpta9NGwBb6NFAEZzFYAE2F9DEqP
-         VY7faodkaVv7EfIsRKu06lkGXTj8EOc7yljNKwXA=
-Authentication-Results: mxback15o.mail.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by myt4-929fb874f3f2.qloud-c.yandex.net with HTTP;
-        Tue, 29 Jan 2019 10:23:29 +0300
-From:   Nazarov Sergey <s-nazarov@yandex.ru>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Tue, 29 Jan 2019 06:32:07 -0500
+Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0TBW5sg099493;
+        Tue, 29 Jan 2019 20:32:05 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
+ Tue, 29 Jan 2019 20:32:05 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0TBW5hP099488
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 29 Jan 2019 20:32:05 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: WARNING in apparmor_secid_to_secctx
+To:     Dmitry Vyukov <dvyukov@google.com>,
         Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
-         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
-         <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
-         <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
-         <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
-         <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
-         <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net> <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
-        <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net> <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>
+References: <000000000000c178e305749daba4@google.com>
+ <CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
+ <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov>
+ <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
+ <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov>
+ <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
+ <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
+ <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+ <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+ <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
+ <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+ <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
+ <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+ <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
+ <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
+ <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
+Date:   Tue, 29 Jan 2019 20:32:01 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Tue, 29 Jan 2019 10:23:29 +0300
-Message-Id: <3499451548746609@myt4-929fb874f3f2.qloud-c.yandex.net>
+In-Reply-To: <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-29.01.2019, 01:18, "Paul Moore" <paul@paul-moore.com>:
-> If we don't pass a skb into ip_options_compile(), meaning both "skb"
-> and "rt" will be NULL, then I don't believe the option data will
-> change. Am I missing something?
->
-> --
-> paul moore
-> www.paul-moore.com
+On 2018/09/06 19:59, Dmitry Vyukov wrote:
+> On Wed, Sep 5, 2018 at 7:37 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 9/5/2018 4:08 AM, Dmitry Vyukov wrote:
+>>> Thanks! I've re-enabled selinux on syzbot:
+>>> https://github.com/google/syzkaller/commit/196410e4f5665d4d2bf6c818d06f1c8d03cfa8cc
+>>> Now we will have instances with apparmor and with selinux.
+>>
+>> Any chance we could get a Smack instance as well?
+> 
+> Hi Casey,
+> 
+> Sure!
+> Provided you want to fix bugs ;)
+> I've setup an instance with smack enabled:
+> https://github.com/google/syzkaller/commit/0bb7a7eb8e0958c6fbe2d69615b9fae4af88c8ee
+> 
 
-I mean, in cipso_v4_error we copy option data from skb before ip_options_compile call:
-+       memcpy(opt->__data, (unsigned char *)&(ip_hdr(skb)[1]), opt->optlen);
-But skb IP header data could be already changed by first call of ip_options_compile
-when packet received.
+Dmitry, is it possible to update configs for linux-next.git , for
+we want to test a big change in LSM which will go to Linux 5.1 ?
+
+TOMOYO security module (CONFIG_SECURITY_TOMOYO=y) can now coexist with
+SELinux/Smack/AppArmor security modules, and SafeSetID security module
+(CONFIG_SECURITY_SAFESETID=y) was added. Testing with these modules also
+enabled might find something...
