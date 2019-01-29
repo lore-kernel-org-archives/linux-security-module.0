@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3A4C282D0
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA20C282D0
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C57B72177E
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2680C2177E
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:40:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727510AbfA2AjR (ORCPT
+        id S1727066AbfA2Akl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:39:17 -0500
-Received: from mga06.intel.com ([134.134.136.31]:5081 "EHLO mga06.intel.com"
+        Mon, 28 Jan 2019 19:40:41 -0500
+Received: from mga06.intel.com ([134.134.136.31]:5088 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727304AbfA2AjN (ORCPT
+        id S1727461AbfA2AjR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:39:13 -0500
+        Mon, 28 Jan 2019 19:39:17 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921891"
+   d="scan'208";a="133921901"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
   by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:11 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -42,13 +42,14 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
-        Nadav Amit <namit@vmware.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 03/20] x86/mm: temporary mm struct
-Date:   Mon, 28 Jan 2019 16:34:05 -0800
-Message-Id: <20190129003422.9328-4-rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 06/20] x86/alternative: use temporary mm for text poking
+Date:   Mon, 28 Jan 2019 16:34:08 -0800
+Message-Id: <20190129003422.9328-7-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
@@ -56,82 +57,199 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Nadav Amit <namit@vmware.com>
 
-Sometimes we want to set a temporary page-table entries (PTEs) in one of
-the cores, without allowing other cores to use - even speculatively -
-these mappings. There are two benefits for doing so:
+text_poke() can potentially compromise the security as it sets temporary
+PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
+from other cores accidentally or maliciously, if an attacker gains the
+ability to write onto kernel memory.
 
-(1) Security: if sensitive PTEs are set, temporary mm prevents their use
-in other cores. This hardens the security as it prevents exploding a
-dangling pointer to overwrite sensitive data using the sensitive PTE.
+Moreover, since remote TLBs are not flushed after the temporary PTEs are
+removed, the time-window in which the code is writable is not limited if
+the fixmap PTEs - maliciously or accidentally - are cached in the TLB.
+To address these potential security hazards, we use a temporary mm for
+patching the code.
 
-(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-remote page-tables.
+Finally, text_poke() is also not conservative enough when mapping pages,
+as it always tries to map 2 pages, even when a single one is sufficient.
+So try to be more conservative, and do not map more than needed.
 
-To do so a temporary mm_struct can be used. Mappings which are private
-for this mm can be set in the userspace part of the address-space.
-During the whole time in which the temporary mm is loaded, interrupts
-must be disabled.
-
-The first use-case for temporary PTEs, which will follow, is for poking
-the kernel text.
-
-[ Commit message was written by Nadav ]
-
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/mmu_context.h | 32 ++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/x86/include/asm/fixmap.h |   2 -
+ arch/x86/kernel/alternative.c | 106 +++++++++++++++++++++++++++-------
+ arch/x86/xen/mmu_pv.c         |   2 -
+ 3 files changed, 84 insertions(+), 26 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 19d18fae6ec6..cd0c29e494a6 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -356,4 +356,36 @@ static inline unsigned long __get_current_cr3_fast(void)
- 	return cr3;
- }
+diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+index 50ba74a34a37..9da8cccdf3fb 100644
+--- a/arch/x86/include/asm/fixmap.h
++++ b/arch/x86/include/asm/fixmap.h
+@@ -103,8 +103,6 @@ enum fixed_addresses {
+ #ifdef CONFIG_PARAVIRT
+ 	FIX_PARAVIRT_BOOTMAP,
+ #endif
+-	FIX_TEXT_POKE1,	/* reserve 2 pages for text_poke() */
+-	FIX_TEXT_POKE0, /* first page is last, because allocation is backward */
+ #ifdef	CONFIG_X86_INTEL_MID
+ 	FIX_LNW_VRTC,
+ #endif
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index ae05fbb50171..76d482a2b716 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -11,6 +11,7 @@
+ #include <linux/stop_machine.h>
+ #include <linux/slab.h>
+ #include <linux/kdebug.h>
++#include <linux/mmu_context.h>
+ #include <asm/text-patching.h>
+ #include <asm/alternative.h>
+ #include <asm/sections.h>
+@@ -683,41 +684,102 @@ __ro_after_init unsigned long poking_addr;
  
-+typedef struct {
-+	struct mm_struct *prev;
-+} temporary_mm_state_t;
+ static void *__text_poke(void *addr, const void *opcode, size_t len)
+ {
++	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
++	temporary_mm_state_t prev;
++	struct page *pages[2] = {NULL};
+ 	unsigned long flags;
+-	char *vaddr;
+-	struct page *pages[2];
+-	int i;
++	pte_t pte, *ptep;
++	spinlock_t *ptl;
++	pgprot_t prot;
+ 
+ 	/*
+-	 * While boot memory allocator is runnig we cannot use struct
+-	 * pages as they are not yet initialized.
++	 * While boot memory allocator is running we cannot use struct pages as
++	 * they are not yet initialized.
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+-		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
++		if (cross_page_boundary)
++			pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+ 	} else {
+ 		pages[0] = virt_to_page(addr);
+ 		WARN_ON(!PageReserved(pages[0]));
+-		pages[1] = virt_to_page(addr + PAGE_SIZE);
++		if (cross_page_boundary)
++			pages[1] = virt_to_page(addr + PAGE_SIZE);
+ 	}
+-	BUG_ON(!pages[0]);
++	BUG_ON(!pages[0] || (cross_page_boundary && !pages[1]));
 +
-+/*
-+ * Using a temporary mm allows to set temporary mappings that are not accessible
-+ * by other cores. Such mappings are needed to perform sensitive memory writes
-+ * that override the kernel memory protections (e.g., W^X), without exposing the
-+ * temporary page-table mappings that are required for these write operations to
-+ * other cores.
-+ *
-+ * Context: The temporary mm needs to be used exclusively by a single core. To
-+ *          harden security IRQs must be disabled while the temporary mm is
-+ *          loaded, thereby preventing interrupt handler bugs from override the
-+ *          kernel memory protection.
-+ */
-+static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
-+{
-+	temporary_mm_state_t state;
+ 	local_irq_save(flags);
+-	set_fixmap(FIX_TEXT_POKE0, page_to_phys(pages[0]));
+-	if (pages[1])
+-		set_fixmap(FIX_TEXT_POKE1, page_to_phys(pages[1]));
+-	vaddr = (char *)fix_to_virt(FIX_TEXT_POKE0);
+-	memcpy(&vaddr[(unsigned long)addr & ~PAGE_MASK], opcode, len);
+-	clear_fixmap(FIX_TEXT_POKE0);
+-	if (pages[1])
+-		clear_fixmap(FIX_TEXT_POKE1);
+-	local_flush_tlb();
+-	sync_core();
+-	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+-	   that causes hangs on some VIA CPUs. */
+-	for (i = 0; i < len; i++)
+-		BUG_ON(((char *)addr)[i] != ((char *)opcode)[i]);
 +
-+	lockdep_assert_irqs_disabled();
-+	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	switch_mm_irqs_off(NULL, mm, current);
-+	return state;
-+}
++	/*
++	 * The lock is not really needed, but this allows to avoid open-coding.
++	 */
++	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
 +
-+static inline void unuse_temporary_mm(temporary_mm_state_t prev)
-+{
-+	lockdep_assert_irqs_disabled();
-+	switch_mm_irqs_off(NULL, prev.prev, current);
-+}
++	/*
++	 * This must not fail; preallocated in poking_init().
++	 */
++	VM_BUG_ON(!ptep);
 +
- #endif /* _ASM_X86_MMU_CONTEXT_H */
++	/*
++	 * flush_tlb_mm_range() would be called when the poking_mm is not
++	 * loaded. When PCID is in use, the flush would be deferred to the time
++	 * the poking_mm is loaded again. Set the PTE as non-global to prevent
++	 * it from being used when we are done.
++	 */
++	prot = __pgprot(pgprot_val(PAGE_KERNEL) & ~_PAGE_GLOBAL);
++
++	pte = mk_pte(pages[0], prot);
++	set_pte_at(poking_mm, poking_addr, ptep, pte);
++
++	if (cross_page_boundary) {
++		pte = mk_pte(pages[1], prot);
++		set_pte_at(poking_mm, poking_addr + PAGE_SIZE, ptep + 1, pte);
++	}
++
++	/*
++	 * Loading the temporary mm behaves as a compiler barrier, which
++	 * guarantees that the PTE will be set at the time memcpy() is done.
++	 */
++	prev = use_temporary_mm(poking_mm);
++
++	kasan_disable_current();
++	memcpy((u8 *)poking_addr + offset_in_page(addr), opcode, len);
++	kasan_enable_current();
++
++	/*
++	 * Ensure that the PTE is only cleared after the instructions of memcpy
++	 * were issued by using a compiler barrier.
++	 */
++	barrier();
++
++	pte_clear(poking_mm, poking_addr, ptep);
++	if (cross_page_boundary)
++		pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
++
++	/*
++	 * Loading the previous page-table hierarchy requires a serializing
++	 * instruction that already allows the core to see the updated version.
++	 * Xen-PV is assumed to serialize execution in a similar manner.
++	 */
++	unuse_temporary_mm(prev);
++
++	/*
++	 * Flushing the TLB might involve IPIs, which would require enabled
++	 * IRQs, but not if the mm is not used, as it is in this point.
++	 */
++	flush_tlb_mm_range(poking_mm, poking_addr, poking_addr +
++			   (cross_page_boundary ? 2 : 1) * PAGE_SIZE,
++			   PAGE_SHIFT, false);
++
++	pte_unmap_unlock(ptep, ptl);
++	/*
++	 * If the text doesn't match what we just wrote; something is
++	 * fundamentally screwy, there's nothing we can really do about that.
++	 */
++	BUG_ON(memcmp(addr, opcode, len));
++
+ 	local_irq_restore(flags);
+ 	return addr;
+ }
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index 0f4fe206dcc2..82b181fcefe5 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -2319,8 +2319,6 @@ static void xen_set_fixmap(unsigned idx, phys_addr_t phys, pgprot_t prot)
+ #elif defined(CONFIG_X86_VSYSCALL_EMULATION)
+ 	case VSYSCALL_PAGE:
+ #endif
+-	case FIX_TEXT_POKE0:
+-	case FIX_TEXT_POKE1:
+ 		/* All local page mappings */
+ 		pte = pfn_pte(phys, prot);
+ 		break;
 -- 
 2.17.1
 
