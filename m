@@ -2,168 +2,79 @@ Return-Path: <SRS0=8CgQ=QF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1088BC282CD
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D15B3C282D0
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 07:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFFF32177E
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 954D22177E
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 07:23:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="Mj7zZe+l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfA2AjM (ORCPT
+        id S1725767AbfA2HXf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:39:12 -0500
-Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726845AbfA2AjL (ORCPT
+        Tue, 29 Jan 2019 02:23:35 -0500
+Received: from forward501o.mail.yandex.net ([37.140.190.203]:34708 "EHLO
+        forward501o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725554AbfA2HXe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:39:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921882"
-Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
-  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:10 -0800
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 00/20] Merge text_poke fixes and executable lockdowns
-Date:   Mon, 28 Jan 2019 16:34:02 -0800
-Message-Id: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 29 Jan 2019 02:23:34 -0500
+Received: from mxback15o.mail.yandex.net (mxback15o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::66])
+        by forward501o.mail.yandex.net (Yandex) with ESMTP id 66B3C1E803CE;
+        Tue, 29 Jan 2019 10:23:31 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback15o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id MvDyFWlBz6-NTkOq2SE;
+        Tue, 29 Jan 2019 10:23:30 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1548746610;
+        bh=WtQ7gdzi44CTthlHJ9m5L0x76EU4jNUXdRdghWsgNb8=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
+        b=Mj7zZe+lR4uaDgordXu7FXtUMkXFdDic7h2wMz7Mtn1N6DqBIXYBPRt+EYCeMrpxW
+         GpO+7z5cR2neXwfAXVx4iLnt9+3ngaAvQ859Kdhpta9NGwBb6NFAEZzFYAE2F9DEqP
+         VY7faodkaVv7EfIsRKu06lkGXTj8EOc7yljNKwXA=
+Authentication-Results: mxback15o.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by myt4-929fb874f3f2.qloud-c.yandex.net with HTTP;
+        Tue, 29 Jan 2019 10:23:29 +0300
+From:   Nazarov Sergey <s-nazarov@yandex.ru>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
+References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
+         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
+         <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
+         <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
+         <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
+         <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
+         <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net> <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
+        <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net> <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
+Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Tue, 29 Jan 2019 10:23:29 +0300
+Message-Id: <3499451548746609@myt4-929fb874f3f2.qloud-c.yandex.net>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patchset improves several overlapping issues around stale TLB
-entries and W^X violations. It is combined from a slightly tweaked
-"x86/alternative: text_poke() enhancements v7" [1] and a next version of
-the "Don’t leave executable TLB entries to freed pages v2" [2]
-patchsets that were conflicting.
+29.01.2019, 01:18, "Paul Moore" <paul@paul-moore.com>:
+> If we don't pass a skb into ip_options_compile(), meaning both "skb"
+> and "rt" will be NULL, then I don't believe the option data will
+> change. Am I missing something?
+>
+> --
+> paul moore
+> www.paul-moore.com
 
-The related issues that this fixes:
-1. Fixmap PTEs that are used for patching are available for access from
-   other cores and might be exploited. They are not even flushed from
-   the TLB in remote cores, so the risk is even higher. Address this
-   issue by introducing a temporary mm that is only used during
-   patching. Unfortunately, due to init ordering, fixmap is still used
-   during boot-time patching. Future patches can eliminate the need for
-   it.
-2. Missing lockdep assertion to ensure text_mutex is taken. It is
-   actually not always taken, so fix the instances that were found not
-   to take the lock (although they should be safe even without taking
-   the lock).
-3. Module_alloc returning memory that is RWX until a module is finished
-   loading.
-4. Sometimes when memory is freed via the module subsystem, an
-   executable permissioned TLB entry can remain to a freed page. If the
-   page is re-used to back an address that will receive data from
-   userspace, it can result in user data being mapped as executable in
-   the kernel. The root of this behavior is vfree lazily flushing the
-   TLB, but not lazily freeing the underlying pages.
-
-Changes for v2:
- - Adding “Reviewed-by tag” [Masami]
- - Comment instead of code to warn against module removal while patching [Masami]
- - Avoiding open-coded TLB flush [Andy]
- - Remove "This patch" [Borislav Petkov]
- - Not set global bit during text poking [Andy, hpa]
- - Add Ack from [Pavel Machek]
- - Split patch 16 "Plug in new special vfree flag" into 4 patches (16-19)
-   to make it easier to review. There were no code changes.
-
-The changes from "Don’t leave executable TLB entries to freed pages
-v2" to v1:
- - Add support for case of hibernate trying to save an unmapped page
-   on the directmap. (Ard Biesheuvel)
- - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
- - Avoid changing deferred free code by moving modules init free to work
-   queue (Andy Lutomirski)
- - Plug in new flag for kprobes and ftrace
- - More arch generic names for set_pages functions (Ard Biesheuvel)
- - Fix for TLB not always flushing the directmap (Nadav Amit)
- 
-Changes from "x86/alternative: text_poke() enhancements v7" to v1
- - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
- - Remove text_poke usage from ftrace (Nadav)
- 
-[1] https://lkml.org/lkml/2018/12/5/200
-[2] https://lkml.org/lkml/2018/12/11/1571
-
-Andy Lutomirski (1):
-  x86/mm: temporary mm struct
-
-Nadav Amit (12):
-  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-  x86/jump_label: Use text_poke_early() during early init
-  fork: provide a function for copying init_mm
-  x86/alternative: initializing temporary mm for patching
-  x86/alternative: use temporary mm for text poking
-  x86/kgdb: avoid redundant comparison of patched code
-  x86/ftrace: set trampoline pages as executable
-  x86/kprobes: instruction pages initialization enhancements
-  x86: avoid W^X being broken during modules loading
-  x86/jump-label: remove support for custom poker
-  x86/alternative: Remove the return value of text_poke_*()
-  x86/alternative: comment about module removal races
-
-Rick Edgecombe (7):
-  Add set_alias_ function and x86 implementation
-  mm: Make hibernate handle unmapped pages
-  vmalloc: New flags for safe vfree on special perms
-  modules: Use vmalloc special flag
-  bpf: Use vmalloc special flag
-  x86/ftrace: Use vmalloc special flag
-  x86/kprobes: Use vmalloc special flag
-
- arch/Kconfig                         |   4 +
- arch/x86/Kconfig                     |   1 +
- arch/x86/include/asm/fixmap.h        |   2 -
- arch/x86/include/asm/mmu_context.h   |  32 +++++
- arch/x86/include/asm/pgtable.h       |   3 +
- arch/x86/include/asm/set_memory.h    |   3 +
- arch/x86/include/asm/text-patching.h |   7 +-
- arch/x86/kernel/alternative.c        | 199 ++++++++++++++++++++-------
- arch/x86/kernel/ftrace.c             |  14 +-
- arch/x86/kernel/jump_label.c         |  19 ++-
- arch/x86/kernel/kgdb.c               |  25 +---
- arch/x86/kernel/kprobes/core.c       |  19 ++-
- arch/x86/kernel/module.c             |   2 +-
- arch/x86/mm/init_64.c                |  36 +++++
- arch/x86/mm/pageattr.c               |  16 ++-
- arch/x86/xen/mmu_pv.c                |   2 -
- include/linux/filter.h               |  18 +--
- include/linux/mm.h                   |  18 +--
- include/linux/sched/task.h           |   1 +
- include/linux/set_memory.h           |  10 ++
- include/linux/vmalloc.h              |  13 ++
- init/main.c                          |   3 +
- kernel/bpf/core.c                    |   1 -
- kernel/fork.c                        |  24 +++-
- kernel/module.c                      |  82 ++++++-----
- mm/page_alloc.c                      |   7 +-
- mm/vmalloc.c                         | 122 +++++++++++++---
- 27 files changed, 494 insertions(+), 189 deletions(-)
-
--- 
-2.17.1
-
+I mean, in cipso_v4_error we copy option data from skb before ip_options_compile call:
++       memcpy(opt->__data, (unsigned char *)&(ip_hdr(skb)[1]), opt->optlen);
+But skb IP header data could be already changed by first call of ip_options_compile
+when packet received.
