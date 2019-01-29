@@ -3,149 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 782FFC282D0
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 12:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4894C169C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 13:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5180A2147A
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 12:33:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76E4A20882
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 13:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfA2Mde (ORCPT
+        id S1725828AbfA2NUU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jan 2019 07:33:34 -0500
-Received: from mga02.intel.com ([134.134.136.20]:6551 "EHLO mga02.intel.com"
+        Tue, 29 Jan 2019 08:20:20 -0500
+Received: from mga06.intel.com ([134.134.136.31]:59450 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727215AbfA2Mde (ORCPT
+        id S1725355AbfA2NUU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jan 2019 07:33:34 -0500
+        Tue, 29 Jan 2019 08:20:20 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 04:33:33 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 05:20:19 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
-   d="scan'208";a="111983217"
+   d="scan'208";a="138829651"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.127])
-  by orsmga006.jf.intel.com with ESMTP; 29 Jan 2019 04:33:30 -0800
-Date:   Tue, 29 Jan 2019 14:33:30 +0200
+  by fmsmga002.fm.intel.com with ESMTP; 29 Jan 2019 05:20:17 -0800
+Date:   Tue, 29 Jan 2019 15:20:16 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     linux-integrity@vger.kernel.org,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
-Message-ID: <20190129123330.GC12883@linux.intel.com>
-References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
- <20190125010519.4tqcno4iaha4ww7r@cantor>
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190129132016.GA1602@linux.intel.com>
+References: <20190118142559.GA4080@linux.intel.com>
+ <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com>
+ <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com>
+ <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190125010519.4tqcno4iaha4ww7r@cantor>
+In-Reply-To: <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 24, 2019 at 06:05:19PM -0700, Jerry Snitselaar wrote:
-> On Wed Jan 16 19, Jarkko Sakkinen wrote:
-> > Make the changes necessary to detach TPM space code and TPM activation
-> > code out of the tpm_transmit() flow because of both of these can cause
-> > nested tpm_transmit() calls. The nesteds calls make the whole flow hard
-> > to maintain, and thus, it is better to just fix things now before this
-> > turns into a bigger mess.
-> > 
-> > v10:
-> > * Use void pointers to avoid unnecessary casts in functions paramaters
-> >  where it makes sense.
-> > 
-> > v9:
-> > * Fixed again tpm_try_get_ops().
-> > * Added missing reviewed-by's.
-> > 
-> > v8:
-> > * Re-add the check for ret < 0 after calling tpm_try_transmit() that
-> >  was dropped by mistake while moving code.
-> > * Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
-> >  fails.
-> > 
-> > v7:
-> > *  Reorganize series so that more trivial and self-contained changes are
-> >   in the head.
-> > 
-> > v6:
-> > * When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
-> >  the TPM header was incorrectly declared as struct tpm_input_header.
-> > * Fix return value in tpm_validate_command().
-> > 
-> > v5:
-> > * Add the missing rev's from Stefan Berger.
-> > 
-> > v4:
-> > * Return 0 from pcrs_show() when tpm1_pcr_read() fails.
-> > * Fix error handling flow in tpm_try_transmit().
-> > * Replace struct tpm_input_header and struct tpm_output_header with
-> >  struct tpm_header.
-> > 
-> > v3:
-> > * Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
-> > * Move TPM power gating code and locking to tpm_try_get_ops() and
-> >  tpm_put_ops().
-> > * Call power gating code directly in tpm_chip_register() and
-> >  tpm2_del_space().
-> > 
-> > v2:
-> > * Print tpm2_commit_space() error inside tpm2_commit_space()
-> > * Error code was not printed when recv() callback failed. It is
-> >  fixed in this version.
-> > * Added a patch that removes @space from tpm_transmit().
-> > * Fixed a regression in earlier series. Forgot to amend the change
-> >  from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
-> > Jarkko Sakkinen (17):
-> >  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
-> >  tpm: fix invalid return value in pubek_show()
-> >  tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
-> >  tpm: print tpm2_commit_space() error inside tpm2_commit_space()
-> >  tpm: declare struct tpm_header
-> >  tpm: access command header through struct in tpm_try_transmit()
-> >  tpm: encapsulate tpm_dev_transmit()
-> >  tpm: call tpm2_flush_space() on error in tpm_try_transmit()
-> >  tpm: clean up tpm_try_transmit() error handling flow
-> >  tpm: move tpm_validate_commmand() to tpm2-space.c
-> >  tpm: move TPM space code out of tpm_transmit()
-> >  tpm: remove @space from tpm_transmit()
-> >  tpm: use tpm_try_get_ops() in tpm-sysfs.c.
-> >  tpm: remove TPM_TRANSMIT_UNLOCKED flag
-> >  tpm: introduce tpm_chip_start() and tpm_chip_stop()
-> >  tpm: take TPM chip power gating out of tpm_transmit()
-> >  tpm: remove @flags from tpm_transmit()
-> > 
-> > drivers/char/tpm/tpm-chip.c       | 109 ++++++++++++
-> > drivers/char/tpm/tpm-dev-common.c |  45 ++++-
-> > drivers/char/tpm/tpm-interface.c  | 264 ++++++------------------------
-> > drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
-> > drivers/char/tpm/tpm.h            |  64 +++-----
-> > drivers/char/tpm/tpm1-cmd.c       |  28 +---
-> > drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
-> > drivers/char/tpm/tpm2-space.c     |  91 +++++++---
-> > drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
-> > drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
-> > drivers/char/tpm/xen-tpmfront.c   |   2 +-
-> > 11 files changed, 409 insertions(+), 421 deletions(-)
-> > 
-> > -- 
-> > 2.19.1
-> > 
+On Thu, Jan 24, 2019 at 07:43:30AM +1300, Linus Torvalds wrote:
+> On Thu, Jan 24, 2019 at 4:36 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> > >
+> > > Is it just that this particular hardware always happened to trigger
+> > > the ERMS case (ie "rep movsb")?
+> >
+> > This is the particular snippet in question:
+> >
+> > memcpy_fromio(buf, priv->rsp, 6);
+> > expected = be32_to_cpup((__be32 *) &buf[2]);
+> > if (expected > count || expected < 6)
+> >         return -EIO;
 > 
-> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> Ok, strange.
+> 
+> So what *used* to happen is that the memcpy_fromio() would just expand
+> as a "memcpy()", and in this case, gcc would then inline the memcpy().
+> In fact, gcc does it as a 4-byte access and a two-byte access from
+> what I can tell.
 
-Thanks!
+I verified, and it is exactly as you stated:
+
+   0xffffffff814aaa33 <+51>:	mov    (%rax),%edx
+   0xffffffff814aaa35 <+53>:	mov    %edx,0x0(%rbp)
+   0xffffffff814aaa38 <+56>:	movzwl 0x4(%rax),%eax
+   0xffffffff814aaa3c <+60>:	mov    %ax,0x4(%rbp)
+
+And your new version does exactly the same thing to the first six bytes
+(with different opcode, but the same memory access pattern).
 
 /Jarkko
