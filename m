@@ -2,96 +2,68 @@ Return-Path: <SRS0=8CgQ=QF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F708C169C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 18:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 379D6C282D0
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 18:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C9420857
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 18:21:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cHk2LUjz"
+	by mail.kernel.org (Postfix) with ESMTP id 0821E2087E
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 18:30:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727898AbfA2SV1 (ORCPT
+        id S1727643AbfA2SaN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jan 2019 13:21:27 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:33896 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbfA2SV1 (ORCPT
+        Tue, 29 Jan 2019 13:30:13 -0500
+Received: from mga09.intel.com ([134.134.136.24]:32186 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727364AbfA2SaN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jan 2019 13:21:27 -0500
-Received: by mail-yb1-f196.google.com with SMTP id k9so8042143ybg.1
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Jan 2019 10:21:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dC239ZrpeLmzKNGp7d/PMxvG6dvpCn21nw5Gvt8HUmM=;
-        b=cHk2LUjzKuO08PqN6tHA2ob9kDTBUPqG4IP3XBq4fKgSUvY1lx/X4A+8udBlTZZmF2
-         MEqAK1fG52bITYGEh+D0yDaUgyBKkj0zOGch7kiknjrrIyzuWIFeYVK8QxS3mj8VVOiJ
-         IHGSOg4/OR0bFhhFxmsZPZ11380o3HIY0wYHc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dC239ZrpeLmzKNGp7d/PMxvG6dvpCn21nw5Gvt8HUmM=;
-        b=S+9Z/FhxvihtxjJvtne6XlwSNOnyZ+yv1RZY9Q/rMpJRTeZ1NijXN6UVJGEI5FZFcP
-         LQLzeTTQYLg5yaKCmG3tQp/55c4yz4WjQZNEInZzbZXNUVr3TLVE9XZAuQ5gXpI0Lk6E
-         qAyXRRets84Zm1aMLvrfPF44e8eMgYCPPvvqTfnygFCyHV+hFEs9BU3n7GcG1ic78l5f
-         COxmZg10VHvPS7wRsZgjf0hcbUQJMqXgQz885whHxOQILk1Wia/RFL2pKI/VuT3jAmjb
-         Mxxs99VXO4ZgswHRJOyl7UuV0M2yCzQi3MJdcIOm+VjuYInnjxGLgw0rZ4LYuqeYEcIV
-         wEwQ==
-X-Gm-Message-State: AJcUukepThb6zvjEaHasdNOAmlRUAxm9m+O12Z25Gq1aXZwJ/i+FA2CY
-        MdZJtShxeeUedkYa78hZJKiuFCz08KEIrlddkX8b3w==
-X-Google-Smtp-Source: ALg8bN5qmemLRZQJPQnWp/Vdr3HheUDfmIZsVModqoEdlC7pHqxv/K50YIumAwLOyfEB4eSB/7cs5q4tOUpsfEztDwg=
-X-Received: by 2002:a25:16c6:: with SMTP id 189mr25723340ybw.17.1548786086721;
- Tue, 29 Jan 2019 10:21:26 -0800 (PST)
+        Tue, 29 Jan 2019 13:30:13 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 10:30:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,537,1539673200"; 
+   d="scan'208";a="120447691"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
+  by fmsmga008.fm.intel.com with ESMTP; 29 Jan 2019 10:30:06 -0800
+Date:   Tue, 29 Jan 2019 20:30:08 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     Stefan Berger <stefanb@linux.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
+Message-ID: <20190129183008.GA11288@linux.intel.com>
+References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
+ <20190123182057.GA24212@linux.intel.com>
+ <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA818C6@hasmsx108.ger.corp.intel.com>
+ <20190129123309.GB12883@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA88D6A@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
-References: <20190129171143.3945af24@canb.auug.org.au> <a4e95bee-e5c5-94f5-a577-d55cdd419e86@infradead.org>
-In-Reply-To: <a4e95bee-e5c5-94f5-a577-d55cdd419e86@infradead.org>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Tue, 29 Jan 2019 10:21:16 -0800
-Message-ID: <CAJ-EccMgDvx81g-XgWymdYn_G5Ou8mgbef3GUbx-C_Ai5qF-pQ@mail.gmail.com>
-Subject: Re: linux-next: Tree for Jan 29 (security/safesetid/)
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA88D6A@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I noticed you don't have the following lines (or some of the other
-related security ones) in your .config.
+On Tue, Jan 29, 2019 at 02:16:56PM +0000, Winkler, Tomas wrote:
+> Yes, looking into in new ICL, had some issues to bring the platform
+> on.  It's really failing (selftest) , we are looking into it.  Will
+> also testing the nesting removal patches. 
 
-CONFIG_SECURITY=y
-CONFIG_SECURITY_WRITABLE_HOOKS=y
+Great, thank you.
 
-Seems like we need a 'depends on SECURITY' line (or something like
-that) in security/safesetid/Kconfig -- let me see if that fixes things
-and if so I'll upload a patch
-
-On Tue, Jan 29, 2019 at 9:04 AM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> On 1/28/19 10:11 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Changes since 20190125:
-> >
->
-> on x86_64:
->
-> ld: security/safesetid/lsm.o:(.data+0x10): undefined reference to `security_hook_heads'
-> ld: security/safesetid/lsm.o:(.data+0x38): undefined reference to `security_hook_heads'
-> ld: security/safesetid/lsm.o: in function `safesetid_security_init':
-> lsm.c:(.init.text+0x14): undefined reference to `security_add_hooks'
->
->
-> Full randconfig file is attached.
->
-> --
-> ~Randy
+/Jarkko
