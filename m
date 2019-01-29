@@ -2,155 +2,222 @@ Return-Path: <SRS0=8CgQ=QF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A33C282CD
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F7FC282CD
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F38942175B
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:12:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4B8820870
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfA2AMb (ORCPT
+        id S1727476AbfA2AjR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:12:31 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36358 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfA2AMb (ORCPT
+        Mon, 28 Jan 2019 19:39:17 -0500
+Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726867AbfA2AjP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:12:31 -0500
-Received: by mail-lj1-f195.google.com with SMTP id g11-v6so15926025ljk.3;
-        Mon, 28 Jan 2019 16:12:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ZbnSJMurLj8BNQYytJBUO+GTsAvTERR77Xowzcjxf6U=;
-        b=ibc2HEsttJngVDPKKCzLK4nHa7agApIiRNg32D/9xD8H0d9yF5ht0/4bnPupLzLYlq
-         kUcfTSIQXc3dMpzJvKj5cwi1dGuAeeZ++Zb+pERYSVWJY1iJPtl9FWLC85i1lYdh7Ewh
-         IFrPPLnlyerHFv54nsdnzkBPFFA+sBETA2IMo8S3Vr/hxwQqhl+2Zz6pDZeSLQt7+5Ye
-         +0pGu4MYySXt7nw26OBZHRRGN3RrCCkfiQMM/mDl76Ir4ZO1khIxWlpFZu4ZPmuYd8QY
-         jabIQNQkIyZC329ebFu3y3oH9pwSFspxmFOz4jayQEUmZuK9ezpqfs+dbZYBl18xPzrx
-         f7ig==
-X-Gm-Message-State: AJcUukdkAsQAsrxAW9wnjMBDlrXkbC55tnVcOpzAE7rklc7Xk79usgT9
-        CR/tXWypR0so9exTxkEuTWQ=
-X-Google-Smtp-Source: ALg8bN7stDrH2CqQuY0B3RQYZuC7ccWFVr0KUPp1UnTxiXJjsgOqvC25P0WS7lOaf7LQDZ9JOZ4qbA==
-X-Received: by 2002:a2e:8187:: with SMTP id e7-v6mr18527787ljg.67.1548720747585;
-        Mon, 28 Jan 2019 16:12:27 -0800 (PST)
-Received: from [192.168.1.183] (128-68-180-17.broadband.corbina.ru. [128.68.180.17])
-        by smtp.gmail.com with ESMTPSA id m1sm3205465lfb.56.2019.01.28.16.12.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 16:12:26 -0800 (PST)
-Reply-To: alex.popov@linux.com
-Subject: Re: [PATCH 0/3] gcc-plugins: Introduce stackinit plugin
-To:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Laura Abbott <labbott@redhat.com>,
-        xen-devel@lists.xenproject.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dev@openvswitch.org, linux-kbuild@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Edwin Zimmerman <edwin@211mainstreet.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-References: <20190123110349.35882-1-keescook@chromium.org>
-From:   Alexander Popov <alex.popov@linux.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
- 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
- jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
-Message-ID: <874b8c23-068b-f8e7-2168-12947c06e145@linux.com>
-Date:   Tue, 29 Jan 2019 03:12:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190123110349.35882-1-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 28 Jan 2019 19:39:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
+   d="scan'208";a="133921886"
+Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
+  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:11 -0800
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 01/20] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+Date:   Mon, 28 Jan 2019 16:34:03 -0800
+Message-Id: <20190129003422.9328-2-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 23.01.2019 14:03, Kees Cook wrote:
-> This adds a new plugin "stackinit" that attempts to perform unconditional
-> initialization of all stack variables
+From: Nadav Amit <namit@vmware.com>
 
-Hello Kees! Hello everyone!
+text_mutex is currently expected to be held before text_poke() is
+called, but we kgdb does not take the mutex, and instead *supposedly*
+ensures the lock is not taken and will not be acquired by any other core
+while text_poke() is running.
 
-I was curious about the performance impact of the initialization of all stack
-variables. So I did a very brief test with this plugin on top of 4.20.5.
+The reason for the "supposedly" comment is that it is not entirely clear
+that this would be the case if kgdb_do_roundup is zero.
 
-hackbench on Intel Core i7-4770 showed ~0.7% slowdown.
-hackbench on Kirin 620 (ARM Cortex-A53 Octa-core 1.2GHz) showed ~1.3% slowdown.
+Create two wrapper functions, text_poke() and text_poke_kgdb() which do
+or do not run the lockdep assertion respectively.
 
-This test involves the kernel scheduler and allocator. I can't say whether they
-use stack aggressively. Maybe performance tests of other subsystems (e.g.
-network subsystem) can show different numbers. Did you try?
+While we are at it, change the return code of text_poke() to something
+meaningful. One day, callers might actually respect it and the existing
+BUG_ON() when patching fails could be removed. For kgdb, the return
+value can actually be used.
 
-I've heard a hypothesis that the initialization of all stack variables would
-pollute CPU caches, which is critical for some types of computations. Maybe some
-micro-benchmarks can disprove/confirm that?
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+---
+ arch/x86/include/asm/text-patching.h |  1 +
+ arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
+ arch/x86/kernel/kgdb.c               | 11 +++---
+ 3 files changed, 45 insertions(+), 19 deletions(-)
 
-Thanks!
-Best regards,
-Alexander
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index e85ff65c43c3..f8fc8e86cf01 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+  * inconsistent instruction while you patch.
+  */
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
++extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index d458c7973c56..12fddbc8c55b 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -678,18 +678,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	return addr;
+ }
+ 
+-/**
+- * text_poke - Update instructions on a live kernel
+- * @addr: address to modify
+- * @opcode: source of the copy
+- * @len: length to copy
+- *
+- * Only atomic text poke/set should be allowed when not doing early patching.
+- * It means the size must be writable atomically and the address must be aligned
+- * in a way that permits an atomic write. It also makes sure we fit on a single
+- * page.
+- */
+-void *text_poke(void *addr, const void *opcode, size_t len)
++static void *__text_poke(void *addr, const void *opcode, size_t len)
+ {
+ 	unsigned long flags;
+ 	char *vaddr;
+@@ -702,8 +691,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
+-	lockdep_assert_held(&text_mutex);
+-
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+ 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+@@ -732,6 +719,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	return addr;
+ }
+ 
++/**
++ * text_poke - Update instructions on a live kernel
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ */
++void *text_poke(void *addr, const void *opcode, size_t len)
++{
++	lockdep_assert_held(&text_mutex);
++
++	return __text_poke(addr, opcode, len);
++}
++
++/**
++ * text_poke_kgdb - Update instructions on a live kernel by kgdb
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ *
++ * Context: should only be used by kgdb, which ensures no other core is running,
++ *	    despite the fact it does not hold the text_mutex.
++ */
++void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
++{
++	return __text_poke(addr, opcode, len);
++}
++
+ static void do_sync_core(void *info)
+ {
+ 	sync_core();
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 5db08425063e..1461544cba8b 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -758,13 +758,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (!err)
+ 		return err;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		return -EBUSY;
+-	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+-		  BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err)
+ 		return err;
+@@ -783,12 +783,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		goto knl_write;
+-	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
++	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
++		       BREAK_INSTR_SIZE);
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+ 		goto knl_write;
+-- 
+2.17.1
+
