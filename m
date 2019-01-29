@@ -2,93 +2,96 @@ Return-Path: <SRS0=8CgQ=QF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58621C169C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 17:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F708C169C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 18:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21E402087E
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 17:25:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27C9420857
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 18:21:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cHk2LUjz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbfA2RZU (ORCPT
+        id S1727898AbfA2SV1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:25:20 -0500
-Received: from namei.org ([65.99.196.166]:48946 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727229AbfA2RZU (ORCPT
+        Tue, 29 Jan 2019 13:21:27 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:33896 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727229AbfA2SV1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:25:20 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x0THP6sR017504;
-        Tue, 29 Jan 2019 17:25:06 GMT
-Date:   Wed, 30 Jan 2019 04:25:06 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Micah Morton <mortonm@chromium.org>
-cc:     Kees Cook <keescook@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] LSM: add SafeSetID module that gates setid
- calls
-In-Reply-To: <CAJ-EccPpb_544TgW3YtcT=ptGDwTxx=KOMBdLtqUNim7ynuCdQ@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1901300424420.16638@namei.org>
-References: <CAGXu5j+V61YOk7oAEw3Fm5rOxQAmy2-3QqOZaOP_FROLBUk2Qg@mail.gmail.com> <20190116154606.92331-1-mortonm@chromium.org> <alpine.LRH.2.21.1901260714380.27585@namei.org> <CAJ-EccMc3Xz0DZAm_u09VvTzWRzhrf9x0SpJKX=4FR6NYwqkpQ@mail.gmail.com>
- <CAJ-EccMAb-OX3R6mk4me0x6dS2bQw=yZrpKmF7JpzHDWSX5e4g@mail.gmail.com> <CAGXu5jKLdcadm30NwpquX1iGJRsjZY-A5grc65BC64B96RE_Eg@mail.gmail.com> <CAJ-EccM3BzUUS0CZuhAcj47+KR57JwvhLWiQoc86LWb87wWBcg@mail.gmail.com>
- <CAJ-EccPpb_544TgW3YtcT=ptGDwTxx=KOMBdLtqUNim7ynuCdQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Tue, 29 Jan 2019 13:21:27 -0500
+Received: by mail-yb1-f196.google.com with SMTP id k9so8042143ybg.1
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Jan 2019 10:21:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dC239ZrpeLmzKNGp7d/PMxvG6dvpCn21nw5Gvt8HUmM=;
+        b=cHk2LUjzKuO08PqN6tHA2ob9kDTBUPqG4IP3XBq4fKgSUvY1lx/X4A+8udBlTZZmF2
+         MEqAK1fG52bITYGEh+D0yDaUgyBKkj0zOGch7kiknjrrIyzuWIFeYVK8QxS3mj8VVOiJ
+         IHGSOg4/OR0bFhhFxmsZPZ11380o3HIY0wYHc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dC239ZrpeLmzKNGp7d/PMxvG6dvpCn21nw5Gvt8HUmM=;
+        b=S+9Z/FhxvihtxjJvtne6XlwSNOnyZ+yv1RZY9Q/rMpJRTeZ1NijXN6UVJGEI5FZFcP
+         LQLzeTTQYLg5yaKCmG3tQp/55c4yz4WjQZNEInZzbZXNUVr3TLVE9XZAuQ5gXpI0Lk6E
+         qAyXRRets84Zm1aMLvrfPF44e8eMgYCPPvvqTfnygFCyHV+hFEs9BU3n7GcG1ic78l5f
+         COxmZg10VHvPS7wRsZgjf0hcbUQJMqXgQz885whHxOQILk1Wia/RFL2pKI/VuT3jAmjb
+         Mxxs99VXO4ZgswHRJOyl7UuV0M2yCzQi3MJdcIOm+VjuYInnjxGLgw0rZ4LYuqeYEcIV
+         wEwQ==
+X-Gm-Message-State: AJcUukepThb6zvjEaHasdNOAmlRUAxm9m+O12Z25Gq1aXZwJ/i+FA2CY
+        MdZJtShxeeUedkYa78hZJKiuFCz08KEIrlddkX8b3w==
+X-Google-Smtp-Source: ALg8bN5qmemLRZQJPQnWp/Vdr3HheUDfmIZsVModqoEdlC7pHqxv/K50YIumAwLOyfEB4eSB/7cs5q4tOUpsfEztDwg=
+X-Received: by 2002:a25:16c6:: with SMTP id 189mr25723340ybw.17.1548786086721;
+ Tue, 29 Jan 2019 10:21:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20190129171143.3945af24@canb.auug.org.au> <a4e95bee-e5c5-94f5-a577-d55cdd419e86@infradead.org>
+In-Reply-To: <a4e95bee-e5c5-94f5-a577-d55cdd419e86@infradead.org>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Tue, 29 Jan 2019 10:21:16 -0800
+Message-ID: <CAJ-EccMgDvx81g-XgWymdYn_G5Ou8mgbef3GUbx-C_Ai5qF-pQ@mail.gmail.com>
+Subject: Re: linux-next: Tree for Jan 29 (security/safesetid/)
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 28 Jan 2019, Micah Morton wrote:
+I noticed you don't have the following lines (or some of the other
+related security ones) in your .config.
 
-> FWIW, I've now done a manual test of this LSMs functionality on a
-> Linux VM built from the next-general branch. Adding policies, policy
-> enforcement by the LSM, and flushing policies all worked as intended.
-> 
-> So there hopefully won't be any more surprises.
+CONFIG_SECURITY=y
+CONFIG_SECURITY_WRITABLE_HOOKS=y
 
-It would be useful to publish these as a testsuite, or include a test 
-script in the kernel tree.
+Seems like we need a 'depends on SECURITY' line (or something like
+that) in security/safesetid/Kconfig -- let me see if that fixes things
+and if so I'll upload a patch
 
-
-> 
-> On Mon, Jan 28, 2019 at 12:19 PM Micah Morton <mortonm@chromium.org> wrote:
+On Tue, Jan 29, 2019 at 9:04 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 1/28/19 10:11 PM, Stephen Rothwell wrote:
+> > Hi all,
 > >
-> > On Mon, Jan 28, 2019 at 11:56 AM Kees Cook <keescook@chromium.org> wrote:
-> > >
-> > > On Tue, Jan 29, 2019 at 8:47 AM Micah Morton <mortonm@chromium.org> wrote:
-> > > >
-> > > > I'm getting the following crash when booting after compiling a kernel
-> > > > with this LSM enabled, so I'll have to figure out what is going on.
-> > > > All the "core" functionality of this LSM has been tested thoroughly
-> > > > (we're already using this LSM on ChromeOS), but looks like there's
-> > > > some debugging of the initialization that still needs to be done.
-> > >
-> > >
-> > > +DEFINE_LSM(safesetid_security_init) = {
-> > > +       .init = safesetid_security_init,
-> > > +};
-> > >
-> > > I think this is from not having:
-> > >
-> > > .name = "safesetid",
+> > Changes since 20190125:
 > >
-> > That fixed it for me! Thanks
-> >
-> > >
-> > > I missed that in the review, sorry!
-> > >
-> > > --
-> > > Kees Cook
-> 
-
--- 
-James Morris
-<jmorris@namei.org>
-
+>
+> on x86_64:
+>
+> ld: security/safesetid/lsm.o:(.data+0x10): undefined reference to `security_hook_heads'
+> ld: security/safesetid/lsm.o:(.data+0x38): undefined reference to `security_hook_heads'
+> ld: security/safesetid/lsm.o: in function `safesetid_security_init':
+> lsm.c:(.init.text+0x14): undefined reference to `security_add_hooks'
+>
+>
+> Full randconfig file is attached.
+>
+> --
+> ~Randy
