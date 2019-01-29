@@ -2,111 +2,133 @@ Return-Path: <SRS0=8CgQ=QF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5FCC4151A
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 21:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C97C169C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 21:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1495520881
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 21:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4836320881
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 21:14:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bGq8wq30"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729307AbfA2VLQ (ORCPT
+        id S1728614AbfA2VOz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jan 2019 16:11:16 -0500
-Received: from mga11.intel.com ([192.55.52.93]:2305 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727488AbfA2VLQ (ORCPT
+        Tue, 29 Jan 2019 16:14:55 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:33404 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbfA2VOz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jan 2019 16:11:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jan 2019 13:11:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,538,1539673200"; 
-   d="scan'208";a="138956592"
-Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
-  by fmsmga002.fm.intel.com with ESMTP; 29 Jan 2019 13:11:10 -0800
-Date:   Tue, 29 Jan 2019 23:11:17 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v10 08/17] tpm: call tpm2_flush_space() on error in
- tpm_try_transmit()
-Message-ID: <20190129211117.GA18819@linux.intel.com>
-References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
- <20190116212342.24524-9-jarkko.sakkinen@linux.intel.com>
- <1548781561.2888.33.camel@HansenPartnership.com>
- <20190129185330.GA11615@linux.intel.com>
- <1548788539.2888.40.camel@HansenPartnership.com>
+        Tue, 29 Jan 2019 16:14:55 -0500
+Received: by mail-yb1-f195.google.com with SMTP id m132so7048041ybf.0
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Jan 2019 13:14:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rMnpgGrGHhKlVTqU2sxSlRR8gFF7F74hSHWXn3EMg3I=;
+        b=bGq8wq30My03SlpBnYl6JBjIFkMLQBib4aNVxAAPMPW2WzaIqztXo3RTHJrYlcUBfh
+         P4GtcmdJEfqQjGTlAw1+dWg5lVhe8qEFY4t7Iei7ViCoOYeOvqyrKUpZRdaB1KTIsMVL
+         4Fnts98H22RgwTzvexoGyBAD8voXubw2j9M7U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rMnpgGrGHhKlVTqU2sxSlRR8gFF7F74hSHWXn3EMg3I=;
+        b=bd0a7T8F2icCq4GHqkCJgZpDzf3GoZQQh0Vu6cVZ0I3gA/JKgcqjP/eCYWwJb1qTHg
+         cP0EAistLfYFFkMOx1DvFHDrwLs05Kspw/LHeQy+GruYwS/AQA4kQdWO2UK6uW4fPKAH
+         DfJUln23a2u2erzn+e6Lm6dUUBACV6fmCOKqXQNzdGVKmbU77LyhLN8nEmjcIEsqigNh
+         WP7vmd4ktKFMPXjnUhrocwtp3q4L7mTrB2PqWQ3zZrww9zkizpa/OT+3A7FLxsL9eGt6
+         xud2QDxHuzhz5523Sqm67RJ632tHTv+gg2eROikqtXdOEpBa2+5aN0zhzePj9KNlkgut
+         /MuA==
+X-Gm-Message-State: AJcUukfwskB9fFO2Ti20ysEf3S1L+TKz3A1YWYRGACAbAEmUkneSZilV
+        6pIIU4Cyx2GT2W8EYTyYZsdjvH63V1l/wS1QBGTk3w==
+X-Google-Smtp-Source: ALg8bN6wtSbwuoX2sr/wrYcxDfROmtOPktB2E/lHIkzB8EoUj7KO3n+LoKRNNKfBb5R0Xu7AhmDxAclKSQ/OTQ45JsQ=
+X-Received: by 2002:a5b:141:: with SMTP id c1mr26222154ybp.260.1548796494879;
+ Tue, 29 Jan 2019 13:14:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548788539.2888.40.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAGXu5j+V61YOk7oAEw3Fm5rOxQAmy2-3QqOZaOP_FROLBUk2Qg@mail.gmail.com>
+ <20190116154606.92331-1-mortonm@chromium.org> <alpine.LRH.2.21.1901260714380.27585@namei.org>
+ <CAJ-EccMc3Xz0DZAm_u09VvTzWRzhrf9x0SpJKX=4FR6NYwqkpQ@mail.gmail.com>
+ <CAJ-EccMAb-OX3R6mk4me0x6dS2bQw=yZrpKmF7JpzHDWSX5e4g@mail.gmail.com>
+ <CAGXu5jKLdcadm30NwpquX1iGJRsjZY-A5grc65BC64B96RE_Eg@mail.gmail.com>
+ <CAJ-EccM3BzUUS0CZuhAcj47+KR57JwvhLWiQoc86LWb87wWBcg@mail.gmail.com>
+ <CAJ-EccPpb_544TgW3YtcT=ptGDwTxx=KOMBdLtqUNim7ynuCdQ@mail.gmail.com> <alpine.LRH.2.21.1901300424420.16638@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1901300424420.16638@namei.org>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Tue, 29 Jan 2019 13:14:43 -0800
+Message-ID: <CAJ-EccOp4zrVT2+RZQZn7j6RchVk5S7UxFjyOBF_6mpE-fHVPA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] LSM: add SafeSetID module that gates setid calls
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 29, 2019 at 11:02:19AM -0800, James Bottomley wrote:
-> On Tue, 2019-01-29 at 20:53 +0200, Jarkko Sakkinen wrote:
-> > On Tue, Jan 29, 2019 at 09:06:01AM -0800, James Bottomley wrote:
-> > > On Wed, 2019-01-16 at 23:23 +0200, Jarkko Sakkinen wrote:
-> > > [...]
-> > > > -	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> > > > +out_space:
-> > > > +	if (rc)
-> > > > +		tpm2_flush_space(chip);
-> > > > +	else
-> > > > +		rc = tpm2_commit_space(chip, space, ordinal,
-> > > > buf,
-> > > > &len);
-> > > 
-> > > I don't think this is quite right.  tpm2_flush_space only flushes
-> > > the handles it knows about and those are the ones from before the
-> > > TPM operation was attempted.  If the operation has altered the
-> > > internal state we could miss a created handle in this flush and it
-> > > would effectively reside forever in the TPM.  We should be able to
-> > > rely on the TPM preserving the original state if it returns an
-> > > error, so I think your patch works for that part.  However rc is
-> > > also set to -EFAULT on a transmission error and if that's on the
-> > > receive path, the TPM may have changed state before the error
-> > > occurred.
-> > 
-> > If TPM is working properly in the first place, tpm2_commit_space() is
-> > always called (e.g. in a situation where TPM gives a TPM error). Your
-> > deduction about the opposite is absolutely correct. Thanks!
-> > 
-> > > If the object is to move the TPM back to where it was before the
-> > > error occurred, even in the case of transmit errors, then I think
-> > > we need to invent a new kind of flush that queries the current TPM
-> > > state and then flushes everything.
-> > 
-> > I think this consideration is anyway out of scope for this patch set.
-> 
-> I certainly agree the problem existed before and this makes it no
-> worse.
-> 
-> > I'd hope you would also skim through v11 as soon as I get it
-> > prepared, at least the patches where I've added an explicit CC (one
-> > or two at most).
-> 
-> Sure, as you can see, I'm up to 8.  I'll complete the review and then
-> set up an environment to test.
+testsuite meaning Linux Test Project / Autotest? We have a ChromeOS
+Autotest for this already
+(https://chromium.googlesource.com/chromiumos/third_party/autotest/+/master/client/site_tests/security_ProcessManagementPolicy/security_ProcessManagementPolicy.py)
+but it would at least need some adaptation for configuring/flushing
+policies during the test. Not sure how different Linux Autotests are
+from ChromeOS, if they are used at all.
 
-Great, thank you! I won't try to land this to v5.1 so there is no any
-kind of rush, because there is a show stopper that I need sort out with
-v5.0, as you've seen...
+Also, could you point me at the directory that holds such test scripts
+in the kernel tree? Shouldn't be too difficult to port that ChromeOS
+autotest to a script if we want to go that route.
 
-/Jarkko
+On Tue, Jan 29, 2019 at 9:25 AM James Morris <jmorris@namei.org> wrote:
+>
+> On Mon, 28 Jan 2019, Micah Morton wrote:
+>
+> > FWIW, I've now done a manual test of this LSMs functionality on a
+> > Linux VM built from the next-general branch. Adding policies, policy
+> > enforcement by the LSM, and flushing policies all worked as intended.
+> >
+> > So there hopefully won't be any more surprises.
+>
+> It would be useful to publish these as a testsuite, or include a test
+> script in the kernel tree.
+>
+>
+> >
+> > On Mon, Jan 28, 2019 at 12:19 PM Micah Morton <mortonm@chromium.org> wrote:
+> > >
+> > > On Mon, Jan 28, 2019 at 11:56 AM Kees Cook <keescook@chromium.org> wrote:
+> > > >
+> > > > On Tue, Jan 29, 2019 at 8:47 AM Micah Morton <mortonm@chromium.org> wrote:
+> > > > >
+> > > > > I'm getting the following crash when booting after compiling a kernel
+> > > > > with this LSM enabled, so I'll have to figure out what is going on.
+> > > > > All the "core" functionality of this LSM has been tested thoroughly
+> > > > > (we're already using this LSM on ChromeOS), but looks like there's
+> > > > > some debugging of the initialization that still needs to be done.
+> > > >
+> > > >
+> > > > +DEFINE_LSM(safesetid_security_init) = {
+> > > > +       .init = safesetid_security_init,
+> > > > +};
+> > > >
+> > > > I think this is from not having:
+> > > >
+> > > > .name = "safesetid",
+> > >
+> > > That fixed it for me! Thanks
+> > >
+> > > >
+> > > > I missed that in the review, sorry!
+> > > >
+> > > > --
+> > > > Kees Cook
+> >
+>
+> --
+> James Morris
+> <jmorris@namei.org>
+>
