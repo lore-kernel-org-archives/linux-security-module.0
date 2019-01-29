@@ -2,93 +2,93 @@ Return-Path: <SRS0=8CgQ=QF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AE1C282D0
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 17:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58621C169C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 17:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09F2C214DA
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 17:06:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="IG4kaNEQ"
+	by mail.kernel.org (Postfix) with ESMTP id 21E402087E
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 17:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfA2RGF (ORCPT
+        id S1727498AbfA2RZU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jan 2019 12:06:05 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45700 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727196AbfA2RGF (ORCPT
+        Tue, 29 Jan 2019 12:25:20 -0500
+Received: from namei.org ([65.99.196.166]:48946 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727229AbfA2RZU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jan 2019 12:06:05 -0500
+        Tue, 29 Jan 2019 12:25:20 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2DEB48EE241;
-        Tue, 29 Jan 2019 09:06:04 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id GEwfT4-fIohK; Tue, 29 Jan 2019 09:06:03 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 411998EE0EF;
-        Tue, 29 Jan 2019 09:06:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1548781563;
-        bh=BM8s9fQWQTb++WNcfjYTF6x0VHGb6CNsqNj7D7Wy+B0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=IG4kaNEQM6g9ot/iOG/rMay5AJpjYvLYWxTXFlVRLjCjyN2Nh0qCKteY4EiNV0KDt
-         dw6BpVVCUz/GejXPLkyDiOxOwAdwxge6jTP/qq+XPn+bcB0NLizzekh+Wx9p9FXBcl
-         E6MBYpm+ja/egGvrZUyAFz4r9KdLdw9zUHzKo1QE=
-Message-ID: <1548781561.2888.33.camel@HansenPartnership.com>
-Subject: Re: [PATCH v10 08/17] tpm: call tpm2_flush_space() on error in
- tpm_try_transmit()
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org
-Date:   Tue, 29 Jan 2019 09:06:01 -0800
-In-Reply-To: <20190116212342.24524-9-jarkko.sakkinen@linux.intel.com>
-References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
-         <20190116212342.24524-9-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        by namei.org (8.14.4/8.14.4) with ESMTP id x0THP6sR017504;
+        Tue, 29 Jan 2019 17:25:06 GMT
+Date:   Wed, 30 Jan 2019 04:25:06 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Micah Morton <mortonm@chromium.org>
+cc:     Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] LSM: add SafeSetID module that gates setid
+ calls
+In-Reply-To: <CAJ-EccPpb_544TgW3YtcT=ptGDwTxx=KOMBdLtqUNim7ynuCdQ@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1901300424420.16638@namei.org>
+References: <CAGXu5j+V61YOk7oAEw3Fm5rOxQAmy2-3QqOZaOP_FROLBUk2Qg@mail.gmail.com> <20190116154606.92331-1-mortonm@chromium.org> <alpine.LRH.2.21.1901260714380.27585@namei.org> <CAJ-EccMc3Xz0DZAm_u09VvTzWRzhrf9x0SpJKX=4FR6NYwqkpQ@mail.gmail.com>
+ <CAJ-EccMAb-OX3R6mk4me0x6dS2bQw=yZrpKmF7JpzHDWSX5e4g@mail.gmail.com> <CAGXu5jKLdcadm30NwpquX1iGJRsjZY-A5grc65BC64B96RE_Eg@mail.gmail.com> <CAJ-EccM3BzUUS0CZuhAcj47+KR57JwvhLWiQoc86LWb87wWBcg@mail.gmail.com>
+ <CAJ-EccPpb_544TgW3YtcT=ptGDwTxx=KOMBdLtqUNim7ynuCdQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2019-01-16 at 23:23 +0200, Jarkko Sakkinen wrote:
-[...]
-> -	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> +out_space:
-> +	if (rc)
-> +		tpm2_flush_space(chip);
-> +	else
-> +		rc = tpm2_commit_space(chip, space, ordinal, buf,
-> &len);
+On Mon, 28 Jan 2019, Micah Morton wrote:
 
-I don't think this is quite right.  tpm2_flush_space only flushes the
-handles it knows about and those are the ones from before the TPM
-operation was attempted.  If the operation has altered the internal
-state we could miss a created handle in this flush and it would
-effectively reside forever in the TPM.  We should be able to rely on
-the TPM preserving the original state if it returns an error, so I
-think your patch works for that part.  However rc is also set to
--EFAULT on a transmission error and if that's on the receive path, the
-TPM may have changed state before the error occurred.
+> FWIW, I've now done a manual test of this LSMs functionality on a
+> Linux VM built from the next-general branch. Adding policies, policy
+> enforcement by the LSM, and flushing policies all worked as intended.
+> 
+> So there hopefully won't be any more surprises.
 
-If the object is to move the TPM back to where it was before the error
-occurred, even in the case of transmit errors, then I think we need to
-invent a new kind of flush that queries the current TPM state and then
-flushes everything.
+It would be useful to publish these as a testsuite, or include a test 
+script in the kernel tree.
 
-James
+
+> 
+> On Mon, Jan 28, 2019 at 12:19 PM Micah Morton <mortonm@chromium.org> wrote:
+> >
+> > On Mon, Jan 28, 2019 at 11:56 AM Kees Cook <keescook@chromium.org> wrote:
+> > >
+> > > On Tue, Jan 29, 2019 at 8:47 AM Micah Morton <mortonm@chromium.org> wrote:
+> > > >
+> > > > I'm getting the following crash when booting after compiling a kernel
+> > > > with this LSM enabled, so I'll have to figure out what is going on.
+> > > > All the "core" functionality of this LSM has been tested thoroughly
+> > > > (we're already using this LSM on ChromeOS), but looks like there's
+> > > > some debugging of the initialization that still needs to be done.
+> > >
+> > >
+> > > +DEFINE_LSM(safesetid_security_init) = {
+> > > +       .init = safesetid_security_init,
+> > > +};
+> > >
+> > > I think this is from not having:
+> > >
+> > > .name = "safesetid",
+> >
+> > That fixed it for me! Thanks
+> >
+> > >
+> > > I missed that in the review, sorry!
+> > >
+> > > --
+> > > Kees Cook
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
 
