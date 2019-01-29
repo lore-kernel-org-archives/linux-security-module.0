@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F7FC282CD
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F69C282CD
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B8820870
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ADCF20870
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jan 2019 00:39:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727476AbfA2AjR (ORCPT
+        id S1727539AbfA2AjT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jan 2019 19:39:17 -0500
+        Mon, 28 Jan 2019 19:39:19 -0500
 Received: from mga06.intel.com ([134.134.136.31]:5079 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726867AbfA2AjP (ORCPT
+        id S1727505AbfA2AjS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jan 2019 19:39:15 -0500
+        Mon, 28 Jan 2019 19:39:18 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:11 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 16:39:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,535,1539673200"; 
-   d="scan'208";a="133921886"
+   d="scan'208";a="133921906"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.79])
   by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 16:39:11 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -43,13 +43,11 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 01/20] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
-Date:   Mon, 28 Jan 2019 16:34:03 -0800
-Message-Id: <20190129003422.9328-2-rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 08/20] x86/ftrace: set trampoline pages as executable
+Date:   Mon, 28 Jan 2019 16:34:10 -0800
+Message-Id: <20190129003422.9328-9-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
@@ -59,165 +57,52 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Nadav Amit <namit@vmware.com>
 
-text_mutex is currently expected to be held before text_poke() is
-called, but we kgdb does not take the mutex, and instead *supposedly*
-ensures the lock is not taken and will not be acquired by any other core
-while text_poke() is running.
+Since alloc_module() will not set the pages as executable soon, we need
+to do so for ftrace trampoline pages after they are allocated.
 
-The reason for the "supposedly" comment is that it is not entirely clear
-that this would be the case if kgdb_do_roundup is zero.
+For the time being, we do not change ftrace to use the text_poke()
+interface. As a result, ftrace breaks still breaks W^X.
 
-Create two wrapper functions, text_poke() and text_poke_kgdb() which do
-or do not run the lockdep assertion respectively.
-
-While we are at it, change the return code of text_poke() to something
-meaningful. One day, callers might actually respect it and the existing
-BUG_ON() when patching fails could be removed. For kgdb, the return
-value can actually be used.
-
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/text-patching.h |  1 +
- arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
- arch/x86/kernel/kgdb.c               | 11 +++---
- 3 files changed, 45 insertions(+), 19 deletions(-)
+ arch/x86/kernel/ftrace.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-index e85ff65c43c3..f8fc8e86cf01 100644
---- a/arch/x86/include/asm/text-patching.h
-+++ b/arch/x86/include/asm/text-patching.h
-@@ -35,6 +35,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
-  * inconsistent instruction while you patch.
-  */
- extern void *text_poke(void *addr, const void *opcode, size_t len);
-+extern void *text_poke_kgdb(void *addr, const void *opcode, size_t len);
- extern int poke_int3_handler(struct pt_regs *regs);
- extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
- extern int after_bootmem;
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index d458c7973c56..12fddbc8c55b 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -678,18 +678,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
- 	return addr;
- }
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index 8257a59704ae..13c8249b197f 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -742,6 +742,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	unsigned long end_offset;
+ 	unsigned long op_offset;
+ 	unsigned long offset;
++	unsigned long npages;
+ 	unsigned long size;
+ 	unsigned long retq;
+ 	unsigned long *ptr;
+@@ -774,6 +775,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 		return 0;
  
--/**
-- * text_poke - Update instructions on a live kernel
-- * @addr: address to modify
-- * @opcode: source of the copy
-- * @len: length to copy
-- *
-- * Only atomic text poke/set should be allowed when not doing early patching.
-- * It means the size must be writable atomically and the address must be aligned
-- * in a way that permits an atomic write. It also makes sure we fit on a single
-- * page.
-- */
--void *text_poke(void *addr, const void *opcode, size_t len)
-+static void *__text_poke(void *addr, const void *opcode, size_t len)
- {
- 	unsigned long flags;
- 	char *vaddr;
-@@ -702,8 +691,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
- 	 */
- 	BUG_ON(!after_bootmem);
+ 	*tramp_size = size + RET_SIZE + sizeof(void *);
++	npages = DIV_ROUND_UP(*tramp_size, PAGE_SIZE);
  
--	lockdep_assert_held(&text_mutex);
--
- 	if (!core_kernel_text((unsigned long)addr)) {
- 		pages[0] = vmalloc_to_page(addr);
- 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-@@ -732,6 +719,43 @@ void *text_poke(void *addr, const void *opcode, size_t len)
- 	return addr;
- }
+ 	/* Copy ftrace_caller onto the trampoline memory */
+ 	ret = probe_kernel_read(trampoline, (void *)start_offset, size);
+@@ -818,6 +820,12 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	/* ALLOC_TRAMP flags lets us know we created it */
+ 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
  
-+/**
-+ * text_poke - Update instructions on a live kernel
-+ * @addr: address to modify
-+ * @opcode: source of the copy
-+ * @len: length to copy
-+ *
-+ * Only atomic text poke/set should be allowed when not doing early patching.
-+ * It means the size must be writable atomically and the address must be aligned
-+ * in a way that permits an atomic write. It also makes sure we fit on a single
-+ * page.
-+ */
-+void *text_poke(void *addr, const void *opcode, size_t len)
-+{
-+	lockdep_assert_held(&text_mutex);
-+
-+	return __text_poke(addr, opcode, len);
-+}
-+
-+/**
-+ * text_poke_kgdb - Update instructions on a live kernel by kgdb
-+ * @addr: address to modify
-+ * @opcode: source of the copy
-+ * @len: length to copy
-+ *
-+ * Only atomic text poke/set should be allowed when not doing early patching.
-+ * It means the size must be writable atomically and the address must be aligned
-+ * in a way that permits an atomic write. It also makes sure we fit on a single
-+ * page.
-+ *
-+ * Context: should only be used by kgdb, which ensures no other core is running,
-+ *	    despite the fact it does not hold the text_mutex.
-+ */
-+void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
-+{
-+	return __text_poke(addr, opcode, len);
-+}
-+
- static void do_sync_core(void *info)
- {
- 	sync_core();
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 5db08425063e..1461544cba8b 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -758,13 +758,13 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
- 	if (!err)
- 		return err;
- 	/*
--	 * It is safe to call text_poke() because normal kernel execution
-+	 * It is safe to call text_poke_kgdb() because normal kernel execution
- 	 * is stopped on all cores, so long as the text_mutex is not locked.
- 	 */
- 	if (mutex_is_locked(&text_mutex))
- 		return -EBUSY;
--	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
--		  BREAK_INSTR_SIZE);
-+	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
-+		       BREAK_INSTR_SIZE);
- 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
- 	if (err)
- 		return err;
-@@ -783,12 +783,13 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
- 	if (bpt->type != BP_POKE_BREAKPOINT)
- 		goto knl_write;
- 	/*
--	 * It is safe to call text_poke() because normal kernel execution
-+	 * It is safe to call text_poke_kgdb() because normal kernel execution
- 	 * is stopped on all cores, so long as the text_mutex is not locked.
- 	 */
- 	if (mutex_is_locked(&text_mutex))
- 		goto knl_write;
--	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
-+	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
-+		       BREAK_INSTR_SIZE);
- 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
- 	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
- 		goto knl_write;
++	/*
++	 * Module allocation needs to be completed by making the page
++	 * executable. The page is still writable, which is a security hazard,
++	 * but anyhow ftrace breaks W^X completely.
++	 */
++	set_memory_x((unsigned long)trampoline, npages);
+ 	return (unsigned long)trampoline;
+ fail:
+ 	tramp_free(trampoline, *tramp_size);
 -- 
 2.17.1
 
