@@ -2,79 +2,136 @@ Return-Path: <SRS0=sdO6=QG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AD2C282D7
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 20:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B311CC282D8
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 23:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 526CB218AC
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 20:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 616F520881
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 23:01:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387608AbfA3UbF (ORCPT
+        id S1730113AbfA3XBq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jan 2019 15:31:05 -0500
-Received: from namei.org ([65.99.196.166]:49278 "EHLO namei.org"
+        Wed, 30 Jan 2019 18:01:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37504 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727269AbfA3UbF (ORCPT
+        id S1728081AbfA3XBm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jan 2019 15:31:05 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x0UKUwCg015458;
-        Wed, 30 Jan 2019 20:30:58 GMT
-Date:   Thu, 31 Jan 2019 07:30:58 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Micah Morton <mortonm@chromium.org>
-cc:     kbuild-all@01.org, linux-security-module@vger.kernel.org,
-        james.morris@microsoft.com
-Subject: Re: [PATCH] LSM: SafeSetID: remove unused include
-In-Reply-To: <20190130155643.167055-1-mortonm@chromium.org>
-Message-ID: <alpine.LRH.2.21.1901310730520.10106@namei.org>
-References: <201901300828.TveZbnBP%fengguang.wu@intel.com> <20190130155643.167055-1-mortonm@chromium.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 30 Jan 2019 18:01:42 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CE6AFC0495BB;
+        Wed, 30 Jan 2019 22:43:45 +0000 (UTC)
+Received: from cantor.redhat.com (ovpn-116-165.phx2.redhat.com [10.3.116.165])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 658DA6266C;
+        Wed, 30 Jan 2019 22:43:45 +0000 (UTC)
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 1/2] tpm: don't return bool from update_timeouts
+Date:   Wed, 30 Jan 2019 15:43:32 -0700
+Message-Id: <20190130224333.20373-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 30 Jan 2019 22:43:45 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 30 Jan 2019, mortonm@chromium.org wrote:
+Set tpm_chip->timeouts_adjusted directly in the update_timeouts
+code instead of returning bool. In case of tpm read failing
+print warning that the read failed and continue on.
 
-> From: Micah Morton <mortonm@chromium.org>
-> 
-> The include for asm/syscall.h was needed in a prior version of lsm.c
-> that checked return values of syscall_get_nr, but since we did away with
-> that part of the code this include is no longer necessary. Take out this
-> include since it breaks builds for certain architectures. We no longer
-> have any arch-specific code in SafeSetID.
-> 
-> Signed-off-by: Micah Morton <mortonm@chromium.org>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+---
+ drivers/char/tpm/tpm1-cmd.c     |  3 +--
+ drivers/char/tpm/tpm_tis_core.c | 15 +++++++++------
+ include/linux/tpm.h             |  2 +-
+ 3 files changed, 11 insertions(+), 9 deletions(-)
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
-
-
-> ---
->  security/safesetid/lsm.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-> index 282a242beb86..cecd38e2ac80 100644
-> --- a/security/safesetid/lsm.c
-> +++ b/security/safesetid/lsm.c
-> @@ -14,7 +14,6 @@
->  
->  #define pr_fmt(fmt) "SafeSetID: " fmt
->  
-> -#include <asm/syscall.h>
->  #include <linux/hashtable.h>
->  #include <linux/lsm_hooks.h>
->  #include <linux/module.h>
-> 
-
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 6f306338953b..bda9a16b44f6 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -380,8 +380,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+ 	 * of misreporting.
+ 	 */
+ 	if (chip->ops->update_timeouts)
+-		chip->timeout_adjusted =
+-			chip->ops->update_timeouts(chip, timeout_eff);
++		chip->ops->update_timeouts(chip, timeout_eff);
+ 
+ 	if (!chip->timeout_adjusted) {
+ 		/* Restore default if chip reported 0 */
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index bf7e49cfa643..45e29fd1f5d7 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -521,35 +521,38 @@ static const struct tis_vendor_timeout_override vendor_timeout_overrides[] = {
+ 			(TIS_SHORT_TIMEOUT*1000), (TIS_SHORT_TIMEOUT*1000) } },
+ };
+ 
+-static bool tpm_tis_update_timeouts(struct tpm_chip *chip,
++static void tpm_tis_update_timeouts(struct tpm_chip *chip,
+ 				    unsigned long *timeout_cap)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 	int i, rc;
+ 	u32 did_vid;
+ 
++	chip->timeout_adjusted = false;
++
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, true);
+ 
+ 	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &did_vid);
+-	if (rc < 0)
++	if (rc < 0) {
++		dev_warn(&chip->dev, "%s: failed to read did_vid: %d\n",
++			 __func__, rc);
+ 		goto out;
++	}
+ 
+ 	for (i = 0; i != ARRAY_SIZE(vendor_timeout_overrides); i++) {
+ 		if (vendor_timeout_overrides[i].did_vid != did_vid)
+ 			continue;
+ 		memcpy(timeout_cap, vendor_timeout_overrides[i].timeout_us,
+ 		       sizeof(vendor_timeout_overrides[i].timeout_us));
+-		rc = true;
++		chip->timeout_adjusted = true;
+ 	}
+ 
+-	rc = false;
+-
+ out:
+ 	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
+ 
+-	return rc;
++	return;
+ }
+ 
+ /*
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index b49a55cf775f..13563b8c0c3a 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -41,7 +41,7 @@ struct tpm_class_ops {
+ 	int (*send) (struct tpm_chip *chip, u8 *buf, size_t len);
+ 	void (*cancel) (struct tpm_chip *chip);
+ 	u8 (*status) (struct tpm_chip *chip);
+-	bool (*update_timeouts)(struct tpm_chip *chip,
++	void (*update_timeouts)(struct tpm_chip *chip,
+ 				unsigned long *timeout_cap);
+ 	int (*go_idle)(struct tpm_chip *chip);
+ 	int (*cmd_ready)(struct tpm_chip *chip);
 -- 
-James Morris
-<jmorris@namei.org>
+2.20.1.98.gecbdaf0899
 
