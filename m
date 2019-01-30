@@ -2,81 +2,118 @@ Return-Path: <SRS0=sdO6=QG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A343C282D7
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 12:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5100C282D7
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 12:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DEAB2175B
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 12:01:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84BD420882
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 12:49:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730656AbfA3MB2 (ORCPT
+        id S1729729AbfA3Mtm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:01:28 -0500
-Received: from mga04.intel.com ([192.55.52.120]:15195 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730592AbfA3MB2 (ORCPT
+        Wed, 30 Jan 2019 07:49:42 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:54233 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730967AbfA3MrW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:01:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 04:01:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
-   d="scan'208";a="140066087"
-Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Jan 2019 04:01:24 -0800
-Date:   Wed, 30 Jan 2019 14:01:22 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v8 1/7] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20190130120122.GA19191@linux.intel.com>
-References: <20190124154910.29948-1-roberto.sassu@huawei.com>
- <20190124154910.29948-2-roberto.sassu@huawei.com>
- <20190129192941.GB14305@linux.intel.com>
- <ddf3515d-efba-6cf0-e224-90966be9cb18@huawei.com>
+        Wed, 30 Jan 2019 07:47:22 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gopGy-0006AC-21; Wed, 30 Jan 2019 05:47:20 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gopGx-0001gZ-7c; Wed, 30 Jan 2019 05:47:19 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Karel Zak <kzak@redhat.com>, util-linux@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        LSM <linux-security-module@vger.kernel.org>
+References: <87va2716mh.fsf@xmission.com>
+        <03e0993b-21db-1cc4-7a33-0236de7be20d@schaufler-ca.com>
+        <87r2cvx7wz.fsf@xmission.com> <87ef8vx7jz.fsf@xmission.com>
+Date:   Wed, 30 Jan 2019 06:47:09 -0600
+In-Reply-To: <87ef8vx7jz.fsf@xmission.com> (Eric W. Biederman's message of
+        "Tue, 29 Jan 2019 19:23:12 -0600")
+Message-ID: <8736pawbw2.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ddf3515d-efba-6cf0-e224-90966be9cb18@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-XM-SPF: eid=1gopGx-0001gZ-7c;;;mid=<8736pawbw2.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18a+etU5hIAZJSftdtZ1VtryMrnkJhAie4=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [RFD] A mount api that notices previous mounts
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 30, 2019 at 08:52:40AM +0100, Roberto Sassu wrote:
-> On 1/29/2019 8:29 PM, Jarkko Sakkinen wrote:
-> > On Thu, Jan 24, 2019 at 04:49:04PM +0100, Roberto Sassu wrote:
-> > > +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
-> > > +					GFP_KERNEL);
-> > > +	if (!chip->allocated_banks) {
-> > > +		rc = -ENOMEM;
-> > > +		goto out;
-> > > +	}
-> > > +
-> > > +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
-> > > +	chip->nr_allocated_banks = 1;
-> > 
-> > Everything else looks nice in this patch except this.
-> > 
-> > You always branch for TPM 1.2, and it will always have just SHA1. This
-> > is unnecessary.
-> 
-> Without this, users of the TPM driver have to call tpm_is_tpm2() first,
-> while instead they can look directly at chip->allocated_banks.
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-I realized this after going through the whole patch set and sleeping
-one night :-) You can keep it. I was mistaken here.
+> ebiederm@xmission.com (Eric W. Biederman) writes:
+>
+>> Casey Schaufler <casey@schaufler-ca.com> writes:
+>>> Are you taking the LSM specific mount options into account?
+>>
+>> In the design yes, and I allow setting them.  It appears in the code
+>> to retrieve the mount options I forgot to call security_sb_show_options.
+>>
+>> For finding the super block that you are going to mount the LSM mount
+>> options are not relevant.  Even nfs will not want to set those early as
+>> they do not help determine the nfs super block.  So the only place where
+>> there is anything interesting in my api is in reading back the security
+>> options so they can be compared to the options the mounter is setting.
+>>
+>> I will add the missing call to security_sb_show_options which is enough
+>> to fix selinux.  Unfortunately smack does not currently implement
+>> .sb_show_options.  Not implementing smack_sb_show_options means
+>> /proc/mounts fails to match /etc/mtab which is a bug and it is likely
+>> a real workd bug for the people who use smack and don't want to depend
+>> on /etc/mtab, or are transitioning away from it.
+>>
+>> Casey do you want to implement smack_sb_show_options or should I put it
+>> on my todo list?
+>
+> Oh.  I should add that I am always parsing the LSM mount options out so
+> that there is not a chance of the individual filesystems implementing
+> comflicting options even when there are no LSMs active.  Without that I
+> am afraid we run the risk of having LSM mount otions in conflict with
+> ordinary filesystems options at some point and by the time we discover
+> it it would start introducing filesystem regressions.
+>
+> That does help with stack though as there is no fundamental reason only
+> one LSM could process mount options.
 
-/Jarkko
+Sigh.  I just realized that there is a smack variant of the bug I am
+working to fix.
+
+smack on remount does not fail if you change the smack mount options.
+It just silently ignores the smack mount options.  Which is exactly the
+same poor interaction with userspace that has surprised user space
+and caused CVEs.
+
+How much do you think the smack users will care if you start verifying
+that if smack options are present in remount that they are unchanged
+from mount?
+
+I suspect the smack userbase is small enough, and the corner case is
+crazy enough we can fix this poor communication by smack.  Otherwise it
+looks like there needs to be a new security hook so old and new remounts
+can be distinguished by the LSMs, and smack can be fixed in the new
+version.
+
+Eric
+
