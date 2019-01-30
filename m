@@ -2,214 +2,81 @@ Return-Path: <SRS0=sdO6=QG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D26C282D9
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 11:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A343C282D7
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 12:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DCF020882
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 11:43:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DEAB2175B
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 12:01:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbfA3LnW (ORCPT
+        id S1730656AbfA3MB2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jan 2019 06:43:22 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53423 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730682AbfA3LnU (ORCPT
+        Wed, 30 Jan 2019 07:01:28 -0500
+Received: from mga04.intel.com ([192.55.52.120]:15195 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730592AbfA3MB2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jan 2019 06:43:20 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d15so21295359wmb.3
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Jan 2019 03:43:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3PwjwnLNTsMD005MExgPvqEqo3DYQCBut/K5wBI3Tz8=;
-        b=aEiCgTTpwIYndw87o0ydVJriIRgPyAwHUzYXMEkMjWqbvhpJUtxzoBa02wUf2NgIJI
-         6qKkVlcJlLNTGPjf2ZftkqZGCJ5q81EWD0cJsDXqshA49RXTw2Lfuun55W7d3kJED0E5
-         96jXnjInpk8ZMcd52O1k6vFqRaXJliHqf3c9uWKmOvXgOJ8BT5/5A9DjNtPrD6uKNoYv
-         nb2Rg/6VMgHpE9PQ31bNSffzsdd/RInhPaSGSK2GqogCmpDYQsZEyfWjE8u1GUwhIbNR
-         eizLEF5kqv75DGqqLjQ+WIVjuMKQ6Nl+c3Euu+clBGLzVhGwho8JKZEACxRckcwhsD2G
-         THVQ==
-X-Gm-Message-State: AJcUukdhhj4baVv3MS4kFnKrpcyPAjcvdzUsxG2WBNCjr/A0RSqvUppp
-        PwVWX1gb7B9dX7HMrluKTnK8vw==
-X-Google-Smtp-Source: ALg8bN4ZPi6grMG89IFL02CrFMuQ3SqhpDmbRacbmnfLWoV8glMov7YCQ0T1J87BtJRffLdoAmmzMQ==
-X-Received: by 2002:a1c:6442:: with SMTP id y63mr23812533wmb.143.1548848597859;
-        Wed, 30 Jan 2019 03:43:17 -0800 (PST)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id n124sm2417691wmd.15.2019.01.30.03.43.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 30 Jan 2019 03:43:17 -0800 (PST)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Wed, 30 Jan 2019 07:01:28 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2019 04:01:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,540,1539673200"; 
+   d="scan'208";a="140066087"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Jan 2019 04:01:24 -0800
+Date:   Wed, 30 Jan 2019 14:01:22 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v3 5/5] kernfs: initialize security of newly created nodes
-Date:   Wed, 30 Jan 2019 12:41:50 +0100
-Message-Id: <20190130114150.27807-6-omosnace@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190130114150.27807-1-omosnace@redhat.com>
-References: <20190130114150.27807-1-omosnace@redhat.com>
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v8 1/7] tpm: dynamically allocate the allocated_banks
+ array
+Message-ID: <20190130120122.GA19191@linux.intel.com>
+References: <20190124154910.29948-1-roberto.sassu@huawei.com>
+ <20190124154910.29948-2-roberto.sassu@huawei.com>
+ <20190129192941.GB14305@linux.intel.com>
+ <ddf3515d-efba-6cf0-e224-90966be9cb18@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ddf3515d-efba-6cf0-e224-90966be9cb18@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the new security_kernfs_init_security() hook to allow LSMs to
-possibly assign a non-default security context to a newly created kernfs
-node based on the attributes of the new node and also its parent node.
+On Wed, Jan 30, 2019 at 08:52:40AM +0100, Roberto Sassu wrote:
+> On 1/29/2019 8:29 PM, Jarkko Sakkinen wrote:
+> > On Thu, Jan 24, 2019 at 04:49:04PM +0100, Roberto Sassu wrote:
+> > > +	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
+> > > +					GFP_KERNEL);
+> > > +	if (!chip->allocated_banks) {
+> > > +		rc = -ENOMEM;
+> > > +		goto out;
+> > > +	}
+> > > +
+> > > +	chip->allocated_banks[0] = TPM2_ALG_SHA1;
+> > > +	chip->nr_allocated_banks = 1;
+> > 
+> > Everything else looks nice in this patch except this.
+> > 
+> > You always branch for TPM 1.2, and it will always have just SHA1. This
+> > is unnecessary.
+> 
+> Without this, users of the TPM driver have to call tpm_is_tpm2() first,
+> while instead they can look directly at chip->allocated_banks.
 
-This fixes an issue with cgroupfs under SELinux, where newly created
-cgroup subdirectories/files would not inherit its parent's context if
-it had been set explicitly to a non-default value (other than the genfs
-context specified by the policy). This can be reproduced as follows (on
-Fedora/RHEL):
+I realized this after going through the whole patch set and sleeping
+one night :-) You can keep it. I was mistaken here.
 
-    # mkdir /sys/fs/cgroup/unified/test
-    # # Need permissive to change the label under Fedora policy:
-    # setenforce 0
-    # chcon -t container_file_t /sys/fs/cgroup/unified/test
-    # ls -lZ /sys/fs/cgroup/unified
-    total 0
-    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.controllers
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.depth
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.descendants
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.procs
-    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.stat
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.subtree_control
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.threads
-    drwxr-xr-x.  2 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 init.scope
-    drwxr-xr-x. 26 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:21 system.slice
-    drwxr-xr-x.  3 root root system_u:object_r:container_file_t:s0 0 Jan 29 03:15 test
-    drwxr-xr-x.  3 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 user.slice
-    # mkdir /sys/fs/cgroup/unified/test/subdir
-
-Actual result:
-
-    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
-    drwxr-xr-x. 2 root root system_u:object_r:cgroup_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
-
-Expected result:
-
-    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
-    drwxr-xr-x. 2 root root unconfined_u:object_r:container_file_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
-
-Link: https://github.com/SELinuxProject/selinux-kernel/issues/39
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- fs/kernfs/dir.c             | 35 +++++++++++++++++++++++++++++++++--
- fs/kernfs/inode.c           |  2 +-
- fs/kernfs/kernfs-internal.h |  1 +
- 3 files changed, 35 insertions(+), 3 deletions(-)
-
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index ad7e3356bcc5..797199a748d7 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -15,6 +15,7 @@
- #include <linux/slab.h>
- #include <linux/security.h>
- #include <linux/hash.h>
-+#include <linux/stringhash.h>
- 
- #include "kernfs-internal.h"
- 
-@@ -616,7 +617,31 @@ struct kernfs_node *kernfs_node_from_dentry(struct dentry *dentry)
- 	return NULL;
- }
- 
-+static int kernfs_node_init_security(struct kernfs_node *parent,
-+				     struct kernfs_node *kn)
-+{
-+	struct kernfs_iattrs *attrs, *pattrs;
-+	struct qstr q;
-+
-+	attrs = kernfs_iattrs(kn);
-+	if (!attrs)
-+		return -ENOMEM;
-+
-+	pattrs = kernfs_iattrs(parent);
-+	if (!pattrs)
-+		return -ENOMEM;
-+
-+	q.name = kn->name;
-+	q.hash_len = hashlen_string(parent, kn->name);
-+
-+	return security_kernfs_init_security(&q, &attrs->ia_iattr,
-+					     &attrs->xattrs_security,
-+					     &pattrs->ia_iattr,
-+					     &pattrs->xattrs_security);
-+}
-+
- static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
-+					     struct kernfs_node *parent,
- 					     const char *name, umode_t mode,
- 					     kuid_t uid, kgid_t gid,
- 					     unsigned flags)
-@@ -673,6 +698,12 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
- 			goto err_out3;
- 	}
- 
-+	if (parent) {
-+		ret = kernfs_node_init_security(parent, kn);
-+		if (ret)
-+			goto err_out3;
-+	}
-+
- 	return kn;
- 
-  err_out3:
-@@ -691,7 +722,7 @@ struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
- {
- 	struct kernfs_node *kn;
- 
--	kn = __kernfs_new_node(kernfs_root(parent),
-+	kn = __kernfs_new_node(kernfs_root(parent), parent,
- 			       name, mode, uid, gid, flags);
- 	if (kn) {
- 		kernfs_get(parent);
-@@ -961,7 +992,7 @@ struct kernfs_root *kernfs_create_root(struct kernfs_syscall_ops *scops,
- 	INIT_LIST_HEAD(&root->supers);
- 	root->next_generation = 1;
- 
--	kn = __kernfs_new_node(root, "", S_IFDIR | S_IRUGO | S_IXUGO,
-+	kn = __kernfs_new_node(root, NULL, "", S_IFDIR | S_IRUGO | S_IXUGO,
- 			       GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
- 			       KERNFS_DIR);
- 	if (!kn) {
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index f0e2cb4379c0..645c404b8644 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -31,7 +31,7 @@ static const struct inode_operations kernfs_iops = {
- 	.listxattr	= kernfs_iop_listxattr,
- };
- 
--static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
-+struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
- {
- 	static DEFINE_MUTEX(iattr_mutex);
- 	struct kernfs_iattrs *ret;
-diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-index 93bf1dcd0306..90215f8e503a 100644
---- a/fs/kernfs/kernfs-internal.h
-+++ b/fs/kernfs/kernfs-internal.h
-@@ -90,6 +90,7 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
- 		       u32 request_mask, unsigned int query_flags);
- ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size);
- int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
-+struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn);
- 
- /*
-  * dir.c
--- 
-2.20.1
-
+/Jarkko
