@@ -2,138 +2,365 @@ Return-Path: <SRS0=sdO6=QG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UPPERCASE_50_75
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9BCC282D8
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 16:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFB3C282D7
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 16:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4502D20989
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 16:19:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 644C92087F
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 16:30:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="chcgJKpI"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OHpXHVqU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731582AbfA3QTz (ORCPT
+        id S1730509AbfA3Qax (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jan 2019 11:19:55 -0500
-Received: from sonic317-33.consmr.mail.bf2.yahoo.com ([74.6.129.88]:37758 "EHLO
-        sonic317-33.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731728AbfA3QTy (ORCPT
+        Wed, 30 Jan 2019 11:30:53 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:33935 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728720AbfA3Qax (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jan 2019 11:19:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1548865193; bh=LasJuwGl/UHagSr9SM9z0GFEzkfCwfY19xaFLYOadCE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=chcgJKpIVazl/520rXok5EynZwVCZdJcW+j2Imd0bsimfcamlrEY7frdPx5H6AD22pqsw38pmbh+jGafj3hJifBV+ZuK3ay26yzgVwUPvtBQgKBRv33HUBzokXjbCpAGbAAfpDvp5gzVFR3vUEDKJ2Wj1m4Z2IZqhVFQay4Y3GTyDT+7BHViKjUQXCbhmT9d/3wEp9fmC77OW4ISwPSZyKFsN2qBKH/t+XdzGSaT0iTUs6cK65aLuMaZOjlqHRwLUgeBTahdpbgo8C4f9/BjR1ez/DK7So2HBfBXDs2k83Zz/k/DdJ6WAFSPrdS7EUpVX2rnp4Ywo6Il/LnEE5aqsA==
-X-YMail-OSG: axqnLCEVM1mkIfZj6kbGleEgrZDkb_ozHAG98dJ3XNKgBXAEHndTX_.oPP6wFZH
- 21x2JHZkNFPQ_aTxqA9kHOz2O98xvsV1E0Kd714YGcM6wE2NIzHtX_qgiJ.q8q0xP7oPS0Oa4iMY
- sZo5ApKqRWq4yOd7I18uRIjOewuyVgTjHKpFuF4Q5kTX9A106cKdhjHxjsRkGTGCnWuCQgXcq6Qo
- x6Qz8G5SOWV7a2EYSvkDmMNVEHdaUPxx8Rx3SBO8AdVPsse5qp3wz4.yqF.uOzYNDUKLewoIIHRO
- Q3psaeK3cQlzvxXU1VezKnNelY4BPXN9Q4WRW62JSdrxTlXDQViZtLQaSXAyY_pNMs_WqdaqDGCk
- aKqGV.0smq1jYqHZYC.U75u_.AICc.WgEaNmrVcWUgKnwqz76oCL3am__mUJmlcekBe3ZYpJ1o5c
- Zot3ShEFLisuKx8zZ7vT1nqcidl2dgK1Er3uumu2tpo7snlUfTxE6KvkirCGqTu4TsjNIns0HuFg
- .WqN7GHeyZcwn9lzzUbKgR5MoZ5ylzYaZ_IrHg4JroDAfVS_ZcWSk6goBzSsXSGkZiyfJwThumJv
- 82OHqpQCef3asY5EgxMcqayqCT66sXBkMqurnY9QFmBNyR5Jr5AhHh1e37CWCze0Ot.MFnP8BzV2
- rQqGRXHo8iquqkQtZ4_ZSwYvgTN71tdPZnT1t.0iJvV_pGfPhzDOuBwvCoZqedxfmH755ae.23QT
- nfuaaMFloHI9nRcDN2CVJ9Qix0VXke7M717E.n9xc7P1AP_WuFj5BkscMggwgeVBNe3Q140pFnsL
- T_PczxA8On70AmMylzvq9Z7hzSoGjYylic6QHoI1mnwl.4naTHm9CNrbUiir5tzKKXwqBOGp0sKa
- LxdLvZUGy_ezK32djba02ZFXqNYZwARNF.ju0GtpBGhSgENJqCOX78j3xwVsv9WGY9_.43TB0cFK
- epZ99eWsRUcdmd_Vegc6qzm.uW3BpNC3S1qQhB_njXCyApXA6jQHhwRxxSfURbAjJ.WPqD6X.gXi
- 6jxazna6p_tDBOnkz4.72PgpLtX_x8mrmOOFTASndSZDz9Bd7Ah.SNKVUV72jupXQor_cFWPgtXz
- Y.EU2J4QxS8ugmLk-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.bf2.yahoo.com with HTTP; Wed, 30 Jan 2019 16:19:53 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp422.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a65f7b02ea53c52498e471c200987f9c;
-          Wed, 30 Jan 2019 16:19:50 +0000 (UTC)
-Subject: Re: [RFD] A mount api that notices previous mounts
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Karel Zak <kzak@redhat.com>, util-linux@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>
-References: <87va2716mh.fsf@xmission.com>
- <03e0993b-21db-1cc4-7a33-0236de7be20d@schaufler-ca.com>
- <87r2cvx7wz.fsf@xmission.com> <87ef8vx7jz.fsf@xmission.com>
- <8736pawbw2.fsf@xmission.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <9e7789f8-2f03-d576-d7ee-a4f78e27ddd2@schaufler-ca.com>
-Date:   Wed, 30 Jan 2019 08:19:46 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 11:30:53 -0500
+Received: by mail-yw1-f66.google.com with SMTP id g75so64862ywb.1
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Jan 2019 08:30:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Zy+tEjDTAcjHbfqkKpcsv6kmnaG6eEk4FXGI0Mau0jo=;
+        b=OHpXHVqU9fK9M2GpyjJZtZi4V1FAgMkpbnsD1lxq1QM8TgEo5WrZUfv7e+m492gvqb
+         e8N7Ckj5DyH0dPc0sWQF1UH5ZCYXG/fMstn5G+rxipdU55IPYnT5RfcpLePlBsdHtRXp
+         3gGwLBhM0RLo5fvhTq8iXeYAF/UxDlxM1zkAs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Zy+tEjDTAcjHbfqkKpcsv6kmnaG6eEk4FXGI0Mau0jo=;
+        b=b1PhRT049UZqeSquGRflrYAZaaSntSKkCZIX8BoryGRZCvDxKaGporil2HwO3ZS/ME
+         qYlBSw8eok/+tLOs8Nbo/oWieZm3pxpJZMsjJFqDolZsJxJ9lIELeThUn8NMLXAmJ+z9
+         LoLTvyxuV+UJ107lIYmLHoFs77LDhy+s8ZXvhEyoPiQKQmLaxLf3AOZWhIOIfTCVvk/O
+         nwx+oeC9awm8ZLlk6h5hlWayIABbKKQEixWGr0QYjE+atdBepGoEUxK3+G16nSQe5tC5
+         xX+ZmsG6RnSzdhag6oZon7CfFMB3vfLI93V3/SuJBu8DUuwiL1sj1Xtqh2LSBtMD2e05
+         RjTg==
+X-Gm-Message-State: AJcUukct+2mMx0fneYXxuuOoyYW6m6sqNQXyGFoFx82jWcx3Qz2Samq8
+        vei/d54zgHp+SCudIOMeRIAh5IHfN6tNhJ5Z4dY8lA==
+X-Google-Smtp-Source: ALg8bN5Q6idL4KNSM6lbz3njBAXoMR0LuxgmHXpyTDB/i9zyGGHYWqEPfsXARKQ5jPdMSBqtlRAaFNz9r4WBOU+59Y4=
+X-Received: by 2002:a81:56d7:: with SMTP id k206mr30162008ywb.167.1548865852166;
+ Wed, 30 Jan 2019 08:30:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <8736pawbw2.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <000000000000c178e305749daba4@google.com> <CACT4Y+Z9wmuq=Pb-gxAJauQNi0uZGDUimWEL66UzWGSp_x2uQA@mail.gmail.com>
+ <37aec45f-69ad-9705-21f1-64ee4ce4a772@tycho.nsa.gov> <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
+ <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov> <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
+ <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
+ <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov> <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+ <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov> <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+ <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov> <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+ <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
+ <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com> <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+ <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp> <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
+In-Reply-To: <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Wed, 30 Jan 2019 08:30:41 -0800
+Message-ID: <CAJ-EccOyGsoSNHUZhOSDZDdEv_RW6ArqGW+hLDTgbQ3UPo5ZOQ@mail.gmail.com>
+Subject: Re: WARNING in apparmor_secid_to_secctx
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/30/2019 4:47 AM, Eric W. Biederman wrote:
-> ebiederm@xmission.com (Eric W. Biederman) writes:
+On Wed, Jan 30, 2019 at 6:45 AM Dmitry Vyukov <dvyukov@google.com> wrote:
 >
->> ebiederm@xmission.com (Eric W. Biederman) writes:
->>
->>> Casey Schaufler <casey@schaufler-ca.com> writes:
->>>> Are you taking the LSM specific mount options into account?
->>> In the design yes, and I allow setting them.  It appears in the code
->>> to retrieve the mount options I forgot to call security_sb_show_options.
->>>
->>> For finding the super block that you are going to mount the LSM mount
->>> options are not relevant.  Even nfs will not want to set those early as
->>> they do not help determine the nfs super block.  So the only place where
->>> there is anything interesting in my api is in reading back the security
->>> options so they can be compared to the options the mounter is setting.
->>>
->>> I will add the missing call to security_sb_show_options which is enough
->>> to fix selinux.  Unfortunately smack does not currently implement
->>> .sb_show_options.  Not implementing smack_sb_show_options means
->>> /proc/mounts fails to match /etc/mtab which is a bug and it is likely
->>> a real workd bug for the people who use smack and don't want to depend
->>> on /etc/mtab, or are transitioning away from it.
->>>
->>> Casey do you want to implement smack_sb_show_options or should I put it
->>> on my todo list?
->> Oh.  I should add that I am always parsing the LSM mount options out so
->> that there is not a chance of the individual filesystems implementing
->> comflicting options even when there are no LSMs active.  Without that I
->> am afraid we run the risk of having LSM mount otions in conflict with
->> ordinary filesystems options at some point and by the time we discover
->> it it would start introducing filesystem regressions.
->>
->> That does help with stack though as there is no fundamental reason only
->> one LSM could process mount options.
-> Sigh.  I just realized that there is a smack variant of the bug I am
-> working to fix.
+> On Tue, Jan 29, 2019 at 12:32 PM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >
+> > On 2018/09/06 19:59, Dmitry Vyukov wrote:
+> > > On Wed, Sep 5, 2018 at 7:37 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > >> On 9/5/2018 4:08 AM, Dmitry Vyukov wrote:
+> > >>> Thanks! I've re-enabled selinux on syzbot:
+> > >>> https://github.com/google/syzkaller/commit/196410e4f5665d4d2bf6c818d06f1c8d03cfa8cc
+> > >>> Now we will have instances with apparmor and with selinux.
+> > >>
+> > >> Any chance we could get a Smack instance as well?
+> > >
+> > > Hi Casey,
+> > >
+> > > Sure!
+> > > Provided you want to fix bugs ;)
+> > > I've setup an instance with smack enabled:
+> > > https://github.com/google/syzkaller/commit/0bb7a7eb8e0958c6fbe2d69615b9fae4af88c8ee
+> > >
+> >
+> > Dmitry, is it possible to update configs for linux-next.git , for
+> > we want to test a big change in LSM which will go to Linux 5.1 ?
+> >
+> > TOMOYO security module (CONFIG_SECURITY_TOMOYO=y) can now coexist with
+> > SELinux/Smack/AppArmor security modules, and SafeSetID security module
+> > (CONFIG_SECURITY_SAFESETID=y) was added. Testing with these modules also
+> > enabled might find something...
 >
-> smack on remount does not fail if you change the smack mount options.
-> It just silently ignores the smack mount options.  Which is exactly the
-> same poor interaction with userspace that has surprised user space
-> and caused CVEs.
+> Hi,
 >
-> How much do you think the smack users will care if you start verifying
-> that if smack options are present in remount that they are unchanged
-> from mount?
+> syzbot configs/cmdline args are stored here:
+> https://github.com/google/syzkaller/tree/master/dashboard/config
+>
+> I've tried to update to the latest kernel, the diff is below.
+> Few questions:
+> 1. How are modules enabled now?
+> We pass security=selinux of security=smack on command line. What do we
+> need to pass now to enable several modules at the same time?
+>
+> 2. What exactly does SECURITY_SAFESETID do?
+> syzkaller executor uses setuid/gid, and the config says "to only those
+> approved by a system-wide whitelist". What/where is that whitelist? If
+> we just enable it, but not whitelist will it break syzkaller?
 
-I've added the smack-discuss list to the conversation.
+There is a description of this recently-added LSM in
+Documentation/admin-guide/LSM/SafeSetID.rst (has been pulled into
+next-general branch in the linux-security tree, should be in
+linux-next tree by now as well). TL;DR: if no whitelist is configured
+by writing to the safesetid directory in securityfs, there will be no
+policies preventing certain users from changing to other users/groups.
+So shouldn't break syzkaller if you "just" enable it.
 
-> I suspect the smack userbase is small enough, and the corner case is
-> crazy enough we can fix this poor communication by smack.  Otherwise it
-> looks like there needs to be a new security hook so old and new remounts
-> can be distinguished by the LSMs, and smack can be fixed in the new
-> version.
-
-I fear that it may be worse than that. It's not enough to distinguish
-a mount from a remount. On remount you need an LSM specific way to
-compare mount options. Smack may decide that it's OK to remount a
-filesystem with more restrictive smackfshat values, for example. Or,
-it may allow smackfsroot=Pop for one and smackfstransmute=Pop on
-the other. I'm not sure about the 2nd case, but you should get the idea.
 
 >
-> Eric
 >
 >
+> diff --git a/dashboard/config/upstream-kasan.config
+> b/dashboard/config/upstream-kasan.config
+> index 475d84a3..ed026cd8 100644
+> --- a/dashboard/config/upstream-kasan.config
+> +++ b/dashboard/config/upstream-kasan.config
+> @@ -1,6 +1,6 @@
+>  #
+>  # Automatically generated file; DO NOT EDIT.
+> -# Linux/x86 4.20.0 Kernel Configuration
+> +# Linux/x86 5.0.0-rc4 Kernel Configuration
+>  #
+>
+>  # The following configs are added manually, preserve them.
+> @@ -14,11 +14,12 @@ CONFIG_DEBUG_MEMORY=y
+>  CONFIG_DEBUG_AID_FOR_SYZBOT=y
+>
+>  #
+> -# Compiler: gcc (GCC) 9.0.0 20181231 (experimental)
+> +# Compiler:
+>  #
+>  CONFIG_CC_IS_GCC=y
+>  CONFIG_GCC_VERSION=90000
+>  CONFIG_CLANG_VERSION=0
+> +CONFIG_CC_HAS_ASM_GOTO=y
+>  CONFIG_CONSTRUCTORS=y
+>  CONFIG_IRQ_WORK=y
+>  CONFIG_BUILDTIME_EXTABLE_SORT=y
+> @@ -295,7 +296,7 @@ CONFIG_X86_X2APIC=y
+>  CONFIG_X86_MPPARSE=y
+>  # CONFIG_GOLDFISH is not set
+>  CONFIG_RETPOLINE=y
+> -# CONFIG_RESCTRL is not set
+> +# CONFIG_X86_RESCTRL is not set
+>  CONFIG_X86_EXTENDED_PLATFORM=y
+>  # CONFIG_X86_NUMACHIP is not set
+>  # CONFIG_X86_VSMP is not set
+> @@ -571,6 +572,7 @@ CONFIG_X86_ACPI_CPUFREQ_CPB=y
+>  CONFIG_CPU_IDLE=y
+>  # CONFIG_CPU_IDLE_GOV_LADDER is not set
+>  CONFIG_CPU_IDLE_GOV_MENU=y
+> +# CONFIG_CPU_IDLE_GOV_TEO is not set
+>  CONFIG_INTEL_IDLE=y
+>
+>  #
+> @@ -745,8 +747,9 @@ CONFIG_HAVE_ARCH_PREL32_RELOCATIONS=y
+>  #
+>  # CONFIG_GCOV_KERNEL is not set
+>  CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
+> -CONFIG_PLUGIN_HOSTCC=""
+> +CONFIG_PLUGIN_HOSTCC="g++"
+>  CONFIG_HAVE_GCC_PLUGINS=y
+> +# CONFIG_GCC_PLUGINS is not set
+>  CONFIG_RT_MUTEXES=y
+>  CONFIG_BASE_SMALL=0
+>  CONFIG_MODULES=y
+> @@ -932,6 +935,7 @@ CONFIG_NET_KEY_MIGRATE=y
+>  CONFIG_SMC=y
+>  CONFIG_SMC_DIAG=y
+>  CONFIG_XDP_SOCKETS=y
+> +CONFIG_XDP_SOCKETS_DIAG=y
+>  CONFIG_INET=y
+>  CONFIG_IP_MULTICAST=y
+>  CONFIG_IP_ADVANCED_ROUTER=y
+> @@ -3246,6 +3250,7 @@ CONFIG_SPI_MASTER=y
+>  CONFIG_SPI_BITBANG=y
+>  # CONFIG_SPI_CADENCE is not set
+>  # CONFIG_SPI_DESIGNWARE is not set
+> +# CONFIG_SPI_NXP_FLEXSPI is not set
+>  CONFIG_SPI_PXA2XX=y
+>  CONFIG_SPI_PXA2XX_PCI=y
+>  # CONFIG_SPI_ROCKCHIP is not set
+> @@ -3896,6 +3901,10 @@ CONFIG_DRM_KMS_CMA_HELPER=y
+>  # CONFIG_DRM_I2C_SIL164 is not set
+>  # CONFIG_DRM_I2C_NXP_TDA998X is not set
+>  # CONFIG_DRM_I2C_NXP_TDA9950 is not set
+> +
+> +#
+> +# ARM devices
+> +#
+>  # CONFIG_DRM_RADEON is not set
+>  # CONFIG_DRM_AMDGPU is not set
+>
+> @@ -3951,6 +3960,7 @@ CONFIG_DRM_PANEL_BRIDGE=y
+>  # Display Interface Bridges
+>  #
+>  # CONFIG_DRM_ANALOGIX_ANX78XX is not set
+> +# CONFIG_DRM_ETNAVIV is not set
+>  # CONFIG_DRM_HISI_HIBMC is not set
+>  CONFIG_DRM_TINYDRM=y
+>  # CONFIG_TINYDRM_HX8357D is not set
+> @@ -4060,7 +4070,6 @@ CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
+>  # CONFIG_FRAMEBUFFER_CONSOLE_ROTATION is not set
+>  # CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER is not set
+>  CONFIG_LOGO=y
+> -# CONFIG_FB_LOGO_CENTER is not set
+>  # CONFIG_LOGO_LINUX_MONO is not set
+>  # CONFIG_LOGO_LINUX_VGA16 is not set
+>  CONFIG_LOGO_LINUX_CLUT224=y
+> @@ -4298,6 +4307,7 @@ CONFIG_LOGIRUMBLEPAD2_FF=y
+>  CONFIG_LOGIG940_FF=y
+>  CONFIG_LOGIWHEELS_FF=y
+>  CONFIG_HID_MAGICMOUSE=y
+> +# CONFIG_HID_MALTRON is not set
+>  # CONFIG_HID_MAYFLASH is not set
+>  # CONFIG_HID_REDRAGON is not set
+>  CONFIG_HID_MICROSOFT=y
+> @@ -4396,6 +4406,7 @@ CONFIG_USB_EHCI_HCD=y
+>  CONFIG_USB_EHCI_ROOT_HUB_TT=y
+>  CONFIG_USB_EHCI_TT_NEWSCHED=y
+>  CONFIG_USB_EHCI_PCI=y
+> +# CONFIG_USB_EHCI_FSL is not set
+>  # CONFIG_USB_EHCI_HCD_PLATFORM is not set
+>  # CONFIG_USB_OXU210HP_HCD is not set
+>  # CONFIG_USB_ISP116X_HCD is not set
+> @@ -4743,6 +4754,10 @@ CONFIG_MLX4_INFINIBAND=y
+>  # CONFIG_INFINIBAND_OCRDMA is not set
+>  # CONFIG_INFINIBAND_VMWARE_PVRDMA is not set
+>  CONFIG_INFINIBAND_USNIC=y
+> +# CONFIG_INFINIBAND_BNXT_RE is not set
+> +# CONFIG_INFINIBAND_HFI1 is not set
+> +CONFIG_INFINIBAND_RDMAVT=y
+> +CONFIG_RDMA_RXE=y
+>  CONFIG_INFINIBAND_IPOIB=y
+>  CONFIG_INFINIBAND_IPOIB_CM=y
+>  CONFIG_INFINIBAND_IPOIB_DEBUG=y
+> @@ -4750,10 +4765,6 @@ CONFIG_INFINIBAND_IPOIB_DEBUG=y
+>  CONFIG_INFINIBAND_SRP=y
+>  CONFIG_INFINIBAND_ISER=y
+>  CONFIG_INFINIBAND_OPA_VNIC=y
+> -CONFIG_INFINIBAND_RDMAVT=y
+> -CONFIG_RDMA_RXE=y
+> -# CONFIG_INFINIBAND_HFI1 is not set
+> -# CONFIG_INFINIBAND_BNXT_RE is not set
+>  CONFIG_EDAC_ATOMIC_SCRUB=y
+>  CONFIG_EDAC_SUPPORT=y
+>  CONFIG_EDAC=y
+> @@ -4820,6 +4831,7 @@ CONFIG_RTC_INTF_DEV=y
+>  # CONFIG_RTC_DRV_RX8025 is not set
+>  # CONFIG_RTC_DRV_EM3027 is not set
+>  # CONFIG_RTC_DRV_RV8803 is not set
+> +# CONFIG_RTC_DRV_SD3078 is not set
+>
+>  #
+>  # SPI RTC drivers
+> @@ -4978,7 +4990,6 @@ CONFIG_STAGING=y
+>  # CONFIG_VT6655 is not set
+>  # CONFIG_VT6656 is not set
+>  # CONFIG_FB_SM750 is not set
+> -# CONFIG_FB_XGI is not set
+>
+>  #
+>  # Speakup console speech
+> @@ -5102,6 +5113,7 @@ CONFIG_CLKBLD_I8253=y
+>  CONFIG_MAILBOX=y
+>  CONFIG_PCC=y
+>  # CONFIG_ALTERA_MBOX is not set
+> +CONFIG_IOMMU_IOVA=y
+>  CONFIG_IOMMU_API=y
+>  CONFIG_IOMMU_SUPPORT=y
+>
+> @@ -5110,7 +5122,6 @@ CONFIG_IOMMU_SUPPORT=y
+>  #
+>  # CONFIG_IOMMU_DEBUGFS is not set
+>  # CONFIG_IOMMU_DEFAULT_PASSTHROUGH is not set
+> -CONFIG_IOMMU_IOVA=y
+>  CONFIG_AMD_IOMMU=y
+>  # CONFIG_AMD_IOMMU_V2 is not set
+>  CONFIG_DMAR_TABLE=y
+> @@ -5288,7 +5299,6 @@ CONFIG_EXPORTFS_BLOCK_OPS=y
+>  CONFIG_FILE_LOCKING=y
+>  CONFIG_MANDATORY_FILE_LOCKING=y
+>  CONFIG_FS_ENCRYPTION=y
+> -# CONFIG_FS_VERITY is not set
+>  CONFIG_FSNOTIFY=y
+>  CONFIG_DNOTIFY=y
+>  CONFIG_INOTIFY_USER=y
+> @@ -5549,7 +5559,6 @@ CONFIG_FORTIFY_SOURCE=y
+>  # CONFIG_STATIC_USERMODEHELPER is not set
+>  CONFIG_SECURITY_SELINUX=y
+>  CONFIG_SECURITY_SELINUX_BOOTPARAM=y
+> -CONFIG_SECURITY_SELINUX_BOOTPARAM_VALUE=1
+>  CONFIG_SECURITY_SELINUX_DISABLE=y
+>  CONFIG_SECURITY_SELINUX_DEVELOP=y
+>  CONFIG_SECURITY_SELINUX_AVC_STATS=y
+> @@ -5558,9 +5567,11 @@ CONFIG_SECURITY_SMACK=y
+>  # CONFIG_SECURITY_SMACK_BRINGUP is not set
+>  CONFIG_SECURITY_SMACK_NETFILTER=y
+>  # CONFIG_SECURITY_SMACK_APPEND_SIGNALS is not set
+> -# CONFIG_SECURITY_TOMOYO is not set
+> +CONFIG_SECURITY_TOMOYO=y
+> +CONFIG_SECURITY_TOMOYO_MAX_ACCEPT_ENTRY=2048
+> +CONFIG_SECURITY_TOMOYO_MAX_AUDIT_LOG=1024
+> +CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER=y
+>  CONFIG_SECURITY_APPARMOR=y
+> -CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
+>  CONFIG_SECURITY_APPARMOR_HASH=y
+>  CONFIG_SECURITY_APPARMOR_HASH_DEFAULT=y
+>  CONFIG_SECURITY_APPARMOR_DEBUG=y
+> @@ -5568,6 +5579,7 @@ CONFIG_SECURITY_APPARMOR_DEBUG_ASSERTS=y
+>  # CONFIG_SECURITY_APPARMOR_DEBUG_MESSAGES is not set
+>  # CONFIG_SECURITY_LOADPIN is not set
+>  CONFIG_SECURITY_YAMA=y
+> +# CONFIG_SECURITY_SAFESETID is not set
+>  CONFIG_INTEGRITY=y
+>  CONFIG_INTEGRITY_SIGNATURE=y
+>  CONFIG_INTEGRITY_ASYMMETRIC_KEYS=y
+> @@ -5598,11 +5610,7 @@ CONFIG_EVM_ATTR_FSUUID=y
+>  CONFIG_EVM_EXTRA_SMACK_XATTRS=y
+>  CONFIG_EVM_ADD_XATTRS=y
+>  # CONFIG_EVM_LOAD_X509 is not set
+> -# CONFIG_DEFAULT_SECURITY_SELINUX is not set
+> -# CONFIG_DEFAULT_SECURITY_SMACK is not set
+> -CONFIG_DEFAULT_SECURITY_APPARMOR=y
+> -# CONFIG_DEFAULT_SECURITY_DAC is not set
+> -CONFIG_DEFAULT_SECURITY="apparmor"
+> +CONFIG_LSM="yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
+>  CONFIG_XOR_BLOCKS=y
+>  CONFIG_ASYNC_CORE=y
+>  CONFIG_ASYNC_MEMCPY=y
