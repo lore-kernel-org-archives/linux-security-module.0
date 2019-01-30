@@ -2,118 +2,125 @@ Return-Path: <SRS0=sdO6=QG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5100C282D7
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 12:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D673C282D7
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 13:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84BD420882
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 12:49:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 385342184D
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 13:18:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="KmZl7krA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbfA3Mtm (ORCPT
+        id S1730093AbfA3NSE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jan 2019 07:49:42 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:54233 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730967AbfA3MrW (ORCPT
+        Wed, 30 Jan 2019 08:18:04 -0500
+Received: from forward500p.mail.yandex.net ([77.88.28.110]:39507 "EHLO
+        forward500p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726332AbfA3NSE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jan 2019 07:47:22 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gopGy-0006AC-21; Wed, 30 Jan 2019 05:47:20 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gopGx-0001gZ-7c; Wed, 30 Jan 2019 05:47:19 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Karel Zak <kzak@redhat.com>, util-linux@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        LSM <linux-security-module@vger.kernel.org>
-References: <87va2716mh.fsf@xmission.com>
-        <03e0993b-21db-1cc4-7a33-0236de7be20d@schaufler-ca.com>
-        <87r2cvx7wz.fsf@xmission.com> <87ef8vx7jz.fsf@xmission.com>
-Date:   Wed, 30 Jan 2019 06:47:09 -0600
-In-Reply-To: <87ef8vx7jz.fsf@xmission.com> (Eric W. Biederman's message of
-        "Tue, 29 Jan 2019 19:23:12 -0600")
-Message-ID: <8736pawbw2.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 30 Jan 2019 08:18:04 -0500
+X-Greylist: delayed 376 seconds by postgrey-1.27 at vger.kernel.org; Wed, 30 Jan 2019 08:18:01 EST
+Received: from mxback15j.mail.yandex.net (mxback15j.mail.yandex.net [IPv6:2a02:6b8:0:1619::91])
+        by forward500p.mail.yandex.net (Yandex) with ESMTP id 0E91C940348;
+        Wed, 30 Jan 2019 16:11:44 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback15j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 9t4zK3SqUQ-Bg2aYf1H;
+        Wed, 30 Jan 2019 16:11:43 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1548853903;
+        bh=r12kxZYIgNz0gw+9Z+am4TOsNakBUCZ7+k/fvJ3GB/A=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
+        b=KmZl7krA+mEZe8H5lNYtMqBlPWBVR82Ar/iPn8UlFzv9nbWpnYZdPm3pXNWf3tuVf
+         gfRSo9cFitIyGbDrA6D4SxJzqNZ9vYVgvKW4J2Q9bg2WUJ6+ZfbmkyJ4YnOJa1W4MV
+         wBxgRWgLe2Qy19DFVKODRWcR4qsXOOBUUuDqVErw=
+Authentication-Results: mxback15j.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by myt6-23299ba78d64.qloud-c.yandex.net with HTTP;
+        Wed, 30 Jan 2019 16:11:42 +0300
+From:   Nazarov Sergey <s-nazarov@yandex.ru>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhRXc=UAfNidPjYsG561_kc_j2CkD6Db=Kb=Gjyhk3ko6Q@mail.gmail.com>
+References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
+         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
+         <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
+         <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
+         <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
+         <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
+         <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net> <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
+        <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net> <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
+         <3499451548746609@myt4-929fb874f3f2.qloud-c.yandex.net> <CAHC9VhRXc=UAfNidPjYsG561_kc_j2CkD6Db=Kb=Gjyhk3ko6Q@mail.gmail.com>
+Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
 MIME-Version: 1.0
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Wed, 30 Jan 2019 16:11:42 +0300
+Message-Id: <3191601548853902@myt6-23299ba78d64.qloud-c.yandex.net>
+Content-Transfer-Encoding: 7bit
 Content-Type: text/plain
-X-XM-SPF: eid=1gopGx-0001gZ-7c;;;mid=<8736pawbw2.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18a+etU5hIAZJSftdtZ1VtryMrnkJhAie4=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFD] A mount api that notices previous mounts
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
-
-> ebiederm@xmission.com (Eric W. Biederman) writes:
+30.01.2019, 01:42, "Paul Moore" <paul@paul-moore.com>:
+> There are several cases where the stack ends up calling icmp_send()
+> after the skb has been through ip_options_compile(), that should be
+> okay.
 >
->> Casey Schaufler <casey@schaufler-ca.com> writes:
->>> Are you taking the LSM specific mount options into account?
->>
->> In the design yes, and I allow setting them.  It appears in the code
->> to retrieve the mount options I forgot to call security_sb_show_options.
->>
->> For finding the super block that you are going to mount the LSM mount
->> options are not relevant.  Even nfs will not want to set those early as
->> they do not help determine the nfs super block.  So the only place where
->> there is anything interesting in my api is in reading back the security
->> options so they can be compared to the options the mounter is setting.
->>
->> I will add the missing call to security_sb_show_options which is enough
->> to fix selinux.  Unfortunately smack does not currently implement
->> .sb_show_options.  Not implementing smack_sb_show_options means
->> /proc/mounts fails to match /etc/mtab which is a bug and it is likely
->> a real workd bug for the people who use smack and don't want to depend
->> on /etc/mtab, or are transitioning away from it.
->>
->> Casey do you want to implement smack_sb_show_options or should I put it
->> on my todo list?
->
-> Oh.  I should add that I am always parsing the LSM mount options out so
-> that there is not a chance of the individual filesystems implementing
-> comflicting options even when there are no LSMs active.  Without that I
-> am afraid we run the risk of having LSM mount otions in conflict with
-> ordinary filesystems options at some point and by the time we discover
-> it it would start introducing filesystem regressions.
->
-> That does help with stack though as there is no fundamental reason only
-> one LSM could process mount options.
+> --
+> paul moore
+> www.paul-moore.com
 
-Sigh.  I just realized that there is a smack variant of the bug I am
-working to fix.
+In those cases precompiled ip_options struct used, without the need to reuse ip_options_compile.
+I think, for error ICMP packet, we can discard all other options except CIPSO. It will be better, than
+send packet, contains wrong option's data. Modified patch 2:
+---
+ net/ipv4/cipso_ipv4.c |   24 ++++++++++++++++++++++--
+ 1 files changed, 22 insertions(+), 2 deletions(-)
 
-smack on remount does not fail if you change the smack mount options.
-It just silently ignores the smack mount options.  Which is exactly the
-same poor interaction with userspace that has surprised user space
-and caused CVEs.
-
-How much do you think the smack users will care if you start verifying
-that if smack options are present in remount that they are unchanged
-from mount?
-
-I suspect the smack userbase is small enough, and the corner case is
-crazy enough we can fix this poor communication by smack.  Otherwise it
-looks like there needs to be a new security hook so old and new remounts
-can be distinguished by the LSMs, and smack can be fixed in the new
-version.
-
-Eric
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index 777fa3b..797826c 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1735,13 +1735,33 @@ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option)
+  */
+ void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway)
+ {
++       struct ip_options opt;
++       unsigned char *optptr;
++
+        if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
+                return;
+ 
++       /* 
++        * We might be called above the IP layer,
++        * so we can not use icmp_send and IPCB here.
++        *
++        * For the generated ICMP packet, we create a
++        * temporary ip _options structure, contains
++        * the CIPSO option only, since the other options data
++        * could be modified when the original packet receiving.
++        */
++
++       memset(&opt, 0, sizeof(struct ip_options));
++       optptr = cipso_v4_optptr(skb);
++       if (optptr) {
++               opt.optlen = optptr[1];
++               opt.cipso = optptr - skb_network_header(skb);
++       }
++
+        if (gateway)
+-               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0);
++               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0, &opt);
+        else
+-               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0);
++               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0, &opt);
+ }
+ 
+ /**
 
