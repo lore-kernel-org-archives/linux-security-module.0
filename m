@@ -2,100 +2,102 @@ Return-Path: <SRS0=sdO6=QG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8577FC282D0
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 02:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070C5C282D4
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 07:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A12220880
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 02:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C47EF21848
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 07:15:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IhVMf6lT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbfA3CAv (ORCPT
+        id S1725820AbfA3HPV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jan 2019 21:00:51 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:36935 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727729AbfA3CAv (ORCPT
+        Wed, 30 Jan 2019 02:15:21 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:46498 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfA3HPU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jan 2019 21:00:51 -0500
-X-Greylist: delayed 2248 seconds by postgrey-1.27 at vger.kernel.org; Tue, 29 Jan 2019 21:00:50 EST
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1goeb2-0008LQ-Py; Tue, 29 Jan 2019 18:23:20 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1goeb2-0002hM-6D; Tue, 29 Jan 2019 18:23:20 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Karel Zak <kzak@redhat.com>, util-linux@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        LSM <linux-security-module@vger.kernel.org>
-References: <87va2716mh.fsf@xmission.com>
-        <03e0993b-21db-1cc4-7a33-0236de7be20d@schaufler-ca.com>
-        <87r2cvx7wz.fsf@xmission.com>
-Date:   Tue, 29 Jan 2019 19:23:12 -0600
-In-Reply-To: <87r2cvx7wz.fsf@xmission.com> (Eric W. Biederman's message of
-        "Tue, 29 Jan 2019 19:15:24 -0600")
-Message-ID: <87ef8vx7jz.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 30 Jan 2019 02:15:20 -0500
+Received: by mail-ua1-f65.google.com with SMTP id v24so7745185uap.13
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Jan 2019 23:15:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o1OQAVE4f+e4vYpM9eFvpzmj3vcKVdsso4y2pAj6E+g=;
+        b=IhVMf6lT+e4wucNHGKkQAULUFSnMAaLy+aNCJzwYWviF6dipqWX+bQf+bpwbt51LZH
+         P55ShamcXbXEaNvlmPuONaEkH6M64rhEy2Vi8sG6pqURUqMvVvpdkwyr94aA8tBNO/IQ
+         LYOnwU9eig8aCeqBgw8p5q4hiBxM081aXGoPs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o1OQAVE4f+e4vYpM9eFvpzmj3vcKVdsso4y2pAj6E+g=;
+        b=CiE0cLa4o1KNXIumnOKP4f+S3fyCL1wujAsrmNrYmxI3yRS2wA/eEJkx4ZEp7Bn+Ni
+         SDvOtGvum9ZrnTggGoC60UuPNN1vKZu5bKyoPo6dRsVBKisyA7CjJy0cqO/KguhTPlch
+         vmLAoSg5AGXZMmcsX49DnpWs53JPKuR8JLOzc7MENMlxTQB33J4YAcxSUZ3v9wHvyzzE
+         5HJJvpGGlWoE5p6L4N6hYetLC2bHq44jtmyrPl1TUXR5OPf/clvm0GPklM345aYb/VCD
+         FWuX9HxJybcwO3xtZgdXIAW9vSNqADIvz4nkzcROcL82ZDzCM3jZFuA4SsyUNtKJM7Yo
+         +YEQ==
+X-Gm-Message-State: AHQUAuYBMkpyEi6s2fsIg3e2jT5f5KXDUS7SzgDo4P33ymuUnL0rOGPj
+        rzTX4U5XJE2P73tGf6vABRj5YUWWYfc=
+X-Google-Smtp-Source: AHgI3IapP5lAWViWBCmZSehlcC4OCGGWh2ZC7/tD4KtBlX/CCzyzUBdt3gYXofYViGXBoF0D93Jojg==
+X-Received: by 2002:ab0:310d:: with SMTP id e13mr1998582ual.63.1548832519444;
+        Tue, 29 Jan 2019 23:15:19 -0800 (PST)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id y195sm816325vkd.0.2019.01.29.23.15.18
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Jan 2019 23:15:18 -0800 (PST)
+Received: by mail-vs1-f49.google.com with SMTP id x64so13639464vsa.5
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Jan 2019 23:15:18 -0800 (PST)
+X-Received: by 2002:a67:e15e:: with SMTP id o30mr12771046vsl.66.1548832517927;
+ Tue, 29 Jan 2019 23:15:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1goeb2-0002hM-6D;;;mid=<87ef8vx7jz.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+h0u/hM65+5LW6450Qd/ruXX6rx6yJOAg=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFD] A mount api that notices previous mounts
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <CAGXu5j+V61YOk7oAEw3Fm5rOxQAmy2-3QqOZaOP_FROLBUk2Qg@mail.gmail.com>
+ <20190116154606.92331-1-mortonm@chromium.org> <alpine.LRH.2.21.1901260714380.27585@namei.org>
+ <CAJ-EccMc3Xz0DZAm_u09VvTzWRzhrf9x0SpJKX=4FR6NYwqkpQ@mail.gmail.com>
+ <CAJ-EccMAb-OX3R6mk4me0x6dS2bQw=yZrpKmF7JpzHDWSX5e4g@mail.gmail.com>
+ <CAGXu5jKLdcadm30NwpquX1iGJRsjZY-A5grc65BC64B96RE_Eg@mail.gmail.com>
+ <CAJ-EccM3BzUUS0CZuhAcj47+KR57JwvhLWiQoc86LWb87wWBcg@mail.gmail.com>
+ <CAJ-EccPpb_544TgW3YtcT=ptGDwTxx=KOMBdLtqUNim7ynuCdQ@mail.gmail.com>
+ <alpine.LRH.2.21.1901300424420.16638@namei.org> <CAJ-EccOp4zrVT2+RZQZn7j6RchVk5S7UxFjyOBF_6mpE-fHVPA@mail.gmail.com>
+In-Reply-To: <CAJ-EccOp4zrVT2+RZQZn7j6RchVk5S7UxFjyOBF_6mpE-fHVPA@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 30 Jan 2019 20:15:05 +1300
+X-Gmail-Original-Message-ID: <CAGXu5jJX5V9H5uWArV93eM9jFzaCO4s3rQPBa6rN0LbKtMj82Q@mail.gmail.com>
+Message-ID: <CAGXu5jJX5V9H5uWArV93eM9jFzaCO4s3rQPBa6rN0LbKtMj82Q@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] LSM: add SafeSetID module that gates setid calls
+To:     Micah Morton <mortonm@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
-
-> Casey Schaufler <casey@schaufler-ca.com> writes:
->> Are you taking the LSM specific mount options into account?
+On Wed, Jan 30, 2019 at 10:14 AM Micah Morton <mortonm@chromium.org> wrote:
 >
-> In the design yes, and I allow setting them.  It appears in the code
-> to retrieve the mount options I forgot to call security_sb_show_options.
+> testsuite meaning Linux Test Project / Autotest? We have a ChromeOS
+> Autotest for this already
+> (https://chromium.googlesource.com/chromiumos/third_party/autotest/+/master/client/site_tests/security_ProcessManagementPolicy/security_ProcessManagementPolicy.py)
+> but it would at least need some adaptation for configuring/flushing
+> policies during the test. Not sure how different Linux Autotests are
+> from ChromeOS, if they are used at all.
 >
-> For finding the super block that you are going to mount the LSM mount
-> options are not relevant.  Even nfs will not want to set those early as
-> they do not help determine the nfs super block.  So the only place where
-> there is anything interesting in my api is in reading back the security
-> options so they can be compared to the options the mounter is setting.
->
-> I will add the missing call to security_sb_show_options which is enough
-> to fix selinux.  Unfortunately smack does not currently implement
-> .sb_show_options.  Not implementing smack_sb_show_options means
-> /proc/mounts fails to match /etc/mtab which is a bug and it is likely
-> a real workd bug for the people who use smack and don't want to depend
-> on /etc/mtab, or are transitioning away from it.
->
-> Casey do you want to implement smack_sb_show_options or should I put it
-> on my todo list?
+> Also, could you point me at the directory that holds such test scripts
+> in the kernel tree? Shouldn't be too difficult to port that ChromeOS
+> autotest to a script if we want to go that route.
 
-Oh.  I should add that I am always parsing the LSM mount options out so
-that there is not a chance of the individual filesystems implementing
-comflicting options even when there are no LSMs active.  Without that I
-am afraid we run the risk of having LSM mount otions in conflict with
-ordinary filesystems options at some point and by the time we discover
-it it would start introducing filesystem regressions.
+The common place is tools/testing/selftests/name-here (for example,
+see the "seccomp/" directory).
 
-That does help with stack though as there is no fundamental reason only
-one LSM could process mount options.
-
-Eric
-
-
+-- 
+Kees Cook
