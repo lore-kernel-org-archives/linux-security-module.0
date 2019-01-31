@@ -2,143 +2,323 @@ Return-Path: <SRS0=hRTQ=QH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33BEC282D9
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 16:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A78C169C4
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 16:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957972082C
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 16:39:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="NwSiVTvZ"
+	by mail.kernel.org (Postfix) with ESMTP id B8763218AC
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 16:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388590AbfAaQjI (ORCPT
+        id S2388561AbfAaQws (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:39:08 -0500
-Received: from sonic303-9.consmr.mail.bf2.yahoo.com ([74.6.131.48]:43908 "EHLO
-        sonic303-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388574AbfAaQjI (ORCPT
+        Thu, 31 Jan 2019 11:52:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55584 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733267AbfAaQwr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:39:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1548952746; bh=VP4YSb4SrA3XoluAnmo+SdrZV9R84fMYlxmzyrvxAyA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=NwSiVTvZXQgOrUmrz12AL+vekPCatCJmeBEL380yosAHJwMybYBuZO+FkTsrTfRzoqIqOFPCSe+28RAYTVUNpoCXP9UmCaZwFXbwfUdqcBAxk+0md6GGlfMFghaYIfm8J/6dUJHf42B3e3gxy0U8Au6rqTdUQ9pZimv1QWRfsu2UZi1vNhPdlSXfqWAfKKTKU5Fx8qGyuQjOpYoxqpstdTZV4yKUfOZjN58N0xKyVw6uakSTvpAL4Iz9gy6wkpRJi0n4MGyY/i8vz5R3yNAtzfnjGzC2+VsxdjlNaNtFFTqBFlS5eeVLPQZ4X+OpBtWCzErkuMx7Qp3FOrGwZdbqCQ==
-X-YMail-OSG: mJx0d1cVM1kuaEnqh_OrCcBC8GeNFiLryIqqHr3VGemGxFpwncAkLS.u1zmotH.
- 7WTNJfplZYZRQsJUmEqsQ499b1KGsMItxjyC8rakfqLQyen9rvO74B.tiTb58hUVAao48tp3P1JW
- 2rwBiSkRMAc6ZVyPLFY0vU8MUtMKDmOxG9zolGVsj9VohsMvbvmHLZdJ2o9zwVxFN9xkWvrZ0dMc
- xRSuU0OcIe7iKzBxgR5zjwfM5vVhrhCKRitpAUKcUVlH3aaiVFPJUyphFSt0WaUqE5mJSNFc4DVj
- dk8KoyuHXtqx0_9TBoA9GcSvCNsOi4rEe.xT2Rs60pzbIZH4wpPZLZD4IzBhZ52BVyA2.Cq3FI61
- j5v9geHRleWZUjs5fWHanPrOJde0D1DPggufyQk.BOWzGixt0wHDPV2L1FAzrnFl3c7bW9eqK6bK
- y9cugxEtQns97mcPc8b2.uHnJ7vhUQX3O9z6MAAP66gWiBJJbpIYVQX7YOXBBUBKnxvyKBQ.K5Dp
- KTfylG.VTJk0Pa06qwzW7DbY3LVUq0GDvh2Va65Nrx7QaVrmx_Hp4n9mvZJP5AAjKrDSg.dSWwpc
- QQToHKD5tvxyu8H4cg3.Qv6hTqQ1Fet9aMbIabVjjXyTk9BTooU5G4Qx2KNJiW3DUA_HqW1.Nsgf
- uVoFNlBU6xHvBLrRXzcXIT.oVAdmjd67a5IA_NbTH6ktKeXUssk97iRCmE4teZaTUvZcmVI.OLmp
- f24BXbxNuF7xsYF5CMAwlwZ4ypSIUpdj.Zk7Vbipj2fdiVoT_82.sZB72T32v8zluW8UKpAKLgof
- RaL0ol_f.wjXvVZkYpn2TtPG_HJQGMGZv.yjRt8YIPXbQDfP0XI.nwf6En.0taVF1lhb5h.sC7D.
- Yt319zsNFpKMR9NtsYU0giDMMEeEeqCmyx_PIK0v6Xl2qqzPT85FqThihbWahhhesu9Tev3fRw2m
- 8pcJY63ppWsRqEXhx_YcOndv_ZRcSizq4sMzpUD6qgBM6S.BCuhV9F3A.bYOeCoOwytPOj0Grc5S
- dTNcXEYh6Pw3NGzqa0AyfJSkPPCR1HYIT47D2hUCDfC03mKcX26lzpxncRxhjBfX._lq7tlkIZQ6
- f1BOwI7lBWOUi9DvW7r5Wl0pdQb8-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Thu, 31 Jan 2019 16:39:06 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp416.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 98cc0d3b076bd18c7df9321b4f34cea0;
-          Thu, 31 Jan 2019 16:39:06 +0000 (UTC)
-Subject: Re: [PATCH v3 5/5] kernfs: initialize security of newly created nodes
-To:     Ondrej Mosnacek <omosnace@redhat.com>, Tejun Heo <tj@kernel.org>
-Cc:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
+        Thu, 31 Jan 2019 11:52:47 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 42A615D61C;
+        Thu, 31 Jan 2019 16:52:47 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-22.phx2.redhat.com [10.3.112.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D5214101960A;
+        Thu, 31 Jan 2019 16:52:37 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
         Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-References: <20190130114150.27807-1-omosnace@redhat.com>
- <20190130114150.27807-6-omosnace@redhat.com>
- <20190130170911.GZ50184@devbig004.ftw2.facebook.com>
- <CAFqZXNt0jNg2-bNbtsCX2=7bcb_GaxCnHfSyck=GksXBTkWJ-g@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <ebe3c70e-2bde-9fca-bb05-b46173e09b69@schaufler-ca.com>
-Date:   Thu, 31 Jan 2019 08:39:02 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <CAFqZXNt0jNg2-bNbtsCX2=7bcb_GaxCnHfSyck=GksXBTkWJ-g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        <linux-security-module@vger.kernel.org>
+Cc:     Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak107 V1] audit: remove unused actx param from audit_rule_match
+Date:   Thu, 31 Jan 2019 11:52:11 -0500
+Message-Id: <c3bc9d90ed20f1b1cce916636a28f1e85af1afdc.1548953334.git.rgb@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 31 Jan 2019 16:52:47 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/31/2019 2:20 AM, Ondrej Mosnacek wrote:
-> Hi Tejun,
->
-> On Wed, Jan 30, 2019 at 6:09 PM Tejun Heo <tj@kernel.org> wrote:
->> Hello,
->>
->> On Wed, Jan 30, 2019 at 12:41:50PM +0100, Ondrej Mosnacek wrote:
->>> @@ -673,6 +698,12 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
->>>                       goto err_out3;
->>>       }
->>>
->>> +     if (parent) {
->>> +             ret = kernfs_node_init_security(parent, kn);
->>> +             if (ret)
->>> +                     goto err_out3;
->>> +     }
->> So, doing this unconditionally isn't a good idea.  kernfs doesn't use
->> the usual dentry/inode because there are machines with 6, even 7 digit
->> number of kernfs nodes and some of them even failed to boot due to
->> memory shortage.  Please don't blow it up by default.
-> Hm, I see... basically the only thing that gets allocated in
-> kernfs_node_init_security() by default (at least under SELinux/ no
-> LSM) is the kernfs_iattrs structures, so I assume you are pointing at
-> that. I think this can be easily fixed, if we again use the assumption
-> that whenever the parent node has only default attributes
-> (parent->iattrs == NULL), then the child node should also have just
-> default attributes (and so we don't need to call kernfs_iattrs() on it
-> nor call the security hook). Something along these lines:
->
-> [...]
-> +static int kernfs_node_init_security(struct kernfs_node *parent,
-> +                                    struct kernfs_node *kn)
-> +{
-> +       struct kernfs_iattrs *attrs, *pattrs;
-> +       struct qstr q;
-> +
-> +       pattrs = parent->iattrs;
-> +       if (!pattrs)
-> +               return 0;
-> +
-> +       attrs = kernfs_iattrs(kn);
-> +       if (!attrs)
-> +               return -ENOMEM;
-> +
-> +       q.name = kn->name;
-> +       q.hash_len = hashlen_string(parent, kn->name);
-> [...]
->
-> Technically this might make some LSMs unhappy, if they want to set
-> some non-default context even if parent is all default,
+The audit_rule_match() struct audit_context *actx parameter is not used
+by any in-tree consumers (selinux, apparmour, integrity, smack).
 
-The only possibility I see as a potential problem is a kernfs
-mounted with the smackfstransmute=Something option. This sets
-the security.SMACK64 to "Something" and the security.SMACK64TRANSMUTE
-to true on the root node. But that doesn't seem like a rational
-thing to do for a kernfs based filesystem.
+The audit context is an internal audit structure that should only be
+accessed by audit accessor functions.
 
-> but this is
-> already impossible now and in this case I think we have no better
-> choice than sacrificing a bit of flexibility for memory efficiency,
-> which is apparently critical here.
->
-> Tejun, Casey, would the above modification be fine with you?
+It was part of commit 03d37d25e0f9 ("LSM/Audit: Introduce > generic
+Audit LSM hooks") but appears to have never been used.
 
-I *think so*, but I can't say 100% that I really understand the
-entire issue.
+Remove it.
 
->
-> --
-> Ondrej Mosnacek <omosnace at redhat dot com>
-> Associate Software Engineer, Security Technologies
-> Red Hat, Inc.
->
+Please see the github issue
+https://github.com/linux-audit/audit-kernel/issues/107
+
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+Passes audit-testsuite.
+
+ include/linux/lsm_hooks.h           |  4 +---
+ include/linux/security.h            |  5 ++---
+ kernel/auditfilter.c                |  2 +-
+ kernel/auditsc.c                    | 21 ++++++++++++---------
+ security/apparmor/audit.c           |  3 +--
+ security/apparmor/include/audit.h   |  3 +--
+ security/integrity/ima/ima.h        |  3 +--
+ security/integrity/ima/ima_policy.c |  6 ++----
+ security/security.c                 |  6 ++----
+ security/selinux/include/audit.h    |  4 +---
+ security/selinux/ss/services.c      |  3 +--
+ security/smack/smack_lsm.c          |  4 +---
+ 12 files changed, 26 insertions(+), 38 deletions(-)
+
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 9a0bdf91e646..d0b5c7a05832 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1344,7 +1344,6 @@
+  *	@field contains the field which relates to current LSM.
+  *	@op contains the operator that will be used for matching.
+  *	@rule points to the audit rule that will be checked against.
+- *	@actx points to the audit context associated with the check.
+  *	Return 1 if secid matches the rule, 0 if it does not, -ERRNO on failure.
+  *
+  * @audit_rule_free:
+@@ -1764,8 +1763,7 @@
+ 	int (*audit_rule_init)(u32 field, u32 op, char *rulestr,
+ 				void **lsmrule);
+ 	int (*audit_rule_known)(struct audit_krule *krule);
+-	int (*audit_rule_match)(u32 secid, u32 field, u32 op, void *lsmrule,
+-				struct audit_context *actx);
++	int (*audit_rule_match)(u32 secid, u32 field, u32 op, void *lsmrule);
+ 	void (*audit_rule_free)(void *lsmrule);
+ #endif /* CONFIG_AUDIT */
+ 
+diff --git a/include/linux/security.h b/include/linux/security.h
+index dbfb5a66babb..e8febec62ffb 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1674,8 +1674,7 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
+ #ifdef CONFIG_SECURITY
+ int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
+ int security_audit_rule_known(struct audit_krule *krule);
+-int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule,
+-			      struct audit_context *actx);
++int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
+ void security_audit_rule_free(void *lsmrule);
+ 
+ #else
+@@ -1692,7 +1691,7 @@ static inline int security_audit_rule_known(struct audit_krule *krule)
+ }
+ 
+ static inline int security_audit_rule_match(u32 secid, u32 field, u32 op,
+-				   void *lsmrule, struct audit_context *actx)
++					    void *lsmrule)
+ {
+ 	return 0;
+ }
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index 26a80a9d43a9..add360b46b38 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -1355,7 +1355,7 @@ int audit_filter(int msgtype, unsigned int listtype)
+ 				if (f->lsm_rule) {
+ 					security_task_getsecid(current, &sid);
+ 					result = security_audit_rule_match(sid,
+-							f->type, f->op, f->lsm_rule, NULL);
++						   f->type, f->op, f->lsm_rule);
+ 				}
+ 				break;
+ 			case AUDIT_EXE:
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index 68da71001096..7d37cb1e4aef 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -631,9 +631,8 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 					need_sid = 0;
+ 				}
+ 				result = security_audit_rule_match(sid, f->type,
+-				                                  f->op,
+-				                                  f->lsm_rule,
+-				                                  ctx);
++								   f->op,
++								   f->lsm_rule);
+ 			}
+ 			break;
+ 		case AUDIT_OBJ_USER:
+@@ -647,13 +646,17 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 				/* Find files that match */
+ 				if (name) {
+ 					result = security_audit_rule_match(
+-					           name->osid, f->type, f->op,
+-					           f->lsm_rule, ctx);
++								name->osid,
++								f->type,
++								f->op,
++								f->lsm_rule);
+ 				} else if (ctx) {
+ 					list_for_each_entry(n, &ctx->names_list, list) {
+-						if (security_audit_rule_match(n->osid, f->type,
+-									      f->op, f->lsm_rule,
+-									      ctx)) {
++						if (security_audit_rule_match(
++								n->osid,
++								f->type,
++								f->op,
++								f->lsm_rule)) {
+ 							++result;
+ 							break;
+ 						}
+@@ -664,7 +667,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 					break;
+ 				if (security_audit_rule_match(ctx->ipc.osid,
+ 							      f->type, f->op,
+-							      f->lsm_rule, ctx))
++							      f->lsm_rule))
+ 					++result;
+ 			}
+ 			break;
+diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+index eeaddfe0c0fb..5a8b9cded4f2 100644
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -225,8 +225,7 @@ int aa_audit_rule_known(struct audit_krule *rule)
+ 	return 0;
+ }
+ 
+-int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule,
+-			struct audit_context *actx)
++int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule)
+ {
+ 	struct aa_audit_rule *rule = vrule;
+ 	struct aa_label *label;
+diff --git a/security/apparmor/include/audit.h b/security/apparmor/include/audit.h
+index b8c8b1066b0a..ee559bc2acb8 100644
+--- a/security/apparmor/include/audit.h
++++ b/security/apparmor/include/audit.h
+@@ -192,7 +192,6 @@ static inline int complain_error(int error)
+ void aa_audit_rule_free(void *vrule);
+ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule);
+ int aa_audit_rule_known(struct audit_krule *rule);
+-int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule,
+-			struct audit_context *actx);
++int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule);
+ 
+ #endif /* __AA_AUDIT_H */
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index cc12f3449a72..026163f37ba1 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -307,8 +307,7 @@ static inline int security_filter_rule_init(u32 field, u32 op, char *rulestr,
+ }
+ 
+ static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
+-					     void *lsmrule,
+-					     struct audit_context *actx)
++					     void *lsmrule)
+ {
+ 	return -EINVAL;
+ }
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8bc8a1c8cb3f..26fa9d9723f6 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -340,8 +340,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 			rc = security_filter_rule_match(osid,
+ 							rule->lsm[i].type,
+ 							Audit_equal,
+-							rule->lsm[i].rule,
+-							NULL);
++							rule->lsm[i].rule);
+ 			break;
+ 		case LSM_SUBJ_USER:
+ 		case LSM_SUBJ_ROLE:
+@@ -349,8 +348,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 			rc = security_filter_rule_match(secid,
+ 							rule->lsm[i].type,
+ 							Audit_equal,
+-							rule->lsm[i].rule,
+-							NULL);
++							rule->lsm[i].rule);
+ 		default:
+ 			break;
+ 		}
+diff --git a/security/security.c b/security/security.c
+index f1b8d2587639..5f954b179a8e 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1783,11 +1783,9 @@ void security_audit_rule_free(void *lsmrule)
+ 	call_void_hook(audit_rule_free, lsmrule);
+ }
+ 
+-int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule,
+-			      struct audit_context *actx)
++int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+ {
+-	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule,
+-				actx);
++	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
+ }
+ #endif /* CONFIG_AUDIT */
+ 
+diff --git a/security/selinux/include/audit.h b/security/selinux/include/audit.h
+index 1bdf973433cc..e51a81ffb8c9 100644
+--- a/security/selinux/include/audit.h
++++ b/security/selinux/include/audit.h
+@@ -46,13 +46,11 @@
+  *	@field: the field this rule refers to
+  *	@op: the operater the rule uses
+  *	@rule: pointer to the audit rule to check against
+- *	@actx: the audit context (can be NULL) associated with the check
+  *
+  *	Returns 1 if the context id matches the rule, 0 if it does not, and
+  *	-errno on failure.
+  */
+-int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *rule,
+-			     struct audit_context *actx);
++int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *rule);
+ 
+ /**
+  *	selinux_audit_rule_known - check to see if rule contains selinux fields.
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index dd44126c8d14..0b7e33f6aa59 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -3376,8 +3376,7 @@ int selinux_audit_rule_known(struct audit_krule *rule)
+ 	return 0;
+ }
+ 
+-int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule,
+-			     struct audit_context *actx)
++int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule)
+ {
+ 	struct selinux_state *state = &selinux_state;
+ 	struct context *ctxt;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 430d4f35e55c..403513df42fc 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4393,13 +4393,11 @@ static int smack_audit_rule_known(struct audit_krule *krule)
+  * @field: audit rule flags given from user-space
+  * @op: required testing operator
+  * @vrule: smack internal rule presentation
+- * @actx: audit context associated with the check
+  *
+  * The core Audit hook. It's used to take the decision of
+  * whether to audit or not to audit a given object.
+  */
+-static int smack_audit_rule_match(u32 secid, u32 field, u32 op, void *vrule,
+-				  struct audit_context *actx)
++static int smack_audit_rule_match(u32 secid, u32 field, u32 op, void *vrule)
+ {
+ 	struct smack_known *skp;
+ 	char *rule = vrule;
+-- 
+1.8.3.1
+
