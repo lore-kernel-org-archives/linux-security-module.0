@@ -1,76 +1,125 @@
-Return-Path: <SRS0=sdO6=QG=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=hRTQ=QH=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CA3C282D8
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 23:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E117C282D7
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 00:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8EEB20881
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jan 2019 23:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33C282087F
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 00:22:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfA3XBp (ORCPT
+        id S1726233AbfAaAW4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jan 2019 18:01:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37514 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728404AbfA3XBm (ORCPT
+        Wed, 30 Jan 2019 19:22:56 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61725 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfAaAW4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jan 2019 18:01:42 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 21655C002964;
-        Wed, 30 Jan 2019 22:43:46 +0000 (UTC)
-Received: from cantor.redhat.com (ovpn-116-165.phx2.redhat.com [10.3.116.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D46935D717;
-        Wed, 30 Jan 2019 22:43:45 +0000 (UTC)
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
+        Wed, 30 Jan 2019 19:22:56 -0500
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0V0Msqg002767;
+        Thu, 31 Jan 2019 09:22:54 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
+ Thu, 31 Jan 2019 09:22:54 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0V0MrCn002710
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 31 Jan 2019 09:22:54 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: WARNING in apparmor_secid_to_secctx
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         linux-security-module@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 2/2] tpm: don't print error message in tpm_transmit_cmd when tpm still testing
-Date:   Wed, 30 Jan 2019 15:43:33 -0700
-Message-Id: <20190130224333.20373-2-jsnitsel@redhat.com>
-In-Reply-To: <20190130224333.20373-1-jsnitsel@redhat.com>
-References: <20190130224333.20373-1-jsnitsel@redhat.com>
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>
+References: <000000000000c178e305749daba4@google.com>
+ <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
+ <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov>
+ <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
+ <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
+ <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+ <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+ <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
+ <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+ <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
+ <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+ <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
+ <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
+ <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+ <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
+ <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
+Date:   Thu, 31 Jan 2019 09:22:49 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 30 Jan 2019 22:43:46 +0000 (UTC)
+In-Reply-To: <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Currently tpm_transmit_cmd will print an error message if the tpm
-returns something other than TPM2_RC_SUCCESS. This means that if the
-tpm returns that it is testing an error message will be printed, and
-this can cause confusion for the end user. So avoid printing the error
-message if TPM2_RC_TESTING is the return code.
+On 2019/01/30 23:45, Dmitry Vyukov wrote:
+>> Dmitry, is it possible to update configs for linux-next.git , for
+>> we want to test a big change in LSM which will go to Linux 5.1 ?
+>>
+>> TOMOYO security module (CONFIG_SECURITY_TOMOYO=y) can now coexist with
+>> SELinux/Smack/AppArmor security modules, and SafeSetID security module
+>> (CONFIG_SECURITY_SAFESETID=y) was added. Testing with these modules also
+>> enabled might find something...
+> 
+> Hi,
+> 
+> syzbot configs/cmdline args are stored here:
+> https://github.com/google/syzkaller/tree/master/dashboard/config
+> 
+> I've tried to update to the latest kernel, the diff is below.
+> Few questions:
+> 1. How are modules enabled now?
+> We pass security=selinux of security=smack on command line. What do we
+> need to pass now to enable several modules at the same time?
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
----
- drivers/char/tpm/tpm-interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Removing security= parameter from kernel boot command line will do it.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index d9439f9abe78..6339a2e289ae 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -397,7 +397,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_space *space,
- 
- 	err = be32_to_cpu(header->return_code);
- 	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
--	    && desc)
-+	    && err != TPM2_RC_TESTING && desc)
- 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
- 			desc);
- 	if (err)
--- 
-2.20.1.98.gecbdaf0899
+  security/apparmor/lsm.c:        .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+  security/selinux/hooks.c:       .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+  security/smack/smack_lsm.c:     .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+  security/tomoyo/tomoyo.c:       .flags = LSM_FLAG_LEGACY_MAJOR,
+  security/security.c:                    if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
 
+But this means that, if same kernel config/cmdline are used between
+linux-next.git and linux.git (etc.), syzbot will need to choose from
+
+ (a) stop sharing kernel cmdline between linux-next.git and linux.git (etc.)
+
+or
+
+ (b) stop sharing kernel config between SELinux, Smack and AppArmor
+
+or
+
+ (c) start testing after the LSM changes went to linux.git as Linux 5.1-rc1
+
+. Is (a) or (b) possible? If this is a too much change, (c) will be OK.
