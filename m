@@ -2,148 +2,92 @@ Return-Path: <SRS0=hRTQ=QH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF235C282D7
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 02:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1ACC282D9
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 07:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A286A20989
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 02:10:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="EjH2eyBW"
+	by mail.kernel.org (Postfix) with ESMTP id 7A46C218AC
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 07:55:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbfAaCKa (ORCPT
+        id S1728238AbfAaHzr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jan 2019 21:10:30 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:32967 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfAaCKa (ORCPT
+        Thu, 31 Jan 2019 02:55:47 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32848 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727614AbfAaHzr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jan 2019 21:10:30 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v1-v6so1326387ljd.0
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Jan 2019 18:10:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Whk/q5GwjVvnbaED4S5YUnxJOg/3KAYycyPfIkJB4r4=;
-        b=EjH2eyBWlFCg9dz5pmsuo8Jl9GrYn9SWlbWo70qvXam/J/oWSt+/3Bj+XSAU78ExMO
-         4otO0wbKwqqBLnCjRmdPikjfGXCul55zWB3qFcybBTEjDdYkmgdj7AkCBf/7nSkcjncA
-         5tc6UJYjqYJungjGAMhK39S281k7eTdTorbvG80ob/aWf7llA/42ILiLezCIdRF9sEwQ
-         v92bt49NCCBXbVpYoP2vgnb+p1788zuWk4CJlXS+6EnstCdzfXvysSefusB0DM87uQgr
-         bv5eYuQpG0Ab9562oPqCX/aaILaq0C5NA6bbtf0gRV/h8lPeGW6U1WxxaRcACslfVulV
-         KKlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Whk/q5GwjVvnbaED4S5YUnxJOg/3KAYycyPfIkJB4r4=;
-        b=W7q6Mi3OFd/qNmzRMhdq9ayiDijHsY9fllLWpMLsj5+TWJ7IkT5HClIwjllVDkYlQd
-         2m0kJ5jXgBGfw1VVdBi+aw42RsvljAcYbJAdw3sXiMKM2O37LoVv/7ikI5z86ZyxvUt3
-         gFKD8aYYpbtQNMgCvfD8apRGzG1OPisGsCURyJXdcHMDuVVR3lx2ESrZ4yyeosPnFv8w
-         +xiXEfcfTLndfCWg2ZOHZvVjQUF9uC629jmxRrH9+OEoijwcREomVHxB0fvD4vutYc93
-         9Ri3ogHlJJKcIMw7UbyATHXfpYcDj0ebe4ZM7IaxQq4FeGDPhsOKYxtim7tFZSnMHSn2
-         a9iw==
-X-Gm-Message-State: AHQUAuZ4dcqPXOdc2F3mcml+Q5zmBEA+79JVC9WvlEqle3/DJmDQnBZJ
-        XWxcsXnJKDoZkih/XaMOsLUYxTG4J4VMLY1Zkqbu
-X-Google-Smtp-Source: AHgI3IaxhW9p8kSXLWoCtfhmPYyq8maDoE9A3BCeTfThYLmmlR8WIA4oj2pfQ/37jeZCnd8u7jumgFeu/kRAaRGwWrA=
-X-Received: by 2002:a2e:8546:: with SMTP id u6-v6mr11945689ljj.95.1548900627375;
- Wed, 30 Jan 2019 18:10:27 -0800 (PST)
-MIME-Version: 1.0
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
- <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
- <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
- <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
- <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
- <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
- <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net> <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
- <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net> <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
- <3499451548746609@myt4-929fb874f3f2.qloud-c.yandex.net> <CAHC9VhRXc=UAfNidPjYsG561_kc_j2CkD6Db=Kb=Gjyhk3ko6Q@mail.gmail.com>
- <3191601548853902@myt6-23299ba78d64.qloud-c.yandex.net>
-In-Reply-To: <3191601548853902@myt6-23299ba78d64.qloud-c.yandex.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 30 Jan 2019 21:10:16 -0500
-Message-ID: <CAHC9VhQcrnXmjcVw_ppwM-fGcwhJq9SafTnZKjgpQpxK0ie+Jw@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
-To:     Nazarov Sergey <s-nazarov@yandex.ru>
-Cc:     "linux-security-module@vger.kernel.org" 
+        Thu, 31 Jan 2019 02:55:47 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 35F7076C8FC4E4091E4A;
+        Thu, 31 Jan 2019 07:55:45 +0000 (GMT)
+Received: from [10.204.65.149] (10.204.65.149) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 31 Jan
+ 2019 07:55:36 +0000
+Subject: Re: [PATCH v8 5/7] tpm: move tpm_chip definition to
+ include/linux/tpm.h
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
+        <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+References: <20190124154910.29948-1-roberto.sassu@huawei.com>
+ <20190124154910.29948-6-roberto.sassu@huawei.com>
+ <20190129203422.GD11615@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <011ba997-3a09-8c68-cad2-9733e79e6d0d@huawei.com>
+Date:   Thu, 31 Jan 2019 08:54:50 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20190129203422.GD11615@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.149]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 30, 2019 at 8:11 AM Nazarov Sergey <s-nazarov@yandex.ru> wrote:
-> 30.01.2019, 01:42, "Paul Moore" <paul@paul-moore.com>:
-> > There are several cases where the stack ends up calling icmp_send()
-> > after the skb has been through ip_options_compile(), that should be
-> > okay.
-> >
-> > --
-> > paul moore
-> > www.paul-moore.com
->
-> In those cases precompiled ip_options struct used, without the need to reuse ip_options_compile.
-> I think, for error ICMP packet, we can discard all other options except CIPSO. It will be better, than
-> send packet, contains wrong option's data. Modified patch 2:
-> ---
->  net/ipv4/cipso_ipv4.c |   24 ++++++++++++++++++++++--
->  1 files changed, 22 insertions(+), 2 deletions(-)
+On 1/29/2019 9:34 PM, Jarkko Sakkinen wrote:
+> On Thu, Jan 24, 2019 at 04:49:08PM +0100, Roberto Sassu wrote:
+>> -enum tpm_const {
+>> -	TPM_MINOR = 224,	/* officially assigned */
+>> -	TPM_BUFSIZE = 4096,
+>> -	TPM_NUM_DEVICES = 65536,
+>> -	TPM_RETRY = 50,		/* 5 seconds */
+>> -	TPM_NUM_EVENT_LOG_FILES = 3,
+>> -};
+> 
+> Here using enum has been a bad idea in the first place, as they don't
+> relate in any meaningful way.
+> 
+> Replace the definition with the following in drivers/char/tpm/tpm.h:
+> 
+> #define TPM_MINOR	224 /* misc backwards compatibility */
+> #define TPM_BUFSIZE	4096
+> #define TPM_NUM_DEVICES	65536
+> #define TPM_RETRY	5 /* seconds */
 
-This isn't how the rest of the stack works, look at
-ip_local_deliver_finish() for one example.  Perhaps the behavior you
-are proposing is correct, but please show me where in the various RFC
-specs it is defined so that I can better understand why it should work
-this way.
+Is 5 correct? TPM_RETRY was 50 before.
 
-> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> index 777fa3b..797826c 100644
-> --- a/net/ipv4/cipso_ipv4.c
-> +++ b/net/ipv4/cipso_ipv4.c
-> @@ -1735,13 +1735,33 @@ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option)
->   */
->  void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway)
->  {
-> +       struct ip_options opt;
-> +       unsigned char *optptr;
-> +
->         if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
->                 return;
->
-> +       /*
-> +        * We might be called above the IP layer,
-> +        * so we can not use icmp_send and IPCB here.
-> +        *
-> +        * For the generated ICMP packet, we create a
-> +        * temporary ip _options structure, contains
-> +        * the CIPSO option only, since the other options data
-> +        * could be modified when the original packet receiving.
-> +        */
-> +
-> +       memset(&opt, 0, sizeof(struct ip_options));
-> +       optptr = cipso_v4_optptr(skb);
-> +       if (optptr) {
-> +               opt.optlen = optptr[1];
-> +               opt.cipso = optptr - skb_network_header(skb);
-> +       }
-> +
->         if (gateway)
-> -               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0);
-> +               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0, &opt);
->         else
-> -               icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0);
-> +               __icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0, &opt);
->  }
->
->  /**
->
+Roberto
 
+
+> And only add this to include/linux/tpm.h:
+> 
+> #define TPM_NUM_EVENT_LOG_FILES 3
+> 
+> Otherwise, this looks good.
+> 
+> /Jarkko
+> 
 
 -- 
-paul moore
-www.paul-moore.com
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
