@@ -2,124 +2,107 @@ Return-Path: <SRS0=hRTQ=QH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E117C282D7
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 00:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1735C282D8
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 00:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33C282087F
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 00:22:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F19420B1F
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 00:28:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Wz22tAox"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbfAaAW4 (ORCPT
+        id S1726531AbfAaA2p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jan 2019 19:22:56 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61725 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfAaAW4 (ORCPT
+        Wed, 30 Jan 2019 19:28:45 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35562 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726087AbfAaA2o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jan 2019 19:22:56 -0500
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0V0Msqg002767;
-        Thu, 31 Jan 2019 09:22:54 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Thu, 31 Jan 2019 09:22:54 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0V0MrCn002710
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 31 Jan 2019 09:22:54 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: WARNING in apparmor_secid_to_secctx
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Wed, 30 Jan 2019 19:28:44 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 195A58EE232;
+        Wed, 30 Jan 2019 16:28:44 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id k5-3HNxwWhHz; Wed, 30 Jan 2019 16:28:43 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 745768EE0E9;
+        Wed, 30 Jan 2019 16:28:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1548894523;
+        bh=pCnL6WVUwxoGCZa/2ue3qx7ky3kdOP0WgfifLCY8uaU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Wz22tAoxw2w8PTfK1sTIhXN3dGUYXQfy42lNp9+nxyW5+BT+0uw+DkMequfUIK349
+         3uLuyHhLs4nFBU51DFr18dyrmAG7hSI9z5KePT66W/XS44Hsc+ZIHIVySAwJRy8tmh
+         NcUHh/1XfLf+8HTwEjNbknD0GsmD3dSg8VqG4E/Q=
+Message-ID: <1548894522.2774.28.camel@HansenPartnership.com>
+Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@tycho.nsa.gov>,
-        Russell Coker <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>,
-        syzkaller <syzkaller@googlegroups.com>
-References: <000000000000c178e305749daba4@google.com>
- <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
- <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov>
- <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
- <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
- <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
- <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
- <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
- <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
- <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
- <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
- <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
- <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
- <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
- <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
- <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
-Date:   Thu, 31 Jan 2019 09:22:49 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Date:   Wed, 30 Jan 2019 16:28:42 -0800
+In-Reply-To: <20190129123111.GA12883@linux.intel.com>
+References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
+         <20190123182057.GA24212@linux.intel.com>
+         <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
+         <20190129123111.GA12883@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/01/30 23:45, Dmitry Vyukov wrote:
->> Dmitry, is it possible to update configs for linux-next.git , for
->> we want to test a big change in LSM which will go to Linux 5.1 ?
->>
->> TOMOYO security module (CONFIG_SECURITY_TOMOYO=y) can now coexist with
->> SELinux/Smack/AppArmor security modules, and SafeSetID security module
->> (CONFIG_SECURITY_SAFESETID=y) was added. Testing with these modules also
->> enabled might find something...
+On Tue, 2019-01-29 at 14:31 +0200, Jarkko Sakkinen wrote:
+> On Wed, Jan 23, 2019 at 01:53:44PM -0500, Stefan Berger wrote:
+> > On 1/23/19 1:20 PM, Jarkko Sakkinen wrote:
+> > > On Wed, Jan 16, 2019 at 11:23:25PM +0200, Jarkko Sakkinen wrote:
+> > > > Make the changes necessary to detach TPM space code and TPM
+> > > > activation
+> > > > code out of the tpm_transmit() flow because of both of these
+> > > > can cause
+> > > > nested tpm_transmit() calls. The nesteds calls make the whole
+> > > > flow hard
+> > > > to maintain, and thus, it is better to just fix things now
+> > > > before this
+> > > > turns into a bigger mess.
+> > > 
+> > > Any reasons not to merge this soon?
+> > 
+> > I suppose v10 hasn't changed anything signinficat. So, not from my
+> > perspective. Were you waiting for more Reviewed-by's?
 > 
-> Hi,
-> 
-> syzbot configs/cmdline args are stored here:
-> https://github.com/google/syzkaller/tree/master/dashboard/config
-> 
-> I've tried to update to the latest kernel, the diff is below.
-> Few questions:
-> 1. How are modules enabled now?
-> We pass security=selinux of security=smack on command line. What do we
-> need to pass now to enable several modules at the same time?
+> Yeah, for example TPM space touching changes would be good to peer
+> check with James. I could have easily forgotten some implementation
+> detail, and it has been very stable piece off code, so don't want
+> to break it. Guess won't yet try to put this v5.1.
 
-Removing security= parameter from kernel boot command line will do it.
+So the implementation detail I was looking for: internal kernel use of
+tpm_transmit_cmd() without tpm_find/try_get_ops() doesn't seem to
+exist, so I think this is all safe.  You can add my
 
-  security/apparmor/lsm.c:        .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-  security/selinux/hooks.c:       .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-  security/smack/smack_lsm.c:     .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-  security/tomoyo/tomoyo.c:       .flags = LSM_FLAG_LEGACY_MAJOR,
-  security/security.c:                    if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
+Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
 
-But this means that, if same kernel config/cmdline are used between
-linux-next.git and linux.git (etc.), syzbot will need to choose from
+But I've got to say I can't test this yet because you've made a huge
+problem for me in the tpm security patches: they introduce a kernel
+space which now becomes somewhat problematic because the space handling
+moved into the device common code.  To get both these things to work
+together so I can test it, space handling is going to have to come
+slightly down from device common code so the kernel can use it.
 
- (a) stop sharing kernel cmdline between linux-next.git and linux.git (etc.)
+James
 
-or
-
- (b) stop sharing kernel config between SELinux, Smack and AppArmor
-
-or
-
- (c) start testing after the LSM changes went to linux.git as Linux 5.1-rc1
-
-. Is (a) or (b) possible? If this is a too much change, (c) will be OK.
