@@ -2,105 +2,143 @@ Return-Path: <SRS0=hRTQ=QH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89325C282DA
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 16:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C33BEC282D9
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 16:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628D72085B
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 16:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 957972082C
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 16:39:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="NwSiVTvZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726355AbfAaQMK (ORCPT
+        id S2388590AbfAaQjI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:12:10 -0500
-Received: from mga18.intel.com ([134.134.136.126]:46539 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388082AbfAaQMK (ORCPT
+        Thu, 31 Jan 2019 11:39:08 -0500
+Received: from sonic303-9.consmr.mail.bf2.yahoo.com ([74.6.131.48]:43908 "EHLO
+        sonic303-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388574AbfAaQjI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:12:10 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 08:12:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="112664329"
-Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
-  by orsmga006.jf.intel.com with ESMTP; 31 Jan 2019 08:11:56 -0800
-Date:   Thu, 31 Jan 2019 18:11:55 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v10 00/17] Remove nested TPM operations
-Message-ID: <20190131161155.GF5629@linux.intel.com>
-References: <20190116212342.24524-1-jarkko.sakkinen@linux.intel.com>
- <20190123182057.GA24212@linux.intel.com>
- <37e53df5-4a25-fce2-d3bf-016669d0a383@linux.ibm.com>
- <20190129123111.GA12883@linux.intel.com>
- <1548894522.2774.28.camel@HansenPartnership.com>
+        Thu, 31 Jan 2019 11:39:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1548952746; bh=VP4YSb4SrA3XoluAnmo+SdrZV9R84fMYlxmzyrvxAyA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=NwSiVTvZXQgOrUmrz12AL+vekPCatCJmeBEL380yosAHJwMybYBuZO+FkTsrTfRzoqIqOFPCSe+28RAYTVUNpoCXP9UmCaZwFXbwfUdqcBAxk+0md6GGlfMFghaYIfm8J/6dUJHf42B3e3gxy0U8Au6rqTdUQ9pZimv1QWRfsu2UZi1vNhPdlSXfqWAfKKTKU5Fx8qGyuQjOpYoxqpstdTZV4yKUfOZjN58N0xKyVw6uakSTvpAL4Iz9gy6wkpRJi0n4MGyY/i8vz5R3yNAtzfnjGzC2+VsxdjlNaNtFFTqBFlS5eeVLPQZ4X+OpBtWCzErkuMx7Qp3FOrGwZdbqCQ==
+X-YMail-OSG: mJx0d1cVM1kuaEnqh_OrCcBC8GeNFiLryIqqHr3VGemGxFpwncAkLS.u1zmotH.
+ 7WTNJfplZYZRQsJUmEqsQ499b1KGsMItxjyC8rakfqLQyen9rvO74B.tiTb58hUVAao48tp3P1JW
+ 2rwBiSkRMAc6ZVyPLFY0vU8MUtMKDmOxG9zolGVsj9VohsMvbvmHLZdJ2o9zwVxFN9xkWvrZ0dMc
+ xRSuU0OcIe7iKzBxgR5zjwfM5vVhrhCKRitpAUKcUVlH3aaiVFPJUyphFSt0WaUqE5mJSNFc4DVj
+ dk8KoyuHXtqx0_9TBoA9GcSvCNsOi4rEe.xT2Rs60pzbIZH4wpPZLZD4IzBhZ52BVyA2.Cq3FI61
+ j5v9geHRleWZUjs5fWHanPrOJde0D1DPggufyQk.BOWzGixt0wHDPV2L1FAzrnFl3c7bW9eqK6bK
+ y9cugxEtQns97mcPc8b2.uHnJ7vhUQX3O9z6MAAP66gWiBJJbpIYVQX7YOXBBUBKnxvyKBQ.K5Dp
+ KTfylG.VTJk0Pa06qwzW7DbY3LVUq0GDvh2Va65Nrx7QaVrmx_Hp4n9mvZJP5AAjKrDSg.dSWwpc
+ QQToHKD5tvxyu8H4cg3.Qv6hTqQ1Fet9aMbIabVjjXyTk9BTooU5G4Qx2KNJiW3DUA_HqW1.Nsgf
+ uVoFNlBU6xHvBLrRXzcXIT.oVAdmjd67a5IA_NbTH6ktKeXUssk97iRCmE4teZaTUvZcmVI.OLmp
+ f24BXbxNuF7xsYF5CMAwlwZ4ypSIUpdj.Zk7Vbipj2fdiVoT_82.sZB72T32v8zluW8UKpAKLgof
+ RaL0ol_f.wjXvVZkYpn2TtPG_HJQGMGZv.yjRt8YIPXbQDfP0XI.nwf6En.0taVF1lhb5h.sC7D.
+ Yt319zsNFpKMR9NtsYU0giDMMEeEeqCmyx_PIK0v6Xl2qqzPT85FqThihbWahhhesu9Tev3fRw2m
+ 8pcJY63ppWsRqEXhx_YcOndv_ZRcSizq4sMzpUD6qgBM6S.BCuhV9F3A.bYOeCoOwytPOj0Grc5S
+ dTNcXEYh6Pw3NGzqa0AyfJSkPPCR1HYIT47D2hUCDfC03mKcX26lzpxncRxhjBfX._lq7tlkIZQ6
+ f1BOwI7lBWOUi9DvW7r5Wl0pdQb8-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Thu, 31 Jan 2019 16:39:06 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
+          by smtp416.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 98cc0d3b076bd18c7df9321b4f34cea0;
+          Thu, 31 Jan 2019 16:39:06 +0000 (UTC)
+Subject: Re: [PATCH v3 5/5] kernfs: initialize security of newly created nodes
+To:     Ondrej Mosnacek <omosnace@redhat.com>, Tejun Heo <tj@kernel.org>
+Cc:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+References: <20190130114150.27807-1-omosnace@redhat.com>
+ <20190130114150.27807-6-omosnace@redhat.com>
+ <20190130170911.GZ50184@devbig004.ftw2.facebook.com>
+ <CAFqZXNt0jNg2-bNbtsCX2=7bcb_GaxCnHfSyck=GksXBTkWJ-g@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <ebe3c70e-2bde-9fca-bb05-b46173e09b69@schaufler-ca.com>
+Date:   Thu, 31 Jan 2019 08:39:02 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548894522.2774.28.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAFqZXNt0jNg2-bNbtsCX2=7bcb_GaxCnHfSyck=GksXBTkWJ-g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 30, 2019 at 04:28:42PM -0800, James Bottomley wrote:
-> On Tue, 2019-01-29 at 14:31 +0200, Jarkko Sakkinen wrote:
-> > On Wed, Jan 23, 2019 at 01:53:44PM -0500, Stefan Berger wrote:
-> > > On 1/23/19 1:20 PM, Jarkko Sakkinen wrote:
-> > > > On Wed, Jan 16, 2019 at 11:23:25PM +0200, Jarkko Sakkinen wrote:
-> > > > > Make the changes necessary to detach TPM space code and TPM
-> > > > > activation
-> > > > > code out of the tpm_transmit() flow because of both of these
-> > > > > can cause
-> > > > > nested tpm_transmit() calls. The nesteds calls make the whole
-> > > > > flow hard
-> > > > > to maintain, and thus, it is better to just fix things now
-> > > > > before this
-> > > > > turns into a bigger mess.
-> > > > 
-> > > > Any reasons not to merge this soon?
-> > > 
-> > > I suppose v10 hasn't changed anything signinficat. So, not from my
-> > > perspective. Were you waiting for more Reviewed-by's?
-> > 
-> > Yeah, for example TPM space touching changes would be good to peer
-> > check with James. I could have easily forgotten some implementation
-> > detail, and it has been very stable piece off code, so don't want
-> > to break it. Guess won't yet try to put this v5.1.
-> 
-> So the implementation detail I was looking for: internal kernel use of
-> tpm_transmit_cmd() without tpm_find/try_get_ops() doesn't seem to
-> exist, so I think this is all safe.  You can add my
-> 
-> Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+On 1/31/2019 2:20 AM, Ondrej Mosnacek wrote:
+> Hi Tejun,
+>
+> On Wed, Jan 30, 2019 at 6:09 PM Tejun Heo <tj@kernel.org> wrote:
+>> Hello,
+>>
+>> On Wed, Jan 30, 2019 at 12:41:50PM +0100, Ondrej Mosnacek wrote:
+>>> @@ -673,6 +698,12 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
+>>>                       goto err_out3;
+>>>       }
+>>>
+>>> +     if (parent) {
+>>> +             ret = kernfs_node_init_security(parent, kn);
+>>> +             if (ret)
+>>> +                     goto err_out3;
+>>> +     }
+>> So, doing this unconditionally isn't a good idea.  kernfs doesn't use
+>> the usual dentry/inode because there are machines with 6, even 7 digit
+>> number of kernfs nodes and some of them even failed to boot due to
+>> memory shortage.  Please don't blow it up by default.
+> Hm, I see... basically the only thing that gets allocated in
+> kernfs_node_init_security() by default (at least under SELinux/ no
+> LSM) is the kernfs_iattrs structures, so I assume you are pointing at
+> that. I think this can be easily fixed, if we again use the assumption
+> that whenever the parent node has only default attributes
+> (parent->iattrs == NULL), then the child node should also have just
+> default attributes (and so we don't need to call kernfs_iattrs() on it
+> nor call the security hook). Something along these lines:
+>
+> [...]
+> +static int kernfs_node_init_security(struct kernfs_node *parent,
+> +                                    struct kernfs_node *kn)
+> +{
+> +       struct kernfs_iattrs *attrs, *pattrs;
+> +       struct qstr q;
+> +
+> +       pattrs = parent->iattrs;
+> +       if (!pattrs)
+> +               return 0;
+> +
+> +       attrs = kernfs_iattrs(kn);
+> +       if (!attrs)
+> +               return -ENOMEM;
+> +
+> +       q.name = kn->name;
+> +       q.hash_len = hashlen_string(parent, kn->name);
+> [...]
+>
+> Technically this might make some LSMs unhappy, if they want to set
+> some non-default context even if parent is all default,
 
-Thank you. I'll send a new revision soonish.
+The only possibility I see as a potential problem is a kernfs
+mounted with the smackfstransmute=Something option. This sets
+the security.SMACK64 to "Something" and the security.SMACK64TRANSMUTE
+to true on the root node. But that doesn't seem like a rational
+thing to do for a kernfs based filesystem.
 
-> But I've got to say I can't test this yet because you've made a huge
-> problem for me in the tpm security patches: they introduce a kernel
-> space which now becomes somewhat problematic because the space handling
-> moved into the device common code.  To get both these things to work
-> together so I can test it, space handling is going to have to come
-> slightly down from device common code so the kernel can use it.
+> but this is
+> already impossible now and in this case I think we have no better
+> choice than sacrificing a bit of flexibility for memory efficiency,
+> which is apparently critical here.
+>
+> Tejun, Casey, would the above modification be fine with you?
 
-Yeah, obviously. I'll apply these patches right after the next PR so
-you will have a more stable platform to work on after that. Stefan
-has tested these, and then there is one full cycle to fix details
-if we find issues.
+I *think so*, but I can't say 100% that I really understand the
+entire issue.
 
-/Jarkko
+>
+> --
+> Ondrej Mosnacek <omosnace at redhat dot com>
+> Associate Software Engineer, Security Technologies
+> Red Hat, Inc.
+>
