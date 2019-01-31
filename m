@@ -2,98 +2,103 @@ Return-Path: <SRS0=hRTQ=QH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E692CC282D9
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 19:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80484C169C4
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 19:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4600218AF
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 19:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 460FE20881
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 19:59:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfAaTrY (ORCPT
+        id S1727028AbfAaT7L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:47:24 -0500
-Received: from mga04.intel.com ([192.55.52.120]:53727 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727111AbfAaTrX (ORCPT
+        Thu, 31 Jan 2019 14:59:11 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42540 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725807AbfAaT7L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:47:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 11:47:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="130538005"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga002.jf.intel.com with ESMTP; 31 Jan 2019 11:47:22 -0800
-Received: from HASMSX110.ger.corp.intel.com (10.184.198.28) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 31 Jan 2019 11:47:22 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
- HASMSX110.ger.corp.intel.com ([169.254.6.213]) with mapi id 14.03.0415.000;
- Thu, 31 Jan 2019 21:47:20 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: RE: Getting weird TPM error after rebasing my tree to
- security/next-general
-Thread-Topic: Getting weird TPM error after rebasing my tree to
- security/next-general
-Thread-Index: AQHUuWAtuzjHOvmUw0aX3ymhUWghKaXJaQyAgAARKoCAABj/gIAABFeAgAAAYICAAAUEAIAAKBgw
-Date:   Thu, 31 Jan 2019 19:47:19 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA8DA75@hasmsx108.ger.corp.intel.com>
-References: <20190122010218.GA26713@linux.intel.com>
- <20190122025836.GH25163@ziepe.ca> <20190122132910.GA2720@linux.intel.com>
- <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
- <20190123153638.GA8727@linux.intel.com>
- <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
- <20190129132016.GA1602@linux.intel.com>
- <20190131122606.GA12470@linux.intel.com>
- <20190131160437.GA5629@linux.intel.com>
- <20190131170603.GA18349@linux.intel.com>
- <20190131183530.GA27112@linux.intel.com>
- <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
- <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
- <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
-In-Reply-To: <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjAzYWIzZTUtZGNjOC00ZDg3LTkzNmUtYzNjZDJiOGE5MzU0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiOTBqK2tPbytadFVHVlB0U3ZwbWdTOWNPUGtpSW0rN3NkcE9lcWg2WG5GTkFZQlY3VVFIbFlTZUVSZ0lDRXpxRSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.254.159.176]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Thu, 31 Jan 2019 14:59:11 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0VJsgdG065032
+        for <linux-security-module@vger.kernel.org>; Thu, 31 Jan 2019 14:59:10 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qc5umwa0c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 31 Jan 2019 14:59:09 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 31 Jan 2019 19:59:08 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 19:59:04 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0VJx3Ee65732790
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 19:59:03 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 84AF2A404D;
+        Thu, 31 Jan 2019 19:59:03 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 334A6A4053;
+        Thu, 31 Jan 2019 19:59:02 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.107.203])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Jan 2019 19:59:02 +0000 (GMT)
+Subject: Re: [PATCH] security: mark expected switch fall-throughs
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Date:   Thu, 31 Jan 2019 14:58:51 -0500
+In-Reply-To: <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com>
+References: <20190125025639.GA13946@embeddedor>
+         <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
+         <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com>
+         <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19013119-0028-0000-0000-0000034180EC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013119-0029-0000-0000-000023FF84D9
+Message-Id: <1548964731.6107.28.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=959 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310148
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-DQo+IA0KPiBPbiBUaHUsIEphbiAzMSwgMjAxOSBhdCAxMDo1MiBBTSBMaW51cyBUb3J2YWxkcyA8
-dG9ydmFsZHNAbGludXgtDQo+IGZvdW5kYXRpb24ub3JnPiB3cm90ZToNCj4gPg0KPiA+IEkgdGhp
-bmsgd2hhdCBJIHNob3VsZCBkbyBpcyB0byBqdXN0IG1ha2UgIm1lbWNweV8qaW8oKSIgZG8gdGhl
-ICJhbGlnbg0KPiA+IG5hdHVyYWxseSIgdGhpbmcuDQo+ID4NCj4gPiBMZXQgbWUgY29vayB1cCBh
-IHBhdGNoIGZvciB5b3UgdG8gdGVzdC4NCj4gDQo+IERvZXMgdGhpcyB3b3JrIGZvciB5b3U/DQo+
-IA0KPiBJIGhhdmVuJ3QgdGVzdGVkIGl0IGF0IGFsbCwgYnV0IEkgdmVyaWZpZWQgdGhhdCB0aGUg
-Z2VuZXJhdGVkIGNvZGUgc2VlbXMgdG8gbWFrZQ0KPiBhdCBsZWFzdCBzb21lIGFtb3VudCBvZiBz
-ZW5zZS4NCj4gDQo+ICAgICAgICAgICAgICAgIExpbnVzDQoNClNvIGRpZyBpbnRvIHRoZSBzcGVj
-IGFuZCBJIHRoaW5rIHRoaXMgaXMgYSBiaXQgcmVsZXZhbnQuIA0KDQpUUE0gVENHIGFjY29yZGlu
-ZyB0aGUgc3BlYyByZXF1aXJlcyB0aGF0IGFsbCBidWZmZXIgYWNjZXNzIGlzIGRvbmUgc2VxdWVu
-dGlhbGx5IGZyb20gdGhlIHN0YXJ0IHRvIGVuZCBvZiB0aGUgcGF5bG9hZCwgDQpTaW1wbHkgSW4g
-Y2FzZSBvZiBza2lwcGluZyBvciBnb2luZyBiYWNrIHRoZSB0cmFuc2FjdGlvbiBpcyBhYm9ydGVk
-LiANClRoZSB3cml0ZSB0cmFuc2FjdGlvbnMgc2hvdWxkIGJlIDEgb3IgcG93ZXIgb2YgMi4gU28g
-aW4gZ2VuZXJhbCA2IGJ5dGUgcmVhZCBzaG91bGQgbm90IHdvcmsuIEJ1dCBJJ20gc3VyZSBvdXIg
-aHcgcmVhbGx5IG9iZXkgdGhpcyByZXN0cmljdGlvbi4NCg0KVGhhbmtzDQpUb21hcyANCg==
+[Cc'ing James Morris]
+
+On Thu, 2019-01-24 at 21:47 -0600, Gustavo A. R. Silva wrote:
+
+> >>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> >>
+> >> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> >>
+> 
+> BTW, thanks, Casey.  I'll take this in my tree.
+
+This patch touches multiple LSMs and IMA.  As James has already picked
+up similar patches, which are in his next-general branch, perhaps he
+could also pick up an updated version of this one.
+
+Mimi
+
