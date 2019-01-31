@@ -2,150 +2,133 @@ Return-Path: <SRS0=hRTQ=QH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C9CC169C4
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 20:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6F0C282DA
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 20:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C9A0218AC
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 20:35:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5741D20881
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 20:45:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbfAaUfu (ORCPT
+        id S1726925AbfAaUpQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:35:50 -0500
-Received: from gateway34.websitewelcome.com ([192.185.149.222]:26265 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728047AbfAaUfu (ORCPT
+        Thu, 31 Jan 2019 15:45:16 -0500
+Received: from mga17.intel.com ([192.55.52.151]:47279 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbfAaUpQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:35:50 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id BB5D0981B3
-        for <linux-security-module@vger.kernel.org>; Thu, 31 Jan 2019 14:12:20 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id pIhAgoghdYTGMpIhAgVbBN; Thu, 31 Jan 2019 14:12:20 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.82.227] (port=44392 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gpIhA-0012jr-7M; Thu, 31 Jan 2019 14:12:20 -0600
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20190125025639.GA13946@embeddedor>
- <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
- <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com>
- <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com>
- <1548964731.6107.28.camel@linux.ibm.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] security: mark expected switch fall-throughs
-Message-ID: <a1cf3a2a-c8ad-fd33-47fb-9a9d8230c24f@embeddedor.com>
-Date:   Thu, 31 Jan 2019 14:12:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 31 Jan 2019 15:45:16 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:45:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
+   d="scan'208";a="114310298"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
+  by orsmga008.jf.intel.com with ESMTP; 31 Jan 2019 12:45:11 -0800
+Date:   Thu, 31 Jan 2019 22:45:10 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     tomas.winkler@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190131204510.GA354@linux.intel.com>
+References: <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com>
+ <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com>
+ <20190131122606.GA12470@linux.intel.com>
+ <20190131160437.GA5629@linux.intel.com>
+ <20190131170603.GA18349@linux.intel.com>
+ <20190131183530.GA27112@linux.intel.com>
+ <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1548964731.6107.28.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.82.227
-X-Source-L: No
-X-Exim-ID: 1gpIhA-0012jr-7M
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.82.227]:44392
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Mimi,
-
-On 1/31/19 1:58 PM, Mimi Zohar wrote:
-> [Cc'ing James Morris]
+On Thu, Jan 31, 2019 at 10:51:03AM -0800, Linus Torvalds wrote:
+> On Thu, Jan 31, 2019 at 10:35 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > OK, so the length of the response is not trashed, but only the error
+> > code. The attached patch fully fixes the issue.
+> >
+> > Here's the header again:
+> >
+> > struct tpm_output_header {
+> >         __be16  tag;
+> >         __be32  length;
+> >         __be32  return_code;
+> > } __packed;
+> >
+> > The first to fields *are* read correctly and the last field get 1's
+> > (thus TPM error -1).
 > 
-> On Thu, 2019-01-24 at 21:47 -0600, Gustavo A. R. Silva wrote:
-> 
->>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>>
->>>> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->>>>
->>
->> BTW, thanks, Casey.  I'll take this in my tree.
-> 
-> This patch touches multiple LSMs and IMA.  As James has already picked
-> up similar patches, which are in his next-general branch, perhaps he
-> could also pick up an updated version of this one.
-> 
+> Ok, so this makes sense, even though that patch is (I think) completely wrong.
 
-Yeah.  I can either integrate your recent fix and respin if you don't mind,
-or remove the fall-through comment and wait for James to take both patches,
-yours and mine.
+I don't disagree on that :-) Just pinpointed the location where it
+fails.
 
-What do you prefer?
+> What happens is that the 32-bit fields are mis-aligned: the "tag" is
+> obviously properly 16-bit aligned, but then both "length" and
+> "return_code" are 32-bit fields that are only aligned on a 16-bit
+> alignment.
+> 
+> What happens is that first you copy the two first fields:
+> 
+>         memcpy_fromio(buf, priv->rsp, 6);
+> 
+> which copies "tag" and "length", but it copies them by reading then as
+> a 4-byte and then 2-byte value (in that order). So it actually reads
+> 'tag' and 'first two bytes of 'length', and then the second access
+> reads the last two bytes of 'length'
+> 
+> And it all works, because the accesses are aligned by address of
+> access, even though they are *not* aligned in the 'struct
+> tpm_output_header' fields.
 
-Thanks
---
-Gustavo
+Right, they are still naturally aligned accesses.
+
+> But then later on, when you read 'return_code', and do
+> 
+>         memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+> 
+> you now do a 4-byte memcpy at offset 6. So it does a 4-byte access,
+> bit it's not 4-byte aligned.
+> 
+> Honestly, memcpy() itself shouldn't have worked *either*, but you
+> lucked out. Gcc doesn't know that it's a 4-byte access, so it actually
+> calls out to the memcpy() routine. And that one happened to be "rep
+> movsb" on your machine. And that happened to work.
+
+I understand what you mean. Just surprised that this hasn't failed
+before to anyone (the same driver has been even successfully used
+on ARM64 with TrustZone based fTPM implementation). It has been in
+for three years now.
+
+> But it's really not supposed to work, and it really *wouldn't* have
+> worked if somebody disabled the rep-string functions.
+> 
+> In fact, we have another patch (that isn't applied) that makes even
+> the memcpy_erms() just call the sw version of memcpy() for short
+> copies (because "rep movsb" is slow for those cases). That would also
+> have broken your driver.
+> 
+>                Linus
+
+/Jarkko
