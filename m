@@ -2,192 +2,106 @@ Return-Path: <SRS0=hRTQ=QH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83FCC169C4
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 11:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B516C169C4
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 12:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A98FF218AF
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 11:30:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="NHfrC9Gx"
+	by mail.kernel.org (Postfix) with ESMTP id D7BE0218AF
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 12:26:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfAaL37 (ORCPT
+        id S1729887AbfAaM0L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Jan 2019 06:29:59 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:40126 "EHLO mail.skyhub.de"
+        Thu, 31 Jan 2019 07:26:11 -0500
+Received: from mga07.intel.com ([134.134.136.100]:20557 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbfAaL37 (ORCPT
+        id S1726153AbfAaM0L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Jan 2019 06:29:59 -0500
-Received: from zn.tnic (p200300EC2BCC59000D578CD19F54A2D7.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5900:d57:8cd1:9f54:a2d7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D60D21EC027A;
-        Thu, 31 Jan 2019 12:29:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548934198;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=pvDZBEHQP9vEk/hY31YWkOL84S0x4lR9x18fyrSrNy8=;
-        b=NHfrC9Gx67nJi72GBFrjjsajVk7iywdi9/1xXraMGshYnbZwj/M+fXSJuZxh3AnaO9YLSJ
-        PmdofcbVTIUGyqKBzoG590SOH3jmmyXkVl6AmHHrBD/62Ycau58bTvK1OAIXACqc1j0u1c
-        urCYlYRfeLIgCEq6K6EWd3pXc+F34vs=
-Date:   Thu, 31 Jan 2019 12:29:48 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        Thu, 31 Jan 2019 07:26:11 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 04:26:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,544,1539673200"; 
+   d="scan'208";a="134732579"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by orsmga001.jf.intel.com with ESMTP; 31 Jan 2019 04:26:07 -0800
+Date:   Thu, 31 Jan 2019 14:26:06 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH v2 03/20] x86/mm: temporary mm struct
-Message-ID: <20190131112948.GE6749@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-4-rick.p.edgecombe@intel.com>
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        tomas.winkler@intel.com
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190131122606.GA12470@linux.intel.com>
+References: <20190118142559.GA4080@linux.intel.com>
+ <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com>
+ <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com>
+ <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-4-rick.p.edgecombe@intel.com>
+In-Reply-To: <20190129132016.GA1602@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> Subject: Re: [PATCH v2 03/20] x86/mm: temporary mm struct
-
-Subject needs a verb: "Add a temporary... "
-
-On Mon, Jan 28, 2019 at 04:34:05PM -0800, Rick Edgecombe wrote:
-> From: Andy Lutomirski <luto@kernel.org>
+On Tue, Jan 29, 2019 at 03:20:16PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Jan 24, 2019 at 07:43:30AM +1300, Linus Torvalds wrote:
+> > On Thu, Jan 24, 2019 at 4:36 AM Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > >
+> > > > Is it just that this particular hardware always happened to trigger
+> > > > the ERMS case (ie "rep movsb")?
+> > >
+> > > This is the particular snippet in question:
+> > >
+> > > memcpy_fromio(buf, priv->rsp, 6);
+> > > expected = be32_to_cpup((__be32 *) &buf[2]);
+> > > if (expected > count || expected < 6)
+> > >         return -EIO;
+> > 
+> > Ok, strange.
+> > 
+> > So what *used* to happen is that the memcpy_fromio() would just expand
+> > as a "memcpy()", and in this case, gcc would then inline the memcpy().
+> > In fact, gcc does it as a 4-byte access and a two-byte access from
+> > what I can tell.
 > 
-> Sometimes we want to set a temporary page-table entries (PTEs) in one of
-
-s/a //
-
-Also, drop the "we" and make it impartial and passive:
-
- "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-  to do frotz", as if you are giving orders to the codebase to change
-  its behaviour."
-
-> the cores, without allowing other cores to use - even speculatively -
-> these mappings. There are two benefits for doing so:
+> I verified, and it is exactly as you stated:
 > 
-> (1) Security: if sensitive PTEs are set, temporary mm prevents their use
-> in other cores. This hardens the security as it prevents exploding a
-
-exploding or exploiting? Or exposing? :)
-
-> dangling pointer to overwrite sensitive data using the sensitive PTE.
+>    0xffffffff814aaa33 <+51>:	mov    (%rax),%edx
+>    0xffffffff814aaa35 <+53>:	mov    %edx,0x0(%rbp)
+>    0xffffffff814aaa38 <+56>:	movzwl 0x4(%rax),%eax
+>    0xffffffff814aaa3c <+60>:	mov    %ax,0x4(%rbp)
 > 
-> (2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-> remote page-tables.
+> And your new version does exactly the same thing to the first six bytes
+> (with different opcode, but the same memory access pattern).
 
-Those belong in the code comments below, explaining what it is going to
-be used for.
+I think I have found the root cause:
 
-> To do so a temporary mm_struct can be used. Mappings which are private
-> for this mm can be set in the userspace part of the address-space.
-> During the whole time in which the temporary mm is loaded, interrupts
-> must be disabled.
-> 
-> The first use-case for temporary PTEs, which will follow, is for poking
-> the kernel text.
-> 
-> [ Commit message was written by Nadav ]
-> 
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  arch/x86/include/asm/mmu_context.h | 32 ++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-> index 19d18fae6ec6..cd0c29e494a6 100644
-> --- a/arch/x86/include/asm/mmu_context.h
-> +++ b/arch/x86/include/asm/mmu_context.h
-> @@ -356,4 +356,36 @@ static inline unsigned long __get_current_cr3_fast(void)
->  	return cr3;
->  }
->  
-> +typedef struct {
+memcpy_fromio(&__rsp_pa, &priv->regs_t->ctrl_rsp_pa, 8);
 
-Why does it have to be a typedef?
+This is from crb_map_io(). This should be read as quad word.
 
-That prev.prev below looks unnecessary, instead of just using prev.
+I'll change it to ioread64() and see what happens. I don't know why it
+even has used memcpy_fromio() in the first place. I guess, when I first
+implemented the driver, I used that for no logical reason, and it has
+worked since up until now.
 
-> +	struct mm_struct *prev;
-
-Why "prev"?
-
-> +} temporary_mm_state_t;
-
-That's kinda long - it is longer than the function name below.
-temp_mm_state_t not enough?
-
-> +
-> +/*
-> + * Using a temporary mm allows to set temporary mappings that are not accessible
-> + * by other cores. Such mappings are needed to perform sensitive memory writes
-> + * that override the kernel memory protections (e.g., W^X), without exposing the
-> + * temporary page-table mappings that are required for these write operations to
-> + * other cores.
-> + *
-> + * Context: The temporary mm needs to be used exclusively by a single core. To
-> + *          harden security IRQs must be disabled while the temporary mm is
-			      ^
-			      ,
-
-> + *          loaded, thereby preventing interrupt handler bugs from override the
-
-s/override/overriding/
-
-> + *          kernel memory protection.
-> + */
-> +static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
-> +{
-> +	temporary_mm_state_t state;
-> +
-> +	lockdep_assert_irqs_disabled();
-> +	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
-> +	switch_mm_irqs_off(NULL, mm, current);
-> +	return state;
-> +}
-> +
-> +static inline void unuse_temporary_mm(temporary_mm_state_t prev)
-> +{
-> +	lockdep_assert_irqs_disabled();
-> +	switch_mm_irqs_off(NULL, prev.prev, current);
-> +}
-> +
->  #endif /* _ASM_X86_MMU_CONTEXT_H */
-> -- 
-> 2.17.1
-> 
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+/Jarkko
