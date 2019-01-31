@@ -2,80 +2,111 @@ Return-Path: <SRS0=hRTQ=QH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCADC169C4
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 13:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 743A0C282D9
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 14:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67E66218D3
-	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 13:20:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="nkhZBbo5"
+	by mail.kernel.org (Postfix) with ESMTP id 491B2218AC
+	for <linux-security-module@archiver.kernel.org>; Thu, 31 Jan 2019 14:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548944571;
+	bh=J8+yKNX4+YfxTYfWs/+pldcdyqOwRR4sdEgpT/77Zv4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Ohl7p/6gcKcllX2yzjwCTrqouIPi0zQSeXx7CK3yD66qhrLIpcZ6fiug8IxgCALX1
+	 vbLLPN0bA3M4wEOwqBN0q/+cLfEks03xsXCHvBHmCBNs6bEn5Kjqb1VMPc/+k8S/JD
+	 So6QokDKNo8bwFegM2px3Rc8AXb1yfzpRIVHFSKM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733061AbfAaNUp (ORCPT
+        id S1732244AbfAaOWt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:20:45 -0500
-Received: from forward501j.mail.yandex.net ([5.45.198.251]:42383 "EHLO
-        forward501j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727108AbfAaNUo (ORCPT
+        Thu, 31 Jan 2019 09:22:49 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:42691 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729892AbfAaOWt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:20:44 -0500
-Received: from mxback21g.mail.yandex.net (mxback21g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:321])
-        by forward501j.mail.yandex.net (Yandex) with ESMTP id E72A133802DB;
-        Thu, 31 Jan 2019 16:20:41 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback21g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 0rvd3jPRdh-KeJCFVc3;
-        Thu, 31 Jan 2019 16:20:41 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1548940841;
-        bh=oB/E2AJU2WzP09fte2H+pLpD91cHyn8nHoMf2IS81yI=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
-        b=nkhZBbo5LrkWeb9JqSou9p0ipcsIwnXhh7bzF5U+m5pThSUo0jgW0lRtvum689sRu
-         4GDqVVH49eYmRS96lte/q+sHrzJCSfnm6Sao37hz/xJl/D1/xMW9c6nNjxUYM4BWkz
-         x3/k04ppJN2D72IyFgOEHDMy2FdFKm9xyx7crmM4=
-Authentication-Results: mxback21g.mail.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by iva8-8d7a47df0521.qloud-c.yandex.net with HTTP;
-        Thu, 31 Jan 2019 16:20:40 +0300
-From:   Nazarov Sergey <s-nazarov@yandex.ru>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "linux-security-module@vger.kernel.org" 
+        Thu, 31 Jan 2019 09:22:49 -0500
+Received: by mail-yw1-f65.google.com with SMTP id x2so1309899ywc.9;
+        Thu, 31 Jan 2019 06:22:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gH04YLr8KCODOOxKnT/DDcO/U+6S3AnfQvySFCkoUQM=;
+        b=V1qEgw2wemqP+e8WUvfItePlczr7nh44Yd3gODVym7hTEUPame3FNOWTVFAapGCNve
+         BuaaJ8vEqnVXiEBknU9zPkLQmWKk4+4CHBRD0E6XTfx5Fd8L3ucDsEltdmpDwYgWyACy
+         E+CDtNvY46XDwN1rmmnyoGaL68keJIi2I19vQ+kv4+++7QDmjmgcUHtt+aj2LIaq1NIo
+         3etJWIz80VNDZ4kosdB+L97AqH1FA9EERwcj02nnru29+kqAavWVmEXpCQuOs8h6he9X
+         jrSTf0xquRt/rW2QakjDXpqUga4WNabMdV90hwtcutUeLaVIckuKMhXkoldfQ9xkKGfe
+         2NpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gH04YLr8KCODOOxKnT/DDcO/U+6S3AnfQvySFCkoUQM=;
+        b=VB8BSwy0QLtutq3LcLgHeYWO6g1FB8haOTqYKBH5lxpLNV33yb2DDJFXg7jwdYkEmC
+         TxDRNd4KpGmzLASR9o7AdOQlixL6fqg849/EdeGZ9F4VIguYyI2PMqFCnglQuN/WCGzt
+         lCUE6IjOZ1KAkMNVha2XRR2YiW0AMr/DSsCplEJyVvrlY3HFWy9MNwgAhYebrP6bJ7rn
+         +L+BOOIaJ2pdq9G8eBQGcTGfVgTDfPCeXZw6TEcnY5unDpCtBo7G0w91GAW+OMPLl1WW
+         gcEgKmZP/8eMBXNSf7PMGb6c7spnl529MPZz2hQPPFbJ0F1wR2qqUpS0vB9hlTSi6IRt
+         iSKA==
+X-Gm-Message-State: AJcUukcdYtqTmvK9yPCsRtMCRMsWb6XMTJvftUnXzx5FRaLAIaXh8mew
+        P4UpXSEnB29nEAW2TmFdv3U=
+X-Google-Smtp-Source: ALg8bN6xRddb2LF8NKONSf+vT4pZ4YNmH87YoiFiK1WU5QmPoshjtg2//8qnRkT69baIuFAxIST6bA==
+X-Received: by 2002:a81:a691:: with SMTP id d139mr34201423ywh.278.1548944568012;
+        Thu, 31 Jan 2019 06:22:48 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:b53a])
+        by smtp.gmail.com with ESMTPSA id 136sm1693010ywm.28.2019.01.31.06.22.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 06:22:46 -0800 (PST)
+Date:   Thu, 31 Jan 2019 06:22:44 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhQcrnXmjcVw_ppwM-fGcwhJq9SafTnZKjgpQpxK0ie+Jw@mail.gmail.com>
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
-         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
-         <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
-         <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
-         <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
-         <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
-         <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net> <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
-        <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net> <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
-         <3499451548746609@myt4-929fb874f3f2.qloud-c.yandex.net> <CAHC9VhRXc=UAfNidPjYsG561_kc_j2CkD6Db=Kb=Gjyhk3ko6Q@mail.gmail.com>
-         <3191601548853902@myt6-23299ba78d64.qloud-c.yandex.net> <CAHC9VhQcrnXmjcVw_ppwM-fGcwhJq9SafTnZKjgpQpxK0ie+Jw@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] kernfs: initialize security of newly created nodes
+Message-ID: <20190131142244.GB50184@devbig004.ftw2.facebook.com>
+References: <20190130114150.27807-1-omosnace@redhat.com>
+ <20190130114150.27807-6-omosnace@redhat.com>
+ <20190130170911.GZ50184@devbig004.ftw2.facebook.com>
+ <CAFqZXNt0jNg2-bNbtsCX2=7bcb_GaxCnHfSyck=GksXBTkWJ-g@mail.gmail.com>
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Thu, 31 Jan 2019 16:20:40 +0300
-Message-Id: <11242361548940840@iva8-8d7a47df0521.qloud-c.yandex.net>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqZXNt0jNg2-bNbtsCX2=7bcb_GaxCnHfSyck=GksXBTkWJ-g@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-31.01.2019, 05:10, "Paul Moore" <paul@paul-moore.com>:
-> This isn't how the rest of the stack works, look at
-> ip_local_deliver_finish() for one example. Perhaps the behavior you
-> are proposing is correct, but please show me where in the various RFC
-> specs it is defined so that I can better understand why it should work
-> this way.
-> --
-> paul moore
-> www.paul-moore.com
+Hello,
 
-Sorry, I was inattentive. ip_options_compile modifies srr option data, only if
-skb is NULL. My last message could be ignored.
+On Thu, Jan 31, 2019 at 11:20:57AM +0100, Ondrej Mosnacek wrote:
+> Hm, I see... basically the only thing that gets allocated in
+> kernfs_node_init_security() by default (at least under SELinux/ no
+> LSM) is the kernfs_iattrs structures, so I assume you are pointing at
+> that. I think this can be easily fixed, if we again use the assumption
+
+Yeap.
+
+> Technically this might make some LSMs unhappy, if they want to set
+> some non-default context even if parent is all default, but this is
+> already impossible now and in this case I think we have no better
+> choice than sacrificing a bit of flexibility for memory efficiency,
+> which is apparently critical here.
+> 
+> Tejun, Casey, would the above modification be fine with you?
+
+Generally looks good but maybe it can check the attr to see whether
+there actually are things which need inheritance?
+
+Thanks.
+
+-- 
+tejun
