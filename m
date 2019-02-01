@@ -2,110 +2,154 @@ Return-Path: <SRS0=Dufg=QI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCBA7C282D8
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 11:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C5CC282D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94B0D21872
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 11:40:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07C7F218AC
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:09:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbfBALkp (ORCPT
+        id S1727077AbfBANJO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 06:40:45 -0500
-Received: from mga03.intel.com ([134.134.136.65]:32546 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726582AbfBALko (ORCPT
+        Fri, 1 Feb 2019 08:09:14 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:35562 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbfBANJO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 06:40:44 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 03:40:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,548,1539673200"; 
-   d="scan'208";a="143365139"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by fmsmga001.fm.intel.com with ESMTP; 01 Feb 2019 03:40:41 -0800
-Date:   Fri, 1 Feb 2019 13:40:41 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        tomas.winkler@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
+        Fri, 1 Feb 2019 08:09:14 -0500
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x11D9Ccq066519;
+        Fri, 1 Feb 2019 22:09:12 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Fri, 01 Feb 2019 22:09:12 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x11D95h3066451
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 1 Feb 2019 22:09:12 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: [PATCH] LSM: Allow syzbot to ignore security= parameter.
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190201114041.GA15858@linux.intel.com>
-References: <20190131122606.GA12470@linux.intel.com>
- <20190131160437.GA5629@linux.intel.com>
- <20190131170603.GA18349@linux.intel.com>
- <20190131183530.GA27112@linux.intel.com>
- <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
- <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
- <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
- <20190131204710.GB354@linux.intel.com>
- <CAHk-=wgPCL9WgkwvK5ehJxg7Df1DHQqGZ0KtBxtjN93QjzUyog@mail.gmail.com>
- <20190131233136.3dhadb7a46lp2nu6@cantor>
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <000000000000c178e305749daba4@google.com>
+ <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+ <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+ <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
+ <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+ <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
+ <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+ <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
+ <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
+ <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+ <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
+ <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
+ <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
+ <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
+ <71e3652b-b222-0c3f-8b48-5980ddcaeb93@i-love.sakura.ne.jp>
+ <CACT4Y+Z036bZfN1-_VaQ5EorwFt_tpPm=RTnrYN5qKV_ebgoFw@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <52531a69-10ed-d263-be66-e707705597d6@i-love.sakura.ne.jp>
+Date:   Fri, 1 Feb 2019 22:09:02 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131233136.3dhadb7a46lp2nu6@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACT4Y+Z036bZfN1-_VaQ5EorwFt_tpPm=RTnrYN5qKV_ebgoFw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 31, 2019 at 04:31:36PM -0700, Jerry Snitselaar wrote:
-> On Thu Jan 31 19, Linus Torvalds wrote:
-> > On Thu, Jan 31, 2019 at 12:47 PM Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > 
-> > > I'll try it first thing when I wake up tomorrow (11PM in Finland ATM).
-> > 
-> > Thanks.
-> > 
-> > > Appreciate for taking time on this.
-> > 
-> > Hey, it was my commit that broke it for you. Even if it happened to
-> > work before, and only did so by pure luck, it was a functional
-> > regression.
-> > 
-> > I get very upset when other developers don't step up when *their*
-> > changes break something, and I don't consider "it shouldn't have
-> > worked in the first place" to be a valid excuse. You broke it, you'd
-> > better fix it.
-> > 
-> > So I had better fix my own mess too, in order to not look too hypocritical.
-> > 
-> > And I was very aware that hardcoding the memcpy_*io() access patterns
-> > might break something. I just _hoped_ it wouldn't, because we actually
-> > ended up going back to the very original access patterns (but it was
-> > from a long long time ago).
-> > 
-> > In fact, while it's slightly annoying, in many ways it's actually good
-> > that we found breakage, and could pinpoint exactly *why* it broke.
-> > That does validate the whole "we shouldn't just depend on the random
-> > implementation detail of 'memcpy()'" argument.
-> > 
-> > So I'll wait to hear back whether that patch fixes things for you, but
-> > I _think_ it will, and we'll be better off in the long range with this
-> > whole thing.
-> > 
-> >              Linus
+On 2019/02/01 19:50, Dmitry Vyukov wrote:
+> On Fri, Feb 1, 2019 at 11:44 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>
+>> On 2019/02/01 19:09, Dmitry Vyukov wrote:
+>>> Thanks for the explanations.
+>>>
+>>> Here is the change that I've come up with:
+>>> https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
+>>
+>> You are not going to apply this updated config to upstream kernels now, are you?
+>> Removing CONFIG_DEFAULT_SECURITY="apparmor" from configs used by upstream kernels
+>> will cause failing to enable AppArmor (unless security=apparmor is specified).
 > 
-> I just did a quick test here of booting and running a couple commands
-> (tpm2_getcap, tpm2_pcrlist), and the patch seems to work for me. I was
-> seeing the error during tpm_crb initialization without the patch.
+> 
+> We do use  security=apparmor, see:
+> https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-apparmor.cmdline
+> https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-selinux.cmdline
+> https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-smack.cmdline
+> 
 
-Works for me too. Just submitted tpm_crb level fix too for the reasons
-explained in accompanied commit message.
+Oh, security= parameter is explicitly specified on all targets?
+Then, we can abuse CONFIG_DEBUG_AID_FOR_SYZBOT option. ;-)
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+LSM folks, may we use this patch for linux-next.git ?
+CONFIG_DEBUG_AID_FOR_SYZBOT is a linux-next.git-only kernel config option used by syzbot.
 
-/Jarkko
+
+
+From c7d21f9c1c0b610ddea4233b89edf7d3140b8baf Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Fri, 1 Feb 2019 22:03:55 +0900
+Subject: [PATCH linux-next] LSM: Allow syzbot to ignore security= parameter.
+
+LSM is going to get infrastructure managed security blob support in Linux
+5.1, and it becomes possible to run TOMOYO with SELinux/Smack/AppArmor.
+But for compatibility reason, since security= parameter makes it
+impossible to run TOMOYO with SELinux/Smack/AppArmor, syzbot can't
+test that combination. Therefore, this patch allows syzbot to temporarily
+ignore security= parameter. This patch is meant for linux-next.git only,
+and will be removed after infrastructure managed security blob support
+went to linux.git.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ security/security.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/security.c b/security/security.c
+index ef03643..0632feb 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -346,12 +346,14 @@ int __init security_init(void)
+ }
+ 
+ /* Save user chosen LSM */
++#ifndef CONFIG_DEBUG_AID_FOR_SYZBOT
+ static int __init choose_major_lsm(char *str)
+ {
+ 	chosen_major_lsm = str;
+ 	return 1;
+ }
+ __setup("security=", choose_major_lsm);
++#endif
+ 
+ /* Explicitly choose LSM initialization order. */
+ static int __init choose_lsm_order(char *str)
+-- 
+1.8.3.1
+
