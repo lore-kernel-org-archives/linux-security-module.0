@@ -2,40 +2,74 @@ Return-Path: <SRS0=Dufg=QI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80D8C282D8
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E67C282D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F27207E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A394421916
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:51:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KTfnPHX2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbfBAKnv (ORCPT
+        id S1729883AbfBAKvD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:43:51 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:15705 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbfBAKnv (ORCPT
+        Fri, 1 Feb 2019 05:51:03 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41158 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729879AbfBAKvC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:43:51 -0500
-Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x11Ahn4f050776;
-        Fri, 1 Feb 2019 19:43:49 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
- Fri, 01 Feb 2019 19:43:49 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x11AhhAu050719
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 1 Feb 2019 19:43:48 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+        Fri, 1 Feb 2019 05:51:02 -0500
+Received: by mail-io1-f65.google.com with SMTP id s22so5300843ioc.8
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Feb 2019 02:51:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2PNRpVTdLN6Dx5TfJoc6n0FURs2N2rTCUidq84xQ/wM=;
+        b=KTfnPHX2cKdJ63GqToTDSDq8IWNYGtthHRSjYOB7VZHMpTXCSGBn4hoo4K0M7KUdoU
+         TISmGaloUqUWjxsZZW40v+eyZB0ZpXdEiiHPz9JD6FzmdDhP115sQVtaZenjbouViZwN
+         zpC6wAK9/x0ksSni39JSfw5bgQ8FjfvlD+KWdAc56lLchMggiSJSLoHOyhVr8XBtWBA+
+         OyzGRHPtk/qzgL3fIH0fp+IwCb5xNFM3ehtwY+2w1RfFODQs6yy7WDsJ8L+2fpd0zNei
+         1iGpkn83aBJs1xDuDAh76HJhbPSM48p12ChZ/inLdOPK5pr+cnFGlsQSrJ5lexWjZ/j3
+         3BuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2PNRpVTdLN6Dx5TfJoc6n0FURs2N2rTCUidq84xQ/wM=;
+        b=a0ZN5fsRojItRwimxoHw5Eyqi9NeyG6wOWCZXSjL/27OSSTVRzjCgpXDu38rk91qMg
+         6SWoa3YzbHkIyLZGH6e9lh8t2Orh6r9+GTZ5EySQFGgNUpVHHOPX+oe//A1ByhGFZVWg
+         t8eSCelMnX4matI/MXxP/+ZYCX2ei81Ed/Y5K/+XjySGUwH2eITeAKqBw46wlKtvyGpz
+         jYl1LPW7d2knHiIqHJ6HiL7LVPH8+l05Svir1ZHaQWH6FgRrSw4yYCAw3TqqqHClEvxU
+         DbGkbOoN9ypOkwLZUCTP3gIuBPpUoLCudsYyu/sm5mPmeoOsJTIqbJJlSyebH5oqcgK7
+         y7ug==
+X-Gm-Message-State: AHQUAuZEeWVFRFRgUHoyrpXhPIhshfbHOwk6Dk2h2HHfBJUp1I8yJrF3
+        yK6ChZYKYov+Nt88Hvo5Z/dyesQyvtgT+SV0QhiDO8tL27H2gA==
+X-Google-Smtp-Source: AHgI3IZBkTGlsM2UUW8HLuhMaTRqQiOCTMKLNTky5qY0LgVJ5q6JFENd6qQzLzGyhuFRcLD1AUTxc04vEoZaTCTdL84=
+X-Received: by 2002:a5d:8491:: with SMTP id t17mr7898787iom.11.1549018261894;
+ Fri, 01 Feb 2019 02:51:01 -0800 (PST)
+MIME-Version: 1.0
+References: <000000000000c178e305749daba4@google.com> <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
+ <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
+ <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov> <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+ <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov> <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+ <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov> <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+ <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
+ <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com> <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+ <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
+ <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
+ <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
+ <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com> <71e3652b-b222-0c3f-8b48-5980ddcaeb93@i-love.sakura.ne.jp>
+In-Reply-To: <71e3652b-b222-0c3f-8b48-5980ddcaeb93@i-love.sakura.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 1 Feb 2019 11:50:50 +0100
+Message-ID: <CACT4Y+Z036bZfN1-_VaQ5EorwFt_tpPm=RTnrYN5qKV_ebgoFw@mail.gmail.com>
 Subject: Re: WARNING in apparmor_secid_to_secctx
-To:     Dmitry Vyukov <dvyukov@google.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
@@ -51,84 +85,69 @@ Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Russell Coker <russell@coker.com.au>,
         Laurent Bigonville <bigon@debian.org>,
         syzkaller <syzkaller@googlegroups.com>
-References: <000000000000c178e305749daba4@google.com>
- <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
- <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
- <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
- <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
- <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
- <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
- <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
- <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
- <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
- <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
- <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
- <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
- <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
- <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
- <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <71e3652b-b222-0c3f-8b48-5980ddcaeb93@i-love.sakura.ne.jp>
-Date:   Fri, 1 Feb 2019 19:43:39 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/02/01 19:09, Dmitry Vyukov wrote:
-> Thanks for the explanations.
+On Fri, Feb 1, 2019 at 11:44 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
 >
-> Here is the change that I've come up with:
-> https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
-
-You are not going to apply this updated config to upstream kernels now, are you?
-Removing CONFIG_DEFAULT_SECURITY="apparmor" from configs used by upstream kernels
-will cause failing to enable AppArmor (unless security=apparmor is specified).
-
-I guess you can apply this updated config to linux-next kernels given that
-you replace
-
-  CONFIG_LSM="yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
-
-with
-
-  CONFIG_LSM="yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo"
-
-so that AppArmor is enabled instead of SELinux.
-
+> On 2019/02/01 19:09, Dmitry Vyukov wrote:
+> > Thanks for the explanations.
+> >
+> > Here is the change that I've come up with:
+> > https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
 >
-> I've disabled CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER (it
-> actually looked like omitting a user-space loader that I don't have is
-> the right thing to do, but okay, it indeed does not with =y).
+> You are not going to apply this updated config to upstream kernels now, are you?
+> Removing CONFIG_DEFAULT_SECURITY="apparmor" from configs used by upstream kernels
+> will cause failing to enable AppArmor (unless security=apparmor is specified).
+
+
+We do use  security=apparmor, see:
+https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-apparmor.cmdline
+https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-selinux.cmdline
+https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-smack.cmdline
+
+
+> I guess you can apply this updated config to linux-next kernels given that
+> you replace
 >
-> For now I just enabled TOMOYO and SAFESETID.
-> I see the problem with making both linux-next and upstream work. If we
-> use a single config and lsm= cmdline argument, then on upstream all
-> kernels will use the same module (they won't understand lsm=). But if
-> we add security= then it will take precedence over lsm= on linux-next,
-> so we won't get stacked modules.
-
-Right.
-
+>   CONFIG_LSM="yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
 >
-> Let's go with (c) because I don't want an additional long-term maintenance cost.
-
-OK.
-
-> If I understand it correctly later we will need to replace:
-> security=selinux
-> security=smack
-> security=apparmor
+> with
 >
-> with:
-> lsm=yama,safesetid,integrity,selinux,tomoyo
-> lsm=yama,safesetid,integrity,smack,tomoyo
-> lsm=yama,safesetid,integrity,tomoyo,apparmor
-
-Yes. Thank you.
+>   CONFIG_LSM="yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo"
+>
+> so that AppArmor is enabled instead of SELinux.
+>
+> >
+> > I've disabled CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER (it
+> > actually looked like omitting a user-space loader that I don't have is
+> > the right thing to do, but okay, it indeed does not with =y).
+> >
+> > For now I just enabled TOMOYO and SAFESETID.
+> > I see the problem with making both linux-next and upstream work. If we
+> > use a single config and lsm= cmdline argument, then on upstream all
+> > kernels will use the same module (they won't understand lsm=). But if
+> > we add security= then it will take precedence over lsm= on linux-next,
+> > so we won't get stacked modules.
+>
+> Right.
+>
+> >
+> > Let's go with (c) because I don't want an additional long-term maintenance cost.
+>
+> OK.
+>
+> > If I understand it correctly later we will need to replace:
+> > security=selinux
+> > security=smack
+> > security=apparmor
+> >
+> > with:
+> > lsm=yama,safesetid,integrity,selinux,tomoyo
+> > lsm=yama,safesetid,integrity,smack,tomoyo
+> > lsm=yama,safesetid,integrity,tomoyo,apparmor
+>
+> Yes. Thank you.
