@@ -2,104 +2,163 @@ Return-Path: <SRS0=Dufg=QI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C59F6C282D8
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 08:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850C6C282D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C113204EC
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 08:12:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B11421872
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:09:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lqe+JqFv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfBAIMu (ORCPT
+        id S1727789AbfBAKJ4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:12:50 -0500
-Received: from mga01.intel.com ([192.55.52.88]:32439 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726110AbfBAIMt (ORCPT
+        Fri, 1 Feb 2019 05:09:56 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:37864 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfBAKJ4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 03:12:49 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 00:12:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,547,1539673200"; 
-   d="scan'208";a="296428940"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by orsmga005.jf.intel.com with ESMTP; 01 Feb 2019 00:12:46 -0800
-Date:   Fri, 1 Feb 2019 10:12:46 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190201081246.GA5728@linux.intel.com>
-References: <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
- <20190129132016.GA1602@linux.intel.com>
- <20190131122606.GA12470@linux.intel.com>
- <20190131160437.GA5629@linux.intel.com>
- <20190131170603.GA18349@linux.intel.com>
- <20190131183530.GA27112@linux.intel.com>
- <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
- <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
- <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA8DA75@hasmsx108.ger.corp.intel.com>
+        Fri, 1 Feb 2019 05:09:56 -0500
+Received: by mail-it1-f194.google.com with SMTP id b5so8955879iti.2
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Feb 2019 02:09:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZJGU6V0Qpvv03UVFSHLRsVJebkWB5dQmQ6QU9nLThiA=;
+        b=Lqe+JqFvQaMlkAbWLM69XZaGSWD9E/2GEfDn0m+WPVGATOFTTJTR1Fm22+Fm2ynlfO
+         033BBD4y98Z1ldvo023zNiuEP0khx+E9HA8Zvx8JI44sTa2ECt5Iir0m+oL1iXG7alPs
+         uy0q4OTR+JK6c9tXBdRsGFnUVjou+kRQ04FFnz9hhQu/gz1PRTesKd4tb/lb7EBNymrR
+         MOp29ulgvhx0xK5HtlljsdnxsQ7ZbrMzwgq8yS+yDmAe5VtyHZcHJsNA83qKsJdF8r5r
+         EmwYVqpIgVTqiXpwt9VfEEdaHwHqxPCNXtX5eONx/2D+Ti7sNIzv0FAvdoUKyo5hyjXZ
+         XJfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZJGU6V0Qpvv03UVFSHLRsVJebkWB5dQmQ6QU9nLThiA=;
+        b=iVLgHO/va4C5EoxisxnKEsdCBVJeOMTwoCICvwNpukLSBGTI1uQRYt5fJbIwNADSPj
+         9RLLXtkwfSyGdmZJ4ZAtLg14nd77gbUrenWbwZgAoIg3yz0hMEwa7GwxXnrX1e5+8Qbp
+         8zrq/xWtGHVmFF5nUSLEbnvK7/jy+j0oAKgkPiWpxO2c1Fw2W8F+mSfUts4KLM/bNJwg
+         CdXUblogrY01SzSJk/UDIkn8DW1arNDShyzlTMHF6I5nJeOzVjGwpwAlAp7lJYVcaoaG
+         9vzN9BaUHjlmvmpQW1fpFbVu3oXuCYeltsG4nmMIaCCMDB6Y7ys4/MfNfoaYN45D6DIy
+         qJng==
+X-Gm-Message-State: AHQUAua6Z8hHIZyGsc0Rgr01crEyWLepZGze2okxKy6SKgzE2YxQiEN/
+        ZkoC9B3m1PU2HaxCRb8KvgZSQq1BfkVD/6A6RZEKrg==
+X-Google-Smtp-Source: AHgI3IY0C98e7apxvaBySppHi/qzCF0V3IK3EhrE50IZHuCn6SKuJ2pqp7TS1Ted9Dh4kYnjOZEjWMiPraX3TKAGI00=
+X-Received: by 2002:a24:6511:: with SMTP id u17mr1023990itb.12.1549015795099;
+ Fri, 01 Feb 2019 02:09:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA8DA75@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <000000000000c178e305749daba4@google.com> <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
+ <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov> <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
+ <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
+ <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov> <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+ <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov> <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+ <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov> <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+ <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
+ <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com> <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+ <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
+ <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com> <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
+In-Reply-To: <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 1 Feb 2019 11:09:42 +0100
+Message-ID: <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
+Subject: Re: WARNING in apparmor_secid_to_secctx
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 31, 2019 at 07:47:19PM +0000, Winkler, Tomas wrote:
-> 
-> > 
-> > On Thu, Jan 31, 2019 at 10:52 AM Linus Torvalds <torvalds@linux-
-> > foundation.org> wrote:
-> > >
-> > > I think what I should do is to just make "memcpy_*io()" do the "align
-> > > naturally" thing.
-> > >
-> > > Let me cook up a patch for you to test.
-> > 
-> > Does this work for you?
-> > 
-> > I haven't tested it at all, but I verified that the generated code seems to make
-> > at least some amount of sense.
-> > 
-> >                Linus
-> 
-> So dig into the spec and I think this is a bit relevant. 
-> 
-> TPM TCG according the spec requires that all buffer access is done
-> sequentially from the start to end of the payload, Simply In case of
-> skipping or going back the transaction is aborted.  The write
-> transactions should be 1 or power of 2. So in general 6 byte read
-> should not work. But I'm sure our hw really obey this restriction.
+On Thu, Jan 31, 2019 at 1:23 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2019/01/30 23:45, Dmitry Vyukov wrote:
+> >> Dmitry, is it possible to update configs for linux-next.git , for
+> >> we want to test a big change in LSM which will go to Linux 5.1 ?
+> >>
+> >> TOMOYO security module (CONFIG_SECURITY_TOMOYO=y) can now coexist with
+> >> SELinux/Smack/AppArmor security modules, and SafeSetID security module
+> >> (CONFIG_SECURITY_SAFESETID=y) was added. Testing with these modules also
+> >> enabled might find something...
+> >
+> > Hi,
+> >
+> > syzbot configs/cmdline args are stored here:
+> > https://github.com/google/syzkaller/tree/master/dashboard/config
+> >
+> > I've tried to update to the latest kernel, the diff is below.
+> > Few questions:
+> > 1. How are modules enabled now?
+> > We pass security=selinux of security=smack on command line. What do we
+> > need to pass now to enable several modules at the same time?
+>
+> Removing security= parameter from kernel boot command line will do it.
+>
+>   security/apparmor/lsm.c:        .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+>   security/selinux/hooks.c:       .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+>   security/smack/smack_lsm.c:     .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+>   security/tomoyo/tomoyo.c:       .flags = LSM_FLAG_LEGACY_MAJOR,
+>   security/security.c:                    if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
+>
+> But this means that, if same kernel config/cmdline are used between
+> linux-next.git and linux.git (etc.), syzbot will need to choose from
+>
+>  (a) stop sharing kernel cmdline between linux-next.git and linux.git (etc.)
+>
+> or
+>
+>  (b) stop sharing kernel config between SELinux, Smack and AppArmor
+>
+> or
+>
+>  (c) start testing after the LSM changes went to linux.git as Linux 5.1-rc1
+>
+> . Is (a) or (b) possible? If this is a too much change, (c) will be OK.
 
-We could easily read the first 8 bytes instead of 6, and then check the
-length. The benefit in doing that would be to be able to backport the
-patch to stable kernels.
 
-I'm fine with either solution.
+Thanks for the explanations.
 
-Applying Linus' fix might anyway a good idea since given that tpm_crb
-broke down, there is a finite probability that there might be some other
-drivers that break down for similar reasons, but no one has noticed so
-far.
+Here is the change that I've come up with:
+https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
 
-Thus, I might even propose doing both...
+I've disabled CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER (it
+actually looked like omitting a user-space loader that I don't have is
+the right thing to do, but okay, it indeed does not with =y).
 
-/Jarkko
+For now I just enabled TOMOYO and SAFESETID.
+I see the problem with making both linux-next and upstream work. If we
+use a single config and lsm= cmdline argument, then on upstream all
+kernels will use the same module (they won't understand lsm=). But if
+we add security= then it will take precedence over lsm= on linux-next,
+so we won't get stacked modules.
+
+Let's go with (c) because I don't want an additional long-term maintenance cost.
+If I understand it correctly later we will need to replace:
+security=selinux
+security=smack
+security=apparmor
+
+with:
+lsm=yama,safesetid,integrity,selinux,tomoyo
+lsm=yama,safesetid,integrity,smack,tomoyo
+lsm=yama,safesetid,integrity,tomoyo,apparmor
