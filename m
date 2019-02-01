@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850C6C282D8
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9D6C282D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B11421872
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51D4821872
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:11:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lqe+JqFv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CEuO1+hA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfBAKJ4 (ORCPT
+        id S1729357AbfBAKLj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:09:56 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:37864 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfBAKJ4 (ORCPT
+        Fri, 1 Feb 2019 05:11:39 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35962 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbfBAKLj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:09:56 -0500
-Received: by mail-it1-f194.google.com with SMTP id b5so8955879iti.2
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Feb 2019 02:09:55 -0800 (PST)
+        Fri, 1 Feb 2019 05:11:39 -0500
+Received: by mail-io1-f66.google.com with SMTP id m19so5244298ioh.3
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Feb 2019 02:11:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZJGU6V0Qpvv03UVFSHLRsVJebkWB5dQmQ6QU9nLThiA=;
-        b=Lqe+JqFvQaMlkAbWLM69XZaGSWD9E/2GEfDn0m+WPVGATOFTTJTR1Fm22+Fm2ynlfO
-         033BBD4y98Z1ldvo023zNiuEP0khx+E9HA8Zvx8JI44sTa2ECt5Iir0m+oL1iXG7alPs
-         uy0q4OTR+JK6c9tXBdRsGFnUVjou+kRQ04FFnz9hhQu/gz1PRTesKd4tb/lb7EBNymrR
-         MOp29ulgvhx0xK5HtlljsdnxsQ7ZbrMzwgq8yS+yDmAe5VtyHZcHJsNA83qKsJdF8r5r
-         EmwYVqpIgVTqiXpwt9VfEEdaHwHqxPCNXtX5eONx/2D+Ti7sNIzv0FAvdoUKyo5hyjXZ
-         XJfg==
+        bh=u5GIOTFH3O7dm7lapBp6BIvom8Tyb2HtT0nB8ve19eU=;
+        b=CEuO1+hA67Buh+wOoCv7i8B7SwfkAPO7roL5YPJKir8kiIpn8DPt+N09BqUAoQFHLV
+         aVPABpC0zKzA9EGBnUy1AmwGJZDHEkv4hipGyJKcxVL/Ac0AvoHIn/luZmGWiytJCcKj
+         yo2W5PcEzsFbsFxI0grwIKtgfHgy6VKeAIhVtda3Cp7K85682q+2eb6uAaZB8hWY2RuG
+         IS3EE2naqqrOgp0NNE/Mhpz0llNTHtdKYQB4y91OZ0HCKLascwqn9HBbFTJEmf8gK7++
+         lgsCgvs39uRILZLDWpsw/3OJ+SDlkcbm2EVfqTlTpQWy2cFmn1yGYAx0Hyq1/5mXBIS4
+         ViEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZJGU6V0Qpvv03UVFSHLRsVJebkWB5dQmQ6QU9nLThiA=;
-        b=iVLgHO/va4C5EoxisxnKEsdCBVJeOMTwoCICvwNpukLSBGTI1uQRYt5fJbIwNADSPj
-         9RLLXtkwfSyGdmZJ4ZAtLg14nd77gbUrenWbwZgAoIg3yz0hMEwa7GwxXnrX1e5+8Qbp
-         8zrq/xWtGHVmFF5nUSLEbnvK7/jy+j0oAKgkPiWpxO2c1Fw2W8F+mSfUts4KLM/bNJwg
-         CdXUblogrY01SzSJk/UDIkn8DW1arNDShyzlTMHF6I5nJeOzVjGwpwAlAp7lJYVcaoaG
-         9vzN9BaUHjlmvmpQW1fpFbVu3oXuCYeltsG4nmMIaCCMDB6Y7ys4/MfNfoaYN45D6DIy
-         qJng==
-X-Gm-Message-State: AHQUAua6Z8hHIZyGsc0Rgr01crEyWLepZGze2okxKy6SKgzE2YxQiEN/
-        ZkoC9B3m1PU2HaxCRb8KvgZSQq1BfkVD/6A6RZEKrg==
-X-Google-Smtp-Source: AHgI3IY0C98e7apxvaBySppHi/qzCF0V3IK3EhrE50IZHuCn6SKuJ2pqp7TS1Ted9Dh4kYnjOZEjWMiPraX3TKAGI00=
-X-Received: by 2002:a24:6511:: with SMTP id u17mr1023990itb.12.1549015795099;
- Fri, 01 Feb 2019 02:09:55 -0800 (PST)
+        bh=u5GIOTFH3O7dm7lapBp6BIvom8Tyb2HtT0nB8ve19eU=;
+        b=RuaGf8qctbGE7xqfE4plmQN9BMnuy/7z3ep0yhU2TQ4Fq1Y/4lcmdPrsu1BCM2/80j
+         BZ40u27Avr76M4KCHBmQ43XzxeV2pjSoO/Xb3ZYeBa46Y3FR8bd9ht7+DXrj2ecRJ9gP
+         3a+NI4OrkKyF1x6m/dVZUFSv6s4CvLRNnHPQ6v5o8pXwJg9175CXgKSwBljoPYNB4PCa
+         ef5vkDKAhfRbryNFJ5vyVYTlK1o/R3A9mJ8F99oOqhy2GYnxpNLEdoWV95cFfclrq0xa
+         nvJ/y+cb52Ax25dpI4Wo7iBe8SwzT5/ruA93sodi0ipBh/hUBbo5rYE5yXDm8lMQ3yMs
+         y/nw==
+X-Gm-Message-State: AJcUukdgr6RYUW5VQ5LCO4hyeTpE+LANoozu3s3d7RYm+HhjyNKAtv3m
+        6DtWXhV6QQKHWRsXlfVGG5Q5JBHqpsqKFNJFq1uorg==
+X-Google-Smtp-Source: AHgI3IbT+N/OGSC5go03vmvYaYbrVS7DaW+ThJa79RvtYTPwrgtDH/2ZjNTfvfD1NgBMmjETiekcvolhCksLNgSGwEg=
+X-Received: by 2002:a6b:fa01:: with SMTP id p1mr21006184ioh.271.1549015898268;
+ Fri, 01 Feb 2019 02:11:38 -0800 (PST)
 MIME-Version: 1.0
 References: <000000000000c178e305749daba4@google.com> <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
  <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov> <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
@@ -62,11 +62,12 @@ References: <000000000000c178e305749daba4@google.com> <CAHC9VhSeP=b1xxpCT8R-CYLE
  <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
  <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com> <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
  <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
- <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com> <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
-In-Reply-To: <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
+ <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
+ <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp> <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 1 Feb 2019 11:09:42 +0100
-Message-ID: <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
+Date:   Fri, 1 Feb 2019 11:11:26 +0100
+Message-ID: <CACT4Y+YGbwOPYE=Uf0PAUEWbfs+19EurKs+12AspNOAKjhCdiA@mail.gmail.com>
 Subject: Re: WARNING in apparmor_secid_to_secctx
 To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
@@ -89,76 +90,81 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 31, 2019 at 1:23 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
+On Fri, Feb 1, 2019 at 11:09 AM Dmitry Vyukov <dvyukov@google.com> wrote:
 >
-> On 2019/01/30 23:45, Dmitry Vyukov wrote:
-> >> Dmitry, is it possible to update configs for linux-next.git , for
-> >> we want to test a big change in LSM which will go to Linux 5.1 ?
-> >>
-> >> TOMOYO security module (CONFIG_SECURITY_TOMOYO=y) can now coexist with
-> >> SELinux/Smack/AppArmor security modules, and SafeSetID security module
-> >> (CONFIG_SECURITY_SAFESETID=y) was added. Testing with these modules also
-> >> enabled might find something...
+> On Thu, Jan 31, 2019 at 1:23 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
 > >
-> > Hi,
+> > On 2019/01/30 23:45, Dmitry Vyukov wrote:
+> > >> Dmitry, is it possible to update configs for linux-next.git , for
+> > >> we want to test a big change in LSM which will go to Linux 5.1 ?
+> > >>
+> > >> TOMOYO security module (CONFIG_SECURITY_TOMOYO=y) can now coexist with
+> > >> SELinux/Smack/AppArmor security modules, and SafeSetID security module
+> > >> (CONFIG_SECURITY_SAFESETID=y) was added. Testing with these modules also
+> > >> enabled might find something...
+> > >
+> > > Hi,
+> > >
+> > > syzbot configs/cmdline args are stored here:
+> > > https://github.com/google/syzkaller/tree/master/dashboard/config
+> > >
+> > > I've tried to update to the latest kernel, the diff is below.
+> > > Few questions:
+> > > 1. How are modules enabled now?
+> > > We pass security=selinux of security=smack on command line. What do we
+> > > need to pass now to enable several modules at the same time?
 > >
-> > syzbot configs/cmdline args are stored here:
-> > https://github.com/google/syzkaller/tree/master/dashboard/config
+> > Removing security= parameter from kernel boot command line will do it.
 > >
-> > I've tried to update to the latest kernel, the diff is below.
-> > Few questions:
-> > 1. How are modules enabled now?
-> > We pass security=selinux of security=smack on command line. What do we
-> > need to pass now to enable several modules at the same time?
+> >   security/apparmor/lsm.c:        .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+> >   security/selinux/hooks.c:       .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+> >   security/smack/smack_lsm.c:     .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+> >   security/tomoyo/tomoyo.c:       .flags = LSM_FLAG_LEGACY_MAJOR,
+> >   security/security.c:                    if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
+> >
+> > But this means that, if same kernel config/cmdline are used between
+> > linux-next.git and linux.git (etc.), syzbot will need to choose from
+> >
+> >  (a) stop sharing kernel cmdline between linux-next.git and linux.git (etc.)
+> >
+> > or
+> >
+> >  (b) stop sharing kernel config between SELinux, Smack and AppArmor
+> >
+> > or
+> >
+> >  (c) start testing after the LSM changes went to linux.git as Linux 5.1-rc1
+> >
+> > . Is (a) or (b) possible? If this is a too much change, (c) will be OK.
 >
-> Removing security= parameter from kernel boot command line will do it.
 >
->   security/apparmor/lsm.c:        .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
->   security/selinux/hooks.c:       .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
->   security/smack/smack_lsm.c:     .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
->   security/tomoyo/tomoyo.c:       .flags = LSM_FLAG_LEGACY_MAJOR,
->   security/security.c:                    if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
+> Thanks for the explanations.
 >
-> But this means that, if same kernel config/cmdline are used between
-> linux-next.git and linux.git (etc.), syzbot will need to choose from
+> Here is the change that I've come up with:
+> https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
 >
->  (a) stop sharing kernel cmdline between linux-next.git and linux.git (etc.)
+> I've disabled CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER (it
+> actually looked like omitting a user-space loader that I don't have is
+> the right thing to do, but okay, it indeed does not with =y).
 >
-> or
+> For now I just enabled TOMOYO and SAFESETID.
+> I see the problem with making both linux-next and upstream work. If we
+> use a single config and lsm= cmdline argument, then on upstream all
+> kernels will use the same module (they won't understand lsm=). But if
+> we add security= then it will take precedence over lsm= on linux-next,
+> so we won't get stacked modules.
 >
->  (b) stop sharing kernel config between SELinux, Smack and AppArmor
+> Let's go with (c) because I don't want an additional long-term maintenance cost.
+> If I understand it correctly later we will need to replace:
+> security=selinux
+> security=smack
+> security=apparmor
 >
-> or
->
->  (c) start testing after the LSM changes went to linux.git as Linux 5.1-rc1
->
-> . Is (a) or (b) possible? If this is a too much change, (c) will be OK.
+> with:
+> lsm=yama,safesetid,integrity,selinux,tomoyo
+> lsm=yama,safesetid,integrity,smack,tomoyo
+> lsm=yama,safesetid,integrity,tomoyo,apparmor
 
 
-Thanks for the explanations.
-
-Here is the change that I've come up with:
-https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
-
-I've disabled CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER (it
-actually looked like omitting a user-space loader that I don't have is
-the right thing to do, but okay, it indeed does not with =y).
-
-For now I just enabled TOMOYO and SAFESETID.
-I see the problem with making both linux-next and upstream work. If we
-use a single config and lsm= cmdline argument, then on upstream all
-kernels will use the same module (they won't understand lsm=). But if
-we add security= then it will take precedence over lsm= on linux-next,
-so we won't get stacked modules.
-
-Let's go with (c) because I don't want an additional long-term maintenance cost.
-If I understand it correctly later we will need to replace:
-security=selinux
-security=smack
-security=apparmor
-
-with:
-lsm=yama,safesetid,integrity,selinux,tomoyo
-lsm=yama,safesetid,integrity,smack,tomoyo
-lsm=yama,safesetid,integrity,tomoyo,apparmor
+Filed https://github.com/google/syzkaller/issues/973 to not forget about it.
