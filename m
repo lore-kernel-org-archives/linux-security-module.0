@@ -2,152 +2,105 @@ Return-Path: <SRS0=Dufg=QI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E67C282D8
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F43C282DA
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 11:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A394421916
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 10:51:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KTfnPHX2"
+	by mail.kernel.org (Postfix) with ESMTP id 54E842080D
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 11:34:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729883AbfBAKvD (ORCPT
+        id S1730154AbfBALd5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:51:03 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41158 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729879AbfBAKvC (ORCPT
+        Fri, 1 Feb 2019 06:33:57 -0500
+Received: from mga12.intel.com ([192.55.52.136]:11876 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726849AbfBALd4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:51:02 -0500
-Received: by mail-io1-f65.google.com with SMTP id s22so5300843ioc.8
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Feb 2019 02:51:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2PNRpVTdLN6Dx5TfJoc6n0FURs2N2rTCUidq84xQ/wM=;
-        b=KTfnPHX2cKdJ63GqToTDSDq8IWNYGtthHRSjYOB7VZHMpTXCSGBn4hoo4K0M7KUdoU
-         TISmGaloUqUWjxsZZW40v+eyZB0ZpXdEiiHPz9JD6FzmdDhP115sQVtaZenjbouViZwN
-         zpC6wAK9/x0ksSni39JSfw5bgQ8FjfvlD+KWdAc56lLchMggiSJSLoHOyhVr8XBtWBA+
-         OyzGRHPtk/qzgL3fIH0fp+IwCb5xNFM3ehtwY+2w1RfFODQs6yy7WDsJ8L+2fpd0zNei
-         1iGpkn83aBJs1xDuDAh76HJhbPSM48p12ChZ/inLdOPK5pr+cnFGlsQSrJ5lexWjZ/j3
-         3BuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2PNRpVTdLN6Dx5TfJoc6n0FURs2N2rTCUidq84xQ/wM=;
-        b=a0ZN5fsRojItRwimxoHw5Eyqi9NeyG6wOWCZXSjL/27OSSTVRzjCgpXDu38rk91qMg
-         6SWoa3YzbHkIyLZGH6e9lh8t2Orh6r9+GTZ5EySQFGgNUpVHHOPX+oe//A1ByhGFZVWg
-         t8eSCelMnX4matI/MXxP/+ZYCX2ei81Ed/Y5K/+XjySGUwH2eITeAKqBw46wlKtvyGpz
-         jYl1LPW7d2knHiIqHJ6HiL7LVPH8+l05Svir1ZHaQWH6FgRrSw4yYCAw3TqqqHClEvxU
-         DbGkbOoN9ypOkwLZUCTP3gIuBPpUoLCudsYyu/sm5mPmeoOsJTIqbJJlSyebH5oqcgK7
-         y7ug==
-X-Gm-Message-State: AHQUAuZEeWVFRFRgUHoyrpXhPIhshfbHOwk6Dk2h2HHfBJUp1I8yJrF3
-        yK6ChZYKYov+Nt88Hvo5Z/dyesQyvtgT+SV0QhiDO8tL27H2gA==
-X-Google-Smtp-Source: AHgI3IZBkTGlsM2UUW8HLuhMaTRqQiOCTMKLNTky5qY0LgVJ5q6JFENd6qQzLzGyhuFRcLD1AUTxc04vEoZaTCTdL84=
-X-Received: by 2002:a5d:8491:: with SMTP id t17mr7898787iom.11.1549018261894;
- Fri, 01 Feb 2019 02:51:01 -0800 (PST)
-MIME-Version: 1.0
-References: <000000000000c178e305749daba4@google.com> <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
- <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
- <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov> <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
- <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov> <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
- <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov> <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
- <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
- <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com> <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
- <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
- <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
- <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
- <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com> <71e3652b-b222-0c3f-8b48-5980ddcaeb93@i-love.sakura.ne.jp>
-In-Reply-To: <71e3652b-b222-0c3f-8b48-5980ddcaeb93@i-love.sakura.ne.jp>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 1 Feb 2019 11:50:50 +0100
-Message-ID: <CACT4Y+Z036bZfN1-_VaQ5EorwFt_tpPm=RTnrYN5qKV_ebgoFw@mail.gmail.com>
-Subject: Re: WARNING in apparmor_secid_to_secctx
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Fri, 1 Feb 2019 06:33:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 03:33:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,548,1539673200"; 
+   d="scan'208";a="139818063"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by fmsmga002.fm.intel.com with ESMTP; 01 Feb 2019 03:33:53 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@tycho.nsa.gov>,
-        Russell Coker <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
+Date:   Fri,  1 Feb 2019 13:19:49 +0200
+Message-Id: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 1, 2019 at 11:44 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2019/02/01 19:09, Dmitry Vyukov wrote:
-> > Thanks for the explanations.
-> >
-> > Here is the change that I've come up with:
-> > https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
->
-> You are not going to apply this updated config to upstream kernels now, are you?
-> Removing CONFIG_DEFAULT_SECURITY="apparmor" from configs used by upstream kernels
-> will cause failing to enable AppArmor (unless security=apparmor is specified).
+The current approach to read first 6 bytes from the response and then tail
+of the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+(e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+memcpy_fromio() is implemented. If this happens, the read will fail and the
+memory controller will fill the read with 1's.
 
+This was triggered by 170d13ca3a2f, which should be probably refined to
+check and react to the address alignment. Before that commit, on x86
+memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
+thing (from tpm_crb's perspective) for us so far, but we should not rely on
+that. Thus, it makes sense to fix this also in tpm_crb, not least because
+the fix can be then backported to stable kernels and make them more robust
+when compiled in differing environments.
 
-We do use  security=apparmor, see:
-https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-apparmor.cmdline
-https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-selinux.cmdline
-https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-smack.cmdline
+Cc: stable@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: James Morris <jmorris@namei.org>
+Cc: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm_crb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 36952ef98f90..7f47e43aa9f1 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -288,18 +288,18 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	unsigned int expected;
+ 
+ 	/* sanity check */
+-	if (count < 6)
++	if (count < 8)
+ 		return -EIO;
+ 
+ 	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
+ 		return -EIO;
+ 
+-	memcpy_fromio(buf, priv->rsp, 6);
++	memcpy_fromio(buf, priv->rsp, 8);
+ 	expected = be32_to_cpup((__be32 *) &buf[2]);
+-	if (expected > count || expected < 6)
++	if (expected > count || expected < 8)
+ 		return -EIO;
+ 
+-	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
++	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
+ 
+ 	return expected;
+ }
+-- 
+2.17.1
 
-> I guess you can apply this updated config to linux-next kernels given that
-> you replace
->
->   CONFIG_LSM="yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
->
-> with
->
->   CONFIG_LSM="yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo"
->
-> so that AppArmor is enabled instead of SELinux.
->
-> >
-> > I've disabled CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER (it
-> > actually looked like omitting a user-space loader that I don't have is
-> > the right thing to do, but okay, it indeed does not with =y).
-> >
-> > For now I just enabled TOMOYO and SAFESETID.
-> > I see the problem with making both linux-next and upstream work. If we
-> > use a single config and lsm= cmdline argument, then on upstream all
-> > kernels will use the same module (they won't understand lsm=). But if
-> > we add security= then it will take precedence over lsm= on linux-next,
-> > so we won't get stacked modules.
->
-> Right.
->
-> >
-> > Let's go with (c) because I don't want an additional long-term maintenance cost.
->
-> OK.
->
-> > If I understand it correctly later we will need to replace:
-> > security=selinux
-> > security=smack
-> > security=apparmor
-> >
-> > with:
-> > lsm=yama,safesetid,integrity,selinux,tomoyo
-> > lsm=yama,safesetid,integrity,smack,tomoyo
-> > lsm=yama,safesetid,integrity,tomoyo,apparmor
->
-> Yes. Thank you.
