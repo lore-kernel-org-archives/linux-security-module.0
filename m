@@ -2,136 +2,87 @@ Return-Path: <SRS0=Dufg=QI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7939EC282DB
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 19:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C032C282D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 21:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54FBE218AF
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 19:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAFED2146E
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 21:19:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ak+yBn2g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbfBATUu convert rfc822-to-8bit (ORCPT
+        id S1726064AbfBAVT6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 14:20:50 -0500
-Received: from mga17.intel.com ([192.55.52.151]:25175 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbfBATUu (ORCPT
+        Fri, 1 Feb 2019 16:19:58 -0500
+Received: from mail-pl1-f172.google.com ([209.85.214.172]:43369 "EHLO
+        mail-pl1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbfBAVT6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 14:20:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 11:20:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,549,1539673200"; 
-   d="scan'208";a="114582532"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga008.jf.intel.com with ESMTP; 01 Feb 2019 11:20:49 -0800
-Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 1 Feb 2019 11:20:49 -0800
-Received: from HASMSX110.ger.corp.intel.com (10.184.198.28) by
- FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 1 Feb 2019 11:20:46 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
- HASMSX110.ger.corp.intel.com ([169.254.6.213]) with mapi id 14.03.0415.000;
- Fri, 1 Feb 2019 21:20:43 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: RE: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
-Thread-Topic: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
-Thread-Index: AQHUuiILqL/DhC1Ugk6fMR5NQMo3vKXLTG+Q
-Date:   Fri, 1 Feb 2019 19:20:42 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA8E215@hasmsx108.ger.corp.intel.com>
-References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDcxMjQyNTktMmZkNC00MzYwLWFkNzgtZjNjYTFjM2U3ZTgzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieXhjWjdrUFJaSndlMlNzNXVKbUtNMUhNSXdhUVFZdm0yd1p4ZTFtMkFwdWVzNlhXblZkXC8rTFB1QkpEeVpka1AifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.254.159.176]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 1 Feb 2019 16:19:58 -0500
+Received: by mail-pl1-f172.google.com with SMTP id gn14so3822617plb.10
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Feb 2019 13:19:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=7tJPlW4X2xQ2FOACCpsW/VxkUsOe9pu9sBX3octZfzg=;
+        b=ak+yBn2gE/Uut/DCqn+jvgL9z4iJNp+GHtE775OUshO5UuwPCVVl+Fd/JTX9iJnspL
+         b0a6jiDiPDuIbRpLQySklMHGSkNwQhLNg8Iu3tKVa9xEZWwtSIWjW/pjiNsZXWu7FPEM
+         uuBO9s48yvSMhq4BKMKC3sDc825ZRhlnmKO/SxFuk6/GXrJa6dbfowcoIF2Xaw8IIWSa
+         ZH/arMfXOGQD06HA1l3pLa2K1JW/dd+VTO4HT+1gs9aSW8RHJZ0YvrODDWwCSavs2VpU
+         DVkbm0ht14IrFdnWn3Cf7Vhm45xoAwpm/oQcLeRoORMPyRmqxDArJmJBwcR7aPW3/jfv
+         cK0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=7tJPlW4X2xQ2FOACCpsW/VxkUsOe9pu9sBX3octZfzg=;
+        b=F+uRKgFIsfgVkSgRFmEV+wRt5DYspbp2Nm/nI2j/5ncVcPx0dx0CMHUDgQ+ce6f6do
+         LeGyGc+5w17hIU1w5j1MSODRkvtJ3WPWeaMO9yHsRviQUmxyFNiuOoKYNALKs8TuPeGB
+         Ef/S8Lrw5Pu6i/w+65os1YAzLrIoQG8TWOcdQjO4qzhwzCMADWkiwwyK8Svy5O5ex596
+         1BfXSspw1dJYVlUgUrf0qA6RT2SZe3d0p0rnAoXGVncHT9PTqQsizyiXJ4JoPG7WyQeO
+         xRp583PkGq1ZVoy2/oMEZLimDeWz2mEvEuLJrWFN3Fg5j+7KGs77kEx/I4pXayZFJr9c
+         Lx4Q==
+X-Gm-Message-State: AJcUukfLj2x8+MNDjAZ8+Pejodgjh4j1H3ha2fJFrZs5rA5kJKuxbD/d
+        HLkTNaa/3REkkFkxrusT1IheEMm5
+X-Google-Smtp-Source: ALg8bN595I7oXH6XA5oLbjL85+or3CxXU2OmE6fCRoYn28oSVhG6jiKLVIw8zs9oCtY+B4HwoYnWQg==
+X-Received: by 2002:a17:902:3283:: with SMTP id z3mr41885479plb.76.1549055997163;
+        Fri, 01 Feb 2019 13:19:57 -0800 (PST)
+Received: from JF-EN-C02V905BHTDF.tld ([12.111.169.54])
+        by smtp.gmail.com with ESMTPSA id d21sm10768521pfo.162.2019.02.01.13.19.56
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 13:19:56 -0800 (PST)
+To:     linux-security-module@vger.kernel.org
+From:   J Freyensee <why2jjj.linux@gmail.com>
+Subject: Basic all-cap/all-lower case question on Environment variables
+Message-ID: <52a3fb2c-8ffb-655e-a9bc-76344b27e64f@gmail.com>
+Date:   Fri, 1 Feb 2019 13:19:52 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> 
-> The current approach to read first 6 bytes from the response and then tail of
-> the response, can cause the 2nd memcpy_fromio() to do an unaligned read
-> (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
-> memcpy_fromio() is implemented. If this happens, the read will fail and the
-> memory controller will fill the read with 1's.
-> 
-> This was triggered by 170d13ca3a2f, which should be probably refined to check
-> and react to the address alignment. Before that commit, on x86
-> memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
-> thing (from tpm_crb's perspective) for us so far, but we should not rely on that.
-> Thus, it makes sense to fix this also in tpm_crb, not least because the fix can be
-> then backported to stable kernels and make them more robust when compiled
-> in differing environments.
-> 
-> Cc: stable@vger.kernel.org
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Tomas Winkler <tomas.winkler@intel.com>
-> Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-> Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/char/tpm/tpm_crb.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c index
-> 36952ef98f90..7f47e43aa9f1 100644
-> --- a/drivers/char/tpm/tpm_crb.c
-> +++ b/drivers/char/tpm/tpm_crb.c
-> @@ -288,18 +288,18 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf,
-> size_t count)
->  	unsigned int expected;
-> 
->  	/* sanity check */
-> -	if (count < 6)
-> +	if (count < 8)
->  		return -EIO;
-Why don't you already enforce reading at least the whole TPM header 10bytes, we are reading the whole buffer at one call anyway.
-Who every is asking for 8 bytes from the protocol level, is doing something wrong.
+I have a basic question on environment variables, that with some 
+documentation I have seen in the security modules like Tomoyo I'm hoping 
+this could be the right list to ask the following question.
 
->  	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
->  		return -EIO;
-> 
-> -	memcpy_fromio(buf, priv->rsp, 6);
-> +	memcpy_fromio(buf, priv->rsp, 8);
-Maybe a short comment will spare someone looking into git history 
->  	expected = be32_to_cpup((__be32 *) &buf[2]);
-> -	if (expected > count || expected < 6)
-> +	if (expected > count || expected < 8)
-Expected should be at least tpm header, right?
->  		return -EIO;
-> 
-> -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
-> +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
-> 
->  	return expected;
->  }
-Otherwise ready the first 8 bytes looks good. 
-Thanks 
-Tomas
+System environment variables, like PATH, LD_LIBRARY_PATH, HOME, etc.  
+Can they ever default to all lower-case in a Linux Distro, i.e., path, 
+ld_library_path, home, etc?  If so, is there a mode bit, kernel 
+configuration setting or sysfs file to check for this setting?
 
+I swear I have worked on Linux systems years ago that had 'path' and 
+'ld_library_path' default to lower-case, but maybe I mis-recall.
 
+Thanks for the info in advance, regards,
+Jay
