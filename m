@@ -2,112 +2,77 @@ Return-Path: <SRS0=Dufg=QI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704A9C282D8
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08F4C282D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C0420863
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C149821872
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbfBANOq (ORCPT
+        id S1729412AbfBANe4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 08:14:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38226 "EHLO mx1.redhat.com"
+        Fri, 1 Feb 2019 08:34:56 -0500
+Received: from mga02.intel.com ([134.134.136.20]:5975 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbfBANOq (ORCPT
+        id S1726586AbfBANe4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 08:14:46 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 914927EBD8;
-        Fri,  1 Feb 2019 13:14:46 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-22.phx2.redhat.com [10.3.112.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1AA515D9D6;
-        Fri,  1 Feb 2019 13:14:38 +0000 (UTC)
-Date:   Fri, 1 Feb 2019 08:14:35 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH ghak107 V1] audit: remove unused actx param from
- audit_rule_match
-Message-ID: <20190201131435.cwwa3yiui2kk6x34@madcap2.tricolour.ca>
-References: <c3bc9d90ed20f1b1cce916636a28f1e85af1afdc.1548953334.git.rgb@redhat.com>
- <CAHC9VhRqeeuVZdARyCSJBumrQtTf7053qMAsfJXJfDrzDOYXrg@mail.gmail.com>
+        Fri, 1 Feb 2019 08:34:56 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 05:34:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,548,1539673200"; 
+   d="scan'208";a="135058337"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by orsmga001.jf.intel.com with ESMTP; 01 Feb 2019 05:34:51 -0800
+Date:   Fri, 1 Feb 2019 15:34:51 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v9 1/6] tpm: dynamically allocate the allocated_banks
+ array
+Message-ID: <20190201133451.GA17861@linux.intel.com>
+References: <20190201100641.26936-1-roberto.sassu@huawei.com>
+ <20190201100641.26936-2-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhRqeeuVZdARyCSJBumrQtTf7053qMAsfJXJfDrzDOYXrg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 01 Feb 2019 13:14:46 +0000 (UTC)
+In-Reply-To: <20190201100641.26936-2-roberto.sassu@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019-01-31 23:15, Paul Moore wrote:
-> On Thu, Jan 31, 2019 at 11:52 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > The audit_rule_match() struct audit_context *actx parameter is not used
-> > by any in-tree consumers (selinux, apparmour, integrity, smack).
-> >
-> > The audit context is an internal audit structure that should only be
-> > accessed by audit accessor functions.
-> >
-> > It was part of commit 03d37d25e0f9 ("LSM/Audit: Introduce > generic
-> > Audit LSM hooks") but appears to have never been used.
+On Fri, Feb 01, 2019 at 11:06:36AM +0100, Roberto Sassu wrote:
+> This patch renames active_banks (member of tpm_chip) to allocated_banks,
+> stores the number of allocated PCR banks in nr_allocated_banks (new member
+> of tpm_chip), and replaces the static array with a pointer to a dynamically
+> allocated array.
 > 
-> Merged into audit/next, but a heads-up that you added a ">" into the
-> referenced commit title.  I'm not sure if that was a cut-n-paste
-> problem, or something else, but just a note to be a bit more careful
-> in the future about those things.
-
-Ok, yes, that must have been a cut/paste error.  Pardon.
-
-> > Remove it.
-> >
-> > Please see the github issue
-> > https://github.com/linux-audit/audit-kernel/issues/107
-> >
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> > Passes audit-testsuite.
-> >
-> >  include/linux/lsm_hooks.h           |  4 +---
-> >  include/linux/security.h            |  5 ++---
-> >  kernel/auditfilter.c                |  2 +-
-> >  kernel/auditsc.c                    | 21 ++++++++++++---------
-> >  security/apparmor/audit.c           |  3 +--
-> >  security/apparmor/include/audit.h   |  3 +--
-> >  security/integrity/ima/ima.h        |  3 +--
-> >  security/integrity/ima/ima_policy.c |  6 ++----
-> >  security/security.c                 |  6 ++----
-> >  security/selinux/include/audit.h    |  4 +---
-> >  security/selinux/ss/services.c      |  3 +--
-> >  security/smack/smack_lsm.c          |  4 +---
-> >  12 files changed, 26 insertions(+), 38 deletions(-)
+> tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
+> the mask in the TPML_PCR_SELECTION structure returned by the TPM for
+> TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
+> bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
+> case, the bank is not included in chip->allocated_banks, to avoid that TPM
+> driver users unnecessarily calculate a digest for that bank.
 > 
-> -- 
-> paul moore
-> www.paul-moore.com
+> One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
 > 
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
+> As a consequence of the introduction of nr_allocated_banks,
+> tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
+> is equal to zero.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-- RGB
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+/Jarkko
