@@ -2,154 +2,112 @@ Return-Path: <SRS0=Dufg=QI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C5CC282D8
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704A9C282D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07C7F218AC
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:09:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48C0420863
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 13:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbfBANJO (ORCPT
+        id S1726514AbfBANOq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 08:09:14 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:35562 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfBANJO (ORCPT
+        Fri, 1 Feb 2019 08:14:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38226 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726206AbfBANOq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 08:09:14 -0500
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x11D9Ccq066519;
-        Fri, 1 Feb 2019 22:09:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Fri, 01 Feb 2019 22:09:12 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x11D95h3066451
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 1 Feb 2019 22:09:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: [PATCH] LSM: Allow syzbot to ignore security= parameter.
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@tycho.nsa.gov>,
-        Russell Coker <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <000000000000c178e305749daba4@google.com>
- <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
- <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
- <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
- <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
- <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
- <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
- <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
- <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
- <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
- <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
- <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
- <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
- <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
- <71e3652b-b222-0c3f-8b48-5980ddcaeb93@i-love.sakura.ne.jp>
- <CACT4Y+Z036bZfN1-_VaQ5EorwFt_tpPm=RTnrYN5qKV_ebgoFw@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <52531a69-10ed-d263-be66-e707705597d6@i-love.sakura.ne.jp>
-Date:   Fri, 1 Feb 2019 22:09:02 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 1 Feb 2019 08:14:46 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 914927EBD8;
+        Fri,  1 Feb 2019 13:14:46 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-22.phx2.redhat.com [10.3.112.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1AA515D9D6;
+        Fri,  1 Feb 2019 13:14:38 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 08:14:35 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH ghak107 V1] audit: remove unused actx param from
+ audit_rule_match
+Message-ID: <20190201131435.cwwa3yiui2kk6x34@madcap2.tricolour.ca>
+References: <c3bc9d90ed20f1b1cce916636a28f1e85af1afdc.1548953334.git.rgb@redhat.com>
+ <CAHC9VhRqeeuVZdARyCSJBumrQtTf7053qMAsfJXJfDrzDOYXrg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+Z036bZfN1-_VaQ5EorwFt_tpPm=RTnrYN5qKV_ebgoFw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRqeeuVZdARyCSJBumrQtTf7053qMAsfJXJfDrzDOYXrg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 01 Feb 2019 13:14:46 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/02/01 19:50, Dmitry Vyukov wrote:
-> On Fri, Feb 1, 2019 at 11:44 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>
->> On 2019/02/01 19:09, Dmitry Vyukov wrote:
->>> Thanks for the explanations.
->>>
->>> Here is the change that I've come up with:
->>> https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
->>
->> You are not going to apply this updated config to upstream kernels now, are you?
->> Removing CONFIG_DEFAULT_SECURITY="apparmor" from configs used by upstream kernels
->> will cause failing to enable AppArmor (unless security=apparmor is specified).
+On 2019-01-31 23:15, Paul Moore wrote:
+> On Thu, Jan 31, 2019 at 11:52 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> >
+> > The audit_rule_match() struct audit_context *actx parameter is not used
+> > by any in-tree consumers (selinux, apparmour, integrity, smack).
+> >
+> > The audit context is an internal audit structure that should only be
+> > accessed by audit accessor functions.
+> >
+> > It was part of commit 03d37d25e0f9 ("LSM/Audit: Introduce > generic
+> > Audit LSM hooks") but appears to have never been used.
 > 
+> Merged into audit/next, but a heads-up that you added a ">" into the
+> referenced commit title.  I'm not sure if that was a cut-n-paste
+> problem, or something else, but just a note to be a bit more careful
+> in the future about those things.
+
+Ok, yes, that must have been a cut/paste error.  Pardon.
+
+> > Remove it.
+> >
+> > Please see the github issue
+> > https://github.com/linux-audit/audit-kernel/issues/107
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > ---
+> > Passes audit-testsuite.
+> >
+> >  include/linux/lsm_hooks.h           |  4 +---
+> >  include/linux/security.h            |  5 ++---
+> >  kernel/auditfilter.c                |  2 +-
+> >  kernel/auditsc.c                    | 21 ++++++++++++---------
+> >  security/apparmor/audit.c           |  3 +--
+> >  security/apparmor/include/audit.h   |  3 +--
+> >  security/integrity/ima/ima.h        |  3 +--
+> >  security/integrity/ima/ima_policy.c |  6 ++----
+> >  security/security.c                 |  6 ++----
+> >  security/selinux/include/audit.h    |  4 +---
+> >  security/selinux/ss/services.c      |  3 +--
+> >  security/smack/smack_lsm.c          |  4 +---
+> >  12 files changed, 26 insertions(+), 38 deletions(-)
 > 
-> We do use  security=apparmor, see:
-> https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-apparmor.cmdline
-> https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-selinux.cmdline
-> https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-smack.cmdline
+> -- 
+> paul moore
+> www.paul-moore.com
 > 
+> --
+> Linux-audit mailing list
+> Linux-audit@redhat.com
+> https://www.redhat.com/mailman/listinfo/linux-audit
 
-Oh, security= parameter is explicitly specified on all targets?
-Then, we can abuse CONFIG_DEBUG_AID_FOR_SYZBOT option. ;-)
+- RGB
 
-LSM folks, may we use this patch for linux-next.git ?
-CONFIG_DEBUG_AID_FOR_SYZBOT is a linux-next.git-only kernel config option used by syzbot.
-
-
-
-From c7d21f9c1c0b610ddea4233b89edf7d3140b8baf Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Fri, 1 Feb 2019 22:03:55 +0900
-Subject: [PATCH linux-next] LSM: Allow syzbot to ignore security= parameter.
-
-LSM is going to get infrastructure managed security blob support in Linux
-5.1, and it becomes possible to run TOMOYO with SELinux/Smack/AppArmor.
-But for compatibility reason, since security= parameter makes it
-impossible to run TOMOYO with SELinux/Smack/AppArmor, syzbot can't
-test that combination. Therefore, this patch allows syzbot to temporarily
-ignore security= parameter. This patch is meant for linux-next.git only,
-and will be removed after infrastructure managed security blob support
-went to linux.git.
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- security/security.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/security.c b/security/security.c
-index ef03643..0632feb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -346,12 +346,14 @@ int __init security_init(void)
- }
- 
- /* Save user chosen LSM */
-+#ifndef CONFIG_DEBUG_AID_FOR_SYZBOT
- static int __init choose_major_lsm(char *str)
- {
- 	chosen_major_lsm = str;
- 	return 1;
- }
- __setup("security=", choose_major_lsm);
-+#endif
- 
- /* Explicitly choose LSM initialization order. */
- static int __init choose_lsm_order(char *str)
--- 
-1.8.3.1
-
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
