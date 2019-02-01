@@ -2,129 +2,187 @@ Return-Path: <SRS0=Dufg=QI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6655DC4151A
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 18:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 674E3C282D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 19:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40FC221901
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 18:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38A7C218AF
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 19:15:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728681AbfBASmS (ORCPT
+        id S1728186AbfBATP1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 13:42:18 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34728 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728135AbfBASmS (ORCPT
+        Fri, 1 Feb 2019 14:15:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60968 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730240AbfBATP1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 13:42:18 -0500
-Received: by mail-qt1-f193.google.com with SMTP id r14so8767590qtp.1
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Feb 2019 10:42:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=fwFQnH9OuB2MvnyRpWht+yCfAp3mugwnL8IAAdrFt5M=;
-        b=lcH861fqQfcyK9B50FRitXfHr5H4juoXQq01fg3HGJM5wi6MajNOTLOkzNjE97/Z28
-         Hn/Cdo7cyjtE0t194d5f3g6NyAmj9QCP1M4IxKy+Kp3ewY1emYmmgMVfCOJT0/Hf97em
-         +2SczkmqgZ5Xm8lvekpBmG/tqEAyuRc64sJMmAMEtvfqC3fNshIP0UbZoWq53xJo9c4A
-         J6KXgIlqd2Y5QuS7zUvPSfKNoH4EqJRnM67q6dO6LBU2IH4QrlMSFBdI3jLTIJ7AaJCW
-         3PjCViqF5u8sXhN3W/EHbBYVSDY+gZ3tBwZEkJNwrYUM4QGjpWd+DfS+RjXkBaWdsHrj
-         uC4g==
-X-Gm-Message-State: AJcUukfBu+HUsg/s4Vw3gA/yrBEVVR0GzKsf+gd8fn6Ui0RTnDbX/rjN
-        BXBYCmR8hYHBb7ETmTJT9o9xfP5Uuy8=
-X-Google-Smtp-Source: ALg8bN7HmZNiBvoGLrsOhjOmh62mH0+md5FzB0sceRpiXhf+0M+tFPz8q52CV0Ao8f9kG5OcDoyurA==
-X-Received: by 2002:ac8:fd4:: with SMTP id f20mr41042364qtk.63.1549046536928;
-        Fri, 01 Feb 2019 10:42:16 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id o21sm7689506qto.18.2019.02.01.10.42.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 10:42:16 -0800 (PST)
-Date:   Fri, 1 Feb 2019 11:42:14 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: Re: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
-Message-ID: <20190201184214.aohoxqu7cyngehqk@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        Tomas Winkler <tomas.winkler@intel.com>
-References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: NeoMutt/20180716
+        Fri, 1 Feb 2019 14:15:27 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x11Iwcon059246
+        for <linux-security-module@vger.kernel.org>; Fri, 1 Feb 2019 14:15:26 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qcsweqn0e-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Feb 2019 14:15:26 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 1 Feb 2019 19:15:23 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 1 Feb 2019 19:15:19 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x11JFIM48585672
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 1 Feb 2019 19:15:18 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 92D5C4C04E;
+        Fri,  1 Feb 2019 19:15:18 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25CC34C044;
+        Fri,  1 Feb 2019 19:15:17 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.130])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  1 Feb 2019 19:15:17 +0000 (GMT)
+Subject: Re: [PATCH v9 6/6] tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        jarkko.sakkinen@linux.intel.com, david.safford@ge.com,
+        monty.wiseman@ge.com, matthewgarrett@google.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Date:   Fri, 01 Feb 2019 14:15:06 -0500
+In-Reply-To: <20190201100641.26936-7-roberto.sassu@huawei.com>
+References: <20190201100641.26936-1-roberto.sassu@huawei.com>
+         <20190201100641.26936-7-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020119-0008-0000-0000-000002B9F85D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020119-0009-0000-0000-000022260126
+Message-Id: <1549048506.6993.73.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-01_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902010140
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri Feb 01 19, Jarkko Sakkinen wrote:
->The current approach to read first 6 bytes from the response and then tail
->of the response, can cause the 2nd memcpy_fromio() to do an unaligned read
->(e.g. read 32-bit word from address aligned to a 16-bits), depending on how
->memcpy_fromio() is implemented. If this happens, the read will fail and the
->memory controller will fill the read with 1's.
->
->This was triggered by 170d13ca3a2f, which should be probably refined to
->check and react to the address alignment. Before that commit, on x86
->memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
->thing (from tpm_crb's perspective) for us so far, but we should not rely on
->that. Thus, it makes sense to fix this also in tpm_crb, not least because
->the fix can be then backported to stable kernels and make them more robust
->when compiled in differing environments.
->
->Cc: stable@vger.kernel.org
->Cc: Linus Torvalds <torvalds@linux-foundation.org>
->Cc: James Morris <jmorris@namei.org>
->Cc: Tomas Winkler <tomas.winkler@intel.com>
->Cc: Jerry Snitselaar <jsnitsel@redhat.com>
->Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
->Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->---
-> drivers/char/tpm/tpm_crb.c | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
->index 36952ef98f90..7f47e43aa9f1 100644
->--- a/drivers/char/tpm/tpm_crb.c
->+++ b/drivers/char/tpm/tpm_crb.c
->@@ -288,18 +288,18 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-> 	unsigned int expected;
->
-> 	/* sanity check */
->-	if (count < 6)
->+	if (count < 8)
-> 		return -EIO;
->
-> 	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
-> 		return -EIO;
->
->-	memcpy_fromio(buf, priv->rsp, 6);
->+	memcpy_fromio(buf, priv->rsp, 8);
-> 	expected = be32_to_cpup((__be32 *) &buf[2]);
->-	if (expected > count || expected < 6)
->+	if (expected > count || expected < 8)
-> 		return -EIO;
->
->-	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
->+	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
->
-> 	return expected;
-> }
->-- 
->2.17.1
->
+Hi Roberto,
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Sorry for the delayed review.  A few comments inline below, minor
+suggestions.
+
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index cc12f3449a72..e6b2dcb0846a 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -56,6 +56,7 @@ extern int ima_policy_flag;
+>  extern int ima_hash_algo;
+>  extern int ima_appraise;
+>  extern struct tpm_chip *ima_tpm_chip;
+> +extern struct tpm_digest *digests;
+>  
+>  /* IMA event related data */
+>  struct ima_event_data {
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+> index 6bb42a9c5e47..296a965b11ef 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -27,6 +27,7 @@
+>  /* name for boot aggregate entry */
+>  static const char boot_aggregate_name[] = "boot_aggregate";
+>  struct tpm_chip *ima_tpm_chip;
+> +struct tpm_digest *digests;
+
+"digests" is used in the new ima_init_digests() and in
+ima_pcr_extend().  It's nice that the initialization routines are
+grouped together here in ima_init.c, but wouldn't it better to define
+"digests" in ima_queued.c, where it is currently being used?
+ "digests" could then be defined as static.
+
+>  
+>  /* Add the boot aggregate to the IMA measurement list and extend
+>   * the PCR register.
+> @@ -104,6 +105,24 @@ void __init ima_load_x509(void)
+>  }
+>  #endif
+>  
+> +int __init ima_init_digests(void)
+> +{
+> +	int i;
+> +
+> +	if (!ima_tpm_chip)
+> +		return 0;
+> +
+> +	digests = kcalloc(ima_tpm_chip->nr_allocated_banks, sizeof(*digests),
+> +			  GFP_NOFS);
+> +	if (!digests)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
+> +		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
+> +
+> +	return 0;
+> +}
+> +
+>  int __init ima_init(void)
+>  {
+>  	int rc;
+> @@ -125,6 +144,9 @@ int __init ima_init(void)
+>  
+>  	ima_load_kexec_buffer();
+>  
+> +	rc = ima_init_digests();
+
+Ok. Getting the tpm chip is at the beginning of this function.
+ Deferring allocating "digests" to here, avoids having to free memory
+on failure.
+
+ima_load_kexec_buffer() restores prior measurements, but doesn't
+extend the TPM.  For anyone reading the code, a short comment above
+ima_load_kexec_buffer() would make sense.
+
+Mimi
+   
+> +	if (rc != 0)
+> +		return rc;
+>  	rc = ima_add_boot_aggregate();	/* boot aggregate must be first entry */
+>  	if (rc != 0)
+>  		return rc;
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+> index 0e41dc1df1d4..719e88ca58f6 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -140,11 +140,15 @@ unsigned long ima_get_binary_runtime_size(void)
+>  static int ima_pcr_extend(const u8 *hash, int pcr)
+>  {
+>  	int result = 0;
+> +	int i;
+>  
+>  	if (!ima_tpm_chip)
+>  		return result;
+>  
+> -	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
+> +		memcpy(digests[i].digest, hash, TPM_DIGEST_SIZE);
+> +
+> +	result = tpm_pcr_extend(ima_tpm_chip, pcr, digests);
+>  	if (result != 0)
+>  		pr_err("Error Communicating to TPM chip, result: %d\n", result);
+>  	return result;
+> 
+
