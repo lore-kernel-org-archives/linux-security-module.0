@@ -1,85 +1,64 @@
-Return-Path: <SRS0=Dufg=QI=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=oenN=QJ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A8EC282DB
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 23:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F9AC282D7
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 Feb 2019 04:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9301121872
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Feb 2019 23:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96BC520855
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 Feb 2019 04:18:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbfBAX3N (ORCPT
+        id S1726495AbfBBESX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 18:29:13 -0500
-Received: from namei.org ([65.99.196.166]:49780 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725803AbfBAX3M (ORCPT
+        Fri, 1 Feb 2019 23:18:23 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:11908 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726438AbfBBESW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 18:29:12 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x11NSdWD025026;
-        Fri, 1 Feb 2019 23:28:39 GMT
-Date:   Sat, 2 Feb 2019 10:28:39 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] security: mark expected switch fall-throughs
-In-Reply-To: <ece10676-4ee9-bf24-ab8d-7d69a678f234@embeddedor.com>
-Message-ID: <alpine.LRH.2.21.1902021028320.24863@namei.org>
-References: <20190125025639.GA13946@embeddedor> <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com> <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com> <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com> <1548964731.6107.28.camel@linux.ibm.com>
- <a1cf3a2a-c8ad-fd33-47fb-9a9d8230c24f@embeddedor.com> <1548966039.6107.29.camel@linux.ibm.com> <ece10676-4ee9-bf24-ab8d-7d69a678f234@embeddedor.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Fri, 1 Feb 2019 23:18:22 -0500
+Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x124IIII059336;
+        Sat, 2 Feb 2019 13:18:19 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
+ Sat, 02 Feb 2019 13:18:18 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x124IE4K059137
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 2 Feb 2019 13:18:18 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: Basic all-cap/all-lower case question on Environment variables
+To:     J Freyensee <why2jjj.linux@gmail.com>,
+        linux-security-module@vger.kernel.org
+References: <52a3fb2c-8ffb-655e-a9bc-76344b27e64f@gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <57fe6767-e8c2-3d3c-84f0-ba3b2a124bc8@I-love.SAKURA.ne.jp>
+Date:   Sat, 2 Feb 2019 13:18:11 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-1580712791-1549063719=:24863"
+In-Reply-To: <52a3fb2c-8ffb-655e-a9bc-76344b27e64f@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 2019/02/02 6:19, J Freyensee wrote:
+> System environment variables, like PATH, LD_LIBRARY_PATH, HOME, etc.  Can they ever
+> default to all lower-case in a Linux Distro, i.e., path, ld_library_path, home, etc?
 
---1665246916-1580712791-1549063719=:24863
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+There is no rule for environment variables, except environment variable name can't
+contain '=' because '=' is used as a separator for environment variable value.
 
-On Thu, 31 Jan 2019, Gustavo A. R. Silva wrote:
+> If so, is there a mode bit, kernel configuration setting or sysfs file to check for this setting?
 
-> 
-> 
-> On 1/31/19 2:20 PM, Mimi Zohar wrote:
-> 
-> >>>
-> >>> This patch touches multiple LSMs and IMA.  As James has already picked
-> >>> up similar patches, which are in his next-general branch, perhaps he
-> >>> could also pick up an updated version of this one.
-> >>>
-> >>
-> >> Yeah.  I can either integrate your recent fix and respin if you don't mind,
-> >> or remove the fall-through comment and wait for James to take both patches,
-> >> yours and mine.
-> >>
-> >> What do you prefer?
-> > 
-> > Either way is fine.
-> > 
-> 
-> OK.  Well, I think in this case less is more, so I will integrate our changes
-> into a single patch.
+No such settings. Just a convention. Even mixed name like OPENSSL_ia32cap is permitted.
 
-WFM
-
--- 
-James Morris
-<jmorris@namei.org>
-
---1665246916-1580712791-1549063719=:24863--
