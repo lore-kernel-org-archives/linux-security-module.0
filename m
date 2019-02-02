@@ -1,64 +1,76 @@
 Return-Path: <SRS0=oenN=QJ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PHP_ORIG_SCRIPT,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F9AC282D7
-	for <linux-security-module@archiver.kernel.org>; Sat,  2 Feb 2019 04:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2FDC282D7
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 Feb 2019 04:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96BC520855
-	for <linux-security-module@archiver.kernel.org>; Sat,  2 Feb 2019 04:18:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC3052086C
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 Feb 2019 04:33:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pbceastgate.org header.i=@pbceastgate.org header.b="NXF6lLWd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726495AbfBBESX (ORCPT
+        id S1726382AbfBBEdG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Feb 2019 23:18:23 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:11908 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726438AbfBBESW (ORCPT
+        Fri, 1 Feb 2019 23:33:06 -0500
+Received: from de1.bighostweb.com ([188.40.53.146]:37247 "EHLO
+        de1.bighostweb.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfBBEdG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Feb 2019 23:18:22 -0500
-Received: from fsav302.sakura.ne.jp (fsav302.sakura.ne.jp [153.120.85.133])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x124IIII059336;
-        Sat, 2 Feb 2019 13:18:19 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav302.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp);
- Sat, 02 Feb 2019 13:18:18 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav302.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x124IE4K059137
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 2 Feb 2019 13:18:18 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: Basic all-cap/all-lower case question on Environment variables
-To:     J Freyensee <why2jjj.linux@gmail.com>,
-        linux-security-module@vger.kernel.org
-References: <52a3fb2c-8ffb-655e-a9bc-76344b27e64f@gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <57fe6767-e8c2-3d3c-84f0-ba3b2a124bc8@I-love.SAKURA.ne.jp>
-Date:   Sat, 2 Feb 2019 13:18:11 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 1 Feb 2019 23:33:06 -0500
+X-Greylist: delayed 2050 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Feb 2019 23:33:05 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=pbceastgate.org; s=default; h=Sender:Content-Type:MIME-Version:Message-ID:
+        From:Date:Subject:To:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=7Bs9IE4hnKla3tLeBAzQ/UspoOnQvEkzidOe21f5Yg8=; b=NXF6lLWdgEpPItQ4ZGYDrJcNTi
+        wyB5kR8uU00FSzL1x5c2xBx/L9tXUYb3i/4lEyMZ9tDsHZ/whxY/s1fhAxQclnSiE896koTkcgh92
+        Ub58KnlL5mD7wVYSzRdyhnfDlzs2jAte6xAlvNl44+IUdH/Xqquy1nEUg5HDN4T0RUH4a6puUF2Sw
+        hTRMw48IhFfLtnVu8NiFWfcvWJuzENKT26SMEtcsTMDQ/D6TAEB/HSpFoGq7WtBwzcIwe2Ddq/V1T
+        XVQCNwydpQempunwa7E2GQnY5tGqXOwtHxRTnLsTPe+Mzqy0kFvVyDd8aAzLskvt9n+TgYrv8IfQj
+        ptk4zUEQ==;
+Received: from pbceast by de1.bighostweb.com with local (Exim 4.91)
+        (envelope-from <pbceast@de1.bighostweb.com>)
+        id 1gpmS5-00C88Q-P5
+        for linux-security-module@vger.kernel.org; Sat, 02 Feb 2019 06:58:46 +0300
+To:     linux-security-module@vger.kernel.org
+Subject: Message
+X-PHP-Script: pbceastgate.org/index.php for 185.189.113.38
+X-PHP-Originating-Script: 733:class-phpmailer.php
+Date:   Sat, 2 Feb 2019 03:58:45 +0000
+From:   PBC Eastgate <info@pbceastgate.org>
+Message-ID: <a4bd48e3b9eba9b2ae21af43d4dc0cea@pbceastgate.org>
+X-Mailer: PHPMailer 5.2.22 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
-In-Reply-To: <52a3fb2c-8ffb-655e-a9bc-76344b27e64f@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+X-OutGoing-Spam-Status: No, score=3.3
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - de1.bighostweb.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [733 501] / [47 12]
+X-AntiAbuse: Sender Address Domain - de1.bighostweb.com
+X-Get-Message-Sender-Via: de1.bighostweb.com: authenticated_id: pbceast/from_h
+X-Authenticated-Sender: de1.bighostweb.com: info@pbceastgate.org
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/02/02 6:19, J Freyensee wrote:
-> System environment variables, like PATH, LD_LIBRARY_PATH, HOME, etc.  Can they ever
-> default to all lower-case in a Linux Distro, i.e., path, ld_library_path, home, etc?
+Hello LutherMaf,
 
-There is no rule for environment variables, except environment variable name can't
-contain '=' because '=' is used as a separator for environment variable value.
+Thank you for contacting us. We will get back to you shorty. 
 
-> If so, is there a mode bit, kernel configuration setting or sysfs file to check for this setting?
+Arise and Shine
+PBC Eastgate
 
-No such settings. Just a convention. Even mixed name like OPENSSL_ia32cap is permitted.
+-- 
+This e-mail was sent from Parklands Baptist Church - Eastgate (http://pbceastgate.org)
 
