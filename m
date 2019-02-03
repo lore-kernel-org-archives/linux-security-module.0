@@ -2,217 +2,76 @@ Return-Path: <SRS0=g9Jl=QK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F77FC282DB
-	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 22:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CD1C4151A
+	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 22:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18FA0217D9
-	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 22:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD9C121871
+	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 22:26:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbfBCWDD (ORCPT
+        id S1727955AbfBCW06 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 3 Feb 2019 17:03:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33794 "EHLO mx1.suse.de"
+        Sun, 3 Feb 2019 17:26:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35946 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726673AbfBCWDD (ORCPT
+        id S1726673AbfBCW06 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 3 Feb 2019 17:03:03 -0500
+        Sun, 3 Feb 2019 17:26:58 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AEC8FAE7A;
-        Sun,  3 Feb 2019 22:03:00 +0000 (UTC)
-Date:   Sun, 3 Feb 2019 23:02:58 +0100
+        by mx1.suse.de (Postfix) with ESMTP id 1AC4FAC6F;
+        Sun,  3 Feb 2019 22:26:57 +0000 (UTC)
+Date:   Sun, 3 Feb 2019 23:26:55 +0100
 From:   Petr Vorel <pvorel@suse.cz>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        David Howells <dhowells@redhat.com>,
-        Dave Young <dyoung@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH 3/3] selftests/ima: kexec_file_load syscall test
-Message-ID: <20190203220258.GC4022@x230>
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tadeusz Struk <tadeusz.struk@intel.com>
+Subject: Re: [PATCH] selftests: add TPM 2.0 tests
+Message-ID: <20190203222654.GA28988@x230>
 Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <1548960936-7800-1-git-send-email-zohar@linux.ibm.com>
- <1548960936-7800-4-git-send-email-zohar@linux.ibm.com>
+References: <20190201175054.26105-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548960936-7800-4-git-send-email-zohar@linux.ibm.com>
+In-Reply-To: <20190201175054.26105-1-jarkko.sakkinen@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mimi,
+Hi Jarkko,
 
-> The kernel can be configured to verify PE signed kernel images, IMA
-> kernel image signatures, both types of signatures, or none.  This test
-> verifies only properly signed kernel images are loaded into memory,
-> based on the kernel configuration and runtime policies.
+> Added the tests that I've been using for testing TPM 2.0 functionality
+> for long time but have out-of-tree so far residing in
 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
+> https://github.com/jsakkine-intel/tpm2-scripts
 
-...
-> +++ b/tools/testing/selftests/ima/test_kexec_file_load.sh
-> @@ -0,0 +1,250 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0+
-# SPDX-License-Identifier: GPL-2.0-or-later
-> +#
-> +# Loading a kernel image via the kexec_file_load syscall can verify either
-> +# the IMA signature stored in the security.ima xattr or the PE signature,
-> +# both signatures depending on the IMA policy, or none.
-> +#
-> +# To determine whether the kernel image is signed, this test depends
-> +# on pesign and getfattr.  This test also requires the kernel to be
-> +# built with CONFIG_IKCONFIG enabled and either CONFIG_IKCONFIG_PROC
-> +# enabled or access to the extract-ikconfig script.
+> Cc: Tadeusz Struk <tadeusz.struk@intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Acked-By: Joey Pabalinas <joeypabalinas@gmail.com>
+Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+
+> +++ b/tools/testing/selftests/tpm2/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
 > +
-> +VERBOSE=1
-Maybe allow to disable verbose without source change?
-VERBOSE="${VERBOSE:-1}"
+> +TEST_PROGS := test_smoke.sh test_space.sh
+Maybe include lib.mk, to avoid make No targets error? (well, it's reported for
+more tests)
 
-> +EXTRACT_IKCONFIG=$(ls /lib/modules/`uname -r`/source/scripts/extract-ikconfig)
-> +IKCONFIG=/tmp/config-`uname -r`
-> +PROC_CONFIG="/proc/config.gz"
-> +KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
-> +PESIGN=/usr/bin/pesign
-> +GETFATTR=/usr/bin/getfattr
-> +
-> +TEST="$0"
-> +. ./common_lib.sh
-> +
-> +# Kselftest framework requirement - SKIP code is 4.
-> +ksft_skip=4
-> +
-> +kconfig_enabled()
-> +{
-> +	RC=0
-> +	egrep -q $1 $IKCONFIG
-> +	if [ $? -eq 0 ]; then
-> +		RC=1
-> +	fi
-> +	return $RC
-> +}
-This would be enough (grep with -e returns only 0 or 1):
-kconfig_enabled()
-{
-	grep -E -q $1 $IKCONFIG
-}
-> +
-> +# policy rule format: action func=<keyword> [appraise_type=<type>]
-> +check_ima_policy()
-> +{
-> +	IMA_POLICY=/sys/kernel/security/ima/policy
-> +
-> +	RC=0
-> +	if [ $# -eq 3 ]; then
-> +		grep -e $2 $IMA_POLICY | grep -e "^$1.*$3" 2>&1 >/dev/null
-> +	else
-> +		grep -e $2 $IMA_POLICY | grep -e "^$1" 2>&1 >/dev/null
-> +	fi
-> +	if [ $? -eq 0 ]; then
-> +		RC=1
-> +	fi
-> +	return $RC
-> +}
-This would be enough and more descriptive:
-check_ima_policy()
-{
-	local action="$1"
-	local keyword="$2"
-	local type="$3"
+include ../lib.mk
 
-	[ -n "$type" ] && type="appraise_type=$type"
-	grep -q "^$action.*func=$keyword.*$type" /sys/kernel/security/ima/policy
-}
+make[1]: Entering directory '/home/pevik/install/src/linux.git/tools/testing/selftests/tpm2'
+make[1]: *** No targets.  Stop.
 
-> +
-> +check_kconfig_options()
-> +{
-> +	# Attempt to get the kernel config first via proc, and then by
-> +	# extracting it from the kernel image using scripts/extract-ikconfig.
-> +	if [ ! -f $PROC_CONFIG ]; then
-> +		modprobe configs 2>/dev/null
-> +	fi
-> +	if [ -f $PROC_CONFIG ]; then
-> +		cat $PROC_CONFIG > $IKCONFIG
-> +	fi
-> +
-> +	if [ ! -f $IKCONFIG ]; then
-> +		if [ ! -f $EXTRACT_IKCONFIG ]; then
-> +			echo "$TEST: requires access to extract-ikconfig" >&2
-> +			exit $ksft_skip
-> +		fi
-> +
-> +		$EXTRACT_IKCONFIG $KERNEL_IMAGE > $IKCONFIG
-> +		kconfig_enabled "CONFIG_IKCONFIG=y"
-> +		if [ $? -eq 0 ]; then
-> +			echo "$TEST: requires the kernel to be built with CONFIG_IKCONFIG" >&2
-> +			exit $ksft_skip
-> +		fi
-> +	fi
-> +
-> +	kconfig_enabled "CONFIG_KEXEC_BZIMAGE_VERIFY_SIG=y"
-> +	pe_sig_required=$?
-> +	if [ $VERBOSE -ne 0 ] && [ $pe_sig_required -eq 1 ]; then
-> +		echo "$TEST: [INFO] PE signed kernel image required"
-> +	fi
-Checks for $VERBOSE here and in other kconfig_enabled usages bellow are a bit
-redundant. And you check for assigned variable now and then later on,
-you use these variables as global (and reset $ima_sig_required in
-check_runtime().
-
-How about using functions instead:
-log_info()
-{
-	echo "$TEST: [INFO] $1"
-}
-(Reducing some duplicity, IMHO helper functions in shell library used in all
-selftest tests would be useful)
-
-kconfig_enabled()
-{
-	local config="$1"
-	local msg="$2"
-	local ret
-
-	grep -E -q $config $IKCONFIG
-	ret=$?
-	[ $VERBOSE -ne 0 ] && [ $ret -eq 1 ] && log_info "$msg"
-	return $ret
-}
-
-ima_sig_enabled()
-{
-	kconfig_enabled "CONFIG_KEXEC_BZIMAGE_VERIFY_SIG=y" \
-		"PE signed kernel image required"
-}
-
-ima_sig_enabled()
-{
-	kconfig_enabled "CONFIG_IMA_APPRAISE_REQUIRE_KEXEC_SIGS=y" \
-		"IMA kernel image signature required"
-}
-Warning is printed each time, but that's deliberate.
-If it's not wanted, it can be moved into setup.
-
-...
-> +check_kconfig_options
-> +check_for_apps
-> +check_runtime
-> +check_for_sigs
-> +kexec_file_load_test
-
-> +rc=$?
-> +exit $rc
-These two are redundant.
 
 Kind regards,
 Petr
