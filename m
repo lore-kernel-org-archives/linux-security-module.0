@@ -2,68 +2,94 @@ Return-Path: <SRS0=g9Jl=QK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=3.0 tests=DATE_IN_PAST_12_24,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80CDBC169C4
-	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 03:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AC6C169C4
+	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 20:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56D172070B
-	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 03:56:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DB5021871
+	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 20:53:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbfBCD4J (ORCPT
+        id S1726840AbfBCUw7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 2 Feb 2019 22:56:09 -0500
-Received: from mail.horeca-service.com ([185.53.168.19]:45229 "EHLO
-        shelterness.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727394AbfBCD4I (ORCPT
+        Sun, 3 Feb 2019 15:52:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55872 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726820AbfBCUw7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 2 Feb 2019 22:56:08 -0500
-X-Greylist: delayed 2608 seconds by postgrey-1.27 at vger.kernel.org; Sat, 02 Feb 2019 22:56:04 EST
-To:     linux-security-module@vger.kernel.org
-Subject: Do the work
-Message-ID: <6f3993193a6dcfe3137c764ad60e52bd@karenwinters.com>
-Date:   Sat, 02 Feb 2019 13:29:18 +0100
-From:   "Grace" <lekkawnzze@verizon.net>
-Reply-To: jiantens@sina.com
+        Sun, 3 Feb 2019 15:52:59 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 05310AE7F;
+        Sun,  3 Feb 2019 20:52:58 +0000 (UTC)
+Date:   Sun, 3 Feb 2019 21:52:52 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        David Howells <dhowells@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH 1/3] selftest/ima: cleanup the kexec selftest
+Message-ID: <20190203205252.GA4022@x230>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <1548960936-7800-1-git-send-email-zohar@linux.ibm.com>
+ <1548960936-7800-2-git-send-email-zohar@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548960936-7800-2-git-send-email-zohar@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Want to retouch your photos? we can help you.
+Hi Mimi,
 
-Deep etching or masking for your photos, or even adding clipping path.
-Retouching also if needed.
+> Remove the few bashisms in the script and use the complete option name
+> for clarity.
 
-Hopefully to start something for you soon.
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
+> ---
+>  tools/testing/selftests/ima/test_kexec_load.sh | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 
-Thanks,
-Grace
+> diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
+> index 1c10093fb526..74423c4229e2 100755
+> --- a/tools/testing/selftests/ima/test_kexec_load.sh
+> +++ b/tools/testing/selftests/ima/test_kexec_load.sh
+> @@ -1,7 +1,7 @@
+>  #!/bin/sh
+>  # SPDX-License-Identifier: GPL-2.0+
+# SPDX-License-Identifier: GPL-2.0-or-later
+According to [1] GPL-2.0+ has been deprecated (but who cares).
+
+...
+> -	if [ "$secureboot" == "1" ]; then
+> +kexec --load $KERNEL_IMAGE 2>&1 /dev/null
+kexec --load $KERNEL_IMAGE 2>&1 >/dev/null
+missing redirection.
+
+> +if [ $? -eq 0 ]; then
+> +	kexec --unload
+> +	if [ $secureboot -eq 1 ]; then
+>  		echo "$TEST: kexec_load succeeded [FAIL]"
+>  		rc=1
+>  	else
+>  		echo "$TEST: kexec_load succeeded [PASS]"
+>  	fi
+It'd be nice, if selftest has some main library with helpers (like LTP has [2]),
+to have unified output and reduce duplicity.
 
 
+Kind regards,
+Petr
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Berdheim
-
-
-Pirna
-
+[1] https://spdx.org/licenses/
+[2] https://github.com/linux-test-project/ltp/blob/master/testcases/lib/tst_test.sh
