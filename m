@@ -2,30 +2,29 @@ Return-Path: <SRS0=g9Jl=QK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AC6C169C4
-	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 20:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B32CFC282DB
+	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 21:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB5021871
-	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 20:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 768D62177E
+	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 21:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfBCUw7 (ORCPT
+        id S1727526AbfBCVUB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 3 Feb 2019 15:52:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55872 "EHLO mx1.suse.de"
+        Sun, 3 Feb 2019 16:20:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58002 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726820AbfBCUw7 (ORCPT
+        id S1726820AbfBCVUB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 3 Feb 2019 15:52:59 -0500
+        Sun, 3 Feb 2019 16:20:01 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 05310AE7F;
-        Sun,  3 Feb 2019 20:52:58 +0000 (UTC)
-Date:   Sun, 3 Feb 2019 21:52:52 +0100
+        by mx1.suse.de (Postfix) with ESMTP id 32D3DAD6B;
+        Sun,  3 Feb 2019 21:20:00 +0000 (UTC)
+Date:   Sun, 3 Feb 2019 22:19:58 +0100
 From:   Petr Vorel <pvorel@suse.cz>
 To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org,
@@ -33,17 +32,16 @@ Cc:     linux-integrity@vger.kernel.org,
         linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
         David Howells <dhowells@redhat.com>,
         Dave Young <dyoung@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH 1/3] selftest/ima: cleanup the kexec selftest
-Message-ID: <20190203205252.GA4022@x230>
+        Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH 2/3] scripts/ima: define a set of common functions
+Message-ID: <20190203211958.GB4022@x230>
 Reply-To: Petr Vorel <pvorel@suse.cz>
 References: <1548960936-7800-1-git-send-email-zohar@linux.ibm.com>
- <1548960936-7800-2-git-send-email-zohar@linux.ibm.com>
+ <1548960936-7800-3-git-send-email-zohar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548960936-7800-2-git-send-email-zohar@linux.ibm.com>
+In-Reply-To: <1548960936-7800-3-git-send-email-zohar@linux.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -51,45 +49,52 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Hi Mimi,
 
-> Remove the few bashisms in the script and use the complete option name
-> for clarity.
+> Define and move get_secureboot_mode() to a common file for use by other
+> tests.
 
 > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Reviewed-by: Petr Vorel <pvorel@suse.cz>
 > ---
->  tools/testing/selftests/ima/test_kexec_load.sh | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  tools/testing/selftests/ima/common_lib.sh      | 20 ++++++++++++++++++++
+>  tools/testing/selftests/ima/test_kexec_load.sh | 17 +++--------------
+>  2 files changed, 23 insertions(+), 14 deletions(-)
+>  create mode 100755 tools/testing/selftests/ima/common_lib.sh
 
-> diff --git a/tools/testing/selftests/ima/test_kexec_load.sh b/tools/testing/selftests/ima/test_kexec_load.sh
-> index 1c10093fb526..74423c4229e2 100755
-> --- a/tools/testing/selftests/ima/test_kexec_load.sh
-> +++ b/tools/testing/selftests/ima/test_kexec_load.sh
-> @@ -1,7 +1,7 @@
->  #!/bin/sh
->  # SPDX-License-Identifier: GPL-2.0+
+> diff --git a/tools/testing/selftests/ima/common_lib.sh b/tools/testing/selftests/ima/common_lib.sh
+> new file mode 100755
+> index 000000000000..ae097a634da5
+> --- /dev/null
+> +++ b/tools/testing/selftests/ima/common_lib.sh
+> @@ -0,0 +1,20 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0+
 # SPDX-License-Identifier: GPL-2.0-or-later
-According to [1] GPL-2.0+ has been deprecated (but who cares).
+
+> +
+> +get_secureboot_mode()
+> +{
+> +	EFIVARFS="/sys/firmware/efi/efivars"
+	local efivarfs="/sys/firmware/efi/efivars"
+	local file
+It's a good practise to use local keyword and lower case the name of the
+variable for variables used only locally (if you treat $EFIVARFS as constant,
+I'd move it outside of get_secureboot_mode()).
+I personally try to avoid using global variables (except constant like).
+
+> +	# Make sure that efivars is mounted in the normal location
+> +	if ! grep -q "^\S\+ $EFIVARFS efivarfs" /proc/mounts; then
+> +		echo "$TEST: efivars is not mounted on $EFIVARFS" >&2
+> +		exit $ksft_skip
+> +	fi
+There could be helper function printing error and exit in selftest library.
+
+> +	# Get secureboot mode
+> +	file="$EFIVARFS/SecureBoot-*"
+	file="$efivarfs/SecureBoot-*"
 
 ...
-> -	if [ "$secureboot" == "1" ]; then
-> +kexec --load $KERNEL_IMAGE 2>&1 /dev/null
-kexec --load $KERNEL_IMAGE 2>&1 >/dev/null
-missing redirection.
-
-> +if [ $? -eq 0 ]; then
-> +	kexec --unload
-> +	if [ $secureboot -eq 1 ]; then
->  		echo "$TEST: kexec_load succeeded [FAIL]"
->  		rc=1
->  	else
->  		echo "$TEST: kexec_load succeeded [PASS]"
->  	fi
-It'd be nice, if selftest has some main library with helpers (like LTP has [2]),
-to have unified output and reduce duplicity.
-
+>  KERNEL_IMAGE="/boot/vmlinuz-`uname -r`"
+Another candidate for helper for potential selftest library.
 
 Kind regards,
 Petr
-
-[1] https://spdx.org/licenses/
-[2] https://github.com/linux-test-project/ltp/blob/master/testcases/lib/tst_test.sh
