@@ -2,104 +2,70 @@ Return-Path: <SRS0=s/Qe=QL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C833C282CB
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 14:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC97C282CC
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 17:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7C52083B
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 14:28:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="AtSkMjV3"
+	by mail.kernel.org (Postfix) with ESMTP id 8F3642087C
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 17:12:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbfBDO2m (ORCPT
+        id S1729112AbfBDRMT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Feb 2019 09:28:42 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37910 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbfBDO2m (ORCPT
+        Mon, 4 Feb 2019 12:12:19 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:36788 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728684AbfBDRMT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Feb 2019 09:28:42 -0500
-Received: from zn.tnic (p200300EC2BC6E200586F742EFBEF042E.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:e200:586f:742e:fbef:42e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 196921EC014B;
-        Mon,  4 Feb 2019 15:28:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549290520;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7QWaSI9Kzgqtb8SEtCk6Q1g3OhoIUSGko6l3DVOvT7k=;
-        b=AtSkMjV3V26u12tYepdjk6o9U9Pk4aRuwarM6f5IGq/OIK+z2V5XsIvRa2phDllI9Zpd8B
-        uuiWlDwk5b69HGShQwpAEW34F3RmpjU/s2F8unqxcQyun4nUQo17fsPzOF7AfXDbkRf0qc
-        sHuQzSqsCV3rWSo/aGkNjUr+0YORPEg=
-Date:   Mon, 4 Feb 2019 15:28:29 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v2 03/20] x86/mm: temporary mm struct
-Message-ID: <20190204142829.GD29639@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-4-rick.p.edgecombe@intel.com>
- <20190131112948.GE6749@zn.tnic>
- <C481E605-E19A-4EA6-AB9A-6FF4229789E0@vmware.com>
+        Mon, 4 Feb 2019 12:12:19 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-137-Or7scgR3NTaJVQtR1cG5qQ-1; Mon, 04 Feb 2019 17:12:15 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 4 Feb 2019 17:12:57 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 4 Feb 2019 17:12:57 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Jarkko Sakkinen' <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: RE: [PATCH v2] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Topic: [PATCH v2] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Index: AQHUvJH/Exb/UEP0DU2J88Qd/uFcRKXP4Huw
+Date:   Mon, 4 Feb 2019 17:12:57 +0000
+Message-ID: <1047dac117cc43bbae1c0db922b13aa5@AcuMS.aculab.com>
+References: <20190204135943.15756-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190204135943.15756-1-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <C481E605-E19A-4EA6-AB9A-6FF4229789E0@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: Or7scgR3NTaJVQtR1cG5qQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 31, 2019 at 10:19:54PM +0000, Nadav Amit wrote:
-> Having a different struct can prevent the misuse of using mm_structs in
-> unuse_temporary_mm() that were not “used” using use_temporary_mm. The
-> typedef, I presume, can deter users from starting to play with the internal
-> “private” fields.
+> +	 * field) in order to make sure that the reminding memory accesses will
 
-Ok, makes sense.
+remaining
 
-> > That prev.prev below looks unnecessary, instead of just using prev.
-> > 
-> >> +	struct mm_struct *prev;
-> > 
-> > Why "prev”?
-> 
-> This is obviously the previous active mm. Feel free to suggest an
-> alternative name.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-Well, when I look at the typedef I'm wondering why is it called "prev"
-but I guess this is to mean that it will be saving the previously used
-mm, so ack.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
