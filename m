@@ -2,55 +2,58 @@ Return-Path: <SRS0=s/Qe=QL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2C2C282C4
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D537C282C4
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 22:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB8142082E
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C25902081B
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 22:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549319438;
+	bh=uqfAAJNvTF8TMUEqeFpVxpZBmKU1zbs/Ov+X3It9DwE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LOd0lq1mJXsjwpeN81PeKXgRuYIgXbd9/lYt+xqJjjcRNjHRlasCXtuA+xYguJv88
+	 LxuRPwxdiYSf7zTMQPg6czwxIwe1msuGkmB/wDY1kB0IYoTOJV3pdC2sQF1CMUckQF
+	 aeTpRB/OhqFN2DfPHgC9JnB4bDNiJlbc48m/q05k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfBDWUT (ORCPT
+        id S1727859AbfBDWad (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:20:19 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49514 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727312AbfBDWUT (ORCPT
+        Mon, 4 Feb 2019 17:30:33 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:36513 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727770AbfBDWac (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:20:19 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x14M3dxV105044
-        for <linux-security-module@vger.kernel.org>; Mon, 4 Feb 2019 17:05:19 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qewa5sbvn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 04 Feb 2019 17:05:18 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 4 Feb 2019 22:05:15 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 4 Feb 2019 22:05:13 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14M5CZf63504394
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 22:05:12 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DFD411C052;
-        Mon,  4 Feb 2019 22:05:12 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5313E11C04A;
-        Mon,  4 Feb 2019 22:05:11 +0000 (GMT)
-Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  4 Feb 2019 22:05:11 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
+        Mon, 4 Feb 2019 17:30:32 -0500
+Received: by mail-yw1-f68.google.com with SMTP id x65so982578ywg.3;
+        Mon, 04 Feb 2019 14:30:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=uY3yXN+xNddVYKpd6S1PrG5wFrsb5mhRKWMVJfJc1Ho=;
+        b=VyVUp6poDI0s/qUfRuAL5AO7wMyPjPLD1uMhkYNhM/AgvXqp5/ap/X+4NsJIrv53WC
+         3z3NZGdVl3MRqAD3+kGnAy9StfbZQxF231fZ+DDrsNIWhGsrxutRjpwqEtYO3AalaEKW
+         bvhjqakWPGjPJezCdT+AnuM38428zKnzERAVqdaGBtK8SvKmtl33DOYh9kU6EimULueu
+         ZelDfP6pnTq0FQowFDG47EFGk4GnQX1uv1t4IC4MZg3d3MQN5+2jt7nh1+3cge1VuLrI
+         yLZu3+KCpgmw9wGZmduyU2rSmO3gn0nCOcJ9ttfb96CmmrmyKSV/fX20+kdA/VZqcE36
+         FZJA==
+X-Gm-Message-State: AHQUAuZ3681VmoHqOpnuMr9PwhmUeQxmRRrHqaQf4FlHckpqWtUoMrlt
+        eFcpSTbdpFRV6zxCcCLzhdjra4akJAc=
+X-Google-Smtp-Source: AHgI3IZBYhQh9lESjMVy/d2JlEqxcbL/qT7suNJb42i78iQCWWUPzGIO6o57HGcbvuNdgUgE8iodAA==
+X-Received: by 2002:a81:b243:: with SMTP id q64mr1422837ywh.351.1549319431360;
+        Mon, 04 Feb 2019 14:30:31 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id 137sm436785ywv.108.2019.02.04.14.30.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 14:30:29 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 04 Feb 2019 14:30:26 -0800
+Date:   Mon, 4 Feb 2019 14:30:26 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
@@ -58,141 +61,141 @@ Cc:     linux-integrity@vger.kernel.org,
         Seth Forshee <seth.forshee@canonical.com>,
         Justin Forbes <jforbes@redhat.com>,
         Matthew Garrett <mjg59@google.com>
-Date:   Mon, 04 Feb 2019 17:05:10 -0500
-In-Reply-To: <20190204203850.GP11489@garbanzo.do-not-panic.com>
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+Message-ID: <20190204223026.GR11489@garbanzo.do-not-panic.com>
 References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
-         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-         <20190204203850.GP11489@garbanzo.do-not-panic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+ <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+ <20190204203850.GP11489@garbanzo.do-not-panic.com>
+ <1549317910.4146.124.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020422-0020-0000-0000-0000031193D0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020422-0021-0000-0000-00002162A20B
-Message-Id: <1549317910.4146.124.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-04_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902040167
+In-Reply-To: <1549317910.4146.124.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-02-04 at 12:38 -0800, Luis Chamberlain wrote:
-> On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
-> > diff --git a/kernel/module.c b/kernel/module.c
-> > index 2ad1b5239910..70a9709d19eb 100644
-> > --- a/kernel/module.c
-> > +++ b/kernel/module.c
-> > @@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
-> >  
-> >  static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-> >  module_param(sig_enforce, bool_enable_only, 0644);
-> > +static bool sig_required;
-> >  
-> >  /*
-> >   * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-> >   * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
+On Mon, Feb 04, 2019 at 05:05:10PM -0500, Mimi Zohar wrote:
+> On Mon, 2019-02-04 at 12:38 -0800, Luis Chamberlain wrote:
+> > On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
+> > > diff --git a/kernel/module.c b/kernel/module.c
+> > > index 2ad1b5239910..70a9709d19eb 100644
+> > > --- a/kernel/module.c
+> > > +++ b/kernel/module.c
+> > > @@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
+> > >  
+> > >  static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+> > >  module_param(sig_enforce, bool_enable_only, 0644);
+> > > +static bool sig_required;
+> > >  
+> > >  /*
+> > >   * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
+> > >   * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
+> > 
+> > But the docs were't updated.
 > 
-> But the docs were't updated.
+> Neither "CONFIG_MODULE_SIG_FORCE" nor "module.sig_enforce" has
+> changed.  Which docs are you referring to? 
 
-Neither "CONFIG_MODULE_SIG_FORCE" nor "module.sig_enforce" has
-changed. Â Which docs are you referring to?Â 
+You renamed is_module_sig_enforced() to is_module_sig_enforced_or_required()
+and left the above doc which only justifies the enforced path.
 
+> > >   */
+> > > -bool is_module_sig_enforced(void)
+> > > +bool is_module_sig_enforced_or_required(void)
+> > >  {
+> > > -	return sig_enforce;
+> > > +	return sig_enforce || sig_required;
+> > >  }
+> > > -EXPORT_SYMBOL(is_module_sig_enforced);
+> > > +EXPORT_SYMBOL(is_module_sig_enforced_or_required);
+> > 
+> > Meh, this is getting sloppy, the module signing infrastructure should
+> > just be LSM'ified now that we have stacked LSMs. That would
+> > compartamentaliz that code and make this much easier to read / understand
+> > and mantain.
+> > 
+> > Can you take a look at doing it that way instead?
 > 
-> >   */
-> > -bool is_module_sig_enforced(void)
-> > +bool is_module_sig_enforced_or_required(void)
-> >  {
-> > -	return sig_enforce;
-> > +	return sig_enforce || sig_required;
-> >  }
-> > -EXPORT_SYMBOL(is_module_sig_enforced);
-> > +EXPORT_SYMBOL(is_module_sig_enforced_or_required);
-> 
-> Meh, this is getting sloppy, the module signing infrastructure should
-> just be LSM'ified now that we have stacked LSMs. That would
-> compartamentaliz that code and make this much easier to read / understand
-> and mantain.
-> 
-> Can you take a look at doing it that way instead?
+> This patch is about coordinating the existing methods of verifying
+> kernel module signatures.
 
-This patch is about coordinating the existing methods of verifying
-kernel module signatures.
+I understand.
 
+> > 
+> > >  /* Block module loading/unloading? */
+> > >  int modules_disabled = 0;
+> > > @@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
+> > >  	}
+> > >  
+> > >  	/* Not having a signature is only an error if we're strict. */
+> > > -	if (err == -ENOKEY && !is_module_sig_enforced())
+> > > +	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
+> > 
+> > This is where I think a proper LSM hook would make sense. I think
+> > that these "questions" model for signing don't work well on the LSM
+> > hook model, perhaps just:
+> > 
+> > kernel_module_signed()
+> > 
+> > Suffices, therefore if not enforced or required its signed. If its
+> > enforced or required and really signed, then it signed.
+> > 
+> > >  		err = 0;
+> > >  
+> > >  	return err;
+> > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > > index 357edd140c09..bbaf87f688be 100644
+> > > --- a/security/integrity/ima/ima_main.c
+> > > +++ b/security/integrity/ima/ima_main.c
+> > > @@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
+> > >  		}
+> > >  		break;
+> > >  	case LOADING_MODULE:
+> > > -		sig_enforce = is_module_sig_enforced();
+> > > +		sig_enforce = is_module_sig_enforced_or_required();
+> > 
+> > Yet another user.
+> > 
+> > >  		if (ima_enforce && (!sig_enforce
+> > >  				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
+> > > -- 
+> > > 2.7.5
+> > 
+> > Plus I think LSM'ifying module signing may help cleaning up some of the
+> > #ifdery and config options around module signing. I'm suggestin this now 
+> > as this has been on my mental TODO list for a while, and just not sure
+> > when we'd get to it, if not you, not sure when it'd get done.
+> > 
+> > Then, do we have proper unit tests for the mixture of options to ensure
+> > we can easily ensure we don't regress?
+> > 
 > 
-> > +
-> > +void set_module_sig_required(void)
-> > +{
-> > +	sig_required = true;
-> > +}
-> > +EXPORT_SYMBOL(set_module_sig_required);
+> There are already two methods  - appended signatures and IMA xattrs -
+> for validating kernel modules.
 > 
-> Since this is a *new* symbol, not yet used, and only used by IMA I'd
-> prefer this to be EXPORT_SYMBOL_GPL().
+> Kernel modules shouldn't be treated any differently than any other
+> file.
 
-Oops, this function shouldn't be exported.
+The good 'ol kernel module signing code *does* treat it as such.
 
-> 
-> >  /* Block module loading/unloading? */
-> >  int modules_disabled = 0;
-> > @@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
-> >  	}
-> >  
-> >  	/* Not having a signature is only an error if we're strict. */
-> > -	if (err == -ENOKEY && !is_module_sig_enforced())
-> > +	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
-> 
-> This is where I think a proper LSM hook would make sense. I think
-> that these "questions" model for signing don't work well on the LSM
-> hook model, perhaps just:
-> 
-> kernel_module_signed()
-> 
-> Suffices, therefore if not enforced or required its signed. If its
-> enforced or required and really signed, then it signed.
-> 
-> >  		err = 0;
-> >  
-> >  	return err;
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > index 357edd140c09..bbaf87f688be 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
-> >  		}
-> >  		break;
-> >  	case LOADING_MODULE:
-> > -		sig_enforce = is_module_sig_enforced();
-> > +		sig_enforce = is_module_sig_enforced_or_required();
-> 
-> Yet another user.
-> 
-> >  		if (ima_enforce && (!sig_enforce
-> >  				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
-> > -- 
-> > 2.7.5
-> 
-> Plus I think LSM'ifying module signing may help cleaning up some of the
-> #ifdery and config options around module signing. I'm suggestin this now 
-> as this has been on my mental TODO list for a while, and just not sure
-> when we'd get to it, if not you, not sure when it'd get done.
-> 
-> Then, do we have proper unit tests for the mixture of options to ensure
-> we can easily ensure we don't regress?
-> 
+> Based on the IMA policy, the kernel module signature can be
+> verified.  Also based on the IMA policy, the file hash added to the
+> measurement list, and the file hash used to extend the TPM PCR.
+>  Lastly, based on policy the file hash can be added to the audit log.
 
-There are already two methods Â - appended signatures and IMA xattrs -
-for validating kernel modules.
+Sure...
 
-Kernel modules shouldn't be treated any differently than any other file. Â Based on the IMA policy, the kernel module signature can be verified. Â Also based on the IMA policy, the file hash added to the measurement list, and the file hash used to extend the TPM PCR. Â Lastly, based on policy the file hash can be added to the audit log.
+> I don't see a need for an additional LSM just for verifying kernel
+> module signatures.
 
-I don't see a need for an additional LSM just for verifying kernel module signatures.
+But it is one, module signing was just spawned pre the boom of LSMs.
 
-Mimi
+I do believe that treating the code as such would help with its reading
+and long term maintenance.
 
+Anyway, I had to try to convince you.
+
+ Luis
