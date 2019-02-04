@@ -2,70 +2,166 @@ Return-Path: <SRS0=s/Qe=QL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC97C282CC
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 17:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847D1C282C4
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 20:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3642087C
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 17:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 501292073D
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 20:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549312737;
+	bh=PUqcfUGNQIRgh0/bhVJ7ahkp/EXeqLcTZ3pmVFh5oiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=C+b1HywMdMI2ySBgfON6q1qD31VWFhA9J/94xe6CAZuU5pvCff2XHoZfXGXACHpl/
+	 IB5bpe91TUbZPsTevLS+gGGRRPLYPWVIiPvBfGVCPucv8iQLdarhE8hJu1BYopK0kX
+	 /29ADoq+JMhC8Vl/u5TxOrzmaBS8vcbx/JqjzEaU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbfBDRMT convert rfc822-to-8bit (ORCPT
+        id S1729001AbfBDUi4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Feb 2019 12:12:19 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:36788 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728684AbfBDRMT (ORCPT
+        Mon, 4 Feb 2019 15:38:56 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:37114 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726676AbfBDUi4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Feb 2019 12:12:19 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-137-Or7scgR3NTaJVQtR1cG5qQ-1; Mon, 04 Feb 2019 17:12:15 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 4 Feb 2019 17:12:57 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 4 Feb 2019 17:12:57 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Jarkko Sakkinen' <jarkko.sakkinen@linux.intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: RE: [PATCH v2] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Thread-Topic: [PATCH v2] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Thread-Index: AQHUvJH/Exb/UEP0DU2J88Qd/uFcRKXP4Huw
-Date:   Mon, 4 Feb 2019 17:12:57 +0000
-Message-ID: <1047dac117cc43bbae1c0db922b13aa5@AcuMS.aculab.com>
-References: <20190204135943.15756-1-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20190204135943.15756-1-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 4 Feb 2019 15:38:56 -0500
+Received: by mail-yb1-f196.google.com with SMTP id 2so151989ybw.4;
+        Mon, 04 Feb 2019 12:38:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mLRyA2UnjPhczO4SCdO86eyDXL+lUQz5fPvfQ4hWkHg=;
+        b=WOHU3OVQmSFeXYZ2sC1WaVJ6ED1aJ69TDiwVorvXmlOJSP468HxhqC9Ci4WYbsk+A6
+         CAmYQPf2AnjWbz6SLFr0uD7hwKBNTC2p+wE2K/VU5n6/qF1S17ok3SbW6EujbWg7rcjy
+         8l05l5DjIDH4oHwEFfzz1xWanDzSyZG/0eGT9B8pCa0LBMKVRbN+NMCRUXowZMslQVQq
+         CkAie6ZBNwkIUB0XxxyiwFv0sDb9sZ2EykXUffug/BPp0a6CDgBx67KOcd3ND/dtsvvB
+         8oETo7EH2M24Us9Gh1kpJlqoQTTd5xJgD1Ga5h/K+HhGRds5CdAwSp76BqLEDWdyjNHl
+         mRVw==
+X-Gm-Message-State: AHQUAubCY55ZPSyrsUYreXW4LRpEDyVRyQovL/bdmifj0TpQYRIhqh7e
+        3WtebNFVkmEeiLoqGFULRl0=
+X-Google-Smtp-Source: AHgI3IbE+1S723jnR6IdBZRzPdY+LBFgutqQzen4Ri49zwhnqVowDgOe+jjrk6AEhQqeaVtLSyjk+g==
+X-Received: by 2002:a25:ba84:: with SMTP id s4mr1139536ybg.325.1549312734864;
+        Mon, 04 Feb 2019 12:38:54 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id f8sm313140ywc.92.2019.02.04.12.38.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 12:38:53 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 04 Feb 2019 12:38:50 -0800
+Date:   Mon, 4 Feb 2019 12:38:50 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+Message-ID: <20190204203850.GP11489@garbanzo.do-not-panic.com>
+References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
+ <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
 MIME-Version: 1.0
-X-MC-Unique: Or7scgR3NTaJVQtR1cG5qQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> +	 * field) in order to make sure that the reminding memory accesses will
+On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 2ad1b5239910..70a9709d19eb 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
+>  
+>  static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+>  module_param(sig_enforce, bool_enable_only, 0644);
+> +static bool sig_required;
+>  
+>  /*
+>   * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
+>   * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
 
-remaining
+But the docs were't updated.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+>   */
+> -bool is_module_sig_enforced(void)
+> +bool is_module_sig_enforced_or_required(void)
+>  {
+> -	return sig_enforce;
+> +	return sig_enforce || sig_required;
+>  }
+> -EXPORT_SYMBOL(is_module_sig_enforced);
+> +EXPORT_SYMBOL(is_module_sig_enforced_or_required);
 
+Meh, this is getting sloppy, the module signing infrastructure should
+just be LSM'ified now that we have stacked LSMs. That would
+compartamentaliz that code and make this much easier to read / understand
+and mantain.
+
+Can you take a look at doing it that way instead?
+
+> +
+> +void set_module_sig_required(void)
+> +{
+> +	sig_required = true;
+> +}
+> +EXPORT_SYMBOL(set_module_sig_required);
+
+Since this is a *new* symbol, not yet used, and only used by IMA I'd
+prefer this to be EXPORT_SYMBOL_GPL().
+
+>  /* Block module loading/unloading? */
+>  int modules_disabled = 0;
+> @@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
+>  	}
+>  
+>  	/* Not having a signature is only an error if we're strict. */
+> -	if (err == -ENOKEY && !is_module_sig_enforced())
+> +	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
+
+This is where I think a proper LSM hook would make sense. I think
+that these "questions" model for signing don't work well on the LSM
+hook model, perhaps just:
+
+kernel_module_signed()
+
+Suffices, therefore if not enforced or required its signed. If its
+enforced or required and really signed, then it signed.
+
+>  		err = 0;
+>  
+>  	return err;
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 357edd140c09..bbaf87f688be 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
+>  		}
+>  		break;
+>  	case LOADING_MODULE:
+> -		sig_enforce = is_module_sig_enforced();
+> +		sig_enforce = is_module_sig_enforced_or_required();
+
+Yet another user.
+
+>  		if (ima_enforce && (!sig_enforce
+>  				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
+> -- 
+> 2.7.5
+
+Plus I think LSM'ifying module signing may help cleaning up some of the
+#ifdery and config options around module signing. I'm suggestin this now 
+as this has been on my mental TODO list for a while, and just not sure
+when we'd get to it, if not you, not sure when it'd get done.
+
+Then, do we have proper unit tests for the mixture of options to ensure
+we can easily ensure we don't regress?
+
+  Luis
