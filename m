@@ -2,148 +2,122 @@ Return-Path: <SRS0=s/Qe=QL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7BEC282C4
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 09:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEE7C282CC
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 11:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7456D2147A
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 09:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C746220823
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 11:44:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbfBDJsr (ORCPT
+        id S1728788AbfBDLoX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:48:47 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35427 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728295AbfBDJsr (ORCPT
+        Mon, 4 Feb 2019 06:44:23 -0500
+Received: from mga12.intel.com ([192.55.52.136]:13176 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726603AbfBDLoX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:48:47 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 81so11958164otj.2
-        for <linux-security-module@vger.kernel.org>; Mon, 04 Feb 2019 01:48:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6FBCNv8Amd2T6qCzRKYhQAWznNu2sLvBARf0W5Lu0p8=;
-        b=P0UK/iDJfmI87K15ZGBCLaoepVGNDyHB1MU8gPaa5oaZUL47lveleXBMUfpyzg3xO/
-         Ku9H/eEZwyr17C4L77XL3q16C6Hqb0HRKqRC0rCpAvetwi9N4YVqfmbi73ZrANEbwcaV
-         yKBZ5aRgmP9txEZb0pgmpmkdFpwuRfRaqnV5WtbSKTchBjBM2BHbU8YsImqpU1LsKy4Z
-         Udwumzg+TrSRnReLnhpdSDRxr0d+ymv5JZNGlLDozQMETEh2Y+d3c/FEe07WDFrJLrG4
-         6/uNOC7DECQQXxcpjTf6gpLsbrDgo4UO8jTeWGs7DiTZZtm+mfH47/xkq7vPpS5Zm3y/
-         c1AQ==
-X-Gm-Message-State: AJcUukeMGb+/3eiVBXrVU2eKQHN91OyMt/10CYr8w7yiHMMvzco/DzHi
-        p1tZUz1S8Tk/5oatYPgpsQfD7m7D5fPTaBnVCklMmw==
-X-Google-Smtp-Source: ALg8bN44sb6V59wT0E57n2ppjt6KdRNDkuTas+wvVPNZa5NcKymJZFMolYJhsDQuYfAgjc9cxwY1ADlmreG088YZETA=
-X-Received: by 2002:a9d:1ea7:: with SMTP id n36mr35579193otn.217.1549273726342;
- Mon, 04 Feb 2019 01:48:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20190130114150.27807-1-omosnace@redhat.com> <20190130114150.27807-6-omosnace@redhat.com>
- <20190130170911.GZ50184@devbig004.ftw2.facebook.com> <CAFqZXNt0jNg2-bNbtsCX2=7bcb_GaxCnHfSyck=GksXBTkWJ-g@mail.gmail.com>
- <ebe3c70e-2bde-9fca-bb05-b46173e09b69@schaufler-ca.com>
-In-Reply-To: <ebe3c70e-2bde-9fca-bb05-b46173e09b69@schaufler-ca.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 4 Feb 2019 10:48:35 +0100
-Message-ID: <CAFqZXNuGUE4oq-=PK9mb=9V5wiETQR4UHYs5XF44-aWoZRrqdg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] kernfs: initialize security of newly created nodes
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Tejun Heo <tj@kernel.org>, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Linux Security Module list 
+        Mon, 4 Feb 2019 06:44:23 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 03:44:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="119817594"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by fmsmga007.fm.intel.com with ESMTP; 04 Feb 2019 03:44:20 -0800
+Date:   Mon, 4 Feb 2019 13:44:19 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: Re: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
+Message-ID: <20190204114419.GA26799@linux.intel.com>
+References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA8E215@hasmsx108.ger.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA8E215@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 31, 2019 at 5:39 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 1/31/2019 2:20 AM, Ondrej Mosnacek wrote:
-> > Hi Tejun,
-> >
-> > On Wed, Jan 30, 2019 at 6:09 PM Tejun Heo <tj@kernel.org> wrote:
-> >> Hello,
-> >>
-> >> On Wed, Jan 30, 2019 at 12:41:50PM +0100, Ondrej Mosnacek wrote:
-> >>> @@ -673,6 +698,12 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
-> >>>                       goto err_out3;
-> >>>       }
-> >>>
-> >>> +     if (parent) {
-> >>> +             ret = kernfs_node_init_security(parent, kn);
-> >>> +             if (ret)
-> >>> +                     goto err_out3;
-> >>> +     }
-> >> So, doing this unconditionally isn't a good idea.  kernfs doesn't use
-> >> the usual dentry/inode because there are machines with 6, even 7 digit
-> >> number of kernfs nodes and some of them even failed to boot due to
-> >> memory shortage.  Please don't blow it up by default.
-> > Hm, I see... basically the only thing that gets allocated in
-> > kernfs_node_init_security() by default (at least under SELinux/ no
-> > LSM) is the kernfs_iattrs structures, so I assume you are pointing at
-> > that. I think this can be easily fixed, if we again use the assumption
-> > that whenever the parent node has only default attributes
-> > (parent->iattrs == NULL), then the child node should also have just
-> > default attributes (and so we don't need to call kernfs_iattrs() on it
-> > nor call the security hook). Something along these lines:
-> >
-> > [...]
-> > +static int kernfs_node_init_security(struct kernfs_node *parent,
-> > +                                    struct kernfs_node *kn)
-> > +{
-> > +       struct kernfs_iattrs *attrs, *pattrs;
-> > +       struct qstr q;
-> > +
-> > +       pattrs = parent->iattrs;
-> > +       if (!pattrs)
-> > +               return 0;
-> > +
-> > +       attrs = kernfs_iattrs(kn);
-> > +       if (!attrs)
-> > +               return -ENOMEM;
-> > +
-> > +       q.name = kn->name;
-> > +       q.hash_len = hashlen_string(parent, kn->name);
-> > [...]
-> >
-> > Technically this might make some LSMs unhappy, if they want to set
-> > some non-default context even if parent is all default,
->
-> The only possibility I see as a potential problem is a kernfs
-> mounted with the smackfstransmute=Something option. This sets
-> the security.SMACK64 to "Something" and the security.SMACK64TRANSMUTE
-> to true on the root node. But that doesn't seem like a rational
-> thing to do for a kernfs based filesystem.
+On Fri, Feb 01, 2019 at 07:20:42PM +0000, Winkler, Tomas wrote:
+> > 
+> > The current approach to read first 6 bytes from the response and then tail of
+> > the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+> > (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+> > memcpy_fromio() is implemented. If this happens, the read will fail and the
+> > memory controller will fill the read with 1's.
+> > 
+> > This was triggered by 170d13ca3a2f, which should be probably refined to check
+> > and react to the address alignment. Before that commit, on x86
+> > memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
+> > thing (from tpm_crb's perspective) for us so far, but we should not rely on that.
+> > Thus, it makes sense to fix this also in tpm_crb, not least because the fix can be
+> > then backported to stable kernels and make them more robust when compiled
+> > in differing environments.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Tomas Winkler <tomas.winkler@intel.com>
+> > Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+> > Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  drivers/char/tpm/tpm_crb.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c index
+> > 36952ef98f90..7f47e43aa9f1 100644
+> > --- a/drivers/char/tpm/tpm_crb.c
+> > +++ b/drivers/char/tpm/tpm_crb.c
+> > @@ -288,18 +288,18 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf,
+> > size_t count)
+> >  	unsigned int expected;
+> > 
+> >  	/* sanity check */
+> > -	if (count < 6)
+> > +	if (count < 8)
+> >  		return -EIO;
+> Why don't you already enforce reading at least the whole TPM header 10bytes, we are reading the whole buffer at one call anyway.
+> Who every is asking for 8 bytes from the protocol level, is doing something wrong.
+> 
+> >  	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
+> >  		return -EIO;
+> > 
+> > -	memcpy_fromio(buf, priv->rsp, 6);
+> > +	memcpy_fromio(buf, priv->rsp, 8);
+> Maybe a short comment will spare someone looking into git history 
+> >  	expected = be32_to_cpup((__be32 *) &buf[2]);
+> > -	if (expected > count || expected < 6)
+> > +	if (expected > count || expected < 8)
+> Expected should be at least tpm header, right?
+> >  		return -EIO;
+> > 
+> > -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+> > +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
+> > 
+> >  	return expected;
+> >  }
+> Otherwise ready the first 8 bytes looks good. 
+> Thanks 
+> Tomas
 
-Actually... I am now experimenting with a slightly different
-kernfs_node_init_security() implementation that should allow for
-calling the hook every time and only allocating kernfs_iattrs when it
-detects that the hook actually did add some security xattrs. It is
-somewhat more hacky and complex, but it should provide the best
-possible compromise. I will post it for review soon.
+Your proposals look sane, thank you.
 
->
-> > but this is
-> > already impossible now and in this case I think we have no better
-> > choice than sacrificing a bit of flexibility for memory efficiency,
-> > which is apparently critical here.
-> >
-> > Tejun, Casey, would the above modification be fine with you?
->
-> I *think so*, but I can't say 100% that I really understand the
-> entire issue.
->
-> >
-> > --
-> > Ondrej Mosnacek <omosnace at redhat dot com>
-> > Associate Software Engineer, Security Technologies
-> > Red Hat, Inc.
-> >
-
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+/Jarkko
