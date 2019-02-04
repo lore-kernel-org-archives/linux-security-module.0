@@ -6,64 +6,60 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8FAC282CB
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 23:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD4EC282CB
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 23:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10CEF20821
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 23:31:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C43EC20821
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 23:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbfBDXav (ORCPT
+        id S1726858AbfBDXbX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Feb 2019 18:30:51 -0500
-Received: from mga07.intel.com ([134.134.136.100]:45632 "EHLO mga07.intel.com"
+        Mon, 4 Feb 2019 18:31:23 -0500
+Received: from mga06.intel.com ([134.134.136.31]:59337 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbfBDXav (ORCPT
+        id S1726083AbfBDXbW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Feb 2019 18:30:51 -0500
+        Mon, 4 Feb 2019 18:31:22 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 15:30:50 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 15:31:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="272504094"
+   d="scan'208";a="272504189"
 Received: from baparham-mobl.amr.corp.intel.com (HELO localhost) ([10.249.254.152])
-  by orsmga004.jf.intel.com with ESMTP; 04 Feb 2019 15:30:45 -0800
-Date:   Tue, 5 Feb 2019 01:30:44 +0200
+  by orsmga004.jf.intel.com with ESMTP; 04 Feb 2019 15:31:18 -0800
+Date:   Tue, 5 Feb 2019 01:31:17 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, david.safford@ge.com,
-        monty.wiseman@ge.com, matthewgarrett@google.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v9 6/6] tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()
-Message-ID: <20190204233044.GD14992@linux.intel.com>
-References: <20190201100641.26936-1-roberto.sassu@huawei.com>
- <20190201100641.26936-7-roberto.sassu@huawei.com>
- <1549048506.6993.73.camel@linux.ibm.com>
- <9f8a64d6-d566-1497-1d2b-465440cdfa80@huawei.com>
- <20190204120746.GG26799@linux.intel.com>
- <8b519a73-eb76-c700-69bc-17f7788cca08@huawei.com>
- <20190204232640.GB14992@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2] tpm/st33zp24: Fix the name collisions in
+ tpm_st33zp24_spi and tpm_i2c_infineon
+Message-ID: <20190204233117.GE14992@linux.intel.com>
+References: <20190204133749.14176-1-jarkko.sakkinen@linux.intel.com>
+ <575f4693-129c-469c-e54e-dbb9ad2a66f2@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204232640.GB14992@linux.intel.com>
+In-Reply-To: <575f4693-129c-469c-e54e-dbb9ad2a66f2@huawei.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 05, 2019 at 01:26:40AM +0200, Jarkko Sakkinen wrote:
-> On Mon, Feb 04, 2019 at 02:21:59PM +0100, Roberto Sassu wrote:
-> > I can include your fix in patch 4/6, if you prefer.
+On Mon, Feb 04, 2019 at 02:49:54PM +0100, Roberto Sassu wrote:
+> On 2/4/2019 2:37 PM, Jarkko Sakkinen wrote:
+> > Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
+> > ST33ZP24_BUFSIZE.
+> > 
+> > Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
+> > TPM_I2C_INFINEON_BUFSIZE.
 > 
-> It is not really a question of my preference because the changes in
-> 4/6 are not part of the bug fix.
+> Please also add a prefix to TPM_RETRY in tpm_i2c_nuvoton.c.
 
-e.g. fixes tags and stable backports
+Thanks, can do.
 
 /Jarkko
