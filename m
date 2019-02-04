@@ -2,151 +2,159 @@ Return-Path: <SRS0=s/Qe=QL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A83AC282CB
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 13:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 731A7C282C4
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 13:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0379F2082F
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 13:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A4EA2081B
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 13:38:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731280AbfBDNWL (ORCPT
+        id S1730024AbfBDNhz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Feb 2019 08:22:11 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32863 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727950AbfBDNWL (ORCPT
+        Mon, 4 Feb 2019 08:37:55 -0500
+Received: from mga06.intel.com ([134.134.136.31]:9198 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726610AbfBDNhz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Feb 2019 08:22:11 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id A5758746AE9CE44AB664;
-        Mon,  4 Feb 2019 13:22:09 +0000 (GMT)
-Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 4 Feb
- 2019 13:21:59 +0000
-Subject: Re: [PATCH v9 6/6] tpm: pass an array of tpm_extend_digest structures
- to tpm_pcr_extend()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Mimi Zohar <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190201100641.26936-1-roberto.sassu@huawei.com>
- <20190201100641.26936-7-roberto.sassu@huawei.com>
- <1549048506.6993.73.camel@linux.ibm.com>
- <9f8a64d6-d566-1497-1d2b-465440cdfa80@huawei.com>
- <20190204120746.GG26799@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <8b519a73-eb76-c700-69bc-17f7788cca08@huawei.com>
-Date:   Mon, 4 Feb 2019 14:21:59 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 4 Feb 2019 08:37:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 05:37:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="135730851"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by orsmga001.jf.intel.com with ESMTP; 04 Feb 2019 05:37:51 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, roberto.sassu@huawei.com,
+        zohar@linux.ibm.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] tpm/st33zp24: Fix the name collisions in tpm_st33zp24_spi and tpm_i2c_infineon
+Date:   Mon,  4 Feb 2019 15:37:49 +0200
+Message-Id: <20190204133749.14176-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20190204120746.GG26799@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.204.65.155]
-X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/4/2019 1:07 PM, Jarkko Sakkinen wrote:
-> On Mon, Feb 04, 2019 at 10:14:38AM +0100, Roberto Sassu wrote:
->> On 2/1/2019 8:15 PM, Mimi Zohar wrote:
->>> Hi Roberto,
->>>
->>> Sorry for the delayed review.  A few comments inline below, minor
->>> suggestions.
->>>
->>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->>>> index cc12f3449a72..e6b2dcb0846a 100644
->>>> --- a/security/integrity/ima/ima.h
->>>> +++ b/security/integrity/ima/ima.h
->>>> @@ -56,6 +56,7 @@ extern int ima_policy_flag;
->>>>    extern int ima_hash_algo;
->>>>    extern int ima_appraise;
->>>>    extern struct tpm_chip *ima_tpm_chip;
->>>> +extern struct tpm_digest *digests;
->>>>    /* IMA event related data */
->>>>    struct ima_event_data {
->>>> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
->>>> index 6bb42a9c5e47..296a965b11ef 100644
->>>> --- a/security/integrity/ima/ima_init.c
->>>> +++ b/security/integrity/ima/ima_init.c
->>>> @@ -27,6 +27,7 @@
->>>>    /* name for boot aggregate entry */
->>>>    static const char boot_aggregate_name[] = "boot_aggregate";
->>>>    struct tpm_chip *ima_tpm_chip;
->>>> +struct tpm_digest *digests;
->>>
->>> "digests" is used in the new ima_init_digests() and in
->>> ima_pcr_extend().  It's nice that the initialization routines are
->>> grouped together here in ima_init.c, but wouldn't it better to define
->>> "digests" in ima_queued.c, where it is currently being used?
->>>    "digests" could then be defined as static.
->>
->> 'digests' and ima_init_digests() can be moved to ima_queue.c, but I have
->> to add the definition of ima_init_digests() to ima.h. Should I do it?
->>
->>
->>>>    /* Add the boot aggregate to the IMA measurement list and extend
->>>>     * the PCR register.
->>>> @@ -104,6 +105,24 @@ void __init ima_load_x509(void)
->>>>    }
->>>>    #endif
->>>> +int __init ima_init_digests(void)
->>>> +{
->>>> +	int i;
->>>> +
->>>> +	if (!ima_tpm_chip)
->>>> +		return 0;
->>>> +
->>>> +	digests = kcalloc(ima_tpm_chip->nr_allocated_banks, sizeof(*digests),
->>>> +			  GFP_NOFS);
->>>> +	if (!digests)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
->>>> +		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>>    int __init ima_init(void)
->>>>    {
->>>>    	int rc;
->>>> @@ -125,6 +144,9 @@ int __init ima_init(void)
->>>>    	ima_load_kexec_buffer();
->>>> +	rc = ima_init_digests();
->>>
->>> Ok. Getting the tpm chip is at the beginning of this function.
->>>    Deferring allocating "digests" to here, avoids having to free memory
->>> on failure.
->>>
->>> ima_load_kexec_buffer() restores prior measurements, but doesn't
->>> extend the TPM.  For anyone reading the code, a short comment above
->>> ima_load_kexec_buffer() would make sense.
->>
->> Ok. Should I resend the last patch again with the fixes you suggested?
-> 
-> Send the full patch set. For me it is easier then to apply the series
-> rather than cherry-picking patches from random versions of the patch
-> set.
+Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
+ST33ZP24_BUFSIZE.
 
-I can include your fix in patch 4/6, if you prefer.
+Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
+TPM_I2C_INFINEON_BUFSIZE.
 
-Roberto
+Cc: stable@vger.kernel.org
+Fixes: bf38b8710892 ("tpm/tpm_i2c_stm_st33: Split tpm_i2c_tpm_st33 in 2 layers (core + phy)")
+Fixes: aad628c1d91a ("char/tpm: Add new driver for Infineon I2C TIS TPM")
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+v2: Fix also the name collision in tpm_ic2_infineon.
+ drivers/char/tpm/st33zp24/i2c.c      |  2 +-
+ drivers/char/tpm/st33zp24/spi.c      |  2 +-
+ drivers/char/tpm/st33zp24/st33zp24.h |  4 ++--
+ drivers/char/tpm/tpm_i2c_infineon.c  | 15 ++++++++-------
+ 4 files changed, 12 insertions(+), 11 deletions(-)
 
-
-> /Jarkko
-> 
-
+diff --git a/drivers/char/tpm/st33zp24/i2c.c b/drivers/char/tpm/st33zp24/i2c.c
+index be5d1abd3e8e..8390c5b54c3b 100644
+--- a/drivers/char/tpm/st33zp24/i2c.c
++++ b/drivers/char/tpm/st33zp24/i2c.c
+@@ -33,7 +33,7 @@
+ 
+ struct st33zp24_i2c_phy {
+ 	struct i2c_client *client;
+-	u8 buf[TPM_BUFSIZE + 1];
++	u8 buf[ST33ZP24_BUFSIZE + 1];
+ 	int io_lpcpd;
+ };
+ 
+diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
+index d7909ab287a8..ff019a1e3c68 100644
+--- a/drivers/char/tpm/st33zp24/spi.c
++++ b/drivers/char/tpm/st33zp24/spi.c
+@@ -63,7 +63,7 @@
+  * some latency byte before the answer is available (max 15).
+  * We have 2048 + 1024 + 15.
+  */
+-#define ST33ZP24_SPI_BUFFER_SIZE (TPM_BUFSIZE + (TPM_BUFSIZE / 2) +\
++#define ST33ZP24_SPI_BUFFER_SIZE (ST33ZP24_BUFSIZE + (ST33ZP24_BUFSIZE / 2) +\
+ 				  MAX_SPI_LATENCY)
+ 
+ 
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.h b/drivers/char/tpm/st33zp24/st33zp24.h
+index 6f4a4198af6a..20da0a84988d 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.h
++++ b/drivers/char/tpm/st33zp24/st33zp24.h
+@@ -18,8 +18,8 @@
+ #ifndef __LOCAL_ST33ZP24_H__
+ #define __LOCAL_ST33ZP24_H__
+ 
+-#define TPM_WRITE_DIRECTION             0x80
+-#define TPM_BUFSIZE                     2048
++#define TPM_WRITE_DIRECTION	0x80
++#define ST33ZP24_BUFSIZE	2048
+ 
+ struct st33zp24_dev {
+ 	struct tpm_chip *chip;
+diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
+index 9086edc9066b..b9d5a1dda8d2 100644
+--- a/drivers/char/tpm/tpm_i2c_infineon.c
++++ b/drivers/char/tpm/tpm_i2c_infineon.c
+@@ -26,8 +26,7 @@
+ #include <linux/wait.h>
+ #include "tpm.h"
+ 
+-/* max. buffer size supported by our TPM */
+-#define TPM_BUFSIZE 1260
++#define TPM_I2C_INFINEON_MAX_BUFSIZE 1260
+ 
+ /* max. number of iterations after I2C NAK */
+ #define MAX_COUNT 3
+@@ -63,11 +62,13 @@ enum i2c_chip_type {
+ 	UNKNOWN,
+ };
+ 
+-/* Structure to store I2C TPM specific stuff */
+ struct tpm_inf_dev {
+ 	struct i2c_client *client;
+ 	int locality;
+-	u8 buf[TPM_BUFSIZE + sizeof(u8)]; /* max. buffer size + addr */
++	/* In addition to the data itself, the buffer must fit the 7-bit I2C
++	 * address and the direction bit.
++	 */
++	u8 buf[TPM_I2C_INFINEON_MAX_BUFSIZE + 1];
+ 	struct tpm_chip *chip;
+ 	enum i2c_chip_type chip_type;
+ 	unsigned int adapterlimit;
+@@ -219,7 +220,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, size_t len,
+ 		.buf = tpm_dev.buf
+ 	};
+ 
+-	if (len > TPM_BUFSIZE)
++	if (len > TPM_I2C_INFINEON_MAX_BUFSIZE)
+ 		return -EINVAL;
+ 
+ 	if (!tpm_dev.client->adapter->algo->master_xfer)
+@@ -527,8 +528,8 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 	u8 retries = 0;
+ 	u8 sts = TPM_STS_GO;
+ 
+-	if (len > TPM_BUFSIZE)
+-		return -E2BIG;	/* command is too long for our tpm, sorry */
++	if (len > TPM_I2C_INFINEON_BUFSIZE)
++		return -E2BIG;
+ 
+ 	if (request_locality(chip, 0) < 0)
+ 		return -EBUSY;
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+2.19.1
+
