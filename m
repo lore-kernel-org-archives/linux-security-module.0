@@ -2,139 +2,99 @@ Return-Path: <SRS0=s/Qe=QL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5088DC282C4
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 12:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20570C282C4
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 12:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B60D2087C
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 12:07:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE52D2081B
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 12:17:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbfBDMHw (ORCPT
+        id S1728216AbfBDMRG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Feb 2019 07:07:52 -0500
-Received: from mga07.intel.com ([134.134.136.100]:52837 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728216AbfBDMHw (ORCPT
+        Mon, 4 Feb 2019 07:17:06 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:20838 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730200AbfBDMRG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Feb 2019 07:07:52 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 04:07:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="131378260"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by orsmga002.jf.intel.com with ESMTP; 04 Feb 2019 04:07:46 -0800
-Date:   Mon, 4 Feb 2019 14:07:46 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, david.safford@ge.com,
-        monty.wiseman@ge.com, matthewgarrett@google.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v9 6/6] tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()
-Message-ID: <20190204120746.GG26799@linux.intel.com>
-References: <20190201100641.26936-1-roberto.sassu@huawei.com>
- <20190201100641.26936-7-roberto.sassu@huawei.com>
- <1549048506.6993.73.camel@linux.ibm.com>
- <9f8a64d6-d566-1497-1d2b-465440cdfa80@huawei.com>
+        Mon, 4 Feb 2019 07:17:06 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-186-21gOOKMAOxe51vSNjyFcuQ-1; Mon, 04 Feb 2019 12:17:01 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
+ 4 Feb 2019 12:17:43 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 4 Feb 2019 12:17:43 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Jarkko Sakkinen' <jarkko.sakkinen@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: RE: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
+Thread-Topic: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
+Thread-Index: AQHUuiIbeXT7VAC4P0CcjbhYywJnDaXPkXWA
+Date:   Mon, 4 Feb 2019 12:17:43 +0000
+Message-ID: <0446c899270a4b128a6d05e62d63e704@AcuMS.aculab.com>
+References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9f8a64d6-d566-1497-1d2b-465440cdfa80@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: 21gOOKMAOxe51vSNjyFcuQ-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 04, 2019 at 10:14:38AM +0100, Roberto Sassu wrote:
-> On 2/1/2019 8:15 PM, Mimi Zohar wrote:
-> > Hi Roberto,
-> > 
-> > Sorry for the delayed review.  A few comments inline below, minor
-> > suggestions.
-> > 
-> > > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> > > index cc12f3449a72..e6b2dcb0846a 100644
-> > > --- a/security/integrity/ima/ima.h
-> > > +++ b/security/integrity/ima/ima.h
-> > > @@ -56,6 +56,7 @@ extern int ima_policy_flag;
-> > >   extern int ima_hash_algo;
-> > >   extern int ima_appraise;
-> > >   extern struct tpm_chip *ima_tpm_chip;
-> > > +extern struct tpm_digest *digests;
-> > >   /* IMA event related data */
-> > >   struct ima_event_data {
-> > > diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> > > index 6bb42a9c5e47..296a965b11ef 100644
-> > > --- a/security/integrity/ima/ima_init.c
-> > > +++ b/security/integrity/ima/ima_init.c
-> > > @@ -27,6 +27,7 @@
-> > >   /* name for boot aggregate entry */
-> > >   static const char boot_aggregate_name[] = "boot_aggregate";
-> > >   struct tpm_chip *ima_tpm_chip;
-> > > +struct tpm_digest *digests;
-> > 
-> > "digests" is used in the new ima_init_digests() and in
-> > ima_pcr_extend().  It's nice that the initialization routines are
-> > grouped together here in ima_init.c, but wouldn't it better to define
-> > "digests" in ima_queued.c, where it is currently being used?
-> >   "digests" could then be defined as static.
-> 
-> 'digests' and ima_init_digests() can be moved to ima_queue.c, but I have
-> to add the definition of ima_init_digests() to ima.h. Should I do it?
-> 
-> 
-> > >   /* Add the boot aggregate to the IMA measurement list and extend
-> > >    * the PCR register.
-> > > @@ -104,6 +105,24 @@ void __init ima_load_x509(void)
-> > >   }
-> > >   #endif
-> > > +int __init ima_init_digests(void)
-> > > +{
-> > > +	int i;
-> > > +
-> > > +	if (!ima_tpm_chip)
-> > > +		return 0;
-> > > +
-> > > +	digests = kcalloc(ima_tpm_chip->nr_allocated_banks, sizeof(*digests),
-> > > +			  GFP_NOFS);
-> > > +	if (!digests)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
-> > > +		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >   int __init ima_init(void)
-> > >   {
-> > >   	int rc;
-> > > @@ -125,6 +144,9 @@ int __init ima_init(void)
-> > >   	ima_load_kexec_buffer();
-> > > +	rc = ima_init_digests();
-> > 
-> > Ok. Getting the tpm chip is at the beginning of this function.
-> >   Deferring allocating "digests" to here, avoids having to free memory
-> > on failure.
-> > 
-> > ima_load_kexec_buffer() restores prior measurements, but doesn't
-> > extend the TPM.  For anyone reading the code, a short comment above
-> > ima_load_kexec_buffer() would make sense.
-> 
-> Ok. Should I resend the last patch again with the fixes you suggested?
+From: Jarkko Sakkinen
+> Sent: 01 February 2019 11:20
+> The current approach to read first 6 bytes from the response and then tail
+> of the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+> (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+> memcpy_fromio() is implemented. If this happens, the read will fail and the
+> memory controller will fill the read with 1's.
 
-Send the full patch set. For me it is easier then to apply the series
-rather than cherry-picking patches from random versions of the patch
-set.
+To my mind memcpy_to/fromio() should only be used on IO addresses that are
+adequately like memory, and should be implemented in a way that that won't
+generate invalid bus cycles.
+Also memcpy_fromio() should also be allowed to do 'aligned' accesses that
+go beyond the ends of the required memory area.
 
-/Jarkko
+...
+> 
+> -	memcpy_fromio(buf, priv->rsp, 6);
+> +	memcpy_fromio(buf, priv->rsp, 8);
+>  	expected = be32_to_cpup((__be32 *) &buf[2]);
+> -	if (expected > count || expected < 6)
+> +	if (expected > count || expected < 8)
+>  		return -EIO;
+> 
+> -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+> +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
+
+Why not just use readl() or readq() ?
+
+Bound to generate better code.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
