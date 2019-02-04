@@ -1,143 +1,171 @@
-Return-Path: <SRS0=g9Jl=QK=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=s/Qe=QL=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D19BC282DB
-	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 23:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE4FC282C4
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 08:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C2CA2177E
-	for <linux-security-module@archiver.kernel.org>; Sun,  3 Feb 2019 23:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A80217D6
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Feb 2019 08:08:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lmQXMM5p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbfBCXBP (ORCPT
+        id S1727671AbfBDIIG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 3 Feb 2019 18:01:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46978 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726723AbfBCXBO (ORCPT
+        Mon, 4 Feb 2019 03:08:06 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35376 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbfBDIIG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 3 Feb 2019 18:01:14 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x13MwoWa014754
-        for <linux-security-module@vger.kernel.org>; Sun, 3 Feb 2019 18:01:14 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qe8wt11t7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Sun, 03 Feb 2019 18:01:13 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 3 Feb 2019 23:01:11 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 3 Feb 2019 23:01:07 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x13N16Rh57737390
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 3 Feb 2019 23:01:06 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 506BAA4051;
-        Sun,  3 Feb 2019 23:01:06 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5426BA405D;
-        Sun,  3 Feb 2019 23:01:05 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.242])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun,  3 Feb 2019 23:01:05 +0000 (GMT)
-Subject: Re: [PATCH] tpm/st33zp24: Fix name collision with TPM_BUFSIZE
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, roberto.sassu@huawei.com,
-        stable@vger.kernel.org
-Date:   Sun, 03 Feb 2019 18:00:54 -0500
-In-Reply-To: <20190201174117.23440-1-jarkko.sakkinen@linux.intel.com>
-References: <20190201174117.23440-1-jarkko.sakkinen@linux.intel.com>
+        Mon, 4 Feb 2019 03:08:06 -0500
+Received: by mail-it1-f194.google.com with SMTP id p197so19153275itp.0
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Feb 2019 00:08:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8gi8M+mE+ACoC9Qk4qSg00/7pIRn10WcvZjQQsyieQE=;
+        b=lmQXMM5pu+qGilUQbhs+M7QqLV1DSVqce1wRnZu8hK4BLafxiJVBObt/HtNlnXYfrk
+         KQ0jXYLZvPFCJWbzh7dJ0H+4Osw5CsJDUd4RYMaZ13GOr8AaEgYZ3hYBfJFRnezzA71c
+         kjHBXGDlLds8uCVJIDfg9+gEAK/nHZ8bgsBSXjNCjfDj6qazU5RHdW3brTwWP9sBMWFv
+         i2cDgLsMIKHHrgyhlh5QT4v+qBcjrOqU0ZWgOkqpnfRIiNs++HmlGNb1swpDiyLGkWe3
+         LfrAc/lc/lQEdQsEHQstgLu06oyqGDz9s4ppGv8gOGKXQkrTgD0ZSIZbx9uS3LTgLDm2
+         M73g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8gi8M+mE+ACoC9Qk4qSg00/7pIRn10WcvZjQQsyieQE=;
+        b=b09RZ3V9nD6TrPC4TXsjjHbLmNTx0TbTebs4L9/7Rn97KkF7q6lkN8SixvY6z1Un0c
+         /iD2JRiwoBm9t2GKcELpQsK/4jgZpikRFY7GX+uKPsWW71fMIZ6Mkag27/+fd9747c0m
+         9KHaNW5YY62NaRjz4bd9ACSj5U6Xiopsp2T1eWs3RKgO/Z+1FCFelxbLKoC9YMLye5cj
+         4xYn0Kle4SDr4THStYJFoEQ8GlFqvnvwhpsITKP7UByEzxbo537LeOSfF79KUlPN5K2p
+         HIyZzToZJKr4do1J/DvXfqMfrG3AYKE1cFmJhVB8Pi4hl8D60k7OWTLrdPOZBQNNgALl
+         lPjA==
+X-Gm-Message-State: AHQUAua0uYfmLAHkTdEJXEetDhxmNQ2zLGIyhyo9mOuhm+2aYKsHoDzF
+        +SDrIRZZ40h4zhyYxwKVp+wNguzH5E/SpQUKnwCKOA==
+X-Google-Smtp-Source: AHgI3IaIzB7nu5Ue92r+fDbKn/UpOD47FDIMfNkXJf7T1KZfB5EcAyvhPfgsCvDh+bj9emv7HBFFzb7zYh1LAFAyZ50=
+X-Received: by 2002:a24:6511:: with SMTP id u17mr8374306itb.12.1549267684913;
+ Mon, 04 Feb 2019 00:08:04 -0800 (PST)
+MIME-Version: 1.0
+References: <000000000000c178e305749daba4@google.com> <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
+ <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
+ <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov> <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
+ <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov> <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+ <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
+ <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com> <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+ <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
+ <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
+ <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
+ <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
+ <71e3652b-b222-0c3f-8b48-5980ddcaeb93@i-love.sakura.ne.jp>
+ <CACT4Y+Z036bZfN1-_VaQ5EorwFt_tpPm=RTnrYN5qKV_ebgoFw@mail.gmail.com> <52531a69-10ed-d263-be66-e707705597d6@i-love.sakura.ne.jp>
+In-Reply-To: <52531a69-10ed-d263-be66-e707705597d6@i-love.sakura.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 4 Feb 2019 09:07:54 +0100
+Message-ID: <CACT4Y+Yd1YN=OELBmzUDvwdg5KuV2WnN9WZpjk5O_yuS0i1yOA@mail.gmail.com>
+Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020323-4275-0000-0000-0000030A0407
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020323-4276-0000-0000-0000381803F5
-Message-Id: <1549234854.4146.24.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-03_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902030191
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jarkko,
+On Fri, Feb 1, 2019 at 2:09 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2019/02/01 19:50, Dmitry Vyukov wrote:
+> > On Fri, Feb 1, 2019 at 11:44 AM Tetsuo Handa
+> > <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >>
+> >> On 2019/02/01 19:09, Dmitry Vyukov wrote:
+> >>> Thanks for the explanations.
+> >>>
+> >>> Here is the change that I've come up with:
+> >>> https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
+> >>
+> >> You are not going to apply this updated config to upstream kernels now, are you?
+> >> Removing CONFIG_DEFAULT_SECURITY="apparmor" from configs used by upstream kernels
+> >> will cause failing to enable AppArmor (unless security=apparmor is specified).
+> >
+> >
+> > We do use  security=apparmor, see:
+> > https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-apparmor.cmdline
+> > https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-selinux.cmdline
+> > https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-smack.cmdline
+> >
+>
+> Oh, security= parameter is explicitly specified on all targets?
+> Then, we can abuse CONFIG_DEBUG_AID_FOR_SYZBOT option. ;-)
+>
+> LSM folks, may we use this patch for linux-next.git ?
+> CONFIG_DEBUG_AID_FOR_SYZBOT is a linux-next.git-only kernel config option used by syzbot.
 
-On Fri, 2019-02-01 at 19:41 +0200, Jarkko Sakkinen wrote:
-> Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
-> ST33ZP24_BUFSIZE as it collides with TPM_BUFSIZE defined in
-> drivers/char/tpm/tpm.h.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: bf38b8710892 ("tpm/tpm_i2c_stm_st33: Split tpm_i2c_tpm_st33 in 2 layers (core + phy)")
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-FYI, I'm seeing a similar redefined TPM_BUFSIZE in tpm_i2c_infineon.c.
+Then we also need this on syzbot side, right? Otherwise it seems that
+all instances will default to a single security module.
+https://github.com/google/syzkaller/commit/ffec3d1894ffd05966b50efa49ca19af76c9ea81
 
-Mimi
 
+> From c7d21f9c1c0b610ddea4233b89edf7d3140b8baf Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Fri, 1 Feb 2019 22:03:55 +0900
+> Subject: [PATCH linux-next] LSM: Allow syzbot to ignore security= parameter.
+>
+> LSM is going to get infrastructure managed security blob support in Linux
+> 5.1, and it becomes possible to run TOMOYO with SELinux/Smack/AppArmor.
+> But for compatibility reason, since security= parameter makes it
+> impossible to run TOMOYO with SELinux/Smack/AppArmor, syzbot can't
+> test that combination. Therefore, this patch allows syzbot to temporarily
+> ignore security= parameter. This patch is meant for linux-next.git only,
+> and will be removed after infrastructure managed security blob support
+> went to linux.git.
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 > ---
->  drivers/char/tpm/st33zp24/i2c.c      | 2 +-
->  drivers/char/tpm/st33zp24/spi.c      | 2 +-
->  drivers/char/tpm/st33zp24/st33zp24.h | 4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/st33zp24/i2c.c b/drivers/char/tpm/st33zp24/i2c.c
-> index be5d1abd3e8e..8390c5b54c3b 100644
-> --- a/drivers/char/tpm/st33zp24/i2c.c
-> +++ b/drivers/char/tpm/st33zp24/i2c.c
-> @@ -33,7 +33,7 @@
->  
->  struct st33zp24_i2c_phy {
->  	struct i2c_client *client;
-> -	u8 buf[TPM_BUFSIZE + 1];
-> +	u8 buf[ST33ZP24_BUFSIZE + 1];
->  	int io_lpcpd;
->  };
->  
-> diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
-> index d7909ab287a8..ff019a1e3c68 100644
-> --- a/drivers/char/tpm/st33zp24/spi.c
-> +++ b/drivers/char/tpm/st33zp24/spi.c
-> @@ -63,7 +63,7 @@
->   * some latency byte before the answer is available (max 15).
->   * We have 2048 + 1024 + 15.
->   */
-> -#define ST33ZP24_SPI_BUFFER_SIZE (TPM_BUFSIZE + (TPM_BUFSIZE / 2) +\
-> +#define ST33ZP24_SPI_BUFFER_SIZE (ST33ZP24_BUFSIZE + (ST33ZP24_BUFSIZE / 2) +\
->  				  MAX_SPI_LATENCY)
->  
->  
-> diff --git a/drivers/char/tpm/st33zp24/st33zp24.h b/drivers/char/tpm/st33zp24/st33zp24.h
-> index 6f4a4198af6a..20da0a84988d 100644
-> --- a/drivers/char/tpm/st33zp24/st33zp24.h
-> +++ b/drivers/char/tpm/st33zp24/st33zp24.h
-> @@ -18,8 +18,8 @@
->  #ifndef __LOCAL_ST33ZP24_H__
->  #define __LOCAL_ST33ZP24_H__
->  
-> -#define TPM_WRITE_DIRECTION             0x80
-> -#define TPM_BUFSIZE                     2048
-> +#define TPM_WRITE_DIRECTION	0x80
-> +#define ST33ZP24_BUFSIZE	2048
->  
->  struct st33zp24_dev {
->  	struct tpm_chip *chip;
-
+>  security/security.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/security/security.c b/security/security.c
+> index ef03643..0632feb 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -346,12 +346,14 @@ int __init security_init(void)
+>  }
+>
+>  /* Save user chosen LSM */
+> +#ifndef CONFIG_DEBUG_AID_FOR_SYZBOT
+>  static int __init choose_major_lsm(char *str)
+>  {
+>         chosen_major_lsm = str;
+>         return 1;
+>  }
+>  __setup("security=", choose_major_lsm);
+> +#endif
+>
+>  /* Explicitly choose LSM initialization order. */
+>  static int __init choose_lsm_order(char *str)
+> --
+> 1.8.3.1
+>
