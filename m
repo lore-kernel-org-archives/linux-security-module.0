@@ -2,122 +2,161 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340C3C282CB
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 10:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263BDC282CB
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B7F320844
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 10:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7B722175B
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:06:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbfBEKvr (ORCPT
+        id S1727164AbfBELGs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 05:51:47 -0500
-Received: from mga14.intel.com ([192.55.52.115]:4825 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725947AbfBEKvr (ORCPT
+        Tue, 5 Feb 2019 06:06:48 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37063 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfBELGs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 05:51:47 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 02:51:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,563,1539673200"; 
-   d="scan'208";a="144297739"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Feb 2019 02:51:44 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
+        Tue, 5 Feb 2019 06:06:48 -0500
+Received: by mail-wr1-f67.google.com with SMTP id s12so3134907wrt.4
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 03:06:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=G4tr0VYwJCG41RI3WYyCA9ntkgW7df/WWDw87a8ZHmU=;
+        b=n1sFAQ2mF+AymSEs2Kx3e5yizLxO9m36+vhurGEA63rqI+CSi37awbH+XQkRh1iJ13
+         SiFObJ0um2I1huOmlt2qCe9yQ4ExkbCEW4F43lK/azfkr3cCcF4/PbY2dGt6Be718/XB
+         0bNLWM0OylXpEQGwmJSxaK62uGZIkXt9JHkmMz9IMSI1ec8LWlO2Lq0HmVz5SBi+SI4i
+         fcfrHsWS54sOjAekGD7r8I0pRIuiIrsDA6fYrjSA2OW8jdSUnrQpPQTyK/0ojCS4OXox
+         wFcX0I5vx1bqeqkv+RI/Y1owBet9OKoCzQSvOWMLR1skuitLAJcLpcynft6gxM6Guoa0
+         JTgg==
+X-Gm-Message-State: AHQUAuam/fJv3fY2iqgxJu4OX9kpdRZN2ZHb5D7jjoiYJSdBbeCVOmqU
+        lXqPgXnCJ72Yy47EFW5OB3hobg==
+X-Google-Smtp-Source: AHgI3Ia/onMA1PpBn4OtwOQAsfNNjisKMAlQaBRaPWEUxupi1JnL2u/otIL9bc7nK8vDg4U2JDW9Tw==
+X-Received: by 2002:a5d:4486:: with SMTP id j6mr3046973wrq.41.1549364805560;
+        Tue, 05 Feb 2019 03:06:45 -0800 (PST)
+Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id x186sm26067070wmg.41.2019.02.05.03.06.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 03:06:44 -0800 (PST)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
         linux-security-module@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        stable@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Date:   Tue,  5 Feb 2019 12:51:36 +0200
-Message-Id: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>
+Subject: [PATCH v5 0/5] Allow initializing the kernfs node's secctx based on its parent
+Date:   Tue,  5 Feb 2019 12:06:33 +0100
+Message-Id: <20190205110638.30782-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The current approach to read first 6 bytes from the response and then tail
-of the response, can cause the 2nd memcpy_fromio() to do an unaligned read
-(e.g. read 32-bit word from address aligned to a 16-bits), depending on how
-memcpy_fromio() is implemented. If this happens, the read will fail and the
-memory controller will fill the read with 1's.
+Changes in v5:
+- fix misplaced semicolon detected by 0day robot
 
-This was triggered by 170d13ca3a2f, which should be probably refined to
-check and react to the address alignment. Before that commit, on x86
-memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
-thing (from tpm_crb's perspective) for us so far, but we should not rely on
-that. Thus, it makes sense to fix this also in tpm_crb, not least because
-the fix can be then backported to stable kernels and make them more robust
-when compiled in differing environments.
+v4: https://lore.kernel.org/selinux/20190205085915.5183-1-omosnace@redhat.com/T/
+Changes in v4:
+- reorder and rename hook arguments
+- avoid allocating kernfs_iattrs unless needed
 
-Cc: stable@vger.kernel.org
-Cc: James Morris <jmorris@namei.org>
-Cc: Tomas Winkler <tomas.winkler@intel.com>
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
----
-v3:
-* Fix typo i.e. %s/reminding/remaining/g
-v2:
-* There was a trailing double colon in the end of the short summary.
-* Check requested and expected length against TPM_HEADER_SIZE.
-* Add some explanatory comments to crb_recv().
- drivers/char/tpm/tpm_crb.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+v3: https://lore.kernel.org/selinux/20190130114150.27807-1-omosnace@redhat.com/T/
+Changes in v3:
+- rename the hook to "kernfs_init_security"
+- change the hook interface to simply pass pointers to struct iattr and
+  struct simple_xattrs of both the new node and its parent
+- add full security xattr support to kernfs (and fixup SELinux behavior
+  to handle it properly)
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index 36952ef98f90..ee4df7815912 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -287,19 +287,29 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
- 	unsigned int expected;
- 
--	/* sanity check */
--	if (count < 6)
-+	/* A sanity check that the upper layer wants to get at least the header
-+	 * as that is the minimum size for any TPM response.
-+	 */
-+	if (count < TPM_HEADER_SIZE)
- 		return -EIO;
- 
-+	/* If this bit is set, according to the spec, the TPM is in unrecovable
-+	 * condition.
-+	 */
- 	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
- 		return -EIO;
- 
--	memcpy_fromio(buf, priv->rsp, 6);
--	expected = be32_to_cpup((__be32 *) &buf[2]);
--	if (expected > count || expected < 6)
-+	/* Read 8 bytes (not just 6 bytes, which would cover the response length
-+	 * field) in order to make sure that the remaining memory accesses will
-+	 * be aligned.
-+	 */
-+	memcpy_fromio(buf, priv->rsp, 8);
-+
-+	expected = be32_to_cpup((__be32 *)&buf[2]);
-+	if (expected > count || expected < TPM_HEADER_SIZE)
- 		return -EIO;
- 
--	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
-+	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
- 
- 	return expected;
- }
+v2: https://lore.kernel.org/selinux/20190109162830.8309-1-omosnace@redhat.com/T/
+Changes in v2:
+- add docstring for the new hook in union security_list_options
+- initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
+  implemented
+
+v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnace@redhat.com/T/
+
+TL;DR:
+This series adds a new security hook that allows to initialize the security
+context of kernfs properly, taking into account the parent context (and
+possibly other attributes). Kernfs nodes require special handling here, since
+they are not bound to specific inodes/superblocks, but instead represent the
+backing tree structure that is used to build the VFS tree when the kernfs
+tree is mounted.
+
+The kernfs nodes initially do not store any security context and rely on
+the LSM to assign some default context to inodes created over them. Kernfs
+inodes, however, allow setting an explicit context via the *setxattr(2)
+syscalls, in which case the context is stored inside the kernfs node's
+internal structure.
+
+SELinux (and possibly other LSMs) initialize the context of newly created
+FS objects based on the parent object's context (usually the child inherits
+the parent's context, unless the policy dictates otherwise). This is done
+by hooking the creation of the new inode corresponding to the newly created
+file/directory via security_inode_init_security() (most filesystems always
+create a fresh inode when a new FS object is created). However, kernfs nodes
+can be created "behind the scenes" while the filesystem is not mounted
+anywhere and thus no inodes can exist for them yet.
+
+Therefore, to allow maintaining similar behavior for kernfs nodes, a new
+LSM hook is needed, which will allow initializing the kernfs node's
+security context based on its own attributes and those of the parent's
+node.
+
+The main motivation for this change is that the userspace users of cgroupfs
+(which is built on kernfs) expect the usual security context inheritance
+to work under SELinux (see [1] and [2]). This functionality is required for
+better confinement of containers under SELinux.
+
+Patch 1/5 changes SELinux to fetch security context from extended
+attributes on kernfs filesystems, falling back to genfs-defined context
+if that fails. Without this patch the 2/5 would be a regression for
+SELinux (due to the removal of ...notifysecctx() call.
+
+Patch 2/5 implements full security xattr support in kernfs using
+simple_xattrs; patch 3/5 adds the new LSM hook; patch 4/5 implements the
+new hook in SELinux; and patch 5/5 modifies kernfs to call the new hook
+on new node creation.
+
+Testing:
+- passed the reproducer from the commit message of the last patch
+- passed SELinux testsuite on Fedora 29 (x86_64) when applied on top of
+  current Rawhide kernel (5.0.0-0.rc5.git0.1) [3]
+  - including the new proposed selinux-testsuite subtest [4] (adapted
+    from the reproducer)
+
+[1] https://github.com/SELinuxProject/selinux-kernel/issues/39
+[2] https://bugzilla.redhat.com/show_bug.cgi?id=1553803
+[3] https://copr.fedorainfracloud.org/coprs/omos/kernel-testing/build/854148/
+[4] https://github.com/SELinuxProject/selinux-testsuite/pull/48
+
+Ondrej Mosnacek (5):
+  selinux: try security xattr after genfs for kernfs filesystems
+  kernfs: use simple_xattrs for security attributes
+  LSM: add new hook for kernfs node initialization
+  selinux: implement the kernfs_init_security hook
+  kernfs: initialize security of newly created nodes
+
+ fs/kernfs/dir.c                     |  64 +++++++-
+ fs/kernfs/inode.c                   | 125 +++++++---------
+ fs/kernfs/kernfs-internal.h         |   7 +-
+ include/linux/lsm_hooks.h           |  22 +++
+ include/linux/security.h            |  14 ++
+ include/linux/xattr.h               |  15 ++
+ security/security.c                 |  10 ++
+ security/selinux/hooks.c            | 221 +++++++++++++++++++---------
+ security/selinux/include/security.h |   1 +
+ 9 files changed, 328 insertions(+), 151 deletions(-)
+
 -- 
-2.19.1
+2.20.1
 
