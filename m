@@ -2,65 +2,72 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDBDC282CC
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 20:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950ECC282CB
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 20:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E29217D6
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 20:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70A352080F
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 20:28:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726915AbfBEUNG (ORCPT
+        id S1726769AbfBEU2f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 15:13:06 -0500
-Received: from namei.org ([65.99.196.166]:50332 "EHLO namei.org"
+        Tue, 5 Feb 2019 15:28:35 -0500
+Received: from mga02.intel.com ([134.134.136.20]:52020 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726654AbfBEUNF (ORCPT
+        id S1726114AbfBEU2f (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 15:13:05 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x15KCvsx006253;
-        Tue, 5 Feb 2019 20:12:57 GMT
-Date:   Wed, 6 Feb 2019 07:12:57 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Tue, 5 Feb 2019 15:28:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 12:28:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,336,1544515200"; 
+   d="scan'208";a="131336533"
+Received: from rhazra-x1y7.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.252.196.214])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Feb 2019 12:28:34 -0800
+Subject: [PATCH 1/2] selftests: tpm2: Open tpm dev in unbuffered mode
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tadeusz Struk <tadeusz.struk@intel.com>
-Subject: Re: [PATCH v3] selftests: add TPM 2.0 tests
-In-Reply-To: <20190204232910.GC14992@linux.intel.com>
-Message-ID: <alpine.LRH.2.21.1902060712500.3449@namei.org>
-References: <20190204131640.11429-1-jarkko.sakkinen@linux.intel.com> <20190204232910.GC14992@linux.intel.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
+        jgg@ziepe.ca
+Date:   Tue, 05 Feb 2019 12:28:33 -0800
+Message-ID: <154939851385.18477.481518864800562919.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 5 Feb 2019, Jarkko Sakkinen wrote:
+In order to have control over how many bytes are read or written
+the device needs to be opened in unbuffered mode.
 
-> On Mon, Feb 04, 2019 at 03:16:40PM +0200, Jarkko Sakkinen wrote:
-> > Added the tests that I've been using for testing TPM 2.0 functionality
-> > for a long time but have been out-of-tree so far, residing in
-> > 
-> > https://github.com/jsakkine-intel/tpm2-scripts
-> > 
-> > Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Acked-By: Joey Pabalinas <joeypabalinas@gmail.com>
-> > Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
-> 
-> Wondering if I can put this to my 5.1 PR?
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+ tools/testing/selftests/tpm2/tpm2.py |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yep, should be fine.
-
--- 
-James Morris
-<jmorris@namei.org>
+diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
+index 40ea95ce2ead..c2b9f2b1a0ac 100644
+--- a/tools/testing/selftests/tpm2/tpm2.py
++++ b/tools/testing/selftests/tpm2/tpm2.py
+@@ -357,9 +357,9 @@ class Client:
+         self.flags = flags
+ 
+         if (self.flags & Client.FLAG_SPACE) == 0:
+-            self.tpm = open('/dev/tpm0', 'r+b')
++            self.tpm = open('/dev/tpm0', 'r+b', buffering=0)
+         else:
+-            self.tpm = open('/dev/tpmrm0', 'r+b')
++            self.tpm = open('/dev/tpmrm0', 'r+b', buffering=0)
+ 
+     def close(self):
+         self.tpm.close()
 
