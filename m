@@ -2,46 +2,47 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F3FC282DA
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C758C282CC
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5AAB2176F
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C8E52075D
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:06:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbfBELGu (ORCPT
+        id S1728020AbfBELGy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:06:50 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53379 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727337AbfBELGt (ORCPT
+        Tue, 5 Feb 2019 06:06:54 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41152 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbfBELGy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:06:49 -0500
-Received: by mail-wm1-f67.google.com with SMTP id d15so3130980wmb.3
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 03:06:47 -0800 (PST)
+        Tue, 5 Feb 2019 06:06:54 -0500
+Received: by mail-wr1-f66.google.com with SMTP id x10so3102084wrs.8
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 03:06:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qWCOjIpCOk81UALDGpP07aau3ZMFw3eCyGnAaDjo63o=;
-        b=djFL4w0rEQDg9uu3SZEqGs0DVIzUgnGHD17g6QeO39CazMtdZOStv+sKBiM+mDzeDh
-         7fcMfFytNQqipb0YPCmSQdRIaMEzq6NjiT5B0w7SffEj9FB5eOzA2AwZLZAZWui+HW50
-         ESI330GlghwMr+2CjqKb9nBgDmcUZ3ksLYl5lUcXMEMndzwbkce/dr9CmldKXbQlSJln
-         VbF5BYGunThKhqq1WZu8VAMJPvey6Ci6ja1eioybqH8xGi1ydR/8WPFfqPKBWKwVf6Ka
-         dGTgdn+Ve7l6JcWn9zi0a6OY21gR7PU+Lc5vEPSc0MXF1+ZW042TxOoiuU7wPGnD2Ljx
-         0eiw==
-X-Gm-Message-State: AHQUAuYoHSFtUIE5WCoXf3VAvTyGNphDI0rF6Y6aEDqPdnynUL3BPYhU
-        bvKbsqpZEawaYSEY5FROJIBishO2G1M=
-X-Google-Smtp-Source: AHgI3IZsOkMczuUcFhr9zTjKONnb8AuE1voIL/wtDRlbJgGf1zwsDVulUQwaM4qTHAxWxsoyFO4+LQ==
-X-Received: by 2002:a1c:c60e:: with SMTP id w14mr3510378wmf.18.1549364806986;
-        Tue, 05 Feb 2019 03:06:46 -0800 (PST)
+        bh=7b1bc6+meFmPqgAqo0J5mXXNpERkis1nOajyuz7TJZM=;
+        b=O372428V3HgeQ2ym+NLG+OkaU6PQHcuzqo62BwIrMwdweMKXqB5ea+w0h6d14A1pI+
+         6GVNeoH41glRnAmKVUdKnDpmIOlIkx/FAgi0j2FPFvFcfL0rwzveVZZWdOAZPs8H/ksK
+         GLIXQD2xg1ZBOv/zIAA7fT4PG6FDb3+cPqQZ4OjDXrRVt2VTkmlTy3rnWx0uw96zak2D
+         RsXZl0mdiqhbTbhMiZcMoi2pQzxQ8gwLXTMbOBcLIVGcpPeiiZMEyFhoW0rxZAB+hwDs
+         D5hR1BCl3gX3U8WAHs7Gxm9S7kURtyqqlcKkZWy42nASP0Il+rCnZZ44t+Z8SzYW2CTx
+         tzXA==
+X-Gm-Message-State: AHQUAubwXpbYgF/mIs8/MMfIKdYBAYB0Zn6AIEpIHrW99VyzXRXAbXC4
+        ebRw5y2nnFTW+UePvG7zaj89NA==
+X-Google-Smtp-Source: AHgI3IbtPjz2TYWo6fiL5PDsWek1XUn3NMtS9U+1Kl6wcqIYcGoqXFKFA3FDY7v8qMdViPJ4nfh+Kw==
+X-Received: by 2002:adf:f692:: with SMTP id v18mr3010075wrp.229.1549364811965;
+        Tue, 05 Feb 2019 03:06:51 -0800 (PST)
 Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id x186sm26067070wmg.41.2019.02.05.03.06.45
+        by smtp.gmail.com with ESMTPSA id x186sm26067070wmg.41.2019.02.05.03.06.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 03:06:46 -0800 (PST)
+        Tue, 05 Feb 2019 03:06:51 -0800 (PST)
 From:   Ondrej Mosnacek <omosnace@redhat.com>
 To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
 Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
@@ -50,9 +51,9 @@ Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
         cgroups@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v5 1/5] selinux: try security xattr after genfs for kernfs filesystems
-Date:   Tue,  5 Feb 2019 12:06:34 +0100
-Message-Id: <20190205110638.30782-2-omosnace@redhat.com>
+Subject: [PATCH v5 5/5] kernfs: initialize security of newly created nodes
+Date:   Tue,  5 Feb 2019 12:06:38 +0100
+Message-Id: <20190205110638.30782-6-omosnace@redhat.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190205110638.30782-1-omosnace@redhat.com>
 References: <20190205110638.30782-1-omosnace@redhat.com>
@@ -62,238 +63,235 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Since kernfs supports the security xattr handlers, we can simply use
-these to determine the inode's context, dropping the need to update it
-from kernfs explicitly using a security_inode_notifysecctx() call.
+Use the new security_kernfs_init_security() hook to allow LSMs to
+possibly assign a non-default security context to a newly created kernfs
+node based on the attributes of the new node and also its parent node.
 
-We achieve this by setting a new sbsec flag SE_SBGENFS_XATTR to all
-mounts that are known to use kernfs under the hood and then fetching the
-xattrs after determining the fallback genfs sid in
-inode_doinit_with_dentry() when this flag is set.
+This fixes an issue with cgroupfs under SELinux, where newly created
+cgroup subdirectories/files would not inherit its parent's context if
+it had been set explicitly to a non-default value (other than the genfs
+context specified by the policy). This can be reproduced as follows (on
+Fedora/RHEL):
 
-This will allow implementing full security xattr support in kernfs and
-removing the ...notifysecctx() call in a subsequent patch.
+    # mkdir /sys/fs/cgroup/unified/test
+    # # Need permissive to change the label under Fedora policy:
+    # setenforce 0
+    # chcon -t container_file_t /sys/fs/cgroup/unified/test
+    # ls -lZ /sys/fs/cgroup/unified
+    total 0
+    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.controllers
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.depth
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.descendants
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.procs
+    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.stat
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.subtree_control
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.threads
+    drwxr-xr-x.  2 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 init.scope
+    drwxr-xr-x. 26 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:21 system.slice
+    drwxr-xr-x.  3 root root system_u:object_r:container_file_t:s0 0 Jan 29 03:15 test
+    drwxr-xr-x.  3 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 user.slice
+    # mkdir /sys/fs/cgroup/unified/test/subdir
 
+Actual result:
+
+    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
+    drwxr-xr-x. 2 root root system_u:object_r:cgroup_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
+
+Expected result:
+
+    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
+    drwxr-xr-x. 2 root root unconfined_u:object_r:container_file_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
+
+Link: https://github.com/SELinuxProject/selinux-kernel/issues/39
 Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
- security/selinux/hooks.c            | 159 +++++++++++++++-------------
- security/selinux/include/security.h |   1 +
- 2 files changed, 88 insertions(+), 72 deletions(-)
+ fs/kernfs/dir.c             | 57 +++++++++++++++++++++++++++++++++++--
+ fs/kernfs/inode.c           | 25 +++++++++-------
+ fs/kernfs/kernfs-internal.h |  2 ++
+ include/linux/xattr.h       | 15 ++++++++++
+ 4 files changed, 86 insertions(+), 13 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 81e012c66d95..758a99d1086e 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -793,11 +793,13 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index ad7e3356bcc5..735a6d382d9d 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -15,6 +15,7 @@
+ #include <linux/slab.h>
+ #include <linux/security.h>
+ #include <linux/hash.h>
++#include <linux/stringhash.h>
  
- 	if (!strcmp(sb->s_type->name, "debugfs") ||
- 	    !strcmp(sb->s_type->name, "tracefs") ||
--	    !strcmp(sb->s_type->name, "sysfs") ||
--	    !strcmp(sb->s_type->name, "pstore") ||
-+	    !strcmp(sb->s_type->name, "pstore"))
-+		sbsec->flags |= SE_SBGENFS;
-+
-+	if (!strcmp(sb->s_type->name, "sysfs") ||
- 	    !strcmp(sb->s_type->name, "cgroup") ||
- 	    !strcmp(sb->s_type->name, "cgroup2"))
--		sbsec->flags |= SE_SBGENFS;
-+		sbsec->flags |= SE_SBGENFS | SE_SBGENFS_XATTR;
+ #include "kernfs-internal.h"
  
- 	if (!sbsec->behavior) {
- 		/*
-@@ -1392,6 +1394,71 @@ static int selinux_genfs_get_sid(struct dentry *dentry,
- 	return rc;
+@@ -616,7 +617,53 @@ struct kernfs_node *kernfs_node_from_dentry(struct dentry *dentry)
+ 	return NULL;
  }
  
-+static int inode_doinit_use_xattr(struct inode *inode, struct dentry *dentry,
-+				  u32 def_sid, u32 *sid)
++static int kernfs_node_init_security(struct kernfs_node *parent,
++				     struct kernfs_node *kn)
 +{
-+#define INITCONTEXTLEN 255
-+	char *context = NULL;
-+	unsigned int len = 0;
-+	int rc;
++	struct simple_xattrs xattr_child, xattr_parent, *pxattr_parent;
++	struct iattr iattr_child, iattr_parent, *piattr_parent;
++	struct qstr q;
++	int ret;
 +
-+	*sid = def_sid;
++	if (!parent->iattr) {
++		kernfs_iattr_init(&iattr_parent, parent);
++		simple_xattrs_init(&xattr_parent);
++		piattr_parent = &iattr_parent;
++		pxattr_parent = &xattr_parent;
++	} else {
++		piattr_parent = &parent->iattr->ia_iattr;
++		pxattr_parent = &parent->iattr->xattrs_security;
++	}
 +
-+	if (!(inode->i_opflags & IOP_XATTR))
-+		return 0;
++	kernfs_iattr_init(&iattr_child, kn);
++	simple_xattrs_init(&xattr_child);
 +
-+	len = INITCONTEXTLEN;
-+	context = kmalloc(len + 1, GFP_NOFS);
-+	if (!context)
-+		return -ENOMEM;
++	q.name = kn->name;
++	q.hash_len = hashlen_string(parent, kn->name);
 +
-+	context[len] = '\0';
-+	rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, context, len);
-+	if (rc == -ERANGE) {
-+		kfree(context);
++	ret = security_kernfs_init_security(&q, piattr_parent, pxattr_parent,
++					    &iattr_child, &xattr_child);
++	if (pxattr_parent == &xattr_parent)
++		simple_xattrs_free(&xattr_parent);
++	if (!ret && !simple_xattrs_empty(&xattr_child)) {
++		/*
++		 * Child has new security xattrs, allocate its kernfs_iattrs
++		 * and put our local xattrs in there.
++		 */
++		struct kernfs_iattrs *attrs = kernfs_iattrs(kn);
 +
-+		/* Need a larger buffer.  Query for the right size. */
-+		rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, NULL, 0);
-+		if (rc < 0)
-+			return rc;
-+
-+		len = rc;
-+		context = kmalloc(len + 1, GFP_NOFS);
-+		if (!context)
++		if (!attrs) {
++			simple_xattrs_free(&xattr_child);
 +			return -ENOMEM;
-+
-+		context[len] = '\0';
-+		rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX,
-+				    context, len);
-+	}
-+	if (rc < 0) {
-+		kfree(context);
-+		if (rc != -ENODATA) {
-+			pr_warn("SELinux: %s:  getxattr returned %d for dev=%s ino=%ld\n",
-+				__func__, -rc, inode->i_sb->s_id, inode->i_ino);
-+			return rc;
 +		}
-+		return 0;
++		simple_xattrs_move(&attrs->xattrs_security, &xattr_child);
 +	}
-+
-+	rc = security_context_to_sid_default(&selinux_state, context, rc, sid,
-+					     def_sid, GFP_NOFS);
-+	if (rc) {
-+		char *dev = inode->i_sb->s_id;
-+		unsigned long ino = inode->i_ino;
-+
-+		if (rc == -EINVAL) {
-+			pr_notice_ratelimited("SELinux: inode=%lu on dev=%s was found to have an invalid context=%s.  This indicates you may need to relabel the inode or the filesystem in question.\n",
-+					      ino, dev, context);
-+		} else {
-+			pr_warn("SELinux: %s:  context_to_sid(%s) returned %d for dev=%s ino=%ld\n",
-+				__func__, context, -rc, dev, ino);
-+		}
-+	}
-+	kfree(context);
-+	return 0;
++	simple_xattrs_free(&xattr_child);
++	return ret;
 +}
 +
- /* The inode's security attributes must be initialized before first use. */
- static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dentry)
- {
-@@ -1401,8 +1468,6 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
- 	u16 sclass;
- 	struct dentry *dentry;
- #define INITCONTEXTLEN 255
--	char *context = NULL;
--	unsigned len = 0;
- 	int rc = 0;
- 
- 	if (isec->initialized == LABEL_INITIALIZED)
-@@ -1470,72 +1535,11 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
- 			goto out;
- 		}
- 
--		len = INITCONTEXTLEN;
--		context = kmalloc(len+1, GFP_NOFS);
--		if (!context) {
--			rc = -ENOMEM;
--			dput(dentry);
--			goto out;
--		}
--		context[len] = '\0';
--		rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, context, len);
--		if (rc == -ERANGE) {
--			kfree(context);
--
--			/* Need a larger buffer.  Query for the right size. */
--			rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, NULL, 0);
--			if (rc < 0) {
--				dput(dentry);
--				goto out;
--			}
--			len = rc;
--			context = kmalloc(len+1, GFP_NOFS);
--			if (!context) {
--				rc = -ENOMEM;
--				dput(dentry);
--				goto out;
--			}
--			context[len] = '\0';
--			rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, context, len);
--		}
-+		rc = inode_doinit_use_xattr(inode, dentry, sbsec->def_sid,
-+					    &sid);
- 		dput(dentry);
--		if (rc < 0) {
--			if (rc != -ENODATA) {
--				pr_warn("SELinux: %s:  getxattr returned "
--				       "%d for dev=%s ino=%ld\n", __func__,
--				       -rc, inode->i_sb->s_id, inode->i_ino);
--				kfree(context);
--				goto out;
--			}
--			/* Map ENODATA to the default file SID */
--			sid = sbsec->def_sid;
--			rc = 0;
--		} else {
--			rc = security_context_to_sid_default(&selinux_state,
--							     context, rc, &sid,
--							     sbsec->def_sid,
--							     GFP_NOFS);
--			if (rc) {
--				char *dev = inode->i_sb->s_id;
--				unsigned long ino = inode->i_ino;
--
--				if (rc == -EINVAL) {
--					if (printk_ratelimit())
--						pr_notice("SELinux: inode=%lu on dev=%s was found to have an invalid "
--							"context=%s.  This indicates you may need to relabel the inode or the "
--							"filesystem in question.\n", ino, dev, context);
--				} else {
--					pr_warn("SELinux: %s:  context_to_sid(%s) "
--					       "returned %d for dev=%s ino=%ld\n",
--					       __func__, context, -rc, dev, ino);
--				}
--				kfree(context);
--				/* Leave with the unlabeled SID */
--				rc = 0;
--				break;
--			}
--		}
--		kfree(context);
-+		if (rc)
-+			goto out;
- 		break;
- 	case SECURITY_FS_USE_TASK:
- 		sid = task_sid;
-@@ -1586,9 +1590,20 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
- 				goto out;
- 			rc = selinux_genfs_get_sid(dentry, sclass,
- 						   sbsec->flags, &sid);
--			dput(dentry);
--			if (rc)
-+			if (rc) {
-+				dput(dentry);
- 				goto out;
-+			}
-+
-+			if (sbsec->flags & SE_SBGENFS_XATTR) {
-+				rc = inode_doinit_use_xattr(inode, dentry,
-+							    sid, &sid);
-+				if (rc) {
-+					dput(dentry);
-+					goto out;
-+				}
-+			}
-+			dput(dentry);
- 		}
- 		break;
+ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
++					     struct kernfs_node *parent,
+ 					     const char *name, umode_t mode,
+ 					     kuid_t uid, kgid_t gid,
+ 					     unsigned flags)
+@@ -673,6 +720,12 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
+ 			goto err_out3;
  	}
-diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-index f68fb25b5702..6e5928f951da 100644
---- a/security/selinux/include/security.h
-+++ b/security/selinux/include/security.h
-@@ -58,6 +58,7 @@
- #define SE_SBINITIALIZED	0x0100
- #define SE_SBPROC		0x0200
- #define SE_SBGENFS		0x0400
-+#define SE_SBGENFS_XATTR	0x0800
  
- #define CONTEXT_STR	"context="
- #define FSCONTEXT_STR	"fscontext="
++	if (parent) {
++		ret = kernfs_node_init_security(parent, kn);
++		if (ret)
++			goto err_out3;
++	}
++
+ 	return kn;
+ 
+  err_out3:
+@@ -691,7 +744,7 @@ struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
+ {
+ 	struct kernfs_node *kn;
+ 
+-	kn = __kernfs_new_node(kernfs_root(parent),
++	kn = __kernfs_new_node(kernfs_root(parent), parent,
+ 			       name, mode, uid, gid, flags);
+ 	if (kn) {
+ 		kernfs_get(parent);
+@@ -961,7 +1014,7 @@ struct kernfs_root *kernfs_create_root(struct kernfs_syscall_ops *scops,
+ 	INIT_LIST_HEAD(&root->supers);
+ 	root->next_generation = 1;
+ 
+-	kn = __kernfs_new_node(root, "", S_IFDIR | S_IRUGO | S_IXUGO,
++	kn = __kernfs_new_node(root, NULL, "", S_IFDIR | S_IRUGO | S_IXUGO,
+ 			       GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
+ 			       KERNFS_DIR);
+ 	if (!kn) {
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index f0e2cb4379c0..6a9084aecbe5 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -31,11 +31,22 @@ static const struct inode_operations kernfs_iops = {
+ 	.listxattr	= kernfs_iop_listxattr,
+ };
+ 
+-static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
++void kernfs_iattr_init(struct iattr *iattrs, struct kernfs_node *kn)
++{
++	/* assign default attributes */
++	iattrs->ia_mode = kn->mode;
++	iattrs->ia_uid = GLOBAL_ROOT_UID;
++	iattrs->ia_gid = GLOBAL_ROOT_GID;
++
++	ktime_get_real_ts64(&iattrs->ia_atime);
++	iattrs->ia_mtime = iattrs->ia_atime;
++	iattrs->ia_ctime = iattrs->ia_atime;
++}
++
++struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
+ {
+ 	static DEFINE_MUTEX(iattr_mutex);
+ 	struct kernfs_iattrs *ret;
+-	struct iattr *iattrs;
+ 
+ 	mutex_lock(&iattr_mutex);
+ 
+@@ -45,16 +56,8 @@ static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
+ 	kn->iattr = kzalloc(sizeof(struct kernfs_iattrs), GFP_KERNEL);
+ 	if (!kn->iattr)
+ 		goto out_unlock;
+-	iattrs = &kn->iattr->ia_iattr;
+-
+-	/* assign default attributes */
+-	iattrs->ia_mode = kn->mode;
+-	iattrs->ia_uid = GLOBAL_ROOT_UID;
+-	iattrs->ia_gid = GLOBAL_ROOT_GID;
+ 
+-	ktime_get_real_ts64(&iattrs->ia_atime);
+-	iattrs->ia_mtime = iattrs->ia_atime;
+-	iattrs->ia_ctime = iattrs->ia_atime;
++	kernfs_iattr_init(&kn->iattr->ia_iattr, kn);
+ 
+ 	simple_xattrs_init(&kn->iattr->xattrs_trusted);
+ 	simple_xattrs_init(&kn->iattr->xattrs_security);
+diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
+index 93bf1dcd0306..ad80f438d8d4 100644
+--- a/fs/kernfs/kernfs-internal.h
++++ b/fs/kernfs/kernfs-internal.h
+@@ -90,6 +90,8 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
+ 		       u32 request_mask, unsigned int query_flags);
+ ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size);
+ int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
++void kernfs_iattr_init(struct iattr *iattrs, struct kernfs_node *kn);
++struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn);
+ 
+ /*
+  * dir.c
+diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+index 6dad031be3c2..05fc6812d554 100644
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -108,4 +108,19 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs, cha
+ void simple_xattr_list_add(struct simple_xattrs *xattrs,
+ 			   struct simple_xattr *new_xattr);
+ 
++static inline int simple_xattrs_empty(struct simple_xattrs *xattrs)
++{
++	return list_empty(&xattrs->head);
++}
++
++/**
++ * Move the xattr list from @src to @dst, leaving @src empty.
++ */
++static inline void simple_xattrs_move(struct simple_xattrs *dst,
++				      struct simple_xattrs *src)
++{
++	simple_xattrs_free(dst);
++	list_replace_init(&src->head, &dst->head);
++}
++
+ #endif	/* _LINUX_XATTR_H */
 -- 
 2.20.1
 
