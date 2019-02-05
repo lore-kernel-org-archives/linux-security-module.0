@@ -6,108 +6,108 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D83C282D7
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 16:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1030C282D7
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 16:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A38E2175B
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 16:11:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B86AF217F9
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 16:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730351AbfBEQLI (ORCPT
+        id S1725952AbfBEQrp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:11:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42376 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730350AbfBEQK7 (ORCPT
+        Tue, 5 Feb 2019 11:47:45 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57688 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727780AbfBEQro (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:10:59 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15G9vtP010108
-        for <linux-security-module@vger.kernel.org>; Tue, 5 Feb 2019 11:10:57 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfctf3a1x-1
+        Tue, 5 Feb 2019 11:47:44 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15Gji9I104107
+        for <linux-security-module@vger.kernel.org>; Tue, 5 Feb 2019 11:47:43 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfe5xrfdt-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 11:10:57 -0500
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 11:47:43 -0500
 Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Tue, 5 Feb 2019 16:10:56 -0000
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 5 Feb 2019 16:47:41 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 5 Feb 2019 16:10:53 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15GAqXN16515146
+        Tue, 5 Feb 2019 16:47:37 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15GlaXp49873032
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Feb 2019 16:10:52 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 955D8C605D;
-        Tue,  5 Feb 2019 16:10:52 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 159FEC605A;
-        Tue,  5 Feb 2019 16:10:51 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.85.201.117])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  5 Feb 2019 16:10:50 +0000 (GMT)
+        Tue, 5 Feb 2019 16:47:36 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 98B174C058;
+        Tue,  5 Feb 2019 16:47:36 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8BBB04C046;
+        Tue,  5 Feb 2019 16:47:35 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.107.43])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  5 Feb 2019 16:47:35 +0000 (GMT)
 Subject: Re: [PATCH] x86/ima: require signed kernel modules
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Seth Forshee <seth.forshee@canonical.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
         Luis Chamberlain <mcgrof@kernel.org>,
         David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
         Justin Forbes <jforbes@redhat.com>,
         Matthew Garrett <mjg59@google.com>
+Date:   Tue, 05 Feb 2019 11:47:24 -0500
+In-Reply-To: <20190205151859.GD16362@ubuntu-xps13>
 References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
- <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Date:   Tue, 5 Feb 2019 11:10:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+         <20190205151859.GD16362@ubuntu-xps13>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 19020516-8235-0000-0000-00000E56DD05
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010542; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01156712; UDB=6.00603406; IPR=6.00937236;
- MB=3.00025446; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-05 16:10:56
+x-cbid: 19020516-0028-0000-0000-00000344895B
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020516-8236-0000-0000-0000445A135F
-Message-Id: <422fd184-8766-4718-d302-db68ed7b90ec@linux.vnet.ibm.com>
+x-cbparentid: 19020516-0029-0000-0000-00002402933B
+Message-Id: <1549385244.4146.148.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=894 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902050124
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902050128
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi Seth,
 
+On Tue, 2019-02-05 at 09:18 -0600, Seth Forshee wrote:
+> On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
+> > Require signed kernel modules on systems with secure boot mode enabled.
+> > 
+> > To coordinate between appended kernel module signatures and IMA
+> > signatures, only define an IMA MODULE_CHECK policy rule if
+> > CONFIG_MODULE_SIG is not enabled.
+> > 
+> > This patch defines a function named set_module_sig_required() and renames
+> > is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
+> > call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
+> > being enabled.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> 
+> With respect to interactions with the kernel lockdown patches, this
+> looks better than the patches I saw previously. I don't feel like I know
+> enough about what's going on with IMA to ack the patch, but I feel
+> confident that it's at least not going to break signature enforcement
+> for us.
 
-On 01/31/2019 02:18 PM, Mimi Zohar wrote:
-> Require signed kernel modules on systems with secure boot mode enabled.
->
-> To coordinate between appended kernel module signatures and IMA
-> signatures, only define an IMA MODULE_CHECK policy rule if
-> CONFIG_MODULE_SIG is not enabled.
->
-> This patch defines a function named set_module_sig_required() and renames
-> is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
-> call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
-> being enabled.
->
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->
+Thank you for testing!  Could this be translated into a "tested-by"
+"(for w/lockdown patches)"?
 
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-
-Thanks & Regards,
-      - Nayna
+Mimi
 
