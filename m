@@ -2,202 +2,91 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274A3C282D7
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 09:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77703C282CB
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F309C20821
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 09:14:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 459FC20844
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="lHmUoXPY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbfBEJOK (ORCPT
+        id S1728387AbfBEJSx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:14:10 -0500
-Received: from mga06.intel.com ([134.134.136.31]:62072 "EHLO mga06.intel.com"
+        Tue, 5 Feb 2019 04:18:53 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:49502 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727828AbfBEJOK (ORCPT
+        id S1728068AbfBEJSx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:14:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 01:14:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,562,1539673200"; 
-   d="scan'208";a="124051370"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by orsmga003.jf.intel.com with ESMTP; 05 Feb 2019 01:14:04 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, roberto.sassu@huawei.com,
-        zohar@linux.ibm.com, jgg@ziepe.ca,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v3] tpm: Fix some name collisions with drivers/char/tpm.h
-Date:   Tue,  5 Feb 2019 11:14:00 +0200
-Message-Id: <20190205091400.29019-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 5 Feb 2019 04:18:53 -0500
+Received: from zn.tnic (p200300EC2BCB6B0041C3B5D5EB4D55D2.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:41c3:b5d5:eb4d:55d2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C4CA01EC02AE;
+        Tue,  5 Feb 2019 10:18:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549358330;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=27z0ZYNcv37KAn9EWdpLBTvefC4+qLAJthht315+v24=;
+        b=lHmUoXPYkWLZS/JSO0PVbQzoLRAdR0EjlaGqBzoguPTBfePCmw46XVjYaic1MT6q92G6I6
+        JRB/OdTUe32hWMX2ytZm5EDzC9y4VLLamRgY2c333m92lAfUlzBCTXfy1SDy+YCiil6x9G
+        6ps4QH+9C5H1UYRDZu1yx+DDOiyUr+M=
+Date:   Tue, 5 Feb 2019 10:18:41 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
+ patching
+Message-ID: <20190205091841.GI21801@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-6-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
-  ST33ZP24_BUFSIZE.
-* Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
-  TPM_I2C_INFINEON_BUFSIZE.
-* Rename TPM_RETRY in tpm_i2c_nuvoton to TPM_I2C_RETRIES.
-* Remove TPM_HEADER_SIZE from tpm_i2c_nuvoton.
+Just nitpicks:
 
-Cc: stable@vger.kernel.org
-Fixes: bf38b8710892 ("tpm/tpm_i2c_stm_st33: Split tpm_i2c_tpm_st33 in 2 layers (core + phy)")
-Fixes: aad628c1d91a ("char/tpm: Add new driver for Infineon I2C TIS TPM")
-Fixes: 32d33b29ba07 ("TPM: Retry SaveState command in suspend path")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-v3:
-* Fix two name collisions in tpm_i2c_nuvoton.
-* Fix short summary.
-* Fix compilation error in tpm_i2c_infineon (forgot to stage one diff
-  to v2).
-v2:
-* Fix also the name collision in tpm_ic2_infineon.
- drivers/char/tpm/st33zp24/i2c.c      |  2 +-
- drivers/char/tpm/st33zp24/spi.c      |  2 +-
- drivers/char/tpm/st33zp24/st33zp24.h |  4 ++--
- drivers/char/tpm/tpm_i2c_infineon.c  | 15 ++++++++-------
- drivers/char/tpm/tpm_i2c_nuvoton.c   | 16 +++++++---------
- 5 files changed, 19 insertions(+), 20 deletions(-)
+Subject: [PATCH v2 05/20] x86/alternative: initializing temporary mm for patching
 
-diff --git a/drivers/char/tpm/st33zp24/i2c.c b/drivers/char/tpm/st33zp24/i2c.c
-index be5d1abd3e8e..8390c5b54c3b 100644
---- a/drivers/char/tpm/st33zp24/i2c.c
-+++ b/drivers/char/tpm/st33zp24/i2c.c
-@@ -33,7 +33,7 @@
- 
- struct st33zp24_i2c_phy {
- 	struct i2c_client *client;
--	u8 buf[TPM_BUFSIZE + 1];
-+	u8 buf[ST33ZP24_BUFSIZE + 1];
- 	int io_lpcpd;
- };
- 
-diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
-index d7909ab287a8..ff019a1e3c68 100644
---- a/drivers/char/tpm/st33zp24/spi.c
-+++ b/drivers/char/tpm/st33zp24/spi.c
-@@ -63,7 +63,7 @@
-  * some latency byte before the answer is available (max 15).
-  * We have 2048 + 1024 + 15.
-  */
--#define ST33ZP24_SPI_BUFFER_SIZE (TPM_BUFSIZE + (TPM_BUFSIZE / 2) +\
-+#define ST33ZP24_SPI_BUFFER_SIZE (ST33ZP24_BUFSIZE + (ST33ZP24_BUFSIZE / 2) +\
- 				  MAX_SPI_LATENCY)
- 
- 
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.h b/drivers/char/tpm/st33zp24/st33zp24.h
-index 6f4a4198af6a..20da0a84988d 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.h
-+++ b/drivers/char/tpm/st33zp24/st33zp24.h
-@@ -18,8 +18,8 @@
- #ifndef __LOCAL_ST33ZP24_H__
- #define __LOCAL_ST33ZP24_H__
- 
--#define TPM_WRITE_DIRECTION             0x80
--#define TPM_BUFSIZE                     2048
-+#define TPM_WRITE_DIRECTION	0x80
-+#define ST33ZP24_BUFSIZE	2048
- 
- struct st33zp24_dev {
- 	struct tpm_chip *chip;
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-index 9086edc9066b..3b490d9d90e7 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -26,8 +26,7 @@
- #include <linux/wait.h>
- #include "tpm.h"
- 
--/* max. buffer size supported by our TPM */
--#define TPM_BUFSIZE 1260
-+#define TPM_I2C_INFINEON_BUFSIZE 1260
- 
- /* max. number of iterations after I2C NAK */
- #define MAX_COUNT 3
-@@ -63,11 +62,13 @@ enum i2c_chip_type {
- 	UNKNOWN,
- };
- 
--/* Structure to store I2C TPM specific stuff */
- struct tpm_inf_dev {
- 	struct i2c_client *client;
- 	int locality;
--	u8 buf[TPM_BUFSIZE + sizeof(u8)]; /* max. buffer size + addr */
-+	/* In addition to the data itself, the buffer must fit the 7-bit I2C
-+	 * address and the direction bit.
-+	 */
-+	u8 buf[TPM_I2C_INFINEON_BUFSIZE + 1];
- 	struct tpm_chip *chip;
- 	enum i2c_chip_type chip_type;
- 	unsigned int adapterlimit;
-@@ -219,7 +220,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, size_t len,
- 		.buf = tpm_dev.buf
- 	};
- 
--	if (len > TPM_BUFSIZE)
-+	if (len > TPM_I2C_INFINEON_BUFSIZE)
- 		return -EINVAL;
- 
- 	if (!tpm_dev.client->adapter->algo->master_xfer)
-@@ -527,8 +528,8 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 	u8 retries = 0;
- 	u8 sts = TPM_STS_GO;
- 
--	if (len > TPM_BUFSIZE)
--		return -E2BIG;	/* command is too long for our tpm, sorry */
-+	if (len > TPM_I2C_INFINEON_BUFSIZE)
-+		return -E2BIG;
- 
- 	if (request_locality(chip, 0) < 0)
- 		return -EBUSY;
-diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-index 217f7f1cbde8..5700cc2ddee1 100644
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -35,14 +35,12 @@
- #include "tpm.h"
- 
- /* I2C interface offsets */
--#define TPM_STS                0x00
--#define TPM_BURST_COUNT        0x01
--#define TPM_DATA_FIFO_W        0x20
--#define TPM_DATA_FIFO_R        0x40
--#define TPM_VID_DID_RID        0x60
--/* TPM command header size */
--#define TPM_HEADER_SIZE        10
--#define TPM_RETRY      5
-+#define TPM_STS			0x00
-+#define TPM_BURST_COUNT		0x01
-+#define TPM_DATA_FIFO_W		0x20
-+#define TPM_DATA_FIFO_R		0x40
-+#define TPM_VID_DID_RID		0x60
-+#define TPM_I2C_RETRIES		5
- /*
-  * I2C bus device maximum buffer size w/o counting I2C address or command
-  * i.e. max size required for I2C write is 34 = addr, command, 32 bytes data
-@@ -292,7 +290,7 @@ static int i2c_nuvoton_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 		dev_err(dev, "%s() count < header size\n", __func__);
- 		return -EIO;
- 	}
--	for (retries = 0; retries < TPM_RETRY; retries++) {
-+	for (retries = 0; retries < TPM_I2C_RETRIES; retries++) {
- 		if (retries > 0) {
- 			/* if this is not the first trial, set responseRetry */
- 			i2c_nuvoton_write_status(client,
+s/initailizing/Initialize/
+
+On Mon, Jan 28, 2019 at 04:34:07PM -0800, Rick Edgecombe wrote:
+> From: Nadav Amit <namit@vmware.com>
+> 
+> To prevent improper use of the PTEs that are used for text patching, we
+> want to use a temporary mm struct. We initailize it by copying the init
+
+Please remove the "we" from commit messages and use impartial, passive
+formulations.
+
+Thx.
+
 -- 
-2.19.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
