@@ -2,151 +2,108 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C90C282D7
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 015DDC4151A
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDD5F2083B
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD2DD2083B
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:10:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbfBELH0 convert rfc822-to-8bit (ORCPT
+        id S1728097AbfBELKp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:07:26 -0500
-Received: from mga01.intel.com ([192.55.52.88]:21393 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727776AbfBELHZ (ORCPT
+        Tue, 5 Feb 2019 06:10:45 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37082 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbfBELKp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:07:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 03:07:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,563,1539673200"; 
-   d="scan'208";a="136021718"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by orsmga001.jf.intel.com with ESMTP; 05 Feb 2019 03:07:24 -0800
-Received: from fmsmsx111.amr.corp.intel.com (10.18.116.5) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 5 Feb 2019 03:07:23 -0800
-Received: from hasmsx111.ger.corp.intel.com (10.184.198.39) by
- fmsmsx111.amr.corp.intel.com (10.18.116.5) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 5 Feb 2019 03:07:22 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
- HASMSX111.ger.corp.intel.com ([169.254.5.16]) with mapi id 14.03.0415.000;
- Tue, 5 Feb 2019 13:07:17 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: RE: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Thread-Topic: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Thread-Index: AQHUvUDUPtSrjGtlHk6wCuMRxetyu6XRCy8A
-Date:   Tue, 5 Feb 2019 11:07:16 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA90A8B@hasmsx108.ger.corp.intel.com>
-References: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.126.72]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 5 Feb 2019 06:10:45 -0500
+Received: by mail-ot1-f65.google.com with SMTP id s13so5008517otq.4
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 03:10:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BHiz5BnB40t7CyxMYJeN0f/lG9oKrCAQiaNvrLJ9gig=;
+        b=qz5bgJ2aEbeA/spj3AQuI0+fLcVXt16lMoAhWttGpG8nzT/bzp+25VqNOi5IsAd2vo
+         LVLvBYIuCi4MnBgjj5egqjKjTmnM2OXv0pRB1KL8dqAPDIyvJ2qm7xu/d7kB9dFlHki2
+         bDp0rDRjmJBHMgLzMnpoT5fbrezHZOF3Oy1bJoyXlJczuaqOe4yPCx380lypY+jw2C4E
+         eFClTRwWcLUEkpvkYk8JvtiG6NjZrZOxdCxKRqNjYq0QOCOWaZsGQMFPkO31xTqQmJwC
+         UOqPtgy5S+Buz4yIHOPwT10ybKXXlD7J6AFBM9R1nkK0Gc2mmvJSMaWQGjW18fDjTjlA
+         tJ5w==
+X-Gm-Message-State: AHQUAuZGeSQ+O4EaWp+t6zV+y7KX7jVieo0N9ukUnoYP8k18ijV/ASlg
+        BcobdeiOVFQ9plnx7zD0//ENrH2fgdzQac/snXCOsA==
+X-Google-Smtp-Source: AHgI3IbDNmS2WRlsaXoMdKMTLDPOdNIafFPgpe/Iv60QoyMyrkXTanXaKY0w7L80ChJuRmdqikj5jCe3bSZUIhw7vA4=
+X-Received: by 2002:aca:2403:: with SMTP id n3mr2265420oic.328.1549365044485;
+ Tue, 05 Feb 2019 03:10:44 -0800 (PST)
 MIME-Version: 1.0
+References: <20190205085915.5183-4-omosnace@redhat.com> <201902051753.YakI70it%fengguang.wu@intel.com>
+In-Reply-To: <201902051753.YakI70it%fengguang.wu@intel.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 5 Feb 2019 12:10:33 +0100
+Message-ID: <CAFqZXNveDL23r8Q3sQ_FM_bK6R157z0x=BjxQ4vS8rT+bW45PQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] LSM: add new hook for kernfs node initialization
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, selinux@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> The current approach to read first 6 bytes from the response and then tail of
-> the response, can cause the 2nd memcpy_fromio() to do an unaligned read
-> (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
-> memcpy_fromio() is implemented. If this happens, the read will fail and the
-> memory controller will fill the read with 1's.
-> 
-> This was triggered by 170d13ca3a2f, which should be probably refined to check
-> and react to the address alignment. Before that commit, on x86
-> memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
-> thing (from tpm_crb's perspective) for us so far, but we should not rely on that.
-> Thus, it makes sense to fix this also in tpm_crb, not least because the fix can be
-> then backported to stable kernels and make them more robust when compiled
-> in differing environments.
-> 
-> Cc: stable@vger.kernel.org
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Tomas Winkler <tomas.winkler@intel.com>
-> Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-> Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> ---
-> v3:
-> * Fix typo i.e. %s/reminding/remaining/g
+On Tue, Feb 5, 2019 at 10:52 AM kbuild test robot <lkp@intel.com> wrote:
+>
+> Hi Ondrej,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on driver-core/driver-core-testing]
+> [also build test ERROR on v5.0-rc4 next-20190205]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Ondrej-Mosnacek/Allow-initializing-the-kernfs-node-s-secctx-based-on-its-parent/20190205-171434
+> config: x86_64-randconfig-x013-201905 (attached as .config)
+> compiler: gcc-8 (Debian 8.2.0-14) 8.2.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64
+>
+> All errors (new ones prefixed by >>):
+>
+>    In file included from fs/file_table.c:15:
+> >> include/linux/security.h:796:1: error: expected identifier or '(' before '{' token
+>     {
+>     ^
+>    In file included from fs/file_table.c:15:
+>    include/linux/security.h:792:19: warning: 'security_kernfs_init_security' declared 'static' but never defined [-Wunused-function]
+>     static inline int security_kernfs_init_security(
+>                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> vim +796 include/linux/security.h
+>
+>    791
+>    792  static inline int security_kernfs_init_security(
+>    793                  const struct qstr *qstr, const struct iattr *dir_iattr,
+>    794                  struct simple_xattrs *dir_secattr, const struct iattr *iattr,
+>    795                  struct simple_xattrs *secattr);
+>  > 796  {
+>    797          return 0;
+>    798  }
+>    799
 
-Why you haven't fixed all the typos I've pointed out? I think you missed that.
-Tomas
+*facepalm*... Fixed in v5.
 
-> v2:
-> * There was a trailing double colon in the end of the short summary.
-> * Check requested and expected length against TPM_HEADER_SIZE.
-> * Add some explanatory comments to crb_recv().
->  drivers/char/tpm/tpm_crb.c | 22 ++++++++++++++++------
->  1 file changed, 16 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c index
-> 36952ef98f90..ee4df7815912 100644
-> --- a/drivers/char/tpm/tpm_crb.c
-> +++ b/drivers/char/tpm/tpm_crb.c
-> @@ -287,19 +287,29 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf,
-> size_t count)
->  	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
->  	unsigned int expected;
-> 
-> -	/* sanity check */
-> -	if (count < 6)
-> +	/* A sanity check that the upper layer wants to get at least the header
-> +	 * as that is the minimum size for any TPM response.
-> +	 */
-> +	if (count < TPM_HEADER_SIZE)
->  		return -EIO;
-> 
-> +	/* If this bit is set, according to the spec, the TPM is in unrecovable
-> +	 * condition.
-> +	 */
->  	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
->  		return -EIO;
-> 
-> -	memcpy_fromio(buf, priv->rsp, 6);
-> -	expected = be32_to_cpup((__be32 *) &buf[2]);
-> -	if (expected > count || expected < 6)
-> +	/* Read 8 bytes (not just 6 bytes, which would cover the response
-> length
-> +	 * field) in order to make sure that the remaining memory accesses
-> will
-> +	 * be aligned.
-> +	 */
-> +	memcpy_fromio(buf, priv->rsp, 8);
-> +
-> +	expected = be32_to_cpup((__be32 *)&buf[2]);
-> +	if (expected > count || expected < TPM_HEADER_SIZE)
->  		return -EIO;
-> 
-> -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
-> +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
-> 
->  	return expected;
->  }
-> --
-> 2.19.1
 
+-- 
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
