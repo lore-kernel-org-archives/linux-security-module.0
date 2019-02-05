@@ -2,112 +2,105 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1030C282D7
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 16:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DE1C282CB
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 17:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B86AF217F9
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 16:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 586BF2175B
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 17:40:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FzVZdrMw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725952AbfBEQrp (ORCPT
+        id S1726962AbfBERkd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:47:45 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57688 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727780AbfBEQro (ORCPT
+        Tue, 5 Feb 2019 12:40:33 -0500
+Received: from sonic302-10.consmr.mail.bf2.yahoo.com ([74.6.135.49]:42273 "EHLO
+        sonic302-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726534AbfBERkc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:47:44 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15Gji9I104107
-        for <linux-security-module@vger.kernel.org>; Tue, 5 Feb 2019 11:47:43 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfe5xrfdt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 11:47:43 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 5 Feb 2019 16:47:41 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 5 Feb 2019 16:47:37 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15GlaXp49873032
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Feb 2019 16:47:36 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98B174C058;
-        Tue,  5 Feb 2019 16:47:36 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8BBB04C046;
-        Tue,  5 Feb 2019 16:47:35 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.43])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  5 Feb 2019 16:47:35 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Seth Forshee <seth.forshee@canonical.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Tue, 05 Feb 2019 11:47:24 -0500
-In-Reply-To: <20190205151859.GD16362@ubuntu-xps13>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
-         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-         <20190205151859.GD16362@ubuntu-xps13>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020516-0028-0000-0000-00000344895B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020516-0029-0000-0000-00002402933B
-Message-Id: <1549385244.4146.148.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902050128
+        Tue, 5 Feb 2019 12:40:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1549388428; bh=6k44cSLXC/RefFPCxz1S8RfBMbuDJCiSyj+7jb/RlTE=; h=To:From:Subject:Date:From:Subject; b=FzVZdrMwiUQaPEtMEFgI8ztysZkRjSzQqPeKp4plFaSR+shvMNeUl6ATTjRz8uJuYzDGr4FFit50ICOst6v09Zj1QPcd53/rFN5/LacSEDJxwNNMBv3R0hLBNl/J7z7L6lCyaDJTbmAwE4bvZLo2dAIf9j8aS50w1d8tar8sLmmcJmUMB5ZyDuObPGDuVYCND2QSukJSfMF5tjpmIGOGLByGeMtiOFpc96FnQ2YevHBq6XaBCruKT7kktZCu3rWrfeGKqMvLabVBwDk0KWdl99aJJV5g3lXVan6IBMdj9baa2M6igve/Se5E8/NooiT+l6GmHhEHkgSYK49IF+Cgpw==
+X-YMail-OSG: EGqMZJYVM1lWrBf226ti7HP4lzwVeWeb2qfxzX6aB_Tj6lk2vPd2DVArFII9lAF
+ vPqn2Fqfk0bYYtXzsRYglHNX5p6adeMnhjpyK40TlSD5HrZFrlLSwn9SqJG5LBfzxOXfBXDhctLB
+ Zp2kw8IreRGj.Dn.4LWPKOka.hk5glxomITIV79FP03Ri.sXFWK7.42BIUk.Hn6JrvsMdJQRhHvC
+ XEHeGINlfEVb.tQoGAja6FSGSGBYMWNz1z2ioezPmakYbe770az.6S8D6Mr9lv1pIE_P_4HcYXOA
+ uUg_WurIScui7Ed08TOnqlRLtcO_3dmswSgavzL_Jz74T8V47HpdLHO393IBr38o_ERSv0A9m4CG
+ XSqa2oBaJb8wOr1CG_QB76Xjwq2Er4tOkHzNMvnjUN91kTMykwScvxakpbJNhhPdYFjpvBn0.vDw
+ EFx763A6aJojtHaLqiSXonDzLYyKpeBg6ZVuM_tQft_o7oS3KEQ6nc.fh42xgAA0Vb.v6LjXL_O9
+ 7wK.vNw9_EvQnM7PFTsFjsUz565MjJTwdsHmt7luuBWi4me0VoW4acSADRa5.P_zj1EWbyzxkDT7
+ 8EBJavgwsJPvFuRUVWf9wFnp7ALjNWxTaX04HOWxccro.oRP1sPBIpvSw2QhRx_XyttaUvtfnnKP
+ pSbELcXSSlSb3OHZJxbEfMHQssOF5oiEZ.50Z.ked2P1YCBHeg8lvFz1cQytyyaE1iAd8GAbAVWO
+ n7RM0BkIFD3iH1cJI35xVAg3ruil0g9GJoglxRJrZrkAVkuyXaLCOPy_5zxgx2WpqtIOC65zwB4M
+ Q_d09t9iLFFQ3WLRf.DBb1qW.qwdF_pHeM5eHaKixTyg_Dy3dfWyDsvllNCvLInTyiIOysBgX2os
+ YIyMA9c2gKHR.sZ9_N_WAHbotL.AOYbkSlClCIFwQcSdimRbLQ1nNagCQVzoX6LQ.gbIzG4OaJL4
+ LCkw5RNDEJ7aJVqOqeh_FPh7e.qrQ80pFXFpzmRzQZsAOjiHLizu_pyERLX0.wL2DkEM6srP2eHN
+ JpIwkMVG3q7rOxGENZtIA4.22_95zb9jBc2lyKnis1ZQfqZGSlmMLYBVpqAqAS1KCW.kJhKKD
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.bf2.yahoo.com with HTTP; Tue, 5 Feb 2019 17:40:28 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
+          by smtp425.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b50c85f3990aee787e8d011d086534f3
+          for <linux-security-module@vger.kernel.org>;
+          Tue, 05 Feb 2019 17:40:28 +0000 (UTC)
+To:     LSM <linux-security-module@vger.kernel.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: New LSM hooks
+Message-ID: <61766e1d-496e-6a7d-d4b8-52e2c99a78c3@schaufler-ca.com>
+Date:   Tue, 5 Feb 2019 09:40:26 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Seth,
+Full disclosure: This is all about me and my interests.
 
-On Tue, 2019-02-05 at 09:18 -0600, Seth Forshee wrote:
-> On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
-> > Require signed kernel modules on systems with secure boot mode enabled.
-> > 
-> > To coordinate between appended kernel module signatures and IMA
-> > signatures, only define an IMA MODULE_CHECK policy rule if
-> > CONFIG_MODULE_SIG is not enabled.
-> > 
-> > This patch defines a function named set_module_sig_required() and renames
-> > is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
-> > call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
-> > being enabled.
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> 
-> With respect to interactions with the kernel lockdown patches, this
-> looks better than the patches I saw previously. I don't feel like I know
-> enough about what's going on with IMA to ack the patch, but I feel
-> confident that it's at least not going to break signature enforcement
-> for us.
+Developers propose new LSM hooks for many reasons. Often,
+it's in support of an exotic feature such as Infiniband.
+Sometimes it's because someone got clever when they optimized
+an otherwise mundane feature and bypassed the usual hooks,
+as is being proposed for kernfs. Usually there is a particular
+security module (i.e. SELinux) that is targeted for the hook.
+In almost all cases a hook is provided for that LSM, but not
+for any other. In many cases the developers don't even include
+the LSM email list in the discussions. LSM maintainers find
+out about the new hooks after the fact.
 
-Thank you for testing!  Could this be translated into a "tested-by"
-"(for w/lockdown patches)"?
+Prior to 2008, when there was only one LSM, this made perfect
+sense. Since then, it's been a regular practice justified by
+the notion that it's the LSM maintainer's option to use the
+hook or not. That also makes sense in cases where the use is
+strictly optional, as it is in binder. It does not make sense,
+however, when a core system facility like kernfs is involved.
 
-Mimi
+I get a double whammy on these new LSM hooks. I have to try
+to figure out if Smack cares, and if it does, whether to proposed
+hook will solve the problem for Smack. Because Smack uses
+xattrs and process attributes differently from SELinux there are
+often problems with hooks that are provided with only an SELinux
+implementation. I also have to work out how the new hook will
+work in the stacked security module case. There are some existing
+hooks that are a special challenge there, and when a new hook is
+proposed that does the same kind of things (e.g. use of secid,
+secctx or list of xattrs) without considering the consequences
+for other modules.
+
+What do I want, I hear you cry? I want some sanity in the way
+LSM hooks are introduced. I want some standards or conventions
+on what is appropriate to pass into and out of LSM hooks. I
+want push back on special purpose hooks that are required to
+fix the deficiencies of a filesystem or bizarre hardware
+implementation. I want to stop spending all my time trying to
+deal with new, crazy LSM hooks. There are enough old ones to
+keep me entertained, thank you very much.
+
+We're about to get a bunch of new LSMs. I don't think that we
+can afford to continue with the current "feature A needs a hook
+for LSM S" behavior.
+
 
