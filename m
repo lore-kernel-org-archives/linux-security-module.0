@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16361C282D7
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 13:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9F2C282CC
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 13:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D99F12073D
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 13:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CE8C20844
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 13:30:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pcx+6gkP"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PoMhzwSc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbfBENZT (ORCPT
+        id S1729161AbfBENa3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:25:19 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41036 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfBENZT (ORCPT
+        Tue, 5 Feb 2019 08:30:29 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:46096 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfBENa2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:25:19 -0500
+        Tue, 5 Feb 2019 08:30:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+l45x5l0P651QToTgntqm4C4rBuYwaWF/YbxeJcL2io=; b=Pcx+6gkPLdBa1ieyYGSrBM86W
-        cluGsoVQzC2hMkhbRbBbvcd309s1CoJjgS8x3tyXcriGoNdWG4+Z1ApqrCrmflsbikjhAWgYdXLIm
-        5VtZ84kTOXNSEEJCU2oPV7toJzb9bsmDs5sAWjqM/9HoDb8jZiKaeLe6fglkiNHCyBuxWFeOkbK3A
-        MqMnbfWYhbM5bmqVdTmFDnW738MZR1o1akvR+72MWee5cFKjAdchbhuCAolzuUKVnpFfQ+4oEhHue
-        DEEMlRNJwbJ2KT75VJf/XcinLApF6zKOOhzZLVaeryeSMnWmHf5w99bCrg1Auwa3uPU0l+nf3hNIW
-        LIaeKvqPw==;
+         bh=CVKHIuEvj5JGw+bPxiuecR8XPRMXnKXfH5LmqCODJr0=; b=PoMhzwScDlbzVjbkRBMfS4MZr
+        XfllCw3u9d26TcsNbDc093sC1RxuPXDZdQHSK2vTbLzwL0ojT3aZp0xe4o9jyt6A0d5fQOCSYHUih
+        6CF3lbljAfVseZghqn6Pau0P5tXLAO6zQQcAGTTjRx862pUtQgZIEQwub/rYZPsmd6yqPnj0TGBVs
+        ElzmBbTUGISW5G0NVPgVofxdS7/o1cgNo8R1wO/E43lLvGAy0Ljfc0lF85dD8t8x/RDAE29wcXiT0
+        YTsQpytF2iY8zJOfEEnJwEpajF0ODa1Q2SMkWVJhldOFAkFR5r6YXvmenPbdZ7AVxX3z7cOOCcMxP
+        ophLotiNQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gr0ir-0006Jc-5O; Tue, 05 Feb 2019 13:25:09 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gr0nT-00047L-1s; Tue, 05 Feb 2019 13:29:55 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9EB66202A2A0F; Tue,  5 Feb 2019 14:25:07 +0100 (CET)
-Date:   Tue, 5 Feb 2019 14:25:07 +0100
+        id C67B82029F1D6; Tue,  5 Feb 2019 14:29:53 +0100 (CET)
+Date:   Tue, 5 Feb 2019 14:29:53 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
@@ -60,34 +60,36 @@ Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
         Masami Hiramatsu <mhiramat@kernel.org>
 Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
  poking
-Message-ID: <20190205132507.GS17528@hirez.programming.kicks-ass.net>
+Message-ID: <20190205132953.GF17582@hirez.programming.kicks-ass.net>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
  <20190129003422.9328-7-rick.p.edgecombe@intel.com>
  <20190205095853.GJ21801@zn.tnic>
  <20190205113146.GP17528@hirez.programming.kicks-ass.net>
- <20190205123533.GN21801@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190205123533.GN21801@zn.tnic>
+In-Reply-To: <20190205113146.GP17528@hirez.programming.kicks-ass.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 05, 2019 at 01:35:33PM +0100, Borislav Petkov wrote:
-> On Tue, Feb 05, 2019 at 12:31:46PM +0100, Peter Zijlstra wrote:
-> > ...
-> >
-> > So while in general I agree with BUG_ON() being undesirable, I think
-> > liberal sprinking in text_poke() is fine; you really _REALLY_ want this
-> > to work or fail loudly. Text corruption is just painful.
+On Tue, Feb 05, 2019 at 12:31:46PM +0100, Peter Zijlstra wrote:
+> In general, text_poke() cannot fail:
 > 
-> Ok. It would be good to have the gist of this sentiment in a comment
-> above it so that it is absolutely clear why we're doing it.
+>  - suppose changing a single jump label requires poking multiple sites
+>    (not uncommon), we fail halfway through and then have to undo the
+>    first pokes, but those pokes fail again.
 > 
-> And since text_poke() can't fail, then it doesn't need a retval too.
-> AFAICT, nothing is actually using it.
+>  - this then leaves us no way forward and no way back, we've got
+>    inconsistent text state -> FAIL.
 
-See patch 12, that removes the return value (after fixing the few users
-that currently 'rely' on it).
+Note that this exact fail scenario still exists in the CPU hotplug code.
+See kernel/cpu.c:cpuhp_thread_fun():
+
+		/*
+		 * If we fail on a rollback, we're up a creek without no
+		 * paddle, no way forward, no way back. We loose, thanks for
+		 * playing.
+		 */
+		WARN_ON_ONCE(st->rollback);
