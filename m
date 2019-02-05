@@ -2,230 +2,174 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E6EDC282D7
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 09:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E57A1C282CB
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 10:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 502E62176F
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 09:59:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="sN+VAMR/"
+	by mail.kernel.org (Postfix) with ESMTP id BD5D620844
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 10:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728758AbfBEJ7F (ORCPT
+        id S1728835AbfBEKCt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:59:05 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:55272 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727127AbfBEJ7F (ORCPT
+        Tue, 5 Feb 2019 05:02:49 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32866 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726334AbfBEKCs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:59:05 -0500
-Received: from zn.tnic (p200300EC2BCB6B0041C3B5D5EB4D55D2.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:41c3:b5d5:eb4d:55d2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 617901EC02AE;
-        Tue,  5 Feb 2019 10:59:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549360743;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=4WLWE+J0DRMfgxDveUBu3Q4pEbwtQo3nPkdUwTDOryU=;
-        b=sN+VAMR/+p82N2cesfhrBJmbYaaoU6yls9h3YT7v4jao9kNIG/tcUSCbuxKb/0uVV9erWV
-        4hRsw4aqxnrrRj4e8lwlE5VFodJOJK/dg/QuzXN/u4AmU8FxMDHrO8Yi/CrlUmQLYakWNr
-        BlG/qnD7KImItVvOV94cFbrLYko4xMg=
-Date:   Tue, 5 Feb 2019 10:58:53 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
- poking
-Message-ID: <20190205095853.GJ21801@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-7-rick.p.edgecombe@intel.com>
+        Tue, 5 Feb 2019 05:02:48 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 392CDCD9A6337D8C23F2;
+        Tue,  5 Feb 2019 10:02:47 +0000 (GMT)
+Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 5 Feb
+ 2019 10:02:37 +0000
+Subject: Re: [PATCH v9 6/6] tpm: pass an array of tpm_extend_digest structures
+ to tpm_pcr_extend()
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        <jarkko.sakkinen@linux.intel.com>, <david.safford@ge.com>,
+        <monty.wiseman@ge.com>, <matthewgarrett@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+References: <20190201100641.26936-1-roberto.sassu@huawei.com>
+ <20190201100641.26936-7-roberto.sassu@huawei.com>
+ <1549048506.6993.73.camel@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <e3d41507-3a3e-2851-c887-ab53b3308558@huawei.com>
+Date:   Tue, 5 Feb 2019 11:02:36 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-7-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1549048506.6993.73.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.204.65.155]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 28, 2019 at 04:34:08PM -0800, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
+On 2/1/2019 8:15 PM, Mimi Zohar wrote:
+> Hi Roberto,
 > 
-> text_poke() can potentially compromise the security as it sets temporary
-
-s/the //
-
-> PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
-> from other cores accidentally or maliciously, if an attacker gains the
-> ability to write onto kernel memory.
-
-Eww, sneaky. That would be a really nasty attack.
-
-> Moreover, since remote TLBs are not flushed after the temporary PTEs are
-> removed, the time-window in which the code is writable is not limited if
-> the fixmap PTEs - maliciously or accidentally - are cached in the TLB.
-> To address these potential security hazards, we use a temporary mm for
-> patching the code.
+> Sorry for the delayed review.  A few comments inline below, minor
+> suggestions.
 > 
-> Finally, text_poke() is also not conservative enough when mapping pages,
-> as it always tries to map 2 pages, even when a single one is sufficient.
-> So try to be more conservative, and do not map more than needed.
+>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+>> index cc12f3449a72..e6b2dcb0846a 100644
+>> --- a/security/integrity/ima/ima.h
+>> +++ b/security/integrity/ima/ima.h
+>> @@ -56,6 +56,7 @@ extern int ima_policy_flag;
+>>   extern int ima_hash_algo;
+>>   extern int ima_appraise;
+>>   extern struct tpm_chip *ima_tpm_chip;
+>> +extern struct tpm_digest *digests;
+>>   
+>>   /* IMA event related data */
+>>   struct ima_event_data {
+>> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+>> index 6bb42a9c5e47..296a965b11ef 100644
+>> --- a/security/integrity/ima/ima_init.c
+>> +++ b/security/integrity/ima/ima_init.c
+>> @@ -27,6 +27,7 @@
+>>   /* name for boot aggregate entry */
+>>   static const char boot_aggregate_name[] = "boot_aggregate";
+>>   struct tpm_chip *ima_tpm_chip;
+>> +struct tpm_digest *digests;
 > 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  arch/x86/include/asm/fixmap.h |   2 -
->  arch/x86/kernel/alternative.c | 106 +++++++++++++++++++++++++++-------
->  arch/x86/xen/mmu_pv.c         |   2 -
->  3 files changed, 84 insertions(+), 26 deletions(-)
+> "digests" is used in the new ima_init_digests() and in
+> ima_pcr_extend().  It's nice that the initialization routines are
+> grouped together here in ima_init.c, but wouldn't it better to define
+> "digests" in ima_queued.c, where it is currently being used?
+>   "digests" could then be defined as static.
 > 
-> diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
-> index 50ba74a34a37..9da8cccdf3fb 100644
-> --- a/arch/x86/include/asm/fixmap.h
-> +++ b/arch/x86/include/asm/fixmap.h
-> @@ -103,8 +103,6 @@ enum fixed_addresses {
->  #ifdef CONFIG_PARAVIRT
->  	FIX_PARAVIRT_BOOTMAP,
->  #endif
-> -	FIX_TEXT_POKE1,	/* reserve 2 pages for text_poke() */
-> -	FIX_TEXT_POKE0, /* first page is last, because allocation is backward */
+>>   
+>>   /* Add the boot aggregate to the IMA measurement list and extend
+>>    * the PCR register.
+>> @@ -104,6 +105,24 @@ void __init ima_load_x509(void)
+>>   }
+>>   #endif
+>>   
+>> +int __init ima_init_digests(void)
+>> +{
+>> +	int i;
+>> +
+>> +	if (!ima_tpm_chip)
+>> +		return 0;
+>> +
+>> +	digests = kcalloc(ima_tpm_chip->nr_allocated_banks, sizeof(*digests),
+>> +			  GFP_NOFS);
+>> +	if (!digests)
+>> +		return -ENOMEM;
+>> +
+>> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
+>> +		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   int __init ima_init(void)
+>>   {
+>>   	int rc;
+>> @@ -125,6 +144,9 @@ int __init ima_init(void)
+>>   
+>>   	ima_load_kexec_buffer();
+>>   
+>> +	rc = ima_init_digests();
+> 
+> Ok. Getting the tpm chip is at the beginning of this function.
+>   Deferring allocating "digests" to here, avoids having to free memory
+> on failure.
 
-Two fixmap slots less - good riddance. :)
+If I understood the code correctly, ima_init() does not undo the actions
+of previous functions. For example, if ima_init_template() fails,
+ima_shash_tfm is not freed.
 
->  #ifdef	CONFIG_X86_INTEL_MID
->  	FIX_LNW_VRTC,
->  #endif
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index ae05fbb50171..76d482a2b716 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -11,6 +11,7 @@
->  #include <linux/stop_machine.h>
->  #include <linux/slab.h>
->  #include <linux/kdebug.h>
-> +#include <linux/mmu_context.h>
->  #include <asm/text-patching.h>
->  #include <asm/alternative.h>
->  #include <asm/sections.h>
-> @@ -683,41 +684,102 @@ __ro_after_init unsigned long poking_addr;
->  
->  static void *__text_poke(void *addr, const void *opcode, size_t len)
->  {
-> +	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
-> +	temporary_mm_state_t prev;
-> +	struct page *pages[2] = {NULL};
->  	unsigned long flags;
-> -	char *vaddr;
-> -	struct page *pages[2];
-> -	int i;
-> +	pte_t pte, *ptep;
-> +	spinlock_t *ptl;
-> +	pgprot_t prot;
->  
->  	/*
-> -	 * While boot memory allocator is runnig we cannot use struct
-> -	 * pages as they are not yet initialized.
-> +	 * While boot memory allocator is running we cannot use struct pages as
-> +	 * they are not yet initialized.
->  	 */
->  	BUG_ON(!after_bootmem);
->  
->  	if (!core_kernel_text((unsigned long)addr)) {
->  		pages[0] = vmalloc_to_page(addr);
-> -		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-> +		if (cross_page_boundary)
-> +			pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
->  	} else {
->  		pages[0] = virt_to_page(addr);
->  		WARN_ON(!PageReserved(pages[0]));
-> -		pages[1] = virt_to_page(addr + PAGE_SIZE);
-> +		if (cross_page_boundary)
-> +			pages[1] = virt_to_page(addr + PAGE_SIZE);
->  	}
-> -	BUG_ON(!pages[0]);
-> +	BUG_ON(!pages[0] || (cross_page_boundary && !pages[1]));
+Probably, this can be improved later.
 
-checkpatch fires a lot for this patchset and I think we should tone down
-the BUG_ON() use.
+Roberto
 
-WARNING: Avoid crashing the kernel - try using WARN_ON & recovery code rather than BUG() or BUG_ON()
-#116: FILE: arch/x86/kernel/alternative.c:711:
-+       BUG_ON(!pages[0] || (cross_page_boundary && !pages[1]));
 
-While the below BUG_ON makes sense, this here could be a WARN_ON or so.
-
-Which begs the next question: AFAICT, nothing looks at text_poke*()'s
-retval. So why are we even bothering returning something?
-
-> +
->  	local_irq_save(flags);
-> -	set_fixmap(FIX_TEXT_POKE0, page_to_phys(pages[0]));
-> -	if (pages[1])
-> -		set_fixmap(FIX_TEXT_POKE1, page_to_phys(pages[1]));
-> -	vaddr = (char *)fix_to_virt(FIX_TEXT_POKE0);
-> -	memcpy(&vaddr[(unsigned long)addr & ~PAGE_MASK], opcode, len);
-> -	clear_fixmap(FIX_TEXT_POKE0);
-> -	if (pages[1])
-> -		clear_fixmap(FIX_TEXT_POKE1);
-> -	local_flush_tlb();
-> -	sync_core();
-> -	/* Could also do a CLFLUSH here to speed up CPU recovery; but
-> -	   that causes hangs on some VIA CPUs. */
-> -	for (i = 0; i < len; i++)
-> -		BUG_ON(((char *)addr)[i] != ((char *)opcode)[i]);
-> +
-> +	/*
-> +	 * The lock is not really needed, but this allows to avoid open-coding.
-> +	 */
-> +	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
-> +
-> +	/*
-> +	 * This must not fail; preallocated in poking_init().
-> +	 */
-> +	VM_BUG_ON(!ptep);
-> +
-> +	/*
-> +	 * flush_tlb_mm_range() would be called when the poking_mm is not
-> +	 * loaded. When PCID is in use, the flush would be deferred to the time
-> +	 * the poking_mm is loaded again. Set the PTE as non-global to prevent
-> +	 * it from being used when we are done.
-> +	 */
-> +	prot = __pgprot(pgprot_val(PAGE_KERNEL) & ~_PAGE_GLOBAL);
-
-So
-
-				_KERNPG_TABLE | _PAGE_NX
-
-as this is pagetable page, AFAICT.
+> ima_load_kexec_buffer() restores prior measurements, but doesn't
+> extend the TPM.  For anyone reading the code, a short comment above
+> ima_load_kexec_buffer() would make sense.
+> 
+> Mimi
+>     
+>> +	if (rc != 0)
+>> +		return rc;
+>>   	rc = ima_add_boot_aggregate();	/* boot aggregate must be first entry */
+>>   	if (rc != 0)
+>>   		return rc;
+>> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+>> index 0e41dc1df1d4..719e88ca58f6 100644
+>> --- a/security/integrity/ima/ima_queue.c
+>> +++ b/security/integrity/ima/ima_queue.c
+>> @@ -140,11 +140,15 @@ unsigned long ima_get_binary_runtime_size(void)
+>>   static int ima_pcr_extend(const u8 *hash, int pcr)
+>>   {
+>>   	int result = 0;
+>> +	int i;
+>>   
+>>   	if (!ima_tpm_chip)
+>>   		return result;
+>>   
+>> -	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
+>> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
+>> +		memcpy(digests[i].digest, hash, TPM_DIGEST_SIZE);
+>> +
+>> +	result = tpm_pcr_extend(ima_tpm_chip, pcr, digests);
+>>   	if (result != 0)
+>>   		pr_err("Error Communicating to TPM chip, result: %d\n", result);
+>>   	return result;
+>>
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
