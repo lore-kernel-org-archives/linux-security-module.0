@@ -2,122 +2,98 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0E5C282CB
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 14:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C16C282CB
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 15:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B71BD217FA
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 14:56:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16FEF217F9
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 15:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbfBEO4I convert rfc822-to-8bit (ORCPT
+        id S1729410AbfBEPTF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 09:56:08 -0500
-Received: from mga14.intel.com ([192.55.52.115]:23261 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726962AbfBEO4H (ORCPT
+        Tue, 5 Feb 2019 10:19:05 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:56776 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729217AbfBEPTF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 09:56:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 06:56:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
-   d="scan'208";a="136065448"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga001.jf.intel.com with ESMTP; 05 Feb 2019 06:56:06 -0800
-Received: from hasmsx107.ger.corp.intel.com (10.184.198.27) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 5 Feb 2019 06:56:06 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
- hasmsx107.ger.corp.intel.com ([169.254.2.13]) with mapi id 14.03.0415.000;
- Tue, 5 Feb 2019 16:56:03 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: RE: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Thread-Topic: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Thread-Index: AQHUvUDUPtSrjGtlHk6wCuMRxetyu6XRCy8AgAAY64CAACU3gA==
-Date:   Tue, 5 Feb 2019 14:56:02 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA90C75@hasmsx108.ger.corp.intel.com>
-References: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA90A8B@hasmsx108.ger.corp.intel.com>
- <20190205143541.GA18330@linux.intel.com>
-In-Reply-To: <20190205143541.GA18330@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.255.205.248]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 5 Feb 2019 10:19:05 -0500
+Received: from mail-yb1-f198.google.com ([209.85.219.198])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <seth.forshee@canonical.com>)
+        id 1gr2V5-0004xS-8g
+        for linux-security-module@vger.kernel.org; Tue, 05 Feb 2019 15:19:03 +0000
+Received: by mail-yb1-f198.google.com with SMTP id y4so1619057ybi.0
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 07:19:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Xj37CtNcS/y5pi4Gq6YdkdO+q+j/uv4oSoSjroFz6HI=;
+        b=XGV9qsuw9+MlA8kjQTtLFVbvkmqjuWqyA1zZhRAZUjMy6HAfM3VqTzVPnT/RpG9UuE
+         IY0rqBpoPxwO51Cz2lxpmUYC+3EKkx76rQAxGq4B0WSk2d69QYqVNtv/D3ZU4GQ4b97A
+         SkSd9oQS+OcdvPMJq1rlRHaHIgROU3PFJg9Xxe4cCFxkCSxmDK7kXaqfNrjNSKtaO/CQ
+         XwcukZxKgfNS+5/GUEKB0gZ4fjrgGsX1Q6pzk1KMkJG0dahF34vHwpa/3nvqxmAemdUj
+         dldfhSo0AUX9QfP80uo9qhoow87+7vmDtZBdKNh1YAh1We00ARmU7qrrlEDrZtGooLal
+         CFQg==
+X-Gm-Message-State: AHQUAubi3O/gIxVlBCK8Y04REIeDGURig8seUgZBFUnNXKCM4hXxone9
+        6112HpFHjTs2iajEGMxwv9OBN3Oeu1TFBW4Mht8sjUQuklV9DgPoyKCieRQ83xi6TqljzmuRcwo
+        Sh/y7CZ1yrqH1ZdIW7aHkBULWQuBGG9bTu7byPX8LJD7ILiSDvvAN0A==
+X-Received: by 2002:a25:2fc6:: with SMTP id v189mr4327464ybv.121.1549379941975;
+        Tue, 05 Feb 2019 07:19:01 -0800 (PST)
+X-Google-Smtp-Source: AHgI3IY7S0RpTDRGdHQDsUVkaz7/giuZ+rR/DJC16+6c1ojJ9/HgzvMs3KUBAoSM31CKWjr5HnACCg==
+X-Received: by 2002:a25:2fc6:: with SMTP id v189mr4327413ybv.121.1549379941393;
+        Tue, 05 Feb 2019 07:19:01 -0800 (PST)
+Received: from localhost ([2605:a601:ac2:fb20:2df6:439b:8b17:3e1f])
+        by smtp.gmail.com with ESMTPSA id f188sm1418274ywc.70.2019.02.05.07.19.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 07:19:00 -0800 (PST)
+Date:   Tue, 5 Feb 2019 09:18:59 -0600
+From:   Seth Forshee <seth.forshee@canonical.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+Message-ID: <20190205151859.GD16362@ubuntu-xps13>
+References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
+ <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> Sent: Tuesday, February 05, 2019 16:36
-> To: Winkler, Tomas <tomas.winkler@intel.com>
-> Cc: linux-integrity@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> security-module@vger.kernel.org; stable@vger.kernel.org; James Morris
-> <jmorris@namei.org>; Jerry Snitselaar <jsnitsel@redhat.com>
-> Subject: Re: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
+> Require signed kernel modules on systems with secure boot mode enabled.
 > 
-> On Tue, Feb 05, 2019 at 11:07:16AM +0000, Winkler, Tomas wrote:
-> > > The current approach to read first 6 bytes from the response and
-> > > then tail of the response, can cause the 2nd memcpy_fromio() to do
-> > > an unaligned read (e.g. read 32-bit word from address aligned to a
-> > > 16-bits), depending on how
-> > > memcpy_fromio() is implemented. If this happens, the read will fail
-> > > and the memory controller will fill the read with 1's.
-> > >
-> > > This was triggered by 170d13ca3a2f, which should be probably refined
-> > > to check and react to the address alignment. Before that commit, on
-> > > x86
-> > > memcpy_fromio() turned out to be memcpy(). By a luck GCC has done
-> > > the right thing (from tpm_crb's perspective) for us so far, but we should not
-> rely on that.
-> > > Thus, it makes sense to fix this also in tpm_crb, not least because
-> > > the fix can be then backported to stable kernels and make them more
-> > > robust when compiled in differing environments.
-> > >
-> > > Cc: stable@vger.kernel.org
-> > > Cc: James Morris <jmorris@namei.org>
-> > > Cc: Tomas Winkler <tomas.winkler@intel.com>
-> > > Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
-> > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > ---
-> > > v3:
-> > > * Fix typo i.e. %s/reminding/remaining/g
-> >
-> > Why you haven't fixed all the typos I've pointed out? I think you missed that.
+> To coordinate between appended kernel module signatures and IMA
+> signatures, only define an IMA MODULE_CHECK policy rule if
+> CONFIG_MODULE_SIG is not enabled.
 > 
-> I saw only comment about remaining. Was there something else? Can fix.
+> This patch defines a function named set_module_sig_required() and renames
+> is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
+> call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
+> being enabled.
+> 
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 
-https://www.spinics.net/lists/stable/msg283648.html
+With respect to interactions with the kernel lockdown patches, this
+looks better than the patches I saw previously. I don't feel like I know
+enough about what's going on with IMA to ack the patch, but I feel
+confident that it's at least not going to break signature enforcement
+for us.
 
-1. unrecovable -> unrecoverable
-2. /* Read 8 bytes (not just 6 bytes, which would cover the tag and the response  length
-> +	 * fields) in order to make sure that the remaining memory accesses */ 
-                                                                             
-Thanks
-Tomas
+Thanks,
+Seth
 
