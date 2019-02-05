@@ -2,46 +2,47 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 727A2C282DA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 959DDC282DC
 	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABF22083B
+	by mail.kernel.org (Postfix) with ESMTP id 6D84C2146F
 	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728360AbfBEI7i (ORCPT
+        id S1728313AbfBEI7m (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:59:38 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42769 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728319AbfBEI7g (ORCPT
+        Tue, 5 Feb 2019 03:59:42 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34129 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728272AbfBEI7j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:59:36 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q18so2667409wrx.9
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 00:59:35 -0800 (PST)
+        Tue, 5 Feb 2019 03:59:39 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z15so648278wrn.1
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 00:59:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3/UgfA2b1LMjP8l3IHGLgf3GGlVLs/lH9BS+aBvDM2I=;
-        b=gqRv2+4DRWxbJKEQrk0vchvwYNteFciN73Hntx/NPZAaxy2A/OpIKsOAtYo44TRcW+
-         uI3cEkzOKcukhQTBkOyQg0A4N948OjX4GEo5CdptWaCql2RPSQqGTUXgKmlF9m1UfCKc
-         jjjXi9imV7rl77tVh2aRU2Xso924BuX0hUOPoF4x3bBeqZhCPWVg5BM5nXdOiKBDbnjY
-         Ux29rbxUPCFY0PJZzyePjEFTkP9eoxEmgCIpHs0vkl0TNZJbyH77APguUACBR5mu0pu7
-         RKocOu7Ux02T+sEQP1LJ8zMwMmwt4zXrGyqOHFTTmm7yrnsJ+dJlBZnL9q3XgPDaBkgf
-         2Y5g==
-X-Gm-Message-State: AHQUAuauL9FsbBwUKp9WY9FOmf7cGVCk9bNIaknq0SzDnQrhAv9H9MvE
-        vUWXZun3ev8kc3ThwnnQ8iH2ya//LNk=
-X-Google-Smtp-Source: AHgI3IZl9A0gP5If4OdooT8IzDoGj3MoCs9lb1qA5iNvrkFls0IE2Ln+p34y4+WANoodZUlRpc9DPQ==
-X-Received: by 2002:adf:e846:: with SMTP id d6mr2827755wrn.72.1549357174614;
-        Tue, 05 Feb 2019 00:59:34 -0800 (PST)
+        bh=7b1bc6+meFmPqgAqo0J5mXXNpERkis1nOajyuz7TJZM=;
+        b=La+JUU/NGFWsIxnNJfsM6TZVNSyBhVP/86ri4hLksR3YLa+o94ZoXuCFi6whcKLqDp
+         wolnz3gBQlhXBG0hh6I/ppL5rrXk1npkwi2mXZPi2hxhtY+7xPvVlReg9TTezDGgDM7f
+         VVoO9s1OZ5d7u89XSLJWB2jtERsDckYfNmO82YN6drH429a7sZB1Yjr9Ka/yW0+wWJyw
+         yQrr8j8EeOXKy0v4qLnBYTASh1uFlzPSnsoRDDJ+hvyObKK7R2QJ0TquFevIOX8wLvS9
+         vh6K7pMVRW5BGWAl78G+M2atJI6/jBPlvGDsPp2ySbXnorwR1KxLi9qPoLbL3awb7BAo
+         t0Ww==
+X-Gm-Message-State: AHQUAuYuZ5ozsSiqPZGDBUoIDnDjFeBphAMSlOvr9ntI2fwXSO67nEXO
+        m7tFgLVIcuDBE7J0AlumWGczsA==
+X-Google-Smtp-Source: AHgI3IYIlgvmYuf6FLMF8ysO2kH8XciSTKd+0GOdOdDNv6d6aaOnJuIN6vw1PUAktYPIab3HYoAl4w==
+X-Received: by 2002:adf:b201:: with SMTP id u1mr2640918wra.165.1549357176054;
+        Tue, 05 Feb 2019 00:59:36 -0800 (PST)
 Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id n82sm12973613wma.42.2019.02.05.00.59.33
+        by smtp.gmail.com with ESMTPSA id n82sm12973613wma.42.2019.02.05.00.59.34
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 00:59:33 -0800 (PST)
+        Tue, 05 Feb 2019 00:59:35 -0800 (PST)
 From:   Ondrej Mosnacek <omosnace@redhat.com>
 To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
 Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
@@ -50,9 +51,9 @@ Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
         cgroups@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v4 4/5] selinux: implement the kernfs_init_security hook
-Date:   Tue,  5 Feb 2019 09:59:14 +0100
-Message-Id: <20190205085915.5183-5-omosnace@redhat.com>
+Subject: [PATCH v4 5/5] kernfs: initialize security of newly created nodes
+Date:   Tue,  5 Feb 2019 09:59:15 +0100
+Message-Id: <20190205085915.5183-6-omosnace@redhat.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190205085915.5183-1-omosnace@redhat.com>
 References: <20190205085915.5183-1-omosnace@redhat.com>
@@ -62,95 +63,235 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The hook applies the same logic as selinux_determine_inode_label(), with
-the exception of the super_block handling, which will be enforced on the
-actual inodes later by other hooks.
+Use the new security_kernfs_init_security() hook to allow LSMs to
+possibly assign a non-default security context to a newly created kernfs
+node based on the attributes of the new node and also its parent node.
 
+This fixes an issue with cgroupfs under SELinux, where newly created
+cgroup subdirectories/files would not inherit its parent's context if
+it had been set explicitly to a non-default value (other than the genfs
+context specified by the policy). This can be reproduced as follows (on
+Fedora/RHEL):
+
+    # mkdir /sys/fs/cgroup/unified/test
+    # # Need permissive to change the label under Fedora policy:
+    # setenforce 0
+    # chcon -t container_file_t /sys/fs/cgroup/unified/test
+    # ls -lZ /sys/fs/cgroup/unified
+    total 0
+    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.controllers
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.depth
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.descendants
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.procs
+    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.stat
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.subtree_control
+    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.threads
+    drwxr-xr-x.  2 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 init.scope
+    drwxr-xr-x. 26 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:21 system.slice
+    drwxr-xr-x.  3 root root system_u:object_r:container_file_t:s0 0 Jan 29 03:15 test
+    drwxr-xr-x.  3 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 user.slice
+    # mkdir /sys/fs/cgroup/unified/test/subdir
+
+Actual result:
+
+    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
+    drwxr-xr-x. 2 root root system_u:object_r:cgroup_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
+
+Expected result:
+
+    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
+    drwxr-xr-x. 2 root root unconfined_u:object_r:container_file_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
+
+Link: https://github.com/SELinuxProject/selinux-kernel/issues/39
 Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
- security/selinux/hooks.c | 62 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ fs/kernfs/dir.c             | 57 +++++++++++++++++++++++++++++++++++--
+ fs/kernfs/inode.c           | 25 +++++++++-------
+ fs/kernfs/kernfs-internal.h |  2 ++
+ include/linux/xattr.h       | 15 ++++++++++
+ 4 files changed, 86 insertions(+), 13 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 758a99d1086e..e013cc02de50 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3354,6 +3354,66 @@ static int selinux_inode_copy_up_xattr(const char *name)
- 	return -EOPNOTSUPP;
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index ad7e3356bcc5..735a6d382d9d 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -15,6 +15,7 @@
+ #include <linux/slab.h>
+ #include <linux/security.h>
+ #include <linux/hash.h>
++#include <linux/stringhash.h>
+ 
+ #include "kernfs-internal.h"
+ 
+@@ -616,7 +617,53 @@ struct kernfs_node *kernfs_node_from_dentry(struct dentry *dentry)
+ 	return NULL;
  }
  
-+/* kernfs node operations */
-+
-+int selinux_kernfs_init_security(const struct qstr *qstr,
-+				 const struct iattr *dir_iattr,
-+				 struct simple_xattrs *dir_secattr,
-+				 const struct iattr *iattr,
-+				 struct simple_xattrs *secattr)
++static int kernfs_node_init_security(struct kernfs_node *parent,
++				     struct kernfs_node *kn)
 +{
-+	const struct task_security_struct *tsec = current_security();
-+	u32 parent_sid, newsid, clen;
-+	int rc;
-+	char *context;
++	struct simple_xattrs xattr_child, xattr_parent, *pxattr_parent;
++	struct iattr iattr_child, iattr_parent, *piattr_parent;
++	struct qstr q;
++	int ret;
 +
-+	rc = simple_xattr_get(dir_secattr, XATTR_SELINUX_SUFFIX, NULL, 0);
-+	if (rc == -ENODATA)
-+		return 0;
-+	else if (rc < 0)
-+		return rc;
-+
-+	clen = (u32)rc;
-+	context = kmalloc(clen, GFP_KERNEL);
-+	if (!context)
-+		return -ENOMEM;
-+
-+	rc = simple_xattr_get(dir_secattr, XATTR_SELINUX_SUFFIX, context, clen);
-+	if (rc < 0) {
-+		kfree(context);
-+		return rc;
-+	}
-+
-+	rc = security_context_to_sid(&selinux_state, context, clen, &parent_sid,
-+				     GFP_KERNEL);
-+	kfree(context);
-+	if (rc)
-+		return rc;
-+
-+	if (tsec->create_sid) {
-+		newsid = tsec->create_sid;
++	if (!parent->iattr) {
++		kernfs_iattr_init(&iattr_parent, parent);
++		simple_xattrs_init(&xattr_parent);
++		piattr_parent = &iattr_parent;
++		pxattr_parent = &xattr_parent;
 +	} else {
-+		u16 secclass = inode_mode_to_security_class(iattr->ia_mode);
-+
-+		rc = security_transition_sid(&selinux_state, tsec->sid,
-+					     parent_sid, secclass, qstr,
-+					     &newsid);
-+		if (rc)
-+			return rc;
++		piattr_parent = &parent->iattr->ia_iattr;
++		pxattr_parent = &parent->iattr->xattrs_security;
 +	}
 +
-+	rc = security_sid_to_context_force(&selinux_state, newsid,
-+					   &context, &clen);
-+	if (rc)
-+		return rc;
++	kernfs_iattr_init(&iattr_child, kn);
++	simple_xattrs_init(&xattr_child);
 +
-+	rc = simple_xattr_set(secattr, XATTR_SELINUX_SUFFIX, context, clen,
-+			      XATTR_CREATE);
-+	kfree(context);
-+	return rc;
++	q.name = kn->name;
++	q.hash_len = hashlen_string(parent, kn->name);
++
++	ret = security_kernfs_init_security(&q, piattr_parent, pxattr_parent,
++					    &iattr_child, &xattr_child);
++	if (pxattr_parent == &xattr_parent)
++		simple_xattrs_free(&xattr_parent);
++	if (!ret && !simple_xattrs_empty(&xattr_child)) {
++		/*
++		 * Child has new security xattrs, allocate its kernfs_iattrs
++		 * and put our local xattrs in there.
++		 */
++		struct kernfs_iattrs *attrs = kernfs_iattrs(kn);
++
++		if (!attrs) {
++			simple_xattrs_free(&xattr_child);
++			return -ENOMEM;
++		}
++		simple_xattrs_move(&attrs->xattrs_security, &xattr_child);
++	}
++	simple_xattrs_free(&xattr_child);
++	return ret;
 +}
 +
-+
- /* file security operations */
+ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
++					     struct kernfs_node *parent,
+ 					     const char *name, umode_t mode,
+ 					     kuid_t uid, kgid_t gid,
+ 					     unsigned flags)
+@@ -673,6 +720,12 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
+ 			goto err_out3;
+ 	}
  
- static int selinux_revalidate_file_permission(struct file *file, int mask)
-@@ -6800,6 +6860,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_copy_up, selinux_inode_copy_up),
- 	LSM_HOOK_INIT(inode_copy_up_xattr, selinux_inode_copy_up_xattr),
- 
-+	LSM_HOOK_INIT(kernfs_init_security, selinux_kernfs_init_security),
++	if (parent) {
++		ret = kernfs_node_init_security(parent, kn);
++		if (ret)
++			goto err_out3;
++	}
 +
- 	LSM_HOOK_INIT(file_permission, selinux_file_permission),
- 	LSM_HOOK_INIT(file_alloc_security, selinux_file_alloc_security),
- 	LSM_HOOK_INIT(file_free_security, selinux_file_free_security),
+ 	return kn;
+ 
+  err_out3:
+@@ -691,7 +744,7 @@ struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
+ {
+ 	struct kernfs_node *kn;
+ 
+-	kn = __kernfs_new_node(kernfs_root(parent),
++	kn = __kernfs_new_node(kernfs_root(parent), parent,
+ 			       name, mode, uid, gid, flags);
+ 	if (kn) {
+ 		kernfs_get(parent);
+@@ -961,7 +1014,7 @@ struct kernfs_root *kernfs_create_root(struct kernfs_syscall_ops *scops,
+ 	INIT_LIST_HEAD(&root->supers);
+ 	root->next_generation = 1;
+ 
+-	kn = __kernfs_new_node(root, "", S_IFDIR | S_IRUGO | S_IXUGO,
++	kn = __kernfs_new_node(root, NULL, "", S_IFDIR | S_IRUGO | S_IXUGO,
+ 			       GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
+ 			       KERNFS_DIR);
+ 	if (!kn) {
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index f0e2cb4379c0..6a9084aecbe5 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -31,11 +31,22 @@ static const struct inode_operations kernfs_iops = {
+ 	.listxattr	= kernfs_iop_listxattr,
+ };
+ 
+-static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
++void kernfs_iattr_init(struct iattr *iattrs, struct kernfs_node *kn)
++{
++	/* assign default attributes */
++	iattrs->ia_mode = kn->mode;
++	iattrs->ia_uid = GLOBAL_ROOT_UID;
++	iattrs->ia_gid = GLOBAL_ROOT_GID;
++
++	ktime_get_real_ts64(&iattrs->ia_atime);
++	iattrs->ia_mtime = iattrs->ia_atime;
++	iattrs->ia_ctime = iattrs->ia_atime;
++}
++
++struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
+ {
+ 	static DEFINE_MUTEX(iattr_mutex);
+ 	struct kernfs_iattrs *ret;
+-	struct iattr *iattrs;
+ 
+ 	mutex_lock(&iattr_mutex);
+ 
+@@ -45,16 +56,8 @@ static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
+ 	kn->iattr = kzalloc(sizeof(struct kernfs_iattrs), GFP_KERNEL);
+ 	if (!kn->iattr)
+ 		goto out_unlock;
+-	iattrs = &kn->iattr->ia_iattr;
+-
+-	/* assign default attributes */
+-	iattrs->ia_mode = kn->mode;
+-	iattrs->ia_uid = GLOBAL_ROOT_UID;
+-	iattrs->ia_gid = GLOBAL_ROOT_GID;
+ 
+-	ktime_get_real_ts64(&iattrs->ia_atime);
+-	iattrs->ia_mtime = iattrs->ia_atime;
+-	iattrs->ia_ctime = iattrs->ia_atime;
++	kernfs_iattr_init(&kn->iattr->ia_iattr, kn);
+ 
+ 	simple_xattrs_init(&kn->iattr->xattrs_trusted);
+ 	simple_xattrs_init(&kn->iattr->xattrs_security);
+diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
+index 93bf1dcd0306..ad80f438d8d4 100644
+--- a/fs/kernfs/kernfs-internal.h
++++ b/fs/kernfs/kernfs-internal.h
+@@ -90,6 +90,8 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
+ 		       u32 request_mask, unsigned int query_flags);
+ ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size);
+ int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
++void kernfs_iattr_init(struct iattr *iattrs, struct kernfs_node *kn);
++struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn);
+ 
+ /*
+  * dir.c
+diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+index 6dad031be3c2..05fc6812d554 100644
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -108,4 +108,19 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs, cha
+ void simple_xattr_list_add(struct simple_xattrs *xattrs,
+ 			   struct simple_xattr *new_xattr);
+ 
++static inline int simple_xattrs_empty(struct simple_xattrs *xattrs)
++{
++	return list_empty(&xattrs->head);
++}
++
++/**
++ * Move the xattr list from @src to @dst, leaving @src empty.
++ */
++static inline void simple_xattrs_move(struct simple_xattrs *dst,
++				      struct simple_xattrs *src)
++{
++	simple_xattrs_free(dst);
++	list_replace_init(&src->head, &dst->head);
++}
++
+ #endif	/* _LINUX_XATTR_H */
 -- 
 2.20.1
 
