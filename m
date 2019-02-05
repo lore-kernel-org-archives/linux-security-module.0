@@ -2,294 +2,112 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D71C282CC
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A07C4151A
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 09:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39BB12146F
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B647C2176F
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 09:03:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7TCpRGF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbfBEI7n (ORCPT
+        id S1727350AbfBEJDv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:59:43 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40992 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726854AbfBEI7e (ORCPT
+        Tue, 5 Feb 2019 04:03:51 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:39720 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbfBEJDv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:59:34 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so2671995wrs.8
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 00:59:32 -0800 (PST)
+        Tue, 5 Feb 2019 04:03:51 -0500
+Received: by mail-yw1-f67.google.com with SMTP id k188so1396568ywa.6;
+        Tue, 05 Feb 2019 01:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=iiLzaNANibauf4WDgP9oQJ7qsEJ7GeQ8Co2yEFUHTIY=;
+        b=M7TCpRGFwBPB1IAhENhKs1QF/a46qPSjmqeRs3zKzekzh4em/YGC8RsQGRf/UyJKhY
+         M94T3ExmxV8td1HycDiMeIYWJATjymIjspEGi36ns4QHwEVT1ByPbgTpZHEozl/kDshd
+         z9/0F32EdKPdrmk21msVPKSr51OP7upVQ/He+j0aepxVNFGGPBFOQa18TFhD7pi9x+2w
+         sb4i6d2T27RRBgBih0cxgcGruO4O2fegbHI1XGGWJt2nY79W/26GUrrE5In0FtHtLbP5
+         poZZ5brFGjXxsTiqb+hwwNvtkfwQ/1E/9dGP3+pnftHhkB1+i/joqbXE1xn6/zVPODEG
+         Mm9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6QMYjOe+pf/wWcR8iZ9VPRtgN1hVQge8pFTdDf7ePKo=;
-        b=H8Hp3Qr3NPTAL529r7X/7RjTmc9zOpRXCcXtL2fc2xqLenfOpjHAzzewZrO0bHMLWb
-         iZ1vB8pv9m7i6M5L8Ewn0QG1WZ/Zf7ElEEFi6lOZ8Uk2AP9F9hyh2dfbhXfcJpns3nPB
-         WuvamvJuromhpkSoUEytLArrgbwOcO60MVOsmsSc07NvT8DV422yNpMjO2Ny2pjmvfOk
-         5Sf3t4SeuOq7YhZFMJsY7K7pp7mlLYP/b/0+bU7OdoVNS62sotGHjW+Cl9WoRk4APISw
-         YoYb8MaEK6P9VWxVhWlDO2BHJ29fzm3lKC6e+u3K9w6LQr4QxgCQq/hnCeaA8IPbPnhq
-         FPSg==
-X-Gm-Message-State: AHQUAubieSZ9m9wVo2mqMgeXYPlUdis33o66CCnMIeokLmXpwlsSIqic
-        aPZZ9FLQYrd+MpefLII2862X1g==
-X-Google-Smtp-Source: AHgI3Ib7ND9oXO/eBPhFCNkImIzpuvlCzIc3FtjOZVN4rMpRCLMhxU3lL18lmUXFBWEH8YyTplP4Rw==
-X-Received: by 2002:adf:c589:: with SMTP id m9mr2762661wrg.145.1549357172143;
-        Tue, 05 Feb 2019 00:59:32 -0800 (PST)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id n82sm12973613wma.42.2019.02.05.00.59.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 00:59:31 -0800 (PST)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v4 2/5] kernfs: use simple_xattrs for security attributes
-Date:   Tue,  5 Feb 2019 09:59:12 +0100
-Message-Id: <20190205085915.5183-3-omosnace@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190205085915.5183-1-omosnace@redhat.com>
-References: <20190205085915.5183-1-omosnace@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=iiLzaNANibauf4WDgP9oQJ7qsEJ7GeQ8Co2yEFUHTIY=;
+        b=YxC4j0zApwIu16fhTwXJ/4a4oW5YPj8rCHMnm+cmZVJdXM8m1zfD9VZ9lkeJX5nSoL
+         Y7plRaee33KewMzrmPX4BcFGQLmUFGoV+LSfzlbwXDtSNWenTcfrA9F5u4XHLKbG1LcQ
+         86q+fz/PibExbP5cG6t8ytnq5Qnhd7LOo0esUq80lTsy53+2p9phWbII7YuTcwsvCbba
+         uHZ6MEmM8kN73NYKzr6Gl+a4W48HY2GHvVvgul4CgF6pXSDIdXlVBoXuTgVt1lB8TD2v
+         4lspOlcu+w98H3qpidPhV5OiXyyHuDXCxC1eSVMnWV58pOJ0dOpzoanvXbEIk07+vfUX
+         U8og==
+X-Gm-Message-State: AHQUAuZM4dFVV19+9MngCmr8lR+cBMHevv/fLRHmRszkAL2e3GUPr3qC
+        dzAkQZCZXyd2mb7xc2N79rI=
+X-Google-Smtp-Source: AHgI3IYEVOw5QrKXj8H8lemNUvI0jmUElJMn+NPfl6e6MupMXqPWylkV9RxkZ0L0f9/SikFyHUah9w==
+X-Received: by 2002:a81:2514:: with SMTP id l20mr3002708ywl.3.1549357429310;
+        Tue, 05 Feb 2019 01:03:49 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id e9sm1047040ywb.45.2019.02.05.01.03.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 01:03:48 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 04/20] fork: provide a function for copying init_mm
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190205085311.GH21801@zn.tnic>
+Date:   Tue, 5 Feb 2019 01:03:45 -0800
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <BF9D1501-5EFF-46FB-8DAB-8C7A2088DB42@gmail.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-5-rick.p.edgecombe@intel.com>
+ <20190205085311.GH21801@zn.tnic>
+To:     Borislav Petkov <bp@alien8.de>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Replace the special handling of security xattrs with simple_xattrs, as
-is already done for the trusted xattrs. This simplifies the code and
-allows LSMs to use more than just a single xattr to do their business.
+> On Feb 5, 2019, at 12:53 AM, Borislav Petkov <bp@alien8.de> wrote:
+> 
+> On Mon, Jan 28, 2019 at 04:34:06PM -0800, Rick Edgecombe wrote:
+>> From: Nadav Amit <namit@vmware.com>
+>> 
+>> - * Allocate a new mm structure and copy contents from the
+>> - * mm structure of the passed in task structure.
+>> +/**
+>> + * dup_mm() - duplicates an existing mm structure
+>> + * @tsk: the task_struct with which the new mm will be associated.
+>> + * @oldmm: the mm to duplicate.
+>> + *
+>> + * Allocates a new mm structure and copy contents from the provided
+> 
+> s/copy/copies/
 
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- fs/kernfs/dir.c             |   7 ++-
- fs/kernfs/inode.c           | 100 +++++++++++++++---------------------
- fs/kernfs/kernfs-internal.h |   5 +-
- 3 files changed, 46 insertions(+), 66 deletions(-)
-
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index 4ca0b5c18192..ad7e3356bcc5 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -532,11 +532,10 @@ void kernfs_put(struct kernfs_node *kn)
- 	kfree_const(kn->name);
- 
- 	if (kn->iattr) {
--		if (kn->iattr->ia_secdata)
--			security_release_secctx(kn->iattr->ia_secdata,
--						kn->iattr->ia_secdata_len);
--		simple_xattrs_free(&kn->iattr->xattrs);
-+		simple_xattrs_free(&kn->iattr->xattrs_trusted);
-+		simple_xattrs_free(&kn->iattr->xattrs_security);
- 	}
-+
- 	kfree(kn->iattr);
- 	spin_lock(&kernfs_idr_lock);
- 	idr_remove(&root->ino_idr, kn->id.ino);
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index 80cebcd94c90..f0e2cb4379c0 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -56,7 +56,8 @@ static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
- 	iattrs->ia_mtime = iattrs->ia_atime;
- 	iattrs->ia_ctime = iattrs->ia_atime;
- 
--	simple_xattrs_init(&kn->iattr->xattrs);
-+	simple_xattrs_init(&kn->iattr->xattrs_trusted);
-+	simple_xattrs_init(&kn->iattr->xattrs_security);
- out_unlock:
- 	ret = kn->iattr;
- 	mutex_unlock(&iattr_mutex);
-@@ -135,33 +136,31 @@ out:
- 	return error;
- }
- 
--static int kernfs_node_setsecdata(struct kernfs_iattrs *attrs, void **secdata,
--				  u32 *secdata_len)
--{
--	void *old_secdata;
--	size_t old_secdata_len;
--
--	old_secdata = attrs->ia_secdata;
--	old_secdata_len = attrs->ia_secdata_len;
--
--	attrs->ia_secdata = *secdata;
--	attrs->ia_secdata_len = *secdata_len;
--
--	*secdata = old_secdata;
--	*secdata_len = old_secdata_len;
--	return 0;
--}
--
- ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size)
- {
- 	struct kernfs_node *kn = kernfs_dentry_node(dentry);
-+	struct inode *inode = d_inode(dentry);
- 	struct kernfs_iattrs *attrs;
-+	ssize_t ret, length = 0;
- 
- 	attrs = kernfs_iattrs(kn);
- 	if (!attrs)
- 		return -ENOMEM;
- 
--	return simple_xattr_list(d_inode(dentry), &attrs->xattrs, buf, size);
-+	ret = simple_xattr_list(inode, &attrs->xattrs_trusted, buf, size);
-+	if (ret < 0)
-+		return ret;
-+	length += ret;
-+
-+	buf += ret;
-+	size -= ret;
-+
-+	ret = simple_xattr_list(inode, &attrs->xattrs_security, buf, size);
-+	if (ret < 0)
-+		return ret;
-+	length += ret;
-+
-+	return length;
- }
- 
- static inline void set_default_inode_attr(struct inode *inode, umode_t mode)
-@@ -186,15 +185,12 @@ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
- 	struct kernfs_iattrs *attrs = kn->iattr;
- 
- 	inode->i_mode = kn->mode;
--	if (attrs) {
-+	if (attrs)
- 		/*
- 		 * kernfs_node has non-default attributes get them from
- 		 * persistent copy in kernfs_node.
- 		 */
- 		set_inode_attr(inode, &attrs->ia_iattr);
--		security_inode_notifysecctx(inode, attrs->ia_secdata,
--					    attrs->ia_secdata_len);
--	}
- 
- 	if (kernfs_type(kn) == KERNFS_DIR)
- 		set_nlink(inode, kn->dir.subdirs + 2);
-@@ -305,19 +301,29 @@ int kernfs_iop_permission(struct inode *inode, int mask)
- 	return generic_permission(inode, mask);
- }
- 
-+static const struct xattr_handler kernfs_trusted_xattr_handler;
-+static const struct xattr_handler kernfs_security_xattr_handler;
-+
- static int kernfs_xattr_get(const struct xattr_handler *handler,
- 			    struct dentry *unused, struct inode *inode,
- 			    const char *suffix, void *value, size_t size)
- {
--	const char *name = xattr_full_name(handler, suffix);
- 	struct kernfs_node *kn = inode->i_private;
- 	struct kernfs_iattrs *attrs;
-+	struct simple_xattrs *xattrs;
- 
- 	attrs = kernfs_iattrs(kn);
- 	if (!attrs)
- 		return -ENOMEM;
- 
--	return simple_xattr_get(&attrs->xattrs, name, value, size);
-+	if (handler == &kernfs_trusted_xattr_handler)
-+		xattrs = &attrs->xattrs_trusted;
-+	else if (handler == &kernfs_security_xattr_handler)
-+		xattrs = &attrs->xattrs_security;
-+	else
-+		return -EINVAL;
-+
-+	return simple_xattr_get(xattrs, suffix, value, size);
- }
- 
- static int kernfs_xattr_set(const struct xattr_handler *handler,
-@@ -325,15 +331,22 @@ static int kernfs_xattr_set(const struct xattr_handler *handler,
- 			    const char *suffix, const void *value,
- 			    size_t size, int flags)
- {
--	const char *name = xattr_full_name(handler, suffix);
- 	struct kernfs_node *kn = inode->i_private;
- 	struct kernfs_iattrs *attrs;
-+	struct simple_xattrs *xattrs;
- 
- 	attrs = kernfs_iattrs(kn);
- 	if (!attrs)
- 		return -ENOMEM;
- 
--	return simple_xattr_set(&attrs->xattrs, name, value, size, flags);
-+	if (handler == &kernfs_trusted_xattr_handler)
-+		xattrs = &attrs->xattrs_trusted;
-+	else if (handler == &kernfs_security_xattr_handler)
-+		xattrs = &attrs->xattrs_security;
-+	else
-+		return -EINVAL;
-+
-+	return simple_xattr_set(xattrs, suffix, value, size, flags);
- }
- 
- static const struct xattr_handler kernfs_trusted_xattr_handler = {
-@@ -342,41 +355,10 @@ static const struct xattr_handler kernfs_trusted_xattr_handler = {
- 	.set = kernfs_xattr_set,
- };
- 
--static int kernfs_security_xattr_set(const struct xattr_handler *handler,
--				     struct dentry *unused, struct inode *inode,
--				     const char *suffix, const void *value,
--				     size_t size, int flags)
--{
--	struct kernfs_node *kn = inode->i_private;
--	struct kernfs_iattrs *attrs;
--	void *secdata;
--	u32 secdata_len = 0;
--	int error;
--
--	attrs = kernfs_iattrs(kn);
--	if (!attrs)
--		return -ENOMEM;
--
--	error = security_inode_setsecurity(inode, suffix, value, size, flags);
--	if (error)
--		return error;
--	error = security_inode_getsecctx(inode, &secdata, &secdata_len);
--	if (error)
--		return error;
--
--	mutex_lock(&kernfs_mutex);
--	error = kernfs_node_setsecdata(attrs, &secdata, &secdata_len);
--	mutex_unlock(&kernfs_mutex);
--
--	if (secdata)
--		security_release_secctx(secdata, secdata_len);
--	return error;
--}
--
- static const struct xattr_handler kernfs_security_xattr_handler = {
- 	.prefix = XATTR_SECURITY_PREFIX,
- 	.get = kernfs_xattr_get,
--	.set = kernfs_security_xattr_set,
-+	.set = kernfs_xattr_set,
- };
- 
- const struct xattr_handler *kernfs_xattr_handlers[] = {
-diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-index 3d83b114bb08..93bf1dcd0306 100644
---- a/fs/kernfs/kernfs-internal.h
-+++ b/fs/kernfs/kernfs-internal.h
-@@ -20,10 +20,9 @@
- 
- struct kernfs_iattrs {
- 	struct iattr		ia_iattr;
--	void			*ia_secdata;
--	u32			ia_secdata_len;
- 
--	struct simple_xattrs	xattrs;
-+	struct simple_xattrs	xattrs_trusted;
-+	struct simple_xattrs	xattrs_security;
- };
- 
- /* +1 to avoid triggering overflow warning when negating it */
--- 
-2.20.1
+Thanks, applied (I revised this sentence a bit).
 
