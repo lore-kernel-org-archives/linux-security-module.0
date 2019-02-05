@@ -2,310 +2,122 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B90C282CB
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 14:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0E5C282CB
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 14:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74605217F9
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 14:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B71BD217FA
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 14:56:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbfBEOmi (ORCPT
+        id S1728299AbfBEO4I convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 09:42:38 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46477 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbfBEOmi (ORCPT
+        Tue, 5 Feb 2019 09:56:08 -0500
+Received: from mga14.intel.com ([192.55.52.115]:23261 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726962AbfBEO4H (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 09:42:38 -0500
-Received: by mail-ot1-f68.google.com with SMTP id w25so5939533otm.13
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 06:42:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xgbeXmEuf+/zO3G4Q0NoddL0iIJp0rOvR8w+B7ImoEg=;
-        b=do6Wh5i+BQZ0A1HV/d99NaaBtpBQxW5HGaby5aTNIj4/SJ6Qm2npUJFhJocjGENQCi
-         ZQl9qeFe5JwKN898VnBeT7eB4pcr6/iZuj/aWkfIJWmbMWtvNznknBMhKxpOC5ric6o+
-         3TacwtmvJlMGzFDaNxIsofBU7deqMwAIQH/sUw/opSxhBw2b0e0wyDan4eRbRSmmpmH8
-         g/90VNhugj1a8mZbcpkHeTvUaQI6LCNyyGwgKwKaGSKfbaT64mQUe2vGJhIXIquUuMZw
-         upew68D1RB39QOoC1Lhqmyu90bfXAtJ9g+XIQotFqRrVEz0aIgm+OXTjmPDsyjvuMEtU
-         3t5w==
-X-Gm-Message-State: AHQUAubKCt6gYa3j3klakpnVktoN6nmxPXXmyY36d9h9HKl7rA/Ro+Iv
-        Zcl2/c0kpZDl1z6GAHnQIZLIdqtntrnJEV2206OybQ==
-X-Google-Smtp-Source: AHgI3IYODGgJMLDiwiS6SlzuAqxbvn20jcyls1GrVhc5W20WL/pKh6myHR7zrYjgo3bv+Iz4Tj2ZAxy++dMkgUltbis=
-X-Received: by 2002:aca:5b43:: with SMTP id p64mr2582301oib.41.1549377757393;
- Tue, 05 Feb 2019 06:42:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20190205110638.30782-1-omosnace@redhat.com> <20190205110638.30782-2-omosnace@redhat.com>
- <6e92a790-5e69-1462-d9e3-79fe48b67793@tycho.nsa.gov>
-In-Reply-To: <6e92a790-5e69-1462-d9e3-79fe48b67793@tycho.nsa.gov>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 5 Feb 2019 15:42:26 +0100
-Message-ID: <CAFqZXNtukhucxdiv5y=82CrRXzbc7+f+DzrZ=mQaFqQbLfv2fQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/5] selinux: try security xattr after genfs for kernfs filesystems
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Linux Security Module list 
+        Tue, 5 Feb 2019 09:56:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 06:56:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
+   d="scan'208";a="136065448"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga001.jf.intel.com with ESMTP; 05 Feb 2019 06:56:06 -0800
+Received: from hasmsx107.ger.corp.intel.com (10.184.198.27) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 5 Feb 2019 06:56:06 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
+ hasmsx107.ger.corp.intel.com ([169.254.2.13]) with mapi id 14.03.0415.000;
+ Tue, 5 Feb 2019 16:56:03 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: RE: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Topic: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Index: AQHUvUDUPtSrjGtlHk6wCuMRxetyu6XRCy8AgAAY64CAACU3gA==
+Date:   Tue, 5 Feb 2019 14:56:02 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA90C75@hasmsx108.ger.corp.intel.com>
+References: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA90A8B@hasmsx108.ger.corp.intel.com>
+ <20190205143541.GA18330@linux.intel.com>
+In-Reply-To: <20190205143541.GA18330@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.255.205.248]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 5, 2019 at 3:23 PM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 2/5/19 6:06 AM, Ondrej Mosnacek wrote:
-> > Since kernfs supports the security xattr handlers, we can simply use
-> > these to determine the inode's context, dropping the need to update it
-> > from kernfs explicitly using a security_inode_notifysecctx() call.
-> >
-> > We achieve this by setting a new sbsec flag SE_SBGENFS_XATTR to all
-> > mounts that are known to use kernfs under the hood and then fetching the
-> > xattrs after determining the fallback genfs sid in
-> > inode_doinit_with_dentry() when this flag is set.
-> >
-> > This will allow implementing full security xattr support in kernfs and
-> > removing the ...notifysecctx() call in a subsequent patch.
-> >
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > ---
-> >   security/selinux/hooks.c            | 159 +++++++++++++++-------------
-> >   security/selinux/include/security.h |   1 +
-> >   2 files changed, 88 insertions(+), 72 deletions(-)
-> >
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 81e012c66d95..758a99d1086e 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -793,11 +793,13 @@ static int selinux_set_mnt_opts(struct super_block *sb,
-> >
-> >       if (!strcmp(sb->s_type->name, "debugfs") ||
-> >           !strcmp(sb->s_type->name, "tracefs") ||
-> > -         !strcmp(sb->s_type->name, "sysfs") ||
-> > -         !strcmp(sb->s_type->name, "pstore") ||
-> > +         !strcmp(sb->s_type->name, "pstore"))
-> > +             sbsec->flags |= SE_SBGENFS;
-> > +
-> > +     if (!strcmp(sb->s_type->name, "sysfs") ||
-> >           !strcmp(sb->s_type->name, "cgroup") ||
-> >           !strcmp(sb->s_type->name, "cgroup2"))
-> > -             sbsec->flags |= SE_SBGENFS;
-> > +             sbsec->flags |= SE_SBGENFS | SE_SBGENFS_XATTR;
-> >
-> >       if (!sbsec->behavior) {
-> >               /*
-> > @@ -1392,6 +1394,71 @@ static int selinux_genfs_get_sid(struct dentry *dentry,
-> >       return rc;
-> >   }
-> >
-> > +static int inode_doinit_use_xattr(struct inode *inode, struct dentry *dentry,
-> > +                               u32 def_sid, u32 *sid)
-> > +{
-> > +#define INITCONTEXTLEN 255
-> > +     char *context = NULL;
-> > +     unsigned int len = 0;
-> > +     int rc;
-> > +
-> > +     *sid = def_sid;
-> > +
-> > +     if (!(inode->i_opflags & IOP_XATTR))
-> > +             return 0;
-> > +
-> > +     len = INITCONTEXTLEN;
-> > +     context = kmalloc(len + 1, GFP_NOFS);
-> > +     if (!context)
-> > +             return -ENOMEM;
-> > +
-> > +     context[len] = '\0';
-> > +     rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, context, len);
-> > +     if (rc == -ERANGE) {
-> > +             kfree(context);
-> > +
-> > +             /* Need a larger buffer.  Query for the right size. */
-> > +             rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, NULL, 0);
-> > +             if (rc < 0)
-> > +                     return rc;
-> > +
-> > +             len = rc;
-> > +             context = kmalloc(len + 1, GFP_NOFS);
-> > +             if (!context)
-> > +                     return -ENOMEM;
-> > +
-> > +             context[len] = '\0';
-> > +             rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX,
-> > +                                 context, len);
-> > +     }
-> > +     if (rc < 0) {
-> > +             kfree(context);
-> > +             if (rc != -ENODATA) {
-> > +                     pr_warn("SELinux: %s:  getxattr returned %d for dev=%s ino=%ld\n",
-> > +                             __func__, -rc, inode->i_sb->s_id, inode->i_ino);
-> > +                     return rc;
-> > +             }
-> > +             return 0;
-> > +     }
-> > +
-> > +     rc = security_context_to_sid_default(&selinux_state, context, rc, sid,
-> > +                                          def_sid, GFP_NOFS);
-> > +     if (rc) {
-> > +             char *dev = inode->i_sb->s_id;
-> > +             unsigned long ino = inode->i_ino;
-> > +
-> > +             if (rc == -EINVAL) {
-> > +                     pr_notice_ratelimited("SELinux: inode=%lu on dev=%s was found to have an invalid context=%s.  This indicates you may need to relabel the inode or the filesystem in question.\n",
-> > +                                           ino, dev, context);
-> > +             } else {
-> > +                     pr_warn("SELinux: %s:  context_to_sid(%s) returned %d for dev=%s ino=%ld\n",
-> > +                             __func__, context, -rc, dev, ino);
-> > +             }
-> > +     }
-> > +     kfree(context);
-> > +     return 0;
-> > +}
-> > +
-> >   /* The inode's security attributes must be initialized before first use. */
-> >   static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dentry)
-> >   {
-> > @@ -1401,8 +1468,6 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
-> >       u16 sclass;
-> >       struct dentry *dentry;
-> >   #define INITCONTEXTLEN 255
->
-> This definition can also be removed, having been moved up above.
-
-Right, staged for fixing in v6.
-
-Thanks,
-
->
-> > -     char *context = NULL;
-> > -     unsigned len = 0;
-> >       int rc = 0;
-> >
-> >       if (isec->initialized == LABEL_INITIALIZED)
-> > @@ -1470,72 +1535,11 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
-> >                       goto out;
-> >               }
-> >
-> > -             len = INITCONTEXTLEN;
-> > -             context = kmalloc(len+1, GFP_NOFS);
-> > -             if (!context) {
-> > -                     rc = -ENOMEM;
-> > -                     dput(dentry);
-> > -                     goto out;
-> > -             }
-> > -             context[len] = '\0';
-> > -             rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, context, len);
-> > -             if (rc == -ERANGE) {
-> > -                     kfree(context);
-> > -
-> > -                     /* Need a larger buffer.  Query for the right size. */
-> > -                     rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, NULL, 0);
-> > -                     if (rc < 0) {
-> > -                             dput(dentry);
-> > -                             goto out;
-> > -                     }
-> > -                     len = rc;
-> > -                     context = kmalloc(len+1, GFP_NOFS);
-> > -                     if (!context) {
-> > -                             rc = -ENOMEM;
-> > -                             dput(dentry);
-> > -                             goto out;
-> > -                     }
-> > -                     context[len] = '\0';
-> > -                     rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, context, len);
-> > -             }
-> > +             rc = inode_doinit_use_xattr(inode, dentry, sbsec->def_sid,
-> > +                                         &sid);
-> >               dput(dentry);
-> > -             if (rc < 0) {
-> > -                     if (rc != -ENODATA) {
-> > -                             pr_warn("SELinux: %s:  getxattr returned "
-> > -                                    "%d for dev=%s ino=%ld\n", __func__,
-> > -                                    -rc, inode->i_sb->s_id, inode->i_ino);
-> > -                             kfree(context);
-> > -                             goto out;
-> > -                     }
-> > -                     /* Map ENODATA to the default file SID */
-> > -                     sid = sbsec->def_sid;
-> > -                     rc = 0;
-> > -             } else {
-> > -                     rc = security_context_to_sid_default(&selinux_state,
-> > -                                                          context, rc, &sid,
-> > -                                                          sbsec->def_sid,
-> > -                                                          GFP_NOFS);
-> > -                     if (rc) {
-> > -                             char *dev = inode->i_sb->s_id;
-> > -                             unsigned long ino = inode->i_ino;
-> > -
-> > -                             if (rc == -EINVAL) {
-> > -                                     if (printk_ratelimit())
-> > -                                             pr_notice("SELinux: inode=%lu on dev=%s was found to have an invalid "
-> > -                                                     "context=%s.  This indicates you may need to relabel the inode or the "
-> > -                                                     "filesystem in question.\n", ino, dev, context);
-> > -                             } else {
-> > -                                     pr_warn("SELinux: %s:  context_to_sid(%s) "
-> > -                                            "returned %d for dev=%s ino=%ld\n",
-> > -                                            __func__, context, -rc, dev, ino);
-> > -                             }
-> > -                             kfree(context);
-> > -                             /* Leave with the unlabeled SID */
-> > -                             rc = 0;
-> > -                             break;
-> > -                     }
-> > -             }
-> > -             kfree(context);
-> > +             if (rc)
-> > +                     goto out;
-> >               break;
-> >       case SECURITY_FS_USE_TASK:
-> >               sid = task_sid;
-> > @@ -1586,9 +1590,20 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
-> >                               goto out;
-> >                       rc = selinux_genfs_get_sid(dentry, sclass,
-> >                                                  sbsec->flags, &sid);
-> > -                     dput(dentry);
-> > -                     if (rc)
-> > +                     if (rc) {
-> > +                             dput(dentry);
-> >                               goto out;
-> > +                     }
-> > +
-> > +                     if (sbsec->flags & SE_SBGENFS_XATTR) {
-> > +                             rc = inode_doinit_use_xattr(inode, dentry,
-> > +                                                         sid, &sid);
-> > +                             if (rc) {
-> > +                                     dput(dentry);
-> > +                                     goto out;
-> > +                             }
-> > +                     }
-> > +                     dput(dentry);
-> >               }
-> >               break;
-> >       }
-> > diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-> > index f68fb25b5702..6e5928f951da 100644
-> > --- a/security/selinux/include/security.h
-> > +++ b/security/selinux/include/security.h
-> > @@ -58,6 +58,7 @@
-> >   #define SE_SBINITIALIZED    0x0100
-> >   #define SE_SBPROC           0x0200
-> >   #define SE_SBGENFS          0x0400
-> > +#define SE_SBGENFS_XATTR     0x0800
-> >
-> >   #define CONTEXT_STR "context="
-> >   #define FSCONTEXT_STR       "fscontext="
-> >
->
 
 
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+> -----Original Message-----
+> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> Sent: Tuesday, February 05, 2019 16:36
+> To: Winkler, Tomas <tomas.winkler@intel.com>
+> Cc: linux-integrity@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> security-module@vger.kernel.org; stable@vger.kernel.org; James Morris
+> <jmorris@namei.org>; Jerry Snitselaar <jsnitsel@redhat.com>
+> Subject: Re: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+> 
+> On Tue, Feb 05, 2019 at 11:07:16AM +0000, Winkler, Tomas wrote:
+> > > The current approach to read first 6 bytes from the response and
+> > > then tail of the response, can cause the 2nd memcpy_fromio() to do
+> > > an unaligned read (e.g. read 32-bit word from address aligned to a
+> > > 16-bits), depending on how
+> > > memcpy_fromio() is implemented. If this happens, the read will fail
+> > > and the memory controller will fill the read with 1's.
+> > >
+> > > This was triggered by 170d13ca3a2f, which should be probably refined
+> > > to check and react to the address alignment. Before that commit, on
+> > > x86
+> > > memcpy_fromio() turned out to be memcpy(). By a luck GCC has done
+> > > the right thing (from tpm_crb's perspective) for us so far, but we should not
+> rely on that.
+> > > Thus, it makes sense to fix this also in tpm_crb, not least because
+> > > the fix can be then backported to stable kernels and make them more
+> > > robust when compiled in differing environments.
+> > >
+> > > Cc: stable@vger.kernel.org
+> > > Cc: James Morris <jmorris@namei.org>
+> > > Cc: Tomas Winkler <tomas.winkler@intel.com>
+> > > Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+> > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > ---
+> > > v3:
+> > > * Fix typo i.e. %s/reminding/remaining/g
+> >
+> > Why you haven't fixed all the typos I've pointed out? I think you missed that.
+> 
+> I saw only comment about remaining. Was there something else? Can fix.
+
+https://www.spinics.net/lists/stable/msg283648.html
+
+1. unrecovable -> unrecoverable
+2. /* Read 8 bytes (not just 6 bytes, which would cover the tag and the response  length
+> +	 * fields) in order to make sure that the remaining memory accesses */ 
+                                                                             
+Thanks
+Tomas
+
