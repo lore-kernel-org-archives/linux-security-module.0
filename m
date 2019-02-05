@@ -2,83 +2,124 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C476C282D7
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC5EC282D7
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D989920821
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EFA32175B
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:53:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dFRXAToX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfBEIhF (ORCPT
+        id S1727038AbfBEIx1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:37:05 -0500
-Received: from mga18.intel.com ([134.134.136.126]:36601 "EHLO mga18.intel.com"
+        Tue, 5 Feb 2019 03:53:27 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:45512 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725954AbfBEIhF (ORCPT
+        id S1725898AbfBEIx1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:37:05 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 00:37:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,562,1539673200"; 
-   d="scan'208";a="297356952"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by orsmga005.jf.intel.com with ESMTP; 05 Feb 2019 00:37:01 -0800
-Date:   Tue, 5 Feb 2019 10:36:59 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
-        stable@vger.kernel.org,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: Re: [PATCH v2] tpm/st33zp24: Fix the name collisions in
- tpm_st33zp24_spi and tpm_i2c_infineon
-Message-ID: <20190205083659.GB7427@linux.intel.com>
-References: <20190204133749.14176-1-jarkko.sakkinen@linux.intel.com>
- <575f4693-129c-469c-e54e-dbb9ad2a66f2@huawei.com>
- <20190204233117.GE14992@linux.intel.com>
- <20190204234047.GA15685@linux.intel.com>
- <a6a9e68d-ff0a-c33d-50ce-5d18939c1ab3@huawei.com>
+        Tue, 5 Feb 2019 03:53:27 -0500
+Received: from zn.tnic (p200300EC2BCB6B008896F3D5E1C66173.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:8896:f3d5:e1c6:6173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 955EB1EC02AE;
+        Tue,  5 Feb 2019 09:53:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549356805;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=9NPvfNG+JFpDM7sjiNkdW+XpScH5VeiM2qlV0JoY6ZA=;
+        b=dFRXAToX5/08SPN0allQ11aILUZsmqf1gG1hG+VKNk9k/KbmUKs/QtkUV1Dckk8k5WEBri
+        SbcwLdA6zuqezXnk0dN5d6IYdQlJsKW0k1gguU0W6REBUNatrwKiZt6E8IsZhciVrJH0CU
+        WTpRddr5zmzLbrlGnkZkBIBx+ZjWfJ4=
+Date:   Tue, 5 Feb 2019 09:53:11 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v2 04/20] fork: provide a function for copying init_mm
+Message-ID: <20190205085311.GH21801@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-5-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a6a9e68d-ff0a-c33d-50ce-5d18939c1ab3@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20190129003422.9328-5-rick.p.edgecombe@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 05, 2019 at 09:08:33AM +0100, Roberto Sassu wrote:
-> On 2/5/2019 12:40 AM, Jarkko Sakkinen wrote:
-> > On Tue, Feb 05, 2019 at 01:31:17AM +0200, Jarkko Sakkinen wrote:
-> > > On Mon, Feb 04, 2019 at 02:49:54PM +0100, Roberto Sassu wrote:
-> > > > On 2/4/2019 2:37 PM, Jarkko Sakkinen wrote:
-> > > > > Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
-> > > > > ST33ZP24_BUFSIZE.
-> > > > > 
-> > > > > Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
-> > > > > TPM_I2C_INFINEON_BUFSIZE.
-> > > > 
-> > > > Please also add a prefix to TPM_RETRY in tpm_i2c_nuvoton.c.
-> > > 
-> > > Thanks, can do.
-> > 
-> > TPM_RETRY defined in
-> > 
-> >    32d33b29ba07 ("TPM: Retry SaveState command in suspend path")
-> > 
-> > has nothing to do with time. I'll also remove the comment about 5
-> > seconds.
+On Mon, Jan 28, 2019 at 04:34:06PM -0800, Rick Edgecombe wrote:
+> From: Nadav Amit <namit@vmware.com>
 > 
-> I'll do the same for patch 4/6.
+> Provide a function for copying init_mm. This function will be later used
+> for setting a temporary mm.
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  include/linux/sched/task.h |  1 +
+>  kernel/fork.c              | 24 ++++++++++++++++++------
+>  2 files changed, 19 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+> index 44c6f15800ff..c5a00a7b3beb 100644
+> --- a/include/linux/sched/task.h
+> +++ b/include/linux/sched/task.h
+> @@ -76,6 +76,7 @@ extern void exit_itimers(struct signal_struct *);
+>  extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
+>  extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
+>  struct task_struct *fork_idle(int);
+> +struct mm_struct *copy_init_mm(void);
+>  extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
+>  extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
+>  
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index b69248e6f0e0..d7b156c49f29 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1299,13 +1299,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
+>  		complete_vfork_done(tsk);
+>  }
+>  
+> -/*
+> - * Allocate a new mm structure and copy contents from the
+> - * mm structure of the passed in task structure.
+> +/**
+> + * dup_mm() - duplicates an existing mm structure
+> + * @tsk: the task_struct with which the new mm will be associated.
+> + * @oldmm: the mm to duplicate.
+> + *
+> + * Allocates a new mm structure and copy contents from the provided
 
-Yep. I'll post a new patch ASAP.
+s/copy/copies/
 
-/Jarkko
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
