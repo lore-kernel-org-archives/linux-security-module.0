@@ -2,67 +2,65 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 238A4C282CB
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 20:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDBDC282CC
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 20:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01E782083B
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 20:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4E29217D6
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 20:13:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726927AbfBEUKN (ORCPT
+        id S1726915AbfBEUNG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 15:10:13 -0500
-Received: from mail.emypeople.net ([216.220.167.73]:42531 "EHLO
-        mail.emypeople.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbfBEUKN (ORCPT
+        Tue, 5 Feb 2019 15:13:06 -0500
+Received: from namei.org ([65.99.196.166]:50332 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbfBEUNF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 15:10:13 -0500
-Received: from Shop7 ([166.182.241.52])
-        by mail.emypeople.net (12.1.1 build 4 DEB9 x64) with ASMTP id 201902051510094375;
-        Tue, 05 Feb 2019 15:10:09 -0500
-From:   "Edwin Zimmerman" <edwin@211mainstreet.net>
-To:     "'Casey Schaufler'" <casey@schaufler-ca.com>,
-        "'LSM'" <linux-security-module@vger.kernel.org>
-References: <61766e1d-496e-6a7d-d4b8-52e2c99a78c3@schaufler-ca.com> <000001d4bd80$8b9442c0$a2bcc840$@211mainstreet.net> <c15e8f04-df2e-40f4-d227-754d03de3dd0@schaufler-ca.com>
-In-Reply-To: <c15e8f04-df2e-40f4-d227-754d03de3dd0@schaufler-ca.com>
-Subject: RE: New LSM hooks
-Date:   Tue, 5 Feb 2019 15:10:02 -0500
-Message-ID: <000001d4bd8e$c7c5c620$57515260$@211mainstreet.net>
+        Tue, 5 Feb 2019 15:13:05 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x15KCvsx006253;
+        Tue, 5 Feb 2019 20:12:57 GMT
+Date:   Wed, 6 Feb 2019 07:12:57 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tadeusz Struk <tadeusz.struk@intel.com>
+Subject: Re: [PATCH v3] selftests: add TPM 2.0 tests
+In-Reply-To: <20190204232910.GC14992@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.1902060712500.3449@namei.org>
+References: <20190204131640.11429-1-jarkko.sakkinen@linux.intel.com> <20190204232910.GC14992@linux.intel.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Content-Language: en-us
-Thread-Index: AQHf3rRGqiR9Wt3dE8sqasOj5e4qfgHrY5dMAgTKDrmlm9vvEA==
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tuesday, February 05, 2019 12:40 PM Casey Schaufler wrote:
-> On 2/5/2019 10:28 AM, Edwin Zimmerman wrote:
-> > On Tuesday, February 05, 2019 12:40 PM Casey Schaufler wrote:
-> >...
-> > Here's my suggestion for starters. According to kernel documentation, new
-> > LSMs must be documented before being accepted.  Perhaps we need a
-> > similar requirement for LSM hooks.
-> 
-> That would be handy. The documentation would need to cover
-> the purpose for the hook and how a security module would be
-> expected to use it.
-> 
-> > As I see it, LSMs are security additions,
-> > not functionality patches for the rest of the kernel or for special hardware or
-> > whatever.  Therefore, I also suggest that all new hooks be implemented in
-> > at least two LSMs before being accepted.
-> 
-> I can't say this makes sense. The binder hooks are only
-> useful for Android, and requiring Smack or AppArmor hooks
-> be implemented isn't reasonable. It would be reasonable for
-> the kernfs hook, as the kernfs hook is a workaround for the
-> fact that kernfs doesn't use inodes.
+On Tue, 5 Feb 2019, Jarkko Sakkinen wrote:
 
-You have a good point there.  I withdraw my "two LSMs" suggestions.
+> On Mon, Feb 04, 2019 at 03:16:40PM +0200, Jarkko Sakkinen wrote:
+> > Added the tests that I've been using for testing TPM 2.0 functionality
+> > for a long time but have been out-of-tree so far, residing in
+> > 
+> > https://github.com/jsakkine-intel/tpm2-scripts
+> > 
+> > Cc: Tadeusz Struk <tadeusz.struk@intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Acked-By: Joey Pabalinas <joeypabalinas@gmail.com>
+> > Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+> 
+> Wondering if I can put this to my 5.1 PR?
+
+Yep, should be fine.
+
+-- 
+James Morris
+<jmorris@namei.org>
 
