@@ -2,127 +2,145 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9B5C282CB
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 17:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC44C282CC
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 18:15:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A7B20811
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 17:55:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 021642175B
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 18:15:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="OpAGewTa"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="FFi7CCBx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbfBERzD (ORCPT
+        id S1727280AbfBESP6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 12:55:03 -0500
-Received: from mail-eopbgr780089.outbound.protection.outlook.com ([40.107.78.89]:55589
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727250AbfBERzD (ORCPT
+        Tue, 5 Feb 2019 13:15:58 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37912 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbfBESP6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 12:55:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DvX0SvjzS9cg6KCABhOsPWSCOuOybvRlHZr0Cemjf4M=;
- b=OpAGewTadxIiu2tMElin5owl7CWsCVVrijVMnRG6Pthy8Zdi1OfGb8jRXisJK8MdhqZFGho3dHnHLTlJBmPRrn8ZxrZhf3Ol53iQFg0sFuknEJUGQRj+E27JmJYsrepyunMK+Dkti5KARvgxwX65eZuQYgRlzJpxYwnGf5wNiR8=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB6296.namprd05.prod.outlook.com (20.178.51.81) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.15; Tue, 5 Feb 2019 17:54:57 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::99ab:18fb:f393:df31]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::99ab:18fb:f393:df31%3]) with mapi id 15.20.1601.016; Tue, 5 Feb 2019
- 17:54:57 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
- poking
-Thread-Topic: [PATCH v2 06/20] x86/alternative: use temporary mm for text
- poking
-Thread-Index: AQHUt2sRlZaCHhQDiEGNmzE5nFIfqqXRA/aAgAAZ9ACAABHSgIAAWTuA
-Date:   Tue, 5 Feb 2019 17:54:56 +0000
-Message-ID: <6D321F51-6B19-46F6-91AC-74248A542BA0@vmware.com>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-7-rick.p.edgecombe@intel.com>
- <20190205095853.GJ21801@zn.tnic>
- <20190205113146.GP17528@hirez.programming.kicks-ass.net>
- <20190205123533.GN21801@zn.tnic>
-In-Reply-To: <20190205123533.GN21801@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB6296;20:QxqDJfbj9XKfepbpbqVmkv5766jXl1JorpcDc6xl1KJTVSUXIhn8Yppt06+640zAjKe19ZUYjxzlT4M0m9fIzrT19NXajABrJO1ZdDj+E2tBtRdgF4MdWJDksNZuGxoMluWmebwHQGTI/5LvMPDyWX2bkhPN5tJcnu8luW5HTyM=
-x-ms-office365-filtering-correlation-id: 233f17a2-c471-4c41-7414-08d68b930a6a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB6296;
-x-ms-traffictypediagnostic: BYAPR05MB6296:
-x-microsoft-antispam-prvs: <BYAPR05MB629637D5EFD114B23FBDE163D06E0@BYAPR05MB6296.namprd05.prod.outlook.com>
-x-forefront-prvs: 0939529DE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(189003)(199004)(81156014)(105586002)(81166006)(93886005)(8936002)(106356001)(2906002)(83716004)(7736002)(86362001)(305945005)(66066001)(14454004)(76176011)(33656002)(71190400001)(97736004)(7416002)(8676002)(316002)(186003)(4744005)(54906003)(26005)(71200400001)(6436002)(36756003)(102836004)(446003)(478600001)(6916009)(99286004)(82746002)(476003)(256004)(68736007)(4326008)(6512007)(2616005)(11346002)(6506007)(53546011)(229853002)(6116002)(3846002)(6486002)(53936002)(6246003)(486006)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB6296;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Ul9qel0S4EZTHba0GgO2eznZQaY624VlPUugjgCH3NFi1b4exP8NOmkXrIxJZBzWQ/9PO790babvf+zx0YTNmHw23UGyw+mITeq8dcEnV5+WT1i9k92R332oCrqA6Z8JAnwzltUXeqkJcatAvWsRexKqhuZHdeCsagmB0PBY7TzMef7OAIl8fLzvwsHHguiU5yeqHfAa2iELj+whTRRM1Q8CXeQbWt8QFB9a2cHOmgTFxjVn3xkqKtGVfQMrXAMNpVAtDbObNsQZnoK2nHGtGARUrWZoGqMzAKQbFIxf5JIb1ZR7/HV7NgpPJ9EEmbA7y7Zd4I/poK/y8+sK/8alNNmUlobAlWEwuYz4Sx5l8KKbdDUXjG84E1cep7hBpaKFiBrw/Bwevt7zMPU34CU4iPzUYAUAlTWAJLxE753GYJY=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F6D00271B554CB47B00297C100C54604@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 5 Feb 2019 13:15:58 -0500
+Received: by mail-lf1-f65.google.com with SMTP id j15so3363238lfh.5
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 10:15:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mbf7A5q2IDkcmquFOhKq4fWWwcmHl2eQ7tXy3UEf9BE=;
+        b=FFi7CCBxRdbgf0UnX2a9J6HnF7xSZEzMQGCYBRqGrUX3qCiHurhJ/RLa5HMd42fowz
+         lvOM36OJ7HGSu2P2fh13+h/gQlvUcoCGSjUpNvCntuFtRuU2Sa4rowyHLVEA7Is6LAhz
+         BJN4plQmOkLsAQ7yek4WPnRKfg+O2Lbwpb07ZB5Js38XZgwgMZrUvZ6ryghoEOiLIvih
+         sQUSACbFjDghj5qRljOBaZKahNulaishghCe9572RlcLkpbsGwimgFmke/AEQJ3yQsq1
+         r8iAQr21/AynLnEoD1hAdMPPhdICIGgN8M+wc7/wNAyyoUfA8I5bZeog5M1v0Q8BVhXV
+         taRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mbf7A5q2IDkcmquFOhKq4fWWwcmHl2eQ7tXy3UEf9BE=;
+        b=LLPmwPz0hq4cmduFXpTVAY3Jw89yzS6UJm4VapiknwVQRtSMoug67cuo7qFwitG9Q9
+         34S8osjnkce6S+8Jja4B4EmYZ82miv/Z380DvueL7e4olbUZoS/mSDyMq1hNTYLsuzfA
+         3/L9LGXm4bOXZtvZDQARyLT/h8jJos773Q5/tVFNyIzb68VJ++ZOiaCQYPZkyyJGi0ao
+         QHQxtITn25ns89EYxrRRs8jfwmi97v8b21ENUSMl1ZiNtFkkb6Hdgv0WtnRvYXYovQ2X
+         ebDfSSYR7vP45Ng8J3a2UD2Rr36Sm0HIwPoJ+VixqsfsE51pqwFRUb6KGq7l9A7p+LFY
+         0gyA==
+X-Gm-Message-State: AHQUAuYKGXTQyOCSIeArnAEQiW77vKt06sNtWTjRW/nL6Z1VZsbBYVsx
+        o/uF7c6JSToKpxm6JsuQEFoWnI/NFvtYBybuv5N2wYk=
+X-Google-Smtp-Source: AHgI3Ib81/3dEq0pXvAOaXbgixtsJEUxTs6tVdvATvZT/nWkRLQSt6AxIFccEoKTgWCBKGO0JSxxUArtUvnX6C9TniU=
+X-Received: by 2002:a19:d619:: with SMTP id n25mr3571544lfg.91.1549390555502;
+ Tue, 05 Feb 2019 10:15:55 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 233f17a2-c471-4c41-7414-08d68b930a6a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2019 17:54:56.8334
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB6296
+References: <61766e1d-496e-6a7d-d4b8-52e2c99a78c3@schaufler-ca.com>
+In-Reply-To: <61766e1d-496e-6a7d-d4b8-52e2c99a78c3@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 5 Feb 2019 13:15:44 -0500
+Message-ID: <CAHC9VhQoruL70fUScgYH8WGDP2Hc1=G2j_fjoS24VMUm3xA=aQ@mail.gmail.com>
+Subject: Re: New LSM hooks
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LSM <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Feb 5, 2019, at 4:35 AM, Borislav Petkov <bp@alien8.de> wrote:
->=20
-> On Tue, Feb 05, 2019 at 12:31:46PM +0100, Peter Zijlstra wrote:
->> ...
->>=20
->> So while in general I agree with BUG_ON() being undesirable, I think
->> liberal sprinking in text_poke() is fine; you really _REALLY_ want this
->> to work or fail loudly. Text corruption is just painful.
->=20
-> Ok. It would be good to have the gist of this sentiment in a comment
-> above it so that it is absolutely clear why we're doing it.
+On Tue, Feb 5, 2019 at 12:40 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> Full disclosure: This is all about me and my interests.
+>
+> Developers propose new LSM hooks for many reasons. Often,
+> it's in support of an exotic feature such as Infiniband.
+> Sometimes it's because someone got clever when they optimized
+> an otherwise mundane feature and bypassed the usual hooks,
+> as is being proposed for kernfs. Usually there is a particular
+> security module (i.e. SELinux) that is targeted for the hook.
+> In almost all cases a hook is provided for that LSM, but not
+> for any other. In many cases the developers don't even include
+> the LSM email list in the discussions. LSM maintainers find
+> out about the new hooks after the fact.
 
-I added a short comment for v3 above each BUG_ON().
+I think it is each LSM maintainer's job to ensure that patches which
+affect the LSM hooks, either through modification or addition, are
+CC'd to the LSM list for discussion.  I've tried to be good about
+this, but I'm sure I've missed some over the years.
 
-> And since text_poke() can't fail, then it doesn't need a retval too.
-> AFAICT, nothing is actually using it.
+> Prior to 2008, when there was only one LSM, this made perfect
+> sense. Since then, it's been a regular practice justified by
+> the notion that it's the LSM maintainer's option to use the
+> hook or not. That also makes sense in cases where the use is
+> strictly optional, as it is in binder. It does not make sense,
+> however, when a core system facility like kernfs is involved.
 
-As Peter said, this is addressed in a separate patch (one patch per logical
-change).
+The term "optional" is tricky here.  In all the cases I can think of
+where a LSM hook has been added to an existing bit of kernel
+functionality, the hook has almost always been optional if for no
+other reason than it didn't exist in the previous kernel.  I suppose
+one could argue that there is a functional disparity between LSMs if
+one LSM implements the hook and the others do not, but that is a
+different issue.
 
+> I get a double whammy on these new LSM hooks. I have to try
+> to figure out if Smack cares, and if it does, whether to proposed
+> hook will solve the problem for Smack. Because Smack uses
+> xattrs and process attributes differently from SELinux there are
+> often problems with hooks that are provided with only an SELinux
+> implementation. I also have to work out how the new hook will
+> work in the stacked security module case. There are some existing
+> hooks that are a special challenge there, and when a new hook is
+> proposed that does the same kind of things (e.g. use of secid,
+> secctx or list of xattrs) without considering the consequences
+> for other modules.
+
+Once again, I think it is important to CC the LSM list on these sorts
+of patchsets, and to get the patch author to consider other LSMs, but
+I think asking the original author to preemptively add support to each
+LSM for every new addition is too high a bar.  I would encourage the
+individual LSMs (both maintainers and contributors) to work with patch
+authors in a constructive manner to add support for new hooks when
+they make sense for the given LSM.
+
+> What do I want, I hear you cry? I want some sanity in the way
+> LSM hooks are introduced. I want some standards or conventions
+> on what is appropriate to pass into and out of LSM hooks. I
+> want push back on special purpose hooks that are required to
+> fix the deficiencies of a filesystem or bizarre hardware
+> implementation. I want to stop spending all my time trying to
+> deal with new, crazy LSM hooks. There are enough old ones to
+> keep me entertained, thank you very much.
+
+Yeah, good luck with that.  I think trying to legislate this too much
+is a sure path to failure.  Our saving grace is that the LSM hook
+boundary is not a kernel/userspace boundary so we are free to change
+it as needed, we just need to make sure if we change an existing hook
+we don't break any of the existing in-tree LSMs.  We've done this in
+the past without too much problem, even other subsystems have done
+this for us (without much notification to the LSMs) and it has
+generally worked out okay.
+
+I'm all for increased collaboration between LSMs, e.g. requiring hooks
+changes to CC the LSM list, but I think mandating anything beyond that
+is a fool's errand.
+
+-- 
+paul moore
+www.paul-moore.com
