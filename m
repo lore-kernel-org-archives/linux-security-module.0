@@ -2,101 +2,111 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388B0C282CB
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 18:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 903D2C282D7
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 18:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15F45217F9
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 18:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72A9020811
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 18:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbfBES2R (ORCPT
+        id S1727578AbfBEScH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 13:28:17 -0500
-Received: from mail.emypeople.net ([216.220.167.73]:38475 "EHLO
-        mail.emypeople.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbfBES2R (ORCPT
+        Tue, 5 Feb 2019 13:32:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33991 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727496AbfBEScH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 13:28:17 -0500
-Received: from Shop7 ([166.182.241.52])
-        by mail.emypeople.net (12.1.1 build 4 DEB9 x64) with ASMTP id 201902051328150710;
-        Tue, 05 Feb 2019 13:28:15 -0500
-From:   "Edwin Zimmerman" <edwin@211mainstreet.net>
-To:     "'Casey Schaufler'" <casey@schaufler-ca.com>,
-        "'LSM'" <linux-security-module@vger.kernel.org>
-References: <61766e1d-496e-6a7d-d4b8-52e2c99a78c3@schaufler-ca.com>
-In-Reply-To: <61766e1d-496e-6a7d-d4b8-52e2c99a78c3@schaufler-ca.com>
-Subject: RE: New LSM hooks
-Date:   Tue, 5 Feb 2019 13:28:08 -0500
-Message-ID: <000001d4bd80$8b9442c0$a2bcc840$@211mainstreet.net>
+        Tue, 5 Feb 2019 13:32:07 -0500
+Received: from mail-yb1-f197.google.com ([209.85.219.197])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <seth.forshee@canonical.com>)
+        id 1gr5Vs-0008Kf-N8
+        for linux-security-module@vger.kernel.org; Tue, 05 Feb 2019 18:32:04 +0000
+Received: by mail-yb1-f197.google.com with SMTP id l14so1928111ybq.7
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 10:32:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=FVlBFbZ/Rf8EhhvuHPQNiF+bYJe2E/F4dl2//NQxB6s=;
+        b=Ahw/E7XJgIAkyVSf5ed6MHuOW7mREvaS6PUang2vPM4n/Nn9vmCEsHYu+IvQ5p9b2d
+         IvzxmnS0UjcphV+g3225EoSCj/luwygLnIkdozcY1/6brySa1KU5/cfOdhLtn0wnZs3r
+         RXAudBUPCVKQRkLTtB2QJkDqWQ+4ldW3e92hAvpqvcw3r29k1Zp0eY/Qtf/oCN8uXdvb
+         HYPYL5fWQ4m9L+gX6Tt6TAAgZOXPW3mEHEADE4tqS/p9cUvAG6Q1Df3WSm6CONIVjrCM
+         JfCztR028q4nunoA+OFjrsDHiq1b86uEr2QWKLgsDBK29ASuF0hOcU0stWJrIHPWrsmX
+         iFEQ==
+X-Gm-Message-State: AHQUAuY7QU/xxyuWmJyctXfJdILjLQFM1W0dXT/PA+Ug7OKEnt2MX0RI
+        X6jxlMp7dNAwK9Lu9f+aTQTUaoVXKVYSrVKtiUGa1tbae3GIFLyuo/XcVukh/UUPCIE2DOMiAnS
+        MpoNTOeKpe6EvCSgHlO7TDNnD+7XdUw/D2K8SEQp5TdsPrk45KqHIxQ==
+X-Received: by 2002:a25:ca83:: with SMTP id a125mr3034487ybg.45.1549391523664;
+        Tue, 05 Feb 2019 10:32:03 -0800 (PST)
+X-Google-Smtp-Source: AHgI3IbGiAuQ5FUu3eHG8ZYvWmgqLHxC/Y5AGQWoUmLCdi0ABBDyZHzdiR8hCZKvi85lDCT++uG86A==
+X-Received: by 2002:a25:ca83:: with SMTP id a125mr3034447ybg.45.1549391523309;
+        Tue, 05 Feb 2019 10:32:03 -0800 (PST)
+Received: from localhost ([2605:a601:ac2:fb20:ac97:1957:a992:bb67])
+        by smtp.gmail.com with ESMTPSA id t129sm1748534ywe.11.2019.02.05.10.32.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 10:32:02 -0800 (PST)
+Date:   Tue, 5 Feb 2019 12:32:01 -0600
+From:   Seth Forshee <seth.forshee@canonical.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+Message-ID: <20190205183201.GA3218@ubuntu-xps13>
+References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
+ <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+ <20190205151859.GD16362@ubuntu-xps13>
+ <1549385244.4146.148.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQHf3rRGqiR9Wt3dE8sqasOj5e4qfqW7PC5g
-Content-Language: en-us
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1549385244.4146.148.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tuesday, February 05, 2019 12:40 PM Casey Schaufler wrote:
-> Full disclosure: This is all about me and my interests.
+On Tue, Feb 05, 2019 at 11:47:24AM -0500, Mimi Zohar wrote:
+> Hi Seth,
 > 
-> Developers propose new LSM hooks for many reasons. Often,
-> it's in support of an exotic feature such as Infiniband.
-> Sometimes it's because someone got clever when they optimized
-> an otherwise mundane feature and bypassed the usual hooks,
-> as is being proposed for kernfs. Usually there is a particular
-> security module (i.e. SELinux) that is targeted for the hook.
-> In almost all cases a hook is provided for that LSM, but not
-> for any other. In many cases the developers don't even include
-> the LSM email list in the discussions. LSM maintainers find
-> out about the new hooks after the fact.
+> On Tue, 2019-02-05 at 09:18 -0600, Seth Forshee wrote:
+> > On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
+> > > Require signed kernel modules on systems with secure boot mode enabled.
+> > > 
+> > > To coordinate between appended kernel module signatures and IMA
+> > > signatures, only define an IMA MODULE_CHECK policy rule if
+> > > CONFIG_MODULE_SIG is not enabled.
+> > > 
+> > > This patch defines a function named set_module_sig_required() and renames
+> > > is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
+> > > call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
+> > > being enabled.
+> > > 
+> > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > 
+> > With respect to interactions with the kernel lockdown patches, this
+> > looks better than the patches I saw previously. I don't feel like I know
+> > enough about what's going on with IMA to ack the patch, but I feel
+> > confident that it's at least not going to break signature enforcement
+> > for us.
 > 
-> Prior to 2008, when there was only one LSM, this made perfect
-> sense. Since then, it's been a regular practice justified by
-> the notion that it's the LSM maintainer's option to use the
-> hook or not. That also makes sense in cases where the use is
-> strictly optional, as it is in binder. It does not make sense,
-> however, when a core system facility like kernfs is involved.
-> 
-> I get a double whammy on these new LSM hooks. I have to try
-> to figure out if Smack cares, and if it does, whether to proposed
-> hook will solve the problem for Smack. Because Smack uses
-> xattrs and process attributes differently from SELinux there are
-> often problems with hooks that are provided with only an SELinux
-> implementation. I also have to work out how the new hook will
-> work in the stacked security module case. There are some existing
-> hooks that are a special challenge there, and when a new hook is
-> proposed that does the same kind of things (e.g. use of secid,
-> secctx or list of xattrs) without considering the consequences
-> for other modules.
-> 
-> What do I want, I hear you cry? I want some sanity in the way
-> LSM hooks are introduced. I want some standards or conventions
-> on what is appropriate to pass into and out of LSM hooks. I
-> want push back on special purpose hooks that are required to
-> fix the deficiencies of a filesystem or bizarre hardware
-> implementation. I want to stop spending all my time trying to
-> deal with new, crazy LSM hooks. There are enough old ones to
-> keep me entertained, thank you very much.
+> Thank you for testing!  Could this be translated into a "tested-by"
+> "(for w/lockdown patches)"?
 
-I agree.  We need a roadmap of where we want the LSM infrastructure to go.
-Without such a guide, LSM code is going to end up as a rats nest of
-confusing, partially implemented, partially supported code.
+Yeah, that's fine. To be clear about what I tested, I've confirmed that
+it doesn't interfere with requiring signed modules under lockdown with
+CONFIG_IMA_ARCH_POLICY=n and IMA appraisal enabled.
 
-Here's my suggestion for starters. According to kernel documentation, new 
-LSMs must be documented before being accepted.  Perhaps we need a 
-similar requirement for LSM hooks.  As I see it, LSMs are security additions,
-not functionality patches for the rest of the kernel or for special hardware or
-whatever.  Therefore, I also suggest that all new hooks be implemented in 
-at least two LSMs before being accepted.
-
--Edwin Zimmerman
-
-> We're about to get a bunch of new LSMs. I don't think that we
-> can afford to continue with the current "feature A needs a hook
-> for LSM S" behavior.
-
+Tested-by: Seth Forshee <seth.forshee@canonical.com>
