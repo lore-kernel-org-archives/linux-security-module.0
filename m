@@ -2,124 +2,157 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC5EC282D7
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EE2C282CB
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EFA32175B
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:53:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dFRXAToX"
+	by mail.kernel.org (Postfix) with ESMTP id B200920844
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 08:59:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbfBEIx1 (ORCPT
+        id S1728117AbfBEI7c (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:53:27 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:45512 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbfBEIx1 (ORCPT
+        Tue, 5 Feb 2019 03:59:32 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36997 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfBEI7b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:53:27 -0500
-Received: from zn.tnic (p200300EC2BCB6B008896F3D5E1C66173.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:8896:f3d5:e1c6:6173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 955EB1EC02AE;
-        Tue,  5 Feb 2019 09:53:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549356805;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=9NPvfNG+JFpDM7sjiNkdW+XpScH5VeiM2qlV0JoY6ZA=;
-        b=dFRXAToX5/08SPN0allQ11aILUZsmqf1gG1hG+VKNk9k/KbmUKs/QtkUV1Dckk8k5WEBri
-        SbcwLdA6zuqezXnk0dN5d6IYdQlJsKW0k1gguU0W6REBUNatrwKiZt6E8IsZhciVrJH0CU
-        WTpRddr5zmzLbrlGnkZkBIBx+ZjWfJ4=
-Date:   Tue, 5 Feb 2019 09:53:11 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v2 04/20] fork: provide a function for copying init_mm
-Message-ID: <20190205085311.GH21801@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-5-rick.p.edgecombe@intel.com>
+        Tue, 5 Feb 2019 03:59:31 -0500
+Received: by mail-wr1-f65.google.com with SMTP id s12so2705744wrt.4
+        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 00:59:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YzaF5xEN/NykgyhWwHEtl45ZnhntT7qxTkQ6YlISyZ8=;
+        b=O8N9uIkL6Nw1Cp+170oZ581M7/Ts3J7IECOULjO1BC/HiPbdRoy7uEzfpaLE2KWHrZ
+         2O9X1ZucxJrZnodkis2yxjue1/2EPKvsc84fj6UjjYUoQBjuDguLJEE14sI4cNCSQgD/
+         w12/xL1RsowS+Ah2ySzDJ/YHBPTcQQL+gTaPKEyVn8TQwziYGlbyTzgei0niE4wBjesL
+         TVS7HFWQ3ngje1aoAk+LqootR3U7DAwWaNWfbEUIYUkvA2aWcfJeyG33MTQCJ3h2jCqY
+         gSoSuyX5OrOZ0xQgxgX2p+Aedf+zs1OQp/DJocJriy8ZyQXnCK9vXQXZsKRKhtbrjT+e
+         fyew==
+X-Gm-Message-State: AHQUAuarBGwRWuPdrorllHqfElclW6Hnw3q9wSaQLZSlAu8Z5iklOuzf
+        4WBcTshcSDI2IlEgeQBf/YlaIw==
+X-Google-Smtp-Source: AHgI3IZtZ71lotR74bHzMK3o6H57+pKIam0AESdGPwIXMgNz7lkef9oA7njxETNoEArYR37+XPuRww==
+X-Received: by 2002:a5d:678b:: with SMTP id v11mr2904766wru.245.1549357169529;
+        Tue, 05 Feb 2019 00:59:29 -0800 (PST)
+Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id n82sm12973613wma.42.2019.02.05.00.59.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 00:59:28 -0800 (PST)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>
+Subject: [PATCH v4 0/5] Allow initializing the kernfs node's secctx based on its parent
+Date:   Tue,  5 Feb 2019 09:59:10 +0100
+Message-Id: <20190205085915.5183-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-5-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 28, 2019 at 04:34:06PM -0800, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
-> 
-> Provide a function for copying init_mm. This function will be later used
-> for setting a temporary mm.
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  include/linux/sched/task.h |  1 +
->  kernel/fork.c              | 24 ++++++++++++++++++------
->  2 files changed, 19 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-> index 44c6f15800ff..c5a00a7b3beb 100644
-> --- a/include/linux/sched/task.h
-> +++ b/include/linux/sched/task.h
-> @@ -76,6 +76,7 @@ extern void exit_itimers(struct signal_struct *);
->  extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
->  extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
->  struct task_struct *fork_idle(int);
-> +struct mm_struct *copy_init_mm(void);
->  extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
->  extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
->  
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index b69248e6f0e0..d7b156c49f29 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1299,13 +1299,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
->  		complete_vfork_done(tsk);
->  }
->  
-> -/*
-> - * Allocate a new mm structure and copy contents from the
-> - * mm structure of the passed in task structure.
-> +/**
-> + * dup_mm() - duplicates an existing mm structure
-> + * @tsk: the task_struct with which the new mm will be associated.
-> + * @oldmm: the mm to duplicate.
-> + *
-> + * Allocates a new mm structure and copy contents from the provided
+Changes in v4:
+- reorder and rename hook arguments
+- avoid allocating kernfs_iattrs unless needed
 
-s/copy/copies/
+v3: https://lore.kernel.org/selinux/20190130114150.27807-1-omosnace@redhat.com/T/
+Changes in v3:
+- rename the hook to "kernfs_init_security"
+- change the hook interface to simply pass pointers to struct iattr and
+  struct simple_xattrs of both the new node and its parent
+- add full security xattr support to kernfs (and fixup SELinux behavior
+  to handle it properly)
+
+v2: https://lore.kernel.org/selinux/20190109162830.8309-1-omosnace@redhat.com/T/
+Changes in v2:
+- add docstring for the new hook in union security_list_options
+- initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
+  implemented
+
+v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnace@redhat.com/T/
+
+TL;DR:
+This series adds a new security hook that allows to initialize the security
+context of kernfs properly, taking into account the parent context (and
+possibly other attributes). Kernfs nodes require special handling here, since
+they are not bound to specific inodes/superblocks, but instead represent the
+backing tree structure that is used to build the VFS tree when the kernfs
+tree is mounted.
+
+The kernfs nodes initially do not store any security context and rely on
+the LSM to assign some default context to inodes created over them. Kernfs
+inodes, however, allow setting an explicit context via the *setxattr(2)
+syscalls, in which case the context is stored inside the kernfs node's
+internal structure.
+
+SELinux (and possibly other LSMs) initialize the context of newly created
+FS objects based on the parent object's context (usually the child inherits
+the parent's context, unless the policy dictates otherwise). This is done
+by hooking the creation of the new inode corresponding to the newly created
+file/directory via security_inode_init_security() (most filesystems always
+create a fresh inode when a new FS object is created). However, kernfs nodes
+can be created "behind the scenes" while the filesystem is not mounted
+anywhere and thus no inodes can exist for them yet.
+
+Therefore, to allow maintaining similar behavior for kernfs nodes, a new
+LSM hook is needed, which will allow initializing the kernfs node's
+security context based on its own attributes and those of the parent's
+node.
+
+The main motivation for this change is that the userspace users of cgroupfs
+(which is built on kernfs) expect the usual security context inheritance
+to work under SELinux (see [1] and [2]). This functionality is required for
+better confinement of containers under SELinux.
+
+Patch 1/5 changes SELinux to fetch security context from extended
+attributes on kernfs filesystems, falling back to genfs-defined context
+if that fails. Without this patch the 2/5 would be a regression for
+SELinux (due to the removal of ...notifysecctx() call.
+
+Patch 2/5 implements full security xattr support in kernfs using
+simple_xattrs; patch 3/5 adds the new LSM hook; patch 4/5 implements the
+new hook in SELinux; and patch 5/5 modifies kernfs to call the new hook
+on new node creation.
+
+Testing:
+- passed the reproducer from the commit message of the last patch
+- passed SELinux testsuite on Fedora 29 (x86_64) when applied on top of
+  current Rawhide kernel (5.0.0-0.rc5.git0.1) [3]
+  - including the new proposed selinux-testsuite subtest [4] (adapted
+    from the reproducer)
+
+[1] https://github.com/SELinuxProject/selinux-kernel/issues/39
+[2] https://bugzilla.redhat.com/show_bug.cgi?id=1553803
+[3] https://copr.fedorainfracloud.org/coprs/omos/kernel-testing/build/854148/
+[4] https://github.com/SELinuxProject/selinux-testsuite/pull/48
+
+Ondrej Mosnacek (5):
+  selinux: try security xattr after genfs for kernfs filesystems
+  kernfs: use simple_xattrs for security attributes
+  LSM: add new hook for kernfs node initialization
+  selinux: implement the kernfs_init_security hook
+  kernfs: initialize security of newly created nodes
+
+ fs/kernfs/dir.c                     |  64 +++++++-
+ fs/kernfs/inode.c                   | 125 +++++++---------
+ fs/kernfs/kernfs-internal.h         |   7 +-
+ include/linux/lsm_hooks.h           |  22 +++
+ include/linux/security.h            |  14 ++
+ include/linux/xattr.h               |  15 ++
+ security/security.c                 |  10 ++
+ security/selinux/hooks.c            | 221 +++++++++++++++++++---------
+ security/selinux/include/security.h |   1 +
+ 9 files changed, 328 insertions(+), 151 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
