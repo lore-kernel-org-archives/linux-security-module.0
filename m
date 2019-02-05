@@ -2,197 +2,151 @@ Return-Path: <SRS0=6WpB=QM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E556C282D7
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C90C282D7
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 186712083B
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDD5F2083B
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Feb 2019 11:07:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfBELG5 (ORCPT
+        id S1728515AbfBELH0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:06:57 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51898 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727949AbfBELGw (ORCPT
+        Tue, 5 Feb 2019 06:07:26 -0500
+Received: from mga01.intel.com ([192.55.52.88]:21393 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727776AbfBELHZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:06:52 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b11so3145117wmj.1
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Feb 2019 03:06:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nXKwAbEZfoxXrwUQ8rLT22YtPLuVavDsba7+2hRLZ3I=;
-        b=EqVzBjoZ1f+ZKNl46fTEttM9cMcOieopqUzyX+kIGO7BNlwkGRQ22as4Ak066Z1Lcl
-         9cYjuDUn1XiF4fkGTmKx+BKIBiKjmZ2zWkvESKhrf0tB9oUURXuh3tAlp/sQ3xIQd1Vf
-         +/bHVV78eFQdpB6RYAODwC1qe58gO2+R/LC73VfyvnLEDMhyZUS1F0EI4KrTVYf+2WDk
-         klT2re6F02PTwlrrUxkHQCRm+g35nbX/U+GFfqD9J1FU3/H9GtPdqKx3HbAEe2l4PEZV
-         oAIUxFkgsmhez8FfFN3V+D5nB/LebbmjuRldulX8AceR514jPa004y9SDekLq73x0G83
-         mQLA==
-X-Gm-Message-State: AHQUAub5+n4QP5s0v6bU67crZYNhIuwa4UN394FtB1BS6x3fLCbFuPKG
-        TK5AO/UDqIAP0jXPG1MPnUCR+w==
-X-Google-Smtp-Source: AHgI3IaAYUGEenLV/qz0PhHBKBRLpJTMK4BSilxFhZkBoiEzpKmgqEAXm7i1G+PsfAPW1vyjGNl8kA==
-X-Received: by 2002:a1c:488b:: with SMTP id v133mr3419464wma.31.1549364809489;
-        Tue, 05 Feb 2019 03:06:49 -0800 (PST)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id x186sm26067070wmg.41.2019.02.05.03.06.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 03:06:48 -0800 (PST)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v5 3/5] LSM: add new hook for kernfs node initialization
-Date:   Tue,  5 Feb 2019 12:06:36 +0100
-Message-Id: <20190205110638.30782-4-omosnace@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190205110638.30782-1-omosnace@redhat.com>
-References: <20190205110638.30782-1-omosnace@redhat.com>
+        Tue, 5 Feb 2019 06:07:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 03:07:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,563,1539673200"; 
+   d="scan'208";a="136021718"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga001.jf.intel.com with ESMTP; 05 Feb 2019 03:07:24 -0800
+Received: from fmsmsx111.amr.corp.intel.com (10.18.116.5) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 5 Feb 2019 03:07:23 -0800
+Received: from hasmsx111.ger.corp.intel.com (10.184.198.39) by
+ fmsmsx111.amr.corp.intel.com (10.18.116.5) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 5 Feb 2019 03:07:22 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
+ HASMSX111.ger.corp.intel.com ([169.254.5.16]) with mapi id 14.03.0415.000;
+ Tue, 5 Feb 2019 13:07:17 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: RE: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Topic: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Index: AQHUvUDUPtSrjGtlHk6wCuMRxetyu6XRCy8A
+Date:   Tue, 5 Feb 2019 11:07:16 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA90A8B@hasmsx108.ger.corp.intel.com>
+References: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.126.72]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch introduces a new security hook that is intended for
-initializing the security data for newly created kernfs nodes, which
-provide a way of storing a non-default security context, but need to
-operate independently from mounts (and therefore may not have an
-associated inode at the moment of creation).
+> The current approach to read first 6 bytes from the response and then tail of
+> the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+> (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+> memcpy_fromio() is implemented. If this happens, the read will fail and the
+> memory controller will fill the read with 1's.
+> 
+> This was triggered by 170d13ca3a2f, which should be probably refined to check
+> and react to the address alignment. Before that commit, on x86
+> memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
+> thing (from tpm_crb's perspective) for us so far, but we should not rely on that.
+> Thus, it makes sense to fix this also in tpm_crb, not least because the fix can be
+> then backported to stable kernels and make them more robust when compiled
+> in differing environments.
+> 
+> Cc: stable@vger.kernel.org
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Tomas Winkler <tomas.winkler@intel.com>
+> Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+> Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> ---
+> v3:
+> * Fix typo i.e. %s/reminding/remaining/g
 
-The main motivation is to allow kernfs nodes to inherit the context of
-the parent under SELinux, similar to the behavior of
-security_inode_init_security(). Other LSMs may implement their own logic
-for handling the creation of new nodes.
+Why you haven't fixed all the typos I've pointed out? I think you missed that.
+Tomas
 
-The interface of the new hook provides the following to the LSM:
- * a qstr containing the name of the new node
- * inode attributes of the parent node (directory)
- * initial inode attributes (struct iattr + simple_xattrs) of the new
-   node
-
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- include/linux/lsm_hooks.h | 22 ++++++++++++++++++++++
- include/linux/security.h  | 14 ++++++++++++++
- security/security.c       | 10 ++++++++++
- 3 files changed, 46 insertions(+)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 9a0bdf91e646..558bbc0ff125 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -429,6 +429,21 @@
-  *	to abort the copy up. Note that the caller is responsible for reading
-  *	and writing the xattrs as this hook is merely a filter.
-  *
-+ * Security hooks for kernfs node operations
-+ *
-+ * @kernfs_init_security
-+ *	Initialize the security context of a newlycreated kernfs node based
-+ *	on its own and its parent's attributes. The security context (or other
-+ *	LSM metadata) should be stored in @secattr as extended attributes.
-+ *	The hook MAY NOT add/modify attributes in @dir_secattr; it should be
-+ *	treated as a read-only list of attributes.
-+ *
-+ *	@qstr contains the last path component of the new node.
-+ *	@dir_iattr contains the inode attributes of the parent node.
-+ *	@dir_secattr is the list of security xattrs of the parent node.
-+ *	@iattr contains the inode attributes of the new node.
-+ *	@secattr is the list of security xattrs of the new node.
-+ *
-  * Security hooks for file operations
-  *
-  * @file_permission:
-@@ -1558,6 +1573,12 @@ union security_list_options {
- 	int (*inode_copy_up)(struct dentry *src, struct cred **new);
- 	int (*inode_copy_up_xattr)(const char *name);
- 
-+	int (*kernfs_init_security)(const struct qstr *qstr,
-+				    const struct iattr *dir_iattr,
-+				    struct simple_xattrs *dir_secattr,
-+				    const struct iattr *iattr,
-+				    struct simple_xattrs *secattr);
-+
- 	int (*file_permission)(struct file *file, int mask);
- 	int (*file_alloc_security)(struct file *file);
- 	void (*file_free_security)(struct file *file);
-@@ -1858,6 +1879,7 @@ struct security_hook_heads {
- 	struct hlist_head inode_getsecid;
- 	struct hlist_head inode_copy_up;
- 	struct hlist_head inode_copy_up_xattr;
-+	struct hlist_head kernfs_init_security;
- 	struct hlist_head file_permission;
- 	struct hlist_head file_alloc_security;
- 	struct hlist_head file_free_security;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index dbfb5a66babb..581944d1e61e 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -51,6 +51,7 @@ struct fown_struct;
- struct file_operations;
- struct msg_msg;
- struct xattr;
-+struct simple_xattrs;
- struct xfrm_sec_ctx;
- struct mm_struct;
- 
-@@ -291,6 +292,11 @@ int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer
- void security_inode_getsecid(struct inode *inode, u32 *secid);
- int security_inode_copy_up(struct dentry *src, struct cred **new);
- int security_inode_copy_up_xattr(const char *name);
-+int security_kernfs_init_security(const struct qstr *qstr,
-+				  const struct iattr *dir_iattr,
-+				  struct simple_xattrs *dir_secattr,
-+				  const struct iattr *iattr,
-+				  struct simple_xattrs *secattr);
- int security_file_permission(struct file *file, int mask);
- int security_file_alloc(struct file *file);
- void security_file_free(struct file *file);
-@@ -783,6 +789,14 @@ static inline int security_inode_copy_up(struct dentry *src, struct cred **new)
- 	return 0;
- }
- 
-+static inline int security_kernfs_init_security(
-+		const struct qstr *qstr, const struct iattr *dir_iattr,
-+		struct simple_xattrs *dir_secattr, const struct iattr *iattr,
-+		struct simple_xattrs *secattr)
-+{
-+	return 0;
-+}
-+
- static inline int security_inode_copy_up_xattr(const char *name)
- {
- 	return -EOPNOTSUPP;
-diff --git a/security/security.c b/security/security.c
-index f1b8d2587639..836e0822874a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -892,6 +892,16 @@ int security_inode_copy_up_xattr(const char *name)
- }
- EXPORT_SYMBOL(security_inode_copy_up_xattr);
- 
-+int security_kernfs_init_security(const struct qstr *qstr,
-+				  const struct iattr *dir_iattr,
-+				  struct simple_xattrs *dir_secattr,
-+				  const struct iattr *iattr,
-+				  struct simple_xattrs *secattr)
-+{
-+	return call_int_hook(kernfs_init_security, 0, qstr, dir_iattr,
-+			     dir_secattr, iattr, secattr);
-+}
-+
- int security_file_permission(struct file *file, int mask)
- {
- 	int ret;
--- 
-2.20.1
+> v2:
+> * There was a trailing double colon in the end of the short summary.
+> * Check requested and expected length against TPM_HEADER_SIZE.
+> * Add some explanatory comments to crb_recv().
+>  drivers/char/tpm/tpm_crb.c | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c index
+> 36952ef98f90..ee4df7815912 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -287,19 +287,29 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf,
+> size_t count)
+>  	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+>  	unsigned int expected;
+> 
+> -	/* sanity check */
+> -	if (count < 6)
+> +	/* A sanity check that the upper layer wants to get at least the header
+> +	 * as that is the minimum size for any TPM response.
+> +	 */
+> +	if (count < TPM_HEADER_SIZE)
+>  		return -EIO;
+> 
+> +	/* If this bit is set, according to the spec, the TPM is in unrecovable
+> +	 * condition.
+> +	 */
+>  	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
+>  		return -EIO;
+> 
+> -	memcpy_fromio(buf, priv->rsp, 6);
+> -	expected = be32_to_cpup((__be32 *) &buf[2]);
+> -	if (expected > count || expected < 6)
+> +	/* Read 8 bytes (not just 6 bytes, which would cover the response
+> length
+> +	 * field) in order to make sure that the remaining memory accesses
+> will
+> +	 * be aligned.
+> +	 */
+> +	memcpy_fromio(buf, priv->rsp, 8);
+> +
+> +	expected = be32_to_cpup((__be32 *)&buf[2]);
+> +	if (expected > count || expected < TPM_HEADER_SIZE)
+>  		return -EIO;
+> 
+> -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+> +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
+> 
+>  	return expected;
+>  }
+> --
+> 2.19.1
 
