@@ -2,86 +2,210 @@ Return-Path: <SRS0=88KC=QN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C1DC169C4
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3FFC169C4
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93E88218AD
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:30:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KevaKXBC"
+	by mail.kernel.org (Postfix) with ESMTP id 53A35218AD
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfBFQaF (ORCPT
+        id S1730986AbfBFQaO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:30:05 -0500
-Received: from sonic302-27.consmr.mail.gq1.yahoo.com ([98.137.68.153]:43673
-        "EHLO sonic302-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726306AbfBFQaF (ORCPT
+        Wed, 6 Feb 2019 11:30:14 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32882 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726306AbfBFQaN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:30:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1549470604; bh=b+DqDn+y8qJpIdXaJROMfGbMY0hoTOlAvWr7uXl/j/A=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=KevaKXBC3CBzB8wSdTnqIL409OaLSMq3Ey7MsfgtwYKnKH0F9rsGEOl+0s4wujc4Rk3TanfDqVDk6/bIJ1R5x/p8WU9epom80bcJkBRhuPkRBKv0fInslIohbdnlUmAy61sl0HeXnHuAKNj23iiWQEk3fZKGS2A30ijDEYBGHr/yjAPJgLclFLq66sQELHZdUTh91sV2nKEN7Ykk6JG7+JHkPGDI8WDCq9TRfhqITdTTUt64WKppU15NqpnFuilGFto74HxJOqMoJ4zmjpbqn78w7P8IYryCOowZPhzTi14LWuYXitFplsiGbUU3ATqqf1a4w2sla6roOMkqsXUxyw==
-X-YMail-OSG: QbN9V90VM1nmlA1RORWT_8eUnAtAekDN8jWlqxRnA7t7e3US07Ts0EnJG.qA8LY
- GMcO6P7KmNDH.HYpB6hBRH5D_dYZb__TKtz0e2Z2EoHDw3k_y0ztkGtlKxCgvfDhNsoNIpdU6zmu
- ena8EsiT1X.Rg7z8LgM8JKRhBF3_2V9UvgVO0QTpa..Uclwb.rCtBI4AGoIB7RBf2gYi6DON8Oe8
- nwPkyx6ztXWkSvSUEyYsXzvW.AH97x6zP_xQIDWrCDUIcw5ezyRJxZM_tyvl2mY2TwGYB.qKE_W3
- CKjMscrIhsFtm2LQtXIwMxZOMPmvbOuWfcuAaFyLukXhSUcKQk7lPXhkVpSSJxCO69fx9Z6a1Cbg
- 5bUqbazDK9MkD126tmgHu029LS65pxXiphRE8izYseGbWz3kAIhssj4YO4I6nxoz.RddLy1naOhc
- PBbZFVyj8vsnpD.uXdgNcL9vF5DfZxfuOLWTi6T22HmSI.bveXXHZlxDNM71RF9AQCFu_htcWECT
- 60uYLujRS7rol7ZfAQglnP14mLhrNnazXyGMxRW5nXTcHI1zqOJRw6jlow095MPuvX7XNHdOIcmu
- C6FriwVn1uFpsSh2y64m3b.LfXgnMXYKJZrlmeOkZYceniqcTykebGJ.IY7CMmya7xp_cbsIfH7S
- hmkHyvIX2QrLMfif3M2zp40IjgncUo9dKV8t4vNv8Cr1zyoOUr5Dm.BH6biQbCNk9CMpR5Bc2rO.
- 6hvMtb1.myqd0zVePL1Jl8LoVMyyKy3kx1MxS11sar7XMvqPga8P4s2Tjfx4EJbYcgfRaBbZCDLq
- WVei78RBPetPT4grGUWoYS.GnfzLl2XvtHdUeEQXb258TMMfeq7P5sJ5ekwf3CknAjL1GC51_dXC
- 5sB_a_kWM3tp0rVvGI8MqYS95MjEhzwIOnCTXDe6RPK2Yu9M7Fx71Xv8Q6TXLEc8koaT4wB_tKqM
- HPMjxF5T9m8HD1iygEVpSd9NO.WWgfj8tOKw0M0dJ4bmTK3d228drqTchmlo43tOSvhSpqrIn3WS
- .qIc_YjjZ6.jQDfuFpbtWXydH_eqAG_MRaYlrYkSp8OMSr1kQNgBnBrZOLJUSEMF5ykSGSVFQrnx
- U4qEO2RXlJjW80Es-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Wed, 6 Feb 2019 16:30:04 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp422.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 6e4278c922cb555df14442c194170d34;
-          Wed, 06 Feb 2019 16:30:02 +0000 (UTC)
-Subject: Re: New LSM hooks
-To:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>
-Cc:     LSM <linux-security-module@vger.kernel.org>
-References: <61766e1d-496e-6a7d-d4b8-52e2c99a78c3@schaufler-ca.com>
- <CAHC9VhQoruL70fUScgYH8WGDP2Hc1=G2j_fjoS24VMUm3xA=aQ@mail.gmail.com>
- <a852b633-a777-c353-85cd-c5a1545b4ef9@schaufler-ca.com>
- <CAHC9VhQ6p=LoEN6Rqze48FrVDsX0mfXHY4BvEaxU97w1azP4YQ@mail.gmail.com>
- <alpine.LRH.2.21.1902061207010.19811@namei.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <e1492ac6-d1b2-ce2b-c0df-1f30601747ad@schaufler-ca.com>
-Date:   Wed, 6 Feb 2019 08:30:00 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 6 Feb 2019 11:30:13 -0500
+Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 299E416B5D142C42546D;
+        Wed,  6 Feb 2019 16:30:12 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.33) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Wed, 6 Feb 2019 16:30:01 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>,
+        <matthewgarrett@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v10, RESEND 5/6] KEYS: trusted: explicitly use tpm_chip structure from tpm_default_chip()
+Date:   Wed, 6 Feb 2019 17:24:51 +0100
+Message-ID: <20190206162452.7749-6-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190206162452.7749-1-roberto.sassu@huawei.com>
+References: <20190206162452.7749-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1902061207010.19811@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/5/2019 5:11 PM, James Morris wrote:
-> On Tue, 5 Feb 2019, Paul Moore wrote:
->
->> I believe that will always be a problem, no matter what we do.  The
->> point I was trying to make was that everyone, especially the
->> maintainers, need to watch for this when patches are posted and make
->> sure the patch author posts to the LSM list in addition to any of the
->> relevant LSM specific lists.
-> Right, and there is no way a new LSM hook should ever be added to the 
-> kernel without review and ack/signoffs from folks on the LSM list 
-> (especially those who are maintainers of in-tree LSMs).
->
-> Casey, do you have any examples of this happening?
+When crypto agility support will be added to the TPM driver, users of the
+driver have to retrieve the allocated banks from chip->allocated_banks and
+use this information to prepare the array of tpm_digest structures to be
+passed to tpm_pcr_extend().
 
-overlayfs (according to my records - which may be flawed)
-is a prime example. Inifiniband hooks were reviewed/acked
-for SELinux, but there was never an attempt made to work
-with other security module maintainers. Yes, they were posted
-to LSM, but under the title "SELinux support for Infiniband".
+This patch retrieves a tpm_chip pointer from tpm_default_chip() so that the
+pointer can be used to prepare the array of tpm_digest structures.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ security/keys/trusted.c | 38 ++++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 14 deletions(-)
+
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index 4d98f4f87236..5b852263eae1 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -34,6 +34,7 @@
+ 
+ static const char hmac_alg[] = "hmac(sha1)";
+ static const char hash_alg[] = "sha1";
++static struct tpm_chip *chip;
+ 
+ struct sdesc {
+ 	struct shash_desc shash;
+@@ -362,7 +363,7 @@ int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+ 	int rc;
+ 
+ 	dump_tpm_buf(cmd);
+-	rc = tpm_send(NULL, cmd, buflen);
++	rc = tpm_send(chip, cmd, buflen);
+ 	dump_tpm_buf(cmd);
+ 	if (rc > 0)
+ 		/* Can't return positive return codes values to keyctl */
+@@ -384,10 +385,10 @@ static int pcrlock(const int pcrnum)
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+-	ret = tpm_get_random(NULL, hash, SHA1_DIGEST_SIZE);
++	ret = tpm_get_random(chip, hash, SHA1_DIGEST_SIZE);
+ 	if (ret != SHA1_DIGEST_SIZE)
+ 		return ret;
+-	return tpm_pcr_extend(NULL, pcrnum, hash) ? -EINVAL : 0;
++	return tpm_pcr_extend(chip, pcrnum, hash) ? -EINVAL : 0;
+ }
+ 
+ /*
+@@ -400,7 +401,7 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
+ 	unsigned char ononce[TPM_NONCE_SIZE];
+ 	int ret;
+ 
+-	ret = tpm_get_random(NULL, ononce, TPM_NONCE_SIZE);
++	ret = tpm_get_random(chip, ononce, TPM_NONCE_SIZE);
+ 	if (ret != TPM_NONCE_SIZE)
+ 		return ret;
+ 
+@@ -496,7 +497,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
+ 	if (ret < 0)
+ 		goto out;
+ 
+-	ret = tpm_get_random(NULL, td->nonceodd, TPM_NONCE_SIZE);
++	ret = tpm_get_random(chip, td->nonceodd, TPM_NONCE_SIZE);
+ 	if (ret != TPM_NONCE_SIZE)
+ 		goto out;
+ 	ordinal = htonl(TPM_ORD_SEAL);
+@@ -606,7 +607,7 @@ static int tpm_unseal(struct tpm_buf *tb,
+ 
+ 	ordinal = htonl(TPM_ORD_UNSEAL);
+ 	keyhndl = htonl(SRKHANDLE);
+-	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
++	ret = tpm_get_random(chip, nonceodd, TPM_NONCE_SIZE);
+ 	if (ret != TPM_NONCE_SIZE) {
+ 		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
+ 		return ret;
+@@ -751,7 +752,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 	int i;
+ 	int tpm2;
+ 
+-	tpm2 = tpm_is_tpm2(NULL);
++	tpm2 = tpm_is_tpm2(chip);
+ 	if (tpm2 < 0)
+ 		return tpm2;
+ 
+@@ -920,7 +921,7 @@ static struct trusted_key_options *trusted_options_alloc(void)
+ 	struct trusted_key_options *options;
+ 	int tpm2;
+ 
+-	tpm2 = tpm_is_tpm2(NULL);
++	tpm2 = tpm_is_tpm2(chip);
+ 	if (tpm2 < 0)
+ 		return NULL;
+ 
+@@ -970,7 +971,7 @@ static int trusted_instantiate(struct key *key,
+ 	size_t key_len;
+ 	int tpm2;
+ 
+-	tpm2 = tpm_is_tpm2(NULL);
++	tpm2 = tpm_is_tpm2(chip);
+ 	if (tpm2 < 0)
+ 		return tpm2;
+ 
+@@ -1011,7 +1012,7 @@ static int trusted_instantiate(struct key *key,
+ 	switch (key_cmd) {
+ 	case Opt_load:
+ 		if (tpm2)
+-			ret = tpm_unseal_trusted(NULL, payload, options);
++			ret = tpm_unseal_trusted(chip, payload, options);
+ 		else
+ 			ret = key_unseal(payload, options);
+ 		dump_payload(payload);
+@@ -1021,13 +1022,13 @@ static int trusted_instantiate(struct key *key,
+ 		break;
+ 	case Opt_new:
+ 		key_len = payload->key_len;
+-		ret = tpm_get_random(NULL, payload->key, key_len);
++		ret = tpm_get_random(chip, payload->key, key_len);
+ 		if (ret != key_len) {
+ 			pr_info("trusted_key: key_create failed (%d)\n", ret);
+ 			goto out;
+ 		}
+ 		if (tpm2)
+-			ret = tpm_seal_trusted(NULL, payload, options);
++			ret = tpm_seal_trusted(chip, payload, options);
+ 		else
+ 			ret = key_seal(payload, options);
+ 		if (ret < 0)
+@@ -1225,17 +1226,26 @@ static int __init init_trusted(void)
+ {
+ 	int ret;
+ 
++	chip = tpm_default_chip();
++	if (!chip)
++		return -ENOENT;
+ 	ret = trusted_shash_alloc();
+ 	if (ret < 0)
+-		return ret;
++		goto err_put;
+ 	ret = register_key_type(&key_type_trusted);
+ 	if (ret < 0)
+-		trusted_shash_release();
++		goto err_release;
++	return 0;
++err_release:
++	trusted_shash_release();
++err_put:
++	put_device(&chip->dev);
+ 	return ret;
+ }
+ 
+ static void __exit cleanup_trusted(void)
+ {
++	put_device(&chip->dev);
+ 	trusted_shash_release();
+ 	unregister_key_type(&key_type_trusted);
+ }
+-- 
+2.17.1
 
