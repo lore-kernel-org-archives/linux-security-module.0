@@ -2,115 +2,146 @@ Return-Path: <SRS0=88KC=QN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A75C282CC
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 12:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 094FEC282C2
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 12:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF1020B1F
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 12:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC47B2175B
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 12:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbfBFMnn (ORCPT
+        id S1730211AbfBFM4B convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Feb 2019 07:43:43 -0500
-Received: from mga09.intel.com ([134.134.136.24]:54585 "EHLO mga09.intel.com"
+        Wed, 6 Feb 2019 07:56:01 -0500
+Received: from mga05.intel.com ([192.55.52.43]:55381 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726598AbfBFMnn (ORCPT
+        id S1730199AbfBFM4B (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Feb 2019 07:43:43 -0500
-X-Amp-Result: UNSCANNABLE
+        Wed, 6 Feb 2019 07:56:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 04:43:42 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 04:56:00 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,339,1544515200"; 
-   d="scan'208";a="316779267"
-Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.171])
-  by fmsmga006.fm.intel.com with ESMTP; 06 Feb 2019 04:43:39 -0800
-Date:   Wed, 6 Feb 2019 14:43:38 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
+   d="scan'208";a="316780988"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Feb 2019 04:56:00 -0800
+Received: from fmsmsx113.amr.corp.intel.com (10.18.116.7) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 6 Feb 2019 04:56:00 -0800
+Received: from hasmsx113.ger.corp.intel.com (10.184.198.64) by
+ FMSMSX113.amr.corp.intel.com (10.18.116.7) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 6 Feb 2019 04:55:59 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
+ HASMSX113.ger.corp.intel.com ([169.254.13.155]) with mapi id 14.03.0415.000;
+ Wed, 6 Feb 2019 14:55:56 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         James Morris <jmorris@namei.org>,
         Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: Re: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-Message-ID: <20190206124324.GA8126@linux.intel.com>
+Subject: RE: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Topic: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Index: AQHUvUDUPtSrjGtlHk6wCuMRxetyu6XRCy8AgAAY64CAACU3gIAARWmAgAEIZgCAACTckA==
+Date:   Wed, 6 Feb 2019 12:55:55 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA91AEE@hasmsx108.ger.corp.intel.com>
 References: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
  <5B8DA87D05A7694D9FA63FD143655C1B9DA90A8B@hasmsx108.ger.corp.intel.com>
  <20190205143541.GA18330@linux.intel.com>
  <5B8DA87D05A7694D9FA63FD143655C1B9DA90C75@hasmsx108.ger.corp.intel.com>
  <20190205205719.GA13023@linux.intel.com>
+ <20190206124324.GA8126@linux.intel.com>
+In-Reply-To: <20190206124324.GA8126@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.126.179]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205205719.GA13023@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 05, 2019 at 10:57:19PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Feb 05, 2019 at 02:56:02PM +0000, Winkler, Tomas wrote:
-> > 
-> > 
-> > > -----Original Message-----
-> > > From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> > > Sent: Tuesday, February 05, 2019 16:36
-> > > To: Winkler, Tomas <tomas.winkler@intel.com>
-> > > Cc: linux-integrity@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> > > security-module@vger.kernel.org; stable@vger.kernel.org; James Morris
-> > > <jmorris@namei.org>; Jerry Snitselaar <jsnitsel@redhat.com>
-> > > Subject: Re: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-> > > 
-> > > On Tue, Feb 05, 2019 at 11:07:16AM +0000, Winkler, Tomas wrote:
-> > > > > The current approach to read first 6 bytes from the response and
-> > > > > then tail of the response, can cause the 2nd memcpy_fromio() to do
-> > > > > an unaligned read (e.g. read 32-bit word from address aligned to a
-> > > > > 16-bits), depending on how
-> > > > > memcpy_fromio() is implemented. If this happens, the read will fail
-> > > > > and the memory controller will fill the read with 1's.
-> > > > >
-> > > > > This was triggered by 170d13ca3a2f, which should be probably refined
-> > > > > to check and react to the address alignment. Before that commit, on
-> > > > > x86
-> > > > > memcpy_fromio() turned out to be memcpy(). By a luck GCC has done
-> > > > > the right thing (from tpm_crb's perspective) for us so far, but we should not
-> > > rely on that.
-> > > > > Thus, it makes sense to fix this also in tpm_crb, not least because
-> > > > > the fix can be then backported to stable kernels and make them more
-> > > > > robust when compiled in differing environments.
-> > > > >
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Cc: James Morris <jmorris@namei.org>
-> > > > > Cc: Tomas Winkler <tomas.winkler@intel.com>
-> > > > > Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > > > Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
-> > > > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > > > ---
-> > > > > v3:
-> > > > > * Fix typo i.e. %s/reminding/remaining/g
-> > > >
-> > > > Why you haven't fixed all the typos I've pointed out? I think you missed that.
-> > > 
-> > > I saw only comment about remaining. Was there something else? Can fix.
-> > 
-> > https://www.spinics.net/lists/stable/msg283648.html
-> > 
-> > 1. unrecovable -> unrecoverable
-> > 2. /* Read 8 bytes (not just 6 bytes, which would cover the tag and the response  length
-> > > +	 * fields) in order to make sure that the remaining memory accesses */ 
+
+ ()
 > 
-> Thanks and apologies for missing these.
+> On Tue, Feb 05, 2019 at 10:57:19PM +0200, Jarkko Sakkinen wrote:
+> > On Tue, Feb 05, 2019 at 02:56:02PM +0000, Winkler, Tomas wrote:
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
+> > > > Sent: Tuesday, February 05, 2019 16:36
+> > > > To: Winkler, Tomas <tomas.winkler@intel.com>
+> > > > Cc: linux-integrity@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > > linux- security-module@vger.kernel.org; stable@vger.kernel.org;
+> > > > James Morris <jmorris@namei.org>; Jerry Snitselaar
+> > > > <jsnitsel@redhat.com>
+> > > > Subject: Re: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in
+> > > > crb_recv()
+> > > >
+> > > > On Tue, Feb 05, 2019 at 11:07:16AM +0000, Winkler, Tomas wrote:
+> > > > > > The current approach to read first 6 bytes from the response
+> > > > > > and then tail of the response, can cause the 2nd
+> > > > > > memcpy_fromio() to do an unaligned read (e.g. read 32-bit word
+> > > > > > from address aligned to a 16-bits), depending on how
+> > > > > > memcpy_fromio() is implemented. If this happens, the read will
+> > > > > > fail and the memory controller will fill the read with 1's.
+> > > > > >
+> > > > > > This was triggered by 170d13ca3a2f, which should be probably
+> > > > > > refined to check and react to the address alignment. Before
+> > > > > > that commit, on
+> > > > > > x86
+> > > > > > memcpy_fromio() turned out to be memcpy(). By a luck GCC has
+> > > > > > done the right thing (from tpm_crb's perspective) for us so
+> > > > > > far, but we should not
+> > > > rely on that.
+> > > > > > Thus, it makes sense to fix this also in tpm_crb, not least
+> > > > > > because the fix can be then backported to stable kernels and
+> > > > > > make them more robust when compiled in differing environments.
+> > > > > >
+> > > > > > Cc: stable@vger.kernel.org
+> > > > > > Cc: James Morris <jmorris@namei.org>
+> > > > > > Cc: Tomas Winkler <tomas.winkler@intel.com>
+> > > > > > Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > > > > Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+> > > > > > Signed-off-by: Jarkko Sakkinen
+> > > > > > <jarkko.sakkinen@linux.intel.com>
+> > > > > > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > > > > ---
+> > > > > > v3:
+> > > > > > * Fix typo i.e. %s/reminding/remaining/g
+> > > > >
+> > > > > Why you haven't fixed all the typos I've pointed out? I think you missed
+> that.
+> > > >
+> > > > I saw only comment about remaining. Was there something else? Can fix.
+> > >
+> > > https://www.spinics.net/lists/stable/msg283648.html
+> > >
+> > > 1. unrecovable -> unrecoverable
+> > > 2. /* Read 8 bytes (not just 6 bytes, which would cover the tag and
+> > > the response  length
+> > > > +	 * fields) in order to make sure that the remaining memory
+> > > > +accesses */
+> >
+> > Thanks and apologies for missing these.
+> 
+> Fixed comments and applied the patch, thank you. Do I amend your acked-by?
 
-Fixed comments and applied the patch, thank you. Do I amend your
-acked-by?
+Please, do.
+Thanks
+Tomas
 
-/Jarkko
