@@ -2,392 +2,180 @@ Return-Path: <SRS0=88KC=QN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5ED2C282CC
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 045C4C169C4
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 17:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDB85218B0
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6CF720823
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 17:03:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="t+ThiFVT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730734AbfBFQat (ORCPT
+        id S1727985AbfBFRDP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:30:49 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32883 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726306AbfBFQat (ORCPT
+        Wed, 6 Feb 2019 12:03:15 -0500
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:38263
+        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727218AbfBFRDO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:30:49 -0500
-Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id A2E35E778654D3EA408B;
-        Wed,  6 Feb 2019 16:30:47 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
- by smtpsuk.huawei.com (10.201.108.33) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 6 Feb 2019 16:30:36 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
-        <david.safford@ge.com>, <monty.wiseman@ge.com>,
-        <matthewgarrett@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v10, RESEND 6/6] tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
-Date:   Wed, 6 Feb 2019 17:24:52 +0100
-Message-ID: <20190206162452.7749-7-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190206162452.7749-1-roberto.sassu@huawei.com>
-References: <20190206162452.7749-1-roberto.sassu@huawei.com>
+        Wed, 6 Feb 2019 12:03:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1549472593; bh=mE8IphMtDdaabS6EguCO2ZT1kDFCkW7laBDMmxpvW7M=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=t+ThiFVTK4YD5bd3dOAT10Owu6eVLhByqieRnwtBsVyc+yGDFVTfm8eckPclHbLUqLJT/AG4mGbCUHqUrrohifgVZn0ugQU70eh7OEHtZygTs4sVu8vLZcLQBxeZmhujohHdNW+qYFeGP1O/llwwxuFd4c6go0Tp9zWxWNlds0FN/MWm7We+ALtl9AOdWFzcC5wol9Jnfj+Z5DztwIdjXMsCvxJxndHNBaYtp9i+IJTop9ECAeocCwOoCWh2H2kTSurkT9Rww8byT+B0FVDcQu1sM7Q/ZDNpCgUMEz/c8p4klmH9lFYJqcPpEgRGG8kcgM1sjNflhmCdg7YGrnN5JQ==
+X-YMail-OSG: uCgeESEVM1kuRtnZWN6gVMJExCrskPgA2223rFcKlCDn9IJ4gbv_G9eKD5LOG31
+ y2WHSGx3C38sehhLqETjG3S9ddfvOySQCmH3NUJU0ABqpZ76us147mzXJHFLh0O5R9.0P8Nj3MtG
+ UlBO_3RNCtKvaV4SQmDd9tsGrBc0uaT7r2RVVUzEqVTBqamaXc8nLaZksFJj1E0P83ToBMsQiOK9
+ 7Cb58cpXRlLGtArTIcX.k18z.Vpd_7ZLYhB5MX8In4YMbS27aG1.uTmXpXYyuGkQiWeQeRCdWfaJ
+ wNgtTYUJr29v2yG9fxZPGeCPG6Ik8JhF1FKYtD_YdDQXksbaYFWzzgnANVljdm070kZpbNOOPxto
+ _gzQboN6.7Td7HuS64H0AQAUPygya_awgkYUeNM5W9uFW2rgTC1M7oVpdyDaQK4pe6YmQU_Q7TMV
+ dLlF1hTP8FbCv2XldGAwqXtnyOcb8n3gT.RgKHyEbX0bSxrhHosc2qbRVuGIRvPh5o.O19uRcVdg
+ gQAbakqf5S1p9O6aoiUdbkLmpDWvlMm75KMyPOc5VTJAGRgYlzsSCmGJ0kH03QkZEAlwNuxLyNRk
+ .uFmkwlHArQ8XXiJFeC1Ch53KUXoDWGj7NyZH0vLEFl1jebT5TKlSytLBkKVFDRgU19GFEOP_m5I
+ 3EQ16MMHZMBr4a6eQuYUdLrWQUWQJdZwQObcTHN5PZDcGc5jsRBz1kFHc9_4ZgrrVtoxOpJb3ikZ
+ dFjzqrUdDW8_KRwZ6JnE7_3dS.QpjfSYSUkHqBBFBNxG4J9dbVsYtjfFKUpRHKY1iqh8NcrdeW7M
+ 9k_t5s7CKbEbGS6rMX.nN_abaDGh6uMk6eq3LXhLOUyCygNnGqGiwBZ9PvFZv3Ue2xF8SwHuVYfR
+ 43gv1D8lMAyfSQt7GC6RxW0j35Mhqul6PdMhz._WawN6ECQYijhVLg9lN6VbBU7eP90iVxVwAPkR
+ rtvUSGl4FGlC6J1VtcxO.JHGvWo1japYLez817.Db3.xVUQLmseI7nYUJB6muAFyocMP9taKIpYj
+ nPahtJcwBHpBhiDVPU8RYjrKpWIG2npq4j3AG3cUNhrJawJ4G3Z29880SNPkKZX0MajuqxtCYiuU
+ Sg8YjRDUn6dMaWt7DNtSfy94VtGcX8vFYaKjK0oX25BcfE9DExfTxALsCRYfuomH0aFEH_UUg3lP
+ MTrPn27MmwYYXgSRAQ9OvP_LeMknG2ILPDn0-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Wed, 6 Feb 2019 17:03:13 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
+          by smtp413.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 45a6055d231189cdf2a08b69a37bc133;
+          Wed, 06 Feb 2019 17:03:09 +0000 (UTC)
+Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@tycho.nsa.gov>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <000000000000c178e305749daba4@google.com>
+ <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
+ <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
+ <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
+ <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
+ <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
+ <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
+ <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
+ <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
+ <CACT4Y+Ynyy-bMK4cxhgNoAaauFdjzExuELM6u0amksbR4wy7GQ@mail.gmail.com>
+ <71e3652b-b222-0c3f-8b48-5980ddcaeb93@i-love.sakura.ne.jp>
+ <CACT4Y+Z036bZfN1-_VaQ5EorwFt_tpPm=RTnrYN5qKV_ebgoFw@mail.gmail.com>
+ <52531a69-10ed-d263-be66-e707705597d6@i-love.sakura.ne.jp>
+ <CACT4Y+Yd1YN=OELBmzUDvwdg5KuV2WnN9WZpjk5O_yuS0i1yOA@mail.gmail.com>
+ <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
+Date:   Wed, 6 Feb 2019 09:03:06 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.154]
-X-CFilter-Loop: Reflected
+In-Reply-To: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
+On 2/6/2019 2:23 AM, Tetsuo Handa wrote:
+> On 2019/02/04 17:07, Dmitry Vyukov wrote:
+>> On Fri, Feb 1, 2019 at 2:09 PM Tetsuo Handa
+>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>> On 2019/02/01 19:50, Dmitry Vyukov wrote:
+>>>> On Fri, Feb 1, 2019 at 11:44 AM Tetsuo Handa
+>>>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>>>> On 2019/02/01 19:09, Dmitry Vyukov wrote:
+>>>>>> Thanks for the explanations.
+>>>>>>
+>>>>>> Here is the change that I've come up with:
+>>>>>> https://github.com/google/syzkaller/commit/aa53be276dc84aa8b3825b3416542447ff82b41a
+>>>>> You are not going to apply this updated config to upstream kernels now, are you?
+>>>>> Removing CONFIG_DEFAULT_SECURITY="apparmor" from configs used by upstream kernels
+>>>>> will cause failing to enable AppArmor (unless security=apparmor is specified).
+>>>>
+>>>> We do use  security=apparmor, see:
+>>>> https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-apparmor.cmdline
+>>>> https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-selinux.cmdline
+>>>> https://github.com/google/syzkaller/blob/master/dashboard/config/upstream-smack.cmdline
+>>>>
+>>> Oh, security= parameter is explicitly specified on all targets?
+>>> Then, we can abuse CONFIG_DEBUG_AID_FOR_SYZBOT option. ;-)
+>>>
+>>> LSM folks, may we use this patch for linux-next.git ?
+>>> CONFIG_DEBUG_AID_FOR_SYZBOT is a linux-next.git-only kernel config option used by syzbot.
+>>
+>> Then we also need this on syzbot side, right? Otherwise it seems that
+>> all instances will default to a single security module.
+>> https://github.com/google/syzkaller/commit/ffec3d1894ffd05966b50efa49ca19af76c9ea81
+>>
+> Right.
+>
+> But as I update the documentation ( https://tomoyo.osdn.jp/2.6/chapter-3.html.en#3.6 ),
+> I came to think that we should ignore security= parameter when lsm= parameter is specified.
+>
+> Currently, it is possible to enable TOMOYO and only one of SELinux/Smack/AppArmor. Therefore,
+> it is possible to disable only TOMOYO by specifying security=selinux when we want to enable
+> only SELinux, by specifying security=smack when we want to enable only Smack, by specifying
+> security=apparmor when we want to enable only AppArmor. That is, we can use security= parameter
+> in order to specify the other LSM module which should not be disabled.
+>
+> But when it becomes possible to enable TOMOYO and more than one of SELinux/Smack/AppArmor,
+> we will no longer be able to selectively disable one LSM module using security= parameter, for
+> security= parameter is intended for specifying only one LSM module which should be enabled.
+> That is, we will need to use lsm= parameter in order to selectively disable LSM modules.
 
-This patch replaces the hash parameter of tpm_pcr_extend() with an array of
-tpm_digest structures, so that the caller can provide a digest for each PCR
-bank currently allocated in the TPM.
+Yes. That is correct. The existing behavior of security= is maintained.
+The new behavior of lsm= is provided to allow general handling of a list
+of security modules. It uses the same form of data as CONFIG_LSM.
 
-tpm_pcr_extend() will not extend banks for which no digest was provided,
-as it happened before this patch, but instead it requires that callers
-provide the full set of digests. Since the number of digests will always be
-chip->nr_allocated_banks, the count parameter has been removed.
+> Then, I think that it is straightforward (and easier to manage) to ignore security= parameter
+> when lsm= parameter is specified.
 
-Due to the API change, ima_pcr_extend() and pcrlock() have been modified.
-Since the number of allocated banks is not known in advance, the memory for
-the digests must be dynamically allocated. To avoid performance degradation
-and to avoid that a PCR extend is not done due to lack of memory, the array
-of tpm_digest structures is allocated by the users of the TPM driver at
-initialization time.
+That reduces flexibility somewhat. If I am debugging security modules
+I may want to use lsm= to specify the order while using security= to
+identify a specific exclusive module. I could do that using lsm= by
+itself, but habits die hard.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Mimi Zohar <zohar@linux.ibm.com> (on x86 for TPM 1.2 & PTT TPM 2.0)
----
- drivers/char/tpm/tpm-interface.c   | 30 ++++++++--------------
- drivers/char/tpm/tpm.h             |  2 +-
- drivers/char/tpm/tpm2-cmd.c        | 10 +++-----
- include/linux/tpm.h                |  5 ++--
- security/integrity/ima/ima.h       |  1 +
- security/integrity/ima/ima_init.c  |  4 +++
- security/integrity/ima/ima_queue.c | 27 +++++++++++++++++++-
- security/keys/trusted.c            | 41 ++++++++++++++++++++++++------
- 8 files changed, 82 insertions(+), 38 deletions(-)
+> Furthermore, we could even avoid introducing lsm= parameter
+> by allowing security= parameter to specify multiple LSM modules.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 8d19040d6c2a..02e8cffd1163 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -299,42 +299,34 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-  * tpm_pcr_extend - extend a PCR value in SHA1 bank.
-  * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-  * @pcr_idx:	the PCR to be retrieved
-- * @hash:	the hash value used to extend the PCR value
-+ * @digests:	array of tpm_digest structures used to extend PCRs
-  *
-- * Note: with TPM 2.0 extends also those banks for which no digest was
-- * specified in order to prevent malicious use of those PCR banks.
-+ * Note: callers must pass a digest for every allocated PCR bank, in the same
-+ * order of the banks in chip->allocated_banks.
-  *
-  * Return: same as with tpm_transmit_cmd()
-  */
--int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-+int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-+		   struct tpm_digest *digests)
- {
- 	int rc;
--	struct tpm_digest *digest_list;
- 	int i;
- 
- 	chip = tpm_find_get_ops(chip);
- 	if (!chip)
- 		return -ENODEV;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		digest_list = kcalloc(chip->nr_allocated_banks,
--				      sizeof(*digest_list), GFP_KERNEL);
--		if (!digest_list)
--			return -ENOMEM;
--
--		for (i = 0; i < chip->nr_allocated_banks; i++) {
--			digest_list[i].alg_id = chip->allocated_banks[i].alg_id;
--			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
--		}
-+	for (i = 0; i < chip->nr_allocated_banks; i++)
-+		if (digests[i].alg_id != chip->allocated_banks[i].alg_id)
-+			return -EINVAL;
- 
--		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
--				     digest_list);
--		kfree(digest_list);
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+		rc = tpm2_pcr_extend(chip, pcr_idx, digests);
- 		tpm_put_ops(chip);
- 		return rc;
- 	}
- 
--	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
-+	rc = tpm1_pcr_extend(chip, pcr_idx, digests[0].digest,
- 			     "attempting extend a PCR value");
- 	tpm_put_ops(chip);
- 	return rc;
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 4f85ce909122..2cce072f25b5 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -441,7 +441,7 @@ static inline u32 tpm2_rc_value(u32 rc)
- int tpm2_get_timeouts(struct tpm_chip *chip);
- int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
- 		  struct tpm_digest *digest, u16 *digest_size_ptr);
--int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-+int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 		    struct tpm_digest *digests);
- int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
- void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 6967f15a6585..e74c5b7b64bf 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -246,12 +246,11 @@ struct tpm2_null_auth_area {
-  *
-  * @chip:	TPM chip to use.
-  * @pcr_idx:	index of the PCR.
-- * @count:	number of digests passed.
-  * @digests:	list of pcr banks and corresponding digest values to extend.
-  *
-  * Return: Same as with tpm_transmit_cmd.
-  */
--int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
-+int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 		    struct tpm_digest *digests)
- {
- 	struct tpm_buf buf;
-@@ -259,9 +258,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
- 	int rc;
- 	int i;
- 
--	if (count > chip->nr_allocated_banks)
--		return -EINVAL;
--
- 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
- 	if (rc)
- 		return rc;
-@@ -276,9 +272,9 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
- 	tpm_buf_append_u32(&buf, sizeof(struct tpm2_null_auth_area));
- 	tpm_buf_append(&buf, (const unsigned char *)&auth_area,
- 		       sizeof(auth_area));
--	tpm_buf_append_u32(&buf, count);
-+	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
- 
--	for (i = 0; i < count; i++) {
-+	for (i = 0; i < chip->nr_allocated_banks; i++) {
- 		tpm_buf_append_u16(&buf, digests[i].alg_id);
- 		tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
- 			       chip->allocated_banks[i].digest_size);
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 816e686a73ac..1b5436b213a2 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -171,7 +171,8 @@ struct tpm_chip {
- extern int tpm_is_tpm2(struct tpm_chip *chip);
- extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
- 			struct tpm_digest *digest);
--extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash);
-+extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-+			  struct tpm_digest *digests);
- extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
- extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
- extern int tpm_seal_trusted(struct tpm_chip *chip,
-@@ -194,7 +195,7 @@ static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx,
- }
- 
- static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
--				 const u8 *hash)
-+				 struct tpm_digest *digests)
- {
- 	return -ENODEV;
- }
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index cc12f3449a72..89d65cf8053d 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -153,6 +153,7 @@ int ima_measurements_show(struct seq_file *m, void *v);
- unsigned long ima_get_binary_runtime_size(void);
- int ima_init_template(void);
- void ima_init_template_list(void);
-+int __init ima_init_digests(void);
- 
- /*
-  * used to protect h_table and sha_table
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 6bb42a9c5e47..6c9295449751 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -123,8 +123,12 @@ int __init ima_init(void)
- 	if (rc != 0)
- 		return rc;
- 
-+	/* It can be called before ima_init_digests(), it does not use TPM. */
- 	ima_load_kexec_buffer();
- 
-+	rc = ima_init_digests();
-+	if (rc != 0)
-+		return rc;
- 	rc = ima_add_boot_aggregate();	/* boot aggregate must be first entry */
- 	if (rc != 0)
- 		return rc;
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 0e41dc1df1d4..6b6d044e0440 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -27,6 +27,9 @@
- 
- #define AUDIT_CAUSE_LEN_MAX 32
- 
-+/* pre-allocated array of tpm_digest structures to extend a PCR */
-+static struct tpm_digest *digests;
-+
- LIST_HEAD(ima_measurements);	/* list of all measurements */
- #ifdef CONFIG_IMA_KEXEC
- static unsigned long binary_runtime_size;
-@@ -140,11 +143,15 @@ unsigned long ima_get_binary_runtime_size(void)
- static int ima_pcr_extend(const u8 *hash, int pcr)
- {
- 	int result = 0;
-+	int i;
- 
- 	if (!ima_tpm_chip)
- 		return result;
- 
--	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
-+	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
-+		memcpy(digests[i].digest, hash, TPM_DIGEST_SIZE);
-+
-+	result = tpm_pcr_extend(ima_tpm_chip, pcr, digests);
- 	if (result != 0)
- 		pr_err("Error Communicating to TPM chip, result: %d\n", result);
- 	return result;
-@@ -211,3 +218,21 @@ int ima_restore_measurement_entry(struct ima_template_entry *entry)
- 	mutex_unlock(&ima_extend_list_mutex);
- 	return result;
- }
-+
-+int __init ima_init_digests(void)
-+{
-+	int i;
-+
-+	if (!ima_tpm_chip)
-+		return 0;
-+
-+	digests = kcalloc(ima_tpm_chip->nr_allocated_banks, sizeof(*digests),
-+			  GFP_NOFS);
-+	if (!digests)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
-+		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
-+
-+	return 0;
-+}
-diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index 5b852263eae1..bcc9c6ead7fd 100644
---- a/security/keys/trusted.c
-+++ b/security/keys/trusted.c
-@@ -35,6 +35,7 @@
- static const char hmac_alg[] = "hmac(sha1)";
- static const char hash_alg[] = "sha1";
- static struct tpm_chip *chip;
-+static struct tpm_digest *digests;
- 
- struct sdesc {
- 	struct shash_desc shash;
-@@ -380,15 +381,10 @@ EXPORT_SYMBOL_GPL(trusted_tpm_send);
-  */
- static int pcrlock(const int pcrnum)
- {
--	unsigned char hash[SHA1_DIGEST_SIZE];
--	int ret;
--
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
--	ret = tpm_get_random(chip, hash, SHA1_DIGEST_SIZE);
--	if (ret != SHA1_DIGEST_SIZE)
--		return ret;
--	return tpm_pcr_extend(chip, pcrnum, hash) ? -EINVAL : 0;
-+
-+	return tpm_pcr_extend(chip, pcrnum, digests) ? -EINVAL : 0;
- }
- 
- /*
-@@ -1222,6 +1218,29 @@ static int __init trusted_shash_alloc(void)
- 	return ret;
- }
- 
-+static int __init init_digests(void)
-+{
-+	u8 digest[TPM_MAX_DIGEST_SIZE];
-+	int ret;
-+	int i;
-+
-+	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
-+	if (ret < 0)
-+		return ret;
-+	if (ret < TPM_MAX_DIGEST_SIZE)
-+		return -EFAULT;
-+
-+	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
-+			  GFP_KERNEL);
-+	if (!digests)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < chip->nr_allocated_banks; i++)
-+		memcpy(digests[i].digest, digest, TPM_MAX_DIGEST_SIZE);
-+
-+	return 0;
-+}
-+
- static int __init init_trusted(void)
- {
- 	int ret;
-@@ -1229,15 +1248,20 @@ static int __init init_trusted(void)
- 	chip = tpm_default_chip();
- 	if (!chip)
- 		return -ENOENT;
--	ret = trusted_shash_alloc();
-+	ret = init_digests();
- 	if (ret < 0)
- 		goto err_put;
-+	ret = trusted_shash_alloc();
-+	if (ret < 0)
-+		goto err_free;
- 	ret = register_key_type(&key_type_trusted);
- 	if (ret < 0)
- 		goto err_release;
- 	return 0;
- err_release:
- 	trusted_shash_release();
-+err_free:
-+	kfree(digests);
- err_put:
- 	put_device(&chip->dev);
- 	return ret;
-@@ -1246,6 +1270,7 @@ static int __init init_trusted(void)
- static void __exit cleanup_trusted(void)
- {
- 	put_device(&chip->dev);
-+	kfree(digests);
- 	trusted_shash_release();
- 	unregister_key_type(&key_type_trusted);
- }
--- 
-2.17.1
+security=yama would work differently than it does today.
+There would be no way to specify an exclusive module but
+no minor modules.
+
+If I have Yama and SELinux built in I could never disable Yama.
+
+	security=selinux - would not disable Yama
+
+whereas
+
+	lsm=selinux      - would disable Yama
+
+> For example, security= parameter
+> is interpreted as a list of all LSM modules which should be enabled when it contains a comma,
+> and it is interpreted as one of LSM_FLAG_LEGACY_MAJOR modules which should be enabled otherwise.
+> Then, specifying security=selinux or security=smack or security=tomoyo or security=apparmor or
+> security=none will respectively enable SELinux, Smack, TOMOYO, AppArmor, none of
+> SELinux/Smack/TOMOYO/AppArmor. And specifying e.g. security=, will disable all LSM modules.
+
+We debated the possibility of making the comma an indication
+that we had an explicit list. It comes down to the "trailing
+comma" syntax, where "security=selinux" and "security=selinux,"
+mean different things. Consensus was that this is too clever,
+and everyone would hate it.
 
