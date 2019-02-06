@@ -2,116 +2,203 @@ Return-Path: <SRS0=88KC=QN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 619B7C169C4
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 13:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF28C169C4
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 13:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 003E220844
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 13:21:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="m0rHK+8t"
+	by mail.kernel.org (Postfix) with ESMTP id 7AD152186A
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 13:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730623AbfBFNVC (ORCPT
+        id S1728089AbfBFNy6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:21:02 -0500
-Received: from uhil19pa10.eemsg.mail.mil ([214.24.21.83]:28740 "EHLO
-        uhil19pa10.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729928AbfBFNVC (ORCPT
+        Wed, 6 Feb 2019 08:54:58 -0500
+Received: from mga11.intel.com ([192.55.52.93]:9855 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727686AbfBFNy6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:21:02 -0500
-X-EEMSG-check-017: 382880668|UHIL19PA10_EEMSG_MP8.csd.disa.mil
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by uhil19pa10.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 06 Feb 2019 13:21:00 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1549459260; x=1580995260;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=6+z2VzC31vGuYnuskcYXaAMKf4DTahsKkSHRgohIfbY=;
-  b=m0rHK+8t8tee7vcAAzfEQIG+Rn1GWUZcR7RobxvKjpgxp7nKsb6sQOA+
-   YyZyOa4kGnxBcweCqC3E6nqimWwq/UobvLSeIU0B/a54m49ix0jagsbFC
-   X6WmjYTlAxBgVI+sz+AxGKoGs3mGl9laFNv4tqmAAJMI/zcsweKR7BO42
-   P8Ex/wO+KwJuZK6STOjgetsFo+DcAdx9LNNxG0anARuVMwXeVbJPPCTfV
-   MsVzuPUsAC/i+fX7CoH83EHwmio7iU7153tOxxPQqlcXujTU70958ZYg2
-   kz6k2LVVUMW+3r0G2j29B3ByqYYPJ6aatPSRzcp/RVfKfKzOQD9g9skES
-   A==;
-X-IronPort-AV: E=Sophos;i="5.58,340,1544486400"; 
-   d="scan'208";a="20248687"
-IronPort-PHdr: =?us-ascii?q?9a23=3An1nu1B2upjy+8JCRsmDT+DRfVm0co7zxezQtwd?=
- =?us-ascii?q?8ZsesWK/XxwZ3uMQTl6Ol3ixeRBMOHs6IC07KempujcFRI2YyGvnEGfc4EfD?=
- =?us-ascii?q?4+ouJSoTYdBtWYA1bwNv/gYn9yNs1DUFh44yPzahANS47xaFLIv3K98yMZFA?=
- =?us-ascii?q?nhOgppPOT1HZPZg9iq2+yo9JDffwZFiCChbb9uMR67sRjfus4KjIV4N60/0A?=
- =?us-ascii?q?HJonxGe+RXwWNnO1eelAvi68mz4ZBu7T1et+ou+MBcX6r6eb84TaFDAzQ9L2?=
- =?us-ascii?q?81/szrugLdQgaJ+3ART38ZkhtMAwjC8RH6QpL8uTb0u+ZhxCWXO9D9QKsqUj?=
- =?us-ascii?q?q+8ahkVB7oiD8GNzEn9mHXltdwh79frB64uhBz35LYbISTOfVwZKPdec4RS3?=
- =?us-ascii?q?RHUMhfSidNBpqwY5UTA+YEO+tTsovzqEYUrRamGAeiGu3vxD9LiHH406I13O?=
- =?us-ascii?q?YuHh3J0gE7A9IDsm7ZoMnpOKocU+24yrTDwzXZb/NR3Dfw8JXGcgw/rvGUXb?=
- =?us-ascii?q?J/b8zRwlQyGQPAlFqQrYjlMC2V1+8QtGWb9PdvVfm0hm47qwB+vjivxsA2ho?=
- =?us-ascii?q?nPnYIa0ErI9Sp+wIYrPNC1TlNwb928EJZIqi2XOIR7TtkiTm11oio21LILtY?=
- =?us-ascii?q?ChcCQXzpks2gTRZOadc4eS5xLuTOORITBli317YL+/nBOy8VS4yu37S8m0zE?=
- =?us-ascii?q?5GripbndnIsXAAzwDT5dKdSvt840ehwiyD1xzT6+5YIUA0krDXK5g9zb4rip?=
- =?us-ascii?q?Ufq0HDHi7ymEnuja+WcFsr+vSw5uj6bbjrqYWQOo9phg3kLKgjldKzDf4lPg?=
- =?us-ascii?q?QWWmiU4+W81Lnt/U3jR7VKi+U7krLEv5DBPskbuq64DBNV0oYk8Rq/CSym38?=
- =?us-ascii?q?4CkXkIK1JFZgqLj5L1NFHWPPD4EfC/jkyukDduwPDGJKfhApTWLnXYlrfuZ7?=
- =?us-ascii?q?N95FBdyAYpytBf/Z1UAKkbIP3vQk/xqMDYDhghPgys2ennFdF925gGWW2VH6?=
- =?us-ascii?q?+ZNLresVqP5uIoOemDepUZtyr6K/gg//Tul2M2mUcBfam12psacGy3Ee59I0?=
- =?us-ascii?q?qHYXvhmcwBHnsKvgUkUezqhlmCXiBJZ3qrQ60z/Cs3B56hDYfGXoqtmqCO3D?=
- =?us-ascii?q?+nHp1KYWBLElSMEXbud4WZVPYAcTmSLdF9nTwZT7ihSpMh1BG3uA//zLpoM/?=
- =?us-ascii?q?fU+ikGup/4yth16PPclQso+Tx3EcudyWeNQH9wnm8SQD82xq9/8gRBzQKh2K?=
- =?us-ascii?q?11mLR9EsZJ5ugBBgU/MoTGzvdSDdn3VwOHec2GHhLuety7BXkUSdUrzpdae0?=
- =?us-ascii?q?9gH/26hw3Hmi+tBKUY0beMAcpn3Ljb2i3KO8tly3vAnJIkhl0iT9oHYXaqnY?=
- =?us-ascii?q?Zj5gPTAMjPiEzfmKG0I/dPlBXR/XuOmDLd9HpTVxR9BOCcBygS?=
-X-IPAS-Result: =?us-ascii?q?A2CKBQDi3lpc/wHyM5BlGwEBAQEDAQEBBwMBAQGBZQKBV?=
- =?us-ascii?q?AUpgTcBMoQqlFEBAQEBAQEGgQgIJYk1jluBejgBhEACgxkiOwMMAQMBAQEBA?=
- =?us-ascii?q?QECAWwogjopAYJnAQUjFUEQCw4KAgImAgJXBgEMCAEBgl8/gXUNrH+BL4VEh?=
- =?us-ascii?q?HiBC4s4F3iBB4E4DIJfiAqCVwKRADqRTgmSPQYZkk6KLJNdAQ6BVisIAhgII?=
- =?us-ascii?q?Q87gm2QeiEDgTUBAY1zAQE?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 06 Feb 2019 13:20:46 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x16DKjOh011350;
-        Wed, 6 Feb 2019 08:20:45 -0500
-Subject: Re: New LSM hooks
-To:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        LSM <linux-security-module@vger.kernel.org>
-References: <61766e1d-496e-6a7d-d4b8-52e2c99a78c3@schaufler-ca.com>
- <CAHC9VhQoruL70fUScgYH8WGDP2Hc1=G2j_fjoS24VMUm3xA=aQ@mail.gmail.com>
- <a852b633-a777-c353-85cd-c5a1545b4ef9@schaufler-ca.com>
- <CAHC9VhQ6p=LoEN6Rqze48FrVDsX0mfXHY4BvEaxU97w1azP4YQ@mail.gmail.com>
- <alpine.LRH.2.21.1902061207010.19811@namei.org>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <84c96e67-6668-b954-0a6b-2bccb00c124c@tycho.nsa.gov>
-Date:   Wed, 6 Feb 2019 08:20:45 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 08:54:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:54:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
+   d="scan'208";a="122416714"
+Received: from briva-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.148])
+  by fmsmga008.fm.intel.com with ESMTP; 06 Feb 2019 05:54:51 -0800
+Date:   Wed, 6 Feb 2019 15:54:50 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
+        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v10 0/6] tpm: retrieve digest size of unknown algorithms
+ from TPM
+Message-ID: <20190206135450.GA20061@linux.intel.com>
+References: <20190206105724.14495-1-roberto.sassu@huawei.com>
+ <20190206125725.GA9257@linux.intel.com>
+ <1fff7b54-cc9a-7705-4c26-819bdd1286f2@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1902061207010.19811@namei.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1fff7b54-cc9a-7705-4c26-819bdd1286f2@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/5/19 8:11 PM, James Morris wrote:
-> On Tue, 5 Feb 2019, Paul Moore wrote:
+On Wed, Feb 06, 2019 at 02:07:04PM +0100, Roberto Sassu wrote:
+> On 2/6/2019 1:57 PM, Jarkko Sakkinen wrote:
+> > On Wed, Feb 06, 2019 at 11:57:18AM +0100, Roberto Sassu wrote:
+> > > Update
+> > > 
+> > > This version of the patch set includes three additional patches (5-7/7)
+> > > that allow users of the TPM driver to provide a digest for each PCR bank to
+> > > tpm_pcr_extend(). The new patches have been included to facilitate the
+> > > review of all the changes to support TPM 2.0 crypto agility for reading and
+> > > extending PCRs.
+> > > 
+> > > 
+> > > Original patch set description
+> > > 
+> > > The TPM driver currently relies on the crypto subsystem to determine the
+> > > digest size of supported TPM algorithms. In the future, TPM vendors might
+> > > implement new algorithms in their chips, and those algorithms might not
+> > > be supported by the crypto subsystem.
+> > > 
+> > > Usually, vendors provide patches for the new hardware, and likely
+> > > the crypto subsystem will be updated before the new algorithm is
+> > > introduced. However, old kernels might be updated later, after patches
+> > > are included in the mainline kernel. This would leave the opportunity
+> > > for attackers to misuse PCRs, as PCR banks with an unknown algorithm
+> > > are not extended.
+> > > 
+> > > This patch set provides a long term solution for this issue. If a TPM
+> > > algorithm is not known by the crypto subsystem, the TPM driver retrieves
+> > > the digest size from the TPM with a PCR read. All the PCR banks are
+> > > extended, even if the algorithm is not yet supported by the crypto
+> > > subsystem.
+> > > 
+> > > PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
+> > > is stored in the tpm_chip structure and available for users of the TPM
+> > > driver.
+> > > 
+> > > Changelog
+> > > 
+> > > v9:
+> > > - add comment for ima_load_kexec_buffer() in ima_init()
+> > > - move 'digests' and ima_init_digests() to ima_queue.c
+> > > - remove comment for TPM_RETRY
+> > > 
+> > > v8:
+> > > - set digest array length in tpm_digest to new constant TPM_MAX_DIGEST_SIZE
+> > > - replace enum tpm_const with #define
+> > > - rename labels in init_trusted()
+> > > - allocate tpm_digest array after retrieving random data in init_digests()
+> > > 
+> > > v7:
+> > > - use memchr_inv() in tpm2_get_pcr_allocation()
+> > > - add patch to move tpm_chip to include/linux/tpm.h
+> > > - add patch to set the tpm_chip argument in trusted.c to a pointer from
+> > >    tpm_default_chip()
+> > > - remove definition of tpm_extend_digest
+> > > - remove code in tpm2_pcr_extend() to extend unused PCR banks with the
+> > >    first digest passed by the caller of tpm_pcr_extend()
+> > > - remove count parameter from tpm_pcr_extend() and tpm2_pcr_extend()
+> > > - remove padding of SHA1 digest in tpm_pcr_extend()
+> > > - pre-allocate and initialize array of tpm_digest structures in
+> > >    security/keys/trusted.c and security/integrity/ima/ima_init.c
+> > > 
+> > > v6:
+> > > - squash patches 4-6
+> > > - rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
+> > >    members to size and data
+> > > - add comment in tpm2_init_bank_info()
+> > > 
+> > > v5:
+> > > - rename digest_struct variable to digest
+> > > - add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+> > > - rename digest_size member of tpm_bank_list to extend_size
+> > > - change type of alg_id member of tpm_bank_list from u8 to u16
+> > > - add missing semi-colon in pcrlock()
+> > > 
+> > > v4:
+> > > - rename active_banks to allocated_banks
+> > > - replace kmalloc_array() with kcalloc()
+> > > - increment nr_allocated_banks if at least one PCR in the bank is selected
+> > > - pass multiple digests to tpm_pcr_extend()
+> > > 
+> > > v3:
+> > > - remove end marker change
+> > > - replace active_banks static array with pointer to dynamic array
+> > > - remove TPM2_ACTIVE_PCR_BANKS
+> > > 
+> > > v2:
+> > > - change the end marker of the active_banks array
+> > > - check digest size from output of PCR read command
+> > > - remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
+> > > 
+> > > v1:
+> > > - modify definition of tpm_pcr_read()
+> > > - move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
+> > > 
+> > > 
+> > > Roberto Sassu (6):
+> > >    tpm: dynamically allocate the allocated_banks array
+> > >    tpm: rename and export tpm2_digest and tpm2_algorithms
+> > >    tpm: retrieve digest size of unknown algorithms with PCR read
+> > >    tpm: move tpm_chip definition to include/linux/tpm.h
+> > >    KEYS: trusted: explicitly use tpm_chip structure from
+> > >      tpm_default_chip()
+> > >    tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
+> > > 
+> > >   drivers/char/tpm/tpm-chip.c         |   1 +
+> > >   drivers/char/tpm/tpm-interface.c    |  38 ++++----
+> > >   drivers/char/tpm/tpm.h              | 117 ++---------------------
+> > >   drivers/char/tpm/tpm1-cmd.c         |  12 +++
+> > >   drivers/char/tpm/tpm2-cmd.c         | 139 ++++++++++++++++++++--------
+> > >   include/linux/tpm.h                 | 126 ++++++++++++++++++++++++-
+> > >   include/linux/tpm_eventlog.h        |   9 +-
+> > >   security/integrity/ima/ima.h        |   1 +
+> > >   security/integrity/ima/ima_crypto.c |  10 +-
+> > >   security/integrity/ima/ima_init.c   |   4 +
+> > >   security/integrity/ima/ima_queue.c  |  27 +++++-
+> > >   security/keys/trusted.c             |  73 +++++++++++----
+> > >   12 files changed, 349 insertions(+), 208 deletions(-)
+> > > 
+> > > -- 
+> > > 2.17.1
+> > > 
+> > 
+> > Can you do two things:
+> > 
+> > 1. Check the v3: https://patchwork.kernel.org/patch/10797181/. Needs
+> > to be applied first.
+> > 2. Check that this does not cause merge conflicts with the current
+> >     imaster? If it does, fix them, and use --subject-prefix="RESEND,PATCH v10".
+> > 
+> > Thanks.
 > 
->> I believe that will always be a problem, no matter what we do.  The
->> point I was trying to make was that everyone, especially the
->> maintainers, need to watch for this when patches are posted and make
->> sure the patch author posts to the LSM list in addition to any of the
->> relevant LSM specific lists.
+> I already applied the patch set on top of linux-tpmdd/next
+> (41ac27d19b07) and your patch.
 > 
-> Right, and there is no way a new LSM hook should ever be added to the
-> kernel without review and ack/signoffs from folks on the LSM list
-> (especially those who are maintainers of in-tree LSMs).
+> Also, there are no conflicts with the current master.
 > 
-> Casey, do you have any examples of this happening?
+> Roberto
 
-Most of the times I've seen that it has come from vfs folks or other 
-subsystems as part of some major reworking of that subsystem rather than 
-from security module developers, e.g. the mount hooks overhaul.
+Before getting your new version, I applied:
+
+https://patchwork.kernel.org/project/linux-integrity/list/?series=76223
+
+This causes some merge conflicts:
+
+error: Failed to merge in the changes.
+Patch failed at 0003 tpm: retrieve digest size of unknown algorithms with PCR read
+
+/Jarkko
