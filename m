@@ -2,254 +2,118 @@ Return-Path: <SRS0=88KC=QN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00322C282CC
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 495F4C169C4
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC578217F9
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:07:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2018E2186A
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 16:22:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbfBFQH7 (ORCPT
+        id S1730598AbfBFQWR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:07:59 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32876 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726270AbfBFQH7 (ORCPT
+        Wed, 6 Feb 2019 11:22:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33326 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727212AbfBFQWR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:07:59 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 2CBC3381FA0F0E930B1B;
-        Wed,  6 Feb 2019 16:07:57 +0000 (GMT)
-Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 6 Feb
- 2019 16:07:49 +0000
-Subject: Re: [PATCH v10 0/6] tpm: retrieve digest size of unknown algorithms
- from TPM
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190206105724.14495-1-roberto.sassu@huawei.com>
- <20190206125725.GA9257@linux.intel.com>
- <1fff7b54-cc9a-7705-4c26-819bdd1286f2@huawei.com>
- <20190206135450.GA20061@linux.intel.com>
- <2dea31e3-0796-e21f-5625-1ddc78485c71@huawei.com>
- <20190206153445.GA23970@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <3cd14c24-9de2-d347-b40c-22ca87d9df87@huawei.com>
-Date:   Wed, 6 Feb 2019 17:07:49 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 6 Feb 2019 11:22:17 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 295922175B;
+        Wed,  6 Feb 2019 16:22:15 +0000 (UTC)
+Date:   Wed, 6 Feb 2019 11:22:13 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>
+Subject: Re: [PATCH 08/17] x86/ftrace: set trampoline pages as executable
+Message-ID: <20190206112213.2ec9dd5c@gandalf.local.home>
+In-Reply-To: <20190117003259.23141-9-rick.p.edgecombe@intel.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+        <20190117003259.23141-9-rick.p.edgecombe@intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190206153445.GA23970@linux.intel.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.155]
-X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/6/2019 4:34 PM, Jarkko Sakkinen wrote:
-> On Wed, Feb 06, 2019 at 03:25:48PM +0100, Roberto Sassu wrote:
->> On 2/6/2019 2:54 PM, Jarkko Sakkinen wrote:
->>> On Wed, Feb 06, 2019 at 02:07:04PM +0100, Roberto Sassu wrote:
->>>> On 2/6/2019 1:57 PM, Jarkko Sakkinen wrote:
->>>>> On Wed, Feb 06, 2019 at 11:57:18AM +0100, Roberto Sassu wrote:
->>>>>> Update
->>>>>>
->>>>>> This version of the patch set includes three additional patches (5-7/7)
->>>>>> that allow users of the TPM driver to provide a digest for each PCR bank to
->>>>>> tpm_pcr_extend(). The new patches have been included to facilitate the
->>>>>> review of all the changes to support TPM 2.0 crypto agility for reading and
->>>>>> extending PCRs.
->>>>>>
->>>>>>
->>>>>> Original patch set description
->>>>>>
->>>>>> The TPM driver currently relies on the crypto subsystem to determine the
->>>>>> digest size of supported TPM algorithms. In the future, TPM vendors might
->>>>>> implement new algorithms in their chips, and those algorithms might not
->>>>>> be supported by the crypto subsystem.
->>>>>>
->>>>>> Usually, vendors provide patches for the new hardware, and likely
->>>>>> the crypto subsystem will be updated before the new algorithm is
->>>>>> introduced. However, old kernels might be updated later, after patches
->>>>>> are included in the mainline kernel. This would leave the opportunity
->>>>>> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
->>>>>> are not extended.
->>>>>>
->>>>>> This patch set provides a long term solution for this issue. If a TPM
->>>>>> algorithm is not known by the crypto subsystem, the TPM driver retrieves
->>>>>> the digest size from the TPM with a PCR read. All the PCR banks are
->>>>>> extended, even if the algorithm is not yet supported by the crypto
->>>>>> subsystem.
->>>>>>
->>>>>> PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
->>>>>> is stored in the tpm_chip structure and available for users of the TPM
->>>>>> driver.
->>>>>>
->>>>>> Changelog
->>>>>>
->>>>>> v9:
->>>>>> - add comment for ima_load_kexec_buffer() in ima_init()
->>>>>> - move 'digests' and ima_init_digests() to ima_queue.c
->>>>>> - remove comment for TPM_RETRY
->>>>>>
->>>>>> v8:
->>>>>> - set digest array length in tpm_digest to new constant TPM_MAX_DIGEST_SIZE
->>>>>> - replace enum tpm_const with #define
->>>>>> - rename labels in init_trusted()
->>>>>> - allocate tpm_digest array after retrieving random data in init_digests()
->>>>>>
->>>>>> v7:
->>>>>> - use memchr_inv() in tpm2_get_pcr_allocation()
->>>>>> - add patch to move tpm_chip to include/linux/tpm.h
->>>>>> - add patch to set the tpm_chip argument in trusted.c to a pointer from
->>>>>>      tpm_default_chip()
->>>>>> - remove definition of tpm_extend_digest
->>>>>> - remove code in tpm2_pcr_extend() to extend unused PCR banks with the
->>>>>>      first digest passed by the caller of tpm_pcr_extend()
->>>>>> - remove count parameter from tpm_pcr_extend() and tpm2_pcr_extend()
->>>>>> - remove padding of SHA1 digest in tpm_pcr_extend()
->>>>>> - pre-allocate and initialize array of tpm_digest structures in
->>>>>>      security/keys/trusted.c and security/integrity/ima/ima_init.c
->>>>>>
->>>>>> v6:
->>>>>> - squash patches 4-6
->>>>>> - rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
->>>>>>      members to size and data
->>>>>> - add comment in tpm2_init_bank_info()
->>>>>>
->>>>>> v5:
->>>>>> - rename digest_struct variable to digest
->>>>>> - add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
->>>>>> - rename digest_size member of tpm_bank_list to extend_size
->>>>>> - change type of alg_id member of tpm_bank_list from u8 to u16
->>>>>> - add missing semi-colon in pcrlock()
->>>>>>
->>>>>> v4:
->>>>>> - rename active_banks to allocated_banks
->>>>>> - replace kmalloc_array() with kcalloc()
->>>>>> - increment nr_allocated_banks if at least one PCR in the bank is selected
->>>>>> - pass multiple digests to tpm_pcr_extend()
->>>>>>
->>>>>> v3:
->>>>>> - remove end marker change
->>>>>> - replace active_banks static array with pointer to dynamic array
->>>>>> - remove TPM2_ACTIVE_PCR_BANKS
->>>>>>
->>>>>> v2:
->>>>>> - change the end marker of the active_banks array
->>>>>> - check digest size from output of PCR read command
->>>>>> - remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
->>>>>>
->>>>>> v1:
->>>>>> - modify definition of tpm_pcr_read()
->>>>>> - move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
->>>>>>
->>>>>>
->>>>>> Roberto Sassu (6):
->>>>>>      tpm: dynamically allocate the allocated_banks array
->>>>>>      tpm: rename and export tpm2_digest and tpm2_algorithms
->>>>>>      tpm: retrieve digest size of unknown algorithms with PCR read
->>>>>>      tpm: move tpm_chip definition to include/linux/tpm.h
->>>>>>      KEYS: trusted: explicitly use tpm_chip structure from
->>>>>>        tpm_default_chip()
->>>>>>      tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
->>>>>>
->>>>>>     drivers/char/tpm/tpm-chip.c         |   1 +
->>>>>>     drivers/char/tpm/tpm-interface.c    |  38 ++++----
->>>>>>     drivers/char/tpm/tpm.h              | 117 ++---------------------
->>>>>>     drivers/char/tpm/tpm1-cmd.c         |  12 +++
->>>>>>     drivers/char/tpm/tpm2-cmd.c         | 139 ++++++++++++++++++++--------
->>>>>>     include/linux/tpm.h                 | 126 ++++++++++++++++++++++++-
->>>>>>     include/linux/tpm_eventlog.h        |   9 +-
->>>>>>     security/integrity/ima/ima.h        |   1 +
->>>>>>     security/integrity/ima/ima_crypto.c |  10 +-
->>>>>>     security/integrity/ima/ima_init.c   |   4 +
->>>>>>     security/integrity/ima/ima_queue.c  |  27 +++++-
->>>>>>     security/keys/trusted.c             |  73 +++++++++++----
->>>>>>     12 files changed, 349 insertions(+), 208 deletions(-)
->>>>>>
->>>>>> -- 
->>>>>> 2.17.1
->>>>>>
->>>>>
->>>>> Can you do two things:
->>>>>
->>>>> 1. Check the v3: https://patchwork.kernel.org/patch/10797181/. Needs
->>>>> to be applied first.
->>>>> 2. Check that this does not cause merge conflicts with the current
->>>>>       imaster? If it does, fix them, and use --subject-prefix="RESEND,PATCH v10".
->>>>>
->>>>> Thanks.
->>>>
->>>> I already applied the patch set on top of linux-tpmdd/next
->>>> (41ac27d19b07) and your patch.
->>>>
->>>> Also, there are no conflicts with the current master.
->>>>
->>>> Roberto
->>>
->>> Before getting your new version, I applied:
->>>
->>> https://patchwork.kernel.org/project/linux-integrity/list/?series=76223
->>>
->>> This causes some merge conflicts:
->>>
->>> error: Failed to merge in the changes.
->>> Patch failed at 0003 tpm: retrieve digest size of unknown algorithms with PCR read
->>
->> I fixed it and patch 4/6. But, I think there is a problem in your patch
->> 'tpm: move tpm_validate_commmand() to tpm2-space.c':
->>
->> ---
->> -int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u32
->> cc,
->> -                      u8 *cmd)
->> +static int tpm_validate_command(struct tpm_chip *chip, struct tpm_space
->> *space,
->> +                               const void *cmd, size_t len)
->> +{
->> +       const struct tpm_header *header = (const void *)cmd;
->> +       int i;
->> +       u32 cc;
->> +       u32 attrs;
->> +       unsigned int nr_handles;
->> +
->> +       if (len < TPM_HEADER_SIZE)
->> +               return -EINVAL;
->> +
->> +       if (chip->nr_commands) {
->>
->> [...]
->>
->> +       }
->> +
->> +       return cc;
->> +
->> ---
->>
->> 'cc' may be not initialized before returning the value.
+On Wed, 16 Jan 2019 16:32:50 -0800
+Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
+
+> From: Nadav Amit <namit@vmware.com>
 > 
-> Ah. Thank you for catching that one. Can you quickly check the attached
-> commit? I'll squash it to the corresponding commit.
-
-Seems ok to me. I'll send patch 3/6 and 4/6.
-
-Roberto
-
-
-> /Jarkko
+> Since alloc_module() will not set the pages as executable soon, we need
+> to do so for ftrace trampoline pages after they are allocated.
 > 
+> For the time being, we do not change ftrace to use the text_poke()
+> interface. As a result, ftrace breaks still breaks W^X.
+> 
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+>  arch/x86/kernel/ftrace.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+> index 8257a59704ae..eb4a1937e72c 100644
+> --- a/arch/x86/kernel/ftrace.c
+> +++ b/arch/x86/kernel/ftrace.c
+> @@ -742,6 +742,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+>  	unsigned long end_offset;
+>  	unsigned long op_offset;
+>  	unsigned long offset;
+> +	unsigned long npages;
+>  	unsigned long size;
+>  	unsigned long retq;
+>  	unsigned long *ptr;
+> @@ -774,6 +775,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+>  		return 0;
+>  
+>  	*tramp_size = size + RET_SIZE + sizeof(void *);
+> +	npages = DIV_ROUND_UP(*tramp_size, PAGE_SIZE);
+>  
+>  	/* Copy ftrace_caller onto the trampoline memory */
+>  	ret = probe_kernel_read(trampoline, (void *)start_offset, size);
+> @@ -818,6 +820,13 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+>  	/* ALLOC_TRAMP flags lets us know we created it */
+>  	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
+>  
+> +	/*
+> +	 * Module allocation needs to be completed by making the page
+> +	 * executable. The page is still writable, which is a security hazard,
+> +	 * but anyhow ftrace breaks W^X completely.
+> +	 */
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Perhaps we should set the page to non writable after the page is
+updated? And set it to writable only when we need to update it.
+
+As for this patch:
+
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+-- Steve
+
+> +	set_memory_x((unsigned long)trampoline, npages);
+> +
+>  	return (unsigned long)trampoline;
+>  fail:
+>  	tramp_free(trampoline, *tramp_size);
+
