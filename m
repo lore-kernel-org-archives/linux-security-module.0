@@ -2,199 +2,70 @@ Return-Path: <SRS0=88KC=QN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F53C169C4
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 13:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2496C282CC
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 13:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 347FD2175B
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 13:07:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DD0320844
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 13:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728504AbfBFNHP (ORCPT
+        id S1731010AbfBFNUK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:07:15 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32874 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727585AbfBFNHP (ORCPT
+        Wed, 6 Feb 2019 08:20:10 -0500
+Received: from mga11.intel.com ([192.55.52.93]:7373 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730739AbfBFNUJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:07:15 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id ADBDE26175651FEE92E1;
-        Wed,  6 Feb 2019 13:07:13 +0000 (GMT)
-Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 6 Feb
- 2019 13:07:05 +0000
-Subject: Re: [PATCH v10 0/6] tpm: retrieve digest size of unknown algorithms
- from TPM
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
-        <linux-integrity@vger.kernel.org>,
+        Wed, 6 Feb 2019 08:20:09 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:20:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
+   d="scan'208";a="144640551"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.171])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Feb 2019 05:20:01 -0800
+Date:   Wed, 6 Feb 2019 15:20:00 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190206105724.14495-1-roberto.sassu@huawei.com>
- <20190206125725.GA9257@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <1fff7b54-cc9a-7705-4c26-819bdd1286f2@huawei.com>
-Date:   Wed, 6 Feb 2019 14:07:04 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: Re: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Message-ID: <20190206132000.GA16667@linux.intel.com>
+References: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA90A8B@hasmsx108.ger.corp.intel.com>
+ <20190205143541.GA18330@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA90C75@hasmsx108.ger.corp.intel.com>
+ <20190205205719.GA13023@linux.intel.com>
+ <20190206124324.GA8126@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA91AEE@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190206125725.GA9257@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.155]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA91AEE@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/6/2019 1:57 PM, Jarkko Sakkinen wrote:
-> On Wed, Feb 06, 2019 at 11:57:18AM +0100, Roberto Sassu wrote:
->> Update
->>
->> This version of the patch set includes three additional patches (5-7/7)
->> that allow users of the TPM driver to provide a digest for each PCR bank to
->> tpm_pcr_extend(). The new patches have been included to facilitate the
->> review of all the changes to support TPM 2.0 crypto agility for reading and
->> extending PCRs.
->>
->>
->> Original patch set description
->>
->> The TPM driver currently relies on the crypto subsystem to determine the
->> digest size of supported TPM algorithms. In the future, TPM vendors might
->> implement new algorithms in their chips, and those algorithms might not
->> be supported by the crypto subsystem.
->>
->> Usually, vendors provide patches for the new hardware, and likely
->> the crypto subsystem will be updated before the new algorithm is
->> introduced. However, old kernels might be updated later, after patches
->> are included in the mainline kernel. This would leave the opportunity
->> for attackers to misuse PCRs, as PCR banks with an unknown algorithm
->> are not extended.
->>
->> This patch set provides a long term solution for this issue. If a TPM
->> algorithm is not known by the crypto subsystem, the TPM driver retrieves
->> the digest size from the TPM with a PCR read. All the PCR banks are
->> extended, even if the algorithm is not yet supported by the crypto
->> subsystem.
->>
->> PCR bank information (TPM algorithm ID, digest size, crypto subsystem ID)
->> is stored in the tpm_chip structure and available for users of the TPM
->> driver.
->>
->> Changelog
->>
->> v9:
->> - add comment for ima_load_kexec_buffer() in ima_init()
->> - move 'digests' and ima_init_digests() to ima_queue.c
->> - remove comment for TPM_RETRY
->>
->> v8:
->> - set digest array length in tpm_digest to new constant TPM_MAX_DIGEST_SIZE
->> - replace enum tpm_const with #define
->> - rename labels in init_trusted()
->> - allocate tpm_digest array after retrieving random data in init_digests()
->>
->> v7:
->> - use memchr_inv() in tpm2_get_pcr_allocation()
->> - add patch to move tpm_chip to include/linux/tpm.h
->> - add patch to set the tpm_chip argument in trusted.c to a pointer from
->>    tpm_default_chip()
->> - remove definition of tpm_extend_digest
->> - remove code in tpm2_pcr_extend() to extend unused PCR banks with the
->>    first digest passed by the caller of tpm_pcr_extend()
->> - remove count parameter from tpm_pcr_extend() and tpm2_pcr_extend()
->> - remove padding of SHA1 digest in tpm_pcr_extend()
->> - pre-allocate and initialize array of tpm_digest structures in
->>    security/keys/trusted.c and security/integrity/ima/ima_init.c
->>
->> v6:
->> - squash patches 4-6
->> - rename tpm_bank_list to tpm_extend_digest, extend_size and extend_data
->>    members to size and data
->> - add comment in tpm2_init_bank_info()
->>
->> v5:
->> - rename digest_struct variable to digest
->> - add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
->> - rename digest_size member of tpm_bank_list to extend_size
->> - change type of alg_id member of tpm_bank_list from u8 to u16
->> - add missing semi-colon in pcrlock()
->>
->> v4:
->> - rename active_banks to allocated_banks
->> - replace kmalloc_array() with kcalloc()
->> - increment nr_allocated_banks if at least one PCR in the bank is selected
->> - pass multiple digests to tpm_pcr_extend()
->>
->> v3:
->> - remove end marker change
->> - replace active_banks static array with pointer to dynamic array
->> - remove TPM2_ACTIVE_PCR_BANKS
->>
->> v2:
->> - change the end marker of the active_banks array
->> - check digest size from output of PCR read command
->> - remove count parameter from tpm_pcr_read() and tpm2_pcr_read()
->>
->> v1:
->> - modify definition of tpm_pcr_read()
->> - move hash algorithms and definition of tpm2_digest to include/linux/tpm.h
->>
->>
->> Roberto Sassu (6):
->>    tpm: dynamically allocate the allocated_banks array
->>    tpm: rename and export tpm2_digest and tpm2_algorithms
->>    tpm: retrieve digest size of unknown algorithms with PCR read
->>    tpm: move tpm_chip definition to include/linux/tpm.h
->>    KEYS: trusted: explicitly use tpm_chip structure from
->>      tpm_default_chip()
->>    tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
->>
->>   drivers/char/tpm/tpm-chip.c         |   1 +
->>   drivers/char/tpm/tpm-interface.c    |  38 ++++----
->>   drivers/char/tpm/tpm.h              | 117 ++---------------------
->>   drivers/char/tpm/tpm1-cmd.c         |  12 +++
->>   drivers/char/tpm/tpm2-cmd.c         | 139 ++++++++++++++++++++--------
->>   include/linux/tpm.h                 | 126 ++++++++++++++++++++++++-
->>   include/linux/tpm_eventlog.h        |   9 +-
->>   security/integrity/ima/ima.h        |   1 +
->>   security/integrity/ima/ima_crypto.c |  10 +-
->>   security/integrity/ima/ima_init.c   |   4 +
->>   security/integrity/ima/ima_queue.c  |  27 +++++-
->>   security/keys/trusted.c             |  73 +++++++++++----
->>   12 files changed, 349 insertions(+), 208 deletions(-)
->>
->> -- 
->> 2.17.1
->>
+On Wed, Feb 06, 2019 at 12:55:55PM +0000, Winkler, Tomas wrote:
+> > Fixed comments and applied the patch, thank you. Do I amend your acked-by?
 > 
-> Can you do two things:
-> 
-> 1. Check the v3: https://patchwork.kernel.org/patch/10797181/. Needs
-> to be applied first.
-> 2. Check that this does not cause merge conflicts with the current
->     imaster? If it does, fix them, and use --subject-prefix="RESEND,PATCH v10".
-> 
-> Thanks.
+> Please, do.
+> Thanks
+> Tomas
 
-I already applied the patch set on top of linux-tpmdd/next
-(41ac27d19b07) and your patch.
+Great, thank you.
 
-Also, there are no conflicts with the current master.
-
-Roberto
-
-
-> /Jarkko
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+/Jarkko
