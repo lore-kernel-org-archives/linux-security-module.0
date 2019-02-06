@@ -2,94 +2,163 @@ Return-Path: <SRS0=88KC=QN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876ECC169C4
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 17:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BD3C169C4
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 17:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 541A32081B
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 17:24:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB445218D2
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Feb 2019 17:33:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="IPKS5N0t"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jxBVSrqh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfBFRYX (ORCPT
+        id S1727999AbfBFRdl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:24:23 -0500
-Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:45324
-        "EHLO sonic309-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726727AbfBFRYX (ORCPT
+        Wed, 6 Feb 2019 12:33:41 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45872 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727594AbfBFRdl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:24:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1549473862; bh=jb2klyamtfjhprb8FJdgfn/qxaDGxU5jpP19IcxwfKQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=IPKS5N0t1NBIwFDGmJ35ZP7ek1GcoVCAx6XNBK6pjdiQeP96t0aM/6r0nAj/VPaHkKXohMFBZoFJOm3Jz1lN29qN7f9dnuCeaRIdTc13hGv1ndeLw3XAcMVSpeewlOY4crajt7FuLrkV1szA+DG09MrQpUinBi0VIoLJI6eseZQIAI1hdTwjlFmDl31xtJ6iXNCZtlxpD8eVkfXSfMXByIywx5vPP7Lt2dBe7MvYD5AXo/UAKLolLv3ZpMquUS4MPmoRkkT99CLx8an5suWfWrHNWp17B7l4e9Mn71ea/M3EOyEaYWhFDVuY701qy91FgLvtYdyRZcbzQS96I/GzLg==
-X-YMail-OSG: VbtF4rwVM1lgW4Gs0lhiQGpmoFeJSvL_yqGhZMZYB3w3ErscBmRM5vLvALkB9yJ
- Ml3DoP5NivZ9p3tWRx0_xWfVM_968Zz9HOP5qulD9ACgSkw1MNujoQmc8EF8X9EyYNye6k2ei5fL
- ImERPi7lGYRAcBxFwy9HqEC6x_iUlYiXtsaxPry9uQBPUAyEgQpujs2eJJS8G6SfkSz.HUEj5egk
- jLKQlZLxqbIbAFYRtopnpT7rw.RL8LFdXwwdTl_.Iprz3xNaxpiMh1FM65FwkjGPWGdCbmr.3E7i
- v7kZbXS30mpWMqsVBsJT_WaNuDZUKW43twzHFBnZDAO81GL3wz1JgBqgXnZM_cxCylvbrAR1vhX.
- 4sVrqNB2PslNtUuNG2l9WfdHGw16zbCuEfmx707M0rHT4iKmet.OOD0nvjBC16PFx7ryw8t.pz4.
- Xx5GDEuVbT8sl2AQyx8.rG7d2Vj.o8iIv5PkU18GIlF3qoY1gjUoYhPGPmzUjhU5Rsw.Y9og.aSp
- pgzeyQXjwpJ6l5tWzaz8jwEAd34Ne_RyaBb4BFbCJ9cyj0.6.Rq7WdZ5_o.juEirXGiR0NxObKUB
- yO4hJhyA6XDBQHfZgy5Bnzwc4U1BYmgiYpZ0HJ93nyUzbRaxNfZzq_qDfuWZk1qX329Jm_NDW0bP
- SupeZUt7HgUw0Zg2jC6VrauFpAg212nwMIYZ5Wa95LtI9htt2yzxrObi7BFFUIiFmpn7eeYIwis5
- qz51.eUiHv5U0xw3vVb1eaSrJ5_scq6FDpi02V4ti.yBTfNWDSynSUUfPC2yaCsPFXtBWid90.5W
- JfobhQzx_4_GBhVTjrZbGDSTiYxjo2xYRkTmF7MsndB4vIT81270pOFSzmsIAq0XKGiF2lTHyXx_
- eIhMPab4rYHeJWrTqanimLXxaJAuNgGacKUKNZjnSGNSyn2PIf4wsf3JpiecVTvuHbQaUHoDGU5i
- Bka0zyQjjLMZkock9jHU8hBOgtSFYCvriDriNeLCS5lThbMP1BP3zIAky_gSQzb0l1Ey5pEq45mp
- MESvM96MS791xulTYzFCat2FC2PrhWlRZHcTvsC.E1Bd5jgGaRgbA2RNoFDi9duxiJY6AAb5U0hG
- hUwnYpJvSPDNFw1x5M3s-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Wed, 6 Feb 2019 17:24:22 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp427.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 4fa1d8b9a17bb3fe522f2a99692f23cf;
-          Wed, 06 Feb 2019 17:24:21 +0000 (UTC)
-Subject: Re: New LSM hooks
-To:     Stephen Smalley <sds@tycho.nsa.gov>,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     LSM <linux-security-module@vger.kernel.org>
-References: <61766e1d-496e-6a7d-d4b8-52e2c99a78c3@schaufler-ca.com>
- <CAHC9VhQoruL70fUScgYH8WGDP2Hc1=G2j_fjoS24VMUm3xA=aQ@mail.gmail.com>
- <a852b633-a777-c353-85cd-c5a1545b4ef9@schaufler-ca.com>
- <CAHC9VhQ6p=LoEN6Rqze48FrVDsX0mfXHY4BvEaxU97w1azP4YQ@mail.gmail.com>
- <alpine.LRH.2.21.1902061207010.19811@namei.org>
- <84c96e67-6668-b954-0a6b-2bccb00c124c@tycho.nsa.gov>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <ca70d18c-3576-fce9-a65b-faf585a536b2@schaufler-ca.com>
-Date:   Wed, 6 Feb 2019 09:24:18 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <84c96e67-6668-b954-0a6b-2bccb00c124c@tycho.nsa.gov>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Wed, 6 Feb 2019 12:33:41 -0500
+Received: by mail-pg1-f196.google.com with SMTP id y4so3180725pgc.12;
+        Wed, 06 Feb 2019 09:33:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=rYbgX2FNZSLFQiDq0Ih+9oGqomi8Dxzpd7WK0+FcTcQ=;
+        b=jxBVSrqhK2+6jA9mgt1ZG2E6Yi97wIPX6W+CP4vKddME0zOC5E6Nq1muZXBqDq66Ye
+         VVAsjSUD9dScTXpLAZBgRw1MBsrpIoTC5JQhT21UolL971aHLI6k3RCW7jONQsJbBlzP
+         t9jtC1tCPW113d7khRQ4pUr9iK6z6+Jl2znriGGF6Tc3h8tJm7WgEkq29wzTlX5g7Mg9
+         7qQk6+j5bVvHFcSvP+fLT9HshRbtp0RQyolyO61o12w+C/C+MMWVvqfybCZv/UsMV/AI
+         BKEhQZUPTuOaO1k+dtte1NfawOt3RDQ2LvtZ9jMask9lAZN5wdlfaI5HXjrthV8o5cSn
+         2XNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=rYbgX2FNZSLFQiDq0Ih+9oGqomi8Dxzpd7WK0+FcTcQ=;
+        b=SYsVM7QUyhCysuvVB0yUdZK7/URF+rK5JpLhsb/9KlekIXfyzsxuwHv3hz9fYgp8qk
+         U82G/MaSONLfa4RzSDOUNbLA0cSoEKD8prqyJ4xru0XV/QizToYDt7vrlLAyUpa3hBqn
+         Cfm56hlQtHKGzUD/ISD5hyqb881vwb+KJ9ybygZYuNGxqryUUQxMnCt8mBq4zXKIWlW/
+         ZRuJ8PpCVYtNHkAf/WmOLTjYrKKACSdy+3NHvmqTxM/RTANyn3cq2/W8NMhoEupvCX9C
+         xU7MqEt1om21qhUFbqmTL8KZrRrDKhDG7liMoRqa8V54xeBItbb8Z/YM3YUm/88dR/wP
+         jH/g==
+X-Gm-Message-State: AHQUAuY7qR7qlh3FNcracmHcPRd157zULVgFShopOGUDNOejhsqUFhzb
+        wGeP2ADcjkjRRukyTVV0PHk=
+X-Google-Smtp-Source: AHgI3IZO/nBxjBj7hWYe6SBT7x8lwLWKo0SvM/vK6C31+42XzDoMO/FAAmIlRnhVDYWo38sCKnYxiQ==
+X-Received: by 2002:a65:62da:: with SMTP id m26mr10648561pgv.278.1549474419293;
+        Wed, 06 Feb 2019 09:33:39 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id a13sm436912pgw.34.2019.02.06.09.33.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 09:33:38 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH 08/17] x86/ftrace: set trampoline pages as executable
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190206112213.2ec9dd5c@gandalf.local.home>
+Date:   Wed, 6 Feb 2019 09:33:35 -0800
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        deneen.t.dock@intel.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5DFA1E3C-A335-4C4B-A86F-904A6CF6D871@gmail.com>
+References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
+ <20190117003259.23141-9-rick.p.edgecombe@intel.com>
+ <20190206112213.2ec9dd5c@gandalf.local.home>
+To:     Steven Rostedt <rostedt@goodmis.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/6/2019 5:20 AM, Stephen Smalley wrote:
-> On 2/5/19 8:11 PM, James Morris wrote:
->> On Tue, 5 Feb 2019, Paul Moore wrote:
->>
->>> I believe that will always be a problem, no matter what we do.  The
->>> point I was trying to make was that everyone, especially the
->>> maintainers, need to watch for this when patches are posted and make
->>> sure the patch author posts to the LSM list in addition to any of the
->>> relevant LSM specific lists.
->>
->> Right, and there is no way a new LSM hook should ever be added to the
->> kernel without review and ack/signoffs from folks on the LSM list
->> (especially those who are maintainers of in-tree LSMs).
->>
->> Casey, do you have any examples of this happening?
->
-> Most of the times I've seen that it has come from vfs folks or other subsystems as part of some major reworking of that subsystem rather than from security module developers, e.g. the mount hooks overhaul.
+> On Feb 6, 2019, at 8:22 AM, Steven Rostedt <rostedt@goodmis.org> =
+wrote:
+>=20
+> On Wed, 16 Jan 2019 16:32:50 -0800
+> Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
+>=20
+>> From: Nadav Amit <namit@vmware.com>
+>>=20
+>> Since alloc_module() will not set the pages as executable soon, we =
+need
+>> to do so for ftrace trampoline pages after they are allocated.
+>>=20
+>> For the time being, we do not change ftrace to use the text_poke()
+>> interface. As a result, ftrace breaks still breaks W^X.
+>>=20
+>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>> Signed-off-by: Nadav Amit <namit@vmware.com>
+>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>> ---
+>> arch/x86/kernel/ftrace.c | 9 +++++++++
+>> 1 file changed, 9 insertions(+)
+>>=20
+>> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+>> index 8257a59704ae..eb4a1937e72c 100644
+>> --- a/arch/x86/kernel/ftrace.c
+>> +++ b/arch/x86/kernel/ftrace.c
+>> @@ -742,6 +742,7 @@ create_trampoline(struct ftrace_ops *ops, =
+unsigned int *tramp_size)
+>> 	unsigned long end_offset;
+>> 	unsigned long op_offset;
+>> 	unsigned long offset;
+>> +	unsigned long npages;
+>> 	unsigned long size;
+>> 	unsigned long retq;
+>> 	unsigned long *ptr;
+>> @@ -774,6 +775,7 @@ create_trampoline(struct ftrace_ops *ops, =
+unsigned int *tramp_size)
+>> 		return 0;
+>>=20
+>> 	*tramp_size =3D size + RET_SIZE + sizeof(void *);
+>> +	npages =3D DIV_ROUND_UP(*tramp_size, PAGE_SIZE);
+>>=20
+>> 	/* Copy ftrace_caller onto the trampoline memory */
+>> 	ret =3D probe_kernel_read(trampoline, (void *)start_offset, =
+size);
+>> @@ -818,6 +820,13 @@ create_trampoline(struct ftrace_ops *ops, =
+unsigned int *tramp_size)
+>> 	/* ALLOC_TRAMP flags lets us know we created it */
+>> 	ops->flags |=3D FTRACE_OPS_FL_ALLOC_TRAMP;
+>>=20
+>> +	/*
+>> +	 * Module allocation needs to be completed by making the page
+>> +	 * executable. The page is still writable, which is a security =
+hazard,
+>> +	 * but anyhow ftrace breaks W^X completely.
+>> +	 */
+>=20
+> Perhaps we should set the page to non writable after the page is
+> updated? And set it to writable only when we need to update it.
 
-David Howells did contact me directly on the mount hook
-changes well in advance. I'm more concerned with special
-purpose hooks like we have for binder, kernfs, nfs, tun,
-Infiniband and bpf. I'm not saying that we never need to
-provide hooks with a single user, but you do have to
-wonder about security_ismaclabel().
+You remember that I sent you a patch that changed all these writes into
+text_poke() and you said that I should defer it until this series is =
+merged?
+
+> As for this patch:
+>=20
+> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+Thanks!
 
