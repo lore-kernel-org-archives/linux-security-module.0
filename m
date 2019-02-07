@@ -2,290 +2,189 @@ Return-Path: <SRS0=SNv9=QO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37842C282CC
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 23:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE964C282C2
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 23:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF5921721
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 23:32:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3B0A21721
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 23:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549582538;
+	bh=moQ9/aV/7DnPJoK809gBzcy3AyTX73nsDatkzclvMC4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uZIGG8dFoZ/wtZagvt9rftQgP3rh6xQ2XXINSPdqcBa753XMYXvbFbtFdS+5lBc3b
+	 H+bY6ilDvET9hJtrE9FDZsbaXpxE7RVHGm0efTRMm5Jwm34giY86mvoosX6Dbod+l+
+	 Lo/6NXVWrff3UEV69Ol9W4+b5TWd4amKuJM+25UY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbfBGXc0 (ORCPT
+        id S1726844AbfBGXfd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Feb 2019 18:32:26 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41574 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726718AbfBGXc0 (ORCPT
+        Thu, 7 Feb 2019 18:35:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48368 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726401AbfBGXfd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Feb 2019 18:32:26 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x17NSve2113265
-        for <linux-security-module@vger.kernel.org>; Thu, 7 Feb 2019 18:32:25 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qguqeevp9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Feb 2019 18:32:24 -0500
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Thu, 7 Feb 2019 23:32:24 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 7 Feb 2019 23:32:20 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x17NWIqH5898256
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Feb 2019 23:32:19 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A99CC78069;
-        Thu,  7 Feb 2019 23:32:18 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BC04778066;
-        Thu,  7 Feb 2019 23:32:17 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Feb 2019 23:32:17 +0000 (GMT)
-Subject: Re: [PATCH v11 15/16] tpm: take TPM chip power gating out of
- tpm_transmit()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
- <20190205224723.19671-16-jarkko.sakkinen@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Thu, 7 Feb 2019 18:32:17 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 7 Feb 2019 18:35:33 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0DB921721;
+        Thu,  7 Feb 2019 23:35:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549582531;
+        bh=moQ9/aV/7DnPJoK809gBzcy3AyTX73nsDatkzclvMC4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vI20K8HWnrh37K7CAOYJwEOqjuqGoZ+M+Z0Ssd+i8kGN3X/fddj7U3kObHaswl50P
+         ZguM7lIQOzeCnlwPUTVkNJK2gZH16qfqo39pC9JzAcODf4dFdq/0T/VuUuodYWVAJY
+         USebt87ZJ7ZWOcwVtg1j88+VO4JGoNk+ej5pulIs=
+Date:   Thu, 7 Feb 2019 15:35:30 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v2] KEYS: always initialize keyring_index_key::desc_len
+Message-ID: <20190207233529.GB125156@gmail.com>
+References: <000000000000a722550577796543@google.com>
+ <20181103015854.7380-1-ebiggers@kernel.org>
+ <20181128231940.GB131170@gmail.com>
+ <20190110202744.GA149637@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190205224723.19671-16-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19020723-8235-0000-0000-00000E584CB9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010556; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01157809; UDB=6.00604069; IPR=6.00938340;
- MB=3.00025484; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-07 23:32:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020723-8236-0000-0000-000044619E9D
-Message-Id: <dfb224e4-82b8-26c0-e69a-c72d19712d48@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-07_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=848 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902070168
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110202744.GA149637@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/5/19 5:47 PM, Jarkko Sakkinen wrote:
-> Call tpm_chip_start() and tpm_chip_stop() in
->
-> * tpm_try_get_ops() and tpm_put_ops()
-> * tpm_chip_register()
-> * tpm2_del_space()
->
-> And remove these calls from tpm_transmit(). The core reason for this
-> change is that in tpm_vtpm_proxy a locality change requires a virtual
-> TPM command (a command made up just for that driver).
->
-> The consequence of this is that this commit removes the remaining nested
-> calls.
->
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Tested-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> ---
->   drivers/char/tpm/tpm-chip.c       | 25 ++++++++++++-------------
->   drivers/char/tpm/tpm-interface.c  |  6 ------
->   drivers/char/tpm/tpm.h            |  9 ---------
->   drivers/char/tpm/tpm2-space.c     |  5 ++++-
->   drivers/char/tpm/tpm_vtpm_proxy.c |  3 +--
->   5 files changed, 17 insertions(+), 31 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 65f1561eba81..7ad4d9045e4c 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -41,9 +41,6 @@ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
->   {
->   	int rc;
->
-> -	if (flags & TPM_TRANSMIT_NESTED)
-> -		return 0;
-> -
->   	if (!chip->ops->request_locality)
->   		return 0;
->
-> @@ -59,9 +56,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
->   {
->   	int rc;
->
-> -	if (flags & TPM_TRANSMIT_NESTED)
-> -		return;
-> -
->   	if (!chip->ops->relinquish_locality)
->   		return;
->
-> @@ -74,9 +68,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
->
->   static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
->   {
-> -	if (flags & TPM_TRANSMIT_NESTED)
-> -		return 0;
-> -
->   	if (!chip->ops->cmd_ready)
->   		return 0;
->
-> @@ -85,9 +76,6 @@ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
->
->   static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
->   {
-> -	if (flags & TPM_TRANSMIT_NESTED)
-> -		return 0;
-> -
->   	if (!chip->ops->go_idle)
->   		return 0;
->
-> @@ -166,11 +154,17 @@ int tpm_try_get_ops(struct tpm_chip *chip)
->
->   	down_read(&chip->ops_sem);
->   	if (!chip->ops)
-> -		goto out_lock;
-> +		goto out_ops;
->
->   	mutex_lock(&chip->tpm_mutex);
-> +	rc = tpm_chip_start(chip, 0);
-> +	if (rc)
-> +		goto out_lock;
-> +
->   	return 0;
->   out_lock:
-> +	mutex_unlock(&chip->tpm_mutex);
-> +out_ops:
->   	up_read(&chip->ops_sem);
->   	put_device(&chip->dev);
->   	return rc;
-> @@ -186,6 +180,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
->    */
->   void tpm_put_ops(struct tpm_chip *chip)
->   {
-> +	tpm_chip_stop(chip, 0);
->   	mutex_unlock(&chip->tpm_mutex);
->   	up_read(&chip->ops_sem);
->   	put_device(&chip->dev);
-> @@ -563,7 +558,11 @@ int tpm_chip_register(struct tpm_chip *chip)
->   {
->   	int rc;
->
-> +	rc = tpm_chip_start(chip, 0);
-> +	if (rc)
-> +		return rc;
->   	rc = tpm_auto_startup(chip);
-> +	tpm_chip_stop(chip, 0);
->   	if (rc)
->   		return rc;
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index f7b7e4e75fcf..f20c78055731 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -168,13 +168,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
->   	memcpy(save, buf, save_size);
->
->   	for (;;) {
-> -		ret = tpm_chip_start(chip, flags);
-> -		if (ret)
-> -			return ret;
-> -
->   		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
-> -
-> -		tpm_chip_stop(chip, flags);
->   		if (ret < 0)
->   			break;
->   		rc = be32_to_cpu(header->return_code);
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 2d6d934f1c8b..53e4208759ee 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -485,15 +485,6 @@ extern const struct file_operations tpm_fops;
->   extern const struct file_operations tpmrm_fops;
->   extern struct idr dev_nums_idr;
->
-> -/**
-> - * enum tpm_transmit_flags - flags for tpm_transmit()
-> - *
-> - * %TPM_TRANSMIT_NESTED:	discard setup steps (power management, locality)
-> - */
-> -enum tpm_transmit_flags {
-> -	TPM_TRANSMIT_NESTED      = BIT(0),
-> -};
-> -
->   ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
->   		     unsigned int flags);
->   ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
-> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> index 9c9ccf2c0681..6c6ad2d4d31b 100644
-> --- a/drivers/char/tpm/tpm2-space.c
-> +++ b/drivers/char/tpm/tpm2-space.c
-> @@ -60,7 +60,10 @@ int tpm2_init_space(struct tpm_space *space)
->   void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
->   {
->   	mutex_lock(&chip->tpm_mutex);
-> -	tpm2_flush_sessions(chip, space);
-> +	if (!tpm_chip_start(chip, 0)) {
-> +		tpm2_flush_sessions(chip, space);
-> +		tpm_chip_stop(chip, 0);
-> +	}
->   	mutex_unlock(&chip->tpm_mutex);
->   	kfree(space->context_buf);
->   	kfree(space->session_buf);
-> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-> index e8a1da2810a9..a4bb60e163cc 100644
-> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> @@ -417,8 +417,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
->
->   	proxy_dev->state |= STATE_DRIVER_COMMAND;
->
-> -	rc = tpm_transmit_cmd(chip, &buf, 0, TPM_TRANSMIT_NESTED,
-> -			      "attempting to set locality");
-> +	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
->
->   	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
->
-This patch seems to be missing a hunk along these lines here
+On Thu, Jan 10, 2019 at 12:27:46PM -0800, Eric Biggers wrote:
+> On Wed, Nov 28, 2018 at 03:19:41PM -0800, Eric Biggers wrote:
+> > On Fri, Nov 02, 2018 at 06:58:54PM -0700, Eric Biggers wrote:
+> > > From: Eric Biggers <ebiggers@google.com>
+> > > 
+> > > syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
+> > > called from construct_alloc_key() during sys_request_key(), because the
+> > > length of the key description was never calculated.
+> > > 
+> > > The problem is that we rely on ->desc_len being initialized by
+> > > search_process_keyrings(), specifically by search_nested_keyrings().
+> > > But, if the process isn't subscribed to any keyrings that never happens.
+> > > 
+> > > Fix it by always initializing keyring_index_key::desc_len as soon as the
+> > > description is set, like we already do in some places.
+> > > 
+> > > The following program reproduces the BUG_ON() when it's run as root and
+> > > no session keyring has been installed.  If it doesn't work, try removing
+> > > pam_keyinit.so from /etc/pam.d/login and rebooting.
+> > > 
+> > >     #include <stdlib.h>
+> > >     #include <unistd.h>
+> > >     #include <keyutils.h>
+> > > 
+> > >     int main(void)
+> > >     {
+> > >             int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
+> > > 
+> > >             keyctl_setperm(id, KEY_OTH_WRITE);
+> > >             setreuid(5000, 5000);
+> > >             request_key("user", "desc", "", id);
+> > >     }
+> > > 
+> > > Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
+> > > Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+> > > Cc: <stable@vger.kernel.org> # v3.13+
+> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > > ---
+> > > 
+> > > v2: In proc_keys_show(), assign index_key directly
+> > > 
+> > >  security/keys/keyring.c          | 4 +---
+> > >  security/keys/proc.c             | 3 +--
+> > >  security/keys/request_key.c      | 1 +
+> > >  security/keys/request_key_auth.c | 2 +-
+> > >  4 files changed, 4 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+> > > index 41bcf57e96f21..99a55145ddcd2 100644
+> > > --- a/security/keys/keyring.c
+> > > +++ b/security/keys/keyring.c
+> > > @@ -661,9 +661,6 @@ static bool search_nested_keyrings(struct key *keyring,
+> > >  	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
+> > >  	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
+> > >  
+> > > -	if (ctx->index_key.description)
+> > > -		ctx->index_key.desc_len = strlen(ctx->index_key.description);
+> > > -
+> > >  	/* Check to see if this top-level keyring is what we are looking for
+> > >  	 * and whether it is valid or not.
+> > >  	 */
+> > > @@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyring,
+> > >  	struct keyring_search_context ctx = {
+> > >  		.index_key.type		= type,
+> > >  		.index_key.description	= description,
+> > > +		.index_key.desc_len	= strlen(description),
+> > >  		.cred			= current_cred(),
+> > >  		.match_data.cmp		= key_default_cmp,
+> > >  		.match_data.raw_data	= description,
+> > > diff --git a/security/keys/proc.c b/security/keys/proc.c
+> > > index 5af2934965d80..d38be9db2cc07 100644
+> > > --- a/security/keys/proc.c
+> > > +++ b/security/keys/proc.c
+> > > @@ -166,8 +166,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
+> > >  	int rc;
+> > >  
+> > >  	struct keyring_search_context ctx = {
+> > > -		.index_key.type		= key->type,
+> > > -		.index_key.description	= key->description,
+> > > +		.index_key		= key->index_key,
+> > >  		.cred			= m->file->f_cred,
+> > >  		.match_data.cmp		= lookup_user_key_possessed,
+> > >  		.match_data.raw_data	= key,
+> > > diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+> > > index 114f7408feee6..7385536986497 100644
+> > > --- a/security/keys/request_key.c
+> > > +++ b/security/keys/request_key.c
+> > > @@ -545,6 +545,7 @@ struct key *request_key_and_link(struct key_type *type,
+> > >  	struct keyring_search_context ctx = {
+> > >  		.index_key.type		= type,
+> > >  		.index_key.description	= description,
+> > > +		.index_key.desc_len	= strlen(description),
+> > >  		.cred			= current_cred(),
+> > >  		.match_data.cmp		= key_default_cmp,
+> > >  		.match_data.raw_data	= description,
+> > > diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+> > > index 424e1d90412ea..6797843154f03 100644
+> > > --- a/security/keys/request_key_auth.c
+> > > +++ b/security/keys/request_key_auth.c
+> > > @@ -246,7 +246,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
+> > >  	struct key *authkey;
+> > >  	key_ref_t authkey_ref;
+> > >  
+> > > -	sprintf(description, "%x", target_id);
+> > > +	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
+> > >  
+> > >  	authkey_ref = search_process_keyrings(&ctx);
+> > >  
+> > > -- 
+> > > 2.19.1
+> > > 
+> > 
+> > Ping.  David, are you planning to apply this?
+> > 
+> > - Eric
+> > 
+> > -- 
+> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20181128231940.GB131170%40gmail.com.
+> > For more options, visit https://groups.google.com/d/optout.
+> 
+> Ping.
+> 
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index e74c5b7b64bf..52afe20cc8a1 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -799,7 +799,9 @@ int tpm2_probe(struct tpm_chip *chip)
-      tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
-      tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
-      tpm_buf_append_u32(&buf, 1);
-+    tpm_chip_start(chip, 0);
-      rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
-+    tpm_chip_stop(chip, 0);
-      /* We ignore TPM return codes on purpose. */
-      if (rc >=  0) {
-          out = (struct tpm_header *)buf.data;
+Ping.  David, are you planning to apply this?
 
-
-Of course you need to check the error from tpm_chip_start().
-
+- Eric
