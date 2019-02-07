@@ -2,76 +2,69 @@ Return-Path: <SRS0=SNv9=QO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8EAC282C2
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 10:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD42C282C2
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 12:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A56F218FE
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 10:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F278521902
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 12:45:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfBGK6c (ORCPT
+        id S1726786AbfBGMpE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Feb 2019 05:58:32 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32888 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726186AbfBGK6c (ORCPT
+        Thu, 7 Feb 2019 07:45:04 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:60480 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726769AbfBGMpE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Feb 2019 05:58:32 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id DA24A86FF9E37E45DFA9;
-        Thu,  7 Feb 2019 10:58:29 +0000 (GMT)
-Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 7 Feb
- 2019 10:58:19 +0000
-Subject: Re: [PATCH v10 0/6] tpm: retrieve digest size of unknown algorithms
- from TPM
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190206105724.14495-1-roberto.sassu@huawei.com>
- <20190206125725.GA9257@linux.intel.com>
- <1fff7b54-cc9a-7705-4c26-819bdd1286f2@huawei.com>
- <20190206135450.GA20061@linux.intel.com>
- <2dea31e3-0796-e21f-5625-1ddc78485c71@huawei.com>
- <20190206153445.GA23970@linux.intel.com>
- <3cd14c24-9de2-d347-b40c-22ca87d9df87@huawei.com>
- <20190206171027.GA25668@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <11187952-3ba3-4f30-3081-cbdfd0986eed@huawei.com>
-Date:   Thu, 7 Feb 2019 11:58:14 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190206171027.GA25668@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.155]
-X-CFilter-Loop: Reflected
+        Thu, 7 Feb 2019 07:45:04 -0500
+Received: from green.intra.ispras.ru (pluton2.ispras.ru [83.149.199.44])
+        by mail.ispras.ru (Postfix) with ESMTPSA id EB7105400A9;
+        Thu,  7 Feb 2019 15:45:01 +0300 (MSK)
+From:   Denis Efremov <efremov@ispras.ru>
+To:     linux-security-module@vger.kernel.org
+Cc:     Denis Efremov <efremov@ispras.ru>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/10] LSM documentation update
+Date:   Thu,  7 Feb 2019 15:44:48 +0300
+Message-Id: <cover.1549540487.git.efremov@ispras.ru>
+X-Mailer: git-send-email 2.17.2
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/6/2019 6:10 PM, Jarkko Sakkinen wrote:
-> On Wed, Feb 06, 2019 at 05:07:49PM +0100, Roberto Sassu wrote:
->> Seems ok to me. I'll send patch 3/6 and 4/6.
-> 
-> Your series has been applied to master and next. Thank you.
+Recent "New LSM Hooks" discussion has led me to the
+thought that it might be a good idea to slightly
+update the current documentation. The patchset adds
+nothing new to the documentation, only fixes the old
+description of hooks to reflect their current state.
 
-Thanks.
+Denis Efremov (10):
+  security: fix documentation for the sb_copy_data hook
+  security: fix documentation for the syslog hook
+  security: fix documentation for the socket_post_create hook
+  security: fix documentation for the task_setscheduler hook
+  security: fix documentation for the socket_getpeersec_dgram hook
+  security: fix documentation for the path_chmod hook
+  security: fix documentation for the audit_* hooks
+  security: fix documentation for the msg_queue_* hooks
+  security: fix documentation for the sem_* hooks
+  security: fix documentation for the shm_* hooks
 
-Roberto
-
-
-> /Jarkko
-> 
+ include/linux/lsm_hooks.h | 127 ++++++++++++++++++--------------------
+ 1 file changed, 61 insertions(+), 66 deletions(-)
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+2.17.2
+
