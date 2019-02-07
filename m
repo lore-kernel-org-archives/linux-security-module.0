@@ -6,36 +6,45 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742CFC282CC
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 17:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E74C4151A
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 18:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46E1121916
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 17:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A81F218D3
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 18:20:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfBGRty (ORCPT
+        id S1726657AbfBGSUu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Feb 2019 12:49:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37154 "EHLO mail.kernel.org"
+        Thu, 7 Feb 2019 13:20:50 -0500
+Received: from mga11.intel.com ([192.55.52.93]:16047 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbfBGRty (ORCPT
+        id S1726401AbfBGSUu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Feb 2019 12:49:54 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF3762083B;
-        Thu,  7 Feb 2019 17:49:51 +0000 (UTC)
-Date:   Thu, 7 Feb 2019 12:49:49 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        Thu, 7 Feb 2019 13:20:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 10:20:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
+   d="scan'208";a="120751908"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Feb 2019 10:20:49 -0800
+Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
+ ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 7 Feb 2019 10:20:47 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.62]) by
+ ORSMSX156.amr.corp.intel.com ([169.254.8.107]) with mapi id 14.03.0415.000;
+ Thu, 7 Feb 2019 10:20:46 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "rostedt@goodmis.org" <rostedt@goodmis.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "jeyu@kernel.org" <jeyu@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
         "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
         "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
         "Dock, Deneen T" <deneen.t.dock@intel.com>,
@@ -57,36 +66,40 @@ Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "ast@kernel.org" <ast@kernel.org>,
         "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>
 Subject: Re: [PATCH 16/17] Plug in new special vfree flag
-Message-ID: <20190207124949.0ea219a7@gandalf.local.home>
-In-Reply-To: <16a2ac45ceef5b6f310f816d696ad2ea8df3b45c.camel@intel.com>
+Thread-Topic: [PATCH 16/17] Plug in new special vfree flag
+Thread-Index: AQHUrfxTN/9E5iQS/ECuiIskA2n60aXTmtoAgAGlzACAAASHgIAACKWA
+Date:   Thu, 7 Feb 2019 18:20:45 +0000
+Message-ID: <e71683c86dbe1b32fcec5cc708e8773e72242519.camel@intel.com>
 References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-        <20190117003259.23141-17-rick.p.edgecombe@intel.com>
-        <20190206112356.64cc5f0d@gandalf.local.home>
-        <16a2ac45ceef5b6f310f816d696ad2ea8df3b45c.camel@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+         <20190117003259.23141-17-rick.p.edgecombe@intel.com>
+         <20190206112356.64cc5f0d@gandalf.local.home>
+         <16a2ac45ceef5b6f310f816d696ad2ea8df3b45c.camel@intel.com>
+         <20190207124949.0ea219a7@gandalf.local.home>
+In-Reply-To: <20190207124949.0ea219a7@gandalf.local.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.11]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <04CF8A361999FE4C8001D62D362CA687@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 7 Feb 2019 17:33:37 +0000
-"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
-
-
-> > > ---
-> > >  arch/x86/kernel/ftrace.c       |  6 +--  
-> > 
-> > For the ftrace code.
-> > 
-> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > 
-> > -- Steve
-> >   
-> Thanks!
-
-I just noticed that the subject is incorrect; It is missing the
-"subsystem:" part. See Documentation/process/submitting-patches.rst
-
--- Steve
+T24gVGh1LCAyMDE5LTAyLTA3IGF0IDEyOjQ5IC0wNTAwLCBTdGV2ZW4gUm9zdGVkdCB3cm90ZToN
+Cj4gT24gVGh1LCA3IEZlYiAyMDE5IDE3OjMzOjM3ICswMDAwDQo+ICJFZGdlY29tYmUsIFJpY2sg
+UCIgPHJpY2sucC5lZGdlY29tYmVAaW50ZWwuY29tPiB3cm90ZToNCj4gDQo+IA0KPiA+ID4gPiAt
+LS0NCj4gPiA+ID4gIGFyY2gveDg2L2tlcm5lbC9mdHJhY2UuYyAgICAgICB8ICA2ICstLSAgDQo+
+ID4gPiANCj4gPiA+IEZvciB0aGUgZnRyYWNlIGNvZGUuDQo+ID4gPiANCj4gPiA+IEFja2VkLWJ5
+OiBTdGV2ZW4gUm9zdGVkdCAoVk13YXJlKSA8cm9zdGVkdEBnb29kbWlzLm9yZz4NCj4gPiA+IA0K
+PiA+ID4gLS0gU3RldmUNCj4gPiA+ICAgDQo+ID4gDQo+ID4gVGhhbmtzIQ0KPiANCj4gSSBqdXN0
+IG5vdGljZWQgdGhhdCB0aGUgc3ViamVjdCBpcyBpbmNvcnJlY3Q7IEl0IGlzIG1pc3NpbmcgdGhl
+DQo+ICJzdWJzeXN0ZW06IiBwYXJ0LiBTZWUgRG9jdW1lbnRhdGlvbi9wcm9jZXNzL3N1Ym1pdHRp
+bmctcGF0Y2hlcy5yc3QNCj4gDQo+IC0tIFN0ZXZlDQpTb3JyeSBhYm91dCB0aGF0LiBUaGVyZSBp
+cyBhY3R1YWxseSB2MiBvZiB0aGlzIHBhdGNoc2V0IG91dCB0aGVyZSwgd2hlcmUgdGhlcmUNCmFy
+ZSBubyBjb2RlIGNoYW5nZXMgZm9yIHRoaXMgcGF0Y2gsIGJ1dCBpdCBpcyBzcGxpdCBpbnRvIHNl
+cGFyYXRlIHBhdGNoZXMgZm9yDQplYWNoIHN1YnN5c3RlbS4gSXQgaGFzICJ4ODYvZnRyYWNlOiAi
+IGZvciB0aGUgZnRyYWNlIHBhdGNoLg0KDQpSaWNrDQo=
