@@ -2,104 +2,203 @@ Return-Path: <SRS0=SNv9=QO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E74C4151A
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 18:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AC1C282CC
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 18:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A81F218D3
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 18:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A667A21872
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 18:51:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="WSxduoYQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfBGSUu (ORCPT
+        id S1726675AbfBGSv5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Feb 2019 13:20:50 -0500
-Received: from mga11.intel.com ([192.55.52.93]:16047 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbfBGSUu (ORCPT
+        Thu, 7 Feb 2019 13:51:57 -0500
+Received: from smtp2.infineon.com ([217.10.52.18]:55424 "EHLO
+        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbfBGSv4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Feb 2019 13:20:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 10:20:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
-   d="scan'208";a="120751908"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Feb 2019 10:20:49 -0800
-Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 7 Feb 2019 10:20:47 -0800
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.62]) by
- ORSMSX156.amr.corp.intel.com ([169.254.8.107]) with mapi id 14.03.0415.000;
- Thu, 7 Feb 2019 10:20:46 -0800
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "rostedt@goodmis.org" <rostedt@goodmis.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "rusty@rustcorp.com.au" <rusty@rustcorp.com.au>,
-        "linux-security-module@vger.kernel.org" 
+        Thu, 7 Feb 2019 13:51:56 -0500
+X-Greylist: delayed 590 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Feb 2019 13:51:54 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
+  t=1549565515; x=1581101515;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=kABnqEUI8oDFNMb/Zw05k+zHhI9JnmBRwJmh2Ur6Wmc=;
+  b=WSxduoYQCKRNQAnK4vJ78eJaOZ5qXceCCmG4TEugEycyP6uqwJRYCkK1
+   xz7fNeYIYVQOMCCeLRenMYdf3qAPb1dihp+aYKRDhPrwmHjVEKhbxc6ZE
+   Gv3uEThf96Yvm9FOKsTjytHY2hseCo0wWq4wdO6G0OYbmOx9RtbqX9I/+
+   0=;
+X-SBRS: None
+X-IronPort-AV: E=McAfee;i="5900,7806,9160"; a="99967746"
+X-IronPort-AV: E=Sophos;i="5.58,345,1544482800"; 
+   d="scan'208";a="99967746"
+Received: from unknown (HELO mucxv001.muc.infineon.com) ([172.23.11.16])
+  by smtp2.infineon.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Feb 2019 19:42:03 +0100
+Received: from MUCSE708.infineon.com (MUCSE708.infineon.com [172.23.7.82])
+        by mucxv001.muc.infineon.com (Postfix) with ESMTPS;
+        Thu,  7 Feb 2019 19:42:03 +0100 (CET)
+Received: from [10.154.32.72] (172.23.8.247) by MUCSE708.infineon.com
+ (172.23.7.82) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.1531.3; Thu, 7 Feb
+ 2019 19:42:02 +0100
+Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        <linux-integrity@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux_dti@icloud.com" <linux_dti@icloud.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>
-Subject: Re: [PATCH 16/17] Plug in new special vfree flag
-Thread-Topic: [PATCH 16/17] Plug in new special vfree flag
-Thread-Index: AQHUrfxTN/9E5iQS/ECuiIskA2n60aXTmtoAgAGlzACAAASHgIAACKWA
-Date:   Thu, 7 Feb 2019 18:20:45 +0000
-Message-ID: <e71683c86dbe1b32fcec5cc708e8773e72242519.camel@intel.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-         <20190117003259.23141-17-rick.p.edgecombe@intel.com>
-         <20190206112356.64cc5f0d@gandalf.local.home>
-         <16a2ac45ceef5b6f310f816d696ad2ea8df3b45c.camel@intel.com>
-         <20190207124949.0ea219a7@gandalf.local.home>
-In-Reply-To: <20190207124949.0ea219a7@gandalf.local.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.11]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <04CF8A361999FE4C8001D62D362CA687@intel.com>
-Content-Transfer-Encoding: base64
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
+ <20190206120634.GA4680@linux.intel.com>
+From:   Alexander Steffen <Alexander.Steffen@infineon.com>
+Message-ID: <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
+Date:   Thu, 7 Feb 2019 19:41:56 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190206120634.GA4680@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.23.8.247]
+X-ClientProxiedBy: MUCSE707.infineon.com (172.23.7.81) To
+ MUCSE708.infineon.com (172.23.7.82)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gVGh1LCAyMDE5LTAyLTA3IGF0IDEyOjQ5IC0wNTAwLCBTdGV2ZW4gUm9zdGVkdCB3cm90ZToN
-Cj4gT24gVGh1LCA3IEZlYiAyMDE5IDE3OjMzOjM3ICswMDAwDQo+ICJFZGdlY29tYmUsIFJpY2sg
-UCIgPHJpY2sucC5lZGdlY29tYmVAaW50ZWwuY29tPiB3cm90ZToNCj4gDQo+IA0KPiA+ID4gPiAt
-LS0NCj4gPiA+ID4gIGFyY2gveDg2L2tlcm5lbC9mdHJhY2UuYyAgICAgICB8ICA2ICstLSAgDQo+
-ID4gPiANCj4gPiA+IEZvciB0aGUgZnRyYWNlIGNvZGUuDQo+ID4gPiANCj4gPiA+IEFja2VkLWJ5
-OiBTdGV2ZW4gUm9zdGVkdCAoVk13YXJlKSA8cm9zdGVkdEBnb29kbWlzLm9yZz4NCj4gPiA+IA0K
-PiA+ID4gLS0gU3RldmUNCj4gPiA+ICAgDQo+ID4gDQo+ID4gVGhhbmtzIQ0KPiANCj4gSSBqdXN0
-IG5vdGljZWQgdGhhdCB0aGUgc3ViamVjdCBpcyBpbmNvcnJlY3Q7IEl0IGlzIG1pc3NpbmcgdGhl
-DQo+ICJzdWJzeXN0ZW06IiBwYXJ0LiBTZWUgRG9jdW1lbnRhdGlvbi9wcm9jZXNzL3N1Ym1pdHRp
-bmctcGF0Y2hlcy5yc3QNCj4gDQo+IC0tIFN0ZXZlDQpTb3JyeSBhYm91dCB0aGF0LiBUaGVyZSBp
-cyBhY3R1YWxseSB2MiBvZiB0aGlzIHBhdGNoc2V0IG91dCB0aGVyZSwgd2hlcmUgdGhlcmUNCmFy
-ZSBubyBjb2RlIGNoYW5nZXMgZm9yIHRoaXMgcGF0Y2gsIGJ1dCBpdCBpcyBzcGxpdCBpbnRvIHNl
-cGFyYXRlIHBhdGNoZXMgZm9yDQplYWNoIHN1YnN5c3RlbS4gSXQgaGFzICJ4ODYvZnRyYWNlOiAi
-IGZvciB0aGUgZnRyYWNlIHBhdGNoLg0KDQpSaWNrDQo=
+On 06.02.2019 13:06, Jarkko Sakkinen wrote:
+> On Wed, Feb 06, 2019 at 12:47:07AM +0200, Jarkko Sakkinen wrote:
+>> Make the changes necessary to detach TPM space code and TPM activation
+>> code out of the tpm_transmit() flow because of both of these can cause
+>> nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+>> to maintain, and thus, it is better to just fix things now before this
+>> turns into a bigger mess.
+>>
+>> v11:
+>> * Drop the patch that tries to flush TPM space on system. Not a proper
+>>    fallback + out of scope for this patch set.
+>>
+>> v10:
+>> * Use void pointers to avoid unnecessary casts in functions paramaters
+>>    where it makes sense.
+>>
+>> v9:
+>> * Fixed again tpm_try_get_ops().
+>> * Added missing reviewed-by's.
+>>
+>> v8:
+>> * Re-add the check for ret < 0 after calling tpm_try_transmit() that
+>>    was dropped by mistake while moving code.
+>> * Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
+>>    fails.
+>>
+>> v7:
+>> *  Reorganize series so that more trivial and self-contained changes are
+>>     in the head.
+>>
+>> v6:
+>> * When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
+>>    the TPM header was incorrectly declared as struct tpm_input_header.
+>> * Fix return value in tpm_validate_command().
+>>
+>> v5:
+>> * Add the missing rev's from Stefan Berger.
+>>
+>> v4:
+>> * Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+>> * Fix error handling flow in tpm_try_transmit().
+>> * Replace struct tpm_input_header and struct tpm_output_header with
+>>    struct tpm_header.
+>>
+>> v3:
+>> * Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
+>> * Move TPM power gating code and locking to tpm_try_get_ops() and
+>>    tpm_put_ops().
+>> * Call power gating code directly in tpm_chip_register() and
+>>    tpm2_del_space().
+>>
+>> v2:
+>> * Print tpm2_commit_space() error inside tpm2_commit_space()
+>> * Error code was not printed when recv() callback failed. It is
+>>    fixed in this version.
+>> * Added a patch that removes @space from tpm_transmit().
+>> * Fixed a regression in earlier series. Forgot to amend the change
+>>    from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
+>>
+>> Jarkko Sakkinen (16):
+>>    tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+>>    tpm: fix invalid return value in pubek_show()
+>>    tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+>>    tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+>>    tpm: declare struct tpm_header
+>>    tpm: access command header through struct in tpm_try_transmit()
+>>    tpm: encapsulate tpm_dev_transmit()
+>>    tpm: clean up tpm_try_transmit() error handling flow
+>>    tpm: move tpm_validate_commmand() to tpm2-space.c
+>>    tpm: move TPM space code out of tpm_transmit()
+>>    tpm: remove @space from tpm_transmit()
+>>    tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+>>    tpm: remove TPM_TRANSMIT_UNLOCKED flag
+>>    tpm: introduce tpm_chip_start() and tpm_chip_stop()
+>>    tpm: take TPM chip power gating out of tpm_transmit()
+>>    tpm: remove @flags from tpm_transmit()
+>>
+>>   drivers/char/tpm/tpm-chip.c       | 109 ++++++++++++
+>>   drivers/char/tpm/tpm-dev-common.c |  44 ++++-
+>>   drivers/char/tpm/tpm-interface.c  | 264 ++++++------------------------
+>>   drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
+>>   drivers/char/tpm/tpm.h            |  64 +++-----
+>>   drivers/char/tpm/tpm1-cmd.c       |  28 +---
+>>   drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+>>   drivers/char/tpm/tpm2-space.c     |  91 +++++++---
+>>   drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+>>   drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+>>   drivers/char/tpm/xen-tpmfront.c   |   2 +-
+>>   11 files changed, 408 insertions(+), 421 deletions(-)
+>>
+>> -- 
+>> 2.19.1
+>>
+> 
+> Applied to master and next.
+
+Something in this series seems to break basic TPM communication for me.
+
+For TPM2.0s the probe command fails, causing them to be misdetected as 
+TPM1.2s:
+
+---
+tpm tpm0: tpm_try_transmit: tpm_send: error -5
+tpm_tis MSFT0101:00: 1.2 TPM (device-id 0x1A, rev-id 22)
+tpm tpm0: A TPM error (30) occurred attempting to determine the timeouts
+---
+tpm tpm0: tpm_try_transmit: tpm_send: error -5
+tpm_tis_spi spi0.1: 1.2 TPM (device-id 0x1B, rev-id 22)
+tpm tpm0: A TPM error (30) occurred attempting to determine the timeouts
+---
+
+And for something that actually is a TPM1.2 it fails in a similar way:
+
+---
+tpm_i2c_infineon 1-0020: 1.2 TPM (device-id 0x1A)
+tpm tpm0: A TPM error (-14) occurred attempting to determine the timeouts
+---
+tpm tpm0: tpm_try_transmit: tpm_send: error -5
+tpm_tis_spi spi0.1: 1.2 TPM (device-id 0x1B, rev-id 16)
+tpm tpm0: A TPM error (-14) occurred attempting to determine the timeouts
+tpm_tis_spi: probe of spi0.1 failed with error -14
+---
+
+I see this problem across my entire range of TPM devices and test 
+platforms. Any idea what could be wrong here?
+
+Alexander
