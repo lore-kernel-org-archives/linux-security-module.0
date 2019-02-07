@@ -2,188 +2,115 @@ Return-Path: <SRS0=SNv9=QO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F93C282CC
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 21:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B550C282C2
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 21:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 421522146E
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 21:29:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDB4C2175B
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 21:55:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iTeCLapt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfBGV3T (ORCPT
+        id S1726880AbfBGVzI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Feb 2019 16:29:19 -0500
-Received: from mga02.intel.com ([134.134.136.20]:31227 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726622AbfBGV3T (ORCPT
+        Thu, 7 Feb 2019 16:55:08 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:45219 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfBGVzI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Feb 2019 16:29:19 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 13:29:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,345,1544515200"; 
-   d="scan'208";a="142495112"
-Received: from mwesterb-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.154])
-  by fmsmga004.fm.intel.com with ESMTP; 07 Feb 2019 13:29:13 -0800
-Date:   Thu, 7 Feb 2019 23:29:12 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
-Message-ID: <20190207212912.GD23906@linux.intel.com>
-References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
- <20190206120634.GA4680@linux.intel.com>
- <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
+        Thu, 7 Feb 2019 16:55:08 -0500
+Received: by mail-yb1-f195.google.com with SMTP id e131so583926ybh.12
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Feb 2019 13:55:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5a0BcPDa2Z/6xrr2VhLG4EobKA5L8sCm5fgGxy9bqh4=;
+        b=iTeCLaptyR7UF4GGQN4y+r2KS/32utaG+Ix5/S+gcfyYL9JrnJcVihEQxL1W/aPbgG
+         9HAvsj9S4mUmsvtiJ1/QcFJeMhSxG3/lU+tHU2xjnNaQZa8mUAVEc+PtvvuhTbVFKjLM
+         T4mt4b+ItugCQys0dbOeXWCImxzSGCpitSbHE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5a0BcPDa2Z/6xrr2VhLG4EobKA5L8sCm5fgGxy9bqh4=;
+        b=cXXW+8QvEO82DaCe1THR0U/zKmtl9KO01HqeCGwYJPaw2JvmERdqDW3TpVgiMWSm2P
+         +jsifBHi9NQsM/V36fwDOxtSwXwoNnNHrf9Hk0zmgkXizTt//xzG7+ybrvLhl5p8ixn5
+         fwQFJ2nN/K1g2QMLbDB8FTpStmNqQ4foYajcvO7ueODA321XbmoSL/ye7eLpcGKFIbnG
+         OOKiLSCyCTc/SuP307YxueLJwGlY85K61G3y7ivL0OQ9jr1+qFjSo+9c55oTjvJAJ+7k
+         Yz3RjCi1Jjt3Gu/ocmOtQOG+2gyrE8vp3I8E+jyIskmDaoKDLul5zTr1Yaih69LlX4Ua
+         HHCQ==
+X-Gm-Message-State: AHQUAuZUYbRoKW5foHvPZSHUPp1DI/FOYmSHXH7Tyvr1nrQl8jV87Str
+        WrwoQPWSIX0Gh0JReeJkGCk0UOQBmHzZnmNXE2Hh1A==
+X-Google-Smtp-Source: AHgI3IboWi6MpPU654yVVqK5KRDuW9lmea7CnCVqAzQ20sCmQyb8upC2mfcsgMeEVcl1RBTQVffvY6uCfbMbMZ5D/Yc=
+X-Received: by 2002:a25:bd5:: with SMTP id 204mr14686019ybl.97.1549576507516;
+ Thu, 07 Feb 2019 13:55:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAGXu5jJX5V9H5uWArV93eM9jFzaCO4s3rQPBa6rN0LbKtMj82Q@mail.gmail.com>
+ <20190206190309.247032-1-mortonm@chromium.org> <000101d4be51$d4c07c80$7e417580$@211mainstreet.net>
+In-Reply-To: <000101d4be51$d4c07c80$7e417580$@211mainstreet.net>
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Thu, 7 Feb 2019 13:54:56 -0800
+Message-ID: <CAJ-EccNpKa8soywNK1BMJGesOcw=jxo9FvQ6BbZukFkubrnnPQ@mail.gmail.com>
+Subject: Re: [PATCH] LSM: SafeSetID: add selftest
+To:     Edwin Zimmerman <edwin@211mainstreet.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 07, 2019 at 07:41:56PM +0100, Alexander Steffen wrote:
-> On 06.02.2019 13:06, Jarkko Sakkinen wrote:
-> > On Wed, Feb 06, 2019 at 12:47:07AM +0200, Jarkko Sakkinen wrote:
-> > > Make the changes necessary to detach TPM space code and TPM activation
-> > > code out of the tpm_transmit() flow because of both of these can cause
-> > > nested tpm_transmit() calls. The nesteds calls make the whole flow hard
-> > > to maintain, and thus, it is better to just fix things now before this
-> > > turns into a bigger mess.
-> > > 
-> > > v11:
-> > > * Drop the patch that tries to flush TPM space on system. Not a proper
-> > >    fallback + out of scope for this patch set.
-> > > 
-> > > v10:
-> > > * Use void pointers to avoid unnecessary casts in functions paramaters
-> > >    where it makes sense.
-> > > 
-> > > v9:
-> > > * Fixed again tpm_try_get_ops().
-> > > * Added missing reviewed-by's.
-> > > 
-> > > v8:
-> > > * Re-add the check for ret < 0 after calling tpm_try_transmit() that
-> > >    was dropped by mistake while moving code.
-> > > * Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
-> > >    fails.
-> > > 
-> > > v7:
-> > > *  Reorganize series so that more trivial and self-contained changes are
-> > >     in the head.
-> > > 
-> > > v6:
-> > > * When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
-> > >    the TPM header was incorrectly declared as struct tpm_input_header.
-> > > * Fix return value in tpm_validate_command().
-> > > 
-> > > v5:
-> > > * Add the missing rev's from Stefan Berger.
-> > > 
-> > > v4:
-> > > * Return 0 from pcrs_show() when tpm1_pcr_read() fails.
-> > > * Fix error handling flow in tpm_try_transmit().
-> > > * Replace struct tpm_input_header and struct tpm_output_header with
-> > >    struct tpm_header.
-> > > 
-> > > v3:
-> > > * Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
-> > > * Move TPM power gating code and locking to tpm_try_get_ops() and
-> > >    tpm_put_ops().
-> > > * Call power gating code directly in tpm_chip_register() and
-> > >    tpm2_del_space().
-> > > 
-> > > v2:
-> > > * Print tpm2_commit_space() error inside tpm2_commit_space()
-> > > * Error code was not printed when recv() callback failed. It is
-> > >    fixed in this version.
-> > > * Added a patch that removes @space from tpm_transmit().
-> > > * Fixed a regression in earlier series. Forgot to amend the change
-> > >    from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
-> > > 
-> > > Jarkko Sakkinen (16):
-> > >    tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
-> > >    tpm: fix invalid return value in pubek_show()
-> > >    tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
-> > >    tpm: print tpm2_commit_space() error inside tpm2_commit_space()
-> > >    tpm: declare struct tpm_header
-> > >    tpm: access command header through struct in tpm_try_transmit()
-> > >    tpm: encapsulate tpm_dev_transmit()
-> > >    tpm: clean up tpm_try_transmit() error handling flow
-> > >    tpm: move tpm_validate_commmand() to tpm2-space.c
-> > >    tpm: move TPM space code out of tpm_transmit()
-> > >    tpm: remove @space from tpm_transmit()
-> > >    tpm: use tpm_try_get_ops() in tpm-sysfs.c.
-> > >    tpm: remove TPM_TRANSMIT_UNLOCKED flag
-> > >    tpm: introduce tpm_chip_start() and tpm_chip_stop()
-> > >    tpm: take TPM chip power gating out of tpm_transmit()
-> > >    tpm: remove @flags from tpm_transmit()
-> > > 
-> > >   drivers/char/tpm/tpm-chip.c       | 109 ++++++++++++
-> > >   drivers/char/tpm/tpm-dev-common.c |  44 ++++-
-> > >   drivers/char/tpm/tpm-interface.c  | 264 ++++++------------------------
-> > >   drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
-> > >   drivers/char/tpm/tpm.h            |  64 +++-----
-> > >   drivers/char/tpm/tpm1-cmd.c       |  28 +---
-> > >   drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
-> > >   drivers/char/tpm/tpm2-space.c     |  91 +++++++---
-> > >   drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
-> > >   drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
-> > >   drivers/char/tpm/xen-tpmfront.c   |   2 +-
-> > >   11 files changed, 408 insertions(+), 421 deletions(-)
-> > > 
-> > > -- 
-> > > 2.19.1
-> > > 
-> > 
-> > Applied to master and next.
-> 
-> Something in this series seems to break basic TPM communication for me.
-> 
-> For TPM2.0s the probe command fails, causing them to be misdetected as
-> TPM1.2s:
-> 
-> ---
-> tpm tpm0: tpm_try_transmit: tpm_send: error -5
-> tpm_tis MSFT0101:00: 1.2 TPM (device-id 0x1A, rev-id 22)
-> tpm tpm0: A TPM error (30) occurred attempting to determine the timeouts
-> ---
-> tpm tpm0: tpm_try_transmit: tpm_send: error -5
-> tpm_tis_spi spi0.1: 1.2 TPM (device-id 0x1B, rev-id 22)
-> tpm tpm0: A TPM error (30) occurred attempting to determine the timeouts
-> ---
-> 
-> And for something that actually is a TPM1.2 it fails in a similar way:
-> 
-> ---
-> tpm_i2c_infineon 1-0020: 1.2 TPM (device-id 0x1A)
-> tpm tpm0: A TPM error (-14) occurred attempting to determine the timeouts
-> ---
-> tpm tpm0: tpm_try_transmit: tpm_send: error -5
-> tpm_tis_spi spi0.1: 1.2 TPM (device-id 0x1B, rev-id 16)
-> tpm tpm0: A TPM error (-14) occurred attempting to determine the timeouts
-> tpm_tis_spi: probe of spi0.1 failed with error -14
-> ---
-> 
-> I see this problem across my entire range of TPM devices and test platforms.
-> Any idea what could be wrong here?
+Yeah, that would be simple, although maybe someone is counting on
+those users to exist later. We could create special users on the
+system for the purpose of this test that didn't exist before the test
+(and delete them afterward), but then there are other setup/cleanup
+questions, like:
 
-Weird.
+- Do we unmount securityfs after the test? What if something was
+counting on it being mounted or not mounted?
+- Do we flush the SafeSetID LSM policies after the test? Note that the
+LSM doesn't currently have the functionality to flush individual
+policies, so what happens if something was counting on certain
+policies (for other users) being configured for the LSM and we flush
+those after running our test?
 
-Can you run a bisect?
+These questions were the reason I was hoping to get more info on the
+kind of environment in which these selftests run. If the norm is to
+boot up a VM, run one of these tests, then reboot/shutdown, most of
+these questions don't need to be answered (we would still probably
+want to fix user creation/deletion since that is persistent across
+reboots).
 
-/Jarkko
+On Wed, Feb 6, 2019 at 11:26 AM Edwin Zimmerman <edwin@211mainstreet.net> wrote:
+>
+> > On Wednesday, February 06, 2019 2:03 PM Micah Morton wrote:
+> > > This patch adds a selftest for the SafeSetID LSM. The test requires
+> > > mounting securityfs if it isn't mounted, creating test users in
+> > > /etc/passwd, and configuring policies for the SafeSetID LSM through
+> > > writes to securityfs.
+> > >
+> > > Signed-off-by: Micah Morton <mortonm@chromium.org>
+> > > ---
+> > > This test is reasonably robust for demonstrating the functionality of
+> > > the LSM, but is no masterpiece by any means. I'm not totally sure how
+> > > these tests are used. Are they incorporated into testing frameworks for
+> > > the Linux kernel that are run regularly or just PoC binaries that sit in
+> > > this directory more or less as documentation? If its the former, this
+> > > code probably needs some more cleanup and better organization. Beyond
+> > > coding style, the test doesn't bother to clean up users that were added
+> > > in /etc/passwd for testing purposes nor flushes policies that were
+> > > configured for the LSM relating to those users. Should it?
+> >
+> > No good reason to leave the users, so I would suggest cleaning them up.
+> > All it would take would be several deluser commands
+> > in safesetid-test.sh.  Very simple.
+>
