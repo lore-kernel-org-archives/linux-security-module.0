@@ -6,27 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1BDC4151A
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11753C282C4
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E23F21917
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D58E421902
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfBGMp2 (ORCPT
+        id S1727138AbfBGMpY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:45:28 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:60632 "EHLO mail.ispras.ru"
+        Thu, 7 Feb 2019 07:45:24 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:60590 "EHLO mail.ispras.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbfBGMp0 (ORCPT
+        id S1726769AbfBGMpX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:45:26 -0500
+        Thu, 7 Feb 2019 07:45:23 -0500
 Received: from green.intra.ispras.ru (pluton2.ispras.ru [83.149.199.44])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 7DA575400AA;
-        Thu,  7 Feb 2019 15:45:24 +0300 (MSK)
+        by mail.ispras.ru (Postfix) with ESMTPSA id 58A675400AD;
+        Thu,  7 Feb 2019 15:45:21 +0300 (MSK)
 From:   Denis Efremov <efremov@ispras.ru>
-To:     KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     Denis Efremov <efremov@ispras.ru>,
-        Casey Schaufler <casey@schaufler-ca.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Eric Paris <eparis@parisplace.org>,
         Kees Cook <keescook@chromium.org>,
@@ -36,9 +35,9 @@ Cc:     Denis Efremov <efremov@ispras.ru>,
         Paul Moore <paul@paul-moore.com>,
         Kentaro Takeda <takedakn@nttdata.co.jp>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/10] security: fix documentation for the task_setscheduler hook
-Date:   Thu,  7 Feb 2019 15:44:52 +0300
-Message-Id: <ea5e1cb926ccf815803e1fc4967e1bf8a390b07e.1549540487.git.efremov@ispras.ru>
+Subject: [PATCH 03/10] security: fix documentation for the socket_post_create hook
+Date:   Thu,  7 Feb 2019 15:44:51 +0300
+Message-Id: <79859c6d228789c3f287ccb46bd0ddeb46aefcdd.1549540487.git.efremov@ispras.ru>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1549540487.git.efremov@ispras.ru>
 References: <cover.1549540487.git.efremov@ispras.ru>
@@ -48,32 +47,36 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The task_setscheduler hook was changed in the commit
-"security: remove unused parameter from security_task_setscheduler()"
-(b0ae19811375). The arguments @policy, @lp were removed from the hook.
-This patch updates the documentation accordingly.
+This patch slightly fixes the documentation for the
+socket_post_create hook. The documentation states that
+i_security field is accessible through inode field of socket
+structure (i.e., 'sock->inode->i_security'). There is no inode
+field in the socket structure. The i_security field is accessible
+through SOCK_INODE macro. The patch updates the documentation
+to reflect this.
 
 Signed-off-by: Denis Efremov <efremov@ispras.ru>
 ---
- include/linux/lsm_hooks.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ include/linux/lsm_hooks.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 80e5f3421b91..09223911876e 100644
+index a0555683db63..80e5f3421b91 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -655,10 +655,8 @@
-  *	Return 0 if permission is granted.
-  * @task_setscheduler:
-  *	Check permission before setting scheduling policy and/or parameters of
-- *	process @p based on @policy and @lp.
-+ *	process @p.
-  *	@p contains the task_struct for process.
-- *	@policy contains the scheduling policy.
-- *	@lp contains the scheduling parameters.
-  *	Return 0 if permission is granted.
-  * @task_getscheduler:
-  *	Check permission before obtaining scheduling information for process
+@@ -752,9 +752,9 @@
+  *	socket structure, but rather, the socket security information is stored
+  *	in the associated inode.  Typically, the inode alloc_security hook will
+  *	allocate and and attach security information to
+- *	sock->inode->i_security.  This hook may be used to update the
+- *	sock->inode->i_security field with additional information that wasn't
+- *	available when the inode was allocated.
++ *	SOCK_INODE(sock)->i_security.  This hook may be used to update the
++ *	SOCK_INODE(sock)->i_security field with additional information that
++ *	wasn't available when the inode was allocated.
+  *	@sock contains the newly created socket structure.
+  *	@family contains the requested protocol family.
+  *	@type contains the requested communications type.
 -- 
 2.17.2
 
