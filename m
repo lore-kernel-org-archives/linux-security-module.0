@@ -6,26 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1771CC282C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1BDC4151A
 	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4CF21902
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E23F21917
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Feb 2019 12:46:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727291AbfBGMpo (ORCPT
+        id S1727218AbfBGMp2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Feb 2019 07:45:44 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:60706 "EHLO mail.ispras.ru"
+        Thu, 7 Feb 2019 07:45:28 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:60632 "EHLO mail.ispras.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726769AbfBGMpn (ORCPT
+        id S1726769AbfBGMp0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Feb 2019 07:45:43 -0500
+        Thu, 7 Feb 2019 07:45:26 -0500
 Received: from green.intra.ispras.ru (pluton2.ispras.ru [83.149.199.44])
-        by mail.ispras.ru (Postfix) with ESMTPSA id B25845400AA;
-        Thu,  7 Feb 2019 15:45:41 +0300 (MSK)
+        by mail.ispras.ru (Postfix) with ESMTPSA id 7DA575400AA;
+        Thu,  7 Feb 2019 15:45:24 +0300 (MSK)
 From:   Denis Efremov <efremov@ispras.ru>
-To:     Casey Schaufler <casey@schaufler-ca.com>
+To:     KOSAKI Motohiro <kosaki.motohiro@jp.fujitsu.com>
 Cc:     Denis Efremov <efremov@ispras.ru>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Eric Paris <eparis@parisplace.org>,
         Kees Cook <keescook@chromium.org>,
@@ -35,9 +36,9 @@ Cc:     Denis Efremov <efremov@ispras.ru>,
         Paul Moore <paul@paul-moore.com>,
         Kentaro Takeda <takedakn@nttdata.co.jp>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/10] security: fix documentation for the audit_* hooks
-Date:   Thu,  7 Feb 2019 15:44:55 +0300
-Message-Id: <f898992a1f64c816b945fd3b6208b2f82ed95d15.1549540487.git.efremov@ispras.ru>
+Subject: [PATCH 04/10] security: fix documentation for the task_setscheduler hook
+Date:   Thu,  7 Feb 2019 15:44:52 +0300
+Message-Id: <ea5e1cb926ccf815803e1fc4967e1bf8a390b07e.1549540487.git.efremov@ispras.ru>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1549540487.git.efremov@ispras.ru>
 References: <cover.1549540487.git.efremov@ispras.ru>
@@ -47,44 +48,32 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch updates the documentation for the audit_* hooks
-to use the same arguments names as in the hook's declarations.
+The task_setscheduler hook was changed in the commit
+"security: remove unused parameter from security_task_setscheduler()"
+(b0ae19811375). The arguments @policy, @lp were removed from the hook.
+This patch updates the documentation accordingly.
 
 Signed-off-by: Denis Efremov <efremov@ispras.ru>
 ---
- include/linux/lsm_hooks.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/lsm_hooks.h | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 5d6428d0027b..307714b8b072 100644
+index 80e5f3421b91..09223911876e 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -1329,7 +1329,7 @@
-  * @audit_rule_known:
-  *	Specifies whether given @rule contains any fields related to
-  *	current LSM.
-- *	@rule contains the audit rule of interest.
-+ *	@krule contains the audit rule of interest.
-  *	Return 1 in case of relation found, 0 otherwise.
-  *
-  * @audit_rule_match:
-@@ -1338,14 +1338,14 @@
-  *	@secid contains the security id in question.
-  *	@field contains the field which relates to current LSM.
-  *	@op contains the operator that will be used for matching.
-- *	@rule points to the audit rule that will be checked against.
-+ *	@lsmrule points to the audit rule that will be checked against.
-  *	@actx points to the audit context associated with the check.
-  *	Return 1 if secid matches the rule, 0 if it does not, -ERRNO on failure.
-  *
-  * @audit_rule_free:
-  *	Deallocate the LSM audit rule structure previously allocated by
-  *	audit_rule_init.
-- *	@rule contains the allocated rule
-+ *	@lsmrule contains the allocated rule.
-  *
-  * @inode_invalidate_secctx:
-  *	Notify the security module that it must revalidate the security context
+@@ -655,10 +655,8 @@
+  *	Return 0 if permission is granted.
+  * @task_setscheduler:
+  *	Check permission before setting scheduling policy and/or parameters of
+- *	process @p based on @policy and @lp.
++ *	process @p.
+  *	@p contains the task_struct for process.
+- *	@policy contains the scheduling policy.
+- *	@lp contains the scheduling parameters.
+  *	Return 0 if permission is granted.
+  * @task_getscheduler:
+  *	Check permission before obtaining scheduling information for process
 -- 
 2.17.2
 
