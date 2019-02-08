@@ -2,95 +2,108 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D5DC169C4
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 22:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC83C282CB
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D49F221908
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 22:00:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08C7621908
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfBHWAc (ORCPT
+        id S1726977AbfBHWGo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:00:32 -0500
-Received: from mga18.intel.com ([134.134.136.126]:59281 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726788AbfBHWAb (ORCPT
+        Fri, 8 Feb 2019 17:06:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57514 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727352AbfBHWGk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:00:31 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 14:00:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="scan'208";a="132150845"
-Received: from mwesterb-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.154])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Feb 2019 14:00:26 -0800
-Date:   Sat, 9 Feb 2019 00:00:25 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
+        Fri, 8 Feb 2019 17:06:40 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18Lx5PB100372
+        for <linux-security-module@vger.kernel.org>; Fri, 8 Feb 2019 17:06:39 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qhfgmxr54-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Feb 2019 17:06:39 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Fri, 8 Feb 2019 22:06:38 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 8 Feb 2019 22:06:34 -0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18M6XAg22544416
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Feb 2019 22:06:34 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6B3BAC08F;
+        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C609EAC089;
+        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
+Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     "Safford, David (GE Global Research)" <david.safford@ge.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
-Message-ID: <20190208220025.GB13567@linux.intel.com>
 References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
  <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
  <20190118150011.GF4080@linux.intel.com>
  <cb86f5b6-8084-1e12-ce60-19418539b581@linux.ibm.com>
+ <20190208220025.GB13567@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Fri, 8 Feb 2019 17:06:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20190208220025.GB13567@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cb86f5b6-8084-1e12-ce60-19418539b581@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 19020822-0072-0000-0000-000003F75C0E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010561; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01158259; UDB=6.00604340; IPR=6.00938792;
+ MB=3.00025497; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 22:06:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020822-0073-0000-0000-00004B1CBA75
+Message-Id: <d34dd6ec-248e-b7f8-edb0-367f1f4f9356@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902080150
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 08, 2019 at 04:21:02PM -0500, Stefan Berger wrote:
-> On 1/18/19 10:00 AM, Jarkko Sakkinen wrote:
-> > On Fri, Jan 11, 2019 at 08:28:00PM +0000, Safford, David (GE Global Research) wrote:
-> > > You might mention that this is an important feature, as on at least some
-> > > systems, ppi function 23 is the only way to enable/disable PCR banks.
-> > > 
-> > > I have tested this patch set on my HP Spectre laptop, and I am finally
-> > > able to turn the sha-1 bank on and off. Much appreciated!
-> > > 
-> > > Tested-by: David Safford <david.safford@ge.com>
-> > Great thanks David.
-> 
-> 
-> While we are at it and for the grand finale of the day :-)
-> 
-> +All you people, keep yourself alive!
-> +Keep yourself alive!
-> +Keep yourself alive!
-> +C'mon, give me your reviewed's
-> +to keep me satisfied!
-> +Give me your signed-off's                       (1)
-> +to keep me satisfied!
-> +Keep yourself alive!
-> +A few test-by's will keep me satisfied!
-> +Keep yourself alive!
-> +Check-in!                                                (2)
-> +
-> +[In the style of Queen]
-> 
-> 
-> Jarrko, do (1) and (2) to keep me satisfied :-)
+On 2/8/19 5:00 PM, Jarkko Sakkinen wrote:
+> On Fri, Feb 08, 2019 at 04:21:02PM -0500, Stefan Berger wrote:
+> I still think that in 5/5 branching could be better but is not a biggie
+> for me (does not make the implementation as whole any kind of mess) and
+> since it is now peer tested I rather would not modify it right now.
+>
+> Applied to master and next!
 
-I still think that in 5/5 branching could be better but is not a biggie
-for me (does not make the implementation as whole any kind of mess) and
-since it is now peer tested I rather would not modify it right now.
 
-Applied to master and next!
+5/5 may cause a complaint about the scanf'ing of a single value in an 
+existing line. Let's see...
 
-/Jarkko
+ Â Â  Thanks.
+
+ Â Â Â Â Â  Stefan
+
+
