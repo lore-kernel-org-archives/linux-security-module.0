@@ -2,70 +2,88 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D54C169C4
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 14:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B5CC169C4
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 14:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAFDA20857
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 14:06:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C010F20857
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 14:08:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfBHOGU (ORCPT
+        id S1727174AbfBHOIj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 09:06:20 -0500
-Received: from mga06.intel.com ([134.134.136.31]:32150 "EHLO mga06.intel.com"
+        Fri, 8 Feb 2019 09:08:39 -0500
+Received: from mga11.intel.com ([192.55.52.93]:23320 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726465AbfBHOGU (ORCPT
+        id S1726641AbfBHOIi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 09:06:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        Fri, 8 Feb 2019 09:08:38 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 06:06:19 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 06:08:38 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,347,1544515200"; 
-   d="scan'208";a="141779272"
+   d="scan'208";a="145242949"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.115])
-  by fmsmga002.fm.intel.com with ESMTP; 08 Feb 2019 06:06:02 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 08 Feb 2019 06:08:35 -0800
+Date:   Fri, 8 Feb 2019 16:08:34 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Peter Huewe <PeterHuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 0/2] Unify send() callbacks
-Date:   Fri,  8 Feb 2019 16:05:58 +0200
-Message-Id: <20190208140600.24996-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
+Message-ID: <20190208140834.GA25255@linux.intel.com>
+References: <0af40351-91d5-d0a7-2965-0a9c6505af79@linux.ibm.com>
+ <20190208003314.GB7202@linux.intel.com>
+ <1fbd29ad-1005-8450-4c39-00974468183b@linux.ibm.com>
+ <20190208111442.GA11755@linux.intel.com>
+ <06473b24-7c59-9405-bbe0-8d30b3450391@linux.ibm.com>
+ <20190208130227.GA16679@linux.intel.com>
+ <da69e24d-ad5c-1e7b-9f02-a435872ad635@linux.ibm.com>
+ <20190208131754.GA18133@linux.intel.com>
+ <20190208133355.GA18774@linux.intel.com>
+ <c3da7f8d-818c-2dc6-5770-9beaf0e55152@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3da7f8d-818c-2dc6-5770-9beaf0e55152@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A portion of send() callbacks have returned length, in many cases just
-returning back what was given as an argument, and tpm_crb has returned 0 on
-success.  This patch set fixes and unifies the behaviour.
+On Fri, Feb 08, 2019 at 09:02:22AM -0500, Stefan Berger wrote:
+> On 2/8/19 8:33 AM, Jarkko Sakkinen wrote:
+> > 
+> > if (len != be32_to_cpu(header->length)) {
+> > 	rc = -EFAULT;
+> > 	goto out;
+> > }
+> > 
+> > rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> > if (rc)
+> > 	dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+> > 
+> > That unconditional call to commit space masked the bugs in the device
+> > drivers. I'll provide fixes shortly.
+> 
+> You got it! :-)
 
-Jarkko Sakkinen (2):
-  tpm: Unify the send callback behaviour
-  tpm/tpm_i2c_atmel: Return -E2BIG when the transfer is incomplete
+Yes, and it should not be fixes in tpm-interface.c. Sent a patch set
+for review.
 
- drivers/char/tpm/st33zp24/st33zp24.c |  2 +-
- drivers/char/tpm/tpm_atmel.c         |  2 +-
- drivers/char/tpm/tpm_i2c_atmel.c     | 10 +++++++++-
- drivers/char/tpm/tpm_i2c_infineon.c  |  2 +-
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
- drivers/char/tpm/tpm_ibmvtpm.c       |  2 +-
- drivers/char/tpm/tpm_vtpm_proxy.c    |  3 +--
- drivers/char/tpm/xen-tpmfront.c      |  2 +-
- 8 files changed, 16 insertions(+), 9 deletions(-)
+Thanks for spotting this out!
 
--- 
-2.19.1
-
+/Jarkko
