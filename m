@@ -2,112 +2,76 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EEDC282CC
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 16:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E353DC4151A
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 16:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBE152146E
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 16:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B35FF2146E
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 16:23:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfBHQTM (ORCPT
+        id S1727257AbfBHQXX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 11:19:12 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38458 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727133AbfBHQTL (ORCPT
+        Fri, 8 Feb 2019 11:23:23 -0500
+Received: from mga03.intel.com ([134.134.136.65]:41202 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727139AbfBHQXX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 11:19:11 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18GDqc0128089
-        for <linux-security-module@vger.kernel.org>; Fri, 8 Feb 2019 11:19:10 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qhd1rgenk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Feb 2019 11:19:10 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Fri, 8 Feb 2019 16:19:09 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 16:19:05 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18GJ4A414614720
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Feb 2019 16:19:04 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9AA9EB2065;
-        Fri,  8 Feb 2019 16:19:04 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A1D5B205F;
-        Fri,  8 Feb 2019 16:19:04 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Feb 2019 16:19:04 +0000 (GMT)
-Subject: Re: [PATCH 1/2] tpm: Unify the send callback behaviour
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        Fri, 8 Feb 2019 11:23:23 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 08:23:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
+   d="scan'208";a="317419552"
+Received: from shivamur-mobl1.gar.corp.intel.com (HELO localhost) ([10.249.254.162])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Feb 2019 08:23:18 -0800
+Date:   Fri, 8 Feb 2019 18:23:16 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Peter Huewe <PeterHuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org
-References: <20190208140600.24996-1-jarkko.sakkinen@linux.intel.com>
- <20190208140600.24996-2-jarkko.sakkinen@linux.intel.com>
- <b53745b6-ed49-9e97-6f56-1378561888eb@linux.ibm.com>
- <20190208154244.GA3963@linux.intel.com>
- <89f94ccb-d63e-271c-a91b-cfe63e40f776@linux.ibm.com>
- <20190208160723.GA23755@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Fri, 8 Feb 2019 11:19:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: [PATCH v2 0/2] tpm: Unify send() callbacks
+Message-ID: <20190208162316.GA25496@linux.intel.com>
+References: <20190208160328.18715-1-jarkko.sakkinen@linux.intel.com>
+ <b0469b08-18fd-847b-0f0b-6223c732b346@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190208160723.GA23755@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19020816-0040-0000-0000-000004BEC780
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010559; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01158143; UDB=6.00604226; IPR=6.00938676;
- MB=3.00025495; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 16:19:07
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020816-0041-0000-0000-000008C9E3E2
-Message-Id: <479945da-8e97-2ff5-c1c6-f77aaec86519@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=898 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080113
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0469b08-18fd-847b-0f0b-6223c732b346@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/8/19 11:07 AM, Jarkko Sakkinen wrote:
-> On Fri, Feb 08, 2019 at 10:45:53AM -0500, Stefan Berger wrote:
->> On 2/8/19 10:42 AM, Jarkko Sakkinen wrote:
->>> On Fri, Feb 08, 2019 at 09:42:16AM -0500, Stefan Berger wrote: > On 2/8/19 9:05 AM, Jarkko Sakkinen wrote:
->>>> At least tpm_nsc_send (tpm_nsc.c) and tpm_inf_send (tpm_infineon.c) are also
->>>> returning the number of bytes sent. I would consider tpm_crb the outlier
->>>> that returns 0 and should return the length even though we don't need it...
->>> That would be absolutely wrong way the fix the *actual* issue i.e.
->>> callbacks returning garbage (sometimes just passing the length parameter
->>> back as a return value).
->> Then I guess you have to fixes those other two files as well...
-> That's still a better option.
+On Fri, Feb 08, 2019 at 11:14:42AM -0500, Stefan Berger wrote:
+> On 2/8/19 11:03 AM, Jarkko Sakkinen wrote:
+> > A portion of send() callbacks have returned length, in many cases just
+> > returning back what was given as an argument, and tpm_crb has returned 0 on
+> > success. This patch set fixes and unifies the behaviour.
+> > 
+> > v2:
+> > The drivers tpm_nsc and tpm_infineon were forgotten. For this version I
+> > checked both with find and command and from Kconfig that everything that is
+> > supposed to be a driver directly interfacing with the TPM core, is included
+> > (e.g. discluding tpm_tis_spi).
+> 
+> 
+> :-( st33zp24/i2c.c ends up calling i2c_master_send, which returns number of
+> bytes written:
+> 
+> https://elixir.bootlin.com/linux/latest/source/include/linux/i2c.h#L108
 
-tpm_tis_core.c's tpm_tis_send_main() also needs fixing...
+And i2c.c is not a TPM driver so does it matter?
 
+Then st33zp24_send() is the callback interfacing with the TPM core.
 
->
-> /Jarkko
->
-
+/Jarkko
