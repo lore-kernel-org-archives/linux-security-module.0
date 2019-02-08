@@ -2,196 +2,92 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DFCC169C4
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FF6C282CC
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF8521908
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:49:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aXIHfd20"
+	by mail.kernel.org (Postfix) with ESMTP id 524AE21927
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:51:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfBHVtp (ORCPT
+        id S1726747AbfBHVvR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:49:45 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:42495 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbfBHVto (ORCPT
+        Fri, 8 Feb 2019 16:51:17 -0500
+Received: from mga17.intel.com ([192.55.52.151]:42767 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726244AbfBHVvR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:49:44 -0500
-Received: by mail-ua1-f66.google.com with SMTP id d21so1617259uap.9
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Feb 2019 13:49:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4fRaS5HEGitPBMuZe/mI/6bybUFiM7/sj7x0YbePNjY=;
-        b=aXIHfd20YOICHLRxigPSutLUUA6kYK4NZVrf9MClkFK8qLumsLJdHErpIFkPz7VZwp
-         1QIXzZRMp+Vq1UigA5uj8WukuebbfHr83hFjjPC3kox3rspL9sy6U9KIU4lnmVytb31j
-         Se66MTZg1Lbx1T7tFRrtLK9DEg9xTBERYHVbE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4fRaS5HEGitPBMuZe/mI/6bybUFiM7/sj7x0YbePNjY=;
-        b=LXOF2dcVzgDmPpTUYXY0H0Tyjk+TZ3tul3F7ySae7v1jp1pibTaItUU5VMmbWyNvuO
-         p3ighiPMkFeupWYF2BtMwhhEeYbK5JLAQx3xk7e1RPrqi7TFm48igTxiZBv8A9hFPsLk
-         mO1ojVFCf+kEv1/WedwUTlO8BM9WsnwmY9+va20nHxtrt3Ex89+Jn7Ue48vk3sVS4318
-         NBg5YnkUM274AgP/P73axfb6FsUmfsNwXRS3WsoKVdj6t55LSqk2wO5nO4KP7uR3OSP1
-         IhUIleT7By6Vxc6dHSlaqipNHeLoKEuGcZMvtiQTgQIJX1AVRRxCpWngPNNPGdbSaOi2
-         zMpg==
-X-Gm-Message-State: AHQUAuZB3SQ5KY5v1xcq2OLgNPlFFCZM5lbl+MrUYsY2yru2sLeEiPVs
-        YbZI1ILJWI2b+tg2uxhlRbuEfZgWe9M=
-X-Google-Smtp-Source: AHgI3Ib9Vf3rUe5f3KDSlLwaGMehfmC9S9oagL0xgR3P5FzOL5DDQJJLIxOsQLOE+UoajkcdzasYKQ==
-X-Received: by 2002:ab0:550b:: with SMTP id t11mr9386984uaa.31.1549662582117;
-        Fri, 08 Feb 2019 13:49:42 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id c11sm553873vsd.9.2019.02.08.13.49.40
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 08 Feb 2019 13:49:41 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id t8so1644222uap.0
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Feb 2019 13:49:40 -0800 (PST)
-X-Received: by 2002:ab0:6151:: with SMTP id w17mr869203uan.114.1549662580116;
- Fri, 08 Feb 2019 13:49:40 -0800 (PST)
+        Fri, 8 Feb 2019 16:51:17 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 13:51:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
+   d="scan'208";a="318812715"
+Received: from mwesterb-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.154])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Feb 2019 13:51:12 -0800
+Date:   Fri, 8 Feb 2019 23:51:10 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tpm: =?iso-8859-1?Q?Uni?=
+ =?iso-8859-1?Q?fy_the_send_callback_behaviour=E4?=
+Message-ID: <20190208215110.GA13567@linux.intel.com>
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
+ <20190208190057.GA3439@linux.intel.com>
+ <20190208191710.GA30645@linux.intel.com>
+ <6a86e3e8-e311-7a0f-585d-3f0435b0143a@linux.ibm.com>
+ <20190208202353.GB1836@linux.intel.com>
+ <36dc691e-4f00-7f6b-5a53-763c12d4fa16@linux.ibm.com>
+ <20190208204635.GA24938@linux.intel.com>
+ <32faca9e-5099-4ff5-6fe7-5e6e840b109b@linux.ibm.com>
 MIME-Version: 1.0
-References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
- <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com> <201902070230.x172UUG6002087@www262.sakura.ne.jp>
- <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com> <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
-In-Reply-To: <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 8 Feb 2019 13:49:28 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJF1M8K39fT0ctOWKBJegboyvLD1pc9U2P_x=miENHw+A@mail.gmail.com>
-Message-ID: <CAGXu5jJF1M8K39fT0ctOWKBJegboyvLD1pc9U2P_x=miENHw+A@mail.gmail.com>
-Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@vger.kernel.org>,
-        Russell Coker <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <32faca9e-5099-4ff5-6fe7-5e6e840b109b@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 8, 2019 at 2:52 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2019/02/08 1:24, Casey Schaufler wrote:
-> >>>> Then, I think that it is straightforward (and easier to manage) to ignore security= parameter
-> >>>> when lsm= parameter is specified.
-> >>> That reduces flexibility somewhat. If I am debugging security modules
-> >>> I may want to use lsm= to specify the order while using security= to
-> >>> identify a specific exclusive module. I could do that using lsm= by
-> >>> itself, but habits die hard.
-> >> "lsm=" can be used for identifying a specific exclusive module, and Ubuntu kernels would
-> >> have to use CONFIG_LSM (or "lsm=") for identifying the default exclusive module (in order
-> >> to allow enabling both TOMOYO and one of SELinux,Smack,AppArmor at the same time).
-> >>
-> >> Since "security=" can't be used for selectively enable/disable more than one of
-> >> SELinux,Smack,TOMOYO,AppArmor, I think that recommending users to migrate to "lsm=" is the
-> >> better direction. And ignoring "security=" when "lsm=" is specified is easier to understand.
-> >
-> > I added Kees to the CC list. Kees, what to you think about
-> > ignoring security= if lsm= is specified? I'm ambivalent.
-> >
-> >
->
-> To help administrators easily understand what LSM modules are possibly enabled by default (which
-> have to be fetched from e.g. /boot/config-`uname -r`) and specify lsm= parameter when they need,
-> I propose changes shown below.
->
-> diff --git a/security/security.c b/security/security.c
-> index 3147785e..051d708 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -51,8 +51,6 @@
->  static __initdata const char *chosen_lsm_order;
->  static __initdata const char *chosen_major_lsm;
->
-> -static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
-> -
->  /* Ordered list of LSMs to initialize. */
->  static __initdata struct lsm_info **ordered_lsms;
->  static __initdata struct lsm_info *exclusive;
-> @@ -284,14 +282,22 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
->  static void __init ordered_lsm_init(void)
->  {
->         struct lsm_info **lsm;
-> +       const char *order = CONFIG_LSM;
-> +       const char *origin = "builtin";
->
->         ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
->                                 GFP_KERNEL);
->
-> -       if (chosen_lsm_order)
-> -               ordered_lsm_parse(chosen_lsm_order, "cmdline");
-> -       else
-> -               ordered_lsm_parse(builtin_lsm_order, "builtin");
-> +       if (chosen_lsm_order) {
-> +               if (chosen_major_lsm) {
-> +                       pr_info("security= is ignored because of lsm=\n");
+On Fri, Feb 08, 2019 at 04:18:40PM -0500, Stefan Berger wrote:
+> On 2/8/19 3:46 PM, Jarkko Sakkinen wrote:
+> > On Fri, Feb 08, 2019 at 03:32:32PM -0500, Stefan Berger wrote:
+> > > 
+> > > tpm_del_char_device also needs the start/stop!
+> > Done and updated the commit message to have all the call sites:
+> > 
+> >      * tpm_chip_register()
+> >      * tpm_class_shutdown()
+> >      * tpm_del_char_device()
+> >      * tpm_pm_suspend()
+> >      * tpm_try_get_ops() and tpm_put_ops()
+> >      * tpm2_del_space()
+> 
+> 
+> I tested this now with tpm_vtpm_proxy, TPM 1.2, (TIS|CRB) + TPM 2.0. Looks
+> good now - rock solid so to say. And while we are at it ... :-)
 
-This is intended to be the new default way to change the LSM
-("lsm=..."), so I'd rather not have this appear every time. Also, it
-must continue to interact with the builtin ordering, so if you wanted
-this, I think better would be to do:
+Thank you for your support. I don't think these quite distruptive
+changes would have made in without any growing pains. The way
+tpm_transmit() used to be had become quite a mess with all the nested
+calls and weird locking flags. Now we have a good baseline to forward
+:-)
 
-diff --git a/security/security.c b/security/security.c
-index 3147785e20d7..e6153ed54361 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -288,9 +288,13 @@ static void __init ordered_lsm_init(void)
-        ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
-                                GFP_KERNEL);
+I rebased the branches to the latest security/next-general. Probably
+do the PR after the middle week (ETA Thu).
 
--       if (chosen_lsm_order)
-+       if (chosen_lsm_order) {
-+               if (chosen_major_lsm) {
-+                       pr_info("security= is ignored because of lsm=\n");
-+                       chosen_major_lsm = NULL;
-+               }
-                ordered_lsm_parse(chosen_lsm_order, "cmdline");
--       else
-+       } else
-                ordered_lsm_parse(builtin_lsm_order, "builtin");
-
-        for (lsm = ordered_lsms; *lsm; lsm++)
-
-> +       pr_info("Security Framework initializing: %s\n", order);
-> +       ordered_lsm_parse(order, origin);
->
->         for (lsm = ordered_lsms; *lsm; lsm++)
->                 prepare_lsm(*lsm);
-> @@ -333,8 +339,6 @@ int __init security_init(void)
->         int i;
->         struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
->
-> -       pr_info("Security Framework initializing\n");
-> -
->         for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
->              i++)
->                 INIT_HLIST_HEAD(&list[i]);
-
-
-
--- 
-Kees Cook
+/Jarkko
