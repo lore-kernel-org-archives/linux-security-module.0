@@ -3,91 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FF6C282CC
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D5DC169C4
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 22:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 524AE21927
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:51:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D49F221908
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 22:00:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbfBHVvR (ORCPT
+        id S1726896AbfBHWAc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:51:17 -0500
-Received: from mga17.intel.com ([192.55.52.151]:42767 "EHLO mga17.intel.com"
+        Fri, 8 Feb 2019 17:00:32 -0500
+Received: from mga18.intel.com ([134.134.136.126]:59281 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726244AbfBHVvR (ORCPT
+        id S1726788AbfBHWAb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:51:17 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        Fri, 8 Feb 2019 17:00:31 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 13:51:16 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 14:00:30 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="scan'208";a="318812715"
+   d="scan'208";a="132150845"
 Received: from mwesterb-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.154])
-  by fmsmga005.fm.intel.com with ESMTP; 08 Feb 2019 13:51:12 -0800
-Date:   Fri, 8 Feb 2019 23:51:10 +0200
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Feb 2019 14:00:26 -0800
+Date:   Sat, 9 Feb 2019 00:00:25 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
+Cc:     "Safford, David (GE Global Research)" <david.safford@ge.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] tpm: =?iso-8859-1?Q?Uni?=
- =?iso-8859-1?Q?fy_the_send_callback_behaviour=E4?=
-Message-ID: <20190208215110.GA13567@linux.intel.com>
-References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
- <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
- <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
- <20190208190057.GA3439@linux.intel.com>
- <20190208191710.GA30645@linux.intel.com>
- <6a86e3e8-e311-7a0f-585d-3f0435b0143a@linux.ibm.com>
- <20190208202353.GB1836@linux.intel.com>
- <36dc691e-4f00-7f6b-5a53-763c12d4fa16@linux.ibm.com>
- <20190208204635.GA24938@linux.intel.com>
- <32faca9e-5099-4ff5-6fe7-5e6e840b109b@linux.ibm.com>
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+Message-ID: <20190208220025.GB13567@linux.intel.com>
+References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
+ <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
+ <20190118150011.GF4080@linux.intel.com>
+ <cb86f5b6-8084-1e12-ce60-19418539b581@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <32faca9e-5099-4ff5-6fe7-5e6e840b109b@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cb86f5b6-8084-1e12-ce60-19418539b581@linux.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 08, 2019 at 04:18:40PM -0500, Stefan Berger wrote:
-> On 2/8/19 3:46 PM, Jarkko Sakkinen wrote:
-> > On Fri, Feb 08, 2019 at 03:32:32PM -0500, Stefan Berger wrote:
+On Fri, Feb 08, 2019 at 04:21:02PM -0500, Stefan Berger wrote:
+> On 1/18/19 10:00 AM, Jarkko Sakkinen wrote:
+> > On Fri, Jan 11, 2019 at 08:28:00PM +0000, Safford, David (GE Global Research) wrote:
+> > > You might mention that this is an important feature, as on at least some
+> > > systems, ppi function 23 is the only way to enable/disable PCR banks.
 > > > 
-> > > tpm_del_char_device also needs the start/stop!
-> > Done and updated the commit message to have all the call sites:
-> > 
-> >      * tpm_chip_register()
-> >      * tpm_class_shutdown()
-> >      * tpm_del_char_device()
-> >      * tpm_pm_suspend()
-> >      * tpm_try_get_ops() and tpm_put_ops()
-> >      * tpm2_del_space()
+> > > I have tested this patch set on my HP Spectre laptop, and I am finally
+> > > able to turn the sha-1 bank on and off. Much appreciated!
+> > > 
+> > > Tested-by: David Safford <david.safford@ge.com>
+> > Great thanks David.
 > 
 > 
-> I tested this now with tpm_vtpm_proxy, TPM 1.2, (TIS|CRB) + TPM 2.0. Looks
-> good now - rock solid so to say. And while we are at it ... :-)
+> While we are at it and for the grand finale of the day :-)
+> 
+> +All you people, keep yourself alive!
+> +Keep yourself alive!
+> +Keep yourself alive!
+> +C'mon, give me your reviewed's
+> +to keep me satisfied!
+> +Give me your signed-off's                       (1)
+> +to keep me satisfied!
+> +Keep yourself alive!
+> +A few test-by's will keep me satisfied!
+> +Keep yourself alive!
+> +Check-in!                                                (2)
+> +
+> +[In the style of Queen]
+> 
+> 
+> Jarrko, do (1) and (2) to keep me satisfied :-)
 
-Thank you for your support. I don't think these quite distruptive
-changes would have made in without any growing pains. The way
-tpm_transmit() used to be had become quite a mess with all the nested
-calls and weird locking flags. Now we have a good baseline to forward
-:-)
+I still think that in 5/5 branching could be better but is not a biggie
+for me (does not make the implementation as whole any kind of mess) and
+since it is now peer tested I rather would not modify it right now.
 
-I rebased the branches to the latest security/next-general. Probably
-do the PR after the middle week (ETA Thu).
+Applied to master and next!
 
 /Jarkko
