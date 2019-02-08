@@ -2,145 +2,77 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D559C169C4
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 10:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F648C282CB
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 11:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4406521919
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 10:53:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 584DF20863
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 11:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbfBHKx2 (ORCPT
+        id S1727813AbfBHLOq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 05:53:28 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:35762 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfBHKx2 (ORCPT
+        Fri, 8 Feb 2019 06:14:46 -0500
+Received: from mga17.intel.com ([192.55.52.151]:63686 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726068AbfBHLOq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 05:53:28 -0500
-Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x18AqXt6062343;
-        Fri, 8 Feb 2019 19:52:33 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
- Fri, 08 Feb 2019 19:52:33 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x18AqWMY062306
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 8 Feb 2019 19:52:33 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Fri, 8 Feb 2019 06:14:46 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 03:14:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,347,1544515200"; 
+   d="scan'208";a="145212033"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.115])
+  by fmsmga001.fm.intel.com with ESMTP; 08 Feb 2019 03:14:42 -0800
+Date:   Fri, 8 Feb 2019 13:14:42 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@vger.kernel.org>,
-        Russell Coker <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
- <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
- <201902070230.x172UUG6002087@www262.sakura.ne.jp>
- <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
-Date:   Fri, 8 Feb 2019 19:52:30 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
+Message-ID: <20190208111442.GA11755@linux.intel.com>
+References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
+ <20190206120634.GA4680@linux.intel.com>
+ <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
+ <20190207212912.GD23906@linux.intel.com>
+ <0af40351-91d5-d0a7-2965-0a9c6505af79@linux.ibm.com>
+ <20190208003314.GB7202@linux.intel.com>
+ <1fbd29ad-1005-8450-4c39-00974468183b@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1fbd29ad-1005-8450-4c39-00974468183b@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/02/08 1:24, Casey Schaufler wrote:
->>>> Then, I think that it is straightforward (and easier to manage) to ignore security= parameter
->>>> when lsm= parameter is specified.
->>> That reduces flexibility somewhat. If I am debugging security modules
->>> I may want to use lsm= to specify the order while using security= to
->>> identify a specific exclusive module. I could do that using lsm= by
->>> itself, but habits die hard.
->> "lsm=" can be used for identifying a specific exclusive module, and Ubuntu kernels would
->> have to use CONFIG_LSM (or "lsm=") for identifying the default exclusive module (in order
->> to allow enabling both TOMOYO and one of SELinux,Smack,AppArmor at the same time).
->>
->> Since "security=" can't be used for selectively enable/disable more than one of
->> SELinux,Smack,TOMOYO,AppArmor, I think that recommending users to migrate to "lsm=" is the
->> better direction. And ignoring "security=" when "lsm=" is specified is easier to understand.
-> 
-> I added Kees to the CC list. Kees, what to you think about
-> ignoring security= if lsm= is specified? I'm ambivalent.
+On Thu, Feb 07, 2019 at 08:51:15PM -0500, Stefan Berger wrote:
+> > > +    rc = 0;
+> > >       if (chip->flags & TPM_CHIP_FLAG_IRQ)
+> > >           goto out_recv;
+> > What why?
 > 
 > 
+> This fix seems to only be necessary when bisecting. You may want to apply
+> it!
 
-To help administrators easily understand what LSM modules are possibly enabled by default (which
-have to be fetched from e.g. /boot/config-`uname -r`) and specify lsm= parameter when they need,
-I propose changes shown below.
+I don't want to apply it because I don't understand why it would
+be needed. Can you give a short explanation?
 
-diff --git a/security/security.c b/security/security.c
-index 3147785e..051d708 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -51,8 +51,6 @@
- static __initdata const char *chosen_lsm_order;
- static __initdata const char *chosen_major_lsm;
- 
--static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
--
- /* Ordered list of LSMs to initialize. */
- static __initdata struct lsm_info **ordered_lsms;
- static __initdata struct lsm_info *exclusive;
-@@ -284,14 +282,22 @@ static void __init ordered_lsm_parse(const char *order, const char *origin)
- static void __init ordered_lsm_init(void)
- {
- 	struct lsm_info **lsm;
-+	const char *order = CONFIG_LSM;
-+	const char *origin = "builtin";
- 
- 	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
- 				GFP_KERNEL);
- 
--	if (chosen_lsm_order)
--		ordered_lsm_parse(chosen_lsm_order, "cmdline");
--	else
--		ordered_lsm_parse(builtin_lsm_order, "builtin");
-+	if (chosen_lsm_order) {
-+		if (chosen_major_lsm) {
-+			pr_info("security= is ignored because of lsm=\n");
-+			chosen_major_lsm = NULL;
-+		}
-+		order = chosen_lsm_order;
-+		origin = "cmdline";
-+	}
-+	pr_info("Security Framework initializing: %s\n", order);
-+	ordered_lsm_parse(order, origin);
- 
- 	for (lsm = ordered_lsms; *lsm; lsm++)
- 		prepare_lsm(*lsm);
-@@ -333,8 +339,6 @@ int __init security_init(void)
- 	int i;
- 	struct hlist_head *list = (struct hlist_head *) &security_hook_heads;
- 
--	pr_info("Security Framework initializing\n");
--
- 	for (i = 0; i < sizeof(security_hook_heads) / sizeof(struct hlist_head);
- 	     i++)
- 		INIT_HLIST_HEAD(&list[i]);
+/Jarkko
