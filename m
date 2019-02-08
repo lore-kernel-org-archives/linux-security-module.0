@@ -2,51 +2,38 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B97C282C4
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 00:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA39C282CC
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 00:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAB8A21907
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 00:03:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADC82080D
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 00:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfBHACy (ORCPT
+        id S1726788AbfBHAdW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Feb 2019 19:02:54 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33977 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726651AbfBHACy (ORCPT
+        Thu, 7 Feb 2019 19:33:22 -0500
+Received: from mga04.intel.com ([192.55.52.120]:44188 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726774AbfBHAdW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Feb 2019 19:02:54 -0500
-Received: by mail-qt1-f195.google.com with SMTP id b8so2108336qtj.1
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Feb 2019 16:02:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=6cLJLbQb0VziB+gnBxS+tInLo6bk7ARyPS9DuV0K2fc=;
-        b=bc8P+pXTv5Eb1YvM557IwA2Fq8ztyG+E0uSmKjGmA4jMOznclb47ez85If3MQ0fiYN
-         yGahvlvFqkIn+S44LT3TBzhNGsFcBNvtsRawqXGF8RxvJNWmOtJlp/ul9rfJrwJweSA5
-         8SDLahwJQNb/K4QvQ9TzOophTKHp5YqCZ8aGCjADH9Wjka1h3DPcE8g6bftaD4+Vxhuy
-         eKM60WySyy0HVPqB4ex37o4g5C7BUXPaF9ukGta0ETjD4E+1cdZhnhBrJX5AZ1n/Nsjq
-         iPnb4ktfbv7lkHhzfUvthfpbl4p200fpG+twthYqd+V0lN7IMfunK4kCV58wVSuIyJAR
-         hJ5Q==
-X-Gm-Message-State: AHQUAubgegoyBVWl7gdEAqWdlcJzaecSx4Cw3Zu+9wXZdM3LM3Jqg1wW
-        P7lWSMv5VPM6pPLSCCVD+npdaw==
-X-Google-Smtp-Source: AHgI3Ias+PeWQp4+/8EmAyOrkcql3Zdh7KCs01nCMrFpxaY0mgqN/FzV4Jir2tUlIAE5EyIeBUxJbQ==
-X-Received: by 2002:a0c:8542:: with SMTP id n60mr14056210qva.205.1549584173122;
-        Thu, 07 Feb 2019 16:02:53 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id m20sm506468qkk.66.2019.02.07.16.02.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 07 Feb 2019 16:02:52 -0800 (PST)
-Date:   Thu, 7 Feb 2019 17:02:51 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
+        Thu, 7 Feb 2019 19:33:22 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Feb 2019 16:33:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,346,1544515200"; 
+   d="scan'208";a="273371456"
+Received: from mwesterb-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.154])
+  by orsmga004.jf.intel.com with ESMTP; 07 Feb 2019 16:33:15 -0800
+Date:   Fri, 8 Feb 2019 02:33:14 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Peter Huewe <PeterHuewe@gmx.de>,
@@ -55,230 +42,194 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Tadeusz Struk <tadeusz.struk@intel.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v11 15/16] tpm: take TPM chip power gating out of
- tpm_transmit()
-Message-ID: <20190208000251.4g5gnsalxh7i5dva@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Stefan Berger <stefanb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
+Message-ID: <20190208003314.GB7202@linux.intel.com>
 References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
- <20190205224723.19671-16-jarkko.sakkinen@linux.intel.com>
- <dfb224e4-82b8-26c0-e69a-c72d19712d48@linux.ibm.com>
+ <20190206120634.GA4680@linux.intel.com>
+ <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
+ <20190207212912.GD23906@linux.intel.com>
+ <0af40351-91d5-d0a7-2965-0a9c6505af79@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <dfb224e4-82b8-26c0-e69a-c72d19712d48@linux.ibm.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <0af40351-91d5-d0a7-2965-0a9c6505af79@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu Feb 07 19, Stefan Berger wrote:
->On 2/5/19 5:47 PM, Jarkko Sakkinen wrote:
->>Call tpm_chip_start() and tpm_chip_stop() in
->>
->>* tpm_try_get_ops() and tpm_put_ops()
->>* tpm_chip_register()
->>* tpm2_del_space()
->>
->>And remove these calls from tpm_transmit(). The core reason for this
->>change is that in tpm_vtpm_proxy a locality change requires a virtual
->>TPM command (a command made up just for that driver).
->>
->>The consequence of this is that this commit removes the remaining nested
->>calls.
->>
->>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->>Tested-by: Stefan Berger <stefanb@linux.ibm.com>
->>Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
->>Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
->>---
->>  drivers/char/tpm/tpm-chip.c       | 25 ++++++++++++-------------
->>  drivers/char/tpm/tpm-interface.c  |  6 ------
->>  drivers/char/tpm/tpm.h            |  9 ---------
->>  drivers/char/tpm/tpm2-space.c     |  5 ++++-
->>  drivers/char/tpm/tpm_vtpm_proxy.c |  3 +--
->>  5 files changed, 17 insertions(+), 31 deletions(-)
->>
->>diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
->>index 65f1561eba81..7ad4d9045e4c 100644
->>--- a/drivers/char/tpm/tpm-chip.c
->>+++ b/drivers/char/tpm/tpm-chip.c
->>@@ -41,9 +41,6 @@ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
->>  {
->>  	int rc;
->>
->>-	if (flags & TPM_TRANSMIT_NESTED)
->>-		return 0;
->>-
->>  	if (!chip->ops->request_locality)
->>  		return 0;
->>
->>@@ -59,9 +56,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
->>  {
->>  	int rc;
->>
->>-	if (flags & TPM_TRANSMIT_NESTED)
->>-		return;
->>-
->>  	if (!chip->ops->relinquish_locality)
->>  		return;
->>
->>@@ -74,9 +68,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
->>
->>  static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
->>  {
->>-	if (flags & TPM_TRANSMIT_NESTED)
->>-		return 0;
->>-
->>  	if (!chip->ops->cmd_ready)
->>  		return 0;
->>
->>@@ -85,9 +76,6 @@ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
->>
->>  static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
->>  {
->>-	if (flags & TPM_TRANSMIT_NESTED)
->>-		return 0;
->>-
->>  	if (!chip->ops->go_idle)
->>  		return 0;
->>
->>@@ -166,11 +154,17 @@ int tpm_try_get_ops(struct tpm_chip *chip)
->>
->>  	down_read(&chip->ops_sem);
->>  	if (!chip->ops)
->>-		goto out_lock;
->>+		goto out_ops;
->>
->>  	mutex_lock(&chip->tpm_mutex);
->>+	rc = tpm_chip_start(chip, 0);
->>+	if (rc)
->>+		goto out_lock;
->>+
->>  	return 0;
->>  out_lock:
->>+	mutex_unlock(&chip->tpm_mutex);
->>+out_ops:
->>  	up_read(&chip->ops_sem);
->>  	put_device(&chip->dev);
->>  	return rc;
->>@@ -186,6 +180,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
->>   */
->>  void tpm_put_ops(struct tpm_chip *chip)
->>  {
->>+	tpm_chip_stop(chip, 0);
->>  	mutex_unlock(&chip->tpm_mutex);
->>  	up_read(&chip->ops_sem);
->>  	put_device(&chip->dev);
->>@@ -563,7 +558,11 @@ int tpm_chip_register(struct tpm_chip *chip)
->>  {
->>  	int rc;
->>
->>+	rc = tpm_chip_start(chip, 0);
->>+	if (rc)
->>+		return rc;
->>  	rc = tpm_auto_startup(chip);
->>+	tpm_chip_stop(chip, 0);
->>  	if (rc)
->>  		return rc;
->>
->>diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->>index f7b7e4e75fcf..f20c78055731 100644
->>--- a/drivers/char/tpm/tpm-interface.c
->>+++ b/drivers/char/tpm/tpm-interface.c
->>@@ -168,13 +168,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
->>  	memcpy(save, buf, save_size);
->>
->>  	for (;;) {
->>-		ret = tpm_chip_start(chip, flags);
->>-		if (ret)
->>-			return ret;
->>-
->>  		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
->>-
->>-		tpm_chip_stop(chip, flags);
->>  		if (ret < 0)
->>  			break;
->>  		rc = be32_to_cpu(header->return_code);
->>diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
->>index 2d6d934f1c8b..53e4208759ee 100644
->>--- a/drivers/char/tpm/tpm.h
->>+++ b/drivers/char/tpm/tpm.h
->>@@ -485,15 +485,6 @@ extern const struct file_operations tpm_fops;
->>  extern const struct file_operations tpmrm_fops;
->>  extern struct idr dev_nums_idr;
->>
->>-/**
->>- * enum tpm_transmit_flags - flags for tpm_transmit()
->>- *
->>- * %TPM_TRANSMIT_NESTED:	discard setup steps (power management, locality)
->>- */
->>-enum tpm_transmit_flags {
->>-	TPM_TRANSMIT_NESTED      = BIT(0),
->>-};
->>-
->>  ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
->>  		     unsigned int flags);
->>  ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
->>diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
->>index 9c9ccf2c0681..6c6ad2d4d31b 100644
->>--- a/drivers/char/tpm/tpm2-space.c
->>+++ b/drivers/char/tpm/tpm2-space.c
->>@@ -60,7 +60,10 @@ int tpm2_init_space(struct tpm_space *space)
->>  void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
->>  {
->>  	mutex_lock(&chip->tpm_mutex);
->>-	tpm2_flush_sessions(chip, space);
->>+	if (!tpm_chip_start(chip, 0)) {
->>+		tpm2_flush_sessions(chip, space);
->>+		tpm_chip_stop(chip, 0);
->>+	}
->>  	mutex_unlock(&chip->tpm_mutex);
->>  	kfree(space->context_buf);
->>  	kfree(space->session_buf);
->>diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
->>index e8a1da2810a9..a4bb60e163cc 100644
->>--- a/drivers/char/tpm/tpm_vtpm_proxy.c
->>+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
->>@@ -417,8 +417,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
->>
->>  	proxy_dev->state |= STATE_DRIVER_COMMAND;
->>
->>-	rc = tpm_transmit_cmd(chip, &buf, 0, TPM_TRANSMIT_NESTED,
->>-			      "attempting to set locality");
->>+	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
->>
->>  	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
->>
->This patch seems to be missing a hunk along these lines here
->
->diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->index e74c5b7b64bf..52afe20cc8a1 100644
->--- a/drivers/char/tpm/tpm2-cmd.c
->+++ b/drivers/char/tpm/tpm2-cmd.c
->@@ -799,7 +799,9 @@ int tpm2_probe(struct tpm_chip *chip)
->     tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
->     tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
->     tpm_buf_append_u32(&buf, 1);
->+    tpm_chip_start(chip, 0);
->     rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
->+    tpm_chip_stop(chip, 0);
->     /* We ignore TPM return codes on purpose. */
->     if (rc >=  0) {
->         out = (struct tpm_header *)buf.data;
->
->
->Of course you need to check the error from tpm_chip_start().
->
+On Thu, Feb 07, 2019 at 06:29:43PM -0500, Stefan Berger wrote:
+> On 2/7/19 4:29 PM, Jarkko Sakkinen wrote:
+> > On Thu, Feb 07, 2019 at 07:41:56PM +0100, Alexander Steffen wrote:
+> > > On 06.02.2019 13:06, Jarkko Sakkinen wrote:
+> > > > On Wed, Feb 06, 2019 at 12:47:07AM +0200, Jarkko Sakkinen wrote:
+> > > > > Make the changes necessary to detach TPM space code and TPM activation
+> > > > > code out of the tpm_transmit() flow because of both of these can cause
+> > > > > nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+> > > > > to maintain, and thus, it is better to just fix things now before this
+> > > > > turns into a bigger mess.
+> > > > > 
+> > > > > v11:
+> > > > > * Drop the patch that tries to flush TPM space on system. Not a proper
+> > > > >     fallback + out of scope for this patch set.
+> > > > > 
+> > > > > v10:
+> > > > > * Use void pointers to avoid unnecessary casts in functions paramaters
+> > > > >     where it makes sense.
+> > > > > 
+> > > > > v9:
+> > > > > * Fixed again tpm_try_get_ops().
+> > > > > * Added missing reviewed-by's.
+> > > > > 
+> > > > > v8:
+> > > > > * Re-add the check for ret < 0 after calling tpm_try_transmit() that
+> > > > >     was dropped by mistake while moving code.
+> > > > > * Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
+> > > > >     fails.
+> > > > > 
+> > > > > v7:
+> > > > > *  Reorganize series so that more trivial and self-contained changes are
+> > > > >      in the head.
+> > > > > 
+> > > > > v6:
+> > > > > * When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
+> > > > >     the TPM header was incorrectly declared as struct tpm_input_header.
+> > > > > * Fix return value in tpm_validate_command().
+> > > > > 
+> > > > > v5:
+> > > > > * Add the missing rev's from Stefan Berger.
+> > > > > 
+> > > > > v4:
+> > > > > * Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+> > > > > * Fix error handling flow in tpm_try_transmit().
+> > > > > * Replace struct tpm_input_header and struct tpm_output_header with
+> > > > >     struct tpm_header.
+> > > > > 
+> > > > > v3:
+> > > > > * Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
+> > > > > * Move TPM power gating code and locking to tpm_try_get_ops() and
+> > > > >     tpm_put_ops().
+> > > > > * Call power gating code directly in tpm_chip_register() and
+> > > > >     tpm2_del_space().
+> > > > > 
+> > > > > v2:
+> > > > > * Print tpm2_commit_space() error inside tpm2_commit_space()
+> > > > > * Error code was not printed when recv() callback failed. It is
+> > > > >     fixed in this version.
+> > > > > * Added a patch that removes @space from tpm_transmit().
+> > > > > * Fixed a regression in earlier series. Forgot to amend the change
+> > > > >     from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
+> > > > > 
+> > > > > Jarkko Sakkinen (16):
+> > > > >     tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+> > > > >     tpm: fix invalid return value in pubek_show()
+> > > > >     tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+> > > > >     tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+> > > > >     tpm: declare struct tpm_header
+> > > > >     tpm: access command header through struct in tpm_try_transmit()
+> > > > >     tpm: encapsulate tpm_dev_transmit()
+> > > > >     tpm: clean up tpm_try_transmit() error handling flow
+> > > > >     tpm: move tpm_validate_commmand() to tpm2-space.c
+> > > > >     tpm: move TPM space code out of tpm_transmit()
+> > > > >     tpm: remove @space from tpm_transmit()
+> > > > >     tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+> > > > >     tpm: remove TPM_TRANSMIT_UNLOCKED flag
+> > > > >     tpm: introduce tpm_chip_start() and tpm_chip_stop()
+> > > > >     tpm: take TPM chip power gating out of tpm_transmit()
+> > > > >     tpm: remove @flags from tpm_transmit()
+> > > > > 
+> > > > >    drivers/char/tpm/tpm-chip.c       | 109 ++++++++++++
+> > > > >    drivers/char/tpm/tpm-dev-common.c |  44 ++++-
+> > > > >    drivers/char/tpm/tpm-interface.c  | 264 ++++++------------------------
+> > > > >    drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
+> > > > >    drivers/char/tpm/tpm.h            |  64 +++-----
+> > > > >    drivers/char/tpm/tpm1-cmd.c       |  28 +---
+> > > > >    drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+> > > > >    drivers/char/tpm/tpm2-space.c     |  91 +++++++---
+> > > > >    drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+> > > > >    drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+> > > > >    drivers/char/tpm/xen-tpmfront.c   |   2 +-
+> > > > >    11 files changed, 408 insertions(+), 421 deletions(-)
+> > > > > 
+> > > > > -- 
+> > > > > 2.19.1
+> > > > > 
+> > > > Applied to master and next.
+> > > Something in this series seems to break basic TPM communication for me.
+> > > 
+> > > For TPM2.0s the probe command fails, causing them to be misdetected as
+> > > TPM1.2s:
+> > > 
+> > > ---
+> > > tpm tpm0: tpm_try_transmit: tpm_send: error -5
+> > > tpm_tis MSFT0101:00: 1.2 TPM (device-id 0x1A, rev-id 22)
+> > > tpm tpm0: A TPM error (30) occurred attempting to determine the timeouts
+> > > ---
+> > > tpm tpm0: tpm_try_transmit: tpm_send: error -5
+> > > tpm_tis_spi spi0.1: 1.2 TPM (device-id 0x1B, rev-id 22)
+> > > tpm tpm0: A TPM error (30) occurred attempting to determine the timeouts
+> > > ---
+> > > 
+> > > And for something that actually is a TPM1.2 it fails in a similar way:
+> > > 
+> > > ---
+> > > tpm_i2c_infineon 1-0020: 1.2 TPM (device-id 0x1A)
+> > > tpm tpm0: A TPM error (-14) occurred attempting to determine the timeouts
+> > > ---
+> > > tpm tpm0: tpm_try_transmit: tpm_send: error -5
+> > > tpm_tis_spi spi0.1: 1.2 TPM (device-id 0x1B, rev-id 16)
+> > > tpm tpm0: A TPM error (-14) occurred attempting to determine the timeouts
+> > > tpm_tis_spi: probe of spi0.1 failed with error -14
+> > > ---
+> > > 
+> > > I see this problem across my entire range of TPM devices and test platforms.
+> > > Any idea what could be wrong here?
+> > Weird.
+> > 
+> > Can you run a bisect?
+> 
+> There are 2 bugs and the following overall patch against your tree fixes
+> them. Let me comment on the individual patches in v17. I missed those
+> obviously when testing with the tpm_vtpm_proxy...
+> 
+> 
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c
+> b/drivers/char/tpm/tpm-interface.c
+> index 02e8cffd1163..34c0da55d885 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -94,6 +94,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+> void *buf, size_t bufsiz)
+>          return rc;
+>      }
+> 
+> +    rc = 0;
+>      if (chip->flags & TPM_CHIP_FLAG_IRQ)
+>          goto out_recv;
 
-Reproduced here with discrete chip. Will test fix in a bit.
+What why?
+
+> 
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index e74c5b7b64bf..52afe20cc8a1 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -799,7 +799,9 @@ int tpm2_probe(struct tpm_chip *chip)
+>      tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
+>      tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
+>      tpm_buf_append_u32(&buf, 1);
+> +    tpm_chip_start(chip);
+>      rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
+> +    tpm_chip_stop(chip);
+
+Thanks Stefan! I added call to tpm_tis_core as tpm2-cmd.c is to be kept
+out of chip management common case being that you call tpm_try_get_ops(),
+do 1-N TPM commands and release with tpm_put_ops(). These functions take
+care starting and stopping the chip.
+
+I fixed the 2nd issue in the master.
+
+ /Jarkko
