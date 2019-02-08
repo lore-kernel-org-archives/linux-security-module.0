@@ -2,120 +2,194 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A2EC282CB
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C30C169C4
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2DC2217D8
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:21:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E067218DA
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 21:31:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfBHVVI (ORCPT
+        id S1726949AbfBHVbB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 16:21:08 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36322 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727083AbfBHVVI (ORCPT
+        Fri, 8 Feb 2019 16:31:01 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.31]:29048 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726916AbfBHVbA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 16:21:08 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18LDda7100761
-        for <linux-security-module@vger.kernel.org>; Fri, 8 Feb 2019 16:21:07 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qhdwj1byq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Feb 2019 16:21:07 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Fri, 8 Feb 2019 21:21:05 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 21:21:03 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18LL29m23593018
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Feb 2019 21:21:02 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4973AAC059;
-        Fri,  8 Feb 2019 21:21:02 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 37D84AC060;
-        Fri,  8 Feb 2019 21:21:02 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Feb 2019 21:21:02 +0000 (GMT)
-Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "Safford, David (GE Global Research)" <david.safford@ge.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
- <20190118150011.GF4080@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Fri, 8 Feb 2019 16:21:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 8 Feb 2019 16:31:00 -0500
+X-Greylist: delayed 2164 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Feb 2019 16:30:59 EST
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id C2531BBD98C
+        for <linux-security-module@vger.kernel.org>; Fri,  8 Feb 2019 14:54:55 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sDAlgJuUb90onsDAlgi4Ww; Fri, 08 Feb 2019 14:54:55 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.49.191] (port=34656 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gsDAk-001tFR-R9; Fri, 08 Feb 2019 14:54:55 -0600
+Date:   Fri, 8 Feb 2019 14:54:53 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH v2] security: mark expected switch fall-throughs and add a
+ missing break
+Message-ID: <20190208205453.GA3232@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20190118150011.GF4080@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19020821-0072-0000-0000-000003F75823
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010560; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01158244; UDB=6.00604331; IPR=6.00938777;
- MB=3.00025497; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 21:21:05
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020821-0073-0000-0000-00004B1C9FF0
-Message-Id: <cb86f5b6-8084-1e12-ce60-19418539b581@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=826 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.49.191
+X-Source-L: No
+X-Exim-ID: 1gsDAk-001tFR-R9
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.49.191]:34656
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/18/19 10:00 AM, Jarkko Sakkinen wrote:
-> On Fri, Jan 11, 2019 at 08:28:00PM +0000, Safford, David (GE Global Research) wrote:
->> You might mention that this is an important feature, as on at least some
->> systems, ppi function 23 is the only way to enable/disable PCR banks.
->>
->> I have tested this patch set on my HP Spectre laptop, and I am finally
->> able to turn the sha-1 bank on and off. Much appreciated!
->>
->> Tested-by: David Safford <david.safford@ge.com>
-> Great thanks David.
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
+This patch fixes the following warnings:
 
-While we are at it and for the grand finale of the day :-)
+security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 
-+All you people, keep yourself alive!
-+Keep yourself alive!
-+Keep yourself alive!
-+C'mon, give me your reviewed's
-+to keep me satisfied!
-+Give me your signed-off's                       (1)
-+to keep me satisfied!
-+Keep yourself alive!
-+A few test-by's will keep me satisfied!
-+Keep yourself alive!
-+Check-in!                                                (2)
-+
-+[In the style of Queen]
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
+Also, add a missing break statement to fix the following warning:
 
-Jarrko, do (1) and (2) to keep me satisfied :-)
+security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+Changes in v2:
+ - Update Subject.
+ - Integrate a missing break in switch fix by Mimi Zohar.
+
+ security/apparmor/domain.c                | 2 +-
+ security/integrity/ima/ima_appraise.c     | 1 +
+ security/integrity/ima/ima_policy.c       | 4 ++++
+ security/integrity/ima/ima_template_lib.c | 1 +
+ security/smack/smack_lsm.c                | 3 +--
+ 5 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 3b266a438776..ca2dccf5b445 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
+ 			stack = NULL;
+ 			break;
+ 		}
+-		/* fall through to X_NAME */
++		/* fall through - to X_NAME */
+ 	case AA_X_NAME:
+ 		if (xindex & AA_X_CHILD)
+ 			/* released by caller */
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index a2baa85ea2f5..5fb7127bbe68 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
+ 		break;
+ 	case CREDS_CHECK:
+ 		iint->ima_creds_status = status;
++		break;
+ 	case FILE_CHECK:
+ 	case POST_SETATTR:
+ 		iint->ima_file_status = status;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 26fa9d9723f6..e0cc323f948f 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -936,10 +936,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 		case Opt_uid_gt:
+ 		case Opt_euid_gt:
+ 			entry->uid_op = &uid_gt;
++			/* fall through */
+ 		case Opt_uid_lt:
+ 		case Opt_euid_lt:
+ 			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
+ 				entry->uid_op = &uid_lt;
++			/* fall through */
+ 		case Opt_uid_eq:
+ 		case Opt_euid_eq:
+ 			uid_token = (token == Opt_uid_eq) ||
+@@ -968,9 +970,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			break;
+ 		case Opt_fowner_gt:
+ 			entry->fowner_op = &uid_gt;
++			/* fall through */
+ 		case Opt_fowner_lt:
+ 			if (token == Opt_fowner_lt)
+ 				entry->fowner_op = &uid_lt;
++			/* fall through */
+ 		case Opt_fowner_eq:
+ 			ima_log_string_op(ab, "fowner", args[0].from,
+ 					  entry->fowner_op);
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 43752002c222..513b457ae900 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+ 		/* skip ':' and '\0' */
+ 		buf_ptr += 2;
+ 		buflen -= buf_ptr - field_data->data;
++		/* fall through */
+ 	case DATA_FMT_DIGEST:
+ 	case DATA_FMT_HEX:
+ 		if (!buflen)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 587dc06eba33..5c1613519d5a 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3380,13 +3380,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+ 		 */
+ 		final = &smack_known_star;
+ 		/*
+-		 * Fall through.
+-		 *
+ 		 * If a smack value has been set we want to use it,
+ 		 * but since tmpfs isn't giving us the opportunity
+ 		 * to set mount options simulate setting the
+ 		 * superblock default.
+ 		 */
++		/* Fall through */
+ 	default:
+ 		/*
+ 		 * This isn't an understood special case.
+-- 
+2.20.1
 
