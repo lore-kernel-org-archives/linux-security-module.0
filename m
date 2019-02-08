@@ -2,87 +2,89 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52227C282DA
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 18:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7B1C282CC
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 19:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 260F82070B
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 18:09:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ED602077B
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 19:01:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbfBHSJF (ORCPT
+        id S1726869AbfBHTBE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 13:09:05 -0500
-Received: from mga09.intel.com ([134.134.136.24]:54965 "EHLO mga09.intel.com"
+        Fri, 8 Feb 2019 14:01:04 -0500
+Received: from mga12.intel.com ([192.55.52.136]:33385 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727373AbfBHSJF (ORCPT
+        id S1726601AbfBHTBE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 13:09:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        Fri, 8 Feb 2019 14:01:04 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 10:09:04 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 11:01:03 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,348,1544515200"; 
-   d="scan'208";a="116299433"
-Received: from shivamur-mobl1.gar.corp.intel.com (HELO localhost) ([10.249.254.162])
-  by orsmga008.jf.intel.com with ESMTP; 08 Feb 2019 10:09:00 -0800
+   d="scan'208";a="141845693"
+Received: from szilberm-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.172])
+  by fmsmga002.fm.intel.com with ESMTP; 08 Feb 2019 11:00:58 -0800
+Date:   Fri, 8 Feb 2019 21:00:57 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Peter Huewe <PeterHuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v4 0/2] tpm: Unify send() callbacks
-Date:   Fri,  8 Feb 2019 20:08:55 +0200
-Message-Id: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
+Message-ID: <20190208190057.GA3439@linux.intel.com>
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+ <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.co m>
+On Fri, Feb 08, 2019 at 01:12:34PM -0500, Stefan Berger wrote:
+> On 2/8/19 1:08 PM, Jarkko Sakkinen wrote:
+> > The send() callback should never return length as it does not in every
+> > driver except tpm_crb in the success case. The reason is that the main
+> > transmit functionality only cares about whether the transmit was
+> > successful or not and ignores the count completely.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> Let me know when you put it into your tree, I'll give it a spin while I am
+> at it. :-)
 
-A portion of send() callbacks have returned length, in many cases just
-returning back what was given as an argument, and tpm_crb has returned 0 on
-success. This patch set fixes and unifies the behaviour.
+Thank you Stefan! I also add your suggested-by to the first commit
+because you pointed out the problem.
 
-v4:
-* Return zero already in tpm_tis_send_main() so that it is applied to all
-  call sites of tpm_tis_send().
-* Fixup tpm_ibmvtpm_send() documentation.
-v3:
-tpm_tis_core fix was left out of the staging area :-(
-v2:
-The drivers tpm_nsc and tpm_infineon were forgotten. For this version I
-checked both with find and command and from Kconfig that everything that is
-supposed to be a driver directly interfacing with the TPM core, is included
-(e.g. discluding tpm_tis_spi).
+It all looks now legit, but just in case I'll add a check for the return
+value to tpm_try_transmit() and a warning if it is not zero in the
+success case (and after that zeroing of rc).
 
-Jarkko Sakkinen (2):
-  tpm: Unify the send callback behaviour
-  tpm/tpm_i2c_atmel: Return -E2BIG when the transfer is incomplete
+That check can be removed when I do v5.3 pull request. That should
+enough window to catch any potential issues and check will ensure that
+kernel won't fail even there was something forgotten.
 
- drivers/char/tpm/st33zp24/st33zp24.c |  2 +-
- drivers/char/tpm/tpm_atmel.c         |  2 +-
- drivers/char/tpm/tpm_i2c_atmel.c     | 10 +++++++++-
- drivers/char/tpm/tpm_i2c_infineon.c  |  2 +-
- drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
- drivers/char/tpm/tpm_ibmvtpm.c       |  8 ++++----
- drivers/char/tpm/tpm_infineon.c      |  2 +-
- drivers/char/tpm/tpm_nsc.c           |  2 +-
- drivers/char/tpm/tpm_tis_core.c      |  2 +-
- drivers/char/tpm/tpm_vtpm_proxy.c    |  3 +--
- drivers/char/tpm/xen-tpmfront.c      |  2 +-
- 11 files changed, 22 insertions(+), 15 deletions(-)
+Alexander, I'll push this version now to the master and next with the
+additional check described in this commit, but will add your tags
+after you have time to test.
 
--- 
-2.19.1
+Thanks alot!
 
+/Jarkko
