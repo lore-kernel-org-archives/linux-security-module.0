@@ -2,35 +2,34 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A28AAC169C4
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 13:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A05C169C4
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 13:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9582086C
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 13:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54EE6217D8
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 13:18:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbfBHNMf (ORCPT
+        id S1727513AbfBHNR7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 08:12:35 -0500
-Received: from mga04.intel.com ([192.55.52.120]:13877 "EHLO mga04.intel.com"
+        Fri, 8 Feb 2019 08:17:59 -0500
+Received: from mga07.intel.com ([134.134.136.100]:32200 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726465AbfBHNMf (ORCPT
+        id S1727336AbfBHNR7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 08:12:35 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        Fri, 8 Feb 2019 08:17:59 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 05:12:35 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Feb 2019 05:17:58 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,347,1544515200"; 
-   d="scan'208";a="142658643"
+   d="scan'208";a="142659512"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.115])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Feb 2019 05:12:32 -0800
-Date:   Fri, 8 Feb 2019 15:12:31 +0200
+  by fmsmga004.fm.intel.com with ESMTP; 08 Feb 2019 05:17:54 -0800
+Date:   Fri, 8 Feb 2019 15:17:54 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Stefan Berger <stefanb@linux.ibm.com>
 Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
@@ -43,61 +42,71 @@ Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
         Nayna Jain <nayna@linux.ibm.com>
 Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
-Message-ID: <20190208131231.GB16679@linux.intel.com>
-References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
- <20190206120634.GA4680@linux.intel.com>
+Message-ID: <20190208131754.GA18133@linux.intel.com>
+References: <20190206120634.GA4680@linux.intel.com>
  <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
  <20190207212912.GD23906@linux.intel.com>
  <0af40351-91d5-d0a7-2965-0a9c6505af79@linux.ibm.com>
  <20190208003314.GB7202@linux.intel.com>
  <1fbd29ad-1005-8450-4c39-00974468183b@linux.ibm.com>
- <9cd734ad-ea9d-77f7-b657-3f0910a9d92f@linux.ibm.com>
- <20190208115031.GB11755@linux.intel.com>
- <8aecea14-cf0a-da6b-305c-c61ae03214be@linux.ibm.com>
+ <20190208111442.GA11755@linux.intel.com>
+ <06473b24-7c59-9405-bbe0-8d30b3450391@linux.ibm.com>
+ <20190208130227.GA16679@linux.intel.com>
+ <da69e24d-ad5c-1e7b-9f02-a435872ad635@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8aecea14-cf0a-da6b-305c-c61ae03214be@linux.ibm.com>
+In-Reply-To: <da69e24d-ad5c-1e7b-9f02-a435872ad635@linux.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 08, 2019 at 07:22:48AM -0500, Stefan Berger wrote:
-> On 2/8/19 6:50 AM, Jarkko Sakkinen wrote:
-> > On Thu, Feb 07, 2019 at 09:14:54PM -0500, Stefan Berger wrote:
+On Fri, Feb 08, 2019 at 08:10:32AM -0500, Stefan Berger wrote:
+> On 2/8/19 8:02 AM, Jarkko Sakkinen wrote:
+> > On Fri, Feb 08, 2019 at 07:05:26AM -0500, Stefan Berger wrote:
+> > > See my comment on [PATCH v11 08/16]. It needs to be added in that patch
+> > > since otherwise rc holds a non-zero value on function exit, which is wrong
+> > > at that point.
+> > The snippet in question:
 > > 
-> > >       chip->ops = NULL;
-> > >       up_write(&chip->ops_sem);
-> > >   }
-> > > diff --git a/drivers/char/tpm/tpm-interface.c
-> > > b/drivers/char/tpm/tpm-interface.c
-> > > index 02e8cffd1163..fcd845ad8c3c 100644
-> > > --- a/drivers/char/tpm/tpm-interface.c
-> > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > @@ -124,6 +124,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
-> > > void *buf, size_t bufsiz)
-> > >           dev_err(&chip->dev, "tpm_transmit: tpm_recv: error %d\n", rc);
-> > >       } else if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
-> > >           rc = -EFAULT;
-> > > +    else
-> > > +        rc = 0;
-> > Why is this needed?
+> > rc = chip->ops->send(chip, buf, count);
+> > if (rc < 0) {
+> > 	if (rc != -EPIPE)
+> > 		dev_err(&chip->dev,
+> > 			"%s: tpm_send: error %d\n", __func__, rc);
+> > 	return rc;
+> > }
+> > 
+> > if (chip->flags & TPM_CHIP_FLAG_IRQ)
+> > 	goto out_recv;
+> > 
+> > 'send()' ought to return zero on success case.
+> > 
+> > This is how the snippet was before applying any patches scheduled for
+> > v5.1:
+> > 
+> > rc = chip->ops->send(chip, buf, count);
+> > if (rc < 0) {
+> > 	if (rc != -EPIPE)
+> > 		dev_err(&chip->dev,
+> > 			"%s: tpm_send: error %d\n", __func__, rc);
+> > 	return rc;
+> > }
+> > 
+> > if (chip->flags & TPM_CHIP_FLAG_IRQ)
+> > 	goto out_recv;
+> > 
+> > Does not compute.
 > 
-> Because it holds a non-zero value, which is wrong at this point. Below it
-> is:
-> 
-> return rc ? rc : len;
-> 
-> It will always return that rc and never 'len'.
-> 
-> It's not just needed for bisecting. I still need it with your latest tree.
-> That's the only change I need with my current testing of tpm_vtpm_proxy, TIS
-> + TPM 1.2 , TIS + TPM 2.0 , and CRB + TPM 2.0 (with QEMU :-) ).
+> tpm_tis_send_main returns 'len' and that's what we have here.
 
-The code is unchaged. If there was a regression that would have been
-ages.
+Before doing any kind of code change, we should at least know what
+has caused this that it has worked before.
+
+And also which commit caused the regression to happen, because it
+looks like a bug in tpm_tis_core, not in the main TPM driver. It
+would need the fixes tag and cc to stable.
 
 /Jarkko
