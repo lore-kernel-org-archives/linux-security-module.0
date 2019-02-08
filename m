@@ -2,196 +2,373 @@ Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC2AC282CC
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 02:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 152CCC4151A
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 04:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A26321907
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 02:15:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8C582147C
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 04:24:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+DGLPvD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfBHCPD (ORCPT
+        id S1726985AbfBHEYS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Feb 2019 21:15:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49852 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726911AbfBHCPD (ORCPT
+        Thu, 7 Feb 2019 23:24:18 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36369 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726924AbfBHEYR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Feb 2019 21:15:03 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x182EaTc191537
-        for <linux-security-module@vger.kernel.org>; Thu, 7 Feb 2019 21:15:01 -0500
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qgx2pp982-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Feb 2019 21:15:01 -0500
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Fri, 8 Feb 2019 02:15:01 -0000
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 02:14:57 -0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x182Etbc14549244
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Feb 2019 02:14:56 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 991B4BE056;
-        Fri,  8 Feb 2019 02:14:55 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A29AEBE04F;
-        Fri,  8 Feb 2019 02:14:54 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Feb 2019 02:14:54 +0000 (GMT)
-Subject: Re: [PATCH v11 00/16] Remove nested TPM operations
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-References: <20190205224723.19671-1-jarkko.sakkinen@linux.intel.com>
- <20190206120634.GA4680@linux.intel.com>
- <3d6fdcc1-8221-2137-fc82-596377cc2fdc@infineon.com>
- <20190207212912.GD23906@linux.intel.com>
- <0af40351-91d5-d0a7-2965-0a9c6505af79@linux.ibm.com>
- <20190208003314.GB7202@linux.intel.com>
- <1fbd29ad-1005-8450-4c39-00974468183b@linux.ibm.com>
-Date:   Thu, 7 Feb 2019 21:14:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 7 Feb 2019 23:24:17 -0500
+Received: by mail-ed1-f67.google.com with SMTP id k20so227951edx.3;
+        Thu, 07 Feb 2019 20:24:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=54KNOSb1H1kc+I/wOX5cMu3wwjrgdbc2LbHcMcOO8W0=;
+        b=l+DGLPvDzIqEYYQQwFxXT65eCWNNfQKBPB36E6+QPi27utSWgdpXCezKoy3SxZgulq
+         JLJJ4FtZXDllRzUHzZzl8FeLE1i24Sz0SXlRhIXRi0+W87/h1hA6YXjqBBdHVSl6Rq9a
+         oKWa4HMXQwRUZcLa9soaeoqzsRBBTapwE7jyOaxfTs+k2tXNw93gOiypQt4iLhZ4zhsG
+         ZEKgpYvaBrB4FAkFbjBWGTuB1b5InMAkd/A87USF5+k9E0d0gt7JE/uLLb4Bd50fVm/+
+         8geBepQJv2D9uQgOW2ffNiJ5jq9PR2ijb9rCb2XV3/1sMjzkIA1MJsRG4QNpOHMPiWZn
+         Sufg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=54KNOSb1H1kc+I/wOX5cMu3wwjrgdbc2LbHcMcOO8W0=;
+        b=W7DZPgOpVxAo+r97z4wKVkTWSM3E9MZ6qjh31Vi1v6xmUijP9OmYeUa3tFS8EJUgOk
+         uc1M+HNMeuoWrWJZtvtbtt7qyoVI+MGPAkcPK7eMKW9MACsq7NdSHHdYKnOAoiwl/VXH
+         A6NPWu9VdNg9VKlXfFw13K3NX7O6GuX41l2ggicxg1iMyGTHylTsKsxxc8zecpApE/59
+         NFuLkuQg2OW9eZEwe+jJH53Eud58Yd5k7v6h9RAqfAYXfrb8j0sX63xOzHr/of+mrOt/
+         QGhc0jT4ZuwAdrx5GxAqhnozo8T/WN0QsM9ZCzDR9Gqcvc52WKYa1dU5+JSRKe1hYp3P
+         Mbrw==
+X-Gm-Message-State: AHQUAuZd3hM1MKEwHpNXm43EdBuxwsgVzg4kzT93XO8Ds7bHLijFzofq
+        nrUqt4WCj52zNwiA7xlnJGY=
+X-Google-Smtp-Source: AHgI3IZ9cFvEWeTUuWfeD3MkFFMiSCdgcjt+tzeFxbhN+VOrRGZ0mZNyKgHrlzM4nwEa6ntkdZ20LQ==
+X-Received: by 2002:a17:906:b7c3:: with SMTP id fy3mr14420348ejb.5.1549599854814;
+        Thu, 07 Feb 2019 20:24:14 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id w27sm234833eje.76.2019.02.07.20.24.12
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 07 Feb 2019 20:24:13 -0800 (PST)
+Date:   Thu, 7 Feb 2019 21:24:11 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        david.safford@ge.com, monty.wiseman@ge.com,
+        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        ndesaulniers@google.com
+Subject: Re: [PATCH v10, RESEND 4/6] tpm: move tpm_chip definition to
+ include/linux/tpm.h
+Message-ID: <20190208042411.GA4822@archlinux-ryzen>
+References: <20190206162452.7749-1-roberto.sassu@huawei.com>
+ <20190206162452.7749-5-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1fbd29ad-1005-8450-4c39-00974468183b@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19020802-0012-0000-0000-00001706D967
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010557; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01157863; UDB=6.00604101; IPR=6.00938395;
- MB=3.00025485; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 02:14:59
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020802-0013-0000-0000-0000561EDEE0
-Message-Id: <9cd734ad-ea9d-77f7-b657-3f0910a9d92f@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=977 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080015
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190206162452.7749-5-roberto.sassu@huawei.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/7/19 8:51 PM, Stefan Berger wrote:
-> On 2/7/19 7:33 PM, Jarkko Sakkinen wrote:
->> On Thu, Feb 07, 2019 at 06:29:43PM -0500, Stefan Berger wrote:
->>> On 2/7/19 4:29 PM, Jarkko Sakkinen wrote:
->
->
->>
->>> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->>> index e74c5b7b64bf..52afe20cc8a1 100644
->>> --- a/drivers/char/tpm/tpm2-cmd.c
->>> +++ b/drivers/char/tpm/tpm2-cmd.c
->>> @@ -799,7 +799,9 @@ int tpm2_probe(struct tpm_chip *chip)
->>>       tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
->>>       tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
->>>       tpm_buf_append_u32(&buf, 1);
->>> +    tpm_chip_start(chip);
->>>       rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
->>> +    tpm_chip_stop(chip);
->> Thanks Stefan! I added call to tpm_tis_core as tpm2-cmd.c is to be kept
->> out of chip management common case being that you call 
->> tpm_try_get_ops(),
->> do 1-N TPM commands and release with tpm_put_ops(). These functions take
->> care starting and stopping the chip.
->>
->> I fixed the 2nd issue in the master.
->
-> You also need to export the tpm_chip_start/stop symbols.
->
->
-> Master now seems to (still) have a problem when rmmod'ing:
->
-> A TPM error (325) occurred stopping the TPM. This happens at the same 
-> patch where I had to add the tpm_chip_start/stop above.
->
->
+On Wed, Feb 06, 2019 at 05:24:50PM +0100, Roberto Sassu wrote:
+> The tpm_chip structure contains the list of PCR banks currently allocated
+> in the TPM. When support for crypto agility will be added to the TPM
+> driver, users of the driver have to provide a digest for each allocated
+> bank to tpm_pcr_extend(). With this patch, they can obtain the PCR bank
+> algorithms directly from chip->allocated_banks.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/char/tpm/tpm.h | 101 ++---------------------------------------
+>  include/linux/tpm.h    |  91 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 95 insertions(+), 97 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 4efa304e9ece..4f85ce909122 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -25,30 +25,22 @@
+>  
+>  #include <linux/module.h>
+>  #include <linux/delay.h>
+> -#include <linux/fs.h>
+> -#include <linux/hw_random.h>
+>  #include <linux/mutex.h>
+>  #include <linux/sched.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/io.h>
+>  #include <linux/tpm.h>
+> -#include <linux/acpi.h>
+> -#include <linux/cdev.h>
+>  #include <linux/highmem.h>
+>  #include <linux/tpm_eventlog.h>
+> -#include <crypto/hash_info.h>
+>  
+>  #ifdef CONFIG_X86
+>  #include <asm/intel-family.h>
+>  #endif
+>  
+> -enum tpm_const {
+> -	TPM_MINOR = 224,	/* officially assigned */
+> -	TPM_BUFSIZE = 4096,
+> -	TPM_NUM_DEVICES = 65536,
+> -	TPM_RETRY = 50,		/* 5 seconds */
+> -	TPM_NUM_EVENT_LOG_FILES = 3,
+> -};
+> +#define TPM_MINOR		224	/* officially assigned */
+> +#define TPM_BUFSIZE		4096
+> +#define TPM_NUM_DEVICES		65536
+> +#define TPM_RETRY		50
+>  
+>  enum tpm_timeout {
+>  	TPM_TIMEOUT = 5,	/* msecs */
+> @@ -65,16 +57,6 @@ enum tpm_addr {
+>  	TPM_ADDR = 0x4E,
+>  };
+>  
+> -/* Indexes the duration array */
+> -enum tpm_duration {
+> -	TPM_SHORT = 0,
+> -	TPM_MEDIUM = 1,
+> -	TPM_LONG = 2,
+> -	TPM_LONG_LONG = 3,
+> -	TPM_UNDEFINED,
+> -	TPM_NUM_DURATIONS = TPM_UNDEFINED,
+> -};
+> -
+>  #define TPM_WARN_RETRY          0x800
+>  #define TPM_WARN_DOING_SELFTEST 0x802
+>  #define TPM_ERR_DEACTIVATED     0x6
+> @@ -179,15 +161,6 @@ enum tpm2_cc_attrs {
+>  #define TPM_VID_WINBOND  0x1050
+>  #define TPM_VID_STM      0x104A
+>  
+> -#define TPM_PPI_VERSION_LEN		3
+> -
+> -struct tpm_space {
+> -	u32 context_tbl[3];
+> -	u8 *context_buf;
+> -	u32 session_tbl[3];
+> -	u8 *session_buf;
+> -};
+> -
+>  enum tpm_chip_flags {
+>  	TPM_CHIP_FLAG_TPM2		= BIT(1),
+>  	TPM_CHIP_FLAG_IRQ		= BIT(2),
+> @@ -196,72 +169,6 @@ enum tpm_chip_flags {
+>  	TPM_CHIP_FLAG_ALWAYS_POWERED	= BIT(5),
+>  };
+>  
+> -struct tpm_bios_log {
+> -	void *bios_event_log;
+> -	void *bios_event_log_end;
+> -};
+> -
+> -struct tpm_chip_seqops {
+> -	struct tpm_chip *chip;
+> -	const struct seq_operations *seqops;
+> -};
+> -
+> -struct tpm_chip {
+> -	struct device dev;
+> -	struct device devs;
+> -	struct cdev cdev;
+> -	struct cdev cdevs;
+> -
+> -	/* A driver callback under ops cannot be run unless ops_sem is held
+> -	 * (sometimes implicitly, eg for the sysfs code). ops becomes null
+> -	 * when the driver is unregistered, see tpm_try_get_ops.
+> -	 */
+> -	struct rw_semaphore ops_sem;
+> -	const struct tpm_class_ops *ops;
+> -
+> -	struct tpm_bios_log log;
+> -	struct tpm_chip_seqops bin_log_seqops;
+> -	struct tpm_chip_seqops ascii_log_seqops;
+> -
+> -	unsigned int flags;
+> -
+> -	int dev_num;		/* /dev/tpm# */
+> -	unsigned long is_open;	/* only one allowed */
+> -
+> -	char hwrng_name[64];
+> -	struct hwrng hwrng;
+> -
+> -	struct mutex tpm_mutex;	/* tpm is processing */
+> -
+> -	unsigned long timeout_a; /* jiffies */
+> -	unsigned long timeout_b; /* jiffies */
+> -	unsigned long timeout_c; /* jiffies */
+> -	unsigned long timeout_d; /* jiffies */
+> -	bool timeout_adjusted;
+> -	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
+> -	bool duration_adjusted;
+> -
+> -	struct dentry *bios_dir[TPM_NUM_EVENT_LOG_FILES];
+> -
+> -	const struct attribute_group *groups[3];
+> -	unsigned int groups_cnt;
+> -
+> -	u32 nr_allocated_banks;
+> -	struct tpm_bank_info *allocated_banks;
+> -#ifdef CONFIG_ACPI
+> -	acpi_handle acpi_dev_handle;
+> -	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+> -#endif /* CONFIG_ACPI */
+> -
+> -	struct tpm_space work_space;
+> -	u32 last_cc;
+> -	u32 nr_commands;
+> -	u32 *cc_attrs_tbl;
+> -
+> -	/* active locality */
+> -	int locality;
+> -};
+> -
+>  #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
+>  
+>  struct tpm_header {
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index afd022fc9d3d..816e686a73ac 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -22,6 +22,10 @@
+>  #ifndef __LINUX_TPM_H__
+>  #define __LINUX_TPM_H__
+>  
+> +#include <linux/hw_random.h>
+> +#include <linux/acpi.h>
+> +#include <linux/cdev.h>
+> +#include <linux/fs.h>
+>  #include <crypto/hash_info.h>
+>  
+>  #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
+> @@ -75,6 +79,93 @@ struct tpm_class_ops {
+>  	void (*clk_enable)(struct tpm_chip *chip, bool value);
+>  };
+>  
+> +#define TPM_NUM_EVENT_LOG_FILES		3
+> +
+> +/* Indexes the duration array */
+> +enum tpm_duration {
+> +	TPM_SHORT = 0,
+> +	TPM_MEDIUM = 1,
+> +	TPM_LONG = 2,
+> +	TPM_LONG_LONG = 3,
+> +	TPM_UNDEFINED,
+> +	TPM_NUM_DURATIONS = TPM_UNDEFINED,
+> +};
+> +
+> +#define TPM_PPI_VERSION_LEN		3
+> +
+> +struct tpm_space {
+> +	u32 context_tbl[3];
+> +	u8 *context_buf;
+> +	u32 session_tbl[3];
+> +	u8 *session_buf;
+> +};
+> +
+> +struct tpm_bios_log {
+> +	void *bios_event_log;
+> +	void *bios_event_log_end;
+> +};
+> +
+> +struct tpm_chip_seqops {
+> +	struct tpm_chip *chip;
+> +	const struct seq_operations *seqops;
+> +};
+> +
+> +struct tpm_chip {
+> +	struct device dev;
+> +	struct device devs;
+> +	struct cdev cdev;
+> +	struct cdev cdevs;
+> +
+> +	/* A driver callback under ops cannot be run unless ops_sem is held
+> +	 * (sometimes implicitly, eg for the sysfs code). ops becomes null
+> +	 * when the driver is unregistered, see tpm_try_get_ops.
+> +	 */
+> +	struct rw_semaphore ops_sem;
+> +	const struct tpm_class_ops *ops;
+> +
+> +	struct tpm_bios_log log;
+> +	struct tpm_chip_seqops bin_log_seqops;
+> +	struct tpm_chip_seqops ascii_log_seqops;
+> +
+> +	unsigned int flags;
+> +
+> +	int dev_num;		/* /dev/tpm# */
+> +	unsigned long is_open;	/* only one allowed */
+> +
+> +	char hwrng_name[64];
+> +	struct hwrng hwrng;
+> +
+> +	struct mutex tpm_mutex;	/* tpm is processing */
+> +
+> +	unsigned long timeout_a; /* jiffies */
+> +	unsigned long timeout_b; /* jiffies */
+> +	unsigned long timeout_c; /* jiffies */
+> +	unsigned long timeout_d; /* jiffies */
+> +	bool timeout_adjusted;
+> +	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
+> +	bool duration_adjusted;
+> +
+> +	struct dentry *bios_dir[TPM_NUM_EVENT_LOG_FILES];
+> +
+> +	const struct attribute_group *groups[3];
+> +	unsigned int groups_cnt;
+> +
+> +	u32 nr_allocated_banks;
+> +	struct tpm_bank_info *allocated_banks;
+> +#ifdef CONFIG_ACPI
+> +	acpi_handle acpi_dev_handle;
+> +	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+> +#endif /* CONFIG_ACPI */
+> +
+> +	struct tpm_space work_space;
+> +	u32 last_cc;
+> +	u32 nr_commands;
+> +	u32 *cc_attrs_tbl;
+> +
+> +	/* active locality */
+> +	int locality;
+> +};
+> +
+>  #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+>  
+>  extern int tpm_is_tpm2(struct tpm_chip *chip);
+> -- 
+> 2.17.1
+> 
 
-Here's my current overall patch against your master. I suppose the other 
-tpm2_shutdown() for power management doesn't need the chip start ?
+Hi Robert,
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 9865776ee2cd..f7147706a9c3 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -115,6 +115,7 @@ int tpm_chip_start(struct tpm_chip *chip)
+This patch causes a build error with Clang (bisected on next-20190207):
 
-      return 0;
-  }
-+EXPORT_SYMBOL_GPL(tpm_chip_start);
+security/integrity/ima/ima.h:191:2: error: redefinition of enumerator 'NONE'
+        __ima_hooks(__ima_hook_enumify)
+        ^
+security/integrity/ima/ima.h:176:7: note: expanded from macro '__ima_hooks'
+        hook(NONE)                      \
+             ^
+include/linux/efi.h:1709:2: note: previous definition is here
+        NONE,
+        ^
+1 error generated.
 
-  /**
-   * tpm_chip_stop() - power off the TPM
-@@ -131,7 +132,7 @@ void tpm_chip_stop(struct tpm_chip *chip)
-      if (chip->ops->clk_enable)
-          chip->ops->clk_enable(chip, false);
-  }
--
-+EXPORT_SYMBOL_GPL(tpm_chip_stop);
+I am not sure how to reconcile this otherwise I would have sent a patch.
 
-  /**
-   * tpm_try_get_ops() - Get a ref to the tpm_chip
-@@ -474,8 +475,11 @@ static void tpm_del_char_device(struct tpm_chip *chip)
-
-      /* Make the driver uncallable. */
-      down_write(&chip->ops_sem);
--    if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+    if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-+        tpm_chip_start(chip, 0);
-          tpm2_shutdown(chip, TPM2_SU_CLEAR);
-+        tpm_chip_stop(chip, 0);
-+    }
-      chip->ops = NULL;
-      up_write(&chip->ops_sem);
-  }
-diff --git a/drivers/char/tpm/tpm-interface.c 
-b/drivers/char/tpm/tpm-interface.c
-index 02e8cffd1163..fcd845ad8c3c 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -124,6 +124,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip 
-*chip, void *buf, size_t bufsiz)
-          dev_err(&chip->dev, "tpm_transmit: tpm_recv: error %d\n", rc);
-      } else if (len < TPM_HEADER_SIZE || len != 
-be32_to_cpu(header->length))
-          rc = -EFAULT;
-+    else
-+        rc = 0;
-
-      return rc ? rc : len;
-  }
-
-
-
-
->
->
->>
->>   /Jarkko
->>
->
-
+Thanks,
+Nathan
