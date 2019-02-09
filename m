@@ -2,266 +2,113 @@ Return-Path: <SRS0=5mKe=QQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FF7C282C4
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 20:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73ACC282C4
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 20:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07D0421929
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 20:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7D722192C
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 20:08:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfBIUBT (ORCPT
+        id S1726931AbfBIUIm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 9 Feb 2019 15:01:19 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52712 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727232AbfBIUBT (ORCPT
+        Sat, 9 Feb 2019 15:08:42 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40277 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726906AbfBIUIl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 9 Feb 2019 15:01:19 -0500
-Received: by mail-it1-f193.google.com with SMTP id r11so11934297itc.2
-        for <linux-security-module@vger.kernel.org>; Sat, 09 Feb 2019 12:01:18 -0800 (PST)
+        Sat, 9 Feb 2019 15:08:41 -0500
+Received: by mail-qt1-f196.google.com with SMTP id j36so7901174qta.7
+        for <linux-security-module@vger.kernel.org>; Sat, 09 Feb 2019 12:08:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SnrNQz1B4Ss8vHhU86InPg3/cZaeTz6EzVLqLgNCWfk=;
-        b=cPPaEkAb9LFRbssdhzHFfCausU9DOrF5dozJHjcafLl01i6XTxrODOB//4rhTN5loK
-         lbnXQ8wDeWFbd4evc5kSofVJ/dWmyZiHzY081YvXgQbIu5BsFkdgxWwQmDQteTiQ2VBe
-         MyBZInniNio39vQ+wEH/7g9KVrdXtKWgtiy0wx0g9pyHFCJ6oIPw5OD5NARpVgyF5+Sp
-         u1Ori2lfP83OkeXyDf7JP8EQqr5d9EAJ5XOaDd6W95/4qP74wy37t6iuwE44dvRrlOCi
-         P/XPdZirNuYYvfpeJQaDfq+2faPdQmhS57JfjPVMqNAfeyDLl49Q/0Wt4cY37h5/VZFV
-         DMeA==
-X-Gm-Message-State: AHQUAuZe/DprWmNEuPB5yO0wt/jUEA5lcPs6MlJGIk0T0DV0N1nvVYwV
-        Wkk14KvvqN8dq4Wc8+QQMRpktRYjqfd0lrUXLu0eAQ==
-X-Google-Smtp-Source: AHgI3IbcvwFLmpVEieAUZWw+f56mXRE7RE6mwA5aJwTjepGeGbITLAc+7BLD1lrH8eK/Gv6ooRypcvFzgt2qcVbNPbM=
-X-Received: by 2002:a02:8cf6:: with SMTP id n51mr10486354jal.86.1549742477713;
- Sat, 09 Feb 2019 12:01:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
- <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com> <20190209182022.zghnna3fa3a3x3w7@cantor>
-In-Reply-To: <20190209182022.zghnna3fa3a3x3w7@cantor>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=caMuua86ZqM/hQ5LV4/Bwjrk9414QCn+/CUk1mK+b+g=;
+        b=KlrcnC+rW3mLAGdiaIhb59OsLq/vjdeJIhv0eqraPOHT+tailM/6JWxVq0BNNyxi+y
+         V+u5ehEqarac16gRhlAj5USYBtIe7ECfn6zYTM7aWLe4x14idzbNYnpRZP2D1y38he48
+         jmw1KqFp+ljQJuXns7sdPPmgCAqecaiM2eYm6IR+tQ+QdDXufUZJ3NKrX7yig8kBNz/U
+         50iAtLA7dvSV5h826hgWTxC8cX3asQNXOAzNsqk8m49/TcBQE5OKuJ5fTsO6SnBeRvsf
+         tfAY4iE8GWZd84rgxlvAAW8zmzDBnQiHHjvDlCGBijqOOUdlDpFQw/myjwvmoA3vPxYt
+         Ml7Q==
+X-Gm-Message-State: AHQUAuYXSTdJQdglF/USEzdFzZD/HTIQgCuzSTtq63j98205L2W/LrBb
+        gEUAQ/90e+bVIqzgpFMeEQ2nX8EsilM=
+X-Google-Smtp-Source: AHgI3IYPk69QFI8kEVaL/meFbiMVI0MHnlyH5YDKJpcCxqpE6cz2mjf+mMA5179HD8wjCVCu0avMKg==
+X-Received: by 2002:ac8:6b50:: with SMTP id x16mr22013636qts.368.1549742920468;
+        Sat, 09 Feb 2019 12:08:40 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id s13sm6776655qkl.71.2019.02.09.12.08.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Feb 2019 12:08:39 -0800 (PST)
+Date:   Sat, 9 Feb 2019 13:08:38 -0700
 From:   Jerry Snitselaar <jsnitsel@redhat.com>
-Date:   Sat, 9 Feb 2019 13:01:06 -0700
-Message-ID: <CALzcddvbmjGHO4rjZ1udO7MuM3UPwuN4V43wxzMvPtnE2OusHg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Peter Huewe <PeterHuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: [PATCH v4 0/2] tpm: Unify send() callbacks
+Message-ID: <20190209200838.2matnb5dqlnr4qdx@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Feb 9, 2019 at 11:20 AM Jerry Snitselaar <jsnitsel@redhat.com> wrote:
+On Fri Feb 08 19, Jarkko Sakkinen wrote:
+>From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.co m>
 >
-> On Fri Feb 08 19, Jarkko Sakkinen wrote:
-> >The send() callback should never return length as it does not in every
-> >driver except tpm_crb in the success case. The reason is that the main
-> >transmit functionality only cares about whether the transmit was
-> >successful or not and ignores the count completely.
-> >
-> >Cc: stable@vger.kernel.org
-> >Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> >---
-> > drivers/char/tpm/st33zp24/st33zp24.c | 2 +-
-> > drivers/char/tpm/tpm_atmel.c         | 2 +-
-> > drivers/char/tpm/tpm_i2c_atmel.c     | 6 +++++-
-> > drivers/char/tpm/tpm_i2c_infineon.c  | 2 +-
-> > drivers/char/tpm/tpm_i2c_nuvoton.c   | 2 +-
-> > drivers/char/tpm/tpm_ibmvtpm.c       | 8 ++++----
-> > drivers/char/tpm/tpm_infineon.c      | 2 +-
-> > drivers/char/tpm/tpm_nsc.c           | 2 +-
-> > drivers/char/tpm/tpm_tis_core.c      | 2 +-
-> > drivers/char/tpm/tpm_vtpm_proxy.c    | 3 +--
-> > drivers/char/tpm/xen-tpmfront.c      | 2 +-
-> > 11 files changed, 18 insertions(+), 15 deletions(-)
-> >
-> >diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-> >index 64dc560859f2..13dc614b7ebc 100644
-> >--- a/drivers/char/tpm/st33zp24/st33zp24.c
-> >+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-> >@@ -436,7 +436,7 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
-> >                       goto out_err;
-> >       }
-> >
-> >-      return len;
-> >+      return 0;
-> > out_err:
-> >       st33zp24_cancel(chip);
-> >       release_locality(chip);
-> >diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tpm_atmel.c
-> >index 66a14526aaf4..a290b30a0c35 100644
-> >--- a/drivers/char/tpm/tpm_atmel.c
-> >+++ b/drivers/char/tpm/tpm_atmel.c
-> >@@ -105,7 +105,7 @@ static int tpm_atml_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> >               iowrite8(buf[i], priv->iobase);
-> >       }
-> >
-> >-      return count;
-> >+      return 0;
-> > }
-> >
-> > static void tpm_atml_cancel(struct tpm_chip *chip)
-> >diff --git a/drivers/char/tpm/tpm_i2c_atmel.c b/drivers/char/tpm/tpm_i2c_atmel.c
-> >index 4720b2442ffe..aa11c8a1df5e 100644
-> >--- a/drivers/char/tpm/tpm_i2c_atmel.c
-> >+++ b/drivers/char/tpm/tpm_i2c_atmel.c
-> >@@ -65,7 +65,11 @@ static int i2c_atmel_send(struct tpm_chip *chip, u8 *buf, size_t len)
-> >       dev_dbg(&chip->dev,
-> >               "%s(buf=%*ph len=%0zx) -> sts=%d\n", __func__,
-> >               (int)min_t(size_t, 64, len), buf, len, status);
-> >-      return status;
-> >+
-> >+      if (status < 0)
-> >+              return status;
-> >+
-> >+      return 0;
-> > }
-> >
-> > static int i2c_atmel_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-> >diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-> >index 3b490d9d90e7..3b4e9672ff6c 100644
-> >--- a/drivers/char/tpm/tpm_i2c_infineon.c
-> >+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-> >@@ -588,7 +588,7 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t len)
-> >       /* go and do it */
-> >       iic_tpm_write(TPM_STS(tpm_dev.locality), &sts, 1);
-> >
-> >-      return len;
-> >+      return 0;
-> > out_err:
-> >       tpm_tis_i2c_ready(chip);
-> >       /* The TPM needs some time to clean up here,
-> >diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> >index 5700cc2ddee1..315a3b4548f7 100644
-> >--- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-> >+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-> >@@ -465,7 +465,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
-> >       }
-> >
-> >       dev_dbg(dev, "%s() -> %zd\n", __func__, len);
-> >-      return len;
-> >+      return 0;
-> > }
-> >
-> > static bool i2c_nuvoton_req_canceled(struct tpm_chip *chip, u8 status)
-> >diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> >index 07b5a487d0c8..757ca45b39b8 100644
-> >--- a/drivers/char/tpm/tpm_ibmvtpm.c
-> >+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> >@@ -139,14 +139,14 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-> > }
-> >
-> > /**
-> >- * tpm_ibmvtpm_send - Send tpm request
-> >- *
-> >+ * tpm_ibmvtpm_send() - Send a TPM command
-> >  * @chip:     tpm chip struct
-> >  * @buf:      buffer contains data to send
-> >  * @count:    size of buffer
-> >  *
-> >  * Return:
-> >- *    Number of bytes sent or < 0 on error.
-> >+ *   0 on success,
-> >+ *   -errno on error
-> >  */
-> > static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> > {
-> >@@ -192,7 +192,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> >               rc = 0;
-> >               ibmvtpm->tpm_processing_cmd = false;
-> >       } else
-> >-              rc = count;
-> >+              rc = 0;
-> >
-> >       spin_unlock(&ibmvtpm->rtce_lock);
-> >       return rc;
-> >diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
-> >index d8f10047fbba..97f6d4fe0aee 100644
-> >--- a/drivers/char/tpm/tpm_infineon.c
-> >+++ b/drivers/char/tpm/tpm_infineon.c
-> >@@ -354,7 +354,7 @@ static int tpm_inf_send(struct tpm_chip *chip, u8 * buf, size_t count)
-> >       for (i = 0; i < count; i++) {
-> >               wait_and_send(chip, buf[i]);
-> >       }
-> >-      return count;
-> >+      return 0;
-> > }
-> >
-> > static void tpm_inf_cancel(struct tpm_chip *chip)
-> >diff --git a/drivers/char/tpm/tpm_nsc.c b/drivers/char/tpm/tpm_nsc.c
-> >index 5d6cce74cd3f..9bee3c5eb4bf 100644
-> >--- a/drivers/char/tpm/tpm_nsc.c
-> >+++ b/drivers/char/tpm/tpm_nsc.c
-> >@@ -226,7 +226,7 @@ static int tpm_nsc_send(struct tpm_chip *chip, u8 * buf, size_t count)
-> >       }
-> >       outb(NSC_COMMAND_EOC, priv->base + NSC_COMMAND);
-> >
-> >-      return count;
-> >+      return 0;
-> > }
-> >
-> > static void tpm_nsc_cancel(struct tpm_chip *chip)
-> >diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> >index 60e2038652b8..b9f64684c3fb 100644
-> >--- a/drivers/char/tpm/tpm_tis_core.c
-> >+++ b/drivers/char/tpm/tpm_tis_core.c
-> >@@ -481,7 +481,7 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
-> >                       goto out_err;
-> >               }
-> >       }
-> >-      return len;
-> >+      return 0;
-> > out_err:
-> >       tpm_tis_ready(chip);
-> >       return rc;
-> >diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-> >index 26a2be555288..d74f3de74ae6 100644
-> >--- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> >+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> >@@ -335,7 +335,6 @@ static int vtpm_proxy_is_driver_command(struct tpm_chip *chip,
-> > static int vtpm_proxy_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> > {
-> >       struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
-> >-      int rc = 0;
-> >
-> >       if (count > sizeof(proxy_dev->buffer)) {
-> >               dev_err(&chip->dev,
-> >@@ -366,7 +365,7 @@ static int vtpm_proxy_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> >
-> >       wake_up_interruptible(&proxy_dev->wq);
-> >
-> >-      return rc;
-> >+      return 0;
-> > }
-> >
-> > static void vtpm_proxy_tpm_op_cancel(struct tpm_chip *chip)
-> >diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
-> >index 1259e935fd58..4e2d00cb0d81 100644
-> >--- a/drivers/char/tpm/xen-tpmfront.c
-> >+++ b/drivers/char/tpm/xen-tpmfront.c
-> >@@ -173,7 +173,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
-> >               return -ETIME;
-> >       }
-> >
-> >-      return count;
-> >+      return 0;
-> > }
-> >
-> > static int vtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-> >--
-> >2.19.1
-> >
+>A portion of send() callbacks have returned length, in many cases just
+>returning back what was given as an argument, and tpm_crb has returned 0 on
+>success. This patch set fixes and unifies the behaviour.
 >
-> Does st33zp24_i2c_send need an update as well? It does 'return write8_reg()'.
+>v4:
+>* Return zero already in tpm_tis_send_main() so that it is applied to all
+>  call sites of tpm_tis_send().
+>* Fixup tpm_ibmvtpm_send() documentation.
+>v3:
+>tpm_tis_core fix was left out of the staging area :-(
+>v2:
+>The drivers tpm_nsc and tpm_infineon were forgotten. For this version I
+>checked both with find and command and from Kconfig that everything that is
+>supposed to be a driver directly interfacing with the TPM core, is included
+>(e.g. discluding tpm_tis_spi).
+>
+>Jarkko Sakkinen (2):
+>  tpm: Unify the send callback behaviour
+>  tpm/tpm_i2c_atmel: Return -E2BIG when the transfer is incomplete
+>
+> drivers/char/tpm/st33zp24/st33zp24.c |  2 +-
+> drivers/char/tpm/tpm_atmel.c         |  2 +-
+> drivers/char/tpm/tpm_i2c_atmel.c     | 10 +++++++++-
+> drivers/char/tpm/tpm_i2c_infineon.c  |  2 +-
+> drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
+> drivers/char/tpm/tpm_ibmvtpm.c       |  8 ++++----
+> drivers/char/tpm/tpm_infineon.c      |  2 +-
+> drivers/char/tpm/tpm_nsc.c           |  2 +-
+> drivers/char/tpm/tpm_tis_core.c      |  2 +-
+> drivers/char/tpm/tpm_vtpm_proxy.c    |  3 +--
+> drivers/char/tpm/xen-tpmfront.c      |  2 +-
+> 11 files changed, 22 insertions(+), 15 deletions(-)
+>
+>-- 
+>2.19.1
+>
 
-Disregard this question. It is st33zp24_send that would be the one to
-change, and you already dealt with that.
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
