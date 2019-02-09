@@ -2,136 +2,275 @@ Return-Path: <SRS0=5mKe=QQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FACC169C4
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 01:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0DAC282C4
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 18:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F093720869
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 01:41:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C74820855
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 18:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfBIBlM (ORCPT
+        id S1727147AbfBISU0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 20:41:12 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:28770 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfBIBlM (ORCPT
+        Sat, 9 Feb 2019 13:20:26 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42068 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727180AbfBISU0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 20:41:12 -0500
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x191eIqT072452;
-        Sat, 9 Feb 2019 10:40:18 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp);
- Sat, 09 Feb 2019 10:40:17 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav101.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x191eHjT072448
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 9 Feb 2019 10:40:17 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Sat, 9 Feb 2019 13:20:26 -0500
+Received: by mail-qk1-f195.google.com with SMTP id y140so4089207qkb.9
+        for <linux-security-module@vger.kernel.org>; Sat, 09 Feb 2019 10:20:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=6hq+Xb2DDfqW+2rdHiwhS/TBnov4CENJ/PKiUFB9kBo=;
+        b=pP7B+PRIkoMFW9QtiiQuyAQ4XjabzfxmDZf029+piwDW1nXyh15NLn9YyWBRXSoAhx
+         96y81B4yM5+M+cPGYJX/ct3io7XmQddox+eMbU2yJo/w7mRMue3uAPJLgvNhd88GGgXV
+         fmnO617Ah5XLflA8P1QAcyyIQCJKAa4gkfEpsj/3AWm1Zvuk/u9cAijtky+5XLvj7Qgt
+         ZTn+YNOKGd8p+1PQcZ3CyrqSJi9Kqc/+KlJxznLuWwGwvygBYcDtW2vWGq7saN7uI4R4
+         PfB/ND+kKBAXtgw0aXIihjOJE4im+DTp7G8ywaR/bsnrEWSLPcHB4lG/5mxX4/c2pDDI
+         Zxag==
+X-Gm-Message-State: AHQUAua5o5NgAPwtsj0HxhmCXWJKB+ZE+rU/dudIVHdmUHiF2yAtW70F
+        3Fc5H1+lXe/1I2pmJc64yn9CdA==
+X-Google-Smtp-Source: AHgI3IYxN4zsT2m8sHIqm+qiyIhLBSu7lD4rjKvanBxNiW9lcNtylopTCfsSgWFXry6WvXCtJ4XI7Q==
+X-Received: by 2002:a37:c30d:: with SMTP id a13mr18652204qkj.18.1549736424651;
+        Sat, 09 Feb 2019 10:20:24 -0800 (PST)
+Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
+        by smtp.gmail.com with ESMTPSA id s13sm5737673qkl.71.2019.02.09.10.20.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 09 Feb 2019 10:20:23 -0800 (PST)
+Date:   Sat, 9 Feb 2019 11:20:22 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@vger.kernel.org>,
-        Russell Coker <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
- <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
- <201902070230.x172UUG6002087@www262.sakura.ne.jp>
- <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com>
- <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
- <54f15845-f256-f503-98ce-64a1b88a5f9f@schaufler-ca.com>
- <3a775445-c161-f104-ebf6-5fa1c9e9dac8@i-love.sakura.ne.jp>
-Message-ID: <0dd46edc-d3ee-75ca-5e50-fee70bd83ddb@i-love.sakura.ne.jp>
-Date:   Sat, 9 Feb 2019 10:40:17 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
+Message-ID: <20190209182022.zghnna3fa3a3x3w7@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        stable@vger.kernel.org
+References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
+ <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <3a775445-c161-f104-ebf6-5fa1c9e9dac8@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=iso-2022-jp
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/02/09 9:28, Tetsuo Handa wrote:
-> On 2019/02/09 1:23, Casey Schaufler wrote:
->> On 2/8/2019 2:52 AM, Tetsuo Handa wrote:
->>> To help administrators easily understand what LSM modules are possibly enabled by default (which
->>> have to be fetched from e.g. /boot/config-`uname -r`)
->>
->> $ cat /sys/kernel/security/lsm
->>
-> 
-> /sys/kernel/security/lsm is list of "actually" enabled modules, isn't it?
-> What I want is "possibly" enabled modules. Ubuntu would chose from either
-> 
->   (a) explicitly add security=apparmor to kernel command line
-> 
-> or
-> 
->   (b) explicitly remove tomoyo from CONFIG_LSM at kernel config
-> 
-> in order not to enable TOMOYO for those who want to enable only one of 
-> SELinux/Smack/AppArmor. And for those who want to enable TOMOYO, I think
-> that (b) (in other words, add
-> 
->   lsm="modules listed in CONFIG_LSM" + ",tomoyo"
-> 
-> ) will retain compatibility when it becomes possible to enable more than
-> one of SELinux/Smack/AppArmor at the same time.
-> 
-> If we can know "possibly" enabled modules from dmesg, users don't need to
-> look at e.g. /boot/config-`uname -r`. It is not essential, but it's handy.
-> 
+On Fri Feb 08 19, Jarkko Sakkinen wrote:
+>The send() callback should never return length as it does not in every
+>driver except tpm_crb in the success case. The reason is that the main
+>transmit functionality only cares about whether the transmit was
+>successful or not and ignores the count completely.
+>
+>Cc: stable@vger.kernel.org
+>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>---
+> drivers/char/tpm/st33zp24/st33zp24.c | 2 +-
+> drivers/char/tpm/tpm_atmel.c         | 2 +-
+> drivers/char/tpm/tpm_i2c_atmel.c     | 6 +++++-
+> drivers/char/tpm/tpm_i2c_infineon.c  | 2 +-
+> drivers/char/tpm/tpm_i2c_nuvoton.c   | 2 +-
+> drivers/char/tpm/tpm_ibmvtpm.c       | 8 ++++----
+> drivers/char/tpm/tpm_infineon.c      | 2 +-
+> drivers/char/tpm/tpm_nsc.c           | 2 +-
+> drivers/char/tpm/tpm_tis_core.c      | 2 +-
+> drivers/char/tpm/tpm_vtpm_proxy.c    | 3 +--
+> drivers/char/tpm/xen-tpmfront.c      | 2 +-
+> 11 files changed, 18 insertions(+), 15 deletions(-)
+>
+>diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+>index 64dc560859f2..13dc614b7ebc 100644
+>--- a/drivers/char/tpm/st33zp24/st33zp24.c
+>+++ b/drivers/char/tpm/st33zp24/st33zp24.c
+>@@ -436,7 +436,7 @@ static int st33zp24_send(struct tpm_chip *chip, unsigned char *buf,
+> 			goto out_err;
+> 	}
+>
+>-	return len;
+>+	return 0;
+> out_err:
+> 	st33zp24_cancel(chip);
+> 	release_locality(chip);
+>diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tpm_atmel.c
+>index 66a14526aaf4..a290b30a0c35 100644
+>--- a/drivers/char/tpm/tpm_atmel.c
+>+++ b/drivers/char/tpm/tpm_atmel.c
+>@@ -105,7 +105,7 @@ static int tpm_atml_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> 		iowrite8(buf[i], priv->iobase);
+> 	}
+>
+>-	return count;
+>+	return 0;
+> }
+>
+> static void tpm_atml_cancel(struct tpm_chip *chip)
+>diff --git a/drivers/char/tpm/tpm_i2c_atmel.c b/drivers/char/tpm/tpm_i2c_atmel.c
+>index 4720b2442ffe..aa11c8a1df5e 100644
+>--- a/drivers/char/tpm/tpm_i2c_atmel.c
+>+++ b/drivers/char/tpm/tpm_i2c_atmel.c
+>@@ -65,7 +65,11 @@ static int i2c_atmel_send(struct tpm_chip *chip, u8 *buf, size_t len)
+> 	dev_dbg(&chip->dev,
+> 		"%s(buf=%*ph len=%0zx) -> sts=%d\n", __func__,
+> 		(int)min_t(size_t, 64, len), buf, len, status);
+>-	return status;
+>+
+>+	if (status < 0)
+>+		return status;
+>+
+>+	return 0;
+> }
+>
+> static int i2c_atmel_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
+>index 3b490d9d90e7..3b4e9672ff6c 100644
+>--- a/drivers/char/tpm/tpm_i2c_infineon.c
+>+++ b/drivers/char/tpm/tpm_i2c_infineon.c
+>@@ -588,7 +588,7 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t len)
+> 	/* go and do it */
+> 	iic_tpm_write(TPM_STS(tpm_dev.locality), &sts, 1);
+>
+>-	return len;
+>+	return 0;
+> out_err:
+> 	tpm_tis_i2c_ready(chip);
+> 	/* The TPM needs some time to clean up here,
+>diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
+>index 5700cc2ddee1..315a3b4548f7 100644
+>--- a/drivers/char/tpm/tpm_i2c_nuvoton.c
+>+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
+>@@ -465,7 +465,7 @@ static int i2c_nuvoton_send(struct tpm_chip *chip, u8 *buf, size_t len)
+> 	}
+>
+> 	dev_dbg(dev, "%s() -> %zd\n", __func__, len);
+>-	return len;
+>+	return 0;
+> }
+>
+> static bool i2c_nuvoton_req_canceled(struct tpm_chip *chip, u8 status)
+>diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+>index 07b5a487d0c8..757ca45b39b8 100644
+>--- a/drivers/char/tpm/tpm_ibmvtpm.c
+>+++ b/drivers/char/tpm/tpm_ibmvtpm.c
+>@@ -139,14 +139,14 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+> }
+>
+> /**
+>- * tpm_ibmvtpm_send - Send tpm request
+>- *
+>+ * tpm_ibmvtpm_send() - Send a TPM command
+>  * @chip:	tpm chip struct
+>  * @buf:	buffer contains data to send
+>  * @count:	size of buffer
+>  *
+>  * Return:
+>- *	Number of bytes sent or < 0 on error.
+>+ *   0 on success,
+>+ *   -errno on error
+>  */
+> static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> {
+>@@ -192,7 +192,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> 		rc = 0;
+> 		ibmvtpm->tpm_processing_cmd = false;
+> 	} else
+>-		rc = count;
+>+		rc = 0;
+>
+> 	spin_unlock(&ibmvtpm->rtce_lock);
+> 	return rc;
+>diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
+>index d8f10047fbba..97f6d4fe0aee 100644
+>--- a/drivers/char/tpm/tpm_infineon.c
+>+++ b/drivers/char/tpm/tpm_infineon.c
+>@@ -354,7 +354,7 @@ static int tpm_inf_send(struct tpm_chip *chip, u8 * buf, size_t count)
+> 	for (i = 0; i < count; i++) {
+> 		wait_and_send(chip, buf[i]);
+> 	}
+>-	return count;
+>+	return 0;
+> }
+>
+> static void tpm_inf_cancel(struct tpm_chip *chip)
+>diff --git a/drivers/char/tpm/tpm_nsc.c b/drivers/char/tpm/tpm_nsc.c
+>index 5d6cce74cd3f..9bee3c5eb4bf 100644
+>--- a/drivers/char/tpm/tpm_nsc.c
+>+++ b/drivers/char/tpm/tpm_nsc.c
+>@@ -226,7 +226,7 @@ static int tpm_nsc_send(struct tpm_chip *chip, u8 * buf, size_t count)
+> 	}
+> 	outb(NSC_COMMAND_EOC, priv->base + NSC_COMMAND);
+>
+>-	return count;
+>+	return 0;
+> }
+>
+> static void tpm_nsc_cancel(struct tpm_chip *chip)
+>diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+>index 60e2038652b8..b9f64684c3fb 100644
+>--- a/drivers/char/tpm/tpm_tis_core.c
+>+++ b/drivers/char/tpm/tpm_tis_core.c
+>@@ -481,7 +481,7 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+> 			goto out_err;
+> 		}
+> 	}
+>-	return len;
+>+	return 0;
+> out_err:
+> 	tpm_tis_ready(chip);
+> 	return rc;
+>diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+>index 26a2be555288..d74f3de74ae6 100644
+>--- a/drivers/char/tpm/tpm_vtpm_proxy.c
+>+++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+>@@ -335,7 +335,6 @@ static int vtpm_proxy_is_driver_command(struct tpm_chip *chip,
+> static int vtpm_proxy_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> {
+> 	struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
+>-	int rc = 0;
+>
+> 	if (count > sizeof(proxy_dev->buffer)) {
+> 		dev_err(&chip->dev,
+>@@ -366,7 +365,7 @@ static int vtpm_proxy_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t count)
+>
+> 	wake_up_interruptible(&proxy_dev->wq);
+>
+>-	return rc;
+>+	return 0;
+> }
+>
+> static void vtpm_proxy_tpm_op_cancel(struct tpm_chip *chip)
+>diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-tpmfront.c
+>index 1259e935fd58..4e2d00cb0d81 100644
+>--- a/drivers/char/tpm/xen-tpmfront.c
+>+++ b/drivers/char/tpm/xen-tpmfront.c
+>@@ -173,7 +173,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+> 		return -ETIME;
+> 	}
+>
+>-	return count;
+>+	return 0;
+> }
+>
+> static int vtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>-- 
+>2.19.1
+>
 
-Well, thinking again, specifying
-
-lsm="modules listed in /sys/kernel/security/lsm" + ",tomoyo"
-
-makes sense, for there is no need to care about disabled modules when
-enabling TOMOYO. Therefore,
-
-+	pr_info("Security Framework initializing: %s\n", order);
--	pr_info("Security Framework initializing\n");
-
-won't be needed.
-
-On 2019/02/09 6:33, Kees Cook wrote:
-> On Thu, Feb 7, 2019 at 8:24 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> I added Kees to the CC list. Kees, what to you think about
->> ignoring security= if lsm= is specified? I'm ambivalent.
-> 
-> This was one of many earlier suggestions, and the consensus seemed to
-> be "don't mix security= and lsm=". Why would anyone use both?
-> 
-
-Then, can we add this change?
-
-+	if (chosen_lsm_order) {
-+		if (chosen_major_lsm) {
-+			pr_info("security= is ignored because of lsm=\n");
-+			chosen_major_lsm = NULL;
-+		}
-+	}
-
+Does st33zp24_i2c_send need an update as well? It does 'return write8_reg()'.
