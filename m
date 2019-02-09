@@ -1,4 +1,4 @@
-Return-Path: <SRS0=FRmR=QP=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=5mKe=QQ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,104 +6,99 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC83C282CB
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82576C169C4
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 00:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08C7621908
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Feb 2019 22:06:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57F9B20821
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 00:29:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfBHWGo (ORCPT
+        id S1726655AbfBIA3L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Feb 2019 17:06:44 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57514 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727352AbfBHWGk (ORCPT
+        Fri, 8 Feb 2019 19:29:11 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:14113 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbfBIA3L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Feb 2019 17:06:40 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x18Lx5PB100372
-        for <linux-security-module@vger.kernel.org>; Fri, 8 Feb 2019 17:06:39 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qhfgmxr54-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Feb 2019 17:06:39 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <stefanb@linux.ibm.com>;
-        Fri, 8 Feb 2019 22:06:38 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 8 Feb 2019 22:06:34 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x18M6XAg22544416
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 Feb 2019 22:06:34 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6B3BAC08F;
-        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C609EAC089;
-        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  8 Feb 2019 22:06:33 +0000 (GMT)
-Subject: Re: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "Safford, David (GE Global Research)" <david.safford@ge.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
- <BCA04D5D9A3B764C9B7405BBA4D4A3C0151A3125@ALPMBAPA12.e2k.ad.ge.com>
- <20190118150011.GF4080@linux.intel.com>
- <cb86f5b6-8084-1e12-ce60-19418539b581@linux.ibm.com>
- <20190208220025.GB13567@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Date:   Fri, 8 Feb 2019 17:06:33 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 8 Feb 2019 19:29:11 -0500
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x190SIOO019237;
+        Sat, 9 Feb 2019 09:28:18 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Sat, 09 Feb 2019 09:28:18 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x190SEkZ019199
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 9 Feb 2019 09:28:18 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] LSM: Allow syzbot to ignore security= parameter.
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
+        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Serge Hallyn <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        SELinux <selinux@vger.kernel.org>,
+        Russell Coker <russell@coker.com.au>,
+        Laurent Bigonville <bigon@debian.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <8f48e1d0-c109-f8a9-ea94-9659b16cae49@i-love.sakura.ne.jp>
+ <0d23d1a5-d4af-debf-6b5f-aaaf698daaa8@schaufler-ca.com>
+ <201902070230.x172UUG6002087@www262.sakura.ne.jp>
+ <6def6199-0235-7c37-974c-baf731725606@schaufler-ca.com>
+ <54c0ae39-f35c-bdcd-a217-8e62ef14e41b@i-love.sakura.ne.jp>
+ <54f15845-f256-f503-98ce-64a1b88a5f9f@schaufler-ca.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <3a775445-c161-f104-ebf6-5fa1c9e9dac8@i-love.sakura.ne.jp>
+Date:   Sat, 9 Feb 2019 09:28:14 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190208220025.GB13567@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-MW
-X-TM-AS-GCONF: 00
-x-cbid: 19020822-0072-0000-0000-000003F75C0E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010561; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01158259; UDB=6.00604340; IPR=6.00938792;
- MB=3.00025497; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-08 22:06:36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020822-0073-0000-0000-00004B1CBA75
-Message-Id: <d34dd6ec-248e-b7f8-edb0-367f1f4f9356@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-08_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902080150
+In-Reply-To: <54f15845-f256-f503-98ce-64a1b88a5f9f@schaufler-ca.com>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/8/19 5:00 PM, Jarkko Sakkinen wrote:
-> On Fri, Feb 08, 2019 at 04:21:02PM -0500, Stefan Berger wrote:
-> I still think that in 5/5 branching could be better but is not a biggie
-> for me (does not make the implementation as whole any kind of mess) and
-> since it is now peer tested I rather would not modify it right now.
->
-> Applied to master and next!
+On 2019/02/09 1:23, Casey Schaufler wrote:
+> On 2/8/2019 2:52 AM, Tetsuo Handa wrote:
+>> To help administrators easily understand what LSM modules are possibly enabled by default (which
+>> have to be fetched from e.g. /boot/config-`uname -r`)
+> 
+> $ cat /sys/kernel/security/lsm
+> 
 
+/sys/kernel/security/lsm is list of "actually" enabled modules, isn't it?
+What I want is "possibly" enabled modules. Ubuntu would chose from either
 
-5/5 may cause a complaint about the scanf'ing of a single value in an 
-existing line. Let's see...
+  (a) explicitly add security=apparmor to kernel command line
 
-    Thanks.
+or
 
-       Stefan
+  (b) explicitly remove tomoyo from CONFIG_LSM at kernel config
 
+in order not to enable TOMOYO for those who want to enable only one of 
+SELinux/Smack/AppArmor. And for those who want to enable TOMOYO, I think
+that (b) (in other words, add
+
+  lsm="modules listed in CONFIG_LSM" + ",tomoyo"
+
+) will retain compatibility when it becomes possible to enable more than
+one of SELinux/Smack/AppArmor at the same time.
+
+If we can know "possibly" enabled modules from dmesg, users don't need to
+look at e.g. /boot/config-`uname -r`. It is not essential, but it's handy.
 
