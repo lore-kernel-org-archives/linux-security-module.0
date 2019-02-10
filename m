@@ -1,114 +1,149 @@
-Return-Path: <SRS0=5mKe=QQ=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=l5Pq=QR=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D73ACC282C4
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 20:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BD4C282C2
+	for <linux-security-module@archiver.kernel.org>; Sun, 10 Feb 2019 15:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D722192C
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Feb 2019 20:08:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 513782145D
+	for <linux-security-module@archiver.kernel.org>; Sun, 10 Feb 2019 15:40:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfBIUIm (ORCPT
+        id S1726243AbfBJPkB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 9 Feb 2019 15:08:42 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40277 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbfBIUIl (ORCPT
+        Sun, 10 Feb 2019 10:40:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39238 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726102AbfBJPkB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 9 Feb 2019 15:08:41 -0500
-Received: by mail-qt1-f196.google.com with SMTP id j36so7901174qta.7
-        for <linux-security-module@vger.kernel.org>; Sat, 09 Feb 2019 12:08:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=caMuua86ZqM/hQ5LV4/Bwjrk9414QCn+/CUk1mK+b+g=;
-        b=KlrcnC+rW3mLAGdiaIhb59OsLq/vjdeJIhv0eqraPOHT+tailM/6JWxVq0BNNyxi+y
-         V+u5ehEqarac16gRhlAj5USYBtIe7ECfn6zYTM7aWLe4x14idzbNYnpRZP2D1y38he48
-         jmw1KqFp+ljQJuXns7sdPPmgCAqecaiM2eYm6IR+tQ+QdDXufUZJ3NKrX7yig8kBNz/U
-         50iAtLA7dvSV5h826hgWTxC8cX3asQNXOAzNsqk8m49/TcBQE5OKuJ5fTsO6SnBeRvsf
-         tfAY4iE8GWZd84rgxlvAAW8zmzDBnQiHHjvDlCGBijqOOUdlDpFQw/myjwvmoA3vPxYt
-         Ml7Q==
-X-Gm-Message-State: AHQUAuYXSTdJQdglF/USEzdFzZD/HTIQgCuzSTtq63j98205L2W/LrBb
-        gEUAQ/90e+bVIqzgpFMeEQ2nX8EsilM=
-X-Google-Smtp-Source: AHgI3IYPk69QFI8kEVaL/meFbiMVI0MHnlyH5YDKJpcCxqpE6cz2mjf+mMA5179HD8wjCVCu0avMKg==
-X-Received: by 2002:ac8:6b50:: with SMTP id x16mr22013636qts.368.1549742920468;
-        Sat, 09 Feb 2019 12:08:40 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id s13sm6776655qkl.71.2019.02.09.12.08.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 09 Feb 2019 12:08:39 -0800 (PST)
-Date:   Sat, 9 Feb 2019 13:08:38 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sun, 10 Feb 2019 10:40:01 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1AFcmSk035765
+        for <linux-security-module@vger.kernel.org>; Sun, 10 Feb 2019 10:39:59 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qjcq8cptg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Sun, 10 Feb 2019 10:39:59 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 10 Feb 2019 15:39:57 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 10 Feb 2019 15:39:54 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1AFdroJ8192298
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 10 Feb 2019 15:39:53 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C706A4203F;
+        Sun, 10 Feb 2019 15:39:53 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DA5D42041;
+        Sun, 10 Feb 2019 15:39:52 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.85])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 10 Feb 2019 15:39:52 +0000 (GMT)
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Seth Forshee <seth.forshee@canonical.com>
+Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-Subject: Re: [PATCH v4 0/2] tpm: Unify send() callbacks
-Message-ID: <20190209200838.2matnb5dqlnr4qdx@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: NeoMutt/20180716
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        "Bruno E. O. Meneguele" <bmeneg@redhat.com>
+Date:   Sun, 10 Feb 2019 10:39:41 -0500
+In-Reply-To: <20190208192127.GO3218@ubuntu-xps13>
+References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
+         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+         <20190205151859.GD16362@ubuntu-xps13>
+         <1549385244.4146.148.camel@linux.ibm.com>
+         <20190205183201.GA3218@ubuntu-xps13>
+         <1549392741.4146.161.camel@linux.ibm.com>
+         <20190208192127.GO3218@ubuntu-xps13>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021015-0016-0000-0000-00000254B542
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021015-0017-0000-0000-000032AECD69
+Message-Id: <1549813181.12743.139.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-10_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902100121
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri Feb 08 19, Jarkko Sakkinen wrote:
->From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.co m>
->
->A portion of send() callbacks have returned length, in many cases just
->returning back what was given as an argument, and tpm_crb has returned 0 on
->success. This patch set fixes and unifies the behaviour.
->
->v4:
->* Return zero already in tpm_tis_send_main() so that it is applied to all
->  call sites of tpm_tis_send().
->* Fixup tpm_ibmvtpm_send() documentation.
->v3:
->tpm_tis_core fix was left out of the staging area :-(
->v2:
->The drivers tpm_nsc and tpm_infineon were forgotten. For this version I
->checked both with find and command and from Kconfig that everything that is
->supposed to be a driver directly interfacing with the TPM core, is included
->(e.g. discluding tpm_tis_spi).
->
->Jarkko Sakkinen (2):
->  tpm: Unify the send callback behaviour
->  tpm/tpm_i2c_atmel: Return -E2BIG when the transfer is incomplete
->
-> drivers/char/tpm/st33zp24/st33zp24.c |  2 +-
-> drivers/char/tpm/tpm_atmel.c         |  2 +-
-> drivers/char/tpm/tpm_i2c_atmel.c     | 10 +++++++++-
-> drivers/char/tpm/tpm_i2c_infineon.c  |  2 +-
-> drivers/char/tpm/tpm_i2c_nuvoton.c   |  2 +-
-> drivers/char/tpm/tpm_ibmvtpm.c       |  8 ++++----
-> drivers/char/tpm/tpm_infineon.c      |  2 +-
-> drivers/char/tpm/tpm_nsc.c           |  2 +-
-> drivers/char/tpm/tpm_tis_core.c      |  2 +-
-> drivers/char/tpm/tpm_vtpm_proxy.c    |  3 +--
-> drivers/char/tpm/xen-tpmfront.c      |  2 +-
-> 11 files changed, 22 insertions(+), 15 deletions(-)
->
->-- 
->2.19.1
->
+[Cc'ing Bruno E. O. Meneguele]
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+On Fri, 2019-02-08 at 13:21 -0600, Seth Forshee wrote:
+> On Tue, Feb 05, 2019 at 01:52:21PM -0500, Mimi Zohar wrote:
+> > On Tue, 2019-02-05 at 12:32 -0600, Seth Forshee wrote:
+> > > On Tue, Feb 05, 2019 at 11:47:24AM -0500, Mimi Zohar wrote:
+> > > > Hi Seth,
+> > > > 
+> > > > On Tue, 2019-02-05 at 09:18 -0600, Seth Forshee wrote:
+> > > > > On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
+> > > > > > Require signed kernel modules on systems with secure boot mode enabled.
+> > > > > > 
+> > > > > > To coordinate between appended kernel module signatures and IMA
+> > > > > > signatures, only define an IMA MODULE_CHECK policy rule if
+> > > > > > CONFIG_MODULE_SIG is not enabled.
+> > > > > > 
+> > > > > > This patch defines a function named set_module_sig_required() and renames
+> > > > > > is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
+> > > > > > call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
+> > > > > > being enabled.
+> > > > > > 
+> > > > > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > > > 
+> > > > > With respect to interactions with the kernel lockdown patches, this
+> > > > > looks better than the patches I saw previously. I don't feel like I know
+> > > > > enough about what's going on with IMA to ack the patch, but I feel
+> > > > > confident that it's at least not going to break signature enforcement
+> > > > > for us.
+> > > > 
+> > > > Thank you for testing!  Could this be translated into a "tested-by"
+> > > > "(for w/lockdown patches)"?
+> > > 
+> > > Yeah, that's fine. To be clear about what I tested, I've confirmed that
+> > > it doesn't interfere with requiring signed modules under lockdown with
+> > > CONFIG_IMA_ARCH_POLICY=n and IMA appraisal enabled.
+> > > 
+> > > Tested-by: Seth Forshee <seth.forshee@canonical.com>
+> > 
+> > Oh!  You've disabled the coordination of the two signature
+> > verification methods.  Any chance you could test with
+> > "CONFIG_IMA_ARCH_POLICY" enabled?
+> 
+> Ok, I've tested this now and it also seems to be working. However it
+> does seem redundant to have CONFIG_IMA_ARCH_POLICY alongside lockdown,
+> as it doesn't enforce anything not already being enforced by lockdown.
+
+Ok.  Based on Luis' and your comments, I'll defer this discussion to
+after IMA appended signature support is upstreamed.  At that point,
+for the finit_module syscall, IMA-appraisal at least won't fail the
+signature verification.  The same appended signature will be verified
+not once, but twice - once on the LSM security_kernel_read_file() hook
+and then again by module_sig_check().
+
+For the init_module() syscall, the only coordination needed will be
+updating is_module_sig_enforced(), based on either the "lockdown" or
+some other flag.
+
+Mimi
+
