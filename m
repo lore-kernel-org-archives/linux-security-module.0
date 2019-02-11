@@ -2,97 +2,108 @@ Return-Path: <SRS0=hX+A=QS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5485C169C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 23:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B12C169C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 23:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A424F2184E
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 23:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C61522184E
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 23:18:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mg4M3c4c"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PiojzZ6p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726819AbfBKXK0 (ORCPT
+        id S1727237AbfBKXSX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 18:10:26 -0500
-Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:36885
-        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727706AbfBKXK0 (ORCPT
+        Mon, 11 Feb 2019 18:18:23 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:43610 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbfBKXSW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 18:10:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1549926625; bh=RbZTTlJJHZ2TKiMRzWETCDAlGSq36U+ITQSW5SleAAs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=mg4M3c4cVaBlH0H6VHSN07pfRZJGZ5OAv0KTFuU91yRxvpw7+EF9IFEYe6Rh/O77ftMH0WHkQ/t0wxNP31PfFVhwT+sQ3zuhH8DSVu0oK5hI3CsCyCqAK5tMI8i/CxQp0vdQzL62wGw3X4h+GrK80K6lQrU+fyVCLqllRsI/MJbJtclxNyZjBI73ndjN5IXGauiLVbxhg/j471pgQcjrYWrfDQ5v4zcn6KNDfgAx3NPDWpkyMrxl5TG+rcq56FWKQ6tpeBzUzsIpI4vyik/USDfPnoREq0/Y+t50pHJm85CEIloNLMCk6dawZHA4etro96YvHWzXjNUUP9+x5FTWDg==
-X-YMail-OSG: _aeHQR8VM1mobTPDy6VKNXFh_R3OTUa7G7UQ19RnEjUlkpG7S9xBklEf2.kqQhq
- ndCxBXN2A48nkRlBB6XLwyr7FPY8whEc4ZkTf4.HjMzBWyJ4qmjPEtoTSvze8B5jwV02wMAnm6JT
- gw1hn8yxPTvHq4BmArUwLSqXiY0LFW17qkQuly2gPphoqs8RknNaAUs9W4MlvPcFWOYmOrMAMnSB
- 2dZbDPt5FEgN1jDdje6IW1puVto2TF5WUDOC.RUQNMALUPXKKtEotyyHhYiyxPWfKxv71xllqUIx
- K4lBHnY5liqa.wr651haDlq7m0Cno3XhByY2HZuuXYW8dDdkiv8MnCxfr0aLA7lFHpvEUhrh8DJp
- tkBOkH7TIzp5qeEL4H_pt4urlGh0yDCarq7dZVeAbWNzVK0Lf_LkhnuvOi5MWxcC0yqmirN1NjhE
- JDdh8ANGoOIP8u45zswR8f.drMd07FnccV46yBheTmRevH6AltCOuDdDc5sXOoF.w9DjqLaTbb9n
- 3up6TKcNL620lIwnaWchP0i0Pia.3SgI9Vhi4CtVfV_1fsnZ0g7qWyYosnNz25g1T_fJb03H0VK4
- hS35sVKMJsRxpp5bgfx6DNVcWemXPlhALlp1BZ.idjXCOjxpVXyCHHBkH0GCrP3eh94zIKoljHzw
- 1f.0C_WPstylum3ZKoiaWxe9o0lfN3W8mRhkZuwBf1Qg8XDodeUYB_MDyulmXrNN0.QuZb1u.iB0
- 1g9QVPMzugQGD9fLE6v57BqGSOTOrNiO55gXNA9datCPKqmy94FfH971py3LyDjupw8ZmOnjroab
- 1RzHSnfeouigOcUxqNZNT4Jj9.0YYSwfGa6k_zS55xy1hnIow2kGi.mYrAW4AEjHjGFl7UMIuJug
- oNHi5iOcJ4O1tO_hgGzCQpQoRt61JKt8ZkUp0uV3N0iTt6b9Q67b3wqldTp0BeLVxa50A_9V6D97
- Gfkx9xDi4BRsV13xbggUto7oZ3d1r7OwqQO9pitTJAtXm1w6edO1Axy_G430fS1agnaw738C2HUl
- Bnpgkl33KxvRParVvpvo2R1A99xA6mycRIodie06_mIsUkc7cKypKpXqL.Gdmv5NQdD561PNmOAc
- tlyyM8wnRxS_LAo5.aa__IE9ObhqVX1ElaA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Mon, 11 Feb 2019 23:10:25 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp414.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 26a66dbf95c268d7b84dc9a6f21c5cef;
-          Mon, 11 Feb 2019 23:10:23 +0000 (UTC)
-Subject: Re: [PATCH] LSM: Ignore "security=" when "lsm=" is specified
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-kernel@vger.kernel.org
-References: <20190211225403.GA7769@beast>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <74310e83-a258-e9c0-7d98-8b2cc5ced3a4@schaufler-ca.com>
-Date:   Mon, 11 Feb 2019 15:10:20 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 11 Feb 2019 18:18:22 -0500
+Received: by mail-vs1-f68.google.com with SMTP id x1so426058vsc.10
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 15:18:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6Qz8ODHkzIZKJF9S1SR/qImm6fQJbGaGKVmJiMCoO3Y=;
+        b=PiojzZ6pT87KyLWfn4wr2y+PjdwzlG0xh9ULcIgvSW1hOUvDZc9wsK6NvUYtAtJtOp
+         T0g8tV3d2vtfpAyhG6RaLiAwI3Z4xrmmmhEJvTAjrRxEk1/oDWWIZ310t2uynvXqFjMh
+         z36iA/akXMaLofWmZB7pEz79rwrXKXziMlPlQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6Qz8ODHkzIZKJF9S1SR/qImm6fQJbGaGKVmJiMCoO3Y=;
+        b=uad2iPm09Cwp0//UvsIYhVWTFNlNf15GjIR+81EecLkgjkfCy/1ouTPTgbAO+R27zc
+         DcokySaLUyxL8qe0vgme4Z2pnm0Li7wpv+EOjjfhMamrA7WHugpaKg6rSzLMOv5N2p1C
+         cmdF2K2MHD/aoVu4ZVlR/ofK/ybj+n46j7tHX9SuIk5uJuLYHIp+1jTuKjMuPnkG+pRt
+         GoUnsg9Joe824hn2dD+EPvv4n4YrN0nyXk3GNQgPNrJza5sv2kpqFwvAuqCE5ALcmDQs
+         lGBdvTRJhb8rP7VAiQw+il2dDEKabb2vd/Cls2UCBoK4zEHTyS/w1Qs9TYKCu8IAX4Y9
+         phgQ==
+X-Gm-Message-State: AHQUAuZP769s2TE5cbHwLk2w9af70E1sSY4VIWw4QjJkq+4NuBgM9SRf
+        IyxJqIdtHme7Y3Gb6lSQufWzaulBJuQ=
+X-Google-Smtp-Source: AHgI3IYeXQLCJP/cPKAdapgKvlximJxDudiJ/996KvcOo/6W3rNbcg9InsKXngZk5EYXAhaxZA298g==
+X-Received: by 2002:a67:eb5a:: with SMTP id x26mr294856vso.89.1549927101166;
+        Mon, 11 Feb 2019 15:18:21 -0800 (PST)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id l10sm12324454vkl.54.2019.02.11.15.18.20
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 15:18:20 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id x1so425993vsc.10
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 15:18:20 -0800 (PST)
+X-Received: by 2002:a67:7d01:: with SMTP id y1mr338916vsc.48.1549927099716;
+ Mon, 11 Feb 2019 15:18:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190211225403.GA7769@beast>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190211225403.GA7769@beast> <74310e83-a258-e9c0-7d98-8b2cc5ced3a4@schaufler-ca.com>
+In-Reply-To: <74310e83-a258-e9c0-7d98-8b2cc5ced3a4@schaufler-ca.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 11 Feb 2019 15:18:07 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLvwLxWWiyM4ThJ=eKzDniy_w2Eaizc-h5tK4x7oCEG2w@mail.gmail.com>
+Message-ID: <CAGXu5jLvwLxWWiyM4ThJ=eKzDniy_w2Eaizc-h5tK4x7oCEG2w@mail.gmail.com>
+Subject: Re: [PATCH] LSM: Ignore "security=" when "lsm=" is specified
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/11/2019 2:54 PM, Kees Cook wrote:
-> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
-> used on the command line, and report that it is happening.
+On Mon, Feb 11, 2019 at 3:10 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  security/security.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> On 2/11/2019 2:54 PM, Kees Cook wrote:
+> > To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
+> > used on the command line, and report that it is happening.
+> >
+> > Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> >  security/security.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/security/security.c b/security/security.c
+> > index 3147785e20d7..e6153ed54361 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -288,9 +288,13 @@ static void __init ordered_lsm_init(void)
+> >       ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+> >                               GFP_KERNEL);
+> >
+> > -     if (chosen_lsm_order)
+> > +     if (chosen_lsm_order) {
+> > +             if (chosen_major_lsm) {
+> > +                     pr_info("security= is ignored because of lsm=\n");
 >
-> diff --git a/security/security.c b/security/security.c
-> index 3147785e20d7..e6153ed54361 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -288,9 +288,13 @@ static void __init ordered_lsm_init(void)
->  	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
->  				GFP_KERNEL);
->  
-> -	if (chosen_lsm_order)
-> +	if (chosen_lsm_order) {
-> +		if (chosen_major_lsm) {
-> +			pr_info("security= is ignored because of lsm=\n");
+> This is a little awkward. How about "lsm= supersedes security=".
 
-This is a little awkward. How about "lsm= supersedes security=".
+Fine by me. James? What would you like here?
 
-> +			chosen_major_lsm = NULL;
-> +		}
->  		ordered_lsm_parse(chosen_lsm_order, "cmdline");
-> -	else
-> +	} else
->  		ordered_lsm_parse(builtin_lsm_order, "builtin");
->  
->  	for (lsm = ordered_lsms; *lsm; lsm++)
+-- 
+Kees Cook
