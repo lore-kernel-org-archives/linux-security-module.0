@@ -2,146 +2,123 @@ Return-Path: <SRS0=hX+A=QS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA6DC169C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00056C169C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E13E921B25
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B808321B18
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:37:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dj10XbPz"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ou1Wfg2g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731161AbfBKSaA (ORCPT
+        id S1732730AbfBKShE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:30:00 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44204 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727968AbfBKSaA (ORCPT
+        Mon, 11 Feb 2019 13:37:04 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39513 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732424AbfBKShD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:30:00 -0500
-Received: from zn.tnic (p200300EC2BC7A10074DEFDFE3AD6CF32.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:74de:fdfe:3ad6:cf32])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1C0D71EC037B;
-        Mon, 11 Feb 2019 19:29:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549909798;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Yw+RK9f/S+johjl1gYKTeZptuEY0P9nfhJd0XlVQGCo=;
-        b=dj10XbPzFbFnu9Nya4W5OkkNbXxJnnkj4Hr1SOpZ2asDUWMbDzAbKRWRj/tjz/qk4tl7WJ
-        0em21jvddg2A3nLTY/GpXAXUxfmJCaIUKjSFW1JC6HHKlJLE1/k9VIlZrqJLUkJ0JPA/M4
-        LmZjPdIjqu1x0Cyl6ehJazATSPz8JTc=
-Date:   Mon, 11 Feb 2019 19:29:56 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
- loading
-Message-ID: <20190211182956.GN19618@zn.tnic>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-11-rick.p.edgecombe@intel.com>
+        Mon, 11 Feb 2019 13:37:03 -0500
+Received: by mail-pg1-f194.google.com with SMTP id r11so5334961pgp.6
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 10:37:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nArp1SIyjhYvkr2+dj1tRdHY+8xTs51Con5kosXTkNg=;
+        b=Ou1Wfg2gwsp34FXdvlHuufYk5gVul5L2Ro9KR6BvE3BRAlTR790QoyHzGbM/uNVBLQ
+         9YbQsoUx68UcTcZbpBEJdvDC3hadlcSJv7Xg1vKzP8v2m/Woxv9Eb9kt3huX2WBijydL
+         HBKIukouO2OxxZR6LBpt8Elfp0RTFiktZ9OrPMR4R7QcY9Kqwhiy94Ke4UzHGoT0JCWF
+         4HhmEHM4HPUzMODyxMElHSOTS1ngr4ZRrs6DO8nKDS9k1mRnlyC1zqe2H00QqIDMYovU
+         cmvXy3LlaAYNyk2VBiwQvdIuLnbTgVIGLxwiqhkyDX4Hd7Z5uJFY22eK7QFPQRnmOMZd
+         PvjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nArp1SIyjhYvkr2+dj1tRdHY+8xTs51Con5kosXTkNg=;
+        b=FKYJ3xrOnC0vSNo/g2dDzjCu4Clb85XEIFQ+v76msCNxlo05hpap67e644JI+PqlCd
+         NJ7a+F6ZaUZ6fVTAPKb4NcCXadffVKhYUQXTl0eUZppr8qM6ktifP5lOlo7fyoTsCZX8
+         /S6JioGBK9h1P8+lbt7YvwREHHpd4gj5+NviLQyKw2j9u0YeJan10eAwvIcLIF5lQFCt
+         NbNSqDXsa+UmP1EsFr9dsvKgWr0I9ig3FRsJ6K9nFeFFyOWiV9tVsIrZdOZo85C5PKc+
+         aO9ClCBpHhZS8AVMeTxosQWyliegl3YGjhlTLVCxSbR9ShvOMqfN8WbQ7NmcvQhrM1L8
+         H5KQ==
+X-Gm-Message-State: AHQUAuaj+Qc2Vr44OFqHcLEdWBKi3w8QSfzYqb99QghMF/+85dLuzxeb
+        WsPWGVQZP7T68NyJwCX0NGvd0DYFssQvexatfzTe0wQawXWnwA==
+X-Google-Smtp-Source: AHgI3IZRCGIkI4dkr6ro49y2f980ZD58xHLurbFNA4K1NZ1glC4lklDpVIZEEFW6qPAc21qEb2yerPFGg14vIXT2dVw=
+X-Received: by 2002:a63:40c1:: with SMTP id n184mr7885032pga.225.1549910222886;
+ Mon, 11 Feb 2019 10:37:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-11-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
+ <20181022234357.82217-1-ndesaulniers@google.com> <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
+ <CAKwvOdn+V8iFJ_V1vr3GBm-NwxzaDbcmK+nW1q3uVky7bRsB3w@mail.gmail.com>
+In-Reply-To: <CAKwvOdn+V8iFJ_V1vr3GBm-NwxzaDbcmK+nW1q3uVky7bRsB3w@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 11 Feb 2019 10:36:51 -0800
+Message-ID: <CAKwvOdnhDin6TJfBVxm6xsCh_nJeBuA7GqbgJwgLnqc3PrJGxA@mail.gmail.com>
+Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
+To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        jarkko.sakkinen@linux.intel.com, zohar@linux.vnet.ibm.com
+Cc:     David Howells <dhowells@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        David.Laight@aculab.com, denkenz@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, keyrings@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules loading
+On Mon, Oct 29, 2018 at 10:54 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Wed, Oct 24, 2018 at 1:37 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > On Mon, 22 Oct 2018, ndesaulniers@google.com wrote:
+> > > Fixes the warning reported by Clang:
+> > > security/keys/trusted.c:146:17: warning: passing an object that
+> > > undergoes default
+> > >      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+> > >        va_start(argp, h3);
+> > >                       ^
+> > > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+> > > char' is declared here
+> > > unsigned char *h2, unsigned char h3, ...)
+> > >                               ^
+> > > Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+> > > standards explicitly call this out as undefined behavior:
+> > >
+> > > The parameter parmN is the identifier of the rightmost parameter in
+> > > the variable parameter list in the function definition (the one just
+> > > before the ...). If the parameter parmN is declared with ... or with a
+> > > type that is not compatible with the type that results after
+> > > application of the default argument promotions, the behavior is
+> > > undefined.
+> > >
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/41
+> > > Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
+> > > Suggested-by: David Laight <David.Laight@aculab.com>
+> > > Suggested-by: Denis Kenzior <denkenz@gmail.com>
+> > > Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
+> > > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> >
+> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> >
+> > /Jarkko
+>
+> Bumping the maintainers if this isn't already picked up?
 
-For your next submission, please fix all your subjects:
-
-The tip tree preferred format for patch subject prefixes is
-'subsys/component:', e.g. 'x86/apic:', 'x86/mm/fault:', 'sched/fair:',
-'genirq/core:'. Please do not use file names or complete file paths as
-prefix. 'git log path/to/file' should give you a reasonable hint in most
-cases.
-
-The condensed patch description in the subject line should start with a
-uppercase letter and should be written in imperative tone.
-
-
-On Mon, Jan 28, 2019 at 04:34:12PM -0800, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
-> 
-> When modules and BPF filters are loaded, there is a time window in
-> which some memory is both writable and executable. An attacker that has
-> already found another vulnerability (e.g., a dangling pointer) might be
-> able to exploit this behavior to overwrite kernel code.
-> 
-> Prevent having writable executable PTEs in this stage. In addition,
-> avoiding having W+X mappings can also slightly simplify the patching of
-> modules code on initialization (e.g., by alternatives and static-key),
-> as would be done in the next patch.
-> 
-> To avoid having W+X mappings, set them initially as RW (NX) and after
-> they are set as RO set them as X as well. Setting them as executable is
-> done as a separate step to avoid one core in which the old PTE is cached
-> (hence writable), and another which sees the updated PTE (executable),
-> which would break the W^X protection.
-> 
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Suggested-by: Andy Lutomirski <luto@amacapital.net>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  arch/x86/kernel/alternative.c | 28 +++++++++++++++++++++-------
->  arch/x86/kernel/module.c      |  2 +-
->  include/linux/filter.h        |  2 +-
->  kernel/module.c               |  5 +++++
->  4 files changed, 28 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> index 76d482a2b716..69f3e650ada8 100644
-> --- a/arch/x86/kernel/alternative.c
-> +++ b/arch/x86/kernel/alternative.c
-> @@ -667,15 +667,29 @@ void __init alternative_instructions(void)
->   * handlers seeing an inconsistent instruction while you patch.
->   */
->  void *__init_or_module text_poke_early(void *addr, const void *opcode,
-> -					      size_t len)
-> +				       size_t len)
->  {
->  	unsigned long flags;
-> -	local_irq_save(flags);
-> -	memcpy(addr, opcode, len);
-> -	local_irq_restore(flags);
-> -	sync_core();
-> -	/* Could also do a CLFLUSH here to speed up CPU recovery; but
-> -	   that causes hangs on some VIA CPUs. */
-> +
-> +	if (static_cpu_has(X86_FEATURE_NX) &&
-
-Not a fast path - boot_cpu_has() is fine here.
-
+James, Jarkko, or Mimi, can you please pick this up (and let me know
+what tree it lands in)?
+https://lkml.org/lkml/2018/10/23/116
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Thanks,
+~Nick Desaulniers
