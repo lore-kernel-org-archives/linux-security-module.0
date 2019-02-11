@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E909BC282D7
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA6DC169C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9AD8218A4
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:22:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E13E921B25
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:30:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="S1eK1s2W"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="dj10XbPz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728869AbfBKSWa (ORCPT
+        id S1731161AbfBKSaA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 13:22:30 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:43098 "EHLO mail.skyhub.de"
+        Mon, 11 Feb 2019 13:30:00 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:44204 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727259AbfBKSW3 (ORCPT
+        id S1727968AbfBKSaA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 13:22:29 -0500
+        Mon, 11 Feb 2019 13:30:00 -0500
 Received: from zn.tnic (p200300EC2BC7A10074DEFDFE3AD6CF32.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:74de:fdfe:3ad6:cf32])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D5B721EC01B6;
-        Mon, 11 Feb 2019 19:22:27 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1C0D71EC037B;
+        Mon, 11 Feb 2019 19:29:58 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549909348;
+        t=1549909798;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=mBrHsqt4hUkstq7VFx24ziqfy/NU+TGvc1tFvnBJ8PA=;
-        b=S1eK1s2WDNc/02K3VAa86oPXXo4XoDwFmtP0wbeZYty5vAp9mprYozKcOct+xRxW15U4++
-        c3/M3JS0QgDRn5peV2kEMuTIRbxVT2WR5+ldKaRyWQt5dV1T85uygPXDKqWdlXpoIgzsRL
-        kYmIwrctHP4YCZkqztXDQC87SbD3/S8=
-Date:   Mon, 11 Feb 2019 19:22:21 +0100
+        bh=Yw+RK9f/S+johjl1gYKTeZptuEY0P9nfhJd0XlVQGCo=;
+        b=dj10XbPzFbFnu9Nya4W5OkkNbXxJnnkj4Hr1SOpZ2asDUWMbDzAbKRWRj/tjz/qk4tl7WJ
+        0em21jvddg2A3nLTY/GpXAXUxfmJCaIUKjSFW1JC6HHKlJLE1/k9VIlZrqJLUkJ0JPA/M4
+        LmZjPdIjqu1x0Cyl6ehJazATSPz8JTc=
+Date:   Mon, 11 Feb 2019 19:29:56 +0100
 From:   Borislav Petkov <bp@alien8.de>
 To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
 Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
@@ -51,103 +51,94 @@ Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH v2 09/20] x86/kprobes: instruction pages initialization
- enhancements
-Message-ID: <20190211182221.GM19618@zn.tnic>
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
+ loading
+Message-ID: <20190211182956.GN19618@zn.tnic>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-10-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-11-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190129003422.9328-10-rick.p.edgecombe@intel.com>
+In-Reply-To: <20190129003422.9328-11-rick.p.edgecombe@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Only nitpicks:
+> Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules loading
 
-> Subject: Re: [PATCH v2 09/20] x86/kprobes: instruction pages initialization enhancements
+For your next submission, please fix all your subjects:
 
-Subject needs a verb.
+The tip tree preferred format for patch subject prefixes is
+'subsys/component:', e.g. 'x86/apic:', 'x86/mm/fault:', 'sched/fair:',
+'genirq/core:'. Please do not use file names or complete file paths as
+prefix. 'git log path/to/file' should give you a reasonable hint in most
+cases.
 
-On Mon, Jan 28, 2019 at 04:34:11PM -0800, Rick Edgecombe wrote:
+The condensed patch description in the subject line should start with a
+uppercase letter and should be written in imperative tone.
+
+
+On Mon, Jan 28, 2019 at 04:34:12PM -0800, Rick Edgecombe wrote:
 > From: Nadav Amit <namit@vmware.com>
 > 
-> Make kprobes instruction pages read-only (and executable) after they are
-> set to prevent them from mistaken or malicious modifications.
+> When modules and BPF filters are loaded, there is a time window in
+> which some memory is both writable and executable. An attacker that has
+> already found another vulnerability (e.g., a dangling pointer) might be
+> able to exploit this behavior to overwrite kernel code.
 > 
-> This is a preparatory patch for a following patch that makes module
-> allocated pages non-executable and sets the page as executable after
-> allocation.
+> Prevent having writable executable PTEs in this stage. In addition,
+> avoiding having W+X mappings can also slightly simplify the patching of
+> modules code on initialization (e.g., by alternatives and static-key),
+> as would be done in the next patch.
 > 
-> While at it, do some small cleanup of what appears to be unnecessary
-> masking.
+> To avoid having W+X mappings, set them initially as RW (NX) and after
+> they are set as RO set them as X as well. Setting them as executable is
+> done as a separate step to avoid one core in which the old PTE is cached
+> (hence writable), and another which sees the updated PTE (executable),
+> which would break the W^X protection.
 > 
-> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Suggested-by: Andy Lutomirski <luto@amacapital.net>
 > Signed-off-by: Nadav Amit <namit@vmware.com>
 > Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 > ---
->  arch/x86/kernel/kprobes/core.c | 24 ++++++++++++++++++++----
->  1 file changed, 20 insertions(+), 4 deletions(-)
+>  arch/x86/kernel/alternative.c | 28 +++++++++++++++++++++-------
+>  arch/x86/kernel/module.c      |  2 +-
+>  include/linux/filter.h        |  2 +-
+>  kernel/module.c               |  5 +++++
+>  4 files changed, 28 insertions(+), 9 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-> index 4ba75afba527..fac692e36833 100644
-> --- a/arch/x86/kernel/kprobes/core.c
-> +++ b/arch/x86/kernel/kprobes/core.c
-> @@ -431,8 +431,20 @@ void *alloc_insn_page(void)
->  	void *page;
->  
->  	page = module_alloc(PAGE_SIZE);
-> -	if (page)
-> -		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
-> +	if (page == NULL)
-> +		return NULL;
-
-Null tests we generally do like this:
-
-	if (! ...
-
-
-like in the rest of this file.
-
-> +
-> +	/*
-> +	 * First make the page read-only, and then only then make it executable
-
- s/then only then/only then/
-
-ditto below.
-
-> +	 * to prevent it from being W+X in between.
-> +	 */
-> +	set_memory_ro((unsigned long)page, 1);
-> +
-> +	/*
-> +	 * TODO: Once additional kernel code protection mechanisms are set, ensure
-> +	 * that the page was not maliciously altered and it is still zeroed.
-> +	 */
-> +	set_memory_x((unsigned long)page, 1);
->  
->  	return page;
->  }
-> @@ -440,8 +452,12 @@ void *alloc_insn_page(void)
->  /* Recover page to RW mode before releasing it */
->  void free_insn_page(void *page)
+> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> index 76d482a2b716..69f3e650ada8 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -667,15 +667,29 @@ void __init alternative_instructions(void)
+>   * handlers seeing an inconsistent instruction while you patch.
+>   */
+>  void *__init_or_module text_poke_early(void *addr, const void *opcode,
+> -					      size_t len)
+> +				       size_t len)
 >  {
-> -	set_memory_nx((unsigned long)page & PAGE_MASK, 1);
-> -	set_memory_rw((unsigned long)page & PAGE_MASK, 1);
-> +	/*
-> +	 * First make the page non-executable, and then only then make it
-> +	 * writable to prevent it from being W+X in between.
-> +	 */
-> +	set_memory_nx((unsigned long)page, 1);
-> +	set_memory_rw((unsigned long)page, 1);
->  	module_memfree(page);
->  }
->  
-> -- 
+>  	unsigned long flags;
+> -	local_irq_save(flags);
+> -	memcpy(addr, opcode, len);
+> -	local_irq_restore(flags);
+> -	sync_core();
+> -	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+> -	   that causes hangs on some VIA CPUs. */
+> +
+> +	if (static_cpu_has(X86_FEATURE_NX) &&
+
+Not a fast path - boot_cpu_has() is fine here.
 
 -- 
 Regards/Gruss,
