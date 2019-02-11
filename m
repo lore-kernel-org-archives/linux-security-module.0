@@ -2,127 +2,292 @@ Return-Path: <SRS0=hX+A=QS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34196C169C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 17:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62477C169C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0489021B68
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 17:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 288E121B18
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 18:05:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GydORsWG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbfBKRzh (ORCPT
+        id S1728772AbfBKSFD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 12:55:37 -0500
-Received: from mga04.intel.com ([192.55.52.120]:2752 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbfBKRzh (ORCPT
+        Mon, 11 Feb 2019 13:05:03 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:37803 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727896AbfBKSFD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 12:55:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 09:55:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
-   d="scan'208";a="115355335"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.56])
-  by orsmga006.jf.intel.com with ESMTP; 11 Feb 2019 09:55:36 -0800
-Subject: Re: [PATCH 2/2] selftests: tpm2: Extend tests to cover partial reads
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
-        jgg@ziepe.ca
-References: <154939851385.18477.481518864800562919.stgit@tstruk-mobl1.jf.intel.com>
- <154939851969.18477.13778157467131576825.stgit@tstruk-mobl1.jf.intel.com>
- <20190211164803.GG8431@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- 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
- FheFfUJaD4iEjuL98uUjS/AI
-Message-ID: <9b879fd2-5c0a-aecc-b6cb-02e5255c22f6@intel.com>
-Date:   Mon, 11 Feb 2019 09:55:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190211164803.GG8431@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Mon, 11 Feb 2019 13:05:03 -0500
+Received: by mail-pl1-f194.google.com with SMTP id b5so5660689plr.4;
+        Mon, 11 Feb 2019 10:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=AUsdeBs8TwVgEYdmAcctLfA3NsYpeVedAfShAvqLCSQ=;
+        b=GydORsWGsWvaK37KjDS0hKIrZCViWp2jnMBbmaJP55UDxAfk6Lpjo3/bo26Ccs1V+w
+         Rx9UAFtFx0BLH9ij6rFgtj7xLiFwLHHvYpCslgRZ2Y5bJY7rmQIs38sQwb1ztEcTOlZG
+         Mbk6gy2n1DYs4cCff9biQQ2Yi4AYE8GurcGLbonmcUaXgvD3t6EDJUSjzmAk3hv42xZx
+         4TcEcJxNFK3xqbfHtLztg/WOeGgGZk5YOu6gwCZhyyVmTX7AGxyTei39eSFz7ZToM6/N
+         CHynptnAS6T+5A0Mg0uYa1UiXlqlz1Q0Vx77VlFdVpD7z3Pv1QL0sEdBq4yVHtchqpfP
+         vWPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=AUsdeBs8TwVgEYdmAcctLfA3NsYpeVedAfShAvqLCSQ=;
+        b=S5espi1gnFCUbgCKpSHM8aZHKPDood/JddbqQSf1fqVPEUwT0I13Citxyzum/LzNzL
+         yEGols4nR47+8KztFfbes9XBMtiZy1/LxZ/0+eHSddCu1fLiXjRbEuUuqchhsk+A0OGe
+         wAY0o/HMeD8ScQfT9QyRRvqto9uObKoqbLAglboxOYXrM4cQ58ti8+ihBDZoeJc/ZOG/
+         G1OJjvhRb9/JJwzsgcsJwu+jpR9TYLipoGG0IXrFdUTf/e3KEkzIBAQ95jY3eyrIsFMD
+         LYq0sDX6hwKa9+//EMEnV6KlaRWH5+tS4n0HCoxpPPDWk3PiXlDZf2cV/J7Cr5kid68C
+         72mw==
+X-Gm-Message-State: AHQUAub4zX/rpBb6H7BtVCBxsf8AVecaOun+kILUMhOB4u2d+LJxdrjO
+        CCj9AeYdULqGBejJ1Y5baXU=
+X-Google-Smtp-Source: AHgI3IahTZgfrp8L0NmonDNlgVSC6Taf0HBldEkpa1Q8EcssFEiNuhJtYHQnYzeDyoJKeaT4IFbqeQ==
+X-Received: by 2002:a17:902:2887:: with SMTP id f7mr37670181plb.176.1549908301976;
+        Mon, 11 Feb 2019 10:05:01 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id 15sm16807648pfr.55.2019.02.11.10.05.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 10:05:01 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
+ patching
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
+Date:   Mon, 11 Feb 2019 10:04:59 -0800
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <6FE10C97-25FF-4E99-A96A-465CBACA935B@gmail.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-6-rick.p.edgecombe@intel.com>
+ <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
+ <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
+To:     Andy Lutomirski <luto@amacapital.net>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/11/19 8:48 AM, Jarkko Sakkinen wrote:
-> You are missing a cover letter from this patch set. Please have it in
-> v2. Also use tag "selftests/tpm2" instead of having two tags in the
-> short summaries. Now they look a bit weird.
+> On Feb 10, 2019, at 9:18 PM, Andy Lutomirski <luto@amacapital.net> =
+wrote:
+>=20
+>=20
+>=20
+> On Feb 10, 2019, at 4:39 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+>=20
+>>> On Jan 28, 2019, at 4:34 PM, Rick Edgecombe =
+<rick.p.edgecombe@intel.com> wrote:
+>>>=20
+>>> From: Nadav Amit <namit@vmware.com>
+>>>=20
+>>> To prevent improper use of the PTEs that are used for text patching, =
+we
+>>> want to use a temporary mm struct. We initailize it by copying the =
+init
+>>> mm.
+>>>=20
+>>> The address that will be used for patching is taken from the lower =
+area
+>>> that is usually used for the task memory. Doing so prevents the need =
+to
+>>> frequently synchronize the temporary-mm (e.g., when BPF programs are
+>>> installed), since different PGDs are used for the task memory.
+>>>=20
+>>> Finally, we randomize the address of the PTEs to harden against =
+exploits
+>>> that use these PTEs.
+>>>=20
+>>> Cc: Kees Cook <keescook@chromium.org>
+>>> Cc: Dave Hansen <dave.hansen@intel.com>
+>>> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>>> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+>>> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+>>> Suggested-by: Andy Lutomirski <luto@kernel.org>
+>>> Signed-off-by: Nadav Amit <namit@vmware.com>
+>>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>>> ---
+>>> arch/x86/include/asm/pgtable.h       |  3 +++
+>>> arch/x86/include/asm/text-patching.h |  2 ++
+>>> arch/x86/kernel/alternative.c        |  3 +++
+>>> arch/x86/mm/init_64.c                | 36 =
+++++++++++++++++++++++++++++
+>>> init/main.c                          |  3 +++
+>>> 5 files changed, 47 insertions(+)
+>>>=20
+>>> diff --git a/arch/x86/include/asm/pgtable.h =
+b/arch/x86/include/asm/pgtable.h
+>>> index 40616e805292..e8f630d9a2ed 100644
+>>> --- a/arch/x86/include/asm/pgtable.h
+>>> +++ b/arch/x86/include/asm/pgtable.h
+>>> @@ -1021,6 +1021,9 @@ static inline void __meminit =
+init_trampoline_default(void)
+>>>   /* Default trampoline pgd value */
+>>>   trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)];
+>>> }
+>>> +
+>>> +void __init poking_init(void);
+>>> +
+>>> # ifdef CONFIG_RANDOMIZE_MEMORY
+>>> void __meminit init_trampoline(void);
+>>> # else
+>>> diff --git a/arch/x86/include/asm/text-patching.h =
+b/arch/x86/include/asm/text-patching.h
+>>> index f8fc8e86cf01..a75eed841eed 100644
+>>> --- a/arch/x86/include/asm/text-patching.h
+>>> +++ b/arch/x86/include/asm/text-patching.h
+>>> @@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void =
+*opcode, size_t len);
+>>> extern int poke_int3_handler(struct pt_regs *regs);
+>>> extern void *text_poke_bp(void *addr, const void *opcode, size_t =
+len, void *handler);
+>>> extern int after_bootmem;
+>>> +extern __ro_after_init struct mm_struct *poking_mm;
+>>> +extern __ro_after_init unsigned long poking_addr;
+>>>=20
+>>> #endif /* _ASM_X86_TEXT_PATCHING_H */
+>>> diff --git a/arch/x86/kernel/alternative.c =
+b/arch/x86/kernel/alternative.c
+>>> index 12fddbc8c55b..ae05fbb50171 100644
+>>> --- a/arch/x86/kernel/alternative.c
+>>> +++ b/arch/x86/kernel/alternative.c
+>>> @@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void =
+*addr, const void *opcode,
+>>>   return addr;
+>>> }
+>>>=20
+>>> +__ro_after_init struct mm_struct *poking_mm;
+>>> +__ro_after_init unsigned long poking_addr;
+>>> +
+>>> static void *__text_poke(void *addr, const void *opcode, size_t len)
+>>> {
+>>>   unsigned long flags;
+>>> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+>>> index bccff68e3267..125c8c48aa24 100644
+>>> --- a/arch/x86/mm/init_64.c
+>>> +++ b/arch/x86/mm/init_64.c
+>>> @@ -53,6 +53,7 @@
+>>> #include <asm/init.h>
+>>> #include <asm/uv/uv.h>
+>>> #include <asm/setup.h>
+>>> +#include <asm/text-patching.h>
+>>>=20
+>>> #include "mm_internal.h"
+>>>=20
+>>> @@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
+>>>   return memory_block_size_probed;
+>>> }
+>>>=20
+>>> +/*
+>>> + * Initialize an mm_struct to be used during poking and a pointer =
+to be used
+>>> + * during patching.
+>>> + */
+>>> +void __init poking_init(void)
+>>> +{
+>>> +    spinlock_t *ptl;
+>>> +    pte_t *ptep;
+>>> +
+>>> +    poking_mm =3D copy_init_mm();
+>>> +    BUG_ON(!poking_mm);
+>>> +
+>>> +    /*
+>>> +     * Randomize the poking address, but make sure that the =
+following page
+>>> +     * will be mapped at the same PMD. We need 2 pages, so find =
+space for 3,
+>>> +     * and adjust the address if the PMD ends after the first one.
+>>> +     */
+>>> +    poking_addr =3D TASK_UNMAPPED_BASE;
+>>> +    if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+>>> +        poking_addr +=3D (kaslr_get_random_long("Poking") & =
+PAGE_MASK) %
+>>> +            (TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
+>>> +
+>>> +    if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) =3D=3D 0)
+>>> +        poking_addr +=3D PAGE_SIZE;
+>>=20
+>> Further thinking about it, I think that allocating the virtual =
+address for
+>> poking from user address-range is problematic. The user can set =
+watchpoints
+>> on different addresses, cause some static-keys to be =
+enabled/disabled, and
+>> monitor the signals to derandomize the poking address.
+>=20
+> Hmm, I hadn=E2=80=99t thought about watchpoints. I=E2=80=99m not sure =
+how much we care
+> about possible derandomization like this, but we certainly don=E2=80=99t=
+ want to
+> send signals or otherwise malfunction.
+>=20
+>> Andy, I think you were pushing this change. Can I go back to use a =
+vmalloc=E2=80=99d
+>> address instead, or do you have a better solution?
+>=20
+> Hmm. If we use a vmalloc address, we have to make sure it=E2=80=99s =
+not actually
+> allocated. I suppose we could allocate one once at boot and use that. =
+We
+> also have the problem that the usual APIs for handling =E2=80=9Cuser=E2=80=
+=9D addresses
+> might assume they=E2=80=99re actually in the user range, although this =
+seems
+> unlikely to be a problem in practice. More seriously, though, the code
+> that manipulates per-mm paging structures assumes that *all* of the
+> structures up to the top level are per-mm, and, if we use anything =
+less
+> than a private pgd, this isn=E2=80=99t the case.
 
-Since when is the cover letter mandatory?
-I understand that is helps for a complicated patch set
-to explain the problem and solution in the cover letter,
-but for this simple test case addition what's the point?
-And there is nothing forcing a cover letter in
-https://www.kernel.org/doc/html/v4.20/process/submitting-patches.html
+I forgot that I only had this conversation in my mind ;-)
 
-Also double tags seams to be quite common for selftest.
-See git log tools/testing/selftests/
-Thanks,
--- 
-Tadeusz
+Well, I did write some code that kept some vmalloc=E2=80=99d area =
+private, and it
+did require more synchronization between the pgd=E2=80=99s. It is still =
+possible
+to use another top-level PGD, but =E2=80=A6 (continued below)
+
+>=20
+>> I prefer not to
+>> save/restore DR7, of course.
+>=20
+> I suspect we may want to use the temporary mm concept for EFI, too, so =
+we
+> may want to just suck it up and save/restore DR7. But only if a =
+watchpoint
+> is in use, of course. I have an old patch I could dust off that tracks =
+DR7
+> to make things like this efficient.
+
+=E2=80=A6 but, if this is the case, then I will just make =
+(un)use_temporary_mm() to
+save/restore DR7. I guess you are ok with such a solution. I will
+incorporate it into Rick=E2=80=99s v3.
+
