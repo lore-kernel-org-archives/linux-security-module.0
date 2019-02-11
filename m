@@ -2,43 +2,68 @@ Return-Path: <SRS0=hX+A=QS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58499C169C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 19:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD839C169C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 20:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2956721B24
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 19:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B385218D8
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 20:32:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ryEPVL3o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDVIlylH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730386AbfBKTnC (ORCPT
+        id S1727165AbfBKUcp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:43:02 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:56204 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728288AbfBKTnC (ORCPT
+        Mon, 11 Feb 2019 15:32:45 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33083 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726025AbfBKUco (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:43:02 -0500
-Received: from zn.tnic (p200300EC2BC7A100D435EAB708BAD763.dip0.t-ipconnect.de [IPv6:2003:ec:2bc7:a100:d435:eab7:8ba:d763])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C15751EC01AF;
-        Mon, 11 Feb 2019 20:42:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549914180;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=+gKW9dyrdmotWHOe9duLDroxnAT+/cbjZvA/JDljj/4=;
-        b=ryEPVL3oTtALDvJ8cDIc+0KJtdcitxb40vihVDnWdIdXjZ6isjCTUoM6PCuhi2jnhtfGFL
-        E0NI+P5yhxp6BB1Ta3o0oMw1Ay4p2Vo7bvPytCD8SS5ycVqqTpNX8RqXhUdQXrf0XhWM8M
-        Btad+B7ZL7KPEAB6R+LP5YU1nECVJ6E=
-Date:   Mon, 11 Feb 2019 20:42:51 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Nadav Amit <nadav.amit@gmail.com>
+        Mon, 11 Feb 2019 15:32:44 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c123so122848pfb.0;
+        Mon, 11 Feb 2019 12:32:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LYEtQ0huIgRqRN72HKrMf6/t6SbOdkntokaFuVtRuwA=;
+        b=jDVIlylHgLecqgbUr9f9MSgPipvsjbdmdR5Ccr2YQlrg8Dl3zqXWhKCYsO4R+DrurX
+         7hYnNc7fJOMhgnQXkTxvObqSsJdhA/mCfjYLko+GOmny8Nx+Oqul4Zl47Vws1RT5rvb2
+         VkSxW3G7r66YWNusKQi1YYB1tqYKEStyT1xd7ee/68a8W21/5rfFlIkYQitSNbAgpiQN
+         r2JetYqDze242ZhQyJy8JJrrOhQXIaJXFOMdOTCgTNJTzdrHXaO010kBDmABT040pMGM
+         ub8BvmNjymWv1dZyTxhLNANe9rda/SV4OTHtRTTKcxnrIgvLnJvd7w4IETjI0SKnVdpj
+         uuew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LYEtQ0huIgRqRN72HKrMf6/t6SbOdkntokaFuVtRuwA=;
+        b=O3TP0IegOWTaCGiPMa5cwPXHwGFV+NThe2n64VDqJUjzrMVgsu1EnWuLtC7HRRaT6V
+         NySWN+ePxbZm9LGhDiIvntr7OZi6nwKhjhRao2owKySB2HJ+0Mk8CaVdw6NJKzWflf8S
+         1yb22ov6ZixJ4dSYUMgsPJFTjUnfcSdurWU2/7NOYf+1YvUauUtkoeg4FEXgB/hRPGZU
+         LJb9lWjagz6iyYnMsA2VE5w7E8V5yQFV8K6efr4PP8ZbZE0aHlyNQO9L9usC74u0gFhs
+         7MAdlLsN+RBKFo87g+vN2oyP0xPDwXTzRs+ahVfydk/oGTLUmFhkBTqyexDeE90hYPk5
+         dWkw==
+X-Gm-Message-State: AHQUAubNqd4kFq0kStGE1GR8AfTDllh1zoYdAagM/oQka5t9yyzLq7l2
+        eqDXEDSsVudUmcnNn0ralD8=
+X-Google-Smtp-Source: AHgI3IY/t2t2yc8abbgd4X3ggvCGVF2OGRCQro2+hmH3yq84NbHtsVFoO6+n44jfzy8/G4hRQTyUTw==
+X-Received: by 2002:a65:6684:: with SMTP id b4mr64478pgw.55.1549917163761;
+        Mon, 11 Feb 2019 12:32:43 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id c23sm12753759pgh.73.2019.02.11.12.32.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Feb 2019 12:32:42 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
+ loading
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190211194251.GS19618@zn.tnic>
+Date:   Mon, 11 Feb 2019 12:32:41 -0800
 Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
         Andy Lutomirski <luto@kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -59,9 +84,8 @@ Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
- loading
-Message-ID: <20190211194251.GS19618@zn.tnic>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A55214F3-CDC0-44C4-AFB6-7E8E23CC6F85@gmail.com>
 References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
  <20190129003422.9328-11-rick.p.edgecombe@intel.com>
  <20190211182956.GN19618@zn.tnic>
@@ -70,29 +94,30 @@ References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
  <A671F14F-3E03-4A97-9F54-426533077E0C@gmail.com>
  <20190211191059.GR19618@zn.tnic>
  <3996E3F9-92D2-4561-84E9-68B43AC60F43@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3996E3F9-92D2-4561-84E9-68B43AC60F43@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+ <20190211194251.GS19618@zn.tnic>
+To:     Borislav Petkov <bp@alien8.de>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 11, 2019 at 11:27:03AM -0800, Nadav Amit wrote:
-> Is there any comment over static_cpu_has()? ;-)
+> On Feb 11, 2019, at 11:42 AM, Borislav Petkov <bp@alien8.de> wrote:
+>=20
+> On Mon, Feb 11, 2019 at 11:27:03AM -0800, Nadav Amit wrote:
+>> Is there any comment over static_cpu_has()? ;-)
+>=20
+> Almost:
+>=20
+> /*
+> * Static testing of CPU features.  Used the same as boot_cpu_has().
+> * These will statically patch the target code for additional
+> * performance.
+> */
+> static __always_inline __pure bool _static_cpu_has(u16 bit)
 
-Almost:
+Oh, I missed this comment.
 
-/*
- * Static testing of CPU features.  Used the same as boot_cpu_has().
- * These will statically patch the target code for additional
- * performance.
- */
-static __always_inline __pure bool _static_cpu_has(u16 bit)
+BTW: the =E2=80=9C__pure=E2=80=9D attribute is useless when =
+=E2=80=9C__always_inline=E2=80=9D is used.
+Unless it is intended to be some sort of comment, of course.
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
