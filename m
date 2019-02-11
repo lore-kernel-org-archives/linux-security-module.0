@@ -2,233 +2,208 @@ Return-Path: <SRS0=hX+A=QS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A10F3C282D7
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 16:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 505E6C282D7
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 16:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B65621B24
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 16:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2619721B24
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 16:48:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728182AbfBKQTZ (ORCPT
+        id S1729393AbfBKQsJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 11:19:25 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37748 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727224AbfBKQTZ (ORCPT
+        Mon, 11 Feb 2019 11:48:09 -0500
+Received: from mga05.intel.com ([192.55.52.43]:47093 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728968AbfBKQsI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 11:19:25 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1BGF0TG167063
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 11:19:24 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qkca70j18-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 11:19:23 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 11 Feb 2019 16:19:21 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Feb 2019 16:19:17 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1BGJG1A43974816
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 11 Feb 2019 16:19:16 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CAC6FAE045;
-        Mon, 11 Feb 2019 16:19:16 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85C70AE053;
-        Mon, 11 Feb 2019 16:19:15 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.91.85])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Feb 2019 16:19:15 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Mon, 11 Feb 2019 11:19:04 -0500
-In-Reply-To: <20190211155609.GC20732@linux-8ccs>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
-         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-         <20190211155609.GC20732@linux-8ccs>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021116-0008-0000-0000-000002BF213A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021116-0009-0000-0000-0000222B370A
-Message-Id: <1549901944.12743.162.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-11_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902110122
+        Mon, 11 Feb 2019 11:48:08 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 08:48:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,359,1544515200"; 
+   d="scan'208";a="114050317"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.142])
+  by orsmga007.jf.intel.com with ESMTP; 11 Feb 2019 08:48:04 -0800
+Date:   Mon, 11 Feb 2019 18:48:03 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
+        jgg@ziepe.ca
+Subject: Re: [PATCH 2/2] selftests: tpm2: Extend tests to cover partial reads
+Message-ID: <20190211164803.GG8431@linux.intel.com>
+References: <154939851385.18477.481518864800562919.stgit@tstruk-mobl1.jf.intel.com>
+ <154939851969.18477.13778157467131576825.stgit@tstruk-mobl1.jf.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154939851969.18477.13778157467131576825.stgit@tstruk-mobl1.jf.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2019-02-11 at 16:56 +0100, Jessica Yu wrote:
-> +++ Mimi Zohar [31/01/19 14:18 -0500]:
-> >Require signed kernel modules on systems with secure boot mode enabled.
-> >
-> >To coordinate between appended kernel module signatures and IMA
-> >signatures, only define an IMA MODULE_CHECK policy rule if
-> >CONFIG_MODULE_SIG is not enabled.
-> >
-> >This patch defines a function named set_module_sig_required() and renames
-> >is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
-> >call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
-> >being enabled.
-> >
-> >Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> >---
-> > arch/x86/kernel/ima_arch.c        |  9 ++++++++-
-> > include/linux/module.h            |  7 ++++++-
-> > kernel/module.c                   | 15 +++++++++++----
-> > security/integrity/ima/ima_main.c |  2 +-
-> > 4 files changed, 26 insertions(+), 7 deletions(-)
-> >
-> >diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-> >index e47cd9390ab4..96a023238a83 100644
-> >--- a/arch/x86/kernel/ima_arch.c
-> >+++ b/arch/x86/kernel/ima_arch.c
-> >@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
-> > 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-> > #endif /* CONFIG_KEXEC_VERIFY_SIG */
-> > 	"measure func=KEXEC_KERNEL_CHECK",
-> >+#if !IS_ENABLED(CONFIG_MODULE_SIG)
-> >+	"appraise func=MODULE_CHECK appraise_type=imasig",
-> >+#endif
-> >+	"measure func=MODULE_CHECK",
-> > 	NULL
-> > };
-> >
-> > const char * const *arch_get_ima_policy(void)
-> > {
-> >-	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
-> >+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-> >+		if (IS_ENABLED(CONFIG_MODULE_SIG))
-> >+			set_module_sig_required();
-> > 		return sb_arch_rules;
-> >+	}
-> > 	return NULL;
-> > }
-> >diff --git a/include/linux/module.h b/include/linux/module.h
-> >index 8fa38d3e7538..af51c8ec755f 100644
-> >--- a/include/linux/module.h
-> >+++ b/include/linux/module.h
-> >@@ -659,7 +659,8 @@ static inline bool is_livepatch_module(struct module *mod)
-> > }
-> > #endif /* CONFIG_LIVEPATCH */
-> >
-> >-bool is_module_sig_enforced(void);
-> >+bool is_module_sig_enforced_or_required(void);
-> >+void set_module_sig_required(void);
-> >
-> > #else /* !CONFIG_MODULES... */
-> >
-> >@@ -780,6 +781,10 @@ static inline bool is_module_sig_enforced(void)
-> > 	return false;
-> > }
-> >
-> >+static inline void set_module_sig_required(void)
-> >+{
-> >+}
-> >+
-> > /* Dereference module function descriptor */
-> > static inline
-> > void *dereference_module_function_descriptor(struct module *mod, void *ptr)
-> >diff --git a/kernel/module.c b/kernel/module.c
-> >index 2ad1b5239910..70a9709d19eb 100644
-> >--- a/kernel/module.c
-> >+++ b/kernel/module.c
-> >@@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
-> >
-> > static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
-> > module_param(sig_enforce, bool_enable_only, 0644);
-> >+static bool sig_required;
-> >
-> > /*
-> >  * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
-> >  * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
-> >  */
-> >-bool is_module_sig_enforced(void)
-> >+bool is_module_sig_enforced_or_required(void)
-> > {
-> >-	return sig_enforce;
-> >+	return sig_enforce || sig_required;
-> > }
+You are missing a cover letter from this patch set. Please have it in
+v2. Also use tag "selftests/tpm2" instead of having two tags in the
+short summaries. Now they look a bit weird.
+
+On Tue, Feb 05, 2019 at 12:28:39PM -0800, Tadeusz Struk wrote:
+> Three new tests added:
+> 1. Send get random cmd, read header in 1st read, read the rest in second
+>    read - expect success
+> 2. Send get random cmd, read only part of the response, send another
+>    get random command, read the response - expect success
+> 3. Send get random cmd followed by another get random cmd, without
+>    reading the first response - expect the second cmd to fail with -EBUSY
 > 
-> Hi Mimi,
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+> ---
+>  tools/testing/selftests/tpm2/tpm2.py       |    1 
+>  tools/testing/selftests/tpm2/tpm2_tests.py |   82 ++++++++++++++++++++++++++++
+>  2 files changed, 83 insertions(+)
 > 
-> Just wondering, is there any particular reason why a distinction is
-> made between sig_enforce and sig_required? Doesn't sig_enforce imply
-> that signed modules are required? In other words, why introduce
-> another variable instead of just using sig_enforce? It may be
-> confusing in the case of a user looking at /sys/module/module/parameters/sig_enforce
-> and it having a value of 0 yet module signatures are being required by ima.
+> diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
+> index c2b9f2b1a0ac..828c18584624 100644
+> --- a/tools/testing/selftests/tpm2/tpm2.py
+> +++ b/tools/testing/selftests/tpm2/tpm2.py
+> @@ -22,6 +22,7 @@ TPM2_CC_UNSEAL = 0x015E
+>  TPM2_CC_FLUSH_CONTEXT = 0x0165
+>  TPM2_CC_START_AUTH_SESSION = 0x0176
+>  TPM2_CC_GET_CAPABILITY	= 0x017A
+> +TPM2_CC_GET_RANDOM = 0x017B
+>  TPM2_CC_PCR_READ = 0x017E
+>  TPM2_CC_POLICY_PCR = 0x017F
+>  TPM2_CC_PCR_EXTEND = 0x0182
+> diff --git a/tools/testing/selftests/tpm2/tpm2_tests.py b/tools/testing/selftests/tpm2/tpm2_tests.py
+> index 3bb066fea4a0..3f6a65cbdd39 100644
+> --- a/tools/testing/selftests/tpm2/tpm2_tests.py
+> +++ b/tools/testing/selftests/tpm2/tpm2_tests.py
+> @@ -158,6 +158,88 @@ class SmokeTest(unittest.TestCase):
+>              pass
+>          self.assertEqual(rejected, True)
+>  
+> +    def test_read_partial_resp(self):
+> +        """Reads random in two subsequent reads"""
+> +        log = logging.getLogger(__name__)
+> +        try:
+> +            fmt = '>HIIH'
+> +            cmd = struct.pack(fmt,
+> +                              tpm2.TPM2_ST_NO_SESSIONS,
+> +                              struct.calcsize(fmt),
+> +                              tpm2.TPM2_CC_GET_RANDOM,
+> +                              0x20)
+> +            self.client.tpm.write(cmd)
+> +            hdr = self.client.tpm.read(10)
+> +            sz = struct.unpack('>I', hdr[2:6])[0]
+> +            rsp = self.client.tpm.read()
 
-Hi Jessica,
+8<
 
-It would definitely be a lot better not having to differentiate
-between the builtin CONFIG/module parm enforced and runtime enforced.
- For some reason the "lockdown" patch doesn't directly modify
-sig_enforce.
+> +            log.debug("header:")
+> +            log.debug(tpm2.hex_dump(hdr))
+> +            log.debug("resp:")
+> +            log.debug(tpm2.hex_dump(rsp))
 
-Mimi
+Remove.
 
+> +        except:
+
+8<
+
+> +            log.debug("Error:", sys.exc_info()[0])
+
+Remove.
+
+> +            raise
+> +
+> +        self.assertEqual(sz, 10 + 2 + 32)
+> +        self.assertEqual(len(rsp), 2 + 32)
+> +
+> +    def test_read_partial_overwrite(self):
+> +        """Reads only part of the response and issue a new cmd"""
+> +        log = logging.getLogger(__name__)
+> +        try:
+> +            fmt = '>HIIH'
+> +            cmd = struct.pack(fmt,
+> +                              tpm2.TPM2_ST_NO_SESSIONS,
+> +                              struct.calcsize(fmt),
+> +                              tpm2.TPM2_CC_GET_RANDOM,
+> +                              0x20)
+> +            self.client.tpm.write(cmd)
+> +            # Read part of the respone
+> +            rsp1 = self.client.tpm.read(15)
+
+8<
+
+> +            log.debug("rsp 1:")
+> +            log.debug(tpm2.hex_dump(rsp1))
+
+Remove.
+
+> +
+> +            # Send a new cmd
+> +            self.client.tpm.write(cmd)
+> +
+> +            # Read the whole respone
+> +            rsp2 = self.client.tpm.read()
+
+8<
+
+> +            log.debug("rsp 2:")
+> +            log.debug(tpm2.hex_dump(rsp2))
+
+Remove.
+
+> +
+> +        except:
+
+8<
+> +            log.debug("Error:", sys.exc_info()[0])
+
+Remove.
+
+> +            raise
+> +
+> +        self.assertEqual(len(rsp1), 15)
+> +        self.assertEqual(len(rsp2), 10 + 2 + 32)
+> +
+> +    def test_send_two_cmds(self):
+> +        """Send two cmds without reading a response"""
+> +        rejected = False
+> +        try:
+> +            fmt = '>HIIH'
+> +            cmd = struct.pack(fmt,
+> +                              tpm2.TPM2_ST_NO_SESSIONS,
+> +                              struct.calcsize(fmt),
+> +                              tpm2.TPM2_CC_GET_RANDOM,
+> +                              0x20)
+> +            self.client.tpm.write(cmd)
+> +
+> +            # expect the second one to raise -EBUSY error
+> +            self.client.tpm.write(cmd)
+> +            rsp = self.client.tpm.read()
+> +
+> +        except IOError, e:
+> +            # read the response
+> +            rsp = self.client.tpm.read()
+> +            rejected = True
+> +            pass
+> +        except:
+> +            raise
+> +
+> +        self.assertEqual(rejected, True)
+> +
+>  class SpaceTest(unittest.TestCase):
+>      def setUp(self):
+>          logging.basicConfig(filename='SpaceTest.log', level=logging.DEBUG)
 > 
-> >-EXPORT_SYMBOL(is_module_sig_enforced);
-> >+EXPORT_SYMBOL(is_module_sig_enforced_or_required);
-> >+
-> >+void set_module_sig_required(void)
-> >+{
-> >+	sig_required = true;
-> >+}
-> >+EXPORT_SYMBOL(set_module_sig_required);
-> >
-> > /* Block module loading/unloading? */
-> > int modules_disabled = 0;
-> >@@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
-> > 	}
-> >
-> > 	/* Not having a signature is only an error if we're strict. */
-> >-	if (err == -ENOKEY && !is_module_sig_enforced())
-> >+	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
-> > 		err = 0;
-> >
-> > 	return err;
-> >diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> >index 357edd140c09..bbaf87f688be 100644
-> >--- a/security/integrity/ima/ima_main.c
-> >+++ b/security/integrity/ima/ima_main.c
-> >@@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
-> > 		}
-> > 		break;
-> > 	case LOADING_MODULE:
-> >-		sig_enforce = is_module_sig_enforced();
-> >+		sig_enforce = is_module_sig_enforced_or_required();
-> >
-> > 		if (ima_enforce && (!sig_enforce
-> > 				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
-> >-- 
-> >2.7.5
-> >
-> 
 
+/Jarkko
