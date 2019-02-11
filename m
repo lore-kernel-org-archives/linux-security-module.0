@@ -2,95 +2,168 @@ Return-Path: <SRS0=hX+A=QS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC3BC169C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 21:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADA3C169C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 22:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25EFB214DA
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 21:21:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="wSUXbe3P"
+	by mail.kernel.org (Postfix) with ESMTP id 1F32A2184E
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 22:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549925282;
+	bh=rV440hGDSZ3wXtwBOPW52PZyuO31p4qEHmRDqv7v/C0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=n5rYuYKXMpf/KPtpIkE9yYi39zA8pnFP8Ud8gwCnqNnp1bkazG+Y/G6v7XTx3gEI/
+	 77C/g0vuo5RoXciQ4H76kzKfPG1W8IzrhwkJJqjgOEcr7KIaM/WPkYqzmzRj78jKMG
+	 8kkeTwG+GhRoFnUFnaOp9hiByheMZwH6x/SFqefE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbfBKVVZ (ORCPT
+        id S1727605AbfBKWr4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 16:21:25 -0500
-Received: from forward500j.mail.yandex.net ([5.45.198.250]:54666 "EHLO
-        forward500j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727036AbfBKVVZ (ORCPT
+        Mon, 11 Feb 2019 17:47:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727556AbfBKWr4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 16:21:25 -0500
-Received: from mxback15o.mail.yandex.net (mxback15o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::66])
-        by forward500j.mail.yandex.net (Yandex) with ESMTP id D430511C1A9D;
-        Tue, 12 Feb 2019 00:21:21 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback15o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 9ZovjpNCyD-LKTK4o3R;
-        Tue, 12 Feb 2019 00:21:21 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1549920081;
-        bh=ntrStKsnT+EwOvQEPA48dKPTT12crE0ESf3wmUiCSDo=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
-        b=wSUXbe3PrCjvNgPCIp9g6Neo/iTgxJN5lnC2+Sh+0lZkO3adtWAahk8dukJSLNSDG
-         UYf7VmFowsjYjJ7VsojogMFnAhToOT9JtXjCWDcHlaUp9+1qTURp+TIVQc39ZpOl2g
-         PS85Z/X6QrBBxO39J56KvlhNc2jRmHEBDAQOCDvs=
-Authentication-Results: mxback15o.mail.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by myt1-06117f29c1ea.qloud-c.yandex.net with HTTP;
-        Tue, 12 Feb 2019 00:21:20 +0300
-From:   Nazarov Sergey <s-nazarov@yandex.ru>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhSjtQRGBUHvx73eVg32NMm4UN4qqaOXFyB9BMSx0Bz7dQ@mail.gmail.com>
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
-         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
-         <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
-         <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
-         <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
-         <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
-         <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net> <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
-        <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net> <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
-         <3499451548746609@myt4-929fb874f3f2.qloud-c.yandex.net> <CAHC9VhRXc=UAfNidPjYsG561_kc_j2CkD6Db=Kb=Gjyhk3ko6Q@mail.gmail.com>
-         <3191601548853902@myt6-23299ba78d64.qloud-c.yandex.net> <CAHC9VhQcrnXmjcVw_ppwM-fGcwhJq9SafTnZKjgpQpxK0ie+Jw@mail.gmail.com>
-         <11242361548940840@iva8-8d7a47df0521.qloud-c.yandex.net> <CAHC9VhSjtQRGBUHvx73eVg32NMm4UN4qqaOXFyB9BMSx0Bz7dQ@mail.gmail.com>
-Subject: Re: Kernel memory corruption in CIPSO labeled TCP packets processing.
+        Mon, 11 Feb 2019 17:47:56 -0500
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 796B1222A0
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 22:47:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549925274;
+        bh=rV440hGDSZ3wXtwBOPW52PZyuO31p4qEHmRDqv7v/C0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2qTB9vzRMdPY0stzJ7/VKb/Y1Z1BstTZsqOtQo7ivCGfDJ8FmzkIxv43/rrWP4x3F
+         yste5X5BVJeQIUceUmQ9K+mMQJ+St7Ye69qYVRSCNvV1Mc1QlgRp/BxHOMZ/iDkSXc
+         xCzKOmorFsxK6wArhlpHajpEWC36AB/b12KduuZk=
+Received: by mail-wm1-f52.google.com with SMTP id j125so974553wmj.1
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 14:47:54 -0800 (PST)
+X-Gm-Message-State: AHQUAua1jgm7Z8EyhY/l4JULFoHv6ZZrOH/VJilKYYM9+YxglaLY2s1/
+        gK0dyYnmTutKpC8AnSuUqH0wm940SadqA4tdR+EzQw==
+X-Google-Smtp-Source: AHgI3IYhqPQS6XNR2rbuUzIn1bPg4Vb52Sam8S3ebJby84Lwzx4pkjy45X+4hrjhxv9sDdjl1Ar3ML3HVCnAR1dksqs=
+X-Received: by 2002:a7b:cc13:: with SMTP id f19mr353124wmh.83.1549925272767;
+ Mon, 11 Feb 2019 14:47:52 -0800 (PST)
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Tue, 12 Feb 2019 00:21:20 +0300
-Message-Id: <34948711549920080@myt1-06117f29c1ea.qloud-c.yandex.net>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=utf-8
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-6-rick.p.edgecombe@intel.com> <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
+ <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net> <6FE10C97-25FF-4E99-A96A-465CBACA935B@gmail.com>
+ <CALCETrVaBaorbOA8QE=Pk=C+PfXZAz0-aX_3O8Y=nJV4QKELbw@mail.gmail.com> <3EA322C6-5645-4900-AEC6-97FC05716F75@gmail.com>
+In-Reply-To: <3EA322C6-5645-4900-AEC6-97FC05716F75@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 11 Feb 2019 14:47:39 -0800
+X-Gmail-Original-Message-ID: <CALCETrXE0n4BrkX2ZLDJjdLqD-N_WwSZHt=S2KKBrTV6Zt5Teg@mail.gmail.com>
+Message-ID: <CALCETrXE0n4BrkX2ZLDJjdLqD-N_WwSZHt=S2KKBrTV6Zt5Teg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for patching
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi, Paul!
-What I need to do for this?
+On Mon, Feb 11, 2019 at 11:18 AM Nadav Amit <nadav.amit@gmail.com> wrote:
+>
+> > On Feb 11, 2019, at 11:07 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> >
+> > I'm certainly amenable to other solutions, but this one does seem the
+> > least messy.  I looked at my old patch, and it doesn't do what you
+> > want.  I'd suggest you just add a percpu variable like cpu_dr7 and rig
+> > up some accessors so that it stays up to date.  Then you can skip the
+> > dr7 writes if there are no watchpoints set.
+> >
+> > Also, EFI is probably a less interesting example than rare_write.
+> > With rare_write, especially the dynamically allocated variants that
+> > people keep coming up with, we'll need a swath of address space fully
+> > as large as the vmalloc area. and getting *that* right while still
+> > using the kernel address range might be more of a mess than we really
+> > want to deal with.
+>
+> As long as you feel comfortable with this solution, I=E2=80=99m fine with=
+ it.
+>
+> Here is what I have (untested). I prefer to save/restore all the DRs,
+> because IIRC DR6 indications are updated even if breakpoints are disabled
+> (in DR7). And anyhow, that is the standard interface.
 
-11.02.2019, 23:37, "Paul Moore" <paul@paul-moore.com>:
-> On Thu, Jan 31, 2019 at 8:20 AM Nazarov Sergey <s-nazarov@yandex.ru> wrote:
->>  31.01.2019, 05:10, "Paul Moore" <paul@paul-moore.com>:
->>  > This isn't how the rest of the stack works, look at
->>  > ip_local_deliver_finish() for one example. Perhaps the behavior you
->>  > are proposing is correct, but please show me where in the various RFC
->>  > specs it is defined so that I can better understand why it should work
->>  > this way.
->>  > --
->>  > paul moore
->>  > www.paul-moore.com
->>
->>  Sorry, I was inattentive. ip_options_compile modifies srr option data, only if
->>  skb is NULL. My last message could be ignored.
+Seems reasonable, but:
+
 >
-> Hi Nazarov,
 >
-> Do you plan on submitting these patches as a proper patchset for
-> review and merging?
+> -- >8 --
 >
-> --
-> paul moore
-> www.paul-moore.com
+> From: Nadav Amit <namit@vmware.com>
+> Date: Mon, 11 Feb 2019 03:07:08 -0800
+> Subject: [PATCH] mm: save DRs when loading temporary mm
+>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  arch/x86/include/asm/mmu_context.h | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mm=
+u_context.h
+> index d684b954f3c0..4f92ec3df149 100644
+> --- a/arch/x86/include/asm/mmu_context.h
+> +++ b/arch/x86/include/asm/mmu_context.h
+> @@ -13,6 +13,7 @@
+>  #include <asm/tlbflush.h>
+>  #include <asm/paravirt.h>
+>  #include <asm/mpx.h>
+> +#include <asm/debugreg.h>
+>
+>  extern atomic64_t last_mm_ctx_id;
+>
+> @@ -358,6 +359,7 @@ static inline unsigned long __get_current_cr3_fast(vo=
+id)
+>
+>  typedef struct {
+>         struct mm_struct *prev;
+> +       unsigned short bp_enabled : 1;
+>  } temp_mm_state_t;
+>
+>  /*
+> @@ -380,6 +382,15 @@ static inline temp_mm_state_t use_temporary_mm(struc=
+t mm_struct *mm)
+>         lockdep_assert_irqs_disabled();
+>         state.prev =3D this_cpu_read(cpu_tlbstate.loaded_mm);
+>         switch_mm_irqs_off(NULL, mm, current);
+> +
+> +       /*
+> +        * If breakpoints are enabled, disable them while the temporary m=
+m is
+> +        * used - they do not belong and might cause wrong signals or cra=
+shes.
+> +        */
+
+Maybe clarify this?  Add some mention that the specific problem is
+that user code could set a watchpoint on an address that is also used
+in the temporary mm.
+
+Arguably we should not disable *kernel* breakpoints a la perf, but
+that seems like quite a minor issue, at least as long as
+use_temporary_mm() doesn't get wider use.  But a comment that this
+also disables perf breakpoints and that this could be undesirable
+might be in order as well.
