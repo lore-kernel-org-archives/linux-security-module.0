@@ -3,62 +3,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8285CC169C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 13:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FF0C169C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 14:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF3F222B0
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 13:58:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D37F6222B0
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 14:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfBKN6u (ORCPT
+        id S1726074AbfBKODH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 08:58:50 -0500
-Received: from mga02.intel.com ([134.134.136.20]:21618 "EHLO mga02.intel.com"
+        Mon, 11 Feb 2019 09:03:07 -0500
+Received: from mga12.intel.com ([192.55.52.136]:37691 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726025AbfBKN6u (ORCPT
+        id S1726036AbfBKODH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 08:58:50 -0500
-X-Amp-Result: UNSCANNABLE
+        Mon, 11 Feb 2019 09:03:07 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 05:58:49 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Feb 2019 06:03:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,358,1544515200"; 
-   d="scan'208";a="121534427"
+   d="scan'208";a="142439913"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.142])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Feb 2019 05:58:47 -0800
-Date:   Mon, 11 Feb 2019 15:58:46 +0200
+  by fmsmga002.fm.intel.com with ESMTP; 11 Feb 2019 06:03:03 -0800
+Date:   Mon, 11 Feb 2019 16:03:02 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Peter Huewe <PeterHuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
-Message-ID: <20190211135846.GA8431@linux.intel.com>
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: [PATCH v4 0/2] tpm: Unify send() callbacks
+Message-ID: <20190211140302.GB8431@linux.intel.com>
 References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
- <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
- <20190209182022.zghnna3fa3a3x3w7@cantor>
+ <20190209200838.2matnb5dqlnr4qdx@cantor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190209182022.zghnna3fa3a3x3w7@cantor>
+In-Reply-To: <20190209200838.2matnb5dqlnr4qdx@cantor>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Feb 09, 2019 at 11:20:22AM -0700, Jerry Snitselaar wrote:
-> Does st33zp24_i2c_send need an update as well? It does 'return
-> write8_reg()'.
+On Sat, Feb 09, 2019 at 01:08:38PM -0700, Jerry Snitselaar wrote:
+> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
-After these commits the only situation when st33zp24_i2c_send() return
-value is returned back to the user space, when called from
-st33zp24_send(), is when it returns -errno.
+Thank you.
 
 /Jarkko
