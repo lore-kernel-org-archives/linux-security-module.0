@@ -2,256 +2,171 @@ Return-Path: <SRS0=hX+A=QS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6937C282D7
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 05:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB89C169C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 12:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABA3221479
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 05:18:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="xyuciNjk"
+	by mail.kernel.org (Postfix) with ESMTP id 7A90221A80
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 12:08:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbfBKFSj (ORCPT
+        id S1727127AbfBKMIB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 00:18:39 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45975 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfBKFSi (ORCPT
+        Mon, 11 Feb 2019 07:08:01 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35775 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbfBKMIB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 00:18:38 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y4so4438029pgc.12
-        for <linux-security-module@vger.kernel.org>; Sun, 10 Feb 2019 21:18:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=P/nz3ACoxpLDqb0eHS2Lbfh7g08M62jcwE0fE5p6slQ=;
-        b=xyuciNjkFWciBsSx/is2lBM2iiUNDec2HmbyGj9VTUJYEYAUDuSAr19G2O+5RQXZja
-         kDN98a6hx1onWzTw7CzmW+8qMZmYMnWAibmq/6o1dY+qqCj/M3v6KtlTjBFVdVkmnHU7
-         0aadpz2eqQLSu6Ist19NGgHJ/rqUS0wyDRkHsl/XcQorAL9QaroZvLPCNGCdzSNG0/sD
-         jkdB1uk7FF3ixo/nUGKC57zIIWHDq+mUzpn29lf3AgAXtDae1qKETi1id1Y4c6r3ZFRG
-         fr2FI8bBDK7khVD+ie9FEuGxSE6QU26XGV9pCOiVMG3MKav8TqVqSrNRJ0uvlV/Q4j8B
-         o21Q==
+        Mon, 11 Feb 2019 07:08:01 -0500
+Received: by mail-ot1-f65.google.com with SMTP id z19so12968385otm.2
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 04:08:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=P/nz3ACoxpLDqb0eHS2Lbfh7g08M62jcwE0fE5p6slQ=;
-        b=PdIXxju3ZIzxyvJMwIIuTXhRi8yT2oGeM+R8FL9jDeUcGzSssoEG1GcMr7a8mImo+7
-         O1z+i/eRMAuF6RD+4L4125TBRx47hoozTkwB0d4+dJW4pvFY2mKVBMuW1wevZWQ1hQpg
-         7FCpKrZkHC2P+SHAGNSIUIMujMUsHcmjRZY/6zOVTYTH2EQcv6dGk08PNbcAP4qQn+po
-         g2QPX77OuFqNJTZSaUmGBAZ9Goz2AIIE303ph9l8/oIrioywoxN2Z8dHkdnE9YOUoU0z
-         +YmEPyiP8a7MYB6MTBXldEE+0/FKTe0Gl3pyhAhlsO5h6LCtkHtq6/gmw84Ic0eJRyJG
-         eGcg==
-X-Gm-Message-State: AHQUAuZ3rmvLNu52A03zI7BIzOsVf+CNaa1E2VgMStVF7uM9gkLifs4t
-        7DtL9x1njqjEMA38oyb8OfvaRQ==
-X-Google-Smtp-Source: AHgI3IZOahjUxu+t0qhpsn/mwzusbGjfiQw5XyvsSy/I2w+d8AyD7+Aa4/VTebWQOBBX1/tTqaH/jA==
-X-Received: by 2002:a63:61d8:: with SMTP id v207mr7347489pgb.308.1549862317394;
-        Sun, 10 Feb 2019 21:18:37 -0800 (PST)
-Received: from ?IPv6:2601:646:c200:7429:5d4d:83bf:b51b:8718? ([2601:646:c200:7429:5d4d:83bf:b51b:8718])
-        by smtp.gmail.com with ESMTPSA id l11sm11539621pff.65.2019.02.10.21.18.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 10 Feb 2019 21:18:35 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for patching
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16C101)
-In-Reply-To: <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
-Date:   Sun, 10 Feb 2019 21:18:34 -0800
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <00649AE8-69C0-4CD2-A916-B8C8F0F5DAC3@amacapital.net>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com> <20190129003422.9328-6-rick.p.edgecombe@intel.com> <162C6C29-CD81-46FE-9A54-6ED05A93A9CB@gmail.com>
-To:     Nadav Amit <nadav.amit@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9hzHmTmOkkAlt/nXQx+HVZVynDSulg9pldKwmaE3AuM=;
+        b=ZYrTMiJNEg+sR/NwJ5YYSNwlrb9ImAkttagVXQj2iB7uJNpjjC61BA7p94jSCe3QvR
+         YyahZuxD6SFlIIMGfMULLHV8iCSiWbwHwBAPCOV32gSlzzeFZ7OmT94NEnaI/6hXEVsP
+         yeADBlrnWje3LZnqF2gAlAjpDniQmiPGp6o0x+SBP33NjUpjHzcLcjh9tAeDG9Hq3Ndf
+         7WY6zTRsTnvQuEUBEPIW4jZuXKJH9yYVcGDD9GveTho6omXIJGFg5E7jDfwdlkLnEqTh
+         twd6/Jk9ikgnk9B+8fb5nJuNp56nGiy/8DeaIDZmiKw58s6cF9Sil2IMb4imWBdeeccv
+         hwFw==
+X-Gm-Message-State: AHQUAuaYsw5rXqxV8/LsKtS9ocRPnrL1xnnRF9MnHM4ufKyLW7xqDgc+
+        SgW0mKX5Ggr2ldZZ2uql5yo/28ADj790WDLB2ktMgA==
+X-Google-Smtp-Source: AHgI3IarB52ugU25VIY97/ZUicIxIlfxkImAvDC7T5rQHotYHYw3cyYtzE+QezSwQZ2YR6KGc+VbQUivPfL/PAmF1Ng=
+X-Received: by 2002:a9d:1790:: with SMTP id j16mr12533961otj.52.1549886880235;
+ Mon, 11 Feb 2019 04:08:00 -0800 (PST)
+MIME-Version: 1.0
+References: <20190205110638.30782-1-omosnace@redhat.com>
+In-Reply-To: <20190205110638.30782-1-omosnace@redhat.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Mon, 11 Feb 2019 13:07:49 +0100
+Message-ID: <CAFqZXNuW-ZAQ5Be2b+R4WRr33JCpJXK8OZ0Qv8uD8Pxcwk7Biw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] Allow initializing the kernfs node's secctx based
+ on its parent
+To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Feb 5, 2019 at 12:06 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> Changes in v5:
+> - fix misplaced semicolon detected by 0day robot
+>
+> v4: https://lore.kernel.org/selinux/20190205085915.5183-1-omosnace@redhat.com/T/
+> Changes in v4:
+> - reorder and rename hook arguments
+> - avoid allocating kernfs_iattrs unless needed
+>
+> v3: https://lore.kernel.org/selinux/20190130114150.27807-1-omosnace@redhat.com/T/
+> Changes in v3:
+> - rename the hook to "kernfs_init_security"
+> - change the hook interface to simply pass pointers to struct iattr and
+>   struct simple_xattrs of both the new node and its parent
+> - add full security xattr support to kernfs (and fixup SELinux behavior
+>   to handle it properly)
+>
+> v2: https://lore.kernel.org/selinux/20190109162830.8309-1-omosnace@redhat.com/T/
+> Changes in v2:
+> - add docstring for the new hook in union security_list_options
+> - initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
+>   implemented
+>
+> v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnace@redhat.com/T/
+>
+> TL;DR:
+> This series adds a new security hook that allows to initialize the security
+> context of kernfs properly, taking into account the parent context (and
+> possibly other attributes). Kernfs nodes require special handling here, since
+> they are not bound to specific inodes/superblocks, but instead represent the
+> backing tree structure that is used to build the VFS tree when the kernfs
+> tree is mounted.
+>
+> The kernfs nodes initially do not store any security context and rely on
+> the LSM to assign some default context to inodes created over them. Kernfs
+> inodes, however, allow setting an explicit context via the *setxattr(2)
+> syscalls, in which case the context is stored inside the kernfs node's
+> internal structure.
+>
+> SELinux (and possibly other LSMs) initialize the context of newly created
+> FS objects based on the parent object's context (usually the child inherits
+> the parent's context, unless the policy dictates otherwise). This is done
+> by hooking the creation of the new inode corresponding to the newly created
+> file/directory via security_inode_init_security() (most filesystems always
+> create a fresh inode when a new FS object is created). However, kernfs nodes
+> can be created "behind the scenes" while the filesystem is not mounted
+> anywhere and thus no inodes can exist for them yet.
+>
+> Therefore, to allow maintaining similar behavior for kernfs nodes, a new
+> LSM hook is needed, which will allow initializing the kernfs node's
+> security context based on its own attributes and those of the parent's
+> node.
+>
+> The main motivation for this change is that the userspace users of cgroupfs
+> (which is built on kernfs) expect the usual security context inheritance
+> to work under SELinux (see [1] and [2]). This functionality is required for
+> better confinement of containers under SELinux.
+>
+> Patch 1/5 changes SELinux to fetch security context from extended
+> attributes on kernfs filesystems, falling back to genfs-defined context
+> if that fails. Without this patch the 2/5 would be a regression for
+> SELinux (due to the removal of ...notifysecctx() call.
+>
+> Patch 2/5 implements full security xattr support in kernfs using
+> simple_xattrs; patch 3/5 adds the new LSM hook; patch 4/5 implements the
+> new hook in SELinux; and patch 5/5 modifies kernfs to call the new hook
+> on new node creation.
+>
+> Testing:
+> - passed the reproducer from the commit message of the last patch
+> - passed SELinux testsuite on Fedora 29 (x86_64) when applied on top of
+>   current Rawhide kernel (5.0.0-0.rc5.git0.1) [3]
+>   - including the new proposed selinux-testsuite subtest [4] (adapted
+>     from the reproducer)
+>
+> [1] https://github.com/SELinuxProject/selinux-kernel/issues/39
+> [2] https://bugzilla.redhat.com/show_bug.cgi?id=1553803
+> [3] https://copr.fedorainfracloud.org/coprs/omos/kernel-testing/build/854148/
+> [4] https://github.com/SELinuxProject/selinux-testsuite/pull/48
+>
+> Ondrej Mosnacek (5):
+>   selinux: try security xattr after genfs for kernfs filesystems
+>   kernfs: use simple_xattrs for security attributes
+>   LSM: add new hook for kernfs node initialization
+>   selinux: implement the kernfs_init_security hook
+>   kernfs: initialize security of newly created nodes
+>
+>  fs/kernfs/dir.c                     |  64 +++++++-
+>  fs/kernfs/inode.c                   | 125 +++++++---------
+>  fs/kernfs/kernfs-internal.h         |   7 +-
+>  include/linux/lsm_hooks.h           |  22 +++
+>  include/linux/security.h            |  14 ++
+>  include/linux/xattr.h               |  15 ++
+>  security/security.c                 |  10 ++
+>  security/selinux/hooks.c            | 221 +++++++++++++++++++---------
+>  security/selinux/include/security.h |   1 +
+>  9 files changed, 328 insertions(+), 151 deletions(-)
+>
+> --
+> 2.20.1
 
+Are there any further comments/objections to this patchset (other than
+the duplicate include in patch #1)? I'd like to accumulate changes (if
+any are needed) before posting v6.
 
-On Feb 10, 2019, at 4:39 PM, Nadav Amit <nadav.amit@gmail.com> wrote:
+Thanks,
 
->> On Jan 28, 2019, at 4:34 PM, Rick Edgecombe <rick.p.edgecombe@intel.com> w=
-rote:
->>=20
->> From: Nadav Amit <namit@vmware.com>
->>=20
->> To prevent improper use of the PTEs that are used for text patching, we
->> want to use a temporary mm struct. We initailize it by copying the init
->> mm.
->>=20
->> The address that will be used for patching is taken from the lower area
->> that is usually used for the task memory. Doing so prevents the need to
->> frequently synchronize the temporary-mm (e.g., when BPF programs are
->> installed), since different PGDs are used for the task memory.
->>=20
->> Finally, we randomize the address of the PTEs to harden against exploits
->> that use these PTEs.
->>=20
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Dave Hansen <dave.hansen@intel.com>
->> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
->> Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
->> Suggested-by: Andy Lutomirski <luto@kernel.org>
->> Signed-off-by: Nadav Amit <namit@vmware.com>
->> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
->> ---
->> arch/x86/include/asm/pgtable.h       |  3 +++
->> arch/x86/include/asm/text-patching.h |  2 ++
->> arch/x86/kernel/alternative.c        |  3 +++
->> arch/x86/mm/init_64.c                | 36 ++++++++++++++++++++++++++++
->> init/main.c                          |  3 +++
->> 5 files changed, 47 insertions(+)
->>=20
->> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtabl=
-e.h
->> index 40616e805292..e8f630d9a2ed 100644
->> --- a/arch/x86/include/asm/pgtable.h
->> +++ b/arch/x86/include/asm/pgtable.h
->> @@ -1021,6 +1021,9 @@ static inline void __meminit init_trampoline_defaul=
-t(void)
->>    /* Default trampoline pgd value */
->>    trampoline_pgd_entry =3D init_top_pgt[pgd_index(__PAGE_OFFSET)];
->> }
->> +
->> +void __init poking_init(void);
->> +
->> # ifdef CONFIG_RANDOMIZE_MEMORY
->> void __meminit init_trampoline(void);
->> # else
->> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/=
-text-patching.h
->> index f8fc8e86cf01..a75eed841eed 100644
->> --- a/arch/x86/include/asm/text-patching.h
->> +++ b/arch/x86/include/asm/text-patching.h
->> @@ -39,5 +39,7 @@ extern void *text_poke_kgdb(void *addr, const void *opc=
-ode, size_t len);
->> extern int poke_int3_handler(struct pt_regs *regs);
->> extern void *text_poke_bp(void *addr, const void *opcode, size_t len, voi=
-d *handler);
->> extern int after_bootmem;
->> +extern __ro_after_init struct mm_struct *poking_mm;
->> +extern __ro_after_init unsigned long poking_addr;
->>=20
->> #endif /* _ASM_X86_TEXT_PATCHING_H */
->> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.=
-c
->> index 12fddbc8c55b..ae05fbb50171 100644
->> --- a/arch/x86/kernel/alternative.c
->> +++ b/arch/x86/kernel/alternative.c
->> @@ -678,6 +678,9 @@ void *__init_or_module text_poke_early(void *addr, co=
-nst void *opcode,
->>    return addr;
->> }
->>=20
->> +__ro_after_init struct mm_struct *poking_mm;
->> +__ro_after_init unsigned long poking_addr;
->> +
->> static void *__text_poke(void *addr, const void *opcode, size_t len)
->> {
->>    unsigned long flags;
->> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
->> index bccff68e3267..125c8c48aa24 100644
->> --- a/arch/x86/mm/init_64.c
->> +++ b/arch/x86/mm/init_64.c
->> @@ -53,6 +53,7 @@
->> #include <asm/init.h>
->> #include <asm/uv/uv.h>
->> #include <asm/setup.h>
->> +#include <asm/text-patching.h>
->>=20
->> #include "mm_internal.h"
->>=20
->> @@ -1383,6 +1384,41 @@ unsigned long memory_block_size_bytes(void)
->>    return memory_block_size_probed;
->> }
->>=20
->> +/*
->> + * Initialize an mm_struct to be used during poking and a pointer to be u=
-sed
->> + * during patching.
->> + */
->> +void __init poking_init(void)
->> +{
->> +    spinlock_t *ptl;
->> +    pte_t *ptep;
->> +
->> +    poking_mm =3D copy_init_mm();
->> +    BUG_ON(!poking_mm);
->> +
->> +    /*
->> +     * Randomize the poking address, but make sure that the following pa=
-ge
->> +     * will be mapped at the same PMD. We need 2 pages, so find space fo=
-r 3,
->> +     * and adjust the address if the PMD ends after the first one.
->> +     */
->> +    poking_addr =3D TASK_UNMAPPED_BASE;
->> +    if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
->> +        poking_addr +=3D (kaslr_get_random_long("Poking") & PAGE_MASK) %=
-
->> +            (TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
->> +
->> +    if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) =3D=3D 0)
->> +        poking_addr +=3D PAGE_SIZE;
->=20
-> Further thinking about it, I think that allocating the virtual address for=
-
-> poking from user address-range is problematic. The user can set watchpoint=
-s
-> on different addresses, cause some static-keys to be enabled/disabled, and=
-
-> monitor the signals to derandomize the poking address.
->=20
-
-Hmm, I hadn=E2=80=99t thought about watchpoints. I=E2=80=99m not sure how mu=
-ch we care about possible derandomization like this, but we certainly don=E2=
-=80=99t want to send signals or otherwise malfunction.
-
-> Andy, I think you were pushing this change. Can I go back to use a vmalloc=
-=E2=80=99d
-> address instead, or do you have a better solution?
-
-Hmm. If we use a vmalloc address, we have to make sure it=E2=80=99s not actu=
-ally allocated. I suppose we could allocate one once at boot and use that.  W=
-e also have the problem that the usual APIs for handling =E2=80=9Cuser=E2=80=
-=9D addresses might assume they=E2=80=99re actually in the user range, altho=
-ugh this seems unlikely to be a problem in practice.  More seriously, though=
-, the code that manipulates per-mm paging structures assumes that *all* of t=
-he structures up to the top level are per-mm, and, if we use anything less t=
-han a private pgd, this isn=E2=80=99t the case.
-
-> I prefer not to
-> save/restore DR7, of course.
->=20
-
-I suspect we may want to use the temporary mm concept for EFI, too, so we ma=
-y want to just suck it up and save/restore DR7.  But only if a watchpoint is=
- in use, of course. I have an old patch I could dust off that tracks DR7 to m=
-ake things like this efficient.=
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
