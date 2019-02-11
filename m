@@ -2,118 +2,99 @@ Return-Path: <SRS0=hX+A=QS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0CFC169C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 19:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29ECAC282D7
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 19:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 399BE2186A
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 19:29:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBC2821B25
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 19:36:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hWinqYJ/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n7nfDm/D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388158AbfBKT3N (ORCPT
+        id S1731129AbfBKTgm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 14:29:13 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:34351 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731532AbfBKT3N (ORCPT
+        Mon, 11 Feb 2019 14:36:42 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41198 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727036AbfBKTgm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 14:29:13 -0500
-Received: by mail-vs1-f65.google.com with SMTP id e10so60098vsp.1
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 11:29:12 -0800 (PST)
+        Mon, 11 Feb 2019 14:36:42 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x10so65947wrs.8;
+        Mon, 11 Feb 2019 11:36:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pg6m4puueGSKgxFi2uNwC9kugYg5UTfpjB90FPweV/Y=;
-        b=hWinqYJ/c2te/mMDwRkz4RGJ6q9hQd0b9oB5Su5BNgJ1rB5H/5fLVvhH/JNk9EGi3I
-         cUYGO6xtpyJQIVlRvwmMIOzI1g9QV1tBJeYO6s//zxjUBEsxfOSKnTrRGWLK7rc0mqqv
-         gnhBDMILghoWVTItSD6WU3WZfQx2F7FgO0T7s=
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=D1a0L7OGkiUm/CdwA+tD4SnrFPDYPK1wPMaIJUcQTMU=;
+        b=n7nfDm/DOfDnL23se9DEzD7Gng5WydSa6aLdnPMA63H8vEkIKqEB+OrdIlCoU34fkP
+         N4cmX+uZsJuo2D+0RCkICRdcR3pBHws+wP5KXIfvW10gExLBNzKx4G1BUsCDAnpeM0gI
+         2T6n3JUEKjsaqGfLolCtBNLr263gjj2S1jESfckSiGhCN8dzDxrlIRKaMaRPXZV+iM3f
+         ep0DzxPJwJfV4YoPu17ACwBQLwkUEQPHHFfityMaGeQ57ljCxtas6o4Ff/04Ur5rjHYZ
+         fyjxWlH0cPWSgrrE0yM9n0O3ms8eA3WUl3prmYRPBxZx3msDuPy/GMW2XpX1bh3RYfHd
+         o6Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pg6m4puueGSKgxFi2uNwC9kugYg5UTfpjB90FPweV/Y=;
-        b=bTfvUR+BDUAvYpC+8i6NiVJp7MjZAgF+4CEws+YdEuawhIc0+PiEgPRRJvWYoAK3FG
-         H7p3bqhkeR+dEVTLisTpGoIGvVBzT+LOmOL2J20BHgpJmaww5/VPVQ4ZiGQTpQA05UE4
-         pyN1PUxCuQ8sB2kc+oU2XKIJscdgSwHEhnTJ0wZudBc69K3q49Q0og9XepbYhm+4zyDC
-         iR58AI4i/6R2htLfGgAEhHTigR4Ctuf0GSRKO5RHFRo56c943f+R6Uq9HjOl5MfuKyx9
-         8X2AQNijNRvi09DnL/6xvcvCxtb8fvlv1n5iMBA7hBdbdmEQ4jukSFYM9KtPXm7M0LOn
-         lLRg==
-X-Gm-Message-State: AHQUAuYzTVH4jCvGMeH4BsicxqWaBwBWH0dTGsMWJeqYY4xbEeVMu9dJ
-        QM/k1W3hstiIayBs5XeH0ukDDzELC2k=
-X-Google-Smtp-Source: AHgI3IbZ19kqX4M1g0fqonW9w5JfMDtQ+fMCju/ujskYqbM1Q90XhqH26Yu4VsBZ8cK+f8eaD1F8jA==
-X-Received: by 2002:a67:7893:: with SMTP id t141mr9888333vsc.57.1549913351207;
-        Mon, 11 Feb 2019 11:29:11 -0800 (PST)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id b21sm898813vsp.2.2019.02.11.11.29.09
-        for <linux-security-module@vger.kernel.org>
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=D1a0L7OGkiUm/CdwA+tD4SnrFPDYPK1wPMaIJUcQTMU=;
+        b=aAzxymVL/+zlFeVKp3WQsIRAEY4nLCG99zuBQf4Lmp98tyb1+4Y9EslDkSdWAOBgWL
+         HRj65cZcieBZmcnpJkzRSX2BLnBu4MvJpA3HmT1HXMyfDPoTDKEg27jc5e7QKqe8htIU
+         RNQz0q5AzGpbHzwrkI6cCrFh5FmbGZ8qNAethwFsY2Q1Zx/S/0XckoM5HfKwmW/vGWP5
+         Zqy/OcWt4Cwh7NLEyELSmhqip8U2kdDeX18qFcqdcjucFzcrcYgtEKO94OSJOzuNO+Gp
+         wgZdCEnRG2NUMF9tBnS57cIfcGp/xifmkXuHHHWUvXWOpwPxKIDYUHyIvGMtfRc1ztsS
+         pCQw==
+X-Gm-Message-State: AHQUAuYJsnsjAMynyO3PT98dsEVd+wdkBzctrWrW56fw8LD0jYoTjR9m
+        vjJekV101DgXuo43BkXBHZc=
+X-Google-Smtp-Source: AHgI3Ib2q/0QJVb/6qpcqP9LGdsUeG0bWflyAb3+BNQ1U33M3QNkI4RiTzo7vzw9FTjKVPbrjNXMBQ==
+X-Received: by 2002:adf:cc83:: with SMTP id p3mr11514429wrj.292.1549913799770;
+        Mon, 11 Feb 2019 11:36:39 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id e27sm23137197wra.67.2019.02.11.11.36.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Feb 2019 11:29:10 -0800 (PST)
-Received: by mail-vk1-f175.google.com with SMTP id t127so11970vke.8
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Feb 2019 11:29:09 -0800 (PST)
-X-Received: by 2002:a1f:e7c5:: with SMTP id e188mr15096131vkh.92.1549913349277;
- Mon, 11 Feb 2019 11:29:09 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1549540487.git.efremov@ispras.ru>
-In-Reply-To: <cover.1549540487.git.efremov@ispras.ru>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 11 Feb 2019 11:28:57 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJ8DaoXk4Vt-K_Tgvpe4=wgHZ3Z1Y=D8JzRHU9n=bvgtA@mail.gmail.com>
-Message-ID: <CAGXu5jJ8DaoXk4Vt-K_Tgvpe4=wgHZ3Z1Y=D8JzRHU9n=bvgtA@mail.gmail.com>
-Subject: Re: [PATCH 00/10] LSM documentation update
-To:     Denis Efremov <efremov@ispras.ru>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Eric Paris <eparis@parisplace.org>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 11 Feb 2019 11:36:39 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 09/20] x86/kprobes: instruction pages initialization
+ enhancements
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190211182221.GM19618@zn.tnic>
+Date:   Mon, 11 Feb 2019 11:36:33 -0800
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        deneen.t.dock@intel.com
+Content-Transfer-Encoding: 7bit
+Message-Id: <173B309B-21A4-4247-BF41-8C4D0267272E@gmail.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-10-rick.p.edgecombe@intel.com>
+ <20190211182221.GM19618@zn.tnic>
+To:     Borislav Petkov <bp@alien8.de>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 7, 2019 at 4:45 AM Denis Efremov <efremov@ispras.ru> wrote:
->
-> Recent "New LSM Hooks" discussion has led me to the
-> thought that it might be a good idea to slightly
-> update the current documentation. The patchset adds
-> nothing new to the documentation, only fixes the old
-> description of hooks to reflect their current state.
+> On Feb 11, 2019, at 10:22 AM, Borislav Petkov <bp@alien8.de> wrote:
+> 
+> Only nitpicks:
 
-Do these fixes silence any warnings during the documentation build?
-(i.e. how did you verify the results beyond eyeballing the changes)
+Thanks for the feedback. Applied.
 
--Kees
-
->
-> Denis Efremov (10):
->   security: fix documentation for the sb_copy_data hook
->   security: fix documentation for the syslog hook
->   security: fix documentation for the socket_post_create hook
->   security: fix documentation for the task_setscheduler hook
->   security: fix documentation for the socket_getpeersec_dgram hook
->   security: fix documentation for the path_chmod hook
->   security: fix documentation for the audit_* hooks
->   security: fix documentation for the msg_queue_* hooks
->   security: fix documentation for the sem_* hooks
->   security: fix documentation for the shm_* hooks
->
->  include/linux/lsm_hooks.h | 127 ++++++++++++++++++--------------------
->  1 file changed, 61 insertions(+), 66 deletions(-)
->
-> --
-> 2.17.2
->
-
-
--- 
-Kees Cook
