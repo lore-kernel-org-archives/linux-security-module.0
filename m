@@ -2,111 +2,205 @@ Return-Path: <SRS0=hX+A=QS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBC2C282D7
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 15:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22782C282D7
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 15:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE527222A8
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 15:17:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=infineon.com header.i=@infineon.com header.b="Tx8E4U1I"
+	by mail.kernel.org (Postfix) with ESMTP id E844921B18
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Feb 2019 15:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549900591;
+	bh=2OsP9BlHcHdO+RqWmL8Fxm4La3wb1bYhLefiHJGPUfw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0dzzB8UmWE5QanGFmwSDVVRW0B6xBMzjcxaC85XIQIxpKxnBoKH6gRS0X0bLLijN4
+	 Kgcw5H30el4NpIG8RMXxTbdhHUKAt7thbttYjAPTp4i0P6K9s7CQ5VA+CP5P5UCnNb
+	 9c3zYrOToxGTBJY+xvOVaB5grW/3CuH8eTIZLVX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728772AbfBKPR1 (ORCPT
+        id S1728939AbfBKP4X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Feb 2019 10:17:27 -0500
-Received: from smtp2.infineon.com ([217.10.52.18]:46699 "EHLO
-        smtp2.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391098AbfBKPF4 (ORCPT
+        Mon, 11 Feb 2019 10:56:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34640 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730516AbfBKP4P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Feb 2019 10:05:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
-  t=1549897555; x=1581433555;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=yV8Bbok3J6t0HsHnKNBRCm3adtM8CO1UJUDJN+aJGU0=;
-  b=Tx8E4U1IMV1qIyjCZ07v0Ij4F83G9XmSqwxiEHn8zK7urm75mqLGglQI
-   YRPNLhuHeV+y9wFsCvZFfb/ciyQ91EdCtueildFmmrP4ypaVORuskCfpd
-   P7RBcv25t+g0WIV2+m6LsfQjuylT846A4jw1IgKgN6yBASMMRk1cdh7i7
-   w=;
-X-SBRS: None
-X-IronPort-AV: E=McAfee;i="5900,7806,9163"; a="100302449"
-X-IronPort-AV: E=Sophos;i="5.58,358,1544482800"; 
-   d="scan'208";a="100302449"
-Received: from unknown (HELO mucxv001.muc.infineon.com) ([172.23.11.16])
-  by smtp2.infineon.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Feb 2019 16:05:53 +0100
-Received: from MUCSE708.infineon.com (MUCSE708.infineon.com [172.23.7.82])
-        by mucxv001.muc.infineon.com (Postfix) with ESMTPS;
-        Mon, 11 Feb 2019 16:05:53 +0100 (CET)
-Received: from [10.154.32.30] (172.23.8.247) by MUCSE708.infineon.com
- (172.23.7.82) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.1531.3; Mon, 11
- Feb 2019 16:05:52 +0100
-Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        <stable@vger.kernel.org>
-References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
- <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
- <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
- <20190208190057.GA3439@linux.intel.com>
-From:   Alexander Steffen <Alexander.Steffen@infineon.com>
-Message-ID: <2849751f-ff26-193e-f15e-4d7d5f8525a7@infineon.com>
-Date:   Mon, 11 Feb 2019 16:05:39 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 11 Feb 2019 10:56:15 -0500
+Received: from linux-8ccs (ip5f5ade6b.dynamic.kabel-deutschland.de [95.90.222.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48ACB21B18;
+        Mon, 11 Feb 2019 15:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549900574;
+        bh=2OsP9BlHcHdO+RqWmL8Fxm4La3wb1bYhLefiHJGPUfw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2avaZrqVWp6jhRyWQ9X2Kg4h3D3V007qa4GO/Hmnzd8wUTPmrO5Wwja2jabmNBDWg
+         RLg1P8UynkRfq8frz5tZFswt5FUSWjr/2Jx9qageaeCAtRc9k/L4vHJNKOE+YRH4Ip
+         p10XFiy90e/qg0UQDLsdzGMiNBsMQzmWg+H672bY=
+Date:   Mon, 11 Feb 2019 16:56:09 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+Message-ID: <20190211155609.GC20732@linux-8ccs>
+References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
+ <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190208190057.GA3439@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.23.8.247]
-X-ClientProxiedBy: MUCSE705.infineon.com (172.23.7.79) To
- MUCSE708.infineon.com (172.23.7.82)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 08.02.2019 20:00, Jarkko Sakkinen wrote:
-> On Fri, Feb 08, 2019 at 01:12:34PM -0500, Stefan Berger wrote:
->> On 2/8/19 1:08 PM, Jarkko Sakkinen wrote:
->>> The send() callback should never return length as it does not in every
->>> driver except tpm_crb in the success case. The reason is that the main
->>> transmit functionality only cares about whether the transmit was
->>> successful or not and ignores the count completely.
->>>
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>
->> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->>
->> Let me know when you put it into your tree, I'll give it a spin while I am
->> at it. :-)
-> 
-> Thank you Stefan! I also add your suggested-by to the first commit
-> because you pointed out the problem.
-> 
-> It all looks now legit, but just in case I'll add a check for the return
-> value to tpm_try_transmit() and a warning if it is not zero in the
-> success case (and after that zeroing of rc).
-> 
-> That check can be removed when I do v5.3 pull request. That should
-> enough window to catch any potential issues and check will ensure that
-> kernel won't fail even there was something forgotten.
-> 
-> Alexander, I'll push this version now to the master and next with the
-> additional check described in this commit, but will add your tags
-> after you have time to test.
++++ Mimi Zohar [31/01/19 14:18 -0500]:
+>Require signed kernel modules on systems with secure boot mode enabled.
+>
+>To coordinate between appended kernel module signatures and IMA
+>signatures, only define an IMA MODULE_CHECK policy rule if
+>CONFIG_MODULE_SIG is not enabled.
+>
+>This patch defines a function named set_module_sig_required() and renames
+>is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
+>call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
+>being enabled.
+>
+>Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+>---
+> arch/x86/kernel/ima_arch.c        |  9 ++++++++-
+> include/linux/module.h            |  7 ++++++-
+> kernel/module.c                   | 15 +++++++++++----
+> security/integrity/ima/ima_main.c |  2 +-
+> 4 files changed, 26 insertions(+), 7 deletions(-)
+>
+>diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+>index e47cd9390ab4..96a023238a83 100644
+>--- a/arch/x86/kernel/ima_arch.c
+>+++ b/arch/x86/kernel/ima_arch.c
+>@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
+> 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+> #endif /* CONFIG_KEXEC_VERIFY_SIG */
+> 	"measure func=KEXEC_KERNEL_CHECK",
+>+#if !IS_ENABLED(CONFIG_MODULE_SIG)
+>+	"appraise func=MODULE_CHECK appraise_type=imasig",
+>+#endif
+>+	"measure func=MODULE_CHECK",
+> 	NULL
+> };
+>
+> const char * const *arch_get_ima_policy(void)
+> {
+>-	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
+>+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
+>+		if (IS_ENABLED(CONFIG_MODULE_SIG))
+>+			set_module_sig_required();
+> 		return sb_arch_rules;
+>+	}
+> 	return NULL;
+> }
+>diff --git a/include/linux/module.h b/include/linux/module.h
+>index 8fa38d3e7538..af51c8ec755f 100644
+>--- a/include/linux/module.h
+>+++ b/include/linux/module.h
+>@@ -659,7 +659,8 @@ static inline bool is_livepatch_module(struct module *mod)
+> }
+> #endif /* CONFIG_LIVEPATCH */
+>
+>-bool is_module_sig_enforced(void);
+>+bool is_module_sig_enforced_or_required(void);
+>+void set_module_sig_required(void);
+>
+> #else /* !CONFIG_MODULES... */
+>
+>@@ -780,6 +781,10 @@ static inline bool is_module_sig_enforced(void)
+> 	return false;
+> }
+>
+>+static inline void set_module_sig_required(void)
+>+{
+>+}
+>+
+> /* Dereference module function descriptor */
+> static inline
+> void *dereference_module_function_descriptor(struct module *mod, void *ptr)
+>diff --git a/kernel/module.c b/kernel/module.c
+>index 2ad1b5239910..70a9709d19eb 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
+>
+> static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+> module_param(sig_enforce, bool_enable_only, 0644);
+>+static bool sig_required;
+>
+> /*
+>  * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
+>  * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
+>  */
+>-bool is_module_sig_enforced(void)
+>+bool is_module_sig_enforced_or_required(void)
+> {
+>-	return sig_enforce;
+>+	return sig_enforce || sig_required;
+> }
 
-I ran all tests again and everything works now as expected :)
+Hi Mimi,
 
-Tested-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+Just wondering, is there any particular reason why a distinction is
+made between sig_enforce and sig_required? Doesn't sig_enforce imply
+that signed modules are required? In other words, why introduce
+another variable instead of just using sig_enforce? It may be
+confusing in the case of a user looking at /sys/module/module/parameters/sig_enforce
+and it having a value of 0 yet module signatures are being required by ima.
 
-Alexander
+Thanks,
+
+Jessica
+
+>-EXPORT_SYMBOL(is_module_sig_enforced);
+>+EXPORT_SYMBOL(is_module_sig_enforced_or_required);
+>+
+>+void set_module_sig_required(void)
+>+{
+>+	sig_required = true;
+>+}
+>+EXPORT_SYMBOL(set_module_sig_required);
+>
+> /* Block module loading/unloading? */
+> int modules_disabled = 0;
+>@@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
+> 	}
+>
+> 	/* Not having a signature is only an error if we're strict. */
+>-	if (err == -ENOKEY && !is_module_sig_enforced())
+>+	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
+> 		err = 0;
+>
+> 	return err;
+>diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+>index 357edd140c09..bbaf87f688be 100644
+>--- a/security/integrity/ima/ima_main.c
+>+++ b/security/integrity/ima/ima_main.c
+>@@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
+> 		}
+> 		break;
+> 	case LOADING_MODULE:
+>-		sig_enforce = is_module_sig_enforced();
+>+		sig_enforce = is_module_sig_enforced_or_required();
+>
+> 		if (ima_enforce && (!sig_enforce
+> 				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
+>-- 
+>2.7.5
+>
