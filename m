@@ -2,140 +2,109 @@ Return-Path: <SRS0=n6I0=QT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 695FCC282C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 10:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE22C282CE
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 11:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 382EC2083B
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 10:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5788920842
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 11:00:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DK5Q1Y+7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfBLKyD (ORCPT
+        id S1728652AbfBLLAp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:54:03 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:35674 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbfBLKyD (ORCPT
+        Tue, 12 Feb 2019 06:00:45 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:43551 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728930AbfBLLAp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:54:03 -0500
-Received: from static-50-53-47-167.bvtn.or.frontiernet.net ([50.53.47.167] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1gtVhP-0001Pl-PO; Tue, 12 Feb 2019 10:54:00 +0000
-Subject: Re: [PATCH] apparmor: fix build error undefined reference to zlib_*
-To:     Anders Roxell <anders.roxell@linaro.org>, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190212094828.8429-1-anders.roxell@linaro.org>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <2f189cdd-28fb-58a7-63ad-abe8ba185b3a@canonical.com>
-Date:   Tue, 12 Feb 2019 02:53:56 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 12 Feb 2019 06:00:45 -0500
+Received: by mail-yw1-f68.google.com with SMTP id u200so818403ywu.10
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Feb 2019 03:00:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ysrs7O4XTNHbvtUzCcBIUDGeAY1c+7Daeugzgccm8iU=;
+        b=DK5Q1Y+7nBvI8ZtpUFCMnauiDQWU4LGZXXrmyHolKdselBSjPMAZPyIN3zU4Iugxrj
+         wm6L86CYf8Uj7B78xFCE+7zDPajhYaxRMRHD19O4NLEDsR/6ynB5lR7QOADjBCovIyOS
+         iB0PTjk5/4guFzs+ELbTH537Ku/BdLYmC2srDzcU84Y1aXKrDh5g8+q/ohHTwIKJTfEn
+         1PKHr40oa/3rhkp3KKAxgPF4ae/KPbs4lF5PmIj8nKSgGfRl6aYOQwS9hRHQFNoocNm7
+         pEWnCJJwX/bNKxiVxF4gY6FC1DEMHefSnrmy+gD8QQhVEk4y2OrjE0ZbFtG9O07I2U6k
+         93kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ysrs7O4XTNHbvtUzCcBIUDGeAY1c+7Daeugzgccm8iU=;
+        b=Upgx1IQTrTFnnLphWoL3XM0SXxdouVeqArJi0Epi5SmtcDYUNA2nDPLeOUOlb42/VL
+         +/86rQbyXzql4/9Q1r87MCXzN9R1q5rHpwRf8EB0hwja+S4w3ClAHH641xyGN7G07Nco
+         uYZyfDYktVKGcrvGPjzHdATFCWhhcb0dV+gxFvtAdpQjgrY8v4qNjFA2fdxNMaZXmKfw
+         KZbkQuViBL7pX24SzCx5/SIERWJIgK00UGjjwbvwKv4KhIm+hrSywTqnq4bl3S12TsRK
+         0k/UCs77JJ+bn03a6rWPRUswgPz0Qw1fAzwKYHEoWaLyHCNoGaqNpcAZfDNXWJ1wVPkt
+         t1oA==
+X-Gm-Message-State: AHQUAubb6HehgHfpWQbOoKqRTbpQaj+YbiZEWPJTCIQzSOlv/GY66pkx
+        WjEu3iWhG6cstCowQglPi8Qbl5lcf3QNim8+4frfcQ==
+X-Google-Smtp-Source: AHgI3Iat0eLR89Vj5qnvP5fXsCILWue/IOcwi0dqtOC3wz6hsOR/tNo0wZC63NTaxdN7uVLXhusTAm5vbtDL4ygH94A=
+X-Received: by 2002:a81:79d3:: with SMTP id u202mr2247939ywc.56.1549969244337;
+ Tue, 12 Feb 2019 03:00:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190212094828.8429-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20190212100825.9113-1-anders.roxell@linaro.org>
+ <CAHp75Vd8yi0u7S6oA=Vr7E9ptYdvBvXBJn=fG2kM-=vS-7oOQg@mail.gmail.com> <CAHp75VcPeKDLOB7vKeSG9+UfsYnPfTPy_omuTgJSUgKzC0caNw@mail.gmail.com>
+In-Reply-To: <CAHp75VcPeKDLOB7vKeSG9+UfsYnPfTPy_omuTgJSUgKzC0caNw@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Tue, 12 Feb 2019 12:00:33 +0100
+Message-ID: <CADYN=9JhN=x67Jj_L6Jk2ShTJsARUK6rQHWQttvNLJuZ0mfQDQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ima: fix build error redeclaration of enumerator
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/12/19 1:48 AM, Anders Roxell wrote:
-> With commit 876dd866c084 ("apparmor: Initial implementation of raw
-> policy blob compression") and SECURITY_APPARMOR is set to '=y'
-> ZLIB_DEFLATE must be enabled as well for the linker to see the symbols.
-> 
-> aarch64-linux-gnu-ld: security/apparmor/policy_unpack.o: in function `deflate_compress':
-> ../security/apparmor/policy_unpack.c:1030: undefined reference to `zlib_deflate_workspacesize'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1030:(.text+0xe20): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflate_workspacesize'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1036: undefined reference to `zlib_deflateInit2'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1036:(.text+0xe60): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateInit2'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1053: undefined reference to `zlib_deflate'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1053:(.text+0xec0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflate'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081: undefined reference to `zlib_deflateEnd'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081:(.text+0xf90): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateEnd'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081: undefined reference to `zlib_deflateEnd'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081:(.text+0xfb4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateEnd'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081: undefined reference to `zlib_deflateEnd'
-> aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081:(.text+0xfd8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateEnd'
-> make[1]: *** [Makefile:1023: vmlinux] Error 1
-> make[1]: Target 'Image' not remade because of errors.
-> make: *** [Makefile:152: sub-make] Error 2
-> make: Target 'Image' not remade because of errors.
-> 
-> Rework so when SECURITY_APPARMOR is set to '=y' ZLIB_INFLATE and ZLIB_DEFLATE gets
-> selected, since both are used by the SECURITY_APPARMOR.
-> 
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+On Tue, 12 Feb 2019 at 11:23, Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+>
+> On Tue, Feb 12, 2019 at 12:21 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > On Tue, Feb 12, 2019 at 12:15 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+> > >
+> > > Commit a893ea15d764 ("tpm: move tpm_chip definition to
+> > > include/linux/tpm.h") introduced a build error when both ima and efi is
+> > > enabled. What happens is that both headers (ima.h and efi.h) defines the
+> > > same 'NONE' constant, and it broke when they started getting included
+> > > from the same file.
+> >
+> > > We only need one of the two patches applied.
+> >
+> > I would argue that we need two patches applied. Namespace is a hidden
+> > issue in the code.
+> >
+> > This patch looks good to me, FWIW,
+> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+>
+> Oh, did you change ABI? So, I have to say that enum changes are okay,
+> but ABI, if any, are not.
 
-yep thanks for the patch,
+urgh, thank you for the review. It looks like I changed a bit too much
+in ima_parse_rule() =/
+I'll send send out a v2 shortly.
 
-unfortunately this same fix landed in apparmor-next about 5 hours ago
-
-> ---
->  security/apparmor/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-> index 3de21f46c82a..99c35e22c119 100644
-> --- a/security/apparmor/Kconfig
-> +++ b/security/apparmor/Kconfig
-> @@ -5,6 +5,8 @@ config SECURITY_APPARMOR
->  	select SECURITY_PATH
->  	select SECURITYFS
->  	select SECURITY_NETWORK
-> +	select ZLIB_INFLATE
-> +	select ZLIB_DEFLATE
->  	default n
->  	help
->  	  This enables the AppArmor security module.
-> 
-
+Cheers,
+Anders
