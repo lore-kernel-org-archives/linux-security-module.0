@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D202C282C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 10:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61270C282CA
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D70B21900
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 10:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E84121B1A
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 10:23:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SzxCJJr9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzsOeNar"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbfBLKVt (ORCPT
+        id S1728711AbfBLKXg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Feb 2019 05:21:49 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45613 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbfBLKVt (ORCPT
+        Tue, 12 Feb 2019 05:23:36 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43041 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbfBLKXg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Feb 2019 05:21:49 -0500
-Received: by mail-pl1-f195.google.com with SMTP id r14so1068226pls.12;
-        Tue, 12 Feb 2019 02:21:49 -0800 (PST)
+        Tue, 12 Feb 2019 05:23:36 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q17so1076102pfh.10;
+        Tue, 12 Feb 2019 02:23:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nPLvJ1U2J5XGkPuS7FrpA67Dv/Qj/MbV6qZU2I6C6bI=;
-        b=SzxCJJr9cKLoRxfWqTkFmr9+SHpyQYrdGl962aPQtGx9/Gjkt0WcKT8Zd+/05ddSDi
-         lhp4ncn4nNyePAubvUZigSQJFbWplxFUesa0jX/qXuqTHPwh0wuAg/uOkvj9oHhiRY+s
-         UOo3BBrGFsOy6U7uwRUFEyn1xSBG9wLKBLvWoyPbme/7F6aumIqfJ2j3JKPrlhwf5QnP
-         DlwKH+PGcbvESYWZCujWrfR4D8joaa8zlg3F0wyuWzjYxJHiXbumLSblx3r1GmO4u8gD
-         PaE5X/qVH1O7w/BHgOjTX90PptcvAEULu6dpoAzx622rTB6PFncIGNhecOVXXrE/vHHw
-         ya0Q==
+        bh=vTTJdqf/ZWLOUT+uK18iY5fQAanEzmeGSK8RyC8mzgo=;
+        b=fzsOeNarDEfKHlAntINZHVZGIhmhjydkfu2/SuhWPNq6Jv/cjgPERGaSPnnjiLNBmp
+         3p+jjD/8ZhnkHPSlrqlE4c+LKREjP985LoD3qsy05XoeHD1oo0PWbW80rJB9iAoh0C/+
+         oQbTnu0lEw/zZvnrULDHXSu7f4vcNFfKjUpkCDyLNQ0YCxCq9tn9Wmf+DUbKBGwVtbkA
+         pRzZyEyfmabYXcefe750yMup2FhKXIlxFn5bCRUuFiBza5BuNqmeak9AXlfgRUgVhHrM
+         FCj7AJ5mJxTm99yj42GmrymH1PhTBi/HVHbFVNA3AuBAqDfbNzO9shxxbFts7LvQRwm+
+         I4aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nPLvJ1U2J5XGkPuS7FrpA67Dv/Qj/MbV6qZU2I6C6bI=;
-        b=rGooVT0IAnuIgHLe333bDAR3Iu12M+9LVu0+wOl/1gqqVOVORFBcow2d5iUu7BWfsM
-         zpAbntVgIXv9CMGmB4UeTx2O1uTwe6O2T1DSN0uL6WG9havcVxcys7RIOGepPHTce4yi
-         2BL1xkLK6oVm0j0B3qkd7A6iQjximdohT9OWz1s8Y4ERnHWfx31FRym4mvgCIx7H6Jrl
-         MNn93dz6hBQuXTmWqN5ypCZ4YCVc1If7niyZd6DK3HEUHPLn6+C7IKHLVk9/043c708M
-         dHJozPH23Jzv4C20LmcqlKo26VkCyd4aBY8rxAHCG0shPDM9qpUQf5cfWtwXKssuv6KO
-         PKQg==
-X-Gm-Message-State: AHQUAuaR6BJRXUBeQSPuDWqS5Q4LpIwOOZfpaZxRAvX4OCv7YAqPF911
-        Up+UCHY+L/2GyUuI1XJ//Fs08eXi7WGxOuaFrkAcgYEJ
-X-Google-Smtp-Source: AHgI3IYTjtEsS21g1g6BjutEpqAJH9KZww8oF5FWEf4AkX1f+Yqr3NPzHlPenD52VchrpZdvHSo0diKYNKb7fi35mKA=
-X-Received: by 2002:a17:902:112c:: with SMTP id d41mr3181069pla.144.1549966908724;
- Tue, 12 Feb 2019 02:21:48 -0800 (PST)
+        bh=vTTJdqf/ZWLOUT+uK18iY5fQAanEzmeGSK8RyC8mzgo=;
+        b=bEqfWy/cbFXEg2PRZGSyQdcy5lhgoiWoa0bjetL7pX6Ti2dXMHBV8LS5+3CVKL+xjS
+         Yons0cE1sVn7aj6rNMV5MCw7/Bjp8MfybTqkoBr9F/Q1M1q6mHVn69Tt6UfcNyPsiDXr
+         OdUzxUEQ4Bze6rxXatj0LgadiKBO42YhOcGE94ojZHwFqjX86WyUOWPyixeWoFDlSHQW
+         viMZAYetor4tu/WkvacNzbCBz3rGRle1u7iZIbPmvDBypTQ8CD79rdg/rRpSdZoDbpqR
+         9kbg4L5bBP9M8vohd2/fralNe8q4n7UpfNvvzXEjmEc0spG4/3y4xcxfj52dnYUMWYkE
+         t1Fg==
+X-Gm-Message-State: AHQUAuZpWXpPXxRfVa5BZAsk5nM3TKlc+o5sT/sfXobIfte2n5gKLpP2
+        yg0xTpZQ7Eo5QCCcSHpAH/Hzy9KAUVIVAdmJ0hY=
+X-Google-Smtp-Source: AHgI3IY2kmVlUdKv8f9Sk+glks2rXPkq7jQagqImqXSs1fMz/TOg7fuP1h2Iql1nmVyW9H/AsHpoBxNwNsrqnbixArc=
+X-Received: by 2002:a63:4a21:: with SMTP id x33mr3033356pga.428.1549967015050;
+ Tue, 12 Feb 2019 02:23:35 -0800 (PST)
 MIME-Version: 1.0
-References: <20190212100825.9113-1-anders.roxell@linaro.org>
-In-Reply-To: <20190212100825.9113-1-anders.roxell@linaro.org>
+References: <20190212100825.9113-1-anders.roxell@linaro.org> <CAHp75Vd8yi0u7S6oA=Vr7E9ptYdvBvXBJn=fG2kM-=vS-7oOQg@mail.gmail.com>
+In-Reply-To: <CAHp75Vd8yi0u7S6oA=Vr7E9ptYdvBvXBJn=fG2kM-=vS-7oOQg@mail.gmail.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 12 Feb 2019 12:21:37 +0200
-Message-ID: <CAHp75Vd8yi0u7S6oA=Vr7E9ptYdvBvXBJn=fG2kM-=vS-7oOQg@mail.gmail.com>
+Date:   Tue, 12 Feb 2019 12:23:24 +0200
+Message-ID: <CAHp75VcPeKDLOB7vKeSG9+UfsYnPfTPy_omuTgJSUgKzC0caNw@mail.gmail.com>
 Subject: Re: [PATCH 1/2] ima: fix build error redeclaration of enumerator
 To:     Anders Roxell <anders.roxell@linaro.org>
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
@@ -78,21 +78,27 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 12, 2019 at 12:15 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+On Tue, Feb 12, 2019 at 12:21 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 >
-> Commit a893ea15d764 ("tpm: move tpm_chip definition to
-> include/linux/tpm.h") introduced a build error when both ima and efi is
-> enabled. What happens is that both headers (ima.h and efi.h) defines the
-> same 'NONE' constant, and it broke when they started getting included
-> from the same file.
+> On Tue, Feb 12, 2019 at 12:15 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+> >
+> > Commit a893ea15d764 ("tpm: move tpm_chip definition to
+> > include/linux/tpm.h") introduced a build error when both ima and efi is
+> > enabled. What happens is that both headers (ima.h and efi.h) defines the
+> > same 'NONE' constant, and it broke when they started getting included
+> > from the same file.
+>
+> > We only need one of the two patches applied.
+>
+> I would argue that we need two patches applied. Namespace is a hidden
+> issue in the code.
+>
+> This patch looks good to me, FWIW,
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> We only need one of the two patches applied.
-
-I would argue that we need two patches applied. Namespace is a hidden
-issue in the code.
-
-This patch looks good to me, FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Oh, did you change ABI? So, I have to say that enum changes are okay,
+but ABI, if any, are not.
 
 -- 
 With Best Regards,
