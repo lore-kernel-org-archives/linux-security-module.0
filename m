@@ -2,74 +2,118 @@ Return-Path: <SRS0=n6I0=QT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF16DC282C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 07:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97D6C282C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 09:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7815206BA
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 07:44:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A496F20821
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 09:48:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FA5bIk4f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725916AbfBLHoi (ORCPT
+        id S1728082AbfBLJsp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Feb 2019 02:44:38 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51068 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728085AbfBLHoi (ORCPT
+        Tue, 12 Feb 2019 04:48:45 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38798 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727509AbfBLJso (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Feb 2019 02:44:38 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id F155BA36A7BBF9BCEDE5;
-        Tue, 12 Feb 2019 15:44:33 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 12 Feb 2019 15:44:24 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Micah Morton <mortonm@chromium.org>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <linux-security-module@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] LSM: fix return value check in safesetid_init_securityfs()
-Date:   Tue, 12 Feb 2019 07:58:31 +0000
-Message-ID: <20190212075831.114668-1-weiyongjun1@huawei.com>
+        Tue, 12 Feb 2019 04:48:44 -0500
+Received: by mail-lj1-f195.google.com with SMTP id c19-v6so1647056lja.5
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Feb 2019 01:48:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=B5KwDzsMcCN5bKZ9gR266BQz8en1Dx9EG+wXdzylMa4=;
+        b=FA5bIk4fzFWuchkxIOg4AeLhpmVs7OBfaWMW2sPfi7DpCClDGF4ofrz7loRZ3j/VzS
+         Tk2pvtGZn/YZ24/gEOSv82HwpW3gVttqa4fWfyiUXThhgJeSEnhdeImfksKpNk+azSv8
+         a6Hxp2udYjXG4wWKrRiGD+Gw4xn5maRsN4/iKJ84T5DFgKb3RFmjWQ3VL+vmktGqGSdy
+         UHZfdztxZ8/AMeqRAMoU8k2PQ7v3IlHC4bpCMlzLhSGJ4iybKO1FQZrCrLdE45JXlsDw
+         TZ17rO2CawWEB/nAni0zWIEfYAgVS5c1f01QTIwo+fzv7V7XQEKP/HwGRu9C8U78YyHb
+         km8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=B5KwDzsMcCN5bKZ9gR266BQz8en1Dx9EG+wXdzylMa4=;
+        b=OA0iWzbswNx3XmnZDgnF7Ks3qc02JcPT60BSWoQ6kJHNRM/0MH7M9MiOyRqr1sjeRM
+         ESgmLHxMj1tw99/f6V7UhhIyRiJz4j97qTHMJVGSRHLX5YXblxKrl1v7f4Ci6Eswiayp
+         bSC5KOaQDqqY/YAPinrSF8SKPEOT5vFFJSWJ9HRLhHe1ow518AA0Ctv+Ve6Wk8qegOT/
+         S8YI85i/dGLJ/hw4mhmcSFBVPxfbeoyagcxjMS6wInziMOiWcH0KwWAusraG+pbOAmF0
+         pjE5lQ+uKaP/3dFjpCGFQCxt1aHbaYMB0dseKvUIEwnuT0+WrhnWgYaijk6rIPRnAQmS
+         oqBg==
+X-Gm-Message-State: AHQUAuYcnYgx5z6wrZU5IrmzV0s4kK3O8eBid8Dmhi2hx3ybJmUn7bcS
+        NDyEweLwI80QOVqmth1sKAbXNn1VPeQ=
+X-Google-Smtp-Source: AHgI3IZlMjfrl7jC2HgNxF9NxbADu+hygxoXPr5sUgRayaHgbR2b6ulEhjT50xjm3CQtCzPea4mO3Q==
+X-Received: by 2002:a2e:302:: with SMTP id 2-v6mr1733377ljd.137.1549964922602;
+        Tue, 12 Feb 2019 01:48:42 -0800 (PST)
+Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id n19sm2840660lfe.64.2019.02.12.01.48.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Feb 2019 01:48:42 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] apparmor: fix build error undefined reference to zlib_*
+Date:   Tue, 12 Feb 2019 10:48:28 +0100
+Message-Id: <20190212094828.8429-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In case of error, the function securityfs_create_dir() returns ERR_PTR()
-and never returns NULL. The NULL test in the return value check should
-be replaced with IS_ERR().
+With commit 876dd866c084 ("apparmor: Initial implementation of raw
+policy blob compression") and SECURITY_APPARMOR is set to '=y'
+ZLIB_DEFLATE must be enabled as well for the linker to see the symbols.
 
-Fixes: aeca4e2ca65c ("LSM: add SafeSetID module that gates setid calls")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+aarch64-linux-gnu-ld: security/apparmor/policy_unpack.o: in function `deflate_compress':
+../security/apparmor/policy_unpack.c:1030: undefined reference to `zlib_deflate_workspacesize'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1030:(.text+0xe20): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflate_workspacesize'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1036: undefined reference to `zlib_deflateInit2'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1036:(.text+0xe60): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateInit2'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1053: undefined reference to `zlib_deflate'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1053:(.text+0xec0): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflate'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081: undefined reference to `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081:(.text+0xf90): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081: undefined reference to `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081:(.text+0xfb4): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081: undefined reference to `zlib_deflateEnd'
+aarch64-linux-gnu-ld: ../security/apparmor/policy_unpack.c:1081:(.text+0xfd8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `zlib_deflateEnd'
+make[1]: *** [Makefile:1023: vmlinux] Error 1
+make[1]: Target 'Image' not remade because of errors.
+make: *** [Makefile:152: sub-make] Error 2
+make: Target 'Image' not remade because of errors.
+
+Rework so when SECURITY_APPARMOR is set to '=y' ZLIB_INFLATE and ZLIB_DEFLATE gets
+selected, since both are used by the SECURITY_APPARMOR.
+
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- security/safesetid/securityfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/apparmor/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-index 61be4ee459cc..2c6c829be044 100644
---- a/security/safesetid/securityfs.c
-+++ b/security/safesetid/securityfs.c
-@@ -167,7 +167,7 @@ static int __init safesetid_init_securityfs(void)
- 		return 0;
- 
- 	safesetid_policy_dir = securityfs_create_dir("safesetid", NULL);
--	if (!safesetid_policy_dir) {
-+	if (IS_ERR(safesetid_policy_dir)) {
- 		ret = PTR_ERR(safesetid_policy_dir);
- 		goto error;
- 	}
-
-
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index 3de21f46c82a..99c35e22c119 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -5,6 +5,8 @@ config SECURITY_APPARMOR
+ 	select SECURITY_PATH
+ 	select SECURITYFS
+ 	select SECURITY_NETWORK
++	select ZLIB_INFLATE
++	select ZLIB_DEFLATE
+ 	default n
+ 	help
+ 	  This enables the AppArmor security module.
+-- 
+2.20.1
 
