@@ -2,181 +2,117 @@ Return-Path: <SRS0=n6I0=QT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1201FC282C4
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 15:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 879D8C282C4
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 16:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEDC921773
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 15:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C35F2082F
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 16:55:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="Ajo+NFPk"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TDzGY2k4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbfBLPKK (ORCPT
+        id S1730776AbfBLQzP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Feb 2019 10:10:10 -0500
-Received: from forward501j.mail.yandex.net ([5.45.198.251]:54872 "EHLO
-        forward501j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726550AbfBLPKJ (ORCPT
+        Tue, 12 Feb 2019 11:55:15 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:40959 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729078AbfBLQzP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Feb 2019 10:10:09 -0500
-Received: from mxback20g.mail.yandex.net (mxback20g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:320])
-        by forward501j.mail.yandex.net (Yandex) with ESMTP id 968B53380399;
-        Tue, 12 Feb 2019 18:10:05 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback20g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id MosGWH5eXs-A3cajrR6;
-        Tue, 12 Feb 2019 18:10:04 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1549984204;
-        bh=qF2Xjin/UNVwOe0zfs8b9biMpPJk4SB+1N+8gipsCc4=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
-        b=Ajo+NFPky08M/AbMT0U8RKW+CdoXtwISNBdO8KCrugstnjssPK+60XSxs0t11UAVt
-         Q++83dN723ZdzDcpnJrBtzl47EjdCZdxM4VnBVrKshVcztcc2AVc+39iNt3/CJyRlX
-         FEkurP3TO/OeZYIx3qW/zOb6wjI2c8o2KEaPpoRo=
-Authentication-Results: mxback20g.mail.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by myt5-a323eb993ef7.qloud-c.yandex.net with HTTP;
-        Tue, 12 Feb 2019 18:10:03 +0300
-From:   Nazarov Sergey <s-nazarov@yandex.ru>
-To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Cc:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>, davem@davemloft.net,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        Paul Moore <paul@paul-moore.com>
-In-Reply-To: <CAHC9VhSDot+uNDi7ULoT7dry4FW9Jgp=NcqDh6TmA=z--kmqkA@mail.gmail.com>
-References: <16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net>
-         <1378e106-1826-2ab4-a3b1-88b57cee8497@schaufler-ca.com> <CAHC9VhTNnEpOito2b6ARFseCXcSw+kSE0erKhikd6FfwwBYppA@mail.gmail.com>
-         <CAHC9VhTEUzjd=Wk1y0Jjq8y0-xUf-8nVY727KRBD3z6APuQKfw@mail.gmail.com>
-         <10416711547829281@sas1-fed4e4c8a570.qloud-c.yandex.net> <CAHC9VhS-veQHhyhVBv0kRr0MZc6ZSh9WWO-9K2tOyQxFba43eA@mail.gmail.com>
-         <42957681548090694@sas1-adb97d30497b.qloud-c.yandex.net> <CAHC9VhT58UT4oN9uXq3eew-OeZi_Yos+s4b21XCoSB3CTMeZNg@mail.gmail.com>
-         <4824091548178512@sas1-ea1d14049a51.qloud-c.yandex.net> <CAHC9VhRhEvcU804qMfZik7qwohuCDfcbvJMHRT+DxMPvvMDEGQ@mail.gmail.com>
-         <11471341548341163@sas2-7b909973f402.qloud-c.yandex.net> <CAHC9VhQD=itT7jE22bo0UF24gE56y1z29fZec-7y1Zumz38FfQ@mail.gmail.com>
-        <1125571548681054@iva5-0acfc31d2b43.qloud-c.yandex.net> <CAHC9VhRC8BC9Ocs9FYVrwnWutWD4Dow_MjwpvowxmJd=NtVN5g@mail.gmail.com>
-         <3499451548746609@myt4-929fb874f3f2.qloud-c.yandex.net> <CAHC9VhRXc=UAfNidPjYsG561_kc_j2CkD6Db=Kb=Gjyhk3ko6Q@mail.gmail.com>
-         <3191601548853902@myt6-23299ba78d64.qloud-c.yandex.net> <CAHC9VhQcrnXmjcVw_ppwM-fGcwhJq9SafTnZKjgpQpxK0ie+Jw@mail.gmail.com>
-         <11242361548940840@iva8-8d7a47df0521.qloud-c.yandex.net> <CAHC9VhSjtQRGBUHvx73eVg32NMm4UN4qqaOXFyB9BMSx0Bz7dQ@mail.gmail.com>
-         <34948711549920080@myt1-06117f29c1ea.qloud-c.yandex.net> <CAHC9VhSDot+uNDi7ULoT7dry4FW9Jgp=NcqDh6TmA=z--kmqkA@mail.gmail.com>
-Subject: [PATCH] NETWORKING: avoid use IPCB in cipso_v4_error
+        Tue, 12 Feb 2019 11:55:15 -0500
+Received: by mail-vs1-f65.google.com with SMTP id z18so1996931vso.7
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Feb 2019 08:55:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DopTO6mzPwF/K2S+N7jiLzOIrEgHvF56VbXSPYIRgaI=;
+        b=TDzGY2k4J9XkJbqYpBBT1miwmNv/9U1Q9W3uQalQShLyHbjEDTPiAwWD+LvWyLWKz5
+         PJoIHX6xKTRx/QcUxiN7hIXgKEneG1z3sFZL6/2l7ueW8dQV8uL5h+Bu5BW2UWAiZ/dd
+         dt2S3LdEjVpNgAJUdd6ni9xk156Y7egsltWBE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DopTO6mzPwF/K2S+N7jiLzOIrEgHvF56VbXSPYIRgaI=;
+        b=ASTLnalWCKB9Ditw3LyHJ+SxvbBMfIVfOXyubxXNQUEsFc3SwNc6pgysQD/xXUL5pS
+         QA7gsh4iZwFK0GLQOE/KJ7j/uDiZbvGMl+pme20DLmTU98TsfHwE1KiDHtKaED1ToO1T
+         onvbuu3AdkNIMWVhdOWMfgE9qjFNGDp5Y/p+lZ5XjvXGsIS7LGCpxAhY8Xb47ryoYid0
+         l6POgleewehcD7G24r2deRQfcDCr9AmX0jGaX1oWIv1GKXb4rWEqdfCzzRSo9UEyEt5y
+         G65B5mmhE8qhamH2wh1ZbWzGdT/9i2Bu0F/LsoBfz4wjnr4kzYtmfc5I4X6aLziWGaw5
+         jrkg==
+X-Gm-Message-State: AHQUAubU1JiTEYEXSw/99Y+exS3l3g+CuO+SDVbjHvomBh3DXL64Jgkg
+        0ev4k4SDHqDsQIA7eHK8ecDrPLfy6oY=
+X-Google-Smtp-Source: AHgI3IZLW5CLIN3P/Bub7Mo9leoX83JFOqgqhC6mYnptr93L/GNgpsrcq1W9/rAZTfutwI5bBI0oFA==
+X-Received: by 2002:a67:688b:: with SMTP id d133mr1941148vsc.126.1549990513524;
+        Tue, 12 Feb 2019 08:55:13 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id a68sm13692348vsd.24.2019.02.12.08.55.12
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Feb 2019 08:55:12 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id s16so2009258vsk.4
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Feb 2019 08:55:12 -0800 (PST)
+X-Received: by 2002:a67:c00a:: with SMTP id v10mr2008287vsi.66.1549990511747;
+ Tue, 12 Feb 2019 08:55:11 -0800 (PST)
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Tue, 12 Feb 2019 18:10:03 +0300
-Message-Id: <6691891549984203@myt5-a323eb993ef7.qloud-c.yandex.net>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+References: <20190212075831.114668-1-weiyongjun1@huawei.com>
+In-Reply-To: <20190212075831.114668-1-weiyongjun1@huawei.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 12 Feb 2019 08:55:00 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLRD49pbatrLPPOtJnGGFT+uT8Uz3OzVo-E0MgZg-NgxA@mail.gmail.com>
+Message-ID: <CAGXu5jLRD49pbatrLPPOtJnGGFT+uT8Uz3OzVo-E0MgZg-NgxA@mail.gmail.com>
+Subject: Re: [PATCH -next] LSM: fix return value check in safesetid_init_securityfs()
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Micah Morton <mortonm@chromium.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Since cipso_v4_error might be called from different network stack layers, we can't safely use icmp_send there.
-icmp_send copies IP options with ip_option_echo, which uses IPCB to take access to IP header compiled data.
-But after commit 971f10ec ("tcp: better TCP_SKB_CB layout to reduce cache line misses"), IPCB can't be used
-above IP layer.
-This patch fixes the problem by creating in cipso_v4_error a local copy of compiled IP options and using it with
-introduced __icmp_send function. This looks some overloaded, but in quite rare error conditions only.
+On Mon, Feb 11, 2019 at 11:44 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
+>
+> In case of error, the function securityfs_create_dir() returns ERR_PTR()
+> and never returns NULL. The NULL test in the return value check should
+> be replaced with IS_ERR().
+>
+> Fixes: aeca4e2ca65c ("LSM: add SafeSetID module that gates setid calls")
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 
-The original discussion is here:
-https://lore.kernel.org/linux-security-module/16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net/
+Nice catch! Thanks,
 
-Signed-off-by: Sergey Nazarov <s-nazarov@yandex.ru>
----
- include/net/icmp.h    |    9 ++++++++-
- net/ipv4/cipso_ipv4.c |   18 ++++++++++++++++--
- net/ipv4/icmp.c       |    7 ++++---
- 3 files changed, 28 insertions(+), 6 deletions(-)
+Acked-by: Kees Cook <keescook@chromium.org>
 
-diff --git a/include/net/icmp.h b/include/net/icmp.h
-index 6ac3a5b..e0f709d 100644
---- a/include/net/icmp.h
-+++ b/include/net/icmp.h
-@@ -22,6 +22,7 @@
- 
- #include <net/inet_sock.h>
- #include <net/snmp.h>
-+#include <net/ip.h>
- 
- struct icmp_err {
-   int		errno;
-@@ -39,7 +40,13 @@ struct icmp_err {
- struct sk_buff;
- struct net;
- 
--void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info);
-+void __icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info,
-+		 const struct ip_options *opt);
-+static inline void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info)
-+{
-+	__icmp_send(skb_in, type, code, info, &IPCB(skb_in)->opt);
-+}
-+
- int icmp_rcv(struct sk_buff *skb);
- int icmp_err(struct sk_buff *skb, u32 info);
- int icmp_init(void);
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index 777fa3b..234d12e 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1735,13 +1735,27 @@ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option)
-  */
- void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway)
- {
-+	unsigned char optbuf[sizeof(struct ip_options) + 40];
-+	struct ip_options *opt = (struct ip_options *)optbuf;
-+
- 	if (ip_hdr(skb)->protocol == IPPROTO_ICMP || error != -EACCES)
- 		return;
- 
-+	/*
-+	 * We might be called above the IP layer,
-+	 * so we can not use icmp_send and IPCB here.
-+	 */
-+
-+	memset(opt, 0, sizeof(struct ip_options));
-+	opt->optlen = ip_hdr(skb)->ihl*4 - sizeof(struct iphdr);
-+	memcpy(opt->__data, (unsigned char *)&(ip_hdr(skb)[1]), opt->optlen);
-+	if (ip_options_compile(dev_net(skb->dev), opt, NULL))
-+		return;
-+
- 	if (gateway)
--		icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0);
-+		__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_NET_ANO, 0, opt);
- 	else
--		icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0);
-+		__icmp_send(skb, ICMP_DEST_UNREACH, ICMP_HOST_ANO, 0, opt);
- }
- 
- /**
-diff --git a/net/ipv4/icmp.c b/net/ipv4/icmp.c
-index 065997f..3f24414 100644
---- a/net/ipv4/icmp.c
-+++ b/net/ipv4/icmp.c
-@@ -570,7 +570,8 @@ static void icmp_reply(struct icmp_bxm *icmp_param, struct sk_buff *skb)
-  *			MUST reply to only the first fragment.
-  */
- 
--void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info)
-+void __icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info,
-+		 const struct ip_options *opt)
- {
- 	struct iphdr *iph;
- 	int room;
-@@ -691,7 +692,7 @@ void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info)
- 					  iph->tos;
- 	mark = IP4_REPLY_MARK(net, skb_in->mark);
- 
--	if (ip_options_echo(net, &icmp_param.replyopts.opt.opt, skb_in))
-+	if (__ip_options_echo(net, &icmp_param.replyopts.opt.opt, skb_in, opt))
- 		goto out_unlock;
- 
- 
-@@ -742,7 +743,7 @@ void icmp_send(struct sk_buff *skb_in, int type, int code, __be32 info)
- 	local_bh_enable();
- out:;
- }
--EXPORT_SYMBOL(icmp_send);
-+EXPORT_SYMBOL(__icmp_send);
- 
- 
- static void icmp_socket_deliver(struct sk_buff *skb, u32 info)
---
+-Kees
 
+> ---
+>  security/safesetid/securityfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
+> index 61be4ee459cc..2c6c829be044 100644
+> --- a/security/safesetid/securityfs.c
+> +++ b/security/safesetid/securityfs.c
+> @@ -167,7 +167,7 @@ static int __init safesetid_init_securityfs(void)
+>                 return 0;
+>
+>         safesetid_policy_dir = securityfs_create_dir("safesetid", NULL);
+> -       if (!safesetid_policy_dir) {
+> +       if (IS_ERR(safesetid_policy_dir)) {
+>                 ret = PTR_ERR(safesetid_policy_dir);
+>                 goto error;
+>         }
+>
+>
+>
+
+
+-- 
+Kees Cook
