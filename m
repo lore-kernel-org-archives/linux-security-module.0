@@ -2,108 +2,158 @@ Return-Path: <SRS0=n6I0=QT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA69FC282CA
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 23:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8B1C282CE
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8007222C9
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 23:13:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8EF72084E
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Feb 2019 23:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730810AbfBLXNF (ORCPT
+        id S1732275AbfBLXmM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Feb 2019 18:13:05 -0500
-Received: from mga03.intel.com ([134.134.136.65]:47418 "EHLO mga03.intel.com"
+        Tue, 12 Feb 2019 18:42:12 -0500
+Received: from mga01.intel.com ([192.55.52.88]:56264 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730495AbfBLXNF (ORCPT
+        id S1732237AbfBLXmL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Feb 2019 18:13:05 -0500
-X-Amp-Result: UNSCANNABLE
+        Tue, 12 Feb 2019 18:42:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 15:13:04 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 15:42:10 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,362,1544515200"; 
-   d="scan'208";a="124013186"
-Received: from briva-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.236])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Feb 2019 15:12:57 -0800
-Date:   Wed, 13 Feb 2019 01:12:56 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        zohar@linux.vnet.ibm.com, David Howells <dhowells@redhat.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        David.Laight@aculab.com, denkenz@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, keyrings@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
-Message-ID: <20190212231256.GD3977@linux.intel.com>
-References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
- <20181022234357.82217-1-ndesaulniers@google.com>
- <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
- <CAKwvOdn+V8iFJ_V1vr3GBm-NwxzaDbcmK+nW1q3uVky7bRsB3w@mail.gmail.com>
- <CAKwvOdnhDin6TJfBVxm6xsCh_nJeBuA7GqbgJwgLnqc3PrJGxA@mail.gmail.com>
+   d="scan'208";a="125983266"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.160])
+  by orsmga003.jf.intel.com with ESMTP; 12 Feb 2019 15:42:10 -0800
+Subject: [PATCH v2 2/2] selftests/tpm2: Extend tests to cover partial reads
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
+        jgg@ziepe.ca
+Date:   Tue, 12 Feb 2019 15:42:10 -0800
+Message-ID: <155001493022.13014.6810778681032295955.stgit@tstruk-mobl1.jf.intel.com>
+In-Reply-To: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
+References: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdnhDin6TJfBVxm6xsCh_nJeBuA7GqbgJwgLnqc3PrJGxA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 11, 2019 at 10:36:51AM -0800, Nick Desaulniers wrote:
-> On Mon, Oct 29, 2018 at 10:54 AM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> >
-> > On Wed, Oct 24, 2018 at 1:37 AM Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > >
-> > > On Mon, 22 Oct 2018, ndesaulniers@google.com wrote:
-> > > > Fixes the warning reported by Clang:
-> > > > security/keys/trusted.c:146:17: warning: passing an object that
-> > > > undergoes default
-> > > >      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
-> > > >        va_start(argp, h3);
-> > > >                       ^
-> > > > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> > > > char' is declared here
-> > > > unsigned char *h2, unsigned char h3, ...)
-> > > >                               ^
-> > > > Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> > > > standards explicitly call this out as undefined behavior:
-> > > >
-> > > > The parameter parmN is the identifier of the rightmost parameter in
-> > > > the variable parameter list in the function definition (the one just
-> > > > before the ...). If the parameter parmN is declared with ... or with a
-> > > > type that is not compatible with the type that results after
-> > > > application of the default argument promotions, the behavior is
-> > > > undefined.
-> > > >
-> > > > Link: https://github.com/ClangBuiltLinux/linux/issues/41
-> > > > Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
-> > > > Suggested-by: David Laight <David.Laight@aculab.com>
-> > > > Suggested-by: Denis Kenzior <denkenz@gmail.com>
-> > > > Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
-> > > > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-> > >
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > >
-> > > /Jarkko
-> >
-> > Bumping the maintainers if this isn't already picked up?
-> 
-> James, Jarkko, or Mimi, can you please pick this up (and let me know
-> what tree it lands in)?
+Three new tests added:
+1. Send get random cmd, read header in 1st read, read the rest in second
+   read - expect success
+2. Send get random cmd, read only part of the response, send another
+   get random command, read the response - expect success
+3. Send get random cmd followed by another get random cmd, without
+   reading the first response - expect the second cmd to fail with -EBUSY
 
-I can volunteer. Have not done yet v5.1 PR so it would land to that
-release. Is this agreed?
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
 
-/Jarkko
+v2:
+- Removed extra logging
+- Changed subject tag to selftest/tpm2:
+---
+ tools/testing/selftests/tpm2/tpm2.py       |    1 
+ tools/testing/selftests/tpm2/tpm2_tests.py |   66 ++++++++++++++++++++++++++++
+ 2 files changed, 67 insertions(+)
+
+diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
+index c2b9f2b1a0ac..828c18584624 100644
+--- a/tools/testing/selftests/tpm2/tpm2.py
++++ b/tools/testing/selftests/tpm2/tpm2.py
+@@ -22,6 +22,7 @@ TPM2_CC_UNSEAL = 0x015E
+ TPM2_CC_FLUSH_CONTEXT = 0x0165
+ TPM2_CC_START_AUTH_SESSION = 0x0176
+ TPM2_CC_GET_CAPABILITY	= 0x017A
++TPM2_CC_GET_RANDOM = 0x017B
+ TPM2_CC_PCR_READ = 0x017E
+ TPM2_CC_POLICY_PCR = 0x017F
+ TPM2_CC_PCR_EXTEND = 0x0182
+diff --git a/tools/testing/selftests/tpm2/tpm2_tests.py b/tools/testing/selftests/tpm2/tpm2_tests.py
+index 3bb066fea4a0..e82d84043c3f 100644
+--- a/tools/testing/selftests/tpm2/tpm2_tests.py
++++ b/tools/testing/selftests/tpm2/tpm2_tests.py
+@@ -158,6 +158,72 @@ class SmokeTest(unittest.TestCase):
+             pass
+         self.assertEqual(rejected, True)
+ 
++    def test_read_partial_resp(self):
++        """Reads random in two subsequent reads"""
++        try:
++            fmt = '>HIIH'
++            cmd = struct.pack(fmt,
++                              tpm2.TPM2_ST_NO_SESSIONS,
++                              struct.calcsize(fmt),
++                              tpm2.TPM2_CC_GET_RANDOM,
++                              0x20)
++            self.client.tpm.write(cmd)
++            hdr = self.client.tpm.read(10)
++            sz = struct.unpack('>I', hdr[2:6])[0]
++            rsp = self.client.tpm.read()
++        except:
++            pass
++        self.assertEqual(sz, 10 + 2 + 32)
++        self.assertEqual(len(rsp), 2 + 32)
++
++    def test_read_partial_overwrite(self):
++        """Reads only part of the response and issue a new cmd"""
++        try:
++            fmt = '>HIIH'
++            cmd = struct.pack(fmt,
++                              tpm2.TPM2_ST_NO_SESSIONS,
++                              struct.calcsize(fmt),
++                              tpm2.TPM2_CC_GET_RANDOM,
++                              0x20)
++            self.client.tpm.write(cmd)
++            # Read part of the respone
++            rsp1 = self.client.tpm.read(15)
++
++            # Send a new cmd
++            self.client.tpm.write(cmd)
++
++            # Read the whole respone
++            rsp2 = self.client.tpm.read()
++        except:
++            pass
++        self.assertEqual(len(rsp1), 15)
++        self.assertEqual(len(rsp2), 10 + 2 + 32)
++
++    def test_send_two_cmds(self):
++        """Send two cmds without reading a response"""
++        rejected = False
++        try:
++            fmt = '>HIIH'
++            cmd = struct.pack(fmt,
++                              tpm2.TPM2_ST_NO_SESSIONS,
++                              struct.calcsize(fmt),
++                              tpm2.TPM2_CC_GET_RANDOM,
++                              0x20)
++            self.client.tpm.write(cmd)
++
++            # expect the second one to raise -EBUSY error
++            self.client.tpm.write(cmd)
++            rsp = self.client.tpm.read()
++
++        except IOError, e:
++            # read the response
++            rsp = self.client.tpm.read()
++            rejected = True
++            pass
++        except:
++            pass
++        self.assertEqual(rejected, True)
++
+ class SpaceTest(unittest.TestCase):
+     def setUp(self):
+         logging.basicConfig(filename='SpaceTest.log', level=logging.DEBUG)
+
