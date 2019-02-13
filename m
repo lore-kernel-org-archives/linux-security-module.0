@@ -2,65 +2,55 @@ Return-Path: <SRS0=Cp5G=QU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175D1C4151A
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 18:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9132CC282CE
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 20:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8AF52075C
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 18:08:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F122218D3
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 20:06:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404789AbfBMSIC (ORCPT
+        id S2389469AbfBMUGk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:08:02 -0500
-Received: from mga09.intel.com ([134.134.136.24]:30882 "EHLO mga09.intel.com"
+        Wed, 13 Feb 2019 15:06:40 -0500
+Received: from namei.org ([65.99.196.166]:52048 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404788AbfBMSIB (ORCPT
+        id S1727049AbfBMUGk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:08:01 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 10:08:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
-   d="scan'208";a="122194034"
-Received: from sorenthe-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.151])
-  by fmsmga007.fm.intel.com with ESMTP; 13 Feb 2019 10:07:56 -0800
-Date:   Wed, 13 Feb 2019 20:07:59 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
-        jgg@ziepe.ca
-Subject: Re: [PATCH v3] selftests/tpm2: Extend tests to cover partial reads
-Message-ID: <20190213180759.GB27173@linux.intel.com>
-References: <155007596864.18677.9373151400257566077.stgit@tstruk-mobl1.jf.intel.com>
- <155007601798.18778.10490966270922534995.stgit@tstruk-mobl1.jf.intel.com>
- <20190213171928.GB23351@linux.intel.com>
- <24290564-9c4d-93f4-d813-7ce4f1fd8745@intel.com>
+        Wed, 13 Feb 2019 15:06:40 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x1DK6bcb002548;
+        Wed, 13 Feb 2019 20:06:37 GMT
+Date:   Thu, 14 Feb 2019 07:06:37 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] tpmdd updates for Linux v5.1
+In-Reply-To: <20190213084921.GA8208@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.1902140706180.1992@namei.org>
+References: <20190213084921.GA8208@linux.intel.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <24290564-9c4d-93f4-d813-7ce4f1fd8745@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 13, 2019 at 09:22:56AM -0800, Tadeusz Struk wrote:
-> On 2/13/19 9:19 AM, Jarkko Sakkinen wrote:
-> > OK, great, thank you.
-> > 
-> > They are in my master branch now.
+On Wed, 13 Feb 2019, Jarkko Sakkinen wrote:
+
+> James,
 > 
-> Thanks Jarkko. Are you planning to push it also to 5.1?
+> Quite a fat release this time. I'll try to enumerate the highlights.
 
-I did already my v5.1 pull request but might do another one if there are
-regressions. So it depends.
+Thanks!
 
-/Jarkko
+Applied to 
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
