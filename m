@@ -2,203 +2,155 @@ Return-Path: <SRS0=Cp5G=QU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B63C0C282C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 08:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADBAC282C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 12:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83C2D222B6
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 08:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6470222B5
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 12:18:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388981AbfBMItZ (ORCPT
+        id S2392065AbfBMMSp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:49:25 -0500
-Received: from mga17.intel.com ([192.55.52.151]:6721 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728933AbfBMItZ (ORCPT
+        Wed, 13 Feb 2019 07:18:45 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33982 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731371AbfBMMSp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:49:25 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 00:49:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="143852240"
-Received: from sorenthe-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.151])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Feb 2019 00:49:22 -0800
-Date:   Wed, 13 Feb 2019 10:49:21 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     jmorris@namei.org
-Cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] tpmdd updates for Linux v5.1
-Message-ID: <20190213084921.GA8208@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 13 Feb 2019 07:18:45 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DCASLS118661
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Feb 2019 07:18:44 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qmgxsnvj0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Feb 2019 07:18:43 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 13 Feb 2019 12:18:41 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Feb 2019 12:18:37 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DCIaGK51249296
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 Feb 2019 12:18:36 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C75014C052;
+        Wed, 13 Feb 2019 12:18:36 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AACAF4C044;
+        Wed, 13 Feb 2019 12:18:35 +0000 (GMT)
+Received: from localhost.ibm.com (unknown [9.80.92.165])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Feb 2019 12:18:35 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Bruno E . O . Meneguele" <bmeneg@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH v2] x86/ima: require signed kernel modules
+Date:   Wed, 13 Feb 2019 07:17:59 -0500
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 19021312-0008-0000-0000-000002BFF769
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021312-0009-0000-0000-0000222C1572
+Message-Id: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902130090
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-James,
+Require signed kernel modules on systems with secure boot mode enabled.
 
-Quite a fat release this time. I'll try to enumerate the highlights.
+Requiring appended kernel module signatures may be configured, enabled
+on the boot command line, or with this patch enabled in secure boot
+mode.  This patch defines set_module_sig_enforced().
 
-Clean up the transmission flow
-==============================
+To coordinate between appended kernel module signatures and IMA
+signatures, only define an IMA MODULE_CHECK policy rule if
+CONFIG_MODULE_SIG is not enabled.
 
-Cleaned up the whole transmission flow. Locking of the chip is now done in
-the level of tpm_try_get_ops() and tpm_put_ops() instead taking the chip
-lock inside tpm_transmit(). The nested calls inside tpm_transmit(), used
-with the resource manager, have been refactored out.
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
 
-Should make easier to perform more complex transactions with the TPM
-without making the subsystem a bigger mess (e.g. encrypted channel patches
-by James Bottomley).
+Changelog:
+- Removed new "sig_required" flag and associated functions, directly set
+  sig_enforce.
 
-PPI 1.3 support
-===============
+ arch/x86/kernel/ima_arch.c | 9 ++++++++-
+ include/linux/module.h     | 1 +
+ kernel/module.c            | 5 +++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-TPM PPI 1.3 introduces an additional optional command parameter that may be
-needed for some commands. Display the parameter if the command requires
-such a parameter. Only command 23 (SetPCRBanks) needs one.
+diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+index e47cd9390ab4..3fb9847f1cad 100644
+--- a/arch/x86/kernel/ima_arch.c
++++ b/arch/x86/kernel/ima_arch.c
+@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
+ 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+ #endif /* CONFIG_KEXEC_VERIFY_SIG */
+ 	"measure func=KEXEC_KERNEL_CHECK",
++#if !IS_ENABLED(CONFIG_MODULE_SIG)
++	"appraise func=MODULE_CHECK appraise_type=imasig",
++#endif
++	"measure func=MODULE_CHECK",
+ 	NULL
+ };
+ 
+ const char * const *arch_get_ima_policy(void)
+ {
+-	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
++	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
++		if (IS_ENABLED(CONFIG_MODULE_SIG))
++			set_module_sig_enforced();
+ 		return sb_arch_rules;
++	}
+ 	return NULL;
+ }
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 8fa38d3e7538..75e2a5c24a2b 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
+ #endif /* CONFIG_LIVEPATCH */
+ 
+ bool is_module_sig_enforced(void);
++void set_module_sig_enforced(void);
+ 
+ #else /* !CONFIG_MODULES... */
+ 
+diff --git a/kernel/module.c b/kernel/module.c
+index 2ad1b5239910..4cb5b733fb18 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
+ }
+ EXPORT_SYMBOL(is_module_sig_enforced);
+ 
++void set_module_sig_enforced(void)
++{
++       sig_enforce = true;
++}
++
+ /* Block module loading/unloading? */
+ int modules_disabled = 0;
+ core_param(nomodule, modules_disabled, bint, 0);
+-- 
+2.7.5
 
-The PPI request file will show output like this then:
-
-   # echo "23 16" > request
-   # cat request
-   23 16
-
-   # echo "5" > request
-   # cat request
-   5
-
-Extend all PCR banks in IMA
-===========================
-
-Instead of static PCR banks array, the array of available PCR banks is now
-allocated dynamically. The digests sizes are determined dynamically using a
-probe PCR read without relying crypto's static list of hash algorithms.
-
-This should finally make sealing of measurements in IMA safe and secure.
-
-TPM 2.0 selftests
-=================
-
-Added a test suite to tools/testing/selftests/tpm2 previously outside of
-the kernel tree: https://github.com/jsakkine-intel/tpm2-scripts.
-
-The following changes since commit 2181e084b26bddca22bc3f23364c15809cfed28b:
-
-  LSM: SafeSetID: remove unused include (2019-01-30 12:29:53 -0800)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20190213
-
-for you to fetch changes up to 50a81b60bfe075a0023670ff86558abd02536799:
-
-  tpm/ppi: Enable submission of optional command parameter for PPI 1.3 (2019-02-13 09:48:53 +0200)
-
-----------------------------------------------------------------
-tpmdd updates for Linux v5.1
-
-----------------------------------------------------------------
-Jarkko Sakkinen (21):
-      tpm/tpm_crb: Avoid unaligned reads in crb_recv()
-      tpm: Fix some name collisions with drivers/char/tpm.h
-      selftests: add TPM 2.0 tests
-      tpm: Unify the send callback behaviour
-      tpm/tpm_i2c_atmel: Return -E2BIG when the transfer is incomplete
-      tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
-      tpm: fix invalid return value in pubek_show()
-      tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
-      tpm: print tpm2_commit_space() error inside tpm2_commit_space()
-      tpm: declare struct tpm_header
-      tpm: access command header through struct in tpm_try_transmit()
-      tpm: encapsulate tpm_dev_transmit()
-      tpm: clean up tpm_try_transmit() error handling flow
-      tpm: move tpm_validate_commmand() to tpm2-space.c
-      tpm: move TPM space code out of tpm_transmit()
-      tpm: remove @space from tpm_transmit()
-      tpm: use tpm_try_get_ops() in tpm-sysfs.c.
-      tpm: remove TPM_TRANSMIT_UNLOCKED flag
-      tpm: introduce tpm_chip_start() and tpm_chip_stop()
-      tpm: take TPM chip power gating out of tpm_transmit()
-      tpm: remove @flags from tpm_transmit()
-
-Jerry Snitselaar (2):
-      tpm: don't print error message in tpm_transmit_cmd when tpm still testing
-      tpm: don't return bool from update_timeouts
-
-Jia Zhang (2):
-      tpm: Simplify the measurements loop
-      tpm: Fix off-by-one when reading binary_bios_measurements
-
-Roberto Sassu (7):
-      tpm: add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
-      tpm: dynamically allocate the allocated_banks array
-      tpm: rename and export tpm2_digest and tpm2_algorithms
-      tpm: retrieve digest size of unknown algorithms with PCR read
-      tpm: move tpm_chip definition to include/linux/tpm.h
-      KEYS: trusted: explicitly use tpm_chip structure from tpm_default_chip()
-      tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
-
-Stefan Berger (5):
-      tpm/ppi: pass function revision ID to tpm_eval_dsm()
-      tpm/ppi: rename TPM_PPI_REVISION_ID to TPM_PPI_REVISION_ID_1
-      tpm/ppi: Display up to 101 operations as define for version 1.3
-      tpm/ppi: Possibly show command parameter if TPM PPI 1.3 is used
-      tpm/ppi: Enable submission of optional command parameter for PPI 1.3
-
- drivers/char/tpm/eventlog/tpm1.c           |  41 +-
- drivers/char/tpm/eventlog/tpm2.c           |  12 +-
- drivers/char/tpm/st33zp24/i2c.c            |   2 +-
- drivers/char/tpm/st33zp24/spi.c            |   2 +-
- drivers/char/tpm/st33zp24/st33zp24.c       |   2 +-
- drivers/char/tpm/st33zp24/st33zp24.h       |   4 +-
- drivers/char/tpm/tpm-chip.c                | 124 ++++-
- drivers/char/tpm/tpm-dev-common.c          |  44 +-
- drivers/char/tpm/tpm-interface.c           | 327 ++++----------
- drivers/char/tpm/tpm-sysfs.c               | 138 +++---
- drivers/char/tpm/tpm.h                     | 180 ++------
- drivers/char/tpm/tpm1-cmd.c                |  43 +-
- drivers/char/tpm/tpm2-cmd.c                | 208 +++++----
- drivers/char/tpm/tpm2-space.c              |  90 +++-
- drivers/char/tpm/tpm_atmel.c               |   2 +-
- drivers/char/tpm/tpm_crb.c                 |  22 +-
- drivers/char/tpm/tpm_i2c_atmel.c           |  15 +-
- drivers/char/tpm/tpm_i2c_infineon.c        |  17 +-
- drivers/char/tpm/tpm_i2c_nuvoton.c         |  18 +-
- drivers/char/tpm/tpm_ibmvtpm.c             |   8 +-
- drivers/char/tpm/tpm_infineon.c            |   2 +-
- drivers/char/tpm/tpm_nsc.c                 |   2 +-
- drivers/char/tpm/tpm_ppi.c                 |  78 +++-
- drivers/char/tpm/tpm_tis_core.c            |  21 +-
- drivers/char/tpm/tpm_vtpm_proxy.c          |  15 +-
- drivers/char/tpm/xen-tpmfront.c            |   4 +-
- include/linux/tpm.h                        | 129 +++++-
- include/linux/tpm_eventlog.h               |  19 +-
- security/integrity/ima/ima.h               |   1 +
- security/integrity/ima/ima_crypto.c        |  10 +-
- security/integrity/ima/ima_init.c          |   4 +
- security/integrity/ima/ima_queue.c         |  27 +-
- security/keys/trusted.c                    |  73 ++-
- tools/testing/selftests/Makefile           |   1 +
- tools/testing/selftests/tpm2/Makefile      |   4 +
- tools/testing/selftests/tpm2/test_smoke.sh |   4 +
- tools/testing/selftests/tpm2/test_space.sh |   4 +
- tools/testing/selftests/tpm2/tpm2.py       | 696 +++++++++++++++++++++++++++++
- tools/testing/selftests/tpm2/tpm2_tests.py | 227 ++++++++++
- 39 files changed, 1876 insertions(+), 744 deletions(-)
- create mode 100644 tools/testing/selftests/tpm2/Makefile
- create mode 100755 tools/testing/selftests/tpm2/test_smoke.sh
- create mode 100755 tools/testing/selftests/tpm2/test_space.sh
- create mode 100644 tools/testing/selftests/tpm2/tpm2.py
- create mode 100644 tools/testing/selftests/tpm2/tpm2_tests.py
