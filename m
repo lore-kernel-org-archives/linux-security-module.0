@@ -2,64 +2,362 @@ Return-Path: <SRS0=Cp5G=QU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11B5C282C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 07:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C5FDC282CA
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 08:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3DA222BA
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 07:44:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C5E7222B6
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 08:45:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0gR7eTL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbfBMHoa (ORCPT
+        id S2390757AbfBMIpZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:44:30 -0500
-Received: from mga05.intel.com ([192.55.52.43]:38921 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728713AbfBMHoa (ORCPT
+        Wed, 13 Feb 2019 03:45:25 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:43107 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390715AbfBMIpZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:44:30 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Feb 2019 23:44:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="124098807"
-Received: from sorenthe-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.151])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Feb 2019 23:44:24 -0800
-Date:   Wed, 13 Feb 2019 09:44:23 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] tpm: Unify the send callback behaviour
-Message-ID: <20190213074423.GA3950@linux.intel.com>
-References: <20190208180857.12330-1-jarkko.sakkinen@linux.intel.com>
- <20190208180857.12330-2-jarkko.sakkinen@linux.intel.com>
- <4072b2b6-0f95-be50-0772-7e2869c2c24e@linux.ibm.com>
- <20190208190057.GA3439@linux.intel.com>
- <2849751f-ff26-193e-f15e-4d7d5f8525a7@infineon.com>
+        Wed, 13 Feb 2019 03:45:25 -0500
+Received: by mail-yb1-f194.google.com with SMTP id s76so597153ybs.10
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Feb 2019 00:45:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hr3/XJE9I3amI/YzMzL7wKhzr+YjIhDg8zrDyVv+5JY=;
+        b=q0gR7eTLrrAlpA2zDToxQJxphJPW5Z2sY0yJ6V50pDNAd7xxGXU3uwFYfgM8WD/WqT
+         mGU7iTkQ8WegfryVkn0bYNcVKhCoCmNBXCPIxKf6EP8+al2UQButMwSoQN89LdbAuQJ3
+         q1XBbu0J2hOAQFyXNi6db4C/W5C/rPXFwCy6MulnEOglJw6FvnbGfpUVlF8hm3YE36k3
+         Xqy+KmoIGRTVyHkBLsWSaeQ0jlDEvLEtZemvfuNXv5A12QkjgM+Y1QSfIzQlxZUxkU0w
+         8mNIqL6C1bCDqDgou7MyrZiEp7TdsEH2UJ7im4QJLBN3iREbtACp9A/6UI5CUhGV/0Im
+         T2WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hr3/XJE9I3amI/YzMzL7wKhzr+YjIhDg8zrDyVv+5JY=;
+        b=nrJohVh8J7xvXTY+APNGA9ZWNMw0DTcSjNDhf6hnJSgMTUHPvK6EU87DPQEfcOXGPs
+         kW0kIOvqM1mnsLLxfYWeV8j7iZjOiGZu4KGt8REVOQRvGxTxw/QSIZpd207JeOK5SoJR
+         m7RFF5JNMywED96TGSQhUwVN2vax2y+ul0LsV7YM+wRUaK2nlAnSWZ13+VWBMFnqJzZC
+         QFE9TBDm8/t0yQqjazM0ZtuXQVrEGIgBnYh5J39ldF99PyuvkJGscWZz1BsqbmFywE80
+         YOISrA7JbUbSRJoVIa/OCwPS3LT85Y9cHm6RSPXz2aJkmuEA+N4QOCZn9y5Tun2cWlxs
+         kT0g==
+X-Gm-Message-State: AHQUAuY+vKkmYYzE4AwnXwIJmPG6KX5rdfs6FkKUgTgOZcpCy33B+TTe
+        fU7dEN/il0619Cdn8HzjpZk51EwJ+HxJvn1n+yhFbg==
+X-Google-Smtp-Source: AHgI3IYwRgDBJ4CvzmtVv+symVv/pEgR+t/9n87ySj0T3UsmJUfAJKl9PlQxWjWoyC3D5tT6w1OP0PtmI0WiqY9iYUU=
+X-Received: by 2002:a25:d94:: with SMTP id 142mr6533587ybn.256.1550047523753;
+ Wed, 13 Feb 2019 00:45:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2849751f-ff26-193e-f15e-4d7d5f8525a7@infineon.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190212112121.32163-1-anders.roxell@linaro.org> <20190212112121.32163-2-anders.roxell@linaro.org>
+In-Reply-To: <20190212112121.32163-2-anders.roxell@linaro.org>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Wed, 13 Feb 2019 09:45:12 +0100
+Message-ID: <CADYN=9LMW_+vjw+V-hB929mjWC0uTsjPEtK_jftsXDuSPkqi6A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] efi: fix build error redeclaration of enumerator
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 11, 2019 at 04:05:39PM +0100, Alexander Steffen wrote:
-> Tested-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+On Tue, 12 Feb 2019 at 12:21, Anders Roxell <anders.roxell@linaro.org> wrote:
+>
+> Commit a893ea15d764 ("tpm: move tpm_chip definition to
+> include/linux/tpm.h") introduced a build error when both ima and efi is
+> enabled. What happens is that both headers (ima.h and efi.h) defines the
+> same 'NONE' constant, and it broke when they started getting included
+> from the same file.
+>
+> In file included from ../security/integrity/ima/ima_fs.c:30:
+> ../security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator "NONE"
+>   hook(NONE)   \
+>        ^~~~
+> ../security/integrity/ima/ima.h:188:34: note: in definition of macro "__ima_hook_enumify"
+>  #define __ima_hook_enumify(ENUM) ENUM,
+>                                   ^~~~
+> ../security/integrity/ima/ima.h:191:2: note: in expansion of macro "__ima_hooks"
+>   __ima_hooks(__ima_hook_enumify)
+>   ^~~~~~~~~~~
+> In file included from ../arch/arm64/include/asm/acpi.h:15,
+>                  from ../include/acpi/acpi_io.h:7,
+>                  from ../include/linux/acpi.h:47,
+>                  from ../include/linux/tpm.h:26,
+>                  from ../security/integrity/ima/ima.h:25,
+>                  from ../security/integrity/ima/ima_fs.c:30:
+> ../include/linux/efi.h:1723:2: note: previous definition of "NONE" was here
+>   NONE,
+>   ^~~~
+> make[4]: *** [../scripts/Makefile.build:277: security/integrity/ima/ima_fs.o] Error 1
+>
+> Rework to prefix the efi enum with 'EFI_*'.
+>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>
+> No changes since v1.
+>
+>  arch/x86/platform/efi/quirks.c          |  2 +-
 
-Thank you!
+I found that I missed rename one 'NONE' to 'EFI_NONE' in the file above.
+Will send a v3 shortly.
 
-/Jarkko
+Cheers,
+Anders
+
+>  drivers/firmware/efi/runtime-wrappers.c | 48 ++++++++++++-------------
+>  include/linux/efi.h                     | 26 +++++++-------
+>  3 files changed, 38 insertions(+), 38 deletions(-)
+>
+> diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+> index 9ce85e605052..b7c0b04ee6ad 100644
+> --- a/arch/x86/platform/efi/quirks.c
+> +++ b/arch/x86/platform/efi/quirks.c
+> @@ -742,7 +742,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
+>          * because this case occurs *very* rarely and hence could be improved
+>          * on a need by basis.
+>          */
+> -       if (efi_rts_work.efi_rts_id == RESET_SYSTEM) {
+> +       if (efi_rts_work.efi_rts_id == EFI_RESET_SYSTEM) {
+>                 pr_info("efi_reset_system() buggy! Reboot through BIOS\n");
+>                 machine_real_restart(MRR_BIOS);
+>                 return;
+> diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
+> index c70df5ae7c4a..28138534643e 100644
+> --- a/drivers/firmware/efi/runtime-wrappers.c
+> +++ b/drivers/firmware/efi/runtime-wrappers.c
+> @@ -85,7 +85,7 @@ struct efi_runtime_work efi_rts_work;
+>                 pr_err("Failed to queue work to efi_rts_wq.\n");        \
+>                                                                         \
+>  exit:                                                                  \
+> -       efi_rts_work.efi_rts_id = NONE;                                 \
+> +       efi_rts_work.efi_rts_id = EFI_NONE;                             \
+>         efi_rts_work.status;                                            \
+>  })
+>
+> @@ -181,50 +181,50 @@ static void efi_call_rts(struct work_struct *work)
+>         arg5 = efi_rts_work.arg5;
+>
+>         switch (efi_rts_work.efi_rts_id) {
+> -       case GET_TIME:
+> +       case EFI_GET_TIME:
+>                 status = efi_call_virt(get_time, (efi_time_t *)arg1,
+>                                        (efi_time_cap_t *)arg2);
+>                 break;
+> -       case SET_TIME:
+> +       case EFI_SET_TIME:
+>                 status = efi_call_virt(set_time, (efi_time_t *)arg1);
+>                 break;
+> -       case GET_WAKEUP_TIME:
+> +       case EFI_GET_WAKEUP_TIME:
+>                 status = efi_call_virt(get_wakeup_time, (efi_bool_t *)arg1,
+>                                        (efi_bool_t *)arg2, (efi_time_t *)arg3);
+>                 break;
+> -       case SET_WAKEUP_TIME:
+> +       case EFI_SET_WAKEUP_TIME:
+>                 status = efi_call_virt(set_wakeup_time, *(efi_bool_t *)arg1,
+>                                        (efi_time_t *)arg2);
+>                 break;
+> -       case GET_VARIABLE:
+> +       case EFI_GET_VARIABLE:
+>                 status = efi_call_virt(get_variable, (efi_char16_t *)arg1,
+>                                        (efi_guid_t *)arg2, (u32 *)arg3,
+>                                        (unsigned long *)arg4, (void *)arg5);
+>                 break;
+> -       case GET_NEXT_VARIABLE:
+> +       case EFI_GET_NEXT_VARIABLE:
+>                 status = efi_call_virt(get_next_variable, (unsigned long *)arg1,
+>                                        (efi_char16_t *)arg2,
+>                                        (efi_guid_t *)arg3);
+>                 break;
+> -       case SET_VARIABLE:
+> +       case EFI_SET_VARIABLE:
+>                 status = efi_call_virt(set_variable, (efi_char16_t *)arg1,
+>                                        (efi_guid_t *)arg2, *(u32 *)arg3,
+>                                        *(unsigned long *)arg4, (void *)arg5);
+>                 break;
+> -       case QUERY_VARIABLE_INFO:
+> +       case EFI_QUERY_VARIABLE_INFO:
+>                 status = efi_call_virt(query_variable_info, *(u32 *)arg1,
+>                                        (u64 *)arg2, (u64 *)arg3, (u64 *)arg4);
+>                 break;
+> -       case GET_NEXT_HIGH_MONO_COUNT:
+> +       case EFI_GET_NEXT_HIGH_MONO_COUNT:
+>                 status = efi_call_virt(get_next_high_mono_count, (u32 *)arg1);
+>                 break;
+> -       case UPDATE_CAPSULE:
+> +       case EFI_UPDATE_CAPSULE:
+>                 status = efi_call_virt(update_capsule,
+>                                        (efi_capsule_header_t **)arg1,
+>                                        *(unsigned long *)arg2,
+>                                        *(unsigned long *)arg3);
+>                 break;
+> -       case QUERY_CAPSULE_CAPS:
+> +       case EFI_QUERY_CAPSULE_CAPS:
+>                 status = efi_call_virt(query_capsule_caps,
+>                                        (efi_capsule_header_t **)arg1,
+>                                        *(unsigned long *)arg2, (u64 *)arg3,
+> @@ -248,7 +248,7 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
+> +       status = efi_queue_work(EFI_GET_TIME, tm, tc, NULL, NULL, NULL);
+>         up(&efi_runtime_lock);
+>         return status;
+>  }
+> @@ -259,7 +259,7 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
+> +       status = efi_queue_work(EFI_SET_TIME, tm, NULL, NULL, NULL, NULL);
+>         up(&efi_runtime_lock);
+>         return status;
+>  }
+> @@ -272,7 +272,7 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
+> +       status = efi_queue_work(EFI_GET_WAKEUP_TIME, enabled, pending, tm, NULL,
+>                                 NULL);
+>         up(&efi_runtime_lock);
+>         return status;
+> @@ -284,7 +284,7 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
+> +       status = efi_queue_work(EFI_SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
+>                                 NULL);
+>         up(&efi_runtime_lock);
+>         return status;
+> @@ -300,7 +300,7 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
+> +       status = efi_queue_work(EFI_GET_VARIABLE, name, vendor, attr, data_size,
+>                                 data);
+>         up(&efi_runtime_lock);
+>         return status;
+> @@ -314,7 +314,7 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
+> +       status = efi_queue_work(EFI_GET_NEXT_VARIABLE, name_size, name, vendor,
+>                                 NULL, NULL);
+>         up(&efi_runtime_lock);
+>         return status;
+> @@ -330,7 +330,7 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
+> +       status = efi_queue_work(EFI_SET_VARIABLE, name, vendor, &attr, &data_size,
+>                                 data);
+>         up(&efi_runtime_lock);
+>         return status;
+> @@ -365,7 +365,7 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
+> +       status = efi_queue_work(EFI_QUERY_VARIABLE_INFO, &attr, storage_space,
+>                                 remaining_space, max_variable_size, NULL);
+>         up(&efi_runtime_lock);
+>         return status;
+> @@ -397,7 +397,7 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
+> +       status = efi_queue_work(EFI_GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
+>                                 NULL, NULL);
+>         up(&efi_runtime_lock);
+>         return status;
+> @@ -413,7 +413,7 @@ static void virt_efi_reset_system(int reset_type,
+>                         "could not get exclusive access to the firmware\n");
+>                 return;
+>         }
+> -       efi_rts_work.efi_rts_id = RESET_SYSTEM;
+> +       efi_rts_work.efi_rts_id = EFI_RESET_SYSTEM;
+>         __efi_call_virt(reset_system, reset_type, status, data_size, data);
+>         up(&efi_runtime_lock);
+>  }
+> @@ -429,7 +429,7 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
+> +       status = efi_queue_work(EFI_UPDATE_CAPSULE, capsules, &count, &sg_list,
+>                                 NULL, NULL);
+>         up(&efi_runtime_lock);
+>         return status;
+> @@ -447,7 +447,7 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
+>
+>         if (down_interruptible(&efi_runtime_lock))
+>                 return EFI_ABORTED;
+> -       status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
+> +       status = efi_queue_work(EFI_QUERY_CAPSULE_CAPS, capsules, &count,
+>                                 max_size, reset_type, NULL);
+>         up(&efi_runtime_lock);
+>         return status;
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index a4de93c96907..b3471b6ff92f 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -1720,19 +1720,19 @@ extern int efi_tpm_eventlog_init(void);
+>   * fault happened while executing an efi runtime service.
+>   */
+>  enum efi_rts_ids {
+> -       NONE,
+> -       GET_TIME,
+> -       SET_TIME,
+> -       GET_WAKEUP_TIME,
+> -       SET_WAKEUP_TIME,
+> -       GET_VARIABLE,
+> -       GET_NEXT_VARIABLE,
+> -       SET_VARIABLE,
+> -       QUERY_VARIABLE_INFO,
+> -       GET_NEXT_HIGH_MONO_COUNT,
+> -       RESET_SYSTEM,
+> -       UPDATE_CAPSULE,
+> -       QUERY_CAPSULE_CAPS,
+> +       EFI_NONE,
+> +       EFI_GET_TIME,
+> +       EFI_SET_TIME,
+> +       EFI_GET_WAKEUP_TIME,
+> +       EFI_SET_WAKEUP_TIME,
+> +       EFI_GET_VARIABLE,
+> +       EFI_GET_NEXT_VARIABLE,
+> +       EFI_SET_VARIABLE,
+> +       EFI_QUERY_VARIABLE_INFO,
+> +       EFI_GET_NEXT_HIGH_MONO_COUNT,
+> +       EFI_RESET_SYSTEM,
+> +       EFI_UPDATE_CAPSULE,
+> +       EFI_QUERY_CAPSULE_CAPS,
+>  };
+>
+>  /*
+> --
+> 2.20.1
+>
