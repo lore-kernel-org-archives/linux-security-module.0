@@ -2,155 +2,91 @@ Return-Path: <SRS0=Cp5G=QU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADBAC282C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 12:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A6EC282CE
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6470222B5
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 12:18:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 384B5222C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392065AbfBMMSp (ORCPT
+        id S1729738AbfBMPN2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:18:45 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731371AbfBMMSp (ORCPT
+        Wed, 13 Feb 2019 10:13:28 -0500
+Received: from mga07.intel.com ([134.134.136.100]:9646 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729139AbfBMPN2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:18:45 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DCASLS118661
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Feb 2019 07:18:44 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qmgxsnvj0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Feb 2019 07:18:43 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 13 Feb 2019 12:18:41 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Feb 2019 12:18:37 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DCIaGK51249296
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Feb 2019 12:18:36 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C75014C052;
-        Wed, 13 Feb 2019 12:18:36 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AACAF4C044;
-        Wed, 13 Feb 2019 12:18:35 +0000 (GMT)
-Received: from localhost.ibm.com (unknown [9.80.92.165])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Feb 2019 12:18:35 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Bruno E . O . Meneguele" <bmeneg@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v2] x86/ima: require signed kernel modules
-Date:   Wed, 13 Feb 2019 07:17:59 -0500
-X-Mailer: git-send-email 2.7.5
-X-TM-AS-GCONF: 00
-x-cbid: 19021312-0008-0000-0000-000002BFF769
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021312-0009-0000-0000-0000222C1572
-Message-Id: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902130090
+        Wed, 13 Feb 2019 10:13:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 07:13:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
+   d="scan'208";a="320060612"
+Received: from sorenthe-mobl1.ger.corp.intel.com ([10.249.254.151])
+  by fmsmga005.fm.intel.com with ESMTP; 13 Feb 2019 07:13:22 -0800
+Message-ID: <9d3e78706b2fdbe0427f675592df5d7920d2c030.camel@linux.intel.com>
+Subject: Re: [PATCH v2 2/2] selftests/tpm2: Extend tests to cover partial
+ reads
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
+        jgg@ziepe.ca
+Date:   Wed, 13 Feb 2019 17:13:23 +0200
+In-Reply-To: <155001493022.13014.6810778681032295955.stgit@tstruk-mobl1.jf.intel.com>
+References: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
+         <155001493022.13014.6810778681032295955.stgit@tstruk-mobl1.jf.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Require signed kernel modules on systems with secure boot mode enabled.
+On Tue, 2019-02-12 at 15:42 -0800, Tadeusz Struk wrote:
+> Three new tests added:
+> 1. Send get random cmd, read header in 1st read, read the rest in second
+>    read - expect success
+> 2. Send get random cmd, read only part of the response, send another
+>    get random command, read the response - expect success
+> 3. Send get random cmd followed by another get random cmd, without
+>    reading the first response - expect the second cmd to fail with -EBUSY
+> 
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 
-Requiring appended kernel module signatures may be configured, enabled
-on the boot command line, or with this patch enabled in secure boot
-mode.  This patch defines set_module_sig_enforced().
+Getting still some garbage in the output:
 
-To coordinate between appended kernel module signatures and IMA
-signatures, only define an IMA MODULE_CHECK policy rule if
-CONFIG_MODULE_SIG is not enabled.
+$ sudo ./test_smoke.sh 
+[sudo] password for jsakkine: 
+test_read_partial_overwrite (tpm2_tests.SmokeTest)
+Reads only part of the response and issue a new cmd ... ok
+test_read_partial_resp (tpm2_tests.SmokeTest)
+Reads random in two subsequent reads ... ok
+test_seal_with_auth (tpm2_tests.SmokeTest) ... ok
+test_seal_with_policy (tpm2_tests.SmokeTest) ... ok
+test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ok
+test_send_two_cmds (tpm2_tests.SmokeTest)
+Send two cmds without reading a response ... ok
+test_too_short_cmd (tpm2_tests.SmokeTest) ... ok
+test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ok
+test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ok
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
+----------------------------------------------------------------------
+Ran 9 tests in 47.374s
 
-Changelog:
-- Removed new "sig_required" flag and associated functions, directly set
-  sig_enforce.
+OK
 
- arch/x86/kernel/ima_arch.c | 9 ++++++++-
- include/linux/module.h     | 1 +
- kernel/module.c            | 5 +++++
- 3 files changed, 14 insertions(+), 1 deletion(-)
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-index e47cd9390ab4..3fb9847f1cad 100644
---- a/arch/x86/kernel/ima_arch.c
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
- 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
- #endif /* CONFIG_KEXEC_VERIFY_SIG */
- 	"measure func=KEXEC_KERNEL_CHECK",
-+#if !IS_ENABLED(CONFIG_MODULE_SIG)
-+	"appraise func=MODULE_CHECK appraise_type=imasig",
-+#endif
-+	"measure func=MODULE_CHECK",
- 	NULL
- };
- 
- const char * const *arch_get_ima_policy(void)
- {
--	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
-+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-+		if (IS_ENABLED(CONFIG_MODULE_SIG))
-+			set_module_sig_enforced();
- 		return sb_arch_rules;
-+	}
- 	return NULL;
- }
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 8fa38d3e7538..75e2a5c24a2b 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
- #endif /* CONFIG_LIVEPATCH */
- 
- bool is_module_sig_enforced(void);
-+void set_module_sig_enforced(void);
- 
- #else /* !CONFIG_MODULES... */
- 
-diff --git a/kernel/module.c b/kernel/module.c
-index 2ad1b5239910..4cb5b733fb18 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
- }
- EXPORT_SYMBOL(is_module_sig_enforced);
- 
-+void set_module_sig_enforced(void)
-+{
-+       sig_enforce = true;
-+}
-+
- /* Block module loading/unloading? */
- int modules_disabled = 0;
- core_param(nomodule, modules_disabled, bint, 0);
--- 
-2.7.5
+Can give reviewed-by after those are cleaned up.
+
+/Jarkko
 
