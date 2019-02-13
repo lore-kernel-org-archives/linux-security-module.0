@@ -2,91 +2,126 @@ Return-Path: <SRS0=Cp5G=QU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A6EC282CE
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8860C282C2
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 16:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 384B5222C2
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 15:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6BAE21904
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 16:05:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="QR45GSPP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbfBMPN2 (ORCPT
+        id S1731311AbfBMQF6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:13:28 -0500
-Received: from mga07.intel.com ([134.134.136.100]:9646 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729139AbfBMPN2 (ORCPT
+        Wed, 13 Feb 2019 11:05:58 -0500
+Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:42329
+        "EHLO sonic309-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728713AbfBMQF5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:13:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 07:13:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="320060612"
-Received: from sorenthe-mobl1.ger.corp.intel.com ([10.249.254.151])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Feb 2019 07:13:22 -0800
-Message-ID: <9d3e78706b2fdbe0427f675592df5d7920d2c030.camel@linux.intel.com>
-Subject: Re: [PATCH v2 2/2] selftests/tpm2: Extend tests to cover partial
- reads
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
-        jgg@ziepe.ca
-Date:   Wed, 13 Feb 2019 17:13:23 +0200
-In-Reply-To: <155001493022.13014.6810778681032295955.stgit@tstruk-mobl1.jf.intel.com>
-References: <155001492513.13014.3572730050393346659.stgit@tstruk-mobl1.jf.intel.com>
-         <155001493022.13014.6810778681032295955.stgit@tstruk-mobl1.jf.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        Wed, 13 Feb 2019 11:05:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1550073956; bh=ZmeWGtL2jJAgsHvJTpT8hEHPVvmez+a7kadxy+k1Zso=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=QR45GSPP4PFIsLa/DPzaHHIr22eSGKfd5voWItvfC4HYrPKQPukyL1RGj3bypuERGyfxu8q2afUJbnCWc4vVcrmfkDcLI9x7xu7V0pHs8L688+yOjmr+iPwpiDex31WV+sGoS9/PQjC6+1rx9leQ7C0Uqgz0/42JYzqcjbx/54Wqour+lJxrxg5DSxxeONQ0jUKegpVmKSxZZ3RBWfhrivBTvq5XzaPtIotkF3GSLjGzdmey5a/I9K8dWmyTfHR4tTgLlHQyr+dBd0vvDUCeVZ3piOiJU+cWIvza1ynBg/ClD3/e0j3TtnuTBeaTeBl1TahSAi4laeNQUs+w8HqXIA==
+X-YMail-OSG: HaWF8QsVM1nwH7B3F3fBitwBOkn4RuGQXa8ru8uwhrgMDPl2.0qnGwg7IJRUCsc
+ WFZDXWLuXNArsp4Pnq6ia7peb46Y_yqx7o4O93qlZRuRZWQ5_NxNacWcAe6zbSdD6Vc_N96_qwX8
+ tZ.7YZzMnReuOBvqyxp0VzxBzMaXMxbKP0fKc7cBY35Ifr41Oi_Qppdd9nIA3vWi7vDYS2ayuzVZ
+ dprxeOYT_3XtqE_3wSF3nZwypSHt3AdqXkkMrPFFsN8j0Gg0MtM.NdqdtwSek.VxRyIf5Kt7yLSG
+ xSLONdc8cV3OOMHkTR1n2bP6x4q_M9bV39b6PM2b2AN06fS8BWFEE9QwjNV3jJZdSuRvY8yzx7ti
+ JszL8bTcRjCoa2875U4_8crJbOgoFo4t0nxfnUaw2hPFyweY8p3lTPnm7B9URrCnGmuD5VoxlH8j
+ JDIqru53ZyN33YVOX8ihsiP0hXQgCOPNvU0V95NgsUzp4r.o7U4aS_zPQC917ezw3kBtJRLMTPje
+ uDYYDbJE.5WWpCVlJf7dLCM7qR.NZfJ3GOyQCJ4dxH6iSTg8dCF.9UpNjUsXgHVlqr5.LQ_dl0vz
+ .oJJ0yyw6cKNliUXsB366CqRO8PfWkoVpYxlx1w1AqWi4u0s9GcQQbdrP0FKnQGBmLppIIxAmLDw
+ OQJuuEVkfj7mf.akqMfMk1qwPpoboHIZtnzB6TgzigybFQqlakeI2KpNKxLAUv8Zlx8kagK9.1oF
+ L4BlBPQzLUm_Y54Il23l7_4VyPtr7B5bPPd6KL3AledrONcgMs9g1rcU0mUn92.FAwNMoiv3NI27
+ 8NJcaMbzfEgGkaNaFHzixEF8pmzY2a3LeUn9z2SP.9KJewCXdxVTji99K88W883WYiSkI212pM8T
+ XVS0Qi_HX71psLOicFYW.G2W4.fJQkuirGJmiCADQ0kuMgZjH1lMYA9ntGxRm10J9sYkyzBs2c08
+ XK00KqA15_9mH4O3z9lI4f9SCXL.IYmp0eCS_uGKSD7Ke5siAqIlRz_H9aPiXR6SHTgNpe30lcw7
+ sJqI3E0lOy4A3LWYK7wg29pHkU.aVBCepk5dE3Jtm6McCDKgDk7FuoG8YAqLiJkYMPC8Goq.f3EX
+ dKAjCa_TCPhWoDrlmuBE47yVXA1c7dYQ-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Wed, 13 Feb 2019 16:05:56 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
+          by smtp409.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 475e3725adb542197ca4c357eac8f865;
+          Wed, 13 Feb 2019 16:05:52 +0000 (UTC)
+Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190212182318.GA16669@beast>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
+Date:   Wed, 13 Feb 2019 08:05:45 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190212182318.GA16669@beast>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2019-02-12 at 15:42 -0800, Tadeusz Struk wrote:
-> Three new tests added:
-> 1. Send get random cmd, read header in 1st read, read the rest in second
->    read - expect success
-> 2. Send get random cmd, read only part of the response, send another
->    get random command, read the response - expect success
-> 3. Send get random cmd followed by another get random cmd, without
->    reading the first response - expect the second cmd to fail with -EBUSY
-> 
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+On 2/12/2019 10:23 AM, Kees Cook wrote:
+> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
+> used on the command line, and report that it is happening.
+>
+> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Getting still some garbage in the output:
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-$ sudo ./test_smoke.sh 
-[sudo] password for jsakkine: 
-test_read_partial_overwrite (tpm2_tests.SmokeTest)
-Reads only part of the response and issue a new cmd ... ok
-test_read_partial_resp (tpm2_tests.SmokeTest)
-Reads random in two subsequent reads ... ok
-test_seal_with_auth (tpm2_tests.SmokeTest) ... ok
-test_seal_with_policy (tpm2_tests.SmokeTest) ... ok
-test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ok
-test_send_two_cmds (tpm2_tests.SmokeTest)
-Send two cmds without reading a response ... ok
-test_too_short_cmd (tpm2_tests.SmokeTest) ... ok
-test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ok
-test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ok
-
-----------------------------------------------------------------------
-Ran 9 tests in 47.374s
-
-OK
-
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-Can give reviewed-by after those are cleaned up.
-
-/Jarkko
-
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 10 ++++------
+>  security/security.c                             |  8 ++++++--
+>  2 files changed, 10 insertions(+), 8 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 93d2c97f28fe..a0abd5f56e00 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2340,7 +2340,7 @@
+>  
+>  	lsm=lsm1,...,lsmN
+>  			[SECURITY] Choose order of LSM initialization. This
+> -			overrides CONFIG_LSM.
+> +			overrides CONFIG_LSM, and the "security=" parameter.
+>  
+>  	machvec=	[IA-64] Force the use of a particular machine-vector
+>  			(machvec) in a generic kernel.
+> @@ -4129,11 +4129,9 @@
+>  			Note: increases power consumption, thus should only be
+>  			enabled if running jitter sensitive (HPC/RT) workloads.
+>  
+> -	security=	[SECURITY] Choose a security module to enable at boot.
+> -			If this boot parameter is not specified, only the first
+> -			security module asking for security registration will be
+> -			loaded. An invalid security module name will be treated
+> -			as if no module has been chosen.
+> +	security=	[SECURITY] Choose a legacy "major" security module to
+> +			enable at boot. This has been deprecated by the
+> +			"lsm=" parameter.
+>  
+>  	selinux=	[SELINUX] Disable or enable SELinux at boot time.
+>  			Format: { "0" | "1" }
+> diff --git a/security/security.c b/security/security.c
+> index 3147785e20d7..23cbb1a295a3 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -288,9 +288,13 @@ static void __init ordered_lsm_init(void)
+>  	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+>  				GFP_KERNEL);
+>  
+> -	if (chosen_lsm_order)
+> +	if (chosen_lsm_order) {
+> +		if (chosen_major_lsm) {
+> +			pr_info("security= is ignored because it is superseded by lsm=\n");
+> +			chosen_major_lsm = NULL;
+> +		}
+>  		ordered_lsm_parse(chosen_lsm_order, "cmdline");
+> -	else
+> +	} else
+>  		ordered_lsm_parse(builtin_lsm_order, "builtin");
+>  
+>  	for (lsm = ordered_lsms; *lsm; lsm++)
