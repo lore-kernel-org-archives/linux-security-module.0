@@ -2,85 +2,194 @@ Return-Path: <SRS0=hpNi=QV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85932C10F04
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 18:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9EEC43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 18:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9E52083E
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 18:14:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="oZzXiuXm"
+	by mail.kernel.org (Postfix) with ESMTP id 88825222D0
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 18:47:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389429AbfBNSOI (ORCPT
+        id S2438159AbfBNSra (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:14:08 -0500
-Received: from forward500o.mail.yandex.net ([37.140.190.195]:60930 "EHLO
-        forward500o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388972AbfBNSOI (ORCPT
+        Thu, 14 Feb 2019 13:47:30 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44232 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391235AbfBNSra (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:14:08 -0500
-Received: from mxback21g.mail.yandex.net (mxback21g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:321])
-        by forward500o.mail.yandex.net (Yandex) with ESMTP id 61FBA602AD;
-        Thu, 14 Feb 2019 21:14:05 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback21g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id mC393i3HhK-E3Jm7YCS;
-        Thu, 14 Feb 2019 21:14:04 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1550168044;
-        bh=eYG4sRk+C9s432oxOV4ltqmANe2jjsw5BO4KOcBzxVg=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
-        b=oZzXiuXm9Idbzr+i5nPTvPvWVPiPBlAv5OxeMusuS/xLyvdUZM7FOYD6dRIc8pOzG
-         YQsA9jL1LdpbXtt7Tdk2QQ0gt2kD1QJxzOx+vyvjj9BpkMOWFp2pqQg0ujgcD5X1CB
-         MI5JN/tWLDojucT1kxS3UGMDT2jpPL0v4JUBUJdE=
-Authentication-Results: mxback21g.mail.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by iva6-7bf5cb2fcad9.qloud-c.yandex.net with HTTP;
-        Thu, 14 Feb 2019 21:14:03 +0300
-From:   Nazarov Sergey <s-nazarov@yandex.ru>
-To:     David Miller <davem@davemloft.net>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
-        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>,
-        "paul@paul-moore.com" <paul@paul-moore.com>
-In-Reply-To: <20190214.084343.1138362153341500718.davem@davemloft.net>
-References: <34948711549920080@myt1-06117f29c1ea.qloud-c.yandex.net>
-        <CAHC9VhSDot+uNDi7ULoT7dry4FW9Jgp=NcqDh6TmA=z--kmqkA@mail.gmail.com>
-        <6691891549984203@myt5-a323eb993ef7.qloud-c.yandex.net> <20190214.084343.1138362153341500718.davem@davemloft.net>
-Subject: Re: [PATCH] NETWORKING: avoid use IPCB in cipso_v4_error
-MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Thu, 14 Feb 2019 21:14:03 +0300
-Message-Id: <372221550168043@iva6-7bf5cb2fcad9.qloud-c.yandex.net>
+        Thu, 14 Feb 2019 13:47:30 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EIdcqM102103
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Feb 2019 13:47:29 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qnce662jt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Feb 2019 13:47:28 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 14 Feb 2019 18:47:26 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Feb 2019 18:47:22 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EIlLWG55967832
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 18:47:21 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4BC754C046;
+        Thu, 14 Feb 2019 18:47:21 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4710D4C04A;
+        Thu, 14 Feb 2019 18:47:20 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.92.228])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Feb 2019 18:47:20 +0000 (GMT)
+Subject: Re: [PATCH v2] x86/ima: require signed kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
+Date:   Thu, 14 Feb 2019 13:47:09 -0500
+In-Reply-To: <20190214175823.GG11489@garbanzo.do-not-panic.com>
+References: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
+         <20190214175823.GG11489@garbanzo.do-not-panic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=utf-8
+X-TM-AS-GCONF: 00
+x-cbid: 19021418-0028-0000-0000-00000348A777
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021418-0029-0000-0000-00002406D47C
+Message-Id: <1550170029.4107.29.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902140126
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Now the problem comes from TCP layer only. Is the IP over ATM operates over IP layer?
+On Thu, 2019-02-14 at 09:58 -0800, Luis Chamberlain wrote:
+> On Wed, Feb 13, 2019 at 07:17:59AM -0500, Mimi Zohar wrote:
+> > Require signed kernel modules on systems with secure boot mode enabled.
+> > 
+> > Requiring appended kernel module signatures may be configured, enabled
+> > on the boot command line, or with this patch enabled in secure boot
+> > mode.
+> 
+> But only if IMA is enabled?
 
-14.02.2019, 19:43, "David Miller" <davem@davemloft.net>:
-> From: Nazarov Sergey <s-nazarov@yandex.ru>
-> Date: Tue, 12 Feb 2019 18:10:03 +0300
->
->>  Since cipso_v4_error might be called from different network stack layers, we can't safely use icmp_send there.
->>  icmp_send copies IP options with ip_option_echo, which uses IPCB to take access to IP header compiled data.
->>  But after commit 971f10ec ("tcp: better TCP_SKB_CB layout to reduce cache line misses"), IPCB can't be used
->>  above IP layer.
->>  This patch fixes the problem by creating in cipso_v4_error a local copy of compiled IP options and using it with
->>  introduced __icmp_send function. This looks some overloaded, but in quite rare error conditions only.
->>
->>  The original discussion is here:
->>  https://lore.kernel.org/linux-security-module/16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net/
->>
->>  Signed-off-by: Sergey Nazarov <s-nazarov@yandex.ru>
->
-> This problem is not unique to Cipso, net/atm/clip.c's error handler
-> has the same exact issue.
->
-> I didn't scan more of the tree, there are probably a couple more
-> locations as well.
+The patch subject line indicates this is for IMA, but sure I can amend
+the patch description, making it clearer.
+
+> If so, should this statement be true if
+> IMA is disabled?
+
+This patch coordinates the PE and IMA signatures so that both
+signature types aren't required.  Only if
+"CONFIG_KEXEC_VERIFY_SIGNATURE" is not enabled, is an IMA policy rule
+defined.  A custom IMA policy can still define an IMA kexec rule,
+requiring an IMA signature, even if the PE signature is required.
+
+For the case when IMA is disabled and PE signatures are required, then
+there isn't a problem.  The issue is when neither signature
+verification method is enabled.  I'll leave that for someone else to
+address.
+
+> 
+> Either way, this is not clear from the commit log and code, can the
+> commit log be clear if set_module_sig_enforced() will be set if
+> IMA is disabled but secure boot mode enabled?
+> 
+> > This patch defines set_module_sig_enforced().
+> > 
+> > To coordinate between appended kernel module signatures and IMA
+> > signatures, only define an IMA MODULE_CHECK policy rule if
+> > CONFIG_MODULE_SIG is not enabled.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > ---
+> > 
+> > Changelog:
+> > - Removed new "sig_required" flag and associated functions, directly set
+> >   sig_enforce.
+> > 
+> >  arch/x86/kernel/ima_arch.c | 9 ++++++++-
+> >  include/linux/module.h     | 1 +
+> >  kernel/module.c            | 5 +++++
+> >  3 files changed, 14 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+> > index e47cd9390ab4..3fb9847f1cad 100644
+> > --- a/arch/x86/kernel/ima_arch.c
+> > +++ b/arch/x86/kernel/ima_arch.c
+> > @@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
+> >  	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+> >  #endif /* CONFIG_KEXEC_VERIFY_SIG */
+> >  	"measure func=KEXEC_KERNEL_CHECK",
+> > +#if !IS_ENABLED(CONFIG_MODULE_SIG)
+> > +	"appraise func=MODULE_CHECK appraise_type=imasig",
+> > +#endif
+> > +	"measure func=MODULE_CHECK",
+> >  	NULL
+> >  };
+> >  
+> >  const char * const *arch_get_ima_policy(void)
+> >  {
+> > -	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
+> > +	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
+> > +		if (IS_ENABLED(CONFIG_MODULE_SIG))
+> > +			set_module_sig_enforced();
+> >  		return sb_arch_rules;
+> > +	}
+> >  	return NULL;
+> >  }
+> > diff --git a/include/linux/module.h b/include/linux/module.h
+> > index 8fa38d3e7538..75e2a5c24a2b 100644
+> > --- a/include/linux/module.h
+> > +++ b/include/linux/module.h
+> > @@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
+> >  #endif /* CONFIG_LIVEPATCH */
+> >  
+> >  bool is_module_sig_enforced(void);
+> > +void set_module_sig_enforced(void);
+> >  
+> >  #else /* !CONFIG_MODULES... */
+> 
+> I think you need the !CONFIG_MODULES definition of set_module_sig_enforced()
+> then...
+
+Good catch, thanks.
+
+> 
+> > diff --git a/kernel/module.c b/kernel/module.c
+> > index 2ad1b5239910..4cb5b733fb18 100644
+> > --- a/kernel/module.c
+> > +++ b/kernel/module.c
+> > @@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
+> >  }
+> >  EXPORT_SYMBOL(is_module_sig_enforced);
+> >  
+> > +void set_module_sig_enforced(void)
+> > +{
+> > +       sig_enforce = true;
+> > +}
+> 
+> The export is not needed as it is bool eh?
+
+IMA is builtin, so it doesn't need to be exported.
+
+Mimi
+
