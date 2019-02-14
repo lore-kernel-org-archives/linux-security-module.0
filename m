@@ -2,296 +2,113 @@ Return-Path: <SRS0=hpNi=QV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AE7C4360F
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 09:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 995ACC43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 10:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E22222A4
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 09:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72900222A4
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 10:52:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406217AbfBNJuj (ORCPT
+        id S2395344AbfBNKw3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:50:39 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41344 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406233AbfBNJue (ORCPT
+        Thu, 14 Feb 2019 05:52:29 -0500
+Received: from mga05.intel.com ([192.55.52.43]:49830 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388138AbfBNKw3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:50:34 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so5697271wrs.8
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Feb 2019 01:50:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=7b1bc6+meFmPqgAqo0J5mXXNpERkis1nOajyuz7TJZM=;
-        b=hUyeNC3gPTg3GCNQKCYkOTVrWL9os5FYSbiz9CwmLTM5smXVgNptpshp7XmCxsQdfc
-         Yeb6hfMrzDGXfdqUNw+B3TY+He4nHQhlnZ/uccYqBAW6Rh77ay/CPFaH4M42os1uxGFp
-         1GvILAalRbAh95nD4TBvNBQkL4R/ZgV+X1ttmSq6x+Ju41ZRiduPMovmRg8BBw61Yj0z
-         5KkCMd3g2ZxWIVrpYPwTdJb7kT8htOUcu5mpzfh7rBUlB+QZ0KIOtJxkkIvJX3KUB2LA
-         vuPkKp0Dka5Qhvit2u+Q52LjmjJ3WJxK82cCvYDFK8gllti8Zn1SmiSgF98BZ/HDXVh5
-         XeJg==
-X-Gm-Message-State: AHQUAuYpL53tbG05gsOS4Gq1sfJq1aOQCi/CA9iYQ4lAQErKfZSU4Pws
-        vW4/fXz4No8j3j3rJPdsDk7qGw==
-X-Google-Smtp-Source: AHgI3IZERL4FQ7aH+OuwG1hc0eqijKnkyAB2Pht1y/y5jbRxCThcTWfwdWmksCaXc1leRWqp0XOLoA==
-X-Received: by 2002:adf:8121:: with SMTP id 30mr2082860wrm.51.1550137832144;
-        Thu, 14 Feb 2019 01:50:32 -0800 (PST)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id g11sm969439wmk.26.2019.02.14.01.50.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 01:50:31 -0800 (PST)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
-        cgroups@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v6 5/5] kernfs: initialize security of newly created nodes
-Date:   Thu, 14 Feb 2019 10:50:15 +0100
-Message-Id: <20190214095015.16032-6-omosnace@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190214095015.16032-1-omosnace@redhat.com>
-References: <20190214095015.16032-1-omosnace@redhat.com>
+        Thu, 14 Feb 2019 05:52:29 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 02:52:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,368,1544515200"; 
+   d="scan'208";a="134242065"
+Received: from djustese-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.237])
+  by orsmga002.jf.intel.com with ESMTP; 14 Feb 2019 02:52:21 -0800
+Date:   Thu, 14 Feb 2019 12:52:21 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        zohar@linux.vnet.ibm.com, David Howells <dhowells@redhat.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        David.Laight@aculab.com, denkenz@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, keyrings@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
+Message-ID: <20190214105221.GB7956@linux.intel.com>
+References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
+ <20181022234357.82217-1-ndesaulniers@google.com>
+ <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
+ <CAKwvOdn+V8iFJ_V1vr3GBm-NwxzaDbcmK+nW1q3uVky7bRsB3w@mail.gmail.com>
+ <CAKwvOdnhDin6TJfBVxm6xsCh_nJeBuA7GqbgJwgLnqc3PrJGxA@mail.gmail.com>
+ <20190212231256.GD3977@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190212231256.GD3977@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the new security_kernfs_init_security() hook to allow LSMs to
-possibly assign a non-default security context to a newly created kernfs
-node based on the attributes of the new node and also its parent node.
+On Wed, Feb 13, 2019 at 01:12:56AM +0200, Jarkko Sakkinen wrote:
+> On Mon, Feb 11, 2019 at 10:36:51AM -0800, Nick Desaulniers wrote:
+> > On Mon, Oct 29, 2018 at 10:54 AM Nick Desaulniers
+> > <ndesaulniers@google.com> wrote:
+> > >
+> > > On Wed, Oct 24, 2018 at 1:37 AM Jarkko Sakkinen
+> > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > >
+> > > > On Mon, 22 Oct 2018, ndesaulniers@google.com wrote:
+> > > > > Fixes the warning reported by Clang:
+> > > > > security/keys/trusted.c:146:17: warning: passing an object that
+> > > > > undergoes default
+> > > > >      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+> > > > >        va_start(argp, h3);
+> > > > >                       ^
+> > > > > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+> > > > > char' is declared here
+> > > > > unsigned char *h2, unsigned char h3, ...)
+> > > > >                               ^
+> > > > > Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+> > > > > standards explicitly call this out as undefined behavior:
+> > > > >
+> > > > > The parameter parmN is the identifier of the rightmost parameter in
+> > > > > the variable parameter list in the function definition (the one just
+> > > > > before the ...). If the parameter parmN is declared with ... or with a
+> > > > > type that is not compatible with the type that results after
+> > > > > application of the default argument promotions, the behavior is
+> > > > > undefined.
+> > > > >
+> > > > > Link: https://github.com/ClangBuiltLinux/linux/issues/41
+> > > > > Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
+> > > > > Suggested-by: David Laight <David.Laight@aculab.com>
+> > > > > Suggested-by: Denis Kenzior <denkenz@gmail.com>
+> > > > > Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
+> > > > > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> > > > > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > >
+> > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > >
+> > > > /Jarkko
+> > >
+> > > Bumping the maintainers if this isn't already picked up?
+> > 
+> > James, Jarkko, or Mimi, can you please pick this up (and let me know
+> > what tree it lands in)?
+> 
+> I can volunteer. Have not done yet v5.1 PR so it would land to that
+> release. Is this agreed?
 
-This fixes an issue with cgroupfs under SELinux, where newly created
-cgroup subdirectories/files would not inherit its parent's context if
-it had been set explicitly to a non-default value (other than the genfs
-context specified by the policy). This can be reproduced as follows (on
-Fedora/RHEL):
+http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/cfb1f7ee3b35e6ba9e9e2de53a8668ced6397f88
 
-    # mkdir /sys/fs/cgroup/unified/test
-    # # Need permissive to change the label under Fedora policy:
-    # setenforce 0
-    # chcon -t container_file_t /sys/fs/cgroup/unified/test
-    # ls -lZ /sys/fs/cgroup/unified
-    total 0
-    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.controllers
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.depth
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.descendants
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.procs
-    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.stat
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.subtree_control
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.threads
-    drwxr-xr-x.  2 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 init.scope
-    drwxr-xr-x. 26 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:21 system.slice
-    drwxr-xr-x.  3 root root system_u:object_r:container_file_t:s0 0 Jan 29 03:15 test
-    drwxr-xr-x.  3 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 user.slice
-    # mkdir /sys/fs/cgroup/unified/test/subdir
-
-Actual result:
-
-    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
-    drwxr-xr-x. 2 root root system_u:object_r:cgroup_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
-
-Expected result:
-
-    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
-    drwxr-xr-x. 2 root root unconfined_u:object_r:container_file_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
-
-Link: https://github.com/SELinuxProject/selinux-kernel/issues/39
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- fs/kernfs/dir.c             | 57 +++++++++++++++++++++++++++++++++++--
- fs/kernfs/inode.c           | 25 +++++++++-------
- fs/kernfs/kernfs-internal.h |  2 ++
- include/linux/xattr.h       | 15 ++++++++++
- 4 files changed, 86 insertions(+), 13 deletions(-)
-
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index ad7e3356bcc5..735a6d382d9d 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -15,6 +15,7 @@
- #include <linux/slab.h>
- #include <linux/security.h>
- #include <linux/hash.h>
-+#include <linux/stringhash.h>
- 
- #include "kernfs-internal.h"
- 
-@@ -616,7 +617,53 @@ struct kernfs_node *kernfs_node_from_dentry(struct dentry *dentry)
- 	return NULL;
- }
- 
-+static int kernfs_node_init_security(struct kernfs_node *parent,
-+				     struct kernfs_node *kn)
-+{
-+	struct simple_xattrs xattr_child, xattr_parent, *pxattr_parent;
-+	struct iattr iattr_child, iattr_parent, *piattr_parent;
-+	struct qstr q;
-+	int ret;
-+
-+	if (!parent->iattr) {
-+		kernfs_iattr_init(&iattr_parent, parent);
-+		simple_xattrs_init(&xattr_parent);
-+		piattr_parent = &iattr_parent;
-+		pxattr_parent = &xattr_parent;
-+	} else {
-+		piattr_parent = &parent->iattr->ia_iattr;
-+		pxattr_parent = &parent->iattr->xattrs_security;
-+	}
-+
-+	kernfs_iattr_init(&iattr_child, kn);
-+	simple_xattrs_init(&xattr_child);
-+
-+	q.name = kn->name;
-+	q.hash_len = hashlen_string(parent, kn->name);
-+
-+	ret = security_kernfs_init_security(&q, piattr_parent, pxattr_parent,
-+					    &iattr_child, &xattr_child);
-+	if (pxattr_parent == &xattr_parent)
-+		simple_xattrs_free(&xattr_parent);
-+	if (!ret && !simple_xattrs_empty(&xattr_child)) {
-+		/*
-+		 * Child has new security xattrs, allocate its kernfs_iattrs
-+		 * and put our local xattrs in there.
-+		 */
-+		struct kernfs_iattrs *attrs = kernfs_iattrs(kn);
-+
-+		if (!attrs) {
-+			simple_xattrs_free(&xattr_child);
-+			return -ENOMEM;
-+		}
-+		simple_xattrs_move(&attrs->xattrs_security, &xattr_child);
-+	}
-+	simple_xattrs_free(&xattr_child);
-+	return ret;
-+}
-+
- static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
-+					     struct kernfs_node *parent,
- 					     const char *name, umode_t mode,
- 					     kuid_t uid, kgid_t gid,
- 					     unsigned flags)
-@@ -673,6 +720,12 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
- 			goto err_out3;
- 	}
- 
-+	if (parent) {
-+		ret = kernfs_node_init_security(parent, kn);
-+		if (ret)
-+			goto err_out3;
-+	}
-+
- 	return kn;
- 
-  err_out3:
-@@ -691,7 +744,7 @@ struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
- {
- 	struct kernfs_node *kn;
- 
--	kn = __kernfs_new_node(kernfs_root(parent),
-+	kn = __kernfs_new_node(kernfs_root(parent), parent,
- 			       name, mode, uid, gid, flags);
- 	if (kn) {
- 		kernfs_get(parent);
-@@ -961,7 +1014,7 @@ struct kernfs_root *kernfs_create_root(struct kernfs_syscall_ops *scops,
- 	INIT_LIST_HEAD(&root->supers);
- 	root->next_generation = 1;
- 
--	kn = __kernfs_new_node(root, "", S_IFDIR | S_IRUGO | S_IXUGO,
-+	kn = __kernfs_new_node(root, NULL, "", S_IFDIR | S_IRUGO | S_IXUGO,
- 			       GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
- 			       KERNFS_DIR);
- 	if (!kn) {
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index f0e2cb4379c0..6a9084aecbe5 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -31,11 +31,22 @@ static const struct inode_operations kernfs_iops = {
- 	.listxattr	= kernfs_iop_listxattr,
- };
- 
--static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
-+void kernfs_iattr_init(struct iattr *iattrs, struct kernfs_node *kn)
-+{
-+	/* assign default attributes */
-+	iattrs->ia_mode = kn->mode;
-+	iattrs->ia_uid = GLOBAL_ROOT_UID;
-+	iattrs->ia_gid = GLOBAL_ROOT_GID;
-+
-+	ktime_get_real_ts64(&iattrs->ia_atime);
-+	iattrs->ia_mtime = iattrs->ia_atime;
-+	iattrs->ia_ctime = iattrs->ia_atime;
-+}
-+
-+struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
- {
- 	static DEFINE_MUTEX(iattr_mutex);
- 	struct kernfs_iattrs *ret;
--	struct iattr *iattrs;
- 
- 	mutex_lock(&iattr_mutex);
- 
-@@ -45,16 +56,8 @@ static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
- 	kn->iattr = kzalloc(sizeof(struct kernfs_iattrs), GFP_KERNEL);
- 	if (!kn->iattr)
- 		goto out_unlock;
--	iattrs = &kn->iattr->ia_iattr;
--
--	/* assign default attributes */
--	iattrs->ia_mode = kn->mode;
--	iattrs->ia_uid = GLOBAL_ROOT_UID;
--	iattrs->ia_gid = GLOBAL_ROOT_GID;
- 
--	ktime_get_real_ts64(&iattrs->ia_atime);
--	iattrs->ia_mtime = iattrs->ia_atime;
--	iattrs->ia_ctime = iattrs->ia_atime;
-+	kernfs_iattr_init(&kn->iattr->ia_iattr, kn);
- 
- 	simple_xattrs_init(&kn->iattr->xattrs_trusted);
- 	simple_xattrs_init(&kn->iattr->xattrs_security);
-diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-index 93bf1dcd0306..ad80f438d8d4 100644
---- a/fs/kernfs/kernfs-internal.h
-+++ b/fs/kernfs/kernfs-internal.h
-@@ -90,6 +90,8 @@ int kernfs_iop_getattr(const struct path *path, struct kstat *stat,
- 		       u32 request_mask, unsigned int query_flags);
- ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size);
- int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
-+void kernfs_iattr_init(struct iattr *iattrs, struct kernfs_node *kn);
-+struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn);
- 
- /*
-  * dir.c
-diff --git a/include/linux/xattr.h b/include/linux/xattr.h
-index 6dad031be3c2..05fc6812d554 100644
---- a/include/linux/xattr.h
-+++ b/include/linux/xattr.h
-@@ -108,4 +108,19 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs, cha
- void simple_xattr_list_add(struct simple_xattrs *xattrs,
- 			   struct simple_xattr *new_xattr);
- 
-+static inline int simple_xattrs_empty(struct simple_xattrs *xattrs)
-+{
-+	return list_empty(&xattrs->head);
-+}
-+
-+/**
-+ * Move the xattr list from @src to @dst, leaving @src empty.
-+ */
-+static inline void simple_xattrs_move(struct simple_xattrs *dst,
-+				      struct simple_xattrs *src)
-+{
-+	simple_xattrs_free(dst);
-+	list_replace_init(&src->head, &dst->head);
-+}
-+
- #endif	/* _LINUX_XATTR_H */
--- 
-2.20.1
-
+/Jarkko
