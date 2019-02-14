@@ -1,364 +1,166 @@
-Return-Path: <SRS0=Cp5G=QU=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=hpNi=QV=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45912C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 22:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A84E2C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 09:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00F93222CF
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Feb 2019 22:16:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IN8Se1M8"
+	by mail.kernel.org (Postfix) with ESMTP id 79133222A4
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Feb 2019 09:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392330AbfBMWQm (ORCPT
+        id S2406170AbfBNJu1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:16:42 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36280 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387886AbfBMWQm (ORCPT
+        Thu, 14 Feb 2019 04:50:27 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:32856 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438060AbfBNJu1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:16:42 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g11-v6so3446646ljk.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Feb 2019 14:16:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hKTG+onhBfwliA1zeOhWdkYq2LfHziM6Kmoz6SxxIZI=;
-        b=IN8Se1M8VLb+jbfpdYZe0pzm4v36DIFczW7RtMc/WoWo4K8i5jctgHMRFDI8e02vlq
-         2eGp1Dx6FxN0ZovSz/kTvE7PszX9leeFDjpiqsfHhzImabs4eyBWwkjpWP5xtAn0ZI9W
-         XjHW+MwpGZPliUbAEV9cieNoMqfzlaOE6t2ZR6LXQp6Szj3qwNBo0zC8G+mZ8O9FvJ0r
-         +JHaRo1Xs2FhrptD810vL4yMRC7LJKpKRanhMHSG1lOIn8nT62+RXxXpWZTyL0oPF4lH
-         gGtrjncWZ9xsY2q1KXDMP9+ORsfk2zEdxNWll+1GdCL+RZt+LdGboWNYTtweMXjBWcCi
-         fHwg==
+        Thu, 14 Feb 2019 04:50:27 -0500
+Received: by mail-wr1-f67.google.com with SMTP id i12so5764426wrw.0
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Feb 2019 01:50:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hKTG+onhBfwliA1zeOhWdkYq2LfHziM6Kmoz6SxxIZI=;
-        b=CQOPkQnN2JqltxHA/GfDE8muxo6USvQvWsq7nF/gYWFExt+1tbGhuvplE4FY86Po/i
-         KLhmZLOO2Tbq2IKCvxinKlQgmtGfsthJmf94DLyN4uaW8r+/x8KSoI2dmi6xiBBl0DlP
-         9ONp23J4pj9b8pMl8/QW0+4wMVRcU8G1FBVAMu2KvEr2zyfEPrZabemgsh0jmZWjztAP
-         mFnJj9yy3qbtgVutAJ6/NkG0e+1BB1RI5lcGHaKCaWbbsw2y5xEaayvtrVs8RO85UDr3
-         f0U55WmqGoZOfi3rrjnMy9qLmtw4+MAJxB2R92QUfXom2iOg/WXXNRPVPM7Lx+H3abq4
-         wh+w==
-X-Gm-Message-State: AHQUAuZVpc2AHU/voH/LeS0p83aeHg/87BDg/69olAhmd4PetlRHhG+2
-        RatXaprWNvC/QedwI3lZRSzwoPxpYqs=
-X-Google-Smtp-Source: AHgI3IYyhAThOhBPs3XUfRamYzG2Ohpzh57N5h0u/VRNe0kPef+GETh9d4RdSUYJfnqRpxaLS7zfHw==
-X-Received: by 2002:a2e:9649:: with SMTP id z9-v6mr234849ljh.11.1550096199223;
-        Wed, 13 Feb 2019 14:16:39 -0800 (PST)
-Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id e9-v6sm88080ljk.92.2019.02.13.14.16.38
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=skdWrxA3koLGpIYt5n9FhAmN9/+o28C/3rSBAZ5onrU=;
+        b=DweP2iEmnK3/s2mQ1IyJMr3S9SC2aqWIA7stUYWIGuE+vmoOBafkJ7ajxb9NVrR/1j
+         wT/esEaKmvH3vUcbE5t7vFpJFgVq46V+KnxFwh4jBrbEeEIa9diimr0yYBxKjC4aOE0b
+         tJYPLCm+xRzYPc6SfKBYW15faT8BSMh3Tip4VPhayVI8bPEyGC17pUJbjmrRsnEV9RQu
+         3zpE5PUEav/dnWgTpx2/BNmLvBlQF4WBlyfPIQ3npAyHwieN1NnE7JknEhyZHYqBczQP
+         FheEIJEG0rCpGSbrSCtYGNTbAJdwSD8m+wZssuXxQ23pYQeM8Y98BpaYNCZ5dgV78o/v
+         0NQA==
+X-Gm-Message-State: AHQUAuYuUr269FCFZ+HusacJzJsvy7zsEBPya9EBWQ3DeVnut0TjN+DK
+        rSS/Lm1y5gEbpn46XWaqA9glSA==
+X-Google-Smtp-Source: AHgI3IZLx3XlevFowQKNiLOkJQU9GABzd55tdf9nURLAxnr69dF3cp0IJRej9MJbWZT/whZJO6FvWA==
+X-Received: by 2002:adf:de83:: with SMTP id w3mr2012510wrl.56.1550137824984;
+        Thu, 14 Feb 2019 01:50:24 -0800 (PST)
+Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id g11sm969439wmk.26.2019.02.14.01.50.23
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 14:16:38 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, ard.biesheuvel@linaro.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de
-Cc:     linux-integrity@vger.kernel.org,
+        Thu, 14 Feb 2019 01:50:24 -0800 (PST)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH v3 2/2] efi: fix build error redeclaration of enumerator
-Date:   Wed, 13 Feb 2019 23:16:25 +0100
-Message-Id: <20190213221625.7551-2-anders.roxell@linaro.org>
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+        cgroups@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>
+Subject: [PATCH v6 0/5] Allow initializing the kernfs node's secctx based on its parent
+Date:   Thu, 14 Feb 2019 10:50:10 +0100
+Message-Id: <20190214095015.16032-1-omosnace@redhat.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190213221625.7551-1-anders.roxell@linaro.org>
-References: <20190213221625.7551-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Commit a893ea15d764 ("tpm: move tpm_chip definition to
-include/linux/tpm.h") introduced a build error when both ima and efi is
-enabled. What happens is that both headers (ima.h and efi.h) defines the
-same 'NONE' constant, and it broke when they started getting included
-from the same file.
+Changes in v6:
+- remove copy-pasted duplicate macro definition
 
-In file included from ../security/integrity/ima/ima_fs.c:30:
-../security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator "NONE"
-  hook(NONE)   \
-       ^~~~
-../security/integrity/ima/ima.h:188:34: note: in definition of macro "__ima_hook_enumify"
- #define __ima_hook_enumify(ENUM) ENUM,
-                                  ^~~~
-../security/integrity/ima/ima.h:191:2: note: in expansion of macro "__ima_hooks"
-  __ima_hooks(__ima_hook_enumify)
-  ^~~~~~~~~~~
-In file included from ../arch/arm64/include/asm/acpi.h:15,
-                 from ../include/acpi/acpi_io.h:7,
-                 from ../include/linux/acpi.h:47,
-                 from ../include/linux/tpm.h:26,
-                 from ../security/integrity/ima/ima.h:25,
-                 from ../security/integrity/ima/ima_fs.c:30:
-../include/linux/efi.h:1723:2: note: previous definition of "NONE" was here
-  NONE,
-  ^~~~
-make[4]: *** [../scripts/Makefile.build:277: security/integrity/ima/ima_fs.o] Error 1
+v5: https://lore.kernel.org/selinux/20190205110638.30782-1-omosnace@redhat.com/T/
+Changes in v5:
+- fix misplaced semicolon detected by 0day robot
 
-Rework to prefix the efi enum with 'EFI_*'.
+v4: https://lore.kernel.org/selinux/20190205085915.5183-1-omosnace@redhat.com/T/
+Changes in v4:
+- reorder and rename hook arguments
+- avoid allocating kernfs_iattrs unless needed
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
+v3: https://lore.kernel.org/selinux/20190130114150.27807-1-omosnace@redhat.com/T/
+Changes in v3:
+- rename the hook to "kernfs_init_security"
+- change the hook interface to simply pass pointers to struct iattr and
+  struct simple_xattrs of both the new node and its parent
+- add full security xattr support to kernfs (and fixup SELinux behavior
+  to handle it properly)
 
-Changes against v2:
- - renamed a missed 'NONE' to 'EFI_NONE'.
+v2: https://lore.kernel.org/selinux/20190109162830.8309-1-omosnace@redhat.com/T/
+Changes in v2:
+- add docstring for the new hook in union security_list_options
+- initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
+  implemented
 
- arch/x86/platform/efi/quirks.c          |  4 +--
- drivers/firmware/efi/runtime-wrappers.c | 48 ++++++++++++-------------
- include/linux/efi.h                     | 26 +++++++-------
- 3 files changed, 39 insertions(+), 39 deletions(-)
+v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnace@redhat.com/T/
 
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 9ce85e605052..458a0e2bcc57 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -717,7 +717,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
- 	 * "efi_mm" cannot be used to check if the page fault had occurred
- 	 * in the firmware context because efi=old_map doesn't use efi_pgd.
- 	 */
--	if (efi_rts_work.efi_rts_id == NONE)
-+	if (efi_rts_work.efi_rts_id == EFI_NONE)
- 		return;
- 
- 	/*
-@@ -742,7 +742,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
- 	 * because this case occurs *very* rarely and hence could be improved
- 	 * on a need by basis.
- 	 */
--	if (efi_rts_work.efi_rts_id == RESET_SYSTEM) {
-+	if (efi_rts_work.efi_rts_id == EFI_RESET_SYSTEM) {
- 		pr_info("efi_reset_system() buggy! Reboot through BIOS\n");
- 		machine_real_restart(MRR_BIOS);
- 		return;
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index c70df5ae7c4a..28138534643e 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -85,7 +85,7 @@ struct efi_runtime_work efi_rts_work;
- 		pr_err("Failed to queue work to efi_rts_wq.\n");	\
- 									\
- exit:									\
--	efi_rts_work.efi_rts_id = NONE;					\
-+	efi_rts_work.efi_rts_id = EFI_NONE;				\
- 	efi_rts_work.status;						\
- })
- 
-@@ -181,50 +181,50 @@ static void efi_call_rts(struct work_struct *work)
- 	arg5 = efi_rts_work.arg5;
- 
- 	switch (efi_rts_work.efi_rts_id) {
--	case GET_TIME:
-+	case EFI_GET_TIME:
- 		status = efi_call_virt(get_time, (efi_time_t *)arg1,
- 				       (efi_time_cap_t *)arg2);
- 		break;
--	case SET_TIME:
-+	case EFI_SET_TIME:
- 		status = efi_call_virt(set_time, (efi_time_t *)arg1);
- 		break;
--	case GET_WAKEUP_TIME:
-+	case EFI_GET_WAKEUP_TIME:
- 		status = efi_call_virt(get_wakeup_time, (efi_bool_t *)arg1,
- 				       (efi_bool_t *)arg2, (efi_time_t *)arg3);
- 		break;
--	case SET_WAKEUP_TIME:
-+	case EFI_SET_WAKEUP_TIME:
- 		status = efi_call_virt(set_wakeup_time, *(efi_bool_t *)arg1,
- 				       (efi_time_t *)arg2);
- 		break;
--	case GET_VARIABLE:
-+	case EFI_GET_VARIABLE:
- 		status = efi_call_virt(get_variable, (efi_char16_t *)arg1,
- 				       (efi_guid_t *)arg2, (u32 *)arg3,
- 				       (unsigned long *)arg4, (void *)arg5);
- 		break;
--	case GET_NEXT_VARIABLE:
-+	case EFI_GET_NEXT_VARIABLE:
- 		status = efi_call_virt(get_next_variable, (unsigned long *)arg1,
- 				       (efi_char16_t *)arg2,
- 				       (efi_guid_t *)arg3);
- 		break;
--	case SET_VARIABLE:
-+	case EFI_SET_VARIABLE:
- 		status = efi_call_virt(set_variable, (efi_char16_t *)arg1,
- 				       (efi_guid_t *)arg2, *(u32 *)arg3,
- 				       *(unsigned long *)arg4, (void *)arg5);
- 		break;
--	case QUERY_VARIABLE_INFO:
-+	case EFI_QUERY_VARIABLE_INFO:
- 		status = efi_call_virt(query_variable_info, *(u32 *)arg1,
- 				       (u64 *)arg2, (u64 *)arg3, (u64 *)arg4);
- 		break;
--	case GET_NEXT_HIGH_MONO_COUNT:
-+	case EFI_GET_NEXT_HIGH_MONO_COUNT:
- 		status = efi_call_virt(get_next_high_mono_count, (u32 *)arg1);
- 		break;
--	case UPDATE_CAPSULE:
-+	case EFI_UPDATE_CAPSULE:
- 		status = efi_call_virt(update_capsule,
- 				       (efi_capsule_header_t **)arg1,
- 				       *(unsigned long *)arg2,
- 				       *(unsigned long *)arg3);
- 		break;
--	case QUERY_CAPSULE_CAPS:
-+	case EFI_QUERY_CAPSULE_CAPS:
- 		status = efi_call_virt(query_capsule_caps,
- 				       (efi_capsule_header_t **)arg1,
- 				       *(unsigned long *)arg2, (u64 *)arg3,
-@@ -248,7 +248,7 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
-+	status = efi_queue_work(EFI_GET_TIME, tm, tc, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -259,7 +259,7 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
-+	status = efi_queue_work(EFI_SET_TIME, tm, NULL, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -272,7 +272,7 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
-+	status = efi_queue_work(EFI_GET_WAKEUP_TIME, enabled, pending, tm, NULL,
- 				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -284,7 +284,7 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
-+	status = efi_queue_work(EFI_SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
- 				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -300,7 +300,7 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
-+	status = efi_queue_work(EFI_GET_VARIABLE, name, vendor, attr, data_size,
- 				data);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -314,7 +314,7 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
-+	status = efi_queue_work(EFI_GET_NEXT_VARIABLE, name_size, name, vendor,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -330,7 +330,7 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
-+	status = efi_queue_work(EFI_SET_VARIABLE, name, vendor, &attr, &data_size,
- 				data);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -365,7 +365,7 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
-+	status = efi_queue_work(EFI_QUERY_VARIABLE_INFO, &attr, storage_space,
- 				remaining_space, max_variable_size, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -397,7 +397,7 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
-+	status = efi_queue_work(EFI_GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -413,7 +413,7 @@ static void virt_efi_reset_system(int reset_type,
- 			"could not get exclusive access to the firmware\n");
- 		return;
- 	}
--	efi_rts_work.efi_rts_id = RESET_SYSTEM;
-+	efi_rts_work.efi_rts_id = EFI_RESET_SYSTEM;
- 	__efi_call_virt(reset_system, reset_type, status, data_size, data);
- 	up(&efi_runtime_lock);
- }
-@@ -429,7 +429,7 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
-+	status = efi_queue_work(EFI_UPDATE_CAPSULE, capsules, &count, &sg_list,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -447,7 +447,7 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
-+	status = efi_queue_work(EFI_QUERY_CAPSULE_CAPS, capsules, &count,
- 				max_size, reset_type, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index a4de93c96907..b3471b6ff92f 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1720,19 +1720,19 @@ extern int efi_tpm_eventlog_init(void);
-  * fault happened while executing an efi runtime service.
-  */
- enum efi_rts_ids {
--	NONE,
--	GET_TIME,
--	SET_TIME,
--	GET_WAKEUP_TIME,
--	SET_WAKEUP_TIME,
--	GET_VARIABLE,
--	GET_NEXT_VARIABLE,
--	SET_VARIABLE,
--	QUERY_VARIABLE_INFO,
--	GET_NEXT_HIGH_MONO_COUNT,
--	RESET_SYSTEM,
--	UPDATE_CAPSULE,
--	QUERY_CAPSULE_CAPS,
-+	EFI_NONE,
-+	EFI_GET_TIME,
-+	EFI_SET_TIME,
-+	EFI_GET_WAKEUP_TIME,
-+	EFI_SET_WAKEUP_TIME,
-+	EFI_GET_VARIABLE,
-+	EFI_GET_NEXT_VARIABLE,
-+	EFI_SET_VARIABLE,
-+	EFI_QUERY_VARIABLE_INFO,
-+	EFI_GET_NEXT_HIGH_MONO_COUNT,
-+	EFI_RESET_SYSTEM,
-+	EFI_UPDATE_CAPSULE,
-+	EFI_QUERY_CAPSULE_CAPS,
- };
- 
- /*
+TL;DR:
+This series adds a new security hook that allows to initialize the security
+context of kernfs properly, taking into account the parent context (and
+possibly other attributes). Kernfs nodes require special handling here, since
+they are not bound to specific inodes/superblocks, but instead represent the
+backing tree structure that is used to build the VFS tree when the kernfs
+tree is mounted.
+
+The kernfs nodes initially do not store any security context and rely on
+the LSM to assign some default context to inodes created over them. Kernfs
+inodes, however, allow setting an explicit context via the *setxattr(2)
+syscalls, in which case the context is stored inside the kernfs node's
+internal structure.
+
+SELinux (and possibly other LSMs) initialize the context of newly created
+FS objects based on the parent object's context (usually the child inherits
+the parent's context, unless the policy dictates otherwise). This is done
+by hooking the creation of the new inode corresponding to the newly created
+file/directory via security_inode_init_security() (most filesystems always
+create a fresh inode when a new FS object is created). However, kernfs nodes
+can be created "behind the scenes" while the filesystem is not mounted
+anywhere and thus no inodes can exist for them yet.
+
+Therefore, to allow maintaining similar behavior for kernfs nodes, a new
+LSM hook is needed, which will allow initializing the kernfs node's
+security context based on its own attributes and those of the parent's
+node.
+
+The main motivation for this change is that the userspace users of cgroupfs
+(which is built on kernfs) expect the usual security context inheritance
+to work under SELinux (see [1] and [2]). This functionality is required for
+better confinement of containers under SELinux.
+
+Patch 1/5 changes SELinux to fetch security context from extended
+attributes on kernfs filesystems, falling back to genfs-defined context
+if that fails. Without this patch the 2/5 would be a regression for
+SELinux (due to the removal of ...notifysecctx() call.
+
+Patch 2/5 implements full security xattr support in kernfs using
+simple_xattrs; patch 3/5 adds the new LSM hook; patch 4/5 implements the
+new hook in SELinux; and patch 5/5 modifies kernfs to call the new hook
+on new node creation.
+
+Testing:
+- passed the reproducer from the commit message of the last patch
+- passed SELinux testsuite on Fedora 29 (x86_64) when applied on top of
+  current Rawhide kernel (5.0.0-0.rc5.git0.1) [3]
+  - including the new proposed selinux-testsuite subtest [4] (adapted
+    from the reproducer)
+
+[1] https://github.com/SELinuxProject/selinux-kernel/issues/39
+[2] https://bugzilla.redhat.com/show_bug.cgi?id=1553803
+[3] https://copr.fedorainfracloud.org/coprs/omos/kernel-testing/build/854148/
+[4] https://github.com/SELinuxProject/selinux-testsuite/pull/48
+
+Ondrej Mosnacek (5):
+  selinux: try security xattr after genfs for kernfs filesystems
+  kernfs: use simple_xattrs for security attributes
+  LSM: add new hook for kernfs node initialization
+  selinux: implement the kernfs_init_security hook
+  kernfs: initialize security of newly created nodes
+
+ fs/kernfs/dir.c                     |  64 +++++++-
+ fs/kernfs/inode.c                   | 125 +++++++---------
+ fs/kernfs/kernfs-internal.h         |   7 +-
+ include/linux/lsm_hooks.h           |  22 +++
+ include/linux/security.h            |  14 ++
+ include/linux/xattr.h               |  15 ++
+ security/security.c                 |  10 ++
+ security/selinux/hooks.c            | 222 +++++++++++++++++++---------
+ security/selinux/include/security.h |   1 +
+ 9 files changed, 328 insertions(+), 152 deletions(-)
+
 -- 
 2.20.1
 
