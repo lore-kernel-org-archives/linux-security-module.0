@@ -2,162 +2,93 @@ Return-Path: <SRS0=pLHH=QW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96910C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 21:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F86BC43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 22:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63B3621B18
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 21:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550267178;
-	bh=Q8wAvpeI5CabGUoVRawEgGha0WyAygxfrYODODFX4Uw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Aqs7Pll7YNI2Ma2VwladqVGu2ElaGUnmHnzlcG2pjA/dVcnGPoCm2WVxx338l4RUG
-	 G6qDR6iNUaHLCKwn5mL2ca7CFTYUq+8hMrg2aqbWKONjo6agmPwFPVrNJZHovLPGzU
-	 p7PWFDu4NGQ9v1oOzYF3fdudBKRU64/pd1R0/pbE=
+	by mail.kernel.org (Postfix) with ESMTP id 085F3222DD
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 22:16:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392643AbfBOVqN (ORCPT
+        id S1728352AbfBOWQH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Feb 2019 16:46:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57314 "EHLO mail.kernel.org"
+        Fri, 15 Feb 2019 17:16:07 -0500
+Received: from namei.org ([65.99.196.166]:52460 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387436AbfBOVqN (ORCPT
+        id S1726000AbfBOWQH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Feb 2019 16:46:13 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06702222DD;
-        Fri, 15 Feb 2019 21:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550267171;
-        bh=Q8wAvpeI5CabGUoVRawEgGha0WyAygxfrYODODFX4Uw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ByxIT5918R/vmNXChNRO+0asNFcC+3W7rzp2thNJBSFZu/WWQdhZGEbtlvvHn3x6P
-         lHChsYGwGMPA6Fu/TwQFYGgBkaPxm3gCFjEF3Tm+ULrNmuOjk7Yo0GLPzBWFT1OjLy
-         nO4Sp2vd+oz7YuEd8d3+xWtQ2lBKHzfJCPdlfs/w=
-Date:   Fri, 15 Feb 2019 13:46:09 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
-        sfrench@samba.org, linux-security-module@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org
-Subject: Re: [RFC PATCH 20/27] container, keys: Add a container keyring
-Message-ID: <20190215214608.GC12909@gmail.com>
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
- <155024704568.21651.12664692449080180818.stgit@warthog.procyon.org.uk>
+        Fri, 15 Feb 2019 17:16:07 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x1FMG0Es005582;
+        Fri, 15 Feb 2019 22:16:00 GMT
+Date:   Sat, 16 Feb 2019 09:16:00 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-security-module@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+Subject: [GIT PULL] KEYS: fixes for v5.1
+Message-ID: <alpine.LRH.2.21.1902160914180.4453@namei.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155024704568.21651.12664692449080180818.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[+Cc linux-fscrypt]
+Hi Linus,
 
-Hi David,
+Please pull these fixes for the Keys subsystem.
 
-On Fri, Feb 15, 2019 at 04:10:45PM +0000, David Howells wrote:
-> Allow a container manager to attach keyrings to a container such that the
-> keys contained therein are searched by request_key() in addition to a
-> process's normal keyrings.  This allows the manager to install keys to
-> support filesystem decryption and authentication for superblocks inside the
-> container without requiring any active role being played by processes
-> inside of the container.
-> 
-> So, for example, a container could be created, a keyring added and then an
-> rxrpc-type key added to the keyring such that a container's root filesystem
-> and data filesystems can be brought in from secure AFS volumes.  It would
-> also be possible to put filesystem crypto keys in there such that Ext4
-> encrypted files could be decrypted - without the need to share the key
-> between other containers or let the key leak into the container.
+From David Howells:
 
-For fscrypt (aka ext4/f2fs/ubifs encryption), rather than a "container keyring",
-I think it's much better served by ioctls to add/remove keys directly to/from
-the filesystem, as I'm proposing here:
-https://patchwork.kernel.org/cover/10806425/.  My proposed API implements all
-the semantics people actually need for fscrypt, including:
+" (1) Handle quotas better, allowing full quota to be reached.
 
-- Making the filesystem's ability to use keys match the locked/unlocked state of
-  encrypted files, which is a filesystem-wide thing not a per-process thing.
+ (2) Fix the creation of shortcuts in the assoc_array internal
+     representation when the index key needs to be an exact multiple of the
+     machine word size.
 
-- Allowing a key to be removed and wiped, *and* the corresponding encrypted
-  files locked efficiently.
+ (3) Fix a dependency loop between the request_key contruction record and
+     the request_key authentication key.  The construction record isn't
+     really necessary and can be dispensed with.
 
-- Still permitting non-root users to use fscrypt, subject to limitations; e.g.
-  keys are identified by cryptographic hash, users are limited by the keys
-  quotas, and a user can't directly remove a key another user has added or
-  create a new encrypted directory without proving they know/knew the key.
+ (4) Set the timestamp on a new key rather than leaving it as 0.  This
+     would ordinarily be fine - provided the system clock is never set to a
+     time before 1970."
 
-A "container keyring" would only address the first problem.
+---
 
-I don't think it's the right semantics to have the kernel's ability to use
-fscrypt keys be conditional on which process is doing the filesystem access --
-even if the processes are divided into different sessions, users, or containers.
-Doing so may sound good, but it plays into common misconceptions about the
-purpose of storage encryption.  It would actually be an OS-level access control
-policy that has nothing to do with the encryption itself.  The kernel already
-has a wide variety of file access control mechanisms to choose from: file mode
-bits, ACLs, SELinux, mount namespaces, etc...
+The following changes since commit 5ded5871030eb75017639148da0a58931dfbfc25:
 
-The purpose of fscrypt is actually very different.  It's designed to protect
-data locally stored on-disk from two classes of attackers: (1) attackers who can
-read directly from disk, and (2) attackers who fully compromise the system
-on-line including all memory, provided that the key isn't currently added.
+  Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi (2019-02-15 13:36:43 -0800)
 
-In these cases, the notion of a "container" is meaningless as the operating
-system is already out of the picture...
+are available in the Git repository at:
 
-I also don't see much benefit to namespacing fscrypt keys for container
-isolation purposes.  If it's at all computationally feasible for keys to
-collide, then the encryption has already been massively screwed up.
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.1-rc6
 
-Also, I don't think that fscrypt should have a de-facto dependency on
-CONFIG_CONTAINERS in order to have sane semantics.  fscrypt is used on many
-systems where containers support would be unnecessary bloat and attack surface.
+for you to fetch changes up to 7c1857bdbdf1e4c541e45eab477ee23ed4333ea4:
 
-So while there probably are still good arguments for adding a container keyring,
-I don't think it's the best way forward for fscrypt.
+  keys: Timestamp new keys (2019-02-15 14:12:09 -0800)
 
-- Eric
+----------------------------------------------------------------
+David Howells (3):
+      assoc_array: Fix shortcut creation
+      keys: Fix dependency loop between construction record and auth key
+      keys: Timestamp new keys
 
-> 
-> Because the container manager retains control of the keyring, it can update
-> the contained keys as necessary to prevent expiration.  Note that the
-> keyring and keys in the keyring must grant Search permission directly to
-> the container object.
-> 
-> [!] Note that NFS, CIFS and other filesystems wishing to make use of this
->     would have to get the token to use by calling request_key() on entry to
->     its VFS methods and retain it in its file struct.
-> 
-> [!] Note that request_key() called from userspace does not look in the
->     container keyring.
-> 
-> [!] Note that keys are now tagged with a tag that identifies the network
->     namespace (or other domain of operation).  This allows keys to be
->     provided in one keyring that allow the same thing but in different
->     network namespaces.
-> 
-> The keyring should be created by the container manager and then set using:
-> 
-> 	keyctl(KEYCTL_SET_CONTAINER_KEYRING, int containerfd,
-> 	       key_serial_t keyring);
-> 
-> With this, request_key() inside the kernel searches:
-> 
-> 	thread-keyring, process-keyring, session-keyring, container-keyring
-> 
-> [!] It may be worth setting a flag on a mountpoint to indicate whether to
->     search the container keyring first or last.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
+Eric Biggers (1):
+      KEYS: allow reaching the keys quotas exactly
+
+ fs/nfs/nfs4idmap.c                   | 31 +++++++++-------
+ include/keys/request_key_auth-type.h | 36 ++++++++++++++++++
+ include/linux/key-type.h             | 22 +++--------
+ lib/assoc_array.c                    |  8 ++--
+ security/keys/internal.h             | 13 +------
+ security/keys/key.c                  |  5 ++-
+ security/keys/keyctl.c               |  1 +
+ security/keys/process_keys.c         |  1 +
+ security/keys/request_key.c          | 72 +++++++++++++++---------------------
+ security/keys/request_key_auth.c     | 16 ++++----
+ 10 files changed, 108 insertions(+), 97 deletions(-)
+ create mode 100644 include/keys/request_key_auth-type.h
