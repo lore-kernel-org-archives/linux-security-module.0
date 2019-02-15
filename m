@@ -2,110 +2,162 @@ Return-Path: <SRS0=pLHH=QW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B91C4360F
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 20:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96910C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 21:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0498821B18
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 20:04:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="pWhGfyv6"
+	by mail.kernel.org (Postfix) with ESMTP id 63B3621B18
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 21:46:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550267178;
+	bh=Q8wAvpeI5CabGUoVRawEgGha0WyAygxfrYODODFX4Uw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Aqs7Pll7YNI2Ma2VwladqVGu2ElaGUnmHnzlcG2pjA/dVcnGPoCm2WVxx338l4RUG
+	 G6qDR6iNUaHLCKwn5mL2ca7CFTYUq+8hMrg2aqbWKONjo6agmPwFPVrNJZHovLPGzU
+	 p7PWFDu4NGQ9v1oOzYF3fdudBKRU64/pd1R0/pbE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388961AbfBOUEj (ORCPT
+        id S2392643AbfBOVqN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Feb 2019 15:04:39 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46176 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388949AbfBOUEj (ORCPT
+        Fri, 15 Feb 2019 16:46:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387436AbfBOVqN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Feb 2019 15:04:39 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f5so8057880lfc.13
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Feb 2019 12:04:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1niQ3pYxtgp6Mtfo356boquUrBnwdlNYwRbtwNCGuJU=;
-        b=pWhGfyv61mpQlon38Tv46098W1AeXNS3LmeQfYM5W0J9mS6Y3Md+CfGJSanl38plCS
-         5vyEsbziRSpXFyS8LU0s9JpxRavimbV/Bb98bnHIhp3EbtJ42Q+Efr3p411OC64m4MMr
-         YaDhnlE14WgsV9v//ChRsRrSOwgzm80/kmgtbdN1C7gx+EdA/jsbakPvAdH3+ynVwZhr
-         zeTpq5upw4UDRmttriC7uV9N7TGjAC14ajn4i0EhOhx3HnvrvpDbxr7M9DK73RRBBlB7
-         kYwysMYOAF62uL+sxjpELuuAdLY9xxdns02SS3qYsjb1vctwBMpnEKxrpV7ZKsneamyG
-         qBzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1niQ3pYxtgp6Mtfo356boquUrBnwdlNYwRbtwNCGuJU=;
-        b=Kg/DP9YsLjs+PQ9Whj5pCq2YUoGeWeDZ5CRI7pztuF7YrTxo1HBumk7wFNaeKQOYL4
-         uQ3hbYudqn/LyyzKhs0l3GKJei/bloWCvEjYSoQL6d/kwo2An+xtjWclG5xiiVV/MseX
-         /tqfHIQ9U8aDq0atmllcwKiJG4VawDZh5GHq6/xaOhCiRXQg/hl4/pei5Lb0coymH2mH
-         w0U3GWTwT+Tj+7RI32Xwdh2Zjh+hR5igV6PkEVbPjzho7LxBujaHU8gS57LtgRj40ogz
-         /5dSeOB5pFtoageOvGaDjQmCXiGc0m6zUYkFtuFOE6cVQueRYG9SmnCVUK0pyvjAtiQT
-         94gg==
-X-Gm-Message-State: AHQUAubnorriWqCEbGn6oYYUUgwULFD3oordofkMwzJwT1KFvxMAopTC
-        REGPUxF7uoIyzmEfL5fU4IsHVtsh2h0fRZYCBz8q
-X-Google-Smtp-Source: AHgI3IYa0RNtHV1ueNnzSoo6U9p/1J3RjplNk9QOYRnnHHvAaY5Pv+9g4VdpWnY+fjmKy0Th/3hCLmdZuxFfCxXLcHE=
-X-Received: by 2002:ac2:4191:: with SMTP id z17mr6434424lfh.117.1550261074847;
- Fri, 15 Feb 2019 12:04:34 -0800 (PST)
+        Fri, 15 Feb 2019 16:46:13 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06702222DD;
+        Fri, 15 Feb 2019 21:46:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550267171;
+        bh=Q8wAvpeI5CabGUoVRawEgGha0WyAygxfrYODODFX4Uw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ByxIT5918R/vmNXChNRO+0asNFcC+3W7rzp2thNJBSFZu/WWQdhZGEbtlvvHn3x6P
+         lHChsYGwGMPA6Fu/TwQFYGgBkaPxm3gCFjEF3Tm+ULrNmuOjk7Yo0GLPzBWFT1OjLy
+         nO4Sp2vd+oz7YuEd8d3+xWtQ2lBKHzfJCPdlfs/w=
+Date:   Fri, 15 Feb 2019 13:46:09 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
+        sfrench@samba.org, linux-security-module@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
+        linux-kernel@vger.kernel.org, linux-fscrypt@vger.kernel.org
+Subject: Re: [RFC PATCH 20/27] container, keys: Add a container keyring
+Message-ID: <20190215214608.GC12909@gmail.com>
+References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
+ <155024704568.21651.12664692449080180818.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <6691891549984203@myt5-a323eb993ef7.qloud-c.yandex.net>
- <20190214.084343.1138362153341500718.davem@davemloft.net> <CAHC9VhQK6Cmcx5kwYAPipR4YGyBHdkLEe3UH+VmNYGHu4PWqjQ@mail.gmail.com>
- <20190215.120009.1549205062473501080.davem@davemloft.net>
-In-Reply-To: <20190215.120009.1549205062473501080.davem@davemloft.net>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 15 Feb 2019 15:04:23 -0500
-Message-ID: <CAHC9VhRys7Efm=aQqph2ug9c8Ryra9imEG66avjeEeY8QZWTqw@mail.gmail.com>
-Subject: Re: [PATCH] NETWORKING: avoid use IPCB in cipso_v4_error
-To:     David Miller <davem@davemloft.net>
-Cc:     s-nazarov@yandex.ru, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <155024704568.21651.12664692449080180818.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 15, 2019 at 3:00 PM David Miller <davem@davemloft.net> wrote:
-> From: Paul Moore <paul@paul-moore.com>
-> Date: Fri, 15 Feb 2019 14:02:31 -0500
->
-> > On Thu, Feb 14, 2019 at 11:43 AM David Miller <davem@davemloft.net> wrote:
-> >> From: Nazarov Sergey <s-nazarov@yandex.ru>
-> >> Date: Tue, 12 Feb 2019 18:10:03 +0300
-> >>
-> >> > Since cipso_v4_error might be called from different network stack layers, we can't safely use icmp_send there.
-> >> > icmp_send copies IP options with ip_option_echo, which uses IPCB to take access to IP header compiled data.
-> >> > But after commit 971f10ec ("tcp: better TCP_SKB_CB layout to reduce cache line misses"), IPCB can't be used
-> >> > above IP layer.
-> >> > This patch fixes the problem by creating in cipso_v4_error a local copy of compiled IP options and using it with
-> >> > introduced __icmp_send function. This looks some overloaded, but in quite rare error conditions only.
-> >> >
-> >> > The original discussion is here:
-> >> > https://lore.kernel.org/linux-security-module/16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net/
-> >> >
-> >> > Signed-off-by: Sergey Nazarov <s-nazarov@yandex.ru>
-> >>
-> >> This problem is not unique to Cipso, net/atm/clip.c's error handler
-> >> has the same exact issue.
-> >>
-> >> I didn't scan more of the tree, there are probably a couple more
-> >> locations as well.
-> >
-> > David, are you happy with Sergey's solution as a fix for this?
-> >
-> > If so, would you prefer a respin of this patch to apply the to the
-> > other broken callers (e.g. net/atm/clip.c), or would you rather merge
-> > this patch and deal with the other callers in separate patches?
->
-> I'd like the other broken callers to be handled.
+[+Cc linux-fscrypt]
 
-Sergey, do you think you could fix the other callers too, or do you
-want some help with that?
+Hi David,
 
--- 
-paul moore
-www.paul-moore.com
+On Fri, Feb 15, 2019 at 04:10:45PM +0000, David Howells wrote:
+> Allow a container manager to attach keyrings to a container such that the
+> keys contained therein are searched by request_key() in addition to a
+> process's normal keyrings.  This allows the manager to install keys to
+> support filesystem decryption and authentication for superblocks inside the
+> container without requiring any active role being played by processes
+> inside of the container.
+> 
+> So, for example, a container could be created, a keyring added and then an
+> rxrpc-type key added to the keyring such that a container's root filesystem
+> and data filesystems can be brought in from secure AFS volumes.  It would
+> also be possible to put filesystem crypto keys in there such that Ext4
+> encrypted files could be decrypted - without the need to share the key
+> between other containers or let the key leak into the container.
+
+For fscrypt (aka ext4/f2fs/ubifs encryption), rather than a "container keyring",
+I think it's much better served by ioctls to add/remove keys directly to/from
+the filesystem, as I'm proposing here:
+https://patchwork.kernel.org/cover/10806425/.  My proposed API implements all
+the semantics people actually need for fscrypt, including:
+
+- Making the filesystem's ability to use keys match the locked/unlocked state of
+  encrypted files, which is a filesystem-wide thing not a per-process thing.
+
+- Allowing a key to be removed and wiped, *and* the corresponding encrypted
+  files locked efficiently.
+
+- Still permitting non-root users to use fscrypt, subject to limitations; e.g.
+  keys are identified by cryptographic hash, users are limited by the keys
+  quotas, and a user can't directly remove a key another user has added or
+  create a new encrypted directory without proving they know/knew the key.
+
+A "container keyring" would only address the first problem.
+
+I don't think it's the right semantics to have the kernel's ability to use
+fscrypt keys be conditional on which process is doing the filesystem access --
+even if the processes are divided into different sessions, users, or containers.
+Doing so may sound good, but it plays into common misconceptions about the
+purpose of storage encryption.  It would actually be an OS-level access control
+policy that has nothing to do with the encryption itself.  The kernel already
+has a wide variety of file access control mechanisms to choose from: file mode
+bits, ACLs, SELinux, mount namespaces, etc...
+
+The purpose of fscrypt is actually very different.  It's designed to protect
+data locally stored on-disk from two classes of attackers: (1) attackers who can
+read directly from disk, and (2) attackers who fully compromise the system
+on-line including all memory, provided that the key isn't currently added.
+
+In these cases, the notion of a "container" is meaningless as the operating
+system is already out of the picture...
+
+I also don't see much benefit to namespacing fscrypt keys for container
+isolation purposes.  If it's at all computationally feasible for keys to
+collide, then the encryption has already been massively screwed up.
+
+Also, I don't think that fscrypt should have a de-facto dependency on
+CONFIG_CONTAINERS in order to have sane semantics.  fscrypt is used on many
+systems where containers support would be unnecessary bloat and attack surface.
+
+So while there probably are still good arguments for adding a container keyring,
+I don't think it's the best way forward for fscrypt.
+
+- Eric
+
+> 
+> Because the container manager retains control of the keyring, it can update
+> the contained keys as necessary to prevent expiration.  Note that the
+> keyring and keys in the keyring must grant Search permission directly to
+> the container object.
+> 
+> [!] Note that NFS, CIFS and other filesystems wishing to make use of this
+>     would have to get the token to use by calling request_key() on entry to
+>     its VFS methods and retain it in its file struct.
+> 
+> [!] Note that request_key() called from userspace does not look in the
+>     container keyring.
+> 
+> [!] Note that keys are now tagged with a tag that identifies the network
+>     namespace (or other domain of operation).  This allows keys to be
+>     provided in one keyring that allow the same thing but in different
+>     network namespaces.
+> 
+> The keyring should be created by the container manager and then set using:
+> 
+> 	keyctl(KEYCTL_SET_CONTAINER_KEYRING, int containerfd,
+> 	       key_serial_t keyring);
+> 
+> With this, request_key() inside the kernel searches:
+> 
+> 	thread-keyring, process-keyring, session-keyring, container-keyring
+> 
+> [!] It may be worth setting a flag on a mountpoint to indicate whether to
+>     search the container keyring first or last.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
