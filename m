@@ -2,298 +2,161 @@ Return-Path: <SRS0=pLHH=QW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E16C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 16:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81170C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 16:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628FB21924
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 16:12:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 592832146E
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 16:51:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392394AbfBOQLs (ORCPT
+        id S2388502AbfBOQu7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:11:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55000 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730404AbfBOQLr (ORCPT
+        Fri, 15 Feb 2019 11:50:59 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37452 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388125AbfBOQu7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:11:47 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A1C711244DB;
-        Fri, 15 Feb 2019 16:11:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 627CC5D70E;
-        Fri, 15 Feb 2019 16:11:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 23/27] KEYS: Provide KEYCTL_GRANT_PERMISSION
-From:   David Howells <dhowells@redhat.com>
-To:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
-        sfrench@samba.org
-Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        rgb@redhat.com, dhowells@redhat.com, linux-kernel@vger.kernel.org
-Date:   Fri, 15 Feb 2019 16:11:39 +0000
-Message-ID: <155024709900.21651.6425389370223480666.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 15 Feb 2019 16:11:45 +0000 (UTC)
+        Fri, 15 Feb 2019 11:50:59 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FGnFh1109195
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Feb 2019 11:50:58 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qp0ga330w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Feb 2019 11:50:57 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 15 Feb 2019 16:50:56 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Feb 2019 16:50:53 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FGoqiM4587862
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 16:50:52 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A63C85205A;
+        Fri, 15 Feb 2019 16:50:52 +0000 (GMT)
+Received: from localhost.ibm.com (unknown [9.80.92.223])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 818BD5204E;
+        Fri, 15 Feb 2019 16:50:51 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Bruno E . O . Meneguele" <bmeneg@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH v3] x86/ima: require signed kernel modules
+Date:   Fri, 15 Feb 2019 11:50:18 -0500
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 19021516-4275-0000-0000-0000030FFB6B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021516-4276-0000-0000-0000381E1BC8
+Message-Id: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902150116
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Provide a keyctl() operation to grant/remove permissions.  The grant
-operation, wrapped by libkeyutils, looks like:
+Have the IMA architecture specific policy require signed kernel modules
+on systems with secure boot mode enabled; and coordinate the different
+signature verification methods, so only one signature is required.
 
-	int ret = keyctl_grant_permission(key_serial_t key,
-					  enum key_ace_subject_type type,
-					  unsigned int subject,
-					  unsigned int perm);
+Requiring appended kernel module signatures may be configured, enabled
+on the boot command line, or with this patch enabled in secure boot
+mode.  This patch defines set_module_sig_enforced().
 
-Where key is the key to be modified, type and subject represent the subject
-to which permission is to be granted (or removed) and perm is the set of
-permissions to be granted.  0 is returned on success.  SET_SECURITY
-permission is required for this.
+To coordinate between appended kernel module signatures and IMA
+signatures, only define an IMA MODULE_CHECK policy rule if
+CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
+and require an IMA signature.
 
-The subject type currently must be KEY_ACE_SUBJ_STANDARD for the moment
-(other subject types will come along later).
-
-For subject type KEY_ACE_SUBJ_STANDARD, the following subject values are
-available:
-
-	KEY_ACE_POSSESSOR	The possessor of the key
-	KEY_ACE_OWNER		The owner of the key
-	KEY_ACE_GROUP		The key's group
-	KEY_ACE_EVERYONE	Everyone
-
-perm lists the permissions to be granted:
-
-	KEY_ACE_VIEW		Can view the key metadata
-	KEY_ACE_READ		Can read the key content
-	KEY_ACE_WRITE		Can update/modify the key content
-	KEY_ACE_SEARCH		Can find the key by searching/requesting
-	KEY_ACE_LINK		Can make a link to the key
-	KEY_ACE_SET_SECURITY	Can set security
-	KEY_ACE_INVAL		Can invalidate
-	KEY_ACE_REVOKE		Can revoke
-	KEY_ACE_JOIN		Can join this keyring
-	KEY_ACE_CLEAR		Can clear this keyring
-
-If an ACE already exists for the subject, then the permissions mask will be
-overwritten; if perm is 0, it will be deleted.
-
-Currently, the internal ACL is limited to a maximum of 16 entries.
-
-For example:
-
-	int ret = keyctl_grant_permission(key,
-					  KEY_ACE_SUBJ_STANDARD,
-					  KEY_ACE_OWNER,
-					  KEY_ACE_VIEW | KEY_ACE_READ);
-
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
+ arch/x86/kernel/ima_arch.c | 9 ++++++++-
+ include/linux/module.h     | 5 +++++
+ kernel/module.c            | 5 +++++
+ 3 files changed, 18 insertions(+), 1 deletion(-)
 
- include/uapi/linux/keyctl.h |    1 
- security/keys/compat.c      |    2 +
- security/keys/internal.h    |    5 ++
- security/keys/keyctl.c      |    5 ++
- security/keys/permission.c  |  119 +++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 132 insertions(+)
-
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index 50d7b6ca82ab..045dcbb6bb8d 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -136,6 +136,7 @@ enum key_ace_standard_subject {
- #define KEYCTL_MOVE			33	/* Move keys between keyrings */
- #define KEYCTL_FIND_LRU			34	/* Find the least-recently used key in a keyring */
- #define KEYCTL_SET_CONTAINER_KEYRING	35	/* Attach a keyring to a container */
-+#define KEYCTL_GRANT_PERMISSION		36	/* Grant a permit to a key */
+diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+index e47cd9390ab4..3fb9847f1cad 100644
+--- a/arch/x86/kernel/ima_arch.c
++++ b/arch/x86/kernel/ima_arch.c
+@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
+ 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+ #endif /* CONFIG_KEXEC_VERIFY_SIG */
+ 	"measure func=KEXEC_KERNEL_CHECK",
++#if !IS_ENABLED(CONFIG_MODULE_SIG)
++	"appraise func=MODULE_CHECK appraise_type=imasig",
++#endif
++	"measure func=MODULE_CHECK",
+ 	NULL
+ };
  
- /* keyctl structures */
- struct keyctl_dh_params {
-diff --git a/security/keys/compat.c b/security/keys/compat.c
-index 7990ec026237..953156f94320 100644
---- a/security/keys/compat.c
-+++ b/security/keys/compat.c
-@@ -174,6 +174,8 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
- 
- 	case KEYCTL_MOVE:
- 		return keyctl_keyring_move(arg2, arg3, arg4, arg5);
-+	case KEYCTL_GRANT_PERMISSION:
-+		return keyctl_grant_permission(arg2, arg3, arg4, arg5);
- 
- 	default:
- 		return -EOPNOTSUPP;
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 9f9ecc1810c9..6cd7b5c17298 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -377,6 +377,11 @@ extern long keyctl_find_lru(key_serial_t, const char __user *);
- extern long keyctl_set_container_keyring(int, key_serial_t);
- #endif
- 
-+extern long keyctl_grant_permission(key_serial_t keyid,
-+				    enum key_ace_subject_type type,
-+				    unsigned int subject,
-+				    unsigned int perm);
-+
- /*
-  * Debugging key validation
-  */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 2df896bfb8e4..02bd73d5a05a 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1961,6 +1961,11 @@ SYSCALL_DEFINE5(keyctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 					   (key_serial_t)arg3,
- 					   (key_serial_t)arg4,
- 					   (unsigned int)arg5);
-+	case KEYCTL_GRANT_PERMISSION:
-+		return keyctl_grant_permission((key_serial_t)arg2,
-+					       (enum key_ace_subject_type)arg3,
-+					       (unsigned int)arg4,
-+					       (unsigned int)arg5);
- 
- 	default:
- 		return -EOPNOTSUPP;
-diff --git a/security/keys/permission.c b/security/keys/permission.c
-index 8dc6e80f6fd0..cb1359f6c668 100644
---- a/security/keys/permission.c
-+++ b/security/keys/permission.c
-@@ -274,3 +274,122 @@ long key_set_acl(struct key *key, struct key_acl *acl)
- 	key_put_acl(acl);
- 	return 0;
+ const char * const *arch_get_ima_policy(void)
+ {
+-	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
++	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
++		if (IS_ENABLED(CONFIG_MODULE_SIG))
++			set_module_sig_enforced();
+ 		return sb_arch_rules;
++	}
+ 	return NULL;
  }
-+
-+/*
-+ * Allocate a new ACL with an extra ACE slot.
-+ */
-+static struct key_acl *key_alloc_acl(const struct key_acl *old_acl, int nr, int skip)
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 8fa38d3e7538..5aaa9359adc8 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
+ #endif /* CONFIG_LIVEPATCH */
+ 
+ bool is_module_sig_enforced(void);
++void set_module_sig_enforced(void);
+ 
+ #else /* !CONFIG_MODULES... */
+ 
+@@ -780,6 +781,10 @@ static inline bool is_module_sig_enforced(void)
+ 	return false;
+ }
+ 
++static inline void set_module_sig_enforced(void)
 +{
-+	struct key_acl *acl;
-+	int nr_ace, i, j = 0;
-+
-+	nr_ace = old_acl->nr_ace + nr;
-+	if (nr_ace > 16)
-+		return ERR_PTR(-EINVAL);
-+
-+	acl = kzalloc(struct_size(acl, aces, nr_ace), GFP_KERNEL);
-+	if (!acl)
-+		return ERR_PTR(-ENOMEM);
-+
-+	refcount_set(&acl->usage, 1);
-+	acl->nr_ace = nr_ace;
-+	for (i = 0; i < old_acl->nr_ace; i++) {
-+		if (i == skip)
-+			continue;
-+		acl->aces[j] = old_acl->aces[i];
-+		j++;
-+	}
-+	return acl;
 +}
 +
-+/*
-+ * Generate the revised ACL.
-+ */
-+static long key_change_acl(struct key *key, struct key_ace *new_ace)
+ /* Dereference module function descriptor */
+ static inline
+ void *dereference_module_function_descriptor(struct module *mod, void *ptr)
+diff --git a/kernel/module.c b/kernel/module.c
+index 2ad1b5239910..73cada04bd24 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
+ }
+ EXPORT_SYMBOL(is_module_sig_enforced);
+ 
++void set_module_sig_enforced(void)
 +{
-+	struct key_acl *acl, *old;
-+	int i;
-+
-+	old = rcu_dereference_protected(key->acl, lockdep_is_held(&key->sem));
-+
-+	for (i = 0; i < old->nr_ace; i++)
-+		if (old->aces[i].type == new_ace->type &&
-+		    old->aces[i].subject_id == new_ace->subject_id)
-+			goto found_match;
-+
-+	if (new_ace->perm == 0)
-+		return 0; /* No permissions to remove.  Add deny record? */
-+
-+	acl = key_alloc_acl(old, 1, -1);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+	acl->aces[i] = *new_ace;
-+	goto change;
-+
-+found_match:
-+	if (new_ace->perm == 0)
-+		goto delete_ace;
-+	if (new_ace->perm == old->aces[i].perm)
-+		return 0;
-+	acl = key_alloc_acl(old, 0, -1);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+	acl->aces[i].perm = new_ace->perm;
-+	goto change;
-+
-+delete_ace:
-+	acl = key_alloc_acl(old, -1, i);
-+	if (IS_ERR(acl))
-+		return PTR_ERR(acl);
-+	goto change;
-+
-+change:
-+	return key_set_acl(key, acl);
++	sig_enforce = true;
 +}
 +
-+/*
-+ * Add, alter or remove (if perm == 0) an ACE in a key's ACL.
-+ */
-+long keyctl_grant_permission(key_serial_t keyid,
-+			     enum key_ace_subject_type type,
-+			     unsigned int subject,
-+			     unsigned int perm)
-+{
-+	struct key_ace new_ace;
-+	struct key *key;
-+	key_ref_t key_ref;
-+	long ret;
-+
-+	new_ace.type = type;
-+	new_ace.perm = perm;
-+
-+	switch (type) {
-+	case KEY_ACE_SUBJ_STANDARD:
-+		if (subject >= nr__key_ace_standard_subject)
-+			return -ENOENT;
-+		new_ace.subject_id = subject;
-+		break;
-+
-+	default:
-+		return -ENOENT;
-+	}
-+
-+	key_ref = lookup_user_key(keyid, KEY_LOOKUP_PARTIAL, KEY_NEED_SETSEC);
-+	if (IS_ERR(key_ref)) {
-+		ret = PTR_ERR(key_ref);
-+		goto error;
-+	}
-+
-+	key = key_ref_to_ptr(key_ref);
-+
-+	down_write(&key->sem);
-+
-+	/* If we're not the sysadmin, we can only change a key that we own */
-+	ret = -EACCES;
-+	if (capable(CAP_SYS_ADMIN) || uid_eq(key->uid, current_fsuid()))
-+		ret = key_change_acl(key, &new_ace);
-+	up_write(&key->sem);
-+	key_put(key);
-+error:
-+	return ret;
-+}
+ /* Block module loading/unloading? */
+ int modules_disabled = 0;
+ core_param(nomodule, modules_disabled, bint, 0);
+-- 
+2.7.5
 
