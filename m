@@ -2,100 +2,101 @@ Return-Path: <SRS0=pLHH=QW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 421C6C4360F
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67794C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 19:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F12B222D0
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F327217F5
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Feb 2019 19:02:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Di3X+31E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbfBOR6f (ORCPT
+        id S1731088AbfBOTCp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:58:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41340 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730062AbfBOR6f (ORCPT
+        Fri, 15 Feb 2019 14:02:45 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46232 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfBOTCo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:58:35 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FHrUxI094486
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Feb 2019 12:58:34 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qp1rcs9b3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Feb 2019 12:58:33 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 15 Feb 2019 17:58:31 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 15 Feb 2019 17:58:28 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FHwR7L2228508
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 17:58:27 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D75A52052;
-        Fri, 15 Feb 2019 17:58:27 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.92.223])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0D1C25204F;
-        Fri, 15 Feb 2019 17:58:25 +0000 (GMT)
-Subject: Re: [PATCH v3] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
-Date:   Fri, 15 Feb 2019 12:58:15 -0500
-In-Reply-To: <20190215170144.GH11489@garbanzo.do-not-panic.com>
-References: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
-         <20190215170144.GH11489@garbanzo.do-not-panic.com>
+        Fri, 15 Feb 2019 14:02:44 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f5so7937814lfc.13
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Feb 2019 11:02:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m2wjZ3rAlh8Xs47pTpzNxCmLt+JJOX01hTpRU1PEbls=;
+        b=Di3X+31Ew6n1MBP8dSAvbI1TT6KJRwBh14vPlq+pp/QQJe5AwdloMjXKskjKIfqvv1
+         OlT0bT5Xh4s+YQRJ09527H17vxOziMoGsTg5+L8nGQ1610yKxEbG8ZOB8SKLXjIPCOZE
+         gcewfRscs8FblXY3/JJL1kfTt4Q+m3GWtnTVF1rSsUNXP2LAC6j2qscSutw56HJsVRlD
+         HRZiqV565a3H8V8EHEJWmZHpt3K7XosgeogYTb6D2OyZ/d/SqlUkOWFUfpx2wUnXFvm7
+         8U9N24rNa+P3pYO7l8Xo80Zu2BfasFgggSBK6H0AQ2wUnf6m/+P7PKzNWfaNqMFgUxVB
+         QNKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m2wjZ3rAlh8Xs47pTpzNxCmLt+JJOX01hTpRU1PEbls=;
+        b=fubf/EV/lVY6BPtkKX/H8WOdCn1bzqQXL3miciTKW6rpooeM0k1Pmp+e/DXmoeumY9
+         kw+5hajJkU6q9BFptcVb98Ezk6ei0zvmcgip0TpzlCuP+i7Ymle/T+8F2uzr/9xSPdEE
+         BXjN2MX0MPHrUXhwz3U+Ppo8p15aLCrKno9QMLg1hlTmqHE5we9Ug1+ZY8ATzYURoBcZ
+         jApk+bb6MOZcUKdSev9dCWk2WTFyLPjXuM6YuN+KcYa8ThgfO64uiwnqRXLZNA9U8XMn
+         ZrvYydu9mxf6IWKoLiUyGkN885oTgLuct4Kp8D148mL78G3J+u9gzApHrp/TKhjJEXWj
+         bLzg==
+X-Gm-Message-State: AHQUAubFJVgxpl3MaQH2h7UgQf16mWXbVwTep4kaT+y3QQDyAzbfXmcM
+        UpICM8Nnkt9u1/YyiYrUymGFtAjwZx6OgpkBqg6D
+X-Google-Smtp-Source: AHgI3IZnkp4Gj0aBxfnV1EZiQ0uGpxT6l3GTlM4dndocUXg0MufMTXUPqnqKcaZGC24bfimdT/P5AdllyIZIZ1cya3I=
+X-Received: by 2002:a19:ee13:: with SMTP id g19mr6315180lfb.72.1550257362535;
+ Fri, 15 Feb 2019 11:02:42 -0800 (PST)
+MIME-Version: 1.0
+References: <34948711549920080@myt1-06117f29c1ea.qloud-c.yandex.net>
+ <CAHC9VhSDot+uNDi7ULoT7dry4FW9Jgp=NcqDh6TmA=z--kmqkA@mail.gmail.com>
+ <6691891549984203@myt5-a323eb993ef7.qloud-c.yandex.net> <20190214.084343.1138362153341500718.davem@davemloft.net>
+In-Reply-To: <20190214.084343.1138362153341500718.davem@davemloft.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 15 Feb 2019 14:02:31 -0500
+Message-ID: <CAHC9VhQK6Cmcx5kwYAPipR4YGyBHdkLEe3UH+VmNYGHu4PWqjQ@mail.gmail.com>
+Subject: Re: [PATCH] NETWORKING: avoid use IPCB in cipso_v4_error
+To:     David Miller <davem@davemloft.net>
+Cc:     s-nazarov@yandex.ru, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021517-0020-0000-0000-000003174E94
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021517-0021-0000-0000-000021688570
-Message-Id: <1550253495.7468.0.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=845 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902150122
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2019-02-15 at 09:01 -0800, Luis Chamberlain wrote:
-> On Fri, Feb 15, 2019 at 11:50:18AM -0500, Mimi Zohar wrote:
-> > Have the IMA architecture specific policy require signed kernel modules
-> > on systems with secure boot mode enabled; and coordinate the different
-> > signature verification methods, so only one signature is required.
-> > 
-> > Requiring appended kernel module signatures may be configured, enabled
-> > on the boot command line, or with this patch enabled in secure boot
-> > mode.  This patch defines set_module_sig_enforced().
-> > 
-> > To coordinate between appended kernel module signatures and IMA
-> > signatures, only define an IMA MODULE_CHECK policy rule if
-> > CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
-> > and require an IMA signature.
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> 
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+On Thu, Feb 14, 2019 at 11:43 AM David Miller <davem@davemloft.net> wrote:
+> From: Nazarov Sergey <s-nazarov@yandex.ru>
+> Date: Tue, 12 Feb 2019 18:10:03 +0300
+>
+> > Since cipso_v4_error might be called from different network stack layers, we can't safely use icmp_send there.
+> > icmp_send copies IP options with ip_option_echo, which uses IPCB to take access to IP header compiled data.
+> > But after commit 971f10ec ("tcp: better TCP_SKB_CB layout to reduce cache line misses"), IPCB can't be used
+> > above IP layer.
+> > This patch fixes the problem by creating in cipso_v4_error a local copy of compiled IP options and using it with
+> > introduced __icmp_send function. This looks some overloaded, but in quite rare error conditions only.
+> >
+> > The original discussion is here:
+> > https://lore.kernel.org/linux-security-module/16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net/
+> >
+> > Signed-off-by: Sergey Nazarov <s-nazarov@yandex.ru>
+>
+> This problem is not unique to Cipso, net/atm/clip.c's error handler
+> has the same exact issue.
+>
+> I didn't scan more of the tree, there are probably a couple more
+> locations as well.
 
-Thanks!
+David, are you happy with Sergey's solution as a fix for this?
 
+If so, would you prefer a respin of this patch to apply the to the
+other broken callers (e.g. net/atm/clip.c), or would you rather merge
+this patch and deal with the other callers in separate patches?
+
+-- 
+paul moore
+www.paul-moore.com
