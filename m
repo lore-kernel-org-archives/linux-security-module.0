@@ -2,119 +2,99 @@ Return-Path: <SRS0=nw36=QY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75B1CC43381
-	for <linux-security-module@archiver.kernel.org>; Sun, 17 Feb 2019 18:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA68C43381
+	for <linux-security-module@archiver.kernel.org>; Sun, 17 Feb 2019 18:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F676217FA
-	for <linux-security-module@archiver.kernel.org>; Sun, 17 Feb 2019 18:45:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 153AA217FA
+	for <linux-security-module@archiver.kernel.org>; Sun, 17 Feb 2019 18:49:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725834AbfBQSp6 (ORCPT
+        id S1725554AbfBQStI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 17 Feb 2019 13:45:58 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:46212 "EHLO mail.ispras.ru"
+        Sun, 17 Feb 2019 13:49:08 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:58134 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725554AbfBQSp6 (ORCPT
+        id S1725613AbfBQStI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 17 Feb 2019 13:45:58 -0500
-Received: from mail.ispras.ru (localhost [127.0.0.1])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 632C6540093;
-        Sun, 17 Feb 2019 21:45:54 +0300 (MSK)
+        Sun, 17 Feb 2019 13:49:08 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 6DCB4615; Sun, 17 Feb 2019 12:49:06 -0600 (CST)
+Date:   Sun, 17 Feb 2019 12:49:06 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     mortonm@chromium.org
+Cc:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        casey@schaufler-ca.com, sds@tycho.nsa.gov,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 2/2] LSM: SafeSetID: gate setgid transitions
+Message-ID: <20190217184906.GA20247@mail.hallyn.com>
+References: <20190215222228.133709-1-mortonm@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Sun, 17 Feb 2019 21:45:54 +0300
-From:   efremov <efremov@ispras.ru>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Edwin Zimmerman <edwin@211mainstreet.net>,
-        'Casey Schaufler' <casey@schaufler-ca.com>,
-        "'Eric W. Biederman'" <ebiederm@xmission.com>,
-        'Eric Paris' <eparis@parisplace.org>,
-        'Kees Cook' <keescook@chromium.org>,
-        'John Johansen' <john.johansen@canonical.com>,
-        'James Morris' <jmorris@namei.org>,
-        "'Serge E. Hallyn'" <serge@hallyn.com>,
-        'Paul Moore' <paul@paul-moore.com>,
-        'Kentaro Takeda' <takedakn@nttdata.co.jp>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        owner-linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 06/10] security: fix documentation for the path_chmod hook
-Organization: ISPRAS
-In-Reply-To: <20190207144654.GB2217@ZenIV.linux.org.uk>
-References: <cover.1549540487.git.efremov@ispras.ru>
- <0275d06334cdb1d2a87384d7971924a70776b3cb.1549540487.git.efremov@ispras.ru>
- <20190207134939.GA2217@ZenIV.linux.org.uk>
- <000001d4beee$caa8eff0$5ffacfd0$@211mainstreet.net>
- <20190207144654.GB2217@ZenIV.linux.org.uk>
-Message-ID: <abeba1c9e7b0df7097834b65f3af6934@ispras.ru>
-X-Sender: efremov@ispras.ru
-User-Agent: Roundcube Webmail/1.1.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215222228.133709-1-mortonm@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-Al Viro писал 2019-02-07 17:46:
-> On Thu, Feb 07, 2019 at 09:09:49AM -0500, Edwin Zimmerman wrote:
->> > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->> > > index cb93972257be..5d6428d0027b 100644
->> > > --- a/include/linux/lsm_hooks.h
->> > > +++ b/include/linux/lsm_hooks.h
->> > > @@ -304,8 +304,7 @@
->> > >   *	Return 0 if permission is granted.
->> > >   * @path_chmod:
->> > >   *	Check for permission to change DAC's permission of a file or directory.
->> > > - *	@dentry contains the dentry structure.
->> > > - *	@mnt contains the vfsmnt structure.
->> > > + *	@path contains the path structure.
->> >
->> > May I politely inquire about the value of these comments?  How much information
->> > is provided by refering to an argument as "the dentry structure" or "the path
->> > structure", especially when there's nothing immediately above that would introduce
->> > either.  "Type of 'dentry' argument is somehow related to struct dentry,
->> > try and guess what the value might be - we don't care, we just need every
->> > argument commented"?
->> >
->> > Who needs that crap in the first place?
->> 
->> The comments fill a valuable place to folks like me who are new to the 
->> linux security modules.
->> In my spare time, I'm writing a new LSM specifically geared for 
->> parental controls uses, and the
->> comments in lsm_hooks.h have helped me out more than once.  Perhaps 
->> the comments could
->> be inproved by changing them to something like this:
->> "@[arg] contains the [type] structure, defined in linux/[?].h"
+On Fri, Feb 15, 2019 at 02:22:28PM -0800, mortonm@chromium.org wrote:
+> From: Micah Morton <mortonm@chromium.org>
 > 
-> Um...   The _type_ of argument is visible in declaration already;
-> it doesn't say a damn thing about the value of that argument.
+> The SafeSetID LSM already gates setuid transitions for UIDs on the
+> system whose use of CAP_SETUID has been 'restricted'. This patch
+> implements the analogous functionality for setgid transitions, in order
+> to restrict the use of CAP_SETGID for certain UIDs on the system. One
+> notable consequence of this addition is that a process running under a
+> restricted UID (i.e. one that is only allowed to setgid to certain
+> approved GIDs) will not be allowed to call the setgroups() syscall to
+> set its supplementary group IDs. For now, we leave such support for
+> restricted setgroups() to future work, as it would require hooking the
+> logic in setgroups() and verifying that the array of GIDs passed in from
+> userspace only consists of approved GIDs.
 > 
-> In this particular case, dentry/mnt pair (whichever way it gets
-> passed; struct path is exactly such a pair) is actually used to
-> specify the location of file or directory in question, but
-> try to guess that by description given in this "documentation"...
+> Signed-off-by: Micah Morton <mortonm@chromium.org>
+> ---
+> Tested with slight mod to test in tools/testing/selftests/safesetid for
+> testing setgid as well as setuid.
 > 
-> As for "defined in"... that's what grep/ctags/etc. are for.
-> Again, the useful information about an argument is _what_ gets
-> passed in it, not just which type it is...
+>  security/safesetid/lsm.c        | 263 +++++++++++++++++++++++++++-----
+>  security/safesetid/lsm.h        |  11 +-
+>  security/safesetid/securityfs.c | 105 +++++++++----
+>  3 files changed, 307 insertions(+), 72 deletions(-)
+> 
+> diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+> index cecd38e2ac80..5d9710b7bb04 100644
+> --- a/security/safesetid/lsm.c
+> +++ b/security/safesetid/lsm.c
+> @@ -26,27 +26,30 @@ int safesetid_initialized;
+>  
+>  #define NUM_BITS 8 /* 128 buckets in hash table */
+...
+> +int add_safesetid_whitelist_uid_entry(kuid_t parent, kuid_t child)
+>  {
+> -	struct entry *new;
+> +	struct id_entry *new;
+>  
+>  	/* Return if entry already exists */
+>  	if (check_setuid_policy_hashtable_key_value(parent, child))
+>  		return 0;
+>  
+> -	new = kzalloc(sizeof(struct entry), GFP_KERNEL);
+> +	new = kzalloc(sizeof(struct id_entry), GFP_KERNEL);
+> +	if (!new)
+> +		return -ENOMEM;
+> +	new->parent_kuid = __kuid_val(parent);
+> +	new->child_kid = __kuid_val(child);
+> +	spin_lock(&safesetid_whitelist_uid_hashtable_spinlock);
+> +	hash_add_rcu(safesetid_whitelist_uid_hashtable,
+> +		     &new->next,
+> +		     __kuid_val(parent));
 
-While I completely agree about the doubtful value of such comments,
-the whole documentation is written in style like that. Unfortunately,
-I don't have the knowledge to rewrite the documentation in every case
-even for functions from this patchset. And I will be surprised if a
-single person could do it for the whole LSM set.
-The patchset only minimally updates the documentation to lift it up
-to the current LSM declarations. And maybe to show once again that
-despite we've got the documentation on a hook it maybe not actual
-for 12 years since the hook was changed in 2006. But of course, it
-doesn't mean that documentation is not needed.
-This can give the maintainers additional arguments for stricter checks
-before accepting new hooks and changing the existing ones.
-I will try to improve the description in the second version of the
-patchset.
+Do you care at all about the possibility of duplicate entries?
+
+> +	spin_unlock(&safesetid_whitelist_uid_hashtable_spinlock);
+> +	return 0;
+> +}
