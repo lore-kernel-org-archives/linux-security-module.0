@@ -2,122 +2,109 @@ Return-Path: <SRS0=s2IT=QZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42098C43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 13:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FACEC43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 21:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D213A21872
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 13:39:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="QrHaLF0T"
+	by mail.kernel.org (Postfix) with ESMTP id E60002176F
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 21:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550523744;
+	bh=VNmClyfzxuXRVuqk2NWqj2E+R20XXrYbCsV9fVGVtPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SIGKZYuqGczXocaWkixdpXt89qLdAWoUIZpPM2lItpYWdY1MViiRk7A5BLuXpbp/i
+	 NAxae8csTTDfRBiRkyZ9oBYd0ISA0q3SjLNtt2PmeLVJmSOvNTK5v/CZ6pYa3qBK2O
+	 6vOmK6zZ+Gs6h2+I8b+8/uXJDyk484akQ3Ur/BII=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730462AbfBRNjS (ORCPT
+        id S1730005AbfBRVCW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:39:18 -0500
-Received: from forward501o.mail.yandex.net ([37.140.190.203]:39448 "EHLO
-        forward501o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727483AbfBRNjS (ORCPT
+        Mon, 18 Feb 2019 16:02:22 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:38461 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729997AbfBRVCW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:39:18 -0500
-Received: from mxback14j.mail.yandex.net (mxback14j.mail.yandex.net [IPv6:2a02:6b8:0:1619::90])
-        by forward501o.mail.yandex.net (Yandex) with ESMTP id 98A761E8054D;
-        Mon, 18 Feb 2019 16:39:13 +0300 (MSK)
-Received: from localhost (localhost [::1])
-        by mxback14j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id BiyURNAmi4-dBGeCrEX;
-        Mon, 18 Feb 2019 16:39:12 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1550497152;
-        bh=9ipw3FavveuSmTbeYKUzwcYkvsCng18ZyCpXSVAwHPg=;
-        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
-        b=QrHaLF0TBeooGnBmgdFv1CNkJPdyX0JNiSvgg+NTtej4d+Q1GMaCTCVvIAUWODq+y
-         bd2Mi3qXbGgFNEjPky8/8LDQoOzxYqvH2VRwJPZ132yP8vOthU5j771hfvzzgBPfw8
-         Wh06ODWpQeemWvFYn2c+k41Gmhb9I60BrHImQcjg=
-Authentication-Results: mxback14j.mail.yandex.net; dkim=pass header.i=@yandex.ru
-Received: by iva7-d29a8296bc3c.qloud-c.yandex.net with HTTP;
-        Mon, 18 Feb 2019 16:39:11 +0300
-From:   Nazarov Sergey <s-nazarov@yandex.ru>
-To:     Paul Moore <paul@paul-moore.com>,
-        David Miller <davem@davemloft.net>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
+        Mon, 18 Feb 2019 16:02:22 -0500
+Received: by mail-yb1-f193.google.com with SMTP id f196so2430781yba.5;
+        Mon, 18 Feb 2019 13:02:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mT6WOBgUOWpg3a/IZnk91lzR1wfES7mgilIFWYqcftE=;
+        b=Pn0c3YFhpdnAnixNJG0zf8JL95VtoAKHXssMwmUmo2+w9R+jQWYqrmcxLsfyuIbbsl
+         d+/ldMSN45dEAXJaWC9uDW/41nZZXoXecyBhB5sGAu7+jmwWLfp1nD2S6kJ+etsmYvFO
+         OdCbZD6PmqwLj42e/zFlum/g9C7yia16CZvAeAaHrCMOsAS4PKt7qIYkCf46i+6ziqIJ
+         TZmxwpf9LOX2SL2CaekflUqMBTRHibq7KlSmzFDLhrb59QF5NJ4fZcbEfvAtlkwfR8dk
+         7GwBoCeheQz1RlmGfOEMs3NgucGSmlquYlusoGge6FF3DU+iIqwIEtSkRNwvnJLTK52j
+         Bufw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mT6WOBgUOWpg3a/IZnk91lzR1wfES7mgilIFWYqcftE=;
+        b=qGEfq8P8vYyPYqRs7uKTue34gt7POc8vWuYN+SpWiFov6BobHh75dnWepns8FRzJkU
+         RpvoVHV/YYzu+HWiAJNbbeJ5EOzzb0Hn/rFCowz190umCnIU5B6M7KyqGLNS70GQ7aC3
+         JJc9Cv9uibN9Aw706VnhDuKGwgKtr9vjRQHgDJRwEZbNdkCY8GsE4Her5LjS9WdVTowG
+         f9xw7y8+p+oV+ZW25eg1FXKE6g5FsYO6z9fvGz8tWRGjpKjKwwE+53fXsrdZIvOSSAfd
+         oyLgIhRWWVQ8+sJiGkRO9K6ip1IecRLjxjoN8aOpTmUCbclu73j3Dn8qYhs/vHlTU4+n
+         zarA==
+X-Gm-Message-State: AHQUAua7udHgdOM+mJttUoOUuzmC9AVz5AwxVkkRMiqDI+W1miTDOAVV
+        SfMotz2xXRj1K16U9teENFM=
+X-Google-Smtp-Source: AHgI3IbauSa8BsXGLvbMsLV/ibWET/S/Xk3yQP/wZTqf1PJHaHpcgB45vHlIQbugHY0/JC2vlDFN1g==
+X-Received: by 2002:a25:6908:: with SMTP id e8mr21350697ybc.324.1550523741341;
+        Mon, 18 Feb 2019 13:02:21 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:2c70])
+        by smtp.gmail.com with ESMTPSA id s126sm5387720ywc.11.2019.02.18.13.02.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 13:02:19 -0800 (PST)
+Date:   Mon, 18 Feb 2019 13:02:15 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
-        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
-        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>
-In-Reply-To: <CAHC9VhRys7Efm=aQqph2ug9c8Ryra9imEG66avjeEeY8QZWTqw@mail.gmail.com>
-References: <6691891549984203@myt5-a323eb993ef7.qloud-c.yandex.net>
-         <20190214.084343.1138362153341500718.davem@davemloft.net> <CAHC9VhQK6Cmcx5kwYAPipR4YGyBHdkLEe3UH+VmNYGHu4PWqjQ@mail.gmail.com>
-         <20190215.120009.1549205062473501080.davem@davemloft.net> <CAHC9VhRys7Efm=aQqph2ug9c8Ryra9imEG66avjeEeY8QZWTqw@mail.gmail.com>
-Subject: Re: [PATCH] NETWORKING: avoid use IPCB in cipso_v4_error
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Subject: Re: [PATCH v6 5/5] kernfs: initialize security of newly created nodes
+Message-ID: <20190218210215.GS50184@devbig004.ftw2.facebook.com>
+References: <20190214095015.16032-1-omosnace@redhat.com>
+ <20190214095015.16032-6-omosnace@redhat.com>
+ <20190214154854.GO50184@devbig004.ftw2.facebook.com>
+ <CAFqZXNuOg9ex_WqCCKYzPQSeqbGmo-KP4Yh9TB4bbMZziG314A@mail.gmail.com>
+ <20190215155014.GP50184@devbig004.ftw2.facebook.com>
+ <CAFqZXNvVb75K9ZemVObcBB+rntL38_VfY5P6jyAbuwjymt6MQQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date:   Mon, 18 Feb 2019 16:39:11 +0300
-Message-Id: <1122331550497151@iva7-d29a8296bc3c.qloud-c.yandex.net>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqZXNvVb75K9ZemVObcBB+rntL38_VfY5P6jyAbuwjymt6MQQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I think, it would not be a good solution, if I will analyze all subsystems using icmp_send, because I do not have enough knowledge for this.
-I propose to add a new function, for example, ismp_send_safe, something like that:
+Hello,
 
-void icmp_send_safe(struct sk_buff *skb_in, int type, int code, __be32 info)
-{
-	unsigned char optbuf[sizeof(struct ip_options) + 40];
-	struct ip_options *opt = (struct ip_options *)optbuf;
+On Mon, Feb 18, 2019 at 11:03:58AM +0100, Ondrej Mosnacek wrote:
+> I don't think there is a way currently to check whether some LSM has
+> been enabled at boot or not. I suppose we could add such function for
+> this kind of heuristics, but I'm not sure how it would interplay with
+> the plans to allow multiple LSM to be enabled simultaneously...
+> Perhaps it would be better/easier to just add a
+> security_kernfs_needs_init() function, which would simply check if the
+> list of registered kernfs_init_security hooks is empty.
+> 
+> I propose something like the patch below (the whitespace is mangled -
+> intended just for visual review). I plan to fold it into the next
+> respin if there are no objections to this approach.
 
-	memset(opt, 0, sizeof(struct ip_options));
-	opt->optlen = ip_hdr(skb_in)->ihl*4 - sizeof(struct iphdr);
-	memcpy(opt->__data, (unsigned char *)&(ip_hdr(skb_in)[1]), opt->optlen);
-	if (ip_options_compile(dev_net(skb_in->dev), opt, NULL))
-		return;
-	__icmp_send(skb_in, type, code, info, opt);
-}
+Sounds good to me.
 
-which could be used when the code works at different network stack layers.
-And the subsystems developers, knowing their code well, will decide which one to use.
+Thanks.
 
-15.02.2019, 23:04, "Paul Moore" <paul@paul-moore.com>:
-> On Fri, Feb 15, 2019 at 3:00 PM David Miller <davem@davemloft.net> wrote:
->>  From: Paul Moore <paul@paul-moore.com>
->>  Date: Fri, 15 Feb 2019 14:02:31 -0500
->>
->>  > On Thu, Feb 14, 2019 at 11:43 AM David Miller <davem@davemloft.net> wrote:
->>  >> From: Nazarov Sergey <s-nazarov@yandex.ru>
->>  >> Date: Tue, 12 Feb 2019 18:10:03 +0300
->>  >>
->>  >> > Since cipso_v4_error might be called from different network stack layers, we can't safely use icmp_send there.
->>  >> > icmp_send copies IP options with ip_option_echo, which uses IPCB to take access to IP header compiled data.
->>  >> > But after commit 971f10ec ("tcp: better TCP_SKB_CB layout to reduce cache line misses"), IPCB can't be used
->>  >> > above IP layer.
->>  >> > This patch fixes the problem by creating in cipso_v4_error a local copy of compiled IP options and using it with
->>  >> > introduced __icmp_send function. This looks some overloaded, but in quite rare error conditions only.
->>  >> >
->>  >> > The original discussion is here:
->>  >> > https://lore.kernel.org/linux-security-module/16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net/
->>  >> >
->>  >> > Signed-off-by: Sergey Nazarov <s-nazarov@yandex.ru>
->>  >>
->>  >> This problem is not unique to Cipso, net/atm/clip.c's error handler
->>  >> has the same exact issue.
->>  >>
->>  >> I didn't scan more of the tree, there are probably a couple more
->>  >> locations as well.
->>  >
->>  > David, are you happy with Sergey's solution as a fix for this?
->>  >
->>  > If so, would you prefer a respin of this patch to apply the to the
->>  > other broken callers (e.g. net/atm/clip.c), or would you rather merge
->>  > this patch and deal with the other callers in separate patches?
->>
->>  I'd like the other broken callers to be handled.
->
-> Sergey, do you think you could fix the other callers too, or do you
-> want some help with that?
->
-> --
-> paul moore
-> www.paul-moore.com
+-- 
+tejun
