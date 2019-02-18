@@ -2,93 +2,89 @@ Return-Path: <SRS0=s2IT=QZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 415A2C10F06
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 02:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CD6C43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 03:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11712218C3
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 02:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 562F7218D3
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 03:57:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="sfIDCqcd"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lPFHHgru"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbfBRCqL (ORCPT
+        id S1728006AbfBRD5q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 17 Feb 2019 21:46:11 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41610 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727939AbfBRCqL (ORCPT
+        Sun, 17 Feb 2019 22:57:46 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:34885 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfBRD5q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 17 Feb 2019 21:46:11 -0500
-Received: by mail-lj1-f196.google.com with SMTP id z25so5157348ljk.8
-        for <linux-security-module@vger.kernel.org>; Sun, 17 Feb 2019 18:46:09 -0800 (PST)
+        Sun, 17 Feb 2019 22:57:46 -0500
+Received: by mail-ua1-f68.google.com with SMTP id k5so579840uao.2
+        for <linux-security-module@vger.kernel.org>; Sun, 17 Feb 2019 19:57:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/DFwKuZhp2tGU3us6NJa0n5ClRLptAu1w9i5MbORi1M=;
-        b=sfIDCqcdOgxM6O9aAAqtZFjFWOJI+8fFxB3Ka8z80V1UdQ5bGCGBHkv9UTNkNe0Mzt
-         eFIzlvt8RtfWMyaRAEQNkTiOHRNTPMHKzyqVFoJgVA0ye3IphqmE8Xsfk0oW9NL1rVaH
-         wdNU4u8WJ2evLyJyCwIttFzdNk3IkHqh/QhoT/cvlBVAn9Whii+J+O2eAPrOGskSOUwj
-         xypDlv6Zwb9An+ZX3vYRWt+Na6JEQISntD/qhKddagBhWpXUX7NDt//1u33B6/nDYto7
-         Ws8+XC14CCTqaAL4e4K5fUv5R6Uq6+WqcSqTWAk+d0UTZanFIoabr7QmNT/bophUiMnV
-         RpMA==
+        bh=UOsM3VCVgb9jvwPmcWRSvBagRCh9VlWAv72+Ih2qte0=;
+        b=lPFHHgruNQsGLwdT6TH5+K5HkaAvs54hgg8I+9lpT8zJJT90R+8fGdQhpnSnLdoT/1
+         /zu/zyHI3Oqk8te3MqN0NvqNRNOFQVN8eM0Z03NZ62Uq5DZ7cuCZg6PzAXI2L+6bAd6c
+         +pi/uIn8MrUihRld/jD2bcWL1eBT1XuclwbFA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/DFwKuZhp2tGU3us6NJa0n5ClRLptAu1w9i5MbORi1M=;
-        b=EhiyjF3ZCuw0IUaxdEOeyqMCCTA4OI3ci+Y0mhPPH/1EPvgje5lTIbIpkCkqwYmJh9
-         8t4kez9jnN+qycoiFFj21/DsMiVxfHWt5+BzK1y9bb03fVM/9RvBEG3yWvnxF75Cx0o9
-         8B91OAH9OPEM50CfhARSoVE+5YV0vBQuS1xtk1kzvQbe+rTmbuY44nKZg2o1mT/iHLP+
-         HN/25uLsGO8i6y+flwh/jPkCH1/YGtyASYmpnpcWP2lvTRJXJk8tbw866Ai/aWq8prhP
-         rsRxSE1sY0IDRpfmIan9/1NL0vfB2nqWbYcrqsayarHt683g6s3iagEI7aclsofCw+IB
-         hqQw==
-X-Gm-Message-State: AHQUAualoLZ45pM8F0hb1Cz1UR4qeXxT9M2gHWSV28kONuTxqEwfhcMt
-        ea9YiH4gXFxwleokpldGz5vRAKVrFbVBl5IO3uXE
-X-Google-Smtp-Source: AHgI3IYLzrhZQodvsXcPvyhPGwNyP3HL+2e5zzLCWSy5/pcGAcvohlbqnDcpE0X+wSIBYk8Tz2XUeDvnKfJivuGH/uQ=
-X-Received: by 2002:a2e:968c:: with SMTP id q12mr2450505lji.95.1550457968559;
- Sun, 17 Feb 2019 18:46:08 -0800 (PST)
+        bh=UOsM3VCVgb9jvwPmcWRSvBagRCh9VlWAv72+Ih2qte0=;
+        b=IWroZBJYl9x9uqOvAgtnnS9cOYzyIHZXt2WRK7xNVn8/2zgk0dDX4Qv/e+85X8lQ4X
+         kU9ynFLKwPJ6w2sM83Qug+f3ycl8gAzhLFKuqjT9OisPzNpYltaSZ+tvGvy/vvZvJK5f
+         6TqxkrgZFaeQdan363Qr8dkbundrEl3IZKPWM7oO5Nd2WnjlDOfmND07aV/gWx4RMTnj
+         QmFrUlJhwKhO/WBfgQb/U4G4kggBvG9EkL44X1twN1U736nv67DYpG8qY0fAFATlXRDo
+         zQY7sCjXmXc9bk4lujLDrvYbblF6uq1JzWgzoKtJys7JHk+R4g8KcklG/FSG2/YENi3k
+         aExA==
+X-Gm-Message-State: AHQUAuadkqhQHGjNy1nJu/rZciS4D4J+SSbhhqaYh6p3z3XOHMhm0waj
+        9lpk2aryV/KYwQvJ+Nh1/M28eSTO79g=
+X-Google-Smtp-Source: AHgI3IaBxiIPT6Pj1S+csYN0MnKO41ImQfcOEbeBNSl0zhyfFr8VPPLZg39rEskA/db3vECj8jZ5BQ==
+X-Received: by 2002:ab0:30ba:: with SMTP id b26mr10694008uam.137.1550462264684;
+        Sun, 17 Feb 2019 19:57:44 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id a30sm5962138uaf.18.2019.02.17.19.57.42
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 19:57:43 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id t13so8859133vsk.3
+        for <linux-security-module@vger.kernel.org>; Sun, 17 Feb 2019 19:57:42 -0800 (PST)
+X-Received: by 2002:a67:6f44:: with SMTP id k65mr10275404vsc.222.1550462262332;
+ Sun, 17 Feb 2019 19:57:42 -0800 (PST)
 MIME-Version: 1.0
 References: <20190212182318.GA16669@beast> <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
- <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp>
-In-Reply-To: <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 17 Feb 2019 21:45:57 -0500
-Message-ID: <CAHC9VhSy8iVUtN1Wt+cy-2RmJQhy34=0zKrUj+RQNEvNuD7y0w@mail.gmail.com>
+ <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp> <CAHC9VhSy8iVUtN1Wt+cy-2RmJQhy34=0zKrUj+RQNEvNuD7y0w@mail.gmail.com>
+In-Reply-To: <CAHC9VhSy8iVUtN1Wt+cy-2RmJQhy34=0zKrUj+RQNEvNuD7y0w@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sun, 17 Feb 2019 19:57:28 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+_Xd_On1WsMV18dbjGEg6NGBcSAj4RSp=LX2ALisuXPw@mail.gmail.com>
+Message-ID: <CAGXu5j+_Xd_On1WsMV18dbjGEg6NGBcSAj4RSp=LX2ALisuXPw@mail.gmail.com>
 Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     SELinux <selinux@vger.kernel.org>, kernel-team@lists.ubuntu.com,
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        SELinux <selinux@vger.kernel.org>,
+        Ubuntu Kernel Team <kernel-team@lists.ubuntu.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>,
         James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Feb 17, 2019 at 12:17 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2019/02/14 1:05, Casey Schaufler wrote:
-> > On 2/12/2019 10:23 AM, Kees Cook wrote:
-> >> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
-> >> used on the command line, and report that it is happening.
-> >>
-> >> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> >> Signed-off-by: Kees Cook <keescook@chromium.org>
-> >
-> > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->
-> The manual for TOMOYO was updated to follow this change.
-> SELinux folks and AppArmor folks, can we apply this change?
+On Sun, Feb 17, 2019 at 6:46 PM Paul Moore <paul@paul-moore.com> wrote:
+> My main concern is that "selinux={0|1}" continues to work as it has
+> for years.  It doesn't look like this affects that, but I can't say
+> I've dug into these changes very far.
 
-My main concern is that "selinux={0|1}" continues to work as it has
-for years.  It doesn't look like this affects that, but I can't say
-I've dug into these changes very far.
+Yup, no worries; it does. :)
 
 -- 
-paul moore
-www.paul-moore.com
+Kees Cook
