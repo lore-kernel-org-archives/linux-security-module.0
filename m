@@ -2,89 +2,156 @@ Return-Path: <SRS0=s2IT=QZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CD6C43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 03:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A4EC10F02
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 09:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 562F7218D3
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 03:57:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lPFHHgru"
+	by mail.kernel.org (Postfix) with ESMTP id 55FFD218D3
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 09:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550483001;
+	bh=5KQyjcgHMMJvQhYRe9+MzGsF49jugRElnB4gy2U8kfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=f241EFkU/v4iMopGWVylYlOOu6qWAabaOsndvu+2oK83QJREn7ZJynVv0NZljCRb/
+	 ca5wSnZ+6kcd3tX4O+Heu/YaqBTZiXWRnSuGWdsfinSmXdF3tS3WuzmJZ79LvO7lGf
+	 rwfg2ner96r2MguIUQ6C6OlFQVh7F/6AwbX3sads=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbfBRD5q (ORCPT
+        id S1728611AbfBRJnU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 17 Feb 2019 22:57:46 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:34885 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726995AbfBRD5q (ORCPT
+        Mon, 18 Feb 2019 04:43:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727228AbfBRJnU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 17 Feb 2019 22:57:46 -0500
-Received: by mail-ua1-f68.google.com with SMTP id k5so579840uao.2
-        for <linux-security-module@vger.kernel.org>; Sun, 17 Feb 2019 19:57:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UOsM3VCVgb9jvwPmcWRSvBagRCh9VlWAv72+Ih2qte0=;
-        b=lPFHHgruNQsGLwdT6TH5+K5HkaAvs54hgg8I+9lpT8zJJT90R+8fGdQhpnSnLdoT/1
-         /zu/zyHI3Oqk8te3MqN0NvqNRNOFQVN8eM0Z03NZ62Uq5DZ7cuCZg6PzAXI2L+6bAd6c
-         +pi/uIn8MrUihRld/jD2bcWL1eBT1XuclwbFA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UOsM3VCVgb9jvwPmcWRSvBagRCh9VlWAv72+Ih2qte0=;
-        b=IWroZBJYl9x9uqOvAgtnnS9cOYzyIHZXt2WRK7xNVn8/2zgk0dDX4Qv/e+85X8lQ4X
-         kU9ynFLKwPJ6w2sM83Qug+f3ycl8gAzhLFKuqjT9OisPzNpYltaSZ+tvGvy/vvZvJK5f
-         6TqxkrgZFaeQdan363Qr8dkbundrEl3IZKPWM7oO5Nd2WnjlDOfmND07aV/gWx4RMTnj
-         QmFrUlJhwKhO/WBfgQb/U4G4kggBvG9EkL44X1twN1U736nv67DYpG8qY0fAFATlXRDo
-         zQY7sCjXmXc9bk4lujLDrvYbblF6uq1JzWgzoKtJys7JHk+R4g8KcklG/FSG2/YENi3k
-         aExA==
-X-Gm-Message-State: AHQUAuadkqhQHGjNy1nJu/rZciS4D4J+SSbhhqaYh6p3z3XOHMhm0waj
-        9lpk2aryV/KYwQvJ+Nh1/M28eSTO79g=
-X-Google-Smtp-Source: AHgI3IaBxiIPT6Pj1S+csYN0MnKO41ImQfcOEbeBNSl0zhyfFr8VPPLZg39rEskA/db3vECj8jZ5BQ==
-X-Received: by 2002:ab0:30ba:: with SMTP id b26mr10694008uam.137.1550462264684;
-        Sun, 17 Feb 2019 19:57:44 -0800 (PST)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id a30sm5962138uaf.18.2019.02.17.19.57.42
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 19:57:43 -0800 (PST)
-Received: by mail-vs1-f43.google.com with SMTP id t13so8859133vsk.3
-        for <linux-security-module@vger.kernel.org>; Sun, 17 Feb 2019 19:57:42 -0800 (PST)
-X-Received: by 2002:a67:6f44:: with SMTP id k65mr10275404vsc.222.1550462262332;
- Sun, 17 Feb 2019 19:57:42 -0800 (PST)
+        Mon, 18 Feb 2019 04:43:20 -0500
+Received: from linux-8ccs (ip5f5adbd6.dynamic.kabel-deutschland.de [95.90.219.214])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A2E22177E;
+        Mon, 18 Feb 2019 09:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550482999;
+        bh=5KQyjcgHMMJvQhYRe9+MzGsF49jugRElnB4gy2U8kfQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rzJVQkO8Hk69UziSZkHvvTTvc6v5DwuFfktadgZz9jl5Ear/TdWqJOvPf6T0YDUPQ
+         /r9hdNPNrc27dT17sgF8XUBBiURP5TiNZd9kdNrzfQpcS7YWYr8WR/gsiMuX8eU+LR
+         L6TOUUbRjfx0csEV8OR7Xa0ZSN1AelLVUcSFJV+E=
+Date:   Mon, 18 Feb 2019 10:43:14 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
+Subject: Re: [PATCH v3] x86/ima: require signed kernel modules
+Message-ID: <20190218094313.GA9296@linux-8ccs>
+References: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
 MIME-Version: 1.0
-References: <20190212182318.GA16669@beast> <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
- <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp> <CAHC9VhSy8iVUtN1Wt+cy-2RmJQhy34=0zKrUj+RQNEvNuD7y0w@mail.gmail.com>
-In-Reply-To: <CAHC9VhSy8iVUtN1Wt+cy-2RmJQhy34=0zKrUj+RQNEvNuD7y0w@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 17 Feb 2019 19:57:28 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+_Xd_On1WsMV18dbjGEg6NGBcSAj4RSp=LX2ALisuXPw@mail.gmail.com>
-Message-ID: <CAGXu5j+_Xd_On1WsMV18dbjGEg6NGBcSAj4RSp=LX2ALisuXPw@mail.gmail.com>
-Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        SELinux <selinux@vger.kernel.org>,
-        Ubuntu Kernel Team <kernel-team@lists.ubuntu.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Feb 17, 2019 at 6:46 PM Paul Moore <paul@paul-moore.com> wrote:
-> My main concern is that "selinux={0|1}" continues to work as it has
-> for years.  It doesn't look like this affects that, but I can't say
-> I've dug into these changes very far.
++++ Mimi Zohar [15/02/19 11:50 -0500]:
+>Have the IMA architecture specific policy require signed kernel modules
+>on systems with secure boot mode enabled; and coordinate the different
+>signature verification methods, so only one signature is required.
+>
+>Requiring appended kernel module signatures may be configured, enabled
+>on the boot command line, or with this patch enabled in secure boot
+>mode.  This patch defines set_module_sig_enforced().
+>
+>To coordinate between appended kernel module signatures and IMA
+>signatures, only define an IMA MODULE_CHECK policy rule if
+>CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
+>and require an IMA signature.
+>
+>Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Yup, no worries; it does. :)
+Acked-by: Jessica Yu <jeyu@kernel.org>
 
--- 
-Kees Cook
+Thanks!
+
+>---
+> arch/x86/kernel/ima_arch.c | 9 ++++++++-
+> include/linux/module.h     | 5 +++++
+> kernel/module.c            | 5 +++++
+> 3 files changed, 18 insertions(+), 1 deletion(-)
+>
+>diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+>index e47cd9390ab4..3fb9847f1cad 100644
+>--- a/arch/x86/kernel/ima_arch.c
+>+++ b/arch/x86/kernel/ima_arch.c
+>@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
+> 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+> #endif /* CONFIG_KEXEC_VERIFY_SIG */
+> 	"measure func=KEXEC_KERNEL_CHECK",
+>+#if !IS_ENABLED(CONFIG_MODULE_SIG)
+>+	"appraise func=MODULE_CHECK appraise_type=imasig",
+>+#endif
+>+	"measure func=MODULE_CHECK",
+> 	NULL
+> };
+>
+> const char * const *arch_get_ima_policy(void)
+> {
+>-	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
+>+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
+>+		if (IS_ENABLED(CONFIG_MODULE_SIG))
+>+			set_module_sig_enforced();
+> 		return sb_arch_rules;
+>+	}
+> 	return NULL;
+> }
+>diff --git a/include/linux/module.h b/include/linux/module.h
+>index 8fa38d3e7538..5aaa9359adc8 100644
+>--- a/include/linux/module.h
+>+++ b/include/linux/module.h
+>@@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
+> #endif /* CONFIG_LIVEPATCH */
+>
+> bool is_module_sig_enforced(void);
+>+void set_module_sig_enforced(void);
+>
+> #else /* !CONFIG_MODULES... */
+>
+>@@ -780,6 +781,10 @@ static inline bool is_module_sig_enforced(void)
+> 	return false;
+> }
+>
+>+static inline void set_module_sig_enforced(void)
+>+{
+>+}
+>+
+> /* Dereference module function descriptor */
+> static inline
+> void *dereference_module_function_descriptor(struct module *mod, void *ptr)
+>diff --git a/kernel/module.c b/kernel/module.c
+>index 2ad1b5239910..73cada04bd24 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
+> }
+> EXPORT_SYMBOL(is_module_sig_enforced);
+>
+>+void set_module_sig_enforced(void)
+>+{
+>+	sig_enforce = true;
+>+}
+>+
+> /* Block module loading/unloading? */
+> int modules_disabled = 0;
+> core_param(nomodule, modules_disabled, bint, 0);
+>-- 
+>2.7.5
+>
