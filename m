@@ -2,156 +2,169 @@ Return-Path: <SRS0=s2IT=QZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A4EC10F02
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 09:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E408EC4360F
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 10:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55FFD218D3
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 09:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550483001;
-	bh=5KQyjcgHMMJvQhYRe9+MzGsF49jugRElnB4gy2U8kfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=f241EFkU/v4iMopGWVylYlOOu6qWAabaOsndvu+2oK83QJREn7ZJynVv0NZljCRb/
-	 ca5wSnZ+6kcd3tX4O+Heu/YaqBTZiXWRnSuGWdsfinSmXdF3tS3WuzmJZ79LvO7lGf
-	 rwfg2ner96r2MguIUQ6C6OlFQVh7F/6AwbX3sads=
+	by mail.kernel.org (Postfix) with ESMTP id BE53D21479
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 10:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728611AbfBRJnU (ORCPT
+        id S1728877AbfBRKEK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:43:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43730 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbfBRJnU (ORCPT
+        Mon, 18 Feb 2019 05:04:10 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44800 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727423AbfBRKEK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:43:20 -0500
-Received: from linux-8ccs (ip5f5adbd6.dynamic.kabel-deutschland.de [95.90.219.214])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A2E22177E;
-        Mon, 18 Feb 2019 09:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550482999;
-        bh=5KQyjcgHMMJvQhYRe9+MzGsF49jugRElnB4gy2U8kfQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rzJVQkO8Hk69UziSZkHvvTTvc6v5DwuFfktadgZz9jl5Ear/TdWqJOvPf6T0YDUPQ
-         /r9hdNPNrc27dT17sgF8XUBBiURP5TiNZd9kdNrzfQpcS7YWYr8WR/gsiMuX8eU+LR
-         L6TOUUbRjfx0csEV8OR7Xa0ZSN1AelLVUcSFJV+E=
-Date:   Mon, 18 Feb 2019 10:43:14 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
-Subject: Re: [PATCH v3] x86/ima: require signed kernel modules
-Message-ID: <20190218094313.GA9296@linux-8ccs>
-References: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
+        Mon, 18 Feb 2019 05:04:10 -0500
+Received: by mail-ot1-f66.google.com with SMTP id g1so27243378otj.11
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Feb 2019 02:04:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WbwmO6eINsku+SH1cWb89Z9C7TTVkRiQSZp8dOH1tRc=;
+        b=pXW61d81y+7J5Lo1RW4XKgH8KchEaGbfH7sd65agaSkuBh6wL6eGI9VJhJ+BEuYjCF
+         YluGRmLVMxiMeucRSEhkr4GcL7ONlAbwFSyTLPU88chPrgiqOD9HLAx2r5KLocXmSE16
+         A41p2MTQ7JHuETsIsBK203NV68h/pjeQiTqLEvikzvqGDUFPK+oZNhSLnzcNLzJWgBda
+         Nw20FhlPybpvlcvUY/ft2D+TviqxlvkUicf+ATOlb9zcMRZT8LMpyZyNiU+3sFL6A76v
+         Z40G2jgWsIHG0DVv4QhCGmer80D0IRbuxYDERKA0W7RyJWFpihhjJ3KjwqIjIENwoaNQ
+         ti0g==
+X-Gm-Message-State: AHQUAuboSJfXQWGV0OUW3u9gqDYSkzAfIMN9rrG2AeotosUE/ND4IyKw
+        SLOS8ALHze+KD8XIp3csTuHpquWndj+KpiKNhvT+TQ==
+X-Google-Smtp-Source: AHgI3IZcxOpohD0mbgzms0HNUj9nyRvF9sqx/UyoxKiQn6Zsb56/MCtfTJuTc0jtv79qS9JiMjhCHu0EoKkQFkyxrkk=
+X-Received: by 2002:a9d:27e3:: with SMTP id c90mr13331306otb.21.1550484249182;
+ Mon, 18 Feb 2019 02:04:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190214095015.16032-1-omosnace@redhat.com> <20190214095015.16032-6-omosnace@redhat.com>
+ <20190214154854.GO50184@devbig004.ftw2.facebook.com> <CAFqZXNuOg9ex_WqCCKYzPQSeqbGmo-KP4Yh9TB4bbMZziG314A@mail.gmail.com>
+ <20190215155014.GP50184@devbig004.ftw2.facebook.com>
+In-Reply-To: <20190215155014.GP50184@devbig004.ftw2.facebook.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Mon, 18 Feb 2019 11:03:58 +0100
+Message-ID: <CAFqZXNvVb75K9ZemVObcBB+rntL38_VfY5P6jyAbuwjymt6MQQ@mail.gmail.com>
+Subject: Re: [PATCH v6 5/5] kernfs: initialize security of newly created nodes
+To:     Tejun Heo <tj@kernel.org>
+Cc:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-+++ Mimi Zohar [15/02/19 11:50 -0500]:
->Have the IMA architecture specific policy require signed kernel modules
->on systems with secure boot mode enabled; and coordinate the different
->signature verification methods, so only one signature is required.
+On Fri, Feb 15, 2019 at 4:50 PM Tejun Heo <tj@kernel.org> wrote:
+> On Fri, Feb 15, 2019 at 04:45:44PM +0100, Ondrej Mosnacek wrote:
+> > On Thu, Feb 14, 2019 at 4:49 PM Tejun Heo <tj@kernel.org> wrote:
+> > > On Thu, Feb 14, 2019 at 10:50:15AM +0100, Ondrej Mosnacek wrote:
+> > > > +static int kernfs_node_init_security(struct kernfs_node *parent,
+> > > > +                                  struct kernfs_node *kn)
+> > >
+> > > Can we skip the whole thing if security is not enabled?
+> >
+> > Do you mean just skipping the whole part when CONFIG_SECURITY=n? That
+> > is easy to do and I can add it in the next respin (although the
+> > compiler should be able to optimize most of it out in that case).
 >
->Requiring appended kernel module signatures may be configured, enabled
->on the boot command line, or with this patch enabled in secure boot
->mode.  This patch defines set_module_sig_enforced().
->
->To coordinate between appended kernel module signatures and IMA
->signatures, only define an IMA MODULE_CHECK policy rule if
->CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
->and require an IMA signature.
->
->Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> So the goal is allowing folks who don't use this to not pay.  It'd be
+> better the evaulation can be as late as possible but obviously there's
+> a point where that'd be too complicated.  Maybe "ever enabled in this
+> boot" is a good and simple enough at the same time?
 
-Acked-by: Jessica Yu <jeyu@kernel.org>
+I don't think there is a way currently to check whether some LSM has
+been enabled at boot or not. I suppose we could add such function for
+this kind of heuristics, but I'm not sure how it would interplay with
+the plans to allow multiple LSM to be enabled simultaneously...
+Perhaps it would be better/easier to just add a
+security_kernfs_needs_init() function, which would simply check if the
+list of registered kernfs_init_security hooks is empty.
 
-Thanks!
+I propose something like the patch below (the whitespace is mangled -
+intended just for visual review). I plan to fold it into the next
+respin if there are no objections to this approach.
 
->---
-> arch/x86/kernel/ima_arch.c | 9 ++++++++-
-> include/linux/module.h     | 5 +++++
-> kernel/module.c            | 5 +++++
-> 3 files changed, 18 insertions(+), 1 deletion(-)
->
->diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
->index e47cd9390ab4..3fb9847f1cad 100644
->--- a/arch/x86/kernel/ima_arch.c
->+++ b/arch/x86/kernel/ima_arch.c
->@@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
-> 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-> #endif /* CONFIG_KEXEC_VERIFY_SIG */
-> 	"measure func=KEXEC_KERNEL_CHECK",
->+#if !IS_ENABLED(CONFIG_MODULE_SIG)
->+	"appraise func=MODULE_CHECK appraise_type=imasig",
->+#endif
->+	"measure func=MODULE_CHECK",
-> 	NULL
-> };
->
-> const char * const *arch_get_ima_policy(void)
-> {
->-	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
->+	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
->+		if (IS_ENABLED(CONFIG_MODULE_SIG))
->+			set_module_sig_enforced();
-> 		return sb_arch_rules;
->+	}
-> 	return NULL;
-> }
->diff --git a/include/linux/module.h b/include/linux/module.h
->index 8fa38d3e7538..5aaa9359adc8 100644
->--- a/include/linux/module.h
->+++ b/include/linux/module.h
->@@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
-> #endif /* CONFIG_LIVEPATCH */
->
-> bool is_module_sig_enforced(void);
->+void set_module_sig_enforced(void);
->
-> #else /* !CONFIG_MODULES... */
->
->@@ -780,6 +781,10 @@ static inline bool is_module_sig_enforced(void)
-> 	return false;
-> }
->
->+static inline void set_module_sig_enforced(void)
->+{
->+}
->+
-> /* Dereference module function descriptor */
-> static inline
-> void *dereference_module_function_descriptor(struct module *mod, void *ptr)
->diff --git a/kernel/module.c b/kernel/module.c
->index 2ad1b5239910..73cada04bd24 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
-> }
-> EXPORT_SYMBOL(is_module_sig_enforced);
->
->+void set_module_sig_enforced(void)
->+{
->+	sig_enforce = true;
->+}
->+
-> /* Block module loading/unloading? */
-> int modules_disabled = 0;
-> core_param(nomodule, modules_disabled, bint, 0);
->-- 
->2.7.5
->
+diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+index 735a6d382d9d..5b99205da919 100644
+--- a/fs/kernfs/dir.c
++++ b/fs/kernfs/dir.c
+@@ -625,6 +625,9 @@ static int kernfs_node_init_security(struct
+kernfs_node *parent,
+        struct qstr q;
+        int ret;
+
++       if (!security_kernfs_needs_init() || !parent)
++               return 0;
++
+        if (!parent->iattr) {
+                kernfs_iattr_init(&iattr_parent, parent);
+                simple_xattrs_init(&xattr_parent);
+@@ -720,11 +723,9 @@ static struct kernfs_node
+*__kernfs_new_node(struct kernfs_root *root,
+                        goto err_out3;
+        }
+
+-       if (parent) {
+-               ret = kernfs_node_init_security(parent, kn);
+-               if (ret)
+-                       goto err_out3;
+-       }
++       ret = kernfs_node_init_security(parent, kn);
++       if (ret)
++               goto err_out3;
+
+        return kn;
+
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 581944d1e61e..49a083dbc464 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -292,6 +292,7 @@ int security_inode_listsecurity(struct inode
+*inode, char *buffer, size_t buffer
+ void security_inode_getsecid(struct inode *inode, u32 *secid);
+ int security_inode_copy_up(struct dentry *src, struct cred **new);
+ int security_inode_copy_up_xattr(const char *name);
++int security_kernfs_needs_init(void);
+ int security_kernfs_init_security(const struct qstr *qstr,
+                                  const struct iattr *dir_iattr,
+                                  struct simple_xattrs *dir_secattr,
+@@ -789,6 +790,11 @@ static inline int security_inode_copy_up(struct
+dentry *src, struct cred **new)
+        return 0;
+ }
+
++static inline int security_kernfs_needs_init(void)
++{
++       return 0;
++}
++
+ static inline int security_kernfs_init_security(
+                const struct qstr *qstr, const struct iattr *dir_iattr,
+                struct simple_xattrs *dir_secattr, const struct iattr *iattr,
+diff --git a/security/security.c b/security/security.c
+index 836e0822874a..3c8b9b5baabc 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -892,6 +892,11 @@ int security_inode_copy_up_xattr(const char *name)
+ }
+ EXPORT_SYMBOL(security_inode_copy_up_xattr);
+
++int security_kernfs_needs_init(void)
++{
++       return !hlist_empty(&security_hook_heads.kernfs_init_security);
++}
++
+ int security_kernfs_init_security(const struct qstr *qstr,
+                                  const struct iattr *dir_iattr,
+                                  struct simple_xattrs *dir_secattr,
+
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
