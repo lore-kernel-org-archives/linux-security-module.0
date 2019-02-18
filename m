@@ -1,98 +1,94 @@
-Return-Path: <SRS0=nw36=QY=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=s2IT=QZ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72349C43381
-	for <linux-security-module@archiver.kernel.org>; Sun, 17 Feb 2019 22:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 415A2C10F06
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 02:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD8221773
-	for <linux-security-module@archiver.kernel.org>; Sun, 17 Feb 2019 22:19:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11712218C3
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 02:46:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SG0l6A6P"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="sfIDCqcd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbfBQWTE (ORCPT
+        id S1728122AbfBRCqL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 17 Feb 2019 17:19:04 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45242 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfBQWTE (ORCPT
+        Sun, 17 Feb 2019 21:46:11 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41610 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727939AbfBRCqL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 17 Feb 2019 17:19:04 -0500
-Received: by mail-pl1-f194.google.com with SMTP id r14so7708866pls.12
-        for <linux-security-module@vger.kernel.org>; Sun, 17 Feb 2019 14:19:03 -0800 (PST)
+        Sun, 17 Feb 2019 21:46:11 -0500
+Received: by mail-lj1-f196.google.com with SMTP id z25so5157348ljk.8
+        for <linux-security-module@vger.kernel.org>; Sun, 17 Feb 2019 18:46:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=ehJ5l7zl5GcH3pulBWL6yMGSbcSlnXfgoJd7ExWqT38=;
-        b=SG0l6A6P/hPKBrUCZmQ1cNdv/oQgJqyPC46MdB+dLeXVy0s60tcGq/qq58OX288Wpc
-         zNmUYEoslb6O6Sb3aWmN2o6CX0WUdri2hF/xwSeT+Kug0bcMASTEps46yQ4ivHbyDEke
-         61qJrupamV64Y4n0Lk345Nyf5U7y44j+civJE=
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/DFwKuZhp2tGU3us6NJa0n5ClRLptAu1w9i5MbORi1M=;
+        b=sfIDCqcdOgxM6O9aAAqtZFjFWOJI+8fFxB3Ka8z80V1UdQ5bGCGBHkv9UTNkNe0Mzt
+         eFIzlvt8RtfWMyaRAEQNkTiOHRNTPMHKzyqVFoJgVA0ye3IphqmE8Xsfk0oW9NL1rVaH
+         wdNU4u8WJ2evLyJyCwIttFzdNk3IkHqh/QhoT/cvlBVAn9Whii+J+O2eAPrOGskSOUwj
+         xypDlv6Zwb9An+ZX3vYRWt+Na6JEQISntD/qhKddagBhWpXUX7NDt//1u33B6/nDYto7
+         Ws8+XC14CCTqaAL4e4K5fUv5R6Uq6+WqcSqTWAk+d0UTZanFIoabr7QmNT/bophUiMnV
+         RpMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=ehJ5l7zl5GcH3pulBWL6yMGSbcSlnXfgoJd7ExWqT38=;
-        b=co/fpk4hy88l5SedUet5sXM/9kPRwen454iXyrjtoGQ2NAnMFgmkTZTsXZL7lIjST2
-         J6CoPcRy1D7yMhRMEoPU/ITxldGFr3zF61ZkLvcvjDFGkiZfxa18MWLgVSjhZc1rDvqm
-         qo+HROSSovz7YSREJMLWF03nVhg8naLt1libtMFGC9802PHZTNjE39kRgL5HoNUbBgHo
-         p7XBVPkGAoy6KT3gvjqEMtgOHmqfnlxlOapkfd07nNabjo13SVJn+khdMHlU/9npDwOv
-         Q+CiI/pFqkFdL/CIjEm4Eh65gLXm3WzcLlPOE3dyaeJ0UWwKEwpDFFRVjnQjuBhrT7OO
-         ECiA==
-X-Gm-Message-State: AHQUAuZ/Du8cfORdi6iVjYjSEQVFtH6qJ9OExFOLumvV+KSre2CnLId0
-        kDCOsAkis9lLeYB1z8QHVyhR7g1cpQs=
-X-Google-Smtp-Source: AHgI3IZHgxNUIg/i9IZSRczYFFgfpXkJy1F7TJw0LzZ6blHPsBl8PYxJW4ZPTBdZf1yNq6jlczN/yg==
-X-Received: by 2002:a17:902:8f98:: with SMTP id z24mr21577540plo.40.1550441943714;
-        Sun, 17 Feb 2019 14:19:03 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id 64sm18521293pfe.143.2019.02.17.14.19.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 17 Feb 2019 14:19:02 -0800 (PST)
-Date:   Sun, 17 Feb 2019 14:19:01 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     efremov <efremov@ispras.ru>, James Morris <jmorris@namei.org>,
-        linux-doc@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] doc: security: Add kern-doc for lsm_hooks.h
-Message-ID: <20190217221901.GA41920@beast>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/DFwKuZhp2tGU3us6NJa0n5ClRLptAu1w9i5MbORi1M=;
+        b=EhiyjF3ZCuw0IUaxdEOeyqMCCTA4OI3ci+Y0mhPPH/1EPvgje5lTIbIpkCkqwYmJh9
+         8t4kez9jnN+qycoiFFj21/DsMiVxfHWt5+BzK1y9bb03fVM/9RvBEG3yWvnxF75Cx0o9
+         8B91OAH9OPEM50CfhARSoVE+5YV0vBQuS1xtk1kzvQbe+rTmbuY44nKZg2o1mT/iHLP+
+         HN/25uLsGO8i6y+flwh/jPkCH1/YGtyASYmpnpcWP2lvTRJXJk8tbw866Ai/aWq8prhP
+         rsRxSE1sY0IDRpfmIan9/1NL0vfB2nqWbYcrqsayarHt683g6s3iagEI7aclsofCw+IB
+         hqQw==
+X-Gm-Message-State: AHQUAualoLZ45pM8F0hb1Cz1UR4qeXxT9M2gHWSV28kONuTxqEwfhcMt
+        ea9YiH4gXFxwleokpldGz5vRAKVrFbVBl5IO3uXE
+X-Google-Smtp-Source: AHgI3IYLzrhZQodvsXcPvyhPGwNyP3HL+2e5zzLCWSy5/pcGAcvohlbqnDcpE0X+wSIBYk8Tz2XUeDvnKfJivuGH/uQ=
+X-Received: by 2002:a2e:968c:: with SMTP id q12mr2450505lji.95.1550457968559;
+ Sun, 17 Feb 2019 18:46:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20190212182318.GA16669@beast> <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
+ <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp>
+In-Reply-To: <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 17 Feb 2019 21:45:57 -0500
+Message-ID: <CAHC9VhSy8iVUtN1Wt+cy-2RmJQhy34=0zKrUj+RQNEvNuD7y0w@mail.gmail.com>
+Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     SELinux <selinux@vger.kernel.org>, kernel-team@lists.ubuntu.com,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There is a lot of kern-doc for the LSM internals, but it wasn't visible
-in the HTML output. This exposes some formatting flaws in lsm_hooks.h
-that will be fixed in a later series of patches.
+On Sun, Feb 17, 2019 at 12:17 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2019/02/14 1:05, Casey Schaufler wrote:
+> > On 2/12/2019 10:23 AM, Kees Cook wrote:
+> >> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
+> >> used on the command line, and report that it is happening.
+> >>
+> >> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> >> Signed-off-by: Kees Cook <keescook@chromium.org>
+> >
+> > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+>
+> The manual for TOMOYO was updated to follow this change.
+> SELinux folks and AppArmor folks, can we apply this change?
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- Documentation/security/LSM.rst | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/security/LSM.rst b/Documentation/security/LSM.rst
-index 8b9ee597e9d0..31d92bc5fdd2 100644
---- a/Documentation/security/LSM.rst
-+++ b/Documentation/security/LSM.rst
-@@ -11,4 +11,7 @@ that end users and distros can make a more informed decision about which
- LSMs suit their requirements.
- 
- For extensive documentation on the available LSM hook interfaces, please
--see ``include/linux/lsm_hooks.h``.
-+see ``include/linux/lsm_hooks.h`` and associated structures:
-+
-+.. kernel-doc:: include/linux/lsm_hooks.h
-+   :internal:
--- 
-2.17.1
-
+My main concern is that "selinux={0|1}" continues to work as it has
+for years.  It doesn't look like this affects that, but I can't say
+I've dug into these changes very far.
 
 -- 
-Kees Cook
+paul moore
+www.paul-moore.com
