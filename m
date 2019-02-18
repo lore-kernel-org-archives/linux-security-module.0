@@ -2,169 +2,122 @@ Return-Path: <SRS0=s2IT=QZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E408EC4360F
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 10:04:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42098C43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 13:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE53D21479
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 10:04:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D213A21872
+	for <linux-security-module@archiver.kernel.org>; Mon, 18 Feb 2019 13:39:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="QrHaLF0T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728877AbfBRKEK (ORCPT
+        id S1730462AbfBRNjS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:04:10 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44800 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfBRKEK (ORCPT
+        Mon, 18 Feb 2019 08:39:18 -0500
+Received: from forward501o.mail.yandex.net ([37.140.190.203]:39448 "EHLO
+        forward501o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727483AbfBRNjS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:04:10 -0500
-Received: by mail-ot1-f66.google.com with SMTP id g1so27243378otj.11
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Feb 2019 02:04:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WbwmO6eINsku+SH1cWb89Z9C7TTVkRiQSZp8dOH1tRc=;
-        b=pXW61d81y+7J5Lo1RW4XKgH8KchEaGbfH7sd65agaSkuBh6wL6eGI9VJhJ+BEuYjCF
-         YluGRmLVMxiMeucRSEhkr4GcL7ONlAbwFSyTLPU88chPrgiqOD9HLAx2r5KLocXmSE16
-         A41p2MTQ7JHuETsIsBK203NV68h/pjeQiTqLEvikzvqGDUFPK+oZNhSLnzcNLzJWgBda
-         Nw20FhlPybpvlcvUY/ft2D+TviqxlvkUicf+ATOlb9zcMRZT8LMpyZyNiU+3sFL6A76v
-         Z40G2jgWsIHG0DVv4QhCGmer80D0IRbuxYDERKA0W7RyJWFpihhjJ3KjwqIjIENwoaNQ
-         ti0g==
-X-Gm-Message-State: AHQUAuboSJfXQWGV0OUW3u9gqDYSkzAfIMN9rrG2AeotosUE/ND4IyKw
-        SLOS8ALHze+KD8XIp3csTuHpquWndj+KpiKNhvT+TQ==
-X-Google-Smtp-Source: AHgI3IZcxOpohD0mbgzms0HNUj9nyRvF9sqx/UyoxKiQn6Zsb56/MCtfTJuTc0jtv79qS9JiMjhCHu0EoKkQFkyxrkk=
-X-Received: by 2002:a9d:27e3:: with SMTP id c90mr13331306otb.21.1550484249182;
- Mon, 18 Feb 2019 02:04:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20190214095015.16032-1-omosnace@redhat.com> <20190214095015.16032-6-omosnace@redhat.com>
- <20190214154854.GO50184@devbig004.ftw2.facebook.com> <CAFqZXNuOg9ex_WqCCKYzPQSeqbGmo-KP4Yh9TB4bbMZziG314A@mail.gmail.com>
- <20190215155014.GP50184@devbig004.ftw2.facebook.com>
-In-Reply-To: <20190215155014.GP50184@devbig004.ftw2.facebook.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 18 Feb 2019 11:03:58 +0100
-Message-ID: <CAFqZXNvVb75K9ZemVObcBB+rntL38_VfY5P6jyAbuwjymt6MQQ@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] kernfs: initialize security of newly created nodes
-To:     Tejun Heo <tj@kernel.org>
-Cc:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Linux Security Module list 
+        Mon, 18 Feb 2019 08:39:18 -0500
+Received: from mxback14j.mail.yandex.net (mxback14j.mail.yandex.net [IPv6:2a02:6b8:0:1619::90])
+        by forward501o.mail.yandex.net (Yandex) with ESMTP id 98A761E8054D;
+        Mon, 18 Feb 2019 16:39:13 +0300 (MSK)
+Received: from localhost (localhost [::1])
+        by mxback14j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id BiyURNAmi4-dBGeCrEX;
+        Mon, 18 Feb 2019 16:39:12 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1550497152;
+        bh=9ipw3FavveuSmTbeYKUzwcYkvsCng18ZyCpXSVAwHPg=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:Message-Id;
+        b=QrHaLF0TBeooGnBmgdFv1CNkJPdyX0JNiSvgg+NTtej4d+Q1GMaCTCVvIAUWODq+y
+         bd2Mi3qXbGgFNEjPky8/8LDQoOzxYqvH2VRwJPZ132yP8vOthU5j771hfvzzgBPfw8
+         Wh06ODWpQeemWvFYn2c+k41Gmhb9I60BrHImQcjg=
+Authentication-Results: mxback14j.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by iva7-d29a8296bc3c.qloud-c.yandex.net with HTTP;
+        Mon, 18 Feb 2019 16:39:11 +0300
+From:   Nazarov Sergey <s-nazarov@yandex.ru>
+To:     Paul Moore <paul@paul-moore.com>,
+        David Miller <davem@davemloft.net>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
+        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>
+In-Reply-To: <CAHC9VhRys7Efm=aQqph2ug9c8Ryra9imEG66avjeEeY8QZWTqw@mail.gmail.com>
+References: <6691891549984203@myt5-a323eb993ef7.qloud-c.yandex.net>
+         <20190214.084343.1138362153341500718.davem@davemloft.net> <CAHC9VhQK6Cmcx5kwYAPipR4YGyBHdkLEe3UH+VmNYGHu4PWqjQ@mail.gmail.com>
+         <20190215.120009.1549205062473501080.davem@davemloft.net> <CAHC9VhRys7Efm=aQqph2ug9c8Ryra9imEG66avjeEeY8QZWTqw@mail.gmail.com>
+Subject: Re: [PATCH] NETWORKING: avoid use IPCB in cipso_v4_error
+MIME-Version: 1.0
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date:   Mon, 18 Feb 2019 16:39:11 +0300
+Message-Id: <1122331550497151@iva7-d29a8296bc3c.qloud-c.yandex.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 15, 2019 at 4:50 PM Tejun Heo <tj@kernel.org> wrote:
-> On Fri, Feb 15, 2019 at 04:45:44PM +0100, Ondrej Mosnacek wrote:
-> > On Thu, Feb 14, 2019 at 4:49 PM Tejun Heo <tj@kernel.org> wrote:
-> > > On Thu, Feb 14, 2019 at 10:50:15AM +0100, Ondrej Mosnacek wrote:
-> > > > +static int kernfs_node_init_security(struct kernfs_node *parent,
-> > > > +                                  struct kernfs_node *kn)
-> > >
-> > > Can we skip the whole thing if security is not enabled?
-> >
-> > Do you mean just skipping the whole part when CONFIG_SECURITY=n? That
-> > is easy to do and I can add it in the next respin (although the
-> > compiler should be able to optimize most of it out in that case).
+I think, it would not be a good solution, if I will analyze all subsystems using icmp_send, because I do not have enough knowledge for this.
+I propose to add a new function, for example, ismp_send_safe, something like that:
+
+void icmp_send_safe(struct sk_buff *skb_in, int type, int code, __be32 info)
+{
+	unsigned char optbuf[sizeof(struct ip_options) + 40];
+	struct ip_options *opt = (struct ip_options *)optbuf;
+
+	memset(opt, 0, sizeof(struct ip_options));
+	opt->optlen = ip_hdr(skb_in)->ihl*4 - sizeof(struct iphdr);
+	memcpy(opt->__data, (unsigned char *)&(ip_hdr(skb_in)[1]), opt->optlen);
+	if (ip_options_compile(dev_net(skb_in->dev), opt, NULL))
+		return;
+	__icmp_send(skb_in, type, code, info, opt);
+}
+
+which could be used when the code works at different network stack layers.
+And the subsystems developers, knowing their code well, will decide which one to use.
+
+15.02.2019, 23:04, "Paul Moore" <paul@paul-moore.com>:
+> On Fri, Feb 15, 2019 at 3:00 PM David Miller <davem@davemloft.net> wrote:
+>>  From: Paul Moore <paul@paul-moore.com>
+>>  Date: Fri, 15 Feb 2019 14:02:31 -0500
+>>
+>>  > On Thu, Feb 14, 2019 at 11:43 AM David Miller <davem@davemloft.net> wrote:
+>>  >> From: Nazarov Sergey <s-nazarov@yandex.ru>
+>>  >> Date: Tue, 12 Feb 2019 18:10:03 +0300
+>>  >>
+>>  >> > Since cipso_v4_error might be called from different network stack layers, we can't safely use icmp_send there.
+>>  >> > icmp_send copies IP options with ip_option_echo, which uses IPCB to take access to IP header compiled data.
+>>  >> > But after commit 971f10ec ("tcp: better TCP_SKB_CB layout to reduce cache line misses"), IPCB can't be used
+>>  >> > above IP layer.
+>>  >> > This patch fixes the problem by creating in cipso_v4_error a local copy of compiled IP options and using it with
+>>  >> > introduced __icmp_send function. This looks some overloaded, but in quite rare error conditions only.
+>>  >> >
+>>  >> > The original discussion is here:
+>>  >> > https://lore.kernel.org/linux-security-module/16659801547571984@sas1-890ba5c2334a.qloud-c.yandex.net/
+>>  >> >
+>>  >> > Signed-off-by: Sergey Nazarov <s-nazarov@yandex.ru>
+>>  >>
+>>  >> This problem is not unique to Cipso, net/atm/clip.c's error handler
+>>  >> has the same exact issue.
+>>  >>
+>>  >> I didn't scan more of the tree, there are probably a couple more
+>>  >> locations as well.
+>>  >
+>>  > David, are you happy with Sergey's solution as a fix for this?
+>>  >
+>>  > If so, would you prefer a respin of this patch to apply the to the
+>>  > other broken callers (e.g. net/atm/clip.c), or would you rather merge
+>>  > this patch and deal with the other callers in separate patches?
+>>
+>>  I'd like the other broken callers to be handled.
 >
-> So the goal is allowing folks who don't use this to not pay.  It'd be
-> better the evaulation can be as late as possible but obviously there's
-> a point where that'd be too complicated.  Maybe "ever enabled in this
-> boot" is a good and simple enough at the same time?
-
-I don't think there is a way currently to check whether some LSM has
-been enabled at boot or not. I suppose we could add such function for
-this kind of heuristics, but I'm not sure how it would interplay with
-the plans to allow multiple LSM to be enabled simultaneously...
-Perhaps it would be better/easier to just add a
-security_kernfs_needs_init() function, which would simply check if the
-list of registered kernfs_init_security hooks is empty.
-
-I propose something like the patch below (the whitespace is mangled -
-intended just for visual review). I plan to fold it into the next
-respin if there are no objections to this approach.
-
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index 735a6d382d9d..5b99205da919 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -625,6 +625,9 @@ static int kernfs_node_init_security(struct
-kernfs_node *parent,
-        struct qstr q;
-        int ret;
-
-+       if (!security_kernfs_needs_init() || !parent)
-+               return 0;
-+
-        if (!parent->iattr) {
-                kernfs_iattr_init(&iattr_parent, parent);
-                simple_xattrs_init(&xattr_parent);
-@@ -720,11 +723,9 @@ static struct kernfs_node
-*__kernfs_new_node(struct kernfs_root *root,
-                        goto err_out3;
-        }
-
--       if (parent) {
--               ret = kernfs_node_init_security(parent, kn);
--               if (ret)
--                       goto err_out3;
--       }
-+       ret = kernfs_node_init_security(parent, kn);
-+       if (ret)
-+               goto err_out3;
-
-        return kn;
-
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 581944d1e61e..49a083dbc464 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -292,6 +292,7 @@ int security_inode_listsecurity(struct inode
-*inode, char *buffer, size_t buffer
- void security_inode_getsecid(struct inode *inode, u32 *secid);
- int security_inode_copy_up(struct dentry *src, struct cred **new);
- int security_inode_copy_up_xattr(const char *name);
-+int security_kernfs_needs_init(void);
- int security_kernfs_init_security(const struct qstr *qstr,
-                                  const struct iattr *dir_iattr,
-                                  struct simple_xattrs *dir_secattr,
-@@ -789,6 +790,11 @@ static inline int security_inode_copy_up(struct
-dentry *src, struct cred **new)
-        return 0;
- }
-
-+static inline int security_kernfs_needs_init(void)
-+{
-+       return 0;
-+}
-+
- static inline int security_kernfs_init_security(
-                const struct qstr *qstr, const struct iattr *dir_iattr,
-                struct simple_xattrs *dir_secattr, const struct iattr *iattr,
-diff --git a/security/security.c b/security/security.c
-index 836e0822874a..3c8b9b5baabc 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -892,6 +892,11 @@ int security_inode_copy_up_xattr(const char *name)
- }
- EXPORT_SYMBOL(security_inode_copy_up_xattr);
-
-+int security_kernfs_needs_init(void)
-+{
-+       return !hlist_empty(&security_hook_heads.kernfs_init_security);
-+}
-+
- int security_kernfs_init_security(const struct qstr *qstr,
-                                  const struct iattr *dir_iattr,
-                                  struct simple_xattrs *dir_secattr,
-
---
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+> Sergey, do you think you could fix the other callers too, or do you
+> want some help with that?
+>
+> --
+> paul moore
+> www.paul-moore.com
