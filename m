@@ -3,485 +3,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D49BC10F00
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E0AC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5EB21738
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:29:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0770621738
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:30:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfBSQ35 (ORCPT
+        id S1729099AbfBSQaF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:29:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37884 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 11:30:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35520 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729234AbfBSQ35 (ORCPT
+        id S1728984AbfBSQaF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:29:57 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        Tue, 19 Feb 2019 11:30:05 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 501359FDD3;
-        Tue, 19 Feb 2019 16:29:56 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B6D407D0CB;
+        Tue, 19 Feb 2019 16:30:04 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C830D17C78;
-        Tue, 19 Feb 2019 16:29:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6975061080;
+        Tue, 19 Feb 2019 16:30:02 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 11/43] convert do_remount_sb() to fs_context
+Subject: [PATCH 12/43] fs_context flavour for submounts
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
         torvalds@linux-foundation.org, ebiederm@xmission.com,
         linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 16:29:54 +0000
-Message-ID: <155059379404.12449.7151387243186063769.stgit@warthog.procyon.org.uk>
+Date:   Tue, 19 Feb 2019 16:30:01 +0000
+Message-ID: <155059380154.12449.5948045751612660590.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 References: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 19 Feb 2019 16:29:56 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 19 Feb 2019 16:30:04 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Replace do_remount_sb() with a function, reconfigure_super(), that's
-fs_context aware.  The fs_context is expected to be parameterised already
-and have ->root pointing to the superblock to be reconfigured.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-A legacy wrapper is provided that is intended to be called from the
-fs_context ops when those appear, but for now is called directly from
-reconfigure_super().  This wrapper invokes the ->remount_fs() superblock op
-for the moment.  It is intended that the remount_fs() op will be phased
-out.
+This is an eventual replacement for vfs_submount() uses.  Unlike the
+"mount" and "remount" cases, the users of that thing are not in VFS -
+they are buried in various ->d_automount() instances and rather than
+converting them all at once we introduce the (thankfully small and
+simple) infrastructure here and deal with the prospective users in
+afs, nfs, etc. parts of the series.
 
-The fs_context->purpose is set to FS_CONTEXT_FOR_RECONFIGURE to indicate
-that the context is being used for reconfiguration.
+Here we just introduce a new constructor (fs_context_for_submount())
+along with the corresponding enum constant to be put into fc->purpose
+for those.
 
-do_umount_root() is provided to consolidate remount-to-R/O for umount and
-emergency remount by creating a context and invoking reconfiguration.
-
-do_remount(), do_umount() and do_emergency_remount_callback() are switched
-to use the new process.
-
-[AV -- fold UMOUNT and EMERGENCY_REMOUNT in; fixes the
-umount / bug, gets rid of pointless complexity]
-[AV -- set ->net_ns in all cases; nfs remount will need that]
-[AV -- shift security_sb_remount() call into reconfigure_super(); the callers
-that didn't do security_sb_remount() have NULL fc->security anyway, so it's
-a no-op for them]
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Co-developed-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
- fs/fs_context.c            |   35 ++++++++++++++
- fs/internal.h              |    3 +
- fs/namespace.c             |   61 ++++++++++++++++---------
- fs/super.c                 |  107 ++++++++++++++++++++++++++++++--------------
- include/linux/fs.h         |    1 
- include/linux/fs_context.h |    4 ++
- 6 files changed, 152 insertions(+), 59 deletions(-)
+ fs/fs_context.c            |   10 ++++++++++
+ include/linux/fs_context.h |    3 +++
+ 2 files changed, 13 insertions(+)
 
 diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 857cd46a687b..5e2c3aba1dd8 100644
+index 5e2c3aba1dd8..2bd652b6e848 100644
 --- a/fs/fs_context.c
 +++ b/fs/fs_context.c
-@@ -69,6 +69,13 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
+@@ -69,6 +69,9 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
  	case FS_CONTEXT_FOR_MOUNT:
  		fc->user_ns = get_user_ns(fc->cred->user_ns);
  		break;
-+	case FS_CONTEXT_FOR_RECONFIGURE:
-+		/* We don't pin any namespaces as the superblock's
-+		 * subscriptions cannot be changed at this point.
-+		 */
-+		atomic_inc(&reference->d_sb->s_active);
-+		fc->root = dget(reference);
++	case FS_CONTEXT_FOR_SUBMOUNT:
++		fc->user_ns = get_user_ns(reference->d_sb->s_user_ns);
 +		break;
- 	}
- 
- 	ret = legacy_init_fs_context(fc);
-@@ -90,6 +97,15 @@ struct fs_context *fs_context_for_mount(struct file_system_type *fs_type,
+ 	case FS_CONTEXT_FOR_RECONFIGURE:
+ 		/* We don't pin any namespaces as the superblock's
+ 		 * subscriptions cannot be changed at this point.
+@@ -106,6 +109,13 @@ struct fs_context *fs_context_for_reconfigure(struct dentry *dentry,
  }
- EXPORT_SYMBOL(fs_context_for_mount);
+ EXPORT_SYMBOL(fs_context_for_reconfigure);
  
-+struct fs_context *fs_context_for_reconfigure(struct dentry *dentry,
-+					unsigned int sb_flags,
-+					unsigned int sb_flags_mask)
++struct fs_context *fs_context_for_submount(struct file_system_type *type,
++					   struct dentry *reference)
 +{
-+	return alloc_fs_context(dentry->d_sb->s_type, dentry, sb_flags,
-+				sb_flags_mask, FS_CONTEXT_FOR_RECONFIGURE);
++	return alloc_fs_context(type, reference, 0, 0, FS_CONTEXT_FOR_SUBMOUNT);
 +}
-+EXPORT_SYMBOL(fs_context_for_reconfigure);
++EXPORT_SYMBOL(fs_context_for_submount);
 +
  void fc_drop_locked(struct fs_context *fc)
  {
  	struct super_block *sb = fc->root->d_sb;
-@@ -99,6 +115,7 @@ void fc_drop_locked(struct fs_context *fc)
- }
- 
- static void legacy_fs_context_free(struct fs_context *fc);
-+
- /**
-  * put_fs_context - Dispose of a superblock configuration context.
-  * @fc: The context to dispose of.
-@@ -118,8 +135,7 @@ void put_fs_context(struct fs_context *fc)
- 		legacy_fs_context_free(fc);
- 
- 	security_free_mnt_opts(&fc->security);
--	if (fc->net_ns)
--		put_net(fc->net_ns);
-+	put_net(fc->net_ns);
- 	put_user_ns(fc->user_ns);
- 	put_cred(fc->cred);
- 	kfree(fc->subtype);
-@@ -172,6 +188,21 @@ int legacy_get_tree(struct fs_context *fc)
- 	return 0;
- }
- 
-+/*
-+ * Handle remount.
-+ */
-+int legacy_reconfigure(struct fs_context *fc)
-+{
-+	struct legacy_fs_context *ctx = fc->fs_private;
-+	struct super_block *sb = fc->root->d_sb;
-+
-+	if (!sb->s_op->remount_fs)
-+		return 0;
-+
-+	return sb->s_op->remount_fs(sb, &fc->sb_flags,
-+				    ctx ? ctx->legacy_data : NULL);
-+}
-+
- /*
-  * Initialise a legacy context for a filesystem that doesn't support
-  * fs_context.
-diff --git a/fs/internal.h b/fs/internal.h
-index 6af26d897034..016a5b8dd305 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -56,6 +56,7 @@ extern void __init chrdev_init(void);
-  * fs_context.c
-  */
- extern int legacy_get_tree(struct fs_context *fc);
-+extern int legacy_reconfigure(struct fs_context *fc);
- extern int parse_monolithic_mount_data(struct fs_context *, void *);
- extern void fc_drop_locked(struct fs_context *);
- 
-@@ -107,7 +108,7 @@ extern struct file *alloc_empty_file_noaccount(int, const struct cred *);
- /*
-  * super.c
-  */
--extern int do_remount_sb(struct super_block *, int, void *, int);
-+extern int reconfigure_super(struct fs_context *);
- extern bool trylock_super(struct super_block *sb);
- extern struct super_block *user_get_super(dev_t);
- 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 750500c6c33d..931228d8518a 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1489,6 +1489,29 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
- 
- static void shrink_submounts(struct mount *mnt);
- 
-+static int do_umount_root(struct super_block *sb)
-+{
-+	int ret = 0;
-+
-+	down_write(&sb->s_umount);
-+	if (!sb_rdonly(sb)) {
-+		struct fs_context *fc;
-+
-+		fc = fs_context_for_reconfigure(sb->s_root, SB_RDONLY,
-+						SB_RDONLY);
-+		if (IS_ERR(fc)) {
-+			ret = PTR_ERR(fc);
-+		} else {
-+			ret = parse_monolithic_mount_data(fc, NULL);
-+			if (!ret)
-+				ret = reconfigure_super(fc);
-+			put_fs_context(fc);
-+		}
-+	}
-+	up_write(&sb->s_umount);
-+	return ret;
-+}
-+
- static int do_umount(struct mount *mnt, int flags)
- {
- 	struct super_block *sb = mnt->mnt.mnt_sb;
-@@ -1554,11 +1577,7 @@ static int do_umount(struct mount *mnt, int flags)
- 		 */
- 		if (!ns_capable(sb->s_user_ns, CAP_SYS_ADMIN))
- 			return -EPERM;
--		down_write(&sb->s_umount);
--		if (!sb_rdonly(sb))
--			retval = do_remount_sb(sb, SB_RDONLY, NULL, 0);
--		up_write(&sb->s_umount);
--		return retval;
-+		return do_umount_root(sb);
- 	}
- 
- 	namespace_lock();
-@@ -2367,7 +2386,7 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
- 	int err;
- 	struct super_block *sb = path->mnt->mnt_sb;
- 	struct mount *mnt = real_mount(path->mnt);
--	void *sec_opts = NULL;
-+	struct fs_context *fc;
- 
- 	if (!check_mnt(mnt))
- 		return -EINVAL;
-@@ -2378,24 +2397,22 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
- 	if (!can_change_locked_flags(mnt, mnt_flags))
- 		return -EPERM;
- 
--	if (data && !(sb->s_type->fs_flags & FS_BINARY_MOUNTDATA)) {
--		err = security_sb_eat_lsm_opts(data, &sec_opts);
--		if (err)
--			return err;
--	}
--	err = security_sb_remount(sb, sec_opts);
--	security_free_mnt_opts(&sec_opts);
--	if (err)
--		return err;
-+	fc = fs_context_for_reconfigure(path->dentry, sb_flags, MS_RMT_MASK);
-+	if (IS_ERR(fc))
-+		return PTR_ERR(fc);
- 
--	down_write(&sb->s_umount);
--	err = -EPERM;
--	if (ns_capable(sb->s_user_ns, CAP_SYS_ADMIN)) {
--		err = do_remount_sb(sb, sb_flags, data, 0);
--		if (!err)
--			set_mount_attributes(mnt, mnt_flags);
-+	err = parse_monolithic_mount_data(fc, data);
-+	if (!err) {
-+		down_write(&sb->s_umount);
-+		err = -EPERM;
-+		if (ns_capable(sb->s_user_ns, CAP_SYS_ADMIN)) {
-+			err = reconfigure_super(fc);
-+			if (!err)
-+				set_mount_attributes(mnt, mnt_flags);
-+		}
-+		up_write(&sb->s_umount);
- 	}
--	up_write(&sb->s_umount);
-+	put_fs_context(fc);
- 	return err;
- }
- 
-diff --git a/fs/super.c b/fs/super.c
-index 11e2a6cb3baf..50553233dd15 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -836,28 +836,35 @@ struct super_block *user_get_super(dev_t dev)
- }
- 
- /**
-- *	do_remount_sb - asks filesystem to change mount options.
-- *	@sb:	superblock in question
-- *	@sb_flags: revised superblock flags
-- *	@data:	the rest of options
-- *      @force: whether or not to force the change
-+ * reconfigure_super - asks filesystem to change superblock parameters
-+ * @fc: The superblock and configuration
-  *
-- *	Alters the mount options of a mounted file system.
-+ * Alters the configuration parameters of a live superblock.
-  */
--int do_remount_sb(struct super_block *sb, int sb_flags, void *data, int force)
-+int reconfigure_super(struct fs_context *fc)
- {
-+	struct super_block *sb = fc->root->d_sb;
- 	int retval;
--	int remount_ro;
-+	bool remount_ro = false;
-+	bool force = fc->sb_flags & SB_FORCE;
- 
-+	if (fc->sb_flags_mask & ~MS_RMT_MASK)
-+		return -EINVAL;
- 	if (sb->s_writers.frozen != SB_UNFROZEN)
- 		return -EBUSY;
- 
-+	retval = security_sb_remount(sb, fc->security);
-+	if (retval)
-+		return retval;
-+
-+	if (fc->sb_flags_mask & SB_RDONLY) {
- #ifdef CONFIG_BLOCK
--	if (!(sb_flags & SB_RDONLY) && bdev_read_only(sb->s_bdev))
--		return -EACCES;
-+		if (!(fc->sb_flags & SB_RDONLY) && bdev_read_only(sb->s_bdev))
-+			return -EACCES;
- #endif
- 
--	remount_ro = (sb_flags & SB_RDONLY) && !sb_rdonly(sb);
-+		remount_ro = (fc->sb_flags & SB_RDONLY) && !sb_rdonly(sb);
-+	}
- 
- 	if (remount_ro) {
- 		if (!hlist_empty(&sb->s_pins)) {
-@@ -868,13 +875,14 @@ int do_remount_sb(struct super_block *sb, int sb_flags, void *data, int force)
- 				return 0;
- 			if (sb->s_writers.frozen != SB_UNFROZEN)
- 				return -EBUSY;
--			remount_ro = (sb_flags & SB_RDONLY) && !sb_rdonly(sb);
-+			remount_ro = !sb_rdonly(sb);
- 		}
- 	}
- 	shrink_dcache_sb(sb);
- 
--	/* If we are remounting RDONLY and current sb is read/write,
--	   make sure there are no rw files opened */
-+	/* If we are reconfiguring to RDONLY and current sb is read/write,
-+	 * make sure there are no files open for writing.
-+	 */
- 	if (remount_ro) {
- 		if (force) {
- 			sb->s_readonly_remount = 1;
-@@ -886,17 +894,17 @@ int do_remount_sb(struct super_block *sb, int sb_flags, void *data, int force)
- 		}
- 	}
- 
--	if (sb->s_op->remount_fs) {
--		retval = sb->s_op->remount_fs(sb, &sb_flags, data);
--		if (retval) {
--			if (!force)
--				goto cancel_readonly;
--			/* If forced remount, go ahead despite any errors */
--			WARN(1, "forced remount of a %s fs returned %i\n",
--			     sb->s_type->name, retval);
--		}
-+	retval = legacy_reconfigure(fc);
-+	if (retval) {
-+		if (!force)
-+			goto cancel_readonly;
-+		/* If forced remount, go ahead despite any errors */
-+		WARN(1, "forced remount of a %s fs returned %i\n",
-+		     sb->s_type->name, retval);
- 	}
--	sb->s_flags = (sb->s_flags & ~MS_RMT_MASK) | (sb_flags & MS_RMT_MASK);
-+
-+	WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
-+				 (fc->sb_flags & fc->sb_flags_mask)));
- 	/* Needs to be ordered wrt mnt_is_readonly() */
- 	smp_wmb();
- 	sb->s_readonly_remount = 0;
-@@ -923,10 +931,15 @@ static void do_emergency_remount_callback(struct super_block *sb)
- 	down_write(&sb->s_umount);
- 	if (sb->s_root && sb->s_bdev && (sb->s_flags & SB_BORN) &&
- 	    !sb_rdonly(sb)) {
--		/*
--		 * What lock protects sb->s_flags??
--		 */
--		do_remount_sb(sb, SB_RDONLY, NULL, 1);
-+		struct fs_context *fc;
-+
-+		fc = fs_context_for_reconfigure(sb->s_root,
-+					SB_RDONLY | SB_FORCE, SB_RDONLY);
-+		if (!IS_ERR(fc)) {
-+			if (parse_monolithic_mount_data(fc, NULL) == 0)
-+				(void)reconfigure_super(fc);
-+			put_fs_context(fc);
-+		}
- 	}
- 	up_write(&sb->s_umount);
- }
-@@ -1213,6 +1226,31 @@ struct dentry *mount_nodev(struct file_system_type *fs_type,
- }
- EXPORT_SYMBOL(mount_nodev);
- 
-+static int reconfigure_single(struct super_block *s,
-+			      int flags, void *data)
-+{
-+	struct fs_context *fc;
-+	int ret;
-+
-+	/* The caller really need to be passing fc down into mount_single(),
-+	 * then a chunk of this can be removed.  [Bollocks -- AV]
-+	 * Better yet, reconfiguration shouldn't happen, but rather the second
-+	 * mount should be rejected if the parameters are not compatible.
-+	 */
-+	fc = fs_context_for_reconfigure(s->s_root, flags, MS_RMT_MASK);
-+	if (IS_ERR(fc))
-+		return PTR_ERR(fc);
-+
-+	ret = parse_monolithic_mount_data(fc, data);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = reconfigure_super(fc);
-+out:
-+	put_fs_context(fc);
-+	return ret;
-+}
-+
- static int compare_single(struct super_block *s, void *p)
- {
- 	return 1;
-@@ -1230,13 +1268,14 @@ struct dentry *mount_single(struct file_system_type *fs_type,
- 		return ERR_CAST(s);
- 	if (!s->s_root) {
- 		error = fill_super(s, data, flags & SB_SILENT ? 1 : 0);
--		if (error) {
--			deactivate_locked_super(s);
--			return ERR_PTR(error);
--		}
--		s->s_flags |= SB_ACTIVE;
-+		if (!error)
-+			s->s_flags |= SB_ACTIVE;
- 	} else {
--		do_remount_sb(s, flags, data, 0);
-+		error = reconfigure_single(s, flags, data);
-+	}
-+	if (unlikely(error)) {
-+		deactivate_locked_super(s);
-+		return ERR_PTR(error);
- 	}
- 	return dget(s->s_root);
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 36fff12ab890..c65d02c5c512 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1337,6 +1337,7 @@ extern int send_sigurg(struct fown_struct *fown);
- 
- /* These sb flags are internal to the kernel */
- #define SB_SUBMOUNT     (1<<26)
-+#define SB_FORCE    	(1<<27)
- #define SB_NOSEC	(1<<28)
- #define SB_BORN		(1<<29)
- #define SB_ACTIVE	(1<<30)
 diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index 9805514444c9..98772f882a3e 100644
+index 98772f882a3e..7feb018c7a9e 100644
 --- a/include/linux/fs_context.h
 +++ b/include/linux/fs_context.h
 @@ -25,6 +25,7 @@ struct user_namespace;
  
  enum fs_context_purpose {
  	FS_CONTEXT_FOR_MOUNT,		/* New superblock for explicit mount */
-+	FS_CONTEXT_FOR_RECONFIGURE,	/* Superblock reconfiguration (remount) */
++	FS_CONTEXT_FOR_SUBMOUNT,	/* New superblock for automatic submount */
+ 	FS_CONTEXT_FOR_RECONFIGURE,	/* Superblock reconfiguration (remount) */
  };
  
- /*
-@@ -57,6 +58,9 @@ struct fs_context {
-  */
- extern struct fs_context *fs_context_for_mount(struct file_system_type *fs_type,
- 						unsigned int sb_flags);
-+extern struct fs_context *fs_context_for_reconfigure(struct dentry *dentry,
-+						unsigned int sb_flags,
-+						unsigned int sb_flags_mask);
+@@ -61,6 +62,8 @@ extern struct fs_context *fs_context_for_mount(struct file_system_type *fs_type,
+ extern struct fs_context *fs_context_for_reconfigure(struct dentry *dentry,
+ 						unsigned int sb_flags,
+ 						unsigned int sb_flags_mask);
++extern struct fs_context *fs_context_for_submount(struct file_system_type *fs_type,
++						struct dentry *reference);
  
  extern int vfs_get_tree(struct fs_context *fc);
  extern void put_fs_context(struct fs_context *fc);
