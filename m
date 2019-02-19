@@ -3,44 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72719C10F00
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 412C4C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3965D2083E
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0682C2083E
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbfBSRJH (ORCPT
+        id S1729249AbfBSRJN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:09:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38164 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 12:09:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33786 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbfBSRJG (ORCPT
+        id S1728201AbfBSRJN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:09:06 -0500
+        Tue, 19 Feb 2019 12:09:13 -0500
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2AA9FC0467E8;
-        Tue, 19 Feb 2019 17:09:05 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 748B220B09;
+        Tue, 19 Feb 2019 17:09:12 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B523F19C56;
-        Tue, 19 Feb 2019 17:09:03 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E87F19C58;
+        Tue, 19 Feb 2019 17:09:10 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 05/10] vfs: syscall: Add fsopen() to prepare for superblock
- creation
+Subject: [PATCH 06/10] vfs: Implement logging through fs_context
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dhowells@redhat.com, torvalds@linux-foundation.org,
-        ebiederm@xmission.com, linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 17:09:03 +0000
-Message-ID: <155059614302.17079.1281132139815655428.stgit@warthog.procyon.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 19 Feb 2019 17:09:10 +0000
+Message-ID: <155059615036.17079.7832765121171328056.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
 References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
@@ -48,298 +47,388 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 19 Feb 2019 17:09:05 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 19 Feb 2019 17:09:12 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Provide an fsopen() system call that starts the process of preparing to
-create a superblock that will then be mountable, using an fd as a context
-handle.  fsopen() is given the name of the filesystem that will be used:
+Implement the ability for filesystems to log error, warning and
+informational messages through the fs_context.  These can be extracted by
+userspace by reading from an fd created by fsopen().
 
-	int mfd = fsopen(const char *fsname, unsigned int flags);
+Error messages are prefixed with "e ", warnings with "w " and informational
+messages with "i ".
 
-where flags can be 0 or FSOPEN_CLOEXEC.
+Inside the kernel, formatted messages are malloc'd but unformatted messages
+are not copied if they're either in the core .rodata section or in the
+.rodata section of the filesystem module pinned by fs_context::fs_type.
+The messages are only good till the fs_type is released.
 
-For example:
+Note that the logging object is shared between duplicated fs_context
+structures.  This is so that such as NFS which do a mount within a mount
+can get at least some of the errors from the inner mount.
 
-	sfd = fsopen("ext4", FSOPEN_CLOEXEC);
-	fsconfig(sfd, FSCONFIG_SET_PATH, "source", "/dev/sda1", AT_FDCWD);
-	fsconfig(sfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
-	fsconfig(sfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
-	fsconfig(sfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
-	fsconfig(sfd, FSCONFIG_SET_STRING, "sb", "1", 0);
-	fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-	fsinfo(sfd, NULL, ...); // query new superblock attributes
-	mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MS_RELATIME);
-	move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+Five logging functions are provided for this:
 
-	sfd = fsopen("afs", -1);
-	fsconfig(fd, FSCONFIG_SET_STRING, "source",
-		 "#grand.central.org:root.cell", 0);
-	fsconfig(fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-	mfd = fsmount(sfd, 0, MS_NODEV);
-	move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+ (1) void logfc(struct fs_context *fc, const char *fmt, ...);
 
-If an error is reported at any step, an error message may be available to be
-read() back (ENODATA will be reported if there isn't an error available) in
-the form:
+     This logs a message into the context.  If the buffer is full, the
+     earliest message is discarded.
 
-	"e <subsys>:<problem>"
-	"e SELinux:Mount on mountpoint not permitted"
+ (2) void errorf(fc, fmt, ...);
 
-Once fsmount() has been called, further fsconfig() calls will incur EBUSY,
-even if the fsmount() fails.  read() is still possible to retrieve error
-information.
+     This wraps logfc() to log an error.
 
-The fsopen() syscall creates a mount context and hangs it of the fd that it
-returns.
+ (3) void invalf(fc, fmt, ...);
 
-Netlink is not used because it is optional and would make the core VFS
-dependent on the networking layer and also potentially add network
-namespace issues.
+     This wraps errorf() and returns -EINVAL for convenience.
 
-Note that, for the moment, the caller must have SYS_CAP_ADMIN to use
-fsopen().
+ (4) void warnf(fc, fmt, ...);
+
+     This wraps logfc() to log a warning.
+
+ (5) void infof(fc, fmt, ...);
+
+     This wraps logfc() to log an informational message.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-api@vger.kernel.org
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
- arch/x86/entry/syscalls/syscall_32.tbl |    1 
- arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/Makefile                            |    2 -
- fs/fs_context.c                        |    4 +
- fs/fsopen.c                            |   88 ++++++++++++++++++++++++++++++++
- include/linux/fs_context.h             |   16 ++++++
- include/linux/syscalls.h               |    1 
- include/uapi/linux/mount.h             |    5 ++
- 8 files changed, 117 insertions(+), 1 deletion(-)
- create mode 100644 fs/fsopen.c
+ fs/fs_context.c            |  105 ++++++++++++++++++++++++++++++++++++++------
+ fs/fsopen.c                |   67 ++++++++++++++++++++++++++++
+ include/linux/fs_context.h |   22 ++++++---
+ include/linux/module.h     |    6 +++
+ 4 files changed, 179 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 76d092b7d1b0..1647fefd2969 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -400,3 +400,4 @@
- 386	i386	rseq			sys_rseq			__ia32_sys_rseq
- 387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
- 388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
-+389	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 37ba4e65eee6..235d33dbccb2 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -345,6 +345,7 @@
- 334	common	rseq			__x64_sys_rseq
- 335	common	open_tree		__x64_sys_open_tree
- 336	common	move_mount		__x64_sys_move_mount
-+337	common	fsopen			__x64_sys_fsopen
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/Makefile b/fs/Makefile
-index ae681523b4b1..e3ea8093b178 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -13,7 +13,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
- 		seq_file.o xattr.o libfs.o fs-writeback.o \
- 		pnode.o splice.o sync.o utimes.o d_path.o \
- 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
--		fs_context.o fs_parser.o
-+		fs_context.o fs_parser.o fsopen.o
- 
- ifeq ($(CONFIG_BLOCK),y)
- obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
 diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 87e3546b9a52..eb806fae3117 100644
+index eb806fae3117..dcf3786f90f9 100644
 --- a/fs/fs_context.c
 +++ b/fs/fs_context.c
-@@ -271,6 +271,8 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
- 	fc->cred	= get_current_cred();
- 	fc->net_ns	= get_net(current->nsproxy->net_ns);
+@@ -11,6 +11,7 @@
+  */
  
-+	mutex_init(&fc->uapi_mutex);
-+
- 	switch (purpose) {
- 	case FS_CONTEXT_FOR_MOUNT:
- 		fc->user_ns = get_user_ns(fc->cred->user_ns);
-@@ -353,6 +355,8 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
- 	if (!fc)
- 		return ERR_PTR(-ENOMEM);
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++#include <linux/module.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
+ #include <linux/fs.h>
+@@ -23,6 +24,7 @@
+ #include <linux/pid_namespace.h>
+ #include <linux/user_namespace.h>
+ #include <net/net_namespace.h>
++#include <asm/sections.h>
+ #include "mount.h"
+ #include "internal.h"
  
-+	mutex_init(&fc->uapi_mutex);
+@@ -365,6 +367,8 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
+ 	get_net(fc->net_ns);
+ 	get_user_ns(fc->user_ns);
+ 	get_cred(fc->cred);
++	if (fc->log)
++		refcount_inc(&fc->log->usage);
+ 
+ 	/* Can't call put until we've called ->dup */
+ 	ret = fc->ops->dup(fc, src_fc);
+@@ -382,7 +386,6 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
+ }
+ EXPORT_SYMBOL(vfs_dup_fs_context);
+ 
+-#ifdef CONFIG_PRINTK
+ /**
+  * logfc - Log a message to a filesystem context
+  * @fc: The filesystem context to log to.
+@@ -390,27 +393,100 @@ EXPORT_SYMBOL(vfs_dup_fs_context);
+  */
+ void logfc(struct fs_context *fc, const char *fmt, ...)
+ {
++	static const char store_failure[] = "OOM: Can't store error string";
++	struct fc_log *log = fc ? fc->log : NULL;
++	const char *p;
+ 	va_list va;
++	char *q;
++	u8 freeable;
+ 
+ 	va_start(va, fmt);
+-
+-	switch (fmt[0]) {
+-	case 'w':
+-		vprintk_emit(0, LOGLEVEL_WARNING, NULL, 0, fmt, va);
+-		break;
+-	case 'e':
+-		vprintk_emit(0, LOGLEVEL_ERR, NULL, 0, fmt, va);
+-		break;
+-	default:
+-		vprintk_emit(0, LOGLEVEL_NOTICE, NULL, 0, fmt, va);
+-		break;
++	if (!strchr(fmt, '%')) {
++		p = fmt;
++		goto unformatted_string;
+ 	}
++	if (strcmp(fmt, "%s") == 0) {
++		p = va_arg(va, const char *);
++		goto unformatted_string;
++	}
 +
- 	fc->fs_private	= NULL;
- 	fc->s_fs_info	= NULL;
- 	fc->source	= NULL;
-diff --git a/fs/fsopen.c b/fs/fsopen.c
-new file mode 100644
-index 000000000000..d256f1ac9ff1
---- /dev/null
-+++ b/fs/fsopen.c
-@@ -0,0 +1,88 @@
-+/* Filesystem access-by-fd.
-+ *
-+ * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
++	q = kvasprintf(GFP_KERNEL, fmt, va);
++copied_string:
++	if (!q)
++		goto store_failure;
++	freeable = 1;
++	goto store_string;
++
++unformatted_string:
++	if ((unsigned long)p >= (unsigned long)__start_rodata &&
++	    (unsigned long)p <  (unsigned long)__end_rodata)
++		goto const_string;
++	if (log && within_module_core((unsigned long)p, log->owner))
++		goto const_string;
++	q = kstrdup(p, GFP_KERNEL);
++	goto copied_string;
++
++store_failure:
++	p = store_failure;
++const_string:
++	q = (char *)p;
++	freeable = 0;
++store_string:
++	if (!log) {
++		switch (fmt[0]) {
++		case 'w':
++			printk(KERN_WARNING "%s\n", q + 2);
++			break;
++		case 'e':
++			printk(KERN_ERR "%s\n", q + 2);
++			break;
++		default:
++			printk(KERN_NOTICE "%s\n", q + 2);
++			break;
++		}
++		if (freeable)
++			kfree(q);
++	} else {
++		unsigned int logsize = ARRAY_SIZE(log->buffer);
++		u8 index;
++
++		index = log->head & (logsize - 1);
++		BUILD_BUG_ON(sizeof(log->head) != sizeof(u8) ||
++			     sizeof(log->tail) != sizeof(u8));
++		if ((u8)(log->head - log->tail) == logsize) {
++			/* The buffer is full, discard the oldest message */
++			if (log->need_free & (1 << index))
++				kfree(log->buffer[index]);
++			log->tail++;
++		}
+ 
+-	pr_cont("\n");
++		log->buffer[index] = q;
++		log->need_free &= ~(1 << index);
++		log->need_free |= freeable << index;
++		log->head++;
++	}
+ 	va_end(va);
+ }
+ EXPORT_SYMBOL(logfc);
+-#endif
++
++/*
++ * Free a logging structure.
 + */
++static void put_fc_log(struct fs_context *fc)
++{
++	struct fc_log *log = fc->log;
++	int i;
 +
-+#include <linux/fs_context.h>
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
-+#include <linux/syscalls.h>
-+#include <linux/security.h>
-+#include <linux/anon_inodes.h>
-+#include <linux/namei.h>
-+#include <linux/file.h>
-+#include <uapi/linux/mount.h>
-+#include "mount.h"
-+
-+static int fscontext_release(struct inode *inode, struct file *file)
++	if (log) {
++		if (refcount_dec_and_test(&log->usage)) {
++			fc->log = NULL;
++			for (i = 0; i <= 7; i++)
++				if (log->need_free & (1 << i))
++					kfree(log->buffer[i]);
++			kfree(log);
++		}
++	}
++}
+ 
+ /**
+  * put_fs_context - Dispose of a superblock configuration context.
+@@ -435,6 +511,7 @@ void put_fs_context(struct fs_context *fc)
+ 	put_user_ns(fc->user_ns);
+ 	put_cred(fc->cred);
+ 	kfree(fc->subtype);
++	put_fc_log(fc);
+ 	put_filesystem(fc->fs_type);
+ 	kfree(fc->source);
+ 	kfree(fc);
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index d256f1ac9ff1..5fce6347de7a 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -20,6 +20,52 @@
+ #include <uapi/linux/mount.h>
+ #include "mount.h"
+ 
++/*
++ * Allow the user to read back any error, warning or informational messages.
++ */
++static ssize_t fscontext_read(struct file *file,
++			      char __user *_buf, size_t len, loff_t *pos)
 +{
 +	struct fs_context *fc = file->private_data;
++	struct fc_log *log = fc->log;
++	unsigned int logsize = ARRAY_SIZE(log->buffer);
++	ssize_t ret;
++	char *p;
++	bool need_free;
++	int index, n;
 +
-+	if (fc) {
-+		file->private_data = NULL;
-+		put_fs_context(fc);
++	ret = mutex_lock_interruptible(&fc->uapi_mutex);
++	if (ret < 0)
++		return ret;
++
++	if (log->head == log->tail) {
++		mutex_unlock(&fc->uapi_mutex);
++		return -ENODATA;
 +	}
++
++	index = log->tail & (logsize - 1);
++	p = log->buffer[index];
++	need_free = log->need_free & (1 << index);
++	log->buffer[index] = NULL;
++	log->need_free &= ~(1 << index);
++	log->tail++;
++	mutex_unlock(&fc->uapi_mutex);
++
++	ret = -EMSGSIZE;
++	n = strlen(p);
++	if (n > len)
++		goto err_free;
++	ret = -EFAULT;
++	if (copy_to_user(_buf, p, n) != 0)
++		goto err_free;
++	ret = n;
++
++err_free:
++	if (need_free)
++		kfree(p);
++	return ret;
++}
++
+ static int fscontext_release(struct inode *inode, struct file *file)
+ {
+ 	struct fs_context *fc = file->private_data;
+@@ -32,6 +78,7 @@ static int fscontext_release(struct inode *inode, struct file *file)
+ }
+ 
+ const struct file_operations fscontext_fops = {
++	.read		= fscontext_read,
+ 	.release	= fscontext_release,
+ 	.llseek		= no_llseek,
+ };
+@@ -50,6 +97,16 @@ static int fscontext_create_fd(struct fs_context *fc, unsigned int o_flags)
+ 	return fd;
+ }
+ 
++static int fscontext_alloc_log(struct fs_context *fc)
++{
++	fc->log = kzalloc(sizeof(*fc->log), GFP_KERNEL);
++	if (!fc->log)
++		return -ENOMEM;
++	refcount_set(&fc->log->usage, 1);
++	fc->log->owner = fc->fs_type->owner;
 +	return 0;
 +}
 +
-+const struct file_operations fscontext_fops = {
-+	.release	= fscontext_release,
-+	.llseek		= no_llseek,
-+};
+ /*
+  * Open a filesystem by name so that it can be configured for mounting.
+  *
+@@ -62,6 +119,7 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
+ 	struct file_system_type *fs_type;
+ 	struct fs_context *fc;
+ 	const char *fs_name;
++	int ret;
+ 
+ 	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
+ 		return -EPERM;
+@@ -84,5 +142,14 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
+ 		return PTR_ERR(fc);
+ 
+ 	fc->phase = FS_CONTEXT_CREATE_PARAMS;
 +
-+/*
-+ * Attach a filesystem context to a file and an fd.
-+ */
-+static int fscontext_create_fd(struct fs_context *fc, unsigned int o_flags)
-+{
-+	int fd;
++	ret = fscontext_alloc_log(fc);
++	if (ret < 0)
++		goto err_fc;
 +
-+	fd = anon_inode_getfd("fscontext", &fscontext_fops, fc,
-+			      O_RDWR | o_flags);
-+	if (fd < 0)
-+		put_fs_context(fc);
-+	return fd;
-+}
+ 	return fscontext_create_fd(fc, flags & FSOPEN_CLOEXEC ? O_CLOEXEC : 0);
 +
-+/*
-+ * Open a filesystem by name so that it can be configured for mounting.
-+ *
-+ * We are allowed to specify a container in which the filesystem will be
-+ * opened, thereby indicating which namespaces will be used (notably, which
-+ * network namespace will be used for network filesystems).
-+ */
-+SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
-+{
-+	struct file_system_type *fs_type;
-+	struct fs_context *fc;
-+	const char *fs_name;
-+
-+	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (flags & ~FSOPEN_CLOEXEC)
-+		return -EINVAL;
-+
-+	fs_name = strndup_user(_fs_name, PAGE_SIZE);
-+	if (IS_ERR(fs_name))
-+		return PTR_ERR(fs_name);
-+
-+	fs_type = get_fs_type(fs_name);
-+	kfree(fs_name);
-+	if (!fs_type)
-+		return -ENODEV;
-+
-+	fc = fs_context_for_mount(fs_type, 0);
-+	put_filesystem(fs_type);
-+	if (IS_ERR(fc))
-+		return PTR_ERR(fc);
-+
-+	fc->phase = FS_CONTEXT_CREATE_PARAMS;
-+	return fscontext_create_fd(fc, flags & FSOPEN_CLOEXEC ? O_CLOEXEC : 0);
-+}
++err_fc:
++	put_fs_context(fc);
++	return ret;
+ }
 diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index eaca452088fa..7ab8b44fab3e 100644
+index 7ab8b44fab3e..1f966670c8dc 100644
 --- a/include/linux/fs_context.h
 +++ b/include/linux/fs_context.h
-@@ -15,6 +15,7 @@
+@@ -13,6 +13,7 @@
+ #define _LINUX_FS_CONTEXT_H
+ 
  #include <linux/kernel.h>
++#include <linux/refcount.h>
  #include <linux/errno.h>
  #include <linux/security.h>
-+#include <linux/mutex.h>
+ #include <linux/mutex.h>
+@@ -95,6 +96,7 @@ struct fs_context {
+ 	struct user_namespace	*user_ns;	/* The user namespace for this mount */
+ 	struct net		*net_ns;	/* The network namespace for this mount */
+ 	const struct cred	*cred;		/* The mounter's credentials */
++	struct fc_log		*log;		/* Logging buffer */
+ 	const char		*source;	/* The source name (eg. dev path) */
+ 	const char		*subtype;	/* The subtype to set on the superblock */
+ 	void			*security;	/* Linux S&M options */
+@@ -151,15 +153,21 @@ extern int vfs_get_super(struct fs_context *fc,
  
- struct cred;
- struct dentry;
-@@ -34,6 +35,19 @@ enum fs_context_purpose {
- 	FS_CONTEXT_FOR_RECONFIGURE,	/* Superblock reconfiguration (remount) */
- };
+ extern const struct file_operations fscontext_fops;
  
+-#ifdef CONFIG_PRINTK
 +/*
-+ * Userspace usage phase for fsopen/fspick.
++ * Mount error, warning and informational message logging.  This structure is
++ * shareable between a mount and a subordinate mount.
 + */
-+enum fs_context_phase {
-+	FS_CONTEXT_CREATE_PARAMS,	/* Loading params for sb creation */
-+	FS_CONTEXT_CREATING,		/* A superblock is being created */
-+	FS_CONTEXT_AWAITING_MOUNT,	/* Superblock created, awaiting fsmount() */
-+	FS_CONTEXT_AWAITING_RECONF,	/* Awaiting initialisation for reconfiguration */
-+	FS_CONTEXT_RECONF_PARAMS,	/* Loading params for reconfiguration */
-+	FS_CONTEXT_RECONFIGURING,	/* Reconfiguring the superblock */
-+	FS_CONTEXT_FAILED,		/* Failed to correctly transition a context */
++struct fc_log {
++	refcount_t	usage;
++	u8		head;		/* Insertion index in buffer[] */
++	u8		tail;		/* Removal index in buffer[] */
++	u8		need_free;	/* Mask of kfree'able items in buffer[] */
++	struct module	*owner;		/* Owner module for strings that don't then need freeing */
++	char		*buffer[8];
 +};
 +
- /*
-  * Type of parameter value.
-  */
-@@ -74,6 +88,7 @@ struct fs_parameter {
-  */
- struct fs_context {
- 	const struct fs_context_operations *ops;
-+	struct mutex		uapi_mutex;	/* Userspace access mutex */
- 	struct file_system_type	*fs_type;
- 	void			*fs_private;	/* The filesystem's context */
- 	struct dentry		*root;		/* The root and superblock */
-@@ -88,6 +103,7 @@ struct fs_context {
- 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
- 	unsigned int		lsm_flags;	/* Information flags from the fs to the LSM */
- 	enum fs_context_purpose	purpose:8;
-+	enum fs_context_phase	phase:8;	/* The phase the context is in */
- 	bool			need_free:1;	/* Need to call ops->free() */
- 	bool			global:1;	/* Goes into &init_user_ns */
- };
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 13289cdf6b52..22ed8a11ef55 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -930,6 +930,7 @@ asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
- asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
- 			       int to_dfd, const char __user *to_path,
- 			       unsigned int ms_flags);
-+asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
+ extern __attribute__((format(printf, 2, 3)))
+ void logfc(struct fs_context *fc, const char *fmt, ...);
+-#else
+-static inline __attribute__((format(printf, 2, 3)))
+-void logfc(struct fs_context *fc, const char *fmt, ...)
+-{
+-}
+-#endif
  
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 3634e065836c..7570df43d08f 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -72,4 +72,9 @@
- #define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
- #define MOVE_MOUNT__MASK		0x00000077
+ /**
+  * infof - Store supplementary informational message
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 8fa38d3e7538..902cbd0047d4 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -693,6 +693,12 @@ static inline bool is_module_text_address(unsigned long addr)
+ 	return false;
+ }
  
-+/*
-+ * fsopen() flags.
-+ */
-+#define FSOPEN_CLOEXEC		0x00000001
++static inline bool within_module_core(unsigned long addr,
++				      const struct module *mod)
++{
++	return false;
++}
 +
- #endif /* _UAPI_LINUX_MOUNT_H */
+ /* Get/put a kernel symbol (calls should be symmetric) */
+ #define symbol_get(x) ({ extern typeof(x) x __attribute__((weak)); &(x); })
+ #define symbol_put(x) do { } while (0)
 
