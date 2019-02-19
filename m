@@ -6,212 +6,238 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50983C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FB5C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E1E52070B
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 408AC21738
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:29:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbfBSQ27 (ORCPT
+        id S1728818AbfBSQ3J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:28:59 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41754 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 11:29:09 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:61490 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726388AbfBSQ27 (ORCPT
+        id S1726110AbfBSQ3J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:28:59 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        Tue, 19 Feb 2019 11:29:09 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 71564C049E24;
-        Tue, 19 Feb 2019 16:28:58 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 33775C704B;
+        Tue, 19 Feb 2019 16:29:09 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1F23E5D6AA;
-        Tue, 19 Feb 2019 16:28:56 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D577D19C68;
+        Tue, 19 Feb 2019 16:29:04 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 04/43] separate copying and locking mount tree on
- cross-userns copies
+Subject: [PATCH 05/43] saner handling of temporary namespaces
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
         torvalds@linux-foundation.org, ebiederm@xmission.com,
         linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 16:28:37 +0000
-Message-ID: <155059371731.12449.5751025556744658291.stgit@warthog.procyon.org.uk>
+Date:   Tue, 19 Feb 2019 16:29:03 +0000
+Message-ID: <155059374364.12449.13897776439989704741.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 References: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 19 Feb 2019 16:28:58 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 19 Feb 2019 16:29:09 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Rather than having propagate_mnt() check doing unprivileged copies,
-lock them before commit_tree().
+mount_subtree() creates (and soon destroys) a temporary namespace,
+so that automounts could function normally.  These beasts should
+never become anyone's current namespaces; they don't, but it would
+be better to make prevention of that more straightforward.  And
+since they don't become anyone's current namespace, we don't need
+to bother with reserving procfs inums for those.
+
+Teach alloc_mnt_ns() to skip inum allocation if told so, adjust
+put_mnt_ns() accordingly, make mount_subtree() use temporary
+(anon) namespace.  is_anon_ns() checks if a namespace is such.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
- fs/namespace.c |   59 +++++++++++++++++++++++++++++++++++---------------------
- fs/pnode.c     |    5 -----
- fs/pnode.h     |    3 +--
- 3 files changed, 38 insertions(+), 29 deletions(-)
+ fs/mount.h     |    5 ++++
+ fs/namespace.c |   74 ++++++++++++++++++++++++++------------------------------
+ 2 files changed, 40 insertions(+), 39 deletions(-)
 
+diff --git a/fs/mount.h b/fs/mount.h
+index f39bc9da4d73..6250de544760 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -146,3 +146,8 @@ static inline bool is_local_mountpoint(struct dentry *dentry)
+ 
+ 	return __is_local_mountpoint(dentry);
+ }
++
++static inline bool is_anon_ns(struct mnt_namespace *ns)
++{
++	return ns->seq == 0;
++}
 diff --git a/fs/namespace.c b/fs/namespace.c
-index a677b59efd74..9ed2f2930dfd 100644
+index 9ed2f2930dfd..f0b8a8ca08df 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1013,27 +1013,6 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
+@@ -2873,7 +2873,8 @@ static void dec_mnt_namespaces(struct ucounts *ucounts)
  
- 	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
- 	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
--	/* Don't allow unprivileged users to change mount flags */
--	if (flag & CL_UNPRIVILEGED) {
--		mnt->mnt.mnt_flags |= MNT_LOCK_ATIME;
--
--		if (mnt->mnt.mnt_flags & MNT_READONLY)
--			mnt->mnt.mnt_flags |= MNT_LOCK_READONLY;
--
--		if (mnt->mnt.mnt_flags & MNT_NODEV)
--			mnt->mnt.mnt_flags |= MNT_LOCK_NODEV;
--
--		if (mnt->mnt.mnt_flags & MNT_NOSUID)
--			mnt->mnt.mnt_flags |= MNT_LOCK_NOSUID;
--
--		if (mnt->mnt.mnt_flags & MNT_NOEXEC)
--			mnt->mnt.mnt_flags |= MNT_LOCK_NOEXEC;
+ static void free_mnt_ns(struct mnt_namespace *ns)
+ {
+-	ns_free_inum(&ns->ns);
++	if (!is_anon_ns(ns))
++		ns_free_inum(&ns->ns);
+ 	dec_mnt_namespaces(ns->ucounts);
+ 	put_user_ns(ns->user_ns);
+ 	kfree(ns);
+@@ -2888,7 +2889,7 @@ static void free_mnt_ns(struct mnt_namespace *ns)
+  */
+ static atomic64_t mnt_ns_seq = ATOMIC64_INIT(1);
+ 
+-static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns)
++static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns, bool anon)
+ {
+ 	struct mnt_namespace *new_ns;
+ 	struct ucounts *ucounts;
+@@ -2898,28 +2899,27 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns)
+ 	if (!ucounts)
+ 		return ERR_PTR(-ENOSPC);
+ 
+-	new_ns = kmalloc(sizeof(struct mnt_namespace), GFP_KERNEL);
++	new_ns = kzalloc(sizeof(struct mnt_namespace), GFP_KERNEL);
+ 	if (!new_ns) {
+ 		dec_mnt_namespaces(ucounts);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+-	ret = ns_alloc_inum(&new_ns->ns);
+-	if (ret) {
+-		kfree(new_ns);
+-		dec_mnt_namespaces(ucounts);
+-		return ERR_PTR(ret);
++	if (!anon) {
++		ret = ns_alloc_inum(&new_ns->ns);
++		if (ret) {
++			kfree(new_ns);
++			dec_mnt_namespaces(ucounts);
++			return ERR_PTR(ret);
++		}
+ 	}
+ 	new_ns->ns.ops = &mntns_operations;
+-	new_ns->seq = atomic64_add_return(1, &mnt_ns_seq);
++	if (!anon)
++		new_ns->seq = atomic64_add_return(1, &mnt_ns_seq);
+ 	atomic_set(&new_ns->count, 1);
+-	new_ns->root = NULL;
+ 	INIT_LIST_HEAD(&new_ns->list);
+ 	init_waitqueue_head(&new_ns->poll);
+-	new_ns->event = 0;
+ 	new_ns->user_ns = get_user_ns(user_ns);
+ 	new_ns->ucounts = ucounts;
+-	new_ns->mounts = 0;
+-	new_ns->pending_mounts = 0;
+ 	return new_ns;
+ }
+ 
+@@ -2943,7 +2943,7 @@ struct mnt_namespace *copy_mnt_ns(unsigned long flags, struct mnt_namespace *ns,
+ 
+ 	old = ns->root;
+ 
+-	new_ns = alloc_mnt_ns(user_ns);
++	new_ns = alloc_mnt_ns(user_ns, false);
+ 	if (IS_ERR(new_ns))
+ 		return new_ns;
+ 
+@@ -3003,37 +3003,25 @@ struct mnt_namespace *copy_mnt_ns(unsigned long flags, struct mnt_namespace *ns,
+ 	return new_ns;
+ }
+ 
+-/**
+- * create_mnt_ns - creates a private namespace and adds a root filesystem
+- * @mnt: pointer to the new root filesystem mountpoint
+- */
+-static struct mnt_namespace *create_mnt_ns(struct vfsmount *m)
+-{
+-	struct mnt_namespace *new_ns = alloc_mnt_ns(&init_user_ns);
+-	if (!IS_ERR(new_ns)) {
+-		struct mount *mnt = real_mount(m);
+-		mnt->mnt_ns = new_ns;
+-		new_ns->root = mnt;
+-		new_ns->mounts++;
+-		list_add(&mnt->mnt_list, &new_ns->list);
+-	} else {
+-		mntput(m);
 -	}
+-	return new_ns;
+-}
 -
--	/* Don't allow unprivileged users to reveal what is under a mount */
--	if ((flag & CL_UNPRIVILEGED) &&
--	    (!(flag & CL_EXPIRE) || list_empty(&old->mnt_expire)))
--		mnt->mnt.mnt_flags |= MNT_LOCKED;
- 
- 	atomic_inc(&sb->s_active);
- 	mnt->mnt.mnt_sb = sb;
-@@ -1837,6 +1816,33 @@ int iterate_mounts(int (*f)(struct vfsmount *, void *), void *arg,
- 	return 0;
- }
- 
-+static void lock_mnt_tree(struct mount *mnt)
-+{
-+	struct mount *p;
-+
-+	for (p = mnt; p; p = next_mnt(p, mnt)) {
-+		int flags = p->mnt.mnt_flags;
-+		/* Don't allow unprivileged users to change mount flags */
-+		flags |= MNT_LOCK_ATIME;
-+
-+		if (flags & MNT_READONLY)
-+			flags |= MNT_LOCK_READONLY;
-+
-+		if (flags & MNT_NODEV)
-+			flags |= MNT_LOCK_NODEV;
-+
-+		if (flags & MNT_NOSUID)
-+			flags |= MNT_LOCK_NOSUID;
-+
-+		if (flags & MNT_NOEXEC)
-+			flags |= MNT_LOCK_NOEXEC;
-+		/* Don't allow unprivileged users to reveal what is under a mount */
-+		if (list_empty(&p->mnt_expire))
-+			flags |= MNT_LOCKED;
-+		p->mnt.mnt_flags = flags;
-+	}
-+}
-+
- static void cleanup_group_ids(struct mount *mnt, struct mount *end)
+-struct dentry *mount_subtree(struct vfsmount *mnt, const char *name)
++struct dentry *mount_subtree(struct vfsmount *m, const char *name)
  {
- 	struct mount *p;
-@@ -1954,6 +1960,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 			struct mountpoint *dest_mp,
- 			struct path *parent_path)
- {
-+	struct user_namespace *user_ns = current->nsproxy->mnt_ns->user_ns;
- 	HLIST_HEAD(tree_list);
- 	struct mnt_namespace *ns = dest_mnt->mnt_ns;
- 	struct mountpoint *smp;
-@@ -2004,6 +2011,9 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 				 child->mnt_mountpoint);
- 		if (q)
- 			mnt_change_mountpoint(child, smp, q);
-+		/* Notice when we are propagating across user namespaces */
-+		if (child->mnt_parent->mnt_ns->user_ns != user_ns)
-+			lock_mnt_tree(child);
- 		commit_tree(child);
- 	}
- 	put_mountpoint(smp);
-@@ -2941,13 +2951,18 @@ struct mnt_namespace *copy_mnt_ns(unsigned long flags, struct mnt_namespace *ns,
- 	/* First pass: copy the tree topology */
- 	copy_flags = CL_COPY_UNBINDABLE | CL_EXPIRE;
- 	if (user_ns != ns->user_ns)
--		copy_flags |= CL_SHARED_TO_SLAVE | CL_UNPRIVILEGED;
-+		copy_flags |= CL_SHARED_TO_SLAVE;
- 	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
- 	if (IS_ERR(new)) {
- 		namespace_unlock();
- 		free_mnt_ns(new_ns);
- 		return ERR_CAST(new);
- 	}
-+	if (user_ns != ns->user_ns) {
-+		lock_mount_hash();
-+		lock_mnt_tree(new);
-+		unlock_mount_hash();
++	struct mount *mnt = real_mount(m);
+ 	struct mnt_namespace *ns;
+ 	struct super_block *s;
+ 	struct path path;
+ 	int err;
+ 
+-	ns = create_mnt_ns(mnt);
+-	if (IS_ERR(ns))
++	ns = alloc_mnt_ns(&init_user_ns, true);
++	if (IS_ERR(ns)) {
++		mntput(m);
+ 		return ERR_CAST(ns);
 +	}
- 	new_ns->root = new;
- 	list_add_tail(&new_ns->list, &new->mnt_list);
++	mnt->mnt_ns = ns;
++	ns->root = mnt;
++	ns->mounts++;
++	list_add(&mnt->mnt_list, &ns->list);
  
-diff --git a/fs/pnode.c b/fs/pnode.c
-index 1100e810d855..7ea6cfb65077 100644
---- a/fs/pnode.c
-+++ b/fs/pnode.c
-@@ -214,7 +214,6 @@ static struct mount *next_group(struct mount *m, struct mount *origin)
- }
+-	err = vfs_path_lookup(mnt->mnt_root, mnt,
++	err = vfs_path_lookup(m->mnt_root, m,
+ 			name, LOOKUP_FOLLOW|LOOKUP_AUTOMOUNT, &path);
  
- /* all accesses are serialized by namespace_sem */
--static struct user_namespace *user_ns;
- static struct mount *last_dest, *first_source, *last_source, *dest_master;
- static struct mountpoint *mp;
- static struct hlist_head *list;
-@@ -260,9 +259,6 @@ static int propagate_one(struct mount *m)
- 			type |= CL_MAKE_SHARED;
- 	}
- 		
--	/* Notice when we are propagating across user namespaces */
--	if (m->mnt_ns->user_ns != user_ns)
--		type |= CL_UNPRIVILEGED;
- 	child = copy_tree(last_source, last_source->mnt.mnt_root, type);
- 	if (IS_ERR(child))
- 		return PTR_ERR(child);
-@@ -303,7 +299,6 @@ int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
- 	 * propagate_one(); everything is serialized by namespace_sem,
- 	 * so globals will do just fine.
- 	 */
--	user_ns = current->nsproxy->mnt_ns->user_ns;
- 	last_dest = dest_mnt;
- 	first_source = source_mnt;
- 	last_source = source_mnt;
-diff --git a/fs/pnode.h b/fs/pnode.h
-index dc87e65becd2..3960a83666cf 100644
---- a/fs/pnode.h
-+++ b/fs/pnode.h
-@@ -27,8 +27,7 @@
- #define CL_MAKE_SHARED 		0x08
- #define CL_PRIVATE 		0x10
- #define CL_SHARED_TO_SLAVE	0x20
--#define CL_UNPRIVILEGED		0x40
--#define CL_COPY_MNT_NS_FILE	0x80
-+#define CL_COPY_MNT_NS_FILE	0x40
+ 	put_mnt_ns(ns);
+@@ -3243,6 +3231,7 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
+ static void __init init_mount_tree(void)
+ {
+ 	struct vfsmount *mnt;
++	struct mount *m;
+ 	struct mnt_namespace *ns;
+ 	struct path root;
+ 	struct file_system_type *type;
+@@ -3255,10 +3244,14 @@ static void __init init_mount_tree(void)
+ 	if (IS_ERR(mnt))
+ 		panic("Can't create rootfs");
  
- #define CL_COPY_ALL		(CL_COPY_UNBINDABLE | CL_COPY_MNT_NS_FILE)
+-	ns = create_mnt_ns(mnt);
++	ns = alloc_mnt_ns(&init_user_ns, false);
+ 	if (IS_ERR(ns))
+ 		panic("Can't allocate initial namespace");
+-
++	m = real_mount(mnt);
++	m->mnt_ns = ns;
++	ns->root = m;
++	ns->mounts = 1;
++	list_add(&m->mnt_list, &ns->list);
+ 	init_task.nsproxy->mnt_ns = ns;
+ 	get_mnt_ns(ns);
+ 
+@@ -3499,6 +3492,9 @@ static int mntns_install(struct nsproxy *nsproxy, struct ns_common *ns)
+ 	    !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
++	if (is_anon_ns(mnt_ns))
++		return -EINVAL;
++
+ 	if (fs->users != 1)
+ 		return -EINVAL;
  
 
