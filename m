@@ -6,572 +6,315 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E40C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD63C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B05821738
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:31:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D7B721738
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbfBSQbQ (ORCPT
+        id S1729211AbfBSQbX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:31:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37934 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 11:31:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42582 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728818AbfBSQbQ (ORCPT
+        id S1729182AbfBSQbX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:31:16 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        Tue, 19 Feb 2019 11:31:23 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 37267A7865;
-        Tue, 19 Feb 2019 16:31:15 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8404FD7819;
+        Tue, 19 Feb 2019 16:31:22 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C546861460;
-        Tue, 19 Feb 2019 16:31:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A4A3101E5B1;
+        Tue, 19 Feb 2019 16:31:21 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 20/43] vfs: Implement a filesystem superblock
- creation/configuration context
+Subject: [PATCH 21/43] convenience helpers: vfs_get_super() and sget_fc()
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
         torvalds@linux-foundation.org, ebiederm@xmission.com,
         linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 16:31:04 +0000
-Message-ID: <155059386422.12449.6531190148715512242.stgit@warthog.procyon.org.uk>
+Date:   Tue, 19 Feb 2019 16:31:20 +0000
+Message-ID: <155059388041.12449.16262861562909897857.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 References: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 19 Feb 2019 16:31:15 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 19 Feb 2019 16:31:22 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[AV - unfuck kern_mount_data(); we want non-NULL ->mnt_ns on long-living
-mounts]
-[AV - reordering fs/namespace.c is badly overdue, but let's keep it
-separate from that series]
-[AV - drop simple_pin_fs() change]
-[AV - clean vfs_kern_mount() failure exits up]
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Implement a filesystem context concept to be used during superblock
-creation for mount and superblock reconfiguration for remount.
+the former is an analogue of mount_{single,nodev} for use in
+->get_tree() instances, the latter - analogue of sget() for the
+same.
 
-The mounting procedure then becomes:
+These are fairly similar to the originals, but the callback signature
+for sget_fc() is different from sget() ones, so getting bits and
+pieces shared would be too convoluted; we might get around to that
+later, but for now let's just remember to keep them in sync.  They
+do live next to each other, and changes in either won't be hard
+to spot.
 
- (1) Allocate new fs_context context.
-
- (2) Configure the context.
-
- (3) Create superblock.
-
- (4) Query the superblock.
-
- (5) Create a mount for the superblock.
-
- (6) Destroy the context.
-
-Rather than calling fs_type->mount(), an fs_context struct is created and
-fs_type->init_fs_context() is called to set it up.  Pointers exist for the
-filesystem and LSM to hang their private data off.
-
-A set of operations has to be set by ->init_fs_context() to provide
-freeing, duplication, option parsing, binary data parsing, validation,
-mounting and superblock filling.
-
-Legacy filesystems are supported by the provision of a set of legacy
-fs_context operations that build up a list of mount options and then invoke
-fs_type->mount() from within the fs_context ->get_tree() operation.  This
-allows all filesystems to be accessed using fs_context.
-
-It should be noted that, whilst this patch adds a lot of lines of code,
-there is quite a bit of duplication with existing code that can be
-eliminated should all filesystems be converted over.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
- fs/filesystems.c           |    4 +
- fs/fs_context.c            |  300 ++++++++++++++++++++++++++++++++++++++++++++
- fs/namespace.c             |   25 +---
- include/linux/fs.h         |    2 
- include/linux/fs_context.h |    5 +
- 5 files changed, 319 insertions(+), 17 deletions(-)
+ fs/super.c                 |  171 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h         |    4 +
+ include/linux/fs_context.h |   15 ++++
+ 3 files changed, 190 insertions(+)
 
-diff --git a/fs/filesystems.c b/fs/filesystems.c
-index b03f57b1105b..9135646e41ac 100644
---- a/fs/filesystems.c
-+++ b/fs/filesystems.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
-+#include <linux/fs_parser.h>
+diff --git a/fs/super.c b/fs/super.c
+index 76b3181c782d..0ebb5c11fa56 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -476,6 +476,94 @@ void generic_shutdown_super(struct super_block *sb)
  
- /*
-  * Handling of filesystem drivers list.
-@@ -73,6 +74,9 @@ int register_filesystem(struct file_system_type * fs)
- 	int res = 0;
- 	struct file_system_type ** p;
+ EXPORT_SYMBOL(generic_shutdown_super);
  
-+	if (fs->parameters && !fs_validate_description(fs->parameters))
-+		return -EINVAL;
-+
- 	BUG_ON(strchr(fs->name, '.'));
- 	if (fs->next)
- 		return -EBUSY;
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 825d1b2c8807..aa7e0ffb591a 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -12,6 +12,7 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- #include <linux/fs_context.h>
-+#include <linux/fs_parser.h>
- #include <linux/fs.h>
- #include <linux/mount.h>
- #include <linux/nsproxy.h>
-@@ -25,13 +26,217 @@
- #include "mount.h"
- #include "internal.h"
- 
-+enum legacy_fs_param {
-+	LEGACY_FS_UNSET_PARAMS,
-+	LEGACY_FS_MONOLITHIC_PARAMS,
-+	LEGACY_FS_INDIVIDUAL_PARAMS,
-+};
-+
- struct legacy_fs_context {
- 	char			*legacy_data;	/* Data page for legacy filesystems */
- 	size_t			data_size;
-+	enum legacy_fs_param	param_type;
- };
- 
- static int legacy_init_fs_context(struct fs_context *fc);
- 
-+static const struct constant_table common_set_sb_flag[] = {
-+	{ "dirsync",	SB_DIRSYNC },
-+	{ "lazytime",	SB_LAZYTIME },
-+	{ "mand",	SB_MANDLOCK },
-+	{ "posixacl",	SB_POSIXACL },
-+	{ "ro",		SB_RDONLY },
-+	{ "sync",	SB_SYNCHRONOUS },
-+};
-+
-+static const struct constant_table common_clear_sb_flag[] = {
-+	{ "async",	SB_SYNCHRONOUS },
-+	{ "nolazytime",	SB_LAZYTIME },
-+	{ "nomand",	SB_MANDLOCK },
-+	{ "rw",		SB_RDONLY },
-+	{ "silent",	SB_SILENT },
-+};
-+
-+static const char *const forbidden_sb_flag[] = {
-+	"bind",
-+	"dev",
-+	"exec",
-+	"move",
-+	"noatime",
-+	"nodev",
-+	"nodiratime",
-+	"noexec",
-+	"norelatime",
-+	"nostrictatime",
-+	"nosuid",
-+	"private",
-+	"rec",
-+	"relatime",
-+	"remount",
-+	"shared",
-+	"slave",
-+	"strictatime",
-+	"suid",
-+	"unbindable",
-+};
-+
-+/*
-+ * Check for a common mount option that manipulates s_flags.
-+ */
-+static int vfs_parse_sb_flag(struct fs_context *fc, const char *key)
-+{
-+	unsigned int token;
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(forbidden_sb_flag); i++)
-+		if (strcmp(key, forbidden_sb_flag[i]) == 0)
-+			return -EINVAL;
-+
-+	token = lookup_constant(common_set_sb_flag, key, 0);
-+	if (token) {
-+		fc->sb_flags |= token;
-+		fc->sb_flags_mask |= token;
-+		return 0;
-+	}
-+
-+	token = lookup_constant(common_clear_sb_flag, key, 0);
-+	if (token) {
-+		fc->sb_flags &= ~token;
-+		fc->sb_flags_mask |= token;
-+		return 0;
-+	}
-+
-+	return -ENOPARAM;
-+}
-+
 +/**
-+ * vfs_parse_fs_param - Add a single parameter to a superblock config
-+ * @fc: The filesystem context to modify
-+ * @param: The parameter
++ * sget_fc - Find or create a superblock
++ * @fc:	Filesystem context.
++ * @test: Comparison callback
++ * @set: Setup callback
 + *
-+ * A single mount option in string form is applied to the filesystem context
-+ * being set up.  Certain standard options (for example "ro") are translated
-+ * into flag bits without going to the filesystem.  The active security module
-+ * is allowed to observe and poach options.  Any other options are passed over
-+ * to the filesystem to parse.
++ * Find or create a superblock using the parameters stored in the filesystem
++ * context and the two callback functions.
 + *
-+ * This may be called multiple times for a context.
++ * If an extant superblock is matched, then that will be returned with an
++ * elevated reference count that the caller must transfer or discard.
 + *
-+ * Returns 0 on success and a negative error code on failure.  In the event of
-+ * failure, supplementary error information may have been set.
++ * If no match is made, a new superblock will be allocated and basic
++ * initialisation will be performed (s_type, s_fs_info and s_id will be set and
++ * the set() callback will be invoked), the superblock will be published and it
++ * will be returned in a partially constructed state with SB_BORN and SB_ACTIVE
++ * as yet unset.
 + */
-+int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
++struct super_block *sget_fc(struct fs_context *fc,
++			    int (*test)(struct super_block *, struct fs_context *),
++			    int (*set)(struct super_block *, struct fs_context *))
 +{
-+	int ret;
++	struct super_block *s = NULL;
++	struct super_block *old;
++	struct user_namespace *user_ns = fc->global ? &init_user_ns : fc->user_ns;
++	int err;
 +
-+	if (!param->key)
-+		return invalf(fc, "Unnamed parameter\n");
-+
-+	ret = vfs_parse_sb_flag(fc, param->key);
-+	if (ret != -ENOPARAM)
-+		return ret;
-+
-+	ret = security_fs_context_parse_param(fc, param);
-+	if (ret != -ENOPARAM)
-+		/* Param belongs to the LSM or is disallowed by the LSM; so
-+		 * don't pass to the FS.
++	if (!(fc->sb_flags & SB_KERNMOUNT) &&
++	    fc->purpose != FS_CONTEXT_FOR_SUBMOUNT) {
++		/* Don't allow mounting unless the caller has CAP_SYS_ADMIN
++		 * over the namespace.
 +		 */
-+		return ret;
-+
-+	if (fc->ops->parse_param) {
-+		ret = fc->ops->parse_param(fc, param);
-+		if (ret != -ENOPARAM)
-+			return ret;
-+	}
-+
-+	/* If the filesystem doesn't take any arguments, give it the
-+	 * default handling of source.
-+	 */
-+	if (strcmp(param->key, "source") == 0) {
-+		if (param->type != fs_value_is_string)
-+			return invalf(fc, "VFS: Non-string source");
-+		if (fc->source)
-+			return invalf(fc, "VFS: Multiple sources");
-+		fc->source = param->string;
-+		param->string = NULL;
-+		return 0;
-+	}
-+
-+	return invalf(fc, "%s: Unknown parameter '%s'",
-+		      fc->fs_type->name, param->key);
-+}
-+EXPORT_SYMBOL(vfs_parse_fs_param);
-+
-+/**
-+ * vfs_parse_fs_string - Convenience function to just parse a string.
-+ */
-+int vfs_parse_fs_string(struct fs_context *fc, const char *key,
-+			const char *value, size_t v_size)
-+{
-+	int ret;
-+
-+	struct fs_parameter param = {
-+		.key	= key,
-+		.type	= fs_value_is_string,
-+		.size	= v_size,
-+	};
-+
-+	if (v_size > 0) {
-+		param.string = kmemdup_nul(value, v_size, GFP_KERNEL);
-+		if (!param.string)
-+			return -ENOMEM;
-+	}
-+
-+	ret = vfs_parse_fs_param(fc, &param);
-+	kfree(param.string);
-+	return ret;
-+}
-+EXPORT_SYMBOL(vfs_parse_fs_string);
-+
-+/**
-+ * generic_parse_monolithic - Parse key[=val][,key[=val]]* mount data
-+ * @ctx: The superblock configuration to fill in.
-+ * @data: The data to parse
-+ *
-+ * Parse a blob of data that's in key[=val][,key[=val]]* form.  This can be
-+ * called from the ->monolithic_mount_data() fs_context operation.
-+ *
-+ * Returns 0 on success or the error returned by the ->parse_option() fs_context
-+ * operation on failure.
-+ */
-+int generic_parse_monolithic(struct fs_context *fc, void *data)
-+{
-+	char *options = data, *key;
-+	int ret = 0;
-+
-+	if (!options)
-+		return 0;
-+
-+	ret = security_sb_eat_lsm_opts(options, &fc->security);
-+	if (ret)
-+		return ret;
-+
-+	while ((key = strsep(&options, ",")) != NULL) {
-+		if (*key) {
-+			size_t v_len = 0;
-+			char *value = strchr(key, '=');
-+
-+			if (value) {
-+				if (value == key)
-+					continue;
-+				*value++ = 0;
-+				v_len = strlen(value);
-+			}
-+			ret = vfs_parse_fs_string(fc, key, value, v_len);
-+			if (ret < 0)
-+				break;
++		if (!(fc->fs_type->fs_flags & FS_USERNS_MOUNT)) {
++			if (!capable(CAP_SYS_ADMIN))
++				return ERR_PTR(-EPERM);
++		} else {
++			if (!ns_capable(fc->user_ns, CAP_SYS_ADMIN))
++				return ERR_PTR(-EPERM);
 +		}
 +	}
 +
-+	return ret;
++retry:
++	spin_lock(&sb_lock);
++	if (test) {
++		hlist_for_each_entry(old, &fc->fs_type->fs_supers, s_instances) {
++			if (test(old, fc))
++				goto share_extant_sb;
++		}
++	}
++	if (!s) {
++		spin_unlock(&sb_lock);
++		s = alloc_super(fc->fs_type, fc->sb_flags, user_ns);
++		if (!s)
++			return ERR_PTR(-ENOMEM);
++		goto retry;
++	}
++
++	s->s_fs_info = fc->s_fs_info;
++	err = set(s, fc);
++	if (err) {
++		s->s_fs_info = NULL;
++		spin_unlock(&sb_lock);
++		destroy_unused_super(s);
++		return ERR_PTR(err);
++	}
++	fc->s_fs_info = NULL;
++	s->s_type = fc->fs_type;
++	strlcpy(s->s_id, s->s_type->name, sizeof(s->s_id));
++	list_add_tail(&s->s_list, &super_blocks);
++	hlist_add_head(&s->s_instances, &s->s_type->fs_supers);
++	spin_unlock(&sb_lock);
++	get_filesystem(s->s_type);
++	register_shrinker_prepared(&s->s_shrink);
++	return s;
++
++share_extant_sb:
++	if (user_ns != old->s_user_ns) {
++		spin_unlock(&sb_lock);
++		destroy_unused_super(s);
++		return ERR_PTR(-EBUSY);
++	}
++	if (!grab_super(old))
++		goto retry;
++	destroy_unused_super(s);
++	return old;
 +}
-+EXPORT_SYMBOL(generic_parse_monolithic);
++EXPORT_SYMBOL(sget_fc);
 +
  /**
-  * alloc_fs_context - Create a filesystem context.
-  * @fs_type: The filesystem type.
-@@ -166,7 +371,87 @@ EXPORT_SYMBOL(put_fs_context);
-  */
- static void legacy_fs_context_free(struct fs_context *fc)
- {
--	kfree(fc->fs_private);
-+	struct legacy_fs_context *ctx = fc->fs_private;
+  *	sget_userns -	find or create a superblock
+  *	@type:	filesystem type superblock should belong to
+@@ -1103,6 +1191,89 @@ struct dentry *mount_ns(struct file_system_type *fs_type,
+ 
+ EXPORT_SYMBOL(mount_ns);
+ 
++int set_anon_super_fc(struct super_block *sb, struct fs_context *fc)
++{
++	return set_anon_super(sb, NULL);
++}
++EXPORT_SYMBOL(set_anon_super_fc);
 +
-+	if (ctx) {
-+		if (ctx->param_type == LEGACY_FS_INDIVIDUAL_PARAMS)
-+			kfree(ctx->legacy_data);
-+		kfree(ctx);
-+	}
++static int test_keyed_super(struct super_block *sb, struct fs_context *fc)
++{
++	return sb->s_fs_info == fc->s_fs_info;
 +}
 +
-+/*
-+ * Add a parameter to a legacy config.  We build up a comma-separated list of
-+ * options.
-+ */
-+static int legacy_parse_param(struct fs_context *fc, struct fs_parameter *param)
++static int test_single_super(struct super_block *s, struct fs_context *fc)
 +{
-+	struct legacy_fs_context *ctx = fc->fs_private;
-+	unsigned int size = ctx->data_size;
-+	size_t len = 0;
++	return 1;
++}
 +
-+	if (strcmp(param->key, "source") == 0) {
-+		if (param->type != fs_value_is_string)
-+			return invalf(fc, "VFS: Legacy: Non-string source");
-+		if (fc->source)
-+			return invalf(fc, "VFS: Legacy: Multiple sources");
-+		fc->source = param->string;
-+		param->string = NULL;
-+		return 0;
-+	}
++/**
++ * vfs_get_super - Get a superblock with a search key set in s_fs_info.
++ * @fc: The filesystem context holding the parameters
++ * @keying: How to distinguish superblocks
++ * @fill_super: Helper to initialise a new superblock
++ *
++ * Search for a superblock and create a new one if not found.  The search
++ * criterion is controlled by @keying.  If the search fails, a new superblock
++ * is created and @fill_super() is called to initialise it.
++ *
++ * @keying can take one of a number of values:
++ *
++ * (1) vfs_get_single_super - Only one superblock of this type may exist on the
++ *     system.  This is typically used for special system filesystems.
++ *
++ * (2) vfs_get_keyed_super - Multiple superblocks may exist, but they must have
++ *     distinct keys (where the key is in s_fs_info).  Searching for the same
++ *     key again will turn up the superblock for that key.
++ *
++ * (3) vfs_get_independent_super - Multiple superblocks may exist and are
++ *     unkeyed.  Each call will get a new superblock.
++ *
++ * A permissions check is made by sget_fc() unless we're getting a superblock
++ * for a kernel-internal mount or a submount.
++ */
++int vfs_get_super(struct fs_context *fc,
++		  enum vfs_get_super_keying keying,
++		  int (*fill_super)(struct super_block *sb,
++				    struct fs_context *fc))
++{
++	int (*test)(struct super_block *, struct fs_context *);
++	struct super_block *sb;
 +
-+	if ((fc->fs_type->fs_flags & FS_HAS_SUBTYPE) &&
-+	    strcmp(param->key, "subtype") == 0) {
-+		if (param->type != fs_value_is_string)
-+			return invalf(fc, "VFS: Legacy: Non-string subtype");
-+		if (fc->subtype)
-+			return invalf(fc, "VFS: Legacy: Multiple subtype");
-+		fc->subtype = param->string;
-+		param->string = NULL;
-+		return 0;
-+	}
-+
-+	if (ctx->param_type == LEGACY_FS_MONOLITHIC_PARAMS)
-+		return invalf(fc, "VFS: Legacy: Can't mix monolithic and individual options");
-+
-+	switch (param->type) {
-+	case fs_value_is_string:
-+		len = 1 + param->size;
-+		/* Fall through */
-+	case fs_value_is_flag:
-+		len += strlen(param->key);
++	switch (keying) {
++	case vfs_get_single_super:
++		test = test_single_super;
++		break;
++	case vfs_get_keyed_super:
++		test = test_keyed_super;
++		break;
++	case vfs_get_independent_super:
++		test = NULL;
 +		break;
 +	default:
-+		return invalf(fc, "VFS: Legacy: Parameter type for '%s' not supported",
-+			      param->key);
++		BUG();
 +	}
 +
-+	if (len > PAGE_SIZE - 2 - size)
-+		return invalf(fc, "VFS: Legacy: Cumulative options too large");
-+	if (strchr(param->key, ',') ||
-+	    (param->type == fs_value_is_string &&
-+	     memchr(param->string, ',', param->size)))
-+		return invalf(fc, "VFS: Legacy: Option '%s' contained comma",
-+			      param->key);
-+	if (!ctx->legacy_data) {
-+		ctx->legacy_data = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+		if (!ctx->legacy_data)
-+			return -ENOMEM;
++	sb = sget_fc(fc, test, set_anon_super_fc);
++	if (IS_ERR(sb))
++		return PTR_ERR(sb);
++
++	if (!sb->s_root) {
++		int err = fill_super(sb, fc);
++		if (err) {
++			deactivate_locked_super(sb);
++			return err;
++		}
++
++		sb->s_flags |= SB_ACTIVE;
 +	}
 +
-+	ctx->legacy_data[size++] = ',';
-+	len = strlen(param->key);
-+	memcpy(ctx->legacy_data + size, param->key, len);
-+	size += len;
-+	if (param->type == fs_value_is_string) {
-+		ctx->legacy_data[size++] = '=';
-+		memcpy(ctx->legacy_data + size, param->string, param->size);
-+		size += param->size;
-+	}
-+	ctx->legacy_data[size] = '\0';
-+	ctx->data_size = size;
-+	ctx->param_type = LEGACY_FS_INDIVIDUAL_PARAMS;
++	BUG_ON(fc->root);
++	fc->root = dget(sb->s_root);
 +	return 0;
- }
- 
- /*
-@@ -175,9 +460,17 @@ static void legacy_fs_context_free(struct fs_context *fc)
- static int legacy_parse_monolithic(struct fs_context *fc, void *data)
++}
++EXPORT_SYMBOL(vfs_get_super);
++
+ #ifdef CONFIG_BLOCK
+ static int set_bdev_super(struct super_block *s, void *data)
  {
- 	struct legacy_fs_context *ctx = fc->fs_private;
-+
-+	if (ctx->param_type != LEGACY_FS_UNSET_PARAMS) {
-+		pr_warn("VFS: Can't mix monolithic and individual options\n");
-+		return -EINVAL;
-+	}
-+
- 	ctx->legacy_data = data;
-+	ctx->param_type = LEGACY_FS_MONOLITHIC_PARAMS;
- 	if (!ctx->legacy_data)
- 		return 0;
-+
- 	if (fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA)
- 		return 0;
- 	return security_sb_eat_lsm_opts(ctx->legacy_data, &fc->security);
-@@ -221,6 +514,7 @@ static int legacy_reconfigure(struct fs_context *fc)
- 
- const struct fs_context_operations legacy_fs_context_ops = {
- 	.free			= legacy_fs_context_free,
-+	.parse_param		= legacy_parse_param,
- 	.parse_monolithic	= legacy_parse_monolithic,
- 	.get_tree		= legacy_get_tree,
- 	.reconfigure		= legacy_reconfigure,
-@@ -242,6 +536,10 @@ static int legacy_init_fs_context(struct fs_context *fc)
- int parse_monolithic_mount_data(struct fs_context *fc, void *data)
- {
- 	int (*monolithic_mount_data)(struct fs_context *, void *);
-+
- 	monolithic_mount_data = fc->ops->parse_monolithic;
-+	if (!monolithic_mount_data)
-+		monolithic_mount_data = generic_parse_monolithic;
-+
- 	return monolithic_mount_data(fc, data);
- }
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 931228d8518a..1a1ed2528f47 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -997,17 +997,15 @@ struct vfsmount *vfs_kern_mount(struct file_system_type *type,
- 	int ret = 0;
- 
- 	if (!type)
--		return ERR_PTR(-ENODEV);
-+		return ERR_PTR(-EINVAL);
- 
- 	fc = fs_context_for_mount(type, flags);
- 	if (IS_ERR(fc))
- 		return ERR_CAST(fc);
- 
--	if (name) {
--		fc->source = kstrdup(name, GFP_KERNEL);
--		if (!fc->source)
--			ret = -ENOMEM;
--	}
-+	if (name)
-+		ret = vfs_parse_fs_string(fc, "source",
-+					  name, strlen(name));
- 	if (!ret)
- 		ret = parse_monolithic_mount_data(fc, data);
- 	if (!ret)
-@@ -2611,16 +2609,11 @@ static int do_new_mount(struct path *path, const char *fstype, int sb_flags,
- 	if (IS_ERR(fc))
- 		return PTR_ERR(fc);
- 
--	if (subtype) {
--		fc->subtype = kstrdup(subtype, GFP_KERNEL);
--		if (!fc->subtype)
--			err = -ENOMEM;
--	}
--	if (!err && name) {
--		fc->source = kstrdup(name, GFP_KERNEL);
--		if (!fc->source)
--			err = -ENOMEM;
--	}
-+	if (subtype)
-+		err = vfs_parse_fs_string(fc, "subtype",
-+					  subtype, strlen(subtype));
-+	if (!err && name)
-+		err = vfs_parse_fs_string(fc, "source", name, strlen(name));
- 	if (!err)
- 		err = parse_monolithic_mount_data(fc, data);
- 	if (!err)
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 8d578a9e1e8c..cf6e9ea161eb 100644
+index cf6e9ea161eb..9d05c128ccf6 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -62,6 +62,7 @@ struct iov_iter;
- struct fscrypt_info;
- struct fscrypt_operations;
- struct fs_context;
-+struct fs_parameter_description;
- 
- extern void __init inode_init(void);
- extern void __init inode_init_early(void);
-@@ -2175,6 +2176,7 @@ struct file_system_type {
- #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
- #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
- 	int (*init_fs_context)(struct fs_context *);
-+	const struct fs_parameter_description *parameters;
- 	struct dentry *(*mount) (struct file_system_type *, int,
- 		       const char *, void *);
- 	void (*kill_sb) (struct super_block *);
+@@ -2232,8 +2232,12 @@ void kill_litter_super(struct super_block *sb);
+ void deactivate_super(struct super_block *sb);
+ void deactivate_locked_super(struct super_block *sb);
+ int set_anon_super(struct super_block *s, void *data);
++int set_anon_super_fc(struct super_block *s, struct fs_context *fc);
+ int get_anon_bdev(dev_t *);
+ void free_anon_bdev(dev_t);
++struct super_block *sget_fc(struct fs_context *fc,
++			    int (*test)(struct super_block *, struct fs_context *),
++			    int (*set)(struct super_block *, struct fs_context *));
+ struct super_block *sget_userns(struct file_system_type *type,
+ 			int (*test)(struct super_block *,void *),
+ 			int (*set)(struct super_block *,void *),
 diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index d5ff3b0bc28d..d794b04e9fbb 100644
+index d794b04e9fbb..b1a95db7a111 100644
 --- a/include/linux/fs_context.h
 +++ b/include/linux/fs_context.h
-@@ -92,6 +92,7 @@ struct fs_context {
+@@ -83,11 +83,13 @@ struct fs_context {
+ 	const char		*source;	/* The source name (eg. dev path) */
+ 	const char		*subtype;	/* The subtype to set on the superblock */
+ 	void			*security;	/* Linux S&M options */
++	void			*s_fs_info;	/* Proposed s_fs_info */
+ 	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
+ 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
+ 	unsigned int		lsm_flags;	/* Information flags from the fs to the LSM */
+ 	enum fs_context_purpose	purpose:8;
+ 	bool			need_free:1;	/* Need to call ops->free() */
++	bool			global:1;	/* Goes into &init_user_ns */
+ };
  
  struct fs_context_operations {
- 	void (*free)(struct fs_context *fc);
-+	int (*parse_param)(struct fs_context *fc, struct fs_parameter *param);
- 	int (*parse_monolithic)(struct fs_context *fc, void *data);
- 	int (*get_tree)(struct fs_context *fc);
- 	int (*reconfigure)(struct fs_context *fc);
-@@ -108,6 +109,10 @@ extern struct fs_context *fs_context_for_reconfigure(struct dentry *dentry,
- extern struct fs_context *fs_context_for_submount(struct file_system_type *fs_type,
- 						struct dentry *reference);
- 
-+extern int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param);
-+extern int vfs_parse_fs_string(struct fs_context *fc, const char *key,
-+			       const char *value, size_t v_size);
-+extern int generic_parse_monolithic(struct fs_context *fc, void *data);
+@@ -116,6 +118,19 @@ extern int generic_parse_monolithic(struct fs_context *fc, void *data);
  extern int vfs_get_tree(struct fs_context *fc);
  extern void put_fs_context(struct fs_context *fc);
  
++/*
++ * sget() wrapper to be called from the ->get_tree() op.
++ */
++enum vfs_get_super_keying {
++	vfs_get_single_super,	/* Only one such superblock may exist */
++	vfs_get_keyed_super,	/* Superblocks with different s_fs_info keys may exist */
++	vfs_get_independent_super, /* Multiple independent superblocks may exist */
++};
++extern int vfs_get_super(struct fs_context *fc,
++			 enum vfs_get_super_keying keying,
++			 int (*fill_super)(struct super_block *sb,
++					   struct fs_context *fc));
++
+ #define logfc(FC, FMT, ...) pr_notice(FMT, ## __VA_ARGS__)
+ 
+ /**
 
