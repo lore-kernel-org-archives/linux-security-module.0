@@ -6,352 +6,249 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99E6C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D81C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99B1E21738
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:31:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D60221738
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:31:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfBSQbq (ORCPT
+        id S1729020AbfBSQbx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:31:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41906 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 11:31:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49678 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726357AbfBSQbp (ORCPT
+        id S1726357AbfBSQbx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:31:45 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        Tue, 19 Feb 2019 11:31:53 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1236EC059B7A;
-        Tue, 19 Feb 2019 16:31:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C34080467;
+        Tue, 19 Feb 2019 16:31:52 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9E66853;
-        Tue, 19 Feb 2019 16:31:43 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0682719C58;
+        Tue, 19 Feb 2019 16:31:50 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 24/43] proc: Add fs_context support to procfs
+Subject: [PATCH 25/43] ipc: Convert mqueue fs to fs_context
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
         torvalds@linux-foundation.org, ebiederm@xmission.com,
         linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 16:31:42 +0000
-Message-ID: <155059390291.12449.10527077827963704179.stgit@warthog.procyon.org.uk>
+Date:   Tue, 19 Feb 2019 16:31:50 +0000
+Message-ID: <155059391026.12449.668855607210599414.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 References: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 19 Feb 2019 16:31:45 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 19 Feb 2019 16:31:52 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add fs_context support to procfs.
+Convert the mqueue filesystem to use the filesystem context stuff.
+
+Notes:
+
+ (1) The relevant ipc namespace is selected in when the context is
+     initialised (and it defaults to the current task's ipc namespace).
+     The caller can override this before calling vfs_get_tree().
+
+ (2) Rather than simply calling kern_mount_data(), mq_init_ns() and
+     mq_internal_mount() create a context, adjust it and then do the rest
+     of the mount procedure.
+
+ (3) The lazy mqueue mounting on creation of a new namespace is retained
+     from a previous patch, but the avoidance of sget() if no superblock
+     yet exists is reverted and the superblock is again keyed on the
+     namespace pointer.
+
+     Yes, there was a performance gain in not searching the superblock
+     hash, but it's only paid once per ipc namespace - and only if someone
+     uses mqueue within that namespace, so I'm not sure it's worth it,
+     especially as calling sget() allows avoidance of recursion.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Alexey Dobriyan <adobriyan@gmail.com>
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
- fs/proc/inode.c    |    1 
- fs/proc/internal.h |    1 
- fs/proc/root.c     |  195 ++++++++++++++++++++++++++++++++++------------------
- 3 files changed, 129 insertions(+), 68 deletions(-)
+ ipc/mqueue.c    |   94 ++++++++++++++++++++++++++++++++++++++++++-------------
+ ipc/namespace.c |    2 +
+ 2 files changed, 73 insertions(+), 23 deletions(-)
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 17b5261206dd..fc7e38def174 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -127,7 +127,6 @@ const struct super_operations proc_sops = {
- 	.drop_inode	= generic_delete_inode,
- 	.evict_inode	= proc_evict_inode,
- 	.statfs		= simple_statfs,
--	.remount_fs	= proc_remount,
- 	.show_options	= proc_show_options,
- };
- 
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 97157c0410a2..40f905143d39 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -270,7 +270,6 @@ static inline void proc_tty_init(void) {}
- extern struct proc_dir_entry proc_root;
- 
- extern void proc_self_init(void);
--extern int proc_remount(struct super_block *, int *, char *);
- 
- /*
-  * task_[no]mmu.c
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index fe4f64b3250b..6927b29ece76 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -19,74 +19,89 @@
- #include <linux/module.h>
- #include <linux/bitops.h>
- #include <linux/user_namespace.h>
-+#include <linux/fs_context.h>
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index c595bed7bfcb..2a9a8be49f5b 100644
+--- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -18,6 +18,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/file.h>
  #include <linux/mount.h>
- #include <linux/pid_namespace.h>
--#include <linux/parser.h>
-+#include <linux/fs_parser.h>
- #include <linux/cred.h>
- #include <linux/magic.h>
-+#include <linux/slab.h>
++#include <linux/fs_context.h>
+ #include <linux/namei.h>
+ #include <linux/sysctl.h>
+ #include <linux/poll.h>
+@@ -42,6 +43,10 @@
+ #include <net/sock.h>
+ #include "util.h"
  
- #include "internal.h"
- 
--enum {
--	Opt_gid, Opt_hidepid, Opt_err,
-+struct proc_fs_context {
-+	struct pid_namespace	*pid_ns;
-+	unsigned int		mask;
-+	int			hidepid;
-+	int			gid;
- };
- 
--static const match_table_t tokens = {
--	{Opt_hidepid, "hidepid=%u"},
--	{Opt_gid, "gid=%u"},
--	{Opt_err, NULL},
-+enum proc_param {
-+	Opt_gid,
-+	Opt_hidepid,
- };
- 
--static int proc_parse_options(char *options, struct pid_namespace *pid)
-+static const struct fs_parameter_spec proc_param_specs[] = {
-+	fsparam_u32("gid",	Opt_gid),
-+	fsparam_u32("hidepid",	Opt_hidepid),
-+	{}
++struct mqueue_fs_context {
++	struct ipc_namespace	*ipc_ns;
 +};
 +
-+static const struct fs_parameter_description proc_fs_parameters = {
-+	.name		= "proc",
-+	.specs		= proc_param_specs,
-+};
-+
-+static int proc_parse_param(struct fs_context *fc, struct fs_parameter *param)
- {
--	char *p;
--	substring_t args[MAX_OPT_ARGS];
--	int option;
--
--	if (!options)
--		return 1;
--
--	while ((p = strsep(&options, ",")) != NULL) {
--		int token;
--		if (!*p)
--			continue;
--
--		args[0].to = args[0].from = NULL;
--		token = match_token(p, tokens, args);
--		switch (token) {
--		case Opt_gid:
--			if (match_int(&args[0], &option))
--				return 0;
--			pid->pid_gid = make_kgid(current_user_ns(), option);
--			break;
--		case Opt_hidepid:
--			if (match_int(&args[0], &option))
--				return 0;
--			if (option < HIDEPID_OFF ||
--			    option > HIDEPID_INVISIBLE) {
--				pr_err("proc: hidepid value must be between 0 and 2.\n");
--				return 0;
--			}
--			pid->hide_pid = option;
--			break;
--		default:
--			pr_err("proc: unrecognized mount option \"%s\" "
--			       "or missing value\n", p);
--			return 0;
--		}
-+	struct proc_fs_context *ctx = fc->fs_private;
-+	struct fs_parse_result result;
-+	int opt;
-+
-+	opt = fs_parse(fc, &proc_fs_parameters, param, &result);
-+	if (opt < 0)
-+		return opt;
-+
-+	switch (opt) {
-+	case Opt_gid:
-+		ctx->gid = result.uint_32;
-+		break;
-+
-+	case Opt_hidepid:
-+		ctx->hidepid = result.uint_32;
-+		if (ctx->hidepid < HIDEPID_OFF ||
-+		    ctx->hidepid > HIDEPID_INVISIBLE)
-+			return invalf(fc, "proc: hidepid value must be between 0 and 2.\n");
-+		break;
-+
-+	default:
-+		return -EINVAL;
- 	}
+ #define MQUEUE_MAGIC	0x19800202
+ #define DIRENT_SIZE	20
+ #define FILENT_SIZE	80
+@@ -87,9 +92,11 @@ struct mqueue_inode_info {
+ 	unsigned long qsize; /* size of queue in memory (sum of all msgs) */
+ };
  
--	return 1;
-+	ctx->mask |= 1 << opt;
-+	return 0;
-+}
-+
-+static void proc_apply_options(struct super_block *s,
-+			       struct fs_context *fc,
-+			       struct pid_namespace *pid_ns,
-+			       struct user_namespace *user_ns)
-+{
-+	struct proc_fs_context *ctx = fc->fs_private;
-+
-+	if (ctx->mask & (1 << Opt_gid))
-+		pid_ns->pid_gid = make_kgid(user_ns, ctx->gid);
-+	if (ctx->mask & (1 << Opt_hidepid))
-+		pid_ns->hide_pid = ctx->hidepid;
++static struct file_system_type mqueue_fs_type;
+ static const struct inode_operations mqueue_dir_inode_operations;
+ static const struct file_operations mqueue_file_operations;
+ static const struct super_operations mqueue_super_ops;
++static const struct fs_context_operations mqueue_fs_context_ops;
+ static void remove_notification(struct mqueue_inode_info *info);
+ 
+ static struct kmem_cache *mqueue_inode_cachep;
+@@ -322,7 +329,7 @@ static struct inode *mqueue_get_inode(struct super_block *sb,
+ 	return ERR_PTR(ret);
  }
  
--static int proc_fill_super(struct super_block *s, void *data, int silent)
-+static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+-static int mqueue_fill_super(struct super_block *sb, void *data, int silent)
++static int mqueue_fill_super(struct super_block *sb, struct fs_context *fc)
  {
--	struct pid_namespace *ns = get_pid_ns(s->s_fs_info);
-+	struct pid_namespace *pid_ns = get_pid_ns(s->s_fs_info);
- 	struct inode *root_inode;
- 	int ret;
- 
--	if (!proc_parse_options(data, ns))
--		return -EINVAL;
-+	proc_apply_options(s, fc, pid_ns, current_user_ns());
- 
- 	/* User space would break if executables or devices appear on proc */
- 	s->s_iflags |= SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
-@@ -127,27 +142,55 @@ static int proc_fill_super(struct super_block *s, void *data, int silent)
- 	return proc_setup_thread_self(s);
+ 	struct inode *inode;
+ 	struct ipc_namespace *ns = sb->s_fs_info;
+@@ -343,18 +350,56 @@ static int mqueue_fill_super(struct super_block *sb, void *data, int silent)
+ 	return 0;
  }
  
--int proc_remount(struct super_block *sb, int *flags, char *data)
-+static int proc_reconfigure(struct fs_context *fc)
+-static struct dentry *mqueue_mount(struct file_system_type *fs_type,
+-			 int flags, const char *dev_name,
+-			 void *data)
++static int mqueue_get_tree(struct fs_context *fc)
  {
-+	struct super_block *sb = fc->root->d_sb;
- 	struct pid_namespace *pid = sb->s_fs_info;
- 
- 	sync_filesystem(sb);
--	return !proc_parse_options(data, pid);
-+
-+	proc_apply_options(sb, fc, pid, current_user_ns());
-+	return 0;
- }
- 
--static struct dentry *proc_mount(struct file_system_type *fs_type,
--	int flags, const char *dev_name, void *data)
-+static int proc_get_tree(struct fs_context *fc)
- {
--	struct pid_namespace *ns;
-+	struct proc_fs_context *ctx = fc->fs_private;
- 
+-	struct ipc_namespace *ns;
 -	if (flags & SB_KERNMOUNT) {
 -		ns = data;
 -		data = NULL;
 -	} else {
--		ns = task_active_pid_ns(current);
+-		ns = current->nsproxy->ipc_ns;
 -	}
+-	return mount_ns(fs_type, flags, data, ns, ns->user_ns, mqueue_fill_super);
++	struct mqueue_fs_context *ctx = fc->fs_private;
++
 +	put_user_ns(fc->user_ns);
-+	fc->user_ns = get_user_ns(ctx->pid_ns->user_ns);
-+	fc->s_fs_info = ctx->pid_ns;
-+	return vfs_get_super(fc, vfs_get_keyed_super, proc_fill_super);
++	fc->user_ns = get_user_ns(ctx->ipc_ns->user_ns);
++	fc->s_fs_info = ctx->ipc_ns;
++	return vfs_get_super(fc, vfs_get_keyed_super, mqueue_fill_super);
 +}
 +
-+static void proc_fs_context_free(struct fs_context *fc)
++static void mqueue_fs_context_free(struct fs_context *fc)
 +{
-+	struct proc_fs_context *ctx = fc->fs_private;
++	struct mqueue_fs_context *ctx = fc->fs_private;
 +
-+	if (ctx->pid_ns)
-+		put_pid_ns(ctx->pid_ns);
++	if (ctx->ipc_ns)
++		put_ipc_ns(ctx->ipc_ns);
 +	kfree(ctx);
 +}
 +
-+static const struct fs_context_operations proc_fs_context_ops = {
-+	.free		= proc_fs_context_free,
-+	.parse_param	= proc_parse_param,
-+	.get_tree	= proc_get_tree,
-+	.reconfigure	= proc_reconfigure,
-+};
-+
-+static int proc_init_fs_context(struct fs_context *fc)
++static int mqueue_init_fs_context(struct fs_context *fc)
 +{
-+	struct proc_fs_context *ctx;
++	struct mqueue_fs_context *ctx;
 +
-+	ctx = kzalloc(sizeof(struct proc_fs_context), GFP_KERNEL);
++	ctx = kzalloc(sizeof(struct mqueue_fs_context), GFP_KERNEL);
 +	if (!ctx)
 +		return -ENOMEM;
- 
--	return mount_ns(fs_type, flags, data, ns, ns->user_ns, proc_fill_super);
-+	ctx->pid_ns = get_pid_ns(task_active_pid_ns(current));
++
++	ctx->ipc_ns = get_ipc_ns(current->nsproxy->ipc_ns);
 +	fc->fs_private = ctx;
-+	fc->ops = &proc_fs_context_ops;
++	fc->ops = &mqueue_fs_context_ops;
 +	return 0;
- }
- 
- static void proc_kill_sb(struct super_block *sb)
-@@ -164,10 +207,11 @@ static void proc_kill_sb(struct super_block *sb)
- }
- 
- static struct file_system_type proc_fs_type = {
--	.name		= "proc",
--	.mount		= proc_mount,
--	.kill_sb	= proc_kill_sb,
--	.fs_flags	= FS_USERNS_MOUNT,
-+	.name			= "proc",
-+	.init_fs_context	= proc_init_fs_context,
-+	.parameters		= &proc_fs_parameters,
-+	.kill_sb		= proc_kill_sb,
-+	.fs_flags		= FS_USERNS_MOUNT,
- };
- 
- void __init proc_root_init(void)
-@@ -205,7 +249,7 @@ static struct dentry *proc_root_lookup(struct inode * dir, struct dentry * dentr
- {
- 	if (!proc_pid_lookup(dir, dentry, flags))
- 		return NULL;
--	
++}
 +
- 	return proc_lookup(dir, dentry, flags);
- }
- 
-@@ -258,9 +302,28 @@ struct proc_dir_entry proc_root = {
- 
- int pid_ns_prepare_proc(struct pid_namespace *ns)
- {
-+	struct proc_fs_context *ctx;
++static struct vfsmount *mq_create_mount(struct ipc_namespace *ns)
++{
++	struct mqueue_fs_context *ctx;
 +	struct fs_context *fc;
- 	struct vfsmount *mnt;
- 
--	mnt = kern_mount_data(&proc_fs_type, ns);
-+	fc = fs_context_for_mount(&proc_fs_type, SB_KERNMOUNT);
-+	if (IS_ERR(fc))
-+		return PTR_ERR(fc);
++	struct vfsmount *mnt;
 +
-+	if (fc->user_ns != ns->user_ns) {
-+		put_user_ns(fc->user_ns);
-+		fc->user_ns = get_user_ns(ns->user_ns);
-+	}
++	fc = fs_context_for_mount(&mqueue_fs_type, SB_KERNMOUNT);
++	if (IS_ERR(fc))
++		return ERR_CAST(fc);
 +
 +	ctx = fc->fs_private;
-+	if (ctx->pid_ns != ns) {
-+		put_pid_ns(ctx->pid_ns);
-+		get_pid_ns(ns);
-+		ctx->pid_ns = ns;
-+	}
++	put_ipc_ns(ctx->ipc_ns);
++	ctx->ipc_ns = get_ipc_ns(ns);
 +
 +	mnt = fc_mount(fc);
 +	put_fs_context(fc);
- 	if (IS_ERR(mnt))
- 		return PTR_ERR(mnt);
++	return mnt;
+ }
+ 
+ static void init_once(void *foo)
+@@ -1522,15 +1567,22 @@ static const struct super_operations mqueue_super_ops = {
+ 	.statfs = simple_statfs,
+ };
+ 
++static const struct fs_context_operations mqueue_fs_context_ops = {
++	.free		= mqueue_fs_context_free,
++	.get_tree	= mqueue_get_tree,
++};
++
+ static struct file_system_type mqueue_fs_type = {
+-	.name = "mqueue",
+-	.mount = mqueue_mount,
+-	.kill_sb = kill_litter_super,
+-	.fs_flags = FS_USERNS_MOUNT,
++	.name			= "mqueue",
++	.init_fs_context	= mqueue_init_fs_context,
++	.kill_sb		= kill_litter_super,
++	.fs_flags		= FS_USERNS_MOUNT,
+ };
+ 
+ int mq_init_ns(struct ipc_namespace *ns)
+ {
++	struct vfsmount *m;
++
+ 	ns->mq_queues_count  = 0;
+ 	ns->mq_queues_max    = DFLT_QUEUESMAX;
+ 	ns->mq_msg_max       = DFLT_MSGMAX;
+@@ -1538,12 +1590,10 @@ int mq_init_ns(struct ipc_namespace *ns)
+ 	ns->mq_msg_default   = DFLT_MSG;
+ 	ns->mq_msgsize_default  = DFLT_MSGSIZE;
+ 
+-	ns->mq_mnt = kern_mount_data(&mqueue_fs_type, ns);
+-	if (IS_ERR(ns->mq_mnt)) {
+-		int err = PTR_ERR(ns->mq_mnt);
+-		ns->mq_mnt = NULL;
+-		return err;
+-	}
++	m = mq_create_mount(ns);
++	if (IS_ERR(m))
++		return PTR_ERR(m);
++	ns->mq_mnt = m;
+ 	return 0;
+ }
+ 
+diff --git a/ipc/namespace.c b/ipc/namespace.c
+index 21607791d62c..b3ca1476ca51 100644
+--- a/ipc/namespace.c
++++ b/ipc/namespace.c
+@@ -42,7 +42,7 @@ static struct ipc_namespace *create_ipc_ns(struct user_namespace *user_ns,
+ 		goto fail;
+ 
+ 	err = -ENOMEM;
+-	ns = kmalloc(sizeof(struct ipc_namespace), GFP_KERNEL);
++	ns = kzalloc(sizeof(struct ipc_namespace), GFP_KERNEL);
+ 	if (ns == NULL)
+ 		goto fail_dec;
  
 
