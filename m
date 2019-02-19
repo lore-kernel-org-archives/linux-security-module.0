@@ -2,219 +2,155 @@ Return-Path: <SRS0=18aP=Q2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A127FC43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A98C2C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E50421773
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:43:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UT+MX4te"
+	by mail.kernel.org (Postfix) with ESMTP id 80B472183E
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729332AbfBSQnM (ORCPT
+        id S1727082AbfBSQpr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:43:12 -0500
-Received: from sonic301-10.consmr.mail.bf2.yahoo.com ([74.6.129.49]:38916 "EHLO
-        sonic301-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729301AbfBSQnM (ORCPT
+        Tue, 19 Feb 2019 11:45:47 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:36707 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfBSQpr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:43:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1550594589; bh=faF+SgY2ts13KTY0TUvjfwhdQBH2YNYnPIrBcDX183w=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=UT+MX4teKE7qsdI8VCSHNzFKV7KrYP+I8HatmFqu6DEdlz9Em07iR9V/HChHQiIB4zLF62tQiGtJ1jiXlpjb1eMVchUXYGmP7xQd6bdu/yXl9fv5PQ/DEOvXBiDfvaewF8FhLpcoFkiATTMxYRnjbIaeKQExbz7xARz2HnZIJAY5hXj8oCGv/O/wXyqCz1MALNNbkqwX8yDkM9ulwKZcXQF4Sbry5jJxUGb3lEgxDFf1TfC5VmTtew31lotw2p++S+2rqeMBJ0oBvTgE4T8+wQzuhnWTVOED1/oH06+cLAp5YqQWaNeUAqqXbbaafQFlXi19M4o8IA7bLFkUpjxs0g==
-X-YMail-OSG: iOXjRWkVM1mtyfzJPPuvHaofq.P07b8yVikAvhTPQsM3UxmhP5QH.UxmWWOjMW5
- BGPIhVGgiT6ObuTfM5nXOPJo5rNpENPpuODB5z8RSpRmcxxNtppYEe3MRP1tS7AVI.c17x2Xa6fp
- xCpQT8hmaT5_ZsbWDWsLvVBYNEHiBfMFOsA0taalW1yAv545rDXyKGouuwWiNlkLfq5QmXpTZBR0
- 8iMrEQPcHwgw9I.G6DzSM9w27xruGdr8Ut2eJncxPmcEivZHNh80n3XSEhqgTMjddbKoWIfue6PR
- ClHIKsddjPoQdP5e536PV6hiXUx3v96cItVvteAFJf0nBxV2qB5BySxAazdmpAEgDGHxlTZOzEqa
- kZeGkh873NC8MNFaxeCpbkEP9Cg2C2dNCijHZ9Yq8NteCDSDgqlFNQWFGl8ZxFRKuLB4Q7ZuHemy
- J1A5I2.eXz9sxdN4tNUpoLht5TauOzZ1YjI9bwBCBtOLw11RpMeNTLZuG6uaOT_xogkdGK9f6u3d
- 04YWmPyryjaWh00yA5GbZCMPBl81PkJlB9gQfXo3IR__z1ybJBDeOXBTuWK7lfpBhooxqp5zx1h1
- 329RAKWgll9ZLKqNY.9wdorR9OEEFXR8555DkC1eLj4hqRryqXraOOhQqKpDszVVYTnMRmbg_WvK
- bvljVYq0WhjOzp7z6.KgJp7YVvEncZitxntw1izmn52JcIL4JyAfwbahJoSHzn7l5ZsA9z_6NeKN
- kP9XWtHlMT.wpQWaeTGlE.bkS0hbJdcOEM6XzgEri9ihFjqUMuGYCTMMHHBuoAKH_scbvJJyezS6
- rM9R26p_6lAHkpp6gsksum26DnR0c.juN7RcDZM99Bhwvk4WVbQqSQyFjBSdu7Q8_r8UpfLqa45R
- udlPJ9ZfnVwt5Il_KtVyD2wAnBBHP_SZvdSy7UTSGT.Bb.Sxe2uOi7w6PCRwzYakQqelkx3BZbYZ
- c8G1CXYUojrkNwV4l3EgVf8guoiIJDiEtoO9nVSfEokJ67elZJcf1wVK.2cfm7vz5b1IVzeKzUUb
- QI2amilrmvUcob11ULgG63AnZUewcQxltvNX6FytbaFbvDcetCFjwvKnVlpeK1Q7UgQ_saCF2xfl
- Qnb_g5DezoPJV
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Tue, 19 Feb 2019 16:43:09 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp428.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a7d4e8ec5dfdede091c8ca18e504c7d6;
-          Tue, 19 Feb 2019 16:43:06 +0000 (UTC)
-Subject: Re: [PATCH v6 5/5] kernfs: initialize security of newly created nodes
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Tejun Heo <tj@kernel.org>, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, casey@schaufler-ca.com
-References: <20190214095015.16032-1-omosnace@redhat.com>
- <20190214095015.16032-6-omosnace@redhat.com>
- <20190214154854.GO50184@devbig004.ftw2.facebook.com>
- <CAFqZXNuOg9ex_WqCCKYzPQSeqbGmo-KP4Yh9TB4bbMZziG314A@mail.gmail.com>
- <20190215155014.GP50184@devbig004.ftw2.facebook.com>
- <CAFqZXNvVb75K9ZemVObcBB+rntL38_VfY5P6jyAbuwjymt6MQQ@mail.gmail.com>
- <8c1ddde8-c7aa-7dca-3a0f-2d425c6879b4@schaufler-ca.com>
- <CAFqZXNtJFrtAqnu=CmoSPnPM312DKF73ALkLeekMk8Me5ojntw@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <0942b8c9-79a3-47a9-a28d-276d322fd9e1@schaufler-ca.com>
-Date:   Tue, 19 Feb 2019 08:43:05 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Tue, 19 Feb 2019 11:45:47 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gw8Wf-0002cJ-D4; Tue, 19 Feb 2019 09:45:45 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gw8We-0006S1-L9; Tue, 19 Feb 2019 09:45:45 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
+        sfrench@samba.org, linux-security-module@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
+        linux-kernel@vger.kernel.org
+References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
+        <155024688620.21651.16013251077091180213.stgit@warthog.procyon.org.uk>
+Date:   Tue, 19 Feb 2019 10:45:33 -0600
+In-Reply-To: <155024688620.21651.16013251077091180213.stgit@warthog.procyon.org.uk>
+        (David Howells's message of "Fri, 15 Feb 2019 16:08:06 +0000")
+Message-ID: <8736ojwwuq.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAFqZXNtJFrtAqnu=CmoSPnPM312DKF73ALkLeekMk8Me5ojntw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
+X-XM-SPF: eid=1gw8We-0006S1-L9;;;mid=<8736ojwwuq.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+0bCbJs2NZ1f0Qu2dc3RqzP0PhMAUsnbg=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [RFC PATCH 06/27] containers, vfs: Allow syscall dirfd arguments to take a container fd
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/19/2019 6:10 AM, Ondrej Mosnacek wrote:
-> On Tue, Feb 19, 2019 at 1:28 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 2/18/2019 2:03 AM, Ondrej Mosnacek wrote:
->>> On Fri, Feb 15, 2019 at 4:50 PM Tejun Heo <tj@kernel.org> wrote:
->>>> On Fri, Feb 15, 2019 at 04:45:44PM +0100, Ondrej Mosnacek wrote:
->>>>> On Thu, Feb 14, 2019 at 4:49 PM Tejun Heo <tj@kernel.org> wrote:
->>>>>> On Thu, Feb 14, 2019 at 10:50:15AM +0100, Ondrej Mosnacek wrote:
->>>>>>> +static int kernfs_node_init_security(struct kernfs_node *parent,
->>>>>>> +                                  struct kernfs_node *kn)
->>>>>> Can we skip the whole thing if security is not enabled?
->>>>> Do you mean just skipping the whole part when CONFIG_SECURITY=n? That
->>>>> is easy to do and I can add it in the next respin (although the
->>>>> compiler should be able to optimize most of it out in that case).
->>>> So the goal is allowing folks who don't use this to not pay.  It'd be
->>>> better the evaulation can be as late as possible but obviously there's
->>>> a point where that'd be too complicated.  Maybe "ever enabled in this
->>>> boot" is a good and simple enough at the same time?
->>> I don't think there is a way currently to check whether some LSM has
->>> been enabled at boot or not. I suppose we could add such function for
->>> this kind of heuristics, but I'm not sure how it would interplay with
->>> the plans to allow multiple LSM to be enabled simultaneously...
->>> Perhaps it would be better/easier to just add a
->>> security_kernfs_needs_init() function, which would simply check if the
->>> list of registered kernfs_init_security hooks is empty.
->>>
->>> I propose something like the patch below (the whitespace is mangled -
->>> intended just for visual review). I plan to fold it into the next
->>> respin if there are no objections to this approach.
->>>
->>> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
->>> index 735a6d382d9d..5b99205da919 100644
->>> --- a/fs/kernfs/dir.c
->>> +++ b/fs/kernfs/dir.c
->>> @@ -625,6 +625,9 @@ static int kernfs_node_init_security(struct
->>> kernfs_node *parent,
->>>           struct qstr q;
->>>           int ret;
->>>
->>> +       if (!security_kernfs_needs_init() || !parent)
->>> +               return 0;
->>> +
->>>           if (!parent->iattr) {
->>>                   kernfs_iattr_init(&iattr_parent, parent);
->>>                   simple_xattrs_init(&xattr_parent);
->>> @@ -720,11 +723,9 @@ static struct kernfs_node
->>> *__kernfs_new_node(struct kernfs_root *root,
->>>                           goto err_out3;
->>>           }
->>>
->>> -       if (parent) {
->>> -               ret = kernfs_node_init_security(parent, kn);
->>> -               if (ret)
->>> -                       goto err_out3;
->>> -       }
->>> +       ret = kernfs_node_init_security(parent, kn);
->>> +       if (ret)
->>> +               goto err_out3;
->>>
->>>           return kn;
->>>
->>> diff --git a/include/linux/security.h b/include/linux/security.h
->>> index 581944d1e61e..49a083dbc464 100644
->>> --- a/include/linux/security.h
->>> +++ b/include/linux/security.h
->>> @@ -292,6 +292,7 @@ int security_inode_listsecurity(struct inode
->>> *inode, char *buffer, size_t buffer
->>>    void security_inode_getsecid(struct inode *inode, u32 *secid);
->>>    int security_inode_copy_up(struct dentry *src, struct cred **new);
->>>    int security_inode_copy_up_xattr(const char *name);
->>> +int security_kernfs_needs_init(void);
->>>    int security_kernfs_init_security(const struct qstr *qstr,
->>>                                     const struct iattr *dir_iattr,
->>>                                     struct simple_xattrs *dir_secattr,
->>> @@ -789,6 +790,11 @@ static inline int security_inode_copy_up(struct
->>> dentry *src, struct cred **new)
->>>           return 0;
->>>    }
->>>
->>> +static inline int security_kernfs_needs_init(void)
->>> +{
->>> +       return 0;
->>> +}
->>> +
->>>    static inline int security_kernfs_init_security(
->>>                   const struct qstr *qstr, const struct iattr *dir_iattr,
->>>                   struct simple_xattrs *dir_secattr, const struct iattr *iattr,
->>> diff --git a/security/security.c b/security/security.c
->>> index 836e0822874a..3c8b9b5baabc 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -892,6 +892,11 @@ int security_inode_copy_up_xattr(const char *name)
->>>    }
->>>    EXPORT_SYMBOL(security_inode_copy_up_xattr);
->>>
->>> +int security_kernfs_needs_init(void)
->>> +{
->>> +       return !hlist_empty(&security_hook_heads.kernfs_init_security);
->>> +}
->>> +
->> Yuck. That's an awful lot of infrastructure just to track
->> that state. May I suggest that instead you have the
->> security_kernfs_init_security() hook return -EOPNOTSUPP
->> in the no-LSM case (2nd argument to call_in_hook). You could
->> then have a state flag in kernfs that you can set to indicate
->> you don't need to call security_kernfs_init_security() again.
-> Well, maintaining a global variable sounds even more yucky to me...
+David Howells <dhowells@redhat.com> writes:
 
-The state you're maintaining is kernfs state, not LSM
-infrastructure state. The state should be maintained in
-kernfs, not in the LSM infrastructure.
+> Some filesystem system calls, such as mkdirat(), take a 'directory fd' to
+> specify the pathwalk origin.  This takes either AT_FDCWD or a file
+> descriptor that refers to an open directory.
+>
+> Make it possible to supply a container fd, as obtained from
+> container_create(), instead thereby specifying the container's root as the
+> origin.  This performs the filesystem operation into the container's mount
+> namespace.  For example:
+>
+> 	int cfd = container_create("fred", CONTAINER_NEW_MNT_NS, 0);
+> 	mkdirat(cfd, "/fred", 0755);
+>
+> A better way to do this might be to temporarily override current->fs and
+> current->nsproxy, but this requires splitting those fields so that procfs
+> doesn't see the override.
+>
+> A sequence number and lock are available to protect the root pointer in
+> case container_chroot() and/or container_pivot_root() are implemented.
 
-> And I don't understand why you'd consider a simple one-line function
-> to be "an awful lot of infrastructure" :)
+If this is desirable we can do this without a ``container''.  We already
+have mount namespaces.
 
-That is because you haven't been working with the LSM
-infrastructure very long. If you'll recall, I have already
-objected to kernfs specific LSM hooks. Now, when you find
-that your approach for using a hook has issues, you want
-to add another function that does nothing but tell you
-that there's nothing to do. You can get that by calling
-the security_kernfs_init_security() hook. The LSM infrastructure
-is set up to be as painless as possible when you don't
-want to use it.
+Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
 
->   But at the end of the day it
-> is up to the maintainers - Greg/Tejun and James/Serge (who I forgot to
-> Cc on these patches, sorry)
+In fact if you take care to use a path that starts with '/' the normal
+dirfd based operations work just fine.
 
-Yes, James and Serge are the maintainers for the
-security sub-system, but I have done the transition
-from hook vector to hook lists and am currently doing
-the transition from module to infrastructure blob management.
-I know it better, and have more invested in it, than anyone
-else just now.
+So I don't see the point of this system call at all.
 
->   - what works better for them.
 
-Kernfs is an important component of the kernel. So is
-the security infrastructure. I would hope you don't want
-to turn this into a contest to see which maintainer has
-the biggest clout.
-
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+>
+>  fs/namei.c |   45 ++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 34 insertions(+), 11 deletions(-)
+>
+> diff --git a/fs/namei.c b/fs/namei.c
+> index a85deb55d0c9..4932b5467285 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2232,20 +2232,43 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+>  		if (!f.file)
+>  			return ERR_PTR(-EBADF);
+>  
+> -		dentry = f.file->f_path.dentry;
+> +		if (is_container_file(f.file)) {
+> +			struct container *c = f.file->private_data;
+> +			unsigned seq;
+>  
+> -		if (*s && unlikely(!d_can_lookup(dentry))) {
+> -			fdput(f);
+> -			return ERR_PTR(-ENOTDIR);
+> -		}
+> +			if (!*s)
+> +				return ERR_PTR(-EINVAL);
+>  
+> -		nd->path = f.file->f_path;
+> -		if (flags & LOOKUP_RCU) {
+> -			nd->inode = nd->path.dentry->d_inode;
+> -			nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
+> +			if (flags & LOOKUP_RCU) {
+> +				do {
+> +					seq = read_seqcount_begin(&c->seq);
+> +					nd->path = c->root;
+> +					nd->inode = nd->path.dentry->d_inode;
+> +					nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
+> +				} while (read_seqcount_retry(&c->seq, seq));
+> +			} else {
+> +				spin_lock(&c->lock);
+> +				nd->path = c->root;
+> +				path_get(&nd->path);
+> +				spin_unlock(&c->lock);
+> +				nd->inode = nd->path.dentry->d_inode;
+> +			}
+>  		} else {
+> -			path_get(&nd->path);
+> -			nd->inode = nd->path.dentry->d_inode;
+> +			dentry = f.file->f_path.dentry;
+> +
+> +			if (*s && unlikely(!d_can_lookup(dentry))) {
+> +				fdput(f);
+> +				return ERR_PTR(-ENOTDIR);
+> +			}
+> +
+> +			nd->path = f.file->f_path;
+> +			if (flags & LOOKUP_RCU) {
+> +				nd->inode = nd->path.dentry->d_inode;
+> +				nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
+> +			} else {
+> +				path_get(&nd->path);
+> +				nd->inode = nd->path.dentry->d_inode;
+> +			}
+>  		}
+>  		fdput(f);
+>  		return s;
