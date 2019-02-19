@@ -2,133 +2,162 @@ Return-Path: <SRS0=18aP=Q2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAE9C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46EA4C10F00
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B9C4206BB
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:04:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gyQOAeLJ"
+	by mail.kernel.org (Postfix) with ESMTP id 22C2E2147A
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:08:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725811AbfBSREW (ORCPT
+        id S1727048AbfBSRI0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:04:22 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:33354 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfBSREW (ORCPT
+        Tue, 19 Feb 2019 12:08:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60524 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726565AbfBSRI0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:04:22 -0500
-Received: by mail-yb1-f195.google.com with SMTP id w2so8424657ybi.0
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Feb 2019 09:04:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=noiDrczKGbhF44NP/ZFkxfX2jHlLrDZ3QMqbb78FL4k=;
-        b=gyQOAeLJO/hVoY2ht7e8thT/4ovHpFSR41ZQw4BXN/6uKUalD3LRSWJmt7uH/eHD78
-         NtHVBj8/8e5n1YMqGdyBlNYRJxLOrj7vCWW1zPFC+M90WPnbA79CFDfTWHznMZDVflgj
-         irCeYuniQItKUCQ64kGjHR7PJsVrhS81FVOuY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=noiDrczKGbhF44NP/ZFkxfX2jHlLrDZ3QMqbb78FL4k=;
-        b=nMPnKzsD50Cg2JkVN3d5ZIA6WQigC4EdmoXtT0mEFU5FB8FSd/CkFMaQb8irGeAI5g
-         vJUB6NM/AsKorNkMTgX8oeJfNAScVzTIer+JA4Ax7Z0VxY2iYNs/ziKsjxUHNz48or6Q
-         Ju6IMX2ZIn5SZxKeFO9VzgR4u6/5k+SIqpb4cs9ppuUsaIUBvu2kH4V58wR1P8DrMNZp
-         4h2V8LN2au5xJkQfktE+/AG0/1jWRtOMnKlAX7mlhkBYHqhLI+uSsu56LY08QHuT6sZy
-         KykV3TRnVI0BC1RhilxxzFb7redkSgsKnJwDG/XBwAfOfnEkTEPpmn2QVEquG0r9R2rl
-         1J3g==
-X-Gm-Message-State: AHQUAuYLUVj+ShFV13qATLW5ly6u/64BiakB33I5pRdoP2TXGZeR6k2/
-        qvPoaYRP8WAOhHBsIeQDVwkpctIWp5QYJS2Stq3byL+PicU=
-X-Google-Smtp-Source: AHgI3IYYzRcQ8IGYB/Glpo34S95LuKUQfPmCEsPxwXePsY89C633S0n7/qJKHKF+Go90zTdaLT4zfm2Fiovsoy4Zhn0=
-X-Received: by 2002:a25:bd5:: with SMTP id 204mr23860955ybl.97.1550595861412;
- Tue, 19 Feb 2019 09:04:21 -0800 (PST)
+        Tue, 19 Feb 2019 12:08:26 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0851983F44;
+        Tue, 19 Feb 2019 17:08:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 954265BBCB;
+        Tue, 19 Feb 2019 17:08:24 +0000 (UTC)
+Subject: [PATCH 00/10] VFS: Provide new mount UAPI
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dhowells@redhat.com, torvalds@linux-foundation.org,
+        ebiederm@xmission.com, linux-security-module@vger.kernel.org
+Date:   Tue, 19 Feb 2019 17:08:23 +0000
+Message-ID: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-References: <20190215222228.133709-1-mortonm@chromium.org> <20190217184906.GA20247@mail.hallyn.com>
-In-Reply-To: <20190217184906.GA20247@mail.hallyn.com>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Tue, 19 Feb 2019 09:04:10 -0800
-Message-ID: <CAJ-EccNax1U0Kc71BJLugjc3t8RUC+oGnOMSQ1=p+bhQtG=Ajw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] LSM: SafeSetID: gate setgid transitions
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 19 Feb 2019 17:08:26 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Feb 17, 2019 at 10:49 AM Serge E. Hallyn <serge@hallyn.com> wrote:
->
-> On Fri, Feb 15, 2019 at 02:22:28PM -0800, mortonm@chromium.org wrote:
-> > From: Micah Morton <mortonm@chromium.org>
-> >
-> > The SafeSetID LSM already gates setuid transitions for UIDs on the
-> > system whose use of CAP_SETUID has been 'restricted'. This patch
-> > implements the analogous functionality for setgid transitions, in order
-> > to restrict the use of CAP_SETGID for certain UIDs on the system. One
-> > notable consequence of this addition is that a process running under a
-> > restricted UID (i.e. one that is only allowed to setgid to certain
-> > approved GIDs) will not be allowed to call the setgroups() syscall to
-> > set its supplementary group IDs. For now, we leave such support for
-> > restricted setgroups() to future work, as it would require hooking the
-> > logic in setgroups() and verifying that the array of GIDs passed in from
-> > userspace only consists of approved GIDs.
-> >
-> > Signed-off-by: Micah Morton <mortonm@chromium.org>
-> > ---
-> > Tested with slight mod to test in tools/testing/selftests/safesetid for
-> > testing setgid as well as setuid.
-> >
-> >  security/safesetid/lsm.c        | 263 +++++++++++++++++++++++++++-----
-> >  security/safesetid/lsm.h        |  11 +-
-> >  security/safesetid/securityfs.c | 105 +++++++++----
-> >  3 files changed, 307 insertions(+), 72 deletions(-)
-> >
-> > diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-> > index cecd38e2ac80..5d9710b7bb04 100644
-> > --- a/security/safesetid/lsm.c
-> > +++ b/security/safesetid/lsm.c
-> > @@ -26,27 +26,30 @@ int safesetid_initialized;
-> >
-> >  #define NUM_BITS 8 /* 128 buckets in hash table */
-> ...
-> > +int add_safesetid_whitelist_uid_entry(kuid_t parent, kuid_t child)
-> >  {
-> > -     struct entry *new;
-> > +     struct id_entry *new;
-> >
-> >       /* Return if entry already exists */
-> >       if (check_setuid_policy_hashtable_key_value(parent, child))
-> >               return 0;
-> >
-> > -     new = kzalloc(sizeof(struct entry), GFP_KERNEL);
-> > +     new = kzalloc(sizeof(struct id_entry), GFP_KERNEL);
-> > +     if (!new)
-> > +             return -ENOMEM;
-> > +     new->parent_kuid = __kuid_val(parent);
-> > +     new->child_kid = __kuid_val(child);
-> > +     spin_lock(&safesetid_whitelist_uid_hashtable_spinlock);
-> > +     hash_add_rcu(safesetid_whitelist_uid_hashtable,
-> > +                  &new->next,
-> > +                  __kuid_val(parent));
->
-> Do you care at all about the possibility of duplicate entries?
 
-Duplicate entries shouldn't be possible due to the invocation of
-check_setuid_policy_hashtable_key_value() above where it says "Return
-if entry already exists". Does this make sense?
+Here's a set of patches that creates a number of new system calls to allow
+the creation and parameterisation of a filesystem context and the
+subsequent use of that context to create or look up a superblock:
 
->
-> > +     spin_unlock(&safesetid_whitelist_uid_hashtable_spinlock);
-> > +     return 0;
-> > +}
+	fd = fsopen("afs");
+	fsconfig(fd, FSCONFIG_SET_STRING,
+		 "source", "#grand.central.org:root.cell.", 0);
+	fsconfig(fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+
+or reconfigure a superblock:
+
+	fd = fspick(AT_FDCWD, "/nfs/foo", FSPICK_NO_AUTOMOUNT);
+	fsconfig(fd, FSCONFIG_SET_FLAG, "noac", NULL, 0);
+	fsconfig(fd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
+
+A mount object can then be created for the superblock which will be
+attached to an O_PATH-equivalent file descriptor:
+
+	mfd = fsmount(fd, MS_NODEV);
+
+This can then be moved into place:
+
+	move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+move_mount() can be used more generically too, e.g.:
+
+	move_mount(AT_FDCWD, "/mnt/foo", AT_FDCWD, "/mnt/bar", 0);
+
+to move mount subtrees around.
+
+One more system call is available:
+
+	mfd = open_tree(AT_FDCWD, "/mnt/foo", 0)
+	mfd = open_tree(AT_FDCWD, "/mnt/foo", OPEN_TREE_CLONE)
+	mfd = open_tree(AT_FDCWD, "/mnt/foo", OPEN_TREE_CLONE | AT_RECURSIVE)
+
+This creates an O_PATH-equivalent file descriptor referring to a mount, a
+copy of a mount or a copy of a mount subtree that move_mount() can then
+move/paste into place.
+
+The patches can be found here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+
+at tag:
+
+	vfs-mount-syscalls
+
+David
+---
+Al Viro (1):
+      vfs: syscall: Add open_tree(2) to reference or clone a mount
+
+David Howells (9):
+      vfs: syscall: Add move_mount(2) to move mounts around
+      teach move_mount(2) to work with OPEN_TREE_CLONE
+      Make anon_inodes unconditional
+      vfs: syscall: Add fsopen() to prepare for superblock creation
+      vfs: Implement logging through fs_context
+      vfs: syscall: Add fsconfig() for configuring and managing a context
+      vfs: syscall: Add fsmount() to create a mount for a superblock
+      vfs: syscall: Add fspick() to select a superblock for reconfiguration
+      vfs: Add a sample program for the new mount API
+
+
+ arch/arm/kvm/Kconfig                   |    1 
+ arch/arm64/kvm/Kconfig                 |    1 
+ arch/mips/kvm/Kconfig                  |    1 
+ arch/powerpc/kvm/Kconfig               |    1 
+ arch/s390/kvm/Kconfig                  |    1 
+ arch/x86/Kconfig                       |    1 
+ arch/x86/entry/syscalls/syscall_32.tbl |    6 
+ arch/x86/entry/syscalls/syscall_64.tbl |    6 
+ arch/x86/kvm/Kconfig                   |    1 
+ drivers/base/Kconfig                   |    1 
+ drivers/char/tpm/Kconfig               |    1 
+ drivers/dma-buf/Kconfig                |    1 
+ drivers/gpio/Kconfig                   |    1 
+ drivers/iio/Kconfig                    |    1 
+ drivers/infiniband/Kconfig             |    1 
+ drivers/vfio/Kconfig                   |    1 
+ fs/Makefile                            |    4 
+ fs/file_table.c                        |    9 -
+ fs/fs_context.c                        |  160 ++++++++++-
+ fs/fsopen.c                            |  477 ++++++++++++++++++++++++++++++++
+ fs/internal.h                          |    4 
+ fs/namespace.c                         |  477 ++++++++++++++++++++++++++++----
+ fs/notify/fanotify/Kconfig             |    1 
+ fs/notify/inotify/Kconfig              |    1 
+ include/linux/fs.h                     |    7 
+ include/linux/fs_context.h             |   38 ++-
+ include/linux/lsm_hooks.h              |    6 
+ include/linux/module.h                 |    6 
+ include/linux/security.h               |    7 
+ include/linux/syscalls.h               |    9 +
+ include/uapi/linux/fcntl.h             |    2 
+ include/uapi/linux/mount.h             |   62 ++++
+ init/Kconfig                           |   10 -
+ samples/Kconfig                        |    9 -
+ samples/Makefile                       |    2 
+ samples/statx/Makefile                 |    7 
+ samples/statx/test-statx.c             |  258 -----------------
+ samples/vfs/Makefile                   |   10 +
+ samples/vfs/test-fsmount.c             |  133 +++++++++
+ samples/vfs/test-statx.c               |  267 ++++++++++++++++++
+ security/security.c                    |    5 
+ 41 files changed, 1617 insertions(+), 380 deletions(-)
+ create mode 100644 fs/fsopen.c
+ delete mode 100644 samples/statx/Makefile
+ delete mode 100644 samples/statx/test-statx.c
+ create mode 100644 samples/vfs/Makefile
+ create mode 100644 samples/vfs/test-fsmount.c
+ create mode 100644 samples/vfs/test-statx.c
+
