@@ -3,311 +3,202 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BC4C10F00
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F36BC10F00
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57AF32083E
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1CFB2147A
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729359AbfBSRJ3 (ORCPT
+        id S1729363AbfBSRJg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:09:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37898 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 12:09:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39154 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbfBSRJ3 (ORCPT
+        id S1728201AbfBSRJf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:09:29 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        Tue, 19 Feb 2019 12:09:35 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 05A3623E6E7;
-        Tue, 19 Feb 2019 17:09:28 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 68E4CC007320;
+        Tue, 19 Feb 2019 17:09:35 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 43BF7101E5B1;
-        Tue, 19 Feb 2019 17:09:26 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F3F9560BE8;
+        Tue, 19 Feb 2019 17:09:33 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 08/10] vfs: syscall: Add fsmount() to create a mount for a
- superblock
+Subject: [PATCH 09/10] vfs: syscall: Add fspick() to select a superblock for
+ reconfiguration
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
 Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         dhowells@redhat.com, torvalds@linux-foundation.org,
         ebiederm@xmission.com, linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 17:09:25 +0000
-Message-ID: <155059616551.17079.6086553789074410155.stgit@warthog.procyon.org.uk>
+Date:   Tue, 19 Feb 2019 17:09:33 +0000
+Message-ID: <155059617323.17079.2377064615299669557.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
 References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 19 Feb 2019 17:09:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 19 Feb 2019 17:09:35 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Provide a system call by which a filesystem opened with fsopen() and
-configured by a series of fsconfig() calls can have a detached mount object
-created for it.  This mount object can then be attached to the VFS mount
-hierarchy using move_mount() by passing the returned file descriptor as the
-from directory fd.
+Provide an fspick() system call that can be used to pick an existing
+mountpoint into an fs_context which can thereafter be used to reconfigure a
+superblock (equivalent of the superblock side of -o remount).
 
-The system call looks like:
+This looks like:
 
-	int mfd = fsmount(int fsfd, unsigned int flags,
-			  unsigned int attr_flags);
+	int fd = fspick(AT_FDCWD, "/mnt",
+			FSPICK_CLOEXEC | FSPICK_NO_AUTOMOUNT);
+	fsconfig(fd, FSCONFIG_SET_FLAG, "intr", NULL, 0);
+	fsconfig(fd, FSCONFIG_SET_FLAG, "noac", NULL, 0);
+	fsconfig(fd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
 
-where fsfd is the file descriptor returned by fsopen().  flags can be 0 or
-FSMOUNT_CLOEXEC.  attr_flags is a bitwise-OR of the following flags:
-
-	MOUNT_ATTR_RDONLY	Mount read-only
-	MOUNT_ATTR_NOSUID	Ignore suid and sgid bits
-	MOUNT_ATTR_NODEV	Disallow access to device special files
-	MOUNT_ATTR_NOEXEC	Disallow program execution
-	MOUNT_ATTR__ATIME	Setting on how atime should be updated
-	MOUNT_ATTR_RELATIME	- Update atime relative to mtime/ctime
-	MOUNT_ATTR_NOATIME	- Do not update access times
-	MOUNT_ATTR_STRICTATIME	- Always perform atime updates
-	MOUNT_ATTR_NODIRATIME	Do not update directory access times
-
-In the event that fsmount() fails, it may be possible to get an error
-message by calling read() on fsfd.  If no message is available, ENODATA
-will be reported.
+At the point of fspick being called, the file descriptor referring to the
+filesystem context is in exactly the same state as the one that was created
+by fsopen() after fsmount() has been successfully called.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-api@vger.kernel.org
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
- arch/x86/entry/syscalls/syscall_32.tbl |    1 
- arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/namespace.c                         |  146 +++++++++++++++++++++++++++++++-
- include/linux/syscalls.h               |    1 
- include/uapi/linux/mount.h             |   18 ++++
- 5 files changed, 164 insertions(+), 3 deletions(-)
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 +
+ fs/fsopen.c                            |   57 ++++++++++++++++++++++++++++++++
+ include/linux/syscalls.h               |    1 +
+ include/uapi/linux/mount.h             |    8 ++++
+ 5 files changed, 68 insertions(+)
 
 diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index f9970310c126..c78b68256f8a 100644
+index c78b68256f8a..d1eb6c815790 100644
 --- a/arch/x86/entry/syscalls/syscall_32.tbl
 +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -402,3 +402,4 @@
- 388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
+@@ -403,3 +403,4 @@
  389	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
  390	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
-+391	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
+ 391	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
++392	i386	fspick			sys_fspick			__ia32_sys_fspick
 diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 4185d36e03bb..d44ead5d4368 100644
+index d44ead5d4368..d3ab703c02bb 100644
 --- a/arch/x86/entry/syscalls/syscall_64.tbl
 +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -347,6 +347,7 @@
- 336	common	move_mount		__x64_sys_move_mount
+@@ -348,6 +348,7 @@
  337	common	fsopen			__x64_sys_fsopen
  338	common	fsconfig		__x64_sys_fsconfig
-+339	common	fsmount			__x64_sys_fsmount
+ 339	common	fsmount			__x64_sys_fsmount
++340	common	fspick			__x64_sys_fspick
  
  #
  # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 56423c60ac7e..43cbce0643ce 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3334,9 +3334,149 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index 65cc2f68f994..3bb9c0c8cbcc 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -156,6 +156,63 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
+ 	return ret;
  }
  
- /*
-- * Move a mount from one place to another.
-- * In combination with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be
-- * used to copy a mount subtree.
-+ * Create a kernel mount representation for a new, prepared superblock
-+ * (specified by fs_fd) and attach to an open_tree-like file descriptor.
++/*
++ * Pick a superblock into a context for reconfiguration.
 + */
-+SYSCALL_DEFINE3(fsmount, int, fs_fd, unsigned int, flags,
-+		unsigned int, attr_flags)
++SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags)
 +{
-+	struct mnt_namespace *ns;
 +	struct fs_context *fc;
-+	struct file *file;
-+	struct path newmount;
-+	struct mount *mnt;
-+	struct fd f;
-+	unsigned int mnt_flags = 0;
-+	long ret;
++	struct path target;
++	unsigned int lookup_flags;
++	int ret;
 +
-+	if (!may_mount())
++	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
 +		return -EPERM;
 +
-+	if ((flags & ~(FSMOUNT_CLOEXEC)) != 0)
++	if ((flags & ~(FSPICK_CLOEXEC |
++		       FSPICK_SYMLINK_NOFOLLOW |
++		       FSPICK_NO_AUTOMOUNT |
++		       FSPICK_EMPTY_PATH)) != 0)
 +		return -EINVAL;
 +
-+	if (attr_flags & ~(MOUNT_ATTR_RDONLY |
-+			   MOUNT_ATTR_NOSUID |
-+			   MOUNT_ATTR_NODEV |
-+			   MOUNT_ATTR_NOEXEC |
-+			   MOUNT_ATTR__ATIME |
-+			   MOUNT_ATTR_NODIRATIME))
-+		return -EINVAL;
-+
-+	if (attr_flags & MOUNT_ATTR_RDONLY)
-+		mnt_flags |= MNT_READONLY;
-+	if (attr_flags & MOUNT_ATTR_NOSUID)
-+		mnt_flags |= MNT_NOSUID;
-+	if (attr_flags & MOUNT_ATTR_NODEV)
-+		mnt_flags |= MNT_NODEV;
-+	if (attr_flags & MOUNT_ATTR_NOEXEC)
-+		mnt_flags |= MNT_NOEXEC;
-+	if (attr_flags & MOUNT_ATTR_NODIRATIME)
-+		mnt_flags |= MNT_NODIRATIME;
-+
-+	switch (attr_flags & MOUNT_ATTR__ATIME) {
-+	case MOUNT_ATTR_STRICTATIME:
-+		break;
-+	case MOUNT_ATTR_NOATIME:
-+		mnt_flags |= MNT_NOATIME;
-+		break;
-+	case MOUNT_ATTR_RELATIME:
-+		mnt_flags |= MNT_RELATIME;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	f = fdget(fs_fd);
-+	if (!f.file)
-+		return -EBADF;
-+
-+	ret = -EINVAL;
-+	if (f.file->f_op != &fscontext_fops)
-+		goto err_fsfd;
-+
-+	fc = f.file->private_data;
-+
-+	ret = mutex_lock_interruptible(&fc->uapi_mutex);
++	lookup_flags = LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
++	if (flags & FSPICK_SYMLINK_NOFOLLOW)
++		lookup_flags &= ~LOOKUP_FOLLOW;
++	if (flags & FSPICK_NO_AUTOMOUNT)
++		lookup_flags &= ~LOOKUP_AUTOMOUNT;
++	if (flags & FSPICK_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
++	ret = user_path_at(dfd, path, lookup_flags, &target);
 +	if (ret < 0)
-+		goto err_fsfd;
++		goto err;
 +
-+	/* There must be a valid superblock or we can't mount it */
 +	ret = -EINVAL;
-+	if (!fc->root)
-+		goto err_unlock;
++	if (target.mnt->mnt_root != target.dentry)
++		goto err_path;
 +
-+	ret = -EPERM;
-+	if (mount_too_revealing(fc->root->d_sb, &mnt_flags)) {
-+		pr_warn("VFS: Mount too revealing\n");
-+		goto err_unlock;
-+	}
-+
-+	ret = -EBUSY;
-+	if (fc->phase != FS_CONTEXT_AWAITING_MOUNT)
-+		goto err_unlock;
-+
-+	ret = -EPERM;
-+	if ((fc->sb_flags & SB_MANDLOCK) && !may_mandlock())
-+		goto err_unlock;
-+
-+	newmount.mnt = vfs_create_mount(fc);
-+	if (IS_ERR(newmount.mnt)) {
-+		ret = PTR_ERR(newmount.mnt);
-+		goto err_unlock;
-+	}
-+	newmount.dentry = dget(fc->root);
-+	newmount.mnt->mnt_flags = mnt_flags;
-+
-+	/* We've done the mount bit - now move the file context into more or
-+	 * less the same state as if we'd done an fspick().  We don't want to
-+	 * do any memory allocation or anything like that at this point as we
-+	 * don't want to have to handle any errors incurred.
-+	 */
-+	vfs_clean_context(fc);
-+
-+	ns = alloc_mnt_ns(current->nsproxy->mnt_ns->user_ns, true);
-+	if (IS_ERR(ns)) {
-+		ret = PTR_ERR(ns);
++	fc = fs_context_for_reconfigure(target.dentry, 0, 0);
++	if (IS_ERR(fc)) {
++		ret = PTR_ERR(fc);
 +		goto err_path;
 +	}
-+	mnt = real_mount(newmount.mnt);
-+	mnt->mnt_ns = ns;
-+	ns->root = mnt;
-+	ns->mounts = 1;
-+	list_add(&mnt->mnt_list, &ns->list);
 +
-+	/* Attach to an apparent O_PATH fd with a note that we need to unmount
-+	 * it, not just simply put it.
-+	 */
-+	file = dentry_open(&newmount, O_PATH, fc->cred);
-+	if (IS_ERR(file)) {
-+		dissolve_on_fput(newmount.mnt);
-+		ret = PTR_ERR(file);
-+		goto err_path;
-+	}
-+	file->f_mode |= FMODE_NEED_UNMOUNT;
++	fc->phase = FS_CONTEXT_RECONF_PARAMS;
 +
-+	ret = get_unused_fd_flags((flags & FSMOUNT_CLOEXEC) ? O_CLOEXEC : 0);
-+	if (ret >= 0)
-+		fd_install(ret, file);
-+	else
-+		fput(file);
++	ret = fscontext_alloc_log(fc);
++	if (ret < 0)
++		goto err_fc;
 +
++	path_put(&target);
++	return fscontext_create_fd(fc, flags & FSPICK_CLOEXEC ? O_CLOEXEC : 0);
++
++err_fc:
++	put_fs_context(fc);
 +err_path:
-+	path_put(&newmount);
-+err_unlock:
-+	mutex_unlock(&fc->uapi_mutex);
-+err_fsfd:
-+	fdput(f);
++	path_put(&target);
++err:
 +	return ret;
 +}
 +
-+/*
-+ * Move a mount from one place to another.  In combination with
-+ * fsopen()/fsmount() this is used to install a new mount and in combination
-+ * with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be used to copy
-+ * a mount subtree.
-  *
-  * Note the flags value is a combination of MOVE_MOUNT_* flags.
-  */
+ /*
+  * Check the state and apply the configuration.  Note that this function is
+  * allowed to 'steal' the value by setting param->xxx to NULL before returning.
 diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 2586faf20078..a332a731a0e4 100644
+index a332a731a0e4..c3f9d865b91d 100644
 --- a/include/linux/syscalls.h
 +++ b/include/linux/syscalls.h
-@@ -933,6 +933,7 @@ asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
- asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
+@@ -934,6 +934,7 @@ asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
  asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
  			     const void __user *value, int aux);
-+asmlinkage long sys_fsmount(int fs_fd, unsigned int flags, unsigned int ms_flags);
+ asmlinkage long sys_fsmount(int fs_fd, unsigned int flags, unsigned int ms_flags);
++asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags);
  
  /*
   * Architecture-specific system calls
 diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 4b90ba9d1770..3888d3b91dc5 100644
+index 3888d3b91dc5..96a0240f23fe 100644
 --- a/include/uapi/linux/mount.h
 +++ b/include/uapi/linux/mount.h
-@@ -91,4 +91,22 @@ enum fsconfig_command {
- 	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
- };
+@@ -77,6 +77,14 @@
+  */
+ #define FSOPEN_CLOEXEC		0x00000001
  
 +/*
-+ * fsmount() flags.
++ * fspick() flags.
 + */
-+#define FSMOUNT_CLOEXEC		0x00000001
++#define FSPICK_CLOEXEC		0x00000001
++#define FSPICK_SYMLINK_NOFOLLOW	0x00000002
++#define FSPICK_NO_AUTOMOUNT	0x00000004
++#define FSPICK_EMPTY_PATH	0x00000008
 +
-+/*
-+ * Mount attributes.
-+ */
-+#define MOUNT_ATTR_RDONLY	0x00000001 /* Mount read-only */
-+#define MOUNT_ATTR_NOSUID	0x00000002 /* Ignore suid and sgid bits */
-+#define MOUNT_ATTR_NODEV	0x00000004 /* Disallow access to device special files */
-+#define MOUNT_ATTR_NOEXEC	0x00000008 /* Disallow program execution */
-+#define MOUNT_ATTR__ATIME	0x00000070 /* Setting on how atime should be updated */
-+#define MOUNT_ATTR_RELATIME	0x00000000 /* - Update atime relative to mtime/ctime. */
-+#define MOUNT_ATTR_NOATIME	0x00000010 /* - Do not update access times. */
-+#define MOUNT_ATTR_STRICTATIME	0x00000020 /* - Always perform atime updates */
-+#define MOUNT_ATTR_NODIRATIME	0x00000080 /* Do not update directory access times */
-+
- #endif /* _UAPI_LINUX_MOUNT_H */
+ /*
+  * The type of fsconfig() call made.
+  */
 
