@@ -6,901 +6,145 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19ECDC43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D75CC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C903D21738
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:33:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8CD121738
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:33:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725911AbfBSQdY (ORCPT
+        id S1727230AbfBSQdd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:33:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41954 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 11:33:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53132 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbfBSQdY (ORCPT
+        id S1725820AbfBSQdd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:33:24 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        Tue, 19 Feb 2019 11:33:33 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D217C59456;
-        Tue, 19 Feb 2019 16:33:22 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5267F81DE8;
+        Tue, 19 Feb 2019 16:33:32 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4BC146608B;
-        Tue, 19 Feb 2019 16:33:14 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E49C06114E;
+        Tue, 19 Feb 2019 16:33:29 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 35/43] kernfs, sysfs, cgroup, intel_rdt: Support fs_context
+Subject: [PATCH 36/43] cpuset: Use fs_context
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        fenghua.yu@intel.com, linux-fsdevel@vger.kernel.org,
+Cc:     Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
         dhowells@redhat.com, torvalds@linux-foundation.org,
         ebiederm@xmission.com, linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 16:33:12 +0000
-Message-ID: <155059399265.12449.14521966377258462430.stgit@warthog.procyon.org.uk>
+Date:   Tue, 19 Feb 2019 16:33:28 +0000
+Message-ID: <155059400804.12449.6061293146947154243.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 References: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 19 Feb 2019 16:33:23 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 19 Feb 2019 16:33:32 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Make kernfs support superblock creation/mount/remount with fs_context.
+Make the cpuset filesystem use the filesystem context.  This is potentially
+tricky as the cpuset fs is almost an alias for the cgroup filesystem, but
+with some special parameters.
 
-This requires that sysfs, cgroup and intel_rdt, which are built on kernfs,
-be made to support fs_context also.
-
-Notes:
-
- (1) A kernfs_fs_context struct is created to wrap fs_context and the
-     kernfs mount parameters are moved in here (or are in fs_context).
-
- (2) kernfs_mount{,_ns}() are made into kernfs_get_tree().  The extra
-     namespace tag parameter is passed in the context if desired
-
- (3) kernfs_free_fs_context() is provided as a destructor for the
-     kernfs_fs_context struct, but for the moment it does nothing except
-     get called in the right places.
-
- (4) sysfs doesn't wrap kernfs_fs_context since it has no parameters to
-     pass, but possibly this should be done anyway in case someone wants to
-     add a parameter in future.
-
- (5) A cgroup_fs_context struct is created to wrap kernfs_fs_context and
-     the cgroup v1 and v2 mount parameters are all moved there.
-
- (6) cgroup1 parameter parsing error messages are now handled by invalf(),
-     which allows userspace to collect them directly.
-
- (7) cgroup1 parameter cleanup is now done in the context destructor rather
-     than in the mount/get_tree and remount functions.
-
-Weirdies:
-
- (*) cgroup_do_get_tree() calls cset_cgroup_from_root() with locks held,
-     but then uses the resulting pointer after dropping the locks.  I'm
-     told this is okay and needs commenting.
-
- (*) The cgroup refcount web.  This really needs documenting.
-
- (*) cgroup2 only has one root?
-
-Add a suggestion from Thomas Gleixner in which the RDT enablement code is
-placed into its own function.
-
-[folded a leak fix from Andrey Vagin]
+This can, however, be handled by setting up an appropriate cgroup
+filesystem and returning the root directory of that as the root dir of this
+one.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 cc: Tejun Heo <tj@kernel.org>
-cc: Li Zefan <lizefan@huawei.com>
-cc: Johannes Weiner <hannes@cmpxchg.org>
-cc: cgroups@vger.kernel.org
-cc: fenghua.yu@intel.com
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
- arch/x86/kernel/cpu/resctrl/internal.h |   16 +++
- arch/x86/kernel/cpu/resctrl/rdtgroup.c |  185 ++++++++++++++++++++------------
- fs/kernfs/kernfs-internal.h            |    1 
- fs/kernfs/mount.c                      |   89 ++++++---------
- fs/sysfs/mount.c                       |   73 +++++++++----
- include/linux/kernfs.h                 |   38 +++----
- kernel/cgroup/cgroup-internal.h        |    5 +
- kernel/cgroup/cgroup.c                 |   31 ++---
- 8 files changed, 262 insertions(+), 176 deletions(-)
+ kernel/cgroup/cpuset.c |   56 ++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 42 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 822b7db634ee..e49b77283924 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/sched.h>
- #include <linux/kernfs.h>
-+#include <linux/fs_context.h>
- #include <linux/jump_label.h>
- 
- #define MSR_IA32_L3_QOS_CFG		0xc81
-@@ -40,6 +41,21 @@
- #define RMID_VAL_ERROR			BIT_ULL(63)
- #define RMID_VAL_UNAVAIL		BIT_ULL(62)
- 
-+
-+struct rdt_fs_context {
-+	struct kernfs_fs_context	kfc;
-+	bool				enable_cdpl2;
-+	bool				enable_cdpl3;
-+	bool				enable_mba_mbps;
-+};
-+
-+static inline struct rdt_fs_context *rdt_fc2context(struct fs_context *fc)
-+{
-+	struct kernfs_fs_context *kfc = fc->fs_private;
-+
-+	return container_of(kfc, struct rdt_fs_context, kfc);
-+}
-+
- DECLARE_STATIC_KEY_FALSE(rdt_enable_key);
- 
- /**
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 8388adf241b2..399601eda8e4 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -24,6 +24,7 @@
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
- #include <linux/fs.h>
-+#include <linux/fs_parser.h>
- #include <linux/sysfs.h>
- #include <linux/kernfs.h>
- #include <linux/seq_buf.h>
-@@ -32,6 +33,7 @@
- #include <linux/sched/task.h>
- #include <linux/slab.h>
- #include <linux/task_work.h>
-+#include <linux/user_namespace.h>
- 
- #include <uapi/linux/magic.h>
- 
-@@ -1858,46 +1860,6 @@ static void cdp_disable_all(void)
- 		cdpl2_disable();
- }
- 
--static int parse_rdtgroupfs_options(char *data)
--{
--	char *token, *o = data;
--	int ret = 0;
--
--	while ((token = strsep(&o, ",")) != NULL) {
--		if (!*token) {
--			ret = -EINVAL;
--			goto out;
--		}
--
--		if (!strcmp(token, "cdp")) {
--			ret = cdpl3_enable();
--			if (ret)
--				goto out;
--		} else if (!strcmp(token, "cdpl2")) {
--			ret = cdpl2_enable();
--			if (ret)
--				goto out;
--		} else if (!strcmp(token, "mba_MBps")) {
--			if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
--				ret = set_mba_sc(true);
--			else
--				ret = -EINVAL;
--			if (ret)
--				goto out;
--		} else {
--			ret = -EINVAL;
--			goto out;
--		}
--	}
--
--	return 0;
--
--out:
--	pr_err("Invalid mount option \"%s\"\n", token);
--
--	return ret;
--}
--
- /*
-  * We don't allow rdtgroup directories to be created anywhere
-  * except the root directory. Thus when looking for the rdtgroup
-@@ -1969,13 +1931,27 @@ static int mkdir_mondata_all(struct kernfs_node *parent_kn,
- 			     struct rdtgroup *prgrp,
- 			     struct kernfs_node **mon_data_kn);
- 
--static struct dentry *rdt_mount(struct file_system_type *fs_type,
--				int flags, const char *unused_dev_name,
--				void *data)
-+static int rdt_enable_ctx(struct rdt_fs_context *ctx)
-+{
-+	int ret = 0;
-+
-+	if (ctx->enable_cdpl2)
-+		ret = cdpl2_enable();
-+
-+	if (!ret && ctx->enable_cdpl3)
-+		ret = cdpl3_enable();
-+
-+	if (!ret && ctx->enable_mba_mbps)
-+		ret = set_mba_sc(true);
-+
-+	return ret;
-+}
-+
-+static int rdt_get_tree(struct fs_context *fc)
- {
-+	struct rdt_fs_context *ctx = rdt_fc2context(fc);
- 	struct rdt_domain *dom;
- 	struct rdt_resource *r;
--	struct dentry *dentry;
- 	int ret;
- 
- 	cpus_read_lock();
-@@ -1984,53 +1960,42 @@ static struct dentry *rdt_mount(struct file_system_type *fs_type,
- 	 * resctrl file system can only be mounted once.
- 	 */
- 	if (static_branch_unlikely(&rdt_enable_key)) {
--		dentry = ERR_PTR(-EBUSY);
-+		ret = -EBUSY;
- 		goto out;
- 	}
- 
--	ret = parse_rdtgroupfs_options(data);
--	if (ret) {
--		dentry = ERR_PTR(ret);
-+	ret = rdt_enable_ctx(ctx);
-+	if (ret < 0)
- 		goto out_cdp;
--	}
- 
- 	closid_init();
- 
- 	ret = rdtgroup_create_info_dir(rdtgroup_default.kn);
--	if (ret) {
--		dentry = ERR_PTR(ret);
--		goto out_cdp;
--	}
-+	if (ret < 0)
-+		goto out_mba;
- 
- 	if (rdt_mon_capable) {
- 		ret = mongroup_create_dir(rdtgroup_default.kn,
- 					  NULL, "mon_groups",
- 					  &kn_mongrp);
--		if (ret) {
--			dentry = ERR_PTR(ret);
-+		if (ret < 0)
- 			goto out_info;
--		}
- 		kernfs_get(kn_mongrp);
- 
- 		ret = mkdir_mondata_all(rdtgroup_default.kn,
- 					&rdtgroup_default, &kn_mondata);
--		if (ret) {
--			dentry = ERR_PTR(ret);
-+		if (ret < 0)
- 			goto out_mongrp;
--		}
- 		kernfs_get(kn_mondata);
- 		rdtgroup_default.mon.mon_data_kn = kn_mondata;
- 	}
- 
- 	ret = rdt_pseudo_lock_init();
--	if (ret) {
--		dentry = ERR_PTR(ret);
-+	if (ret)
- 		goto out_mondata;
--	}
- 
--	dentry = kernfs_mount(fs_type, flags, rdt_root,
--			      RDTGROUP_SUPER_MAGIC, NULL);
--	if (IS_ERR(dentry))
-+	ret = kernfs_get_tree(fc);
-+	if (ret < 0)
- 		goto out_psl;
- 
- 	if (rdt_alloc_capable)
-@@ -2059,14 +2024,95 @@ static struct dentry *rdt_mount(struct file_system_type *fs_type,
- 		kernfs_remove(kn_mongrp);
- out_info:
- 	kernfs_remove(kn_info);
-+out_mba:
-+	if (ctx->enable_mba_mbps)
-+		set_mba_sc(false);
- out_cdp:
- 	cdp_disable_all();
- out:
- 	rdt_last_cmd_clear();
- 	mutex_unlock(&rdtgroup_mutex);
- 	cpus_read_unlock();
-+	return ret;
-+}
-+
-+enum rdt_param {
-+	Opt_cdp,
-+	Opt_cdpl2,
-+	Opt_mba_mpbs,
-+	nr__rdt_params
-+};
-+
-+static const struct fs_parameter_spec rdt_param_specs[] = {
-+	fsparam_flag("cdp",		Opt_cdp),
-+	fsparam_flag("cdpl2",		Opt_cdpl2),
-+	fsparam_flag("mba_mpbs",	Opt_mba_mpbs),
-+	{}
-+};
-+
-+static const struct fs_parameter_description rdt_fs_parameters = {
-+	.name		= "rdt",
-+	.specs		= rdt_param_specs,
-+};
-+
-+static int rdt_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+{
-+	struct rdt_fs_context *ctx = rdt_fc2context(fc);
-+	struct fs_parse_result result;
-+	int opt;
-+
-+	opt = fs_parse(fc, &rdt_fs_parameters, param, &result);
-+	if (opt < 0)
-+		return opt;
- 
--	return dentry;
-+	switch (opt) {
-+	case Opt_cdp:
-+		ctx->enable_cdpl3 = true;
-+		return 0;
-+	case Opt_cdpl2:
-+		ctx->enable_cdpl2 = true;
-+		return 0;
-+	case Opt_mba_mpbs:
-+		if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
-+			return -EINVAL;
-+		ctx->enable_mba_mbps = true;
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static void rdt_fs_context_free(struct fs_context *fc)
-+{
-+	struct rdt_fs_context *ctx = rdt_fc2context(fc);
-+
-+	kernfs_free_fs_context(fc);
-+	kfree(ctx);
-+}
-+
-+static const struct fs_context_operations rdt_fs_context_ops = {
-+	.free		= rdt_fs_context_free,
-+	.parse_param	= rdt_parse_param,
-+	.get_tree	= rdt_get_tree,
-+};
-+
-+static int rdt_init_fs_context(struct fs_context *fc)
-+{
-+	struct rdt_fs_context *ctx;
-+
-+	ctx = kzalloc(sizeof(struct rdt_fs_context), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->kfc.root = rdt_root;
-+	ctx->kfc.magic = RDTGROUP_SUPER_MAGIC;
-+	fc->fs_private = &ctx->kfc;
-+	fc->ops = &rdt_fs_context_ops;
-+	if (fc->user_ns)
-+		put_user_ns(fc->user_ns);
-+	fc->user_ns = get_user_ns(&init_user_ns);
-+	fc->global = true;
-+	return 0;
- }
- 
- static int reset_all_ctrls(struct rdt_resource *r)
-@@ -2239,9 +2285,10 @@ static void rdt_kill_sb(struct super_block *sb)
- }
- 
- static struct file_system_type rdt_fs_type = {
--	.name    = "resctrl",
--	.mount   = rdt_mount,
--	.kill_sb = rdt_kill_sb,
-+	.name			= "resctrl",
-+	.init_fs_context	= rdt_init_fs_context,
-+	.parameters		= &rdt_fs_parameters,
-+	.kill_sb		= rdt_kill_sb,
- };
- 
- static int mon_addfile(struct kernfs_node *parent_kn, const char *name,
-diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-index 3d83b114bb08..379e3a9eb1ec 100644
---- a/fs/kernfs/kernfs-internal.h
-+++ b/fs/kernfs/kernfs-internal.h
-@@ -17,6 +17,7 @@
- #include <linux/xattr.h>
- 
- #include <linux/kernfs.h>
-+#include <linux/fs_context.h>
- 
- struct kernfs_iattrs {
- 	struct iattr		ia_iattr;
-diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
-index 4d303047a4f8..36376cc5c9c2 100644
---- a/fs/kernfs/mount.c
-+++ b/fs/kernfs/mount.c
-@@ -22,16 +22,6 @@
- 
- struct kmem_cache *kernfs_node_cache;
- 
--static int kernfs_sop_remount_fs(struct super_block *sb, int *flags, char *data)
--{
--	struct kernfs_root *root = kernfs_info(sb)->root;
--	struct kernfs_syscall_ops *scops = root->syscall_ops;
--
--	if (scops && scops->remount_fs)
--		return scops->remount_fs(root, flags, data);
--	return 0;
--}
--
- static int kernfs_sop_show_options(struct seq_file *sf, struct dentry *dentry)
- {
- 	struct kernfs_root *root = kernfs_root(kernfs_dentry_node(dentry));
-@@ -60,7 +50,6 @@ const struct super_operations kernfs_sops = {
- 	.drop_inode	= generic_delete_inode,
- 	.evict_inode	= kernfs_evict_inode,
- 
--	.remount_fs	= kernfs_sop_remount_fs,
- 	.show_options	= kernfs_sop_show_options,
- 	.show_path	= kernfs_sop_show_path,
- };
-@@ -222,7 +211,7 @@ struct dentry *kernfs_node_dentry(struct kernfs_node *kn,
- 	} while (true);
- }
- 
--static int kernfs_fill_super(struct super_block *sb, unsigned long magic)
-+static int kernfs_fill_super(struct super_block *sb, struct kernfs_fs_context *kfc)
- {
- 	struct kernfs_super_info *info = kernfs_info(sb);
- 	struct inode *inode;
-@@ -233,7 +222,7 @@ static int kernfs_fill_super(struct super_block *sb, unsigned long magic)
- 	sb->s_iflags |= SB_I_NOEXEC | SB_I_NODEV;
- 	sb->s_blocksize = PAGE_SIZE;
- 	sb->s_blocksize_bits = PAGE_SHIFT;
--	sb->s_magic = magic;
-+	sb->s_magic = kfc->magic;
- 	sb->s_op = &kernfs_sops;
- 	sb->s_xattr = kernfs_xattr_handlers;
- 	if (info->root->flags & KERNFS_ROOT_SUPPORT_EXPORTOP)
-@@ -263,21 +252,20 @@ static int kernfs_fill_super(struct super_block *sb, unsigned long magic)
- 	return 0;
- }
- 
--static int kernfs_test_super(struct super_block *sb, void *data)
-+static int kernfs_test_super(struct super_block *sb, struct fs_context *fc)
- {
- 	struct kernfs_super_info *sb_info = kernfs_info(sb);
--	struct kernfs_super_info *info = data;
-+	struct kernfs_super_info *info = fc->s_fs_info;
- 
- 	return sb_info->root == info->root && sb_info->ns == info->ns;
- }
- 
--static int kernfs_set_super(struct super_block *sb, void *data)
-+static int kernfs_set_super(struct super_block *sb, struct fs_context *fc)
- {
--	int error;
--	error = set_anon_super(sb, data);
--	if (!error)
--		sb->s_fs_info = data;
--	return error;
-+	struct kernfs_fs_context *kfc = fc->fs_private;
-+
-+	kfc->ns_tag = NULL;
-+	return set_anon_super_fc(sb, fc);
- }
- 
- /**
-@@ -294,63 +282,60 @@ const void *kernfs_super_ns(struct super_block *sb)
- }
- 
- /**
-- * kernfs_mount_ns - kernfs mount helper
-- * @fs_type: file_system_type of the fs being mounted
-- * @flags: mount flags specified for the mount
-- * @root: kernfs_root of the hierarchy being mounted
-- * @magic: file system specific magic number
-- * @new_sb_created: tell the caller if we allocated a new superblock
-- * @ns: optional namespace tag of the mount
-+ * kernfs_get_tree - kernfs filesystem access/retrieval helper
-+ * @fc: The filesystem context.
-  *
-- * This is to be called from each kernfs user's file_system_type->mount()
-- * implementation, which should pass through the specified @fs_type and
-- * @flags, and specify the hierarchy and namespace tag to mount via @root
-- * and @ns, respectively.
-- *
-- * The return value can be passed to the vfs layer verbatim.
-+ * This is to be called from each kernfs user's fs_context->ops->get_tree()
-+ * implementation, which should set the specified ->@fs_type and ->@flags, and
-+ * specify the hierarchy and namespace tag to mount via ->@root and ->@ns,
-+ * respectively.
-  */
--struct dentry *kernfs_mount_ns(struct file_system_type *fs_type, int flags,
--				struct kernfs_root *root, unsigned long magic,
--				bool *new_sb_created, const void *ns)
-+int kernfs_get_tree(struct fs_context *fc)
- {
-+	struct kernfs_fs_context *kfc = fc->fs_private;
- 	struct super_block *sb;
- 	struct kernfs_super_info *info;
- 	int error;
- 
- 	info = kzalloc(sizeof(*info), GFP_KERNEL);
- 	if (!info)
--		return ERR_PTR(-ENOMEM);
-+		return -ENOMEM;
- 
--	info->root = root;
--	info->ns = ns;
-+	info->root = kfc->root;
-+	info->ns = kfc->ns_tag;
- 	INIT_LIST_HEAD(&info->node);
- 
--	sb = sget_userns(fs_type, kernfs_test_super, kernfs_set_super, flags,
--			 &init_user_ns, info);
--	if (IS_ERR(sb) || sb->s_fs_info != info)
--		kfree(info);
-+	fc->s_fs_info = info;
-+	sb = sget_fc(fc, kernfs_test_super, kernfs_set_super);
- 	if (IS_ERR(sb))
--		return ERR_CAST(sb);
--
--	if (new_sb_created)
--		*new_sb_created = !sb->s_root;
-+		return PTR_ERR(sb);
- 
- 	if (!sb->s_root) {
- 		struct kernfs_super_info *info = kernfs_info(sb);
- 
--		error = kernfs_fill_super(sb, magic);
-+		kfc->new_sb_created = true;
-+
-+		error = kernfs_fill_super(sb, kfc);
- 		if (error) {
- 			deactivate_locked_super(sb);
--			return ERR_PTR(error);
-+			return error;
- 		}
- 		sb->s_flags |= SB_ACTIVE;
- 
- 		mutex_lock(&kernfs_mutex);
--		list_add(&info->node, &root->supers);
-+		list_add(&info->node, &info->root->supers);
- 		mutex_unlock(&kernfs_mutex);
- 	}
- 
--	return dget(sb->s_root);
-+	fc->root = dget(sb->s_root);
-+	return 0;
-+}
-+
-+void kernfs_free_fs_context(struct fs_context *fc)
-+{
-+	/* Note that we don't deal with kfc->ns_tag here. */
-+	kfree(fc->s_fs_info);
-+	fc->s_fs_info = NULL;
- }
- 
- /**
-diff --git a/fs/sysfs/mount.c b/fs/sysfs/mount.c
-index 92682fcc41f6..4cb21b558a85 100644
---- a/fs/sysfs/mount.c
-+++ b/fs/sysfs/mount.c
-@@ -13,34 +13,69 @@
- #include <linux/magic.h>
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 479743db6c37..9758b03834ac 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -39,6 +39,7 @@
+ #include <linux/memory.h>
+ #include <linux/export.h>
  #include <linux/mount.h>
- #include <linux/init.h>
-+#include <linux/slab.h>
- #include <linux/user_namespace.h>
 +#include <linux/fs_context.h>
-+#include <net/net_namespace.h>
- 
- #include "sysfs.h"
- 
- static struct kernfs_root *sysfs_root;
- struct kernfs_node *sysfs_root_kn;
- 
--static struct dentry *sysfs_mount(struct file_system_type *fs_type,
--	int flags, const char *dev_name, void *data)
-+static int sysfs_get_tree(struct fs_context *fc)
- {
--	struct dentry *root;
--	void *ns;
--	bool new_sb = false;
-+	struct kernfs_fs_context *kfc = fc->fs_private;
-+	int ret;
- 
--	if (!(flags & SB_KERNMOUNT)) {
-+	ret = kernfs_get_tree(fc);
-+	if (ret)
-+		return ret;
-+
-+	if (kfc->new_sb_created)
-+		fc->root->d_sb->s_iflags |= SB_I_USERNS_VISIBLE;
-+	return 0;
-+}
-+
-+static void sysfs_fs_context_free(struct fs_context *fc)
-+{
-+	struct kernfs_fs_context *kfc = fc->fs_private;
-+
-+	if (kfc->ns_tag)
-+		kobj_ns_drop(KOBJ_NS_TYPE_NET, kfc->ns_tag);
-+	kernfs_free_fs_context(fc);
-+	kfree(kfc);
-+}
-+
-+static const struct fs_context_operations sysfs_fs_context_ops = {
-+	.free		= sysfs_fs_context_free,
-+	.get_tree	= sysfs_get_tree,
-+};
-+
-+static int sysfs_init_fs_context(struct fs_context *fc)
-+{
-+	struct kernfs_fs_context *kfc;
-+	struct net *netns;
-+
-+	if (!(fc->sb_flags & SB_KERNMOUNT)) {
- 		if (!kobj_ns_current_may_mount(KOBJ_NS_TYPE_NET))
--			return ERR_PTR(-EPERM);
-+			return -EPERM;
- 	}
- 
--	ns = kobj_ns_grab_current(KOBJ_NS_TYPE_NET);
--	root = kernfs_mount_ns(fs_type, flags, sysfs_root,
--				SYSFS_MAGIC, &new_sb, ns);
--	if (!new_sb)
--		kobj_ns_drop(KOBJ_NS_TYPE_NET, ns);
--	else if (!IS_ERR(root))
--		root->d_sb->s_iflags |= SB_I_USERNS_VISIBLE;
-+	kfc = kzalloc(sizeof(struct kernfs_fs_context), GFP_KERNEL);
-+	if (!kfc)
-+		return -ENOMEM;
- 
--	return root;
-+	kfc->ns_tag = netns = kobj_ns_grab_current(KOBJ_NS_TYPE_NET);
-+	kfc->root = sysfs_root;
-+	kfc->magic = SYSFS_MAGIC;
-+	fc->fs_private = kfc;
-+	fc->ops = &sysfs_fs_context_ops;
-+	if (fc->user_ns)
-+		put_user_ns(fc->user_ns);
-+	fc->user_ns = get_user_ns(netns->user_ns);
-+	fc->global = true;
-+	return 0;
- }
- 
- static void sysfs_kill_sb(struct super_block *sb)
-@@ -52,10 +87,10 @@ static void sysfs_kill_sb(struct super_block *sb)
- }
- 
- static struct file_system_type sysfs_fs_type = {
--	.name		= "sysfs",
--	.mount		= sysfs_mount,
--	.kill_sb	= sysfs_kill_sb,
--	.fs_flags	= FS_USERNS_MOUNT,
-+	.name			= "sysfs",
-+	.init_fs_context	= sysfs_init_fs_context,
-+	.kill_sb		= sysfs_kill_sb,
-+	.fs_flags		= FS_USERNS_MOUNT,
- };
- 
- int __init sysfs_init(void)
-diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-index 44acb4c3659c..822a64e65b41 100644
---- a/include/linux/kernfs.h
-+++ b/include/linux/kernfs.h
-@@ -25,7 +25,9 @@ struct seq_file;
- struct vm_area_struct;
- struct super_block;
- struct file_system_type;
-+struct fs_context;
- 
-+struct kernfs_fs_context;
- struct kernfs_open_node;
- struct kernfs_iattrs;
- 
-@@ -167,7 +169,6 @@ struct kernfs_node {
-  * kernfs_node parameter.
+ #include <linux/namei.h>
+ #include <linux/pagemap.h>
+ #include <linux/proc_fs.h>
+@@ -372,25 +373,52 @@ static inline bool is_in_v2_mode(void)
+  * users. If someone tries to mount the "cpuset" filesystem, we
+  * silently switch it to mount "cgroup" instead
   */
- struct kernfs_syscall_ops {
--	int (*remount_fs)(struct kernfs_root *root, int *flags, char *data);
- 	int (*show_options)(struct seq_file *sf, struct kernfs_root *root);
- 
- 	int (*mkdir)(struct kernfs_node *parent, const char *name,
-@@ -268,6 +269,18 @@ struct kernfs_ops {
- #endif
- };
- 
-+/*
-+ * The kernfs superblock creation/mount parameter context.
-+ */
-+struct kernfs_fs_context {
-+	struct kernfs_root	*root;		/* Root of the hierarchy being mounted */
-+	void			*ns_tag;	/* Namespace tag of the mount (or NULL) */
-+	unsigned long		magic;		/* File system specific magic number */
-+
-+	/* The following are set/used by kernfs_mount() */
-+	bool			new_sb_created;	/* Set to T if we allocated a new sb */
-+};
-+
- #ifdef CONFIG_KERNFS
- 
- static inline enum kernfs_node_type kernfs_type(struct kernfs_node *kn)
-@@ -353,9 +366,8 @@ int kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
- void kernfs_notify(struct kernfs_node *kn);
- 
- const void *kernfs_super_ns(struct super_block *sb);
--struct dentry *kernfs_mount_ns(struct file_system_type *fs_type, int flags,
--			       struct kernfs_root *root, unsigned long magic,
--			       bool *new_sb_created, const void *ns);
-+int kernfs_get_tree(struct fs_context *fc);
-+void kernfs_free_fs_context(struct fs_context *fc);
- void kernfs_kill_sb(struct super_block *sb);
- 
- void kernfs_init(void);
-@@ -458,11 +470,10 @@ static inline void kernfs_notify(struct kernfs_node *kn) { }
- static inline const void *kernfs_super_ns(struct super_block *sb)
- { return NULL; }
- 
--static inline struct dentry *
--kernfs_mount_ns(struct file_system_type *fs_type, int flags,
--		struct kernfs_root *root, unsigned long magic,
--		bool *new_sb_created, const void *ns)
--{ return ERR_PTR(-ENOSYS); }
-+static inline int kernfs_get_tree(struct fs_context *fc)
-+{ return -ENOSYS; }
-+
-+static inline void kernfs_free_fs_context(struct fs_context *fc) { }
- 
- static inline void kernfs_kill_sb(struct super_block *sb) { }
- 
-@@ -545,13 +556,4 @@ static inline int kernfs_rename(struct kernfs_node *kn,
- 	return kernfs_rename_ns(kn, new_parent, new_name, NULL);
- }
- 
--static inline struct dentry *
--kernfs_mount(struct file_system_type *fs_type, int flags,
--		struct kernfs_root *root, unsigned long magic,
--		bool *new_sb_created)
+-static struct dentry *cpuset_mount(struct file_system_type *fs_type,
+-			 int flags, const char *unused_dev_name, void *data)
 -{
--	return kernfs_mount_ns(fs_type, flags, root,
--				magic, new_sb_created, NULL);
--}
--
- #endif	/* __LINUX_KERNFS_H */
-diff --git a/kernel/cgroup/cgroup-internal.h b/kernel/cgroup/cgroup-internal.h
-index 37cf709b7a0e..30e39f3932ad 100644
---- a/kernel/cgroup/cgroup-internal.h
-+++ b/kernel/cgroup/cgroup-internal.h
-@@ -41,6 +41,7 @@ extern void __init enable_debug_cgroup(void);
-  * The cgroup filesystem superblock creation/mount context.
-  */
- struct cgroup_fs_context {
-+	struct kernfs_fs_context kfc;
- 	struct cgroup_root	*root;
- 	struct cgroup_namespace	*ns;
- 	unsigned int	flags;			/* CGRP_ROOT_* flags */
-@@ -56,7 +57,9 @@ struct cgroup_fs_context {
- 
- static inline struct cgroup_fs_context *cgroup_fc2context(struct fs_context *fc)
- {
--	return fc->fs_private;
-+	struct kernfs_fs_context *kfc = fc->fs_private;
-+
-+	return container_of(kfc, struct cgroup_fs_context, kfc);
- }
- 
- /*
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 0c6bef234a7c..747e5b17f9da 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -2039,18 +2039,14 @@ int cgroup_setup_root(struct cgroup_root *root, u16 ss_mask)
- int cgroup_do_get_tree(struct fs_context *fc)
- {
- 	struct cgroup_fs_context *ctx = cgroup_fc2context(fc);
--	bool new_sb = false;
--	unsigned long magic;
--	int ret = 0;
+-	struct file_system_type *cgroup_fs = get_fs_type("cgroup");
+-	struct dentry *ret = ERR_PTR(-ENODEV);
+-	if (cgroup_fs) {
+-		char mountopts[] =
+-			"cpuset,noprefix,"
+-			"release_agent=/sbin/cpuset_release_agent";
+-		ret = cgroup_fs->mount(cgroup_fs, flags,
+-					   unused_dev_name, mountopts);
+-		put_filesystem(cgroup_fs);
++static int cpuset_get_tree(struct fs_context *fc)
++{
++	struct file_system_type *cgroup_fs;
++	struct fs_context *new_fc;
 +	int ret;
- 
-+	ctx->kfc.root = ctx->root->kf_root;
- 	if (fc->fs_type == &cgroup2_fs_type)
--		magic = CGROUP2_SUPER_MAGIC;
-+		ctx->kfc.magic = CGROUP2_SUPER_MAGIC;
- 	else
--		magic = CGROUP_SUPER_MAGIC;
--	fc->root = kernfs_mount(fc->fs_type, fc->sb_flags, ctx->root->kf_root,
--				magic, &new_sb);
--	if (IS_ERR(fc->root))
--		ret = PTR_ERR(fc->root);
-+		ctx->kfc.magic = CGROUP_SUPER_MAGIC;
-+	ret = kernfs_get_tree(fc);
- 
- 	/*
- 	 * In non-init cgroup namespace, instead of root cgroup's dentry,
-@@ -2078,7 +2074,7 @@ int cgroup_do_get_tree(struct fs_context *fc)
- 		}
++
++	cgroup_fs = get_fs_type("cgroup");
++	if (!cgroup_fs)
++		return -ENODEV;
++
++	new_fc = fs_context_for_mount(cgroup_fs, fc->sb_flags);
++	if (IS_ERR(new_fc)) {
++		ret = PTR_ERR(new_fc);
++	} else {
++		static const char agent_path[] = "/sbin/cpuset_release_agent";
++		ret = vfs_parse_fs_string(new_fc, "cpuset", NULL, 0);
++		if (!ret)
++			ret = vfs_parse_fs_string(new_fc, "noprefix", NULL, 0);
++		if (!ret)
++			ret = vfs_parse_fs_string(new_fc, "release_agent",
++					agent_path, sizeof(agent_path) - 1);
++		if (!ret)
++			ret = vfs_get_tree(new_fc);
++		if (!ret) {	/* steal the result */
++			fc->root = new_fc->root;
++			new_fc->root = NULL;
++		}
++		put_fs_context(new_fc);
  	}
- 
--	if (!new_sb)
-+	if (!ctx->kfc.new_sb_created)
- 		cgroup_put(&ctx->root->cgrp);
- 
++	put_filesystem(cgroup_fs);
  	return ret;
-@@ -2094,19 +2090,15 @@ static void cgroup_fs_context_free(struct fs_context *fc)
- 	kfree(ctx->name);
- 	kfree(ctx->release_agent);
- 	put_cgroup_ns(ctx->ns);
-+	kernfs_free_fs_context(fc);
- 	kfree(ctx);
  }
  
- static int cgroup_get_tree(struct fs_context *fc)
- {
--	struct cgroup_namespace *ns = current->nsproxy->cgroup_ns;
- 	struct cgroup_fs_context *ctx = cgroup_fc2context(fc);
- 	int ret;
- 
--	/* Check if the caller has permission to mount. */
--	if (!ns_capable(ns->user_ns, CAP_SYS_ADMIN))
--		return -EPERM;
--
- 	cgrp_dfl_visible = true;
- 	cgroup_get_live(&cgrp_dfl_root.cgrp);
- 	ctx->root = &cgrp_dfl_root;
-@@ -2132,7 +2124,8 @@ static const struct fs_context_operations cgroup1_fs_context_ops = {
++static const struct fs_context_operations cpuset_fs_context_ops = {
++	.get_tree	= cpuset_get_tree,
++};
++
++static int cpuset_init_fs_context(struct fs_context *fc)
++{
++	fc->ops = &cpuset_fs_context_ops;
++	return 0;
++}
++
+ static struct file_system_type cpuset_fs_type = {
+-	.name = "cpuset",
+-	.mount = cpuset_mount,
++	.name			= "cpuset",
++	.init_fs_context	= cpuset_init_fs_context,
  };
  
  /*
-- * Initialise the cgroup filesystem creation/reconfiguration context.
-+ * Initialise the cgroup filesystem creation/reconfiguration context.  Notably,
-+ * we select the namespace we're going to use.
-  */
- static int cgroup_init_fs_context(struct fs_context *fc)
- {
-@@ -2151,11 +2144,15 @@ static int cgroup_init_fs_context(struct fs_context *fc)
- 
- 	ctx->ns = current->nsproxy->cgroup_ns;
- 	get_cgroup_ns(ctx->ns);
--	fc->fs_private = ctx;
-+	fc->fs_private = &ctx->kfc;
- 	if (fc->fs_type == &cgroup2_fs_type)
- 		fc->ops = &cgroup_fs_context_ops;
- 	else
- 		fc->ops = &cgroup1_fs_context_ops;
-+	if (fc->user_ns)
-+		put_user_ns(fc->user_ns);
-+	fc->user_ns = get_user_ns(ctx->ns->user_ns);
-+	fc->global = true;
- 	return 0;
- }
- 
 
