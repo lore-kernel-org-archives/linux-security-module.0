@@ -2,191 +2,196 @@ Return-Path: <SRS0=18aP=Q2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AE2C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB118C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B63B21738
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9276121738
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbfBSQah (ORCPT
+        id S1729297AbfBSQap (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:30:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38816 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 11:30:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50576 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728984AbfBSQag (ORCPT
+        id S1729120AbfBSQao (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:30:36 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        Tue, 19 Feb 2019 11:30:44 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6519813150C;
-        Tue, 19 Feb 2019 16:30:36 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 488E081DEE;
+        Tue, 19 Feb 2019 16:30:44 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EB6C4C4;
-        Tue, 19 Feb 2019 16:30:34 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 76B4B60FD8;
+        Tue, 19 Feb 2019 16:30:42 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 16/43] vfs: Add LSM hooks for the new mount API
+Subject: [PATCH 17/43] selinux: Implement the new mount API LSM hooks
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     linux-security-module@vger.kernel.org,
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>, selinux@tycho.nsa.gov,
+        linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
         torvalds@linux-foundation.org, ebiederm@xmission.com,
         linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 16:30:34 +0000
-Message-ID: <155059383419.12449.6522023890948977248.stgit@warthog.procyon.org.uk>
+Date:   Tue, 19 Feb 2019 16:30:41 +0000
+Message-ID: <155059384161.12449.17357084420263811610.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 References: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 19 Feb 2019 16:30:36 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 19 Feb 2019 16:30:44 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add LSM hooks for use by the new mount API and filesystem context code.
-This includes:
-
- (1) Hooks to handle allocation, duplication and freeing of the security
-     record attached to a filesystem context.
-
- (2) A hook to snoop source specifications.  There may be multiple of these
-     if the filesystem supports it.  They will to be local files/devices if
-     fs_context::source_is_dev is true and will be something else, possibly
-     remote server specifications, if false.
-
- (3) A hook to snoop superblock configuration options in key[=val] form.
-     If the LSM decides it wants to handle it, it can suppress the option
-     being passed to the filesystem.  Note that 'val' may include commas
-     and binary data with the fsopen patch.
-
- (4) A hook to perform validation and allocation after the configuration
-     has been done but before the superblock is allocated and set up.
-
- (5) A hook to transfer the security from the context to a newly created
-     superblock.
-
- (6) A hook to rule on whether a path point can be used as a mountpoint.
-
-These are intended to replace:
-
-	security_sb_copy_data
-	security_sb_kern_mount
-	security_sb_mount
-	security_sb_set_mnt_opts
-	security_sb_clone_mnt_opts
-	security_sb_parse_opts_str
-
-[AV -- some of the methods being replaced are already gone, some of the
-methods are not added for the lack of need]
+Implement the new mount API LSM hooks for SELinux.  At some point the old
+hooks will need to be removed.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Paul Moore <paul@paul-moore.com>
+cc: Stephen Smalley <sds@tycho.nsa.gov>
+cc: selinux@tycho.nsa.gov
 cc: linux-security-module@vger.kernel.org
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
- include/linux/lsm_hooks.h |   14 ++++++++++++++
- include/linux/security.h  |   10 ++++++++++
- security/security.c       |    5 +++++
- 3 files changed, 29 insertions(+)
+ security/selinux/hooks.c            |   49 +++++++++++++++++++++++++++++++----
+ security/selinux/include/security.h |   10 ++++---
+ 2 files changed, 49 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 9a0bdf91e646..47ba4db4d8fb 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -76,6 +76,17 @@
-  *	changes on the process such as clearing out non-inheritable signal
-  *	state.  This is called immediately after commit_creds().
-  *
-+ * Security hooks for mount using fs_context.
-+ *	[See also Documentation/filesystems/mounting.txt]
-+ *
-+ * @fs_context_parse_param:
-+ *	Userspace provided a parameter to configure a superblock.  The LSM may
-+ *	reject it with an error and may use it for itself, in which case it
-+ *	should return 0; otherwise it should return -ENOPARAM to pass it on to
-+ *	the filesystem.
-+ *	@fc indicates the filesystem context.
-+ *	@param The parameter
-+ *
-  * Security hooks for filesystem operations.
-  *
-  * @sb_alloc_security:
-@@ -1459,6 +1470,8 @@ union security_list_options {
- 	void (*bprm_committing_creds)(struct linux_binprm *bprm);
- 	void (*bprm_committed_creds)(struct linux_binprm *bprm);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f0e36c3492ba..f99381e97d73 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -48,6 +48,8 @@
+ #include <linux/fdtable.h>
+ #include <linux/namei.h>
+ #include <linux/mount.h>
++#include <linux/fs_context.h>
++#include <linux/fs_parser.h>
+ #include <linux/netfilter_ipv4.h>
+ #include <linux/netfilter_ipv6.h>
+ #include <linux/tty.h>
+@@ -454,11 +456,11 @@ static inline int inode_doinit(struct inode *inode)
  
-+	int (*fs_context_parse_param)(struct fs_context *fc, struct fs_parameter *param);
-+
- 	int (*sb_alloc_security)(struct super_block *sb);
- 	void (*sb_free_security)(struct super_block *sb);
- 	void (*sb_free_mnt_opts)(void *mnt_opts);
-@@ -1800,6 +1813,7 @@ struct security_hook_heads {
- 	struct hlist_head bprm_check_security;
- 	struct hlist_head bprm_committing_creds;
- 	struct hlist_head bprm_committed_creds;
-+	struct hlist_head fs_context_parse_param;
- 	struct hlist_head sb_alloc_security;
- 	struct hlist_head sb_free_security;
- 	struct hlist_head sb_free_mnt_opts;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index dbfb5a66babb..1cc4d7a3d6fa 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -53,6 +53,9 @@ struct msg_msg;
- struct xattr;
- struct xfrm_sec_ctx;
- struct mm_struct;
-+struct fs_context;
-+struct fs_parameter;
-+enum fs_value_type;
+ enum {
+ 	Opt_error = -1,
+-	Opt_context = 1,
++	Opt_context = 0,
++	Opt_defcontext = 1,
+ 	Opt_fscontext = 2,
+-	Opt_defcontext = 3,
+-	Opt_rootcontext = 4,
+-	Opt_seclabel = 5,
++	Opt_rootcontext = 3,
++	Opt_seclabel = 4,
+ };
  
- /* If capable should audit the security request */
- #define SECURITY_CAP_NOAUDIT 0
-@@ -220,6 +223,7 @@ int security_bprm_set_creds(struct linux_binprm *bprm);
- int security_bprm_check(struct linux_binprm *bprm);
- void security_bprm_committing_creds(struct linux_binprm *bprm);
- void security_bprm_committed_creds(struct linux_binprm *bprm);
-+int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
- int security_sb_alloc(struct super_block *sb);
- void security_sb_free(struct super_block *sb);
- void security_free_mnt_opts(void **mnt_opts);
-@@ -517,6 +521,12 @@ static inline void security_bprm_committed_creds(struct linux_binprm *bprm)
- {
- }
+ #define A(s, has_arg) {#s, sizeof(#s) - 1, Opt_##s, has_arg}
+@@ -1089,6 +1091,7 @@ static int show_sid(struct seq_file *m, u32 sid)
+ 	if (!rc) {
+ 		bool has_comma = context && strchr(context, ',');
  
-+static inline int security_fs_context_parse_param(struct fs_context *fc,
-+						  struct fs_parameter *param)
-+{
-+	return -ENOPARAM;
-+}
-+
- static inline int security_sb_alloc(struct super_block *sb)
- {
++		seq_putc(m, '=');
+ 		if (has_comma)
+ 			seq_putc(m, '\"');
+ 		seq_escape(m, context, "\"\n\\");
+@@ -1142,7 +1145,7 @@ static int selinux_sb_show_options(struct seq_file *m, struct super_block *sb)
+ 	}
+ 	if (sbsec->flags & SBLABEL_MNT) {
+ 		seq_putc(m, ',');
+-		seq_puts(m, LABELSUPP_STR);
++		seq_puts(m, SECLABEL_STR);
+ 	}
  	return 0;
-diff --git a/security/security.c b/security/security.c
-index f1b8d2587639..e5519488327d 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -374,6 +374,11 @@ void security_bprm_committed_creds(struct linux_binprm *bprm)
- 	call_void_hook(bprm_committed_creds, bprm);
+ }
+@@ -2761,6 +2764,38 @@ static int selinux_umount(struct vfsmount *mnt, int flags)
+ 				   FILESYSTEM__UNMOUNT, NULL);
  }
  
-+int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
++static const struct fs_parameter_spec selinux_param_specs[] = {
++	fsparam_string(CONTEXT_STR,	Opt_context),
++	fsparam_string(DEFCONTEXT_STR,	Opt_defcontext),
++	fsparam_string(FSCONTEXT_STR,	Opt_fscontext),
++	fsparam_string(ROOTCONTEXT_STR,	Opt_rootcontext),
++	fsparam_flag  (SECLABEL_STR,	Opt_seclabel),
++	{}
++};
++
++static const struct fs_parameter_description selinux_fs_parameters = {
++	.name		= "SELinux",
++	.specs		= selinux_param_specs,
++};
++
++static int selinux_fs_context_parse_param(struct fs_context *fc,
++					  struct fs_parameter *param)
 +{
-+	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
++	struct fs_parse_result result;
++	int opt, rc;
++
++	opt = fs_parse(fc, &selinux_fs_parameters, param, &result);
++	if (opt < 0)
++		return opt;
++
++	rc = selinux_add_opt(opt, param->string, &fc->security);
++	if (!rc) {
++		param->string = NULL;
++		rc = 1;
++	}
++	return rc;
 +}
 +
- int security_sb_alloc(struct super_block *sb)
- {
- 	return call_int_hook(sb_alloc_security, 0, sb);
+ /* inode security operations */
+ 
+ static int selinux_inode_alloc_security(struct inode *inode)
+@@ -6710,6 +6745,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_committing_creds, selinux_bprm_committing_creds),
+ 	LSM_HOOK_INIT(bprm_committed_creds, selinux_bprm_committed_creds),
+ 
++	LSM_HOOK_INIT(fs_context_parse_param, selinux_fs_context_parse_param),
++
+ 	LSM_HOOK_INIT(sb_alloc_security, selinux_sb_alloc_security),
+ 	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
+ 	LSM_HOOK_INIT(sb_eat_lsm_opts, selinux_sb_eat_lsm_opts),
+@@ -6978,6 +7015,8 @@ static __init int selinux_init(void)
+ 	else
+ 		pr_debug("SELinux:  Starting in permissive mode\n");
+ 
++	fs_validate_description(&selinux_fs_parameters);
++
+ 	return 0;
+ }
+ 
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index ba8eedf42b90..529d8941c9c5 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -59,11 +59,11 @@
+ #define SE_SBPROC		0x0200
+ #define SE_SBGENFS		0x0400
+ 
+-#define CONTEXT_STR	"context="
+-#define FSCONTEXT_STR	"fscontext="
+-#define ROOTCONTEXT_STR	"rootcontext="
+-#define DEFCONTEXT_STR	"defcontext="
+-#define LABELSUPP_STR "seclabel"
++#define CONTEXT_STR	"context"
++#define FSCONTEXT_STR	"fscontext"
++#define ROOTCONTEXT_STR	"rootcontext"
++#define DEFCONTEXT_STR	"defcontext"
++#define SECLABEL_STR "seclabel"
+ 
+ struct netlbl_lsm_secattr;
+ 
 
