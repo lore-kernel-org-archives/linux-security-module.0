@@ -2,246 +2,219 @@ Return-Path: <SRS0=18aP=Q2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 967E0C4360F
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A127FC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71502217D9
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:42:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E50421773
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 16:43:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="UT+MX4te"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbfBSQmK (ORCPT
+        id S1729332AbfBSQnM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 11:42:10 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:51760 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfBSQmK (ORCPT
+        Tue, 19 Feb 2019 11:43:12 -0500
+Received: from sonic301-10.consmr.mail.bf2.yahoo.com ([74.6.129.49]:38916 "EHLO
+        sonic301-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729301AbfBSQnM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 11:42:10 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gw8TB-0003Ko-4h; Tue, 19 Feb 2019 09:42:09 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gw8T9-0002pA-To; Tue, 19 Feb 2019 09:42:09 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
-        sfrench@samba.org, linux-security-module@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, rgb@redhat.com,
-        linux-kernel@vger.kernel.org
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-        <155024687804.21651.13220990774688382294.stgit@warthog.procyon.org.uk>
-Date:   Tue, 19 Feb 2019 10:41:56 -0600
-In-Reply-To: <155024687804.21651.13220990774688382294.stgit@warthog.procyon.org.uk>
-        (David Howells's message of "Fri, 15 Feb 2019 16:07:58 +0000")
-Message-ID: <87k1hvwx0r.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 19 Feb 2019 11:43:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1550594589; bh=faF+SgY2ts13KTY0TUvjfwhdQBH2YNYnPIrBcDX183w=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=UT+MX4teKE7qsdI8VCSHNzFKV7KrYP+I8HatmFqu6DEdlz9Em07iR9V/HChHQiIB4zLF62tQiGtJ1jiXlpjb1eMVchUXYGmP7xQd6bdu/yXl9fv5PQ/DEOvXBiDfvaewF8FhLpcoFkiATTMxYRnjbIaeKQExbz7xARz2HnZIJAY5hXj8oCGv/O/wXyqCz1MALNNbkqwX8yDkM9ulwKZcXQF4Sbry5jJxUGb3lEgxDFf1TfC5VmTtew31lotw2p++S+2rqeMBJ0oBvTgE4T8+wQzuhnWTVOED1/oH06+cLAp5YqQWaNeUAqqXbbaafQFlXi19M4o8IA7bLFkUpjxs0g==
+X-YMail-OSG: iOXjRWkVM1mtyfzJPPuvHaofq.P07b8yVikAvhTPQsM3UxmhP5QH.UxmWWOjMW5
+ BGPIhVGgiT6ObuTfM5nXOPJo5rNpENPpuODB5z8RSpRmcxxNtppYEe3MRP1tS7AVI.c17x2Xa6fp
+ xCpQT8hmaT5_ZsbWDWsLvVBYNEHiBfMFOsA0taalW1yAv545rDXyKGouuwWiNlkLfq5QmXpTZBR0
+ 8iMrEQPcHwgw9I.G6DzSM9w27xruGdr8Ut2eJncxPmcEivZHNh80n3XSEhqgTMjddbKoWIfue6PR
+ ClHIKsddjPoQdP5e536PV6hiXUx3v96cItVvteAFJf0nBxV2qB5BySxAazdmpAEgDGHxlTZOzEqa
+ kZeGkh873NC8MNFaxeCpbkEP9Cg2C2dNCijHZ9Yq8NteCDSDgqlFNQWFGl8ZxFRKuLB4Q7ZuHemy
+ J1A5I2.eXz9sxdN4tNUpoLht5TauOzZ1YjI9bwBCBtOLw11RpMeNTLZuG6uaOT_xogkdGK9f6u3d
+ 04YWmPyryjaWh00yA5GbZCMPBl81PkJlB9gQfXo3IR__z1ybJBDeOXBTuWK7lfpBhooxqp5zx1h1
+ 329RAKWgll9ZLKqNY.9wdorR9OEEFXR8555DkC1eLj4hqRryqXraOOhQqKpDszVVYTnMRmbg_WvK
+ bvljVYq0WhjOzp7z6.KgJp7YVvEncZitxntw1izmn52JcIL4JyAfwbahJoSHzn7l5ZsA9z_6NeKN
+ kP9XWtHlMT.wpQWaeTGlE.bkS0hbJdcOEM6XzgEri9ihFjqUMuGYCTMMHHBuoAKH_scbvJJyezS6
+ rM9R26p_6lAHkpp6gsksum26DnR0c.juN7RcDZM99Bhwvk4WVbQqSQyFjBSdu7Q8_r8UpfLqa45R
+ udlPJ9ZfnVwt5Il_KtVyD2wAnBBHP_SZvdSy7UTSGT.Bb.Sxe2uOi7w6PCRwzYakQqelkx3BZbYZ
+ c8G1CXYUojrkNwV4l3EgVf8guoiIJDiEtoO9nVSfEokJ67elZJcf1wVK.2cfm7vz5b1IVzeKzUUb
+ QI2amilrmvUcob11ULgG63AnZUewcQxltvNX6FytbaFbvDcetCFjwvKnVlpeK1Q7UgQ_saCF2xfl
+ Qnb_g5DezoPJV
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Tue, 19 Feb 2019 16:43:09 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
+          by smtp428.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID a7d4e8ec5dfdede091c8ca18e504c7d6;
+          Tue, 19 Feb 2019 16:43:06 +0000 (UTC)
+Subject: Re: [PATCH v6 5/5] kernfs: initialize security of newly created nodes
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Tejun Heo <tj@kernel.org>, selinux@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, casey@schaufler-ca.com
+References: <20190214095015.16032-1-omosnace@redhat.com>
+ <20190214095015.16032-6-omosnace@redhat.com>
+ <20190214154854.GO50184@devbig004.ftw2.facebook.com>
+ <CAFqZXNuOg9ex_WqCCKYzPQSeqbGmo-KP4Yh9TB4bbMZziG314A@mail.gmail.com>
+ <20190215155014.GP50184@devbig004.ftw2.facebook.com>
+ <CAFqZXNvVb75K9ZemVObcBB+rntL38_VfY5P6jyAbuwjymt6MQQ@mail.gmail.com>
+ <8c1ddde8-c7aa-7dca-3a0f-2d425c6879b4@schaufler-ca.com>
+ <CAFqZXNtJFrtAqnu=CmoSPnPM312DKF73ALkLeekMk8Me5ojntw@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <0942b8c9-79a3-47a9-a28d-276d322fd9e1@schaufler-ca.com>
+Date:   Tue, 19 Feb 2019 08:43:05 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gw8T9-0002pA-To;;;mid=<87k1hvwx0r.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+eDxco8mTJxxxZDHThx6wGVh+wuPemyU0=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFC PATCH 05/27] containers: Open a socket inside a container
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <CAFqZXNtJFrtAqnu=CmoSPnPM312DKF73ALkLeekMk8Me5ojntw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-David Howells <dhowells@redhat.com> writes:
+On 2/19/2019 6:10 AM, Ondrej Mosnacek wrote:
+> On Tue, Feb 19, 2019 at 1:28 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 2/18/2019 2:03 AM, Ondrej Mosnacek wrote:
+>>> On Fri, Feb 15, 2019 at 4:50 PM Tejun Heo <tj@kernel.org> wrote:
+>>>> On Fri, Feb 15, 2019 at 04:45:44PM +0100, Ondrej Mosnacek wrote:
+>>>>> On Thu, Feb 14, 2019 at 4:49 PM Tejun Heo <tj@kernel.org> wrote:
+>>>>>> On Thu, Feb 14, 2019 at 10:50:15AM +0100, Ondrej Mosnacek wrote:
+>>>>>>> +static int kernfs_node_init_security(struct kernfs_node *parent,
+>>>>>>> +                                  struct kernfs_node *kn)
+>>>>>> Can we skip the whole thing if security is not enabled?
+>>>>> Do you mean just skipping the whole part when CONFIG_SECURITY=n? That
+>>>>> is easy to do and I can add it in the next respin (although the
+>>>>> compiler should be able to optimize most of it out in that case).
+>>>> So the goal is allowing folks who don't use this to not pay.  It'd be
+>>>> better the evaulation can be as late as possible but obviously there's
+>>>> a point where that'd be too complicated.  Maybe "ever enabled in this
+>>>> boot" is a good and simple enough at the same time?
+>>> I don't think there is a way currently to check whether some LSM has
+>>> been enabled at boot or not. I suppose we could add such function for
+>>> this kind of heuristics, but I'm not sure how it would interplay with
+>>> the plans to allow multiple LSM to be enabled simultaneously...
+>>> Perhaps it would be better/easier to just add a
+>>> security_kernfs_needs_init() function, which would simply check if the
+>>> list of registered kernfs_init_security hooks is empty.
+>>>
+>>> I propose something like the patch below (the whitespace is mangled -
+>>> intended just for visual review). I plan to fold it into the next
+>>> respin if there are no objections to this approach.
+>>>
+>>> diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
+>>> index 735a6d382d9d..5b99205da919 100644
+>>> --- a/fs/kernfs/dir.c
+>>> +++ b/fs/kernfs/dir.c
+>>> @@ -625,6 +625,9 @@ static int kernfs_node_init_security(struct
+>>> kernfs_node *parent,
+>>>           struct qstr q;
+>>>           int ret;
+>>>
+>>> +       if (!security_kernfs_needs_init() || !parent)
+>>> +               return 0;
+>>> +
+>>>           if (!parent->iattr) {
+>>>                   kernfs_iattr_init(&iattr_parent, parent);
+>>>                   simple_xattrs_init(&xattr_parent);
+>>> @@ -720,11 +723,9 @@ static struct kernfs_node
+>>> *__kernfs_new_node(struct kernfs_root *root,
+>>>                           goto err_out3;
+>>>           }
+>>>
+>>> -       if (parent) {
+>>> -               ret = kernfs_node_init_security(parent, kn);
+>>> -               if (ret)
+>>> -                       goto err_out3;
+>>> -       }
+>>> +       ret = kernfs_node_init_security(parent, kn);
+>>> +       if (ret)
+>>> +               goto err_out3;
+>>>
+>>>           return kn;
+>>>
+>>> diff --git a/include/linux/security.h b/include/linux/security.h
+>>> index 581944d1e61e..49a083dbc464 100644
+>>> --- a/include/linux/security.h
+>>> +++ b/include/linux/security.h
+>>> @@ -292,6 +292,7 @@ int security_inode_listsecurity(struct inode
+>>> *inode, char *buffer, size_t buffer
+>>>    void security_inode_getsecid(struct inode *inode, u32 *secid);
+>>>    int security_inode_copy_up(struct dentry *src, struct cred **new);
+>>>    int security_inode_copy_up_xattr(const char *name);
+>>> +int security_kernfs_needs_init(void);
+>>>    int security_kernfs_init_security(const struct qstr *qstr,
+>>>                                     const struct iattr *dir_iattr,
+>>>                                     struct simple_xattrs *dir_secattr,
+>>> @@ -789,6 +790,11 @@ static inline int security_inode_copy_up(struct
+>>> dentry *src, struct cred **new)
+>>>           return 0;
+>>>    }
+>>>
+>>> +static inline int security_kernfs_needs_init(void)
+>>> +{
+>>> +       return 0;
+>>> +}
+>>> +
+>>>    static inline int security_kernfs_init_security(
+>>>                   const struct qstr *qstr, const struct iattr *dir_iattr,
+>>>                   struct simple_xattrs *dir_secattr, const struct iattr *iattr,
+>>> diff --git a/security/security.c b/security/security.c
+>>> index 836e0822874a..3c8b9b5baabc 100644
+>>> --- a/security/security.c
+>>> +++ b/security/security.c
+>>> @@ -892,6 +892,11 @@ int security_inode_copy_up_xattr(const char *name)
+>>>    }
+>>>    EXPORT_SYMBOL(security_inode_copy_up_xattr);
+>>>
+>>> +int security_kernfs_needs_init(void)
+>>> +{
+>>> +       return !hlist_empty(&security_hook_heads.kernfs_init_security);
+>>> +}
+>>> +
+>> Yuck. That's an awful lot of infrastructure just to track
+>> that state. May I suggest that instead you have the
+>> security_kernfs_init_security() hook return -EOPNOTSUPP
+>> in the no-LSM case (2nd argument to call_in_hook). You could
+>> then have a state flag in kernfs that you can set to indicate
+>> you don't need to call security_kernfs_init_security() again.
+> Well, maintaining a global variable sounds even more yucky to me...
 
-> Provide a system call to open a socket inside of a container, using that
-> container's network namespace.  This allows netlink to be used to manage
-> the container.
->
-> 	fd = container_socket(int container_fd,
-> 			      int domain, int type, int protocol);
->
+The state you're maintaining is kernfs state, not LSM
+infrastructure state. The state should be maintained in
+kernfs, not in the LSM infrastructure.
 
-Nacked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> And I don't understand why you'd consider a simple one-line function
+> to be "an awful lot of infrastructure" :)
 
-Use a namespace file descriptor if you need this.  So far we have not
-added this system call as it is just a performance optimization.  And it
-has been too niche to matter.
+That is because you haven't been working with the LSM
+infrastructure very long. If you'll recall, I have already
+objected to kernfs specific LSM hooks. Now, when you find
+that your approach for using a hook has issues, you want
+to add another function that does nothing but tell you
+that there's nothing to do. You can get that by calling
+the security_kernfs_init_security() hook. The LSM infrastructure
+is set up to be as painless as possible when you don't
+want to use it.
 
-If this that has changed we can add this separately from everything else
-you are doing here.
+>   But at the end of the day it
+> is up to the maintainers - Greg/Tejun and James/Serge (who I forgot to
+> Cc on these patches, sorry)
 
+Yes, James and Serge are the maintainers for the
+security sub-system, but I have done the transition
+from hook vector to hook lists and am currently doing
+the transition from module to infrastructure blob management.
+I know it better, and have more invested in it, than anyone
+else just now.
 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
->
->  arch/x86/entry/syscalls/syscall_32.tbl |    1 +
->  arch/x86/entry/syscalls/syscall_64.tbl |    1 +
->  include/linux/socket.h                 |    3 ++-
->  include/linux/syscalls.h               |    2 ++
->  kernel/sys_ni.c                        |    1 +
->  net/compat.c                           |    2 +-
->  net/socket.c                           |   34 +++++++++++++++++++++++++++-----
->  7 files changed, 37 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-> index 8666693510f9..f4c9beff77a6 100644
-> --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> @@ -409,3 +409,4 @@
->  395	i386	sb_notify		sys_sb_notify			__ia32_sys_sb_notify
->  396	i386	container_create	sys_container_create		__ia32_sys_container_create
->  397	i386	fork_into_container	sys_fork_into_container		__ia32_sys_fork_into_container
-> +398	i386	container_socket	sys_container_socket		__ia32_sys_container_socket
-> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> index d40d4790fcb2..e20cdf7b5527 100644
-> --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> @@ -354,6 +354,7 @@
->  343	common	sb_notify		__x64_sys_sb_notify
->  344	common	container_create	__x64_sys_container_create
->  345	common	fork_into_container	__x64_sys_fork_into_container
-> +346	common	container_socket	__x64_sys_container_socket
->  
->  #
->  # x32-specific system call numbers start at 512 to avoid cache impact
-> diff --git a/include/linux/socket.h b/include/linux/socket.h
-> index ab2041a00e01..154ac900a8a5 100644
-> --- a/include/linux/socket.h
-> +++ b/include/linux/socket.h
-> @@ -10,6 +10,7 @@
->  #include <linux/compiler.h>		/* __user			*/
->  #include <uapi/linux/socket.h>
->  
-> +struct net;
->  struct pid;
->  struct cred;
->  
-> @@ -376,7 +377,7 @@ extern int __sys_sendto(int fd, void __user *buff, size_t len,
->  			int addr_len);
->  extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
->  			 int __user *upeer_addrlen, int flags);
-> -extern int __sys_socket(int family, int type, int protocol);
-> +extern int __sys_socket(struct net *net, int family, int type, int protocol);
->  extern int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrlen);
->  extern int __sys_connect(int fd, struct sockaddr __user *uservaddr,
->  			 int addrlen);
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index 15e5cc704df3..547334c6ffc2 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -947,6 +947,8 @@ asmlinkage long sys_container_create(const char __user *name, unsigned int flags
->  				     unsigned long spare3, unsigned long spare4,
->  				     unsigned long spare5);
->  asmlinkage long sys_fork_into_container(int containerfd);
-> +asmlinkage long sys_container_socket(int containerfd,
-> +				     int domain, int type, int protocol);
->  
->  /*
->   * Architecture-specific system calls
-> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-> index a23ad529d548..ce9c5bb30e7f 100644
-> --- a/kernel/sys_ni.c
-> +++ b/kernel/sys_ni.c
-> @@ -236,6 +236,7 @@ COND_SYSCALL(shmdt);
->  /* net/socket.c */
->  COND_SYSCALL(socket);
->  COND_SYSCALL(socketpair);
-> +COND_SYSCALL(container_socket);
->  COND_SYSCALL(bind);
->  COND_SYSCALL(listen);
->  COND_SYSCALL(accept);
-> diff --git a/net/compat.c b/net/compat.c
-> index 959d1c51826d..1b2db740fd33 100644
-> --- a/net/compat.c
-> +++ b/net/compat.c
-> @@ -856,7 +856,7 @@ COMPAT_SYSCALL_DEFINE2(socketcall, int, call, u32 __user *, args)
->  
->  	switch (call) {
->  	case SYS_SOCKET:
-> -		ret = __sys_socket(a0, a1, a[2]);
-> +		ret = __sys_socket(current->nsproxy->net_ns, a0, a1, a[2]);
->  		break;
->  	case SYS_BIND:
->  		ret = __sys_bind(a0, compat_ptr(a1), a[2]);
-> diff --git a/net/socket.c b/net/socket.c
-> index 7d271a1d0c7e..7406580598b9 100644
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@ -80,6 +80,7 @@
->  #include <linux/highmem.h>
->  #include <linux/mount.h>
->  #include <linux/fs_context.h>
-> +#include <linux/container.h>
->  #include <linux/security.h>
->  #include <linux/syscalls.h>
->  #include <linux/compat.h>
-> @@ -1326,9 +1327,9 @@ int sock_create_kern(struct net *net, int family, int type, int protocol, struct
->  }
->  EXPORT_SYMBOL(sock_create_kern);
->  
-> -int __sys_socket(int family, int type, int protocol)
-> +int __sys_socket(struct net *net, int family, int type, int protocol)
->  {
-> -	int retval;
-> +	long retval;
->  	struct socket *sock;
->  	int flags;
->  
-> @@ -1346,7 +1347,7 @@ int __sys_socket(int family, int type, int protocol)
->  	if (SOCK_NONBLOCK != O_NONBLOCK && (flags & SOCK_NONBLOCK))
->  		flags = (flags & ~SOCK_NONBLOCK) | O_NONBLOCK;
->  
-> -	retval = sock_create(family, type, protocol, &sock);
-> +	retval = __sock_create(net, family, type, protocol, &sock, 0);
->  	if (retval < 0)
->  		return retval;
->  
-> @@ -1355,9 +1356,32 @@ int __sys_socket(int family, int type, int protocol)
->  
->  SYSCALL_DEFINE3(socket, int, family, int, type, int, protocol)
->  {
-> -	return __sys_socket(family, type, protocol);
-> +	return __sys_socket(current->nsproxy->net_ns, family, type, protocol);
->  }
->  
-> +/*
-> + * Create a socket inside a container.
-> + */
-> +#ifdef CONFIG_CONTAINERS
-> +SYSCALL_DEFINE4(container_socket,
-> +		int, containerfd, int, family, int, type, int, protocol)
-> +{
-> +	struct fd f = fdget(containerfd);
-> +	long ret;
-> +
-> +	if (!f.file)
-> +		return -EBADF;
-> +	ret = -EINVAL;
-> +	if (is_container_file(f.file)) {
-> +		struct container *c = f.file->private_data;
-> +
-> +		ret = __sys_socket(c->ns->net_ns, family, type, protocol);
-> +	}
-> +	fdput(f);
-> +	return ret;
-> +}
-> +#endif
-> +
->  /*
->   *	Create a pair of connected sockets.
->   */
-> @@ -2555,7 +2579,7 @@ SYSCALL_DEFINE2(socketcall, int, call, unsigned long __user *, args)
->  
->  	switch (call) {
->  	case SYS_SOCKET:
-> -		err = __sys_socket(a0, a1, a[2]);
-> +		err = __sys_socket(current->nsproxy->net_ns, a0, a1, a[2]);
->  		break;
->  	case SYS_BIND:
->  		err = __sys_bind(a0, (struct sockaddr __user *)a1, a[2]);
+>   - what works better for them.
+
+Kernfs is an important component of the kernel. So is
+the security infrastructure. I would hope you don't want
+to turn this into a contest to see which maintainer has
+the biggest clout.
+
