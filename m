@@ -6,199 +6,810 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F36BC10F00
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8838C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1CFB2147A
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E44D2083E
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbfBSRJg (ORCPT
+        id S1729389AbfBSRJp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:09:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39154 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 12:09:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34144 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbfBSRJf (ORCPT
+        id S1728201AbfBSRJo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:09:35 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        Tue, 19 Feb 2019 12:09:44 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 68E4CC007320;
-        Tue, 19 Feb 2019 17:09:35 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id BCBE436809;
+        Tue, 19 Feb 2019 17:09:42 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F3F9560BE8;
-        Tue, 19 Feb 2019 17:09:33 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 54A345BBCB;
+        Tue, 19 Feb 2019 17:09:41 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 09/10] vfs: syscall: Add fspick() to select a superblock for
- reconfiguration
+Subject: [PATCH 10/10] vfs: Add a sample program for the new mount API
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dhowells@redhat.com, torvalds@linux-foundation.org,
-        ebiederm@xmission.com, linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 17:09:33 +0000
-Message-ID: <155059617323.17079.2377064615299669557.stgit@warthog.procyon.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 19 Feb 2019 17:09:40 +0000
+Message-ID: <155059618062.17079.18093724934271186662.stgit@warthog.procyon.org.uk>
 In-Reply-To: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
 References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/unknown-version
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 19 Feb 2019 17:09:35 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 19 Feb 2019 17:09:42 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Provide an fspick() system call that can be used to pick an existing
-mountpoint into an fs_context which can thereafter be used to reconfigure a
-superblock (equivalent of the superblock side of -o remount).
+Add a sample program to demonstrate fsopen/fsmount/move_mount to mount
+something.
 
-This looks like:
-
-	int fd = fspick(AT_FDCWD, "/mnt",
-			FSPICK_CLOEXEC | FSPICK_NO_AUTOMOUNT);
-	fsconfig(fd, FSCONFIG_SET_FLAG, "intr", NULL, 0);
-	fsconfig(fd, FSCONFIG_SET_FLAG, "noac", NULL, 0);
-	fsconfig(fd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
-
-At the point of fspick being called, the file descriptor referring to the
-filesystem context is in exactly the same state as the one that was created
-by fsopen() after fsmount() has been successfully called.
+To make it compile on all arches, irrespective of whether or not syscall
+numbers are assigned, define the syscall number to -1 if it isn't to cause
+the kernel to return -ENOSYS.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-api@vger.kernel.org
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
 
- arch/x86/entry/syscalls/syscall_32.tbl |    1 +
- arch/x86/entry/syscalls/syscall_64.tbl |    1 +
- fs/fsopen.c                            |   57 ++++++++++++++++++++++++++++++++
- include/linux/syscalls.h               |    1 +
- include/uapi/linux/mount.h             |    8 ++++
- 5 files changed, 68 insertions(+)
+ samples/Kconfig            |    9 +
+ samples/Makefile           |    2 
+ samples/statx/Makefile     |    7 -
+ samples/statx/test-statx.c |  258 -------------------------------------------
+ samples/vfs/Makefile       |   10 ++
+ samples/vfs/test-fsmount.c |  133 ++++++++++++++++++++++
+ samples/vfs/test-statx.c   |  267 ++++++++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 416 insertions(+), 270 deletions(-)
+ delete mode 100644 samples/statx/Makefile
+ delete mode 100644 samples/statx/test-statx.c
+ create mode 100644 samples/vfs/Makefile
+ create mode 100644 samples/vfs/test-fsmount.c
+ create mode 100644 samples/vfs/test-statx.c
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index c78b68256f8a..d1eb6c815790 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -403,3 +403,4 @@
- 389	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
- 390	i386	fsconfig		sys_fsconfig			__ia32_sys_fsconfig
- 391	i386	fsmount			sys_fsmount			__ia32_sys_fsmount
-+392	i386	fspick			sys_fspick			__ia32_sys_fspick
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index d44ead5d4368..d3ab703c02bb 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -348,6 +348,7 @@
- 337	common	fsopen			__x64_sys_fsopen
- 338	common	fsconfig		__x64_sys_fsconfig
- 339	common	fsmount			__x64_sys_fsmount
-+340	common	fspick			__x64_sys_fspick
+diff --git a/samples/Kconfig b/samples/Kconfig
+index ad1ec7016d4c..dc4eb5355fad 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -147,10 +147,11 @@ config SAMPLE_VFIO_MDEV_MBOCHS
+ 	  Specifically it does *not* include any legacy vga stuff.
+ 	  Device looks a lot like "qemu -device secondary-vga".
  
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/fsopen.c b/fs/fsopen.c
-index 65cc2f68f994..3bb9c0c8cbcc 100644
---- a/fs/fsopen.c
-+++ b/fs/fsopen.c
-@@ -156,6 +156,63 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
- 	return ret;
- }
+-config SAMPLE_STATX
+-	bool "Build example extended-stat using code"
+-	depends on BROKEN
++config SAMPLE_VFS
++	bool "Build example programs that use new VFS system calls"
+ 	help
+-	  Build example userspace program to use the new extended-stat syscall.
++	  Build example userspace programs that use new VFS system calls such
++	  as mount API and statx().  Note that this is restricted to the x86
++	  arch whilst it accesses system calls that aren't yet in all arches.
  
-+/*
-+ * Pick a superblock into a context for reconfiguration.
+ endif # SAMPLES
+diff --git a/samples/Makefile b/samples/Makefile
+index bd601c038b86..c5a6175c2d3f 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -3,4 +3,4 @@
+ obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
+ 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
+ 			   configfs/ connector/ v4l/ trace_printk/ \
+-			   vfio-mdev/ statx/ qmi/
++			   vfio-mdev/ vfs/ qmi/
+diff --git a/samples/statx/Makefile b/samples/statx/Makefile
+deleted file mode 100644
+index 59df7c25a9d1..000000000000
+--- a/samples/statx/Makefile
++++ /dev/null
+@@ -1,7 +0,0 @@
+-# List of programs to build
+-hostprogs-$(CONFIG_SAMPLE_STATX) := test-statx
+-
+-# Tell kbuild to always build the programs
+-always := $(hostprogs-y)
+-
+-HOSTCFLAGS_test-statx.o += -I$(objtree)/usr/include
+diff --git a/samples/statx/test-statx.c b/samples/statx/test-statx.c
+deleted file mode 100644
+index d4d77b09412c..000000000000
+--- a/samples/statx/test-statx.c
++++ /dev/null
+@@ -1,258 +0,0 @@
+-/* Test the statx() system call.
+- *
+- * Note that the output of this program is intended to look like the output of
+- * /bin/stat where possible.
+- *
+- * Copyright (C) 2015 Red Hat, Inc. All Rights Reserved.
+- * Written by David Howells (dhowells@redhat.com)
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public Licence
+- * as published by the Free Software Foundation; either version
+- * 2 of the Licence, or (at your option) any later version.
+- */
+-
+-#define _GNU_SOURCE
+-#define _ATFILE_SOURCE
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <string.h>
+-#include <unistd.h>
+-#include <ctype.h>
+-#include <errno.h>
+-#include <time.h>
+-#include <sys/syscall.h>
+-#include <sys/types.h>
+-#include <linux/stat.h>
+-#include <linux/fcntl.h>
+-#include <sys/stat.h>
+-
+-#define AT_STATX_SYNC_TYPE	0x6000
+-#define AT_STATX_SYNC_AS_STAT	0x0000
+-#define AT_STATX_FORCE_SYNC	0x2000
+-#define AT_STATX_DONT_SYNC	0x4000
+-
+-static __attribute__((unused))
+-ssize_t statx(int dfd, const char *filename, unsigned flags,
+-	      unsigned int mask, struct statx *buffer)
+-{
+-	return syscall(__NR_statx, dfd, filename, flags, mask, buffer);
+-}
+-
+-static void print_time(const char *field, struct statx_timestamp *ts)
+-{
+-	struct tm tm;
+-	time_t tim;
+-	char buffer[100];
+-	int len;
+-
+-	tim = ts->tv_sec;
+-	if (!localtime_r(&tim, &tm)) {
+-		perror("localtime_r");
+-		exit(1);
+-	}
+-	len = strftime(buffer, 100, "%F %T", &tm);
+-	if (len == 0) {
+-		perror("strftime");
+-		exit(1);
+-	}
+-	printf("%s", field);
+-	fwrite(buffer, 1, len, stdout);
+-	printf(".%09u", ts->tv_nsec);
+-	len = strftime(buffer, 100, "%z", &tm);
+-	if (len == 0) {
+-		perror("strftime2");
+-		exit(1);
+-	}
+-	fwrite(buffer, 1, len, stdout);
+-	printf("\n");
+-}
+-
+-static void dump_statx(struct statx *stx)
+-{
+-	char buffer[256], ft = '?';
+-
+-	printf("results=%x\n", stx->stx_mask);
+-
+-	printf(" ");
+-	if (stx->stx_mask & STATX_SIZE)
+-		printf(" Size: %-15llu", (unsigned long long)stx->stx_size);
+-	if (stx->stx_mask & STATX_BLOCKS)
+-		printf(" Blocks: %-10llu", (unsigned long long)stx->stx_blocks);
+-	printf(" IO Block: %-6llu", (unsigned long long)stx->stx_blksize);
+-	if (stx->stx_mask & STATX_TYPE) {
+-		switch (stx->stx_mode & S_IFMT) {
+-		case S_IFIFO:	printf("  FIFO\n");			ft = 'p'; break;
+-		case S_IFCHR:	printf("  character special file\n");	ft = 'c'; break;
+-		case S_IFDIR:	printf("  directory\n");		ft = 'd'; break;
+-		case S_IFBLK:	printf("  block special file\n");	ft = 'b'; break;
+-		case S_IFREG:	printf("  regular file\n");		ft = '-'; break;
+-		case S_IFLNK:	printf("  symbolic link\n");		ft = 'l'; break;
+-		case S_IFSOCK:	printf("  socket\n");			ft = 's'; break;
+-		default:
+-			printf(" unknown type (%o)\n", stx->stx_mode & S_IFMT);
+-			break;
+-		}
+-	} else {
+-		printf(" no type\n");
+-	}
+-
+-	sprintf(buffer, "%02x:%02x", stx->stx_dev_major, stx->stx_dev_minor);
+-	printf("Device: %-15s", buffer);
+-	if (stx->stx_mask & STATX_INO)
+-		printf(" Inode: %-11llu", (unsigned long long) stx->stx_ino);
+-	if (stx->stx_mask & STATX_NLINK)
+-		printf(" Links: %-5u", stx->stx_nlink);
+-	if (stx->stx_mask & STATX_TYPE) {
+-		switch (stx->stx_mode & S_IFMT) {
+-		case S_IFBLK:
+-		case S_IFCHR:
+-			printf(" Device type: %u,%u",
+-			       stx->stx_rdev_major, stx->stx_rdev_minor);
+-			break;
+-		}
+-	}
+-	printf("\n");
+-
+-	if (stx->stx_mask & STATX_MODE)
+-		printf("Access: (%04o/%c%c%c%c%c%c%c%c%c%c)  ",
+-		       stx->stx_mode & 07777,
+-		       ft,
+-		       stx->stx_mode & S_IRUSR ? 'r' : '-',
+-		       stx->stx_mode & S_IWUSR ? 'w' : '-',
+-		       stx->stx_mode & S_IXUSR ? 'x' : '-',
+-		       stx->stx_mode & S_IRGRP ? 'r' : '-',
+-		       stx->stx_mode & S_IWGRP ? 'w' : '-',
+-		       stx->stx_mode & S_IXGRP ? 'x' : '-',
+-		       stx->stx_mode & S_IROTH ? 'r' : '-',
+-		       stx->stx_mode & S_IWOTH ? 'w' : '-',
+-		       stx->stx_mode & S_IXOTH ? 'x' : '-');
+-	if (stx->stx_mask & STATX_UID)
+-		printf("Uid: %5d   ", stx->stx_uid);
+-	if (stx->stx_mask & STATX_GID)
+-		printf("Gid: %5d\n", stx->stx_gid);
+-
+-	if (stx->stx_mask & STATX_ATIME)
+-		print_time("Access: ", &stx->stx_atime);
+-	if (stx->stx_mask & STATX_MTIME)
+-		print_time("Modify: ", &stx->stx_mtime);
+-	if (stx->stx_mask & STATX_CTIME)
+-		print_time("Change: ", &stx->stx_ctime);
+-	if (stx->stx_mask & STATX_BTIME)
+-		print_time(" Birth: ", &stx->stx_btime);
+-
+-	if (stx->stx_attributes_mask) {
+-		unsigned char bits, mbits;
+-		int loop, byte;
+-
+-		static char attr_representation[64 + 1] =
+-			/* STATX_ATTR_ flags: */
+-			"????????"	/* 63-56 */
+-			"????????"	/* 55-48 */
+-			"????????"	/* 47-40 */
+-			"????????"	/* 39-32 */
+-			"????????"	/* 31-24	0x00000000-ff000000 */
+-			"????????"	/* 23-16	0x00000000-00ff0000 */
+-			"???me???"	/* 15- 8	0x00000000-0000ff00 */
+-			"?dai?c??"	/*  7- 0	0x00000000-000000ff */
+-			;
+-
+-		printf("Attributes: %016llx (", stx->stx_attributes);
+-		for (byte = 64 - 8; byte >= 0; byte -= 8) {
+-			bits = stx->stx_attributes >> byte;
+-			mbits = stx->stx_attributes_mask >> byte;
+-			for (loop = 7; loop >= 0; loop--) {
+-				int bit = byte + loop;
+-
+-				if (!(mbits & 0x80))
+-					putchar('.');	/* Not supported */
+-				else if (bits & 0x80)
+-					putchar(attr_representation[63 - bit]);
+-				else
+-					putchar('-');	/* Not set */
+-				bits <<= 1;
+-				mbits <<= 1;
+-			}
+-			if (byte)
+-				putchar(' ');
+-		}
+-		printf(")\n");
+-	}
+-}
+-
+-static void dump_hex(unsigned long long *data, int from, int to)
+-{
+-	unsigned offset, print_offset = 1, col = 0;
+-
+-	from /= 8;
+-	to = (to + 7) / 8;
+-
+-	for (offset = from; offset < to; offset++) {
+-		if (print_offset) {
+-			printf("%04x: ", offset * 8);
+-			print_offset = 0;
+-		}
+-		printf("%016llx", data[offset]);
+-		col++;
+-		if ((col & 3) == 0) {
+-			printf("\n");
+-			print_offset = 1;
+-		} else {
+-			printf(" ");
+-		}
+-	}
+-
+-	if (!print_offset)
+-		printf("\n");
+-}
+-
+-int main(int argc, char **argv)
+-{
+-	struct statx stx;
+-	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
+-
+-	unsigned int mask = STATX_ALL;
+-
+-	for (argv++; *argv; argv++) {
+-		if (strcmp(*argv, "-F") == 0) {
+-			atflag &= ~AT_STATX_SYNC_TYPE;
+-			atflag |= AT_STATX_FORCE_SYNC;
+-			continue;
+-		}
+-		if (strcmp(*argv, "-D") == 0) {
+-			atflag &= ~AT_STATX_SYNC_TYPE;
+-			atflag |= AT_STATX_DONT_SYNC;
+-			continue;
+-		}
+-		if (strcmp(*argv, "-L") == 0) {
+-			atflag &= ~AT_SYMLINK_NOFOLLOW;
+-			continue;
+-		}
+-		if (strcmp(*argv, "-O") == 0) {
+-			mask &= ~STATX_BASIC_STATS;
+-			continue;
+-		}
+-		if (strcmp(*argv, "-A") == 0) {
+-			atflag |= AT_NO_AUTOMOUNT;
+-			continue;
+-		}
+-		if (strcmp(*argv, "-R") == 0) {
+-			raw = 1;
+-			continue;
+-		}
+-
+-		memset(&stx, 0xbf, sizeof(stx));
+-		ret = statx(AT_FDCWD, *argv, atflag, mask, &stx);
+-		printf("statx(%s) = %d\n", *argv, ret);
+-		if (ret < 0) {
+-			perror(*argv);
+-			exit(1);
+-		}
+-
+-		if (raw)
+-			dump_hex((unsigned long long *)&stx, 0, sizeof(stx));
+-
+-		dump_statx(&stx);
+-	}
+-	return 0;
+-}
+diff --git a/samples/vfs/Makefile b/samples/vfs/Makefile
+new file mode 100644
+index 000000000000..4ac9690fb3c4
+--- /dev/null
++++ b/samples/vfs/Makefile
+@@ -0,0 +1,10 @@
++# List of programs to build
++hostprogs-$(CONFIG_SAMPLE_VFS) := \
++	test-fsmount \
++	test-statx
++
++# Tell kbuild to always build the programs
++always := $(hostprogs-y)
++
++HOSTCFLAGS_test-fsmount.o += -I$(objtree)/usr/include
++HOSTCFLAGS_test-statx.o += -I$(objtree)/usr/include
+diff --git a/samples/vfs/test-fsmount.c b/samples/vfs/test-fsmount.c
+new file mode 100644
+index 000000000000..266d72b3dce4
+--- /dev/null
++++ b/samples/vfs/test-fsmount.c
+@@ -0,0 +1,133 @@
++/* fd-based mount test.
++ *
++ * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
 + */
-+SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags)
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <sys/prctl.h>
++#include <sys/wait.h>
++#include <linux/mount.h>
++#include <linux/unistd.h>
++
++#define E(x) do { if ((x) == -1) { perror(#x); exit(1); } } while(0)
++
++static void check_messages(int fd)
 +{
-+	struct fs_context *fc;
-+	struct path target;
-+	unsigned int lookup_flags;
-+	int ret;
++	char buf[4096];
++	int err, n;
 +
-+	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
-+		return -EPERM;
++	err = errno;
 +
-+	if ((flags & ~(FSPICK_CLOEXEC |
-+		       FSPICK_SYMLINK_NOFOLLOW |
-+		       FSPICK_NO_AUTOMOUNT |
-+		       FSPICK_EMPTY_PATH)) != 0)
-+		return -EINVAL;
++	for (;;) {
++		n = read(fd, buf, sizeof(buf));
++		if (n < 0)
++			break;
++		n -= 2;
 +
-+	lookup_flags = LOOKUP_FOLLOW | LOOKUP_AUTOMOUNT;
-+	if (flags & FSPICK_SYMLINK_NOFOLLOW)
-+		lookup_flags &= ~LOOKUP_FOLLOW;
-+	if (flags & FSPICK_NO_AUTOMOUNT)
-+		lookup_flags &= ~LOOKUP_AUTOMOUNT;
-+	if (flags & FSPICK_EMPTY_PATH)
-+		lookup_flags |= LOOKUP_EMPTY;
-+	ret = user_path_at(dfd, path, lookup_flags, &target);
-+	if (ret < 0)
-+		goto err;
-+
-+	ret = -EINVAL;
-+	if (target.mnt->mnt_root != target.dentry)
-+		goto err_path;
-+
-+	fc = fs_context_for_reconfigure(target.dentry, 0, 0);
-+	if (IS_ERR(fc)) {
-+		ret = PTR_ERR(fc);
-+		goto err_path;
++		switch (buf[0]) {
++		case 'e':
++			fprintf(stderr, "Error: %*.*s\n", n, n, buf + 2);
++			break;
++		case 'w':
++			fprintf(stderr, "Warning: %*.*s\n", n, n, buf + 2);
++			break;
++		case 'i':
++			fprintf(stderr, "Info: %*.*s\n", n, n, buf + 2);
++			break;
++		}
 +	}
 +
-+	fc->phase = FS_CONTEXT_RECONF_PARAMS;
-+
-+	ret = fscontext_alloc_log(fc);
-+	if (ret < 0)
-+		goto err_fc;
-+
-+	path_put(&target);
-+	return fscontext_create_fd(fc, flags & FSPICK_CLOEXEC ? O_CLOEXEC : 0);
-+
-+err_fc:
-+	put_fs_context(fc);
-+err_path:
-+	path_put(&target);
-+err:
-+	return ret;
++	errno = err;
 +}
 +
- /*
-  * Check the state and apply the configuration.  Note that this function is
-  * allowed to 'steal' the value by setting param->xxx to NULL before returning.
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index a332a731a0e4..c3f9d865b91d 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -934,6 +934,7 @@ asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
- asmlinkage long sys_fsconfig(int fs_fd, unsigned int cmd, const char __user *key,
- 			     const void __user *value, int aux);
- asmlinkage long sys_fsmount(int fs_fd, unsigned int flags, unsigned int ms_flags);
-+asmlinkage long sys_fspick(int dfd, const char __user *path, unsigned int flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 3888d3b91dc5..96a0240f23fe 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -77,6 +77,14 @@
-  */
- #define FSOPEN_CLOEXEC		0x00000001
- 
-+/*
-+ * fspick() flags.
-+ */
-+#define FSPICK_CLOEXEC		0x00000001
-+#define FSPICK_SYMLINK_NOFOLLOW	0x00000002
-+#define FSPICK_NO_AUTOMOUNT	0x00000004
-+#define FSPICK_EMPTY_PATH	0x00000008
++static __attribute__((noreturn))
++void mount_error(int fd, const char *s)
++{
++	check_messages(fd);
++	fprintf(stderr, "%s: %m\n", s);
++	exit(1);
++}
 +
- /*
-  * The type of fsconfig() call made.
-  */
++/* Hope -1 isn't a syscall */
++#ifndef __NR_fsopen
++#define __NR_fsopen -1
++#endif
++#ifndef __NR_fsmount
++#define __NR_fsmount -1
++#endif
++#ifndef __NR_fsconfig
++#define __NR_fsconfig -1
++#endif
++#ifndef __NR_move_mount
++#define __NR_move_mount -1
++#endif
++
++
++static inline int fsopen(const char *fs_name, unsigned int flags)
++{
++	return syscall(__NR_fsopen, fs_name, flags);
++}
++
++static inline int fsmount(int fsfd, unsigned int flags, unsigned int ms_flags)
++{
++	return syscall(__NR_fsmount, fsfd, flags, ms_flags);
++}
++
++static inline int fsconfig(int fsfd, unsigned int cmd,
++			   const char *key, const void *val, int aux)
++{
++	return syscall(__NR_fsconfig, fsfd, cmd, key, val, aux);
++}
++
++static inline int move_mount(int from_dfd, const char *from_pathname,
++			     int to_dfd, const char *to_pathname,
++			     unsigned int flags)
++{
++	return syscall(__NR_move_mount,
++		       from_dfd, from_pathname,
++		       to_dfd, to_pathname, flags);
++}
++
++#define E_fsconfig(fd, cmd, key, val, aux)				\
++	do {								\
++		if (fsconfig(fd, cmd, key, val, aux) == -1)		\
++			mount_error(fd, key ?: "create");		\
++	} while (0)
++
++int main(int argc, char *argv[])
++{
++	int fsfd, mfd;
++
++	/* Mount a publically available AFS filesystem */
++	fsfd = fsopen("afs", 0);
++	if (fsfd == -1) {
++		perror("fsopen");
++		exit(1);
++	}
++
++	E_fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "#grand.central.org:root.cell.", 0);
++	E_fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
++
++	mfd = fsmount(fsfd, 0, MOUNT_ATTR_RDONLY);
++	if (mfd < 0)
++		mount_error(fsfd, "fsmount");
++	E(close(fsfd));
++
++	if (move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH) < 0) {
++		perror("move_mount");
++		exit(1);
++	}
++
++	E(close(mfd));
++	exit(0);
++}
+diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
+new file mode 100644
+index 000000000000..e91f918e84c4
+--- /dev/null
++++ b/samples/vfs/test-statx.c
+@@ -0,0 +1,267 @@
++/* Test the statx() system call.
++ *
++ * Note that the output of this program is intended to look like the output of
++ * /bin/stat where possible.
++ *
++ * Copyright (C) 2015 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#define _GNU_SOURCE
++#define _ATFILE_SOURCE
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <ctype.h>
++#include <errno.h>
++#include <time.h>
++#include <sys/syscall.h>
++#include <sys/types.h>
++#include <linux/stat.h>
++#include <linux/fcntl.h>
++#define statx foo
++#define statx_timestamp foo_timestamp
++#include <sys/stat.h>
++#undef statx
++#undef statx_timestamp
++
++#define AT_STATX_SYNC_TYPE	0x6000
++#define AT_STATX_SYNC_AS_STAT	0x0000
++#define AT_STATX_FORCE_SYNC	0x2000
++#define AT_STATX_DONT_SYNC	0x4000
++
++#ifndef __NR_statx
++#define __NR_statx -1
++#endif
++
++static __attribute__((unused))
++ssize_t statx(int dfd, const char *filename, unsigned flags,
++	      unsigned int mask, struct statx *buffer)
++{
++	return syscall(__NR_statx, dfd, filename, flags, mask, buffer);
++}
++
++static void print_time(const char *field, struct statx_timestamp *ts)
++{
++	struct tm tm;
++	time_t tim;
++	char buffer[100];
++	int len;
++
++	tim = ts->tv_sec;
++	if (!localtime_r(&tim, &tm)) {
++		perror("localtime_r");
++		exit(1);
++	}
++	len = strftime(buffer, 100, "%F %T", &tm);
++	if (len == 0) {
++		perror("strftime");
++		exit(1);
++	}
++	printf("%s", field);
++	fwrite(buffer, 1, len, stdout);
++	printf(".%09u", ts->tv_nsec);
++	len = strftime(buffer, 100, "%z", &tm);
++	if (len == 0) {
++		perror("strftime2");
++		exit(1);
++	}
++	fwrite(buffer, 1, len, stdout);
++	printf("\n");
++}
++
++static void dump_statx(struct statx *stx)
++{
++	char buffer[256], ft = '?';
++
++	printf("results=%x\n", stx->stx_mask);
++
++	printf(" ");
++	if (stx->stx_mask & STATX_SIZE)
++		printf(" Size: %-15llu", (unsigned long long)stx->stx_size);
++	if (stx->stx_mask & STATX_BLOCKS)
++		printf(" Blocks: %-10llu", (unsigned long long)stx->stx_blocks);
++	printf(" IO Block: %-6llu", (unsigned long long)stx->stx_blksize);
++	if (stx->stx_mask & STATX_TYPE) {
++		switch (stx->stx_mode & S_IFMT) {
++		case S_IFIFO:	printf("  FIFO\n");			ft = 'p'; break;
++		case S_IFCHR:	printf("  character special file\n");	ft = 'c'; break;
++		case S_IFDIR:	printf("  directory\n");		ft = 'd'; break;
++		case S_IFBLK:	printf("  block special file\n");	ft = 'b'; break;
++		case S_IFREG:	printf("  regular file\n");		ft = '-'; break;
++		case S_IFLNK:	printf("  symbolic link\n");		ft = 'l'; break;
++		case S_IFSOCK:	printf("  socket\n");			ft = 's'; break;
++		default:
++			printf(" unknown type (%o)\n", stx->stx_mode & S_IFMT);
++			break;
++		}
++	} else {
++		printf(" no type\n");
++	}
++
++	sprintf(buffer, "%02x:%02x", stx->stx_dev_major, stx->stx_dev_minor);
++	printf("Device: %-15s", buffer);
++	if (stx->stx_mask & STATX_INO)
++		printf(" Inode: %-11llu", (unsigned long long) stx->stx_ino);
++	if (stx->stx_mask & STATX_NLINK)
++		printf(" Links: %-5u", stx->stx_nlink);
++	if (stx->stx_mask & STATX_TYPE) {
++		switch (stx->stx_mode & S_IFMT) {
++		case S_IFBLK:
++		case S_IFCHR:
++			printf(" Device type: %u,%u",
++			       stx->stx_rdev_major, stx->stx_rdev_minor);
++			break;
++		}
++	}
++	printf("\n");
++
++	if (stx->stx_mask & STATX_MODE)
++		printf("Access: (%04o/%c%c%c%c%c%c%c%c%c%c)  ",
++		       stx->stx_mode & 07777,
++		       ft,
++		       stx->stx_mode & S_IRUSR ? 'r' : '-',
++		       stx->stx_mode & S_IWUSR ? 'w' : '-',
++		       stx->stx_mode & S_IXUSR ? 'x' : '-',
++		       stx->stx_mode & S_IRGRP ? 'r' : '-',
++		       stx->stx_mode & S_IWGRP ? 'w' : '-',
++		       stx->stx_mode & S_IXGRP ? 'x' : '-',
++		       stx->stx_mode & S_IROTH ? 'r' : '-',
++		       stx->stx_mode & S_IWOTH ? 'w' : '-',
++		       stx->stx_mode & S_IXOTH ? 'x' : '-');
++	if (stx->stx_mask & STATX_UID)
++		printf("Uid: %5d   ", stx->stx_uid);
++	if (stx->stx_mask & STATX_GID)
++		printf("Gid: %5d\n", stx->stx_gid);
++
++	if (stx->stx_mask & STATX_ATIME)
++		print_time("Access: ", &stx->stx_atime);
++	if (stx->stx_mask & STATX_MTIME)
++		print_time("Modify: ", &stx->stx_mtime);
++	if (stx->stx_mask & STATX_CTIME)
++		print_time("Change: ", &stx->stx_ctime);
++	if (stx->stx_mask & STATX_BTIME)
++		print_time(" Birth: ", &stx->stx_btime);
++
++	if (stx->stx_attributes_mask) {
++		unsigned char bits, mbits;
++		int loop, byte;
++
++		static char attr_representation[64 + 1] =
++			/* STATX_ATTR_ flags: */
++			"????????"	/* 63-56 */
++			"????????"	/* 55-48 */
++			"????????"	/* 47-40 */
++			"????????"	/* 39-32 */
++			"????????"	/* 31-24	0x00000000-ff000000 */
++			"????????"	/* 23-16	0x00000000-00ff0000 */
++			"???me???"	/* 15- 8	0x00000000-0000ff00 */
++			"?dai?c??"	/*  7- 0	0x00000000-000000ff */
++			;
++
++		printf("Attributes: %016llx (",
++		       (unsigned long long)stx->stx_attributes);
++		for (byte = 64 - 8; byte >= 0; byte -= 8) {
++			bits = stx->stx_attributes >> byte;
++			mbits = stx->stx_attributes_mask >> byte;
++			for (loop = 7; loop >= 0; loop--) {
++				int bit = byte + loop;
++
++				if (!(mbits & 0x80))
++					putchar('.');	/* Not supported */
++				else if (bits & 0x80)
++					putchar(attr_representation[63 - bit]);
++				else
++					putchar('-');	/* Not set */
++				bits <<= 1;
++				mbits <<= 1;
++			}
++			if (byte)
++				putchar(' ');
++		}
++		printf(")\n");
++	}
++}
++
++static void dump_hex(unsigned long long *data, int from, int to)
++{
++	unsigned offset, print_offset = 1, col = 0;
++
++	from /= 8;
++	to = (to + 7) / 8;
++
++	for (offset = from; offset < to; offset++) {
++		if (print_offset) {
++			printf("%04x: ", offset * 8);
++			print_offset = 0;
++		}
++		printf("%016llx", data[offset]);
++		col++;
++		if ((col & 3) == 0) {
++			printf("\n");
++			print_offset = 1;
++		} else {
++			printf(" ");
++		}
++	}
++
++	if (!print_offset)
++		printf("\n");
++}
++
++int main(int argc, char **argv)
++{
++	struct statx stx;
++	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
++
++	unsigned int mask = STATX_ALL;
++
++	for (argv++; *argv; argv++) {
++		if (strcmp(*argv, "-F") == 0) {
++			atflag &= ~AT_STATX_SYNC_TYPE;
++			atflag |= AT_STATX_FORCE_SYNC;
++			continue;
++		}
++		if (strcmp(*argv, "-D") == 0) {
++			atflag &= ~AT_STATX_SYNC_TYPE;
++			atflag |= AT_STATX_DONT_SYNC;
++			continue;
++		}
++		if (strcmp(*argv, "-L") == 0) {
++			atflag &= ~AT_SYMLINK_NOFOLLOW;
++			continue;
++		}
++		if (strcmp(*argv, "-O") == 0) {
++			mask &= ~STATX_BASIC_STATS;
++			continue;
++		}
++		if (strcmp(*argv, "-A") == 0) {
++			atflag |= AT_NO_AUTOMOUNT;
++			continue;
++		}
++		if (strcmp(*argv, "-R") == 0) {
++			raw = 1;
++			continue;
++		}
++
++		memset(&stx, 0xbf, sizeof(stx));
++		ret = statx(AT_FDCWD, *argv, atflag, mask, &stx);
++		printf("statx(%s) = %d\n", *argv, ret);
++		if (ret < 0) {
++			perror(*argv);
++			exit(1);
++		}
++
++		if (raw)
++			dump_hex((unsigned long long *)&stx, 0, sizeof(stx));
++
++		dump_statx(&stx);
++	}
++	return 0;
++}
 
