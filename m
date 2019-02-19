@@ -2,814 +2,265 @@ Return-Path: <SRS0=18aP=Q2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8838C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AEDC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 18:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E44D2083E
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 17:09:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 236C62089F
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 18:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbfBSRJp (ORCPT
+        id S1726464AbfBSSUK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 12:09:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34144 "EHLO mx1.redhat.com"
+        Tue, 19 Feb 2019 13:20:10 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:37376 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728201AbfBSRJo (ORCPT
+        id S1725807AbfBSSUK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 12:09:44 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BCBE436809;
-        Tue, 19 Feb 2019 17:09:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 54A345BBCB;
-        Tue, 19 Feb 2019 17:09:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 10/10] vfs: Add a sample program for the new mount API
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
-        torvalds@linux-foundation.org, ebiederm@xmission.com,
-        linux-security-module@vger.kernel.org
-Date:   Tue, 19 Feb 2019 17:09:40 +0000
-Message-ID: <155059618062.17079.18093724934271186662.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
-References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Tue, 19 Feb 2019 13:20:10 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 7C40F904; Tue, 19 Feb 2019 12:20:06 -0600 (CST)
+Date:   Tue, 19 Feb 2019 12:20:06 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Micah Morton <mortonm@chromium.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH 1/2] LSM: SafeSetID: gate setgid transitions
+Message-ID: <20190219182006.GA10524@mail.hallyn.com>
+References: <20190215222217.133213-1-mortonm@chromium.org>
+ <20190216164333.GA10883@mail.hallyn.com>
+ <CAJ-EccPGZzet27H18PS3ANS24FJ=FuLvtyaFaoo5YHbBgOzm6A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 19 Feb 2019 17:09:42 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJ-EccPGZzet27H18PS3ANS24FJ=FuLvtyaFaoo5YHbBgOzm6A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add a sample program to demonstrate fsopen/fsmount/move_mount to mount
-something.
+On Tue, Feb 19, 2019 at 09:00:13AM -0800, Micah Morton wrote:
+> On Sat, Feb 16, 2019 at 8:43 AM Serge E. Hallyn <serge@hallyn.com> wrote:
+> >
+> > On Fri, Feb 15, 2019 at 02:22:17PM -0800, mortonm@chromium.org wrote:
+> > > From: Micah Morton <mortonm@chromium.org>
+> > >
+> > > This patch adds a 'task_fix_setgid' LSM hook, which is analogous to the
+> > > existing 'task_fix_setuid' LSM hook, and calls this new hook from the
+> > > setgid functions in kernel/sys.c. This will allow the SafeSetID LSM to
+> > > govern setgid transitions in addition to setuid transitions. This change
+> > > also makes sure the setgid functions in kernel/sys.c call
+> > > security_capable_setid rather than the ordinary security_capable
+> >
+> > Sorry, where security_capable_setid this defined?  I assume it was in a recent
+> > patchset, but google and grep are failing me.
+> 
+> It was defined in commit 40852275a94afb3e836be9248399e036982d1a79 on
+> the origin/next-general branch of
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git.
 
-To make it compile on all arches, irrespective of whether or not syscall
-numbers are assigned, define the syscall number to -1 if it isn't to cause
-the kernel to return -ENOSYS.
+Thanks.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
+> > > function, so that the security_capable hook in the SafeSetID LSM knows
+> > > it is being invoked from a setid function.
+> > >
+> > > Signed-off-by: Micah Morton <mortonm@chromium.org>
 
- samples/Kconfig            |    9 +
- samples/Makefile           |    2 
- samples/statx/Makefile     |    7 -
- samples/statx/test-statx.c |  258 -------------------------------------------
- samples/vfs/Makefile       |   10 ++
- samples/vfs/test-fsmount.c |  133 ++++++++++++++++++++++
- samples/vfs/test-statx.c   |  267 ++++++++++++++++++++++++++++++++++++++++++++
- 7 files changed, 416 insertions(+), 270 deletions(-)
- delete mode 100644 samples/statx/Makefile
- delete mode 100644 samples/statx/test-statx.c
- create mode 100644 samples/vfs/Makefile
- create mode 100644 samples/vfs/test-fsmount.c
- create mode 100644 samples/vfs/test-statx.c
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-diff --git a/samples/Kconfig b/samples/Kconfig
-index ad1ec7016d4c..dc4eb5355fad 100644
---- a/samples/Kconfig
-+++ b/samples/Kconfig
-@@ -147,10 +147,11 @@ config SAMPLE_VFIO_MDEV_MBOCHS
- 	  Specifically it does *not* include any legacy vga stuff.
- 	  Device looks a lot like "qemu -device secondary-vga".
- 
--config SAMPLE_STATX
--	bool "Build example extended-stat using code"
--	depends on BROKEN
-+config SAMPLE_VFS
-+	bool "Build example programs that use new VFS system calls"
- 	help
--	  Build example userspace program to use the new extended-stat syscall.
-+	  Build example userspace programs that use new VFS system calls such
-+	  as mount API and statx().  Note that this is restricted to the x86
-+	  arch whilst it accesses system calls that aren't yet in all arches.
- 
- endif # SAMPLES
-diff --git a/samples/Makefile b/samples/Makefile
-index bd601c038b86..c5a6175c2d3f 100644
---- a/samples/Makefile
-+++ b/samples/Makefile
-@@ -3,4 +3,4 @@
- obj-$(CONFIG_SAMPLES)	+= kobject/ kprobes/ trace_events/ livepatch/ \
- 			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
- 			   configfs/ connector/ v4l/ trace_printk/ \
--			   vfio-mdev/ statx/ qmi/
-+			   vfio-mdev/ vfs/ qmi/
-diff --git a/samples/statx/Makefile b/samples/statx/Makefile
-deleted file mode 100644
-index 59df7c25a9d1..000000000000
---- a/samples/statx/Makefile
-+++ /dev/null
-@@ -1,7 +0,0 @@
--# List of programs to build
--hostprogs-$(CONFIG_SAMPLE_STATX) := test-statx
--
--# Tell kbuild to always build the programs
--always := $(hostprogs-y)
--
--HOSTCFLAGS_test-statx.o += -I$(objtree)/usr/include
-diff --git a/samples/statx/test-statx.c b/samples/statx/test-statx.c
-deleted file mode 100644
-index d4d77b09412c..000000000000
---- a/samples/statx/test-statx.c
-+++ /dev/null
-@@ -1,258 +0,0 @@
--/* Test the statx() system call.
-- *
-- * Note that the output of this program is intended to look like the output of
-- * /bin/stat where possible.
-- *
-- * Copyright (C) 2015 Red Hat, Inc. All Rights Reserved.
-- * Written by David Howells (dhowells@redhat.com)
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public Licence
-- * as published by the Free Software Foundation; either version
-- * 2 of the Licence, or (at your option) any later version.
-- */
--
--#define _GNU_SOURCE
--#define _ATFILE_SOURCE
--#include <stdio.h>
--#include <stdlib.h>
--#include <string.h>
--#include <unistd.h>
--#include <ctype.h>
--#include <errno.h>
--#include <time.h>
--#include <sys/syscall.h>
--#include <sys/types.h>
--#include <linux/stat.h>
--#include <linux/fcntl.h>
--#include <sys/stat.h>
--
--#define AT_STATX_SYNC_TYPE	0x6000
--#define AT_STATX_SYNC_AS_STAT	0x0000
--#define AT_STATX_FORCE_SYNC	0x2000
--#define AT_STATX_DONT_SYNC	0x4000
--
--static __attribute__((unused))
--ssize_t statx(int dfd, const char *filename, unsigned flags,
--	      unsigned int mask, struct statx *buffer)
--{
--	return syscall(__NR_statx, dfd, filename, flags, mask, buffer);
--}
--
--static void print_time(const char *field, struct statx_timestamp *ts)
--{
--	struct tm tm;
--	time_t tim;
--	char buffer[100];
--	int len;
--
--	tim = ts->tv_sec;
--	if (!localtime_r(&tim, &tm)) {
--		perror("localtime_r");
--		exit(1);
--	}
--	len = strftime(buffer, 100, "%F %T", &tm);
--	if (len == 0) {
--		perror("strftime");
--		exit(1);
--	}
--	printf("%s", field);
--	fwrite(buffer, 1, len, stdout);
--	printf(".%09u", ts->tv_nsec);
--	len = strftime(buffer, 100, "%z", &tm);
--	if (len == 0) {
--		perror("strftime2");
--		exit(1);
--	}
--	fwrite(buffer, 1, len, stdout);
--	printf("\n");
--}
--
--static void dump_statx(struct statx *stx)
--{
--	char buffer[256], ft = '?';
--
--	printf("results=%x\n", stx->stx_mask);
--
--	printf(" ");
--	if (stx->stx_mask & STATX_SIZE)
--		printf(" Size: %-15llu", (unsigned long long)stx->stx_size);
--	if (stx->stx_mask & STATX_BLOCKS)
--		printf(" Blocks: %-10llu", (unsigned long long)stx->stx_blocks);
--	printf(" IO Block: %-6llu", (unsigned long long)stx->stx_blksize);
--	if (stx->stx_mask & STATX_TYPE) {
--		switch (stx->stx_mode & S_IFMT) {
--		case S_IFIFO:	printf("  FIFO\n");			ft = 'p'; break;
--		case S_IFCHR:	printf("  character special file\n");	ft = 'c'; break;
--		case S_IFDIR:	printf("  directory\n");		ft = 'd'; break;
--		case S_IFBLK:	printf("  block special file\n");	ft = 'b'; break;
--		case S_IFREG:	printf("  regular file\n");		ft = '-'; break;
--		case S_IFLNK:	printf("  symbolic link\n");		ft = 'l'; break;
--		case S_IFSOCK:	printf("  socket\n");			ft = 's'; break;
--		default:
--			printf(" unknown type (%o)\n", stx->stx_mode & S_IFMT);
--			break;
--		}
--	} else {
--		printf(" no type\n");
--	}
--
--	sprintf(buffer, "%02x:%02x", stx->stx_dev_major, stx->stx_dev_minor);
--	printf("Device: %-15s", buffer);
--	if (stx->stx_mask & STATX_INO)
--		printf(" Inode: %-11llu", (unsigned long long) stx->stx_ino);
--	if (stx->stx_mask & STATX_NLINK)
--		printf(" Links: %-5u", stx->stx_nlink);
--	if (stx->stx_mask & STATX_TYPE) {
--		switch (stx->stx_mode & S_IFMT) {
--		case S_IFBLK:
--		case S_IFCHR:
--			printf(" Device type: %u,%u",
--			       stx->stx_rdev_major, stx->stx_rdev_minor);
--			break;
--		}
--	}
--	printf("\n");
--
--	if (stx->stx_mask & STATX_MODE)
--		printf("Access: (%04o/%c%c%c%c%c%c%c%c%c%c)  ",
--		       stx->stx_mode & 07777,
--		       ft,
--		       stx->stx_mode & S_IRUSR ? 'r' : '-',
--		       stx->stx_mode & S_IWUSR ? 'w' : '-',
--		       stx->stx_mode & S_IXUSR ? 'x' : '-',
--		       stx->stx_mode & S_IRGRP ? 'r' : '-',
--		       stx->stx_mode & S_IWGRP ? 'w' : '-',
--		       stx->stx_mode & S_IXGRP ? 'x' : '-',
--		       stx->stx_mode & S_IROTH ? 'r' : '-',
--		       stx->stx_mode & S_IWOTH ? 'w' : '-',
--		       stx->stx_mode & S_IXOTH ? 'x' : '-');
--	if (stx->stx_mask & STATX_UID)
--		printf("Uid: %5d   ", stx->stx_uid);
--	if (stx->stx_mask & STATX_GID)
--		printf("Gid: %5d\n", stx->stx_gid);
--
--	if (stx->stx_mask & STATX_ATIME)
--		print_time("Access: ", &stx->stx_atime);
--	if (stx->stx_mask & STATX_MTIME)
--		print_time("Modify: ", &stx->stx_mtime);
--	if (stx->stx_mask & STATX_CTIME)
--		print_time("Change: ", &stx->stx_ctime);
--	if (stx->stx_mask & STATX_BTIME)
--		print_time(" Birth: ", &stx->stx_btime);
--
--	if (stx->stx_attributes_mask) {
--		unsigned char bits, mbits;
--		int loop, byte;
--
--		static char attr_representation[64 + 1] =
--			/* STATX_ATTR_ flags: */
--			"????????"	/* 63-56 */
--			"????????"	/* 55-48 */
--			"????????"	/* 47-40 */
--			"????????"	/* 39-32 */
--			"????????"	/* 31-24	0x00000000-ff000000 */
--			"????????"	/* 23-16	0x00000000-00ff0000 */
--			"???me???"	/* 15- 8	0x00000000-0000ff00 */
--			"?dai?c??"	/*  7- 0	0x00000000-000000ff */
--			;
--
--		printf("Attributes: %016llx (", stx->stx_attributes);
--		for (byte = 64 - 8; byte >= 0; byte -= 8) {
--			bits = stx->stx_attributes >> byte;
--			mbits = stx->stx_attributes_mask >> byte;
--			for (loop = 7; loop >= 0; loop--) {
--				int bit = byte + loop;
--
--				if (!(mbits & 0x80))
--					putchar('.');	/* Not supported */
--				else if (bits & 0x80)
--					putchar(attr_representation[63 - bit]);
--				else
--					putchar('-');	/* Not set */
--				bits <<= 1;
--				mbits <<= 1;
--			}
--			if (byte)
--				putchar(' ');
--		}
--		printf(")\n");
--	}
--}
--
--static void dump_hex(unsigned long long *data, int from, int to)
--{
--	unsigned offset, print_offset = 1, col = 0;
--
--	from /= 8;
--	to = (to + 7) / 8;
--
--	for (offset = from; offset < to; offset++) {
--		if (print_offset) {
--			printf("%04x: ", offset * 8);
--			print_offset = 0;
--		}
--		printf("%016llx", data[offset]);
--		col++;
--		if ((col & 3) == 0) {
--			printf("\n");
--			print_offset = 1;
--		} else {
--			printf(" ");
--		}
--	}
--
--	if (!print_offset)
--		printf("\n");
--}
--
--int main(int argc, char **argv)
--{
--	struct statx stx;
--	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
--
--	unsigned int mask = STATX_ALL;
--
--	for (argv++; *argv; argv++) {
--		if (strcmp(*argv, "-F") == 0) {
--			atflag &= ~AT_STATX_SYNC_TYPE;
--			atflag |= AT_STATX_FORCE_SYNC;
--			continue;
--		}
--		if (strcmp(*argv, "-D") == 0) {
--			atflag &= ~AT_STATX_SYNC_TYPE;
--			atflag |= AT_STATX_DONT_SYNC;
--			continue;
--		}
--		if (strcmp(*argv, "-L") == 0) {
--			atflag &= ~AT_SYMLINK_NOFOLLOW;
--			continue;
--		}
--		if (strcmp(*argv, "-O") == 0) {
--			mask &= ~STATX_BASIC_STATS;
--			continue;
--		}
--		if (strcmp(*argv, "-A") == 0) {
--			atflag |= AT_NO_AUTOMOUNT;
--			continue;
--		}
--		if (strcmp(*argv, "-R") == 0) {
--			raw = 1;
--			continue;
--		}
--
--		memset(&stx, 0xbf, sizeof(stx));
--		ret = statx(AT_FDCWD, *argv, atflag, mask, &stx);
--		printf("statx(%s) = %d\n", *argv, ret);
--		if (ret < 0) {
--			perror(*argv);
--			exit(1);
--		}
--
--		if (raw)
--			dump_hex((unsigned long long *)&stx, 0, sizeof(stx));
--
--		dump_statx(&stx);
--	}
--	return 0;
--}
-diff --git a/samples/vfs/Makefile b/samples/vfs/Makefile
-new file mode 100644
-index 000000000000..4ac9690fb3c4
---- /dev/null
-+++ b/samples/vfs/Makefile
-@@ -0,0 +1,10 @@
-+# List of programs to build
-+hostprogs-$(CONFIG_SAMPLE_VFS) := \
-+	test-fsmount \
-+	test-statx
-+
-+# Tell kbuild to always build the programs
-+always := $(hostprogs-y)
-+
-+HOSTCFLAGS_test-fsmount.o += -I$(objtree)/usr/include
-+HOSTCFLAGS_test-statx.o += -I$(objtree)/usr/include
-diff --git a/samples/vfs/test-fsmount.c b/samples/vfs/test-fsmount.c
-new file mode 100644
-index 000000000000..266d72b3dce4
---- /dev/null
-+++ b/samples/vfs/test-fsmount.c
-@@ -0,0 +1,133 @@
-+/* fd-based mount test.
-+ *
-+ * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <sys/prctl.h>
-+#include <sys/wait.h>
-+#include <linux/mount.h>
-+#include <linux/unistd.h>
-+
-+#define E(x) do { if ((x) == -1) { perror(#x); exit(1); } } while(0)
-+
-+static void check_messages(int fd)
-+{
-+	char buf[4096];
-+	int err, n;
-+
-+	err = errno;
-+
-+	for (;;) {
-+		n = read(fd, buf, sizeof(buf));
-+		if (n < 0)
-+			break;
-+		n -= 2;
-+
-+		switch (buf[0]) {
-+		case 'e':
-+			fprintf(stderr, "Error: %*.*s\n", n, n, buf + 2);
-+			break;
-+		case 'w':
-+			fprintf(stderr, "Warning: %*.*s\n", n, n, buf + 2);
-+			break;
-+		case 'i':
-+			fprintf(stderr, "Info: %*.*s\n", n, n, buf + 2);
-+			break;
-+		}
-+	}
-+
-+	errno = err;
-+}
-+
-+static __attribute__((noreturn))
-+void mount_error(int fd, const char *s)
-+{
-+	check_messages(fd);
-+	fprintf(stderr, "%s: %m\n", s);
-+	exit(1);
-+}
-+
-+/* Hope -1 isn't a syscall */
-+#ifndef __NR_fsopen
-+#define __NR_fsopen -1
-+#endif
-+#ifndef __NR_fsmount
-+#define __NR_fsmount -1
-+#endif
-+#ifndef __NR_fsconfig
-+#define __NR_fsconfig -1
-+#endif
-+#ifndef __NR_move_mount
-+#define __NR_move_mount -1
-+#endif
-+
-+
-+static inline int fsopen(const char *fs_name, unsigned int flags)
-+{
-+	return syscall(__NR_fsopen, fs_name, flags);
-+}
-+
-+static inline int fsmount(int fsfd, unsigned int flags, unsigned int ms_flags)
-+{
-+	return syscall(__NR_fsmount, fsfd, flags, ms_flags);
-+}
-+
-+static inline int fsconfig(int fsfd, unsigned int cmd,
-+			   const char *key, const void *val, int aux)
-+{
-+	return syscall(__NR_fsconfig, fsfd, cmd, key, val, aux);
-+}
-+
-+static inline int move_mount(int from_dfd, const char *from_pathname,
-+			     int to_dfd, const char *to_pathname,
-+			     unsigned int flags)
-+{
-+	return syscall(__NR_move_mount,
-+		       from_dfd, from_pathname,
-+		       to_dfd, to_pathname, flags);
-+}
-+
-+#define E_fsconfig(fd, cmd, key, val, aux)				\
-+	do {								\
-+		if (fsconfig(fd, cmd, key, val, aux) == -1)		\
-+			mount_error(fd, key ?: "create");		\
-+	} while (0)
-+
-+int main(int argc, char *argv[])
-+{
-+	int fsfd, mfd;
-+
-+	/* Mount a publically available AFS filesystem */
-+	fsfd = fsopen("afs", 0);
-+	if (fsfd == -1) {
-+		perror("fsopen");
-+		exit(1);
-+	}
-+
-+	E_fsconfig(fsfd, FSCONFIG_SET_STRING, "source", "#grand.central.org:root.cell.", 0);
-+	E_fsconfig(fsfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-+
-+	mfd = fsmount(fsfd, 0, MOUNT_ATTR_RDONLY);
-+	if (mfd < 0)
-+		mount_error(fsfd, "fsmount");
-+	E(close(fsfd));
-+
-+	if (move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH) < 0) {
-+		perror("move_mount");
-+		exit(1);
-+	}
-+
-+	E(close(mfd));
-+	exit(0);
-+}
-diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
-new file mode 100644
-index 000000000000..e91f918e84c4
---- /dev/null
-+++ b/samples/vfs/test-statx.c
-@@ -0,0 +1,267 @@
-+/* Test the statx() system call.
-+ *
-+ * Note that the output of this program is intended to look like the output of
-+ * /bin/stat where possible.
-+ *
-+ * Copyright (C) 2015 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#define _GNU_SOURCE
-+#define _ATFILE_SOURCE
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <ctype.h>
-+#include <errno.h>
-+#include <time.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <linux/stat.h>
-+#include <linux/fcntl.h>
-+#define statx foo
-+#define statx_timestamp foo_timestamp
-+#include <sys/stat.h>
-+#undef statx
-+#undef statx_timestamp
-+
-+#define AT_STATX_SYNC_TYPE	0x6000
-+#define AT_STATX_SYNC_AS_STAT	0x0000
-+#define AT_STATX_FORCE_SYNC	0x2000
-+#define AT_STATX_DONT_SYNC	0x4000
-+
-+#ifndef __NR_statx
-+#define __NR_statx -1
-+#endif
-+
-+static __attribute__((unused))
-+ssize_t statx(int dfd, const char *filename, unsigned flags,
-+	      unsigned int mask, struct statx *buffer)
-+{
-+	return syscall(__NR_statx, dfd, filename, flags, mask, buffer);
-+}
-+
-+static void print_time(const char *field, struct statx_timestamp *ts)
-+{
-+	struct tm tm;
-+	time_t tim;
-+	char buffer[100];
-+	int len;
-+
-+	tim = ts->tv_sec;
-+	if (!localtime_r(&tim, &tm)) {
-+		perror("localtime_r");
-+		exit(1);
-+	}
-+	len = strftime(buffer, 100, "%F %T", &tm);
-+	if (len == 0) {
-+		perror("strftime");
-+		exit(1);
-+	}
-+	printf("%s", field);
-+	fwrite(buffer, 1, len, stdout);
-+	printf(".%09u", ts->tv_nsec);
-+	len = strftime(buffer, 100, "%z", &tm);
-+	if (len == 0) {
-+		perror("strftime2");
-+		exit(1);
-+	}
-+	fwrite(buffer, 1, len, stdout);
-+	printf("\n");
-+}
-+
-+static void dump_statx(struct statx *stx)
-+{
-+	char buffer[256], ft = '?';
-+
-+	printf("results=%x\n", stx->stx_mask);
-+
-+	printf(" ");
-+	if (stx->stx_mask & STATX_SIZE)
-+		printf(" Size: %-15llu", (unsigned long long)stx->stx_size);
-+	if (stx->stx_mask & STATX_BLOCKS)
-+		printf(" Blocks: %-10llu", (unsigned long long)stx->stx_blocks);
-+	printf(" IO Block: %-6llu", (unsigned long long)stx->stx_blksize);
-+	if (stx->stx_mask & STATX_TYPE) {
-+		switch (stx->stx_mode & S_IFMT) {
-+		case S_IFIFO:	printf("  FIFO\n");			ft = 'p'; break;
-+		case S_IFCHR:	printf("  character special file\n");	ft = 'c'; break;
-+		case S_IFDIR:	printf("  directory\n");		ft = 'd'; break;
-+		case S_IFBLK:	printf("  block special file\n");	ft = 'b'; break;
-+		case S_IFREG:	printf("  regular file\n");		ft = '-'; break;
-+		case S_IFLNK:	printf("  symbolic link\n");		ft = 'l'; break;
-+		case S_IFSOCK:	printf("  socket\n");			ft = 's'; break;
-+		default:
-+			printf(" unknown type (%o)\n", stx->stx_mode & S_IFMT);
-+			break;
-+		}
-+	} else {
-+		printf(" no type\n");
-+	}
-+
-+	sprintf(buffer, "%02x:%02x", stx->stx_dev_major, stx->stx_dev_minor);
-+	printf("Device: %-15s", buffer);
-+	if (stx->stx_mask & STATX_INO)
-+		printf(" Inode: %-11llu", (unsigned long long) stx->stx_ino);
-+	if (stx->stx_mask & STATX_NLINK)
-+		printf(" Links: %-5u", stx->stx_nlink);
-+	if (stx->stx_mask & STATX_TYPE) {
-+		switch (stx->stx_mode & S_IFMT) {
-+		case S_IFBLK:
-+		case S_IFCHR:
-+			printf(" Device type: %u,%u",
-+			       stx->stx_rdev_major, stx->stx_rdev_minor);
-+			break;
-+		}
-+	}
-+	printf("\n");
-+
-+	if (stx->stx_mask & STATX_MODE)
-+		printf("Access: (%04o/%c%c%c%c%c%c%c%c%c%c)  ",
-+		       stx->stx_mode & 07777,
-+		       ft,
-+		       stx->stx_mode & S_IRUSR ? 'r' : '-',
-+		       stx->stx_mode & S_IWUSR ? 'w' : '-',
-+		       stx->stx_mode & S_IXUSR ? 'x' : '-',
-+		       stx->stx_mode & S_IRGRP ? 'r' : '-',
-+		       stx->stx_mode & S_IWGRP ? 'w' : '-',
-+		       stx->stx_mode & S_IXGRP ? 'x' : '-',
-+		       stx->stx_mode & S_IROTH ? 'r' : '-',
-+		       stx->stx_mode & S_IWOTH ? 'w' : '-',
-+		       stx->stx_mode & S_IXOTH ? 'x' : '-');
-+	if (stx->stx_mask & STATX_UID)
-+		printf("Uid: %5d   ", stx->stx_uid);
-+	if (stx->stx_mask & STATX_GID)
-+		printf("Gid: %5d\n", stx->stx_gid);
-+
-+	if (stx->stx_mask & STATX_ATIME)
-+		print_time("Access: ", &stx->stx_atime);
-+	if (stx->stx_mask & STATX_MTIME)
-+		print_time("Modify: ", &stx->stx_mtime);
-+	if (stx->stx_mask & STATX_CTIME)
-+		print_time("Change: ", &stx->stx_ctime);
-+	if (stx->stx_mask & STATX_BTIME)
-+		print_time(" Birth: ", &stx->stx_btime);
-+
-+	if (stx->stx_attributes_mask) {
-+		unsigned char bits, mbits;
-+		int loop, byte;
-+
-+		static char attr_representation[64 + 1] =
-+			/* STATX_ATTR_ flags: */
-+			"????????"	/* 63-56 */
-+			"????????"	/* 55-48 */
-+			"????????"	/* 47-40 */
-+			"????????"	/* 39-32 */
-+			"????????"	/* 31-24	0x00000000-ff000000 */
-+			"????????"	/* 23-16	0x00000000-00ff0000 */
-+			"???me???"	/* 15- 8	0x00000000-0000ff00 */
-+			"?dai?c??"	/*  7- 0	0x00000000-000000ff */
-+			;
-+
-+		printf("Attributes: %016llx (",
-+		       (unsigned long long)stx->stx_attributes);
-+		for (byte = 64 - 8; byte >= 0; byte -= 8) {
-+			bits = stx->stx_attributes >> byte;
-+			mbits = stx->stx_attributes_mask >> byte;
-+			for (loop = 7; loop >= 0; loop--) {
-+				int bit = byte + loop;
-+
-+				if (!(mbits & 0x80))
-+					putchar('.');	/* Not supported */
-+				else if (bits & 0x80)
-+					putchar(attr_representation[63 - bit]);
-+				else
-+					putchar('-');	/* Not set */
-+				bits <<= 1;
-+				mbits <<= 1;
-+			}
-+			if (byte)
-+				putchar(' ');
-+		}
-+		printf(")\n");
-+	}
-+}
-+
-+static void dump_hex(unsigned long long *data, int from, int to)
-+{
-+	unsigned offset, print_offset = 1, col = 0;
-+
-+	from /= 8;
-+	to = (to + 7) / 8;
-+
-+	for (offset = from; offset < to; offset++) {
-+		if (print_offset) {
-+			printf("%04x: ", offset * 8);
-+			print_offset = 0;
-+		}
-+		printf("%016llx", data[offset]);
-+		col++;
-+		if ((col & 3) == 0) {
-+			printf("\n");
-+			print_offset = 1;
-+		} else {
-+			printf(" ");
-+		}
-+	}
-+
-+	if (!print_offset)
-+		printf("\n");
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct statx stx;
-+	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
-+
-+	unsigned int mask = STATX_ALL;
-+
-+	for (argv++; *argv; argv++) {
-+		if (strcmp(*argv, "-F") == 0) {
-+			atflag &= ~AT_STATX_SYNC_TYPE;
-+			atflag |= AT_STATX_FORCE_SYNC;
-+			continue;
-+		}
-+		if (strcmp(*argv, "-D") == 0) {
-+			atflag &= ~AT_STATX_SYNC_TYPE;
-+			atflag |= AT_STATX_DONT_SYNC;
-+			continue;
-+		}
-+		if (strcmp(*argv, "-L") == 0) {
-+			atflag &= ~AT_SYMLINK_NOFOLLOW;
-+			continue;
-+		}
-+		if (strcmp(*argv, "-O") == 0) {
-+			mask &= ~STATX_BASIC_STATS;
-+			continue;
-+		}
-+		if (strcmp(*argv, "-A") == 0) {
-+			atflag |= AT_NO_AUTOMOUNT;
-+			continue;
-+		}
-+		if (strcmp(*argv, "-R") == 0) {
-+			raw = 1;
-+			continue;
-+		}
-+
-+		memset(&stx, 0xbf, sizeof(stx));
-+		ret = statx(AT_FDCWD, *argv, atflag, mask, &stx);
-+		printf("statx(%s) = %d\n", *argv, ret);
-+		if (ret < 0) {
-+			perror(*argv);
-+			exit(1);
-+		}
-+
-+		if (raw)
-+			dump_hex((unsigned long long *)&stx, 0, sizeof(stx));
-+
-+		dump_statx(&stx);
-+	}
-+	return 0;
-+}
-
+> > > ---
+> > > Tested with slight mod to test in tools/testing/selftests/safesetid for
+> > > testing setgid as well as setuid.
+> > >
+> > >  include/linux/lsm_hooks.h | 12 ++++++++++++
+> > >  include/linux/security.h  | 10 ++++++++++
+> > >  kernel/sys.c              | 27 +++++++++++++++++++++------
+> > >  security/security.c       |  6 ++++++
+> > >  4 files changed, 49 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > > index 22fc786d723a..f252ed3e95ef 100644
+> > > --- a/include/linux/lsm_hooks.h
+> > > +++ b/include/linux/lsm_hooks.h
+> > > @@ -603,6 +603,15 @@
+> > >   *   @old is the set of credentials that are being replaces
+> > >   *   @flags contains one of the LSM_SETID_* values.
+> > >   *   Return 0 on success.
+> > > + * @task_fix_setgid:
+> > > + *      Update the module's state after setting one or more of the group
+> > > + *      identity attributes of the current process.  The @flags parameter
+> > > + *      indicates which of the set*gid system calls invoked this hook.
+> > > + *      @new is the set of credentials that will be installed.  Modifications
+> > > + *      should be made to this rather than to @current->cred.
+> > > + *      @old is the set of credentials that are being replaced
+> > > + *      @flags contains one of the LSM_SETID_* values.
+> > > + *      Return 0 on success.
+> > >   * @task_setpgid:
+> > >   *   Check permission before setting the process group identifier of the
+> > >   *   process @p to @pgid.
+> > > @@ -1596,6 +1605,8 @@ union security_list_options {
+> > >                                    enum kernel_read_file_id id);
+> > >       int (*task_fix_setuid)(struct cred *new, const struct cred *old,
+> > >                               int flags);
+> > > +     int (*task_fix_setgid)(struct cred *new, const struct cred *old,
+> > > +                             int flags);
+> > >       int (*task_setpgid)(struct task_struct *p, pid_t pgid);
+> > >       int (*task_getpgid)(struct task_struct *p);
+> > >       int (*task_getsid)(struct task_struct *p);
+> > > @@ -1887,6 +1898,7 @@ struct security_hook_heads {
+> > >       struct hlist_head kernel_post_read_file;
+> > >       struct hlist_head kernel_module_request;
+> > >       struct hlist_head task_fix_setuid;
+> > > +     struct hlist_head task_fix_setgid;
+> > >       struct hlist_head task_setpgid;
+> > >       struct hlist_head task_getpgid;
+> > >       struct hlist_head task_getsid;
+> > > diff --git a/include/linux/security.h b/include/linux/security.h
+> > > index 13537a49ae97..f3d095e8dfc1 100644
+> > > --- a/include/linux/security.h
+> > > +++ b/include/linux/security.h
+> > > @@ -96,6 +96,7 @@ extern int cap_mmap_addr(unsigned long addr);
+> > >  extern int cap_mmap_file(struct file *file, unsigned long reqprot,
+> > >                        unsigned long prot, unsigned long flags);
+> > >  extern int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags);
+> > > +extern int cap_task_fix_setgid(struct cred *new, const struct cred *old, int flags);
+> > >  extern int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+> > >                         unsigned long arg4, unsigned long arg5);
+> > >  extern int cap_task_setscheduler(struct task_struct *p);
+> > > @@ -326,6 +327,8 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
+> > >                                  enum kernel_read_file_id id);
+> > >  int security_task_fix_setuid(struct cred *new, const struct cred *old,
+> > >                            int flags);
+> > > +int security_task_fix_setgid(struct cred *new, const struct cred *old,
+> > > +                          int flags);
+> > >  int security_task_setpgid(struct task_struct *p, pid_t pgid);
+> > >  int security_task_getpgid(struct task_struct *p);
+> > >  int security_task_getsid(struct task_struct *p);
+> > > @@ -930,6 +933,13 @@ static inline int security_task_fix_setuid(struct cred *new,
+> > >       return cap_task_fix_setuid(new, old, flags);
+> > >  }
+> > >
+> > > +static inline int security_task_fix_setgid(struct cred *new,
+> > > +                                        const struct cred *old,
+> > > +                                        int flags)
+> > > +{
+> > > +     return cap_task_fix_setgid(new, old, flags);
+> > > +}
+> > > +
+> > >  static inline int security_task_setpgid(struct task_struct *p, pid_t pgid)
+> > >  {
+> > >       return 0;
+> > > diff --git a/kernel/sys.c b/kernel/sys.c
+> > > index c5f875048aef..76f1c46ac66f 100644
+> > > --- a/kernel/sys.c
+> > > +++ b/kernel/sys.c
+> > > @@ -372,7 +372,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
+> > >       if (rgid != (gid_t) -1) {
+> > >               if (gid_eq(old->gid, krgid) ||
+> > >                   gid_eq(old->egid, krgid) ||
+> > > -                 ns_capable(old->user_ns, CAP_SETGID))
+> > > +                 ns_capable_setid(old->user_ns, CAP_SETGID))
+> > >                       new->gid = krgid;
+> > >               else
+> > >                       goto error;
+> > > @@ -381,7 +381,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
+> > >               if (gid_eq(old->gid, kegid) ||
+> > >                   gid_eq(old->egid, kegid) ||
+> > >                   gid_eq(old->sgid, kegid) ||
+> > > -                 ns_capable(old->user_ns, CAP_SETGID))
+> > > +                 ns_capable_setid(old->user_ns, CAP_SETGID))
+> > >                       new->egid = kegid;
+> > >               else
+> > >                       goto error;
+> > > @@ -392,6 +392,10 @@ long __sys_setregid(gid_t rgid, gid_t egid)
+> > >               new->sgid = new->egid;
+> > >       new->fsgid = new->egid;
+> > >
+> > > +     retval = security_task_fix_setgid(new, old, LSM_SETID_RE);
+> > > +     if (retval < 0)
+> > > +             goto error;
+> > > +
+> > >       return commit_creds(new);
+> > >
+> > >  error:
+> > > @@ -427,13 +431,17 @@ long __sys_setgid(gid_t gid)
+> > >       old = current_cred();
+> > >
+> > >       retval = -EPERM;
+> > > -     if (ns_capable(old->user_ns, CAP_SETGID))
+> > > +     if (ns_capable_setid(old->user_ns, CAP_SETGID))
+> > >               new->gid = new->egid = new->sgid = new->fsgid = kgid;
+> > >       else if (gid_eq(kgid, old->gid) || gid_eq(kgid, old->sgid))
+> > >               new->egid = new->fsgid = kgid;
+> > >       else
+> > >               goto error;
+> > >
+> > > +     retval = security_task_fix_setgid(new, old, LSM_SETID_ID);
+> > > +     if (retval < 0)
+> > > +             goto error;
+> > > +
+> > >       return commit_creds(new);
+> > >
+> > >  error:
+> > > @@ -735,7 +743,7 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
+> > >       old = current_cred();
+> > >
+> > >       retval = -EPERM;
+> > > -     if (!ns_capable(old->user_ns, CAP_SETGID)) {
+> > > +     if (!ns_capable_setid(old->user_ns, CAP_SETGID)) {
+> > >               if (rgid != (gid_t) -1        && !gid_eq(krgid, old->gid) &&
+> > >                   !gid_eq(krgid, old->egid) && !gid_eq(krgid, old->sgid))
+> > >                       goto error;
+> > > @@ -755,6 +763,10 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
+> > >               new->sgid = ksgid;
+> > >       new->fsgid = new->egid;
+> > >
+> > > +     retval = security_task_fix_setgid(new, old, LSM_SETID_RES);
+> > > +     if (retval < 0)
+> > > +             goto error;
+> > > +
+> > >       return commit_creds(new);
+> > >
+> > >  error:
+> > > @@ -858,10 +870,13 @@ long __sys_setfsgid(gid_t gid)
+> > >
+> > >       if (gid_eq(kgid, old->gid)  || gid_eq(kgid, old->egid)  ||
+> > >           gid_eq(kgid, old->sgid) || gid_eq(kgid, old->fsgid) ||
+> > > -         ns_capable(old->user_ns, CAP_SETGID)) {
+> > > +         ns_capable_setid(old->user_ns, CAP_SETGID)) {
+> > >               if (!gid_eq(kgid, old->fsgid)) {
+> > >                       new->fsgid = kgid;
+> > > -                     goto change_okay;
+> > > +                     if (security_task_fix_setgid(new,
+> > > +                                             old,
+> > > +                                             LSM_SETID_FS) == 0)
+> > > +                             goto change_okay;
+> > >               }
+> > >       }
+> > >
+> > > diff --git a/security/security.c b/security/security.c
+> > > index b6bff646d373..4264a1e77ce8 100644
+> > > --- a/security/security.c
+> > > +++ b/security/security.c
+> > > @@ -1570,6 +1570,12 @@ int security_task_fix_setuid(struct cred *new, const struct cred *old,
+> > >       return call_int_hook(task_fix_setuid, 0, new, old, flags);
+> > >  }
+> > >
+> > > +int security_task_fix_setgid(struct cred *new, const struct cred *old,
+> > > +                          int flags)
+> > > +{
+> > > +     return call_int_hook(task_fix_setgid, 0, new, old, flags);
+> > > +}
+> > > +
+> > >  int security_task_setpgid(struct task_struct *p, pid_t pgid)
+> > >  {
+> > >       return call_int_hook(task_setpgid, 0, p, pgid);
+> > > --
+> > > 2.21.0.rc0.258.g878e2cd30e-goog
