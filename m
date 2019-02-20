@@ -2,90 +2,99 @@ Return-Path: <SRS0=vYSA=Q3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB724C10F0B
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 15:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ED1C43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 16:00:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC17621905
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 15:04:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 398D72147A
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 16:00:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="mahU/fAm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725863AbfBTPEu (ORCPT
+        id S1726082AbfBTQAp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Feb 2019 10:04:50 -0500
-Received: from mga05.intel.com ([192.55.52.43]:32849 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725822AbfBTPEu (ORCPT
+        Wed, 20 Feb 2019 11:00:45 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40137 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfBTQAp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Feb 2019 10:04:50 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Feb 2019 07:04:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,391,1544515200"; 
-   d="scan'208";a="148394532"
-Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.177])
-  by fmsmga001.fm.intel.com with ESMTP; 20 Feb 2019 07:04:46 -0800
-Date:   Wed, 20 Feb 2019 17:04:45 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     jmorris@namei.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH] MAINTAINERS: add linux-security-module mailing list to
- TPM drivers
-Message-ID: <20190220150445.GA4794@linux.intel.com>
-References: <20190220035846.6272-1-jsnitsel@redhat.com>
- <20190220070413.GB23027@linux.intel.com>
- <20190220140357.5vbepgmexso3jc6d@cantor>
+        Wed, 20 Feb 2019 11:00:45 -0500
+Received: by mail-pl1-f194.google.com with SMTP id bj4so12427593plb.7
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Feb 2019 08:00:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RY11cIriJiQSAMxw9Y+OKRZpU3gInWMmnwtnKL7ESTo=;
+        b=mahU/fAmVgFJMmY1HOrY8vlYPp1BtdCssDMXjzZqDddjWiIGNhISThFMZb2monQuv6
+         bXnuK6ZOOo05OLlTz/LGTn6MqZHSeOly4OOujYAp81eVrR91l/HLIJC9Mhen/L+pbUc3
+         TeGKiMYx/cXTTfaWE8c5v0WGPBWI5TdvrpoWBBjxCaRuVkb0ivPAKKcVbarh0pmIDlSa
+         CakG2PtkATIpnfM3L5dbPvxQ8EPWhl9g15J53gJ8zxGarf6Ih7eu1VMyYAoTeslmrCFZ
+         Rz6r0X0CBd6IsrA2AX9hOHYK0lp1R0QNaRotXa1nZxbTFX69Sd5wGjB4fsOopaHIohzs
+         oXAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RY11cIriJiQSAMxw9Y+OKRZpU3gInWMmnwtnKL7ESTo=;
+        b=phxKQ0ZUeYrl1X0DT+3tlg4i+mf7g2y3uWOu71j93HYBg9lMks4MH3JybSVnRk+zoZ
+         qgNR9KZGtoLHe5vgrpRipNAsvjG44+EP+Ym6iol1n5WWzGaS2kShlS3iA0dWmztXvc2W
+         oSjjgMKqwXU26FcnYyeSXelcv2xkyTFrJVGTMlzlUY25/DunSbshDNszzZx9ws9oRVvA
+         gXO/EK80uxLo7Q9SuVindrv+QTBSPProLKzm060qis4SbM8VJ90q6qHN93lIlTMbWWZM
+         aBlWYMaHyNiUSleI9nNpzU/vAtZSjYw+9s+wr7nqHOpmP0AQSIAlid0uZ7wwNTc58f2q
+         QfLw==
+X-Gm-Message-State: AHQUAuarOQqXYZIfUNxUGmJ6gCEA6VKUsJEchoHoZ66Tqv23xD14TL+7
+        zF5ieDihyRMZ1vEnzBfwzTSLnA==
+X-Google-Smtp-Source: AHgI3IZrMSSAdOlqKlcGRid3pAKHrrIxikBSsRqtAHc7I/ueTGAhyQslkMGqf53BI49555BCCocLpw==
+X-Received: by 2002:a17:902:7c98:: with SMTP id y24mr19525405pll.191.1550678444132;
+        Wed, 20 Feb 2019 08:00:44 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id l2sm6129849pgj.64.2019.02.20.08.00.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 20 Feb 2019 08:00:43 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gwUIc-0007vb-PL; Wed, 20 Feb 2019 09:00:42 -0700
+Date:   Wed, 20 Feb 2019 09:00:42 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     YueHaibing <yuehaibing@huawei.com>, peterhuewe@gmx.de,
+        arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 -next] tpm: Fix the type of the return value in
+ calc_tpm2_event_size()
+Message-ID: <20190220160042.GD8429@ziepe.ca>
+References: <20190220022300.25888-1-yuehaibing@huawei.com>
+ <20190220063159.GA23027@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190220140357.5vbepgmexso3jc6d@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190220063159.GA23027@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 20, 2019 at 07:03:57AM -0700, Jerry Snitselaar wrote:
-> On Wed Feb 20 19, Jarkko Sakkinen wrote:
-> > On Tue, Feb 19, 2019 at 08:58:46PM -0700, Jerry Snitselaar wrote:
-> > > I've seen requests to add linux-security-module to tpm patch
-> > > submissions a couple of times recently, so just add the list
-> > > to MAINTAINERS so get_maintainers.pl will mention it.
-> > > 
-> > > Cc: Peter Huewe <peterhuewe@gmx.de>
-> > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+On Wed, Feb 20, 2019 at 08:31:59AM +0200, Jarkko Sakkinen wrote:
+> On Wed, Feb 20, 2019 at 10:23:00AM +0800, YueHaibing wrote:
+> > calc_tpm2_event_size() has an invalid signature because
+> > it returns a 'size_t' where as its signature says that
+> > it returns 'int'.
 > > 
-> > I guess James should say something about this.
-> > 
-> > /Jarkko
+> > Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
+> > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > 
-> Sorry, I meant to add James as well.
+> Two remarks:
 > 
-> Maybe this isn't needed. Do you only want certain patches
-> being cc'd to linux-security-module? Looking back at
-> recent patches, it looked like it was a general request.
-> If it is, I'll be more likely to remember if get_maintainers.pl
-> brings it up. :)
+> - git config user.name "Yue Haibing"
+> - "Cc: stable@vger.kernel.org" before the fixes tag.
 
-I'm all open here. Not sure which practices apply to IMA. I kind of tend
-to dilate to question does it make sense to CC to LSM for two reasons:
+'Theoretical' bug fixes are not suitable for stable
 
-1. I think the original reason was that tpmdd mailing list was small.
-Now with the new linux-integrity mailing list up and running there is
-more eyes looking at the code. And more importantly the people are
-subscribed who use TPM for something, like IMA developers.
-2. I don't remember ever reading within the time that I've been
-maintaining even a single comment from anyone that works with LSM's. The
-value of CC'ing there is not very significant, which means that most of
-the time the TPM traffic is just noise on that list.
-
-/Jarkko
+Jason
