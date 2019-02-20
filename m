@@ -2,126 +2,89 @@ Return-Path: <SRS0=vYSA=Q3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B91C7C10F01
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 13:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6263CC4360F
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D03A20880
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 13:26:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="G2WBdU6b"
+	by mail.kernel.org (Postfix) with ESMTP id 31E9E2147A
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbfBTN0J (ORCPT
+        id S1726469AbfBTNcP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:26:09 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33860 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbfBTN0J (ORCPT
+        Wed, 20 Feb 2019 08:32:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33668 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726213AbfBTNcP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:26:09 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y185so4723431wmd.1
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Feb 2019 05:26:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1JQam90U+6VOjJbiYx8tejOxAiXSTEoSs7kyr8I+VFw=;
-        b=G2WBdU6bGnmGuvbpVAav4fL6NRioQgwohfgDFrrieMWMGgiT+Jg2vi/v+wWiXYMufa
-         4C1z5B/kF1sYh8GGIpAUWVY3b1agcNyixvWIq+JhskHVIuW7yJ6fnSBNTMd7SACwp6c6
-         D5ym2SUwCzj3JGI1bT2y5ybho+t8WhjNiRbfPTmIkZDcaJJbNUnS8w20ABrrBda45vql
-         bYYzTY2aqeCiQVx2yaPV4BAnsPqAzOIbmJ9/+lqUtx5liYzsWHjmXK9y7gyR6J3AaJW8
-         ujJ9vA/ycJlGuIWTk5meRwRknAxakE24vWEny5SsX+tUF8OK0w/eexPTrtZ9qv5UWABM
-         hRww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1JQam90U+6VOjJbiYx8tejOxAiXSTEoSs7kyr8I+VFw=;
-        b=lT2cgG3Qnsu0tOjsv8qd/uKAcn5pDWt01b+pH9PU4w7iHdd0s2s2BF8lkAQSJeWKEd
-         R8w438rFGWP7KRqVkK6SLqfNTafiCzu7qIgdmc1Fc/8r2XP3Tfe6f1hwK8h4OON4RRkg
-         jtn+79I5UJFLZrFcQ9eOlNgTlU5LXQKx2wQXvmfS7f7XjMjc68hx/JFKJviwIxMlo0n/
-         c8okEFNk0LHujidCYuGmw9AEYymIzXaPUlLC7f26niBVG2HKpMClhLh1Smz9y14gCd8F
-         jD4JwcLMjzmmyDf60gVPiiiN2Iw56QYK2XCaA3jZy7mhINbbIjRipkXt/p8HBVMHl+BS
-         nJaQ==
-X-Gm-Message-State: AHQUAuYTsjJn4u3luh/u5yJwcJayMYL/WEIuQKibWKQV785T5c1DSgah
-        0wSto6TqSmYlp/sEkK6Sm+1+3g==
-X-Google-Smtp-Source: AHgI3IbSRhSOCjOsYRy3P9yFqZXDL9xDOkY/2Z80pS6vYHEU364Y1PNIbuHS54Q+XWmcs0PYU/Sing==
-X-Received: by 2002:a7b:c0c3:: with SMTP id s3mr6369747wmh.141.1550669167512;
-        Wed, 20 Feb 2019 05:26:07 -0800 (PST)
-Received: from brauner.io ([81.92.17.155])
-        by smtp.gmail.com with ESMTPSA id j124sm5816696wmb.48.2019.02.20.05.26.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 20 Feb 2019 05:26:06 -0800 (PST)
-Date:   Wed, 20 Feb 2019 14:26:02 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Ian Kent <raven@themaw.net>
-Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        trond.myklebust@hammerspace.com, sfrench@samba.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
- objects
-Message-ID: <20190220132600.c5ahsmnoihdrcqeq@brauner.io>
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
- <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
- <7923d4aa646fbe4bd71cfb4144f1c96f28cad972.camel@themaw.net>
+        Wed, 20 Feb 2019 08:32:15 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5BF7C2DA996;
+        Wed, 20 Feb 2019 13:32:14 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C62BC2707A;
+        Wed, 20 Feb 2019 13:32:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] KEYS: user: Align the payload buffer
+From:   David Howells <dhowells@redhat.com>
+To:     jmorris@namei.org
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>, stable@vger.kernel.org,
+        Eric Biggers <ebiggers@google.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 20 Feb 2019 13:32:11 +0000
+Message-ID: <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7923d4aa646fbe4bd71cfb4144f1c96f28cad972.camel@themaw.net>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 20 Feb 2019 13:32:14 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 20, 2019 at 10:46:24AM +0800, Ian Kent wrote:
-> On Fri, 2019-02-15 at 16:07 +0000, David Howells wrote:
-> > Implement a kernel container object such that it contains the following
-> > things:
-> > 
-> >  (1) Namespaces.
-> > 
-> >  (2) A root directory.
-> > 
-> >  (3) A set of processes, including one designated as the 'init' process.
-> 
-> Yeah, I think a name other than init needs to be used for this
-> process.
-> 
-> The problem being that there is no requirement for container
-> process 1 to behave in any way like an "init" process is
-> expected to behave and that leads to confusion (at least
-> it certainly did for me).
+From: Eric Biggers <ebiggers@google.com>
 
-If you look at the documentation for pid namespaces(7) you can see that
-the pid 1 inside a pid namespace is expected to behave like an init
-process:
--  "The  first  process created in a new namespace [...] has  the PID 1,
-   and is the "init" process for the namespace (see init(1))."
-- "[...] child process that is orphaned within the namespace will be
-  reparented to this process rather than init(1) [...]"
-- "If the "init" process of a PID namespace terminates, the kernel
-  terminates all of the processes in the  namespace  via a SIGKILL
-  signal. This behavior reflects the fact that the "init" process is
-  essential for the cor‐ rect operation of a PID namespace."
-- "Only signals for which the "init" process has established a signal
-  handler can be sent to the  "init" process by other members of the
-  PID namespace."
-- "[...] the reboot(2) system call causes a signal to be sent to the
-  namespace "init" process."
+Align the payload of "user" and "logon" keys so that users of the
+keyrings service can access it as a struct that requires more than
+2-byte alignment.  fscrypt currently does this which results in the read
+of fscrypt_key::size being misaligned as it needs 4-byte alignment.
 
-This is one of the reasons why all major current container runtimes
-finally after years of failing to realize this run a stub init process
-that mimicks a dumb init. Sure, you get away with not having an init
-that behaves like an init but this is inherently broken or at least
-against the way pid namespaces were designed.
+Align to __alignof__(u64) rather than __alignof__(long) since in the
+future it's conceivable that people would use structs beginning with
+u64, which on some platforms would require more than 'long' alignment.
+
+Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Fixes: 2aa349f6e37c ("[PATCH] Keys: Export user-defined keyring operations")
+Fixes: 88bd6ccdcdd6 ("ext4 crypto: add encryption key management facilities")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ include/keys/user-type.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/keys/user-type.h b/include/keys/user-type.h
+index e098cbe27db5..12babe991594 100644
+--- a/include/keys/user-type.h
++++ b/include/keys/user-type.h
+@@ -31,7 +31,7 @@
+ struct user_key_payload {
+ 	struct rcu_head	rcu;		/* RCU destructor */
+ 	unsigned short	datalen;	/* length of this data */
+-	char		data[0];	/* actual data */
++	char		data[0] __aligned(__alignof__(u64)); /* actual data */
+ };
+ 
+ extern struct key_type key_type_user;
+
