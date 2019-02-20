@@ -2,89 +2,90 @@ Return-Path: <SRS0=vYSA=Q3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6263CC4360F
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8666DC43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 13:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31E9E2147A
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 13:32:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E67420859
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 13:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfBTNcP (ORCPT
+        id S1726105AbfBTNwA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Feb 2019 08:32:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33668 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726213AbfBTNcP (ORCPT
+        Wed, 20 Feb 2019 08:52:00 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:60887 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725844AbfBTNwA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Feb 2019 08:32:15 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5BF7C2DA996;
-        Wed, 20 Feb 2019 13:32:14 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C62BC2707A;
-        Wed, 20 Feb 2019 13:32:12 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] KEYS: user: Align the payload buffer
-From:   David Howells <dhowells@redhat.com>
-To:     jmorris@namei.org
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>, stable@vger.kernel.org,
+        Wed, 20 Feb 2019 08:52:00 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id uk-mta-3-bPYqFGAfPcihNxlGMAzATg-1;
+ Wed, 20 Feb 2019 13:51:57 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 20 Feb 2019 13:52:40 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 20 Feb 2019 13:52:40 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'David Howells' <dhowells@redhat.com>,
+        "jmorris@namei.org" <jmorris@namei.org>
+CC:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
         Eric Biggers <ebiggers@google.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 20 Feb 2019 13:32:11 +0000
-Message-ID: <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] KEYS: user: Align the payload buffer
+Thread-Topic: [PATCH] KEYS: user: Align the payload buffer
+Thread-Index: AQHUySDST0ZEr/LQC0mQ8ti2hSdKCKXotDKQ
+Date:   Wed, 20 Feb 2019 13:52:40 +0000
+Message-ID: <6bf441ffc1a54d06ad27ed01c6d06a58@AcuMS.aculab.com>
+References: <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155066953188.21038.12015964986007814182.stgit@warthog.procyon.org.uk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 20 Feb 2019 13:32:14 +0000 (UTC)
+X-MC-Unique: bPYqFGAfPcihNxlGMAzATg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
-
-Align the payload of "user" and "logon" keys so that users of the
-keyrings service can access it as a struct that requires more than
-2-byte alignment.  fscrypt currently does this which results in the read
-of fscrypt_key::size being misaligned as it needs 4-byte alignment.
-
-Align to __alignof__(u64) rather than __alignof__(long) since in the
-future it's conceivable that people would use structs beginning with
-u64, which on some platforms would require more than 'long' alignment.
-
-Reported-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Fixes: 2aa349f6e37c ("[PATCH] Keys: Export user-defined keyring operations")
-Fixes: 88bd6ccdcdd6 ("ext4 crypto: add encryption key management facilities")
-Cc: stable@vger.kernel.org
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Tested-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- include/keys/user-type.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/keys/user-type.h b/include/keys/user-type.h
-index e098cbe27db5..12babe991594 100644
---- a/include/keys/user-type.h
-+++ b/include/keys/user-type.h
-@@ -31,7 +31,7 @@
- struct user_key_payload {
- 	struct rcu_head	rcu;		/* RCU destructor */
- 	unsigned short	datalen;	/* length of this data */
--	char		data[0];	/* actual data */
-+	char		data[0] __aligned(__alignof__(u64)); /* actual data */
- };
- 
- extern struct key_type key_type_user;
+RnJvbTogRGF2aWQgSG93ZWxscw0KPiBTZW50OiAyMCBGZWJydWFyeSAyMDE5IDEzOjMyDQo+IA0K
+PiBGcm9tOiBFcmljIEJpZ2dlcnMgPGViaWdnZXJzQGdvb2dsZS5jb20+DQo+IA0KPiBBbGlnbiB0
+aGUgcGF5bG9hZCBvZiAidXNlciIgYW5kICJsb2dvbiIga2V5cyBzbyB0aGF0IHVzZXJzIG9mIHRo
+ZQ0KPiBrZXlyaW5ncyBzZXJ2aWNlIGNhbiBhY2Nlc3MgaXQgYXMgYSBzdHJ1Y3QgdGhhdCByZXF1
+aXJlcyBtb3JlIHRoYW4NCj4gMi1ieXRlIGFsaWdubWVudC4gIGZzY3J5cHQgY3VycmVudGx5IGRv
+ZXMgdGhpcyB3aGljaCByZXN1bHRzIGluIHRoZSByZWFkDQo+IG9mIGZzY3J5cHRfa2V5OjpzaXpl
+IGJlaW5nIG1pc2FsaWduZWQgYXMgaXQgbmVlZHMgNC1ieXRlIGFsaWdubWVudC4NCj4gDQo+IEFs
+aWduIHRvIF9fYWxpZ25vZl9fKHU2NCkgcmF0aGVyIHRoYW4gX19hbGlnbm9mX18obG9uZykgc2lu
+Y2UgaW4gdGhlDQo+IGZ1dHVyZSBpdCdzIGNvbmNlaXZhYmxlIHRoYXQgcGVvcGxlIHdvdWxkIHVz
+ZSBzdHJ1Y3RzIGJlZ2lubmluZyB3aXRoDQo+IHU2NCwgd2hpY2ggb24gc29tZSBwbGF0Zm9ybXMg
+d291bGQgcmVxdWlyZSBtb3JlIHRoYW4gJ2xvbmcnIGFsaWdubWVudC4NCi4uLg0KPiAgaW5jbHVk
+ZS9rZXlzL3VzZXItdHlwZS5oIHwgICAgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0
+aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9rZXlzL3Vz
+ZXItdHlwZS5oIGIvaW5jbHVkZS9rZXlzL3VzZXItdHlwZS5oDQo+IGluZGV4IGUwOThjYmUyN2Ri
+NS4uMTJiYWJlOTkxNTk0IDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2tleXMvdXNlci10eXBlLmgN
+Cj4gKysrIGIvaW5jbHVkZS9rZXlzL3VzZXItdHlwZS5oDQo+IEBAIC0zMSw3ICszMSw3IEBADQo+
+ICBzdHJ1Y3QgdXNlcl9rZXlfcGF5bG9hZCB7DQo+ICAJc3RydWN0IHJjdV9oZWFkCXJjdTsJCS8q
+IFJDVSBkZXN0cnVjdG9yICovDQo+ICAJdW5zaWduZWQgc2hvcnQJZGF0YWxlbjsJLyogbGVuZ3Ro
+IG9mIHRoaXMgZGF0YSAqLw0KPiAtCWNoYXIJCWRhdGFbMF07CS8qIGFjdHVhbCBkYXRhICovDQo+
+ICsJY2hhcgkJZGF0YVswXSBfX2FsaWduZWQoX19hbGlnbm9mX18odTY0KSk7IC8qIGFjdHVhbCBk
+YXRhICovDQo+ICB9Ow0KDQpJJ2QgbWFrZSB0aGUgJ2RhdGFsZW4nIGZpZWxkICd1bnNpZ25lZCBp
+bnQnIGF0IHRoZSBzYW1lIHRpbWUuDQpJdCB3aWxsIHVzZSBzb21lIG9mIHRoZSBob2xlIHlvdSd2
+ZSBtYWRlIGFuZCBnZW5lcmF0ZSBiZXR0ZXINCmNvZGUgb24gbW9zdCBhcmNoZXMuDQoNCglEYXZp
+ZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQg
+RmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4
+NiAoV2FsZXMpDQo=
 
