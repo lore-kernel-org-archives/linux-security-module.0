@@ -2,65 +2,79 @@ Return-Path: <SRS0=vYSA=Q3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F822C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 07:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D49F0C10F01
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 08:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0ABE2087B
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 07:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B005F208E4
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 08:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725922AbfBTHET (ORCPT
+        id S1725966AbfBTI0E (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Feb 2019 02:04:19 -0500
-Received: from mga05.intel.com ([192.55.52.43]:2586 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbfBTHET (ORCPT
+        Wed, 20 Feb 2019 03:26:04 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4231 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725813AbfBTI0E (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Feb 2019 02:04:19 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Feb 2019 23:04:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,388,1544515200"; 
-   d="scan'208";a="145715860"
-Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.148])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Feb 2019 23:04:15 -0800
-Date:   Wed, 20 Feb 2019 09:04:13 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>, jmorris@namei.org
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH] MAINTAINERS: add linux-security-module mailing list to
- TPM drivers
-Message-ID: <20190220070413.GB23027@linux.intel.com>
-References: <20190220035846.6272-1-jsnitsel@redhat.com>
+        Wed, 20 Feb 2019 03:26:04 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D2EAC34512E3DE65C2D5;
+        Wed, 20 Feb 2019 16:25:55 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Wed, 20 Feb 2019
+ 16:25:45 +0800
+From:   Yue Haibing <yuehaibing@huawei.com>
+To:     <peterhuewe@gmx.de>, <jarkko.sakkinen@linux.intel.com>,
+        <jgg@ziepe.ca>, <arnd@arndb.de>, <gregkh@linuxfoundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Yue Haibing <yuehaibing@huawei.com>, <stable@vger.kernel.org>
+Subject: [PATCH v3 -next] tpm: Fix the type of the return value in calc_tpm2_event_size()
+Date:   Wed, 20 Feb 2019 16:25:38 +0800
+Message-ID: <20190220082538.26260-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190220035846.6272-1-jsnitsel@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 19, 2019 at 08:58:46PM -0700, Jerry Snitselaar wrote:
-> I've seen requests to add linux-security-module to tpm patch
-> submissions a couple of times recently, so just add the list
-> to MAINTAINERS so get_maintainers.pl will mention it.
-> 
-> Cc: Peter Huewe <peterhuewe@gmx.de>
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+calc_tpm2_event_size() has an invalid signature because
+it returns a 'size_t' where as its signature says that
+it returns 'int'.
 
-I guess James should say something about this.
+Cc: <stable@vger.kernel.org>
+Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+v3: fix My real name and cc stable
+v2: modify patch title and commit message as Jarkko suggested
+---
+ drivers/char/tpm/eventlog/tpm2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-/Jarkko
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index d8b7713..f824563 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -37,8 +37,8 @@
+  *
+  * Returns size of the event. If it is an invalid event, returns 0.
+  */
+-static int calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+-				struct tcg_pcr_event *event_header)
++static size_t calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
++				   struct tcg_pcr_event *event_header)
+ {
+ 	struct tcg_efi_specid_event_head *efispecid;
+ 	struct tcg_event_field *event_field;
+-- 
+2.7.0
+
+
