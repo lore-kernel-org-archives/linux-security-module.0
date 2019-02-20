@@ -1,144 +1,86 @@
-Return-Path: <SRS0=18aP=Q2=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=vYSA=Q3=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC705C4360F
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 23:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8969AC10F00
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 02:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC72821736
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Feb 2019 23:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A2C12183E
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 02:20:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="Z/7b/1vA"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Hx/2U7zh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729891AbfBSXzq (ORCPT
+        id S1727733AbfBTCUX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Feb 2019 18:55:46 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:46948 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728703AbfBSXzl (ORCPT
+        Tue, 19 Feb 2019 21:20:23 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45226 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726235AbfBTCUX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Feb 2019 18:55:41 -0500
-Received: by mail-yb1-f194.google.com with SMTP id 7so8859796ybp.13
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Feb 2019 15:55:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XmfykJFWMdzt50aQZr96YqLCUVrpFtYe1zYWBcFZzcA=;
-        b=Z/7b/1vAoATLYB980TMrZnS7a9RZhkaOR+kZaRlTSKJ2TW2hKAF1Drh3EQ4Ly0Glgc
-         xs0V5+JSQ7F0m8mn2l+d/+4qIGgNI/fUN81yfRnBcs69K2Psmy9VjGESBckZHyE2kwxB
-         xRm3tMIngV4zq82LrVYsILkQkvRzAHxXgKwbtuY8YBc2gZgmZ0iyY68dauf+YQsmSibJ
-         x3rdISbdn9/77fMX5S7SuazmkcDnt9j9omFPPdlyA3/L/y241YHXK0vE/eNLsmmEKCBf
-         UWX7v0pSGDjEDkVVhHXwdOwIZUQrJK8wyi1dCBPG3jsNP42fJ1HiQ1lvP6YEABIzbHhm
-         LLCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XmfykJFWMdzt50aQZr96YqLCUVrpFtYe1zYWBcFZzcA=;
-        b=DTUz/ZTf+CFP6w0goAFtgvK5Ik7x/PK1viMWl3slQVjU7ZA9IHYVM341WLgssjieoN
-         caFVQARLgSW9B4kXyr1uHEZxqLqhRcOATvJy5eyDNL7YnGl26Lg9QyXH4O9gNcU6lxR/
-         JTVWBbclCXyIdMe7E0S+vmRvhuw9Bg5d6ZiKj+2XG+DQthN/0cQUGhgAe/aYboiI7pFw
-         WOYuEIBcb78bVJZepqXozxifEQRNdLmIfYpyoSDe3hPCUqmbdUKxnXudUQnR3NnT/a6k
-         pjaH/FCsPQQuTfdxkMj1AJrHFhXFVxSTka6oZfYoA/vxJofoJWc1GEkpgtttH3PWWpUb
-         MSVg==
-X-Gm-Message-State: AHQUAubS0kK96+0Qgv2L3p9MGGBjn/QJXU3R5BDXHmWQyiUssijM3CT2
-        KovWJR3H4bzHAA0cxKCyYCTXLg==
-X-Google-Smtp-Source: AHgI3Ia2i9jHTYEQ7iOijMe8HCPEysNc4k8d73BEpsZQ5AC7eUJ2apQHuYie8xBVEi4zutUdVt+6LQ==
-X-Received: by 2002:a5b:501:: with SMTP id o1mr25411431ybp.85.1550620539905;
-        Tue, 19 Feb 2019 15:55:39 -0800 (PST)
-Received: from cisco ([128.107.241.177])
-        by smtp.gmail.com with ESMTPSA id v9sm7655589ywe.59.2019.02.19.15.55.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 19 Feb 2019 15:55:39 -0800 (PST)
-Date:   Tue, 19 Feb 2019 16:55:37 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
+        Tue, 19 Feb 2019 21:20:23 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5C7498EE235;
+        Tue, 19 Feb 2019 18:20:22 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id s9oNZuQAem3F; Tue, 19 Feb 2019 18:20:22 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7A7E28EE21A;
+        Tue, 19 Feb 2019 18:20:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1550629221;
+        bh=Sv05kO616trax6QX+MKM8GQoT95dBmrnAy9m8tcgS+U=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Hx/2U7zh6bPP50kPafInPt5h8xpRnWpTE6DK1PBZw4PWDDrBwQMwyUajynAGYxcPd
+         KxEkrdu1tD2aCxGQTLl5dxmVgEuC21bt3yFrqUir4ZIl6XB9G3miFn/zIFccie3Gox
+         TX7lmNgsPT0d1ornz8fKEze4OEViFT4q5xX4Y0UA=
+Message-ID: <1550629220.11684.3.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
+ objects
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     David Howells <dhowells@redhat.com>
 Cc:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
         sfrench@samba.org, linux-security-module@vger.kernel.org,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, rgb@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 02/27] containers: Implement containers as kernel
- objects
-Message-ID: <20190219235537.GC5274@cisco>
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
- <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, cgroups@vger.kernel.org
+Date:   Tue, 19 Feb 2019 18:20:20 -0800
+In-Reply-To: <19562.1550617574@warthog.procyon.org.uk>
+References: <1550432358.2809.21.camel@HansenPartnership.com>
+         <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
+         <155024685321.21651.1504201877881622756.stgit@warthog.procyon.org.uk>
+         <19562.1550617574@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 15, 2019 at 04:07:33PM +0000, David Howells wrote:
-> ==================
-> FUTURE DEVELOPMENT
-> ==================
+On Tue, 2019-02-19 at 23:06 +0000, David Howells wrote:
+> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
 > 
->  (1) Setting up the container.
+> > I thought we got agreement years ago that containers don't exist in
+> > Linux as a single entity: they're currently a collection of cgroups
+> > and namespaces some of which may and some of which may not be local
+> > to the entity the orchestration system thinks of as a "container".
 > 
->      A container would be created with, say:
-> 
-> 	int cfd = container_create("fred", CONTAINER_NEW_EMPTY_FS_NS);
-> 
+> I wasn't party to that agreement and don't feel particularly bound by
+> it.
 
-...
+That's not at all relevant, is it?  The point is we have widespread
+uses of namespaces and cgroups that span containers today meaning that
+a "container id" becomes a problematic concept.  What we finally got to
+with the audit people was an unmodifiable label which the orchestration
+system can set ... can't you just use that?
 
->      Further mounts can be added by:
-> 
-> 	move_mount(mfd, "", cfd, "proc", MOVE_MOUNT_F_EMPTY_PATH);
-> 
+James
 
-...
-
->  (2) Starting the container.
-> 
->      Once all modifications are complete, the container's 'init' process
->      can be started by:
-> 
-> 	fork_into_container(int cfd);
-> 
->      This precludes further external modification of the mount tree within
->      the container.
-
-Is there a technical reason for this? In particular, there are some
-container runtimes that do this today via clever use of bind mounts
-and MS_MOVE, for things like dynamically attaching volumes. It would
-be useful to be able to mount things into the container after the
-fact.
-
->  (3) Waiting for the container to complete.
-> 
->      The container fd can then be polled to wait for init process therein
->      to complete and the exit code collected by:
-> 
-> 	container_wait(int container_fd, int *_wstatus, unsigned int wait,
-> 		       struct rusage *rusage);
-> 
->      The container and everything in it can be terminated or killed off:
-> 
-> 	container_kill(int container_fd, int initonly, int signal);
-> 
->      If 'init' dies, all other processes in the container are preemptively
->      SIGKILL'd by the kernel.
-
-Isn't this essentially how the pid ns works today? I'm not sure what
-the container fd offers here (of course if it lands, then having the
-same semantics makes sense).
-
->  (6) Running different LSM policies by container.  This might particularly
->      make sense with something like Apparmor where different path-based
->      rules might be required inside a container to inside the parent.
-
-Apparmor supports this today, as long as the host is also running
-Apparmor. For the more general case, Casey (and others) have been
-working on LSM stacking for a long time.
-
-Tycho
