@@ -7,252 +7,243 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C255C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 18:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBABC43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 18:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D86C320859
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 18:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BFED206C0
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Feb 2019 18:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJ9YDnJf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sPPzLHAz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725877AbfBTSzd (ORCPT
+        id S1726180AbfBTS7b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Feb 2019 13:55:33 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40205 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbfBTSzc (ORCPT
+        Wed, 20 Feb 2019 13:59:31 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52042 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725798AbfBTS7a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Feb 2019 13:55:32 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t15so7397021wmi.5;
-        Wed, 20 Feb 2019 10:55:31 -0800 (PST)
+        Wed, 20 Feb 2019 13:59:30 -0500
+Received: by mail-wm1-f65.google.com with SMTP id n19so7709526wmi.1;
+        Wed, 20 Feb 2019 10:59:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=from:subject:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=19o3HJBkFlUEm7hCN5qdep2KdRKhJO/iuRNq6cYkcwY=;
-        b=CJ9YDnJfh6Qadkg1W/KwnJH+Q5RED5LBO18Rc2gTNn6064J2FoDj+2w5c1jXiA4+IG
-         zF3HEHapE5aN1ZkJgNwGfaKvAXikfzGlDKXFpBTu6FjWi7KJbBtYylI5iTGauflY2+UT
-         QHvwQaXlnyN3aEKPNZgViPzbUuN7DsYwowHTHNJDiPZDBBKegWARfpCu4+dFc20WlVO8
-         zh3TZ7sFzmgokQIJvzcCdC+caSrLOlEMHTqhGcZ7/ZzZcuJTvzPRcUPU6xx13ogXiZ7q
-         e8FkEWXe0nQGXbWYnOih/WLZnZ0xXaYJTsFsPHLzDfvpoQ8PeQJOQqvDTy4UiB1vLxxk
-         smtA==
+        bh=pCMkP1QOowY9M43VDV6r8m4uMezeHM6eDrf7s0bA+Q4=;
+        b=sPPzLHAzJdrzeg8jmkXQOon3SvdAaEsf6nrXI6HRA8s+BbT1slgQPutbSQXfSRo1l8
+         CxuNDFK3rUFzGIvrG0wBcQkWMBojKPOOClAtNLr1gm4Z17F0Qa4oZ65fdxAkRkNTLHfU
+         MC3TTQ6TSgMnwGEaJCbr4Occr3EDxlLung9ApTPPg0zkDZ0NJYHjb+AAo+oDy5BdoSiF
+         4AVIzFEUI3EjHmvfoph9L4eanqBI1MxiUJ6jvXgRhvey8v8FtyfFmUZJAh9yTpcN9Z8D
+         IQbiEMw5QKe+4LJjjlqUwNgT/URA7MUoBzSNsU2oslbALtU1hduFZuAVT0yOCUjTHhqU
+         6icw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=19o3HJBkFlUEm7hCN5qdep2KdRKhJO/iuRNq6cYkcwY=;
-        b=ij8mFx5J8IxLbbqVRYV/vdybqiZQQ6lviHnDL8GkD5J/NImgVyMYs/zar55Q2t9/8s
-         RnS+/sBKklc5Hx4YIiolEHdgssET8fDS40xq+3bzuiZTkMquCjsgvfWxeV7MfciQBB+4
-         Yy7+UQ7CnE2KFBpl1LImCUJpfB8bJDOrD2NXdu8XNOqPycpo3vNoaWXgetx2OZ8u1/JH
-         BghQvKcKixQWdIXo0gpWz5YOUrvcCPwENVSPUnpNdq/HQxE+jdF3juAFVZkD1yiIsVsE
-         WKg964AaKMzqN5FEiaAeXCQjnCyt5L0dlFNwEW3DdzddL6ttIj/PRgkZy9wO2qPZYubS
-         /oZQ==
-X-Gm-Message-State: AHQUAua1Hu4oSolPc7j3/UZHLKejeMCfKq0Z956Lw1hP0gfBk+urh0cf
-        vdmbmIy+zJb1iRmW7bPuFBnoJD66
-X-Google-Smtp-Source: AHgI3IY5tNc/T4GhAhL7a6ysh3ECKSAAbIvyMpBiHpf+6Tx5Dh58Mb5uW+r+cuZfIOTfrBP1/oSXWw==
-X-Received: by 2002:a1c:a5cc:: with SMTP id o195mr7605008wme.67.1550688929908;
-        Wed, 20 Feb 2019 10:55:29 -0800 (PST)
+        bh=pCMkP1QOowY9M43VDV6r8m4uMezeHM6eDrf7s0bA+Q4=;
+        b=gWzBQDLfDpqLZIqu3LBVg1Px6mQW50TpYwyKIoDW6A8jWikdbUGu4+8KC5HoaQRvCX
+         JytO36XKbnHNlRTjzNJTWYa9kLSDOdQNH8NK9mZqQfOoOn/q+ZbouKNESXXMT/8E0jxj
+         BuIGT72H5Gk3sLoikjGRdzIdxnG6sAsueh2HLv1iyWiEx9IjQsDjLv+m0qVM0JftXxQl
+         Amjp9ElaO3YBhQtE+8qj+7bVFhWuA6yq2FElTrzQw9uPcOVnghkgL/rbr0Rlo98k/R4K
+         g1+WVI2MDQ9cKmJtdQA/siqGSyt35rRlDSA7811Si8QDVpALZ57Ph06IB/vBJW4r0Fek
+         HorA==
+X-Gm-Message-State: AHQUAuamf6D3gAaOXIKc4qK4DUBzmSbjumGhga49bxinKuIGAQfk8hrs
+        jeAoCpmhC3/ZWdsg/OtD50ygD335
+X-Google-Smtp-Source: AHgI3IYumHbEcke0rkmg7p3ok26w/YBQycq/V8S1ce+ZpMKicMyxvfQABg9JsWVURUSbkAna4tcETw==
+X-Received: by 2002:a1c:a185:: with SMTP id k127mr7546723wme.134.1550689168325;
+        Wed, 20 Feb 2019 10:59:28 -0800 (PST)
 Received: from [172.16.1.192] (host-78-151-217-103.as13285.net. [78.151.217.103])
-        by smtp.gmail.com with ESMTPSA id x24sm10509405wmi.5.2019.02.20.10.55.28
+        by smtp.gmail.com with ESMTPSA id z16sm20670110wrr.66.2019.02.20.10.59.27
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Feb 2019 10:55:29 -0800 (PST)
-Subject: Re: [PATCH 04/43] separate copying and locking mount tree on
- cross-userns copies
+        Wed, 20 Feb 2019 10:59:27 -0800 (PST)
+From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
+Subject: Re: [PATCH 03/10] teach move_mount(2) to work with OPEN_TREE_CLONE
 To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
 Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
         ebiederm@xmission.com, linux-security-module@vger.kernel.org
-References: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
- <155059371731.12449.5751025556744658291.stgit@warthog.procyon.org.uk>
-From:   Alan Jenkins <alan.christopher.jenkins@gmail.com>
-Message-ID: <e967b416-dcef-2ce4-8775-2eb67da7d045@gmail.com>
-Date:   Wed, 20 Feb 2019 18:55:27 +0000
+References: <155059610368.17079.2220554006494174417.stgit@warthog.procyon.org.uk>
+ <155059612649.17079.7287713053194562461.stgit@warthog.procyon.org.uk>
+Message-ID: <0c084993-d45d-20b3-2709-38bbd12c5936@gmail.com>
+Date:   Wed, 20 Feb 2019 18:59:26 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <155059371731.12449.5751025556744658291.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155059612649.17079.7287713053194562461.stgit@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-GB
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 19/02/2019 16:28, David Howells wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
+On 19/02/2019 17:08, David Howells wrote:
+> Allow a detached tree created by open_tree(..., OPEN_TREE_CLONE) to be
+> attached by move_mount(2).
 >
-> Rather than having propagate_mnt() check doing unprivileged copies,
-> lock them before commit_tree().
+> If by the time of final fput() of OPEN_TREE_CLONE-opened file its tree is
+> not detached anymore, it won't be dissolved.  move_mount(2) is adjusted
+> to handle detached source.
 >
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> That gives us equivalents of mount --bind and mount --rbind.
+> Thanks also to Alan Jenkins<alan.christopher.jenkins@gmail.com>  for
+> providing a whole bunch of ways to break things using this interface.
+>
+> Signed-off-by: Al Viro<viro@zeniv.linux.org.uk>
+> Signed-off-by: David Howells<dhowells@redhat.com>
+> Signed-off-by: Al Viro<viro@zeniv.linux.org.uk>
 > ---
 >
->   fs/namespace.c |   59 +++++++++++++++++++++++++++++++++++---------------------
->   fs/pnode.c     |    5 -----
->   fs/pnode.h     |    3 +--
->   3 files changed, 38 insertions(+), 29 deletions(-)
+>   fs/namespace.c |   62 ++++++++++++++++++++++++++++++++++++++++++++++++++------
+>   1 file changed, 55 insertions(+), 7 deletions(-)
 >
 > diff --git a/fs/namespace.c b/fs/namespace.c
-> index a677b59efd74..9ed2f2930dfd 100644
+> index f10122028a11..56423c60ac7e 100644
 > --- a/fs/namespace.c
 > +++ b/fs/namespace.c
-> @@ -1013,27 +1013,6 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
+> @@ -1840,10 +1840,16 @@ void dissolve_on_fput(struct vfsmount *mnt)
+>   	namespace_lock();
+>   	lock_mount_hash();
+>   	ns = real_mount(mnt)->mnt_ns;
+> -	umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
+> +	if (ns) {
+> +		if (is_anon_ns(ns))
+> +			umount_tree(real_mount(mnt), UMOUNT_CONNECTED);
+> +		else
+> +			ns = NULL;
+> +	}
+>   	unlock_mount_hash();
+>   	namespace_unlock();
+> -	free_mnt_ns(ns);
+> +	if (ns)
+> +		free_mnt_ns(ns);
+>   }
 >   
->   	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
->   	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
-> -	/* Don't allow unprivileged users to change mount flags */
-> -	if (flag & CL_UNPRIVILEGED) {
-> -		mnt->mnt.mnt_flags |= MNT_LOCK_ATIME;
-> -
-> -		if (mnt->mnt.mnt_flags & MNT_READONLY)
-> -			mnt->mnt.mnt_flags |= MNT_LOCK_READONLY;
-> -
-> -		if (mnt->mnt.mnt_flags & MNT_NODEV)
-> -			mnt->mnt.mnt_flags |= MNT_LOCK_NODEV;
-> -
-> -		if (mnt->mnt.mnt_flags & MNT_NOSUID)
-> -			mnt->mnt.mnt_flags |= MNT_LOCK_NOSUID;
-> -
-> -		if (mnt->mnt.mnt_flags & MNT_NOEXEC)
-> -			mnt->mnt.mnt_flags |= MNT_LOCK_NOEXEC;
-> -	}
-> -
-> -	/* Don't allow unprivileged users to reveal what is under a mount */
-> -	if ((flag & CL_UNPRIVILEGED) &&
-> -	    (!(flag & CL_EXPIRE) || list_empty(&old->mnt_expire)))
-> -		mnt->mnt.mnt_flags |= MNT_LOCKED;
->   
->   	atomic_inc(&sb->s_active);
->   	mnt->mnt.mnt_sb = sb;
-> @@ -1837,6 +1816,33 @@ int iterate_mounts(int (*f)(struct vfsmount *, void *), void *arg,
+>   void drop_collected_mounts(struct vfsmount *mnt)
+> @@ -2079,6 +2085,10 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+>   		attach_mnt(source_mnt, dest_mnt, dest_mp);
+>   		touch_mnt_namespace(source_mnt->mnt_ns);
+>   	} else {
+> +		if (source_mnt->mnt_ns) {
+> +			/* move from anon - the caller will destroy */
+> +			list_del_init(&source_mnt->mnt_ns->list);
+> +		}
+>   		mnt_set_mountpoint(dest_mnt, dest_mp, source_mnt);
+>   		commit_tree(source_mnt);
+>   	}
+> @@ -2537,13 +2547,37 @@ static inline int tree_contains_unbindable(struct mount *mnt)
 >   	return 0;
 >   }
 >   
-> +static void lock_mnt_tree(struct mount *mnt)
+> +/*
+> + * Check that there aren't references to earlier/same mount namespaces in the
+> + * specified subtree.  Such references can act as pins for mount namespaces
+> + * that aren't checked by the mount-cycle checking code, thereby allowing
+> + * cycles to be made.
+> + */
+> +static bool check_for_nsfs_mounts(struct mount *subtree)
 > +{
 > +	struct mount *p;
+> +	bool ret = false;
 > +
-> +	for (p = mnt; p; p = next_mnt(p, mnt)) {
-> +		int flags = p->mnt.mnt_flags;
-> +		/* Don't allow unprivileged users to change mount flags */
-> +		flags |= MNT_LOCK_ATIME;
+> +	lock_mount_hash();
+> +	for (p = subtree; p; p = next_mnt(p, subtree))
+> +		if (mnt_ns_loop(p->mnt.mnt_root))
+> +			goto out;
 > +
-> +		if (flags & MNT_READONLY)
-> +			flags |= MNT_LOCK_READONLY;
-> +
-> +		if (flags & MNT_NODEV)
-> +			flags |= MNT_LOCK_NODEV;
-> +
-> +		if (flags & MNT_NOSUID)
-> +			flags |= MNT_LOCK_NOSUID;
-> +
-> +		if (flags & MNT_NOEXEC)
-> +			flags |= MNT_LOCK_NOEXEC;
-> +		/* Don't allow unprivileged users to reveal what is under a mount */
-> +		if (list_empty(&p->mnt_expire))
-> +			flags |= MNT_LOCKED;
-> +		p->mnt.mnt_flags = flags;
-> +	}
+> +	ret = true;
+> +out:
+> +	unlock_mount_hash();
+> +	return ret;
 > +}
 > +
->   static void cleanup_group_ids(struct mount *mnt, struct mount *end)
+>   static int do_move_mount(struct path *old_path, struct path *new_path)
 >   {
+>   	struct path parent_path = {.mnt = NULL, .dentry = NULL};
+> +	struct mnt_namespace *ns;
 >   	struct mount *p;
-> @@ -1954,6 +1960,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
->   			struct mountpoint *dest_mp,
->   			struct path *parent_path)
->   {
-> +	struct user_namespace *user_ns = current->nsproxy->mnt_ns->user_ns;
->   	HLIST_HEAD(tree_list);
->   	struct mnt_namespace *ns = dest_mnt->mnt_ns;
->   	struct mountpoint *smp;
-> @@ -2004,6 +2011,9 @@ static int attach_recursive_mnt(struct mount *source_mnt,
->   				 child->mnt_mountpoint);
->   		if (q)
->   			mnt_change_mountpoint(child, smp, q);
-> +		/* Notice when we are propagating across user namespaces */
-> +		if (child->mnt_parent->mnt_ns->user_ns != user_ns)
-> +			lock_mnt_tree(child);
->   		commit_tree(child);
->   	}
->   	put_mountpoint(smp);
-> @@ -2941,13 +2951,18 @@ struct mnt_namespace *copy_mnt_ns(unsigned long flags, struct mnt_namespace *ns,
->   	/* First pass: copy the tree topology */
->   	copy_flags = CL_COPY_UNBINDABLE | CL_EXPIRE;
->   	if (user_ns != ns->user_ns)
-> -		copy_flags |= CL_SHARED_TO_SLAVE | CL_UNPRIVILEGED;
-> +		copy_flags |= CL_SHARED_TO_SLAVE;
->   	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
->   	if (IS_ERR(new)) {
->   		namespace_unlock();
->   		free_mnt_ns(new_ns);
->   		return ERR_CAST(new);
->   	}
-> +	if (user_ns != ns->user_ns) {
-> +		lock_mount_hash();
-> +		lock_mnt_tree(new);
-> +		unlock_mount_hash();
-> +	}
->   	new_ns->root = new;
->   	list_add_tail(&new_ns->list, &new->mnt_list);
+>   	struct mount *old;
+>   	struct mountpoint *mp;
+>   	int err;
+> +	bool attached;
 >   
-> diff --git a/fs/pnode.c b/fs/pnode.c
-> index 1100e810d855..7ea6cfb65077 100644
-> --- a/fs/pnode.c
-> +++ b/fs/pnode.c
-> @@ -214,7 +214,6 @@ static struct mount *next_group(struct mount *m, struct mount *origin)
+>   	mp = lock_mount(new_path);
+>   	if (IS_ERR(mp))
+> @@ -2551,12 +2585,19 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>   
+>   	old = real_mount(old_path->mnt);
+>   	p = real_mount(new_path->mnt);
+> +	attached = mnt_has_parent(old);
+> +	ns = old->mnt_ns;
+>   
+>   	err = -EINVAL;
+> -	if (!check_mnt(p) || !check_mnt(old))
+> +	/* The mountpoint must be in our namespace. */
+> +	if (!check_mnt(p))
+>   		goto out;
+>   
+> -	if (!mnt_has_parent(old))
+> +	/* The thing moved should be either ours or completely unattached. */
+> +	if (attached && !check_mnt(old))
+> +		goto out;
+> +
+> +	if (!attached && !is_anon_ns(ns))
+
+I think this is missing a check for ns != NULL, before passing it to 
+is_anon_ns().
+
+E.g. in case I called umount2(old_path, MNT_DETACH) beforehand.
+
+>   		goto out;
+>   
+>   	if (old->mnt.mnt_flags & MNT_LOCKED)
+> @@ -2571,7 +2612,7 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>   	/*
+>   	 * Don't move a mount residing in a shared parent.
+>   	 */
+> -	if (IS_MNT_SHARED(old->mnt_parent))
+> +	if (attached && IS_MNT_SHARED(old->mnt_parent))
+>   		goto out;
+>   	/*
+>   	 * Don't move a mount tree containing unbindable mounts to a destination
+> @@ -2580,12 +2621,14 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>   	if (IS_MNT_SHARED(p) && tree_contains_unbindable(old))
+>   		goto out;
+>   	err = -ELOOP;
+> +	if (!check_for_nsfs_mounts(old))
+> +		goto out;
+>   	for (; mnt_has_parent(p); p = p->mnt_parent)
+>   		if (p == old)
+>   			goto out;
+>   
+>   	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
+> -				   &parent_path);
+> +				   attached ? &parent_path : NULL);
+>   	if (err)
+>   		goto out;
+>   
+> @@ -2594,8 +2637,11 @@ static int do_move_mount(struct path *old_path, struct path *new_path)
+>   	list_del_init(&old->mnt_expire);
+>   out:
+>   	unlock_mount(mp);
+> -	if (!err)
+> +	if (!err) {
+>   		path_put(&parent_path);
+> +		if (!attached)
+> +			free_mnt_ns(ns);
+> +	}
+>   	return err;
 >   }
 >   
->   /* all accesses are serialized by namespace_sem */
-> -static struct user_namespace *user_ns;
->   static struct mount *last_dest, *first_source, *last_source, *dest_master;
->   static struct mountpoint *mp;
->   static struct hlist_head *list;
-> @@ -260,9 +259,6 @@ static int propagate_one(struct mount *m)
->   			type |= CL_MAKE_SHARED;
->   	}
->   		
-> -	/* Notice when we are propagating across user namespaces */
-> -	if (m->mnt_ns->user_ns != user_ns)
-> -		type |= CL_UNPRIVILEGED;
->   	child = copy_tree(last_source, last_source->mnt.mnt_root, type);
->   	if (IS_ERR(child))
->   		return PTR_ERR(child);
-> @@ -303,7 +299,6 @@ int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
->   	 * propagate_one(); everything is serialized by namespace_sem,
->   	 * so globals will do just fine.
->   	 */
-> -	user_ns = current->nsproxy->mnt_ns->user_ns;
->   	last_dest = dest_mnt;
->   	first_source = source_mnt;
->   	last_source = source_mnt;
-> diff --git a/fs/pnode.h b/fs/pnode.h
-> index dc87e65becd2..3960a83666cf 100644
-> --- a/fs/pnode.h
-> +++ b/fs/pnode.h
-> @@ -27,8 +27,7 @@
->   #define CL_MAKE_SHARED 		0x08
->   #define CL_PRIVATE 		0x10
->   #define CL_SHARED_TO_SLAVE	0x20
-> -#define CL_UNPRIVILEGED		0x40
-> -#define CL_COPY_MNT_NS_FILE	0x80
-> +#define CL_COPY_MNT_NS_FILE	0x40
+> @@ -3289,6 +3335,8 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
 >   
->   #define CL_COPY_ALL		(CL_COPY_UNBINDABLE | CL_COPY_MNT_NS_FILE)
->   
+>   /*
+>    * Move a mount from one place to another.
+> + * In combination with open_tree(OPEN_TREE_CLONE [| AT_RECURSIVE]) it can be
+> + * used to copy a mount subtree.
+>    *
+>    * Note the flags value is a combination of MOVE_MOUNT_* flags.
+>    */
 >
 >
 
-I can see that this covers copy_mnt_ns().  It should also cover what 
-will happen in future, if you pass an OPEN_TREE_CLONE fd to a process 
-with a different mnt_ns and mnt_ns->user_ns, and that process mounts the 
-fd using move_mount().  However, I can't work out how this covers mount 
-propagation across namespaces.
-
-The comment "Notice when we are propagating across user namespaces" is 
-moved to attach_recursive_mnt().  I can't find any call to 
-attach_recursive_mount() inside the mount propagation code.  Am I 
-overlooking something?
-
-Thanks
-Alan
