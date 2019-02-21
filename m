@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 262EAC43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E77C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E86E72083B
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB1F220818
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Feb 2019 23:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfBUXu4 (ORCPT
+        id S1727085AbfBUXwh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Feb 2019 18:50:56 -0500
-Received: from mga14.intel.com ([192.55.52.115]:3139 "EHLO mga14.intel.com"
+        Thu, 21 Feb 2019 18:52:37 -0500
+Received: from mga14.intel.com ([192.55.52.115]:3142 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726178AbfBUXuy (ORCPT
+        id S1726841AbfBUXu4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Feb 2019 18:50:54 -0500
+        Thu, 21 Feb 2019 18:50:56 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:50:54 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:50:55 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
-   d="scan'208";a="322394801"
+   d="scan'208";a="322394815"
 Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
-  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:50:52 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:50:54 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
@@ -42,14 +42,10 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v3 01/20] x86/jump_label: Use text_poke_early() during early init
-Date:   Thu, 21 Feb 2019 15:44:32 -0800
-Message-Id: <20190221234451.17632-2-rick.p.edgecombe@intel.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v3 03/20] x86/mm: Save DRs when loading a temporary mm
+Date:   Thu, 21 Feb 2019 15:44:34 -0800
+Message-Id: <20190221234451.17632-4-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
 References: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
@@ -59,43 +55,74 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Nadav Amit <namit@vmware.com>
 
-There is no apparent reason not to use text_poke_early() during
-early-init, since no patching of code that might be on the stack is done
-and only a single core is running.
-
-This is required for the next patches that would set a temporary mm for
-text poking, and this mm is only initialized after some static-keys are
-enabled/disabled.
+Prevent user watchpoints from mistakenly firing while the temporary mm
+is being used. As the addresses that of the temporary mm might overlap
+those of the user-process, this is necessary to prevent wrong signals
+or worse things from happening.
 
 Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/jump_label.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/mmu_context.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index f99bd26bd3f1..e7d8c636b228 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -50,7 +50,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index d684b954f3c0..0d6c72ece750 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -13,6 +13,7 @@
+ #include <asm/tlbflush.h>
+ #include <asm/paravirt.h>
+ #include <asm/mpx.h>
++#include <asm/debugreg.h>
  
--	if (early_boot_irqs_disabled)
+ extern atomic64_t last_mm_ctx_id;
+ 
+@@ -358,6 +359,7 @@ static inline unsigned long __get_current_cr3_fast(void)
+ 
+ typedef struct {
+ 	struct mm_struct *prev;
++	unsigned short bp_enabled : 1;
+ } temp_mm_state_t;
+ 
+ /*
+@@ -380,6 +382,22 @@ static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
+ 	lockdep_assert_irqs_disabled();
+ 	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
+ 	switch_mm_irqs_off(NULL, mm, current);
++
 +	/*
-+	 * As long as only a single processor is running and the code is still
-+	 * not marked as RO, text_poke_early() can be used; Checking that
-+	 * system_state is SYSTEM_BOOTING guarantees it.
++	 * If breakpoints are enabled, disable them while the temporary mm is
++	 * used. Userspace might set up watchpoints on addresses that are used
++	 * in the temporary mm, which would lead to wrong signals being sent or
++	 * crashes.
++	 *
++	 * Note that breakpoints are not disabled selectively, which also causes
++	 * kernel breakpoints (e.g., perf's) to be disabled. This might be
++	 * undesirable, but still seems reasonable as the code that runs in the
++	 * temporary mm should be short.
 +	 */
-+	if (system_state == SYSTEM_BOOTING)
- 		poker = text_poke_early;
++	state.bp_enabled = hw_breakpoint_active();
++	if (state.bp_enabled)
++		hw_breakpoint_disable();
++
+ 	return state;
+ }
  
- 	if (type == JUMP_LABEL_JMP) {
+@@ -387,6 +405,13 @@ static inline void unuse_temporary_mm(temp_mm_state_t prev)
+ {
+ 	lockdep_assert_irqs_disabled();
+ 	switch_mm_irqs_off(NULL, prev.prev, current);
++
++	/*
++	 * Restore the breakpoints if they were disabled before the temporary mm
++	 * was loaded.
++	 */
++	if (prev.bp_enabled)
++		hw_breakpoint_restore();
+ }
+ 
+ #endif /* _ASM_X86_MMU_CONTEXT_H */
 -- 
 2.17.1
 
