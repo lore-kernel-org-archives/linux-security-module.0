@@ -2,124 +2,178 @@ Return-Path: <SRS0=b/fy=Q4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0927C00319
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Feb 2019 16:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E861C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Feb 2019 23:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A173E2084D
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Feb 2019 16:52:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="IlMSoOkO"
+	by mail.kernel.org (Postfix) with ESMTP id 5F93120842
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Feb 2019 23:50:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbfBUQwi (ORCPT
+        id S1726237AbfBUXux (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Feb 2019 11:52:38 -0500
-Received: from sonic315-14.consmr.mail.gq1.yahoo.com ([98.137.65.38]:40046
-        "EHLO sonic315-14.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725866AbfBUQwi (ORCPT
+        Thu, 21 Feb 2019 18:50:53 -0500
+Received: from mga14.intel.com ([192.55.52.115]:3139 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726178AbfBUXux (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Feb 2019 11:52:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1550767957; bh=bmadhQQC7bqlXt50DQRo82QBsvRuMgLNFCg6SUydqC4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=IlMSoOkOjUK+yPVQ0ZMWz63w8vBrFaOzJ69QVLcXnABkqVlZmhz7VqNVlDqGNZr1zgfSGSjr1tgF0EXs3xc51rh0bCmV3+rlo8QpF38ulqneDwRJLL/uhy6Az82y1NkgmjvhnlUbdx0m9i7TbSHER5O6piL7xTYZ+WS3oo7aYYCFl9kFOvWWfFrau72j6LgV6eVTzpo7ZgdW/nr/I/pwXLbMWkCqdKgXwaGPe35yKBHVdKPY1DPSxMyosjV4QifTrjvO8Fj8i3HX9ut6ml8x9FqMqJ6nJ2b7lHRcxmKqzv5JrclLdUPjM+qsivA1WxDv7Hrmc/dputQpFRKUbS5Utg==
-X-YMail-OSG: wjKwoRQVM1llJLMsIX5iiGMWW8_mC.TDwjjm2pCJ.0mYSeVwVcBQunjptSfuH73
- _Jv.HnP73r._jO5Xb3GDlSlGKrw2JRIlC9D5d4ZutmmVi8S602czlH1smVXn8__yRKRo3hxc7qYt
- mdMSVwKZYc6ER1vBuXriGIJ9FeL30.Rh8MnNr7yL7Ofl_Vu2z4n9AP1JRAqsNuGhfM5mV603h7lM
- UWP6hfUHlkp4kekC6DVqCwvMy53HeKCFqOCSg9vD2o8aPs8GVvrex7lXMzjBgeK5ynKk2G0kbH4D
- Lk5sFAT6N9FpGiTx8ZpCf1wgM7sQPnP13Ksdbq55r_mNcqIad.L3.v8Q.yF8ooo4htYx9y41tque
- nALHOxsuJ2Ww_9iuytg5vJlI_HXIEtEOI234NDeiEMZzisNd4ZNZGwobAhnx8ZLDOBVR9B.ry8SW
- 8IsAVIRTngia2kAVBgmrGJcS_jgoNMpjtDs_rj2fYzz7B40k4qNUfWnpgjlltYEI39d9xHS8Ca8U
- 68pNlN5XfoZ9Esn7mWVTKzQpLTvF1bN7svH7RbeHXCxaJAuy8PbNFg7Mfv7lMbSF5EriWXAPxcVJ
- i8aQ3MiZlhYtGwOYk1nLGAUsXPlr0t7B8czSyxLe0S4qjFZMFt5fAIRDW_6czgsO1cMKmIjBzQiH
- nsWOOc7UU6mQDlHqlmglrJFtEfjuiRqv9EG4_XlgEq4k3al.j7FT1VXYc7mtUDMoN.LUHm9DnGPp
- pLDIOMgrJaJEW3uOMv3cIjnJwYFXYxYy.5JhI9.T_BTYnlscKNX3seNUvIV3r9xZXxsk__DWGY_W
- UCkMjWZIt1IQ.z414frmIz4N8rKQezaDQ6IsN.AvqxtPyFp1pLArpfx4Wzc2LVmRMsluv9vbH.Wy
- PDMvOumnL4QRh1hpjcsqJjzz7U_cfbi9Hr3YChyOrzI0m2jYNGmN7fdW13GU4bDeObXU_6EFzAzw
- XfxUxxNxAPD2EqdgqWa5_nLq3M3ecoUCLhYL2XmpJ68UZDGUXb1yaueWIHX5b7MlzIMe9VcgPvkQ
- b27ZDUjbOvvRQYlDQWTdmegl9bh63OrwMAQrrN90FlR9Nc1Z.8Wfz_yugZtVpR4F4Yb8WTjxEzc.
- g_ruySKVrPXg43Kk.o9vjQw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Thu, 21 Feb 2019 16:52:37 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp420.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 53967e73d2f51e432241f3b0340d2690;
-          Thu, 21 Feb 2019 16:52:34 +0000 (UTC)
-Subject: Re: [PATCH v6 5/5] kernfs: initialize security of newly created nodes
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Tejun Heo <tj@kernel.org>, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, casey@schaufler-ca.com
-References: <20190214095015.16032-1-omosnace@redhat.com>
- <20190214095015.16032-6-omosnace@redhat.com>
- <20190214154854.GO50184@devbig004.ftw2.facebook.com>
- <CAFqZXNuOg9ex_WqCCKYzPQSeqbGmo-KP4Yh9TB4bbMZziG314A@mail.gmail.com>
- <20190215155014.GP50184@devbig004.ftw2.facebook.com>
- <CAFqZXNvVb75K9ZemVObcBB+rntL38_VfY5P6jyAbuwjymt6MQQ@mail.gmail.com>
- <8c1ddde8-c7aa-7dca-3a0f-2d425c6879b4@schaufler-ca.com>
- <CAFqZXNtJFrtAqnu=CmoSPnPM312DKF73ALkLeekMk8Me5ojntw@mail.gmail.com>
- <0942b8c9-79a3-47a9-a28d-276d322fd9e1@schaufler-ca.com>
- <CAFqZXNvWyBQ5g6nwD4AiePxEDXGP2DY31S0RWttqcRSa90SakA@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <2de9569d-2368-1dc9-f757-0a7a0a116c16@schaufler-ca.com>
-Date:   Thu, 21 Feb 2019 08:52:33 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Thu, 21 Feb 2019 18:50:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 15:50:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
+   d="scan'208";a="322394796"
+Received: from linksys13920.jf.intel.com (HELO rpedgeco-DESK5.jf.intel.com) ([10.54.75.11])
+  by fmsmga005.fm.intel.com with ESMTP; 21 Feb 2019 15:50:51 -0800
+From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH v3 00/20] Merge text_poke fixes and executable lockdowns
+Date:   Thu, 21 Feb 2019 15:44:31 -0800
+Message-Id: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAFqZXNvWyBQ5g6nwD4AiePxEDXGP2DY31S0RWttqcRSa90SakA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/21/2019 1:13 AM, Ondrej Mosnacek wrote:
-> On Tue, Feb 19, 2019 at 5:43 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> .....
->> The state you're maintaining is kernfs state, not LSM
->> infrastructure state. The state should be maintained in
->> kernfs, not in the LSM infrastructure.
-> But I'm not maintaining any state. I'm merely trying to answer the
-> query "Is there anything that will handle this hook? Do I need to
-> prepare stuff for it?", which is obviously a query about the LSM
-> state. Granted, ideally we wouldn't need to do any preparatory work at
-> all, but that would require exposing more of the kernfs internals
-> (which brings its own issues, but maybe I'll need to look into that
-> approach more...).
+This patchset improves several overlapping issues around stale TLB entries and
+W^X violations. It is combined from "x86/alternative: text_poke() enhancements
+v7" [1] and "Don’t leave executable TLB entries to freed pages v2" [2] patchsets
+that were conflicting.
 
-It sounds like you're bumping up against the limitations
-of the finely honed optimized implementation of kernfs. :(
-If it where still the pre-android era, when using an LSM
-was rare, the check for an LSM might have made sense. Today,
-with the vast majority of systems using LSMs*, optimizing for
-the no LSM case is nonsensical.
+The related issues that this fixes:
+1. Fixmap PTEs that are used for patching are available for access from
+   other cores and might be exploited. They are not even flushed from
+   the TLB in remote cores, so the risk is even higher. Address this
+   issue by introducing a temporary mm that is only used during
+   patching. Unfortunately, due to init ordering, fixmap is still used
+   during boot-time patching. Future patches can eliminate the need for
+   it.
+2. Missing lockdep assertion to ensure text_mutex is taken. It is
+   actually not always taken, so fix the instances that were found not
+   to take the lock (although they should be safe even without taking
+   the lock).
+3. Module_alloc returning memory that is RWX until a module is finished
+   loading.
+4. Sometimes when memory is freed via the module subsystem, an
+   executable permissioned TLB entry can remain to a freed page. If the
+   page is re-used to back an address that will receive data from
+   userspace, it can result in user data being mapped as executable in
+   the kernel. The root of this behavior is vfree lazily flushing the
+   TLB, but not lazily freeing the underlying pages.
 
----
-* Android, Tizen, Fedora/RHEL, Ubuntu
 
-> ...
-> Kernfs is an important component of the kernel. So is
-> the security infrastructure. I would hope you don't want
-> to turn this into a contest to see which maintainer has
-> the biggest clout.
-> Oh, no, you misunderstood my intention. I just got a feeling that this
-> thread was turning into a discussion about perceived code ugliness
-> (and about which subsystem that ugliness ends up in), which is
-> naturally a very subjective topic, so I wanted to know what is the
-> opinion of the people that have the final decision about whether the
-> code should get in or not. Anyway, I'll try to find a more elegant
-> variant of the solution once again, hopefully I manage to get to
-> something less controversial.
+Changes v2 to v3:
+ - Fix commit messages and comments [Boris]
+ - Rename VM_HAS_SPECIAL_PERMS [Boris]
+ - Remove unnecessary local variables [Boris]
+ - Rename set_alias_*() functions [Boris, Andy]
+ - Save/restore DR registers when using temporary mm
+ - Move line deletion from patch 10 to patch 17
 
-Thank you. I believe (which, of course, doesn't make it true)
-that when a component goes outside the general system architecture
-the way that kernfs does *even for performance reasons* that it is
-responsible for the edge cases it encounters. I know that I've had
-to do a good bit of that in Smack.
-  
+Changes v1 to v2:
+ - Adding “Reviewed-by tag” [Masami]
+ - Comment instead of code to warn against module removal while
+   patching [Masami]
+ - Avoiding open-coded TLB flush [Andy]
+ - Remove "This patch" [Borislav Petkov]
+ - Not set global bit during text poking [Andy, hpa]
+ - Add Ack from [Pavel Machek]
+ - Split patch 16 "Plug in new special vfree flag" into 4 patches (16-19)
+   to make it easier to review. There were no code changes.
+
+The changes from "Don’t leave executable TLB entries to freed pages
+v2" to v1:
+ - Add support for case of hibernate trying to save an unmapped page
+   on the directmap. (Ard Biesheuvel)
+ - No week arch breakout for vfree-ing special memory (Andy Lutomirski)
+ - Avoid changing deferred free code by moving modules init free to work
+   queue (Andy Lutomirski)
+ - Plug in new flag for kprobes and ftrace
+ - More arch generic names for set_pages functions (Ard Biesheuvel)
+ - Fix for TLB not always flushing the directmap (Nadav Amit)
+ 
+Changes from "x86/alternative: text_poke() enhancements v7" to v1
+ - Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
+ - Remove text_poke usage from ftrace (Nadav)
+ 
+[1] https://lkml.org/lkml/2018/12/5/200
+[2] https://lkml.org/lkml/2018/12/11/1571
+
+Andy Lutomirski (1):
+  x86/mm: Introduce temporary mm structs
+
+Nadav Amit (12):
+  x86/jump_label: Use text_poke_early() during early init
+  x86/mm: Save DRs when loading a temporary mm
+  fork: Provide a function for copying init_mm
+  x86/alternative: Initialize temporary mm for patching
+  x86/alternative: Use temporary mm for text poking
+  x86/kgdb: Avoid redundant comparison of patched code
+  x86/ftrace: Set trampoline pages as executable
+  x86/kprobes: Set instruction page as executable
+  x86/module: Avoid breaking W^X while loading modules
+  x86/jump-label: Remove support for custom poker
+  x86/alternative: Remove the return value of text_poke_*()
+  x86/alternative: Comment about module removal races
+
+Rick Edgecombe (7):
+  x86/mm/cpa: Add set_direct_map_ functions
+  mm: Make hibernate handle unmapped pages
+  vmalloc: Add flag for free of special permsissions
+  modules: Use vmalloc special flag
+  bpf: Use vmalloc special flag
+  x86/ftrace: Use vmalloc special flag
+  x86/kprobes: Use vmalloc special flag
+
+ arch/Kconfig                         |   4 +
+ arch/x86/Kconfig                     |   1 +
+ arch/x86/include/asm/fixmap.h        |   2 -
+ arch/x86/include/asm/mmu_context.h   |  58 ++++++++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/set_memory.h    |   3 +
+ arch/x86/include/asm/text-patching.h |   6 +-
+ arch/x86/kernel/alternative.c        | 153 +++++++++++++++++++++------
+ arch/x86/kernel/ftrace.c             |  14 ++-
+ arch/x86/kernel/jump_label.c         |  21 ++--
+ arch/x86/kernel/kgdb.c               |  14 +--
+ arch/x86/kernel/kprobes/core.c       |  19 +++-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/mm/init_64.c                |  36 +++++++
+ arch/x86/mm/pageattr.c               |  16 +--
+ arch/x86/xen/mmu_pv.c                |   2 -
+ include/linux/filter.h               |  18 +---
+ include/linux/mm.h                   |  18 ++--
+ include/linux/sched/task.h           |   1 +
+ include/linux/set_memory.h           |  10 ++
+ include/linux/vmalloc.h              |  13 +++
+ init/main.c                          |   3 +
+ kernel/bpf/core.c                    |   1 -
+ kernel/fork.c                        |  24 +++--
+ kernel/module.c                      |  82 +++++++-------
+ kernel/power/snapshot.c              |   5 +-
+ mm/page_alloc.c                      |   7 +-
+ mm/vmalloc.c                         | 113 ++++++++++++++++----
+ 28 files changed, 475 insertions(+), 174 deletions(-)
+
+-- 
+2.17.1
 
