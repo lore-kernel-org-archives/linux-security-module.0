@@ -2,103 +2,118 @@ Return-Path: <SRS0=OQ6N=Q5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CDDC43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 00:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE3AC43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 10:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F06D4207E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 00:55:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E85D020700
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 10:00:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfBVAzv (ORCPT
+        id S1726117AbfBVKAZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Feb 2019 19:55:51 -0500
-Received: from mga11.intel.com ([192.55.52.93]:32672 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726178AbfBVAzv (ORCPT
+        Fri, 22 Feb 2019 05:00:25 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:49758 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbfBVKAZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Feb 2019 19:55:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 16:55:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
-   d="scan'208";a="135401743"
-Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
-  by FMSMGA003.fm.intel.com with ESMTP; 21 Feb 2019 16:55:50 -0800
-Received: from orsmsx115.amr.corp.intel.com (10.22.240.11) by
- ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 21 Feb 2019 16:55:49 -0800
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.70]) by
- ORSMSX115.amr.corp.intel.com ([169.254.4.136]) with mapi id 14.03.0415.000;
- Thu, 21 Feb 2019 16:55:49 -0800
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "rostedt@goodmis.org" <rostedt@goodmis.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux_dti@icloud.com" <linux_dti@icloud.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH v3 18/20] x86/ftrace: Use vmalloc special flag
-Thread-Topic: [PATCH v3 18/20] x86/ftrace: Use vmalloc special flag
-Thread-Index: AQHUykBbJ0x53lHatE6GL2AlMLdzQ6XreugAgAAJbQA=
-Date:   Fri, 22 Feb 2019 00:55:49 +0000
-Message-ID: <3cd659eb8c7d43cf46bebc6562c1c26bb6c51b51.camel@intel.com>
-References: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
-         <20190221234451.17632-19-rick.p.edgecombe@intel.com>
-         <20190221192210.3e038fc3@gandalf.local.home>
-In-Reply-To: <20190221192210.3e038fc3@gandalf.local.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.11]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5A4A8CD00D4DF448B0BFB3995685F0A4@intel.com>
-Content-Transfer-Encoding: base64
+        Fri, 22 Feb 2019 05:00:25 -0500
+Received: from static-50-53-47-167.bvtn.or.frontiernet.net ([50.53.47.167] helo=[10.8.192.6])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1gx7d0-0001tA-DP; Fri, 22 Feb 2019 10:00:22 +0000
+Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com
+References: <20190212182318.GA16669@beast>
+ <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
+ <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp>
+ <ac50e659-89a8-3b25-52fd-53e1d8a0b934@I-love.SAKURA.ne.jp>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: Canonical
+Message-ID: <5e68990a-216b-bd12-e852-608c69b8f3fd@canonical.com>
+Date:   Fri, 22 Feb 2019 02:00:16 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <ac50e659-89a8-3b25-52fd-53e1d8a0b934@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gVGh1LCAyMDE5LTAyLTIxIGF0IDE5OjIyIC0wNTAwLCBTdGV2ZW4gUm9zdGVkdCB3cm90ZToN
-Cj4gT24gVGh1LCAyMSBGZWIgMjAxOSAxNTo0NDo0OSAtMDgwMA0KPiBSaWNrIEVkZ2Vjb21iZSA8
-cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+IHdyb3RlOg0KPiANCj4gPiBVc2UgbmV3IGZsYWcg
-Vk1fRkxVU0hfUkVTRVRfUEVSTVMgZm9yIGhhbmRsaW5nIGZyZWVpbmcgb2Ygc3BlY2lhbA0KPiA+
-IHBlcm1pc3Npb25lZCBtZW1vcnkgaW4gdm1hbGxvYyBhbmQgcmVtb3ZlIHBsYWNlcyB3aGVyZSBt
-ZW1vcnkgd2FzIHNldCBOWA0KPiA+IGFuZCBSVyBiZWZvcmUgZnJlZWluZyB3aGljaCBpcyBubyBs
-b25nZXIgbmVlZGVkLg0KPiA+IA0KPiA+IENjOiBTdGV2ZW4gUm9zdGVkdCA8cm9zdGVkdEBnb29k
-bWlzLm9yZz4NCj4gPiBBY2tlZC1ieTogU3RldmVuIFJvc3RlZHQgKFZNd2FyZSkgPHJvc3RlZHRA
-Z29vZG1pcy5vcmc+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmljayBFZGdlY29tYmUgPHJpY2sucC5l
-ZGdlY29tYmVAaW50ZWwuY29tPg0KPiA+IC0tLQ0KPiA+ICBhcmNoL3g4Ni9rZXJuZWwvZnRyYWNl
-LmMgfCA2ICsrLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA0IGRl
-bGV0aW9ucygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvZnRyYWNl
-LmMgYi9hcmNoL3g4Ni9rZXJuZWwvZnRyYWNlLmMNCj4gPiBpbmRleCAxM2M4MjQ5YjE5N2YuLjkz
-ZWZlMzk1NTMzMyAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvZnRyYWNlLmMNCj4g
-PiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvZnRyYWNlLmMNCj4gPiBAQCAtNjkyLDEwICs2OTIsNiBA
-QCBzdGF0aWMgaW5saW5lIHZvaWQgKmFsbG9jX3RyYW1wKHVuc2lnbmVkIGxvbmcgc2l6ZSkNCj4g
-PiAgfQ0KPiA+ICBzdGF0aWMgaW5saW5lIHZvaWQgdHJhbXBfZnJlZSh2b2lkICp0cmFtcCwgaW50
-IHNpemUpDQo+IA0KPiBBcyBzaXplIGlzIG5vIGxvbmdlciB1c2VkIHdpdGhpbiB0aGUgZnVuY3Rp
-b24sIGNhbiB5b3UgcmVtb3ZlIHRoYXQgdG9vLg0KPiANCj4gVGhhbmtzLA0KPiANCj4gLS0gU3Rl
-dmUNCj4gDQpHb29kIHBvaW50LCBJJ2xsIHJlbW92ZSBpdC4NCg0KVGhhbmtzLA0KDQpSaWNrDQoN
-CltzbmlwXQ0K
+On 2/21/19 5:12 AM, Tetsuo Handa wrote:
+> On 2019/02/17 14:16, Tetsuo Handa wrote:
+>> On 2019/02/14 1:05, Casey Schaufler wrote:
+>>> On 2/12/2019 10:23 AM, Kees Cook wrote:
+>>>> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
+>>>> used on the command line, and report that it is happening.
+>>>>
+>>>> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+>>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>>
+>>> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>
+>>
+>> The manual for TOMOYO was updated to follow this change.
+>> SELinux folks and AppArmor folks, can we apply this change?
+>>
+> 
+> No response from Ubuntu kernel team. Redirecting to AppArmor list...
+> 
+
+yeah this is okay
+
+Acked-by: John Johansen <john.johansen@canonical.com>
+
