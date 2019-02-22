@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BCDC10F18
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C90B8C4360F
 	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A2472086A
+	by mail.kernel.org (Postfix) with ESMTP id 92AA220657
 	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:57:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfBVO55 (ORCPT
+        id S1726599AbfBVO55 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Fri, 22 Feb 2019 09:57:57 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36401 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbfBVO5y (ORCPT
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39299 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbfBVO55 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Feb 2019 09:57:54 -0500
-Received: by mail-wr1-f67.google.com with SMTP id o17so2715253wrw.3
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 06:57:54 -0800 (PST)
+        Fri, 22 Feb 2019 09:57:57 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l5so2694164wrw.6
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 06:57:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LtC53CwnIpZppJiGjM2dPMSUQdkOPhnvKUZTLjV/uWw=;
-        b=joMh58NIIJhOzEUDbfJIazaexABf+Zn3QeKCO8jhaH4Q8SYANGIq8YvwxV/bNT0BHw
-         cOEJg1m45pGF8BXEi5cdjRHWtLR+CeYLVZUkpc96kvqLVvL1Mjmmg+taxXqgmkRLsWbq
-         quCfsC6iGXWuKxsdNUSl6643U9JCW5aQgRcrvk7qxJtamCYzBxuytC2c2hYxcLQlboyH
-         EdToU5BXmR2zSIzbgMaLWQlbEV3FMPgZXZeZXAn3pdGBIqATrgqgMt6w0r8H/717FXZi
-         L4XdyLYYbYiMF1T+ifNVIFFYrw6P+mtSW/J0OGMMngLpaIfszr1SCFStIuxEUv/2duvU
-         5iCA==
-X-Gm-Message-State: AHQUAubD9C3WIP8Ra3BPmtMoIFE13iddMb3QO/Zie4LZo1grsFZwztwT
-        jqj31WKaFihbc8pomRj1V3LtwQ==
-X-Google-Smtp-Source: AHgI3IafQQvCpXtC0mmzQdj04YWnd6hHIiJKlzp1ZbkFQwsaQpEaDW5EebOja8mQysZkx4fVojSulg==
-X-Received: by 2002:adf:e9c2:: with SMTP id l2mr3096428wrn.315.1550847473411;
-        Fri, 22 Feb 2019 06:57:53 -0800 (PST)
+        bh=RQqTehVwyEq+5RjrXTh4vr5ainm8upgUWoiVA/zT8OY=;
+        b=UukmsiJTViDmh9uUgBFFDiWcJXtV7TqCn1yYt+61sC0MSDquzrazkmGpEwAdY1Xzdu
+         M0/UURP4tKGma/Kxot+5bfaln1+UQGnXVxZCvz+2GS2TssaTjPpPNL8u5OzWekfL2GCB
+         lxu2gz3cT4Y+b/5I9cOyAMNmxDdcnJl/KZ3zRRjZBK0imDcdFzW6vGqIgseSu41oPWzT
+         0crApcPYkrfFcJm9bU0uMpcHfkW+BRZTa0viCCRRKtp60lNesIajwQg8hWzxP9rpsh3e
+         Zav+YwjldXi9KNN3/dAAhfmWytbJIkdcHtE5M/4uznmbz8orU39jJ283i+ZzDvGT5KJQ
+         gYPg==
+X-Gm-Message-State: AHQUAuZeV/RcvJduH2qWa4zC1cIlRdV84Vo4dx1LHfw+fMZRDO92GHTW
+        VNyRXf1Pu8uhohVrw+iOk7r24Q==
+X-Google-Smtp-Source: AHgI3IbD9XBZzLkfcM82OGUQ3YUOi1ufH+//zGIwnvAYMcrFN4VP1/zwsfwqxudhQpdFpdpussPzig==
+X-Received: by 2002:adf:ee01:: with SMTP id y1mr3208021wrn.268.1550847474588;
+        Fri, 22 Feb 2019 06:57:54 -0800 (PST)
 Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 203sm1503912wme.30.2019.02.22.06.57.51
+        by smtp.gmail.com with ESMTPSA id 203sm1503912wme.30.2019.02.22.06.57.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 06:57:52 -0800 (PST)
+        Fri, 22 Feb 2019 06:57:53 -0800 (PST)
 From:   Ondrej Mosnacek <omosnace@redhat.com>
 To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
 Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
@@ -52,9 +52,9 @@ Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
         James Morris <jmorris@namei.org>,
         linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
         Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v7 4/7] kernfs: use simple_xattrs for security attributes
-Date:   Fri, 22 Feb 2019 15:57:15 +0100
-Message-Id: <20190222145718.5740-5-omosnace@redhat.com>
+Subject: [PATCH v7 5/7] LSM: add new hook for kernfs node initialization
+Date:   Fri, 22 Feb 2019 15:57:16 +0100
+Message-Id: <20190222145718.5740-6-omosnace@redhat.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190222145718.5740-1-omosnace@redhat.com>
 References: <20190222145718.5740-1-omosnace@redhat.com>
@@ -64,137 +64,236 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Replace the special handling of security xattrs with simple_xattrs, as
-is already done for the trusted xattrs. This simplifies the code and
-allows LSMs to use more than just a single xattr to do their business.
+This patch introduces a new security hook that is intended for
+initializing the security data for newly created kernfs nodes, which
+provide a way of storing a non-default security context, but need to
+operate independently from mounts (and therefore may not have an
+associated inode at the moment of creation).
+
+The main motivation is to allow kernfs nodes to inherit the context of
+the parent under SELinux, similar to the behavior of
+security_inode_init_security(). Other LSMs may implement their own logic
+for handling the creation of new nodes.
+
+This patch also adds helper functions to <linux/kernfs.h> for
+getting/setting security xattrs of a kernfs node so that LSMs hooks are
+able to do their job. Other important attributes should be accessible
+direcly in the kernfs_node fields (in case there is need for more, then
+new helpers should be added to kernfs.h along with the patch that needs
+them).
 
 Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
- fs/kernfs/dir.c             |  7 ++---
- fs/kernfs/inode.c           | 55 ++-----------------------------------
- fs/kernfs/kernfs-internal.h |  2 --
- 3 files changed, 4 insertions(+), 60 deletions(-)
+ fs/kernfs/inode.c         | 48 +++++++++++++++++++++++++++++++--------
+ include/linux/kernfs.h    | 15 ++++++++++++
+ include/linux/lsm_hooks.h | 13 +++++++++++
+ include/linux/security.h  |  9 ++++++++
+ security/security.c       |  6 +++++
+ 5 files changed, 82 insertions(+), 9 deletions(-)
 
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index e3e00d9be70d..6048f2ce85c4 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -531,12 +531,9 @@ void kernfs_put(struct kernfs_node *kn)
- 
- 	kfree_const(kn->name);
- 
--	if (kn->iattr) {
--		if (kn->iattr->ia_secdata)
--			security_release_secctx(kn->iattr->ia_secdata,
--						kn->iattr->ia_secdata_len);
-+	if (kn->iattr)
- 		simple_xattrs_free(&kn->iattr->xattrs);
--	}
-+
- 	kfree(kn->iattr);
- 	spin_lock(&kernfs_idr_lock);
- 	idr_remove(&root->ino_idr, kn->id.ino);
 diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index 7a7985961bbf..1acdfbf4b86a 100644
+index 1acdfbf4b86a..a831b2186a27 100644
 --- a/fs/kernfs/inode.c
 +++ b/fs/kernfs/inode.c
-@@ -137,23 +137,6 @@ out:
- 	return error;
+@@ -288,12 +288,11 @@ int kernfs_iop_permission(struct inode *inode, int mask)
+ 	return generic_permission(inode, mask);
  }
  
--static int kernfs_node_setsecdata(struct kernfs_iattrs *attrs, void **secdata,
--				  u32 *secdata_len)
--{
--	void *old_secdata;
--	size_t old_secdata_len;
--
--	old_secdata = attrs->ia_secdata;
--	old_secdata_len = attrs->ia_secdata_len;
--
--	attrs->ia_secdata = *secdata;
--	attrs->ia_secdata_len = *secdata_len;
--
--	*secdata = old_secdata;
--	*secdata_len = old_secdata_len;
--	return 0;
--}
--
- ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size)
+-static int kernfs_xattr_get(const struct xattr_handler *handler,
+-			    struct dentry *unused, struct inode *inode,
+-			    const char *suffix, void *value, size_t size)
++static int kernfs_node_xattr_get(const struct xattr_handler *handler,
++				 struct kernfs_node *kn, const char *suffix,
++				 void *value, size_t size)
  {
- 	struct kernfs_node *kn = kernfs_dentry_node(dentry);
-@@ -189,15 +172,12 @@ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
- 	struct kernfs_iattrs *attrs = kn->iattr;
- 
- 	inode->i_mode = kn->mode;
--	if (attrs) {
-+	if (attrs)
- 		/*
- 		 * kernfs_node has non-default attributes get them from
- 		 * persistent copy in kernfs_node.
- 		 */
- 		set_inode_attr(inode, attrs);
--		security_inode_notifysecctx(inode, attrs->ia_secdata,
--					    attrs->ia_secdata_len);
--	}
- 
- 	if (kernfs_type(kn) == KERNFS_DIR)
- 		set_nlink(inode, kn->dir.subdirs + 2);
-@@ -345,41 +325,10 @@ static const struct xattr_handler kernfs_trusted_xattr_handler = {
- 	.set = kernfs_xattr_set,
- };
- 
--static int kernfs_security_xattr_set(const struct xattr_handler *handler,
--				     struct dentry *unused, struct inode *inode,
--				     const char *suffix, const void *value,
--				     size_t size, int flags)
--{
+ 	const char *name = xattr_full_name(handler, suffix);
 -	struct kernfs_node *kn = inode->i_private;
--	struct kernfs_iattrs *attrs;
--	void *secdata;
--	u32 secdata_len = 0;
--	int error;
--
--	attrs = kernfs_iattrs(kn);
--	if (!attrs)
--		return -ENOMEM;
--
--	error = security_inode_setsecurity(inode, suffix, value, size, flags);
--	if (error)
--		return error;
--	error = security_inode_getsecctx(inode, &secdata, &secdata_len);
--	if (error)
--		return error;
--
--	mutex_lock(&kernfs_mutex);
--	error = kernfs_node_setsecdata(attrs, &secdata, &secdata_len);
--	mutex_unlock(&kernfs_mutex);
--
--	if (secdata)
--		security_release_secctx(secdata, secdata_len);
--	return error;
--}
--
- static const struct xattr_handler kernfs_security_xattr_handler = {
- 	.prefix = XATTR_SECURITY_PREFIX,
+ 	struct kernfs_iattrs *attrs;
+ 
+ 	attrs = kernfs_iattrs_noalloc(kn);
+@@ -303,13 +302,11 @@ static int kernfs_xattr_get(const struct xattr_handler *handler,
+ 	return simple_xattr_get(&attrs->xattrs, name, value, size);
+ }
+ 
+-static int kernfs_xattr_set(const struct xattr_handler *handler,
+-			    struct dentry *unused, struct inode *inode,
+-			    const char *suffix, const void *value,
+-			    size_t size, int flags)
++static int kernfs_node_xattr_set(const struct xattr_handler *handler,
++				 struct kernfs_node *kn, const char *suffix,
++				 const void *value, size_t size, int flags)
+ {
+ 	const char *name = xattr_full_name(handler, suffix);
+-	struct kernfs_node *kn = inode->i_private;
+ 	struct kernfs_iattrs *attrs;
+ 
+ 	attrs = kernfs_iattrs(kn);
+@@ -319,6 +316,25 @@ static int kernfs_xattr_set(const struct xattr_handler *handler,
+ 	return simple_xattr_set(&attrs->xattrs, name, value, size, flags);
+ }
+ 
++static int kernfs_xattr_get(const struct xattr_handler *handler,
++			    struct dentry *unused, struct inode *inode,
++			    const char *suffix, void *value, size_t size)
++{
++	struct kernfs_node *kn = inode->i_private;
++
++	return kernfs_node_xattr_get(handler, kn, suffix, value, size);
++}
++
++static int kernfs_xattr_set(const struct xattr_handler *handler,
++			    struct dentry *unused, struct inode *inode,
++			    const char *suffix, const void *value,
++			    size_t size, int flags)
++{
++	struct kernfs_node *kn = inode->i_private;
++
++	return kernfs_node_xattr_set(handler, kn, suffix, value, size, flags);
++}
++
+ static const struct xattr_handler kernfs_trusted_xattr_handler = {
+ 	.prefix = XATTR_TRUSTED_PREFIX,
  	.get = kernfs_xattr_get,
--	.set = kernfs_security_xattr_set,
-+	.set = kernfs_xattr_set,
+@@ -336,3 +352,17 @@ const struct xattr_handler *kernfs_xattr_handlers[] = {
+ 	&kernfs_security_xattr_handler,
+ 	NULL
  };
++
++int kernfs_security_xattr_get(struct kernfs_node *kn, const char *suffix,
++			      void *value, size_t size)
++{
++	return kernfs_node_xattr_get(&kernfs_security_xattr_handler,
++				     kn, suffix, value, size);
++}
++
++int kernfs_security_xattr_set(struct kernfs_node *kn, const char *suffix,
++			      void *value, size_t size, int flags)
++{
++	return kernfs_node_xattr_set(&kernfs_security_xattr_handler,
++				     kn, suffix, value, size, flags);
++}
+diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
+index 5b36b1287a5a..db8d1aa57e95 100644
+--- a/include/linux/kernfs.h
++++ b/include/linux/kernfs.h
+@@ -352,6 +352,11 @@ int kernfs_rename_ns(struct kernfs_node *kn, struct kernfs_node *new_parent,
+ int kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr);
+ void kernfs_notify(struct kernfs_node *kn);
  
- const struct xattr_handler *kernfs_xattr_handlers[] = {
-diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-index 388c1193c4fa..0e1f1aa7df1e 100644
---- a/fs/kernfs/kernfs-internal.h
-+++ b/fs/kernfs/kernfs-internal.h
-@@ -24,8 +24,6 @@ struct kernfs_iattrs {
- 	struct timespec64	ia_atime;
- 	struct timespec64	ia_mtime;
- 	struct timespec64	ia_ctime;
--	void			*ia_secdata;
--	u32			ia_secdata_len;
++int kernfs_security_xattr_get(struct kernfs_node *kn, const char *suffix,
++			      void *value, size_t size);
++int kernfs_security_xattr_set(struct kernfs_node *kn, const char *suffix,
++			      void *value, size_t size, int flags);
++
+ const void *kernfs_super_ns(struct super_block *sb);
+ struct dentry *kernfs_mount_ns(struct file_system_type *fs_type, int flags,
+ 			       struct kernfs_root *root, unsigned long magic,
+@@ -456,6 +461,16 @@ static inline int kernfs_setattr(struct kernfs_node *kn,
  
- 	struct simple_xattrs	xattrs;
- };
+ static inline void kernfs_notify(struct kernfs_node *kn) { }
+ 
++static inline int kernfs_security_xattr_get(struct kernfs_node *kn,
++					    const char *suffix, void *value,
++					    size_t size)
++{ return -ENOSYS; }
++
++static inline int kernfs_security_xattr_set(struct kernfs_node *kn,
++					    const char *suffix, void *value,
++					    size_t size, int flags)
++{ return -ENOSYS; }
++
+ static inline const void *kernfs_super_ns(struct super_block *sb)
+ { return NULL; }
+ 
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 9a0bdf91e646..71af02629c63 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -429,6 +429,15 @@
+  *	to abort the copy up. Note that the caller is responsible for reading
+  *	and writing the xattrs as this hook is merely a filter.
+  *
++ * Security hooks for kernfs node operations
++ *
++ * @kernfs_init_security
++ *	Initialize the security context of a newly created kernfs node based
++ *	on its own and its parent's attributes.
++ *
++ *	@kn_dir the parent kernfs node
++ *	@kn the new child kernfs node
++ *
+  * Security hooks for file operations
+  *
+  * @file_permission:
+@@ -1558,6 +1567,9 @@ union security_list_options {
+ 	int (*inode_copy_up)(struct dentry *src, struct cred **new);
+ 	int (*inode_copy_up_xattr)(const char *name);
+ 
++	int (*kernfs_init_security)(struct kernfs_node *kn_dir,
++				    struct kernfs_node *kn);
++
+ 	int (*file_permission)(struct file *file, int mask);
+ 	int (*file_alloc_security)(struct file *file);
+ 	void (*file_free_security)(struct file *file);
+@@ -1858,6 +1870,7 @@ struct security_hook_heads {
+ 	struct hlist_head inode_getsecid;
+ 	struct hlist_head inode_copy_up;
+ 	struct hlist_head inode_copy_up_xattr;
++	struct hlist_head kernfs_init_security;
+ 	struct hlist_head file_permission;
+ 	struct hlist_head file_alloc_security;
+ 	struct hlist_head file_free_security;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index dbfb5a66babb..f63765af1816 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -51,6 +51,7 @@ struct fown_struct;
+ struct file_operations;
+ struct msg_msg;
+ struct xattr;
++struct kernfs_node;
+ struct xfrm_sec_ctx;
+ struct mm_struct;
+ 
+@@ -291,6 +292,8 @@ int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer
+ void security_inode_getsecid(struct inode *inode, u32 *secid);
+ int security_inode_copy_up(struct dentry *src, struct cred **new);
+ int security_inode_copy_up_xattr(const char *name);
++int security_kernfs_init_security(struct kernfs_node *kn_dir,
++				  struct kernfs_node *kn);
+ int security_file_permission(struct file *file, int mask);
+ int security_file_alloc(struct file *file);
+ void security_file_free(struct file *file);
+@@ -783,6 +786,12 @@ static inline int security_inode_copy_up(struct dentry *src, struct cred **new)
+ 	return 0;
+ }
+ 
++static inline int security_kernfs_init_security(struct kernfs_node *kn_dir,
++						struct kernfs_node *kn)
++{
++	return 0;
++}
++
+ static inline int security_inode_copy_up_xattr(const char *name)
+ {
+ 	return -EOPNOTSUPP;
+diff --git a/security/security.c b/security/security.c
+index f1b8d2587639..2864fb99feb2 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -892,6 +892,12 @@ int security_inode_copy_up_xattr(const char *name)
+ }
+ EXPORT_SYMBOL(security_inode_copy_up_xattr);
+ 
++int security_kernfs_init_security(struct kernfs_node *kn_dir,
++				  struct kernfs_node *kn)
++{
++	return call_int_hook(kernfs_init_security, 0, kn_dir, kn);
++}
++
+ int security_file_permission(struct file *file, int mask)
+ {
+ 	int ret;
 -- 
 2.20.1
 
