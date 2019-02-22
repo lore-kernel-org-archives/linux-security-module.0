@@ -2,157 +2,347 @@ Return-Path: <SRS0=OQ6N=Q5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA939C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 15:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C78C10F00
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 15:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1F8B20700
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 15:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC0820823
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 15:41:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="m4K454S7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfBVPgW (ORCPT
+        id S1727183AbfBVPlB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Feb 2019 10:36:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45260 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725942AbfBVPgW (ORCPT
+        Fri, 22 Feb 2019 10:41:01 -0500
+Received: from uhil19pa11.eemsg.mail.mil ([214.24.21.84]:17024 "EHLO
+        uhil19pa11.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbfBVPlA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Feb 2019 10:36:22 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7BC08A796;
-        Fri, 22 Feb 2019 15:36:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AC2CE60BE6;
-        Fri, 22 Feb 2019 15:36:19 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] KEYS: always initialize keyring_index_key::desc_len
-From:   David Howells <dhowells@redhat.com>
-To:     jmorris@namei.org
-Cc:     syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com,
-        Eric Biggers <ebiggers@google.com>, stable@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 22 Feb 2019 15:36:18 +0000
-Message-ID: <155084977835.23242.14844856182331713906.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Fri, 22 Feb 2019 10:41:00 -0500
+X-EEMSG-check-017: 388207712|UHIL19PA11_EEMSG_MP9.csd.disa.mil
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by uhil19pa11.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 22 Feb 2019 15:40:47 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1550850047; x=1582386047;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=BdvFTOE9Ef8FKaUyAUQeLKYjwqqiRL5h0hiwLJfTjoE=;
+  b=m4K454S7kyclpgij+wAL8kAd18ieyvUx1fjVCfoL/DvjYbocwLGuUXoj
+   esp/zQOc1iEXNH67tSXugdFwrAkVwC4kSzCvkHxH7EKtDxMSTQ4MQzxJQ
+   ioNr8U0vlelt0sbNOtP0jlh+TI6ctCeFLvpwQm6p4AnmN7a5XxwMkNJNS
+   cjk2Cg4xG8JW98JszS5+qsIhl5nwpmv3GwfOtqNsBdd81vlnkXiczhtkM
+   UYVI8my8sgKhmd36DErmban84+B28xQP3mJmNHNpWoHO9wC2f1kJDZGPy
+   SXzo+ng5Fa7A608edV4siWGVEqiGb7+wyvbDmtnwbd88tA0w1m0A5iYoB
+   A==;
+X-IronPort-AV: E=Sophos;i="5.58,400,1544486400"; 
+   d="scan'208";a="20795241"
+IronPort-PHdr: =?us-ascii?q?9a23=3AKsv06BeCjib9DIj+m92QC3StlGMj4u6mDksu8p?=
+ =?us-ascii?q?Mizoh2WeGdxc2+YR2N2/xhgRfzUJnB7Loc0qyK6/CmATRIyK3CmUhKSIZLWR?=
+ =?us-ascii?q?4BhJdetC0bK+nBN3fGKuX3ZTcxBsVIWQwt1Xi6NU9IBJS2PAWK8TW94jEIBx?=
+ =?us-ascii?q?rwKxd+KPjrFY7OlcS30P2594HObwlSizexfbB/IA+qoQnNq8IbnZZsJqEtxx?=
+ =?us-ascii?q?XTv3BGYf5WxWRmJVKSmxbz+MK994N9/ipTpvws6ddOXb31cKokQ7NYCi8mM3?=
+ =?us-ascii?q?0u683wqRbDVwqP6WACXWgQjxFFHhLK7BD+Xpf2ryv6qu9w0zSUMMHqUbw5Xy?=
+ =?us-ascii?q?mp4rx1QxH0ligIKz858HnWisNuiqJbvAmhrAF7z4LNfY2ZKOZycqbbcNwUX2?=
+ =?us-ascii?q?pBWttaWTJHDI2ycoADC/MNMfhEo4X4oVYFsBmwChS2BO731zFGmHH206053e?=
+ =?us-ascii?q?ovHw7J0w4vEM4BvnnPsNX4Nr0fXfypwKTGzzjOae5d1zfn6IjPdxAsueyCXa?=
+ =?us-ascii?q?5ufsrJyUkgCQXFhUiNp4zgJTyV0uANvHab7uF9Uu+vkHMoqxpqrzizxsYjlo?=
+ =?us-ascii?q?nJhoUPxlDC7iV22pw5JdK/SE5leNOpFoZbuSKCN4ZuX88vTG5ltDw6x7Ebo5?=
+ =?us-ascii?q?K3YicHxIo9yxLCbfGMbpKG7Qj5VOmLJDd1nHdleLWiiBms6UWg0ej8VtWs0F?=
+ =?us-ascii?q?ZNsypFjsHAtnAT2BzX7ciKUud98V272TaOygDT8ftIIVw0lKXHK54hxaQ8lp?=
+ =?us-ascii?q?wPvkTYAiD6gkD2jK6Sdkk8++io7froYqn+q5OBOIJ5hRvyP6QzlsClH+g1PR?=
+ =?us-ascii?q?YCU3KG9eik0b3s50z5QLFEjv0slanZtYjXJd8Gqa6iGAJVzoYi5Aq/Dzehyt?=
+ =?us-ascii?q?gYm2IHI0hfdBKIiIjpJUnCIOrkAvenn1SsjDBryujBPr3kBZXNNX7Dn639cr?=
+ =?us-ascii?q?lj8ENc0hQ8ws1f551OFrENOu78Wkj0tNbAFB82LxS0w/r7CNV6zo4eQnyAAq?=
+ =?us-ascii?q?uYMKPUrF+J6fkiI/eDZIALojbxMfsl6OD0jX8/h1AdebOl3ZwNaHC3Bv5mOV?=
+ =?us-ascii?q?mWYWLwgtcdFmcHphI+Q/b3iF2GSjNTf2y9X7845j0iDYKmCoDDRpqzj7CbwC?=
+ =?us-ascii?q?i7GZhWbHhcCl+QCXfoa5mEW/AUZSKWI89hlCEEVLe4R486yx6hqBL6y6BmLu?=
+ =?us-ascii?q?rI+iwUrJfj1N9o6O3OkRE96yd5D9qS026TVWF4hGAISCEs3KB5v0N9zk2P0a?=
+ =?us-ascii?q?9ig/xXDdZT/e9GUh8mNZ7AyOx3E8zyWgDac9eKVlmmWNOmDi81Tt4rxN8OeU?=
+ =?us-ascii?q?l9Ec24jh/fxyqqH6MVl7uTCZMo6K3cxGb+JsZmxnbdyKYhj0MpQtZBNW2imK?=
+ =?us-ascii?q?F/7RHfCJLTnEmDi6mqcqEc1jbX9Gif1WqOoF1YUAloXKXeQ38ffETWosri60?=
+ =?us-ascii?q?PCVbCuDbAnMwtHycKYNqRKbdjph01cRPj/INTef36xm2CoCBaH3LODcoXqe2?=
+ =?us-ascii?q?Yd3CjGDEgEkgYT/WuJNAgwASehvmTeAyF0GlLzYkPs9u9+pGm8Tk8uwAGAd1?=
+ =?us-ascii?q?dh2Kat+h4JmfycTOse3rABuCcmsTV0Ble938nNBtqGvQVhebtTYdIn7FdAz2?=
+ =?us-ascii?q?LZuBR3Poa8IKB6ml4ebwN3slvq1xV2DIVAjMcroGokzAppNK2Xzk1BeC2c3Z?=
+ =?us-ascii?q?3rJL3XJXf9/Aq1Z67VxF7eytCW9bkL6PgirFXjpg6pHFI483p7y9lVz2ec5p?=
+ =?us-ascii?q?LSAQUOXpLxSEE39wVip7HBeSQ9+YzU2mN2MaWusT/NxcgpBO07xRakZdtfN7?=
+ =?us-ascii?q?mEFAChW/EdUu+oJPYnmRCMaQkCNetf9+ZgOMahbP2P06ODJutsnDu6y29A5d?=
+ =?us-ascii?q?Y5mlmB8yt6V/7gwZkI2beb0xGBWjO6i02u9ojPkJ1ALRQVGXCygXz8DZNVTr?=
+ =?us-ascii?q?V7YIJODGCpOcDxzdJ70c3DQXldoWW/CksG1cnhQh+ba1jwzEUEzkgMiWC2ki?=
+ =?us-ascii?q?u/iTpvmncmqbTJj3+G+PjraBdSYj0Df2Jll1q5ZNHu190=3D?=
+X-IPAS-Result: =?us-ascii?q?A2CTAACuF3Bc/wHyM5BlHAEBAQQBAQcEAQGBVAQBAQsBg?=
+ =?us-ascii?q?VkqgTcBMieEB5Q5AQEBAQEBBoEQJYk7kF44AYRAAoN+IjcGDQEDAQEBAQEBA?=
+ =?us-ascii?q?gFsKII6KQGCZwEFIwQRQRALDgoCAiYCAlcGAQwGAgEBgl89gWYNrAR8M4VEh?=
+ =?us-ascii?q?GmBC4s9F3iBB4ERJwyCX4gLgjUiAooKggWEQEs7kgQJkloGGYFxkR6KToEQk?=
+ =?us-ascii?q?wIigVYrCAIYCCEPgyeCKBcTjikhAzCBBQEBjwQBAQ?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 22 Feb 2019 15:40:37 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x1MFeakb008558;
+        Fri, 22 Feb 2019 10:40:36 -0500
+Subject: Re: [PATCH v7 3/7] selinux: try security xattr after genfs for kernfs
+ filesystems
+To:     Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+References: <20190222145718.5740-1-omosnace@redhat.com>
+ <20190222145718.5740-4-omosnace@redhat.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <9cf19efd-2853-210d-2094-cacd23090e12@tycho.nsa.gov>
+Date:   Fri, 22 Feb 2019 10:40:18 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190222145718.5740-4-omosnace@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 22 Feb 2019 15:36:21 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+On 2/22/19 9:57 AM, Ondrej Mosnacek wrote:
+> Since kernfs supports the security xattr handlers, we can simply use
+> these to determine the inode's context, dropping the need to update it
+> from kernfs explicitly using a security_inode_notifysecctx() call.
+> 
+> We achieve this by setting a new sbsec flag SE_SBGENFS_XATTR to all
+> mounts that are known to use kernfs under the hood and then fetching the
+> xattrs after determining the fallback genfs sid in
+> inode_doinit_with_dentry() when this flag is set.
+> 
+> This will allow implementing full security xattr support in kernfs and
+> removing the ...notifysecctx() call in a subsequent patch.
+> 
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 
-syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
-called from construct_alloc_key() during sys_request_key(), because the
-length of the key description was never calculated.
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 
-The problem is that we rely on ->desc_len being initialized by
-search_process_keyrings(), specifically by search_nested_keyrings().
-But, if the process isn't subscribed to any keyrings that never happens.
-
-Fix it by always initializing keyring_index_key::desc_len as soon as the
-description is set, like we already do in some places.
-
-The following program reproduces the BUG_ON() when it's run as root and
-no session keyring has been installed.  If it doesn't work, try removing
-pam_keyinit.so from /etc/pam.d/login and rebooting.
-
-    #include <stdlib.h>
-    #include <unistd.h>
-    #include <keyutils.h>
-
-    int main(void)
-    {
-            int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
-
-            keyctl_setperm(id, KEY_OTH_WRITE);
-            setreuid(5000, 5000);
-            request_key("user", "desc", "", id);
-    }
-
-Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
-Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Cc: stable@vger.kernel.org
----
-
- security/keys/keyring.c          |    4 +---
- security/keys/proc.c             |    3 +--
- security/keys/request_key.c      |    1 +
- security/keys/request_key_auth.c |    2 +-
- 4 files changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index eadebb92986a..f81372f53dd7 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -661,9 +661,6 @@ static bool search_nested_keyrings(struct key *keyring,
- 	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
- 	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
- 
--	if (ctx->index_key.description)
--		ctx->index_key.desc_len = strlen(ctx->index_key.description);
--
- 	/* Check to see if this top-level keyring is what we are looking for
- 	 * and whether it is valid or not.
- 	 */
-@@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyring,
- 	struct keyring_search_context ctx = {
- 		.index_key.type		= type,
- 		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
- 		.cred			= current_cred(),
- 		.match_data.cmp		= key_default_cmp,
- 		.match_data.raw_data	= description,
-diff --git a/security/keys/proc.c b/security/keys/proc.c
-index d2b802072693..78ac305d715e 100644
---- a/security/keys/proc.c
-+++ b/security/keys/proc.c
-@@ -165,8 +165,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
- 	int rc;
- 
- 	struct keyring_search_context ctx = {
--		.index_key.type		= key->type,
--		.index_key.description	= key->description,
-+		.index_key		= key->index_key,
- 		.cred			= m->file->f_cred,
- 		.match_data.cmp		= lookup_user_key_possessed,
- 		.match_data.raw_data	= key,
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 3f56a312dd35..7a0c6b666ff0 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -531,6 +531,7 @@ struct key *request_key_and_link(struct key_type *type,
- 	struct keyring_search_context ctx = {
- 		.index_key.type		= type,
- 		.index_key.description	= description,
-+		.index_key.desc_len	= strlen(description),
- 		.cred			= current_cred(),
- 		.match_data.cmp		= key_default_cmp,
- 		.match_data.raw_data	= description,
-diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
-index afc304e8b61e..bda6201c6c45 100644
---- a/security/keys/request_key_auth.c
-+++ b/security/keys/request_key_auth.c
-@@ -247,7 +247,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
- 	struct key *authkey;
- 	key_ref_t authkey_ref;
- 
--	sprintf(description, "%x", target_id);
-+	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
- 
- 	authkey_ref = search_process_keyrings(&ctx);
- 
+> ---
+>   security/selinux/hooks.c            | 157 +++++++++++++++-------------
+>   security/selinux/include/security.h |   1 +
+>   2 files changed, 85 insertions(+), 73 deletions(-)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 81e012c66d95..0f62757b6634 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -793,11 +793,13 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+>   
+>   	if (!strcmp(sb->s_type->name, "debugfs") ||
+>   	    !strcmp(sb->s_type->name, "tracefs") ||
+> -	    !strcmp(sb->s_type->name, "sysfs") ||
+> -	    !strcmp(sb->s_type->name, "pstore") ||
+> +	    !strcmp(sb->s_type->name, "pstore"))
+> +		sbsec->flags |= SE_SBGENFS;
+> +
+> +	if (!strcmp(sb->s_type->name, "sysfs") ||
+>   	    !strcmp(sb->s_type->name, "cgroup") ||
+>   	    !strcmp(sb->s_type->name, "cgroup2"))
+> -		sbsec->flags |= SE_SBGENFS;
+> +		sbsec->flags |= SE_SBGENFS | SE_SBGENFS_XATTR;
+>   
+>   	if (!sbsec->behavior) {
+>   		/*
+> @@ -1392,6 +1394,67 @@ static int selinux_genfs_get_sid(struct dentry *dentry,
+>   	return rc;
+>   }
+>   
+> +static int inode_doinit_use_xattr(struct inode *inode, struct dentry *dentry,
+> +				  u32 def_sid, u32 *sid)
+> +{
+> +#define INITCONTEXTLEN 255
+> +	char *context;
+> +	unsigned int len;
+> +	int rc;
+> +
+> +	len = INITCONTEXTLEN;
+> +	context = kmalloc(len + 1, GFP_NOFS);
+> +	if (!context)
+> +		return -ENOMEM;
+> +
+> +	context[len] = '\0';
+> +	rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, context, len);
+> +	if (rc == -ERANGE) {
+> +		kfree(context);
+> +
+> +		/* Need a larger buffer.  Query for the right size. */
+> +		rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, NULL, 0);
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		len = rc;
+> +		context = kmalloc(len + 1, GFP_NOFS);
+> +		if (!context)
+> +			return -ENOMEM;
+> +
+> +		context[len] = '\0';
+> +		rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX,
+> +				    context, len);
+> +	}
+> +	if (rc < 0) {
+> +		kfree(context);
+> +		if (rc != -ENODATA) {
+> +			pr_warn("SELinux: %s:  getxattr returned %d for dev=%s ino=%ld\n",
+> +				__func__, -rc, inode->i_sb->s_id, inode->i_ino);
+> +			return rc;
+> +		}
+> +		*sid = def_sid;
+> +		return 0;
+> +	}
+> +
+> +	rc = security_context_to_sid_default(&selinux_state, context, rc, sid,
+> +					     def_sid, GFP_NOFS);
+> +	if (rc) {
+> +		char *dev = inode->i_sb->s_id;
+> +		unsigned long ino = inode->i_ino;
+> +
+> +		if (rc == -EINVAL) {
+> +			pr_notice_ratelimited("SELinux: inode=%lu on dev=%s was found to have an invalid context=%s.  This indicates you may need to relabel the inode or the filesystem in question.\n",
+> +					      ino, dev, context);
+> +		} else {
+> +			pr_warn("SELinux: %s:  context_to_sid(%s) returned %d for dev=%s ino=%ld\n",
+> +				__func__, context, -rc, dev, ino);
+> +		}
+> +	}
+> +	kfree(context);
+> +	return 0;
+> +}
+> +
+>   /* The inode's security attributes must be initialized before first use. */
+>   static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dentry)
+>   {
+> @@ -1400,9 +1463,6 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
+>   	u32 task_sid, sid = 0;
+>   	u16 sclass;
+>   	struct dentry *dentry;
+> -#define INITCONTEXTLEN 255
+> -	char *context = NULL;
+> -	unsigned len = 0;
+>   	int rc = 0;
+>   
+>   	if (isec->initialized == LABEL_INITIALIZED)
+> @@ -1470,72 +1530,11 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
+>   			goto out;
+>   		}
+>   
+> -		len = INITCONTEXTLEN;
+> -		context = kmalloc(len+1, GFP_NOFS);
+> -		if (!context) {
+> -			rc = -ENOMEM;
+> -			dput(dentry);
+> -			goto out;
+> -		}
+> -		context[len] = '\0';
+> -		rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, context, len);
+> -		if (rc == -ERANGE) {
+> -			kfree(context);
+> -
+> -			/* Need a larger buffer.  Query for the right size. */
+> -			rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, NULL, 0);
+> -			if (rc < 0) {
+> -				dput(dentry);
+> -				goto out;
+> -			}
+> -			len = rc;
+> -			context = kmalloc(len+1, GFP_NOFS);
+> -			if (!context) {
+> -				rc = -ENOMEM;
+> -				dput(dentry);
+> -				goto out;
+> -			}
+> -			context[len] = '\0';
+> -			rc = __vfs_getxattr(dentry, inode, XATTR_NAME_SELINUX, context, len);
+> -		}
+> +		rc = inode_doinit_use_xattr(inode, dentry, sbsec->def_sid,
+> +					    &sid);
+>   		dput(dentry);
+> -		if (rc < 0) {
+> -			if (rc != -ENODATA) {
+> -				pr_warn("SELinux: %s:  getxattr returned "
+> -				       "%d for dev=%s ino=%ld\n", __func__,
+> -				       -rc, inode->i_sb->s_id, inode->i_ino);
+> -				kfree(context);
+> -				goto out;
+> -			}
+> -			/* Map ENODATA to the default file SID */
+> -			sid = sbsec->def_sid;
+> -			rc = 0;
+> -		} else {
+> -			rc = security_context_to_sid_default(&selinux_state,
+> -							     context, rc, &sid,
+> -							     sbsec->def_sid,
+> -							     GFP_NOFS);
+> -			if (rc) {
+> -				char *dev = inode->i_sb->s_id;
+> -				unsigned long ino = inode->i_ino;
+> -
+> -				if (rc == -EINVAL) {
+> -					if (printk_ratelimit())
+> -						pr_notice("SELinux: inode=%lu on dev=%s was found to have an invalid "
+> -							"context=%s.  This indicates you may need to relabel the inode or the "
+> -							"filesystem in question.\n", ino, dev, context);
+> -				} else {
+> -					pr_warn("SELinux: %s:  context_to_sid(%s) "
+> -					       "returned %d for dev=%s ino=%ld\n",
+> -					       __func__, context, -rc, dev, ino);
+> -				}
+> -				kfree(context);
+> -				/* Leave with the unlabeled SID */
+> -				rc = 0;
+> -				break;
+> -			}
+> -		}
+> -		kfree(context);
+> +		if (rc)
+> +			goto out;
+>   		break;
+>   	case SECURITY_FS_USE_TASK:
+>   		sid = task_sid;
+> @@ -1586,9 +1585,21 @@ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dent
+>   				goto out;
+>   			rc = selinux_genfs_get_sid(dentry, sclass,
+>   						   sbsec->flags, &sid);
+> -			dput(dentry);
+> -			if (rc)
+> +			if (rc) {
+> +				dput(dentry);
+>   				goto out;
+> +			}
+> +
+> +			if ((sbsec->flags & SE_SBGENFS_XATTR) &&
+> +			    (inode->i_opflags & IOP_XATTR)) {
+> +				rc = inode_doinit_use_xattr(inode, dentry,
+> +							    sid, &sid);
+> +				if (rc) {
+> +					dput(dentry);
+> +					goto out;
+> +				}
+> +			}
+> +			dput(dentry);
+>   		}
+>   		break;
+>   	}
+> diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+> index f68fb25b5702..6e5928f951da 100644
+> --- a/security/selinux/include/security.h
+> +++ b/security/selinux/include/security.h
+> @@ -58,6 +58,7 @@
+>   #define SE_SBINITIALIZED	0x0100
+>   #define SE_SBPROC		0x0200
+>   #define SE_SBGENFS		0x0400
+> +#define SE_SBGENFS_XATTR	0x0800
+>   
+>   #define CONTEXT_STR	"context="
+>   #define FSCONTEXT_STR	"fscontext="
+> 
 
