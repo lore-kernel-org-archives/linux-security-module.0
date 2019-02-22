@@ -2,42 +2,35 @@ Return-Path: <SRS0=OQ6N=Q5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7EBC43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 17:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DE3C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 18:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 160A62070B
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 17:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65CE4206B6
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 18:15:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbfBVR6F (ORCPT
+        id S1725942AbfBVSPQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Feb 2019 12:58:05 -0500
-Received: from namei.org ([65.99.196.166]:53646 "EHLO namei.org"
+        Fri, 22 Feb 2019 13:15:16 -0500
+Received: from namei.org ([65.99.196.166]:53660 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725832AbfBVR6F (ORCPT
+        id S1725832AbfBVSPQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Feb 2019 12:58:05 -0500
+        Fri, 22 Feb 2019 13:15:16 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x1MHviVm014713;
-        Fri, 22 Feb 2019 17:57:44 GMT
-Date:   Sat, 23 Feb 2019 04:57:44 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x1MIFBbr016281;
+        Fri, 22 Feb 2019 18:15:11 GMT
+Date:   Sat, 23 Feb 2019 05:15:11 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-cc:     John Johansen <john.johansen@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v2] security: mark expected switch fall-throughs and add
- a missing break
-In-Reply-To: <20190208205453.GA3232@embeddedor>
-Message-ID: <alpine.LRH.2.21.1902230457250.27514@namei.org>
-References: <20190208205453.GA3232@embeddedor>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-security-module@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Eric Biggers <ebiggers@google.com>
+Subject: [GIT PULL] More key subsystem fixes for 5.0
+Message-ID: <alpine.LRH.2.21.1902230513480.27514@namei.org>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -45,26 +38,29 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 8 Feb 2019, Gustavo A. R. Silva wrote:
+Please pull these fixes from Eric Biggers.
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warnings:
-> 
-> security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> 
 
-Applied to
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+The following changes since commit 8a61716ff2ab23eddd1f7a05a075a374e4d0c3d4:
 
--- 
-James Morris
-<jmorris@namei.org>
+  Merge tag 'ceph-for-5.0-rc8' of git://github.com/ceph/ceph-client (2019-02-21 09:43:37 -0800)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.0-rc7
+
+for you to fetch changes up to ede0fa98a900e657d1fcd80b50920efc896c1a4c:
+
+  KEYS: always initialize keyring_index_key::desc_len (2019-02-22 10:11:34 -0800)
+
+----------------------------------------------------------------
+Eric Biggers (2):
+      KEYS: user: Align the payload buffer
+      KEYS: always initialize keyring_index_key::desc_len
+
+ include/keys/user-type.h         | 2 +-
+ security/keys/keyring.c          | 4 +---
+ security/keys/proc.c             | 3 +--
+ security/keys/request_key.c      | 1 +
+ security/keys/request_key_auth.c | 2 +-
+ 5 files changed, 5 insertions(+), 7 deletions(-)
