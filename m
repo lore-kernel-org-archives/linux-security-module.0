@@ -2,157 +2,157 @@ Return-Path: <SRS0=OQ6N=Q5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1359C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA939C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 15:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1DB820657
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:58:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1F8B20700
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 15:36:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbfBVO6B (ORCPT
+        id S1727328AbfBVPgW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Feb 2019 09:58:01 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37562 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727043AbfBVO6A (ORCPT
+        Fri, 22 Feb 2019 10:36:22 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45260 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725942AbfBVPgW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Feb 2019 09:58:00 -0500
-Received: by mail-wm1-f65.google.com with SMTP id x10so2226410wmg.2
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 06:57:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lIV1fCtG86s0m7c7WVIkMbP81jHJSbE5ZarjCCqDsws=;
-        b=SMj5vA4BRcIK5n7RO2t4YKO5PyfAGeqA+o4BiwLJ0lGE71xhbGgBQIguQXSEyxESGE
-         4sx6UICTIRkQ5gDKKP/JF2ki5f9/gLhMJ+Vr6Wk+wAPtwAPxQt51Gw1UWQrL/zgVgjYw
-         O4XPZd+sp5uogA8XtaLqHxvwHkQd88xGYs6IuPnK0hUpSi8El6kKQoSgQo2krhuX7W+a
-         5Hq0pLCse0RC5rWJgUKoXBOActeAGaitZ9QEv372EUh3Yt60SwUsyIODLK/6Gc8KgLcq
-         OCae6jLNguTyESPidmFlbDODVhYtkr96C8aO8aYMBPCVpmd+YWVXdwx+XcrbZZ+dpHfe
-         8HaA==
-X-Gm-Message-State: AHQUAuaQjAl0d9PSVoCRpPH8E4VNewfiXtVa8ABCBfWKoE8MitSOdmgl
-        rrb7av4GdDBDYsbZgg9c9Mb0fw==
-X-Google-Smtp-Source: AHgI3IZGtmfvx6O88/ej785uZA2eS30KPDhLGylbngJTAqcI40/W4v3FYL1C1dejIT3+K57f22cKLg==
-X-Received: by 2002:a1c:1902:: with SMTP id 2mr2872288wmz.150.1550847477314;
-        Fri, 22 Feb 2019 06:57:57 -0800 (PST)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 203sm1503912wme.30.2019.02.22.06.57.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 06:57:56 -0800 (PST)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v7 7/7] kernfs: initialize security of newly created nodes
-Date:   Fri, 22 Feb 2019 15:57:18 +0100
-Message-Id: <20190222145718.5740-8-omosnace@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190222145718.5740-1-omosnace@redhat.com>
-References: <20190222145718.5740-1-omosnace@redhat.com>
+        Fri, 22 Feb 2019 10:36:22 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7BC08A796;
+        Fri, 22 Feb 2019 15:36:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AC2CE60BE6;
+        Fri, 22 Feb 2019 15:36:19 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] KEYS: always initialize keyring_index_key::desc_len
+From:   David Howells <dhowells@redhat.com>
+To:     jmorris@namei.org
+Cc:     syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com,
+        Eric Biggers <ebiggers@google.com>, stable@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 22 Feb 2019 15:36:18 +0000
+Message-ID: <155084977835.23242.14844856182331713906.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 22 Feb 2019 15:36:21 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use the new security_kernfs_init_security() hook to allow LSMs to
-possibly assign a non-default security context to a newly created kernfs
-node based on the attributes of the new node and also its parent node.
+From: Eric Biggers <ebiggers@google.com>
 
-This fixes an issue with cgroupfs under SELinux, where newly created
-cgroup subdirectories/files would not inherit its parent's context if
-it had been set explicitly to a non-default value (other than the genfs
-context specified by the policy). This can be reproduced as follows (on
-Fedora/RHEL):
+syzbot hit the 'BUG_ON(index_key->desc_len == 0);' in __key_link_begin()
+called from construct_alloc_key() during sys_request_key(), because the
+length of the key description was never calculated.
 
-    # mkdir /sys/fs/cgroup/unified/test
-    # # Need permissive to change the label under Fedora policy:
-    # setenforce 0
-    # chcon -t container_file_t /sys/fs/cgroup/unified/test
-    # ls -lZ /sys/fs/cgroup/unified
-    total 0
-    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.controllers
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.depth
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.max.descendants
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.procs
-    -r--r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.stat
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.subtree_control
-    -rw-r--r--.  1 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 cgroup.threads
-    drwxr-xr-x.  2 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 init.scope
-    drwxr-xr-x. 26 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:21 system.slice
-    drwxr-xr-x.  3 root root system_u:object_r:container_file_t:s0 0 Jan 29 03:15 test
-    drwxr-xr-x.  3 root root system_u:object_r:cgroup_t:s0         0 Jan 29 03:06 user.slice
-    # mkdir /sys/fs/cgroup/unified/test/subdir
+The problem is that we rely on ->desc_len being initialized by
+search_process_keyrings(), specifically by search_nested_keyrings().
+But, if the process isn't subscribed to any keyrings that never happens.
 
-Actual result:
+Fix it by always initializing keyring_index_key::desc_len as soon as the
+description is set, like we already do in some places.
 
-    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
-    drwxr-xr-x. 2 root root system_u:object_r:cgroup_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
+The following program reproduces the BUG_ON() when it's run as root and
+no session keyring has been installed.  If it doesn't work, try removing
+pam_keyinit.so from /etc/pam.d/login and rebooting.
 
-Expected result:
+    #include <stdlib.h>
+    #include <unistd.h>
+    #include <keyutils.h>
 
-    # ls -ldZ /sys/fs/cgroup/unified/test/subdir
-    drwxr-xr-x. 2 root root unconfined_u:object_r:container_file_t:s0 0 Jan 29 03:15 /sys/fs/cgroup/unified/test/subdir
+    int main(void)
+    {
+            int id = add_key("keyring", "syz", NULL, 0, KEY_SPEC_USER_KEYRING);
 
-Link: https://github.com/SELinuxProject/selinux-kernel/issues/39
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+            keyctl_setperm(id, KEY_OTH_WRITE);
+            setreuid(5000, 5000);
+            request_key("user", "desc", "", id);
+    }
+
+Reported-by: syzbot+ec24e95ea483de0a24da@syzkaller.appspotmail.com
+Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: stable@vger.kernel.org
 ---
- fs/kernfs/dir.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index 6048f2ce85c4..c5f6e6c76982 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -615,6 +615,7 @@ struct kernfs_node *kernfs_node_from_dentry(struct dentry *dentry)
- }
+ security/keys/keyring.c          |    4 +---
+ security/keys/proc.c             |    3 +--
+ security/keys/request_key.c      |    1 +
+ security/keys/request_key_auth.c |    2 +-
+ 4 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index eadebb92986a..f81372f53dd7 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -661,9 +661,6 @@ static bool search_nested_keyrings(struct key *keyring,
+ 	BUG_ON((ctx->flags & STATE_CHECKS) == 0 ||
+ 	       (ctx->flags & STATE_CHECKS) == STATE_CHECKS);
  
- static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
-+					     struct kernfs_node *parent,
- 					     const char *name, umode_t mode,
- 					     kuid_t uid, kgid_t gid,
- 					     unsigned flags)
-@@ -671,6 +672,12 @@ static struct kernfs_node *__kernfs_new_node(struct kernfs_root *root,
- 			goto err_out3;
- 	}
+-	if (ctx->index_key.description)
+-		ctx->index_key.desc_len = strlen(ctx->index_key.description);
+-
+ 	/* Check to see if this top-level keyring is what we are looking for
+ 	 * and whether it is valid or not.
+ 	 */
+@@ -914,6 +911,7 @@ key_ref_t keyring_search(key_ref_t keyring,
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
++		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+diff --git a/security/keys/proc.c b/security/keys/proc.c
+index d2b802072693..78ac305d715e 100644
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -165,8 +165,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
+ 	int rc;
  
-+	if (parent) {
-+		ret = security_kernfs_init_security(parent, kn);
-+		if (ret)
-+			goto err_out3;
-+	}
-+
- 	return kn;
+ 	struct keyring_search_context ctx = {
+-		.index_key.type		= key->type,
+-		.index_key.description	= key->description,
++		.index_key		= key->index_key,
+ 		.cred			= m->file->f_cred,
+ 		.match_data.cmp		= lookup_user_key_possessed,
+ 		.match_data.raw_data	= key,
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 3f56a312dd35..7a0c6b666ff0 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -531,6 +531,7 @@ struct key *request_key_and_link(struct key_type *type,
+ 	struct keyring_search_context ctx = {
+ 		.index_key.type		= type,
+ 		.index_key.description	= description,
++		.index_key.desc_len	= strlen(description),
+ 		.cred			= current_cred(),
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index afc304e8b61e..bda6201c6c45 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -247,7 +247,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
+ 	struct key *authkey;
+ 	key_ref_t authkey_ref;
  
-  err_out3:
-@@ -689,7 +696,7 @@ struct kernfs_node *kernfs_new_node(struct kernfs_node *parent,
- {
- 	struct kernfs_node *kn;
+-	sprintf(description, "%x", target_id);
++	ctx.index_key.desc_len = sprintf(description, "%x", target_id);
  
--	kn = __kernfs_new_node(kernfs_root(parent),
-+	kn = __kernfs_new_node(kernfs_root(parent), parent,
- 			       name, mode, uid, gid, flags);
- 	if (kn) {
- 		kernfs_get(parent);
-@@ -958,7 +965,7 @@ struct kernfs_root *kernfs_create_root(struct kernfs_syscall_ops *scops,
- 	INIT_LIST_HEAD(&root->supers);
- 	root->next_generation = 1;
+ 	authkey_ref = search_process_keyrings(&ctx);
  
--	kn = __kernfs_new_node(root, "", S_IFDIR | S_IRUGO | S_IXUGO,
-+	kn = __kernfs_new_node(root, NULL, "", S_IFDIR | S_IRUGO | S_IXUGO,
- 			       GLOBAL_ROOT_UID, GLOBAL_ROOT_GID,
- 			       KERNFS_DIR);
- 	if (!kn) {
--- 
-2.20.1
 
