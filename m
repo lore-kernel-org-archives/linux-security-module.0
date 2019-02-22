@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D25DAC10F18
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2DFC10F0B
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC5882086A
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:57:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E07902086C
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:57:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726356AbfBVO5v (ORCPT
+        id S1726220AbfBVO5x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Feb 2019 09:57:51 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34865 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726425AbfBVO5v (ORCPT
+        Fri, 22 Feb 2019 09:57:53 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34790 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbfBVO5w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Feb 2019 09:57:51 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y15so2255048wma.0
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 06:57:49 -0800 (PST)
+        Fri, 22 Feb 2019 09:57:52 -0500
+Received: by mail-wr1-f65.google.com with SMTP id f14so2725496wrg.1
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 06:57:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=i8YHv0/qIqj+KRVAYbor72UyNmxKrCXiH7RYPyw72kU=;
-        b=pYh+dQv+OHV68bHGGNiITLi5+NsXdjgF1rB3veK6sF1RoHF6s/NbfjiLKrsW+fvJSL
-         Hi3s+hEZW6zKU0r9IzA3gCIf7IlO0ZQWP/NN3hRaucNqgRw6oGJt6RDHyDh4q+sPQP/L
-         hac0TovefFl0FMEzp01CdPUDql8/Hg7j+BeTJh/FXNNKavB5XslzWQzwHBkb1EVWctRN
-         1QJYkeo5DQ7Ayy2vxT8goez7iB6udSRb+g0iPgRMSAWMF+vPR0OrtfQ8P6NymX+JgBRq
-         Ej11zbG92CAhDQ0Snk/O/VaxDPnc1AlegH2SVXObWLTxm3+RmhYt18CPvR1z70MFJyS/
-         2ZyQ==
-X-Gm-Message-State: AHQUAuZ2xbrHmYalNgqSrupjo/FOa+mvPKGWy8S0TJMhtEgXx85wPJhr
-        gbzWrW4E9KDxWUGAb49RWJAOCg==
-X-Google-Smtp-Source: AHgI3IbGcwdiZdgENhG4RF7d9RUODRKCbnSygvPNXZ+Qqgv2HwmGICokA+II73AJzD51MlMyRRP8oQ==
-X-Received: by 2002:a1c:6c12:: with SMTP id h18mr2556656wmc.131.1550847468932;
-        Fri, 22 Feb 2019 06:57:48 -0800 (PST)
+        bh=7n/70NaWl0BIWsrw4Nf9QtXYHdDHEAFx5YuB2+JlALg=;
+        b=nacvT0dLnS276u6yS5mPxuGPQkbeJXK4indKUJPJknKeaTrfSylL4jTWw2oC2P0S1m
+         X5rUnsM8F5pTYCKk9r7ilUGKwaH+mlMXsabUUkDCj6FgCQiNlUYzcq4JY9g33/649bp3
+         E8zXibPjCZmJZ9K78W9EoM2ZYhD4f/0Cu0WjZ0HpaV4c4RTLIrplUbcquNbc6ZYAbRpV
+         MmdcuG7xAEck3bTJSleT7QIMlRwKrw30i8dkmn6pDJG7q0dbn96PQzjS2DcYE2iMjCD/
+         DHqW8/Jj2Ij88oRWkUgkfI1n3aXww3qGFhzWLlNIYjaAPktyeNPxC+3Qo6U80guzWC+S
+         lAPg==
+X-Gm-Message-State: AHQUAuZiFX8LyDRNAy3cpzilv/M0r9ebvWGNecfTl+f++aZ2ZasxXF8S
+        vJ5e6KR6hzXgca9cPO6vpNl+7w==
+X-Google-Smtp-Source: AHgI3IbmtHK+lnP7Dljpl1l5VaePLL7sxhmizTelgs7gUNpQQvXAR4jRwoQad6d+gSsubj1f7mv2rA==
+X-Received: by 2002:adf:ff81:: with SMTP id j1mr3324885wrr.261.1550847470086;
+        Fri, 22 Feb 2019 06:57:50 -0800 (PST)
 Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 203sm1503912wme.30.2019.02.22.06.57.47
+        by smtp.gmail.com with ESMTPSA id 203sm1503912wme.30.2019.02.22.06.57.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 22 Feb 2019 06:57:48 -0800 (PST)
+        Fri, 22 Feb 2019 06:57:49 -0800 (PST)
 From:   Ondrej Mosnacek <omosnace@redhat.com>
 To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
 Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
@@ -52,9 +52,9 @@ Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
         James Morris <jmorris@namei.org>,
         linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
         Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH v7 1/7] kernfs: clean up struct kernfs_iattrs
-Date:   Fri, 22 Feb 2019 15:57:12 +0100
-Message-Id: <20190222145718.5740-2-omosnace@redhat.com>
+Subject: [PATCH v7 2/7] kernfs: do not alloc iattrs in kernfs_xattr_get
+Date:   Fri, 22 Feb 2019 15:57:13 +0100
+Message-Id: <20190222145718.5740-3-omosnace@redhat.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190222145718.5740-1-omosnace@redhat.com>
 References: <20190222145718.5740-1-omosnace@redhat.com>
@@ -64,181 +64,64 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Right now, kernfs_iattrs embeds the whole struct iattr, even though it
-doesn't really use half of its fields... This both leads to wasting
-space and makes the code look awkward. Let's just list the few fields
-we need directly in struct kernfs_iattrs.
+This is a read-only operation, so we can simply return -ENODATA if
+kn->iattr is NULL.
 
 Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
- fs/kernfs/dir.c             | 10 ++++----
- fs/kernfs/inode.c           | 47 ++++++++++++++++---------------------
- fs/kernfs/kernfs-internal.h |  6 ++++-
- fs/kernfs/symlink.c         |  4 ++--
- 4 files changed, 31 insertions(+), 36 deletions(-)
+ fs/kernfs/inode.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index 4ca0b5c18192..e3e00d9be70d 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -795,9 +795,8 @@ int kernfs_add_one(struct kernfs_node *kn)
- 	/* Update timestamps on the parent */
- 	ps_iattr = parent->iattr;
- 	if (ps_iattr) {
--		struct iattr *ps_iattrs = &ps_iattr->ia_iattr;
--		ktime_get_real_ts64(&ps_iattrs->ia_ctime);
--		ps_iattrs->ia_mtime = ps_iattrs->ia_ctime;
-+		ktime_get_real_ts64(&ps_iattr->ia_ctime);
-+		ps_iattr->ia_mtime = ps_iattr->ia_ctime;
- 	}
- 
- 	mutex_unlock(&kernfs_mutex);
-@@ -1329,9 +1328,8 @@ static void __kernfs_remove(struct kernfs_node *kn)
- 
- 			/* update timestamps on the parent */
- 			if (ps_iattr) {
--				ktime_get_real_ts64(&ps_iattr->ia_iattr.ia_ctime);
--				ps_iattr->ia_iattr.ia_mtime =
--					ps_iattr->ia_iattr.ia_ctime;
-+				ktime_get_real_ts64(&ps_iattr->ia_ctime);
-+				ps_iattr->ia_mtime = ps_iattr->ia_ctime;
- 			}
- 
- 			kernfs_put(pos);
 diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index 80cebcd94c90..ffd1ef962728 100644
+index ffd1ef962728..7a7985961bbf 100644
 --- a/fs/kernfs/inode.c
 +++ b/fs/kernfs/inode.c
-@@ -35,7 +35,6 @@ static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
+@@ -31,14 +31,14 @@ static const struct inode_operations kernfs_iops = {
+ 	.listxattr	= kernfs_iop_listxattr,
+ };
+ 
+-static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
++static struct kernfs_iattrs *__kernfs_iattrs(struct kernfs_node *kn, int alloc)
  {
  	static DEFINE_MUTEX(iattr_mutex);
  	struct kernfs_iattrs *ret;
--	struct iattr *iattrs;
  
  	mutex_lock(&iattr_mutex);
  
-@@ -45,16 +44,14 @@ static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
- 	kn->iattr = kzalloc(sizeof(struct kernfs_iattrs), GFP_KERNEL);
- 	if (!kn->iattr)
+-	if (kn->iattr)
++	if (kn->iattr || !alloc)
  		goto out_unlock;
--	iattrs = &kn->iattr->ia_iattr;
  
- 	/* assign default attributes */
--	iattrs->ia_mode = kn->mode;
--	iattrs->ia_uid = GLOBAL_ROOT_UID;
--	iattrs->ia_gid = GLOBAL_ROOT_GID;
-+	kn->iattr->ia_uid = GLOBAL_ROOT_UID;
-+	kn->iattr->ia_gid = GLOBAL_ROOT_GID;
+ 	kn->iattr = kzalloc(sizeof(struct kernfs_iattrs), GFP_KERNEL);
+@@ -60,6 +60,16 @@ out_unlock:
+ 	return ret;
+ }
  
--	ktime_get_real_ts64(&iattrs->ia_atime);
--	iattrs->ia_mtime = iattrs->ia_atime;
--	iattrs->ia_ctime = iattrs->ia_atime;
-+	ktime_get_real_ts64(&kn->iattr->ia_atime);
-+	kn->iattr->ia_mtime = kn->iattr->ia_atime;
-+	kn->iattr->ia_ctime = kn->iattr->ia_atime;
- 
- 	simple_xattrs_init(&kn->iattr->xattrs);
- out_unlock:
-@@ -66,29 +63,24 @@ out_unlock:
++static struct kernfs_iattrs *kernfs_iattrs(struct kernfs_node *kn)
++{
++	return __kernfs_iattrs(kn, 1);
++}
++
++static struct kernfs_iattrs *kernfs_iattrs_noalloc(struct kernfs_node *kn)
++{
++	return __kernfs_iattrs(kn, 0);
++}
++
  int __kernfs_setattr(struct kernfs_node *kn, const struct iattr *iattr)
  {
  	struct kernfs_iattrs *attrs;
--	struct iattr *iattrs;
- 	unsigned int ia_valid = iattr->ia_valid;
+@@ -306,9 +316,9 @@ static int kernfs_xattr_get(const struct xattr_handler *handler,
+ 	struct kernfs_node *kn = inode->i_private;
+ 	struct kernfs_iattrs *attrs;
  
- 	attrs = kernfs_iattrs(kn);
+-	attrs = kernfs_iattrs(kn);
++	attrs = kernfs_iattrs_noalloc(kn);
  	if (!attrs)
- 		return -ENOMEM;
+-		return -ENOMEM;
++		return -ENODATA;
  
--	iattrs = &attrs->ia_iattr;
--
- 	if (ia_valid & ATTR_UID)
--		iattrs->ia_uid = iattr->ia_uid;
-+		attrs->ia_uid = iattr->ia_uid;
- 	if (ia_valid & ATTR_GID)
--		iattrs->ia_gid = iattr->ia_gid;
-+		attrs->ia_gid = iattr->ia_gid;
- 	if (ia_valid & ATTR_ATIME)
--		iattrs->ia_atime = iattr->ia_atime;
-+		attrs->ia_atime = iattr->ia_atime;
- 	if (ia_valid & ATTR_MTIME)
--		iattrs->ia_mtime = iattr->ia_mtime;
-+		attrs->ia_mtime = iattr->ia_mtime;
- 	if (ia_valid & ATTR_CTIME)
--		iattrs->ia_ctime = iattr->ia_ctime;
--	if (ia_valid & ATTR_MODE) {
--		umode_t mode = iattr->ia_mode;
--		iattrs->ia_mode = kn->mode = mode;
--	}
-+		attrs->ia_ctime = iattr->ia_ctime;
-+	if (ia_valid & ATTR_MODE)
-+		kn->mode = iattr->ia_mode;
- 	return 0;
+ 	return simple_xattr_get(&attrs->xattrs, name, value, size);
  }
- 
-@@ -171,14 +163,15 @@ static inline void set_default_inode_attr(struct inode *inode, umode_t mode)
- 		inode->i_ctime = current_time(inode);
- }
- 
--static inline void set_inode_attr(struct inode *inode, struct iattr *iattr)
-+static inline void set_inode_attr(struct inode *inode,
-+				  struct kernfs_iattrs *attrs)
- {
- 	struct super_block *sb = inode->i_sb;
--	inode->i_uid = iattr->ia_uid;
--	inode->i_gid = iattr->ia_gid;
--	inode->i_atime = timespec64_trunc(iattr->ia_atime, sb->s_time_gran);
--	inode->i_mtime = timespec64_trunc(iattr->ia_mtime, sb->s_time_gran);
--	inode->i_ctime = timespec64_trunc(iattr->ia_ctime, sb->s_time_gran);
-+	inode->i_uid = attrs->ia_uid;
-+	inode->i_gid = attrs->ia_gid;
-+	inode->i_atime = timespec64_trunc(attrs->ia_atime, sb->s_time_gran);
-+	inode->i_mtime = timespec64_trunc(attrs->ia_mtime, sb->s_time_gran);
-+	inode->i_ctime = timespec64_trunc(attrs->ia_ctime, sb->s_time_gran);
- }
- 
- static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
-@@ -191,7 +184,7 @@ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
- 		 * kernfs_node has non-default attributes get them from
- 		 * persistent copy in kernfs_node.
- 		 */
--		set_inode_attr(inode, &attrs->ia_iattr);
-+		set_inode_attr(inode, attrs);
- 		security_inode_notifysecctx(inode, attrs->ia_secdata,
- 					    attrs->ia_secdata_len);
- 	}
-diff --git a/fs/kernfs/kernfs-internal.h b/fs/kernfs/kernfs-internal.h
-index 3d83b114bb08..388c1193c4fa 100644
---- a/fs/kernfs/kernfs-internal.h
-+++ b/fs/kernfs/kernfs-internal.h
-@@ -19,7 +19,11 @@
- #include <linux/kernfs.h>
- 
- struct kernfs_iattrs {
--	struct iattr		ia_iattr;
-+	kuid_t			ia_uid;
-+	kgid_t			ia_gid;
-+	struct timespec64	ia_atime;
-+	struct timespec64	ia_mtime;
-+	struct timespec64	ia_ctime;
- 	void			*ia_secdata;
- 	u32			ia_secdata_len;
- 
-diff --git a/fs/kernfs/symlink.c b/fs/kernfs/symlink.c
-index 162f43b80c84..eb46c3a16e2f 100644
---- a/fs/kernfs/symlink.c
-+++ b/fs/kernfs/symlink.c
-@@ -33,8 +33,8 @@ struct kernfs_node *kernfs_create_link(struct kernfs_node *parent,
- 	kgid_t gid = GLOBAL_ROOT_GID;
- 
- 	if (target->iattr) {
--		uid = target->iattr->ia_iattr.ia_uid;
--		gid = target->iattr->ia_iattr.ia_gid;
-+		uid = target->iattr->ia_uid;
-+		gid = target->iattr->ia_gid;
- 	}
- 
- 	kn = kernfs_new_node(parent, name, S_IFLNK|S_IRWXUGO, uid, gid,
 -- 
 2.20.1
 
