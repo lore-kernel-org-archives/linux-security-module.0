@@ -2,118 +2,140 @@ Return-Path: <SRS0=OQ6N=Q5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE3AC43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 10:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DD9C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 12:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E85D020700
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 10:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A2592070D
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 12:52:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726117AbfBVKAZ (ORCPT
+        id S1726463AbfBVMww (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Feb 2019 05:00:25 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:49758 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbfBVKAZ (ORCPT
+        Fri, 22 Feb 2019 07:52:52 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42944 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbfBVMww (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Feb 2019 05:00:25 -0500
-Received: from static-50-53-47-167.bvtn.or.frontiernet.net ([50.53.47.167] helo=[10.8.192.6])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1gx7d0-0001tA-DP; Fri, 22 Feb 2019 10:00:22 +0000
-Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, apparmor@lists.ubuntu.com
-References: <20190212182318.GA16669@beast>
- <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
- <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp>
- <ac50e659-89a8-3b25-52fd-53e1d8a0b934@I-love.SAKURA.ne.jp>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <5e68990a-216b-bd12-e852-608c69b8f3fd@canonical.com>
-Date:   Fri, 22 Feb 2019 02:00:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 22 Feb 2019 07:52:52 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i5so1723676oto.9
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 04:52:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OZnNMftqiPAsuB1GyGpVHOn6leIPquiVq0JQBzM6kzU=;
+        b=VWQR5Z6zQ+Kku0R797DoxNq5Se22rNKNuhSB0XhI0Z1pYsWnORazu9sXGfjrZzlo9X
+         BbAqwfdkJZyBW9hf2faaBpYra1xqUenHaAUHSz8BCUU73wly45DxpVGTelyt37gbLVuo
+         D/IebPLY9mQ69A9j9144Hhy1nohP8fPYl9bYTOqvBkou3QK2sk4xJ8jvF4yxLPu7KAGG
+         QFq36qzCLX93TUGZo+eFdS+mSB0fz+GgLYZ12MMV1wdXVzsftpLKYIkOJmcS/YpKQqEv
+         AA//lvjpL160yfLnfu4mpchQgn+5gNbLE4nr6Y2D1556tpg+gaBJ1LNFGiLuvg1Kzdk0
+         JPGg==
+X-Gm-Message-State: AHQUAuZx/+PO1tdDP6MMDnnuc+Bn6ANqiK/w88VN9q+9uFlaj6xbgmbb
+        nYIFczsp3YsBl6SnPhhUTCxzc35/Ehwl0opxInDQtQ==
+X-Google-Smtp-Source: AHgI3IZh+MhFZKokXhwn79qjP3+xjyhEnAcRDw1vqkDlDOAlxT6HqJippTVBHvuvT25WvxLViy7eLgl0bBMnZmgNUh0=
+X-Received: by 2002:a9d:5889:: with SMTP id x9mr2474553otg.109.1550839971104;
+ Fri, 22 Feb 2019 04:52:51 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <ac50e659-89a8-3b25-52fd-53e1d8a0b934@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20190214095015.16032-1-omosnace@redhat.com> <20190214095015.16032-6-omosnace@redhat.com>
+ <20190214154854.GO50184@devbig004.ftw2.facebook.com> <CAFqZXNuOg9ex_WqCCKYzPQSeqbGmo-KP4Yh9TB4bbMZziG314A@mail.gmail.com>
+ <20190215155014.GP50184@devbig004.ftw2.facebook.com> <CAFqZXNvVb75K9ZemVObcBB+rntL38_VfY5P6jyAbuwjymt6MQQ@mail.gmail.com>
+ <8c1ddde8-c7aa-7dca-3a0f-2d425c6879b4@schaufler-ca.com> <CAFqZXNtJFrtAqnu=CmoSPnPM312DKF73ALkLeekMk8Me5ojntw@mail.gmail.com>
+ <0942b8c9-79a3-47a9-a28d-276d322fd9e1@schaufler-ca.com> <CAFqZXNvWyBQ5g6nwD4AiePxEDXGP2DY31S0RWttqcRSa90SakA@mail.gmail.com>
+ <2de9569d-2368-1dc9-f757-0a7a0a116c16@schaufler-ca.com>
+In-Reply-To: <2de9569d-2368-1dc9-f757-0a7a0a116c16@schaufler-ca.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Fri, 22 Feb 2019 13:52:39 +0100
+Message-ID: <CAFqZXNutDB+3xsPOU-8H-D7bHMvACLXy16PKiKRfR6wWw93A8Q@mail.gmail.com>
+Subject: Re: [PATCH v6 5/5] kernfs: initialize security of newly created nodes
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Tejun Heo <tj@kernel.org>, selinux@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/21/19 5:12 AM, Tetsuo Handa wrote:
-> On 2019/02/17 14:16, Tetsuo Handa wrote:
->> On 2019/02/14 1:05, Casey Schaufler wrote:
->>> On 2/12/2019 10:23 AM, Kees Cook wrote:
->>>> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
->>>> used on the command line, and report that it is happening.
->>>>
->>>> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
->>>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>>
->>> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->>>
->>
->> The manual for TOMOYO was updated to follow this change.
->> SELinux folks and AppArmor folks, can we apply this change?
->>
-> 
-> No response from Ubuntu kernel team. Redirecting to AppArmor list...
-> 
+On Thu, Feb 21, 2019 at 5:52 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 2/21/2019 1:13 AM, Ondrej Mosnacek wrote:
+> > On Tue, Feb 19, 2019 at 5:43 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > .....
+> >> The state you're maintaining is kernfs state, not LSM
+> >> infrastructure state. The state should be maintained in
+> >> kernfs, not in the LSM infrastructure.
+> > But I'm not maintaining any state. I'm merely trying to answer the
+> > query "Is there anything that will handle this hook? Do I need to
+> > prepare stuff for it?", which is obviously a query about the LSM
+> > state. Granted, ideally we wouldn't need to do any preparatory work at
+> > all, but that would require exposing more of the kernfs internals
+> > (which brings its own issues, but maybe I'll need to look into that
+> > approach more...).
+>
+> It sounds like you're bumping up against the limitations
+> of the finely honed optimized implementation of kernfs. :(
+> If it where still the pre-android era, when using an LSM
+> was rare, the check for an LSM might have made sense. Today,
+> with the vast majority of systems using LSMs*, optimizing for
+> the no LSM case is nonsensical.
 
-yeah this is okay
+I imagine it might make sense on some very minimal embedded systems
+(microcontrollers?), where you almost certainly need kernfs (via sysfs
+or debugfs), but you don't necessarily need advanced security controls
+(you might just have a single monolithic userspace process running
+there and very limited memory/CPU resources). I'm hardly an expert on
+embedded platforms, but it sounds like a reasonable use case.
+(Although in such cases I'd expect CONFIG_SECURITY to be simply set to
+'n', so no need for runtime checks anyway...).
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+>
+> ---
+> * Android, Tizen, Fedora/RHEL, Ubuntu
+>
+> > ...
+> > Kernfs is an important component of the kernel. So is
+> > the security infrastructure. I would hope you don't want
+> > to turn this into a contest to see which maintainer has
+> > the biggest clout.
+> > Oh, no, you misunderstood my intention. I just got a feeling that this
+> > thread was turning into a discussion about perceived code ugliness
+> > (and about which subsystem that ugliness ends up in), which is
+> > naturally a very subjective topic, so I wanted to know what is the
+> > opinion of the people that have the final decision about whether the
+> > code should get in or not. Anyway, I'll try to find a more elegant
+> > variant of the solution once again, hopefully I manage to get to
+> > something less controversial.
+>
+> Thank you. I believe (which, of course, doesn't make it true)
+> that when a component goes outside the general system architecture
+> the way that kernfs does *even for performance reasons* that it is
+> responsible for the edge cases it encounters. I know that I've had
+> to do a good bit of that in Smack.
 
+OK, so I tried taking the other approach (pass kernfs nodes and expose
+necessary kernfs internals) and I'm quite happy with the result. It
+turns out the only thing I actually need to expose (at least for
+SELinux) is getting and setting the security xattrs, which is just two
+simple functions. The rest of the attributes (uid, gid, and access
+times) don't seem important and they can always be exposed by adding
+more helper functions as needed. With this design the last patch now
+becomes embarrassingly simple - there is just a single call that will
+either call an LSM hook or do nothing at all.
+
+I still need to do some testing on the new patches before posting. In
+the meantime they are available here for the curious:
+
+https://gitlab.com/omos/linux-public/compare/selinux-next...selinux-fix-cgroupfs-v12
+
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
