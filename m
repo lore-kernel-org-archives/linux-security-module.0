@@ -2,140 +2,193 @@ Return-Path: <SRS0=OQ6N=Q5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DD9C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 12:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 957F6C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A2592070D
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 12:52:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 529F22086A
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 14:57:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbfBVMww (ORCPT
+        id S1726090AbfBVO5u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Feb 2019 07:52:52 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42944 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfBVMww (ORCPT
+        Fri, 22 Feb 2019 09:57:50 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52160 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbfBVO5u (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Feb 2019 07:52:52 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i5so1723676oto.9
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 04:52:51 -0800 (PST)
+        Fri, 22 Feb 2019 09:57:50 -0500
+Received: by mail-wm1-f66.google.com with SMTP id n19so2230916wmi.1
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 06:57:48 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OZnNMftqiPAsuB1GyGpVHOn6leIPquiVq0JQBzM6kzU=;
-        b=VWQR5Z6zQ+Kku0R797DoxNq5Se22rNKNuhSB0XhI0Z1pYsWnORazu9sXGfjrZzlo9X
-         BbAqwfdkJZyBW9hf2faaBpYra1xqUenHaAUHSz8BCUU73wly45DxpVGTelyt37gbLVuo
-         D/IebPLY9mQ69A9j9144Hhy1nohP8fPYl9bYTOqvBkou3QK2sk4xJ8jvF4yxLPu7KAGG
-         QFq36qzCLX93TUGZo+eFdS+mSB0fz+GgLYZ12MMV1wdXVzsftpLKYIkOJmcS/YpKQqEv
-         AA//lvjpL160yfLnfu4mpchQgn+5gNbLE4nr6Y2D1556tpg+gaBJ1LNFGiLuvg1Kzdk0
-         JPGg==
-X-Gm-Message-State: AHQUAuZx/+PO1tdDP6MMDnnuc+Bn6ANqiK/w88VN9q+9uFlaj6xbgmbb
-        nYIFczsp3YsBl6SnPhhUTCxzc35/Ehwl0opxInDQtQ==
-X-Google-Smtp-Source: AHgI3IZh+MhFZKokXhwn79qjP3+xjyhEnAcRDw1vqkDlDOAlxT6HqJippTVBHvuvT25WvxLViy7eLgl0bBMnZmgNUh0=
-X-Received: by 2002:a9d:5889:: with SMTP id x9mr2474553otg.109.1550839971104;
- Fri, 22 Feb 2019 04:52:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20190214095015.16032-1-omosnace@redhat.com> <20190214095015.16032-6-omosnace@redhat.com>
- <20190214154854.GO50184@devbig004.ftw2.facebook.com> <CAFqZXNuOg9ex_WqCCKYzPQSeqbGmo-KP4Yh9TB4bbMZziG314A@mail.gmail.com>
- <20190215155014.GP50184@devbig004.ftw2.facebook.com> <CAFqZXNvVb75K9ZemVObcBB+rntL38_VfY5P6jyAbuwjymt6MQQ@mail.gmail.com>
- <8c1ddde8-c7aa-7dca-3a0f-2d425c6879b4@schaufler-ca.com> <CAFqZXNtJFrtAqnu=CmoSPnPM312DKF73ALkLeekMk8Me5ojntw@mail.gmail.com>
- <0942b8c9-79a3-47a9-a28d-276d322fd9e1@schaufler-ca.com> <CAFqZXNvWyBQ5g6nwD4AiePxEDXGP2DY31S0RWttqcRSa90SakA@mail.gmail.com>
- <2de9569d-2368-1dc9-f757-0a7a0a116c16@schaufler-ca.com>
-In-Reply-To: <2de9569d-2368-1dc9-f757-0a7a0a116c16@schaufler-ca.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yo4EQtVDRF+pddHZo6tp5yiQ23TLrBEFCS+IQNlTiS4=;
+        b=kFEUhfS0MiWoQyd/L1zRnQJs/04IlRJjXiAHpzCXqZGe6tdPaLv5PWKI1MpZUAuBrV
+         aIsWsIV5y4EYaVgaSKhD4T2MIUf+gSK1i2DB2pEJhs+Z5yaf9LERH7YmVHFunPg+14ns
+         IQi5spnNCeW0LoWsmihKNFep+H+YX+qOf/r+37l69970Golye4e0gohPF+2lkT7ecEgQ
+         VFPd+FW5Y0upce/iJpiFphYn/Fcvbp240H91gV1IDxo8OKl005glFKVexp5HtbMvwqEr
+         Khrga1eDSN/wsBzTrya+CENQ0rpoc2h8nss90umgxBzJ5pL8ErgVoGrskWxb/pK+42IG
+         LhoQ==
+X-Gm-Message-State: AHQUAualFG6ZQoFOT/qwEnti+mRFofmRtjLQKXXIrmjLriRNDjHZT4ac
+        Oi87vqfreUHKJRJS7sAmSJY/QA==
+X-Google-Smtp-Source: AHgI3IZcfzuHxs8gi5WFbUu8zLL0TOcyyycYezFnncqlihWzrlvv/CSRakRv7ejWp9c2M8seWYYbGQ==
+X-Received: by 2002:a7b:c14f:: with SMTP id z15mr2846155wmi.3.1550847467818;
+        Fri, 22 Feb 2019 06:57:47 -0800 (PST)
+Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 203sm1503912wme.30.2019.02.22.06.57.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 22 Feb 2019 06:57:47 -0800 (PST)
 From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Fri, 22 Feb 2019 13:52:39 +0100
-Message-ID: <CAFqZXNutDB+3xsPOU-8H-D7bHMvACLXy16PKiKRfR6wWw93A8Q@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] kernfs: initialize security of newly created nodes
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Tejun Heo <tj@kernel.org>, selinux@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
+To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        Ondrej Mosnacek <omosnace@redhat.com>
+Subject: [PATCH v7 0/7] Allow initializing the kernfs node's secctx based on its parent
+Date:   Fri, 22 Feb 2019 15:57:11 +0100
+Message-Id: <20190222145718.5740-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 21, 2019 at 5:52 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 2/21/2019 1:13 AM, Ondrej Mosnacek wrote:
-> > On Tue, Feb 19, 2019 at 5:43 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > .....
-> >> The state you're maintaining is kernfs state, not LSM
-> >> infrastructure state. The state should be maintained in
-> >> kernfs, not in the LSM infrastructure.
-> > But I'm not maintaining any state. I'm merely trying to answer the
-> > query "Is there anything that will handle this hook? Do I need to
-> > prepare stuff for it?", which is obviously a query about the LSM
-> > state. Granted, ideally we wouldn't need to do any preparatory work at
-> > all, but that would require exposing more of the kernfs internals
-> > (which brings its own issues, but maybe I'll need to look into that
-> > approach more...).
->
-> It sounds like you're bumping up against the limitations
-> of the finely honed optimized implementation of kernfs. :(
-> If it where still the pre-android era, when using an LSM
-> was rare, the check for an LSM might have made sense. Today,
-> with the vast majority of systems using LSMs*, optimizing for
-> the no LSM case is nonsensical.
+TL;DR:
+This series adds a new security hook that allows to initialize the security
+context of kernfs properly, taking into account the parent context (and
+possibly other attributes). Kernfs nodes require special handling here, since
+they are not bound to specific inodes/superblocks, but instead represent the
+backing tree structure that is used to build the VFS tree when the kernfs
+tree is mounted.
 
-I imagine it might make sense on some very minimal embedded systems
-(microcontrollers?), where you almost certainly need kernfs (via sysfs
-or debugfs), but you don't necessarily need advanced security controls
-(you might just have a single monolithic userspace process running
-there and very limited memory/CPU resources). I'm hardly an expert on
-embedded platforms, but it sounds like a reasonable use case.
-(Although in such cases I'd expect CONFIG_SECURITY to be simply set to
-'n', so no need for runtime checks anyway...).
+Changes in v7:
+- simplify the new security hook's interface
+  - rather than trying to extract kernfs data into common structures, just
+    pass the kernfs nodes themselves and add helper functions to
+    <linux/kernfs.h> for accessing their security xattrs
+  - in case other LSMs need more kernfs node attributes than the file mode
+    (uid/gid/...), they can simply add new helpers to <linux/kernfs.h> as
+    needed
+- refactor "kernfs: use simple_xattrs for security attributes" to keep using
+  a single common simple_xattrs structure
+  - turns out having two separate simple_xattrs wouldn't work right (see
+    the definition of simple_xattr_list() in fs/xattr.c)
+- drop unnecessary initializations from inode_doinit_use_xattr()
+- move the IOP_XATTR check out of inode_doinit_use_xattr()
+- add two kernfs cleanup patches
+  - these could be applied independently, but the rest of the patches depend on
+    them, so I'd rather they stay bundled with the rest to avoid cross-tree
+    conflicts
 
->
-> ---
-> * Android, Tizen, Fedora/RHEL, Ubuntu
->
-> > ...
-> > Kernfs is an important component of the kernel. So is
-> > the security infrastructure. I would hope you don't want
-> > to turn this into a contest to see which maintainer has
-> > the biggest clout.
-> > Oh, no, you misunderstood my intention. I just got a feeling that this
-> > thread was turning into a discussion about perceived code ugliness
-> > (and about which subsystem that ugliness ends up in), which is
-> > naturally a very subjective topic, so I wanted to know what is the
-> > opinion of the people that have the final decision about whether the
-> > code should get in or not. Anyway, I'll try to find a more elegant
-> > variant of the solution once again, hopefully I manage to get to
-> > something less controversial.
->
-> Thank you. I believe (which, of course, doesn't make it true)
-> that when a component goes outside the general system architecture
-> the way that kernfs does *even for performance reasons* that it is
-> responsible for the edge cases it encounters. I know that I've had
-> to do a good bit of that in Smack.
+v6: https://lore.kernel.org/selinux/20190214095015.16032-1-omosnace@redhat.com/T/
+Changes in v6:
+- remove copy-pasted duplicate macro definition
 
-OK, so I tried taking the other approach (pass kernfs nodes and expose
-necessary kernfs internals) and I'm quite happy with the result. It
-turns out the only thing I actually need to expose (at least for
-SELinux) is getting and setting the security xattrs, which is just two
-simple functions. The rest of the attributes (uid, gid, and access
-times) don't seem important and they can always be exposed by adding
-more helper functions as needed. With this design the last patch now
-becomes embarrassingly simple - there is just a single call that will
-either call an LSM hook or do nothing at all.
+v5: https://lore.kernel.org/selinux/20190205110638.30782-1-omosnace@redhat.com/T/
+Changes in v5:
+- fix misplaced semicolon detected by 0day robot
 
-I still need to do some testing on the new patches before posting. In
-the meantime they are available here for the curious:
+v4: https://lore.kernel.org/selinux/20190205085915.5183-1-omosnace@redhat.com/T/
+Changes in v4:
+- reorder and rename hook arguments
+- avoid allocating kernfs_iattrs unless needed
 
-https://gitlab.com/omos/linux-public/compare/selinux-next...selinux-fix-cgroupfs-v12
+v3: https://lore.kernel.org/selinux/20190130114150.27807-1-omosnace@redhat.com/T/
+Changes in v3:
+- rename the hook to "kernfs_init_security"
+- change the hook interface to simply pass pointers to struct iattr and
+  struct simple_xattrs of both the new node and its parent
+- add full security xattr support to kernfs (and fixup SELinux behavior
+  to handle it properly)
 
---
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+v2: https://lore.kernel.org/selinux/20190109162830.8309-1-omosnace@redhat.com/T/
+Changes in v2:
+- add docstring for the new hook in union security_list_options
+- initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
+  implemented
+
+v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnace@redhat.com/T/
+
+The kernfs nodes initially do not store any security context and rely on
+the LSM to assign some default context to inodes created over them. Kernfs
+inodes, however, allow setting an explicit context via the *setxattr(2)
+syscalls, in which case the context is stored inside the kernfs node's
+internal structure.
+
+SELinux (and possibly other LSMs) initialize the context of newly created
+FS objects based on the parent object's context (usually the child inherits
+the parent's context, unless the policy dictates otherwise). This is done
+by hooking the creation of the new inode corresponding to the newly created
+file/directory via security_inode_init_security() (most filesystems always
+create a fresh inode when a new FS object is created). However, kernfs nodes
+can be created "behind the scenes" while the filesystem is not mounted
+anywhere and thus no inodes can exist for them yet.
+
+Therefore, to allow maintaining similar behavior for kernfs nodes, a new
+LSM hook is needed, which will allow initializing the kernfs node's
+security context based on its own attributes and those of the parent's
+node.
+
+The main motivation for this change is that the userspace users of cgroupfs
+(which is built on kernfs) expect the usual security context inheritance
+to work under SELinux (see [1] and [2]). This functionality is required for
+better confinement of containers under SELinux.
+
+Patch 1/7 simplifies the kernfs_iattrs structure and patch 2/7 optimizes
+kernfs to not allocate kernfs_iattrs when getting the value of an xattr.
+
+Patch 3/7 changes SELinux to fetch security context from extended
+attributes on kernfs filesystems, falling back to genfs-defined context
+if that fails. Without this patch the 4/7 would be a regression for
+SELinux (due to the removal of ...notifysecctx() call.
+
+Patch 4/7 implements full security xattr support in kernfs using
+simple_xattrs; patch 5/7 adds the new LSM hook; patch 6/7 implements the
+new hook in SELinux; and patch 7/7 modifies kernfs to call the new hook
+on new node creation.
+
+Testing:
+- passed the reproducer from the commit message of the last patch
+- passed SELinux testsuite on Fedora Rawhide (x86_64) when applied on top
+  of current Rawhide kernel (5.0.0-0.rc7.git2.1) [3]
+  - including the new proposed selinux-testsuite subtest [4] (adapted
+    from the reproducer)
+
+[1] https://github.com/SELinuxProject/selinux-kernel/issues/39
+[2] https://bugzilla.redhat.com/show_bug.cgi?id=1553803
+[3] https://koji.fedoraproject.org/koji/taskinfo?taskID=32963825
+[4] https://github.com/SELinuxProject/selinux-testsuite/pull/48
+
+Ondrej Mosnacek (7):
+  kernfs: clean up struct kernfs_iattrs
+  kernfs: do not alloc iattrs in kernfs_xattr_get
+  selinux: try security xattr after genfs for kernfs filesystems
+  kernfs: use simple_xattrs for security attributes
+  LSM: add new hook for kernfs node initialization
+  selinux: implement the kernfs_init_security hook
+  kernfs: initialize security of newly created nodes
+
+ fs/kernfs/dir.c                     |  28 ++--
+ fs/kernfs/inode.c                   | 166 +++++++++------------
+ fs/kernfs/kernfs-internal.h         |   8 +-
+ fs/kernfs/symlink.c                 |   4 +-
+ include/linux/kernfs.h              |  15 ++
+ include/linux/lsm_hooks.h           |  13 ++
+ include/linux/security.h            |   9 ++
+ security/security.c                 |   6 +
+ security/selinux/hooks.c            | 223 +++++++++++++++++++---------
+ security/selinux/include/security.h |   1 +
+ 10 files changed, 290 insertions(+), 183 deletions(-)
+
+-- 
+2.20.1
+
