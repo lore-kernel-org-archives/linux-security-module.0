@@ -2,164 +2,144 @@ Return-Path: <SRS0=OQ6N=Q5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1799EC43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 20:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E3CC43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 23:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D589E206BA
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 20:26:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jjk9Y0DS"
+	by mail.kernel.org (Postfix) with ESMTP id 0C29520651
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 23:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbfBVU0e (ORCPT
+        id S1725821AbfBVX3P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Feb 2019 15:26:34 -0500
-Received: from mail-ua1-f73.google.com ([209.85.222.73]:52114 "EHLO
-        mail-ua1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727219AbfBVU0V (ORCPT
+        Fri, 22 Feb 2019 18:29:15 -0500
+Received: from gateway36.websitewelcome.com ([50.116.126.2]:33735 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725811AbfBVX3P (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Feb 2019 15:26:21 -0500
-Received: by mail-ua1-f73.google.com with SMTP id j2so648152uap.18
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 12:26:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=8ZLu9apGJq8gMxM5fACckAPsW9cvH79FQBy+6X2uyc4=;
-        b=jjk9Y0DSJr31PAijE1VAhzeYGJwQBiuw4R13Y+cM2jKBQWe7RFRRzTRWqyb0AQhqd8
-         tOalXyt8ulNJgbQBaV915incR5EvtBoFKTx2KRjMcK40a4Swexf1RR+lyDZwcPR0xZHZ
-         pk3B9oAx/m1niI99/67S94VbZIdEdcxWCiLKwOZ0TDFjtnV5CJ8YUe29uUmgloHE7ZWh
-         c/Q2SMU77B+TWlewVizz6l3TTnmfjnsQlTydvywAtTjmaikZmhz9zZFM+KB5Rcw0N+GU
-         zjYUsgXdUWZzur4GTYlCNlu19siCy8VDEjmFzBAjj/T1HPWc9GVEkYCCwHldooZfQuxj
-         GG0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=8ZLu9apGJq8gMxM5fACckAPsW9cvH79FQBy+6X2uyc4=;
-        b=boE4rybeFYid1L7ETfODG44ILFxsVt/BuixSc3Tj0LhULJwmP30x1Lg2RxQaU2GLMI
-         io0GG/1HuaLbvaze9LyJ71DD4Xo0dFo0q76RIUG7qOpQg5HvHNM7EMjq8PcuYuRAxiwV
-         0tq91PcIjkIHBZJxRNntRziGDzwuTqusOK5It9KZ/Td4HKRRY8awQDX/hWL26Pbz/s1P
-         D/H2OtmZZ+s5ZUxO5YXQvHKINlnUtcDkSAdciGqZ78MKfJzkdwJmPi9QdnLpZCEbmvWL
-         o7HmTOta2ik08jLVIMCw0Z/qYfm2b+rk8iTxnYEeo3CnTHKCSkptoT4Kd2lYzWdM8yMj
-         LK6w==
-X-Gm-Message-State: AHQUAuZ9f7wND5fmW70cudT79L1YASZbP/d1xrnC69WjlJ+rH9bll/rf
-        lFFWThFr26Vni4egWeq7KtA7GQu1ZAqb+F0R8eqzAA==
-X-Google-Smtp-Source: AHgI3IbxQ+WnEa1/boPr02rjPJvsi/TF2O3WIyWJ2V88tbL2ZfaXand/Xu/BuwpCrTw/FKj2l4P2xXsSmArD5SMITXRi0w==
-X-Received: by 2002:a1f:9750:: with SMTP id z77mr196035vkd.5.1550867180288;
- Fri, 22 Feb 2019 12:26:20 -0800 (PST)
-Date:   Fri, 22 Feb 2019 12:26:05 -0800
-In-Reply-To: <20190222202606.160816-1-matthewgarrett@google.com>
-Message-Id: <20190222202606.160816-4-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190222202606.160816-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-Subject: [PATCH V4 3/4] tpm: Append the final event log to the TPM event log
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
+        Fri, 22 Feb 2019 18:29:15 -0500
+X-Greylist: delayed 1500 seconds by postgrey-1.27 at vger.kernel.org; Fri, 22 Feb 2019 18:29:14 EST
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id B26CC400D57D9
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Feb 2019 15:56:55 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id xJWEghYGGiQerxJWEgv1IW; Fri, 22 Feb 2019 16:42:10 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.127.169] (port=49378 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gxJWE-0006jx-1b; Fri, 22 Feb 2019 16:42:10 -0600
+To:     James Morris <jmorris@namei.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        John Johansen <john.johansen@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com,
-        Matthew Garrett <mjg59@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190208205453.GA3232@embeddedor>
+ <1549660417.12743.18.camel@linux.ibm.com>
+ <26221503-3755-1ee1-2265-f4e0a7e1304c@embeddedor.com>
+ <4be79a11-bda8-b0c5-a966-d9793e47d915@embeddedor.com>
+ <alpine.LRH.2.21.1902230452380.27514@namei.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ mQINBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
+ 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
+ tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
+ DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
+ 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
+ YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
+ m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
+ NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
+ qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
+ LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABtCxHdXN0YXZvIEEu
+ IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPokCPQQTAQgAJwUCWywcDAIbIwUJ
+ CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
+ l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
+ obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
+ cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
+ ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
+ JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
+ JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
+ PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
+ R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
+ 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
+ e5YnLxF8ctRAp7K4yVlvA7kCDQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
+ H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
+ DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
+ 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
+ otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
+ l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
+ jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
+ zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
+ I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
+ ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
+ EQEAAYkCJQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
+ UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
+ XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
+ WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
+ imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
+ fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
+ 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
+ ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
+ YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
+ GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH v2] security: mark expected switch fall-throughs and add a
+ missing break
+Message-ID: <b791ecd5-8881-f652-6b3e-d4a6e73e9ea5@embeddedor.com>
+Date:   Fri, 22 Feb 2019 16:42:06 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.LRH.2.21.1902230452380.27514@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.127.169
+X-Source-L: No
+X-Exim-ID: 1gxJWE-0006jx-1b
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.127.169]:49378
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Matthew Garrett <mjg59@google.com>
 
-Any events that are logged after GetEventsLog() is called are logged to
-the EFI Final Events table. These events are defined as being in the
-crypto agile log format, so we can just append them directly to the
-existing log if it's in the same format. In theory we can also construct
-old-style SHA1 log entries for devices that only return logs in that
-format, but EDK2 doesn't generate the final event log in that case so
-it doesn't seem worth it at the moment.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
----
- drivers/char/tpm/eventlog/efi.c | 50 ++++++++++++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 7 deletions(-)
+On 2/22/19 11:53 AM, James Morris wrote:
+> On Fri, 22 Feb 2019, Gustavo A. R. Silva wrote:
+> 
+>> Hi James,
+>>
+>> I wonder if you can take this, please.
+> 
+> Ok -- I had thought you were sending all of these upstream across the 
+> board.
+> 
+> 
 
-diff --git a/drivers/char/tpm/eventlog/efi.c b/drivers/char/tpm/eventlog/efi.c
-index 3e673ab22cb4..9179cf6bdee9 100644
---- a/drivers/char/tpm/eventlog/efi.c
-+++ b/drivers/char/tpm/eventlog/efi.c
-@@ -21,10 +21,13 @@
- int tpm_read_log_efi(struct tpm_chip *chip)
- {
- 
-+	struct efi_tcg2_final_events_table *final_tbl = NULL;
- 	struct linux_efi_tpm_eventlog *log_tbl;
- 	struct tpm_bios_log *log;
- 	u32 log_size;
- 	u8 tpm_log_version;
-+	void *tmp;
-+	int ret;
- 
- 	if (!(chip->flags & TPM_CHIP_FLAG_TPM2))
- 		return -ENODEV;
-@@ -52,15 +55,48 @@ int tpm_read_log_efi(struct tpm_chip *chip)
- 
- 	/* malloc EventLog space */
- 	log->bios_event_log = kmemdup(log_tbl->log, log_size, GFP_KERNEL);
--	if (!log->bios_event_log)
--		goto err_memunmap;
--	log->bios_event_log_end = log->bios_event_log + log_size;
-+	if (!log->bios_event_log) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
- 
-+	log->bios_event_log_end = log->bios_event_log + log_size;
- 	tpm_log_version = log_tbl->version;
--	memunmap(log_tbl);
--	return tpm_log_version;
- 
--err_memunmap:
-+	ret = tpm_log_version;
-+
-+	if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR ||
-+	    efi_tpm_final_log_size == 0 ||
-+	    tpm_log_version != EFI_TCG2_EVENT_LOG_FORMAT_TCG_2)
-+		goto out;
-+
-+	final_tbl = memremap(efi.tpm_final_log,
-+			     sizeof(*final_tbl) + efi_tpm_final_log_size,
-+			     MEMREMAP_WB);
-+	if (!final_tbl) {
-+		pr_err("Could not map UEFI TPM final log\n");
-+		kfree(log->bios_event_log);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	tmp = krealloc(log->bios_event_log,
-+		       log_size + efi_tpm_final_log_size,
-+		       GFP_KERNEL);
-+	if (!tmp) {
-+		kfree(log->bios_event_log);
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	log->bios_event_log = tmp;
-+	memcpy((void *)log->bios_event_log + log_size,
-+	       final_tbl->events, efi_tpm_final_log_size);
-+	log->bios_event_log_end = log->bios_event_log +
-+		log_size + efi_tpm_final_log_size;
-+
-+out:
-+	memunmap(final_tbl);
- 	memunmap(log_tbl);
--	return -ENOMEM;
-+	return ret;
- }
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
+Yeah, I'm only doing that in cases where patches are being ignored.
 
+Thanks
+--
+Gustavo
