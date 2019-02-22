@@ -6,96 +6,99 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E4DC43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 00:22:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CDDC43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 00:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A52F2083E
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 00:22:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F06D4207E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Feb 2019 00:55:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbfBVAWO (ORCPT
+        id S1726317AbfBVAzv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Feb 2019 19:22:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35128 "EHLO mail.kernel.org"
+        Thu, 21 Feb 2019 19:55:51 -0500
+Received: from mga11.intel.com ([192.55.52.93]:32672 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725961AbfBVAWO (ORCPT
+        id S1726178AbfBVAzv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Feb 2019 19:22:14 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF0422080F;
-        Fri, 22 Feb 2019 00:22:11 +0000 (UTC)
-Date:   Thu, 21 Feb 2019 19:22:10 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com
+        Thu, 21 Feb 2019 19:55:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2019 16:55:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,397,1544515200"; 
+   d="scan'208";a="135401743"
+Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Feb 2019 16:55:50 -0800
+Received: from orsmsx115.amr.corp.intel.com (10.22.240.11) by
+ ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 21 Feb 2019 16:55:49 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.70]) by
+ ORSMSX115.amr.corp.intel.com ([169.254.4.136]) with mapi id 14.03.0415.000;
+ Thu, 21 Feb 2019 16:55:49 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "rostedt@goodmis.org" <rostedt@goodmis.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nadav.amit@gmail.com" <nadav.amit@gmail.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux_dti@icloud.com" <linux_dti@icloud.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>
 Subject: Re: [PATCH v3 18/20] x86/ftrace: Use vmalloc special flag
-Message-ID: <20190221192210.3e038fc3@gandalf.local.home>
-In-Reply-To: <20190221234451.17632-19-rick.p.edgecombe@intel.com>
+Thread-Topic: [PATCH v3 18/20] x86/ftrace: Use vmalloc special flag
+Thread-Index: AQHUykBbJ0x53lHatE6GL2AlMLdzQ6XreugAgAAJbQA=
+Date:   Fri, 22 Feb 2019 00:55:49 +0000
+Message-ID: <3cd659eb8c7d43cf46bebc6562c1c26bb6c51b51.camel@intel.com>
 References: <20190221234451.17632-1-rick.p.edgecombe@intel.com>
-        <20190221234451.17632-19-rick.p.edgecombe@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+         <20190221234451.17632-19-rick.p.edgecombe@intel.com>
+         <20190221192210.3e038fc3@gandalf.local.home>
+In-Reply-To: <20190221192210.3e038fc3@gandalf.local.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.11]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5A4A8CD00D4DF448B0BFB3995685F0A4@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 21 Feb 2019 15:44:49 -0800
-Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
-
-> Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
-> permissioned memory in vmalloc and remove places where memory was set NX
-> and RW before freeing which is no longer needed.
-> 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  arch/x86/kernel/ftrace.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-> index 13c8249b197f..93efe3955333 100644
-> --- a/arch/x86/kernel/ftrace.c
-> +++ b/arch/x86/kernel/ftrace.c
-> @@ -692,10 +692,6 @@ static inline void *alloc_tramp(unsigned long size)
->  }
->  static inline void tramp_free(void *tramp, int size)
-
-As size is no longer used within the function, can you remove that too.
-
-Thanks,
-
--- Steve
-
->  {
-> -	int npages = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> -
-> -	set_memory_nx((unsigned long)tramp, npages);
-> -	set_memory_rw((unsigned long)tramp, npages);
->  	module_memfree(tramp);
->  }
->  #else
-> @@ -820,6 +816,8 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
->  	/* ALLOC_TRAMP flags lets us know we created it */
->  	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
->  
-> +	set_vm_flush_reset_perms(trampoline);
-> +
->  	/*
->  	 * Module allocation needs to be completed by making the page
->  	 * executable. The page is still writable, which is a security hazard,
-
+T24gVGh1LCAyMDE5LTAyLTIxIGF0IDE5OjIyIC0wNTAwLCBTdGV2ZW4gUm9zdGVkdCB3cm90ZToN
+Cj4gT24gVGh1LCAyMSBGZWIgMjAxOSAxNTo0NDo0OSAtMDgwMA0KPiBSaWNrIEVkZ2Vjb21iZSA8
+cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+IHdyb3RlOg0KPiANCj4gPiBVc2UgbmV3IGZsYWcg
+Vk1fRkxVU0hfUkVTRVRfUEVSTVMgZm9yIGhhbmRsaW5nIGZyZWVpbmcgb2Ygc3BlY2lhbA0KPiA+
+IHBlcm1pc3Npb25lZCBtZW1vcnkgaW4gdm1hbGxvYyBhbmQgcmVtb3ZlIHBsYWNlcyB3aGVyZSBt
+ZW1vcnkgd2FzIHNldCBOWA0KPiA+IGFuZCBSVyBiZWZvcmUgZnJlZWluZyB3aGljaCBpcyBubyBs
+b25nZXIgbmVlZGVkLg0KPiA+IA0KPiA+IENjOiBTdGV2ZW4gUm9zdGVkdCA8cm9zdGVkdEBnb29k
+bWlzLm9yZz4NCj4gPiBBY2tlZC1ieTogU3RldmVuIFJvc3RlZHQgKFZNd2FyZSkgPHJvc3RlZHRA
+Z29vZG1pcy5vcmc+DQo+ID4gU2lnbmVkLW9mZi1ieTogUmljayBFZGdlY29tYmUgPHJpY2sucC5l
+ZGdlY29tYmVAaW50ZWwuY29tPg0KPiA+IC0tLQ0KPiA+ICBhcmNoL3g4Ni9rZXJuZWwvZnRyYWNl
+LmMgfCA2ICsrLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCA0IGRl
+bGV0aW9ucygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvZnRyYWNl
+LmMgYi9hcmNoL3g4Ni9rZXJuZWwvZnRyYWNlLmMNCj4gPiBpbmRleCAxM2M4MjQ5YjE5N2YuLjkz
+ZWZlMzk1NTMzMyAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL3g4Ni9rZXJuZWwvZnRyYWNlLmMNCj4g
+PiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvZnRyYWNlLmMNCj4gPiBAQCAtNjkyLDEwICs2OTIsNiBA
+QCBzdGF0aWMgaW5saW5lIHZvaWQgKmFsbG9jX3RyYW1wKHVuc2lnbmVkIGxvbmcgc2l6ZSkNCj4g
+PiAgfQ0KPiA+ICBzdGF0aWMgaW5saW5lIHZvaWQgdHJhbXBfZnJlZSh2b2lkICp0cmFtcCwgaW50
+IHNpemUpDQo+IA0KPiBBcyBzaXplIGlzIG5vIGxvbmdlciB1c2VkIHdpdGhpbiB0aGUgZnVuY3Rp
+b24sIGNhbiB5b3UgcmVtb3ZlIHRoYXQgdG9vLg0KPiANCj4gVGhhbmtzLA0KPiANCj4gLS0gU3Rl
+dmUNCj4gDQpHb29kIHBvaW50LCBJJ2xsIHJlbW92ZSBpdC4NCg0KVGhhbmtzLA0KDQpSaWNrDQoN
+CltzbmlwXQ0K
