@@ -7,87 +7,96 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C77C43381
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Feb 2019 21:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73EBC43381
+	for <linux-security-module@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A6D720651
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Feb 2019 21:23:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4C0720661
+	for <linux-security-module@archiver.kernel.org>; Sat, 23 Feb 2019 21:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550956998;
-	bh=xWhci2uiZVKn8+F0XxbRqRgkhpvH1cIACyISIkzvWqo=;
+	s=default; t=1550957372;
+	bh=YVF0yT3f2WP404RMvkpvJDTOaXP+Ui0h05CyqKXZJDY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VyjBLCTsIGLylIH32wBcqmo1PVJ6syt/DeCpgCfT531jqhC08l7mHnfN46Ck7212j
-	 WvXMoy+cbbFNIoyYE1ZI8+YfSjc+mhgSHz/Ub8b4Qm3tEZ9Am7vUpXpNOrVsgeD7o8
-	 pjjPHzUzV8MgtP6nqAOecNkwCZVQaSJ0v430yyv4=
+	b=E3W2uRk3T4e+Nk7o/Q/SUn/ETYQWZ3R6G1YuMYYpenOZyh+i1do5FuCJplkYMiCxo
+	 LLP//8tX0AJJgZurOvHpa0Jkvs6eHpReKJAYtOINRASNMYawFgYfpRNJrQ3TeUlXaH
+	 q/QxgiYpwbjNZSJukthqUW09jJycMxZdaQA6rUSY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbfBWVIL (ORCPT
+        id S1728613AbfBWVGG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 23 Feb 2019 16:08:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43482 "EHLO mail.kernel.org"
+        Sat, 23 Feb 2019 16:06:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729225AbfBWVIJ (ORCPT
+        id S1728601AbfBWVGF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 23 Feb 2019 16:08:09 -0500
+        Sat, 23 Feb 2019 16:06:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 985B32086A;
-        Sat, 23 Feb 2019 21:08:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0B1520861;
+        Sat, 23 Feb 2019 21:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550956089;
-        bh=xWhci2uiZVKn8+F0XxbRqRgkhpvH1cIACyISIkzvWqo=;
+        s=default; t=1550955964;
+        bh=YVF0yT3f2WP404RMvkpvJDTOaXP+Ui0h05CyqKXZJDY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LPeW1AJeRnk/2WFuCQ/UjhmfBFA5zylTDuP2bfcT2FZiQW5MiyrHXLDJHXOlG1jJA
-         GKmIpdbo0MGifBFJI6ZO910Pvz23boMv64o2JOduS6mjhcJSj0d2eOeJgB6AZyaJGu
-         Q9qSj7tgZn5RhflNH1UNXHhsv9+hTrLMYZhgEHNU=
+        b=C6afxrt1Ra6ruD4DeUa4wK3qI9LnJk/zwiR5jii4NeGYZAEnwGUIWir9vKvuQ29z2
+         voIZekrXXA+M4ITldEfkZcsfcCRC99v/TD0Br4absMfigtu5tXiHj7f+Qe/PEKsQlR
+         1y6ChBKbWmtzffhhSqKHgnbF7csfspPzBBQkngyY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     John Johansen <john.johansen@canonical.com>,
+Cc:     Petr Vorel <pvorel@suse.cz>,
+        John Johansen <john.johansen@canonical.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 56/65] apparmor: Fix aa_label_build() error handling for failed merges
-Date:   Sat, 23 Feb 2019 16:06:31 -0500
-Message-Id: <20190223210640.200911-56-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 60/72] apparmor: Fix warning about unused function apparmor_ipv6_postroute
+Date:   Sat, 23 Feb 2019 16:04:10 -0500
+Message-Id: <20190223210422.199966-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190223210640.200911-1-sashal@kernel.org>
-References: <20190223210640.200911-1-sashal@kernel.org>
+In-Reply-To: <20190223210422.199966-1-sashal@kernel.org>
+References: <20190223210422.199966-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: John Johansen <john.johansen@canonical.com>
+From: Petr Vorel <pvorel@suse.cz>
 
-[ Upstream commit d6d478aee003e19ef90321176552a8ad2929a47f ]
+[ Upstream commit a1a02062ad466052a34a8c4323143ccf9726eb52 ]
 
-aa_label_merge() can return NULL for memory allocations failures
-make sure to handle and set the correct error in this case.
+when compiled without CONFIG_IPV6:
+security/apparmor/lsm.c:1601:21: warning: ‘apparmor_ipv6_postroute’ defined but not used [-Wunused-function]
+ static unsigned int apparmor_ipv6_postroute(void *priv,
+                     ^~~~~~~~~~~~~~~~~~~~~~~
 
-Reported-by: Peng Hao <peng.hao2@zte.com.cn>
+Reported-by: Jordan Glover <Golden_Miller83@protonmail.ch>
+Tested-by: Jordan Glover <Golden_Miller83@protonmail.ch>
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
 Signed-off-by: John Johansen <john.johansen@canonical.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/apparmor/domain.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ security/apparmor/lsm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 08c88de0ffdad..11975ec8d5665 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -1444,7 +1444,10 @@ int aa_change_profile(const char *fqname, int flags)
- 			new = aa_label_merge(label, target, GFP_KERNEL);
- 		if (IS_ERR_OR_NULL(new)) {
- 			info = "failed to build target label";
--			error = PTR_ERR(new);
-+			if (!new)
-+				error = -ENOMEM;
-+			else
-+				error = PTR_ERR(new);
- 			new = NULL;
- 			perms.allow = 0;
- 			goto audit;
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 42446a216f3bc..7d1eeb0849687 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -1598,12 +1598,14 @@ static unsigned int apparmor_ipv4_postroute(void *priv,
+ 	return apparmor_ip_postroute(priv, skb, state);
+ }
+ 
++#if IS_ENABLED(CONFIG_IPV6)
+ static unsigned int apparmor_ipv6_postroute(void *priv,
+ 					    struct sk_buff *skb,
+ 					    const struct nf_hook_state *state)
+ {
+ 	return apparmor_ip_postroute(priv, skb, state);
+ }
++#endif
+ 
+ static const struct nf_hook_ops apparmor_nf_ops[] = {
+ 	{
 -- 
 2.19.1
 
