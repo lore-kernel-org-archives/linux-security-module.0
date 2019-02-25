@@ -2,89 +2,61 @@ Return-Path: <SRS0=Ku0V=RA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFACC43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Feb 2019 22:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8ECCC43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Feb 2019 22:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C77213A2
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Feb 2019 22:17:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CNhYdUjR"
+	by mail.kernel.org (Postfix) with ESMTP id BE92920643
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Feb 2019 22:33:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbfBYWRT (ORCPT
+        id S1728048AbfBYWd5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Feb 2019 17:17:19 -0500
-Received: from mail-qk1-f197.google.com ([209.85.222.197]:51504 "EHLO
-        mail-qk1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbfBYWRT (ORCPT
+        Mon, 25 Feb 2019 17:33:57 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:47240 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbfBYWd5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Feb 2019 17:17:19 -0500
-Received: by mail-qk1-f197.google.com with SMTP id h6so8808684qke.18
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Feb 2019 14:17:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=+Ffk1f/LNLI6QFI7UedzZxiEOH9uDzBXldmlBOknquc=;
-        b=CNhYdUjRpCUQneY+7ub9/XpTJVU+UdNTriYFCygIH2xgDW6rdPld2DuaRDn762khLN
-         K56cHM7kEJb0pS+UQhbiKml9bd0vPtFl7aoVehK1k8C8BqnlwJBZPVHOY0U78arMYaqG
-         5ZtdBwsan6FRxXzQbl0T8R7LzrkV97wQjcigA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=+Ffk1f/LNLI6QFI7UedzZxiEOH9uDzBXldmlBOknquc=;
-        b=HbrTWO1Ob2nJX97LpgtIWjeeCG9RhKeFRzPhlL34eDKRSAVf/JXyfYEe8NsRCKcFca
-         /gWwSOJL/icZktpGsW+2L8hwp/a7eEDXa6EWktR8WK6YtUL7ytxKFMvE3qlRHO7YPFF/
-         ZVFDpxizwbMMwsRqtsV5YhSRdCq5CuK5AaE/grfjAsLNUvzIZracGQ4n38nWXPX4V1tA
-         8+lgesreRSdxRgMXXrlDXfhiAxLyQqeFVa2iKG4z4mc1PH63WDL+K4qBSwUca4Q4O8pg
-         Pi4SFOxFhGEmGKjFCTowzpKr07mIVhQpBdltIULDXrlyGqvK6bhzsC0N4JEt3Zld2oIK
-         g/mA==
-X-Gm-Message-State: AHQUAuZr8CnJYTcStNmdmHTdQ85APXAARVDeyXQHU9WiXudrCUVh20Tk
-        TuR8L4fAEeIY9sGFMSP5W8DRr+x58hnrslhH
-X-Google-Smtp-Source: AHgI3IZnwVjCgAS0e5h1RWzZ9+P6X8OydZzUreoo4JQLlqJHxqXYNne7xHjiRDEUWuzIVu69WZZ68KjKu0kIJwK+
-X-Received: by 2002:a37:9a4c:: with SMTP id c73mr12217478qke.50.1551133037943;
- Mon, 25 Feb 2019 14:17:17 -0800 (PST)
-Date:   Mon, 25 Feb 2019 14:17:10 -0800
-Message-Id: <20190225221710.226552-1-mortonm@chromium.org>
+        Mon, 25 Feb 2019 17:33:57 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0EB7714EF987A;
+        Mon, 25 Feb 2019 14:33:56 -0800 (PST)
+Date:   Mon, 25 Feb 2019 14:33:55 -0800 (PST)
+Message-Id: <20190225.143355.245256286926542053.davem@davemloft.net>
+To:     s-nazarov@yandex.ru
+Cc:     paul@paul-moore.com, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org
+Subject: Re: [PATCH v2 1/2] NETWORKING: avoid use IPCB in cipso_v4_error
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <52295911551111855@myt5-f1576e7b5bad.qloud-c.yandex.net>
+References: <33533951550857169@myt3-2475c4d2af83.qloud-c.yandex.net>
+        <20190224.173328.1032826011262803545.davem@davemloft.net>
+        <52295911551111855@myt5-f1576e7b5bad.qloud-c.yandex.net>
+X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-Subject: [PATCH] LSM: Update function documentation for cap_capable
-From:   mortonm@chromium.org
-To:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        casey@schaufler-ca.com, sds@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org
-Cc:     Micah Morton <mortonm@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 25 Feb 2019 14:33:56 -0800 (PST)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Micah Morton <mortonm@chromium.org>
+From: Nazarov Sergey <s-nazarov@yandex.ru>
+Date: Mon, 25 Feb 2019 19:24:15 +0300
 
-This should have gone in with commit
-c1a85a00ea66cb6f0bd0f14e47c28c2b0999799f.
+> Add __icmp_send function having ip_options struct parameter
+> 
+> Signed-off-by: Sergey Nazarov <s-nazarov@yandex.ru>
 
-Signed-off-by: Micah Morton <mortonm@chromium.org>
----
- security/commoncap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied with Subject line fixes up.  This commit doesn't even make
+changes to cipse_v4_error().
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 188eaf59f82f..f1d117c3d8ae 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -57,7 +57,7 @@ static void warn_setuid_and_fcaps_mixed(const char *fname)
-  * @cred: The credentials to use
-  * @ns:  The user namespace in which we need the capability
-  * @cap: The capability to check for
-- * @audit: Whether to write an audit message or not
-+ * @opts: Bitmask of options defined in include/linux/security.h
-  *
-  * Determine whether the nominated task has the specified capability amongst
-  * its effective set, returning 0 if it does, -ve if it does not.
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
+Anyone who ACK'd this change or added their Reviewed-by did not read
+this email and are just rubber stamping crap.
 
