@@ -2,141 +2,104 @@ Return-Path: <SRS0=Z4XS=RB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDFCC43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A496C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 23:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DDC6218A1
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49246218D0
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 23:34:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pUJbkEuP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728727AbfBZUv0 (ORCPT
+        id S1729038AbfBZXen (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Feb 2019 15:51:26 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:45428 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728989AbfBZUvI (ORCPT
+        Tue, 26 Feb 2019 18:34:43 -0500
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com ([66.163.187.153]:41722
+        "EHLO sonic316-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728729AbfBZXen (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Feb 2019 15:51:08 -0500
-Received: from green.intra.ispras.ru (pluton2.ispras.ru [83.149.199.44])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 44EB25400C3;
-        Tue, 26 Feb 2019 23:51:05 +0300 (MSK)
-From:   Denis Efremov <efremov@ispras.ru>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Denis Efremov <efremov@ispras.ru>,
-        Casey Schaufler <casey@schaufler-ca.com>,
+        Tue, 26 Feb 2019 18:34:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551224081; bh=EktdXZ+AubJdhKWu5IoDK+BCu7sCQC/kR/8KwY8ETPg=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=pUJbkEuPhHrdVN/Hp6s7OaldakxGdv245xqX68wTL5w+JWU9/aownIUINClH0y2YK93O5imr8Irvp5mWEk+usHZ7ph7nqJpHo/BS3zWd9KcqhoohOCLco6ZhP8rkQBCjsBwgqj+VLxh2GAIWWr6CQTmmAZ7L/r3eiN8jLb7w7ps7x9uF82KcTUtL0rBQwPpIJdOa2YMRuvYRjdQnlWmjkC+74aD3vmuQAqtCis6H4fIs5na3DYQt/rnkDg+ZZYx+mOYzDxio+hgR6Bn9JMzGLhdLwNKZzLR93ekyiqf/6RiNuzYkj9H7LEknu6/tAoX+A6cFh6PciCJ3ZR7hGijvNA==
+X-YMail-OSG: 5MqEs4MVM1lNbtjBUFoVqhh2TTWsAMKIAAxYe5_5N35gf1a_jjhwXfA3lbupNKn
+ NN.EFyCNeg5M0Mo6V2FoN_k3qAJSS8SlMdtxa1bw2fpyTxB8iF89iUEs8bznQJ6ltfj0gQnes0zg
+ tHTNewpzo69tcRD1LXdp8DnlRDWengRXo7Ldh3qsO6uPQb3YnrLTKSuN0cbhFVJDf3oHn5pGjFjK
+ CgyXSx08KSpSfhRIFRiLatDcgqKPgp6v4TQgsYfRoX8FXeBeY47lqN773Ef_YgPauGL0XVnjdjan
+ QLvCnOtFQMURRGPtug9sZAfQXsk_n0JEPoaBXViz.FFDR_mWo.1biZ5ND9nDLElml1leV2QshPdT
+ 5tVZvRfFUG4CK1wGo3oZUocbM9ZGsDsevlf6G4vzCcQ3HLOKVFrXK1dDyVaBT0tSgUqsE_v0QC_Q
+ 7rPLeBr0GGSZ_goXS_6Ggl0MpEmvH8Ej1ODrhPquy90awkEN7lJwenTPV.OH9BtVHh_c33G.1uKE
+ CLjJmi0lrInic7nLPaAHy5APhqwPF8QAqeMDVj8WBA_LagP9wzwX4CGt1jFO7RFX7O9zN4OykHeV
+ rtOF04M.vR7FQmsTepOMJ8wlsGXGmUeQb7I0nwNbEf.4I4BDEPG.PAmRfxCbRC3o8whL_BQGqE4f
+ XVzytwrcehNjk2RaeIVVdf6u05A.I0Ih_n_116LWV1E.D6p9_MsbnHuvDsClCYHjJCyIEyfLoc4U
+ Uw4JJsvDpq6okRcWE7nAtNDMma9nMQDcE84hkMG.m9z3.jmYfi5kBe8R8TlQ1Kicjjs.Q.iXTOIf
+ DrQsp2DbynCTQluIpfo7HzCR1A0sriZFQHIpMqFURoMMZr4AiTtLYHtuSuiOm3uhgUE6kjtFBIee
+ asRMmv9ASXwOfvZ18fMjaPq1em8cveZiyZ6Xu5XtoPq5omDTXgCibgovFtAQYagfc2OKmubkZk_G
+ MQsu49P8s0iX_fCnjwUf4IoS8j7gG.o7vjHKF2LTLU4UnSr6ZbgXpukUoi7gy9XZQMPojEMBuKzF
+ mkv1JdfscpnyUlPFOzJ_rw6g06VIV1o7NFt7xpEUH6Lff8XBjUx1_x1G389QvwR35or2F3dJkKs0
+ GS9JCKYPyfoS4LqpICrTJ6O9j8MxnOtrqHWtV
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 26 Feb 2019 23:34:41 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
+          by smtp425.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 32189341dbc632a409d2d6505fbfc953;
+          Tue, 26 Feb 2019 23:34:41 +0000 (UTC)
+Subject: Re: [PATCH v2 00/11] LSM documentation update
+To:     Denis Efremov <efremov@ispras.ru>,
+        Kees Cook <keescook@chromium.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         Eric Paris <eparis@parisplace.org>,
-        Kees Cook <keescook@chromium.org>,
         John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Paul Moore <paul@paul-moore.com>,
         Kentaro Takeda <takedakn@nttdata.co.jp>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 08/11] LSM: fix documentation for the msg_queue_* hooks
-Date:   Tue, 26 Feb 2019 23:49:09 +0300
-Message-Id: <c781bb5891baac283a13332abfec3f39cb3a6c0b.1551213058.git.efremov@ispras.ru>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <cover.1551213058.git.efremov@ispras.ru>
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, casey@schaufler-ca.com
 References: <cover.1551213058.git.efremov@ispras.ru>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <8e1c8f44-9f4d-1b05-e5ee-c07bf287a67a@schaufler-ca.com>
+Date:   Tue, 26 Feb 2019 15:34:42 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
 In-Reply-To: <cover.1551213058.git.efremov@ispras.ru>
-References: <cover.1551213058.git.efremov@ispras.ru>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The msg_queue_* hooks were changed in the commit
-"msg/security: Pass kern_ipc_perm not msg_queue into the msg_queue
-security hooks" (d8c6e8543294). The type of the argument msq was changed
-from msq_queue to kern_ipc_perm. This patch updates the documentation
-for the hooks accordingly.
+On 2/26/2019 12:49 PM, Denis Efremov wrote:
+> Recent "New LSM Hooks" discussion has led me to the
+> thought that it might be a good idea to slightly
+> update the current documentation. The patchset adds
+> nothing new to the documentation, only fixes the old
+> description of hooks to reflect their current state.
+>
+> V2 adds the clarification on arguments for some hooks.
+> The format of the documentation is also slightly updated
+> for better html. However, there are still 10 hooks without
+> documentation at all. I think that this should be fixed
+> separatedly.
+>
+> Denis Efremov (11):
+>    LSM: fix documentation for sb_copy_data hook
+>    LSM: fix documentation for the syslog hook
+>    LSM: fix documentation for the socket_post_create hook
+>    LSM: fix documentation for the task_setscheduler hook
+>    LSM: fix documentation for the socket_getpeersec_dgram hook
+>    LSM: fix documentation for the path_chmod hook
+>    LSM: fix documentation for the audit_* hooks
+>    LSM: fix documentation for the msg_queue_* hooks
+>    LSM: fix documentation for the sem_* hooks
+>    LSM: fix documentation for the shm_* hooks
+>    LSM: lsm_hooks.h: fix documentation format
+>
+>   include/linux/lsm_hooks.h | 170 ++++++++++++++++++--------------------
+>   1 file changed, 81 insertions(+), 89 deletions(-)
 
-Signed-off-by: Denis Efremov <efremov@ispras.ru>
----
- include/linux/lsm_hooks.h | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+You can mark the series
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 1d60b07f30ab..5deea99aec18 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1095,41 +1095,41 @@
-  *
-  * @msg_queue_alloc_security:
-  *	Allocate and attach a security structure to the
-- *	msq->q_perm.security field. The security field is initialized to
-+ *	@perm->security field. The security field is initialized to
-  *	NULL when the structure is first created.
-- *	@msq contains the message queue structure to be modified.
-+ *	@perm contains the IPC permissions of the message queue.
-  *	Return 0 if operation was successful and permission is granted.
-  * @msg_queue_free_security:
-- *	Deallocate security structure for this message queue.
-- *	@msq contains the message queue structure to be modified.
-+ *	Deallocate security field @perm->security for the message queue.
-+ *	@perm contains the IPC permissions of the message queue.
-  * @msg_queue_associate:
-  *	Check permission when a message queue is requested through the
-- *	msgget system call.  This hook is only called when returning the
-+ *	msgget system call. This hook is only called when returning the
-  *	message queue identifier for an existing message queue, not when a
-  *	new message queue is created.
-- *	@msq contains the message queue to act upon.
-+ *	@perm contains the IPC permissions of the message queue.
-  *	@msqflg contains the operation control flags.
-  *	Return 0 if permission is granted.
-  * @msg_queue_msgctl:
-  *	Check permission when a message control operation specified by @cmd
-- *	is to be performed on the message queue @msq.
-- *	The @msq may be NULL, e.g. for IPC_INFO or MSG_INFO.
-- *	@msq contains the message queue to act upon.  May be NULL.
-+ *	is to be performed on the message queue with permissions @perm.
-+ *	The @perm may be NULL, e.g. for IPC_INFO or MSG_INFO.
-+ *	@perm contains the IPC permissions of the msg queue. May be NULL.
-  *	@cmd contains the operation to be performed.
-  *	Return 0 if permission is granted.
-  * @msg_queue_msgsnd:
-  *	Check permission before a message, @msg, is enqueued on the message
-- *	queue, @msq.
-- *	@msq contains the message queue to send message to.
-+ *	queue with permissions @perm.
-+ *	@perm contains the IPC permissions of the message queue.
-  *	@msg contains the message to be enqueued.
-  *	@msqflg contains operational flags.
-  *	Return 0 if permission is granted.
-  * @msg_queue_msgrcv:
-  *	Check permission before a message, @msg, is removed from the message
-- *	queue, @msq.  The @target task structure contains a pointer to the
-+ *	queue. The @target task structure contains a pointer to the
-  *	process that will be receiving the message (not equal to the current
-  *	process when inline receives are being performed).
-- *	@msq contains the message queue to retrieve message from.
-+ *	@perm contains the IPC permissions of the message queue.
-  *	@msg contains the message destination.
-  *	@target contains the task structure for recipient process.
-  *	@type contains the type of message requested.
-@@ -1619,13 +1619,13 @@ union security_list_options {
- 	int (*msg_msg_alloc_security)(struct msg_msg *msg);
- 	void (*msg_msg_free_security)(struct msg_msg *msg);
- 
--	int (*msg_queue_alloc_security)(struct kern_ipc_perm *msq);
--	void (*msg_queue_free_security)(struct kern_ipc_perm *msq);
--	int (*msg_queue_associate)(struct kern_ipc_perm *msq, int msqflg);
--	int (*msg_queue_msgctl)(struct kern_ipc_perm *msq, int cmd);
--	int (*msg_queue_msgsnd)(struct kern_ipc_perm *msq, struct msg_msg *msg,
-+	int (*msg_queue_alloc_security)(struct kern_ipc_perm *perm);
-+	void (*msg_queue_free_security)(struct kern_ipc_perm *perm);
-+	int (*msg_queue_associate)(struct kern_ipc_perm *perm, int msqflg);
-+	int (*msg_queue_msgctl)(struct kern_ipc_perm *perm, int cmd);
-+	int (*msg_queue_msgsnd)(struct kern_ipc_perm *perm, struct msg_msg *msg,
- 				int msqflg);
--	int (*msg_queue_msgrcv)(struct kern_ipc_perm *msq, struct msg_msg *msg,
-+	int (*msg_queue_msgrcv)(struct kern_ipc_perm *perm, struct msg_msg *msg,
- 				struct task_struct *target, long type,
- 				int mode);
- 
--- 
-2.17.2
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
