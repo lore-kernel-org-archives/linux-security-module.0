@@ -2,118 +2,152 @@ Return-Path: <SRS0=Z4XS=RB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D92D4C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 00:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C13AC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 09:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 966C3217F4
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 00:06:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6683D20643
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 09:09:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="BNtnvDYf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pCQTUdVX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbfBZAGK (ORCPT
+        id S1727389AbfBZJJG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Feb 2019 19:06:10 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41405 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728530AbfBZAGJ (ORCPT
+        Tue, 26 Feb 2019 04:09:06 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36760 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbfBZJJG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Feb 2019 19:06:09 -0500
-Received: by mail-qt1-f195.google.com with SMTP id v10so12867979qtp.8
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Feb 2019 16:06:09 -0800 (PST)
+        Tue, 26 Feb 2019 04:09:06 -0500
+Received: by mail-pg1-f195.google.com with SMTP id r124so5920688pgr.3;
+        Tue, 26 Feb 2019 01:09:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:date:message-id:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=FsQY+v0ElZ+UC5/pLE9pTQWvKqfzoalmfhBWkpQl2jk=;
-        b=BNtnvDYfTTNyfUZtpkP0KG9yslkrrDyEYIcS2Y/131BvhiYUZ98FykDsFOFyusplUw
-         57VpYTYZbN9G55YqDsMWekhV74gDCzl3zITTeGHMeAFv/ADuIPWqKijyU7fVf66KMDQe
-         m7LSthKdQl8/urBda8+JCAQLZhTUfrIo53ClKESKHxUhhcPcVKnK3MoHVXNKe7GxLtJb
-         rshvYtEK+FAFzPP2mQSdwycFF8k5ztuk8NyUHD96mdSDeilghwKgz2iNZoFiJM/VBeFM
-         HyEBrC2DaqaePhGd68eHzXH2AJfgzYqCT4Nw62PKddHsMrC2ZJkY9ZnMZANVnmCUg1Av
-         HklQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=52U25cht0zHiNRNh66FwIqUZB8W16/yFRaq8MAGOCOU=;
+        b=pCQTUdVXRjdN2oHcSwJV1KFOqwZqKklngD75ks+Uu9IwXl5ZuHSmuqanlhvIyX9wjY
+         p/MthjObBgkzoiZNpZ17efB7XfFcU+mf/wW7H6AkzGGsCV+6HKw4/4BawF27dhEuUBhu
+         F8eqprbPejNaSyGY3NCICTrHmIx1fFAOqtMF0VuzzAEPUlriiOgmSLcZTwr3TN7JGs1f
+         LmAgdLm7f7IP5bUoukLsCu0H8MSZaB7DuYsZAnV+pLxQNItI+CE8lx2uuLmrDBoeqIL8
+         T/tLZJrfPeJlhhr1ybpSoaIs5tdJVUIAqvNa1f3RaPr5ix6RIpooaULY7Ozj+jTFAu2M
+         uKgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:date:message-id:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=FsQY+v0ElZ+UC5/pLE9pTQWvKqfzoalmfhBWkpQl2jk=;
-        b=fWp68MhP4KxrfpttWDoFgPLSFlPBBFRF/hHKDUxqmbtozQjQ9DlbHAR0szjfoi/5hI
-         P1mbRuoHlehVHZhkECNyEHVHKpIXWOE6DbuqOIfO2eMDAodj9izk4as4UYnJlaoEufgp
-         Ss4AMq4kfvw2+kN+kXEFsz7IWtOjjAERA453xfFsxIdtNxqAlwVwN/zoaKK4MUmbBTxq
-         l4D+2ZyDlKrNwEW5JBuFnwJprkAPwuE3LQvcr4gaToRXT7SwRaDsh9SYHOh+aH+t87N2
-         RkYobl5ML3W6IPiWHwVa7QxEsIn4uOEXS8rRqr7olTTxpH7CwLgUks+ksaJc6wMcQx0R
-         iuDA==
-X-Gm-Message-State: AHQUAuar+sUVhlWihF+KJ9Z+xEcRBcUwT7BK/SdIxYJdYFcScwbFsjZc
-        Yrc/NUFyYsxN7bEQYk5H9cN5
-X-Google-Smtp-Source: AHgI3IZuHBCds4U35jZctyo5v3ttdMh4QnmOVyfgCebH+r0xL/6V15Bgx9nIS0dzN/eTrgprQcfMDw==
-X-Received: by 2002:a0c:d963:: with SMTP id t32mr15638036qvj.231.1551139568527;
-        Mon, 25 Feb 2019 16:06:08 -0800 (PST)
-Received: from localhost (static-96-233-112-89.bstnma.ftas.verizon.net. [96.233.112.89])
-        by smtp.gmail.com with ESMTPSA id o2sm8071374qtf.46.2019.02.25.16.06.07
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=52U25cht0zHiNRNh66FwIqUZB8W16/yFRaq8MAGOCOU=;
+        b=HQfPd9tYw7bLBttM8gHLjHT9HHJ+JPMovb1tEI5ek1PmPf9rr9qmVNrX2dYjblh6zX
+         kDsK2nMWjdSDn9NFdv9m8+5X22OxhOkTgqkvTNwIcemVyQu5KhzdhUoDDwQJawUOCQSO
+         3LPdVcLbaRlAUn12Vv+zhxzrfRn4ojCQA94nYtHOhhpj9e7ANEV+RybX4CKIvNNlnAOp
+         Ffqcsc00UQDN9o/Yn676E+mZoD6YfHrt6IxBHlokOw7BDkU7r5Fow0GF9jDC+v1dgoGb
+         B2geKdL+ZxJ3yesyBGUzkpOqR7EUUryS1tm1LGhzP7OudrbCWQ3pQh8KKeTObZ5oh32u
+         myzg==
+X-Gm-Message-State: AHQUAuZkA6Yb1S0AD1hj17bbvuO+fMcvM9bCWQDW1YP3IUZ0vxN/2njX
+        Dlb4dkrNVOjRpwmEr73agaw=
+X-Google-Smtp-Source: AHgI3IbEeDLnZ1SbUP9xbqKEIlqYWIaU40ROwPIqoMi89NWKZrP4A+ZgzNRLL4k8lQ9do0aV0fZCGg==
+X-Received: by 2002:a65:4147:: with SMTP id x7mr2711647pgp.54.1551172145673;
+        Tue, 26 Feb 2019 01:09:05 -0800 (PST)
+Received: from localhost ([43.224.245.180])
+        by smtp.gmail.com with ESMTPSA id q5sm18093662pga.71.2019.02.26.01.09.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 25 Feb 2019 16:06:07 -0800 (PST)
-From:   Paul Moore <paul@paul-moore.com>
-X-Google-Original-From: Paul Moore <pmoore2@cisco.com>
-Subject: [PATCH] netlabel: fix out-of-bounds memory accesses
-To:     netdev@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Date:   Mon, 25 Feb 2019 19:06:06 -0500
-Message-ID: <155113956675.10125.14312108729252175194.stgit@chester>
-User-Agent: StGit/0.19-dirty
+        Tue, 26 Feb 2019 01:09:05 -0800 (PST)
+Date:   Tue, 26 Feb 2019 17:09:03 +0800
+From:   Geliang Tang <geliangtang@gmail.com>
+To:     David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security: keys: add NULL checking for
+ key->type->instantiate
+Message-ID: <20190226090903.GA3197@OptiPlex>
+References: <754d6ccb4012fc11c7b9369e66ba7f3e816fdb57.1548400400.git.geliangtang@gmail.com>
+ <31395.1549492013@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <31395.1549492013@warthog.procyon.org.uk>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There are two array out-of-bounds memory accesses, one in
-cipso_v4_map_lvl_valid(), the other in netlbl_bitmap_walk().  Both
-errors are embarassingly simple, and the fixes are straightforward.
+On Wed, Feb 06, 2019 at 10:26:53PM +0000, David Howells wrote:
+> Geliang Tang <geliangtang@gmail.com> wrote:
+> 
+> > key->type->instantiate can be NULL, add NULL checking to prevent
+> > NULL pointer dereference in __key_instantiate_and_link().
+> 
+> Do you have an oops report or test case for this?
+> 
+> David
 
-As a FYI for anyone backporting this patch to kernels prior to v4.8,
-you'll want to apply the netlbl_bitmap_walk() patch to
-cipso_v4_bitmap_walk() as netlbl_bitmap_walk() doesn't exist before
-Linux v4.8.
+Here is the test module code. Insmod it, we can get the oops.
 
-Reported-by: Jann Horn <jannh@google.com>
-Fixes: 446fda4f2682 ("[NetLabel]: CIPSOv4 engine")
-Fixes: 3faa8f982f95 ("netlabel: Move bitmap manipulation functions to the NetLabel core.")
-Signed-off-by: Paul Moore <paul@paul-moore.com>
----
- net/ipv4/cipso_ipv4.c        |    3 ++-
- net/netlabel/netlabel_kapi.c |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+#include <linux/init.h>
+#include <linux/module.h>
+#include <linux/key.h>
+#include <linux/key-type.h>
+#include <linux/cred.h>
+#include <linux/seq_file.h>
 
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index 777fa3b7fb13..f4b83de2263e 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -667,7 +667,8 @@ static int cipso_v4_map_lvl_valid(const struct cipso_v4_doi *doi_def, u8 level)
- 	case CIPSO_V4_MAP_PASS:
- 		return 0;
- 	case CIPSO_V4_MAP_TRANS:
--		if (doi_def->map.std->lvl.cipso[level] < CIPSO_V4_INV_LVL)
-+		if ((level < doi_def->map.std->lvl.cipso_size) &&
-+		    (doi_def->map.std->lvl.cipso[level] < CIPSO_V4_INV_LVL))
- 			return 0;
- 		break;
- 	}
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index ea7c67050792..ee3e5b6471a6 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -903,7 +903,8 @@ int netlbl_bitmap_walk(const unsigned char *bitmap, u32 bitmap_len,
- 		    (state == 0 && (byte & bitmask) == 0))
- 			return bit_spot;
- 
--		bit_spot++;
-+		if (++bit_spot >= bitmap_len)
-+			return -1;
- 		bitmask >>= 1;
- 		if (bitmask == 0) {
- 			byte = bitmap[++byte_offset];
+static int test_instantiate(struct key *key, struct key_preparsed_payload *prep)
+{
+	return 0;
+}
 
+static void test_describe(const struct key *key, struct seq_file *m)
+{
+	seq_puts(m, key->description);
+}
+
+struct key_type test_key_type = {
+        .name           = "test",
+	//.instantiate	= test_instantiate,
+        .describe       = test_describe,
+};
+
+static int __init test_init(void)
+{
+	const struct cred *cred = current_cred();
+	struct key *key;
+	int ret;
+
+	register_key_type(&test_key_type);
+
+	key = key_alloc(&test_key_type, "test",
+			GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, cred,
+			KEY_POS_SEARCH, KEY_ALLOC_NOT_IN_QUOTA, NULL);
+	if (IS_ERR(key))
+		return -1;
+
+	pr_info("keyring allocated successfully.\n");
+
+	ret = key_instantiate_and_link(key,
+				       NULL,
+				       sizeof(int),
+				       current->cred->user->session_keyring,
+				       NULL);
+	if (ret < 0) {
+		key_revoke(key);
+		key_put(key);
+		return ret;
+	}
+
+	return 0;
+}
+
+static void __exit test_exit(void)
+{
+	unregister_key_type(&test_key_type);
+}
+
+module_init(test_init);
+module_exit(test_exit);
+
+MODULE_LICENSE("GPL");
