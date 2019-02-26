@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1669CC43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62503C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D94B3218A1
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3875D218A1
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Feb 2019 20:51:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbfBZUvG (ORCPT
+        id S1729313AbfBZUvK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Feb 2019 15:51:06 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:45394 "EHLO mail.ispras.ru"
+        Tue, 26 Feb 2019 15:51:10 -0500
+Received: from mail.ispras.ru ([83.149.199.45]:45474 "EHLO mail.ispras.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729261AbfBZUvG (ORCPT
+        id S1729285AbfBZUvJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Feb 2019 15:51:06 -0500
+        Tue, 26 Feb 2019 15:51:09 -0500
 Received: from green.intra.ispras.ru (pluton2.ispras.ru [83.149.199.44])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 6FA0F5400DD;
-        Tue, 26 Feb 2019 23:51:03 +0300 (MSK)
+        by mail.ispras.ru (Postfix) with ESMTPSA id 44EAE5400E3;
+        Tue, 26 Feb 2019 23:51:07 +0300 (MSK)
 From:   Denis Efremov <efremov@ispras.ru>
-To:     Casey Schaufler <casey@schaufler-ca.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Denis Efremov <efremov@ispras.ru>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Eric Paris <eparis@parisplace.org>,
         Kees Cook <keescook@chromium.org>,
         John Johansen <john.johansen@canonical.com>,
@@ -35,9 +35,9 @@ Cc:     Denis Efremov <efremov@ispras.ru>,
         Paul Moore <paul@paul-moore.com>,
         Kentaro Takeda <takedakn@nttdata.co.jp>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/11] LSM: fix documentation for the audit_* hooks
-Date:   Tue, 26 Feb 2019 23:49:08 +0300
-Message-Id: <dcb793c5cf4212c2f1adaaed2d0bf62c36fd489b.1551213058.git.efremov@ispras.ru>
+Subject: [PATCH v2 10/11] LSM: fix documentation for the shm_* hooks
+Date:   Tue, 26 Feb 2019 23:49:11 +0300
+Message-Id: <a88f0a4f483f65398e39f38d1b68a95eb4a341b3.1551213058.git.efremov@ispras.ru>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1551213058.git.efremov@ispras.ru>
 References: <cover.1551213058.git.efremov@ispras.ru>
@@ -47,47 +47,86 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch updates the documentation for the audit_* hooks
-to use the same arguments names as in the hook's declarations.
+The shm_* hooks were changed in the commit
+"shm/security: Pass kern_ipc_perm not shmid_kernel into the
+shm security hooks" (7191adff2a55). The type of the argument
+shp was changed from shmid_kernel to kern_ipc_perm. This patch
+updates the documentation for the hooks accordingly.
 
 Signed-off-by: Denis Efremov <efremov@ispras.ru>
 ---
- include/linux/lsm_hooks.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ include/linux/lsm_hooks.h | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index feedd03cbd59..1d60b07f30ab 100644
+index 06fefe39a397..f4a168c5e85c 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -1329,9 +1329,9 @@
-  *	-EINVAL in case of an invalid rule.
+@@ -1139,34 +1139,34 @@
+  * Security hooks for System V Shared Memory Segments
   *
-  * @audit_rule_known:
-- *	Specifies whether given @rule contains any fields related to
-+ *	Specifies whether given @krule contains any fields related to
-  *	current LSM.
-- *	@rule contains the audit rule of interest.
-+ *	@krule contains the audit rule of interest.
-  *	Return 1 in case of relation found, 0 otherwise.
-  *
-  * @audit_rule_match:
-@@ -1340,14 +1340,14 @@
-  *	@secid contains the security id in question.
-  *	@field contains the field which relates to current LSM.
-  *	@op contains the operator that will be used for matching.
-- *	@rule points to the audit rule that will be checked against.
-+ *	@lsmrule points to the audit rule that will be checked against.
-  *	@actx points to the audit context associated with the check.
-  *	Return 1 if secid matches the rule, 0 if it does not, -ERRNO on failure.
-  *
-  * @audit_rule_free:
-  *	Deallocate the LSM audit rule structure previously allocated by
-  *	audit_rule_init.
-- *	@rule contains the allocated rule
-+ *	@lsmrule contains the allocated rule.
-  *
-  * @inode_invalidate_secctx:
-  *	Notify the security module that it must revalidate the security context
+  * @shm_alloc_security:
+- *	Allocate and attach a security structure to the shp->shm_perm.security
+- *	field.  The security field is initialized to NULL when the structure is
++ *	Allocate and attach a security structure to the @perm->security
++ *	field. The security field is initialized to NULL when the structure is
+  *	first created.
+- *	@shp contains the shared memory structure to be modified.
++ *	@perm contains the IPC permissions of the shared memory structure.
+  *	Return 0 if operation was successful and permission is granted.
+  * @shm_free_security:
+- *	Deallocate the security struct for this memory segment.
+- *	@shp contains the shared memory structure to be modified.
++ *	Deallocate the security structure @perm->security for the memory segment.
++ *	@perm contains the IPC permissions of the shared memory structure.
+  * @shm_associate:
+  *	Check permission when a shared memory region is requested through the
+- *	shmget system call.  This hook is only called when returning the shared
++ *	shmget system call. This hook is only called when returning the shared
+  *	memory region identifier for an existing region, not when a new shared
+  *	memory region is created.
+- *	@shp contains the shared memory structure to be modified.
++ *	@perm contains the IPC permissions of the shared memory structure.
+  *	@shmflg contains the operation control flags.
+  *	Return 0 if permission is granted.
+  * @shm_shmctl:
+  *	Check permission when a shared memory control operation specified by
+- *	@cmd is to be performed on the shared memory region @shp.
+- *	The @shp may be NULL, e.g. for IPC_INFO or SHM_INFO.
+- *	@shp contains shared memory structure to be modified.
++ *	@cmd is to be performed on the shared memory region with permissions @perm.
++ *	The @perm may be NULL, e.g. for IPC_INFO or SHM_INFO.
++ *	@perm contains the IPC permissions of the shared memory structure.
+  *	@cmd contains the operation to be performed.
+  *	Return 0 if permission is granted.
+  * @shm_shmat:
+  *	Check permissions prior to allowing the shmat system call to attach the
+- *	shared memory segment @shp to the data segment of the calling process.
+- *	The attaching address is specified by @shmaddr.
+- *	@shp contains the shared memory structure to be modified.
++ *	shared memory segment with permissions @perm to the data segment of the
++ *	calling process. The attaching address is specified by @shmaddr.
++ *	@perm contains the IPC permissions of the shared memory structure.
+  *	@shmaddr contains the address to attach memory region to.
+  *	@shmflg contains the operational flags.
+  *	Return 0 if permission is granted.
+@@ -1629,11 +1629,11 @@ union security_list_options {
+ 				struct task_struct *target, long type,
+ 				int mode);
+ 
+-	int (*shm_alloc_security)(struct kern_ipc_perm *shp);
+-	void (*shm_free_security)(struct kern_ipc_perm *shp);
+-	int (*shm_associate)(struct kern_ipc_perm *shp, int shmflg);
+-	int (*shm_shmctl)(struct kern_ipc_perm *shp, int cmd);
+-	int (*shm_shmat)(struct kern_ipc_perm *shp, char __user *shmaddr,
++	int (*shm_alloc_security)(struct kern_ipc_perm *perm);
++	void (*shm_free_security)(struct kern_ipc_perm *perm);
++	int (*shm_associate)(struct kern_ipc_perm *perm, int shmflg);
++	int (*shm_shmctl)(struct kern_ipc_perm *perm, int cmd);
++	int (*shm_shmat)(struct kern_ipc_perm *perm, char __user *shmaddr,
+ 				int shmflg);
+ 
+ 	int (*sem_alloc_security)(struct kern_ipc_perm *perm);
 -- 
 2.17.2
 
