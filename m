@@ -2,28 +2,71 @@ Return-Path: <SRS0=eR/s=RC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF309C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 15:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB3AC43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 16:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9521B2184A
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 15:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A9662184A
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 16:27:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m9W2RWrP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726223AbfB0PK3 convert rfc822-to-8bit (ORCPT
+        id S1730054AbfB0Q1i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Feb 2019 10:10:29 -0500
-Received: from mail.ispras.ru ([83.149.199.45]:47830 "EHLO mail.ispras.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726181AbfB0PK3 (ORCPT
+        Wed, 27 Feb 2019 11:27:38 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:36066 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbfB0Q1h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Feb 2019 10:10:29 -0500
-Received: from edu175047.fhi-fokus.de (edu175047.fhi-fokus.de [194.95.175.47])
-        by mail.ispras.ru (Postfix) with ESMTPSA id 8A61B5400C2;
-        Wed, 27 Feb 2019 18:10:25 +0300 (MSK)
+        Wed, 27 Feb 2019 11:27:37 -0500
+Received: by mail-vk1-f193.google.com with SMTP id v131so3989660vkd.3
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Feb 2019 08:27:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UxgEDS2CX/CMq20ylO8bSwgapXjZEgLgnN1+iXxgyB4=;
+        b=m9W2RWrPGFU0kTqTwPbx+GS/q5Mx8/SrZWVqVUu8C80Blg3WUbNfEUbf5tZ6PRLnMC
+         O157XHAgGDDe8lGhsXAz+Hq29Jh0lmImXqs6fp3BvDHfZGg+zNIZw6kkCZGkf1ZnirI9
+         87XHcUujeiVyLzHMNcf3c+icWB7F6nxC2SD30=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UxgEDS2CX/CMq20ylO8bSwgapXjZEgLgnN1+iXxgyB4=;
+        b=P0d8Utwd0Ff4Ugq4DbbwIO2XfdNbMXtL5FrI01edOpbtXjmyuHu1MD4f/+MA7Pu8PX
+         eXDLNzmMxtJO5RyDn3LolCLh0F5O2tueFU58d0qzsxUh+BYXejrmny92W53R142N7l3s
+         S/KnNCbpz0grnW2f+9wAxC9jgRT6UHn+XLChzKaLKJ/gDTAAyTPtS/0sp+ZuCMvbypab
+         11wE6ZjrD2Ik2L0TWCeqtUhhlL5F5YCw5aUddcuckcRy8l8j4m3eRUmMT5vUtStsFoVu
+         Qufcc8VYEWBuae5/0V2pjOWVMLWUaX58lkWPji+0zes5yIla/R98ZTp4xFTfh+t4yJPh
+         icUw==
+X-Gm-Message-State: AHQUAuagA3nmluQy8Gbj90wjbMvZkukNrWUNxOJh5ivjxKN9nhjRLjQ6
+        o3cQ75uBe4naXGvMYJ6pwU5JMZzGQcQ=
+X-Google-Smtp-Source: AHgI3Iadf3oikD8vc6K4aMNjK5uTBmINLlGOyoTK7n2vsmZF0cOpNUXEElYyImFl8Px3ImKZ9UdIUg==
+X-Received: by 2002:a1f:24d3:: with SMTP id k202mr1073677vkk.45.1551284855621;
+        Wed, 27 Feb 2019 08:27:35 -0800 (PST)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id f188sm4857128vkg.11.2019.02.27.08.27.31
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Feb 2019 08:27:32 -0800 (PST)
+Received: by mail-ua1-f45.google.com with SMTP id u1so15162697uae.12
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Feb 2019 08:27:31 -0800 (PST)
+X-Received: by 2002:ab0:2712:: with SMTP id s18mr2507403uao.114.1551284851047;
+ Wed, 27 Feb 2019 08:27:31 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1551213058.git.efremov@ispras.ru> <CAGXu5jKzDi42Hazh7JsPQpzH-xdQQTQ+oD06Bb1N6tbYzB3uuA@mail.gmail.com>
+ <35a7a5dd-4478-1dc2-5966-c974196f8c7a@ispras.ru>
+In-Reply-To: <35a7a5dd-4478-1dc2-5966-c974196f8c7a@ispras.ru>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 27 Feb 2019 08:27:18 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+s7k=nai-ZaMo_526OBBmzNosZ2Dxmjk5LXNP06XJ4Rg@mail.gmail.com>
+Message-ID: <CAGXu5j+s7k=nai-ZaMo_526OBBmzNosZ2Dxmjk5LXNP06XJ4Rg@mail.gmail.com>
 Subject: Re: [PATCH v2 00/11] LSM documentation update
-To:     Kees Cook <keescook@chromium.org>
+To:     Denis Efremov <efremov@ispras.ru>
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Eric Paris <eparis@parisplace.org>,
@@ -36,72 +79,19 @@ Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         LKML <linux-kernel@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
         "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-References: <cover.1551213058.git.efremov@ispras.ru>
- <CAGXu5jKzDi42Hazh7JsPQpzH-xdQQTQ+oD06Bb1N6tbYzB3uuA@mail.gmail.com>
-From:   Denis Efremov <efremov@ispras.ru>
-Openpgp: preference=signencrypt
-Autocrypt: addr=efremov@ispras.ru; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <35a7a5dd-4478-1dc2-5966-c974196f8c7a@ispras.ru>
-Date:   Wed, 27 Feb 2019 16:10:24 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKzDi42Hazh7JsPQpzH-xdQQTQ+oD06Bb1N6tbYzB3uuA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: ru
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The rest of the warnings are about undocumented hooks. This patchset
-fixes the existing documentation. I will try to document the hooks from
-warnings in a separate patch. Some of the hooks are trivial enough, but
-others require me digging into the code and mailing lists. Can't promise
-to do it quickly.
+On Wed, Feb 27, 2019 at 7:10 AM Denis Efremov <efremov@ispras.ru> wrote:
+> The rest of the warnings are about undocumented hooks. This patchset
+> fixes the existing documentation. I will try to document the hooks from
+> warnings in a separate patch. Some of the hooks are trivial enough, but
+> others require me digging into the code and mailing lists. Can't promise
+> to do it quickly.
 
-27.02.2019 1:09, Kees Cook пишет:
-> If you want more work, I do notice the following warnings are still present:
+No worries! What you've added already helps a lot. :)
 
+-- 
+Kees Cook
