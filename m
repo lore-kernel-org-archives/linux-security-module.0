@@ -2,88 +2,86 @@ Return-Path: <SRS0=eR/s=RC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DCEC43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 14:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A678C43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 14:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4834220661
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 14:03:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FCE72133D
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 14:19:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbfB0ODG (ORCPT
+        id S1730618AbfB0OTe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Feb 2019 09:03:06 -0500
-Received: from mga14.intel.com ([192.55.52.115]:27794 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730392AbfB0ODG (ORCPT
+        Wed, 27 Feb 2019 09:19:34 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:58096 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728284AbfB0OTe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Feb 2019 09:03:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 06:03:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,419,1544515200"; 
-   d="scan'208";a="278280438"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
-  by orsmga004.jf.intel.com with ESMTP; 27 Feb 2019 06:03:01 -0800
-Date:   Wed, 27 Feb 2019 16:02:59 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V4 2/4] tpm: Reserve the TPM final events table
-Message-ID: <20190227140259.GA17106@linux.intel.com>
-References: <20190222202606.160816-1-matthewgarrett@google.com>
- <20190222202606.160816-3-matthewgarrett@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190222202606.160816-3-matthewgarrett@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 27 Feb 2019 09:19:34 -0500
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1REJPlm057862;
+        Wed, 27 Feb 2019 23:19:25 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Wed, 27 Feb 2019 23:19:25 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1REJKmR057812
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 27 Feb 2019 23:19:25 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] tomoyo: Change pathname calculation for read-only filesystems.
+Date:   Wed, 27 Feb 2019 23:19:24 +0900
+Message-Id: <1551277164-8715-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 22, 2019 at 12:26:04PM -0800, Matthew Garrett wrote:
-> From: Matthew Garrett <mjg59@google.com>
-> 
-> UEFI systems provide a boot services protocol for obtaining the TPM
-> event log, but this is unusable after ExitBootServices() is called.
-> Unfortunately ExitBootServices() itself triggers additional TPM events
-> that then can't be obtained using this protocol. The platform provides a
-> mechanism for the OS to obtain these events by recording them to a
-> separate UEFI configuration table which the OS can then map.
-> 
-> Unfortunately this table isn't self describing in terms of providing its
-> length, so we need to parse the events inside it to figure out how long
-> it is. Since the table isn't mapped at this point, we need to extend the
-> length calculation function to be able to map the event as it goes
-> along.
-> 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
+Commit 5625f2e3266319fd ("TOMOYO: Change pathname for non-rename()able
+filesystems.") intended to be applied to filesystems where the content is
+not controllable from the userspace (e.g. proc, sysfs, securityfs), based
+on an assumption that such filesystems do not support rename() operation.
 
-Getting:
+But it turned out that read-only filesystems also do not support rename()
+operation despite the content is controllable from the userspace, and that
+commit is annoying TOMOYO users who want to use e.g. squashfs as the root
+filesystem due to use of local name which does not start with '/'.
 
-Applying: tpm: Reserve the TPM final events table
-error: sha1 information is lacking or useless (drivers/firmware/efi/efi.c).
-error: could not build fake ancestor
+Therefore, based on an assumption that filesystems which require the
+device argument upon mount() request is an indication that the content
+is controllable from the userspace, do not use local name if a filesystem
+does not support rename() operation but requires the device argument upon
+mount() request.
 
-My tree:
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ security/tomoyo/realpath.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-git://git.infradead.org/users/jjs/linux-tpmdd.git
+diff --git a/security/tomoyo/realpath.c b/security/tomoyo/realpath.c
+index 85e6e31..e7832448 100644
+--- a/security/tomoyo/realpath.c
++++ b/security/tomoyo/realpath.c
+@@ -295,7 +295,8 @@ char *tomoyo_realpath_from_path(const struct path *path)
+ 		 * or dentry without vfsmount.
+ 		 */
+ 		if (!path->mnt ||
+-		    (!inode->i_op->rename))
++		    (!inode->i_op->rename &&
++		     !(sb->s_type->fs_flags & FS_REQUIRES_DEV)))
+ 			pos = tomoyo_get_local_path(path->dentry, buf,
+ 						    buf_len - 1);
+ 		/* Get absolute name for the rest. */
+-- 
+1.8.3.1
 
-My guess is that your patches are based a later 5.0-rcX. Unfortunately I
-cannot update my master at this point because my 5.1 PR was taken to
-security tree and rebasing would change the commit IDs of 5.1 content
-because security/next-general does not yet contain those patches.
-
-/Jarkko
