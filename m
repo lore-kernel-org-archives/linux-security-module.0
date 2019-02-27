@@ -2,83 +2,88 @@ Return-Path: <SRS0=eR/s=RC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF55C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 13:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DCEC43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 14:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DE99213A2
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 13:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4834220661
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Feb 2019 14:03:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729948AbfB0NHf (ORCPT
+        id S1730526AbfB0ODG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Feb 2019 08:07:35 -0500
-Received: from mga11.intel.com ([192.55.52.93]:5750 "EHLO mga11.intel.com"
+        Wed, 27 Feb 2019 09:03:06 -0500
+Received: from mga14.intel.com ([192.55.52.115]:27794 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfB0NHe (ORCPT
+        id S1730392AbfB0ODG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Feb 2019 08:07:34 -0500
+        Wed, 27 Feb 2019 09:03:06 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 05:07:34 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Feb 2019 06:03:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,419,1544515200"; 
-   d="scan'208";a="129762081"
+   d="scan'208";a="278280438"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
-  by orsmga003.jf.intel.com with ESMTP; 27 Feb 2019 05:07:32 -0800
-Date:   Wed, 27 Feb 2019 15:07:30 +0200
+  by orsmga004.jf.intel.com with ESMTP; 27 Feb 2019 06:03:01 -0800
+Date:   Wed, 27 Feb 2019 16:02:59 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     janne.karhunen@gmail.com
-Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        dhowells@redhat.com
-Subject: Re: [PATCH] RFC: user-mode extensible trusted key support
-Message-ID: <20190227130730.GA12394@linux.intel.com>
-References: <20190211173033.2493-1-Janne.Karhunen@gmail.com>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tweek@google.com,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH V4 2/4] tpm: Reserve the TPM final events table
+Message-ID: <20190227140259.GA17106@linux.intel.com>
+References: <20190222202606.160816-1-matthewgarrett@google.com>
+ <20190222202606.160816-3-matthewgarrett@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190211173033.2493-1-Janne.Karhunen@gmail.com>
+In-Reply-To: <20190222202606.160816-3-matthewgarrett@google.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 11, 2019 at 07:30:33PM +0200, janne.karhunen@gmail.com wrote:
-> From: Janne Karhunen <Janne.Karhunen@gmail.com>
+On Fri, Feb 22, 2019 at 12:26:04PM -0800, Matthew Garrett wrote:
+> From: Matthew Garrett <mjg59@google.com>
 > 
-> Current kernel key subsystem only supports tpm to implement
-> trusted keys. This is fine, but the tpm is poorly supported
-> in the embedded world that primarily use custom trust roots,
-> TEEs or even white box crypto. Problem with these setups is
-> that they are extremely diverse, complex, proprietary and
-> in some cases for valid reasons (white box).
+> UEFI systems provide a boot services protocol for obtaining the TPM
+> event log, but this is unusable after ExitBootServices() is called.
+> Unfortunately ExitBootServices() itself triggers additional TPM events
+> that then can't be obtained using this protocol. The platform provides a
+> mechanism for the OS to obtain these events by recording them to a
+> separate UEFI configuration table which the OS can then map.
 > 
-> This patch provides trial plumbing to enable declaration
-> of new trust sources via tiny user mode helpers baked as
-> part of the kernel image. If the hardware based trust source
-> is available, the provided um helper can read the given
-> device node and act as a translator for the kernel key
-> requests and the actual device node can be kept out of the
-> 'regular' userland. In the case of white box crypto, the
-> um helper is free to perform any sort of software magic
-> required to mangle the keys within the kernel keyring.
+> Unfortunately this table isn't self describing in terms of providing its
+> length, so we need to parse the events inside it to figure out how long
+> it is. Since the table isn't mapped at this point, we need to extend the
+> length calculation function to be able to map the event as it goes
+> along.
 > 
-> The kernel built-in usermode helper key operations are made
-> available via new key type named 'ext-trusted' that is
-> compatible with the existing userland utilities:
-> keyctl add ext-trusted foo "new_umh 32" @u
-> keyctl pipe `keyctl search @u ext-trusted foo` > foo.key
-> keyctl add ext-trusted bar "load `cat foo.key`" @u
-> ...
-> 
-> Signed-off-by: Janne Karhunen <Janne.Karhunen@gmail.com>
-> Reviewed-by: Pekka Honkanen <Pekka.Honkanen@aalto.fi>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
 
-I guess this misses an actual workload to look at.
+Getting:
+
+Applying: tpm: Reserve the TPM final events table
+error: sha1 information is lacking or useless (drivers/firmware/efi/efi.c).
+error: could not build fake ancestor
+
+My tree:
+
+git://git.infradead.org/users/jjs/linux-tpmdd.git
+
+My guess is that your patches are based a later 5.0-rcX. Unfortunately I
+cannot update my master at this point because my 5.1 PR was taken to
+security tree and rebasing would change the commit IDs of 5.1 content
+because security/next-general does not yet contain those patches.
 
 /Jarkko
