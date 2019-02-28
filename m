@@ -2,240 +2,208 @@ Return-Path: <SRS0=r65R=RD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA3AC43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7ACC43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CDEA2133D
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:14:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 379F62085A
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:24:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fuzj4be/"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mEB/jTmq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733244AbfB1XMI (ORCPT
+        id S1729750AbfB1XYv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 18:12:08 -0500
-Received: from mail-io1-f73.google.com ([209.85.166.73]:40236 "EHLO
-        mail-io1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733049AbfB1XMH (ORCPT
+        Thu, 28 Feb 2019 18:24:51 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51486 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728891AbfB1XYv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:12:07 -0500
-Received: by mail-io1-f73.google.com with SMTP id 68so16749941iov.7
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:12:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=JgzwmpXUZt6KNQDOAKfrLdx7UP057Xc3K0KJM8I4IMs=;
-        b=fuzj4be/utb+s8Vx8KsNnR8tKuIypLsihlSey2iVxr/B69aksur8ZBLCEe5qHUi4M/
-         gT0dCRdr9REFLg9BcSIq2lGwMowoZNYjT4z61z8x/i8D1i7y2Pr5xHCygz8DV+VO3Xij
-         SiN7R40q56yNmnWWHqE4dUsKeeCJEEu3LmTIFQVGko0g6yLFzzulfe9ISxxaY/1OIupS
-         qv36MEwUlYTg4MF5PjvS9hovsByQdbGmTZXRVzuyspodNjJQkN56+uHVWSOan7vpQRgO
-         4evyp/Oq0eRH9pxiaBRcaCpm3/6Y+CT68cEolbeRQ/gx/gSyj2O0cBWEBgpWFi+qBDhf
-         I3KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=JgzwmpXUZt6KNQDOAKfrLdx7UP057Xc3K0KJM8I4IMs=;
-        b=o+XmRiUy1Z4o5uy88+B2T8ZQ+748k7VDrxsmmTfJbw+cULqHhMWh966e9Yco7DWTSc
-         zHvatu4BEyw0RH8Is/vYiMB00Rl6D6HbHp1gNHKNXq1Q4j0KTtMt2yrE3c9iRkoCbT8P
-         yUWbPv/p3HsQAXkd2wOnc0yfrCwyceScvtKAkrWq4iKWq+bbLjT5ZqF+axGuEhCREh2j
-         guGEf1dCwnc9rxt/k2B9nB8u9HQAdOnKmxDf8YeHwW6LfH5jrS4e0dO+Y2laJohQ8sNh
-         Ml+3QSiBhBHbs9UA/H3hPm8xydE72jDxsYdCUt66N20hAxIkaRTRvMLlwR99mRNOzFNc
-         yhiw==
-X-Gm-Message-State: APjAAAWm2mbmQWpROD9dIKHmhu7ijVoaZjt4oy2c8Ifq5smJW2EJoGk6
-        dfDaoBmzc5Vj6crFs2lNfTckd5QYVBLUHtkQNJU6bQ==
-X-Google-Smtp-Source: AHgI3IaSrBaKC5+f/5QeKpdJHq6ck0jHfNE6DAmlYm5+YRAfPkcS64HbRS9/++8n1he4M8qosCmX4e4+7uliIWEwbmwczQ==
-X-Received: by 2002:a24:5947:: with SMTP id p68mr1493419itb.27.1551395526454;
- Thu, 28 Feb 2019 15:12:06 -0800 (PST)
-Date:   Thu, 28 Feb 2019 15:11:37 -0800
-In-Reply-To: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
-Message-Id: <20190228231203.212359-1-matthewgarrett@google.com>
-Mime-Version: 1.0
+        Thu, 28 Feb 2019 18:24:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=3OTMvqIsgBsJKRphPPB6sZbG3KA1MawSCRk7xDbyzX0=; b=mEB/jTmqBGbWZjLxTYyDNXKDKy
+        BTKsbKJHVI846klJqeDouvMnSlYtWxup0/+NzX7AHpweGS8a/6B2qBOB6AcUvd0M5w7Ausl8EEGd/
+        Fyl/RqsSFNs5UAktQWJE6FsLHc3GOSuHfIyVmHjSYNeBTagY/mY7QGggwRf2k1cxQEIy1Ai3fHm9X
+        MOoEfn+HW4RDttvgDV5LCTtOVCE29wq5BtUcVFvln9o0VhRKGPUgaSwkxI4HMV1cklcZxJGQ4XyXs
+        rlr5a60gMzXYkhy6z4vUoAOnL/VmF5fprFz6beSeeVyvLMO043wH+x8IrHAKpeLbmqERtE+fGxE5Q
+        38KRN1sQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gzV2l-0001oM-3f; Thu, 28 Feb 2019 23:24:47 +0000
+Subject: Re: [PULL REQUEST] Lock down patches
+To:     Matthew Garrett <mjg59@google.com>, jmorris@namei.org
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
 References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
-X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 01/27] Add the ability to lock down access to the running
- kernel image
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6826f3fa-487e-ca4e-0433-9160f38cd901@infradead.org>
+Date:   Thu, 28 Feb 2019 15:24:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: David Howells <dhowells@redhat.com>
+On 2/28/19 1:28 PM, Matthew Garrett wrote:
+> Hi James,
+> 
+> David is low on cycles at the moment, so I'm taking over for this time
+> round. This patchset introduces an optional kernel lockdown feature,
+> intended to strengthen the boundary between UID 0 and the kernel. When
+> enabled and active (by enabling the config option and passing the
+> "lockdown" option on the kernel command line), various pieces of
+> kernel functionality are restricted. Applications that rely on
+> low-level access to either hardware or the kernel may cease working as
+> a result - therefore this should not be enabled without appropriate
+> evaluation beforehand.
 
-Provide a single call to allow kernel code to determine whether the system
-should be locked down, thereby disallowing various accesses that might
-allow the running kernel image to be changed including the loading of
-modules that aren't validly signed with a key we recognise, fiddling with
-MSR registers and disallowing hibernation.
+Documentation/process/submitting-patches.rst says (IMO) that these
+patches should also have Signed-of-by: <you>.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: James Morris <james.l.morris@oracle.com>
----
- include/linux/kernel.h   | 17 ++++++++++++
- include/linux/security.h |  9 +++++-
- security/Kconfig         | 15 ++++++++++
- security/Makefile        |  3 ++
- security/lock_down.c     | 59 ++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 102 insertions(+), 1 deletion(-)
- create mode 100644 security/lock_down.c
+"The Signed-off-by: tag indicates that the signer was involved in the
+development of the patch, or that he/she was in the patch's delivery path."
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 8f0e68e250a7..833bf32ce4e6 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -340,6 +340,23 @@ static inline void refcount_error_report(struct pt_regs *regs, const char *err)
- { }
- #endif
- 
-+#ifdef CONFIG_LOCK_DOWN_KERNEL
-+extern bool __kernel_is_locked_down(const char *what, bool first);
-+#else
-+static inline bool __kernel_is_locked_down(const char *what, bool first)
-+{
-+	return false;
-+}
-+#endif
-+
-+#define kernel_is_locked_down(what)					\
-+	({								\
-+		static bool message_given;				\
-+		bool locked_down = __kernel_is_locked_down(what, !message_given); \
-+		message_given = true;					\
-+		locked_down;						\
-+	})
-+
- /* Internal, do not use. */
- int __must_check _kstrtoul(const char *s, unsigned int base, unsigned long *res);
- int __must_check _kstrtol(const char *s, unsigned int base, long *res);
-diff --git a/include/linux/security.h b/include/linux/security.h
-index dbfb5a66babb..35f0be540e0b 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1793,5 +1793,12 @@ static inline void security_bpf_prog_free(struct bpf_prog_aux *aux)
- #endif /* CONFIG_SECURITY */
- #endif /* CONFIG_BPF_SYSCALL */
- 
--#endif /* ! __LINUX_SECURITY_H */
-+#ifdef CONFIG_LOCK_DOWN_KERNEL
-+extern void __init init_lockdown(void);
-+#else
-+static inline void __init init_lockdown(void)
-+{
-+}
-+#endif
- 
-+#endif /* ! __LINUX_SECURITY_H */
-diff --git a/security/Kconfig b/security/Kconfig
-index e4fe2f3c2c65..c2aff0006de2 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -230,6 +230,21 @@ config STATIC_USERMODEHELPER_PATH
- 	  If you wish for all usermode helper programs to be disabled,
- 	  specify an empty string here (i.e. "").
- 
-+config LOCK_DOWN_KERNEL
-+	bool "Allow the kernel to be 'locked down'"
-+	help
-+	  Allow the kernel to be locked down. If lockdown support is enabled
-+	  and activated, the kernel will impose additional restrictions
-+	  intended to prevent uid 0 from being able to modify the running
-+	  kernel. This may break userland applications that rely on low-level
-+	  access to hardware.
-+
-+config LOCK_DOWN_KERNEL_FORCE
-+        bool "Enable kernel lockdown mode automatically"
-+        depends on LOCK_DOWN_KERNEL
-+        help
-+          Enable the kernel lock down functionality automatically at boot.
-+
- source "security/selinux/Kconfig"
- source "security/smack/Kconfig"
- source "security/tomoyo/Kconfig"
-diff --git a/security/Makefile b/security/Makefile
-index 4d2d3782ddef..507ac8c520ce 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -30,3 +30,6 @@ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
- # Object integrity file lists
- subdir-$(CONFIG_INTEGRITY)		+= integrity
- obj-$(CONFIG_INTEGRITY)			+= integrity/
-+
-+# Allow the kernel to be locked down
-+obj-$(CONFIG_LOCK_DOWN_KERNEL)		+= lock_down.o
-diff --git a/security/lock_down.c b/security/lock_down.c
-new file mode 100644
-index 000000000000..13a8228c1034
---- /dev/null
-+++ b/security/lock_down.c
-@@ -0,0 +1,59 @@
-+/* Lock down the kernel
-+ *
-+ * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#include <linux/security.h>
-+#include <linux/export.h>
-+
-+static __ro_after_init bool kernel_locked_down;
-+
-+/*
-+ * Put the kernel into lock-down mode.
-+ */
-+static void __init lock_kernel_down(const char *where)
-+{
-+	if (!kernel_locked_down) {
-+		kernel_locked_down = true;
-+		pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
-+			  where);
-+	}
-+}
-+
-+static int __init lockdown_param(char *ignored)
-+{
-+	lock_kernel_down("command line");
-+	return 0;
-+}
-+
-+early_param("lockdown", lockdown_param);
-+
-+/*
-+ * Lock the kernel down from very early in the arch setup.  This must happen
-+ * prior to things like ACPI being initialised.
-+ */
-+void __init init_lockdown(void)
-+{
-+#ifdef CONFIG_LOCK_DOWN_FORCE
-+	lock_kernel_down("Kernel configuration");
-+#endif
-+}
-+
-+/**
-+ * kernel_is_locked_down - Find out if the kernel is locked down
-+ * @what: Tag to use in notice generated if lockdown is in effect
-+ */
-+bool __kernel_is_locked_down(const char *what, bool first)
-+{
-+	if (what && first && kernel_locked_down)
-+		pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
-+			  what);
-+	return kernel_locked_down;
-+}
-+EXPORT_SYMBOL(__kernel_is_locked_down);
+Also, the sysrq key usage should be documented in
+Documentation/admin-guide/sysrq.rst.
+
+> The majority of mainstream distributions have been carrying variants
+> of this patchset for many years now, so there's value in providing a
+> unified upstream implementation to reduce the delta. This PR probably
+> doesn't meet every distribution requirement, but gets us much closer
+> to not requiring external patches.
+> 
+> This PR is mostly the same as the previous attempt, but with the
+> following changes:
+> 
+> 1) The integration between EFI secure boot and the lockdown state has
+> been removed
+> 2) A new CONFIG_KERNEL_LOCK_DOWN_FORCE kconfig option has been added,
+> which will always enable lockdown regardless of the kernel command
+> line
+> 3) The integration with IMA has been dropped for now. Requiring the
+> use of the IMA secure boot policy when lockdown is enabled isn't
+> practical for most distributions at the moment, as there's still not a
+> great deal of infrastructure for shipping packages with appropriate
+> IMA signatures, and it makes it complicated for end users to manage
+> custom IMA policies.
+> 
+> The following changes since commit a3b22b9f11d9fbc48b0291ea92259a5a810e9438:
+> 
+>   Linux 5.0-rc7 (2019-02-17 18:46:40 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   https://github.com/mjg59/linux lock_down
+> 
+> for you to fetch changes up to 43e004ecae91bf9159b8e91cd1d613e58b8f63f8:
+> 
+>   lockdown: Print current->comm in restriction messages (2019-02-28
+> 11:19:23 -0800)
+> 
+> ----------------------------------------------------------------
+> Dave Young (1):
+>       Copy secure_boot flag in boot params across kexec reboot
+> 
+> David Howells (12):
+>       Add the ability to lock down access to the running kernel image
+>       Enforce module signatures if the kernel is locked down
+>       Prohibit PCMCIA CIS storage when the kernel is locked down
+>       Lock down TIOCSSERIAL
+>       Lock down module params that specify hardware parameters (eg. ioport)
+>       x86/mmiotrace: Lock down the testmmiotrace module
+>       Lock down /proc/kcore
+>       Lock down kprobes
+>       bpf: Restrict kernel image access functions when the kernel is locked down
+>       Lock down perf
+>       debugfs: Restrict debugfs when the kernel is locked down
+>       lockdown: Print current->comm in restriction messages
+> 
+> Jiri Bohac (2):
+>       kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
+>       kexec_file: Restrict at runtime if the kernel is locked down
+> 
+> Josh Boyer (2):
+>       hibernate: Disable when the kernel is locked down
+>       acpi: Ignore acpi_rsdp kernel param when the kernel has been locked down
+> 
+> Kyle McMartin (1):
+>       Add a SysRq option to lift kernel lockdown
+> 
+> Linn Crosetto (2):
+>       acpi: Disable ACPI table override if the kernel is locked down
+>       acpi: Disable APEI error injection if the kernel is locked down
+> 
+> Matthew Garrett (7):
+>       Restrict /dev/{mem,kmem,port} when the kernel is locked down
+>       kexec_load: Disable at runtime if the kernel is locked down
+>       uswsusp: Disable when the kernel is locked down
+>       PCI: Lock down BAR access when the kernel is locked down
+>       x86: Lock down IO port access when the kernel is locked down
+>       x86/msr: Restrict MSR access when the kernel is locked down
+>       ACPI: Limit access to custom_method when the kernel is locked down
+> 
+>  arch/x86/Kconfig                       |  20 ++++++++++++-----
+>  arch/x86/include/asm/setup.h           |   2 ++
+>  arch/x86/kernel/ioport.c               |   6 ++++--
+>  arch/x86/kernel/kexec-bzimage64.c      |   1 +
+>  arch/x86/kernel/msr.c                  |  10 +++++++++
+>  arch/x86/mm/testmmiotrace.c            |   3 +++
+>  crypto/asymmetric_keys/verify_pefile.c |   4 +++-
+>  drivers/acpi/apei/einj.c               |   3 +++
+>  drivers/acpi/custom_method.c           |   3 +++
+>  drivers/acpi/osl.c                     |   2 +-
+>  drivers/acpi/tables.c                  |   5 +++++
+>  drivers/char/mem.c                     |   2 ++
+>  drivers/input/misc/uinput.c            |   1 +
+>  drivers/pci/pci-sysfs.c                |   9 ++++++++
+>  drivers/pci/proc.c                     |   9 +++++++-
+>  drivers/pci/syscall.c                  |   3 ++-
+>  drivers/pcmcia/cistpl.c                |   3 +++
+>  drivers/tty/serial/serial_core.c       |   6 ++++++
+>  drivers/tty/sysrq.c                    |  19 +++++++++++------
+>  fs/debugfs/file.c                      |  28 ++++++++++++++++++++++++
+>  fs/debugfs/inode.c                     |  30 ++++++++++++++++++++++++--
+>  fs/proc/kcore.c                        |   2 ++
+>  include/linux/ima.h                    |   6 ++++++
+>  include/linux/input.h                  |   5 +++++
+>  include/linux/kernel.h                 |  17 +++++++++++++++
+>  include/linux/kexec.h                  |   4 ++--
+>  include/linux/security.h               |   9 +++++++-
+>  include/linux/sysrq.h                  |   8 ++++++-
+>  kernel/bpf/syscall.c                   |   3 +++
+>  kernel/debug/kdb/kdb_main.c            |   2 +-
+>  kernel/events/core.c                   |   5 +++++
+>  kernel/kexec.c                         |   7 ++++++
+>  kernel/kexec_file.c                    |  56
+> ++++++++++++++++++++++++++++++++++++++++++------
+>  kernel/kprobes.c                       |   3 +++
+>  kernel/module.c                        |  56
+> ++++++++++++++++++++++++++++++++++++------------
+>  kernel/params.c                        |  26 ++++++++++++++++++-----
+>  kernel/power/hibernate.c               |   2 +-
+>  kernel/power/user.c                    |   3 +++
+>  security/Kconfig                       |  24 +++++++++++++++++++++
+>  security/Makefile                      |   3 +++
+>  security/lock_down.c                   | 106
+> +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  41 files changed, 466 insertions(+), 50 deletions(-)
+>  create mode 100644 security/lock_down.c
+> 
+
+
 -- 
-2.21.0.352.gf09ad66450-goog
-
+~Randy
