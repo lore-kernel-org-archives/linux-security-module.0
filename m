@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05124C4360F
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E639C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C39142133D
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 598CD2133D
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oMSabQYS"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ghzhVGL+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387950AbfB1XNQ (ORCPT
+        id S1728082AbfB1XNf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 18:13:16 -0500
-Received: from mail-it1-f201.google.com ([209.85.166.201]:43549 "EHLO
-        mail-it1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727866AbfB1XNP (ORCPT
+        Thu, 28 Feb 2019 18:13:35 -0500
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:45635 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388170AbfB1XNJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:13:15 -0500
-Received: by mail-it1-f201.google.com with SMTP id w200so9784304itc.8
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:13:15 -0800 (PST)
+        Thu, 28 Feb 2019 18:13:09 -0500
+Received: by mail-pg1-f202.google.com with SMTP id 17so16142084pgw.12
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:13:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=7o31AusohNb959PRfakB/D1YmTnIqZCzH/ljQnTAp4Y=;
-        b=oMSabQYSh5BEnjbYGEt+9TN7Xn+nTrX7vyeNAkn7Hg7wqae8z2ha9ZxQUgPwIa4uOT
-         D9EqfjspaqUQMQD9DR0P64E7c6/9e5DTMbgrejyEbgKt8/B2ED1B2AfeToabME/vKcJS
-         F1s2URj9svBxho3mIVh7eI2Hh0m1OzlMX3SwFyWICfJ3RBuyZUo5kQC+PhEEiHyqWCVK
-         92QW9m+UzGGHovCtmYgAEoRQsDilDe/a2lqHWWKbGmKCrI+VFgd8IOQR7iOqB+vAN4fb
-         P3tFWNnSXJ2+GjPS14Xl0ue2sairI2sv5DUJIqT1o7fqRGM1PNkKwcYFw//QEsu3B8ib
-         iT6Q==
+        bh=Qg2yYq0hUq63hRGHhOba+WbLOFuIxBMUvDVZS8FGVBM=;
+        b=ghzhVGL+EOOW50MsKqzFSDoDeqFyzfz4F+A809BdsxK5XLGujWuwUg7l6VN5hQdmOM
+         vMnjgNtaM+yQpXyqcLTH9z1qhAcx9BdIaol/AXsZ6OTJgZURU7X3X9bofYed0AzAvIe3
+         iOjhqa7KuPAk5HzkCcMo7pZctQbBYZonfIywEB4+Gx8GydwAwweihTpX6Q2pWv9Ys26O
+         WuwnROqSZR2utNxjtQ862ffDx3/OrT6h3myNDaQ/A5MohGfCiAWL01m9zhDgk916WZ3a
+         O3T7FTCp9VhHNKTCm+XK6YwJKPurLXup01ex8uwUJdV3j/f9UxuS9hCM4tl/A3NX4p7t
+         Eu3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=7o31AusohNb959PRfakB/D1YmTnIqZCzH/ljQnTAp4Y=;
-        b=Eeccvzz9a3TvgwPZOFTgImB9wjXZF9SAWxN0p0dShffSNTimcXYhYpgy7kdcKJ067u
-         BS6N0rs19oOcVubHuaTl4uq6tCD8yqzpWni5XRhf/To9SFpgFh1FoSOf8D6WkAHm6+31
-         R/+K+ugK6cGQztsIF7nlCnYyDpNTou6uAr2Q0KPyef7gbk66QmdQ2POL07PpBl77OYz7
-         c8+JSLzffJa9V1ZBAtThtXdfNSG99cvDi/sPjNUhFfr7sxRFSop+h9JyuRbXVi1+4pE8
-         aMR8A2mtXwWMDstscEvLDXsUvP4O96YuMTdiFq9ZM8MOJro0YfHAKX9blT0RKm5ZbfGG
-         z7Eg==
-X-Gm-Message-State: APjAAAVOHBHEF+Ju7Ulxa2qXqOa6W1Q1hanlOZGLKofHZJ3J0AnuasDn
-        u7317QNjlw2IfLxBqsL8gvyWn8ugt024prqfGd5jRw==
-X-Google-Smtp-Source: APXvYqz85FIjQCIycs1HBz9ec4dvIvyrWTRZIyhimnBeV4YZuCRUEi0ZSjJmX6p4cWT4jfxZgD/dNItVttOpZKRT+49geA==
-X-Received: by 2002:a24:5dc9:: with SMTP id w192mr1465559ita.33.1551395594739;
- Thu, 28 Feb 2019 15:13:14 -0800 (PST)
-Date:   Thu, 28 Feb 2019 15:12:03 -0800
+        bh=Qg2yYq0hUq63hRGHhOba+WbLOFuIxBMUvDVZS8FGVBM=;
+        b=l2jzI9yj3BUb6GYaUFJbj6uODUZGhRDaUdhm5MTiotGiGZMgosb/MEq4zrGI/MTfjB
+         oaYcaUgQBhzoOj8S1zKU0eXFmjA5Zkjn4PRHpqJJ9APw8MKuRme7TnjAZsPpQzzDeWwE
+         /UIbbAhyqoa3vafSpjL39VQx3r8bUAdeWOKFncYmQKN18kslPtEgzhobQbRuHYKZtqcO
+         i3KMTwObXNsAFgEaQ4wsvn93bqD+pgyc1R59i+Jd84xlGqxANC8FoC5x8+Tt1gqNzMJZ
+         WaCfpsoMIkBUdtuqOxomyYsj7nMiP3x8J+mw4YMGAAtL0C5KaSimk1irX53L8F3AWrbP
+         P4rg==
+X-Gm-Message-State: AHQUAuYKYxsUEmjD/0rYdvd1rv42PvIj1UOoiQdwWPSpgqvv9MUnljfZ
+        T8vGwH4RcWSJdJ4dNMUiNyAfQlIjCQ2+NR76ZDMJlQ==
+X-Google-Smtp-Source: APXvYqzBqqwYEj+Y8BGFwz1Y2XBzaxPlC+fblom95C6AwBCpJ8V+4s+ZQmJYnnh4F1w8vPqKp/sZq5+3o2SXE8HUmTa4mQ==
+X-Received: by 2002:a62:b60e:: with SMTP id j14mr975653pff.77.1551395589203;
+ Thu, 28 Feb 2019 15:13:09 -0800 (PST)
+Date:   Thu, 28 Feb 2019 15:12:01 -0800
 In-Reply-To: <20190228231203.212359-1-matthewgarrett@google.com>
-Message-Id: <20190228231203.212359-27-matthewgarrett@google.com>
+Message-Id: <20190228231203.212359-25-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
  <20190228231203.212359-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 27/27] lockdown: Print current->comm in restriction messages
+Subject: [PATCH 25/27] Lock down perf
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -71,34 +71,30 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-Print the content of current->comm in messages generated by lockdown to
-indicate a restriction that was hit.  This makes it a bit easier to find
-out what caused the message.
-
-The message now patterned something like:
-
-	Lockdown: <comm>: <what> is restricted; see man kernel_lockdown.7
+Disallow the use of certain perf facilities that might allow userspace to
+access kernel data.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- security/lock_down.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/events/core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/security/lock_down.c b/security/lock_down.c
-index cfbc2c39712b..5243b55b3c1f 100644
---- a/security/lock_down.c
-+++ b/security/lock_down.c
-@@ -58,8 +58,8 @@ void __init init_lockdown(void)
- bool __kernel_is_locked_down(const char *what, bool first)
- {
- 	if (what && first && kernel_locked_down)
--		pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
--			  what);
-+		pr_notice("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
-+			  current->comm, what);
- 	return kernel_locked_down;
- }
- EXPORT_SYMBOL(__kernel_is_locked_down);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 26d6edab051a..4265ce43bca4 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10477,6 +10477,11 @@ SYSCALL_DEFINE5(perf_event_open,
+ 			return -EINVAL;
+ 	}
+ 
++	if ((attr.sample_type & PERF_SAMPLE_REGS_INTR) &&
++	    kernel_is_locked_down("PERF_SAMPLE_REGS_INTR"))
++		/* REGS_INTR can leak data, lockdown must prevent this */
++		return -EPERM;
++
+ 	/* Only privileged users can get physical addresses */
+ 	if ((attr.sample_type & PERF_SAMPLE_PHYS_ADDR) &&
+ 	    perf_paranoid_kernel() && !capable(CAP_SYS_ADMIN))
 -- 
 2.21.0.352.gf09ad66450-goog
 
