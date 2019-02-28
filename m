@@ -4,62 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EDAC43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D818C10F00
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90B822133D
+	by mail.kernel.org (Postfix) with ESMTP id CDE5A218AE
 	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IpVUN+Ln"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z1+rvoth"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731039AbfB1XNt (ORCPT
+        id S2388046AbfB1XM6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 18:13:49 -0500
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:35642 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388057AbfB1XM7 (ORCPT
+        Thu, 28 Feb 2019 18:12:58 -0500
+Received: from mail-io1-f74.google.com ([209.85.166.74]:36248 "EHLO
+        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388044AbfB1XM5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:12:59 -0500
-Received: by mail-pg1-f202.google.com with SMTP id y8so16176287pgk.2
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:12:59 -0800 (PST)
+        Thu, 28 Feb 2019 18:12:57 -0500
+Received: by mail-io1-f74.google.com with SMTP id v3so17184077iol.3
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:12:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=pGMKAmmDh5CXWuiQ7W09QK/FwS2bHkIIbTbOhTQuPUY=;
-        b=IpVUN+LnDhNCnYgH87Yti/gH8YcHfd3eB0nigEUV7nIBR7yUCtn8GYobBEJYY1+3Jx
-         D9t+k05834I29T2Sf2A6lVcrFiWh46QBO1J+cKI7uCvU+ydhut+eHS5Cb1YsqAWa9PWQ
-         NYkfFRn5xgKOIfEsrVIeLj0A42O3PtwH/A5BZlTGMBfZD6jfRKafOCLNwSTK7nLrDQ3u
-         JhnooqXvCTwySTQBTHWZv0usxXx7UZeGT+4fKRkEUMQT8hZwSiW5HzoqQLFGdytfBpFV
-         S1y8NrZqwCjD1xrR+mT1C5LbDhSJL0i5O7UDf0QHQylgwFBKVxjlHqQCV13OPaCKcShT
-         lzCg==
+        bh=8KM4GPF8H/ZA8qZu4X13d5O4g08OSMJQgTj+Sn30UNM=;
+        b=Z1+rvothKUqR2tRl+zH/aPd+au+70MAgtzcgA3i6y553uX+/QzIYSKO8X1D+XAkhO1
+         0cl1XIShXKMwqyV6SVOjdEECCNLnNp+Z+xJ+RdtzV7mU2UBm1BwrIw7MdCFoZGEPgTyo
+         9wjPyw6bEZD8qzrKYAL4ox04cDYhyezdGMVSzQSkQgBzEUNhcY/tY/qjGleZanIupMtu
+         /RE567QzdS2BRSNaNuv19QZraWcbeTaKiX/lUHm8VfdT/iyEnAQ/QeymKlMFvz5QzdmQ
+         3y7uAMlcmrGK7Cd9rmYXZVD5vZxSWp/JwAVzW5gt5Xku7HymwCegv48ovK72haVv4bgM
+         wxgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=pGMKAmmDh5CXWuiQ7W09QK/FwS2bHkIIbTbOhTQuPUY=;
-        b=dXkYT+zB3AUeyrOgb4vWFDWvQ+6e2z0Jr+U6XZkQ1mH9M31SgZe2iGAS8CcxsKhVhm
-         1LI5cfpcWh55B1iiBXTNkw1RlN+jMyDkLyFySYhW+8g4iyIYBFPdtpHvTmCZznjVfYiD
-         htB6yBJVsFJbkOOSvLU4/E64tsYKZn8OFolIbVkBWFATbFlaDJP2R7LqSDo4bXOhcvas
-         yDOZGLHMc81dx3DB0KfBTGuiQz+S4zgKoU35Btzp4vbPz0NsVqn3TCry6/M6wFPbLwTY
-         n8cGCQLAt0knbpDHK9NvZAK364GmoXYGuYo3tdMtGBm5yv8wtlJ6xHr+xpuHPILMwBpv
-         sU8w==
-X-Gm-Message-State: APjAAAUTWs22YMosXdbEtT82yAZd5M7IwyS8xUPilIhF/e8S978fXRnn
-        3eE5GP5YjqE4kJUAvtmfS4iSiIUiQCqWxKD+PtuhCg==
-X-Google-Smtp-Source: AHgI3IbdRsmVD4cLGmyor1MNc5tkjRGqx/qg/fddoUfCqLYQ0pZsImsOab5wV8/apSee3hsgNQESH3ULN0YMTwdETvbmSA==
-X-Received: by 2002:a62:2e05:: with SMTP id u5mr960236pfu.137.1551395578986;
- Thu, 28 Feb 2019 15:12:58 -0800 (PST)
-Date:   Thu, 28 Feb 2019 15:11:57 -0800
+        bh=8KM4GPF8H/ZA8qZu4X13d5O4g08OSMJQgTj+Sn30UNM=;
+        b=tQtVPuzN4duDB1VUgcyvm8i8RwFzRgmkYT+ILivvlPXzZHEbGKvhRdKBxZuGZ5RPHE
+         R0jInrha/uV7DZE3pMcB7RNwLrWcv6ADSXJRH9s+nM6MJQ8EylQhnuMxSVPTWKHtLeuI
+         4bpPhmgGjRUzu+zYiUhsOQS4BDO4OOsRiAY2i21K8HyHj6QzYh2rlzgVL4yU8dB8fsib
+         DP4N2oLwjkP/kw62J+LWNeEJ/bdN5YFs90RRdn5jYeShQMqGFgn8fPNRMHs3VpWPZY6L
+         bAdg4kcW7vAmpcoMsKjOD+CsqglkJOb3eHOJDjECbAj/8ZK1VaMYs/FN3c27Fk5Hy2t1
+         /dhw==
+X-Gm-Message-State: AHQUAuZkDh7IqRGlLG+ZeG5TH6y/eGRDqd+zAgP/lHsJpQsrqTKYK2mV
+        4myCTycCZX9aQR5EyrD9jpJ136XmxEB5+5zHNCK53w==
+X-Google-Smtp-Source: APXvYqyYIIPpi6LMvPSKodYDlF1Q3NR9zGkxdJ+I+B3eh9JF55kOsrbcWMzonXnT5HJXudG42GD3brjdc1roSdr3TYkjjw==
+X-Received: by 2002:a24:612:: with SMTP id 18mr1507443itv.7.1551395576756;
+ Thu, 28 Feb 2019 15:12:56 -0800 (PST)
+Date:   Thu, 28 Feb 2019 15:11:56 -0800
 In-Reply-To: <20190228231203.212359-1-matthewgarrett@google.com>
-Message-Id: <20190228231203.212359-21-matthewgarrett@google.com>
+Message-Id: <20190228231203.212359-20-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
  <20190228231203.212359-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 21/27] x86/mmiotrace: Lock down the testmmiotrace module
+Subject: [PATCH 20/27] Lock down module params that specify hardware
+ parameters (eg. ioport)
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -71,34 +72,80 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-The testmmiotrace module shouldn't be permitted when the kernel is locked
-down as it can be used to arbitrarily read and write MMIO space.
+Provided an annotation for module parameters that specify hardware
+parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+dma buffers and other types).
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: David Howells <dhowells@redhat.com
-cc: Thomas Gleixner <tglx@linutronix.de>
-cc: Steven Rostedt <rostedt@goodmis.org>
-cc: Ingo Molnar <mingo@kernel.org>
-cc: "H. Peter Anvin" <hpa@zytor.com>
-cc: x86@kernel.org
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
- arch/x86/mm/testmmiotrace.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/params.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-index f6ae6830b341..bbaad357f5d7 100644
---- a/arch/x86/mm/testmmiotrace.c
-+++ b/arch/x86/mm/testmmiotrace.c
-@@ -115,6 +115,9 @@ static int __init init(void)
- {
- 	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
+diff --git a/kernel/params.c b/kernel/params.c
+index ce89f757e6da..8ac751c938f8 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -108,13 +108,19 @@ bool parameq(const char *a, const char *b)
+ 	return parameqn(a, b, strlen(a)+1);
+ }
  
-+	if (kernel_is_locked_down("MMIO trace testing"))
-+		return -EPERM;
+-static void param_check_unsafe(const struct kernel_param *kp)
++static bool param_check_unsafe(const struct kernel_param *kp,
++			       const char *doing)
+ {
+ 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+ 		pr_notice("Setting dangerous option %s - tainting kernel\n",
+ 			  kp->name);
+ 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+ 	}
 +
- 	if (mmio_address == 0) {
- 		pr_err("you have to use the module argument mmio_address.\n");
- 		pr_err("DO NOT LOAD THIS MODULE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!\n");
++	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
++	    kernel_is_locked_down("Command line-specified device addresses, irqs and dma channels"))
++		return false;
++	return true;
+ }
+ 
+ static int parse_one(char *param,
+@@ -144,8 +150,10 @@ static int parse_one(char *param,
+ 			pr_debug("handling %s with %p\n", param,
+ 				params[i].ops->set);
+ 			kernel_param_lock(params[i].mod);
+-			param_check_unsafe(&params[i]);
+-			err = params[i].ops->set(val, &params[i]);
++			if (param_check_unsafe(&params[i], doing))
++				err = params[i].ops->set(val, &params[i]);
++			else
++				err = -EPERM;
+ 			kernel_param_unlock(params[i].mod);
+ 			return err;
+ 		}
+@@ -553,6 +561,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
+ 	return count;
+ }
+ 
++#ifdef CONFIG_MODULES
++#define mod_name(mod) (mod)->name
++#else
++#define mod_name(mod) "unknown"
++#endif
++
+ /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
+ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 				struct module_kobject *mk,
+@@ -565,8 +579,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 		return -EPERM;
+ 
+ 	kernel_param_lock(mk->mod);
+-	param_check_unsafe(attribute->param);
+-	err = attribute->param->ops->set(buf, attribute->param);
++	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
++		err = attribute->param->ops->set(buf, attribute->param);
++	else
++		err = -EPERM;
+ 	kernel_param_unlock(mk->mod);
+ 	if (!err)
+ 		return len;
 -- 
 2.21.0.352.gf09ad66450-goog
 
