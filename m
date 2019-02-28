@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BDA9C10F00
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C191FC4360F
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1C9218AE
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:44:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F113218AE
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:44:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="OsXOJIEc"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="MnGyKpMb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730134AbfB1Woa (ORCPT
+        id S1730110AbfB1Wog (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 17:44:30 -0500
-Received: from sonic307-10.consmr.mail.bf2.yahoo.com ([74.6.134.49]:33240 "EHLO
-        sonic307-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730110AbfB1Wo3 (ORCPT
+        Thu, 28 Feb 2019 17:44:36 -0500
+Received: from sonic301-10.consmr.mail.bf2.yahoo.com ([74.6.129.49]:37242 "EHLO
+        sonic301-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730042AbfB1Wof (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 17:44:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551393868; bh=5Tzzr7tzx0u4Co/RelBllwIUxaOD5cmia+v4HkbQgps=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=OsXOJIEcTGWE4E9VHsQTTs0vrHO3S4hELMBulatsY40iQZiHXQMPfgwp18WtR90M7787TsmiJu5/3VG+m9OXT6Rjb0bJrNTHn0xXXPt9MrOxqrLzaPTk/cr05jmw21im6SC17ZZvtmUx9SboD2t4OJ9QV4M7bco45cUwoKo4P+q3AoBiRycbzZcvAy6BDuZ2d5hFLIn+BwIqLfZ7AEQdtaXxqDL+r9umVfhSR0cbTrKiFGITwOY5R8XjTqjtq9Te3aIZ+cKE1h1obkTfOvbZFWcNe2dWU2C3P+fmsSkziK80sSdfnmTGDUfcu9u5RHU6IplvgRyNtpVABglKNSERtQ==
-X-YMail-OSG: L1z1N3QVM1nYGyyszql1W09yRNvbgOBtj8N8cu8Jgm3OnKSqpmDYMGmC89VG3Z2
- d6lEBeDJZFSrylpFGw3IptqInZuY13A73mbqEFJqunK03dBMMijV0yu8XDBnUv1tmzqEuxMbT8zR
- xrvHuYvlbsdgSvh6aUxfXTI0N7UH5Ewtd4soZoCqjyZ4dqs2ZIjF8oFEueQ7yZLtYoBmfh3MEhkO
- K0vWraH3AHAZjilLqjGdI99GFrZFtoT9C1y9wQFehoVgEvivwPQTRP5WEJQOWd5666t6qTgB5mgN
- wqtamqH5EIC_nJzJmeMDG7VkwUdGZvLO0ZlUsmAwwa7Kxx.809DuFR4aibsRp9lUUH9cyC0q.wPI
- 3rT.ffecfUt3VmuA2Fbow3KjEjAPP7i5nnRLdOmFg4go_hNX7FilgEHEXp6bd0LWDc8qUoWGaBG1
- 1gWlyjblyytCrv5CutZPd.xCjNpldATJYBWgCdGlC1sMEmBnh49skwp26FN49wqIf6w3_2c_HnBp
- Zwkiv6nwDJBZlFW.sr0DhiTcTu9wgoe0VKFYv9rKW2t1Tj1ZoUIdQNWAcjx6BqbQShG1CaV1Oaie
- 3iwFuSnMlivnSOTsgamDYc0Ls9zNhH7ES08Gs7SVpD4Rc.iHWQgIWxdtXPlxx8_95L_d4Ovag96A
- VpK3DskU7hALtaa.7LjCqvyDtxzbSpPHm2gt.cEuWbDybuxa7jwH0d3FGVGViwgnZl8GKT95oKUe
- i.mi.p52VwS5HPMDWS08nrDFDOsB1BTz9JEkzMAgovqFCpmtSi33LIAPr3cW1uOlFJPwxdkNG.Je
- rjRW43dDIZUhWsF81vENQoTeX1dXa7Qc2h5saVrGH_yAygEnDSxZUVbJCPY8iEy2NjA7UCOFDD19
- 3QUGJacwgmq.ylkawcHACSso1iYx2a5bMJQTrHCoPHZuWp9NXfllStfmd5svJ2sJhUljb5RSHyvn
- RqbJ_QAwEEtkCdj8tCemft0bxvLHiuP7t0v2z1MhaZs15HXWx_y5xVYeUv6xDrb6LzkM8GhYRvAa
- uJqIXh5tWfHLaJZXYvRc6Xuc74e0JSiIS71pJNYGafF6WAj0K5AKrtqMLim2Fi24EtplL5i0L66_
- ve0V.WPkLKRbP1_PZNjaYtOscVzfddw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Thu, 28 Feb 2019 22:44:28 +0000
+        Thu, 28 Feb 2019 17:44:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551393874; bh=mBl/BTOGpw7zkbjPkI0ZSNky0iR3x9y1FbWRTLx/zrE=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=MnGyKpMb671zrYH5kS7t0dX89JqlqbqUKBsfP3okqW4DIH1YzpkcxkW75lbcZH4gIJPEqaRV1iE88QaQIJ1E7/7wgBaP9edcOZdHic0b72e5K+pkHNnT42YLZYbkZfcwvyFqdDFcS1cF4REdivW0Jj3vOp4osht0QAELtUxaY9oTqkrclB2i52eijLLn0UO7Gu7WSLj7xtqm6OSCB4FXC0NAZIPBXzmcvWQBYMqpBw8lc26aU3humTvxQditXZxDGSUuZYxLE8Sarq5w7CNN4vjuaJo4DibBZGjWyNaudJ22SMkUMLjSzF+ZIyMt6gin7+5iTckCKszdma0L+Ev93w==
+X-YMail-OSG: leitoa0VM1k3Y0qz8zWWkxRBpN5E5rT8UMH9zeBnkVXWyQWdF.VHi2n3TTCFa.h
+ 4_tdUwxN.uUgCuGNb6uhygbPvhdrArk4dXUQxeBUMnj8nch92TRa6F2SRpJ54xfDGQdkoPrbnVE1
+ 8t4mtyqsPr7ZTfXriVqLJzTsNPb98NTlPH6llQ9xyUpUC_8c_MFrVR65zLcJzs7_LRNqRFWU.p0B
+ WSV3CjX3Io2CXbuDSEx_LOYj4c0Nohm_K9TrqPvPDnsUIzr2SYNM19VzvhRQxP64Yy1bXx9KybkK
+ 9m3zlUsGZAhmM935cxFret3vbBCXOSx6WG9AWYEgrnCucXxVjF5sHzjFhI3zTzrxbb3zS2R83fZD
+ ERkVXtoeF3J6jTCUQGlv5ySRTRppHEpJbmlFXOeatCyeILsjZVrCrEfDws_28HZjDjojdmZMdFTT
+ vcOQU1u3XppLp9j80ZoRlTSnUEzUpdFzg0SrrO6Xpn2LYIqPvFUyT_grXrPDcJtGsHBOMa5_Ym00
+ D7HftiA9w5SVgrxoRuEaB17kIe4qgzBaVZEN7y6Otx8s4wALccSlAK6QhnnMVnZWhye2_eoTxM2u
+ d3RQ8upzUFnp21ZEmL43j.Ov6J4XfpCg5urYhkG_OulfbwMSGi4th9NuDzIUySdXof8bnwbr3Lh3
+ iy0fcEmX98a9snD2FjT7GidUmvwBSEVvTlFdFjwAvbKJmpWgIdWOTN5CovDN7621czXTSd7iXPoe
+ uuHnRszkY9XHyM0POUAWIfgeLxyt7uR_bxSOCkiHJNKKa2N8HiZLwKtK3.ck17cXInyFuir9ofeJ
+ lv3Z2WDgecn1BYbTjWvZ0r4LVRPzztGn4wvIvSdPy3EBQrnBl0_h9vb_o2RXJFYLyzKITJZpmK20
+ Vy5LJ2Sz0Nhs91qwcopelmxXfWCx8D77C8zsbHTec1pmQc8OeIkkOLGIOGMr8q7q5jJ5ESdFHnIG
+ fYPzzj.ZpjdoJtd7kAUDhuTIkfSFd5KWUNeTZ99hMmFWuAp94PuB9rlRUTbbSRQoC1tDjJ0OnKlr
+ mHmW9uu6qLE_jDPk.edV0a8_zJVdn4Cx5CiK322GrSnZ2JCPJJsWdqfskmecGgRBWQLcdfS3URk6
+ wwXVt3tQPRJL.2WyFDoOiULtDNqQPjSL7Yl28vuzH7nLHIdBW06Wz.erR
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Thu, 28 Feb 2019 22:44:34 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp415.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 46c3ca42412e81058eafbaa96f791691;
-          Thu, 28 Feb 2019 22:44:24 +0000 (UTC)
+          by smtp430.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 41bc5dec9e4ecaa87e9a199cc17828e6;
+          Thu, 28 Feb 2019 22:44:33 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-Subject: [PATCH 85/97] Smack: Let netlabel do the work on the ambient domain
-Date:   Thu, 28 Feb 2019 14:43:44 -0800
-Message-Id: <20190228224356.2608-16-casey@schaufler-ca.com>
+Subject: [PATCH 91/97] Netlabel: Return the labeling type on socket
+Date:   Thu, 28 Feb 2019 14:43:50 -0800
+Message-Id: <20190228224356.2608-22-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190228224356.2608-1-casey@schaufler-ca.com>
 References: <20190228224356.2608-1-casey@schaufler-ca.com>
@@ -59,110 +59,102 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Don't delete the netlabel data from sockets on the
-ambient domain as netlabel will do it correctly without
-any help.
+Change netlbl_req_setattr() to return the labeling
+type of the domain. This allows the labeling types to
+be compared when two LSMs want to determine how a socket
+should be used.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/smack/smack_lsm.c | 31 ++++++++-----------------------
- 1 file changed, 8 insertions(+), 23 deletions(-)
+ net/netlabel/netlabel_kapi.c | 18 +++++++++++-------
+ security/selinux/netlabel.c  |  2 ++
+ security/smack/smack_lsm.c   |  2 ++
+ 3 files changed, 15 insertions(+), 7 deletions(-)
 
+diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
+index 1d362a38dd05..5c5825171281 100644
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -1185,12 +1185,14 @@ int netlbl_conn_setattr(struct sock *sk,
+  *
+  * Description:
+  * Attach the correct label to the given socket using the security attributes
+- * specified in @secattr.  Returns zero on success, negative values on failure.
++ * specified in @secattr.  Returns the NLTYPE on success, negative values on
++ * failure.
+  *
+  */
+ int netlbl_req_setattr(struct request_sock *req,
+ 		       const struct netlbl_lsm_secattr *secattr)
+ {
++	int rc;
+ 	int ret_val;
+ 	struct netlbl_dommap_def *entry;
+ 	struct inet_request_sock *ireq = inet_rsk(req);
+@@ -1204,14 +1206,15 @@ int netlbl_req_setattr(struct request_sock *req,
+ 			ret_val = -ENOENT;
+ 			goto req_setattr_return;
+ 		}
++		ret_val = entry->type;
+ 		switch (entry->type) {
+ 		case NETLBL_NLTYPE_CIPSOV4:
+-			ret_val = cipso_v4_req_setattr(req,
+-						       entry->cipso, secattr);
++			rc = cipso_v4_req_setattr(req, entry->cipso, secattr);
++			if (rc < 0)
++				ret_val = rc;
+ 			break;
+ 		case NETLBL_NLTYPE_UNLABELED:
+ 			netlbl_req_delattr(req);
+-			ret_val = 0;
+ 			break;
+ 		default:
+ 			ret_val = -ENOENT;
+@@ -1225,14 +1228,15 @@ int netlbl_req_setattr(struct request_sock *req,
+ 			ret_val = -ENOENT;
+ 			goto req_setattr_return;
+ 		}
++		ret_val = entry->type;
+ 		switch (entry->type) {
+ 		case NETLBL_NLTYPE_CALIPSO:
+-			ret_val = calipso_req_setattr(req,
+-						      entry->calipso, secattr);
++			rc = calipso_req_setattr(req, entry->calipso, secattr);
++			if (rc < 0)
++				ret_val = rc;
+ 			break;
+ 		case NETLBL_NLTYPE_UNLABELED:
+ 			netlbl_req_delattr(req);
+-			ret_val = 0;
+ 			break;
+ 		default:
+ 			ret_val = -ENOENT;
+diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
+index b6eede4406bd..9fbf22a3ca57 100644
+--- a/security/selinux/netlabel.c
++++ b/security/selinux/netlabel.c
+@@ -358,6 +358,8 @@ int selinux_netlbl_inet_conn_request(struct request_sock *req, u16 family)
+ 	if (rc != 0)
+ 		goto inet_conn_request_return;
+ 	rc = netlbl_req_setattr(req, &secattr);
++	if (rc > 0)
++		rc = 0;
+ inet_conn_request_return:
+ 	netlbl_secattr_destroy(&secattr);
+ 	return rc;
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index a4c8f93534ec..d2a73d8a6976 100644
+index 20eed64e91de..086a3f696baa 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -2316,37 +2316,27 @@ static struct smack_known *smack_ipv6host_label(struct sockaddr_in6 *sip)
- /**
-  * smack_netlabel - Set the secattr on a socket
-  * @sk: the socket
-- * @labeled: socket label scheme
-  *
-  * Convert the outbound smack value (smk_out) to a
-  * secattr and attach it to the socket.
-  *
-  * Returns 0 on success or an error code
-  */
--static int smack_netlabel(struct sock *sk, int labeled)
-+static int smack_netlabel(struct sock *sk)
- {
- 	struct smack_known *skp;
- 	struct socket_smack *ssp = smack_sock(sk);
- 	int rc = 0;
+@@ -4060,6 +4060,8 @@ static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
+ 		rc = netlbl_req_setattr(req, &skp->smk_netlabel);
+ 	else
+ 		rc = netlbl_req_setattr(req, &smack_net_ambient->smk_netlabel);
++	if (rc >= 0)
++		return 0;
  
- 	/*
--	 * Usually the netlabel code will handle changing the
-+	 * The netlabel code will handle changing the
- 	 * packet labeling based on the label.
--	 * The case of a single label host is different, because
--	 * a single label host should never get a labeled packet
--	 * even though the label is usually associated with a packet
--	 * label.
- 	 */
- 	local_bh_disable();
- 	bh_lock_sock_nested(sk);
- 
--	if (ssp->smk_out == smack_net_ambient ||
--	    labeled == SMACK_UNLABELED_SOCKET)
--		netlbl_sock_delattr(sk);
--	else {
--		skp = ssp->smk_out;
--		rc = netlbl_sock_setattr(sk, sk->sk_family, &skp->smk_netlabel);
--	}
-+	skp = ssp->smk_out;
-+	rc = netlbl_sock_setattr(sk, sk->sk_family, &skp->smk_netlabel);
- 
- 	bh_unlock_sock(sk);
- 	local_bh_enable();
-@@ -2368,8 +2358,7 @@ static int smack_netlabel(struct sock *sk, int labeled)
- static int smack_netlabel_send(struct sock *sk, struct sockaddr_in *sap)
- {
- 	struct smack_known *skp;
--	int rc;
--	int sk_lbl;
-+	int rc = 0;
- 	struct smack_known *hkp;
- 	struct socket_smack *ssp = smack_sock(sk);
- 	struct smk_audit_info ad;
-@@ -2385,19 +2374,15 @@ static int smack_netlabel_send(struct sock *sk, struct sockaddr_in *sap)
- 		ad.a.u.net->dport = sap->sin_port;
- 		ad.a.u.net->v4info.daddr = sap->sin_addr.s_addr;
- #endif
--		sk_lbl = SMACK_UNLABELED_SOCKET;
- 		skp = ssp->smk_out;
- 		rc = smk_access(skp, hkp, MAY_WRITE, &ad);
- 		rc = smk_bu_note("IPv4 host check", skp, hkp, MAY_WRITE, rc);
--	} else {
--		sk_lbl = SMACK_CIPSO_SOCKET;
--		rc = 0;
- 	}
- 	rcu_read_unlock();
- 	if (rc != 0)
- 		return rc;
- 
--	return smack_netlabel(sk, sk_lbl);
-+	return smack_netlabel(sk);
+ 	return rc;
  }
- 
- #if IS_ENABLED(CONFIG_IPV6)
-@@ -2635,7 +2620,7 @@ static int smack_inode_setsecurity(struct inode *inode, const char *name,
- 	else if (strcmp(name, XATTR_SMACK_IPOUT) == 0) {
- 		ssp->smk_out = skp;
- 		if (sock->sk->sk_family == PF_INET) {
--			rc = smack_netlabel(sock->sk, SMACK_CIPSO_SOCKET);
-+			rc = smack_netlabel(sock->sk);
- 			if (rc != 0)
- 				printk(KERN_WARNING
- 					"Smack: \"%s\" netlbl error %d.\n",
-@@ -2686,7 +2671,7 @@ static int smack_socket_post_create(struct socket *sock, int family,
- 	/*
- 	 * Set the outbound netlbl.
- 	 */
--	return smack_netlabel(sock->sk, SMACK_CIPSO_SOCKET);
-+	return smack_netlabel(sock->sk);
- }
- 
- /**
 -- 
 2.17.0
 
