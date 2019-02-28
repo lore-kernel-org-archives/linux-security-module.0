@@ -2,199 +2,130 @@ Return-Path: <SRS0=r65R=RD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 725E6C43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 21:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06974C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 275392084F
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 21:28:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7A672133D
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:19:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U6XmUlHD"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lh+QsAyx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbfB1V2z (ORCPT
+        id S1729312AbfB1WTr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 16:28:55 -0500
-Received: from mail-it1-f172.google.com ([209.85.166.172]:56108 "EHLO
-        mail-it1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbfB1V2z (ORCPT
+        Thu, 28 Feb 2019 17:19:47 -0500
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:42818
+        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729181AbfB1WTq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 16:28:55 -0500
-Received: by mail-it1-f172.google.com with SMTP id z131so16991339itf.5
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 13:28:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=lo/JvVTQE4I5wGCfn1vSplMk3xnMhXABB2NqHLEsaQA=;
-        b=U6XmUlHDnLJfCGWgF07dSdGO071uAEjd33/xkwWOT1c9407Jc1lDOhN4sQ7d5YMebu
-         ewTrnSzJsbd0J8Fem0bcH/R68GjBUeknJY5aeeMG0jdeoAAFGI/lgkpXFBSRegmI+mI+
-         XI7k9cy2L1gx+tpq/F6cnzvq031ciUz9nEsyVf2XEmUrGlbUOHSxBkfBl6QLsGtz1NpG
-         YAepPzkkDEdwsUgM+E1S3siWB1JIiho67SCv1AZJTfotaSEUzpJuG0xei77+d9kdTKa5
-         yfqnPi49ta4thwL6FCHOXP3iMKuj5Zaq8ue2P7AqaQL3WlVO89kdOxyC6L+eO+kOam6/
-         IQhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=lo/JvVTQE4I5wGCfn1vSplMk3xnMhXABB2NqHLEsaQA=;
-        b=g2o+HoLsqn0M9VZE518vFkgOwY4thgTTKmn868r2P1XQhN4p6w0c4197quDl/NjaWu
-         7h6NnDKod+G0SiYjCYq1mOdapAMvSjYZ9sjmFQSaFmRLC0FLag1+cwwcP5mTndezRmYk
-         Pqf/3yw2BnAdQn8As1cyv2zr28/Jlm1arvngmhmFQtX2UUDhP0fFQaimuzyDwvMVuEU8
-         TdMa1hbmcwmTgdYQVCW3xFsu0WQvl8E4oQtqB6wsbIAVnoWLL9tWDLMGeGmHn1aWDRd6
-         hVEbe6uMIzj6COCe4FmodjbpCKXPu+lYhpPXK2r2e+RdhE4N1fMDBZ7a461JZak7BJjw
-         xjNA==
-X-Gm-Message-State: APjAAAX23DAp6Wlne1zaNp6d4m0QEH0RNLkYq9SGg548tlcNl3/TAoAj
-        Q8VyAf+bJ7xoN0btu+T4HPfGTb73z9FfnvPMzGwbAA==
-X-Google-Smtp-Source: APXvYqwD47PgS6b+dGFhb1JFZ0sJhyWMuqb0pbU6TVL+b55jKYrpCep8BdWenTEZY9FYWHif14xL3FhKNvrONMRKyYg=
-X-Received: by 2002:a24:7908:: with SMTP id z8mr1381172itc.16.1551389333486;
- Thu, 28 Feb 2019 13:28:53 -0800 (PST)
-MIME-Version: 1.0
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 28 Feb 2019 13:28:42 -0800
-Message-ID: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
-Subject: [PULL REQUEST] Lock down patches
-To:     jmorris@namei.org
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 28 Feb 2019 17:19:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392386; bh=kdtislM8E8h74/k7iD5aHOq6AYv+fS3/ejHJ7LD5ioI=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=lh+QsAyxCQq105gQQotAtOAEFGdBw6aK1Dxq/xpp9X2G65T5M0YEBcpCoA89vDMlhZ0zEQdqDj8lkfViTBU0MUac1AeC6/OhrLW62JcaYKSIlrHjxlZRHlqvqDnURRh5oiFWQi/73qjf5KL9jw/eInalDCb9iFRWhIVWLGTqOhNsH/ZOqDCK5TfmoGdzJ7tOZLY7FiZXh/mcHuVPU6sggo/ULC64yX4HljIkyvnuebqGpAFQG8hKUGHo0G24cWvE6hdAuwkN8sDMU77QYGWo5MSi4kngSQ21zjXcItvj4WxL9mVTUZpwCpGACQRw1SgVDb6WyhLJYOS8NH7uc81NXA==
+X-YMail-OSG: zAfK7zwVM1np_7128qPpP6wQGyulkb5n_7K6Kc6rZfk8pEAjW9hKS_Ubka5Eqou
+ Fei1Ga9RyW5djwhjm4azyTFO3hS2v.Hm9g.261N7GsGYCyCEUhhlIiX948VqHTnXiAwROMNBUzqv
+ S30duzrAio93qWv.FbzpO60rSxyQUb0m_i4GnySW3ztqbUwRaNtOGLCg89g.PVUYp8_WwNGoZz9C
+ zTM9j0E6UtmGGHVKXr.RywehFDkWk8i5RaTnUTQZaBPSBIstO0RZbbnNleVnOvrKRw_Uz82rXyiE
+ M3kFsrSI6pWMzyHRpS0PTNw0VV_ufaeIlNe30GwNzJ2JD7qhttKh6BB5lENFGXeZ3gGIysMHlT9q
+ Q584eq2X0NW8M6.mgwbg0As7Jr5mRZCMTo065hV.GFxXH_kAp8GB.410yXqYt7WqrQ2T_8EMiDT.
+ LjNXRN7BdJpQYIrXxXaFMxzknnyZl5UE6KMzNAQ27JOg0c_3DIa4XG7sFH_QH6GJnX0q1.ZV7kY0
+ hNxOgZz1AZhHWcXxE_UnCLrCLFmpx75dzZ3CeHSUNL1Hagr_pyWg1mDQwkp.lxadJDGKqlA0cw15
+ FOKo3kL_aQ3aX8WB.SGzTmwmSvLNP2EfIhsDGryr8d5SGBCWihPy_WJ_Et7lUKo0idF35rwUCmlS
+ MSGvuVW6ougtnbreUPtfBj83.G_96A06LFn4PRb60uGbV2zsvWifci1vGs8nonkZ4QMEQE43pvB3
+ qE.hw9gdqzVQI0YwrEZAArXqoKVUtvnCnM9SNds5XEez6Cds6B82gRsT8UG0WIn9TXOCcXc.polz
+ ibxi8vK7QpES8XnrI37rvKrL2SbqPmhhxRrfW0v971NO6BqYxkKq1Dl3fqHa5gRSHLeAav9xopie
+ oIN6avkljfrruwoHhaRKqhQdlCSM8hMm5m2ArEjaWXbfWjkO5ZllGupa1jg16htJAQdyTMFCrno7
+ IENywvAzeUpmS_JnzP0EKNTrw8QdVYSiukOmPKd7Z2CKroBQvr27QK7ik_EaB_LFpeHBF9Bqs8oh
+ rbHFl6uB4Si6mTChF8CY6RLUW.UeIMyUXj822E717zonNEg0UPcbswlp_1gqZU_1os9K9693P1ul
+ lVU1SG41nzLnV8e43z3FcbTSoybv448XPiHUJxg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:19:46 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
+          by smtp403.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID eca90f2e660dab57d5d3726b0a8f0373;
+          Thu, 28 Feb 2019 22:19:45 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Cc:     keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
+Subject: [PATCH 04/97] SCAFFOLD: Move sock_graft out of sock.h
+Date:   Thu, 28 Feb 2019 14:18:00 -0800
+Message-Id: <20190228221933.2551-5-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20190228221933.2551-1-casey@schaufler-ca.com>
+References: <20190228221933.2551-1-casey@schaufler-ca.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi James,
+Move sock_graft out of sock.h so that sock.h doesn't need security.h.
+This makes Casey's life easier as lots less recompiles after a change
+to security.h. DO NOT TAKE THIS PATCH!
 
-David is low on cycles at the moment, so I'm taking over for this time
-round. This patchset introduces an optional kernel lockdown feature,
-intended to strengthen the boundary between UID 0 and the kernel. When
-enabled and active (by enabling the config option and passing the
-"lockdown" option on the kernel command line), various pieces of
-kernel functionality are restricted. Applications that rely on
-low-level access to either hardware or the kernel may cease working as
-a result - therefore this should not be enabled without appropriate
-evaluation beforehand.
+Signed-off-by: Casey Schaufler <caey@schaufler-ca.com>
+---
+ include/net/sock.h | 14 ++------------
+ net/socket.c       | 17 +++++++++++++++++
+ 2 files changed, 19 insertions(+), 12 deletions(-)
 
-The majority of mainstream distributions have been carrying variants
-of this patchset for many years now, so there's value in providing a
-unified upstream implementation to reduce the delta. This PR probably
-doesn't meet every distribution requirement, but gets us much closer
-to not requiring external patches.
+diff --git a/include/net/sock.h b/include/net/sock.h
+index 2b229f7be8eb..2beeda35e39f 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -51,7 +51,7 @@
+ #include <linux/netdevice.h>
+ #include <linux/skbuff.h>	/* struct sk_buff */
+ #include <linux/mm.h>
+-#include <linux/security.h>
++//CBS #include <linux/security.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
+ #include <linux/page_counter.h>
+@@ -1800,17 +1800,7 @@ static inline void sock_orphan(struct sock *sk)
+ 	write_unlock_bh(&sk->sk_callback_lock);
+ }
+ 
+-static inline void sock_graft(struct sock *sk, struct socket *parent)
+-{
+-	WARN_ON(parent->sk);
+-	write_lock_bh(&sk->sk_callback_lock);
+-	rcu_assign_pointer(sk->sk_wq, parent->wq);
+-	parent->sk = sk;
+-	sk_set_socket(sk, parent);
+-	sk->sk_uid = SOCK_INODE(parent)->i_uid;
+-	security_sock_graft(sk, parent);
+-	write_unlock_bh(&sk->sk_callback_lock);
+-}
++void sock_graft(struct sock *sk, struct socket *parent);
+ 
+ kuid_t sock_i_uid(struct sock *sk);
+ unsigned long sock_i_ino(struct sock *sk);
+diff --git a/net/socket.c b/net/socket.c
+index e89884e2197b..d5da935302a7 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -3425,3 +3425,20 @@ u32 kernel_sock_ip_overhead(struct sock *sk)
+ 	}
+ }
+ EXPORT_SYMBOL(kernel_sock_ip_overhead);
++
++//CBS - HACK TO SPEED COMPILES
++
++void sock_graft(struct sock *sk, struct socket *parent)
++{
++	WARN_ON(parent->sk);
++	write_lock_bh(&sk->sk_callback_lock);
++	rcu_assign_pointer(sk->sk_wq, parent->wq);
++	parent->sk = sk;
++	sk_set_socket(sk, parent);
++	sk->sk_uid = SOCK_INODE(parent)->i_uid;
++	security_sock_graft(sk, parent);
++	write_unlock_bh(&sk->sk_callback_lock);
++}
++EXPORT_SYMBOL(sock_graft);
++
++//CBS - HACK TO SPEED COMPILES
+-- 
+2.17.0
 
-This PR is mostly the same as the previous attempt, but with the
-following changes:
-
-1) The integration between EFI secure boot and the lockdown state has
-been removed
-2) A new CONFIG_KERNEL_LOCK_DOWN_FORCE kconfig option has been added,
-which will always enable lockdown regardless of the kernel command
-line
-3) The integration with IMA has been dropped for now. Requiring the
-use of the IMA secure boot policy when lockdown is enabled isn't
-practical for most distributions at the moment, as there's still not a
-great deal of infrastructure for shipping packages with appropriate
-IMA signatures, and it makes it complicated for end users to manage
-custom IMA policies.
-
-The following changes since commit a3b22b9f11d9fbc48b0291ea92259a5a810e9438:
-
-  Linux 5.0-rc7 (2019-02-17 18:46:40 -0800)
-
-are available in the Git repository at:
-
-  https://github.com/mjg59/linux lock_down
-
-for you to fetch changes up to 43e004ecae91bf9159b8e91cd1d613e58b8f63f8:
-
-  lockdown: Print current->comm in restriction messages (2019-02-28
-11:19:23 -0800)
-
-----------------------------------------------------------------
-Dave Young (1):
-      Copy secure_boot flag in boot params across kexec reboot
-
-David Howells (12):
-      Add the ability to lock down access to the running kernel image
-      Enforce module signatures if the kernel is locked down
-      Prohibit PCMCIA CIS storage when the kernel is locked down
-      Lock down TIOCSSERIAL
-      Lock down module params that specify hardware parameters (eg. ioport)
-      x86/mmiotrace: Lock down the testmmiotrace module
-      Lock down /proc/kcore
-      Lock down kprobes
-      bpf: Restrict kernel image access functions when the kernel is locked down
-      Lock down perf
-      debugfs: Restrict debugfs when the kernel is locked down
-      lockdown: Print current->comm in restriction messages
-
-Jiri Bohac (2):
-      kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE
-      kexec_file: Restrict at runtime if the kernel is locked down
-
-Josh Boyer (2):
-      hibernate: Disable when the kernel is locked down
-      acpi: Ignore acpi_rsdp kernel param when the kernel has been locked down
-
-Kyle McMartin (1):
-      Add a SysRq option to lift kernel lockdown
-
-Linn Crosetto (2):
-      acpi: Disable ACPI table override if the kernel is locked down
-      acpi: Disable APEI error injection if the kernel is locked down
-
-Matthew Garrett (7):
-      Restrict /dev/{mem,kmem,port} when the kernel is locked down
-      kexec_load: Disable at runtime if the kernel is locked down
-      uswsusp: Disable when the kernel is locked down
-      PCI: Lock down BAR access when the kernel is locked down
-      x86: Lock down IO port access when the kernel is locked down
-      x86/msr: Restrict MSR access when the kernel is locked down
-      ACPI: Limit access to custom_method when the kernel is locked down
-
- arch/x86/Kconfig                       |  20 ++++++++++++-----
- arch/x86/include/asm/setup.h           |   2 ++
- arch/x86/kernel/ioport.c               |   6 ++++--
- arch/x86/kernel/kexec-bzimage64.c      |   1 +
- arch/x86/kernel/msr.c                  |  10 +++++++++
- arch/x86/mm/testmmiotrace.c            |   3 +++
- crypto/asymmetric_keys/verify_pefile.c |   4 +++-
- drivers/acpi/apei/einj.c               |   3 +++
- drivers/acpi/custom_method.c           |   3 +++
- drivers/acpi/osl.c                     |   2 +-
- drivers/acpi/tables.c                  |   5 +++++
- drivers/char/mem.c                     |   2 ++
- drivers/input/misc/uinput.c            |   1 +
- drivers/pci/pci-sysfs.c                |   9 ++++++++
- drivers/pci/proc.c                     |   9 +++++++-
- drivers/pci/syscall.c                  |   3 ++-
- drivers/pcmcia/cistpl.c                |   3 +++
- drivers/tty/serial/serial_core.c       |   6 ++++++
- drivers/tty/sysrq.c                    |  19 +++++++++++------
- fs/debugfs/file.c                      |  28 ++++++++++++++++++++++++
- fs/debugfs/inode.c                     |  30 ++++++++++++++++++++++++--
- fs/proc/kcore.c                        |   2 ++
- include/linux/ima.h                    |   6 ++++++
- include/linux/input.h                  |   5 +++++
- include/linux/kernel.h                 |  17 +++++++++++++++
- include/linux/kexec.h                  |   4 ++--
- include/linux/security.h               |   9 +++++++-
- include/linux/sysrq.h                  |   8 ++++++-
- kernel/bpf/syscall.c                   |   3 +++
- kernel/debug/kdb/kdb_main.c            |   2 +-
- kernel/events/core.c                   |   5 +++++
- kernel/kexec.c                         |   7 ++++++
- kernel/kexec_file.c                    |  56
-++++++++++++++++++++++++++++++++++++++++++------
- kernel/kprobes.c                       |   3 +++
- kernel/module.c                        |  56
-++++++++++++++++++++++++++++++++++++------------
- kernel/params.c                        |  26 ++++++++++++++++++-----
- kernel/power/hibernate.c               |   2 +-
- kernel/power/user.c                    |   3 +++
- security/Kconfig                       |  24 +++++++++++++++++++++
- security/Makefile                      |   3 +++
- security/lock_down.c                   | 106
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 41 files changed, 466 insertions(+), 50 deletions(-)
- create mode 100644 security/lock_down.c
