@@ -7,60 +7,59 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D818C10F00
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD8DC4360F
 	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE5A218AE
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FDA02133D
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z1+rvoth"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mQlkbUme"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388046AbfB1XM6 (ORCPT
+        id S2387487AbfB1XM6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Thu, 28 Feb 2019 18:12:58 -0500
-Received: from mail-io1-f74.google.com ([209.85.166.74]:36248 "EHLO
-        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388044AbfB1XM5 (ORCPT
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:45051 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388021AbfB1XMy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:12:57 -0500
-Received: by mail-io1-f74.google.com with SMTP id v3so17184077iol.3
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:12:57 -0800 (PST)
+        Thu, 28 Feb 2019 18:12:54 -0500
+Received: by mail-qt1-f202.google.com with SMTP id c9so19960664qte.11
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:12:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=8KM4GPF8H/ZA8qZu4X13d5O4g08OSMJQgTj+Sn30UNM=;
-        b=Z1+rvothKUqR2tRl+zH/aPd+au+70MAgtzcgA3i6y553uX+/QzIYSKO8X1D+XAkhO1
-         0cl1XIShXKMwqyV6SVOjdEECCNLnNp+Z+xJ+RdtzV7mU2UBm1BwrIw7MdCFoZGEPgTyo
-         9wjPyw6bEZD8qzrKYAL4ox04cDYhyezdGMVSzQSkQgBzEUNhcY/tY/qjGleZanIupMtu
-         /RE567QzdS2BRSNaNuv19QZraWcbeTaKiX/lUHm8VfdT/iyEnAQ/QeymKlMFvz5QzdmQ
-         3y7uAMlcmrGK7Cd9rmYXZVD5vZxSWp/JwAVzW5gt5Xku7HymwCegv48ovK72haVv4bgM
-         wxgA==
+        bh=IP8fctA6K8NN5G061Fb911uxfYbe+tQq7t68cSfEm4c=;
+        b=mQlkbUme7tUstIHNnk9Zjy+vZsDymO3M/+KQz36FFl4PseyptXPSkOtBCU+VpzfEzc
+         w3Im01jnFe+xZbYmKjScHPbl0D5aFAz9aJX9QND+3DJ+4w2AyWglVW9aSPYzyZWM4Xov
+         VNMUMd1Hty/C/yllcYOxa1rarjilo90btm0agwUTN1xuIFhQmzbKupvAihcV0+yUYUmP
+         5SRr3bC9Lxy14IGMFYgXruziHJfDmPzF+qG4swTP01x4n/j6MX/s8cEo5REfTmpcTorT
+         i380vbq3qlJJdw2Ya002CR0tq2AQicmhOuN88v8S4QRFAmpsoW5lTOuK+Et7XBt2D3XH
+         dQDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=8KM4GPF8H/ZA8qZu4X13d5O4g08OSMJQgTj+Sn30UNM=;
-        b=tQtVPuzN4duDB1VUgcyvm8i8RwFzRgmkYT+ILivvlPXzZHEbGKvhRdKBxZuGZ5RPHE
-         R0jInrha/uV7DZE3pMcB7RNwLrWcv6ADSXJRH9s+nM6MJQ8EylQhnuMxSVPTWKHtLeuI
-         4bpPhmgGjRUzu+zYiUhsOQS4BDO4OOsRiAY2i21K8HyHj6QzYh2rlzgVL4yU8dB8fsib
-         DP4N2oLwjkP/kw62J+LWNeEJ/bdN5YFs90RRdn5jYeShQMqGFgn8fPNRMHs3VpWPZY6L
-         bAdg4kcW7vAmpcoMsKjOD+CsqglkJOb3eHOJDjECbAj/8ZK1VaMYs/FN3c27Fk5Hy2t1
-         /dhw==
-X-Gm-Message-State: AHQUAuZkDh7IqRGlLG+ZeG5TH6y/eGRDqd+zAgP/lHsJpQsrqTKYK2mV
-        4myCTycCZX9aQR5EyrD9jpJ136XmxEB5+5zHNCK53w==
-X-Google-Smtp-Source: APXvYqyYIIPpi6LMvPSKodYDlF1Q3NR9zGkxdJ+I+B3eh9JF55kOsrbcWMzonXnT5HJXudG42GD3brjdc1roSdr3TYkjjw==
-X-Received: by 2002:a24:612:: with SMTP id 18mr1507443itv.7.1551395576756;
- Thu, 28 Feb 2019 15:12:56 -0800 (PST)
-Date:   Thu, 28 Feb 2019 15:11:56 -0800
+        bh=IP8fctA6K8NN5G061Fb911uxfYbe+tQq7t68cSfEm4c=;
+        b=YhCQYiKy96O1Y0qE7Yd45KH0nG7/XlFpVEWKWHHxxfeVcOqjl1ZNnar8k3YNsvXTr/
+         Eer9b+wprt11fMUJeJoUNCbM30IlfulkZm2hoIg2L/OFqwRuL56p8WYeNT+4WeSF9xU7
+         X1qXDXwhPrkBdEgUQS9ogXWkChD1WGSGARh6Uy8x86EelPvRIvvWeWljDOffvaK0csFM
+         U99NbGy+EqXrFvi64EGme+h2IQxdpEGVMMt04/ZR89wHJx8qAYNrJ8Bq5xRhnUuhYbeQ
+         ootZDsgsoB9ZhM2HZT4M+aIExKPnEZ5yet9UHpy3xEXOd2Bb9NDCRun8SFnFCAadE2Mq
+         jpfA==
+X-Gm-Message-State: APjAAAVXXUlnMont956FkrQ6qv/Mf3/AEaRQY/SHW8fGQe8brFFeIqS1
+        CPwdABWBtAzgGt5CQjT7i3Vl6z3nVg++3mJrFhK31A==
+X-Google-Smtp-Source: APXvYqy6lnQP7cNTqUdwNAkXY6NJVBfXyJNp6Vjb7dh42LsutuwHpIVZFbrkYoaWwoRivdgkehMjZnjCLN5L07N/suMS5g==
+X-Received: by 2002:ac8:1973:: with SMTP id g48mr1130734qtk.58.1551395574099;
+ Thu, 28 Feb 2019 15:12:54 -0800 (PST)
+Date:   Thu, 28 Feb 2019 15:11:55 -0800
 In-Reply-To: <20190228231203.212359-1-matthewgarrett@google.com>
-Message-Id: <20190228231203.212359-20-matthewgarrett@google.com>
+Message-Id: <20190228231203.212359-19-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
  <20190228231203.212359-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 20/27] Lock down module params that specify hardware
- parameters (eg. ioport)
+Subject: [PATCH 19/27] Lock down TIOCSSERIAL
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -72,80 +71,35 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-Provided an annotation for module parameters that specify hardware
-parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
-dma buffers and other types).
+Lock down TIOCSSERIAL as that can be used to change the ioport and irq
+settings on a serial port.  This only appears to be an issue for the serial
+drivers that use the core serial code.  All other drivers seem to either
+ignore attempts to change port/irq or give an error.
 
-Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Jiri Slaby <jslaby@suse.com>
 ---
- kernel/params.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+ drivers/tty/serial/serial_core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/kernel/params.c b/kernel/params.c
-index ce89f757e6da..8ac751c938f8 100644
---- a/kernel/params.c
-+++ b/kernel/params.c
-@@ -108,13 +108,19 @@ bool parameq(const char *a, const char *b)
- 	return parameqn(a, b, strlen(a)+1);
- }
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 556f50aa1b58..627e859ae25a 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -852,6 +852,12 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
+ 	new_flags = (__force upf_t)new_info->flags;
+ 	old_custom_divisor = uport->custom_divisor;
  
--static void param_check_unsafe(const struct kernel_param *kp)
-+static bool param_check_unsafe(const struct kernel_param *kp,
-+			       const char *doing)
- {
- 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
- 		pr_notice("Setting dangerous option %s - tainting kernel\n",
- 			  kp->name);
- 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
- 	}
++	if ((change_port || change_irq) &&
++	    kernel_is_locked_down("Using TIOCSSERIAL to change device addresses, irqs and dma channels")) {
++		retval = -EPERM;
++		goto exit;
++	}
 +
-+	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
-+	    kernel_is_locked_down("Command line-specified device addresses, irqs and dma channels"))
-+		return false;
-+	return true;
- }
- 
- static int parse_one(char *param,
-@@ -144,8 +150,10 @@ static int parse_one(char *param,
- 			pr_debug("handling %s with %p\n", param,
- 				params[i].ops->set);
- 			kernel_param_lock(params[i].mod);
--			param_check_unsafe(&params[i]);
--			err = params[i].ops->set(val, &params[i]);
-+			if (param_check_unsafe(&params[i], doing))
-+				err = params[i].ops->set(val, &params[i]);
-+			else
-+				err = -EPERM;
- 			kernel_param_unlock(params[i].mod);
- 			return err;
- 		}
-@@ -553,6 +561,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
- 	return count;
- }
- 
-+#ifdef CONFIG_MODULES
-+#define mod_name(mod) (mod)->name
-+#else
-+#define mod_name(mod) "unknown"
-+#endif
-+
- /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
- static ssize_t param_attr_store(struct module_attribute *mattr,
- 				struct module_kobject *mk,
-@@ -565,8 +579,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
- 		return -EPERM;
- 
- 	kernel_param_lock(mk->mod);
--	param_check_unsafe(attribute->param);
--	err = attribute->param->ops->set(buf, attribute->param);
-+	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
-+		err = attribute->param->ops->set(buf, attribute->param);
-+	else
-+		err = -EPERM;
- 	kernel_param_unlock(mk->mod);
- 	if (!err)
- 		return len;
+ 	if (!capable(CAP_SYS_ADMIN)) {
+ 		retval = -EPERM;
+ 		if (change_irq || change_port ||
 -- 
 2.21.0.352.gf09ad66450-goog
 
