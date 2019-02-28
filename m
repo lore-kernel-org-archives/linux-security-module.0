@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E0FC10F09
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A65C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6191D2133D
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FB092133D
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qsg0rstv"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="JUAMnVGZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbfB1WUl (ORCPT
+        id S1729671AbfB1WUm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 17:20:41 -0500
-Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:40941
+        Thu, 28 Feb 2019 17:20:42 -0500
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:35525
         "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729937AbfB1WUH (ORCPT
+        by vger.kernel.org with ESMTP id S1729772AbfB1WUB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 17:20:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392406; bh=ATJToVBjnuDBIC7U6KtklpNvDxWpsaxtFTNEcUSwbgU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=qsg0rstvFZf4l5V8P7aoXr0OzKbRefXTT7AJxuHhswaTcBxosIeqGB6KD7cj1iqxDTr3Yh65IX5kf0/o68no+7OB6SzXI0beDh769bCTIpUQP+J6E3ABgOyP0fSS0mrIRAHI2zKCdFDr/ovMYi9dGGmW4w0nDDVUSFBcLJCqPzLah5LrkqNwztBrbpS7psvb04C+tQ5/xng1vgJFJ1My7UvRmD0sisWby3OPBP4QPS1Xatd/KCFswFRUPHZOMvHCQ6CI50WbFEkQOzcj2U0UlcRncMV4ZVrywzx1oFqCuHJuQxrxhBWjttG3u2sPOLU6AQzjlRnXb32WJouh2UoqQw==
-X-YMail-OSG: IzJelawVM1mkjcIIccWL1dEtfwi6vTTXkzyezLVL4_yBtpnxGtTa9VHWt.xjlex
- wdx1p8MDJOBDfMVZsIwk04HpUsCm5klyzaGQKkdMfPNApxrQLD_DB1TjLAkc6DQ7rRx5392mgLXt
- 42C4lOfvB.Ewb4rUnWcMAkCGsLCYzGxPJQxtKNRcyRENisGXX_ZT.PX6FO9EJ_ZKqFzFo70WcPhN
- RBOX_SStO8wQ_1n5tZMuvHKVFS0FJaIAqh.4kaEuQmx3zx51bi2UuwdFhxhloq5cpFM8Hub9u_Uo
- HRkG9jOIwSmO3c_IAGjC815520KpGKgk0LI_9yyCIugo2DJi97IV6CMJZIXkLjjQ3FIQno2zz4Pi
- EZEUU6f5U10ZWW5m22b8oHZk3FfkvWw6x4yIJrAUVOe8lGMeSgryhE2xDxgMPGe6BfRj73b5EbBR
- 5KHVj_hIaRhcWeHhtwijlrr38ZJT9aaauejzriLnV78SUrTraY1hfkg.Mup5_wf4jpopxSsXWln1
- Ikbm7mWLsPdUndIlb3vRbN_J6.54xp5vHqmUczDCEtqLT2T.06iw.2APcfjvOO4KlCU2dZHwlK4o
- TTD9mK.WmiNgrNs14vxTwZwA4xqwg5gjBTuzWTCV0tjkVg7GE9Cd16a8jwZ8MyZ1iuCO1q33oXO5
- hYJm6zr1L9gMoRown33xijO_QvZW7bWrxaan3NnP1T0tdqA4m1s.Es9LbGEAD42ueXio9aK9CfZ7
- 2i_M6MbbLZQhd_9l_3GmfEI0doBwaEcoO7GbGF6wnsJJqeKS9bk9pTnQGvaqoRz6ZMn.GuLS4lYO
- yHb8g8Wn7R3kF7A_syHzJI2uAcHfln99HDCVs8q3iYpdpRSHoHp7qQtTnLR2ZT7zWOMGlr0s.oFJ
- uTbYffp95ZcNfy6nADsuLuJvGf6RWCX7ZaBCEaC772DpP4EKbc1NJrMxcjDWk5DSjXwBGaa_eShi
- lDHiRvPIyQXbxUN6XGtpteEXeEu.eyAWQHSDdyg73SMKzyXXa_86ktrbELxAf515ekxDyxSjk52n
- b.FT0bA6gMGikQdLZYfvy0pbmn4PmAlbZV2HrdL8BlkLroAt5Wmmv4lpK.h656uMU_vRr7hTZx9o
- DZO94Yb3AYD9x73O2oGHZGIXq9hZ6bDkdar17XBwRGI_7osFR
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:20:06 +0000
+        Thu, 28 Feb 2019 17:20:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392401; bh=FzVvjR+NFksvu4dNddqr2/PVXMCrtqnd2aRCMpeNGXA=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=JUAMnVGZMy+yL+kuf3fNwhI2taDO7JFPEx5V6n1gJjZNqwxIz6SLBKVnyZE3k3ms9BPPRQpaUc1qKzqYz1kWorOVUah2fKf6bRj4J4+MSTwzhKP2PFdZ6wTXJcRS9vE0XigJP+80/eFnP9ANklMTqss4BhWFDhPV9T8CyQKxuFNOIOMUJG7R78Egc793+YkLzFdSRLl/EkGXly8Nr7bdMKFTDabu1gs16FHKOP6mx8oO2fF3m+97+aCU65NoEJWCFeUFbhl0zPTwPmItlnlCixv0mNIUqjkKdmPdc3esQHH0AM9StqBhdMDfZ4WaixI6WC63FX/t5dMWMT+Q6e5ekQ==
+X-YMail-OSG: 5N3hT5EVM1mB6w_4r3.DdYZ7jqHY7GJUZhEGAJb9kW3q2ALH72dJR7EYohosJES
+ GAnbRsERKq65q1XC.OHRKYzNdrInIpIw7rimQHihreh2_s8cJmcwroZzvLdXsFdQJC4gnBbfiwEV
+ D_VLN8JsjKMTcvdNlSq65svyYXyLGvIhEBpeeKrTcV96FhdxEvWQFs6Gup8jvifD2lurXE97WlZD
+ 1Jmz1_5U6hT56CzDCVa02CmTxERBc201LPiz7qwQrX8kOddPyWbDeYFm3kLmRfzcKxgGhcSzm4pY
+ yNcwjrlP8b5FLMquQXDVdPqJRh8_3EhKB0ikGDpAFfFnq9NZUS0uVSXHGWk6PssUadsiI9BqknSL
+ Y1dq9MCmvwDhHxqqG1HwPnaM_F8mOzDOb3.yplJ02CHRK7glOX6RQF_JTcIiZE3pTNeUS2Mh0f2j
+ DaqdciO2HPZgyM3ii4ZmWngZzC7skKWyQyxPrGb9aRGfA0Lv5Gp6YUqmpJKsZUToLCG5GOkGc.VA
+ EWZ6DfCYv7rA4Bs49MO0D9scBFmGXoE6TaK5RMecsQmqAjjCAzW0DCUEL4MwwcnkvQr0N9BQv0S4
+ asbWlKe.7oqYd8cRmDDbyZXL32IuN5MP0GAnhSNRXU1Whnno6_TwdtCyLaeumqMAzCMTkzNOIEUj
+ PrYrYZLM9RZUqEW6nrqmYVqsdJquz38A5YoavT.W8mhBLfNUHPVDejmCZ3eH4XLItQOm42SOnsnm
+ Yb3bSturQtsDFtvEM3iy6zurmv9O8IvvCdAkooC_YM8T1e8qIISLSkEYy4z0ULULzL2gEN8ecObC
+ bxtu5juGwRSHQYsHoEjh7183qJH7EX2boPjt7wgr6fTZDEBa36RPTXjPWWwZO4kL7YBipjMVFHIp
+ PHhOFGsttMAT3Fz4JXNdFXX.8RJSs1n2r.P5Nfq6_C765JUTIXV.uJnisgly0UvNn1kSx91cBxhu
+ xjT3dZ6OJ78wzejr0IckIYSh_gzLkPgLL.MzwKCK.I_S3pAAxvx0Y9U_vhCaiftg4ma8Cr1TkKGu
+ wqP3cJQLWGZLqhxb8kxTQTeMFp_CuQJvSjMqCYKq8jGf5VnV00q6kO2IX4cOaE71d7zxXV40qU2J
+ nGnukyZ8jUNUDJTTtDlDb2BmzfF1RtpTnaDPITcPflLK8EJ.T
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:20:01 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp409.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID e8fded081226753664bb344863181a7a;
-          Thu, 28 Feb 2019 22:20:03 +0000 (UTC)
+          by smtp406.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 5c7d685bea94a92cc9d12c4cc22f1f0e;
+          Thu, 28 Feb 2019 22:19:59 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-Subject: [PATCH 33/97] NET: Store LSM access information in the socket blob for UDS
-Date:   Thu, 28 Feb 2019 14:18:29 -0800
-Message-Id: <20190228221933.2551-34-casey@schaufler-ca.com>
+Subject: [PATCH 27/97] LSM: Use lsm_export in security_cred_getsecid
+Date:   Thu, 28 Feb 2019 14:18:23 -0800
+Message-Id: <20190228221933.2551-28-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190228221933.2551-1-casey@schaufler-ca.com>
 References: <20190228221933.2551-1-casey@schaufler-ca.com>
@@ -59,134 +59,64 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-UNIX domain socket connections don't have sufficient
-space in the socket buffer (skb) secmark for more than
-one Linux security module (LSM) to pass data. Expanding
-the secmark has been ruled out as an option. Store the
-necessary data in the socket security blob pointed to
-by the skb socket.
+Convert security_cred_getsecid to use the lsm_export structure
+instead of a u32 secid. There is some scaffolding involved
+that will be removed when the related data is updated.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/security.h | 20 +++++++++++++++++++-
- net/unix/af_unix.c       | 14 ++++++++------
- security/security.c      | 17 ++++++++++++++++-
- 3 files changed, 43 insertions(+), 8 deletions(-)
+ include/linux/security.h          | 2 +-
+ security/integrity/ima/ima_main.c | 3 ++-
+ security/security.c               | 8 +++-----
+ 3 files changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/include/linux/security.h b/include/linux/security.h
-index ae79b24f076d..6659ffa8cacc 100644
+index 07fd36f6616d..87085ff519bf 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -68,6 +68,7 @@ struct ctl_table;
- struct audit_krule;
- struct user_namespace;
- struct timezone;
-+struct sk_buff;
+@@ -376,7 +376,7 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
+ void security_cred_free(struct cred *cred);
+ int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp);
+ void security_transfer_creds(struct cred *new, const struct cred *old);
+-void security_cred_getsecid(const struct cred *c, u32 *secid);
++void security_cred_getsecid(const struct cred *c, struct lsm_export *l);
+ int security_kernel_act_as(struct cred *new, struct lsm_export *l);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index e78658b26a74..7efc806eb5ab 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -374,7 +374,8 @@ int ima_bprm_check(struct linux_binprm *bprm)
+ 	if (ret)
+ 		return ret;
  
- enum lsm_event {
- 	LSM_POLICY_CHANGE,
-@@ -97,6 +98,22 @@ static inline bool lsm_export_any(struct lsm_export *l)
- 		((l->flags & LSM_EXPORT_APPARMOR) && l->apparmor));
+-	security_cred_getsecid(bprm->cred, &secid);
++	security_cred_getsecid(bprm->cred, &le);
++	lsm_export_secid(&le, &secid);
+ 	return process_measurement(bprm->file, bprm->cred, secid, NULL, 0,
+ 				   MAY_EXEC, CREDS_CHECK);
  }
- 
-+static inline bool lsm_export_equal(struct lsm_export *l, struct lsm_export *m)
-+{
-+	if (l->flags != m->flags || l->flags == LSM_EXPORT_NONE)
-+		return false;
-+	if (l->flags & LSM_EXPORT_SELINUX &&
-+	    (l->selinux != m->selinux || l->selinux == 0))
-+		return false;
-+	if (l->flags & LSM_EXPORT_SMACK &&
-+	    (l->smack != m->smack || l->smack == 0))
-+		return false;
-+	if (l->flags & LSM_EXPORT_APPARMOR &&
-+	    (l->apparmor != m->apparmor || l->apparmor == 0))
-+		return false;
-+	return true;
-+}
-+
- /**
-  * lsm_export_secid - pull the useful secid out of a lsm_export
-  * @data: the containing data structure
-@@ -140,6 +157,8 @@ static inline void lsm_export_to_all(struct lsm_export *data, u32 secid)
- 		      LSM_EXPORT_APPARMOR;
- }
- 
-+extern struct lsm_export *lsm_export_skb(struct sk_buff *skb);
-+
- /* These functions are in security/commoncap.c */
- extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- 		       int cap, unsigned int opts);
-@@ -171,7 +190,6 @@ extern int cap_task_setnice(struct task_struct *p, int nice);
- extern int cap_vm_enough_memory(struct mm_struct *mm, long pages);
- 
- struct msghdr;
--struct sk_buff;
- struct sock;
- struct sockaddr;
- struct socket;
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index e2327428aecb..df183ff69d61 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -141,21 +141,23 @@ static struct hlist_head *unix_sockets_unbound(void *addr)
- #ifdef CONFIG_SECURITY_NETWORK
- static void unix_get_secdata(struct scm_cookie *scm, struct sk_buff *skb)
- {
--	lsm_export_secid(&scm->le, &(UNIXCB(skb).secid));
-+	struct lsm_export *ble = lsm_export_skb(skb);
-+
-+	*ble = scm->le;
- }
- 
- static inline void unix_set_secdata(struct scm_cookie *scm, struct sk_buff *skb)
- {
--	lsm_export_to_all(&scm->le, UNIXCB(skb).secid);
-+	struct lsm_export *ble = lsm_export_skb(skb);
-+
-+	scm->le = *ble;
- }
- 
- static inline bool unix_secdata_eq(struct scm_cookie *scm, struct sk_buff *skb)
- {
--	u32 best_secid;
--
--	lsm_export_secid(&scm->le, &best_secid);
--	return (best_secid == UNIXCB(skb).secid);
-+	return lsm_export_equal(&scm->le, lsm_export_skb(skb));
- }
-+
- #else
- static inline void unix_get_secdata(struct scm_cookie *scm, struct sk_buff *skb)
- { }
 diff --git a/security/security.c b/security/security.c
-index e52b500adb27..2f9411b93f70 100644
+index c2cf82b063ca..06461712c881 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -46,7 +46,22 @@ static struct kmem_cache *lsm_file_cache;
- static struct kmem_cache *lsm_inode_cache;
+@@ -1590,12 +1590,10 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
+ 	call_void_hook(cred_transfer, new, old);
+ }
  
- char *lsm_names;
--static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init;
-+
-+/* Socket blobs include infrastructure managed data */
-+static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init = {
-+	.lbs_sock = sizeof(struct lsm_export),
-+};
-+
-+/**
-+ * lsm_export_skb - pointer to the lsm_export associated with the skb
-+ * @skb: the socket buffer
-+ *
-+ * Returns a pointer to the LSM managed data.
-+ */
-+struct lsm_export *lsm_export_skb(struct sk_buff *skb)
-+{
-+	return skb->sk->sk_security;
-+}
+-void security_cred_getsecid(const struct cred *c, u32 *secid)
++void security_cred_getsecid(const struct cred *c, struct lsm_export *l)
+ {
+-	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
+-
+-	call_void_hook(cred_getsecid, c, &data);
+-	lsm_export_secid(&data, secid);
++	lsm_export_init(l);
++	call_void_hook(cred_getsecid, c, l);
+ }
+ EXPORT_SYMBOL(security_cred_getsecid);
  
- /* Boot-time LSM user choice */
- static __initdata const char *chosen_lsm_order;
 -- 
 2.17.0
 
