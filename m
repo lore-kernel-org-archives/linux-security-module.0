@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59466C43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C83C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E082133D
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:14:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82B402133D
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:14:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ageJCM95"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d9mbo5KR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387898AbfB1XMp (ORCPT
+        id S2387861AbfB1XMm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 18:12:45 -0500
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:49706 "EHLO
-        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387872AbfB1XMo (ORCPT
+        Thu, 28 Feb 2019 18:12:42 -0500
+Received: from mail-oi1-f201.google.com ([209.85.167.201]:46418 "EHLO
+        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387481AbfB1XMm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:12:44 -0500
-Received: by mail-qk1-f202.google.com with SMTP id s65so17276179qke.16
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:12:44 -0800 (PST)
+        Thu, 28 Feb 2019 18:12:42 -0500
+Received: by mail-oi1-f201.google.com with SMTP id v138so9728902oie.13
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:12:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=Wqh1XdjrR2tvM3s7JD9p7Uz2t1LkZeFbYNWqPw8a2Aw=;
-        b=ageJCM95rFFnT+xvmUfxE0iJAoV+n+N8mVj52V+6FViQT9B9gThHA1Dux7SYXzh757
-         vW07/zc36SNBzPb7yLPanIUYV4txRFnWY0HPa7vFyNMXwygb4ma3/2VaqKtguwXLB31c
-         y06GyPMa0kjPa0dfBTGkO9WB9kGU17MGsLsGAikRv9+zuPf6l0bwgJteKFBghHOSdTSa
-         Cg1u9+NdHPJs5Dn7cbi8GBKy6ZVzmXduON7YW2/CgSjFUDVFeGCDQGM8IYb5cvXHY2sL
-         Ov+LWR6ufzXIr7NqMCosbz/hUJc8Glr4TF325/gs0oBJI6BvEmgB/3gxy+DCW95Tg4/2
-         TtUw==
+        bh=mp70BzDzYljwrYd25Lt2UYdTDnlpZHVvwxSHppwzPMQ=;
+        b=d9mbo5KRuX/RDzSfaF9z9U/JVALls/m/pz/TIR77Q8r3FIN9dJSFVDfe7as12j9CYg
+         qdZsexqPqnAnxNUev6Df6+SU06uOFjwvNupM5qThkzxUC15WeMpr/ddVBIPpUk/sshgT
+         Yi5w8NjP8cW20UyrwtFhz2TyseSwRojDZ/w/dlGj8GGMfifKP/4bOXm+K2rOU8mgi9Cq
+         APHC6H3pa3BlkFIFnpQhlTRcgtn6Jp9jwLbfbnead8KChCcHOpGUiD4PlmqMesuMwi2j
+         FXGWgUQvqdOBu7336UXlYA4jKK7YzGfa7nW2nwCbZbMRZw9MYFvHqpRhaK7UJesHPJJz
+         QcdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=Wqh1XdjrR2tvM3s7JD9p7Uz2t1LkZeFbYNWqPw8a2Aw=;
-        b=EOM842K0ABJ9FD1mWwc3i99OgTsqBQ8FLoKWcnOEe6OQGvQJ0UhwQa/a0FbwbjyOVp
-         UfK086Hc0gMbB5b56+xtoJt721pQIg+zQnlaIOwUUOy6s0yi6tL7WHL0e2Buk6s+EZni
-         7ocHIy5YMcr8RQjWPxKPq+EgZrZB918iVn55aXh2kkZYHUXNjrDyVNAfwz9893DVM9Ln
-         onoS/ipvIUjDBB6umOZUzFEx1hqZ9+ZSa2/HZufthqrsq0jMde5zpi1Vf99qNO50W42b
-         u1ly1nGrhA09Lv9UvTpV74QoUMjbhJoLiceo6q48CkTeYsCxE8gjqBzczwI+VqjZS/4o
-         owfQ==
-X-Gm-Message-State: APjAAAUPQwNvmKD1w9zT39jDq9xUoDqHl9sGFUNMPCbMxIkr1LVgm30i
-        DmYVpQ5V1ctvWOK0GAL4YguCv6usUeKltsFzkb65Rw==
-X-Google-Smtp-Source: APXvYqzMYtXMIbPpyBJ53LzazIQ0J3J476+ftoTfkkRnqsTBZKh5DwMy7w3f+Yq4e1XEX0j8l3KXmtYFbsoIiTcS9h7BtA==
-X-Received: by 2002:a0c:869d:: with SMTP id 29mr1097176qvf.34.1551395564025;
- Thu, 28 Feb 2019 15:12:44 -0800 (PST)
-Date:   Thu, 28 Feb 2019 15:11:51 -0800
+        bh=mp70BzDzYljwrYd25Lt2UYdTDnlpZHVvwxSHppwzPMQ=;
+        b=TapbBYi17YQr8cl+JDt7Va8+HdDVX1Y6CLkHbSd/mBXx2kTFFBEIwyWGVm9V02nR0V
+         bdKSeputAiiCXSwj1v1xlJiQHkhdMe91/u7awLiciRkbZ716A+yKAhCr+AK6IwET5K0O
+         beyH9/IfSf6z7QkbwjJ3PQ2iKDg9HZg5qkBwTycSv5x7PFZcbYQjmUPeaSdAyHrg1ND8
+         Ka6AWTtMpC2oZWP1khVH7rMIfM+k+feSEWNSwOBzUt5N2valepJh6kRzap3bEVLYkh0T
+         c+t9rsnOP4o5Cu4T0/+mUIaEZRFljY6clYtB5rTjycDfUBmVCz7t0uPKJ8LH7fcgQTyP
+         9UoQ==
+X-Gm-Message-State: AHQUAuZl17NjbVPYxyDXgwLMx3GmtZ9y9aKQfYXKDA99QxYmm6JLPc87
+        vbw2fgXmLqQA5vCG9l57L44k+lLE4vZUaX3INjarmA==
+X-Google-Smtp-Source: AHgI3Ia5usj8LcdFU5Loh4aKXUNg08MNR91CW+JW/r9yGIg2PlSZhi9WN17w46ruHiIg35AKXfCS9vIsXAqcsDrlO7E+sQ==
+X-Received: by 2002:aca:4b97:: with SMTP id y145mr1322685oia.19.1551395561327;
+ Thu, 28 Feb 2019 15:12:41 -0800 (PST)
+Date:   Thu, 28 Feb 2019 15:11:50 -0800
 In-Reply-To: <20190228231203.212359-1-matthewgarrett@google.com>
-Message-Id: <20190228231203.212359-15-matthewgarrett@google.com>
+Message-Id: <20190228231203.212359-14-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
  <20190228231203.212359-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 15/27] acpi: Ignore acpi_rsdp kernel param when the kernel has
- been locked down
+Subject: [PATCH 14/27] ACPI: Limit access to custom_method when the kernel is
+ locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -70,34 +70,34 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Josh Boyer <jwboyer@redhat.com>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-This option allows userspace to pass the RSDP address to the kernel, which
-makes it possible for a user to modify the workings of hardware .  Reject
-the option when the kernel is locked down.
+custom_method effectively allows arbitrary access to system memory, making
+it possible for an attacker to circumvent restrictions on module loading.
+Disable it if the kernel is locked down.
 
-Signed-off-by: Josh Boyer <jwboyer@redhat.com>
+Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-cc: Dave Young <dyoung@redhat.com>
 cc: linux-acpi@vger.kernel.org
 ---
- drivers/acpi/osl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/custom_method.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index f29e427d0d1d..3e44cef7a0cd 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -194,7 +194,7 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
- 	acpi_physical_address pa;
+diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
+index 4451877f83b6..ac8a90dc7096 100644
+--- a/drivers/acpi/custom_method.c
++++ b/drivers/acpi/custom_method.c
+@@ -29,6 +29,9 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 	struct acpi_table_header table;
+ 	acpi_status status;
  
- #ifdef CONFIG_KEXEC
--	if (acpi_rsdp)
-+	if (acpi_rsdp && !kernel_is_locked_down("ACPI RSDP specification"))
- 		return acpi_rsdp;
- #endif
- 	pa = acpi_arch_get_root_pointer();
++	if (kernel_is_locked_down("ACPI custom methods"))
++		return -EPERM;
++
+ 	if (!(*ppos)) {
+ 		/* parse the table header to get the table length */
+ 		if (count <= sizeof(struct acpi_table_header))
 -- 
 2.21.0.352.gf09ad66450-goog
 
