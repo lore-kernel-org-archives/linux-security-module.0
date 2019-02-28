@@ -5,62 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846FAC4360F
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21B7C10F00
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C6E52133D
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD3E22133D
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sbWK4YE0"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h2dQs5JS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731073AbfB1XNg (ORCPT
+        id S1730822AbfB1XNo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 18:13:36 -0500
-Received: from mail-oi1-f202.google.com ([209.85.167.202]:48998 "EHLO
-        mail-oi1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388151AbfB1XNH (ORCPT
+        Thu, 28 Feb 2019 18:13:44 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:43344 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388087AbfB1XNC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:13:07 -0500
-Received: by mail-oi1-f202.google.com with SMTP id p65so9044140oib.15
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:13:07 -0800 (PST)
+        Thu, 28 Feb 2019 18:13:02 -0500
+Received: by mail-pf1-f201.google.com with SMTP id 19so16279474pfo.10
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:13:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=587I7do7VgxQ57ltQWC5RYKCBbhcordnhHm7PVPlrfA=;
-        b=sbWK4YE0HC80ETP/khZWToJ0cY/+JZs2pKZzeqO1jHXpQLJR84Q1N85z026hYQyuB3
-         LeV0T57ywlzszxahT2vl/qZUIVwhBikEiOeJ0MbD+DOwdCmXusrvPnZMVNg6l1tievGR
-         f8FKwhIb0yArv5Q4zkGy69wseUmP6EnDPUmydSvSYXVyM8Bs5Db1sLbsk66kaL63Nr7U
-         4GZ4DhjEzgipUCGH8blHScAGTgIWf+FjggAhdKmeUbv42UA1ivgbihlAxXVyeRj75ZSu
-         b+bLBp03z512RhDnhKfLybHJrLmLP+GTVdf3MJquifWC4bLlksxJ84N5WGRpdTmRqUGQ
-         J1MQ==
+        bh=1Fd13wAoeAlJDZDMn5wRTcmN7nj+iFwc6tEPzGSBE4U=;
+        b=h2dQs5JSnAG5Wy4W0iJMttDO7lKtCKoinJmTMo41kH6xI6qAI/Rq9vmuNe3Ff+fio5
+         LuvzOvPbhTpyh34gr9zrOE5mA1Y5t0ifI7DWi4CcqVkoc8uMRf9HfZV8LAEXrmOcPxJD
+         HPzwxav8T+gSYUt7jFe2FK6xBbwCBCxFQ8o7gYEQ3UklvUjo3FtFW+yxeESQH9iowvh1
+         97xDBgCWJvCFr9mig2BOszoMYCp/5BCz6gIE+Hss9v4IdxSkmMYoZOSBOW/RDtxVP0jD
+         7PU+J/oherZ/xNZSWdJ8dLmULlg5bDB3PE1jpql9FajhQLT0wu4uFj6RoxqsbWteM0Vk
+         CSvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=587I7do7VgxQ57ltQWC5RYKCBbhcordnhHm7PVPlrfA=;
-        b=VSOTkgCeQBSvUF5tE0egM0bSchMpZDgHUlFduL4hepzY2+R10J4qyYMiBdlwEvNYnP
-         5WHRtdU36wLXJe2H+L8dNKJJaYm///9XXtChuhCJRB/SOgPnGN/7jCvVBBLfMfVrvwVg
-         TUDnqEno0XzFgpob+J0mRcbfZdgV/m/SvoSZnpY9w87h84Ir1wHniCpzejRLm1vt5p4s
-         DhTjsJ67L2tcUo4ytYIYCG/A0zRFwckC/sNhON8UO3epGDY5HA03x5dVTrKfRHejUJHZ
-         2FmLVfBLyuEo2/LJTZOeBIr7BHBo0ZuG3Zry63bC0V3H12snQQtDrliUM5BLpa9xCOVo
-         8VOg==
-X-Gm-Message-State: APjAAAUWpZM5P11dK0Wf41fgBpCRkLbjPjuykYE5BynTrA2e6zWn5yxF
-        XuKmY6Iq5bkWtBN9k2M2riB4hkF8sVvp3XFOaQbjqA==
-X-Google-Smtp-Source: APXvYqzOiv/mL97RdQqgTV+SouP3a/ir0Fmjes/HKCMDAbGlipGiqFHPSNi7JMtsJsXvmAuEhbuhiYDZK3zdSUUKm7AtYA==
-X-Received: by 2002:a9d:6c58:: with SMTP id g24mr1304166otq.10.1551395586760;
- Thu, 28 Feb 2019 15:13:06 -0800 (PST)
-Date:   Thu, 28 Feb 2019 15:12:00 -0800
+        bh=1Fd13wAoeAlJDZDMn5wRTcmN7nj+iFwc6tEPzGSBE4U=;
+        b=fQvxYYnMX76EAsosLuTGrsF0o41qEmxetY6wxraYQznOQjZ2mh75W8oHYWFgfq3gk5
+         nM9aBWnZ9FrJr2dTu1ff9Sj/I6or2PwEcPuNn9H36PHWAUltVvb/rTgGIY8IeUPV2B6u
+         fuvwEeKqiEr5wGAJbh9z5U+sTRD/+BzKKqGSRWCGJTKvV5GiAf1RpDySxUZh0G6eErFN
+         6Uf3zh17KyKs/x/SH4uMteVVgxkS7kVUDqU0xjdEH+kIOOiSETrBTICjydlviL4deeP7
+         9iBN9qEHd1BwJblEc815S/Ei0EHRuHxkPz8bBoxEHMkYmLmlIRscq0U5Qt67JbuzJHwv
+         um+g==
+X-Gm-Message-State: AHQUAuaA+LMGvCqE3I8WAqsYtoyPKxmQjl2cyNBSASr7WGBuyhINTjM5
+        qDgt9Odt/anqiD478dHa4Ez7ILOJilDbLokzu/TSNw==
+X-Google-Smtp-Source: AHgI3IbPb2bAkGu7mbtq3dNBtqEavh+uoz2l0tI4DokDL5Yk3RfeUuSVrpg8fxfLlyNRX+BVqb6qkCQm79o4/aJYuKCGxA==
+X-Received: by 2002:aa7:8699:: with SMTP id d25mr975489pfo.22.1551395581516;
+ Thu, 28 Feb 2019 15:13:01 -0800 (PST)
+Date:   Thu, 28 Feb 2019 15:11:58 -0800
 In-Reply-To: <20190228231203.212359-1-matthewgarrett@google.com>
-Message-Id: <20190228231203.212359-24-matthewgarrett@google.com>
+Message-Id: <20190228231203.212359-22-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
  <20190228231203.212359-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 24/27] bpf: Restrict kernel image access functions when the
- kernel is locked down
+Subject: [PATCH 22/27] Lock down /proc/kcore
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -72,37 +71,28 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-There are some bpf functions can be used to read kernel memory:
-bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
-private keys in kernel memory (e.g. the hibernation image signing key) to
-be read by an eBPF program and kernel memory to be altered without
-restriction.
+Disallow access to /proc/kcore when the kernel is locked down to prevent
+access to cryptographic data.
 
-Completely prohibit the use of BPF when the kernel is locked down.
-
-Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: netdev@vger.kernel.org
-cc: Chun-Yi Lee <jlee@suse.com>
-cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 ---
- kernel/bpf/syscall.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/proc/kcore.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 8577bb7f8be6..e78dbe5473c9 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -2593,6 +2593,9 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
- 	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index bbcc185062bb..d50ebfbf3dbb 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -518,6 +518,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ 
+ static int open_kcore(struct inode *inode, struct file *filp)
+ {
++	if (kernel_is_locked_down("/proc/kcore"))
++		return -EPERM;
+ 	if (!capable(CAP_SYS_RAWIO))
  		return -EPERM;
  
-+	if (kernel_is_locked_down("BPF"))
-+		return -EPERM;
-+
- 	err = bpf_check_uarg_tail_zero(uattr, sizeof(attr), size);
- 	if (err)
- 		return err;
 -- 
 2.21.0.352.gf09ad66450-goog
 
