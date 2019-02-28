@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDDCC43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE94EC43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD93D206DD
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:44:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B863206DD
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qz6SU0DC"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="cNUW0tGk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728438AbfB1WoR (ORCPT
+        id S1729133AbfB1WoU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 17:44:17 -0500
-Received: from sonic301-10.consmr.mail.bf2.yahoo.com ([74.6.129.49]:46528 "EHLO
+        Thu, 28 Feb 2019 17:44:20 -0500
+Received: from sonic301-10.consmr.mail.bf2.yahoo.com ([74.6.129.49]:32944 "EHLO
         sonic301-10.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728775AbfB1WoQ (ORCPT
+        by vger.kernel.org with ESMTP id S1728903AbfB1WoU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 17:44:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551393853; bh=D46jH1NzMuCKPDROaZjQDTvHqgXO7BOSHaSWxaZtxc8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=qz6SU0DCmIGMZkN1UYcY5Oav3kckLekCt6FE1qWTbyG7e+mhRC1LBn35pR30p74wC/4Rtg8U6kswxCtm569gWtc4Ov2WgAMAK9i9iloXjCAUq6SgTf8+4XXVHSP0Qt1wT/e8XNqLtEAHgakGKOmKlEiIbW2ZR0VNnd0r/gM51YSUntkuMogxdkyLXBgW6iU2ftEFfQL0sLKDY/75gaE97dIEzsQKVzo2EKvx+5Up8yFxnwvmxx8GaIyCa8TtyyuZmgSeHBP1MlX9eFRXK+i65/gMOMlVn6PBy9VsCHLS620COzORpPxTxGixFSI08FmwaH4H86cSDkuKCDqm7+kwRQ==
-X-YMail-OSG: zpq3x9kVM1kZUkVlasbn09i4IDlKWZcSZxNhqXQ_m_ol_I004U4k4ueusbehZDi
- Z299h.yjHJNAegN5GNN.76k5QAJgwC8oqZQv6OQiBMIsQo5oIbLN0xr5VyQrvEIak6nw7UayhJ57
- aUgIjW6VAmdn9luAWQTgO1s6JnG6xysCXaegg91SwvL5mHFRsvU0L4qzcbTLHKJOcsH1R_br3qRL
- ELQRarjSkLTJM0ID4..EwZfxzUKPfrS7cxPvy2I79ZUd1FpKIm3jrlpFJ.mwkOQIJv90xYtKsFrG
- 7QcaTTCermb1_uK9PYnSvz5Vp3O6nsOY9R5n8abvSY3NYgXXOH.pIOYSE9oy6c1kDIAEiwvTap.c
- lTxUrtTZ7Q0jaPW69gvJyJT4mQuZM_nG.6RxNwuMia.FHUzc3ESZ1qGDClp8rKpxRTKAyhM3TadO
- tsuYLXX5l7aQyURJHNYLdRUqXf5h62fxsDgZhR7JZVTCY68fh5Qi7ETy9XPodAC8zubJdSp3kKbA
- nwwhI5pHBUAwFYt_Uq6_vJNBStEHC3GS4joqvZUzVxMOp1FG5yZ2183qISj5SLihRyiYj94eIeme
- rWEhFGfrd6h.yTparI3IE7cLPNG6ctTvIHSnFvwGu3rsnCj98Gz2MgFY.TvMSOGC_0b4Kqk5jRUL
- noEZwFVl9ZrVaBoitSv2.PtGkechsyoDGm.b1yiLlVTQ._SM79A_3SnfAQhsHnXyUorHpWkPAwNL
- 5CsRxrXjfgiTvISjGKcAsNNQpld6O1gKx14_eaphDHvQK7gYw6TK4L0h7sJ65S.xv67VbEGMJMw8
- 2aNpj_uI8xB.z2KOYnfzoRhIbWFVgKo43RWVC5G2ZnK8FjeT32hzaWddl5CZ3cJ_pphcFgixjkiE
- Gke7sBmF8EV0RM7.yrEKDPJTvW3t8hZTYHMDBCSUt_vHWPeuuRcTaeP6JqeWyIAZG5uDUGTX0LII
- wXXZJrKK0Qxd1Q0fQ_UJvLHdXvxXVoNMQLgVTw_qQ0gtJW._mkfKz1ktbgYpouSqxk6vNsK.zlL0
- IOciJtfFET47WOHpN1gNm4W3PNtTKML_kjzMPBtUMHt_4Pygz6qfxftpNHucQ3kieze8U.k9p5NC
- huw3ryiZC03xuin_OkqpZZlUQGoUbmdihYdlX1o7ITxqG_Rk3iGbQv0w-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Thu, 28 Feb 2019 22:44:13 +0000
+        Thu, 28 Feb 2019 17:44:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551393858; bh=q6uoWrAShVrIzUTRZ/xFtGhPWu+7m7/p+agiDK8IfOs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=cNUW0tGkIopZ2dGhEWsVDhs+wm5ei7NYgaeaBXyVHsn2565YdmKqrTx5oZfsdBSpQciezA2SwJCVsaOj2PlpVirjw5gVjKIr/G48abhUNasKHJeKNtq99F4CtIDleLnwrJhJfieJow2R/WaJguAGBWVSSw/uoLfmwY2OepWvR00k4qoS4W3YqQb6fE/N+2o7slqCKzEqNbHcbXvFkrJiqSYgBNbEF+VTyx1y9PurcteAIbte6NqAEvDKV65DYTUnT59YsuaKkqPFUNpGec95msHpUMNlYgBia2jo4uHC1NddUHR9U+OI769zwOjqoN3/em9vgPrMZ1LIyTQ64Fa+ow==
+X-YMail-OSG: QCWsTtUVM1nDT5rOHpJtMnRxa1dhZYm9mmtloCJL3DxK5Il7UY.3NQXq5KjXFub
+ RtRFDnceqmnAb0PLQglRDtfJrM70Id3sMkdjvQV5z77SzsC4yjqpSkV72DATKnrvAEgSSHctff9A
+ TBLrhmJc9CdmdJc8AQU3MM81fUskWovBsMgLgkqPjT0OZ.SQg9jUpRX6UQcXzkcKchz6Szd9Bh_f
+ 1fXGH5KpN.80DcpFY6S2JfeEwZ98VajDViLw8YVfwa.yH7wxYeB7CFnZ.s8bBgv7BHSTrOVoMSd4
+ MEylMyYmwfTVRCN8e.e7Dtzqh09n2ixhCEDWws0VQM4gWgCGi2eHJjXONLhcVGU2P01Pk4yuygTf
+ VyGdMMl8RtR987Xzs_8Wb1gZHHmumULwGyKnhW8.RrpcKmhgpuSpuLmhaSYtQ._RaKH.I04Vgj60
+ Ej2pzVgXEomNu39aqFrC7XwJO2ascZJLTizwm1zYUxO8HzjfHQQu245yK2doFzBU19VqWcZKSXAy
+ t2TzJSo.AiALd2nYKYKStwo1McFBDmX67BOIPbM2uQbL86C3vf99Dr5miKEy47Lr815fBKPMWAAX
+ 976WjJAyexuRO60ksVVlQSdIVj_.EUWTiogvlLIuZrFzPcqgS7cj8NLYwcD0Pw0Yyoai.w7abtl5
+ oxyz2zMtMefQv9IiPmIEE2of5r6xb4KonwxS0tP7YsSid0yDGJlPxYldwbiQ_zOWGRsDVirZXo6h
+ pxLmE9PIBxr5hGmnuTk_jq5rygM0OqYoXkTJdncD730ki36iWEXzDPEt9cjvUE1xci8iGEc96o6g
+ dVAgYGsd2gt38831ou_Zf9PhtzhfHdSX_K4xK2cuceQFVeXkBZCcRazP4SMBcfDhO3j31Ydg.Sf2
+ 56gfwry2KNll6HjxOjC.uSVnAp2zEz2yesMF2rKnSP3jEAOC0jLJdbbNwfoNcpEZuZk9h8rG1adn
+ pzwa83438n4AxY70VCgteCD92QpPqTpUikjyM8mzjAnbcpyiRvxOxJbSGbuZ7HsZwiXL_r2Y.c_n
+ f4U4Z.36kzQ3DuqdQzUx00uvbKIjUzrx9UuUoe1uC0HJvJLlF.oHVhphobbdkWka5DFVbxHKaNk2
+ FlVRMVH9CI26kCBt9joNPa_JAu9xS8kTU2bpSnwFCLmRODFNTnrgpBtTc
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.bf2.yahoo.com with HTTP; Thu, 28 Feb 2019 22:44:18 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp428.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 731ec5e129ec3fdeedd3a533970a7e62;
-          Thu, 28 Feb 2019 22:44:11 +0000 (UTC)
+          Thu, 28 Feb 2019 22:44:15 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-Subject: [PATCH 76/97] LSM: Use full security context in security_inode_setsecctx
-Date:   Thu, 28 Feb 2019 14:43:35 -0800
-Message-Id: <20190228224356.2608-7-casey@schaufler-ca.com>
+Subject: [PATCH 79/97] LSM: Fix for security_init_inode_security
+Date:   Thu, 28 Feb 2019 14:43:38 -0800
+Message-Id: <20190228224356.2608-10-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190228224356.2608-1-casey@schaufler-ca.com>
 References: <20190228224356.2608-1-casey@schaufler-ca.com>
@@ -59,159 +59,76 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The security hooks security_inode_setsecctx and security_inode_getsecctx
-need to maintain the context strings for any and all LSMs that
-provide contexts. This information is internal to the kernel
-and volitile. If only one LSM uses this information the raw form is
-used.
+The code assumes you can call evm_init_inode_security more
+than once for an inode, but that won't work because security.evm
+is a single value attribute. This does not make EVM work properly,
+but does allow the security modules to initialize their attribures.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/security.c | 110 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 108 insertions(+), 2 deletions(-)
+ security/security.c | 35 +++++++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 10 deletions(-)
 
 diff --git a/security/security.c b/security/security.c
-index 16ff98c86414..bb0eea873a7e 100644
+index 780c914df9fb..c4265ceb6dd0 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -438,6 +438,9 @@ static int lsm_append(char *new, char **result)
- /* Base list of once-only hooks */
- struct lsm_one_hooks lsm_base_one;
+@@ -1104,11 +1104,24 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return 0;
  
-+/* Count of inode_[gs]etsecctx hooks */
-+static int lsm_inode_secctx_count;
-+
- /**
-  * security_add_hooks - Add a modules hooks to the hook lists.
-  * @hooks: the hooks to add
-@@ -455,6 +458,15 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 		hooks[i].lsm = lsm;
- 		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
+-	if (!initxattrs)
+-		return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
+-				     dir, qstr, NULL, NULL, NULL);
++	if (!initxattrs) {
++		rc = -EOPNOTSUPP;
++		hlist_for_each_entry(p,
++				     &security_hook_heads.inode_init_security,
++				     list) {
++			rc = p->hook.inode_init_security(inode, dir, qstr,
++							 NULL, NULL, NULL);
++			if (rc == -EOPNOTSUPP) {
++				rc = 0;
++				continue;
++			}
++			if (rc)
++				break;
++		}
++		return rc;
++	}
  
-+		/*
-+		 * Keep count of the internal security context using hooks.
-+		 * Assume that there is a 1:1 mapping from inode_getsecctx
-+		 * to inode_setsecctx in the security modules.
-+		 */
-+		if (hooks[i].head == &security_hook_heads.inode_getsecctx) {
-+			lsm_inode_secctx_count++;
+-	repo = kzalloc((LSM_COUNT * 2) * sizeof(*repo), GFP_NOFS);
++	repo = kzalloc((LSM_COUNT + 1) * sizeof(*repo), GFP_NOFS);
+ 	if (repo == NULL)
+ 		return -ENOMEM;
+ 
+@@ -1119,18 +1132,20 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 		rc = p->hook.inode_init_security(inode, dir, qstr,
+ 						 &repo[i].name, &repo[i].value,
+ 						 &repo[i].value_len);
++		if (rc == -EOPNOTSUPP)
 +			continue;
-+		}
- 		/*
- 		 * Check for the special hooks that are restricted to
- 		 * a single module to create the base set. Use the hooks
-@@ -2162,15 +2174,109 @@ int security_inode_notifysecctx(struct inode *inode, struct lsm_context *cp)
- }
- EXPORT_SYMBOL(security_inode_notifysecctx);
+ 		if (rc)
+ 			goto out;
  
-+/*
-+ * The inode_[gs]etsecctx functions need to proved a context
-+ * for multiple security modules. If there is more than one
-+ * LSM supplying hooks the format will be
-+ *	lsm1='value',lsm2='value'[,lsmN='value']...
-+ */
-+static void lsm_release_secctx(struct lsm_context *cp)
-+{
-+	kfree(cp->context);
-+}
+-		rc = evm_inode_init_security(inode, &repo[i], &repo[i + 1]);
+-		if (rc)
+-			goto out;
+-
+-		i += 2;
++		i++;
+ 	}
++	rc = evm_inode_init_security(inode, &repo[i], &repo[i + 1]);
++	if (rc)
++		goto out;
 +
- int security_inode_setsecctx(struct dentry *dentry, struct lsm_context *cp)
- {
--	return call_int_hook(inode_setsecctx, 0, dentry, cp);
-+	struct security_hook_list *hp;
-+	struct lsm_context lc;
-+	char *full;
-+	char *ctx;
-+	char *quote;
-+	int rc = 0;
-+
-+	if (lsm_inode_secctx_count <= 1)
-+		return call_int_hook(inode_setsecctx, 0, dentry, cp);
-+
-+	full = kstrndup(cp->context, cp->len, GFP_KERNEL);
-+	if (full == NULL)
-+		return -ENOMEM;
-+
-+	ctx = full;
-+	hlist_for_each_entry(hp, &security_hook_heads.inode_setsecctx, list) {
-+		if (strncmp(ctx, hp->lsm, strlen(hp->lsm))) {
-+			WARN_ONCE(1, "security_inode_setsecctx form1 error\n");
-+			rc = -EINVAL;
-+			break;
-+		}
-+		ctx += strlen(hp->lsm);
-+		if (ctx[0] != '=' || ctx[1] != '\'') {
-+			WARN_ONCE(1, "security_inode_setsecctx form2 error\n");
-+			rc = -EINVAL;
-+			break;
-+		}
-+		ctx += 2;
-+		quote = strnchr(ctx, cp->len, '\'');
-+		if (quote == NULL) {
-+			WARN_ONCE(1, "security_inode_setsecctx form3 error\n");
-+			rc = -EINVAL;
-+			break;
-+		}
-+		quote[0] = '\0';
-+		if (quote[1] != ',' && quote[1] != '\0') {
-+			WARN_ONCE(1, "security_inode_setsecctx form4 error\n");
-+			rc = -EINVAL;
-+			break;
-+		}
-+		lc.context = ctx;
-+		lc.len = strlen(ctx);
-+
-+		ctx = quote + 2;
-+
-+		rc = hp->hook.inode_setsecctx(dentry, &lc);
-+		if (rc)
-+			break;
-+	}
-+
-+	kfree(full);
-+	return rc;
- }
- EXPORT_SYMBOL(security_inode_setsecctx);
- 
- int security_inode_getsecctx(struct inode *inode, struct lsm_context *cp)
- {
--	return call_int_hook(inode_getsecctx, -EOPNOTSUPP, inode, cp);
-+	struct security_hook_list *hp;
-+	struct lsm_context lc;
-+	char *final = NULL;
-+	char *tp;
-+	int rc;
-+
-+	if (lsm_inode_secctx_count <= 1)
-+		return call_int_hook(inode_getsecctx, -EOPNOTSUPP, inode, cp);
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.inode_getsecctx, list) {
-+		rc = hp->hook.inode_getsecctx(inode, &lc);
-+		if (rc) {
-+			kfree(final);
-+			return rc;
-+		}
-+		if (final) {
-+			tp = kasprintf(GFP_KERNEL, "%s,%s='%s'", final,
-+				       hp->lsm, lc.context);
-+			kfree(final);
-+		} else
-+			tp = kasprintf(GFP_KERNEL, "%s='%s'", hp->lsm,
-+				       lc.context);
-+		security_release_secctx(&lc);
-+		if (tp == NULL) {
-+			kfree(final);
-+			return -ENOMEM;
-+		}
-+		final = tp;
-+	}
-+	cp->context = final;
-+	cp->len = strlen(final);
-+	cp->release = lsm_release_secctx;
-+	return 0;
- }
- EXPORT_SYMBOL(security_inode_getsecctx);
- 
+ 	rc = initxattrs(inode, repo, fs_data);
+ out:
+-	for (i-- ; i >= 0; i--)
++	for (i++ ; i >= 0; i--)
+ 		kfree(repo[i].value);
+ 	kfree(repo);
+ 	return (rc == -EOPNOTSUPP) ? 0 : rc;
 -- 
 2.17.0
 
