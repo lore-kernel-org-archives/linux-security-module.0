@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEACCC10F00
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2D9C10F06
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF54720851
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DD1120851
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="tIb+WifN"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="h71uFiFz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731915AbfB1WU1 (ORCPT
+        id S1732134AbfB1WU2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 17:20:27 -0500
-Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:44342
-        "EHLO sonic309-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731443AbfB1WU0 (ORCPT
+        Thu, 28 Feb 2019 17:20:28 -0500
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:45901
+        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731964AbfB1WU1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 17:20:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392425; bh=g3SbYyqnAYykVzKNW9ckS4SnvlWfIuT7xfaM+EUnDjU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=tIb+WifNJ8pN6TvXk7uyDNBgLlziA4kZSzqsmP7UReYtGs8GDvKU4u8nlKtrtFvO+nh3evwUSRIxbW8tJppx+taSBmOYtWbVrgtCcOMH+VbQNIfOs4ZZ1LNaMBa27xYm0+rPdXGGE5VLLZQLziIJdlEOWjRYzQVN2cvoyrtwaSBqGrBaIodJDvKRCA+Tw5eWCocvLXM3ESR/5MMWoJvwje2s8y6w0hiB339jUAH2qZRw1/1/mtloUqraS8eQKzRDT/x/ckAGnTGmzgINVBmJEbBjJZsM+JLP2S55ksDSPiWaWDdgx7rIwoaRrhluekYmTAiTalS6++NRQNs6NumrYA==
-X-YMail-OSG: 0LlS0lAVM1m0qm0p9Mn3teGTc1PMHHwiPOckm_jm_Iqk9OeMGA4B2IzXY.ilQYQ
- wOv78D8UyIjsi5nbvCvIh9q.PP3KGqgn5e3teS13gi.Cii4bsW29vtrhvR6Tf6lX5IzirOPnHM7n
- usecXs18tvqPfQ.bPBtbNC3FxRtj6BDaavtGhu7FSHRBzoQJ.uM3ma8mNLbnoCH4y6jtyOBVy7vT
- WW9oMKDBnzD6kHFUesSqSZL_mY_eaGeoDd3GqxriUMbT33vCoRBoEGwkYHjNtElUWdArVVIZk7k6
- AnfrOooVI0.G2ngRdUE42OROVtWFdbzcqNsU.W.nMuHZuhbxoZDNF_ZqnvPx6srjL2pY0ACGm6qS
- nddGl9iJ2OLJ2Y6NVAcCxoRcB7Sv0xISx7qEfOOA98tOwaWMG7UqICtRddrUYdgDoJNN5DHrav.J
- 258YFbzXnCjCxcD4j3W832byQV1CDKmQ5Q7WDW.4CYnJTL7hvd1WnO55oVvd7Dp52TZG_TKN0sZN
- ew996yoskEEdGS9ntEWXqxI4VJFynnCKd_S5pCJmCG2PZ_C7usRq95l8sraWYvv46s5d7YeJRYbz
- Q9Z3NY.i7UfIIf1H.iJfxx2y_8MjhYNud6vFjfZU5cK2_hRpUXhMPRZBaPOV8m7nD.F.gbh14n1N
- yYcBbvZwnDV7O5S6X.CVb9oNQaI6w_IIBm_pBzKmJXffr6fnP3N3txCFBMspY8UIAOObT8Vqv1b2
- mI9_MxxdWiUCwC4syP..q7pRazxcsONR2VbWI6izX0bT73RiFdVqxz7TpL3RSFNDMdHGx270N5xR
- d2W2oa1LnjQdShPfyfcA7Y0t4i7INMvhzQL_pAgzu7CYi6d6dp3A2ETblDlb.415M9DLYAXotkc1
- KHYw3KdjJljGVKoPp2_WWzj98vEgRI9Dn7T0bRaZbRUbLHXQ1d2VdstTwMgxLSKSAbGbCQ7fONtR
- YYjEvo1RGADjaosFY8tl9fHtXbzKZbqOM6AeW6_J779djtSmkfitgMCjr4QYr1znNMXdtt5CzyAs
- O9PJT_eZv71vBzN.UN8k_bXmZ9TasetniPE0aSGOJq8rbdGOreg7zAwDprtR5Z69dZvJqic7BZvF
- uQ_mEDNfYLUudLBp6JZgMH.4UTgzKu7UwbBzGLO.JFgtNvkBB
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:20:25 +0000
+        Thu, 28 Feb 2019 17:20:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392426; bh=1XElOFnX0SWyB3Pfzpq0lWLsE8uqoo3/Ln03nYB82X8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=h71uFiFzjlNEHDt/+BXvS1anQUtKGT4420kSTZjs+FoAPsX4Q6ZR/FfanfxSdXFD82PxjR73wNBW0MimdddzkVf+KGAUNsBneqWERq/KE1seUs9JWqhhMR3HiY+ath0w6FqUbqVM9F7XkLZpX+SFBVSYXehkxnlfvBdX5Q8vS9jJfD4C6YDrgo19EfZ81jzh+rdxRvnP1HpfWKtWAS6iWI1b/iHbKRFyIYCY12apKY0Rjq87jEzNbT7x7aY4MX/TdnAYtM69NgbsDJ0ApTr6Pcdbi/NY7/lNxDh8RXBg91pkS5v13gkOhNksqn9i7rstNUV5Dnks2iliGsyfouhvjg==
+X-YMail-OSG: c2bm09IVM1mPT1F4G40gxsiBAqRY9DyiQsvlJpqjRi.6WxW33v3iS2guqys3nY6
+ .98.9fi395W5dKRYDMOvoVY4arGATraC3fOlxS.UJEvUGD9x4BaAoHO62ukFYn9tTyCAZ64Iol7M
+ KGnxiAH5lDkUQJGpjvJ8Av91Ud4fz0p.BcD_2qi1V4Y7MLj9SWs2Nh0KRFSb0prYhMzVd.op_1EL
+ eqZ8MrVpefDkqfaAWgdEfHPHWCdCAFmOgzA9TuqEkQs73rUBWeU3lbHeub01cwJwO5EDk.kbyFSo
+ go1r4xHHDvkmZf4etgqMCS75dSOLI4DTJh_6AhvsVDuuqc4CMPOwyBtdqabgPntcpTnEhhPbZpBF
+ 0iaaSMg2.JKdyxLtTwkPYDoeHAaaDLnptFlJd.VoQKNFnTMSGvE1o7xhedexuPX.Y.nOnkfWby0n
+ T7x7dRboiU_m5n8iB5W70XOUZWpGJUxx995XtFkfXrNPfPHWQV4_n9PTXxDDWAiaCnXAtsca.ltJ
+ oeZR_sSODF8SJqjdjdmI33ZW8UrApoJTb.WuRi.kjTQ4vEz5YiujZdvEROMs4MNSiTmyCEhKzOTP
+ Js1IRB.rONg.znXDKNQcuGNTxXJFDhs_XCdc_ouJsEK1KkYPbrlj7NMlrtiA3bhTd6tLsslAdCNV
+ ZIrwZGHQEhRAiRxrheKFF2.Jl8xWlMhO12BP7j9Jg7MFssa6tx.gUBisUffnGTNoEKLm82q7qtZG
+ W_soBSrkeq6gaoyokchL9686fvg6Xz.W1gqHG0fcaF3Av9cQ7dfBlPLVW86_g3ntruA2M5aelHQM
+ e4QP8_UvQpVN4navimpwWTpyeH.wtAkCM_4Ysz61j9311LyYuNXgGZb54bx620d6pomjQxDfrJay
+ 8Hf2gW042qkFprzY1r8FHVQCLku5SAc66.uXoFr0Xpg7ZPaOaK_oV0LoHrlY68Qm0gJpMkZ946Dk
+ rWuVxhFYfdt6vUhW9L9IF7fzkvuRLJYMYEonEe4Ese4rlXK3zt5zGFtbv2FooMW.LBTpV7V0hPNd
+ x5NYFei_zhnN0thMK.9AZ1Jh2qex.KQNuV0EqiV28FWl6w.g5Er97BxH219bU7z1QCqAGVDZVhlC
+ j9iIzgl6N9c7VZmd4MzuZaIvhfk6NHYjZY3at5iOm8PR.ti0-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:20:26 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp421.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d90148b291d74b44c78573c559ceeae0;
-          Thu, 28 Feb 2019 22:20:25 +0000 (UTC)
+          Thu, 28 Feb 2019 22:20:21 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-Subject: [PATCH 67/97] LSM: Make getting the secmark right cleaner with lsm_export_one_secid
-Date:   Thu, 28 Feb 2019 14:19:03 -0800
-Message-Id: <20190228221933.2551-68-casey@schaufler-ca.com>
+Subject: [PATCH 60/97] kernfs: remove lsm_context scaffolding
+Date:   Thu, 28 Feb 2019 14:18:56 -0800
+Message-Id: <20190228221933.2551-61-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190228221933.2551-1-casey@schaufler-ca.com>
 References: <20190228221933.2551-1-casey@schaufler-ca.com>
@@ -59,81 +59,55 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Getting the u32 secmark from the result of security_secctx_to_secid()
-requires knowledge about which LSM interpreted the context. Add a
-function lsm_export_one_secid() that finds the active secid in a
-lsm_export structure. Use it in secmark processing.
+Change the parameters to kernfs_node_setsecdata from a
+data/length pair to a lsm_context struct as both the function
+it calls and the function that calls it want that.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/security.h   | 16 ++++++++++++++++
- net/netfilter/nft_meta.c   |  7 +------
- net/netfilter/xt_SECMARK.c |  7 +------
- 3 files changed, 18 insertions(+), 12 deletions(-)
+ fs/kernfs/inode.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index cb5e685f60eb..cb392c6b620f 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -115,6 +115,22 @@ static inline bool lsm_export_equal(struct lsm_export *l, struct lsm_export *m)
- 	return true;
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index 6db050b7c6ab..3d47fd74cc8c 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -135,20 +135,15 @@ int kernfs_iop_setattr(struct dentry *dentry, struct iattr *iattr)
+ 	return error;
  }
  
-+/*
-+ * After calling security_secctx_to_secid() one, and only one
-+ * of the LSM fields will be set in the lsm_export. Return
-+ * whichever one was set. Used to supply secmarks.
-+ */
-+static inline u32 lsm_export_one_secid(struct lsm_export *l)
-+{
-+	if (l->flags & LSM_EXPORT_SELINUX)
-+		return l->selinux;
-+	if (l->flags & LSM_EXPORT_SMACK)
-+		return l->smack;
-+	if (l->flags & LSM_EXPORT_APPARMOR)
-+		return l->apparmor;
-+	return 0;
-+}
-+
- extern struct lsm_export *lsm_export_skb(struct sk_buff *skb);
+-static int kernfs_node_setsecdata(struct kernfs_iattrs *attrs, void **secdata,
+-				  u32 *secdata_len)
++static int kernfs_node_setsecdata(struct kernfs_iattrs *attrs,
++				  struct lsm_context *cp)
+ {
+-	void *old_secdata;
+-	size_t old_secdata_len;
++	struct lsm_context old_context;
  
- /* Text representation of LSM specific security information - a "context" */
-diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
-index ad1aa430f733..1a2b3efc79ee 100644
---- a/net/netfilter/nft_meta.c
-+++ b/net/netfilter/nft_meta.c
-@@ -576,12 +576,7 @@ static int nft_secmark_compute_secid(struct nft_secmark *priv)
- 	if (err)
- 		return err;
+-	old_secdata = attrs->ia_context.context;
+-	old_secdata_len = attrs->ia_context.len;
++	old_context = attrs->ia_context;
++	attrs->ia_context = *cp;
++	*cp = old_context;
  
--	/* Use the "best" secid */
--	if (le.selinux)
--		tmp_secid = le.selinux;
--	else
--		tmp_secid = le.smack;
+-	attrs->ia_context.context = *secdata;
+-	attrs->ia_context.len = *secdata_len;
 -
-+	tmp_secid = lsm_export_one_secid(&le);
- 	if (!tmp_secid)
- 		return -ENOENT;
+-	*secdata = old_secdata;
+-	*secdata_len = old_secdata_len;
+ 	return 0;
+ }
  
-diff --git a/net/netfilter/xt_SECMARK.c b/net/netfilter/xt_SECMARK.c
-index a06e50535194..b20753957e8d 100644
---- a/net/netfilter/xt_SECMARK.c
-+++ b/net/netfilter/xt_SECMARK.c
-@@ -67,12 +67,7 @@ static int checkentry_lsm(struct xt_secmark_target_info *info)
- 		return err;
- 	}
+@@ -363,7 +358,7 @@ static int kernfs_security_xattr_set(const struct xattr_handler *handler,
+ 		return error;
  
--	/* Smack is cheating, using SECMARK_MODE_SEL */
--	if (le.selinux)
--		info->secid = le.selinux;
--	else
--		info->secid = le.smack;
--
-+	info->secid = lsm_export_one_secid(&le);
- 	if (!info->secid) {
- 		pr_info_ratelimited("unable to map security context \'%s\'\n",
- 				    info->secctx);
+ 	mutex_lock(&kernfs_mutex);
+-	error = kernfs_node_setsecdata(attrs, (void **)&lc.context, &lc.len);
++	error = kernfs_node_setsecdata(attrs, &lc);
+ 	mutex_unlock(&kernfs_mutex);
+ 
+ 	if (lc.context)
 -- 
 2.17.0
 
