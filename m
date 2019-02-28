@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAA0C10F06
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAEE9C4360F
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F29E2133D
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 767A120851
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ulr1SYjP"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="rJoexait"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730965AbfB1WUj (ORCPT
+        id S1726088AbfB1WUk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 17:20:39 -0500
-Received: from sonic315-15.consmr.mail.gq1.yahoo.com ([98.137.65.39]:46669
-        "EHLO sonic315-15.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729881AbfB1WUH (ORCPT
+        Thu, 28 Feb 2019 17:20:40 -0500
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:38657
+        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729931AbfB1WUH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Thu, 28 Feb 2019 17:20:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392406; bh=XvxKnEkF2sbi5gT9OtymXDF9xExofaDsGkL7ia0bjZs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=ulr1SYjPuhynVx4q5Td+Du1DN038UtWX4WMeHc+AGMsGcTLldUkJNhYSkvRafB9XyIrBh5GQlvtLS5mya0+mZjI3swPg1grefA+qhHQ6vxzzWD+unt/tIXkjp1QD0n9zQmUoJPXMzMNfM6s54Snm6bL7VWFYyPff9orLXIJVmK0/leiS+VcZBFf/gk2GmQIC0ZCvDYdUp98RkW7I0ksZ2mSI1yxZKpeNTt/p+DC6S1vA9xrSqvhFsjer1+KHk1IHDRaPBhPjeHe9o9kULvLBXNJvlhIbRXuLxJOkyoRn2jkQ0739R58D0EPlcz3RmPN6MYLE12ELvqsu+7h5zCMO/Q==
-X-YMail-OSG: 5sa3upkVM1kXPz5sVpCuZ8FUxZlSWR_GBxT3lSNlz1LPmb2ivM9NGcxT3FHKyT4
- v70j.chnOMOoOHLeJUkp0sTLY4bfEbKPfUTn_gvmjPsfaXRR7_M8adlEQ9_NuGZDg2jqFKNzyGSA
- 67VM3okFjhrTtUr6V4f20kpLvg77nD3itlrUFOJFhS0gd1mtckQSFmMZUx7FQaVQeAOmnxDRhs4B
- eJ3h5EMhZdaLoIc0h8cbDNby96Eg99vEur_DOlCMuaEPRMJdcxo.1H7e0BGgHL_SWob0IMvVWofR
- IM5rxUz5TCaQwLRMfJOS.MgyvPpxma3zuN4htjSYDDh57_Zs7.7BxVIR9AR.JPQjNdG7jEitZ2zY
- kXnRFIPjzy.HMYk0b.LPN2RZX2dXcPb3WpE0knZZfxYU2NXOqOAg26Ql4sRW7rLorQ0Nn7T6jVRu
- o5TO6360Bz_y0zR6KGRh3ceLN3uCmGhPHLh56PHJGi72Q2HHhJih39FqFQvjvekmUflcL6oGAdpP
- 8HaYuycUrTJsVEcyiB4J5i1sU4npojcnmY_l7OKB7EqfnAwxYtSuVqDsCUBLww9Y1n2lYHDHjQLz
- GAIApz4x2PjikzGVZuXAnidg5jZMEjG.j_Fo_XzRA7twgXujJLfGJu.vMZISD3T6lSlN_gWEbNyB
- hxEp4H5X3lFSsLI7qGdA0TQ3V4oD.9cHAdJsEtQByaxHLZ9Zf_nx7q7wYmHywJwT9AaZ.cMOEbKk
- 1arPMDCRTYmZK41GcMUSviVessEJUrFCoW_onWHy4ysXu_cu8KNf67jRwcOmKodgO7GKz5gIiVY9
- xxf6xj5k7LTUQc6yaMxZN9FnWpZnguctPXjwbObfT0lqXgZdilHBFjizUjkD5V2Dc.EETG.grN2Q
- Fd0nTh5uHlAuNE_CoxlsOeFzDhHLxdHGUgeNBGqYihVDj1D73yUe6JwXfzWCPe4LgoXk7TQOD_tk
- EmdqHFjzR57enfSXXfgQWkt24iBf0Zyf.K0S7yrVV4EtBAI1xXC8VTiai_n8qJKneYX5swxZ1HAw
- LjjciG3CuFPTGqosPCAWgOUNOVoSG6Qf3xrwXcxVzN_VBm54P6S0b6x2RpNVMAIsFj1XC5YT9cag
- Zg9sBI6iQuQMbICp.0G.0SiMCRUo9fSxY6IfZuyt9fpld2vKX
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:20:06 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392406; bh=RkkT8VCXXloma0Fq/QmxeKgnWLosnAsoKiC6R1t6xs0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=rJoexait/gFkMkP6lsEGLJWa6eeNVahGo3xUcEfA6c9cTqiyqdwuxbmndrfGDyDwjt2GMYPd2r7mD2kkEIg28auhIBGvIBZY6fNJgPIwF3R4QbN4OkH7ZefcuK9nqJaYVKpLqQv0YElQW6MXooHX4K4iGTKZYXLpepRjJOQDjNya4RLgbn1lqlQG4rRAh94RA7Jo6p9aM93hY3SfWYsFw3AOlzPKX+grMqWRtB/oZ1qpbXjWR8D9ZG7cGyOSGiF/aIh2wONUrbUnFVtFMhPuxahlcbRivj33ufIFpTBcurB2AQZU+kjLGqLRKRN7JBjl+qyWmYc0KMlOScQ5lvi5gg==
+X-YMail-OSG: jEm.EwcVM1nxwz7G39ySxyN_SP5CWoVCLNzNh7fbTZrdG7LbgIbUTh5ZYqab6zG
+ _.jLw1SMXYYnVoT984yuD3XwYWfqCWp5D1.SNXK90ZUsvqQMoxVyeiydpgsI2FvmMbq7_IKiNGDH
+ CS6veEx.nfpQTFiFtEYowM.q45vbwXfcItgVkSBWlePMZ4ck3wP0Y1lXMbeVLL1QResHTCC6a.na
+ GkJA0l4_I0.3u88KNMGt0uH4MpdGetIZb.CuVfrdUIfgYqbqRK0LKrniMV.u_4J4rlMcPkIOdxSy
+ _hS3aNY9z9DinXhTEOf1mNl8_Vz9AuhadWKrPYTMuPcUj9_UQN_dCvvqespRQq6eJwle4QckY.Ic
+ 6aDFE0VGTi_VmLfguLy_izKekJGgFPV1dYXiBz.kkf0sAj4Hx5M6_wv7Uk8U1Ei1fny1qw6Or0_y
+ ks5OEiPRVlFBPDAC4F2hV.KtwCohTuMIhR19USe6vpY2PNf3_SIafYaSXYUQZmJnWfuSxspplQbD
+ QcS1.F8zNXH1pk4VJy239Nm90lw_l86It1PkF1AHqyxqUBK8PetbmM5m38CnqcjIOtgkMOv7_TfR
+ 41M2xhFx7_NKFzTk1ozOyZVENBTJAVciyGrXOJh4h_abjCiz4zaeicgUt4y4jZL8P12Qy3ViDGVf
+ lUKElSWBZcZBLuiCi18GFT2_QdT9ypDL.J4XQeSxvZx.kpnxIoGk6.9JZovbSP9fmljt06adbBoC
+ jgBW7AtboDANT8qXeTnOtfVdreYXeHL77NAHKYxsUFen.0iH3Cbv1OKN5D6JyEOEPFK32kqOl.rN
+ mg0mBf5wj27_hgGHnyTbxJI8SDuEhx3kaSpM902y5KlELy8S78iyLPQ5y953.bPjffdhAWB3ET.J
+ dux0BwmCq8bTjRndeUHEy8z_kTxbzGPlAWGFeRdEElFO7sIfOs.au2CnEH9.tHXTmTnVK50HHfhr
+ KVvsAWW643_OzsYPneDxXCvwa__NZbaxs2q6nWxEFwDTDOOqRRQ_gpseQcImuZjLuJzmrQMHqKMQ
+ s2yT_7bkHAvWg.bt3ft_xCfG4yBzL_g1XjW6VLiFIw1QbuRp6fuhew8c0D37ozz5.B6_7iP7dGuV
+ YZciNRm3lXQg4WeTmiThDBIq8IntpvhD4Ez2yDXFfBtBrF3g-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:20:06 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp409.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID e8fded081226753664bb344863181a7a;
-          Thu, 28 Feb 2019 22:20:04 +0000 (UTC)
+          Thu, 28 Feb 2019 22:20:02 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-Subject: [PATCH 35/97] NET: Remove scaffolding on new secmarks
-Date:   Thu, 28 Feb 2019 14:18:31 -0800
-Message-Id: <20190228221933.2551-36-casey@schaufler-ca.com>
+Subject: [PATCH 30/97] Audit: Convert target_sid to an lsm_export structure
+Date:   Thu, 28 Feb 2019 14:18:26 -0800
+Message-Id: <20190228221933.2551-31-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190228221933.2551-1-casey@schaufler-ca.com>
 References: <20190228221933.2551-1-casey@schaufler-ca.com>
@@ -59,35 +59,151 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Replace the lsm_export scaffolding in nft_meta.
+Convert target_sid to be an lsm_export structure
+instead of a u32 secid. Clean out the associated
+scaffolding. Change the name to target_lsm to be
+descriptive.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- net/netfilter/nft_meta.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/audit.h   |  3 ++-
+ kernel/auditsc.c | 30 ++++++++++++------------------
+ 2 files changed, 14 insertions(+), 19 deletions(-)
 
-diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
-index a03de2ab833a..9f5040140fe0 100644
---- a/net/netfilter/nft_meta.c
-+++ b/net/netfilter/nft_meta.c
-@@ -568,11 +568,17 @@ static int nft_secmark_compute_secid(struct nft_secmark *priv)
- 	u32 tmp_secid = 0;
- 	int err;
+diff --git a/kernel/audit.h b/kernel/audit.h
+index 06c732e0f301..63883a773aa2 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -22,6 +22,7 @@
+ #include <linux/fs.h>
+ #include <linux/audit.h>
+ #include <linux/skbuff.h>
++#include <linux/security.h>
+ #include <uapi/linux/mqueue.h>
+ #include <linux/tty.h>
  
-+	lsm_export_init(&le);
- 	err = security_secctx_to_secid(priv->ctx, strlen(priv->ctx), &le);
- 	if (err)
- 		return err;
+@@ -146,7 +147,7 @@ struct audit_context {
+ 	kuid_t		    target_auid;
+ 	kuid_t		    target_uid;
+ 	unsigned int	    target_sessionid;
+-	u32		    target_sid;
++	struct lsm_export   target_lsm;
+ 	char		    target_comm[TASK_COMM_LEN];
  
--	lsm_export_secid(&le, &tmp_secid);
-+	/* Use the "best" secid */
-+	if (le.selinux)
-+		tmp_secid = le.selinux;
-+	else
-+		tmp_secid = le.smack;
-+
- 	if (!tmp_secid)
- 		return -ENOENT;
+ 	struct audit_tree_refs *trees, *first_trees;
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index c57c2e346c6d..2ee74d18c90c 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -112,7 +112,7 @@ struct audit_aux_data_pids {
+ 	kuid_t			target_auid[AUDIT_AUX_PIDS];
+ 	kuid_t			target_uid[AUDIT_AUX_PIDS];
+ 	unsigned int		target_sessionid[AUDIT_AUX_PIDS];
+-	u32			target_sid[AUDIT_AUX_PIDS];
++	struct lsm_export	target_lsm[AUDIT_AUX_PIDS];
+ 	char 			target_comm[AUDIT_AUX_PIDS][TASK_COMM_LEN];
+ 	int			pid_count;
+ };
+@@ -934,14 +934,14 @@ static inline void audit_free_context(struct audit_context *context)
+ }
+ 
+ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+-				 kuid_t auid, kuid_t uid, unsigned int sessionid,
+-				 u32 sid, char *comm)
++				 kuid_t auid, kuid_t uid,
++				 unsigned int sessionid,
++				 struct lsm_export *l, char *comm)
+ {
+ 	struct audit_buffer *ab;
+ 	char *ctx = NULL;
+ 	u32 len;
+ 	int rc = 0;
+-	struct lsm_export le;
+ 
+ 	ab = audit_log_start(context, GFP_KERNEL, AUDIT_OBJ_PID);
+ 	if (!ab)
+@@ -950,9 +950,8 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
+ 	audit_log_format(ab, "opid=%d oauid=%d ouid=%d oses=%d", pid,
+ 			 from_kuid(&init_user_ns, auid),
+ 			 from_kuid(&init_user_ns, uid), sessionid);
+-	if (sid) {
+-		lsm_export_to_all(&le, sid);
+-		if (security_secid_to_secctx(&le, &ctx, &len)) {
++	if (lsm_export_any(l)) {
++		if (security_secid_to_secctx(l, &ctx, &len)) {
+ 			audit_log_format(ab, " obj=(none)");
+ 			rc = 1;
+ 		} else {
+@@ -1401,7 +1400,7 @@ static void audit_log_exit(void)
+ 						  axs->target_auid[i],
+ 						  axs->target_uid[i],
+ 						  axs->target_sessionid[i],
+-						  axs->target_sid[i],
++						  &axs->target_lsm[i],
+ 						  axs->target_comm[i]))
+ 				call_panic = 1;
+ 	}
+@@ -1410,7 +1409,7 @@ static void audit_log_exit(void)
+ 	    audit_log_pid_context(context, context->target_pid,
+ 				  context->target_auid, context->target_uid,
+ 				  context->target_sessionid,
+-				  context->target_sid, context->target_comm))
++				  &context->target_lsm, context->target_comm))
+ 			call_panic = 1;
+ 
+ 	if (context->pwd.dentry && context->pwd.mnt) {
+@@ -1587,7 +1586,7 @@ void __audit_syscall_exit(int success, long return_code)
+ 	context->aux = NULL;
+ 	context->aux_pids = NULL;
+ 	context->target_pid = 0;
+-	context->target_sid = 0;
++	lsm_export_init(&context->target_lsm);
+ 	context->sockaddr_len = 0;
+ 	context->type = 0;
+ 	context->fds[0] = -1;
+@@ -2260,14 +2259,12 @@ int __audit_sockaddr(int len, void *a)
+ void __audit_ptrace(struct task_struct *t)
+ {
+ 	struct audit_context *context = audit_context();
+-	struct lsm_export le;
+ 
+ 	context->target_pid = task_tgid_nr(t);
+ 	context->target_auid = audit_get_loginuid(t);
+ 	context->target_uid = task_uid(t);
+ 	context->target_sessionid = audit_get_sessionid(t);
+-	security_task_getsecid(t, &le);
+-	lsm_export_secid(&le, &context->target_sid);
++	security_task_getsecid(t, &context->target_lsm);
+ 	memcpy(context->target_comm, t->comm, TASK_COMM_LEN);
+ }
+ 
+@@ -2284,7 +2281,6 @@ int audit_signal_info(int sig, struct task_struct *t)
+ 	struct audit_aux_data_pids *axp;
+ 	struct audit_context *ctx = audit_context();
+ 	kuid_t uid = current_uid(), auid, t_uid = task_uid(t);
+-	struct lsm_export le;
+ 
+ 	if (auditd_test_task(t) &&
+ 	    (sig == SIGTERM || sig == SIGHUP ||
+@@ -2308,8 +2304,7 @@ int audit_signal_info(int sig, struct task_struct *t)
+ 		ctx->target_auid = audit_get_loginuid(t);
+ 		ctx->target_uid = t_uid;
+ 		ctx->target_sessionid = audit_get_sessionid(t);
+-		security_task_getsecid(t, &le);
+-		lsm_export_secid(&le, &ctx->target_sid);
++		security_task_getsecid(t, &ctx->target_lsm);
+ 		memcpy(ctx->target_comm, t->comm, TASK_COMM_LEN);
+ 		return 0;
+ 	}
+@@ -2330,8 +2325,7 @@ int audit_signal_info(int sig, struct task_struct *t)
+ 	axp->target_auid[axp->pid_count] = audit_get_loginuid(t);
+ 	axp->target_uid[axp->pid_count] = t_uid;
+ 	axp->target_sessionid[axp->pid_count] = audit_get_sessionid(t);
+-	security_task_getsecid(t, &le);
+-	lsm_export_secid(&le, &axp->target_sid[axp->pid_count]);
++	security_task_getsecid(t, &axp->target_lsm[axp->pid_count]);
+ 	memcpy(axp->target_comm[axp->pid_count], t->comm, TASK_COMM_LEN);
+ 	axp->pid_count++;
  
 -- 
 2.17.0
