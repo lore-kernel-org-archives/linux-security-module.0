@@ -2,128 +2,131 @@ Return-Path: <SRS0=r65R=RD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39892C43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 14:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04729C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 14:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C8362133D
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 14:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF123214D8
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 14:12:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbfB1OGd (ORCPT
+        id S1732473AbfB1OMG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 09:06:33 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:28227 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728038AbfB1OGd (ORCPT
+        Thu, 28 Feb 2019 09:12:06 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:46883 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728038AbfB1OMF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 09:06:33 -0500
-Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1SE6HMN077403;
-        Thu, 28 Feb 2019 23:06:17 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
- Thu, 28 Feb 2019 23:06:17 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1SE6APA077370
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 28 Feb 2019 23:06:16 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+29569ed06425fcf67a95@syzkaller.appspotmail.com>,
-        syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
-Subject: [PATCH] tomoyo: Add a kernel config option for fuzzing testing.
-Date:   Thu, 28 Feb 2019 23:06:10 +0900
-Message-Id: <1551362770-8655-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 28 Feb 2019 09:12:05 -0500
+Received: by mail-io1-f72.google.com with SMTP id r21so15991236ioa.13
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 06:12:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ekxuPCiwzgIqznbM3XZuOlpyXhdKAEjkhYfaE2wcIO0=;
+        b=YfIU+ha/bRHYHliT9nJN0NAfsXFupUmSepACUkz/WVBT62+K1Y7E2+2mJPhElqJL0H
+         TbTAU5h8dReLLNc3/0VRWIs7naapbaFT7Dak1KRpegXlOLkk8jTVZo4P7n12/KjYJWkI
+         et5AetM58JSfi8W7+1+K5GqHDDMZdB2K/UHvTFjF6X8BFMu6Vr0rQnGA75pLoT2KEcSS
+         zIOzMD/on2tNP0Ow/yfiD+RbVex3+QZMviShD0ISeHOb15Otuojo42GM4anF5UGw+x/V
+         iZ//f+L8IQ8r3RCVRY0xQc1IQPhDOzNH5pvhTyxwCiWohbznkoWTxS80hLxPvm2GwIk4
+         0mWQ==
+X-Gm-Message-State: AHQUAuYNItitHJjM5JfTuJDKSbP1L8eM3u97ZdfUX2MYnUthvSfO/dM/
+        syr225YjiLuqQoqk4nPcQnpFZTubVStzwroxDa6rNPUvx4Oa
+X-Google-Smtp-Source: AHgI3IbhdcAiLY0VfbsNuoQQIcnNG03vd7RzyyTt6EsmPDZEGGSYGy7aXh0JDVti6y8nZdw9cwzWs+Z9RSDx1+Ix6KKiF64fvqoR
+MIME-Version: 1.0
+X-Received: by 2002:a02:5c0f:: with SMTP id q15mr5086034jab.22.1551363124742;
+ Thu, 28 Feb 2019 06:12:04 -0800 (PST)
+Date:   Thu, 28 Feb 2019 06:12:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f7d1840582f4df63@google.com>
+Subject: kernel panic: MAC Initialization failed. (3)
+From:   syzbot <syzbot+2ee3f8974c2e7dc69feb@syzkaller.appspotmail.com>
+To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot is reporting kernel panic triggered by memory allocation fault
-injection before loading TOMOYO's policy [1]. To make the fuzzing tests
-useful, we need to assign a profile other than "disabled" (no-op) mode.
-Therefore, let's allow syzbot to load TOMOYO's built-in policy for
-"learning" mode using a kernel config option. This option must not be
-enabled for kernels built for production system, for this option also
-disables domain/program checks when modifying policy configuration via
-/sys/kernel/security/tomoyo/ interface.
+Hello,
 
-[1] https://syzkaller.appspot.com/bug?extid=29569ed06425fcf67a95
+syzbot found the following crash on:
 
-Reported-by: syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
-Reported-by: syzbot <syzbot+29569ed06425fcf67a95@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+HEAD commit:    42fd8df9d1d9 Add linux-next specific files for 20190228
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=179e9b6cc00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c0f38652d28b522f
+dashboard link: https://syzkaller.appspot.com/bug?extid=2ee3f8974c2e7dc69feb
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c68242c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17190c8ac00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2ee3f8974c2e7dc69feb@syzkaller.appspotmail.com
+
+RIP: 0033:0x440fe9
+Code: e8 0c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffc37062bd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000440fe9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00007ffc37062bf0 R08: 0000000000001000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
+ERROR: Out of memory at tomoyo_realpath_from_path.
+Kernel panic - not syncing: MAC Initialization failed.
+CPU: 0 PID: 7764 Comm: syz-executor980 Not tainted 5.0.0-rc8-next-20190228  
+#45
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2cb/0x65c kernel/panic.c:214
+  tomoyo_warn_oom.cold+0x35/0x43 security/tomoyo/memory.c:28
+  tomoyo_realpath_from_path+0x3a8/0x730 security/tomoyo/realpath.c:320
+  tomoyo_realpath_nofollow+0xc8/0xdb security/tomoyo/realpath.c:336
+  tomoyo_find_next_domain+0x28c/0x1f8a security/tomoyo/domain.c:725
+  tomoyo_bprm_check_security security/tomoyo/tomoyo.c:107 [inline]
+  tomoyo_bprm_check_security+0x12a/0x1b0 security/tomoyo/tomoyo.c:97
+  security_bprm_check+0x69/0xb0 security/security.c:751
+  search_binary_handler+0x77/0x570 fs/exec.c:1644
+  exec_binprm fs/exec.c:1698 [inline]
+  __do_execve_file.isra.0+0x1394/0x23f0 fs/exec.c:1818
+  do_execveat_common fs/exec.c:1865 [inline]
+  do_execveat fs/exec.c:1893 [inline]
+  __do_sys_execveat fs/exec.c:1969 [inline]
+  __se_sys_execveat fs/exec.c:1961 [inline]
+  __x64_sys_execveat+0xed/0x130 fs/exec.c:1961
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440fe9
+Code: e8 0c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffc37062bd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000142
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000440fe9
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00007ffc37062bf0 R08: 0000000000001000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+R13: 0000000000000004 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- security/tomoyo/Kconfig  | 10 ++++++++++
- security/tomoyo/common.c | 13 ++++++++++++-
- 2 files changed, 22 insertions(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/security/tomoyo/Kconfig b/security/tomoyo/Kconfig
-index 404dce6..a00ab7e 100644
---- a/security/tomoyo/Kconfig
-+++ b/security/tomoyo/Kconfig
-@@ -74,3 +74,13 @@ config SECURITY_TOMOYO_ACTIVATION_TRIGGER
- 	  You can override this setting via TOMOYO_trigger= kernel command line
- 	  option. For example, if you pass init=/bin/systemd option, you may
- 	  want to also pass TOMOYO_trigger=/bin/systemd option.
-+
-+config SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
-+	bool "Use insecure built-in settings for fuzzing tests."
-+	default n
-+	depends on SECURITY_TOMOYO
-+	select SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
-+	help
-+	  Enabling this option forces minimal built-in policy and disables
-+	  domain/program checks for run-time policy modifications. Please enable
-+	  this option only if this kernel is built for doing fuzzing tests.
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index 57988d9..dd3d594 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -940,7 +940,7 @@ static bool tomoyo_manager(void)
- 	const char *exe;
- 	const struct task_struct *task = current;
- 	const struct tomoyo_path_info *domainname = tomoyo_domain()->domainname;
--	bool found = false;
-+	bool found = IS_ENABLED(CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING);
- 
- 	if (!tomoyo_policy_loaded)
- 		return true;
-@@ -2810,6 +2810,16 @@ void tomoyo_check_profile(void)
-  */
- void __init tomoyo_load_builtin_policy(void)
- {
-+#ifdef CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
-+	static char tomoyo_builtin_profile[] __initdata =
-+		"PROFILE_VERSION=20150505\n"
-+		"0-CONFIG={ mode=learning grant_log=no reject_log=yes }\n";
-+	static char tomoyo_builtin_exception_policy[] __initdata =
-+		"aggregator proc:/self/exe /proc/self/exe\n";
-+	static char tomoyo_builtin_domain_policy[] __initdata = "";
-+	static char tomoyo_builtin_manager[] __initdata = "";
-+	static char tomoyo_builtin_stat[] __initdata = "";
-+#else
- 	/*
- 	 * This include file is manually created and contains built-in policy
- 	 * named "tomoyo_builtin_profile", "tomoyo_builtin_exception_policy",
-@@ -2817,6 +2827,7 @@ void __init tomoyo_load_builtin_policy(void)
- 	 * "tomoyo_builtin_stat" in the form of "static char [] __initdata".
- 	 */
- #include "builtin-policy.h"
-+#endif
- 	u8 i;
- 	const int idx = tomoyo_read_lock();
- 
--- 
-1.8.3.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
