@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1A0C10F00
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE7FC10F06
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9599920851
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 271672184A
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="mh8RaDtE"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PpB2X3RI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbfB1WUN (ORCPT
+        id S1730119AbfB1WUR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 17:20:13 -0500
-Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:34617
-        "EHLO sonic309-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729581AbfB1WUB (ORCPT
+        Thu, 28 Feb 2019 17:20:17 -0500
+Received: from sonic315-15.consmr.mail.gq1.yahoo.com ([98.137.65.39]:33796
+        "EHLO sonic315-15.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730388AbfB1WUQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 17:20:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392400; bh=UQjfh0v16AxJWcccZZiZEJMDUSepDFazKRU1XVl6thk=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=mh8RaDtEIK6adxBCjINF6fsh0f6WDhdJs288T6f3JsUkmUSNUJUTyRAK6QfuZuWyord+0IJnm/msv3lbkjo+KsM7iia2lvo6e5z84G94IXT1Jn96I7ZKjYWtlda7lTj04eZ+XbSetDthwiDNONepa7++Fie3CNxiXTKD+WEDw3XGiwSK3RJljDvxFKwnB/WuhrPkThRqNu/TSw355gAzp170NQCXCqSuMXhsjEHAroiHneG+lN7jDHOxi0/HlsGwmxZwqiS4jGdpVT6A6NNd37/9vfBiw6EXFDgUJak30ktY4FhT2RRVRVqJFYHz1KRJC+mS7TVx//qd+U624Sq4yQ==
-X-YMail-OSG: LlSbQ_EVM1nhKYIZOdbAZdv7qN5DoxDdlD5BDkoQ6b6kJ9Pqmlvk3n59k0vGb4c
- l0Tlf17Ppw6ZBQga70oljqEw6x9tv6WDwfwGrq6xWUUMgMoUUOF5McK9hN1EdkRG_RXD5z58YXyq
- pT_v2UtZJmV2CwiiXBeDbtJHGpZE9PiE0Rwxgv15ER7bKTwRIU0Xg6CSmP9Dk56Wot80e6tBr0kw
- WtgD.6RdXHZnDTtNM6QpZ3bUBZ_PQ18JllqTLUW7l5jeTc2Ey62slzC2U9Ny_K9jdUNdEqMMxHE7
- O7uZaECGsbCWyedVrTGaDdnmvuJo2DBUVf_BC_TZosbS9ka9eKGdVS_Aj6wM1fSZymI.pqGOuuBw
- 4Pm1QdDyFvJxxvvyBCDikgp71ZTy54krZE7.7QW7WJ50MoJ9Tcn0C.kKjHD9Zt1a6Mt.7NtN_85p
- HAdu1zSQXRuoUWEIwS49gcnIX5bmleJAw8ZMf1kcUOVaCFLGkZH4ix8ssVvB3LtQMmJg4OyCHgVA
- Z7ITUGuWQTCTRnkkM4OXIlyVSDlFYJNBE9oMVY7XmMo2MvViOVy0XfGxMQij_1We1hd5HRgj2PFf
- bs7VD8fZnMC6BkkPrHzl0I_Ar1yuW.8gq3Ds6XclG6YMDJHjstMGv4uXk278Sn24d_v_8jHVM5wi
- HI9wwrxJtaGKZT9x.FmKm611q6BA_jqzcx2r4wnMogOd53Nwl_3Grsd4tXauEHX9ERTY3QyFdXiX
- 185Jc1TL999EpyggLcuMgiMdjceWKfMYu625grZjpDSc9eVGE6vTnMrLuvp7hOY4qCCuCbEkM4qs
- _6mxCk_aRNXAhxIUG5XBF4hMVa2Mg.9qAG4B79bb0ICfEM8AEcVLEme3l3XgaTVGUCzUvL42CwcY
- .qT2t0ilVnNwhV3b4Cw7EexjA62kfwsnAoQVnh6Ur1NZ_YqDkLXvYOmc4ph.TrO8sM1SkkxVMSoK
- bXychDixdLj7k89CDehC2zaAGNCjmxPO7tYl0mGfR5JDzCSdRx1lwhUcTZPzRw98lWicvD7sfb3z
- 7cyp0QQJZTlt0PsCa1i.I0EXwK1pBg2sEZoFSZqWeEi4IdYpSsFydeKqfvTo5KneuSR4W1oPHb5a
- fKxpzT84iUtc64lZvEh7HidyrpS.mAPuTJxqSC6lIyyCA2Rs-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:20:00 +0000
+        Thu, 28 Feb 2019 17:20:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392416; bh=+EktEinDsp7sVGtCHwNA5KY/taBeP90CMVznou1rZ5M=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=PpB2X3RI/7Y1iDPfPMGiBnvKZ9eHZJbxVH/J9npWIjtQTFeT4SR/BdF9fWT1K4Fn0ZnyjByPAfDmg1yXAHJpzL3F7e+sxtUEg8jsreo0m0f7W8k/T3nbWPt3yFyBqgHmGFCIYXJxtsSrsCxKUokIPQwGHAJISPVjJRqYjzJmPlbjW0jtekEta0s7BfxgnZ7ijDk2u/G9Oip85NkdxRr5nCwqRo9axqCjb8k3nwD+0w1BAZYRBfmb+Nm0GvTQgO4XHuMxKvwozuy8upT9YioEzAsjmKCyGZRJz/us4lboPgwa56FjUYWgNmZB/wKqO2i218FF8qyXuZIZYBNxuyabQA==
+X-YMail-OSG: vFN__oIVM1kjnhpUPombrDFnsf0bEW0L0n7j_BnyTlSDEAMXIpYRyeq7ifEcXcG
+ mXWZhs1t0lhVS8FE.A2WnSVtcNnWvAZghnMaqlaVb5kgXMMJyBFpwvkGukGZBputcllAtyEiuP2O
+ y99dDFkDO6DjGtgKab2cZwxV0JPUx.eLh3zE.Z9gYjHbvDncVjma3DHumKNndS3dlDeXcystKZCm
+ HDcNQVcqr1NnVlOtWQ4gufr.rpo2sDwvplCOYge_bTYPr31STt3a25FU5maPe.dpiGyr7zD2tabZ
+ sFQa__nPONzHRwM4T9YInrHtn2Oy_fHNTrbOxKkm.yySXnRoluFjMJf5po24k4bhoMzsYbybp0li
+ _GKPzFCSEHt594TuC1tlFfOm8uC8XQLH1TcRmD6tVo68AGPhopyh1UYrneZ.ziJgAMrPnTWFSV_4
+ 3z8owynNayGwZbZ8uN7bemD7thZ.K8y1GGcQCzD4lHBivRHfyzum19T35CifRHS5KYIRD7GWrYZU
+ pvFjP.HaCZyWRAsAAdAO_j6jposn86QV6I1xkmZPDc2SMG6vHiuH.AEQKIMsew1UUWmiS6cVTmFb
+ ses54B0OC2uSdZlP5u.SxqPbxIf9g9XVhVr4Pem6keR4gHI7Fz1gByD5siF6ZdJQy6uAsPHXzxSp
+ u.hg3HzuPyifmOqlZEmFNLRcmlnS8LLiegn7T40SqJs1D1oC9BavOsSnl2pt6KIecMGGHdvE66c4
+ IlsjYCAo7ykvNARPwjsx9WG_hg4G_7xa7iFcl2SalaRITcl0xICWepPT2E.2G80O_sJv7IYM1n3w
+ CkuVFAyQblylKrS1YQdpxvKn6G785SvBjqpBqtKLFe5H1Dzm9TFym7UuVWHA4SggO4nTJs8KKulM
+ n1Egxu195Y7ziNhR4lWtEfg6tFWt6jpyBBjGReNE7XLlCtt_Ay2MTHkMYZdCmXkcIeXGeh0Rn2Lj
+ esq5VMhE3.et3XjDqkGKVDbdQo.DOvhMDB87taB7VpwfWQJhNk0ci95ePMKRfXjHKSMTFX.xfTBp
+ zMEGtoEWbPEHX2sLTW7b.5pbRT6RlcFwFzsNPnG_v2M.gynkt1aI2heKwKP.YxKfmWkvp1Gp63hT
+ TErI5N6n8bItnz80N0MGnojGQonBS4bB.8kCPumi6GTpq0Zo-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:20:16 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp406.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 5c7d685bea94a92cc9d12c4cc22f1f0e;
-          Thu, 28 Feb 2019 22:19:58 +0000 (UTC)
+          by smtp423.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 51882fbcdd41d0138ebd23ca73a62b12;
+          Thu, 28 Feb 2019 22:20:15 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-Subject: [PATCH 25/97] LSM: FIXUP - security_secid_to_secctx
-Date:   Thu, 28 Feb 2019 14:18:21 -0800
-Message-Id: <20190228221933.2551-26-casey@schaufler-ca.com>
+Subject: [PATCH 50/97] LSM: Use lsm_context in security_inode_notifysecctx
+Date:   Thu, 28 Feb 2019 14:18:46 -0800
+Message-Id: <20190228221933.2551-51-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190228221933.2551-1-casey@schaufler-ca.com>
 References: <20190228221933.2551-1-casey@schaufler-ca.com>
@@ -59,37 +59,108 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fix in netlabel for security_secid_to_secctx
+Convert security_inode_notifysecctx to use the lsm_context structure
+instead of a context/secid pair. There is some scaffolding involved
+that will be removed when the related data is updated.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- net/netlabel/netlabel_user.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/kernfs/inode.c        | 6 ++++--
+ fs/nfs/inode.c           | 6 ++++--
+ include/linux/security.h | 5 +++--
+ security/security.c      | 8 ++------
+ 4 files changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
-index 4676f5bb16ae..0266879efef1 100644
---- a/net/netlabel/netlabel_user.c
-+++ b/net/netlabel/netlabel_user.c
-@@ -100,6 +100,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
- 	struct audit_buffer *audit_buf;
- 	char *secctx;
- 	u32 secctx_len;
-+	struct lsm_export le;
+diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
+index 80cebcd94c90..7c5b0d5140c4 100644
+--- a/fs/kernfs/inode.c
++++ b/fs/kernfs/inode.c
+@@ -184,6 +184,7 @@ static inline void set_inode_attr(struct inode *inode, struct iattr *iattr)
+ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
+ {
+ 	struct kernfs_iattrs *attrs = kn->iattr;
++	struct lsm_context lc;	/* Scaffolding -Casey */
  
- 	if (audit_enabled == AUDIT_OFF)
- 		return NULL;
-@@ -112,8 +113,10 @@ struct audit_buffer *netlbl_audit_start_common(int type,
- 			 from_kuid(&init_user_ns, audit_info->loginuid),
- 			 audit_info->sessionid);
+ 	inode->i_mode = kn->mode;
+ 	if (attrs) {
+@@ -192,8 +193,9 @@ static void kernfs_refresh_inode(struct kernfs_node *kn, struct inode *inode)
+ 		 * persistent copy in kernfs_node.
+ 		 */
+ 		set_inode_attr(inode, &attrs->ia_iattr);
+-		security_inode_notifysecctx(inode, attrs->ia_secdata,
+-					    attrs->ia_secdata_len);
++		lc.context = attrs->ia_secdata;
++		lc.len = attrs->ia_secdata_len;
++		security_inode_notifysecctx(inode, &lc);
+ 	}
  
-+	if (audit_info->secid != 0)
-+		lsm_export_to_all(&le, audit_info->secid);
- 	if (audit_info->secid != 0 &&
--	    security_secid_to_secctx(audit_info->secid,
-+	    security_secid_to_secctx(&le,
- 				     &secctx,
- 				     &secctx_len) == 0) {
- 		audit_log_format(audit_buf, " subj=%s", secctx);
+ 	if (kernfs_type(kn) == KERNFS_DIR)
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index 094775ea0781..f6c339d4e6fb 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -339,14 +339,16 @@ static void nfs_clear_label_invalid(struct inode *inode)
+ void nfs_setsecurity(struct inode *inode, struct nfs_fattr *fattr,
+ 					struct nfs4_label *label)
+ {
++	struct lsm_context lc;	/* Scaffolding -Casey */
+ 	int error;
+ 
+ 	if (label == NULL)
+ 		return;
+ 
+ 	if ((fattr->valid & NFS_ATTR_FATTR_V4_SECURITY_LABEL) && inode->i_security) {
+-		error = security_inode_notifysecctx(inode, label->label,
+-				label->len);
++		lc.context = label->label;
++		lc.len = label->len;
++		error = security_inode_notifysecctx(inode, &lc);
+ 		if (error)
+ 			printk(KERN_ERR "%s() %s %d "
+ 					"security_inode_notifysecctx() %d\n",
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 7940a92e8b5c..4194f6b8b97f 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -434,7 +434,7 @@ int security_secctx_to_secid(const char *secdata, u32 seclen,
+ void security_release_secctx(char *secdata, u32 seclen);
+ 
+ void security_inode_invalidate_secctx(struct inode *inode);
+-int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
++int security_inode_notifysecctx(struct inode *inode, struct lsm_context *cp);
+ int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
+ #else /* CONFIG_SECURITY */
+@@ -1218,7 +1218,8 @@ static inline void security_inode_invalidate_secctx(struct inode *inode)
+ {
+ }
+ 
+-static inline int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
++static inline int security_inode_notifysecctx(struct inode *inode,
++					      struct lsm_context *cp);
+ {
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/security/security.c b/security/security.c
+index a821e0558370..464dee357986 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2012,13 +2012,9 @@ void security_inode_invalidate_secctx(struct inode *inode)
+ }
+ EXPORT_SYMBOL(security_inode_invalidate_secctx);
+ 
+-int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
++int security_inode_notifysecctx(struct inode *inode, struct lsm_context *cp)
+ {
+-	struct lsm_context lc;
+-
+-	lc.context = ctx;
+-	lc.len = ctxlen;
+-	return call_int_hook(inode_notifysecctx, 0, inode, &lc);
++	return call_int_hook(inode_notifysecctx, 0, inode, cp);
+ }
+ EXPORT_SYMBOL(security_inode_notifysecctx);
+ 
 -- 
 2.17.0
 
