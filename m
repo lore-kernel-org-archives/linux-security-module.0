@@ -4,352 +4,221 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A93C43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1832C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E51218AE
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714A32133D
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mgfk17oS"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rzfnYNTL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733062AbfB1XLk (ORCPT
+        id S2387507AbfB1XMN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 18:11:40 -0500
-Received: from mail-ua1-f74.google.com ([209.85.222.74]:55179 "EHLO
-        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732514AbfB1XLj (ORCPT
+        Thu, 28 Feb 2019 18:12:13 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:39495 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387476AbfB1XMN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:11:39 -0500
-Received: by mail-ua1-f74.google.com with SMTP id f17so2706020uao.21
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:11:39 -0800 (PST)
+        Thu, 28 Feb 2019 18:12:13 -0500
+Received: by mail-pg1-f201.google.com with SMTP id 202so16152936pgb.6
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:12:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=u73jCkXFL2POTTvMCMv7ZqTMPf3k7bn3erx/FRu/gvg=;
-        b=mgfk17oSTddYrOZLDMZq1OfuZV3qOXQpDlcid7jC1iiG/bwf1OPhb3GdYsG/YMdvkw
-         PY+YaZq1wTg6PrHhhk3BzA249LJ/y3MNgV4V9ErFX8wILakgxWYOsQbOBV2hzOOVWcYU
-         YEp0kZeEbF6FU/nBnhwD18FqHAT62Y4HS4zc3PoypXdestpJer5YKPZmC8M6/CeuFqms
-         N4Jvx9SFP2Ib7VRCyqp+PGr26jdfb5lxDhJKFmIVnf0L9UjBOeRxk0FPli1umSI4O/kW
-         BOSew5htVmcSP/cdGA/Lou0ena4tV4gE85unX8IjWHu0rKJiYmTglwdm+yA91f9Dhb7C
-         JcNQ==
+        bh=QtKsyYHiwCWU5yiWJciggoAD1nlqNR9ctuqeDCsYWKI=;
+        b=rzfnYNTLJA1ZeFACBysiRXmHvQrizAgydUJTNEp1PKJ8dFuZNs5aYF6JbQjMRRcRYN
+         oHDRL39qxkz+uZfepJbEY4U9l0frA6ZXMkZa0M0Xe4EQ0oYnw9XB6AmoBQTqqc4ZTwaJ
+         veSnNaJ4T17FTfFup/RE83ghYUXl6JZvfzdRz8hWeMfN8swjSixWObHc8Dc64zFCo8b9
+         8uMbyjrYaKXIvsfxU5pr6KjJKfIj7pjXybNjMlogwX/2HfuslhAuluVTjvOXUmTJBfMe
+         fcbiINkIL2McwoDvK4XpTKTShrAb9mASZmYeH7C3XrRC9coYp5oJ2WbZLv3IOEcuys0z
+         DPtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=u73jCkXFL2POTTvMCMv7ZqTMPf3k7bn3erx/FRu/gvg=;
-        b=VJ61nL6FE/iXjZ1zZmylGnXAARFfkL/GCxIBpAJfiN84MG7HzLF5d+LZYqkFiTS7yj
-         uRGqeogBHWDBdMNCwXY6t+5pnyGHREr/KY7CswWO/BeOUYScN8vJtXhs7G461V+xm3Kj
-         UvVH8vfG2r/mrTNDBGMy/NYgINENB4L5bQMbFEjXV70rnm7iXNKb1peyouJ53ZxXJBs5
-         kxkzM8PVV1hcSfxdu4h8nfj/KeMlD5QXjGdutpYtKXsGEyl95fqa0KeEMSjKJ07hD3a8
-         XX+riGVhyhtHNnHgU4PGt5rZ+KVdYVG4qBs55riHO2bQjC2pUAWBocRU848ZxzjsymPs
-         AAPQ==
-X-Gm-Message-State: APjAAAVRdUaQxQcJ1cXmDgCc8bl0pWQM/kMFKiB938Tf/uQbMK+F0LZ7
-        vg4T+3QUyh62Ag8dmHzNn2tCB9aomGIssyFz9wPsNg==
-X-Google-Smtp-Source: APXvYqxUtiaDSX8aL4mxfBd7R+kfdbihgLFtahs/r0o5fe3NW3y5Q3MczAE2RjUTFb4KuWnzHe9q1eS4WOrYdgom/I0BdA==
-X-Received: by 2002:a67:788c:: with SMTP id t134mr1264501vsc.18.1551395498717;
- Thu, 28 Feb 2019 15:11:38 -0800 (PST)
-Date:   Thu, 28 Feb 2019 15:11:08 -0800
-In-Reply-To: <20190228231133.210926-1-matthewgarrett@google.com>
-Message-Id: <20190228231133.210926-2-matthewgarrett@google.com>
+        bh=QtKsyYHiwCWU5yiWJciggoAD1nlqNR9ctuqeDCsYWKI=;
+        b=NticleZKNS1QbnrZ6tFUG3M+kkdNOP+sIZ4WCVThP9pt27tf0iXDIS3Ascf40IM+ih
+         91AgiS7n49qbAU68pgg+MxYoIaTNV4Ikq4dwkFrZInxPZ+XSqTXVLgMb3O1re2uBwI+I
+         TpdJ8kchzuH03ipS26+azmEAKA4Pkt6XcrhdR0MJpv6W/x8szDjj7RwO098zUdHhbk+4
+         2MhyOXj7BrUosrnGcRJC3qy0OyUz5oL68WwFjRt2hzLHp9Usorgx+H/HEI2Hu6K6QHKG
+         K1hT2XMm+h889rZ1fuJJeyRaFqAD2X8QT6ts/nMIPGX4qQcDYIfTJQZsMQ+5XLLtShEZ
+         K3WA==
+X-Gm-Message-State: AHQUAuancHnGoWDMXcUa3YaLeILg7vLqf0c5vmuFF6aTDD6zsQjsKzDg
+        I3EGQ1MV3wuG1YM/2gQZEXzjKOAMDskRErxcssY2tw==
+X-Google-Smtp-Source: APXvYqxTdLxxvHRUxrP6dBjOqmshkQpbu3yKcYUfKStvLjNRtJ1u9wNINweXDLZgeOP8DXPUtfKeahlCufSsmmEwMAmy6A==
+X-Received: by 2002:a62:ac0f:: with SMTP id v15mr973328pfe.148.1551395531818;
+ Thu, 28 Feb 2019 15:12:11 -0800 (PST)
+Date:   Thu, 28 Feb 2019 15:11:39 -0800
+In-Reply-To: <20190228231203.212359-1-matthewgarrett@google.com>
+Message-Id: <20190228231203.212359-3-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
- <20190228231133.210926-1-matthewgarrett@google.com>
+ <20190228231203.212359-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 02/27] Add a SysRq option to lift kernel lockdown
+Subject: [PATCH 03/27] Enforce module signatures if the kernel is locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        Kyle McMartin <kyle@redhat.com>, x86@kernel.org
+        linux-kernel@vger.kernel.org, dhowells@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Kyle McMartin <kyle@redhat.com>
+From: David Howells <dhowells@redhat.com>
 
-Make an option to provide a sysrq key that will lift the kernel lockdown,
-thereby allowing the running kernel image to be accessed and modified.
+If the kernel is locked down, require that all modules have valid
+signatures that we can verify or that IMA can validate the file.
 
-On x86 this is triggered with SysRq+x, but this key may not be available on
-all arches, so it is set by setting LOCKDOWN_LIFT_KEY in asm/setup.h.
-Since this macro must be defined in an arch to be able to use this facility
-for that arch, the Kconfig option is restricted to arches that support it.
+I have adjusted the errors generated:
 
-Signed-off-by: Kyle McMartin <kyle@redhat.com>
+ (1) If there's no signature (ENODATA) or we can't check it (ENOPKG,
+     ENOKEY), then:
+
+     (a) If signatures are enforced then EKEYREJECTED is returned.
+
+     (b) If IMA will have validated the image, return 0 (okay).
+
+     (c) If there's no signature or we can't check it, but the kernel is
+	 locked down then EPERM is returned (this is then consistent with
+	 other lockdown cases).
+
+ (2) If the signature is unparseable (EBADMSG, EINVAL), the signature fails
+     the check (EKEYREJECTED) or a system error occurs (eg. ENOMEM), we
+     return the error we got.
+
+Note that the X.509 code doesn't check for key expiry as the RTC might not
+be valid or might not have been transferred to the kernel's clock yet.
+
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: x86@kernel.org
+Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+cc: "Lee, Chun-Yi" <jlee@suse.com>
+cc: James Morris <james.l.morris@oracle.com>
 ---
- arch/x86/include/asm/setup.h |  2 ++
- drivers/input/misc/uinput.c  |  1 +
- drivers/tty/sysrq.c          | 19 ++++++++++-----
- include/linux/input.h        |  5 ++++
- include/linux/sysrq.h        |  8 +++++-
- kernel/debug/kdb/kdb_main.c  |  2 +-
- security/Kconfig             |  9 +++++++
- security/lock_down.c         | 47 ++++++++++++++++++++++++++++++++++++
- 8 files changed, 85 insertions(+), 8 deletions(-)
+ kernel/module.c | 56 +++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 43 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index ed8ec011a9fd..8daf633a5347 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -9,6 +9,8 @@
- #include <linux/linkage.h>
- #include <asm/page_types.h>
+diff --git a/kernel/module.c b/kernel/module.c
+index 2ad1b5239910..afa5489be39f 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -64,6 +64,7 @@
+ #include <linux/bsearch.h>
+ #include <linux/dynamic_debug.h>
+ #include <linux/audit.h>
++#include <linux/ima.h>
+ #include <uapi/linux/module.h>
+ #include "module-internal.h"
  
-+#define LOCKDOWN_LIFT_KEY 'x'
-+
- #ifdef __i386__
+@@ -2765,10 +2766,12 @@ static inline void kmemleak_load_module(const struct module *mod,
+ #endif
  
- #include <linux/pfn.h>
-diff --git a/drivers/input/misc/uinput.c b/drivers/input/misc/uinput.c
-index 26ec603fe220..a73e92490286 100644
---- a/drivers/input/misc/uinput.c
-+++ b/drivers/input/misc/uinput.c
-@@ -366,6 +366,7 @@ static int uinput_create_device(struct uinput_device *udev)
- 		dev->flush = uinput_dev_flush;
+ #ifdef CONFIG_MODULE_SIG
+-static int module_sig_check(struct load_info *info, int flags)
++static int module_sig_check(struct load_info *info, int flags,
++			    bool can_do_ima_check)
+ {
+-	int err = -ENOKEY;
++	int err = -ENODATA;
+ 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
++	const char *reason;
+ 	const void *mod = info->hdr;
+ 
+ 	/*
+@@ -2783,19 +2786,46 @@ static int module_sig_check(struct load_info *info, int flags)
+ 		err = mod_verify_sig(mod, info);
  	}
  
-+	dev->flags |= INPUTDEV_FLAGS_SYNTHETIC;
- 	dev->event = uinput_dev_event;
+-	if (!err) {
++	switch (err) {
++	case 0:
+ 		info->sig_ok = true;
+ 		return 0;
+-	}
  
- 	input_set_drvdata(udev->dev, udev);
-diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
-index 1f03078ec352..0a05d336008e 100644
---- a/drivers/tty/sysrq.c
-+++ b/drivers/tty/sysrq.c
-@@ -480,6 +480,7 @@ static struct sysrq_key_op *sysrq_key_table[36] = {
- 	/* x: May be registered on mips for TLB dump */
- 	/* x: May be registered on ppc/powerpc for xmon */
- 	/* x: May be registered on sparc64 for global PMU dump */
-+	/* x: May be registered on x86_64 for disabling secure boot */
- 	NULL,				/* x */
- 	/* y: May be registered on sparc64 for global register dump */
- 	NULL,				/* y */
-@@ -523,7 +524,7 @@ static void __sysrq_put_key_op(int key, struct sysrq_key_op *op_p)
-                 sysrq_key_table[i] = op_p;
- }
+-	/* Not having a signature is only an error if we're strict. */
+-	if (err == -ENOKEY && !is_module_sig_enforced())
+-		err = 0;
++		/* We don't permit modules to be loaded into trusted kernels
++		 * without a valid signature on them, but if we're not
++		 * enforcing, certain errors are non-fatal.
++		 */
++	case -ENODATA:
++		reason = "Loading of unsigned module";
++		goto decide;
++	case -ENOPKG:
++		reason = "Loading of module with unsupported crypto";
++		goto decide;
++	case -ENOKEY:
++		reason = "Loading of module with unavailable key";
++	decide:
++		if (is_module_sig_enforced()) {
++			pr_notice("%s is rejected\n", reason);
++			return -EKEYREJECTED;
++		}
  
--void __handle_sysrq(int key, bool check_mask)
-+void __handle_sysrq(int key, unsigned int from)
- {
- 	struct sysrq_key_op *op_p;
- 	int orig_log_level;
-@@ -543,11 +544,15 @@ void __handle_sysrq(int key, bool check_mask)
- 
-         op_p = __sysrq_get_key_op(key);
-         if (op_p) {
-+		/* Ban synthetic events from some sysrq functionality */
-+		if ((from == SYSRQ_FROM_PROC || from == SYSRQ_FROM_SYNTHETIC) &&
-+		    op_p->enable_mask & SYSRQ_DISABLE_USERSPACE)
-+			printk("This sysrq operation is disabled from userspace.\n");
- 		/*
- 		 * Should we check for enabled operations (/proc/sysrq-trigger
- 		 * should not) and is the invoked operation enabled?
- 		 */
--		if (!check_mask || sysrq_on_mask(op_p->enable_mask)) {
-+		if (from == SYSRQ_FROM_KERNEL || sysrq_on_mask(op_p->enable_mask)) {
- 			pr_cont("%s\n", op_p->action_msg);
- 			console_loglevel = orig_log_level;
- 			op_p->handler(key);
-@@ -579,7 +584,7 @@ void __handle_sysrq(int key, bool check_mask)
- void handle_sysrq(int key)
- {
- 	if (sysrq_on())
--		__handle_sysrq(key, true);
-+		__handle_sysrq(key, SYSRQ_FROM_KERNEL);
- }
- EXPORT_SYMBOL(handle_sysrq);
- 
-@@ -659,7 +664,7 @@ static void sysrq_do_reset(struct timer_list *t)
- static void sysrq_handle_reset_request(struct sysrq_state *state)
- {
- 	if (state->reset_requested)
--		__handle_sysrq(sysrq_xlate[KEY_B], false);
-+		__handle_sysrq(sysrq_xlate[KEY_B], SYSRQ_FROM_KERNEL);
- 
- 	if (sysrq_reset_downtime_ms)
- 		mod_timer(&state->keyreset_timer,
-@@ -812,8 +817,10 @@ static bool sysrq_handle_keypress(struct sysrq_state *sysrq,
- 
- 	default:
- 		if (sysrq->active && value && value != 2) {
-+			int from = sysrq->handle.dev->flags & INPUTDEV_FLAGS_SYNTHETIC ?
-+					SYSRQ_FROM_SYNTHETIC : 0;
- 			sysrq->need_reinject = false;
--			__handle_sysrq(sysrq_xlate[code], true);
-+			__handle_sysrq(sysrq_xlate[code], from);
- 		}
- 		break;
- 	}
-@@ -1096,7 +1103,7 @@ static ssize_t write_sysrq_trigger(struct file *file, const char __user *buf,
- 
- 		if (get_user(c, buf))
- 			return -EFAULT;
--		__handle_sysrq(c, false);
-+		__handle_sysrq(c, SYSRQ_FROM_PROC);
- 	}
- 
- 	return count;
-diff --git a/include/linux/input.h b/include/linux/input.h
-index 7c7516eb7d76..38cd0ea72c37 100644
---- a/include/linux/input.h
-+++ b/include/linux/input.h
-@@ -42,6 +42,7 @@ struct input_value {
-  * @phys: physical path to the device in the system hierarchy
-  * @uniq: unique identification code for the device (if device has it)
-  * @id: id of the device (struct input_id)
-+ * @flags: input device flags (SYNTHETIC, etc.)
-  * @propbit: bitmap of device properties and quirks
-  * @evbit: bitmap of types of events supported by the device (EV_KEY,
-  *	EV_REL, etc.)
-@@ -124,6 +125,8 @@ struct input_dev {
- 	const char *uniq;
- 	struct input_id id;
- 
-+	unsigned int flags;
+-	return err;
++		if (can_do_ima_check && is_ima_appraise_enabled())
++			return 0;
++		if (kernel_is_locked_down(reason))
++			return -EPERM;
++		return 0;
 +
- 	unsigned long propbit[BITS_TO_LONGS(INPUT_PROP_CNT)];
- 
- 	unsigned long evbit[BITS_TO_LONGS(EV_CNT)];
-@@ -190,6 +193,8 @@ struct input_dev {
- };
- #define to_input_dev(d) container_of(d, struct input_dev, dev)
- 
-+#define	INPUTDEV_FLAGS_SYNTHETIC	0x000000001
-+
- /*
-  * Verify that we are in sync with input_device_id mod_devicetable.h #defines
-  */
-diff --git a/include/linux/sysrq.h b/include/linux/sysrq.h
-index 8c71874e8485..7de1f08b60a9 100644
---- a/include/linux/sysrq.h
-+++ b/include/linux/sysrq.h
-@@ -29,6 +29,8 @@
- #define SYSRQ_ENABLE_BOOT	0x0080
- #define SYSRQ_ENABLE_RTNICE	0x0100
- 
-+#define SYSRQ_DISABLE_USERSPACE	0x00010000
-+
- struct sysrq_key_op {
- 	void (*handler)(int);
- 	char *help_msg;
-@@ -43,8 +45,12 @@ struct sysrq_key_op {
-  * are available -- else NULL's).
-  */
- 
-+#define SYSRQ_FROM_KERNEL	0x0001
-+#define SYSRQ_FROM_PROC		0x0002
-+#define SYSRQ_FROM_SYNTHETIC	0x0004
-+
- void handle_sysrq(int key);
--void __handle_sysrq(int key, bool check_mask);
-+void __handle_sysrq(int key, unsigned int from);
- int register_sysrq_key(int key, struct sysrq_key_op *op);
- int unregister_sysrq_key(int key, struct sysrq_key_op *op);
- struct sysrq_key_op *__sysrq_get_key_op(int key);
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index 82a3b32a7cfc..efee1abf5e8e 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -1981,7 +1981,7 @@ static int kdb_sr(int argc, const char **argv)
- 		return KDB_ARGCOUNT;
- 
- 	kdb_trap_printk++;
--	__handle_sysrq(*argv[1], check_mask);
-+	__handle_sysrq(*argv[1], check_mask ? SYSRQ_FROM_KERNEL : 0);
- 	kdb_trap_printk--;
- 
- 	return 0;
-diff --git a/security/Kconfig b/security/Kconfig
-index c2aff0006de2..afaf6fa17c9a 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -245,6 +245,15 @@ config LOCK_DOWN_KERNEL_FORCE
-         help
-           Enable the kernel lock down functionality automatically at boot.
- 
-+config ALLOW_LOCKDOWN_LIFT_BY_SYSRQ
-+	bool "Allow the kernel lockdown to be lifted by SysRq"
-+	depends on LOCK_DOWN_KERNEL
-+	depends on MAGIC_SYSRQ
-+	depends on X86
-+	help
-+	  Allow the lockdown on a kernel to be lifted, by pressing a SysRq key
-+	  combination on a wired keyboard.
-+
- source "security/selinux/Kconfig"
- source "security/smack/Kconfig"
- source "security/tomoyo/Kconfig"
-diff --git a/security/lock_down.c b/security/lock_down.c
-index 13a8228c1034..cfbc2c39712b 100644
---- a/security/lock_down.c
-+++ b/security/lock_down.c
-@@ -11,8 +11,14 @@
- 
- #include <linux/security.h>
- #include <linux/export.h>
-+#include <linux/sysrq.h>
-+#include <asm/setup.h>
- 
-+#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ
-+static __read_mostly bool kernel_locked_down;
-+#else
- static __ro_after_init bool kernel_locked_down;
-+#endif
- 
- /*
-  * Put the kernel into lock-down mode.
-@@ -57,3 +63,44 @@ bool __kernel_is_locked_down(const char *what, bool first)
- 	return kernel_locked_down;
- }
- EXPORT_SYMBOL(__kernel_is_locked_down);
-+
-+#ifdef CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ
-+
-+/*
-+ * Take the kernel out of lockdown mode.
-+ */
-+static void lift_kernel_lockdown(void)
-+{
-+	pr_notice("Lifting lockdown\n");
-+	kernel_locked_down = false;
-+}
-+
-+/*
-+ * Allow lockdown to be lifted by pressing something like SysRq+x (and not by
-+ * echoing the appropriate letter into the sysrq-trigger file).
-+ */
-+static void sysrq_handle_lockdown_lift(int key)
-+{
-+	if (kernel_locked_down)
-+		lift_kernel_lockdown();
-+}
-+
-+static struct sysrq_key_op lockdown_lift_sysrq_op = {
-+	.handler	= sysrq_handle_lockdown_lift,
-+	.help_msg	= "unSB(x)",
-+	.action_msg	= "Disabling Secure Boot restrictions",
-+	.enable_mask	= SYSRQ_DISABLE_USERSPACE,
-+};
-+
-+static int __init lockdown_lift_sysrq(void)
-+{
-+	if (kernel_locked_down) {
-+		lockdown_lift_sysrq_op.help_msg[5] = LOCKDOWN_LIFT_KEY;
-+		register_sysrq_key(LOCKDOWN_LIFT_KEY, &lockdown_lift_sysrq_op);
++		/* All other errors are fatal, including nomem, unparseable
++		 * signatures and signature check failures - even if signatures
++		 * aren't required.
++		 */
++	default:
++		return err;
 +	}
-+	return 0;
-+}
-+
-+late_initcall(lockdown_lift_sysrq);
-+
-+#endif /* CONFIG_ALLOW_LOCKDOWN_LIFT_BY_SYSRQ */
+ }
+ #else /* !CONFIG_MODULE_SIG */
+-static int module_sig_check(struct load_info *info, int flags)
++static int module_sig_check(struct load_info *info, int flags,
++			    bool can_do_ima_check)
+ {
+ 	return 0;
+ }
+@@ -3658,7 +3688,7 @@ static int unknown_module_param_cb(char *param, char *val, const char *modname,
+ /* Allocate and load the module: note that size of section 0 is always
+    zero, and we rely on this for optional sections. */
+ static int load_module(struct load_info *info, const char __user *uargs,
+-		       int flags)
++		       int flags, bool can_do_ima_check)
+ {
+ 	struct module *mod;
+ 	long err = 0;
+@@ -3677,7 +3707,7 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 		goto free_copy;
+ 	}
+ 
+-	err = module_sig_check(info, flags);
++	err = module_sig_check(info, flags, can_do_ima_check);
+ 	if (err)
+ 		goto free_copy;
+ 
+@@ -3872,7 +3902,7 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
+ 	if (err)
+ 		return err;
+ 
+-	return load_module(&info, uargs, 0);
++	return load_module(&info, uargs, 0, false);
+ }
+ 
+ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+@@ -3899,7 +3929,7 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+ 	info.hdr = hdr;
+ 	info.len = size;
+ 
+-	return load_module(&info, uargs, flags);
++	return load_module(&info, uargs, flags, true);
+ }
+ 
+ static inline int within(unsigned long addr, void *start, unsigned long size)
 -- 
 2.21.0.352.gf09ad66450-goog
 
