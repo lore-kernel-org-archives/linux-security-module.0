@@ -2,72 +2,71 @@ Return-Path: <SRS0=r65R=RD=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5589DC43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 12:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CB4C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 12:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B1F82183F
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 12:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41CE6206DD
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 12:38:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731389AbfB1Mah (ORCPT
+        id S1731627AbfB1Miw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 07:30:37 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:57081 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725918AbfB1Mah (ORCPT
+        Thu, 28 Feb 2019 07:38:52 -0500
+Received: from mga11.intel.com ([192.55.52.93]:40792 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727754AbfB1Miw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 07:30:37 -0500
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1SCUZsc092362;
-        Thu, 28 Feb 2019 21:30:35 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
- Thu, 28 Feb 2019 21:30:35 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1SCUVoL092336
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 28 Feb 2019 21:30:35 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: kernel panic: MAC Initialization failed.
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>
-References: <0000000000001c63c80582e32294@google.com>
- <8d94063c-e10c-c470-8ce0-1f86c517b1b4@i-love.sakura.ne.jp>
- <CACT4Y+ZqjoXftDAby9s-YUrOv8txBFqKukRcxP6ty3LLKz_+Hw@mail.gmail.com>
- <722a3390-3112-0067-282c-b94a8be53aa0@i-love.sakura.ne.jp>
- <CACT4Y+aXA4fh9Z=vKKVi-vids4O_npkUDqccD1eUS+gNV7WyGA@mail.gmail.com>
- <ebfd7dae-d90a-059c-8ace-643c2228e7d0@i-love.sakura.ne.jp>
-Message-ID: <780b399b-3afe-3d3e-b32e-050e849735e3@i-love.sakura.ne.jp>
-Date:   Thu, 28 Feb 2019 21:30:30 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Thu, 28 Feb 2019 07:38:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Feb 2019 04:38:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,423,1544515200"; 
+   d="scan'208";a="148046694"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.169])
+  by fmsmga004.fm.intel.com with ESMTP; 28 Feb 2019 04:38:49 -0800
+Date:   Thu, 28 Feb 2019 14:38:48 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?iso-8859-1?Q?Thi=E9baud?= Weksteen <tweek@google.com>
+Subject: Re: [PATCH V4 2/4] tpm: Reserve the TPM final events table
+Message-ID: <20190228123848.GD17109@linux.intel.com>
+References: <20190222202606.160816-1-matthewgarrett@google.com>
+ <20190222202606.160816-3-matthewgarrett@google.com>
+ <20190227140259.GA17106@linux.intel.com>
+ <CACdnJuucWezNf3jki5wN2XJ6wsN_uMSxQuyrekr9F-3aJJE4kA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <ebfd7dae-d90a-059c-8ace-643c2228e7d0@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACdnJuucWezNf3jki5wN2XJ6wsN_uMSxQuyrekr9F-3aJJE4kA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/02/28 19:58, Tetsuo Handa wrote:
-> But the problem is that since syzbot is automated, there is no chance to
-> edit the content of security/tomoyo/policy/ directory when building the
-> kernels.
+On Wed, Feb 27, 2019 at 11:57:09AM -0800, Matthew Garrett wrote:
+> On Wed, Feb 27, 2019 at 6:03 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> > My guess is that your patches are based a later 5.0-rcX. Unfortunately I
+> > cannot update my master at this point because my 5.1 PR was taken to
+> > security tree and rebasing would change the commit IDs of 5.1 content
+> > because security/next-general does not yet contain those patches.
+> 
+> Bother. I'll rebase against your tree.
 
-Thinking again, I realized that it would be possible to automatically
-generate the content of security/tomoyo/policy/ directory specialized
-for fuzzing tests using some kernel config option, for syzbot can enable
-some kernel config option. I'll try it.
+Thanks!
+
+/Jarkko
