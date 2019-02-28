@@ -4,62 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E21B7C10F00
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EDAC43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD3E22133D
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90B822133D
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:13:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h2dQs5JS"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IpVUN+Ln"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730822AbfB1XNo (ORCPT
+        id S1731039AbfB1XNt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 18:13:44 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:43344 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388087AbfB1XNC (ORCPT
+        Thu, 28 Feb 2019 18:13:49 -0500
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:35642 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388057AbfB1XM7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:13:02 -0500
-Received: by mail-pf1-f201.google.com with SMTP id 19so16279474pfo.10
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:13:01 -0800 (PST)
+        Thu, 28 Feb 2019 18:12:59 -0500
+Received: by mail-pg1-f202.google.com with SMTP id y8so16176287pgk.2
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:12:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=1Fd13wAoeAlJDZDMn5wRTcmN7nj+iFwc6tEPzGSBE4U=;
-        b=h2dQs5JSnAG5Wy4W0iJMttDO7lKtCKoinJmTMo41kH6xI6qAI/Rq9vmuNe3Ff+fio5
-         LuvzOvPbhTpyh34gr9zrOE5mA1Y5t0ifI7DWi4CcqVkoc8uMRf9HfZV8LAEXrmOcPxJD
-         HPzwxav8T+gSYUt7jFe2FK6xBbwCBCxFQ8o7gYEQ3UklvUjo3FtFW+yxeESQH9iowvh1
-         97xDBgCWJvCFr9mig2BOszoMYCp/5BCz6gIE+Hss9v4IdxSkmMYoZOSBOW/RDtxVP0jD
-         7PU+J/oherZ/xNZSWdJ8dLmULlg5bDB3PE1jpql9FajhQLT0wu4uFj6RoxqsbWteM0Vk
-         CSvQ==
+        bh=pGMKAmmDh5CXWuiQ7W09QK/FwS2bHkIIbTbOhTQuPUY=;
+        b=IpVUN+LnDhNCnYgH87Yti/gH8YcHfd3eB0nigEUV7nIBR7yUCtn8GYobBEJYY1+3Jx
+         D9t+k05834I29T2Sf2A6lVcrFiWh46QBO1J+cKI7uCvU+ydhut+eHS5Cb1YsqAWa9PWQ
+         NYkfFRn5xgKOIfEsrVIeLj0A42O3PtwH/A5BZlTGMBfZD6jfRKafOCLNwSTK7nLrDQ3u
+         JhnooqXvCTwySTQBTHWZv0usxXx7UZeGT+4fKRkEUMQT8hZwSiW5HzoqQLFGdytfBpFV
+         S1y8NrZqwCjD1xrR+mT1C5LbDhSJL0i5O7UDf0QHQylgwFBKVxjlHqQCV13OPaCKcShT
+         lzCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=1Fd13wAoeAlJDZDMn5wRTcmN7nj+iFwc6tEPzGSBE4U=;
-        b=fQvxYYnMX76EAsosLuTGrsF0o41qEmxetY6wxraYQznOQjZ2mh75W8oHYWFgfq3gk5
-         nM9aBWnZ9FrJr2dTu1ff9Sj/I6or2PwEcPuNn9H36PHWAUltVvb/rTgGIY8IeUPV2B6u
-         fuvwEeKqiEr5wGAJbh9z5U+sTRD/+BzKKqGSRWCGJTKvV5GiAf1RpDySxUZh0G6eErFN
-         6Uf3zh17KyKs/x/SH4uMteVVgxkS7kVUDqU0xjdEH+kIOOiSETrBTICjydlviL4deeP7
-         9iBN9qEHd1BwJblEc815S/Ei0EHRuHxkPz8bBoxEHMkYmLmlIRscq0U5Qt67JbuzJHwv
-         um+g==
-X-Gm-Message-State: AHQUAuaA+LMGvCqE3I8WAqsYtoyPKxmQjl2cyNBSASr7WGBuyhINTjM5
-        qDgt9Odt/anqiD478dHa4Ez7ILOJilDbLokzu/TSNw==
-X-Google-Smtp-Source: AHgI3IbPb2bAkGu7mbtq3dNBtqEavh+uoz2l0tI4DokDL5Yk3RfeUuSVrpg8fxfLlyNRX+BVqb6qkCQm79o4/aJYuKCGxA==
-X-Received: by 2002:aa7:8699:: with SMTP id d25mr975489pfo.22.1551395581516;
- Thu, 28 Feb 2019 15:13:01 -0800 (PST)
-Date:   Thu, 28 Feb 2019 15:11:58 -0800
+        bh=pGMKAmmDh5CXWuiQ7W09QK/FwS2bHkIIbTbOhTQuPUY=;
+        b=dXkYT+zB3AUeyrOgb4vWFDWvQ+6e2z0Jr+U6XZkQ1mH9M31SgZe2iGAS8CcxsKhVhm
+         1LI5cfpcWh55B1iiBXTNkw1RlN+jMyDkLyFySYhW+8g4iyIYBFPdtpHvTmCZznjVfYiD
+         htB6yBJVsFJbkOOSvLU4/E64tsYKZn8OFolIbVkBWFATbFlaDJP2R7LqSDo4bXOhcvas
+         yDOZGLHMc81dx3DB0KfBTGuiQz+S4zgKoU35Btzp4vbPz0NsVqn3TCry6/M6wFPbLwTY
+         n8cGCQLAt0knbpDHK9NvZAK364GmoXYGuYo3tdMtGBm5yv8wtlJ6xHr+xpuHPILMwBpv
+         sU8w==
+X-Gm-Message-State: APjAAAUTWs22YMosXdbEtT82yAZd5M7IwyS8xUPilIhF/e8S978fXRnn
+        3eE5GP5YjqE4kJUAvtmfS4iSiIUiQCqWxKD+PtuhCg==
+X-Google-Smtp-Source: AHgI3IbdRsmVD4cLGmyor1MNc5tkjRGqx/qg/fddoUfCqLYQ0pZsImsOab5wV8/apSee3hsgNQESH3ULN0YMTwdETvbmSA==
+X-Received: by 2002:a62:2e05:: with SMTP id u5mr960236pfu.137.1551395578986;
+ Thu, 28 Feb 2019 15:12:58 -0800 (PST)
+Date:   Thu, 28 Feb 2019 15:11:57 -0800
 In-Reply-To: <20190228231203.212359-1-matthewgarrett@google.com>
-Message-Id: <20190228231203.212359-22-matthewgarrett@google.com>
+Message-Id: <20190228231203.212359-21-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
  <20190228231203.212359-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 22/27] Lock down /proc/kcore
+Subject: [PATCH 21/27] x86/mmiotrace: Lock down the testmmiotrace module
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -71,28 +71,34 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-Disallow access to /proc/kcore when the kernel is locked down to prevent
-access to cryptographic data.
+The testmmiotrace module shouldn't be permitted when the kernel is locked
+down as it can be used to arbitrarily read and write MMIO space.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: David Howells <dhowells@redhat.com
+cc: Thomas Gleixner <tglx@linutronix.de>
+cc: Steven Rostedt <rostedt@goodmis.org>
+cc: Ingo Molnar <mingo@kernel.org>
+cc: "H. Peter Anvin" <hpa@zytor.com>
+cc: x86@kernel.org
 ---
- fs/proc/kcore.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/mm/testmmiotrace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index bbcc185062bb..d50ebfbf3dbb 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -518,6 +518,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 
- static int open_kcore(struct inode *inode, struct file *filp)
+diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
+index f6ae6830b341..bbaad357f5d7 100644
+--- a/arch/x86/mm/testmmiotrace.c
++++ b/arch/x86/mm/testmmiotrace.c
+@@ -115,6 +115,9 @@ static int __init init(void)
  {
-+	if (kernel_is_locked_down("/proc/kcore"))
-+		return -EPERM;
- 	if (!capable(CAP_SYS_RAWIO))
- 		return -EPERM;
+ 	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
  
++	if (kernel_is_locked_down("MMIO trace testing"))
++		return -EPERM;
++
+ 	if (mmio_address == 0) {
+ 		pr_err("you have to use the module argument mmio_address.\n");
+ 		pr_err("DO NOT LOAD THIS MODULE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!\n");
 -- 
 2.21.0.352.gf09ad66450-goog
 
