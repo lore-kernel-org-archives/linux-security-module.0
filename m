@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15580C10F09
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 472DCC4360F
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7C172133D
+	by mail.kernel.org (Postfix) with ESMTP id 167BC2133D
 	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 22:19:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lGOx6UNZ"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="GoMHch8n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729353AbfB1WTw (ORCPT
+        id S1729444AbfB1WTw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Thu, 28 Feb 2019 17:19:52 -0500
-Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:35431
+Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:42866
         "EHLO sonic309-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729011AbfB1WTw (ORCPT
+        by vger.kernel.org with ESMTP id S1729286AbfB1WTv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 17:19:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392390; bh=wDH2jWq/5InVuEensvl7qeoLag9X/nJnC3tKz8KwL2Q=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=lGOx6UNZVB8VI8tQqNqzxlzJguwCeEzU8kWDlYRMdjB7AkTSy/OFv58Y85p+2i9MuJ8r2cKgrnZo3eBz+WvdQClZIHB6kts+YbBLIrWGS85I867WXftzYcVFDG4TOqQgBQ+wqKbIrW6iJBl1lKGwI1IvqFIB24t0mVzyekrWgsvjB1NiCCK+5Gk/M/PO34Btl434lHsNWBD2AZmeQD9tLhBvN6PLRuxLZpP6djmUYeFMygLTSu0jU8aw/CuiFX0myEro/p5+heGUMW5E9dZqi1LBlSGp4nZFoMu4F7TFBoK/mo4XSXgSXH9bUspC///O0SMt5zjqjJVxNBGy0/EwxQ==
-X-YMail-OSG: mE.q.MQVM1ntIQf_vIxqd92ca3bzczhxbS4aBBs8Vfj5kS0QHj09EJojU6e28rF
- Ebu77oeH0gdpGWzULUIIPVlyAxNCbSFA7MMh9UK2iS2ZkGD6rp7OoCkAdyCunlNJs5g46Edgm2UD
- 7Q516koT8wMTGa0n2TZ8C3aItYpsra_zN8ixjUK2Y4WK1JlEYmS1pwtEexA64OGCddSCx11rS5JD
- I63mvVRfwargfYCyU1o.YzKwR81uDDK4xmzOhAcvUFRCViTrNd88TcEXhito6XnGB7EySPDI0yzM
- sYVn9w17YMDbZp4JNbcrHSGhLrQf8jVUykK6WSaA.8pB4LD4YD1SfbQv3k8d5ufYRYih8c9EyERX
- jMMqOQP3rOBpgcMLZoPlc6XvdrYZBUlYws3B5RYRXTD04eVrgPhW65KuyYidUjvI4VX9qI.XoWsA
- T8fnauPSVxd37CAxQEa50KEEVzU4JdPReYnkg6QGRNm7I.wrd.9ynTjw542bcrMCwF3AsCuONxPQ
- Pb5OEwgdSIvQiayvJwh2r.jVgDpi2k9Z.MZG4GQH7GrEsLY..53jI525eQWTG23U2rL03biLLqzU
- .7CtaAcSLA9uyHtLsgMLpfrn2QvXUsujSqXsCRvaHQ5OVQcaw5MLiU7diJ7FfmIg7nBsxftdP.iE
- cP2UGrKruUAQxpm9VZ3vhzcHt4KzuJfWuWUuqiGSjSTnM9LKJ0tVLV4VlDfsreoaTgr.VWyuzLeO
- A.OrZJnU8yqH.D1AUyhzix7ZUu0WOb._kAcXIkqWRxeSnEgnOsTyAjvtagF42WEntz41uwKaV4Xg
- D7g_U6nXC7If.8U5rAo0ccm82xriKV0E4HQUDSar7Ms5bD.jHe6xLkgbBTt5FYZsObn0c3usoAuo
- QuQSKG0dOXbZLClnhfPBNAj9sxxI45o65lJq27ViZupenMcsc5numCZx6d33SWOWDYucaLtWiTgr
- .P4laoyaXb1uw5t7nWwM6Z85iZuviO2O0bzx7_Cgsny3r7dPY6e40jcIkdMwfod5ytgAMhO2wH3S
- ZNE_NklpAb7L3kb.hxbr.R_C0TdiVfCLPPQeqCPxtbxqWn44CySAtKWRnOaF9YCWpswWjVXJOGSi
- AXwt_1i0.lXmA.87DHWk6DVtbX6sXSRigkd8Jklbfu.E-
+        Thu, 28 Feb 2019 17:19:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1551392390; bh=i1PttAKZCuhgesoh/f1kuby1GmIoq4buaBK1bUoKrs4=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=GoMHch8nX66t3QO6G1oGqGrcF/0A3Ubd1CmAq++KISSwv1Iq0CjrJOGvTr6tOCc1LkFVtQtR2gBWd5sYFwTIPs22Uhj1ZPA/nezXrCKGxkJTpaH41FwKEpREwjKtTLCN9zVQns51qVX6qfvOvkMtYc0Ml/IiXl8GGjrcELSKH93r8ddjKSUB69t2pTwPwdMhhtPDUjr5WR2V3PdGn10b62iE8i6BlB6DQFTLtOiLvGdU3S74ODvQj8Nmp/yCMiqTa/WgZpOBHPAP/QeKUQG+3BFR5q01QD6vANqOJFOXRiNQpr/tf8FzWFETFFcLbI25r5axMMYGWBt4jOgqu4IoEQ==
+X-YMail-OSG: F.mgOY8VM1l.4nofvuJCkKrekIeV1DL7En0Md7jZD4zu1qkUFOPBatFWESVYwWI
+ O7Uad._QlvqKptn3BePn5mgQwFtyK24XqmKCsd6gzo2Wl.zECBSt0kDBPcHYTtJ102HxOHVwdojc
+ mfVGIouxBGE7Hv_AxqlMyEzIl5NrmuPVhDxfYpxm76GYJxaTOFL1rRhYEoqbWuZ4KLjWM3o3PfZ_
+ wvo2hxEu2.xByLZUAXiGIQs77BOAXxxnFeigqFWUpsOOUT6EqCn0BYtInLXpSuhXZv9FK6eOrbKI
+ DZ4lRYVGsg47rX_ZiprDN94zWpWs2g5qa7HucDBIYq1ans6Uz_fxRT5BdQVkW_8XoFDxnqXWSKfh
+ vhHrFJrDgQOAZWHlBVEFrVkBSzfqnSeosEbsiHCVg5LiPKoZMDSk3SMVc_77RgC8kLPkmAPXd5n2
+ by7syrJfshm7N0mJKlSFyVdaZieKodL8UmYbTp5AA4j3_ZMIbf7QQqGwon7IEtfkqt5HSRZXD2FH
+ fgUmACUJbtAZSskLG_9aF4UBXKrdxmnYIm5Nw41XmnkKSz4YTbt3MsAFmPQ5.mggnfzbIC.7t_Bx
+ TVf4FOIv83y6JlOhOrn37tYmnyglIEunXRD02EkZX7o6cZbGnCzxxwuV1KDEzms11ZqvGpwvV2Qw
+ 2HM2WAEi2Z_DwOPuhNOGwgxAxWf7kkZs6sg_t3tUi4kT7OluXxBrl3zEY.JITMAM185fwXxtc9_g
+ Y3hlKdtCYnEi7oyiJU09UWpObrr8gY8eYtYJ6vIKY8DP2EqR5A2Ox6VDrASiYFfVQ4MEmzLeQTAQ
+ xhuzUW6WBTgxxVKhh9wQcU_TcVJE7gbJjrTu2o559oeAZ7euROmZqyHgl7QI1ZY1A2fDRY8vTIdx
+ 6429uTth2kvSqgQ1V4IYTQihAKxrif5bg7M3Mqfwm5kLeICAzJYx7wdQ3QoSkOBdWqcn8iLNkFxR
+ rm1v_mh94KSYhz8L8fGZhSgRUOirEKGQHCdyajJgN29IOko0KFNdjYmwQFuI2ztO.zov0eCv5iYG
+ WUO05aBzNsh8CBu7mY7oQDKJQnUvpLPed6oGcPqJZogmG4QtjKIIpTuqnuJae_eYCPPcJthg5fQn
+ DhD9EZjy61giSY4IpzM3K42Jh6pOqY8K0ZfjWask-
 Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Thu, 28 Feb 2019 22:19:50 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp403.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID eca90f2e660dab57d5d3726b0a8f0373;
-          Thu, 28 Feb 2019 22:19:48 +0000 (UTC)
+          Thu, 28 Feb 2019 22:19:47 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com
-Subject: [PATCH 09/97] LSM: Use lsm_export in the ipc_getsecid and task_getsecid hooks
-Date:   Thu, 28 Feb 2019 14:18:05 -0800
-Message-Id: <20190228221933.2551-10-casey@schaufler-ca.com>
+Subject: [PATCH 08/97] LSM: Use lsm_export in the cred_getsecid hooks
+Date:   Thu, 28 Feb 2019 14:18:04 -0800
+Message-Id: <20190228221933.2551-9-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190228221933.2551-1-casey@schaufler-ca.com>
 References: <20190228221933.2551-1-casey@schaufler-ca.com>
@@ -59,187 +59,95 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Convert the cred_getsecid and task_getsecid hooks to use the
-lsm_export structure instead of a u32 secid. There is some
-scaffolding involved that will be removed when
-security_ipc_getsecid() and security_task_getsecid() are
-updated.
+Convert the cred_getsecid hooks to use the lsm_export
+structure instead of a u32 secid. There is some scaffolding
+involved that will be removed when security_cred_getsecid()
+is updated.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hooks.h  |  8 ++++----
- security/apparmor/lsm.c    | 12 ++++++++++--
- security/security.c        | 12 ++++++++----
- security/selinux/hooks.c   | 10 ++++++----
- security/smack/smack_lsm.c |  8 ++++----
- 5 files changed, 32 insertions(+), 18 deletions(-)
+ include/linux/lsm_hooks.h  | 5 +++--
+ security/security.c        | 6 ++++--
+ security/selinux/hooks.c   | 4 ++--
+ security/smack/smack_lsm.c | 4 ++--
+ 4 files changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 2e8516447bfd..f798a947bf8d 100644
+index ff97f57a87bb..2e8516447bfd 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -622,7 +622,7 @@
-  *	Return 0 if permission is granted.
-  * @task_getsecid:
-  *	Retrieve the security identifier of the process @p.
-- *	@p contains the task_struct for the process and place is into @secid.
-+ *	@p contains the task_struct for the process and place is into @l.
-  *	In case of failure, @secid will be set to zero.
-  *
-  * @task_setnice:
-@@ -1080,7 +1080,7 @@
-  * @ipc_getsecid:
-  *	Get the secid associated with the ipc object.
-  *	@ipcp contains the kernel IPC permission structure.
-- *	@secid contains a pointer to the location where result will be saved.
+@@ -556,7 +556,8 @@
+  *	Transfer data from original creds to new creds
+  * @cred_getsecid:
+  *	Retrieve the security identifier of the cred structure @c
+- *	@c contains the credentials, secid will be placed into @secid.
++ *	@c contains the credentials
 + *	@l contains a pointer to the location where result will be saved.
   *	In case of failure, @secid will be set to zero.
-  *
-  * Security hooks for individual messages held in System V IPC message queues
-@@ -1600,7 +1600,7 @@ union security_list_options {
- 	int (*task_setpgid)(struct task_struct *p, pid_t pgid);
- 	int (*task_getpgid)(struct task_struct *p);
- 	int (*task_getsid)(struct task_struct *p);
--	void (*task_getsecid)(struct task_struct *p, u32 *secid);
-+	void (*task_getsecid)(struct task_struct *p, struct lsm_export *l);
- 	int (*task_setnice)(struct task_struct *p, int nice);
- 	int (*task_setioprio)(struct task_struct *p, int ioprio);
- 	int (*task_getioprio)(struct task_struct *p);
-@@ -1618,7 +1618,7 @@ union security_list_options {
- 	void (*task_to_inode)(struct task_struct *p, struct inode *inode);
- 
- 	int (*ipc_permission)(struct kern_ipc_perm *ipcp, short flag);
--	void (*ipc_getsecid)(struct kern_ipc_perm *ipcp, u32 *secid);
-+	void (*ipc_getsecid)(struct kern_ipc_perm *ipcp, struct lsm_export *l);
- 
- 	int (*msg_msg_alloc_security)(struct msg_msg *msg);
- 	void (*msg_msg_free_security)(struct msg_msg *msg);
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index b77571ddbed3..377fa4ed1518 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -49,6 +49,14 @@ int apparmor_initialized;
- 
- DEFINE_PER_CPU(struct aa_buffers, aa_buffers);
- 
-+/*
-+ * Set the AppArmor secid in an lsm_export structure
-+ */
-+static inline void apparmor_export_secid(struct lsm_export *l, u32 secid)
-+{
-+	l->apparmor = secid;
-+	l->flags |= LSM_EXPORT_APPARMOR;
-+}
- 
- /*
-  * LSM hook functions
-@@ -710,10 +718,10 @@ static void apparmor_bprm_committed_creds(struct linux_binprm *bprm)
- 	return;
- }
- 
--static void apparmor_task_getsecid(struct task_struct *p, u32 *secid)
-+static void apparmor_task_getsecid(struct task_struct *p, struct lsm_export *l)
- {
- 	struct aa_label *label = aa_get_task_label(p);
--	*secid = label->secid;
-+	apparmor_export_secid(l, label->secid);
- 	aa_put_label(label);
- }
- 
+  * @kernel_act_as:
+  *	Set the credentials for a kernel service to act as (subjective context).
+@@ -1586,7 +1587,7 @@ union security_list_options {
+ 	int (*cred_prepare)(struct cred *new, const struct cred *old,
+ 				gfp_t gfp);
+ 	void (*cred_transfer)(struct cred *new, const struct cred *old);
+-	void (*cred_getsecid)(const struct cred *c, u32 *secid);
++	void (*cred_getsecid)(const struct cred *c, struct lsm_export *l);
+ 	int (*kernel_act_as)(struct cred *new, u32 secid);
+ 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
+ 	int (*kernel_module_request)(char *kmod_name);
 diff --git a/security/security.c b/security/security.c
-index 9c10d9aae83f..f6ee25ebfa3c 100644
+index 5bee7e0b0bf3..9c10d9aae83f 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1708,8 +1708,10 @@ int security_task_getsid(struct task_struct *p)
+@@ -1624,8 +1624,10 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
  
- void security_task_getsecid(struct task_struct *p, u32 *secid)
+ void security_cred_getsecid(const struct cred *c, u32 *secid)
  {
 -	*secid = 0;
--	call_void_hook(task_getsecid, p, secid);
+-	call_void_hook(cred_getsecid, c, secid);
 +	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
 +
-+	call_void_hook(task_getsecid, p, &data);
++	call_void_hook(cred_getsecid, c, &data);
 +	lsm_export_secid(&data, secid);
  }
- EXPORT_SYMBOL(security_task_getsecid);
+ EXPORT_SYMBOL(security_cred_getsecid);
  
-@@ -1791,8 +1793,10 @@ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
- 
- void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
- {
--	*secid = 0;
--	call_void_hook(ipc_getsecid, ipcp, secid);
-+	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
-+
-+	call_void_hook(ipc_getsecid, ipcp, &data);
-+	lsm_export_secid(&data, secid);
- }
- 
- int security_msg_msg_alloc(struct msg_msg *msg)
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index d9179b75acb7..104b2315d36d 100644
+index cbf7bf3fa4af..d9179b75acb7 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -3807,9 +3807,9 @@ static int selinux_task_getsid(struct task_struct *p)
- 			    PROCESS__GETSESSION, NULL);
+@@ -3660,9 +3660,9 @@ static void selinux_cred_transfer(struct cred *new, const struct cred *old)
+ 	*tsec = *old_tsec;
  }
  
--static void selinux_task_getsecid(struct task_struct *p, u32 *secid)
-+static void selinux_task_getsecid(struct task_struct *p, struct lsm_export *l)
+-static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
++static void selinux_cred_getsecid(const struct cred *c, struct lsm_export *l)
  {
--	*secid = task_sid(p);
-+	selinux_export_secid(l, task_sid(p));
+-	*secid = cred_sid(c);
++	selinux_export_secid(l, cred_sid(c));
  }
  
- static int selinux_task_setnice(struct task_struct *p, int nice)
-@@ -5987,10 +5987,12 @@ static int selinux_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
- 	return ipc_has_perm(ipcp, av);
- }
- 
--static void selinux_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
-+static void selinux_ipc_getsecid(struct kern_ipc_perm *ipcp,
-+				 struct lsm_export *l)
- {
- 	struct ipc_security_struct *isec = selinux_ipc(ipcp);
--	*secid = isec->sid;
-+
-+	selinux_export_secid(l, isec->sid);
- }
- 
- static void selinux_d_instantiate(struct dentry *dentry, struct inode *inode)
+ /*
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index e3639d6f1b62..d5ff34a5803b 100644
+index a9277a942ca2..e3639d6f1b62 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -2000,11 +2000,11 @@ static int smack_task_getsid(struct task_struct *p)
+@@ -1893,13 +1893,13 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
   *
   * Sets the secid to contain a u32 version of the smack label.
   */
--static void smack_task_getsecid(struct task_struct *p, u32 *secid)
-+static void smack_task_getsecid(struct task_struct *p, struct lsm_export *l)
+-static void smack_cred_getsecid(const struct cred *cred, u32 *secid)
++static void smack_cred_getsecid(const struct cred *cred, struct lsm_export *l)
  {
- 	struct smack_known *skp = smk_of_task_struct(p);
+ 	struct smack_known *skp;
  
+ 	rcu_read_lock();
+ 	skp = smk_of_task(smack_cred(cred));
 -	*secid = skp->smk_secid;
 +	smack_export_secid(l, skp->smk_secid);
+ 	rcu_read_unlock();
  }
  
- /**
-@@ -3144,12 +3144,12 @@ static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
-  * @ipp: the object permissions
-  * @secid: where result will be saved
-  */
--static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, u32 *secid)
-+static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, struct lsm_export *l)
- {
- 	struct smack_known **blob = smack_ipc(ipp);
- 	struct smack_known *iskp = *blob;
- 
--	*secid = iskp->smk_secid;
-+	smack_export_secid(l, iskp->smk_secid);
- }
- 
- /**
 -- 
 2.17.0
 
