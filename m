@@ -1,490 +1,168 @@
-Return-Path: <SRS0=r65R=RD=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=EupR=RE=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF88DC43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BF5C10F00
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 00:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91FA22087E
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Feb 2019 23:55:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cPI8kB/R"
+	by mail.kernel.org (Postfix) with ESMTP id E77A32085A
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 00:05:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfB1Xzj (ORCPT
+        id S1727806AbfCAAFa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 18:55:39 -0500
-Received: from mail-pl1-f197.google.com ([209.85.214.197]:35852 "EHLO
-        mail-pl1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfB1Xzj (ORCPT
+        Thu, 28 Feb 2019 19:05:30 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46450 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730812AbfCAAF3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 18:55:39 -0500
-Received: by mail-pl1-f197.google.com with SMTP id f65so12109416plb.3
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 15:55:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=XKp74Lq986ihimrtQQX0FWSbGunne+kCjdLZwMFkugU=;
-        b=cPI8kB/R78qfAUD6OABwqe0c1TtZhc3Quwi6YuEwCYYFx3BWXK9BRcLBeXfZepuwPx
-         FV4Ax2HWjHIPTAzbAVBeKwnw1z0KwXrk0a+RxBpIeaB4mSeJhSShQmIrd57C1nhqGVGs
-         Nl3WfoP4TYDcheESgSKl/xAHHQf6tvI9DUcKE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=XKp74Lq986ihimrtQQX0FWSbGunne+kCjdLZwMFkugU=;
-        b=Ij8ysytBLFD0lbDDyDSJ040fzMhlBC/amdtja4ypNaOThiWOhg7ZugKUP4NfjTN2Xz
-         //qg62lUiqgp0TrbyxG6kGsx4xaiH+wkSLvykm3xuiaLLJbEOneLq9sKRZxHXi6505fj
-         IfjfHVIDKBFnuKT0u1fJTCAk9QZh5OVvw5FkuVngszF8wYw3lk+XprTV13JBHavjHsyl
-         gB9iJidIiTw1ODDqEumTHmTY6sru625+n5iGtN9uTQhxd9LkIeY0lZtnSln3fq+OG/tV
-         84E+651xOdhy+2QvWi5QYREqn6WwVaFfqa+rldyw+fOgXte89loCAPSnJbylThAlW+eH
-         a+dA==
-X-Gm-Message-State: APjAAAWuW80MKvLX2qGeIEGZVNtr4e+y7HIWcCgl+VMNS4SoVpwY1A9L
-        ofupypooCVI7xb43DAbVFfHTfFnH94B4Ux0f
-X-Google-Smtp-Source: APXvYqzZOw2DTjo57wYADuIa9mwpDgRsbLziNDlF6KszaEVIc6okowwh46ZyK+JleE+/bFj6iBN63CQqOBPIxxLz
-X-Received: by 2002:a63:b70d:: with SMTP id t13mr806514pgf.49.1551398137715;
- Thu, 28 Feb 2019 15:55:37 -0800 (PST)
-Date:   Thu, 28 Feb 2019 15:55:34 -0800
-In-Reply-To: <5552a810-8072-e0fe-4a4c-76f937f0c3f4@schaufler-ca.com>
-Message-Id: <20190228235534.248869-1-mortonm@chromium.org>
-Mime-Version: 1.0
-References: <5552a810-8072-e0fe-4a4c-76f937f0c3f4@schaufler-ca.com>
-X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH v4 1/2] LSM: SafeSetID: gate setgid transitions
-From:   mortonm@chromium.org
-To:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        casey@schaufler-ca.com, sds@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org
-Cc:     Micah Morton <mortonm@chromium.org>
+        Thu, 28 Feb 2019 19:05:29 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2104w8Y140397
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 19:05:27 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qxs5psj9b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 19:05:27 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 1 Mar 2019 00:05:25 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 1 Mar 2019 00:05:22 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2105L3i32505966
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 1 Mar 2019 00:05:22 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF757AE057;
+        Fri,  1 Mar 2019 00:05:21 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45636AE04D;
+        Fri,  1 Mar 2019 00:05:21 +0000 (GMT)
+Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  1 Mar 2019 00:05:21 +0000 (GMT)
+Subject: Re: [PULL REQUEST] Lock down patches
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     jmorris@namei.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Date:   Thu, 28 Feb 2019 19:05:20 -0500
+In-Reply-To: <CACdnJuvwnh0PKr5jUTm2h=P5-u-oLgBjvThX+DxcegShXReCdA@mail.gmail.com>
+References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
+         <1551392438.10911.227.camel@linux.ibm.com>
+         <CACdnJuvwnh0PKr5jUTm2h=P5-u-oLgBjvThX+DxcegShXReCdA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19030100-0020-0000-0000-0000031C9675
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19030100-0021-0000-0000-0000216E0ACD
+Message-Id: <1551398720.10911.270.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-28_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902280160
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Micah Morton <mortonm@chromium.org>
+On Thu, 2019-02-28 at 15:13 -0800, Matthew Garrett wrote:
+> On Thu, Feb 28, 2019 at 2:20 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Thu, 2019-02-28 at 13:28 -0800, Matthew Garrett wrote:
+> > > This PR is mostly the same as the previous attempt, but with the
+> > > following changes:
+> >
+> > Where/when was this latest version of the patches posted?
+> 
+> They should have followed this, but git-send-email choked on some
+> reviewed-by: lines so I'm just trying to sort that out.
 
-This patch generalizes the 'task_fix_setuid' LSM hook to enable hooking
-setgid transitions as well as setuid transitions. The hook is renamed to
-'task_fix_setid'. The patch introduces calls to this hook from the
-setgid functions in kernel/sys.c. This will allow the SafeSetID LSM to
-govern setgid transitions in addition to setuid transitions. This patch
-also makes sure the setgid functions in kernel/sys.c call
-security_capable_setid rather than the ordinary security_capable
-function, so that the security_capable hook in the SafeSetID LSM knows
-it is being invoked from a setid function.
+I'm a little perplexed as to why you would send a pull request, before
+re-posting the patches with the changes for review.
 
-Signed-off-by: Micah Morton <mortonm@chromium.org>
----
-Changes since the last patch: Add break statements for the
-setgid-related case statements in cap_task_fix_setid in
-security/commoncap.c. We don't want those cases to fall through to the
-default statement and return -EINVAL. Are the setreuid and setuid cases
-for this function always returning -EINVAL or am I missing something
-really obvious?.. Seems strange if that is the case.
+> 
+> > >
+> > > 1) The integration between EFI secure boot and the lockdown state has
+> > > been removed
+> > > 2) A new CONFIG_KERNEL_LOCK_DOWN_FORCE kconfig option has been added,
+> > > which will always enable lockdown regardless of the kernel command
+> > > line
+> > > 3) The integration with IMA has been dropped for now. Requiring the
+> > > use of the IMA secure boot policy when lockdown is enabled isn't
+> > > practical for most distributions at the moment, as there's still not a
+> > > great deal of infrastructure for shipping packages with appropriate
+> > > IMA signatures, and it makes it complicated for end users to manage
+> > > custom IMA policies.
+> >
+> > I'm all in favor of dropping the original attempt to coordinate
+> > between the kexec PE and IMA kernel image signatures and the kernel
+> > appended and IMA modules signatures, but there has been quite a bit of
+> > work recently coordinating the different types of signatures.
+> >
+> > Preventing systems which do use IMA for signature verification, should
+> > not limit their ability to enable "lock down".  Does this version of
+> > the "lock down" patches coordinate the different kexec kernel image
+> > and kernel module signature verification methods?
+> 
+> It's a little more complicated than this. We can't just rely on IMA
+> appraisal - it has to be based on digital signatures, and the existing
+> patch only made that implicit by enabling the secure_boot policy.  
 
- Documentation/admin-guide/LSM/SafeSetID.rst |  2 +-
- include/linux/lsm_hooks.h                   |  8 ++---
- include/linux/security.h                    | 36 ++++++++++++++-------
- kernel/sys.c                                | 35 ++++++++++++++------
- security/commoncap.c                        | 25 +++++++++-----
- security/safesetid/lsm.c                    | 12 +++----
- security/security.c                         |  4 +--
- 7 files changed, 79 insertions(+), 43 deletions(-)
+Right, which is the reason the IMA architecture specific policy
+requires file signatures. [1][2]
 
-diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/admin-guide/LSM/SafeSetID.rst
-index 212434ef65ad..670a6544fd39 100644
---- a/Documentation/admin-guide/LSM/SafeSetID.rst
-+++ b/Documentation/admin-guide/LSM/SafeSetID.rst
-@@ -88,7 +88,7 @@ other system interactions, including use of pid namespaces and device creation.
- Use an existing LSM
- -------------------
- None of the other in-tree LSMs have the capability to gate setid transitions, or
--even employ the security_task_fix_setuid hook at all. SELinux says of that hook:
-+even employ the security_task_fix_setid hook at all. SELinux says of that hook:
- "Since setuid only affects the current process, and since the SELinux controls
- are not based on the Linux identity attributes, SELinux does not need to control
- this operation."
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 22fc786d723a..47fd04410fde 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -594,14 +594,14 @@
-  *	@size length of the file contents.
-  *	@id kernel read file identifier
-  *	Return 0 if permission is granted.
-- * @task_fix_setuid:
-+ * @task_fix_setid:
-  *	Update the module's state after setting one or more of the user
-  *	identity attributes of the current process.  The @flags parameter
-  *	indicates which of the set*uid system calls invoked this hook.  If
-  *	@new is the set of credentials that will be installed.  Modifications
-  *	should be made to this rather than to @current->cred.
-  *	@old is the set of credentials that are being replaces
-- *	@flags contains one of the LSM_SETID_* values.
-+ *	@flags contains one of the LSM_SET*ID_* values.
-  *	Return 0 on success.
-  * @task_setpgid:
-  *	Check permission before setting the process group identifier of the
-@@ -1594,7 +1594,7 @@ union security_list_options {
- 	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
- 	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
- 				     enum kernel_read_file_id id);
--	int (*task_fix_setuid)(struct cred *new, const struct cred *old,
-+	int (*task_fix_setid)(struct cred *new, const struct cred *old,
- 				int flags);
- 	int (*task_setpgid)(struct task_struct *p, pid_t pgid);
- 	int (*task_getpgid)(struct task_struct *p);
-@@ -1886,7 +1886,7 @@ struct security_hook_heads {
- 	struct hlist_head kernel_read_file;
- 	struct hlist_head kernel_post_read_file;
- 	struct hlist_head kernel_module_request;
--	struct hlist_head task_fix_setuid;
-+	struct hlist_head task_fix_setid;
- 	struct hlist_head task_setpgid;
- 	struct hlist_head task_getpgid;
- 	struct hlist_head task_getsid;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 13537a49ae97..76df3e22fed1 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -95,7 +95,7 @@ extern int cap_inode_getsecurity(struct inode *inode, const char *name,
- extern int cap_mmap_addr(unsigned long addr);
- extern int cap_mmap_file(struct file *file, unsigned long reqprot,
- 			 unsigned long prot, unsigned long flags);
--extern int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags);
-+extern int cap_task_fix_setid(struct cred *new, const struct cred *old, int flags);
- extern int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			  unsigned long arg4, unsigned long arg5);
- extern int cap_task_setscheduler(struct task_struct *p);
-@@ -128,17 +128,29 @@ extern unsigned long dac_mmap_min_addr;
- /*
-  * Values used in the task_security_ops calls
-  */
--/* setuid or setgid, id0 == uid or gid */
--#define LSM_SETID_ID	1
-+/* setuid, id0 == uid */
-+#define LSM_SETUID_ID	1
- 
--/* setreuid or setregid, id0 == real, id1 == eff */
--#define LSM_SETID_RE	2
-+/* setreuid, id0 == real, id1 == eff */
-+#define LSM_SETUID_RE	2
- 
--/* setresuid or setresgid, id0 == real, id1 == eff, uid2 == saved */
--#define LSM_SETID_RES	4
-+/* setresuid, id0 == real, id1 == eff, uid2 == saved */
-+#define LSM_SETUID_RES	4
- 
--/* setfsuid or setfsgid, id0 == fsuid or fsgid */
--#define LSM_SETID_FS	8
-+/* setfsuid, id0 == fsgid */
-+#define LSM_SETUID_FS	8
-+
-+/* setgid, id0 == gid */
-+#define LSM_SETGID_ID	16
-+
-+/* setregid, id0 == real, id1 == eff */
-+#define LSM_SETGID_RE	32
-+
-+/* setresgid, id0 == real, id1 == eff, uid2 == saved */
-+#define LSM_SETGID_RES	64
-+
-+/* setfsgid, id0 == fsgid */
-+#define LSM_SETGID_FS	128
- 
- /* Flags for security_task_prlimit(). */
- #define LSM_PRLIMIT_READ  1
-@@ -324,7 +336,7 @@ int security_kernel_load_data(enum kernel_load_data_id id);
- int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
- int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id);
--int security_task_fix_setuid(struct cred *new, const struct cred *old,
-+int security_task_fix_setid(struct cred *new, const struct cred *old,
- 			     int flags);
- int security_task_setpgid(struct task_struct *p, pid_t pgid);
- int security_task_getpgid(struct task_struct *p);
-@@ -923,11 +935,11 @@ static inline int security_kernel_post_read_file(struct file *file,
- 	return 0;
- }
- 
--static inline int security_task_fix_setuid(struct cred *new,
-+static inline int security_task_fix_setid(struct cred *new,
- 					   const struct cred *old,
- 					   int flags)
- {
--	return cap_task_fix_setuid(new, old, flags);
-+	return cap_task_fix_setid(new, old, flags);
- }
- 
- static inline int security_task_setpgid(struct task_struct *p, pid_t pgid)
-diff --git a/kernel/sys.c b/kernel/sys.c
-index c5f875048aef..615b44939238 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -372,7 +372,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
- 	if (rgid != (gid_t) -1) {
- 		if (gid_eq(old->gid, krgid) ||
- 		    gid_eq(old->egid, krgid) ||
--		    ns_capable(old->user_ns, CAP_SETGID))
-+		    ns_capable_setid(old->user_ns, CAP_SETGID))
- 			new->gid = krgid;
- 		else
- 			goto error;
-@@ -381,7 +381,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
- 		if (gid_eq(old->gid, kegid) ||
- 		    gid_eq(old->egid, kegid) ||
- 		    gid_eq(old->sgid, kegid) ||
--		    ns_capable(old->user_ns, CAP_SETGID))
-+		    ns_capable_setid(old->user_ns, CAP_SETGID))
- 			new->egid = kegid;
- 		else
- 			goto error;
-@@ -392,6 +392,10 @@ long __sys_setregid(gid_t rgid, gid_t egid)
- 		new->sgid = new->egid;
- 	new->fsgid = new->egid;
- 
-+	retval = security_task_fix_setid(new, old, LSM_SETGID_RE);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -427,13 +431,17 @@ long __sys_setgid(gid_t gid)
- 	old = current_cred();
- 
- 	retval = -EPERM;
--	if (ns_capable(old->user_ns, CAP_SETGID))
-+	if (ns_capable_setid(old->user_ns, CAP_SETGID))
- 		new->gid = new->egid = new->sgid = new->fsgid = kgid;
- 	else if (gid_eq(kgid, old->gid) || gid_eq(kgid, old->sgid))
- 		new->egid = new->fsgid = kgid;
- 	else
- 		goto error;
- 
-+	retval = security_task_fix_setid(new, old, LSM_SETGID_ID);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -539,7 +547,7 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
- 		new->suid = new->euid;
- 	new->fsuid = new->euid;
- 
--	retval = security_task_fix_setuid(new, old, LSM_SETID_RE);
-+	retval = security_task_fix_setid(new, old, LSM_SETUID_RE);
- 	if (retval < 0)
- 		goto error;
- 
-@@ -597,7 +605,7 @@ long __sys_setuid(uid_t uid)
- 
- 	new->fsuid = new->euid = kuid;
- 
--	retval = security_task_fix_setuid(new, old, LSM_SETID_ID);
-+	retval = security_task_fix_setid(new, old, LSM_SETUID_ID);
- 	if (retval < 0)
- 		goto error;
- 
-@@ -672,7 +680,7 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
- 		new->suid = ksuid;
- 	new->fsuid = new->euid;
- 
--	retval = security_task_fix_setuid(new, old, LSM_SETID_RES);
-+	retval = security_task_fix_setid(new, old, LSM_SETUID_RES);
- 	if (retval < 0)
- 		goto error;
- 
-@@ -735,7 +743,7 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
- 	old = current_cred();
- 
- 	retval = -EPERM;
--	if (!ns_capable(old->user_ns, CAP_SETGID)) {
-+	if (!ns_capable_setid(old->user_ns, CAP_SETGID)) {
- 		if (rgid != (gid_t) -1        && !gid_eq(krgid, old->gid) &&
- 		    !gid_eq(krgid, old->egid) && !gid_eq(krgid, old->sgid))
- 			goto error;
-@@ -755,6 +763,10 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
- 		new->sgid = ksgid;
- 	new->fsgid = new->egid;
- 
-+	retval = security_task_fix_setid(new, old, LSM_SETGID_RES);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -817,7 +829,7 @@ long __sys_setfsuid(uid_t uid)
- 	    ns_capable_setid(old->user_ns, CAP_SETUID)) {
- 		if (!uid_eq(kuid, old->fsuid)) {
- 			new->fsuid = kuid;
--			if (security_task_fix_setuid(new, old, LSM_SETID_FS) == 0)
-+			if (security_task_fix_setid(new, old, LSM_SETUID_FS) == 0)
- 				goto change_okay;
- 		}
- 	}
-@@ -858,10 +870,13 @@ long __sys_setfsgid(gid_t gid)
- 
- 	if (gid_eq(kgid, old->gid)  || gid_eq(kgid, old->egid)  ||
- 	    gid_eq(kgid, old->sgid) || gid_eq(kgid, old->fsgid) ||
--	    ns_capable(old->user_ns, CAP_SETGID)) {
-+	    ns_capable_setid(old->user_ns, CAP_SETGID)) {
- 		if (!gid_eq(kgid, old->fsgid)) {
- 			new->fsgid = kgid;
--			goto change_okay;
-+			if (security_task_fix_setid(new,
-+						old,
-+						LSM_SETGID_FS) == 0)
-+				goto change_okay;
- 		}
- 	}
- 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index f1d117c3d8ae..6f514d91d010 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1026,27 +1026,27 @@ static inline void cap_emulate_setxuid(struct cred *new, const struct cred *old)
- }
- 
- /**
-- * cap_task_fix_setuid - Fix up the results of setuid() call
-+ * cap_task_fix_setid - Fix up the results of setid() call
-  * @new: The proposed credentials
-  * @old: The current task's current credentials
-  * @flags: Indications of what has changed
-  *
-- * Fix up the results of setuid() call before the credential changes are
-+ * Fix up the results of setid() call before the credential changes are
-  * actually applied, returning 0 to grant the changes, -ve to deny them.
-  */
--int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
-+int cap_task_fix_setid(struct cred *new, const struct cred *old, int flags)
- {
- 	switch (flags) {
--	case LSM_SETID_RE:
--	case LSM_SETID_ID:
--	case LSM_SETID_RES:
-+	case LSM_SETUID_RE:
-+	case LSM_SETUID_ID:
-+	case LSM_SETUID_RES:
- 		/* juggle the capabilities to follow [RES]UID changes unless
- 		 * otherwise suppressed */
- 		if (!issecure(SECURE_NO_SETUID_FIXUP))
- 			cap_emulate_setxuid(new, old);
- 		break;
- 
--	case LSM_SETID_FS:
-+	case LSM_SETUID_FS:
- 		/* juggle the capabilties to follow FSUID changes, unless
- 		 * otherwise suppressed
- 		 *
-@@ -1066,6 +1066,15 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
- 		}
- 		break;
- 
-+	case LSM_SETGID_RE:
-+                break;
-+	case LSM_SETGID_ID:
-+                break;
-+	case LSM_SETGID_RES:
-+                break;
-+	case LSM_SETGID_FS:
-+                break;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1355,7 +1364,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_getsecurity, cap_inode_getsecurity),
- 	LSM_HOOK_INIT(mmap_addr, cap_mmap_addr),
- 	LSM_HOOK_INIT(mmap_file, cap_mmap_file),
--	LSM_HOOK_INIT(task_fix_setuid, cap_task_fix_setuid),
-+	LSM_HOOK_INIT(task_fix_setid, cap_task_fix_setid),
- 	LSM_HOOK_INIT(task_prctl, cap_task_prctl),
- 	LSM_HOOK_INIT(task_setscheduler, cap_task_setscheduler),
- 	LSM_HOOK_INIT(task_setioprio, cap_task_setioprio),
-diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-index cecd38e2ac80..5deffa92f25f 100644
---- a/security/safesetid/lsm.c
-+++ b/security/safesetid/lsm.c
-@@ -120,7 +120,7 @@ static int check_uid_transition(kuid_t parent, kuid_t child)
-  * set*uid to user under new cred struct, or the UID transition is allowed (by
-  * Linux set*uid rules) even without CAP_SETUID.
-  */
--static int safesetid_task_fix_setuid(struct cred *new,
-+static int safesetid_task_fix_setid(struct cred *new,
- 				     const struct cred *old,
- 				     int flags)
- {
-@@ -130,7 +130,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 		return 0;
- 
- 	switch (flags) {
--	case LSM_SETID_RE:
-+	case LSM_SETUID_RE:
- 		/*
- 		 * Users for which setuid restrictions exist can only set the
- 		 * real UID to the real UID or the effective UID, unless an
-@@ -152,7 +152,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 			return check_uid_transition(old->euid, new->euid);
- 		}
- 		break;
--	case LSM_SETID_ID:
-+	case LSM_SETUID_ID:
- 		/*
- 		 * Users for which setuid restrictions exist cannot change the
- 		 * real UID or saved set-UID unless an explicit whitelist
-@@ -163,7 +163,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 		if (!uid_eq(old->suid, new->suid))
- 			return check_uid_transition(old->suid, new->suid);
- 		break;
--	case LSM_SETID_RES:
-+	case LSM_SETUID_RES:
- 		/*
- 		 * Users for which setuid restrictions exist cannot change the
- 		 * real UID, effective UID, or saved set-UID to anything but
-@@ -187,7 +187,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 			return check_uid_transition(old->suid, new->suid);
- 		}
- 		break;
--	case LSM_SETID_FS:
-+	case LSM_SETUID_FS:
- 		/*
- 		 * Users for which setuid restrictions exist cannot change the
- 		 * filesystem UID to anything but one of: the current real UID,
-@@ -256,7 +256,7 @@ void flush_safesetid_whitelist_entries(void)
- }
- 
- static struct security_hook_list safesetid_security_hooks[] = {
--	LSM_HOOK_INIT(task_fix_setuid, safesetid_task_fix_setuid),
-+	LSM_HOOK_INIT(task_fix_setid, safesetid_task_fix_setid),
- 	LSM_HOOK_INIT(capable, safesetid_security_capable)
- };
- 
-diff --git a/security/security.c b/security/security.c
-index ed9b8cbf21cf..450784fd1d2b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1568,10 +1568,10 @@ int security_kernel_load_data(enum kernel_load_data_id id)
- }
- EXPORT_SYMBOL_GPL(security_kernel_load_data);
- 
--int security_task_fix_setuid(struct cred *new, const struct cred *old,
-+int security_task_fix_setid(struct cred *new, const struct cred *old,
- 			     int flags)
- {
--	return call_int_hook(task_fix_setuid, 0, new, old, flags);
-+	return call_int_hook(task_fix_setid, 0, new, old, flags);
- }
- 
- int security_task_setpgid(struct task_struct *p, pid_t pgid)
--- 
-2.21.0.352.gf09ad66450-goog
+> I
+> think we do want to integrate these, but there's a few things we need
+> to take into account:
+> 
+> 1) An integrated solution can't depend on xattrs, both because of the
+> lagging support for distributing those signatures but also because we
+> need to support filesystems that don't support xattrs
+
+That's not a valid reason for preventing systems that do use IMA for
+verifying the kexec kernel image signature or kernel module signatures
+from enabling "lock down".  This just means that there needs to be
+some coordination between the different signature verification
+methods. [1][2]
+
+> 2) An integrated solution can't depend on the current secure_boot
+> policy because that requires signed IMA policy updates, but
+> distributions have no way of knowing what IMA policy end users require
+
+Both the "CONFIG_IMA_APPRAISE_REQUIRE_KEXEC_SIGS" and the IMA
+architecture policy rules persist after loading a custom policy.
+ Neither of them require loading or signing a custom policy.
+
+> In any case, I do agree that we should aim to make this more
+> reasonable - having orthogonal signing code doesn't benefit anyone.
+> Once there's solid agreement on that we can extend this support.
+> 
+
+Having multiple signature verification methods is going to be around
+for a while.  The solution is to coordinate the signature verification
+methods, without requiring both types of signatures. [1][2]
+
+[For distros that do enable IMA, enabling the IMA architecture
+specific policy enforces the kexec kernel image and kernel modules
+signature verification.]
+
+Mimi
+
+[1] Subject: [PATCH v2 0/5] selftests/ima: add kexec and kernel module tests
+[2] Patches available from the "next-queued-testing" branch
+https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/
 
