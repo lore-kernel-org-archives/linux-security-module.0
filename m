@@ -2,146 +2,100 @@ Return-Path: <SRS0=EupR=RE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85573C43381
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 02:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF9CC43381
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 03:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E14C20854
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 02:06:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FFB220854
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 03:33:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VXH2nYGz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfCACGN (ORCPT
+        id S1729553AbfCADd3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Feb 2019 21:06:13 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57604 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727795AbfCACGM (ORCPT
+        Thu, 28 Feb 2019 22:33:29 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33635 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727545AbfCADd3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Feb 2019 21:06:12 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2124Dni053688
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 21:06:11 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qxrg6fbpn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 21:06:11 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 1 Mar 2019 02:06:09 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 1 Mar 2019 02:06:05 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x21264n616908422
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 1 Mar 2019 02:06:05 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E14FC4C052;
-        Fri,  1 Mar 2019 02:06:04 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1BCAF4C040;
-        Fri,  1 Mar 2019 02:06:04 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.108.117])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  1 Mar 2019 02:06:03 +0000 (GMT)
-Subject: Re: [PATCH 08/27] kexec_file: Restrict at runtime if the kernel is
- locked down
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com
-Date:   Thu, 28 Feb 2019 21:05:53 -0500
-In-Reply-To: <20190228231203.212359-8-matthewgarrett@google.com>
+        Thu, 28 Feb 2019 22:33:29 -0500
+Received: by mail-io1-f68.google.com with SMTP id e186so18541153ioa.0
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Feb 2019 19:33:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GtFvcteIBJq3dYSU1h9ov8iTU+O9WXT4b1Ku5DaUd0w=;
+        b=VXH2nYGzuptscs7Fi4efQlx/r+cyna9QZXwaSg4rMz9AxSl9/Ehdtwpe4teyPs/qdy
+         rc2Y4LKBegDyBC0E43GDNfna6kWvvA4NngkXrHqB7Wp15yNUlvN6Nh5CpP3H/iwP3zPh
+         I8nFNir6284yHc/TvfVVvw4jYsR3guVNvL5TCah6YngTBf4Slm+t0rWNIPZcuY7fK4FR
+         9cd7gubpIrrk0rA1z/xrYjuQepAkTjZwi3d48W73JZNPl86xgFAM71znC9GoCBeg0MR1
+         DRrzonpU6222sy7XhhzWY/1USFNCfz36OqPRl/ZCl7Bcf4Udquz/eITqHhPpS1tSmUds
+         wtCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GtFvcteIBJq3dYSU1h9ov8iTU+O9WXT4b1Ku5DaUd0w=;
+        b=OSH9aOUcY7Q3XHPpiwx4w2KbguYiC+ki3vToQ622i21VSCtyyHA3wDl3Bt3Lwwdg2S
+         dYlt+wZU+ZZZygAeDKUv7CUgJlswmScf5nW1adAL0ivgn0MSfvZwm8MmGgv57sWgmrIS
+         JA5Pju6xBxOorDTQJk88SboD9vRRvajBNS24UYiJLq5S9elE9lmgOXn22/m0k0B6hmae
+         JAAgpIjx8DCOzMidmoOQNeQUMhMRzkExwS9yFo25z/qtQp0WmROCDGrfStr5D757R8HZ
+         M9pUsFgdjPN1cliQ6iH3EtNrSAUI6j3SpBJ199BRLODXyCXzqi/8uDSJ6WBjdSAies3I
+         pfjw==
+X-Gm-Message-State: APjAAAXdgxmJbUwTYJlFdMNdRIfLP7Usg9nJ3njdWtAxUplPubLQRZyE
+        xTenIoikF3Zm624k04hiJU3VanLuISr6msUIW7ahjQ==
+X-Google-Smtp-Source: APXvYqyPENJJcQkJnxS6nB1jB8TSdoJmkbYn1a2eZoOmbzIaClwCmZeL3fRP/q0osC/tT4t3aVJTl0giuhpgkon/cb0=
+X-Received: by 2002:a5d:9254:: with SMTP id e20mr1601733iol.88.1551411207771;
+ Thu, 28 Feb 2019 19:33:27 -0800 (PST)
+MIME-Version: 1.0
 References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
-         <20190228231203.212359-1-matthewgarrett@google.com>
-         <20190228231203.212359-8-matthewgarrett@google.com>
+ <1551392438.10911.227.camel@linux.ibm.com> <CACdnJuvwnh0PKr5jUTm2h=P5-u-oLgBjvThX+DxcegShXReCdA@mail.gmail.com>
+ <1551398720.10911.270.camel@linux.ibm.com> <CACdnJutqg26pk5xnK2ii3ia9JabAnBptE3YQ3yLvVT93as666Q@mail.gmail.com>
+ <1551404654.10911.276.camel@linux.ibm.com>
+In-Reply-To: <1551404654.10911.276.camel@linux.ibm.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Thu, 28 Feb 2019 19:33:16 -0800
+Message-ID: <CACdnJuvn4uC075+Z99CaO3YGjJ+4nviPj=4TEQpkndC3JwFovg@mail.gmail.com>
+Subject: Re: [PULL REQUEST] Lock down patches
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     jmorris@namei.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19030102-0008-0000-0000-000002C64A58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19030102-0009-0000-0000-000022329DF1
-Message-Id: <1551405953.10911.281.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-01_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903010011
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jiri,
+On Thu, Feb 28, 2019 at 5:45 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Thu, 2019-02-28 at 17:01 -0800, Matthew Garrett wrote:
+>
+> > > That's not a valid reason for preventing systems that do use IMA for
+> > > verifying the kexec kernel image signature or kernel module signatures
+> > > from enabling "lock down".  This just means that there needs to be
+> > > some coordination between the different signature verification
+> > > methods. [1][2]
+> >
+> > I agree, but the current form of the integration makes it impossible
+> > for anyone using an IMA-enabled kernel (but not using IMA) to do
+> > anything unless they have IMA signatures. It's a problem we need to
+> > solve, I just don't think it's a problem we need to solve before
+> > merging the patchset.
+>
+> That's simply not true.  Have you even looked at the IMA architecture
+> patches?
 
-Thank you for thinking about IMA.
-
-On Thu, 2019-02-28 at 15:11 -0800, Matthew Garrett wrote:
-> From: Jiri Bohac <jbohac@suse.cz>
-> 
-> When KEXEC_SIG is not enabled, kernel should not load images through
-> kexec_file systemcall if the kernel is locked down unless IMA can be used
-> to validate the image.
-
-This patch is a partial solution, but it doesn't take into account the
-architecture specific or custom policies.
-
-Mimi
-
-> [Modified by David Howells to fit with modifications to the previous patch
->  and to return -EPERM if the kernel is locked down for consistency with
->  other lockdowns]
-> 
-> Signed-off-by: Jiri Bohac <jbohac@suse.cz>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Reviewed-by: Jiri Bohac <jbohac@suse.cz>
-> Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-> cc: Chun-Yi Lee <jlee@suse.com>
-> cc: kexec@lists.infradead.org
-> ---
->  include/linux/ima.h | 6 ++++++
->  kernel/kexec_file.c | 8 ++++++++
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index b5e16b8c50b7..b35ed0725a05 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -127,4 +127,10 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
->  	return 0;
->  }
->  #endif /* CONFIG_IMA_APPRAISE */
-> +
-> +static inline bool is_ima_kexec_appraise_enabled(void)
-> +{
-> +	return IS_ENABLED(CONFIG_IMA_APPRAISE_REQUIRE_KEXEC_SIGS);
-> +}
-> +
->  #endif /* _LINUX_IMA_H */
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 67f3a866eabe..b4e938dff4be 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -239,6 +239,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
->  		}
-> 
->  		ret = 0;
-> +		if (is_ima_kexec_appraise_enabled())
-> +			break;
-> +
-> +		if (kernel_is_locked_down(reason)) {
-> +			ret = -EPERM;
-> +			goto out;
-> +		}
-> +
->  		break;
-> 
->  		/* All other errors are fatal, including nomem, unparseable
-
+Sorry, I think we're talking at cross purposes - I was referring to
+your patch "ima: require secure_boot rules in lockdown mode"
+(https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=efi-lock-down&id=7fa3734bd31a4b3fe71358fcba8d4878e5005b7f).
+If the goal is just to use the architecture rules then I don't see any
+conflict, and as far as I can tell things would just work as is if I
+drop the ima portion from "kexec_file: Restrict at runtime if the
+kernel is locked down"? Apologies, I'd thought that the secure_boot
+ruleset was still intended to be used in a lockdown environment.
