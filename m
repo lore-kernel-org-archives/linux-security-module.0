@@ -2,35 +2,35 @@ Return-Path: <SRS0=EupR=RE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B4FC43381
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 16:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07AF6C43381
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 16:10:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 403182083D
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 16:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5A762083D
+	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 16:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725966AbfCAQKj (ORCPT
+        id S2388812AbfCAQK3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Mar 2019 11:10:39 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:37564 "EHLO inva020.nxp.com"
+        Fri, 1 Mar 2019 11:10:29 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:55388 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727952AbfCAQK3 (ORCPT
+        id S2387940AbfCAQK3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 1 Mar 2019 11:10:29 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 690F91A0077;
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 665A120008B;
         Fri,  1 Mar 2019 17:10:26 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5B4B61A0085;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 59877200024;
         Fri,  1 Mar 2019 17:10:26 +0100 (CET)
 Received: from sopsvulinux.ea.freescale.net (sopsvulinux.ea.freescale.net [10.161.69.178])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 35E60205ED;
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 35F3E20642;
         Fri,  1 Mar 2019 17:10:26 +0100 (CET)
 Received: from SOPDPUATS05.ea.freescale.net (SOPDPUATS05.ea.freescale.net [10.161.66.238])
-        by sopsvulinux.ea.freescale.net (Postfix) with ESMTP id 5B1D582C7D;
+        by sopsvulinux.ea.freescale.net (Postfix) with ESMTP id 4F6BA82C7B;
         Fri,  1 Mar 2019 17:08:45 +0100 (CET)
 From:   Franck LENORMAND <franck.lenormand@nxp.com>
 To:     linux-kernel@vger.kernel.org,
@@ -39,140 +39,92 @@ Cc:     franck.lenormand@nxp.com, horia.geanta@nxp.com,
         silvano.dininno@nxp.com, agk@redhat.com, snitzer@redhat.com,
         dm-devel@redhat.com, dhowells@redhat.com, jmorris@namei.org,
         serge@hallyn.com
-Subject: [RFC PATCH 2/2] dm-crypt: Use any key type which is registered
-Date:   Fri,  1 Mar 2019 17:09:59 +0100
-Message-Id: <1551456599-10603-3-git-send-email-franck.lenormand@nxp.com>
+Subject: [RFC PATCH 0/2] Create CAAM HW key in linux keyring and use in dmcrypt
+Date:   Fri,  1 Mar 2019 17:09:57 +0100
+Message-Id: <1551456599-10603-1-git-send-email-franck.lenormand@nxp.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1551456599-10603-1-git-send-email-franck.lenormand@nxp.com>
-References: <1551456599-10603-1-git-send-email-franck.lenormand@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There was only 2 key_type supported by dm-crypt which limits other
-implementations.
+This RFC aims to provide better security of users using CAAM block allowing
+them to encrypt their disks with a hardware key. A hardware key is a
+key only know by the hardware hence not known neither by the userspace nor
+the kernelspace.
 
-This patch allows to use any key_type which is registered obtaining
-the key_type from key framework.
+The use of hardware keys allows to mitigate attacks against systems using
+such type of keys as the key is more complicated to obtain. In effect, even
+a compromised kernel could not divulge the key used to encrypt the data.
+The user or the kernel can only configure a device mapper using the target
+crypt and provide the HW key to encrypt a disk.
 
-This also remove the compilation dependency between dm-crypt and
-key implementations.
+The CAAM possesses a mechanism to generate HW keys called "black key".
 
-Signed-off-by: Franck LENORMAND <franck.lenormand@nxp.com>
----
- drivers/md/dm-crypt.c    | 11 ++++++-----
- include/linux/key-type.h |  2 ++
- security/keys/key.c      | 42 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 50 insertions(+), 5 deletions(-)
+The CAAM has the capacity to encrypt a plain key ("red key") with a key
+only accessible by the hardware hence creating a "black key". The
+encryption key used change at each reset of the CAAM: shutdown, reboot.
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index dd538e6..e25efc2 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -35,6 +35,7 @@
- #include <crypto/authenc.h>
- #include <linux/rtnetlink.h> /* for struct rtattr and RTA macros only */
- #include <keys/user-type.h>
-+#include <linux/key-type.h>
- 
- #include <linux/device-mapper.h>
- 
-@@ -2010,6 +2011,7 @@ static int crypt_set_keyring_key(struct crypt_config *cc, const char *key_string
- 	int ret;
- 	struct key *key;
- 	const struct user_key_payload *ukp;
-+	struct key_type *type;
- 
- 	/*
- 	 * Reject key_string with whitespace. dm core currently lacks code for
-@@ -2025,16 +2027,15 @@ static int crypt_set_keyring_key(struct crypt_config *cc, const char *key_string
- 	if (!key_desc || key_desc == key_string || !strlen(key_desc + 1))
- 		return -EINVAL;
- 
--	if (strncmp(key_string, "logon:", key_desc - key_string + 1) &&
--	    strncmp(key_string, "user:", key_desc - key_string + 1))
--		return -EINVAL;
-+	type = get_key_type(key_string, key_desc - key_string);
-+	if (!type)
-+		return -ENOENT;
- 
- 	new_key_string = kstrdup(key_string, GFP_KERNEL);
- 	if (!new_key_string)
- 		return -ENOMEM;
- 
--	key = request_key(key_string[0] == 'l' ? &key_type_logon : &key_type_user,
--			  key_desc + 1, NULL);
-+	key = request_key(type, key_desc + 1, NULL);
- 	if (IS_ERR(key)) {
- 		kzfree(new_key_string);
- 		return PTR_ERR(key);
-diff --git a/include/linux/key-type.h b/include/linux/key-type.h
-index bc9af55..2b2167b 100644
---- a/include/linux/key-type.h
-+++ b/include/linux/key-type.h
-@@ -176,6 +176,8 @@ extern struct key_type key_type_keyring;
- extern int register_key_type(struct key_type *ktype);
- extern void unregister_key_type(struct key_type *ktype);
- 
-+extern struct key_type *get_key_type(const char *type_name, size_t string_size);
-+
- extern int key_payload_reserve(struct key *key, size_t datalen);
- extern int key_instantiate_and_link(struct key *key,
- 				    const void *data,
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 44a80d6..ef76114 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -1156,6 +1156,48 @@ void unregister_key_type(struct key_type *ktype)
- }
- EXPORT_SYMBOL(unregister_key_type);
- 
-+/**
-+ * get_key_type - Get the type of key using its name
-+ * @type_name: Name of the key type to get
-+ * @string_size: Size of the string to match
-+ *
-+ * The functions support null ended string (string_size == 0) as well as
-+ * pointer on a string matching a number of characters (string_size > 0)
-+ *
-+ * Returns a pointer on the key type if successful, -ENOENT if the key type
-+ * is not registered.
-+ */
-+struct key_type *get_key_type(const char *type_name, size_t string_size)
-+{
-+	struct key_type *p;
-+	struct key_type *ktype = ERR_PTR(-ENOENT);
-+
-+	if (!type_name)
-+		return ktype;
-+
-+	down_write(&key_types_sem);
-+
-+	/* Search the key type in the list */
-+	list_for_each_entry(p, &key_types_list, link) {
-+		if (string_size) {
-+			if (strncmp(p->name, type_name, string_size) == 0) {
-+				ktype = p;
-+				break;
-+			}
-+		} else {
-+			if (strcmp(p->name, type_name) == 0) {
-+				ktype = p;
-+				break;
-+			}
-+		}
-+	}
-+
-+	up_read(&key_types_sem);
-+
-+	return ktype;
-+}
-+EXPORT_SYMBOL(get_key_type);
-+
- /*
-  * Initialise the key management state.
-  */
+generate a black key: <plain key> -> CAAM -> <black key>
+
+To keep a black key between reset, it must be stored in filesystem in a
+structure called "black blob". This structure contains the "black key" but
+also encryption information. It is also generated by the CAAM using a key
+only accessible by the hardware but which doesn't change between reset of
+the CAAM.
+
+generate a black blob: <black key> -> CAAM -> <black blob> -> FS
+obtain the black key: FS -> <black blob> -> CAAM -> <black key>
+
+The creation of such structures and its use was not exposed to userspace so
+it was complicated to use and required custom development. We would like to
+ease this using interface which are known and used:
+ - Linux key retention service : Allow to generate or load keys in a
+	keyring	which can be used by applications.
+ - dm-crypt : device mapper allowing to encrypt data.
+
+The capacity to generate or load keys already available in the Linux key
+retention service does not allows to exploit CAAM capabilities hence we
+need to create a new key_type. The new key type "caam_tk" allows to:
+ - Create a black key from random
+ - Create a black key from a red key
+ - Load a black blob to retrieve the black key
+
+The patch 01 presents the implementation of the key type is available in
+the RFC. This implementation is presented to give context but cannot be
+compiled as it requires other components not presented in this RFC.
+
+We target dm-crypt to perform the disk encryption. It can retrieve keys
+from the Linux key retention service however it only supports the key
+type "user" and "logon". In order to use keys from our new key type, we
+need to either:
+ - add support for our new key type : dm-crypt need a reference on the key
+	type structure.
+ - support any key type : the reference on the key type is retrieved from
+	the key subsystem based on the name of the key type
+
+The patch 02 present the implementation of the second solution. The main
+advantage of this implementation are:
+ - The reference on the key type is no more needed at compile time
+ - All future key type will be supported
+ - Only the key type registered can be obtained (key type as module)
+
+We think that this modification of dm-crypt and the key subsystem will ease
+the use of dm-crypt and the development of key type.
+
+Franck LENORMAND (2):
+  drivers: crypto: caam: key: Add caam_tk key type
+  dm-crypt: Use any key type which is registered
+
+ drivers/crypto/caam/caam_key.c | 623 +++++++++++++++++++++++++++++++++++++++++
+ drivers/crypto/caam/caam_key.h |  58 ++++
+ drivers/md/dm-crypt.c          |  11 +-
+ include/linux/key-type.h       |   2 +
+ security/keys/key.c            |  42 +++
+ 5 files changed, 731 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/crypto/caam/caam_key.c
+ create mode 100644 drivers/crypto/caam/caam_key.h
+
 -- 
 2.7.4
 
