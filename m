@@ -1,74 +1,959 @@
-Return-Path: <SRS0=EupR=RE=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=8tWj=RG=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D57C43381
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 22:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F08C43381
+	for <linux-security-module@archiver.kernel.org>; Sun,  3 Mar 2019 02:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F7E20684
-	for <linux-security-module@archiver.kernel.org>; Fri,  1 Mar 2019 22:28:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE18420838
+	for <linux-security-module@archiver.kernel.org>; Sun,  3 Mar 2019 02:53:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbfCAW2z (ORCPT
+        id S1726090AbfCCCxU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 1 Mar 2019 17:28:55 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:49868 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbfCAW2z (ORCPT
+        Sat, 2 Mar 2019 21:53:20 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:53950 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbfCCCxT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 1 Mar 2019 17:28:55 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id D689AB38; Fri,  1 Mar 2019 16:28:53 -0600 (CST)
-Date:   Fri, 1 Mar 2019 16:28:53 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Ben Dooks <ben.dooks@codethink.co.uk>
-Cc:     keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        linux-kernel@lists.codethink.co.uk
-Subject: Re: [PATCH] keys: fix missing __user in KEYCTL_PKEY_QUERY
-Message-ID: <20190301222853.GA17210@mail.hallyn.com>
-References: <20190301113026.17721-1-ben.dooks@codethink.co.uk>
+        Sat, 2 Mar 2019 21:53:19 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1h0HFO-00023u-Sy; Sun, 03 Mar 2019 02:53:06 +0000
+Date:   Sun, 3 Mar 2019 02:53:02 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        ebiederm@xmission.com, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 15/43] vfs: Add configuration parser helpers
+Message-ID: <20190303025259.GN2217@ZenIV.linux.org.uk>
+References: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
+ <155059382463.12449.9058984258656142511.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190301113026.17721-1-ben.dooks@codethink.co.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <155059382463.12449.9058984258656142511.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 01, 2019 at 11:30:26AM +0000, Ben Dooks wrote:
-> The arg5 of KEYCTL_PKEY_QUERY should have a __user pointer tag on
-> it as it is a user pointer. This clears the following sparse warning
-> for this:
-> 
-> security/keys/keyctl.c:1755:43: warning: incorrect type in argument 3 (different address spaces)
-> security/keys/keyctl.c:1755:43:    expected struct keyctl_pkey_query [noderef] <asn:1>*<noident>
-> security/keys/keyctl.c:1755:43:    got struct keyctl_pkey_query *<noident>
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+On Tue, Feb 19, 2019 at 04:30:24PM +0000, David Howells wrote:
+> Because the new API passes in key,value parameters, match_token() cannot be
+> used with it.  Instead, provide three new helpers to aid with parsing:
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+[snip]
 
-> ---
->  security/keys/keyctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-> index 7bbe03593e58..3e4053a217c3 100644
-> --- a/security/keys/keyctl.c
-> +++ b/security/keys/keyctl.c
-> @@ -1752,7 +1752,7 @@ SYSCALL_DEFINE5(keyctl, int, option, unsigned long, arg2, unsigned long, arg3,
->  			return -EINVAL;
->  		return keyctl_pkey_query((key_serial_t)arg2,
->  					 (const char __user *)arg4,
-> -					 (struct keyctl_pkey_query *)arg5);
-> +					 (struct keyctl_pkey_query __user *)arg5);
->  
->  	case KEYCTL_PKEY_ENCRYPT:
->  	case KEYCTL_PKEY_DECRYPT:
-> -- 
-> 2.20.1
+... and the same, with horrible macros taken out and shot.  The only difference
+is in the way fsparam_...() family is defined; it's *NOT* a weird vararg now.
+All users in that series are two-argument ones, so they remain as-is.
+Not-ready-for-merge NFS (and even less ready btrfs) patch series had been
+adjusted to match (with results of macro expansion unchanged compared to
+the earlier variant).
+
+commit 31d921c7fb9691722ba9503b64153cdc322a7fa8
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Nov 1 23:07:24 2018 +0000
+
+    vfs: Add configuration parser helpers
+    
+    Because the new API passes in key,value parameters, match_token() cannot be
+    used with it.  Instead, provide three new helpers to aid with parsing:
+    
+     (1) fs_parse().  This takes a parameter and a simple static description of
+         all the parameters and maps the key name to an ID.  It returns 1 on a
+         match, 0 on no match if unknowns should be ignored and some other
+         negative error code on a parse error.
+    
+         The parameter description includes a list of key names to IDs, desired
+         parameter types and a list of enumeration name -> ID mappings.
+    
+         [!] Note that for the moment I've required that the key->ID mapping
+         array is expected to be sorted and unterminated.  The size of the
+         array is noted in the fsconfig_parser struct.  This allows me to use
+         bsearch(), but I'm not sure any performance gain is worth the hassle
+         of requiring people to keep the array sorted.
+    
+         The parameter type array is sized according to the number of parameter
+         IDs and is indexed directly.  The optional enum mapping array is an
+         unterminated, unsorted list and the size goes into the fsconfig_parser
+         struct.
+    
+         The function can do some additional things:
+    
+            (a) If it's not ambiguous and no value is given, the prefix "no" on
+                a key name is permitted to indicate that the parameter should
+                be considered negatory.
+    
+            (b) If the desired type is a single simple integer, it will perform
+                an appropriate conversion and store the result in a union in
+                the parse result.
+    
+            (c) If the desired type is an enumeration, {key ID, name} will be
+                looked up in the enumeration list and the matching value will
+                be stored in the parse result union.
+    
+            (d) Optionally generate an error if the key is unrecognised.
+    
+         This is called something like:
+    
+            enum rdt_param {
+                    Opt_cdp,
+                    Opt_cdpl2,
+                    Opt_mba_mpbs,
+                    nr__rdt_params
+            };
+    
+            const struct fs_parameter_spec rdt_param_specs[nr__rdt_params] = {
+                    [Opt_cdp]       = { fs_param_is_bool },
+                    [Opt_cdpl2]     = { fs_param_is_bool },
+                    [Opt_mba_mpbs]  = { fs_param_is_bool },
+            };
+    
+            const const char *const rdt_param_keys[nr__rdt_params] = {
+                    [Opt_cdp]       = "cdp",
+                    [Opt_cdpl2]     = "cdpl2",
+                    [Opt_mba_mpbs]  = "mba_mbps",
+            };
+    
+            const struct fs_parameter_description rdt_parser = {
+                    .name           = "rdt",
+                    .nr_params      = nr__rdt_params,
+                    .keys           = rdt_param_keys,
+                    .specs          = rdt_param_specs,
+                    .no_source      = true,
+            };
+    
+            int rdt_parse_param(struct fs_context *fc,
+                                struct fs_parameter *param)
+            {
+                    struct fs_parse_result parse;
+                    struct rdt_fs_context *ctx = rdt_fc2context(fc);
+                    int ret;
+    
+                    ret = fs_parse(fc, &rdt_parser, param, &parse);
+                    if (ret < 0)
+                            return ret;
+    
+                    switch (parse.key) {
+                    case Opt_cdp:
+                            ctx->enable_cdpl3 = true;
+                            return 0;
+                    case Opt_cdpl2:
+                            ctx->enable_cdpl2 = true;
+                            return 0;
+                    case Opt_mba_mpbs:
+                            ctx->enable_mba_mbps = true;
+                            return 0;
+                    }
+    
+                    return -EINVAL;
+            }
+    
+     (2) fs_lookup_param().  This takes a { dirfd, path, LOOKUP_EMPTY? } or
+         string value and performs an appropriate path lookup to convert it
+         into a path object, which it will then return.
+    
+         If the desired type was a blockdev, the type of the looked up inode
+         will be checked to make sure it is one.
+    
+         This can be used like:
+    
+            enum foo_param {
+                    Opt_source,
+                    nr__foo_params
+            };
+    
+            const struct fs_parameter_spec foo_param_specs[nr__foo_params] = {
+                    [Opt_source]    = { fs_param_is_blockdev },
+            };
+    
+            const char *char foo_param_keys[nr__foo_params] = {
+                    [Opt_source]    = "source",
+            };
+    
+            const struct constant_table foo_param_alt_keys[] = {
+                    { "device",     Opt_source },
+            };
+    
+            const struct fs_parameter_description foo_parser = {
+                    .name           = "foo",
+                    .nr_params      = nr__foo_params,
+                    .nr_alt_keys    = ARRAY_SIZE(foo_param_alt_keys),
+                    .keys           = foo_param_keys,
+                    .alt_keys       = foo_param_alt_keys,
+                    .specs          = foo_param_specs,
+            };
+    
+            int foo_parse_param(struct fs_context *fc,
+                                struct fs_parameter *param)
+            {
+                    struct fs_parse_result parse;
+                    struct foo_fs_context *ctx = foo_fc2context(fc);
+                    int ret;
+    
+                    ret = fs_parse(fc, &foo_parser, param, &parse);
+                    if (ret < 0)
+                            return ret;
+    
+                    switch (parse.key) {
+                    case Opt_source:
+                            return fs_lookup_param(fc, &foo_parser, param,
+                                                   &parse, &ctx->source);
+                    default:
+                            return -EINVAL;
+                    }
+            }
+    
+     (3) lookup_constant().  This takes a table of named constants and looks up
+         the given name within it.  The table is expected to be sorted such
+         that bsearch() be used upon it.
+    
+         Possibly I should require the table be terminated and just use a
+         for-loop to scan it instead of using bsearch() to reduce hassle.
+    
+         Tables look something like:
+    
+            static const struct constant_table bool_names[] = {
+                    { "0",          false },
+                    { "1",          true },
+                    { "false",      false },
+                    { "no",         false },
+                    { "true",       true },
+                    { "yes",        true },
+            };
+    
+         and a lookup is done with something like:
+    
+            b = lookup_constant(bool_names, param->string, -1);
+    
+    Additionally, optional validation routines for the parameter description
+    are provided that can be enabled at compile time.  A later patch will
+    invoke these when a filesystem is registered.
+    
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+diff --git a/fs/Kconfig b/fs/Kconfig
+index ac474a61be37..25700b152c75 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -8,6 +8,13 @@ menu "File systems"
+ config DCACHE_WORD_ACCESS
+        bool
+ 
++config VALIDATE_FS_PARSER
++	bool "Validate filesystem parameter description"
++	default y
++	help
++	  Enable this to perform validation of the parameter description for a
++	  filesystem when it is registered.
++
+ if BLOCK
+ 
+ config FS_IOMAP
+diff --git a/fs/Makefile b/fs/Makefile
+index 5563cf34f7c2..9a0b8003f069 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -13,7 +13,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		seq_file.o xattr.o libfs.o fs-writeback.o \
+ 		pnode.o splice.o sync.o utimes.o d_path.o \
+ 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+-		fs_context.o
++		fs_context.o fs_parser.o
+ 
+ ifeq ($(CONFIG_BLOCK),y)
+ obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+new file mode 100644
+index 000000000000..842e8f749db6
+--- /dev/null
++++ b/fs/fs_parser.c
+@@ -0,0 +1,447 @@
++/* Filesystem parameter parser.
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/export.h>
++#include <linux/fs_context.h>
++#include <linux/fs_parser.h>
++#include <linux/slab.h>
++#include <linux/security.h>
++#include <linux/namei.h>
++#include "internal.h"
++
++static const struct constant_table bool_names[] = {
++	{ "0",		false },
++	{ "1",		true },
++	{ "false",	false },
++	{ "no",		false },
++	{ "true",	true },
++	{ "yes",	true },
++};
++
++/**
++ * lookup_constant - Look up a constant by name in an ordered table
++ * @tbl: The table of constants to search.
++ * @tbl_size: The size of the table.
++ * @name: The name to look up.
++ * @not_found: The value to return if the name is not found.
++ */
++int __lookup_constant(const struct constant_table *tbl, size_t tbl_size,
++		      const char *name, int not_found)
++{
++	unsigned int i;
++
++	for (i = 0; i < tbl_size; i++)
++		if (strcmp(name, tbl[i].name) == 0)
++			return tbl[i].value;
++
++	return not_found;
++}
++EXPORT_SYMBOL(__lookup_constant);
++
++static const struct fs_parameter_spec *fs_lookup_key(
++	const struct fs_parameter_description *desc,
++	const char *name)
++{
++	const struct fs_parameter_spec *p;
++
++	if (!desc->specs)
++		return NULL;
++
++	for (p = desc->specs; p->name; p++)
++		if (strcmp(p->name, name) == 0)
++			return p;
++
++	return NULL;
++}
++
++/*
++ * fs_parse - Parse a filesystem configuration parameter
++ * @fc: The filesystem context to log errors through.
++ * @desc: The parameter description to use.
++ * @param: The parameter.
++ * @result: Where to place the result of the parse
++ *
++ * Parse a filesystem configuration parameter and attempt a conversion for a
++ * simple parameter for which this is requested.  If successful, the determined
++ * parameter ID is placed into @result->key, the desired type is indicated in
++ * @result->t and any converted value is placed into an appropriate member of
++ * the union in @result.
++ *
++ * The function returns the parameter number if the parameter was matched,
++ * -ENOPARAM if it wasn't matched and @desc->ignore_unknown indicated that
++ * unknown parameters are okay and -EINVAL if there was a conversion issue or
++ * the parameter wasn't recognised and unknowns aren't okay.
++ */
++int fs_parse(struct fs_context *fc,
++	     const struct fs_parameter_description *desc,
++	     struct fs_parameter *param,
++	     struct fs_parse_result *result)
++{
++	const struct fs_parameter_spec *p;
++	const struct fs_parameter_enum *e;
++	int ret = -ENOPARAM, b;
++
++	result->has_value = !!param->string;
++	result->negated = false;
++	result->uint_64 = 0;
++
++	p = fs_lookup_key(desc, param->key);
++	if (!p) {
++		/* If we didn't find something that looks like "noxxx", see if
++		 * "xxx" takes the "no"-form negative - but only if there
++		 * wasn't an value.
++		 */
++		if (result->has_value)
++			goto unknown_parameter;
++		if (param->key[0] != 'n' || param->key[1] != 'o' || !param->key[2])
++			goto unknown_parameter;
++
++		p = fs_lookup_key(desc, param->key + 2);
++		if (!p)
++			goto unknown_parameter;
++		if (!(p->flags & fs_param_neg_with_no))
++			goto unknown_parameter;
++		result->boolean = false;
++		result->negated = true;
++	}
++
++	if (p->flags & fs_param_deprecated)
++		warnf(fc, "%s: Deprecated parameter '%s'",
++		      desc->name, param->key);
++
++	if (result->negated)
++		goto okay;
++
++	/* Certain parameter types only take a string and convert it. */
++	switch (p->type) {
++	case __fs_param_wasnt_defined:
++		return -EINVAL;
++	case fs_param_is_u32:
++	case fs_param_is_u32_octal:
++	case fs_param_is_u32_hex:
++	case fs_param_is_s32:
++	case fs_param_is_u64:
++	case fs_param_is_enum:
++	case fs_param_is_string:
++		if (param->type != fs_value_is_string)
++			goto bad_value;
++		if (!result->has_value) {
++			if (p->flags & fs_param_v_optional)
++				goto okay;
++			goto bad_value;
++		}
++		/* Fall through */
++	default:
++		break;
++	}
++
++	/* Try to turn the type we were given into the type desired by the
++	 * parameter and give an error if we can't.
++	 */
++	switch (p->type) {
++	case fs_param_is_flag:
++		if (param->type != fs_value_is_flag &&
++		    (param->type != fs_value_is_string || result->has_value))
++			return invalf(fc, "%s: Unexpected value for '%s'",
++				      desc->name, param->key);
++		result->boolean = true;
++		goto okay;
++
++	case fs_param_is_bool:
++		switch (param->type) {
++		case fs_value_is_flag:
++			result->boolean = true;
++			goto okay;
++		case fs_value_is_string:
++			if (param->size == 0) {
++				result->boolean = true;
++				goto okay;
++			}
++			b = lookup_constant(bool_names, param->string, -1);
++			if (b == -1)
++				goto bad_value;
++			result->boolean = b;
++			goto okay;
++		default:
++			goto bad_value;
++		}
++
++	case fs_param_is_u32:
++		ret = kstrtouint(param->string, 0, &result->uint_32);
++		goto maybe_okay;
++	case fs_param_is_u32_octal:
++		ret = kstrtouint(param->string, 8, &result->uint_32);
++		goto maybe_okay;
++	case fs_param_is_u32_hex:
++		ret = kstrtouint(param->string, 16, &result->uint_32);
++		goto maybe_okay;
++	case fs_param_is_s32:
++		ret = kstrtoint(param->string, 0, &result->int_32);
++		goto maybe_okay;
++	case fs_param_is_u64:
++		ret = kstrtoull(param->string, 0, &result->uint_64);
++		goto maybe_okay;
++
++	case fs_param_is_enum:
++		for (e = desc->enums; e->name[0]; e++) {
++			if (e->opt == p->opt &&
++			    strcmp(e->name, param->string) == 0) {
++				result->uint_32 = e->value;
++				goto okay;
++			}
++		}
++		goto bad_value;
++
++	case fs_param_is_string:
++		goto okay;
++	case fs_param_is_blob:
++		if (param->type != fs_value_is_blob)
++			goto bad_value;
++		goto okay;
++
++	case fs_param_is_fd: {
++		if (param->type != fs_value_is_file)
++			goto bad_value;
++		goto okay;
++	}
++
++	case fs_param_is_blockdev:
++	case fs_param_is_path:
++		goto okay;
++	default:
++		BUG();
++	}
++
++maybe_okay:
++	if (ret < 0)
++		goto bad_value;
++okay:
++	return p->opt;
++
++bad_value:
++	return invalf(fc, "%s: Bad value for '%s'", desc->name, param->key);
++unknown_parameter:
++	return -ENOPARAM;
++}
++EXPORT_SYMBOL(fs_parse);
++
++/**
++ * fs_lookup_param - Look up a path referred to by a parameter
++ * @fc: The filesystem context to log errors through.
++ * @param: The parameter.
++ * @want_bdev: T if want a blockdev
++ * @_path: The result of the lookup
++ */
++int fs_lookup_param(struct fs_context *fc,
++		    struct fs_parameter *param,
++		    bool want_bdev,
++		    struct path *_path)
++{
++	struct filename *f;
++	unsigned int flags = 0;
++	bool put_f;
++	int ret;
++
++	switch (param->type) {
++	case fs_value_is_string:
++		f = getname_kernel(param->string);
++		if (IS_ERR(f))
++			return PTR_ERR(f);
++		put_f = true;
++		break;
++	case fs_value_is_filename_empty:
++		flags = LOOKUP_EMPTY;
++		/* Fall through */
++	case fs_value_is_filename:
++		f = param->name;
++		put_f = false;
++		break;
++	default:
++		return invalf(fc, "%s: not usable as path", param->key);
++	}
++
++	ret = filename_lookup(param->dirfd, f, flags, _path, NULL);
++	if (ret < 0) {
++		errorf(fc, "%s: Lookup failure for '%s'", param->key, f->name);
++		goto out;
++	}
++
++	if (want_bdev &&
++	    !S_ISBLK(d_backing_inode(_path->dentry)->i_mode)) {
++		path_put(_path);
++		_path->dentry = NULL;
++		_path->mnt = NULL;
++		errorf(fc, "%s: Non-blockdev passed as '%s'",
++		       param->key, f->name);
++		ret = -ENOTBLK;
++	}
++
++out:
++	if (put_f)
++		putname(f);
++	return ret;
++}
++EXPORT_SYMBOL(fs_lookup_param);
++
++#ifdef CONFIG_VALIDATE_FS_PARSER
++/**
++ * validate_constant_table - Validate a constant table
++ * @name: Name to use in reporting
++ * @tbl: The constant table to validate.
++ * @tbl_size: The size of the table.
++ * @low: The lowest permissible value.
++ * @high: The highest permissible value.
++ * @special: One special permissible value outside of the range.
++ */
++bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
++			     int low, int high, int special)
++{
++	size_t i;
++	bool good = true;
++
++	if (tbl_size == 0) {
++		pr_warn("VALIDATE C-TBL: Empty\n");
++		return true;
++	}
++
++	for (i = 0; i < tbl_size; i++) {
++		if (!tbl[i].name) {
++			pr_err("VALIDATE C-TBL[%zu]: Null\n", i);
++			good = false;
++		} else if (i > 0 && tbl[i - 1].name) {
++			int c = strcmp(tbl[i-1].name, tbl[i].name);
++
++			if (c == 0) {
++				pr_err("VALIDATE C-TBL[%zu]: Duplicate %s\n",
++				       i, tbl[i].name);
++				good = false;
++			}
++			if (c > 0) {
++				pr_err("VALIDATE C-TBL[%zu]: Missorted %s>=%s\n",
++				       i, tbl[i-1].name, tbl[i].name);
++				good = false;
++			}
++		}
++
++		if (tbl[i].value != special &&
++		    (tbl[i].value < low || tbl[i].value > high)) {
++			pr_err("VALIDATE C-TBL[%zu]: %s->%d const out of range (%d-%d)\n",
++			       i, tbl[i].name, tbl[i].value, low, high);
++			good = false;
++		}
++	}
++
++	return good;
++}
++
++/**
++ * fs_validate_description - Validate a parameter description
++ * @desc: The parameter description to validate.
++ */
++bool fs_validate_description(const struct fs_parameter_description *desc)
++{
++	const struct fs_parameter_spec *param, *p2;
++	const struct fs_parameter_enum *e;
++	const char *name = desc->name;
++	unsigned int nr_params = 0;
++	bool good = true, enums = false;
++
++	pr_notice("*** VALIDATE %s ***\n", name);
++
++	if (!name[0]) {
++		pr_err("VALIDATE Parser: No name\n");
++		name = "Unknown";
++		good = false;
++	}
++
++	if (desc->specs) {
++		for (param = desc->specs; param->name; param++) {
++			enum fs_parameter_type t = param->type;
++
++			/* Check that the type is in range */
++			if (t == __fs_param_wasnt_defined ||
++			    t >= nr__fs_parameter_type) {
++				pr_err("VALIDATE %s: PARAM[%s] Bad type %u\n",
++				       name, param->name, t);
++				good = false;
++			} else if (t == fs_param_is_enum) {
++				enums = true;
++			}
++
++			/* Check for duplicate parameter names */
++			for (p2 = desc->specs; p2 < param; p2++) {
++				if (strcmp(param->name, p2->name) == 0) {
++					pr_err("VALIDATE %s: PARAM[%s]: Duplicate\n",
++					       name, param->name);
++					good = false;
++				}
++			}
++		}
++
++		nr_params = param - desc->specs;
++	}
++
++	if (desc->enums) {
++		if (!nr_params) {
++			pr_err("VALIDATE %s: Enum table but no parameters\n",
++			       name);
++			good = false;
++			goto no_enums;
++		}
++		if (!enums) {
++			pr_err("VALIDATE %s: Enum table but no enum-type values\n",
++			       name);
++			good = false;
++			goto no_enums;
++		}
++
++		for (e = desc->enums; e->name[0]; e++) {
++			/* Check that all entries in the enum table have at
++			 * least one parameter that uses them.
++			 */
++			for (param = desc->specs; param->name; param++) {
++				if (param->opt == e->opt &&
++				    param->type != fs_param_is_enum) {
++					pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
++					       name, e - desc->enums, param->name);
++					good = false;
++				}
++			}
++		}
++
++		/* Check that all enum-type parameters have at least one enum
++		 * value in the enum table.
++		 */
++		for (param = desc->specs; param->name; param++) {
++			if (param->type != fs_param_is_enum)
++				continue;
++			for (e = desc->enums; e->name[0]; e++)
++				if (e->opt == param->opt)
++					break;
++			if (!e->name[0]) {
++				pr_err("VALIDATE %s: PARAM[%s] enum with no values\n",
++				       name, param->name);
++				good = false;
++			}
++		}
++	} else {
++		if (enums) {
++			pr_err("VALIDATE %s: enum-type values, but no enum table\n",
++			       name);
++			good = false;
++			goto no_enums;
++		}
++	}
++
++no_enums:
++	return good;
++}
++#endif /* CONFIG_VALIDATE_FS_PARSER */
+diff --git a/fs/internal.h b/fs/internal.h
+index 8f8d07cc433f..6a8b71643af4 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -61,6 +61,8 @@ extern void fc_drop_locked(struct fs_context *);
+ /*
+  * namei.c
+  */
++extern int filename_lookup(int dfd, struct filename *name, unsigned flags,
++			   struct path *path, struct path *root);
+ extern int user_path_mountpoint_at(int, const char __user *, unsigned int, struct path *);
+ extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
+ 			   const char *, unsigned int, struct path *);
+diff --git a/fs/namei.c b/fs/namei.c
+index 914178cdbe94..a85deb55d0c9 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2333,8 +2333,8 @@ static int path_lookupat(struct nameidata *nd, unsigned flags, struct path *path
+ 	return err;
+ }
+ 
+-static int filename_lookup(int dfd, struct filename *name, unsigned flags,
+-			   struct path *path, struct path *root)
++int filename_lookup(int dfd, struct filename *name, unsigned flags,
++		    struct path *path, struct path *root)
+ {
+ 	int retval;
+ 	struct nameidata nd;
+diff --git a/include/linux/errno.h b/include/linux/errno.h
+index 3cba627577d6..d73f597a2484 100644
+--- a/include/linux/errno.h
++++ b/include/linux/errno.h
+@@ -18,6 +18,7 @@
+ #define ERESTART_RESTARTBLOCK 516 /* restart by calling sys_restart_syscall */
+ #define EPROBE_DEFER	517	/* Driver requests probe retry */
+ #define EOPENSTALE	518	/* open found a stale dentry */
++#define ENOPARAM	519	/* Parameter not supported */
+ 
+ /* Defined for the NFSv3 protocol */
+ #define EBADHANDLE	521	/* Illegal NFS file handle */
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index d208cc40b868..899027c94788 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -35,6 +35,35 @@ enum fs_context_purpose {
+ };
+ 
+ /*
++ * Type of parameter value.
++ */
++enum fs_value_type {
++	fs_value_is_undefined,
++	fs_value_is_flag,		/* Value not given a value */
++	fs_value_is_string,		/* Value is a string */
++	fs_value_is_blob,		/* Value is a binary blob */
++	fs_value_is_filename,		/* Value is a filename* + dirfd */
++	fs_value_is_filename_empty,	/* Value is a filename* + dirfd + AT_EMPTY_PATH */
++	fs_value_is_file,		/* Value is a file* */
++};
++
++/*
++ * Configuration parameter.
++ */
++struct fs_parameter {
++	const char		*key;		/* Parameter name */
++	enum fs_value_type	type:8;		/* The type of value here */
++	union {
++		char		*string;
++		void		*blob;
++		struct filename	*name;
++		struct file	*file;
++	};
++	size_t	size;
++	int	dirfd;
++};
++
++/*
+  * Filesystem context for holding the parameters used in the creation or
+  * reconfiguration of a superblock.
+  *
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+new file mode 100644
+index 000000000000..d966f96ffe62
+--- /dev/null
++++ b/include/linux/fs_parser.h
+@@ -0,0 +1,151 @@
++/* Filesystem parameter description and parser
++ *
++ * Copyright (C) 2018 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#ifndef _LINUX_FS_PARSER_H
++#define _LINUX_FS_PARSER_H
++
++#include <linux/fs_context.h>
++
++struct path;
++
++struct constant_table {
++	const char	*name;
++	int		value;
++};
++
++/*
++ * The type of parameter expected.
++ */
++enum fs_parameter_type {
++	__fs_param_wasnt_defined,
++	fs_param_is_flag,
++	fs_param_is_bool,
++	fs_param_is_u32,
++	fs_param_is_u32_octal,
++	fs_param_is_u32_hex,
++	fs_param_is_s32,
++	fs_param_is_u64,
++	fs_param_is_enum,
++	fs_param_is_string,
++	fs_param_is_blob,
++	fs_param_is_blockdev,
++	fs_param_is_path,
++	fs_param_is_fd,
++	nr__fs_parameter_type,
++};
++
++/*
++ * Specification of the type of value a parameter wants.
++ *
++ * Note that the fsparam_flag(), fsparam_string(), fsparam_u32(), ... macros
++ * should be used to generate elements of this type.
++ */
++struct fs_parameter_spec {
++	const char		*name;
++	u8			opt;	/* Option number (returned by fs_parse()) */
++	enum fs_parameter_type	type:8;	/* The desired parameter type */
++	unsigned short		flags;
++#define fs_param_v_optional	0x0001	/* The value is optional */
++#define fs_param_neg_with_no	0x0002	/* "noxxx" is negative param */
++#define fs_param_neg_with_empty	0x0004	/* "xxx=" is negative param */
++#define fs_param_deprecated	0x0008	/* The param is deprecated */
++};
++
++struct fs_parameter_enum {
++	u8		opt;		/* Option number (as fs_parameter_spec::opt) */
++	char		name[14];
++	u8		value;
++};
++
++struct fs_parameter_description {
++	const char	name[16];		/* Name for logging purposes */
++	const struct fs_parameter_spec *specs;	/* List of param specifications */
++	const struct fs_parameter_enum *enums;	/* Enum values */
++};
++
++/*
++ * Result of parse.
++ */
++struct fs_parse_result {
++	bool			negated;	/* T if param was "noxxx" */
++	bool			has_value;	/* T if value supplied to param */
++	union {
++		bool		boolean;	/* For spec_bool */
++		int		int_32;		/* For spec_s32/spec_enum */
++		unsigned int	uint_32;	/* For spec_u32{,_octal,_hex}/spec_enum */
++		u64		uint_64;	/* For spec_u64 */
++	};
++};
++
++extern int fs_parse(struct fs_context *fc,
++		    const struct fs_parameter_description *desc,
++		    struct fs_parameter *value,
++		    struct fs_parse_result *result);
++extern int fs_lookup_param(struct fs_context *fc,
++			   struct fs_parameter *param,
++			   bool want_bdev,
++			   struct path *_path);
++
++extern int __lookup_constant(const struct constant_table tbl[], size_t tbl_size,
++			     const char *name, int not_found);
++#define lookup_constant(t, n, nf) __lookup_constant(t, ARRAY_SIZE(t), (n), (nf))
++
++#ifdef CONFIG_VALIDATE_FS_PARSER
++extern bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
++				    int low, int high, int special);
++extern bool fs_validate_description(const struct fs_parameter_description *desc);
++#else
++static inline bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
++					   int low, int high, int special)
++{ return true; }
++static inline bool fs_validate_description(const struct fs_parameter_description *desc)
++{ return true; }
++#endif
++
++/*
++ * Parameter type, name, index and flags element constructors.  Use as:
++ *
++ *  fsparam_xxxx("foo", Opt_foo)
++ *
++ * If existing helpers are not enough, direct use of __fsparam() would
++ * work, but any such case is probably a sign that new helper is needed.
++ * Helpers will remain stable; low-level implementation may change.
++ */
++#define __fsparam(TYPE, NAME, OPT, FLAGS) \
++	{ \
++		.name = NAME, \
++		.opt = OPT, \
++		.type = TYPE, \
++		.flags = FLAGS \
++	}
++
++#define fsparam_flag(NAME, OPT)	__fsparam(fs_param_is_flag, NAME, OPT, 0)
++#define fsparam_flag_no(NAME, OPT) \
++				__fsparam(fs_param_is_flag, NAME, OPT, \
++					    fs_param_neg_with_no)
++#define fsparam_bool(NAME, OPT)	__fsparam(fs_param_is_bool, NAME, OPT, 0)
++#define fsparam_u32(NAME, OPT)	__fsparam(fs_param_is_u32, NAME, OPT, 0)
++#define fsparam_u32oct(NAME, OPT) \
++				__fsparam(fs_param_is_u32_octal, NAME, OPT, 0)
++#define fsparam_u32hex(NAME, OPT) \
++				__fsparam(fs_param_is_u32_hex, NAME, OPT, 0)
++#define fsparam_s32(NAME, OPT)	__fsparam(fs_param_is_s32, NAME, OPT, 0)
++#define fsparam_u64(NAME, OPT)	__fsparam(fs_param_is_u64, NAME, OPT, 0)
++#define fsparam_enum(NAME, OPT)	__fsparam(fs_param_is_enum, NAME, OPT, 0)
++#define fsparam_string(NAME, OPT) \
++				__fsparam(fs_param_is_string, NAME, OPT, 0)
++#define fsparam_blob(NAME, OPT)	__fsparam(fs_param_is_blob, NAME, OPT, 0)
++#define fsparam_bdev(NAME, OPT)	__fsparam(fs_param_is_blockdev, NAME, OPT, 0)
++#define fsparam_path(NAME, OPT)	__fsparam(fs_param_is_path, NAME, OPT, 0)
++#define fsparam_fd(NAME, OPT)	__fsparam(fs_param_is_fd, NAME, OPT, 0)
++
++
++#endif /* _LINUX_FS_PARSER_H */
