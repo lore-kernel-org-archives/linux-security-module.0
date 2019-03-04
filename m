@@ -2,482 +2,197 @@ Return-Path: <SRS0=S0ZR=RH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44DE2C43381
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 18:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECFAC4360F
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 18:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E58D3206DD
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 18:27:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2AE8206BA
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 18:52:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O8ANvpPH"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="YgKt7wk6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbfCDS1d (ORCPT
+        id S1727291AbfCDSwX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Mar 2019 13:27:33 -0500
-Received: from mail-vk1-f199.google.com ([209.85.221.199]:44310 "EHLO
-        mail-vk1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726063AbfCDS1d (ORCPT
+        Mon, 4 Mar 2019 13:52:23 -0500
+Received: from uphb19pa08.eemsg.mail.mil ([214.24.26.82]:9329 "EHLO
+        USFB19PA11.eemsg.mail.mil" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726162AbfCDSwW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Mar 2019 13:27:33 -0500
-Received: by mail-vk1-f199.google.com with SMTP id 202so3945790vkv.11
-        for <linux-security-module@vger.kernel.org>; Mon, 04 Mar 2019 10:27:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=a8KvlTm2qToizifS+5ymLbeHsnyCcVmB8Y52LG3Kh4Y=;
-        b=O8ANvpPHkflH17Qe9jdhJCETmJdK2OK1dY1u6AdKvMehKJGLClaQiuWehLQxJVRF1r
-         /WmJjGU4D9BQK22UYM4FJBO797DxM0a2ZpK3Rt5S27RtR3oRrNw0gAfM+2QHsmjLkY7K
-         /l05BAD9xZeGOpLbo0EuJEoE14gQV0+5PVWAY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=a8KvlTm2qToizifS+5ymLbeHsnyCcVmB8Y52LG3Kh4Y=;
-        b=DWDk0T+mGV5GuTI8GJJQZuiDKRroggkyRfcfU0UE1e+QPagdOgdY+b02x4cd3avKG5
-         PU9M8SPk6KzZyYSKHWM3CRYWBqMp9rKB6R0j22E+A+gbJF9u2UALPgPCXJCgconnSu/t
-         MT9nq8DPeCAVyW9IoXKvK+UvmdJ57gJtR5bLN+qqDF1qJrpUvyxsEkUEbAenp6IqzKVX
-         0ulDI/I+kiBzF0dZ3MnVg4bRjzU6GPEu/QynyGuoKUFdh1aKl3pvKWV+PhFQ9jW0+/hU
-         E1DmrU/oNrbJB+4XIQVIxIJGAvqSgVSZOTnOrdM0Xa+w/b1zZGMcIMYcNWffcH/AY5hv
-         kWKg==
-X-Gm-Message-State: APjAAAUBS9kog5IGwIdOX9A7/qKZ3qRpRukVGRrJlmDbpG5N3nmy4Sr9
-        7Ug9l8YTcQdDdDfSN9a0GT2Znyz4e28xSUfy
-X-Google-Smtp-Source: APXvYqxwm9ohqk5OE92wsB4Z0to4O5peBZBpgemAz7T18HN6DCKgA8eKtlm5tEV9ZufK9GyMu5WL/sA0JrSZFe2Z
-X-Received: by 2002:a67:c518:: with SMTP id e24mr13430627vsk.12.1551724051172;
- Mon, 04 Mar 2019 10:27:31 -0800 (PST)
-Date:   Mon,  4 Mar 2019 10:27:27 -0800
-In-Reply-To: <CAJ-EccMu97tZCWXTakcTwqFwzXdzVDedgc3jWaRvaJu-duH6tQ@mail.gmail.com>
-Message-Id: <20190304182727.125419-1-mortonm@chromium.org>
-Mime-Version: 1.0
-References: <CAJ-EccMu97tZCWXTakcTwqFwzXdzVDedgc3jWaRvaJu-duH6tQ@mail.gmail.com>
-X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH v5 1/2] LSM: SafeSetID: gate setgid transitions
-From:   mortonm@chromium.org
-To:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-        casey@schaufler-ca.com, sds@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org
-Cc:     Micah Morton <mortonm@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 4 Mar 2019 13:52:22 -0500
+X-EEMSG-check-017: 117533107|USFB19PA11_EEMSG_MP7.csd.disa.mil
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by USFB19PA11.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 04 Mar 2019 18:52:19 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1551725539; x=1583261539;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=mOcW812sxEX8GI7oCIGPziVYsszmewLiDhWIvfUWgfQ=;
+  b=YgKt7wk6W5ZkBdrI4+ONzwBUf0ket7NEEm6I+arUTTZAM9PX68oLNRe/
+   aBUbmVRoTP9VEpOLZjxDNXxdA4D/jDrHaCl2RQ2XKwiJsXe75jN34v9fR
+   BZlEy4N1IL6RLkQ3BNkSjCxiW6lPRgJonBOYnNKtIBJSDhrxoyW2wD6/H
+   jb/20bfHTMOl02rworMu1pEBaaQJF85ylu3KURMIIw5zMJov+IHASpeqO
+   jSjRUJQiawfQc1UH85xhx613mNx7+626MypQZNXIHJ8VtP3lM+S1gAUVM
+   mVw0sMLrU6IgwQtv1Eg0Q3VxAidxgWVPIkPlmFwL+8e12kg5ByKWSmR+U
+   A==;
+X-IronPort-AV: E=Sophos;i="5.58,440,1544486400"; 
+   d="scan'208";a="21103139"
+IronPort-PHdr: =?us-ascii?q?9a23=3AadNgGxXY5asCdPP9fylRymMZLdrV8LGtZVwlr6?=
+ =?us-ascii?q?E/grcLSJyIuqrYZRGDv6dThVPEFb/W9+hDw7KP9fy5ASpYuN6oizMrSNR0TR?=
+ =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
+ =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vMBm6txndutQLioZ+N6g9zQ?=
+ =?us-ascii?q?fErGFVcOpM32NoIlyTnxf45siu+ZNo7jpdtfE8+cNeSKv2Z6s3Q6BWAzQgKG?=
+ =?us-ascii?q?A1+dbktQLfQguV53sTSXsZnxxVCAXY9h76X5Pxsizntuph3SSRIMP7QawoVT?=
+ =?us-ascii?q?mk8qxmUwHjhjsZODEl8WHXks1wg7xdoBK9vBx03orYbJiIOPZiYq/ReNUXSm?=
+ =?us-ascii?q?RbXsZVSidPHIWyYYUSBOYFJOpVr43wq14IoBCjBwejGfnvxydViHHo06000+?=
+ =?us-ascii?q?cvHw/I0wMvHd0BrHvaoc7pNKoQS+250LXEwDvBYv5QxDzz6JLIchckofyUQL?=
+ =?us-ascii?q?xwbdTeyVEvFwzbiFWbtJHrPzaP2eQJt2iU8ephXv+ohm48tg5xuSOixtssi4?=
+ =?us-ascii?q?bVhoIVzUrI9SNiwIkvP9G4R0l7YcC9HZZWqiqUNJN2T9s/T2xntys20L0LtY?=
+ =?us-ascii?q?OhcCQUx5kr2QTTZ+GBfoOV+BzsTvyRLi19hH99fbK/gAu9/la4x+3nU8m0zE?=
+ =?us-ascii?q?5Kri1YktnQrnwN1wLc6syASvZl4keuwyyP1wHO6uFfO0w0iaraJIIhwr43jJ?=
+ =?us-ascii?q?YTt1jMHjTql0nsia+Wd0Ek9vCp6+ThfLrmuoeRO5J7hwzxKKgjmtGzDf4mPg?=
+ =?us-ascii?q?UBQWSX4/mw2KXm/ULjQbVKivM2krPesJDfPckbvbO2AxRO34Y/6xewEzem0N?=
+ =?us-ascii?q?MCkXkBN1JKYgiLj4fuO1HQOPz4F+uwg0ywkDd3wPDLJqbhDY/JLnnDkbbgfb?=
+ =?us-ascii?q?B95lVGxwo10N9f/ZVUCrAcL/7pRkDxs9nYBAcjMwOo2+bnFMl91oQGVGKRDa?=
+ =?us-ascii?q?+ZN6PTvkWM5u80OemDepIauDbnJPg5/fLhkXg5mVoFd6mzwZQXcGy4HuhhI0?=
+ =?us-ascii?q?iBZHrsg9QBEWMNvgolV+Hqk1yDXiBJZ3msQq085ys3CIK7DY3bXICinKSB3D?=
+ =?us-ascii?q?unHp1Rfm1GDVWMEXDzd4WCQfgDdDydL9R7kjMaSLehS5Uu1Q20uADmzLpnK/?=
+ =?us-ascii?q?Le+jcEupL7yNh1++rTmAkp+jx6DsSSzWWNQHxvnm4TST823b5woUhgxVeYz6?=
+ =?us-ascii?q?d4mOZUFdtJ5/NGSg06L4LTz/RmC9DuXQLMZs+JR0y7QtWiGjwxVsg+w8IKY0?=
+ =?us-ascii?q?pkHtWiiRfD3zC0DLMPi7OLA5k0+LrG33ftP8Z912rG1K45glkiQ8tPM3Cmh6?=
+ =?us-ascii?q?Fm+wjQGYHJiUOZmLiudakHwi7N+3mMzXCUsEFbTgFwS6PFUm4bZkfMqtT5/E?=
+ =?us-ascii?q?zCRae0Cbs7KgtB1dKCKqxSZ93tjFVGQurjOdvHb2KsnWewBBGIxrWCbIrxYG?=
+ =?us-ascii?q?gdwirdB1YekwwJ/naJKxI+BiG/rGLaFjBuEkjvY0z0++lktHy7VlM0zx2Nb0?=
+ =?us-ascii?q?B507q1+xgVheGTSv8K0LIEozoupCtqHFmj29LbEMSApwV/c6VGe98940lI1X?=
+ =?us-ascii?q?jftwNjOpysNadihkQRcw5vpUPhyw13CplckcgttH4q1xR9KaaZ0FNHajOZ0o?=
+ =?us-ascii?q?v9OqPYKmbs5hCjca3W1U/E0NaQ5KgP7O40q1L5vAGmDkAi6Wlo08FJ03uA4Z?=
+ =?us-ascii?q?XHFBcdUJzrXUYz7Bh6p6rXYjMj6IzJ1X1jK7W0viXe1NIuAesv0gygcMtHMK?=
+ =?us-ascii?q?OYCA/yFNUXB8yvKOwshlioYQsIPPtM+6EoIsOmbfqG2LKrPep5mTKminlI4J?=
+ =?us-ascii?q?150k2S7Cd8VOHI0Igfw/2C3QuISS38jFG/vcDzg4xEYisSHmXsgRTjUatYfK?=
+ =?us-ascii?q?46Ro8PGHW/JYXj3dx6loz8XVZR8lK5AFIKnsSufEzWJ2L8wwBTnWsQsHWj0X?=
+ =?us-ascii?q?+mwDtlmjUBtKeT3CXShe/lcUxDcktKR21llh/XM4WugtwbFBytbgstkwCN/l?=
+ =?us-ascii?q?T33aVXpeJ/Mj+Ab11Pen3NM2x6Uqa2/oGHaspL5YJg5T5bS8ygcFuaTfj7uB?=
+ =?us-ascii?q?Jc3CT9STgNjAsnfi2n782q1ydxj3iQeTMq8SvU?=
+X-IPAS-Result: =?us-ascii?q?A2CuBQAdc31c/wHyM5BlHAEBAQQBAQcEAQGBZYFhBSqBO?=
+ =?us-ascii?q?DOEL5NlTAEBAQEBAQaBCC2JPJBgOAGEQAKEJSI4EgEBAwEBAQIBAwIBbCiCO?=
+ =?us-ascii?q?ikBgmYBAQEBAgEjFUEFCwsYAgImAgJXBgEMCAEBF4JIP4FpBQipJoEvhUSEZ?=
+ =?us-ascii?q?oELJIsoF3iBB4E4gmuEO4NQglcChzaCWoIIhRg7khkJizuDOoN5BhmBdIkqi?=
+ =?us-ascii?q?ASKZJQoIYFWKwgCGAghD4MokGghA4E1AQGNQQ8XBIIjAQE?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 04 Mar 2019 18:52:17 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x24IoSsM026122;
+        Mon, 4 Mar 2019 13:50:28 -0500
+Subject: Re: overlayfs access checks on underlying layers
+To:     Mark Salyzyn <salyzyn@android.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        LSM <linux-security-module@vger.kernel.org>
+References: <CAJfpegs9JjkXguemL4qSiBvRP6Dnut-D+nJo-oLFXkfCL1Egvw@mail.gmail.com>
+ <CAJfpegvfqx+0D32n1h2X7oj5d1mZWiLTcSSGpBnD+ba7AKzPyA@mail.gmail.com>
+ <20181127210542.GA2599@redhat.com>
+ <CAJfpegtQGM2z9TOt3DWwd39fC60cQknsC4vNnj7YimVEubRzUg@mail.gmail.com>
+ <20181128170302.GA12405@redhat.com>
+ <377b7d4f-eb1d-c281-5c67-8ab6de77c881@tycho.nsa.gov>
+ <CAJfpegtNhcWD0VWy6LPtoDtQBfPu4x5iFsB053UMCidj6oMsuw@mail.gmail.com>
+ <26bce3be-49c2-cdd8-af03-1a78d0f268ae@tycho.nsa.gov>
+ <CAJfpeguL9xOh9Eq8LOP=ddJ4YD6nbp2UY6e2AYDVoHeCLuVhZA@mail.gmail.com>
+ <20181129134943.GA16762@redhat.com>
+ <fe78aaed-5fb1-3c51-1330-39de46ae39c5@android.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <ae2682f2-4a15-39e6-eb49-b9c0e72f10e4@tycho.nsa.gov>
+Date:   Mon, 4 Mar 2019 13:44:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <fe78aaed-5fb1-3c51-1330-39de46ae39c5@android.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Micah Morton <mortonm@chromium.org>
+On 3/4/19 12:01 PM, Mark Salyzyn wrote:
+> On 11/29/2018 05:49 AM, Vivek Goyal wrote:
+>> So will override_creds=off solve the NFS issue also where all access will
+>> happen with the creds of task now? Though it will stil require more
+>> priviliges in task for other operations in overlay to succeed.
+> 
+> NFS problems seems to have ended the discussion, too many stakeholders? 
+> too many outstanding questions?
+> 
+> Do we accept the limitations of the override_creds patch as is, and then 
+> have the folks more familiar with the NFS scenario(s) build on it?
+> 
+> [TL;DR]
+> 
+> After looking at all this discussion, it feels like a larger audited 
+> rewrite of the security model is in order and override_creds=off may be 
+> a disservice (although expediently deals with Android's needs) to a 
+> correct general solution. I admit I have little idea where to go from 
+> here for a general solution.
+> 
+> As far as I see it, the model of creator && caller credentials is a 
+> problem for any non-overlapping (MAC) privilege models. This patch 
+> allows one to drop any creator privilege escalation, re-introducing the 
+> "caller" to the lower layers.
+> 
+> As such I would expect a better model is to _always_ check the caller 
+> credentials again in the lower layers, and only check the creator 
+> credentials, some without caller credentials, for some special cases? 
+> Change an && to an || for some of the checks? What are those special 
+> cases? I must admit _none_ of those special cases need attention in the 
+> Android usage models though making it difficult for me to do the fight 
+> thing for the associated stakeholders.
 
-This patch generalizes the 'task_fix_setuid' LSM hook to enable hooking
-setgid transitions as well as setuid transitions. The hook is renamed to
-'task_fix_setid'. The patch introduces calls to this hook from the
-setgid functions in kernel/sys.c. This will allow the SafeSetID LSM to
-govern setgid transitions in addition to setuid transitions. This patch
-also makes sure the setgid functions in kernel/sys.c call
-security_capable_setid rather than the ordinary security_capable
-function, so that the security_capable hook in the SafeSetID LSM knows
-it is being invoked from a setid function.
+As I recall, there were multiple problems with using current process' 
+creds for the operations on the lower/upper/work directories:
 
-Signed-off-by: Micah Morton <mortonm@chromium.org>
----
-Changes since the last patch: Only one break is needed for the four
-LSM_SETGID_* cases in security/commoncap.c.
+- Some overlayfs operations on the lower/upper/work directories required 
+privilege (capabilities) that the current process might lack, e.g. to 
+set ownership and the like on upper or work files, to set special xattrs 
+used internally by overlayfs for whiteouts or similar purposes, to act 
+on files within the work dir which was inaccessible to the current 
+process to prevent accessing files in an incomplete state, etc. 
+Originally that was handled by temporarily elevating the effective 
+capabilities around the privileged operation in the overlayfs code but 
+that didn't help with the SELinux or other LSM capability checking that 
+was triggered upon the capable calls.  Without some change there you'd 
+have to allow all client process domains all of the relevant 
+capabilities in policy, greatly increasing their privileges.
 
- Documentation/admin-guide/LSM/SafeSetID.rst |  2 +-
- include/linux/lsm_hooks.h                   |  8 ++---
- include/linux/security.h                    | 36 ++++++++++++++-------
- kernel/sys.c                                | 35 ++++++++++++++------
- security/commoncap.c                        | 22 ++++++++-----
- security/safesetid/lsm.c                    | 12 +++----
- security/security.c                         |  4 +--
- 7 files changed, 76 insertions(+), 43 deletions(-)
+- The original logic was checking access to the lower dir/files in the 
+context of the current process when performing some operation that 
+modifies the file content or metadata, thereby triggering a SELinux/LSM 
+write or similar check, even though the actual data or metadata 
+modification occurs to the copied-up file instead and does not affect 
+the lower dir/files.  That was preventing making the lower dir/file 
+labels read-only to the client processes in the policy, which was 
+desired for the container use case.
 
-diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/admin-guide/LSM/SafeSetID.rst
-index 212434ef65ad..670a6544fd39 100644
---- a/Documentation/admin-guide/LSM/SafeSetID.rst
-+++ b/Documentation/admin-guide/LSM/SafeSetID.rst
-@@ -88,7 +88,7 @@ other system interactions, including use of pid namespaces and device creation.
- Use an existing LSM
- -------------------
- None of the other in-tree LSMs have the capability to gate setid transitions, or
--even employ the security_task_fix_setuid hook at all. SELinux says of that hook:
-+even employ the security_task_fix_setid hook at all. SELinux says of that hook:
- "Since setuid only affects the current process, and since the SELinux controls
- are not based on the Linux identity attributes, SELinux does not need to control
- this operation."
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 22fc786d723a..47fd04410fde 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -594,14 +594,14 @@
-  *	@size length of the file contents.
-  *	@id kernel read file identifier
-  *	Return 0 if permission is granted.
-- * @task_fix_setuid:
-+ * @task_fix_setid:
-  *	Update the module's state after setting one or more of the user
-  *	identity attributes of the current process.  The @flags parameter
-  *	indicates which of the set*uid system calls invoked this hook.  If
-  *	@new is the set of credentials that will be installed.  Modifications
-  *	should be made to this rather than to @current->cred.
-  *	@old is the set of credentials that are being replaces
-- *	@flags contains one of the LSM_SETID_* values.
-+ *	@flags contains one of the LSM_SET*ID_* values.
-  *	Return 0 on success.
-  * @task_setpgid:
-  *	Check permission before setting the process group identifier of the
-@@ -1594,7 +1594,7 @@ union security_list_options {
- 	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
- 	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
- 				     enum kernel_read_file_id id);
--	int (*task_fix_setuid)(struct cred *new, const struct cred *old,
-+	int (*task_fix_setid)(struct cred *new, const struct cred *old,
- 				int flags);
- 	int (*task_setpgid)(struct task_struct *p, pid_t pgid);
- 	int (*task_getpgid)(struct task_struct *p);
-@@ -1886,7 +1886,7 @@ struct security_hook_heads {
- 	struct hlist_head kernel_read_file;
- 	struct hlist_head kernel_post_read_file;
- 	struct hlist_head kernel_module_request;
--	struct hlist_head task_fix_setuid;
-+	struct hlist_head task_fix_setid;
- 	struct hlist_head task_setpgid;
- 	struct hlist_head task_getpgid;
- 	struct hlist_head task_getsid;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 13537a49ae97..76df3e22fed1 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -95,7 +95,7 @@ extern int cap_inode_getsecurity(struct inode *inode, const char *name,
- extern int cap_mmap_addr(unsigned long addr);
- extern int cap_mmap_file(struct file *file, unsigned long reqprot,
- 			 unsigned long prot, unsigned long flags);
--extern int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags);
-+extern int cap_task_fix_setid(struct cred *new, const struct cred *old, int flags);
- extern int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			  unsigned long arg4, unsigned long arg5);
- extern int cap_task_setscheduler(struct task_struct *p);
-@@ -128,17 +128,29 @@ extern unsigned long dac_mmap_min_addr;
- /*
-  * Values used in the task_security_ops calls
-  */
--/* setuid or setgid, id0 == uid or gid */
--#define LSM_SETID_ID	1
-+/* setuid, id0 == uid */
-+#define LSM_SETUID_ID	1
- 
--/* setreuid or setregid, id0 == real, id1 == eff */
--#define LSM_SETID_RE	2
-+/* setreuid, id0 == real, id1 == eff */
-+#define LSM_SETUID_RE	2
- 
--/* setresuid or setresgid, id0 == real, id1 == eff, uid2 == saved */
--#define LSM_SETID_RES	4
-+/* setresuid, id0 == real, id1 == eff, uid2 == saved */
-+#define LSM_SETUID_RES	4
- 
--/* setfsuid or setfsgid, id0 == fsuid or fsgid */
--#define LSM_SETID_FS	8
-+/* setfsuid, id0 == fsgid */
-+#define LSM_SETUID_FS	8
-+
-+/* setgid, id0 == gid */
-+#define LSM_SETGID_ID	16
-+
-+/* setregid, id0 == real, id1 == eff */
-+#define LSM_SETGID_RE	32
-+
-+/* setresgid, id0 == real, id1 == eff, uid2 == saved */
-+#define LSM_SETGID_RES	64
-+
-+/* setfsgid, id0 == fsgid */
-+#define LSM_SETGID_FS	128
- 
- /* Flags for security_task_prlimit(). */
- #define LSM_PRLIMIT_READ  1
-@@ -324,7 +336,7 @@ int security_kernel_load_data(enum kernel_load_data_id id);
- int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
- int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id);
--int security_task_fix_setuid(struct cred *new, const struct cred *old,
-+int security_task_fix_setid(struct cred *new, const struct cred *old,
- 			     int flags);
- int security_task_setpgid(struct task_struct *p, pid_t pgid);
- int security_task_getpgid(struct task_struct *p);
-@@ -923,11 +935,11 @@ static inline int security_kernel_post_read_file(struct file *file,
- 	return 0;
- }
- 
--static inline int security_task_fix_setuid(struct cred *new,
-+static inline int security_task_fix_setid(struct cred *new,
- 					   const struct cred *old,
- 					   int flags)
- {
--	return cap_task_fix_setuid(new, old, flags);
-+	return cap_task_fix_setid(new, old, flags);
- }
- 
- static inline int security_task_setpgid(struct task_struct *p, pid_t pgid)
-diff --git a/kernel/sys.c b/kernel/sys.c
-index c5f875048aef..615b44939238 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -372,7 +372,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
- 	if (rgid != (gid_t) -1) {
- 		if (gid_eq(old->gid, krgid) ||
- 		    gid_eq(old->egid, krgid) ||
--		    ns_capable(old->user_ns, CAP_SETGID))
-+		    ns_capable_setid(old->user_ns, CAP_SETGID))
- 			new->gid = krgid;
- 		else
- 			goto error;
-@@ -381,7 +381,7 @@ long __sys_setregid(gid_t rgid, gid_t egid)
- 		if (gid_eq(old->gid, kegid) ||
- 		    gid_eq(old->egid, kegid) ||
- 		    gid_eq(old->sgid, kegid) ||
--		    ns_capable(old->user_ns, CAP_SETGID))
-+		    ns_capable_setid(old->user_ns, CAP_SETGID))
- 			new->egid = kegid;
- 		else
- 			goto error;
-@@ -392,6 +392,10 @@ long __sys_setregid(gid_t rgid, gid_t egid)
- 		new->sgid = new->egid;
- 	new->fsgid = new->egid;
- 
-+	retval = security_task_fix_setid(new, old, LSM_SETGID_RE);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -427,13 +431,17 @@ long __sys_setgid(gid_t gid)
- 	old = current_cred();
- 
- 	retval = -EPERM;
--	if (ns_capable(old->user_ns, CAP_SETGID))
-+	if (ns_capable_setid(old->user_ns, CAP_SETGID))
- 		new->gid = new->egid = new->sgid = new->fsgid = kgid;
- 	else if (gid_eq(kgid, old->gid) || gid_eq(kgid, old->sgid))
- 		new->egid = new->fsgid = kgid;
- 	else
- 		goto error;
- 
-+	retval = security_task_fix_setid(new, old, LSM_SETGID_ID);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -539,7 +547,7 @@ long __sys_setreuid(uid_t ruid, uid_t euid)
- 		new->suid = new->euid;
- 	new->fsuid = new->euid;
- 
--	retval = security_task_fix_setuid(new, old, LSM_SETID_RE);
-+	retval = security_task_fix_setid(new, old, LSM_SETUID_RE);
- 	if (retval < 0)
- 		goto error;
- 
-@@ -597,7 +605,7 @@ long __sys_setuid(uid_t uid)
- 
- 	new->fsuid = new->euid = kuid;
- 
--	retval = security_task_fix_setuid(new, old, LSM_SETID_ID);
-+	retval = security_task_fix_setid(new, old, LSM_SETUID_ID);
- 	if (retval < 0)
- 		goto error;
- 
-@@ -672,7 +680,7 @@ long __sys_setresuid(uid_t ruid, uid_t euid, uid_t suid)
- 		new->suid = ksuid;
- 	new->fsuid = new->euid;
- 
--	retval = security_task_fix_setuid(new, old, LSM_SETID_RES);
-+	retval = security_task_fix_setid(new, old, LSM_SETUID_RES);
- 	if (retval < 0)
- 		goto error;
- 
-@@ -735,7 +743,7 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
- 	old = current_cred();
- 
- 	retval = -EPERM;
--	if (!ns_capable(old->user_ns, CAP_SETGID)) {
-+	if (!ns_capable_setid(old->user_ns, CAP_SETGID)) {
- 		if (rgid != (gid_t) -1        && !gid_eq(krgid, old->gid) &&
- 		    !gid_eq(krgid, old->egid) && !gid_eq(krgid, old->sgid))
- 			goto error;
-@@ -755,6 +763,10 @@ long __sys_setresgid(gid_t rgid, gid_t egid, gid_t sgid)
- 		new->sgid = ksgid;
- 	new->fsgid = new->egid;
- 
-+	retval = security_task_fix_setid(new, old, LSM_SETGID_RES);
-+	if (retval < 0)
-+		goto error;
-+
- 	return commit_creds(new);
- 
- error:
-@@ -817,7 +829,7 @@ long __sys_setfsuid(uid_t uid)
- 	    ns_capable_setid(old->user_ns, CAP_SETUID)) {
- 		if (!uid_eq(kuid, old->fsuid)) {
- 			new->fsuid = kuid;
--			if (security_task_fix_setuid(new, old, LSM_SETID_FS) == 0)
-+			if (security_task_fix_setid(new, old, LSM_SETUID_FS) == 0)
- 				goto change_okay;
- 		}
- 	}
-@@ -858,10 +870,13 @@ long __sys_setfsgid(gid_t gid)
- 
- 	if (gid_eq(kgid, old->gid)  || gid_eq(kgid, old->egid)  ||
- 	    gid_eq(kgid, old->sgid) || gid_eq(kgid, old->fsgid) ||
--	    ns_capable(old->user_ns, CAP_SETGID)) {
-+	    ns_capable_setid(old->user_ns, CAP_SETGID)) {
- 		if (!gid_eq(kgid, old->fsgid)) {
- 			new->fsgid = kgid;
--			goto change_okay;
-+			if (security_task_fix_setid(new,
-+						old,
-+						LSM_SETGID_FS) == 0)
-+				goto change_okay;
- 		}
- 	}
- 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index f1d117c3d8ae..4a038d3c7196 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1026,27 +1026,27 @@ static inline void cap_emulate_setxuid(struct cred *new, const struct cred *old)
- }
- 
- /**
-- * cap_task_fix_setuid - Fix up the results of setuid() call
-+ * cap_task_fix_setid - Fix up the results of setid() call
-  * @new: The proposed credentials
-  * @old: The current task's current credentials
-  * @flags: Indications of what has changed
-  *
-- * Fix up the results of setuid() call before the credential changes are
-+ * Fix up the results of setid() call before the credential changes are
-  * actually applied, returning 0 to grant the changes, -ve to deny them.
-  */
--int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
-+int cap_task_fix_setid(struct cred *new, const struct cred *old, int flags)
- {
- 	switch (flags) {
--	case LSM_SETID_RE:
--	case LSM_SETID_ID:
--	case LSM_SETID_RES:
-+	case LSM_SETUID_RE:
-+	case LSM_SETUID_ID:
-+	case LSM_SETUID_RES:
- 		/* juggle the capabilities to follow [RES]UID changes unless
- 		 * otherwise suppressed */
- 		if (!issecure(SECURE_NO_SETUID_FIXUP))
- 			cap_emulate_setxuid(new, old);
- 		break;
- 
--	case LSM_SETID_FS:
-+	case LSM_SETUID_FS:
- 		/* juggle the capabilties to follow FSUID changes, unless
- 		 * otherwise suppressed
- 		 *
-@@ -1066,6 +1066,12 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
- 		}
- 		break;
- 
-+	case LSM_SETGID_RE:
-+	case LSM_SETGID_ID:
-+	case LSM_SETGID_RES:
-+	case LSM_SETGID_FS:
-+                break;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1355,7 +1361,7 @@ struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(inode_getsecurity, cap_inode_getsecurity),
- 	LSM_HOOK_INIT(mmap_addr, cap_mmap_addr),
- 	LSM_HOOK_INIT(mmap_file, cap_mmap_file),
--	LSM_HOOK_INIT(task_fix_setuid, cap_task_fix_setuid),
-+	LSM_HOOK_INIT(task_fix_setid, cap_task_fix_setid),
- 	LSM_HOOK_INIT(task_prctl, cap_task_prctl),
- 	LSM_HOOK_INIT(task_setscheduler, cap_task_setscheduler),
- 	LSM_HOOK_INIT(task_setioprio, cap_task_setioprio),
-diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-index cecd38e2ac80..5deffa92f25f 100644
---- a/security/safesetid/lsm.c
-+++ b/security/safesetid/lsm.c
-@@ -120,7 +120,7 @@ static int check_uid_transition(kuid_t parent, kuid_t child)
-  * set*uid to user under new cred struct, or the UID transition is allowed (by
-  * Linux set*uid rules) even without CAP_SETUID.
-  */
--static int safesetid_task_fix_setuid(struct cred *new,
-+static int safesetid_task_fix_setid(struct cred *new,
- 				     const struct cred *old,
- 				     int flags)
- {
-@@ -130,7 +130,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 		return 0;
- 
- 	switch (flags) {
--	case LSM_SETID_RE:
-+	case LSM_SETUID_RE:
- 		/*
- 		 * Users for which setuid restrictions exist can only set the
- 		 * real UID to the real UID or the effective UID, unless an
-@@ -152,7 +152,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 			return check_uid_transition(old->euid, new->euid);
- 		}
- 		break;
--	case LSM_SETID_ID:
-+	case LSM_SETUID_ID:
- 		/*
- 		 * Users for which setuid restrictions exist cannot change the
- 		 * real UID or saved set-UID unless an explicit whitelist
-@@ -163,7 +163,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 		if (!uid_eq(old->suid, new->suid))
- 			return check_uid_transition(old->suid, new->suid);
- 		break;
--	case LSM_SETID_RES:
-+	case LSM_SETUID_RES:
- 		/*
- 		 * Users for which setuid restrictions exist cannot change the
- 		 * real UID, effective UID, or saved set-UID to anything but
-@@ -187,7 +187,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 			return check_uid_transition(old->suid, new->suid);
- 		}
- 		break;
--	case LSM_SETID_FS:
-+	case LSM_SETUID_FS:
- 		/*
- 		 * Users for which setuid restrictions exist cannot change the
- 		 * filesystem UID to anything but one of: the current real UID,
-@@ -256,7 +256,7 @@ void flush_safesetid_whitelist_entries(void)
- }
- 
- static struct security_hook_list safesetid_security_hooks[] = {
--	LSM_HOOK_INIT(task_fix_setuid, safesetid_task_fix_setuid),
-+	LSM_HOOK_INIT(task_fix_setid, safesetid_task_fix_setid),
- 	LSM_HOOK_INIT(capable, safesetid_security_capable)
- };
- 
-diff --git a/security/security.c b/security/security.c
-index ed9b8cbf21cf..450784fd1d2b 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1568,10 +1568,10 @@ int security_kernel_load_data(enum kernel_load_data_id id)
- }
- EXPORT_SYMBOL_GPL(security_kernel_load_data);
- 
--int security_task_fix_setuid(struct cred *new, const struct cred *old,
-+int security_task_fix_setid(struct cred *new, const struct cred *old,
- 			     int flags)
- {
--	return call_int_hook(task_fix_setuid, 0, new, old, flags);
-+	return call_int_hook(task_fix_setid, 0, new, old, flags);
- }
- 
- int security_task_setpgid(struct task_struct *p, pid_t pgid)
--- 
-2.21.0.352.gf09ad66450-goog
+You'd need to solve those problems in some way.
+
+> The lower privileged application access to the directory cache inherited 
+> by other callers troubles me (not for Android, but in general) and feels 
+> troublesome (flush out the directory cache? how to tag the privileges 
+> associated with the current instance of the directory cache?). Some 
+> operations (eg: delete a file for incoming, create mknod in upperdir) 
+> are special cases requiring the checking of caller credentaisl to 
+> function (not a problem for Android as the caller that deletes a file 
+> just so happens to have the necessary privileges).
+> 
+> Also, mount namespaces (in upper, lower, etc), how will they affect this 
+> all, is there a need for more attention to this as well?
+> 
+> -- Mark
 
