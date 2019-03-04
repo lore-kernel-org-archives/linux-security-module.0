@@ -3,68 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B29C43381
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 16:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B2D6C10F03
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 16:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5092920823
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 16:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D880220830
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 16:49:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726552AbfCDQWX convert rfc822-to-8bit (ORCPT
+        id S1726787AbfCDQtg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Mar 2019 11:22:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43220 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726409AbfCDQWX (ORCPT
+        Mon, 4 Mar 2019 11:49:36 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36046 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726755AbfCDQtf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Mar 2019 11:22:23 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8685C882F5;
-        Mon,  4 Mar 2019 16:22:23 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-148.rdu2.redhat.com [10.10.121.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 110755D6B3;
-        Mon,  4 Mar 2019 16:22:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1551715930.10911.468.camel@linux.ibm.com>
-References: <1551715930.10911.468.camel@linux.ibm.com> <155171231301.4764.5429281379303710262.stgit@warthog.procyon.org.uk>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-fsdevel@vger.kernel.org,
+        Mon, 4 Mar 2019 11:49:35 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x24Gk3mb067195
+        for <linux-security-module@vger.kernel.org>; Mon, 4 Mar 2019 11:49:34 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2r1659dqa7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Mar 2019 11:49:34 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 4 Mar 2019 16:49:32 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 4 Mar 2019 16:49:28 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x24GnR8i58785998
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 4 Mar 2019 16:49:28 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D80AB4C040;
+        Mon,  4 Mar 2019 16:49:27 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ED0BE4C04A;
+        Mon,  4 Mar 2019 16:49:26 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.93.84])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  4 Mar 2019 16:49:26 +0000 (GMT)
+Subject: Re: [PATCH] vfs: Move kernel_read_file() to fs/read_write.c
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: Move kernel_read_file() to fs/read_write.c
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Date:   Mon, 04 Mar 2019 16:22:20 +0000
-Message-ID: <12096.1551716540@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 04 Mar 2019 16:22:23 +0000 (UTC)
+Date:   Mon, 04 Mar 2019 11:49:16 -0500
+In-Reply-To: <12096.1551716540@warthog.procyon.org.uk>
+References: <1551715930.10911.468.camel@linux.ibm.com>
+         <155171231301.4764.5429281379303710262.stgit@warthog.procyon.org.uk>
+         <12096.1551716540@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19030416-0016-0000-0000-0000025DAEDB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19030416-0017-0000-0000-000032B82D2E
+Message-Id: <1551718156.10911.473.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-04_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903040122
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Mimi Zohar <zohar@linux.ibm.com> wrote:
-
-> > Move kernel_read_file() to fs/read_write.c and out of fs/exec.c as it's not
-> > actually used by anything in the execve subsystem.
+On Mon, 2019-03-04 at 16:22 +0000, David Howells wrote:
+> Mimi Zohar <zohar@linux.ibm.com> wrote:
 > 
-> All files being opened by the kernel should be calling one of these
-> helper routines.  Has that changed?
+> > > Move kernel_read_file() to fs/read_write.c and out of fs/exec.c as it's not
+> > > actually used by anything in the execve subsystem.
+> > 
+> > All files being opened by the kernel should be calling one of these
+> > helper routines.  Has that changed?
+> 
+> prepare_binprm() uses kernel_read() and has done since at least 2014.  The
+> binfmt drivers also use kernel_read().
+> 
+> Since kernel_read_file() is used by a bunch of things that aren't exec, even
+> if we switch exec to it, it should probably still go in fs/read_write.c since
+> it seems generic.
 
-prepare_binprm() uses kernel_read() and has done since at least 2014.  The
-binfmt drivers also use kernel_read().
+Oh, commit bdd1d2d3d251 ("fs: fix kernel_read prototype") moved
+kernel_read() to fs/read_write.c without moving the helpers.
+ Definitely makes sense to move the helpers.  Please include a
+reference to the commit in this patch. 
 
-Since kernel_read_file() is used by a bunch of things that aren't exec, even
-if we switch exec to it, it should probably still go in fs/read_write.c since
-it seems generic.
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-David
