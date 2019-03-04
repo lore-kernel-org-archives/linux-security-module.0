@@ -2,72 +2,83 @@ Return-Path: <SRS0=S0ZR=RH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648E6C43381
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 22:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CA3C43381
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 23:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 278672070B
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 22:11:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nbj5ObLW"
+	by mail.kernel.org (Postfix) with ESMTP id E9F9E206B8
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Mar 2019 23:59:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726076AbfCDWLA (ORCPT
+        id S1726080AbfCDX7h (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Mar 2019 17:11:00 -0500
-Received: from mail-io1-f49.google.com ([209.85.166.49]:39566 "EHLO
-        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbfCDWLA (ORCPT
+        Mon, 4 Mar 2019 18:59:37 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:16116 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbfCDX7h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Mar 2019 17:11:00 -0500
-Received: by mail-io1-f49.google.com with SMTP id x3so5284002ior.6
-        for <linux-security-module@vger.kernel.org>; Mon, 04 Mar 2019 14:11:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vj49IZmp1GrMY1xTUuQD9hq4RsIb2liKzZRRfy2CemA=;
-        b=Nbj5ObLWXYNVo6Hp3tJm7ii+yuZsP68jytnydqgfDdBl07K9iHRa7a4EX7EJne4Wfo
-         Q1K7PV7cWgKFi3UCLJc3RZIK43tPJbZxpslt151hqYk2lykff15TjqP2loLu7H/FFxfw
-         nGuuVGJuqNEjIUfV9CvwoO0ce5q/JvCm0IqJzmFIqi8ejFaY6Qt6M9uc8nBtMs81gd3b
-         VH65fm0dYVolbqvJPgVu9/nWOSIZmRhfZbvSZxgUcdGCw3UqsVB8pd1IAbBhfVi0OwX2
-         tletcFGKc0CQFKY755YyQVIKzH4ZQPFq/eokga0XGJoqUSp6rYo70BZlatNHtdad1WQZ
-         Beng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vj49IZmp1GrMY1xTUuQD9hq4RsIb2liKzZRRfy2CemA=;
-        b=Ph5amTsFjqUgnTud1ql6KT3rjiJzRzb6ZJQRRtYsiCgdiE96ZaXMMELGVGsNDPrKTe
-         B1O5+PXZvRVPvVUCD3UdKDfgoWLU//KKNpp11HjqRrkYGtZmei1VVHWHUg0w5n7vRF19
-         AYl/GsOUHu5klRnfHQ1vtrTfZC3tCaubIDZT246i2XDS1AcM/utwrmcM5XyDnjijmBdG
-         FBG9GW5uxsTNtrNh/bfBOtb0TpaVds/3jJKfU0CpKH1Bq1p4DbEwR76jqfB4IXSSieHs
-         2CsNdFpOLB9HnvDNXWSpRKVa17WO2Z9kJ8a4qNLwrUrupuED/9ghunWPaIR15NEmFaFU
-         Y7QA==
-X-Gm-Message-State: APjAAAXsfvQ/KrrmK5jtG7qdDp5nc2Mk2Vhw6i6hPn39ILnd+oCJnsqk
-        hPSXgjp+bV9PMh1kdvkJnKfU5QC2f79O8Kwut9Q1RzKOJ+k=
-X-Google-Smtp-Source: APXvYqwQrbFA5IlzK79qgPvlqYG+LyP4Ti+jgRCZ0sxsPgNpfnqXCIA2fvjkbvGSlTf7XawzfrnDhBbL038Gk9J0IaI=
-X-Received: by 2002:a5d:9254:: with SMTP id e20mr11205078iol.88.1551737459461;
- Mon, 04 Mar 2019 14:10:59 -0800 (PST)
+        Mon, 4 Mar 2019 18:59:37 -0500
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x24NxJwY065724;
+        Tue, 5 Mar 2019 08:59:19 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
+ Tue, 05 Mar 2019 08:59:19 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x24NxJmZ065720;
+        Tue, 5 Mar 2019 08:59:19 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x24NxJwx065719;
+        Tue, 5 Mar 2019 08:59:19 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201903042359.x24NxJwx065719@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [PATCH] tomoyo: Add a kernel config option for fuzzing testing.
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org
 MIME-Version: 1.0
-References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
-In-Reply-To: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Mon, 4 Mar 2019 14:10:48 -0800
-Message-ID: <CACdnJut3ix5nGOZ94KjxXPTdLWL1myi8rZcBv+0H3Gg2kAA5yg@mail.gmail.com>
-Subject: Re: [PULL REQUEST] Lock down patches
-To:     jmorris@namei.org
-Cc:     LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Tue, 05 Mar 2019 08:59:19 +0900
+References: <19e3dbac-d3ac-53b2-6e98-faf927bc72b3@i-love.sakura.ne.jp> <05b05166-d24a-3c50-6556-472f50a239b9@tycho.nsa.gov>
+In-Reply-To: <05b05166-d24a-3c50-6556-472f50a239b9@tycho.nsa.gov>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi James,
+Stephen Smalley wrote:
+> On 3/4/19 8:35 AM, Tetsuo Handa wrote:
+> > James, please include this patch for 5.1-rc1, for failing to include
+> > this patch will prevent various trees (SELinux/Smack/AppArmor) from
+> > proper testing due to this problem because syzbot is enabling both
+> > TOMOYO and one of SELinux/Smack/AppArmor via lsm= boot parameter.
+> > 
+> > By including this patch and building kernels with this config option
+> > enabled, syzbot will be able to continue proper testing.
+> 
+> Could you clarify the status of upstream TOMOYO?  Is its MAINTAINERS 
+> entry still accurate?  Is it still actively maintained?
 
-Based on feedback, I'm going to make a couple of small changes to this
-patchset and then resend.
+Mainly bugfixes and Q&A phase like
+https://osdn.net/projects/tomoyo/lists/archive/users-en/2017-July/000685.html .
+
+Now that TOMOYO can coexist with one of SELinux/Smack/AppArmor, TOMOYO users
+can borrow ready-made rules from them and utilize TOMOYO's ability to generate
+custom-made rules for things like
+https://tomoyo.osdn.jp/1.8/ssh-protection-using-environment.html .
+
+>                                                          Its existing 
+> documentation (in-tree and the tomoyo.osdn.jp site) seem to suggest that 
+> using the pre-LSM version and/or AKARI are preferred to using the 
+> upstream version. Is that still true, and do you envision it changing?
+
+I guess that majority of TOMOYO users are now using the upstream version. But
+pre-LSM version and/or AKARI will remain there until LKM-based LSMs becomes
+officially supported, for e.g. Fedora/RHEL users will need to use AKARI because
+TOMOYO is not available ( https://bugzilla.redhat.com/show_bug.cgi?id=542986 ).
