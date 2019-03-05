@@ -2,116 +2,315 @@ Return-Path: <SRS0=jfU4=RI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A3EC10F09
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Mar 2019 22:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CD8C10F09
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Mar 2019 23:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7893520643
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Mar 2019 22:17:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="jnz0IGkD"
+	by mail.kernel.org (Postfix) with ESMTP id 422CD20652
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Mar 2019 23:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726367AbfCEWRo (ORCPT
+        id S1726620AbfCEXSz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Mar 2019 17:17:44 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36241 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728215AbfCEWRn (ORCPT
+        Tue, 5 Mar 2019 18:18:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53984 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726430AbfCEXSy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Mar 2019 17:17:43 -0500
-Received: by mail-lf1-f66.google.com with SMTP id x206so7383915lff.3
-        for <linux-security-module@vger.kernel.org>; Tue, 05 Mar 2019 14:17:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=gycZSpHeEzm9Bb+y6ZInD4EPay3X1lr+WOAbT2jGc3w=;
-        b=jnz0IGkDAH3EbUDaoZRjIOIEFDuv5NkUhJiEvdccT9ZFXoGek84jVvPWz62nB56xzt
-         u7jWaFQPXkmeXoHX3aJIwIoOl3odyEtLJ7AOWwB/Qe7xgOX/e9csreQ1Ix9r5lgjVlV+
-         nELWXUq0Fb/BnX925sGYRn2GzV082ZO5evwAZFpw0pA9m8VusSmeW+TIlClYT3qZUV8/
-         2PHujH5ycFO4yAihsmEmumLXVtdtq23UAGVLJXnzt0VRMO6llxqMPiBNT+SW76QFLaZR
-         3YaoNBpMTvSN+lGWpW2AHN28OOqBqmS//AM4tYP8YnRRVdpo9/wDjrpO8GdKvmstBJup
-         5Zhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=gycZSpHeEzm9Bb+y6ZInD4EPay3X1lr+WOAbT2jGc3w=;
-        b=NLP1qVwPgypAGNDScd5w1xjyEnPgzVM2MrRSz16YbOQ+rwS90BE0PN3er3MkOjR6IR
-         6lX+gfR74qNEGLvtjbaZhXDAxKGeHhClYcDehoOPMW4TvvDZaAPyvGwJTiu4qvUu7CFF
-         meSq0/wQRlgVZVZkpNi2JO5GyT4eS5uwGC5wSlnj4kr04SOjtNAmelxe/8uGCcTYkHwE
-         LkH4r/kSS89/nqpTlhXtm4S2FANFFb2vbt5FgmSGUyjd7WmDVfeGxgjF2p3G63A5hsKS
-         BNKgAdL8sb9jKGQ3EXckknm9OIP2KikwFSxQZemGt8ntCq/UwMUjOobzDvWOwb9mEh/H
-         Z1nQ==
-X-Gm-Message-State: APjAAAX6SFLz6p9TuI/habSp5SpgdF9KdLJhcykMKrOrJDvFNvBzYLeT
-        EkEdKzQvoB7lNnrJEAqIGzVbT3XLxhVaEU8CEsuR
-X-Google-Smtp-Source: APXvYqz+rQBVNGS/1z9Vj6Y6ApudFtOTIYLDjwQEImtklgp7JGieOFj+YbzWRUPkHSuW+sDikWUng7YJe8jq6KrE5Ek=
-X-Received: by 2002:ac2:55b2:: with SMTP id y18mr2020169lfg.72.1551824261666;
- Tue, 05 Mar 2019 14:17:41 -0800 (PST)
+        Tue, 5 Mar 2019 18:18:54 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1FE315D67E;
+        Tue,  5 Mar 2019 23:18:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-148.rdu2.redhat.com [10.10.121.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 662E75DE69;
+        Tue,  5 Mar 2019 23:18:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] vfs: Move kernel_read_file() to fs/read_write.c
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 05 Mar 2019 23:18:51 +0000
+Message-ID: <155182793151.22751.13487483863282128982.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 5 Mar 2019 17:17:30 -0500
-Message-ID: <CAHC9VhRbDONFkYe5J2KtFSRdKcz5Z3vdJFuiZCi_EQiJHFaNtA@mail.gmail.com>
-Subject: [GIT PULL] SELinux patches for v5.1
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 05 Mar 2019 23:18:54 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+Commit bdd1d2d3d251 ("fs: fix kernel_read prototype") moved kernel_read()
+to fs/read_write.c without moving the helpers.
 
-Nine SELinux patches for v5.1, all bug fixes.  As far as I'm
-concerned, nothing really jumps out as risky or special to me, but
-each commit has a decent description so you can judge for yourself.
-As usual, everything passes the selinux-testsuite; please merge for
-v5.1.
+Move kernel_read_file() to fs/read_write.c and out of fs/exec.c as it's not
+actually used by anything in the execve subsystem.
 
-Thanks,
--Paul
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+---
 
---
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+ fs/exec.c       |  106 -------------------------------------------------------
+ fs/read_write.c |  106 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 106 insertions(+), 106 deletions(-)
 
- Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+diff --git a/fs/exec.c b/fs/exec.c
+index fb72d36f7823..cbb1a9cd25ca 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -61,7 +61,6 @@
+ #include <linux/pipe_fs_i.h>
+ #include <linux/oom.h>
+ #include <linux/compat.h>
+-#include <linux/vmalloc.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -892,111 +891,6 @@ struct file *open_exec(const char *name)
+ }
+ EXPORT_SYMBOL(open_exec);
+ 
+-int kernel_read_file(struct file *file, void **buf, loff_t *size,
+-		     loff_t max_size, enum kernel_read_file_id id)
+-{
+-	loff_t i_size, pos;
+-	ssize_t bytes = 0;
+-	int ret;
+-
+-	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
+-		return -EINVAL;
+-
+-	ret = deny_write_access(file);
+-	if (ret)
+-		return ret;
+-
+-	ret = security_kernel_read_file(file, id);
+-	if (ret)
+-		goto out;
+-
+-	i_size = i_size_read(file_inode(file));
+-	if (i_size <= 0) {
+-		ret = -EINVAL;
+-		goto out;
+-	}
+-	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
+-		ret = -EFBIG;
+-		goto out;
+-	}
+-
+-	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
+-		*buf = vmalloc(i_size);
+-	if (!*buf) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
+-
+-	pos = 0;
+-	while (pos < i_size) {
+-		bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
+-		if (bytes < 0) {
+-			ret = bytes;
+-			goto out;
+-		}
+-
+-		if (bytes == 0)
+-			break;
+-	}
+-
+-	if (pos != i_size) {
+-		ret = -EIO;
+-		goto out_free;
+-	}
+-
+-	ret = security_kernel_post_read_file(file, *buf, i_size, id);
+-	if (!ret)
+-		*size = pos;
+-
+-out_free:
+-	if (ret < 0) {
+-		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
+-			vfree(*buf);
+-			*buf = NULL;
+-		}
+-	}
+-
+-out:
+-	allow_write_access(file);
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(kernel_read_file);
+-
+-int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
+-			       loff_t max_size, enum kernel_read_file_id id)
+-{
+-	struct file *file;
+-	int ret;
+-
+-	if (!path || !*path)
+-		return -EINVAL;
+-
+-	file = filp_open(path, O_RDONLY, 0);
+-	if (IS_ERR(file))
+-		return PTR_ERR(file);
+-
+-	ret = kernel_read_file(file, buf, size, max_size, id);
+-	fput(file);
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
+-
+-int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
+-			     enum kernel_read_file_id id)
+-{
+-	struct fd f = fdget(fd);
+-	int ret = -EBADF;
+-
+-	if (!f.file)
+-		goto out;
+-
+-	ret = kernel_read_file(f.file, buf, size, max_size, id);
+-out:
+-	fdput(f);
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
+-
+ ssize_t read_code(struct file *file, unsigned long addr, loff_t pos, size_t len)
+ {
+ 	ssize_t res = vfs_read(file, (void __user *)addr, len, &pos);
+diff --git a/fs/read_write.c b/fs/read_write.c
+index ff3c5e6f87cf..555dcaec00ac 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -20,6 +20,7 @@
+ #include <linux/compat.h>
+ #include <linux/mount.h>
+ #include <linux/fs.h>
++#include <linux/vmalloc.h>
+ #include "internal.h"
+ 
+ #include <linux/uaccess.h>
+@@ -1362,6 +1363,111 @@ COMPAT_SYSCALL_DEFINE6(pwritev2, compat_ulong_t, fd,
+ 
+ #endif
+ 
++int kernel_read_file(struct file *file, void **buf, loff_t *size,
++		     loff_t max_size, enum kernel_read_file_id id)
++{
++	loff_t i_size, pos;
++	ssize_t bytes = 0;
++	int ret;
++
++	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
++		return -EINVAL;
++
++	ret = deny_write_access(file);
++	if (ret)
++		return ret;
++
++	ret = security_kernel_read_file(file, id);
++	if (ret)
++		goto out;
++
++	i_size = i_size_read(file_inode(file));
++	if (i_size <= 0) {
++		ret = -EINVAL;
++		goto out;
++	}
++	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
++		ret = -EFBIG;
++		goto out;
++	}
++
++	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
++		*buf = vmalloc(i_size);
++	if (!*buf) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	pos = 0;
++	while (pos < i_size) {
++		bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
++		if (bytes < 0) {
++			ret = bytes;
++			goto out;
++		}
++
++		if (bytes == 0)
++			break;
++	}
++
++	if (pos != i_size) {
++		ret = -EIO;
++		goto out_free;
++	}
++
++	ret = security_kernel_post_read_file(file, *buf, i_size, id);
++	if (!ret)
++		*size = pos;
++
++out_free:
++	if (ret < 0) {
++		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
++			vfree(*buf);
++			*buf = NULL;
++		}
++	}
++
++out:
++	allow_write_access(file);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(kernel_read_file);
++
++int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
++			       loff_t max_size, enum kernel_read_file_id id)
++{
++	struct file *file;
++	int ret;
++
++	if (!path || !*path)
++		return -EINVAL;
++
++	file = filp_open(path, O_RDONLY, 0);
++	if (IS_ERR(file))
++		return PTR_ERR(file);
++
++	ret = kernel_read_file(file, buf, size, max_size, id);
++	fput(file);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
++
++int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
++			     enum kernel_read_file_id id)
++{
++	struct fd f = fdget(fd);
++	int ret = -EBADF;
++
++	if (!f.file)
++		goto out;
++
++	ret = kernel_read_file(f.file, buf, size, max_size, id);
++out:
++	fdput(f);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
++
+ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 		  	   size_t count, loff_t max)
+ {
 
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20190305
-
-for you to fetch changes up to 45189a1998e00f6375ebd49d1e18161acddd73de:
-
- selinux: fix avc audit messages (2019-02-05 12:34:33 -0500)
-
-----------------------------------------------------------------
-selinux/stable-5.1 PR 20190305
-
-----------------------------------------------------------------
-Ondrej Mosnacek (6):
-     selinux: never allow relabeling on context mounts
-     selinux: do not override context on context mounts
-     selinux: inline some AVC functions used only once
-     selinux: replace some BUG_ON()s with a WARN_ON()
-     selinux: log invalid contexts in AVCs
-     selinux: replace BUG_ONs with WARN_ONs in avc.c
-
-Stephen Smalley (3):
-     selinux: avoid silent denials in permissive mode under RCU walk
-     selinux: stop passing MAY_NOT_BLOCK to the AVC upon follow_link
-     selinux: fix avc audit messages
-
-security/selinux/avc.c              | 199 +++++++++++++++++-------------------
-security/selinux/hooks.c            |  58 ++++++++---
-security/selinux/include/avc.h      |   6 +-
-security/selinux/include/security.h |   3 +
-security/selinux/ss/services.c      |  37 ++++++-
-5 files changed, 176 insertions(+), 127 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
