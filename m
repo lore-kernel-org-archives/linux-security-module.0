@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34733C4360F
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F568C43381
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0154D20842
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 395A020842
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O1ibSFci"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oDpvVEqX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfCGAAZ (ORCPT
+        id S1726655AbfCGAAX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Mar 2019 19:00:25 -0500
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:43176 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbfCGAAZ (ORCPT
+        Wed, 6 Mar 2019 19:00:23 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:50477 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfCGAAW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Mar 2019 19:00:25 -0500
-Received: by mail-qk1-f201.google.com with SMTP id a11so11537132qkk.10
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:24 -0800 (PST)
+        Wed, 6 Mar 2019 19:00:22 -0500
+Received: by mail-pf1-f201.google.com with SMTP id q21so15418942pfi.17
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=zcieI5+oJsXOBRD2KKmNlRR+gsKSY7mBPeZzRy6NCSc=;
-        b=O1ibSFciJav1PBiNgfW7eudRgTugTEl+TugUvK9qs+q2PFX0lyPloPkpzQwzw61I64
-         Q2zx5/02BIZdytE7FQiwVUDn2df256UDJt3cpW+z1UhfXc+rC+66FD0K/p4em9inKb8J
-         /XFuvm5TXkQ6iT7dbSpy6iXTYwfeRN0PYs6etedNN5+u7UuUuogetkzOVadi+RL0eXft
-         opqc9XF0yWDwaofLK3Zuk8uGos6c9ZFIxHG3yQ1SW4U/+mUBQBslM9ZYHjnaB77B3jQD
-         Nw0yLYzxPB66JJn3zzoVdET/cQayg7nSTwBR75/2YCgJarOi/6b98ytYorvyqE+K2ES0
-         dS0Q==
+        bh=Slizqb5/EuTPaUwcXF3KMpeQ4PrQTQCbKq0uAOfUYTM=;
+        b=oDpvVEqXJpIrSthsVtrG1ShhFNsu55AnYk1HsI+XwYF/iW9kwSA2kBAvPZw+7yQjfw
+         vzSxG4bd1r2co7712oCcMqt74ttgVvINiMXH2LrnEfxsC4EDf5f61m15hsOZGc8wurdo
+         z6ZJHSMjH/LZX7w3vZkraygwiuGz5NTi58N3Acqfjmle8xv12Sll71j3ifjGa63q/qlQ
+         gchCUqX0bdhLA2vxyqg9QdSl6LJ/vHnekwBmOl8If6OxlO2ffb/B1kyfZHeRiHVFHwfz
+         eRYI39TbxMswh6rAd0+mFAm9dDOPwVdoNwsAl4QTQpyBtiPMO+KPc50P2B8V0cHzf08F
+         IMuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=zcieI5+oJsXOBRD2KKmNlRR+gsKSY7mBPeZzRy6NCSc=;
-        b=Nf2Lll52mOjHtlt9xOgP60v30yBwX09fIx9EW2t7sMSrJ/j2mktrwW4KTQ4Pp8yjki
-         OdkEtEAurErNbY/87UaQzsVKI4FxYSlXjvG9fYC+mOSmO5XD5B3bzowl1IBrYBLrGgIe
-         DzCXmWmlcJoXXXrPl08X2CDcjotEmY6D4BHrTOxRx/QCgt7H4aQq/WRyMzIU9y3oNY+k
-         lLSrR4aXTwqRaAByu1CKoBuO+R19nBaxfKJmOaM+8Il6vHCQ9kCYQRA6meC4/6wR4LmD
-         VU5nyp7gdF3IFjwvkyp6jBjlu/ixFDToxEBdTKbrVpzBQNYCn1LBzg2uTRqA9KcFStEB
-         GrBA==
-X-Gm-Message-State: APjAAAWFFDGYD6m95Eueo/lYeLRYTW1QrLUyWhK4uMh0AGd8oonnzZvb
-        jwhfgmyEpzHgFQch3k7BpegIrNy1Ek6IiA5cKDe6+Q==
-X-Google-Smtp-Source: APXvYqzsrsMnuTp4pilucBGFtnRzrjGoHO9C4n2TLsODhv9zqdR3Iv8B2UbdukqEA3eTSRrBVF3kQ1EWF724z+8y5G/9BA==
-X-Received: by 2002:aed:37c4:: with SMTP id j62mr5902579qtb.19.1551916824091;
- Wed, 06 Mar 2019 16:00:24 -0800 (PST)
-Date:   Wed,  6 Mar 2019 15:59:08 -0800
+        bh=Slizqb5/EuTPaUwcXF3KMpeQ4PrQTQCbKq0uAOfUYTM=;
+        b=qtO4USnm9byub1gLRAVneuJrRZzcGBgYTkxT95DjTKl9+mR/WizfjI3hT0m+iRYMLc
+         s/Kp6lMP4oINw7T5qlGEJQgS2uXlZQh6ddQO2mz8L2+xepBfBL3hf4gH50amHi7nA0pN
+         jGa9FlI7+jX1kEgI5qkBEOwuesnZDJV3qqVh5Z3pW/NBVGYTak0fFZIn5ELOS+HZsovC
+         dmJwHsHdtE2W7moa7TNTnEi1NZaLr/zJ4dLj6Dkq//MKdFXPX4JtMbLnjWiRI6J5IbPE
+         Iw8XdM2jKRTDtp6XaZ2qtKYYGFFLgyFU7UCnS4DB0QiaLvk7zEbxzos8e8ODon0jvEXk
+         vC+Q==
+X-Gm-Message-State: APjAAAUkR0GOpnB2GglcZPTgmPXhlEbNR+5n5sKleA/UcpE77qwMGN1K
+        x5aQSDVR619gRpog0WekvcL0kqUe2uAN2jXE7PddUQ==
+X-Google-Smtp-Source: APXvYqzfz1Mm6zPNOwyLTXv7LVSJYhgRqpTmBGV1FsT7o7dpYl1eV0/IRR3lSRHTQ2w2htmMx8UY+sNjaz8NhBbQOd9Png==
+X-Received: by 2002:aa7:8215:: with SMTP id k21mr3854968pfi.78.1551916821402;
+ Wed, 06 Mar 2019 16:00:21 -0800 (PST)
+Date:   Wed,  6 Mar 2019 15:59:07 -0800
 In-Reply-To: <20190306235913.6631-1-matthewgarrett@google.com>
-Message-Id: <20190306235913.6631-23-matthewgarrett@google.com>
+Message-Id: <20190306235913.6631-22-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190306235913.6631-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 22/27] Lock down /proc/kcore
+Subject: [PATCH 21/27] x86/mmiotrace: Lock down the testmmiotrace module
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -70,29 +70,35 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-Disallow access to /proc/kcore when the kernel is locked down to prevent
-access to cryptographic data.
+The testmmiotrace module shouldn't be permitted when the kernel is locked
+down as it can be used to arbitrarily read and write MMIO space.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: David Howells <dhowells@redhat.com
+cc: Thomas Gleixner <tglx@linutronix.de>
+cc: Steven Rostedt <rostedt@goodmis.org>
+cc: Ingo Molnar <mingo@kernel.org>
+cc: "H. Peter Anvin" <hpa@zytor.com>
+cc: x86@kernel.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- fs/proc/kcore.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/mm/testmmiotrace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index bbcc185062bb..d50ebfbf3dbb 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -518,6 +518,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 
- static int open_kcore(struct inode *inode, struct file *filp)
+diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
+index f6ae6830b341..bbaad357f5d7 100644
+--- a/arch/x86/mm/testmmiotrace.c
++++ b/arch/x86/mm/testmmiotrace.c
+@@ -115,6 +115,9 @@ static int __init init(void)
  {
-+	if (kernel_is_locked_down("/proc/kcore"))
-+		return -EPERM;
- 	if (!capable(CAP_SYS_RAWIO))
- 		return -EPERM;
+ 	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
  
++	if (kernel_is_locked_down("MMIO trace testing"))
++		return -EPERM;
++
+ 	if (mmio_address == 0) {
+ 		pr_err("you have to use the module argument mmio_address.\n");
+ 		pr_err("DO NOT LOAD THIS MODULE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!\n");
 -- 
 2.21.0.352.gf09ad66450-goog
 
