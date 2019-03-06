@@ -7,58 +7,59 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 949C1C43381
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F5BC43381
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62BC320842
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 413F320663
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BXibPNAU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RTrNjVLx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbfCGABJ (ORCPT
+        id S1726586AbfCGAAJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Mar 2019 19:01:09 -0500
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:49322 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfCGAAN (ORCPT
+        Wed, 6 Mar 2019 19:00:09 -0500
+Received: from mail-oi1-f201.google.com ([209.85.167.201]:51235 "EHLO
+        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfCGAAI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Mar 2019 19:00:13 -0500
-Received: by mail-qt1-f202.google.com with SMTP id q11so13383324qtj.16
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:13 -0800 (PST)
+        Wed, 6 Mar 2019 19:00:08 -0500
+Received: by mail-oi1-f201.google.com with SMTP id n205so2051695oif.18
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=EeAsNLooacMCIyQQG8kjyYl9LfYTYq2OlHNVaSq+jF4=;
-        b=BXibPNAU2kBLKi0tjOaBoATPK4GSG9rdLOziADGyltDJLflexEotgn/YIOIEl1Fm1H
-         yMKiAZuRKAYyc2wi9Z9d4o35i6BvJDlVbS0M3iQvUIZits5qZwr7R60IUQGPdO6d5eWg
-         oqY4UJoLQdmZJ2B0X2IxvA0M9/CXZx0HcS1UqVad8pRlnNi2MHHBlTg276gQPOoUjJVU
-         jXR9xzzJ/1LnMTEgqx6l/1wlLediq2tk6EewVxCYv9Ajdlki6r3EAt3+eXpztFNwMs93
-         3/hzDEIcglR4a8m9b8Zr9hyDIA0YZdse4rBnWiIpPApIuSjtOjoQUODVtRMhiygVCjIw
-         lwFw==
+        bh=VGdoKwvSOpDfBZXQlfYkzECG5jzVJCUvh3oP5CjQxIk=;
+        b=RTrNjVLxRZTgAOBWsuKxkprHBBIqH7DjzBBpSZ7zQaQvDgTODrf7K0sFB9SUJRlT7e
+         nrhZ2WsILQ0S8qG1E11K49GiC0Ap915AQ3z07gV7UXjsAVQsZQGCrnM/EauC6Kr9jLQm
+         1jMsZ8KUgIipeXp3iPgZURAieKlLWPBY/rRglPTe5asNog9rVGmQpJZ9A+RiSfA5S4sH
+         QmzdOSdUvGjhm+mK9M7CoaoT0v+Gixaz5/+r4AaO/ypu1URtdl2Bh09k+mVxnj8YFqoF
+         XA3qj2pwgStFGwNo6JJx84TB9t/L1s4Wjjc+fs07jfWOK+UD2/JHe26Bzm+zQ2MwR6qO
+         JT3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=EeAsNLooacMCIyQQG8kjyYl9LfYTYq2OlHNVaSq+jF4=;
-        b=PdfzB4fp+Kgawjb++Fc0ywleAi1lIUDQ3QnXFl0XB8XU1g5n549/1Ev8VQ/pOKfK6y
-         pRP40xziz4sWnehUDOnXJOJ/JW5VwDDQXo1GC8VYxkHhfVlc6g3F7n6zi4qE2cMzYxS1
-         FnDVpFKbsQYqd+ufBKP9eyptSY3O8OIcZDPQLUNbRh7y0TCoYa0xAixI4a5l1ERpGra6
-         CEYCPLq3oi3z5Bpzz4aCRcL1z4Sqy3hgUSRWYETj62jn1ls8b4zcBoY+wR9xM8N7AqKc
-         MnC01OsHh0riP9joGOe9kHAbrjmwLkV2d29Q14s08P4azldVuyUphp4sp3pOfuU5Mgc/
-         DLbQ==
-X-Gm-Message-State: APjAAAV4KNf2pWlXIHmJj+WT5PiKdgmYkm0Dikyxt1y9xfajDMfMUTj5
-        pmY3ZfcZf5NZ9KkhjqocfV074Egl9p90PTpYo33a0Q==
-X-Google-Smtp-Source: APXvYqyyHqurNEQcATvX9vuJ/DA66of6NpknXBwulCWr+CZ2zas04bUFP1eObLNYb/FpEk+eXfimYgny1hYZiiVpm2mLag==
-X-Received: by 2002:a0c:b10f:: with SMTP id q15mr6331977qvc.0.1551916812836;
- Wed, 06 Mar 2019 16:00:12 -0800 (PST)
-Date:   Wed,  6 Mar 2019 15:59:04 -0800
+        bh=VGdoKwvSOpDfBZXQlfYkzECG5jzVJCUvh3oP5CjQxIk=;
+        b=jitehabJjE1saW79k2FYq1hlWT4X55vHRy73PG6Zb8PFF/bFQgZyH7tkBlM5IOEY1w
+         953xlK85URGjxYROibD9+MxAk5HhrTG59vgH0fH0AWJfiKS9Vj8XfghzE1RadcgHuXsd
+         ggbnjuWVl+rCw6dHVbv9v8en+Y4E8oK255oVKJKmAnWRKRyGltqoLffcnxeKSTg7GXDH
+         7YCL7cU5tyS9uasJsQARRJJd/1FGtK1lvPshc7gZ412pEFjjm2p/FDPnv8qVcoFbL1C3
+         TPyywN0yYLK5veq3SBDPR4yp8KOy8ZhMU3m1HwshrW8crxJ5PQg3UrixuUTXaQ9aFLFQ
+         AbrA==
+X-Gm-Message-State: APjAAAVEDDduH2sB1kCkK29Kv4nus0s3ABECSHnqUiN2x8r3Slo+Vu1I
+        JPmiSd/78ViI9ArPJN8fPUltmnuCh1vTGKkz6R5PkQ==
+X-Google-Smtp-Source: AHgI3IbIQfs+qlNy04rRIbGGwZDV+GAve/Dbcrar2+5Zcfjm3N+32fWe55odB5OSUTGnTk7bWqpelKzk1jsptguY8gxWHg==
+X-Received: by 2002:aca:4e93:: with SMTP id c141mr18809217oib.27.1551916807574;
+ Wed, 06 Mar 2019 16:00:07 -0800 (PST)
+Date:   Wed,  6 Mar 2019 15:59:02 -0800
 In-Reply-To: <20190306235913.6631-1-matthewgarrett@google.com>
-Message-Id: <20190306235913.6631-19-matthewgarrett@google.com>
+Message-Id: <20190306235913.6631-17-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190306235913.6631-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 18/27] Prohibit PCMCIA CIS storage when the kernel is locked down
+Subject: [PATCH 16/27] acpi: Disable ACPI table override if the kernel is
+ locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -68,33 +69,43 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: David Howells <dhowells@redhat.com>
+From: Linn Crosetto <linn@hpe.com>
 
-Prohibit replacement of the PCMCIA Card Information Structure when the
-kernel is locked down.
+From the kernel documentation (initrd_table_override.txt):
 
-Suggested-by: Dominik Brodowski <linux@dominikbrodowski.net>
+  If the ACPI_INITRD_TABLE_OVERRIDE compile option is true, it is possible
+  to override nearly any ACPI table provided by the BIOS with an
+  instrumented, modified one.
+
+When securelevel is set, the kernel should disallow any unauthenticated
+changes to kernel space.  ACPI tables contain code invoked by the kernel,
+so do not allow ACPI tables to be overridden if the kernel is locked down.
+
+Signed-off-by: Linn Crosetto <linn@hpe.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-pcmcia@lists.infradead.org
+Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
+cc: linux-acpi@vger.kernel.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- drivers/pcmcia/cistpl.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/tables.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pcmcia/cistpl.c b/drivers/pcmcia/cistpl.c
-index ac0672b8dfca..8adf092d0e18 100644
---- a/drivers/pcmcia/cistpl.c
-+++ b/drivers/pcmcia/cistpl.c
-@@ -1578,6 +1578,9 @@ static ssize_t pccard_store_cis(struct file *filp, struct kobject *kobj,
- 	struct pcmcia_socket *s;
- 	int error;
+diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+index 48eabb6c2d4f..f3b4117cd8f3 100644
+--- a/drivers/acpi/tables.c
++++ b/drivers/acpi/tables.c
+@@ -531,6 +531,11 @@ void __init acpi_table_upgrade(void)
+ 	if (table_nr == 0)
+ 		return;
  
-+	if (kernel_is_locked_down("Direct PCMCIA CIS storage"))
-+		return -EPERM;
++	if (kernel_is_locked_down("ACPI table override")) {
++		pr_notice("kernel is locked down, ignoring table override\n");
++		return;
++	}
 +
- 	s = to_socket(container_of(kobj, struct device, kobj));
- 
- 	if (off)
+ 	acpi_tables_addr =
+ 		memblock_find_in_range(0, ACPI_TABLE_UPGRADE_MAX_PHYS,
+ 				       all_tables_size, PAGE_SIZE);
 -- 
 2.21.0.352.gf09ad66450-goog
 
