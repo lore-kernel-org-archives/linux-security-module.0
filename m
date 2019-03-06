@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C649C4360F
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Mar 2019 23:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 101DBC43381
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Mar 2019 23:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4714920663
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Mar 2019 23:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D027120663
+	for <linux-security-module@archiver.kernel.org>; Wed,  6 Mar 2019 23:59:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JRB6MFnI"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fgEDghp9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbfCFX7u (ORCPT
+        id S1726445AbfCFX75 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Mar 2019 18:59:50 -0500
-Received: from mail-io1-f74.google.com ([209.85.166.74]:32865 "EHLO
-        mail-io1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726414AbfCFX7r (ORCPT
+        Wed, 6 Mar 2019 18:59:57 -0500
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:49133 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfCFX7z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Mar 2019 18:59:47 -0500
-Received: by mail-io1-f74.google.com with SMTP id e1so11196116iog.0
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 15:59:46 -0800 (PST)
+        Wed, 6 Mar 2019 18:59:55 -0500
+Received: by mail-vk1-f201.google.com with SMTP id j1so7389546vkj.15
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 15:59:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=rcoY9tEENkPaxN2uc2H4A3TvvTCasWpC/2OBy6PWjj0=;
-        b=JRB6MFnI6CPHKumtls+v+QBW7huDdcHgUo+9G6jnfMgtqnoDu+NHyFBZ3cUbo632t2
-         PlyEn7WDWbPymbRpkF3y3nrGsSdRqjr6WuE0wI5aQpoDoJtOPImZywpluRwMVNUtzYnv
-         vr8adGb/tSGxj/r/6bBGVZYEhsyms0OeDTa+7aU7+SmwYVp224csVMQWZUWLnSPI0P4K
-         udeBcAK3Ti48QozUBr3XOz3jl02KsXDgn3AOjVOj03xEtm8S7aLowHKVDYj6l5OL6cLW
-         rYZtqPka5Y+F/WjoAzm6m9vHA8cgp3v6by7Z5TBVbSp/uAEjvbwkH3xvVDBUX5flQAGx
-         qC5A==
+        bh=ACqFRhtJUfbHBZBPOu5dDkAx0/TaxY9Rwhxh4VD+UBs=;
+        b=fgEDghp9aUPPq5LIQbGaL6nEH0coUYCSyYuTyRdQ1gO7leMx3wv+kvJFbiZsfJbaov
+         pklDS/Qt+yxsTTHks6MoVO6lWCuAdTGqQMzj/XCnPMZ5UPnexaPpwiiChv19uM9BCsLb
+         n9YirvJwxBiFfS9eJUPeX1s7SaKQQ2dx44MkksoVzcAyWjumoAoWdn1t2PQ4sFbpQjQv
+         v6PPsY0oLcsXMY6ctV6rr7aTkf2/sZpJgGo917exFXjIF4tDC6TPaOHRkVBab0nCoNQe
+         KYu6vYBfWFa8zDnkCuY6BcGyBAU7/dXYU0DzBrLh18YqVlZ8UvtOrAE4Sd4uraIBBuDv
+         8uQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=rcoY9tEENkPaxN2uc2H4A3TvvTCasWpC/2OBy6PWjj0=;
-        b=Yszu9hgLpENJkfqFCNl+vmRdgyOle1g6tVVlIOooOkxvZnI2Pdjg/H81KdTNO0ObwG
-         L82wyFLRcGRoZwbJJqmqrRe2uRpAds0ZJditwPfLgzzECBcuUuuYbHq8vl1dcQQDI+5q
-         PU5my0xA+uWYAXkCCjubL4ilJf+DSeTasIUxAo1zStiC4+W/Ml+T0Zcz4pmzedOZKW8W
-         PIyROewHxSa1H6XGiDsFjE8FD3ZeaYSeucRFM05LR7KQvhH2gSpjXWXCxvHqOZajM3bT
-         KmbZaMVXGrLK9L0kHnj1sYAtvjLl8Q5KBl2E1IjBBgbl5HVX6seeglzqNWPLhqmlkL/g
-         oVOA==
-X-Gm-Message-State: APjAAAW9R+KT3braHvmMxb8hnF/ZMtp8VOFiB1WprD8/D5ybC2DhfTnp
-        HtVeC3fCWwNzMDfHtuqqNz9jEZc9j5NgDrXfrXeKXg==
-X-Google-Smtp-Source: APXvYqxGw8B9EHptHkokWDqZZE64N4QJSY8ps2Pub8k3OebCUGaqCst4r3RFxG/Nq8WYbm1W63x0ibE/nq1ckHdCxbwYTw==
-X-Received: by 2002:a05:660c:48:: with SMTP id p8mr7384486itk.31.1551916786498;
- Wed, 06 Mar 2019 15:59:46 -0800 (PST)
-Date:   Wed,  6 Mar 2019 15:58:54 -0800
+        bh=ACqFRhtJUfbHBZBPOu5dDkAx0/TaxY9Rwhxh4VD+UBs=;
+        b=tRV0eiJ7E0YvXh11gaT5OMgRH+eIZiUUocpYd6mRX/glfTBkAkxqJy51zK1dFe+Y01
+         bbTPQK8fDe6IPHgmK7E/SE/1EAgxiAqoHuQ8joaCXxUBtbAysY1jV85AnrmuLZa3wxzp
+         7FWNDxg29b4xOui6ROTF8bJW6zEqAKyaxb8WqpbcKmHyK79lSy1C90xUqtHWPQLMT74T
+         omt53MPJQczYL0LO5C4N9HF2uE5vDtZ4RxbvxQIMlAomfkvcu58CrdyqxuFU+o7HTIfn
+         30z0jWcHruOL/hjgJ37QiKOTQsh3hf/uMWrffFY2xMEortZU5pgXjowsKge7+f6zIqCw
+         QNGg==
+X-Gm-Message-State: APjAAAVJIySdemTjjYgZbskQui5VhnK5n/VJK0wv4oYqfo9xLTO9O3sa
+        Y8/bbQ3b/+ji/rRXcp8hWUsDmj5xGQHn3svv3bMEkA==
+X-Google-Smtp-Source: APXvYqzUBqNd8/YUx2fDLnRpZCWhP0/NfK79PxMtzpWY5W8/fAB2exucG4GxQ+dIl9GStj1lAczoDSn+eRiRXxQ2c8jgmQ==
+X-Received: by 2002:ab0:778d:: with SMTP id x13mr6862246uar.7.1551916794166;
+ Wed, 06 Mar 2019 15:59:54 -0800 (PST)
+Date:   Wed,  6 Mar 2019 15:58:57 -0800
 In-Reply-To: <20190306235913.6631-1-matthewgarrett@google.com>
-Message-Id: <20190306235913.6631-9-matthewgarrett@google.com>
+Message-Id: <20190306235913.6631-12-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190306235913.6631-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 08/27] kexec_file: Restrict at runtime if the kernel is locked down
+Subject: [PATCH 11/27] PCI: Lock down BAR access when the kernel is locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -68,45 +68,108 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jiri Bohac <jbohac@suse.cz>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-When KEXEC_SIG is not enabled, kernel should not load images through
-kexec_file systemcall if the kernel is locked down.
+Any hardware that can potentially generate DMA has to be locked down in
+order to avoid it being possible for an attacker to modify kernel code,
+allowing them to circumvent disabled module loading or module signing.
+Default to paranoid - in future we can potentially relax this for
+sufficiently IOMMU-isolated devices.
 
-[Modified by David Howells to fit with modifications to the previous patch
- and to return -EPERM if the kernel is locked down for consistency with
- other lockdowns. Modified by Matthew Garrett to remove the IMA
- integration, which will be replaced by integrating with the IMA
- architecture policy patches.]
-
-Signed-off-by: Jiri Bohac <jbohac@suse.cz>
+Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jiri Bohac <jbohac@suse.cz>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-cc: Chun-Yi Lee <jlee@suse.com>
-cc: kexec@lists.infradead.org
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
+cc: linux-pci@vger.kernel.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- kernel/kexec_file.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/pci/pci-sysfs.c | 9 +++++++++
+ drivers/pci/proc.c      | 9 ++++++++-
+ drivers/pci/syscall.c   | 3 ++-
+ 3 files changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 67f3a866eabe..0cfe4f6f7f85 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -239,6 +239,12 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 		}
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index 9ecfe13157c0..40c14574fcf8 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -905,6 +905,9 @@ static ssize_t pci_write_config(struct file *filp, struct kobject *kobj,
+ 	loff_t init_off = off;
+ 	u8 *data = (u8 *) buf;
  
- 		ret = 0;
++	if (kernel_is_locked_down("Direct PCI access"))
++		return -EPERM;
 +
-+		if (kernel_is_locked_down(reason)) {
-+			ret = -EPERM;
-+			goto out;
-+		}
-+
- 		break;
+ 	if (off > dev->cfg_size)
+ 		return 0;
+ 	if (off + count > dev->cfg_size) {
+@@ -1167,6 +1170,9 @@ static int pci_mmap_resource(struct kobject *kobj, struct bin_attribute *attr,
+ 	enum pci_mmap_state mmap_type;
+ 	struct resource *res = &pdev->resource[bar];
  
- 		/* All other errors are fatal, including nomem, unparseable
++	if (kernel_is_locked_down("Direct PCI access"))
++		return -EPERM;
++
+ 	if (res->flags & IORESOURCE_MEM && iomem_is_exclusive(res->start))
+ 		return -EINVAL;
+ 
+@@ -1242,6 +1248,9 @@ static ssize_t pci_write_resource_io(struct file *filp, struct kobject *kobj,
+ 				     struct bin_attribute *attr, char *buf,
+ 				     loff_t off, size_t count)
+ {
++	if (kernel_is_locked_down("Direct PCI access"))
++		return -EPERM;
++
+ 	return pci_resource_io(filp, kobj, attr, buf, off, count, true);
+ }
+ 
+diff --git a/drivers/pci/proc.c b/drivers/pci/proc.c
+index 6fa1627ce08d..1549cdd0710e 100644
+--- a/drivers/pci/proc.c
++++ b/drivers/pci/proc.c
+@@ -117,6 +117,9 @@ static ssize_t proc_bus_pci_write(struct file *file, const char __user *buf,
+ 	int size = dev->cfg_size;
+ 	int cnt;
+ 
++	if (kernel_is_locked_down("Direct PCI access"))
++		return -EPERM;
++
+ 	if (pos >= size)
+ 		return 0;
+ 	if (nbytes >= size)
+@@ -196,6 +199,9 @@ static long proc_bus_pci_ioctl(struct file *file, unsigned int cmd,
+ #endif /* HAVE_PCI_MMAP */
+ 	int ret = 0;
+ 
++	if (kernel_is_locked_down("Direct PCI access"))
++		return -EPERM;
++
+ 	switch (cmd) {
+ 	case PCIIOC_CONTROLLER:
+ 		ret = pci_domain_nr(dev->bus);
+@@ -237,7 +243,8 @@ static int proc_bus_pci_mmap(struct file *file, struct vm_area_struct *vma)
+ 	struct pci_filp_private *fpriv = file->private_data;
+ 	int i, ret, write_combine = 0, res_bit = IORESOURCE_MEM;
+ 
+-	if (!capable(CAP_SYS_RAWIO))
++	if (!capable(CAP_SYS_RAWIO) ||
++	    kernel_is_locked_down("Direct PCI access"))
+ 		return -EPERM;
+ 
+ 	if (fpriv->mmap_state == pci_mmap_io) {
+diff --git a/drivers/pci/syscall.c b/drivers/pci/syscall.c
+index d96626c614f5..b8a08d3166a1 100644
+--- a/drivers/pci/syscall.c
++++ b/drivers/pci/syscall.c
+@@ -90,7 +90,8 @@ SYSCALL_DEFINE5(pciconfig_write, unsigned long, bus, unsigned long, dfn,
+ 	u32 dword;
+ 	int err = 0;
+ 
+-	if (!capable(CAP_SYS_ADMIN))
++	if (!capable(CAP_SYS_ADMIN) ||
++	    kernel_is_locked_down("Direct PCI access"))
+ 		return -EPERM;
+ 
+ 	dev = pci_get_domain_bus_and_slot(0, bus, dfn);
 -- 
 2.21.0.352.gf09ad66450-goog
 
