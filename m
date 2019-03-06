@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F5BC43381
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B25D9C43381
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413F320663
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 826A7206DD
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RTrNjVLx"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i/MjTXb7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726586AbfCGAAJ (ORCPT
+        id S1726558AbfCGAAF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Mar 2019 19:00:09 -0500
-Received: from mail-oi1-f201.google.com ([209.85.167.201]:51235 "EHLO
-        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfCGAAI (ORCPT
+        Wed, 6 Mar 2019 19:00:05 -0500
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:35192 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbfCGAAD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Mar 2019 19:00:08 -0500
-Received: by mail-oi1-f201.google.com with SMTP id n205so2051695oif.18
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:07 -0800 (PST)
+        Wed, 6 Mar 2019 19:00:03 -0500
+Received: by mail-qk1-f202.google.com with SMTP id 207so11648754qkl.2
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=VGdoKwvSOpDfBZXQlfYkzECG5jzVJCUvh3oP5CjQxIk=;
-        b=RTrNjVLxRZTgAOBWsuKxkprHBBIqH7DjzBBpSZ7zQaQvDgTODrf7K0sFB9SUJRlT7e
-         nrhZ2WsILQ0S8qG1E11K49GiC0Ap915AQ3z07gV7UXjsAVQsZQGCrnM/EauC6Kr9jLQm
-         1jMsZ8KUgIipeXp3iPgZURAieKlLWPBY/rRglPTe5asNog9rVGmQpJZ9A+RiSfA5S4sH
-         QmzdOSdUvGjhm+mK9M7CoaoT0v+Gixaz5/+r4AaO/ypu1URtdl2Bh09k+mVxnj8YFqoF
-         XA3qj2pwgStFGwNo6JJx84TB9t/L1s4Wjjc+fs07jfWOK+UD2/JHe26Bzm+zQ2MwR6qO
-         JT3A==
+        bh=RLZYCznt91X7Gql2FLJuA+D6Xq8z59q436/ddkparrE=;
+        b=i/MjTXb7CbOG6UdkkS0vRNZvfV6iqT+SJUy26kVbxvGCwjfn8jRCtI1zQO9vj5H2ak
+         apfgI4/baSkKebqMBSvCMvYYCd4lYbo5ztim2Tyika6/fTfhgxfiyzwCe6U8SXuxUH/A
+         QMXQD8oXCYd6+d5dhpHO9MT8ekx8Nhcac8L3GeVKmleZ3xJNOFmMJqTs6o1aMOa/SvMi
+         gfGhsbLGZLzEnc36jFQIkNfeaKcX77AgJBYVu2/DvzZJ1oXI4NCpFzcTHoMVU38SfSl7
+         DH+AH9U/Yw0/Mu1nSxhw0CQM0XKEcmhK6zNTjbEdD41qts+TJNBsuwJNo9oPQByKvGkt
+         DkxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=VGdoKwvSOpDfBZXQlfYkzECG5jzVJCUvh3oP5CjQxIk=;
-        b=jitehabJjE1saW79k2FYq1hlWT4X55vHRy73PG6Zb8PFF/bFQgZyH7tkBlM5IOEY1w
-         953xlK85URGjxYROibD9+MxAk5HhrTG59vgH0fH0AWJfiKS9Vj8XfghzE1RadcgHuXsd
-         ggbnjuWVl+rCw6dHVbv9v8en+Y4E8oK255oVKJKmAnWRKRyGltqoLffcnxeKSTg7GXDH
-         7YCL7cU5tyS9uasJsQARRJJd/1FGtK1lvPshc7gZ412pEFjjm2p/FDPnv8qVcoFbL1C3
-         TPyywN0yYLK5veq3SBDPR4yp8KOy8ZhMU3m1HwshrW8crxJ5PQg3UrixuUTXaQ9aFLFQ
-         AbrA==
-X-Gm-Message-State: APjAAAVEDDduH2sB1kCkK29Kv4nus0s3ABECSHnqUiN2x8r3Slo+Vu1I
-        JPmiSd/78ViI9ArPJN8fPUltmnuCh1vTGKkz6R5PkQ==
-X-Google-Smtp-Source: AHgI3IbIQfs+qlNy04rRIbGGwZDV+GAve/Dbcrar2+5Zcfjm3N+32fWe55odB5OSUTGnTk7bWqpelKzk1jsptguY8gxWHg==
-X-Received: by 2002:aca:4e93:: with SMTP id c141mr18809217oib.27.1551916807574;
- Wed, 06 Mar 2019 16:00:07 -0800 (PST)
-Date:   Wed,  6 Mar 2019 15:59:02 -0800
+        bh=RLZYCznt91X7Gql2FLJuA+D6Xq8z59q436/ddkparrE=;
+        b=uGjDYAnt9H4xM6LyquCzocjb90+oezhyQDJ8hxbFtL2xTTVlNqhxuSZYoHsu8lTSlI
+         2r1pQOV8LeEbne8KF7JbMdYcE5K1OE32DCSI59iQ6xZGc/ljC7kIreGjBxyrkWWD82FV
+         OF081wnXSjC1Sxwuqx+lYNA8j72GxJ845Qwx9GaOZjU9+QeFV2QSzC46lPEO2Rm+nGOG
+         lWGhbwDyXavk8xw2SjDYawqWbWHAEgUxVOkouQzq1IiuDp2INdao9roubBWf/XT3rye5
+         nO5v8Pml/TpNzfxfsqtouD5F6X/NH5F2EuOvJeuYK+EJh+/Rgb3mu9SwCxee6m32P5OU
+         RZrA==
+X-Gm-Message-State: APjAAAWCqihGbnLJdz9qQB7bpL9fYGtUCfdwh+oJCzqp3ZyK6IIosx9a
+        +YzQtWvslPUaUQzgE77/k1Fj2u5NglPpCz/U9eOk0A==
+X-Google-Smtp-Source: APXvYqyg65IJHTLLH/dejwTsjoNanUPirYo+pqDWCoJN7KCkY2ggEVBCzFT/3DLvioXGAP9kW6hrdz8OII58UGrorWamGQ==
+X-Received: by 2002:a0c:b91c:: with SMTP id u28mr5950718qvf.45.1551916802349;
+ Wed, 06 Mar 2019 16:00:02 -0800 (PST)
+Date:   Wed,  6 Mar 2019 15:59:00 -0800
 In-Reply-To: <20190306235913.6631-1-matthewgarrett@google.com>
-Message-Id: <20190306235913.6631-17-matthewgarrett@google.com>
+Message-Id: <20190306235913.6631-15-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190306235913.6631-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 16/27] acpi: Disable ACPI table override if the kernel is
+Subject: [PATCH 14/27] ACPI: Limit access to custom_method when the kernel is
  locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
@@ -69,43 +69,35 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Linn Crosetto <linn@hpe.com>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-From the kernel documentation (initrd_table_override.txt):
+custom_method effectively allows arbitrary access to system memory, making
+it possible for an attacker to circumvent restrictions on module loading.
+Disable it if the kernel is locked down.
 
-  If the ACPI_INITRD_TABLE_OVERRIDE compile option is true, it is possible
-  to override nearly any ACPI table provided by the BIOS with an
-  instrumented, modified one.
-
-When securelevel is set, the kernel should disallow any unauthenticated
-changes to kernel space.  ACPI tables contain code invoked by the kernel,
-so do not allow ACPI tables to be overridden if the kernel is locked down.
-
-Signed-off-by: Linn Crosetto <linn@hpe.com>
+Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
 cc: linux-acpi@vger.kernel.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- drivers/acpi/tables.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/acpi/custom_method.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-index 48eabb6c2d4f..f3b4117cd8f3 100644
---- a/drivers/acpi/tables.c
-+++ b/drivers/acpi/tables.c
-@@ -531,6 +531,11 @@ void __init acpi_table_upgrade(void)
- 	if (table_nr == 0)
- 		return;
+diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
+index 4451877f83b6..ac8a90dc7096 100644
+--- a/drivers/acpi/custom_method.c
++++ b/drivers/acpi/custom_method.c
+@@ -29,6 +29,9 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 	struct acpi_table_header table;
+ 	acpi_status status;
  
-+	if (kernel_is_locked_down("ACPI table override")) {
-+		pr_notice("kernel is locked down, ignoring table override\n");
-+		return;
-+	}
++	if (kernel_is_locked_down("ACPI custom methods"))
++		return -EPERM;
 +
- 	acpi_tables_addr =
- 		memblock_find_in_range(0, ACPI_TABLE_UPGRADE_MAX_PHYS,
- 				       all_tables_size, PAGE_SIZE);
+ 	if (!(*ppos)) {
+ 		/* parse the table header to get the table length */
+ 		if (count <= sizeof(struct acpi_table_header))
 -- 
 2.21.0.352.gf09ad66450-goog
 
