@@ -7,58 +7,59 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDD7C43381
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5B7C43381
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A99820663
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3620720663
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:00:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gYTOWof+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="miWti6Bj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfCGAAB (ORCPT
+        id S1726661AbfCGAAU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Mar 2019 19:00:01 -0500
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:54588 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbfCGAAA (ORCPT
+        Wed, 6 Mar 2019 19:00:20 -0500
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:38876 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfCGAAT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Mar 2019 19:00:00 -0500
-Received: by mail-qk1-f201.google.com with SMTP id i66so11512756qke.21
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:00 -0800 (PST)
+        Wed, 6 Mar 2019 19:00:19 -0500
+Received: by mail-pf1-f201.google.com with SMTP id d5so15454712pfo.5
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=EgD7M29mELKbRq1NWt6DNZZmbYMYEW26ecUsjbEvlVs=;
-        b=gYTOWof+SnJgMS2LMqTCUBSp6zvC0gCXrCSqXNr50gmxewWj8i1zMYIleOGZoVxMPQ
-         LF37ClnmwpqbzLw2xE8kWW8XNteLVIsCet67X232y7QE+kb57re8nGck768NviwV1t5l
-         fJecS05fRNQ9WKgzKmIbkiqL82Z1S8X8Npca0z9r7YkeAgAo8zFrxNeTjgbZqXxrCkcm
-         d5+Jr2N6cwpx+0SPxEEmQS6+b1WW3yrKkoGtM7svV8BvQzcAOUIWyFSYyYDHqfdpPkB7
-         D/Mk96oFbG+YOC/1Yyf5ws/IFrQ2VPf7EEq49q2+f/jbjKa3lmOtkfTb8PWvjD0Pp2pF
-         U5mg==
+        bh=IdVfFnhFbXtJ1p9edmpEjpXYYyA3kgeVT7S8ioUS5wI=;
+        b=miWti6BjaJ9xhyuyzcg9fulsDcsx5hrWoVxexTNUp6cG96sXJZg2aJm3xzAMwTzM0f
+         yom5fwu85Oc3gbfqvU4MT9rIJu4yzS5y6yH6FGVLOtRP5ifcxbp+GJS0lU7mvX3a/rr5
+         eEIteTb76gg0LnPklB2z14hPboM4l8q2QPLUN0X1NAWX1VzzxvfM6qSimMKgVouLlqDn
+         CjpRLUJp/eA/akAxu9BdNlgYzIQKKwc7bdtAsvhFE6A/Q5IVz1lvSYUEN6nzjO8A2L3V
+         x2BgK2d4yd55qCvx3Dk9iAI+5sGtbaMuSg0wCmgXmsVcIMumaQd66hbX2fTEpyUZdNOs
+         X1Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=EgD7M29mELKbRq1NWt6DNZZmbYMYEW26ecUsjbEvlVs=;
-        b=GGD3/gam34FCNHNhVqRS64JZbsSYwgQ9c31tHvEyiDi3qZbkEqP2NO6t5OwsV/lwk4
-         nWWZJaW8Tp5nuNoMrW96L17ZrUILuwBLKUj7dYIbEsL3gMNji2jyerw+yJ0XEzjWF+L5
-         7dWDTy+oS18sKwZtJN3B/KleigNaF2SZyFXCOyGph0DCKELZqpatgBUNZy7zyYP7Q5Ei
-         oDc2lcnOVxK4QzOk8wt+q5lsxvBAiho31xR5DfwVkZFW1BOB5DYqNABMnoUlcloh/zBV
-         g0tQXT/tZ/U51oqRzxeGngbgtRXtYwDWzcVfuvdjOd0W14EpUduk2FzrPcBggVDYiYEi
-         M0xQ==
-X-Gm-Message-State: APjAAAVliM431jxwP7fIgvzhEEW/BXxAwIU9SfUfSIfKBs8d5WJ3DXQ8
-        UQdQB1mk9fzYi9j0l68AN6uhGlBYT4kIstnCtRzUkw==
-X-Google-Smtp-Source: APXvYqyMy1TJIWtN1222VFXuk/FGDSDNyZ8044iMtqYU3Zf07qKmx+B/7/pJqqNoAqGr0x0JLQBdkjn8lvYBk6GwiigknA==
-X-Received: by 2002:aed:37c4:: with SMTP id j62mr5900910qtb.19.1551916799883;
- Wed, 06 Mar 2019 15:59:59 -0800 (PST)
-Date:   Wed,  6 Mar 2019 15:58:59 -0800
+        bh=IdVfFnhFbXtJ1p9edmpEjpXYYyA3kgeVT7S8ioUS5wI=;
+        b=aNDfBl/x3aQbS/Szy9eOYz5apUYoG+bH0s4Yy/GnAO5WqieQAbi8fI7RIks795fJJm
+         fNQ/2+H82ZIWAGpeKHhoQqjmoEW52yjCvTQyAX1jt1k0G2eYeM1CY54CnVk+69z5zfel
+         +JAP1c4TXc1s7VTl0ddfHqnd4voPqmpKroI4VeHy4oLEfHP+s0ZA8rBR7Ja/hZtINrxw
+         k9uXDHJtvl+EueYU8QFfTSJ/HXCvv6fuqm+9bQAOqOxLyW1s6Iqrb8TDycX8KvKLurxj
+         +09bv1WQe4fGXlnW1OuzdmTvFJ3xbk/tQsh/JQggAF0zzIUxmPM5lnS9XI+JeVC1jdcX
+         LEPg==
+X-Gm-Message-State: APjAAAU/PiYGNkrrRctQbUAO/FZpYmjMtNdNnB/a7lbL6/4k71Sm6Ama
+        ax8jS9pOVL+hEvtqTENEQuMGilGBJ2B/sJgv+532LQ==
+X-Google-Smtp-Source: APXvYqzuMdXhB+JQDhn/jZvkysiN7UpsUi+51+G/P1uyrCn2dFNevUmM8fPQ7LjRFpo4VAJuXceadCsJ/fcgh0w80TFhaQ==
+X-Received: by 2002:aa7:9313:: with SMTP id 19mr3840216pfj.101.1551916818945;
+ Wed, 06 Mar 2019 16:00:18 -0800 (PST)
+Date:   Wed,  6 Mar 2019 15:59:06 -0800
 In-Reply-To: <20190306235913.6631-1-matthewgarrett@google.com>
-Message-Id: <20190306235913.6631-14-matthewgarrett@google.com>
+Message-Id: <20190306235913.6631-21-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190306235913.6631-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 13/27] x86/msr: Restrict MSR access when the kernel is locked down
+Subject: [PATCH 20/27] Lock down module params that specify hardware
+ parameters (eg. ioport)
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -68,54 +69,83 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+From: David Howells <dhowells@redhat.com>
 
-Writing to MSRs should not be allowed if the kernel is locked down, since
-it could lead to execution of arbitrary code in kernel mode.  Based on a
-patch by Kees Cook.
+Provided an annotation for module parameters that specify hardware
+parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+dma buffers and other types).
 
-MSR accesses are logged for the purposes of building up a whitelist as per
-Alan Cox's suggestion.
-
-Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-cc: x86@kernel.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- arch/x86/kernel/msr.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ kernel/params.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
-index 4588414e2561..f5a2cf07972f 100644
---- a/arch/x86/kernel/msr.c
-+++ b/arch/x86/kernel/msr.c
-@@ -84,6 +84,11 @@ static ssize_t msr_write(struct file *file, const char __user *buf,
- 	int err = 0;
- 	ssize_t bytes = 0;
+diff --git a/kernel/params.c b/kernel/params.c
+index ce89f757e6da..8ac751c938f8 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -108,13 +108,19 @@ bool parameq(const char *a, const char *b)
+ 	return parameqn(a, b, strlen(a)+1);
+ }
  
-+	if (kernel_is_locked_down("Direct MSR access")) {
-+		pr_info("Direct access to MSR %x\n", reg);
-+		return -EPERM;
-+	}
+-static void param_check_unsafe(const struct kernel_param *kp)
++static bool param_check_unsafe(const struct kernel_param *kp,
++			       const char *doing)
+ {
+ 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+ 		pr_notice("Setting dangerous option %s - tainting kernel\n",
+ 			  kp->name);
+ 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+ 	}
 +
- 	if (count % 8)
- 		return -EINVAL;	/* Invalid chunk size */
++	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
++	    kernel_is_locked_down("Command line-specified device addresses, irqs and dma channels"))
++		return false;
++	return true;
+ }
  
-@@ -135,6 +140,11 @@ static long msr_ioctl(struct file *file, unsigned int ioc, unsigned long arg)
- 			err = -EFAULT;
- 			break;
+ static int parse_one(char *param,
+@@ -144,8 +150,10 @@ static int parse_one(char *param,
+ 			pr_debug("handling %s with %p\n", param,
+ 				params[i].ops->set);
+ 			kernel_param_lock(params[i].mod);
+-			param_check_unsafe(&params[i]);
+-			err = params[i].ops->set(val, &params[i]);
++			if (param_check_unsafe(&params[i], doing))
++				err = params[i].ops->set(val, &params[i]);
++			else
++				err = -EPERM;
+ 			kernel_param_unlock(params[i].mod);
+ 			return err;
  		}
-+		if (kernel_is_locked_down("Direct MSR access")) {
-+			pr_info("Direct access to MSR %x\n", regs[1]); /* Display %ecx */
-+			err = -EPERM;
-+			break;
-+		}
- 		err = wrmsr_safe_regs_on_cpu(cpu, regs);
- 		if (err)
- 			break;
+@@ -553,6 +561,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
+ 	return count;
+ }
+ 
++#ifdef CONFIG_MODULES
++#define mod_name(mod) (mod)->name
++#else
++#define mod_name(mod) "unknown"
++#endif
++
+ /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
+ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 				struct module_kobject *mk,
+@@ -565,8 +579,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 		return -EPERM;
+ 
+ 	kernel_param_lock(mk->mod);
+-	param_check_unsafe(attribute->param);
+-	err = attribute->param->ops->set(buf, attribute->param);
++	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
++		err = attribute->param->ops->set(buf, attribute->param);
++	else
++		err = -EPERM;
+ 	kernel_param_unlock(mk->mod);
+ 	if (!err)
+ 		return len;
 -- 
 2.21.0.352.gf09ad66450-goog
 
