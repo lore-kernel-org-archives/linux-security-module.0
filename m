@@ -7,59 +7,58 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0173CC10F00
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949C1C43381
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2D0620842
+	by mail.kernel.org (Postfix) with ESMTP id 62BC320842
 	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 00:01:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UKz3VNDT"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BXibPNAU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbfCGAAM (ORCPT
+        id S1726101AbfCGABJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Mar 2019 19:00:12 -0500
-Received: from mail-ua1-f74.google.com ([209.85.222.74]:48569 "EHLO
-        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbfCGAAL (ORCPT
+        Wed, 6 Mar 2019 19:01:09 -0500
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:49322 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfCGAAN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Mar 2019 19:00:11 -0500
-Received: by mail-ua1-f74.google.com with SMTP id y19so1990856uap.15
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:10 -0800 (PST)
+        Wed, 6 Mar 2019 19:00:13 -0500
+Received: by mail-qt1-f202.google.com with SMTP id q11so13383324qtj.16
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Mar 2019 16:00:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=PqjENvzleKHq5r7VnPhuqFw2a2C+H2yOqXdiGG7oaFo=;
-        b=UKz3VNDTrFINv1Zw1JIFlqxV6jtbW7ksegxAkGlnfJsvZM35PiRWCSDU3Foos2uiey
-         19kv+vj6oA5hcbIwcgitp8WcFyB64OdSGSJ/jVFTor6v9eKAvxBalM5dQZBERK/hVX/K
-         F3OfCSW1PtffLcFO9mRmYFX1aJamjaEvbYwb0uULRCQmdb1uVatPgt7rAIiBcIfcOpew
-         UQYi0FtKWccFFwG/ALEqEyjM3VfvjODjBz/ir7sywBOSGb+/7kr67LQr6Z2/bKTgIdAB
-         xx5E2HnliBJTFtriJjYVkSBtEJYM5VtBjvOJFlDe6NuVu8GdwK+i01HjUm+aiz26RW6f
-         z7oQ==
+        bh=EeAsNLooacMCIyQQG8kjyYl9LfYTYq2OlHNVaSq+jF4=;
+        b=BXibPNAU2kBLKi0tjOaBoATPK4GSG9rdLOziADGyltDJLflexEotgn/YIOIEl1Fm1H
+         yMKiAZuRKAYyc2wi9Z9d4o35i6BvJDlVbS0M3iQvUIZits5qZwr7R60IUQGPdO6d5eWg
+         oqY4UJoLQdmZJ2B0X2IxvA0M9/CXZx0HcS1UqVad8pRlnNi2MHHBlTg276gQPOoUjJVU
+         jXR9xzzJ/1LnMTEgqx6l/1wlLediq2tk6EewVxCYv9Ajdlki6r3EAt3+eXpztFNwMs93
+         3/hzDEIcglR4a8m9b8Zr9hyDIA0YZdse4rBnWiIpPApIuSjtOjoQUODVtRMhiygVCjIw
+         lwFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=PqjENvzleKHq5r7VnPhuqFw2a2C+H2yOqXdiGG7oaFo=;
-        b=VQMAG4hZBfolgQWOumqbtO9y08HznQLmdBgCWE/6ikQsbz7F8BjHg+0Z9IxBIc8CHE
-         d3neqEZzQEEK8ylLgRREJigJYSNDVvgMiyzkXFbh1Tz+IgohrQidhhfxlZCITHZZk9Da
-         olgvjImjh3geQnpmw1n2Yj2oApliTGxc4i2OtTmAH4a4KvDFM5ClKRdgIVf6UXvLw22+
-         QkzNa5fpoBGxpil0JRiyM0yX8ipDNzyVsQeqitNPXAegG31DahywE78IzVBHG6Kwu5f4
-         pEqoa57MUFWIjcg+YBbVIzz6ggdR4vuw4Cku4ndKOmHE0DM4TTSUECP9wNsGZQ1AQ88g
-         8Bgw==
-X-Gm-Message-State: APjAAAW1NufiSF2uQ2HisZ67wSvhJFbvFr5H/o+X3YG+PlzAu+dMvi1g
-        nm6ZVConFxCZEXcLIuSbv0Mctqj+fojegGrYZpiy0w==
-X-Google-Smtp-Source: APXvYqz4xl5JcRRYnkdfh5b5R4DGoQ7iBnjDI80Ifuo8n1LWoBqkTumYb8oFwWgTadiqg8qVnykG8rL9vu6Uy49JuXnWkw==
-X-Received: by 2002:ab0:b98:: with SMTP id c24mr6860349uak.19.1551916810289;
- Wed, 06 Mar 2019 16:00:10 -0800 (PST)
-Date:   Wed,  6 Mar 2019 15:59:03 -0800
+        bh=EeAsNLooacMCIyQQG8kjyYl9LfYTYq2OlHNVaSq+jF4=;
+        b=PdfzB4fp+Kgawjb++Fc0ywleAi1lIUDQ3QnXFl0XB8XU1g5n549/1Ev8VQ/pOKfK6y
+         pRP40xziz4sWnehUDOnXJOJ/JW5VwDDQXo1GC8VYxkHhfVlc6g3F7n6zi4qE2cMzYxS1
+         FnDVpFKbsQYqd+ufBKP9eyptSY3O8OIcZDPQLUNbRh7y0TCoYa0xAixI4a5l1ERpGra6
+         CEYCPLq3oi3z5Bpzz4aCRcL1z4Sqy3hgUSRWYETj62jn1ls8b4zcBoY+wR9xM8N7AqKc
+         MnC01OsHh0riP9joGOe9kHAbrjmwLkV2d29Q14s08P4azldVuyUphp4sp3pOfuU5Mgc/
+         DLbQ==
+X-Gm-Message-State: APjAAAV4KNf2pWlXIHmJj+WT5PiKdgmYkm0Dikyxt1y9xfajDMfMUTj5
+        pmY3ZfcZf5NZ9KkhjqocfV074Egl9p90PTpYo33a0Q==
+X-Google-Smtp-Source: APXvYqyyHqurNEQcATvX9vuJ/DA66of6NpknXBwulCWr+CZ2zas04bUFP1eObLNYb/FpEk+eXfimYgny1hYZiiVpm2mLag==
+X-Received: by 2002:a0c:b10f:: with SMTP id q15mr6331977qvc.0.1551916812836;
+ Wed, 06 Mar 2019 16:00:12 -0800 (PST)
+Date:   Wed,  6 Mar 2019 15:59:04 -0800
 In-Reply-To: <20190306235913.6631-1-matthewgarrett@google.com>
-Message-Id: <20190306235913.6631-18-matthewgarrett@google.com>
+Message-Id: <20190306235913.6631-19-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190306235913.6631-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.352.gf09ad66450-goog
-Subject: [PATCH 17/27] acpi: Disable APEI error injection if the kernel is
- locked down
+Subject: [PATCH 18/27] Prohibit PCMCIA CIS storage when the kernel is locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -69,46 +68,33 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Linn Crosetto <linn@hpe.com>
+From: David Howells <dhowells@redhat.com>
 
-ACPI provides an error injection mechanism, EINJ, for debugging and testing
-the ACPI Platform Error Interface (APEI) and other RAS features.  If
-supported by the firmware, ACPI specification 5.0 and later provide for a
-way to specify a physical memory address to which to inject the error.
+Prohibit replacement of the PCMCIA Card Information Structure when the
+kernel is locked down.
 
-Injecting errors through EINJ can produce errors which to the platform are
-indistinguishable from real hardware errors.  This can have undesirable
-side-effects, such as causing the platform to mark hardware as needing
-replacement.
-
-While it does not provide a method to load unauthenticated privileged code,
-the effect of these errors may persist across reboots and affect trust in
-the underlying hardware, so disable error injection through EINJ if
-the kernel is locked down.
-
-Signed-off-by: Linn Crosetto <linn@hpe.com>
+Suggested-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
-cc: linux-acpi@vger.kernel.org
+cc: linux-pcmcia@lists.infradead.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- drivers/acpi/apei/einj.c | 3 +++
+ drivers/pcmcia/cistpl.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
-index fcccbfdbdd1a..9fe6bbab2e7d 100644
---- a/drivers/acpi/apei/einj.c
-+++ b/drivers/acpi/apei/einj.c
-@@ -518,6 +518,9 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
- 	int rc;
- 	u64 base_addr, size;
+diff --git a/drivers/pcmcia/cistpl.c b/drivers/pcmcia/cistpl.c
+index ac0672b8dfca..8adf092d0e18 100644
+--- a/drivers/pcmcia/cistpl.c
++++ b/drivers/pcmcia/cistpl.c
+@@ -1578,6 +1578,9 @@ static ssize_t pccard_store_cis(struct file *filp, struct kobject *kobj,
+ 	struct pcmcia_socket *s;
+ 	int error;
  
-+	if (kernel_is_locked_down("ACPI error injection"))
++	if (kernel_is_locked_down("Direct PCMCIA CIS storage"))
 +		return -EPERM;
 +
- 	/* If user manually set "flags", make sure it is legal */
- 	if (flags && (flags &
- 		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
+ 	s = to_socket(container_of(kobj, struct device, kobj));
+ 
+ 	if (off)
 -- 
 2.21.0.352.gf09ad66450-goog
 
