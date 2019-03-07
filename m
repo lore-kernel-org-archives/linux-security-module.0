@@ -2,81 +2,101 @@ Return-Path: <SRS0=bVIv=RK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A94C4360F
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46100C43381
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B031820851
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:29:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vgo0ZuHf"
+	by mail.kernel.org (Postfix) with ESMTP id 156992081B
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:35:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfCGW3E (ORCPT
+        id S1726242AbfCGWez (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Mar 2019 17:29:04 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:52484 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726237AbfCGW3D (ORCPT
+        Thu, 7 Mar 2019 17:34:55 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53814 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726227AbfCGWez (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Mar 2019 17:29:03 -0500
-Received: by mail-it1-f195.google.com with SMTP id g17so17960437ita.2
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2019 14:29:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vNxJ3foSkA4SZkqYFT+UIjdNLs58toH+QOhrzUMtpYc=;
-        b=Vgo0ZuHfZ0CQsRUYsH9bmQmCVMGzvvZf0zYxZGh9TjXtesRrpqj9H3qW4qnYrCCU3F
-         9GR73nxfrpQeuIdnF1OXEhLvB96J/rQvI9isT5i5FStkanUr3Sw1NTwbJOJVOTcdSM7x
-         ebCNzVAQKuF3/ZkmlMStUgUt69BxOzeHEz3CQi5ka+Z0QyqHiEocp19IzRsfPqz8ocv1
-         z7maRj2F+vV5Awf/vysGKYj5R8OXYSjQ8fNuGJX/9JX1XNi6DVJoRkzXnLlAtNKaHZBT
-         UYfTVmCwehNQ9pQamd6ylSMkfpla/ILa5FZJFoPEfm3T0BUx+8VP9StX5o9BW5RedRaf
-         7QPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vNxJ3foSkA4SZkqYFT+UIjdNLs58toH+QOhrzUMtpYc=;
-        b=R/XFTQd7UDHkot7+/K2poVOLtuPJ73A43TBp0y2B6cXEr1eEC4J/8qK6fGr7oyAUUc
-         8zPMpGxoNFhofT+YTbQJxKPosGmPEj7B/5ADcVBsXre0fbGb9ueeC+FMNA6wmKImGikV
-         DIkUNT4q6TtVP0NDp+oLudTreUT4QleD21CSWgpGOW/HDvZRSOLA7wewEgETmsoIfD5M
-         NznsA/G7iRlLlr99AP9aAA5/w14EjZTBhKS+b72mX2ZQ09G5A/mr4KlHeULmqJmCFyTb
-         ++PtzZnrobyhpQdE8bJWjDS88fPsTd21AT+o/5tiBGlGpX+I19XCD4rZ4Y6LsftgIqpW
-         ecCw==
-X-Gm-Message-State: APjAAAXCE786Q8SlA7Y6m3CkT2S90tShraeeqAzBlNipMSoTjVzAmGtV
-        jLXOoorpeiHY9p2HnZi0zd8BAo5YiqIT2I7Nb/A0a+xvFjE=
-X-Google-Smtp-Source: APXvYqy43x5FazluW1X9TdVxWggDEgzXnLX6+pFxYl5tfuPVTEaHj5SdjRk99bEssezrmdKgcOhdOIvCihQxJQ9kiY8=
-X-Received: by 2002:a02:76c2:: with SMTP id z185mr8696301jab.102.1551997742985;
- Thu, 07 Mar 2019 14:29:02 -0800 (PST)
-MIME-Version: 1.0
-References: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com> <1542657371-7019-4-git-send-email-zohar@linux.ibm.com>
-In-Reply-To: <1542657371-7019-4-git-send-email-zohar@linux.ibm.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 7 Mar 2019 14:28:52 -0800
-Message-ID: <CACdnJusqHZ1OLJD1baN=fXK9KE+bSqzB4OUbmLXH5-qZNrQXJg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/ima: retry detecting secure boot mode
-To:     Mimi Zohar <zohar@linux.ibm.com>
+        Thu, 7 Mar 2019 17:34:55 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x27MIcaL052539
+        for <linux-security-module@vger.kernel.org>; Thu, 7 Mar 2019 17:34:54 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2r38qd28u3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2019 17:34:54 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 7 Mar 2019 22:34:51 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 7 Mar 2019 22:34:48 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x27MYltN55574654
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 7 Mar 2019 22:34:47 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7A52BAE2CA;
+        Thu,  7 Mar 2019 22:34:47 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 572ADAE2CC;
+        Thu,  7 Mar 2019 22:34:46 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.93.211])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  7 Mar 2019 22:34:46 +0000 (GMT)
+Subject: Re: [PATCH v2] x86/ima: require signed kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Matthew Garrett <mjg59@google.com>
 Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>, jforbes@redhat.com,
+        Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
         Seth Forshee <seth.forshee@canonical.com>,
-        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
+        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
+Date:   Thu, 07 Mar 2019 17:34:35 -0500
+In-Reply-To: <CACdnJuuPyL3Qo4jAiJDQvUF9Ctch6Yo2bKezEuQ2KaM5ZZ1vqw@mail.gmail.com>
+References: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
+         <CACdnJuuPyL3Qo4jAiJDQvUF9Ctch6Yo2bKezEuQ2KaM5ZZ1vqw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19030722-0020-0000-0000-0000031FF55E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19030722-0021-0000-0000-000021720BA8
+Message-Id: <1551998075.31706.455.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-07_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=984 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903070147
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 19, 2018 at 11:57 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> The secure boot mode may not be detected on boot for some reason (eg.
-> buggy firmware).  This patch attempts one more time to detect the
-> secure boot mode.
+On Thu, 2019-03-07 at 14:27 -0800, Matthew Garrett wrote:
+> On Wed, Feb 13, 2019 at 4:18 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > -       if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
+> > +       if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
+> > +               if (IS_ENABLED(CONFIG_MODULE_SIG))
+> > +                       set_module_sig_enforced();
+> >                 return sb_arch_rules;
+> 
+> Linus previously pushed back on having the lockdown features
+> automatically enabled on secure boot systems. Why are we doing the
+> same in IMA?
 
-Do we have cases where this has actually been seen? I'm not sure what
-the circumstances are that would result in this behaviour.
+IMA-appraisal is extending the "secure boot" concept to the running
+system.
+
+Mimi
+
