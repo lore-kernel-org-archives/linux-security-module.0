@@ -7,79 +7,76 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5403DC10F03
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A94C4360F
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 170DC20851
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:27:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B031820851
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:29:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NNgESof5"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vgo0ZuHf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbfCGW1n (ORCPT
+        id S1726267AbfCGW3E (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Mar 2019 17:27:43 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38776 "EHLO
+        Thu, 7 Mar 2019 17:29:04 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:52484 "EHLO
         mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbfCGW1n (ORCPT
+        with ESMTP id S1726237AbfCGW3D (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Mar 2019 17:27:43 -0500
-Received: by mail-it1-f195.google.com with SMTP id l66so18461902itg.3
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2019 14:27:42 -0800 (PST)
+        Thu, 7 Mar 2019 17:29:03 -0500
+Received: by mail-it1-f195.google.com with SMTP id g17so17960437ita.2
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2019 14:29:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aeVAu/2CmpB2cfJzu9fgIHJ9O24LMTKNu5/wViBrthU=;
-        b=NNgESof5mox7G8Hv0Loxzlk+NqdipLK34lwbWzwkccQZRP5m7mDI2/Lhi892EhFjih
-         SaEAQkyJg6BLwyWCRQ+K71TctgHEXNlB4eUvyIYwgaxGAhdOr00cdN2oFPrCl+5cuVyG
-         vKXtskP0L9Ug4UetozxVXClQmFHZkQR5nFmRR07VC49mvaMjqZ17yD4TxPdWOprypq6E
-         mnK2tobJp5lqAYfGnIoz1ZE3zQwylVmjRnQWWx/oSYYxz29tfl+mdRmr04M9mvmTlI/S
-         bMWrBDjobhLdG7xut4Z51sCdohAGb7yTLptSiX1i8gxdZ2dfcOqPTmvdLAq+r//JioKt
-         934Q==
+        bh=vNxJ3foSkA4SZkqYFT+UIjdNLs58toH+QOhrzUMtpYc=;
+        b=Vgo0ZuHfZ0CQsRUYsH9bmQmCVMGzvvZf0zYxZGh9TjXtesRrpqj9H3qW4qnYrCCU3F
+         9GR73nxfrpQeuIdnF1OXEhLvB96J/rQvI9isT5i5FStkanUr3Sw1NTwbJOJVOTcdSM7x
+         ebCNzVAQKuF3/ZkmlMStUgUt69BxOzeHEz3CQi5ka+Z0QyqHiEocp19IzRsfPqz8ocv1
+         z7maRj2F+vV5Awf/vysGKYj5R8OXYSjQ8fNuGJX/9JX1XNi6DVJoRkzXnLlAtNKaHZBT
+         UYfTVmCwehNQ9pQamd6ylSMkfpla/ILa5FZJFoPEfm3T0BUx+8VP9StX5o9BW5RedRaf
+         7QPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aeVAu/2CmpB2cfJzu9fgIHJ9O24LMTKNu5/wViBrthU=;
-        b=Q2bwI79eQVGlIR9j4VSt6zVXMxwhrmrfFTavL74SODQfCUTuR2BHnk1BtSU1yqdkCc
-         QqD5gJTJAajvsJCH9qShX86imOBnJljuKhk8MEUjNTMu2rdiMKQddZjBE2SOcbZgJm/4
-         M8bcAYdM33p7vgOJCHA3/YpQ93gdWIcdqnJX0lr3pzxDDC5KoOgRrbk9OkHP98U9rxvG
-         SPjeejyPbvH/2yLXM6YVlhd/YHXRal07DVwngtcow+Vo5zq6g/l97nAbmI96ydBSB9Ed
-         IVVPngMD+6a4Hjnmxzcu8V8osvjrJfKtHZCO2kc4CkRIovoqmgdUCJ9SGU5rESlAxoZv
-         +mQA==
-X-Gm-Message-State: APjAAAXlSw5n3ko+mi/nZfOrCGEeToM84YoE40tUzrfmn0XDO9V7ryba
-        aEAQWbKYVE5iPFmqvF2Oe2xLLTHzHTf5Jq/KUc4kmA==
-X-Google-Smtp-Source: APXvYqxbJLcL/ijDNhiVl36WddXDPvHt3J7DK8v4ybguz/Rvx9zNjG7NKm8O4VOahRH5hXYiEQDaoeFIVroSEgxweAk=
-X-Received: by 2002:a24:43d1:: with SMTP id s200mr6643361itb.118.1551997661963;
- Thu, 07 Mar 2019 14:27:41 -0800 (PST)
+        bh=vNxJ3foSkA4SZkqYFT+UIjdNLs58toH+QOhrzUMtpYc=;
+        b=R/XFTQd7UDHkot7+/K2poVOLtuPJ73A43TBp0y2B6cXEr1eEC4J/8qK6fGr7oyAUUc
+         8zPMpGxoNFhofT+YTbQJxKPosGmPEj7B/5ADcVBsXre0fbGb9ueeC+FMNA6wmKImGikV
+         DIkUNT4q6TtVP0NDp+oLudTreUT4QleD21CSWgpGOW/HDvZRSOLA7wewEgETmsoIfD5M
+         NznsA/G7iRlLlr99AP9aAA5/w14EjZTBhKS+b72mX2ZQ09G5A/mr4KlHeULmqJmCFyTb
+         ++PtzZnrobyhpQdE8bJWjDS88fPsTd21AT+o/5tiBGlGpX+I19XCD4rZ4Y6LsftgIqpW
+         ecCw==
+X-Gm-Message-State: APjAAAXCE786Q8SlA7Y6m3CkT2S90tShraeeqAzBlNipMSoTjVzAmGtV
+        jLXOoorpeiHY9p2HnZi0zd8BAo5YiqIT2I7Nb/A0a+xvFjE=
+X-Google-Smtp-Source: APXvYqy43x5FazluW1X9TdVxWggDEgzXnLX6+pFxYl5tfuPVTEaHj5SdjRk99bEssezrmdKgcOhdOIvCihQxJQ9kiY8=
+X-Received: by 2002:a02:76c2:: with SMTP id z185mr8696301jab.102.1551997742985;
+ Thu, 07 Mar 2019 14:29:02 -0800 (PST)
 MIME-Version: 1.0
-References: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
-In-Reply-To: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
+References: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com> <1542657371-7019-4-git-send-email-zohar@linux.ibm.com>
+In-Reply-To: <1542657371-7019-4-git-send-email-zohar@linux.ibm.com>
 From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 7 Mar 2019 14:27:30 -0800
-Message-ID: <CACdnJuuPyL3Qo4jAiJDQvUF9Ctch6Yo2bKezEuQ2KaM5ZZ1vqw@mail.gmail.com>
-Subject: Re: [PATCH v2] x86/ima: require signed kernel modules
+Date:   Thu, 7 Mar 2019 14:28:52 -0800
+Message-ID: <CACdnJusqHZ1OLJD1baN=fXK9KE+bSqzB4OUbmLXH5-qZNrQXJg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] x86/ima: retry detecting secure boot mode
 To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
+        David Howells <dhowells@redhat.com>, jforbes@redhat.com,
         Seth Forshee <seth.forshee@canonical.com>,
-        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
+        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 13, 2019 at 4:18 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> -       if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
-> +       if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-> +               if (IS_ENABLED(CONFIG_MODULE_SIG))
-> +                       set_module_sig_enforced();
->                 return sb_arch_rules;
+On Mon, Nov 19, 2018 at 11:57 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> The secure boot mode may not be detected on boot for some reason (eg.
+> buggy firmware).  This patch attempts one more time to detect the
+> secure boot mode.
 
-Linus previously pushed back on having the lockdown features
-automatically enabled on secure boot systems. Why are we doing the
-same in IMA?
+Do we have cases where this has actually been seen? I'm not sure what
+the circumstances are that would result in this behaviour.
