@@ -4,63 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83837C43381
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 20:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F851C4360F
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 20:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52B9E2085A
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 20:55:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E47A20851
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 20:55:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1551992116;
-	bh=DQzHm4skpWyQriYNUEH6chVKGfS/vVwSCDgivYJhmgg=;
+	s=default; t=1551992119;
+	bh=5r639Man69NVlhCkmwwdQa5NuM9IotL1m9vSHKNcnz0=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=n1YNlzyd9GU3r2lOl6x32BKl6i82hw1E1dyvmLxVfShq2xgwlCs0ln8AxFHIkjDUI
-	 7i6KCQCZ8NULXMsz0hIwzXpQZlU9MqK59bSMw3LQm2BFX2v1/7RygQGjRwhuqEB+WR
-	 lEOt4a5Zn40eTPm/dJoVuwlKUZy0DS+m22ineZ2w=
+	b=xsYisH7G5MMREISR2HpP+1XAKvlqv27uVsbt4fjnBlwZo+ezEFzwshAG6Pp6Splxn
+	 9UWe1cCHvBhXEyb72Xjc7aQhwJ0VH7b+0SDyYge/iJj0oHcny7hXZFpBFGR3MP35U7
+	 qEq/6TI6JPvVCRZD46+193VYQHylgGL+wpxspfJg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbfCGUzP (ORCPT
+        id S1726243AbfCGUzR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Mar 2019 15:55:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60866 "EHLO mail.kernel.org"
+        Thu, 7 Mar 2019 15:55:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726428AbfCGUzP (ORCPT
+        id S1726428AbfCGUzQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Mar 2019 15:55:15 -0500
-Subject: Re: [GIT PULL] security subsystem changes for v5.1
+        Thu, 7 Mar 2019 15:55:16 -0500
+Subject: Re: [GIT PULL] SELinux patches for v5.1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1551992115;
-        bh=DQzHm4skpWyQriYNUEH6chVKGfS/vVwSCDgivYJhmgg=;
+        bh=5r639Man69NVlhCkmwwdQa5NuM9IotL1m9vSHKNcnz0=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=jcnaiEm/AV9XQpGISLDwuXOCWrUKXm/VvdICTtn6rpVjjz9xS1XkJ+blbJRwp5yPZ
-         T3R6K2j6/k8veIhuhkg+0Vsdu3weRqkHTd0MLH5F0omifH9WQ9PSDTYJ6vuxYHFqZO
-         6sYEKvGEH2ZUzMPHykP3y8IX/ErKuG+FaCcZrowo=
+        b=sBqnA4vH2ZZOhMlDbRg5eQYiZ1s4JaFBZjtSbt9d75DnPJ0vT0k88nQiRTwtV2Lv2
+         ZVuiQ/Wc7OqQQF98ZZRtl0qXVHY9JURPJgT92LEDhLifLi6wsm0wX0jFXnnTEibKfE
+         UyE+PEakLl1WvOFdGGcYpKUENOc5kxJiApXTjuN0=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <alpine.LRH.2.21.1903060540160.19551@namei.org>
-References: <alpine.LRH.2.21.1903060540160.19551@namei.org>
+In-Reply-To: <CAHC9VhRbDONFkYe5J2KtFSRdKcz5Z3vdJFuiZCi_EQiJHFaNtA@mail.gmail.com>
+References: <CAHC9VhRbDONFkYe5J2KtFSRdKcz5Z3vdJFuiZCi_EQiJHFaNtA@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1903060540160.19551@namei.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
- next-general
-X-PR-Tracked-Commit-Id: 468e91cecb3218afd684b8c422490dfebe0691bb
+X-PR-Tracked-Message-Id: <CAHC9VhRbDONFkYe5J2KtFSRdKcz5Z3vdJFuiZCi_EQiJHFaNtA@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+ tags/selinux-pr-20190305
+X-PR-Tracked-Commit-Id: 45189a1998e00f6375ebd49d1e18161acddd73de
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ae5906ceee038ea29ff5162d1bcd18fb50af8b94
-Message-Id: <155199211495.24626.7564639083723810854.pr-tracker-bot@kernel.org>
-Date:   Thu, 07 Mar 2019 20:55:14 +0000
-To:     James Morris <jmorris@namei.org>
+X-PR-Merge-Commit-Id: 3ac96c30ccfa802501dd2f4941e4508ea54b0b8a
+Message-Id: <155199211579.24626.7678959468205082133.pr-tracker-bot@kernel.org>
+Date:   Thu, 07 Mar 2019 20:55:15 +0000
+To:     Paul Moore <paul@paul-moore.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Wed, 6 Mar 2019 05:57:03 +1100 (AEDT):
+The pull request you sent on Tue, 5 Mar 2019 17:17:30 -0500:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20190305
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ae5906ceee038ea29ff5162d1bcd18fb50af8b94
+https://git.kernel.org/torvalds/c/3ac96c30ccfa802501dd2f4941e4508ea54b0b8a
 
 Thank you!
 
