@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52501C10F03
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 17:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC649C10F03
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 17:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2328420851
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 17:02:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF5E92087C
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 17:06:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="MMTf+qM5"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ATn+ZtuV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbfCGRCy (ORCPT
+        id S1726200AbfCGRG3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Mar 2019 12:02:54 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:53568 "EHLO mail.skyhub.de"
+        Thu, 7 Mar 2019 12:06:29 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:54078 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726185AbfCGRCy (ORCPT
+        id S1726185AbfCGRG2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Mar 2019 12:02:54 -0500
+        Thu, 7 Mar 2019 12:06:28 -0500
 Received: from zn.tnic (unknown [IPv6:2003:ec:2f08:1c00:329c:23ff:fea6:a903])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 71BE81EC066F;
-        Thu,  7 Mar 2019 18:02:51 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 79C761EC066F;
+        Thu,  7 Mar 2019 18:06:26 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1551978171;
+        t=1551978386;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=y3qq1FJAtgMcBrhxJOuu6fPyW4x/qy6rfTwk7P7bdN4=;
-        b=MMTf+qM5o5XuoSWwaEXahf1r1N0Uzibm438tZBQJCyJa28wh0t3NHqV9+LCJc/KAUVt0F4
-        /cYa61X4/5ES4JmSh89MXAEWV0xafzdCuIDLPjbWxu4Gu8NVU7b7/xRFzc2AGidX/jTp7x
-        sA46QeeJG2aL3u03dxDA5CCVDdKx6F0=
-Date:   Thu, 7 Mar 2019 18:02:54 +0100
+        bh=l8cTM4Q9P0s3RXZNsCWcgbO0ogkOlG4bqVEytx8DQK0=;
+        b=ATn+ZtuVU+ClpyQgBAKOuZpfBSy9/Dx5UMED9ml4h113elugzb1qFn7lbGNrpfnfie8mmC
+        aoP9aXiU+zgnRgI9OpXbhrqrFnO3PsdxLF9jaXXCA2oBndyvQzd6FYW3H78uhFnwXocnhf
+        XncZ0ieSiRYL2PGhG+PbQZvyAnmQfM8=
+Date:   Thu, 7 Mar 2019 18:06:29 +0100
 From:   Borislav Petkov <bp@alien8.de>
 To:     hpa@zytor.com
 Cc:     Nadav Amit <nadav.amit@gmail.com>,
@@ -58,68 +58,45 @@ Cc:     Nadav Amit <nadav.amit@gmail.com>,
         "Dock, Deneen T" <deneen.t.dock@intel.com>,
         Kees Cook <keescook@chromium.org>,
         Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Michael Matz <matz@suse.de>
-Subject: Re: [PATCH] x86/cpufeature: Remove __pure attribute to
- _static_cpu_has()
-Message-ID: <20190307170254.GF26566@zn.tnic>
-References: <20190211182956.GN19618@zn.tnic>
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 10/20] x86: avoid W^X being broken during modules
+ loading
+Message-ID: <20190307170629.GG26566@zn.tnic>
+References: <20190129003422.9328-11-rick.p.edgecombe@intel.com>
+ <20190211182956.GN19618@zn.tnic>
  <1533F2BB-2284-499B-9912-6D74D0B87BC1@gmail.com>
  <20190211190108.GP19618@zn.tnic>
  <A671F14F-3E03-4A97-9F54-426533077E0C@gmail.com>
  <20190211191059.GR19618@zn.tnic>
  <3996E3F9-92D2-4561-84E9-68B43AC60F43@gmail.com>
  <20190211194251.GS19618@zn.tnic>
- <A55214F3-CDC0-44C4-AFB6-7E8E23CC6F85@gmail.com>
- <20190307151036.GD26566@zn.tnic>
- <D683E00D-845E-4970-80DE-AD1DED3AE609@zytor.com>
+ <20190307072947.GA26566@zn.tnic>
+ <EF5F87D9-EA7B-4F92-81C4-329A89EEADFA@zytor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <D683E00D-845E-4970-80DE-AD1DED3AE609@zytor.com>
+In-Reply-To: <EF5F87D9-EA7B-4F92-81C4-329A89EEADFA@zytor.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Lemme preface this by saying that I've talked to gcc guys before doing
-this.
+On Thu, Mar 07, 2019 at 08:53:34AM -0800, hpa@zytor.com wrote:
+> If we *do*, what is the issue here? Although boot_cpu_has() isn't
+> slow (it should in general be possible to reduce to one testb
+> instruction followed by a conditional jump) it seems that "avoiding an
+> alternatives slot" *should* be a *very* weak reason, and seems to me
+> to look like papering over some other problem.
 
-On Thu, Mar 07, 2019 at 08:43:50AM -0800, hpa@zytor.com wrote:
-> Uhm... (a) it is correct, even if the compiler doesn't use it now, it
-> allows the compiler to CSE it in the future;
+Forget the current thread: this is simply trying to document when to use
+static_cpu_has() and when to use boot_cpu_has(). I get asked about it at
+least once a month.
 
-Well, the compiler won't CSE asm blocks due to the difference in the
-labels, for example, so the heuristic won't detect them as equivalent
-blocks.
+And then it is replacing clear slow paths using static_cpu_has() with
+boot_cpu_has() because there's purely no need to patch there. And having
+a RIP-relative MOV and a JMP is good enough for slow paths.
 
-Also, compiler guys said that they might consider inlining pure
-functions later, in the IPA stage but that's future stuff.
-
-This is how I understood it, at least.
-
-> (b) it is documentation;
-
-That could be a comment instead. Otherwise we will wonder again why this
-is marked pure.
-
-> (c) there is an actual bug here: the "volatile" implies a side effect,
-> which in reality is not present, inhibiting CSE.
->
-> So the correct fix is to remove "volatile", not remove "__pure".
-
-There's not really a volatile there:
-
-/*
- * GCC 'asm goto' miscompiles certain code sequences:
- *
- *   http://gcc.gnu.org/bugzilla/show_bug.cgi?id=58670
- *
- * Work it around via a compiler barrier quirk suggested by Jakub Jelinek.
- *
- * (asm goto is automatically volatile - the naming reflects this.)
- */
-#define asm_volatile_goto(x...) do { asm goto(x); asm (""); } while (0)
+Makes sense?
 
 -- 
 Regards/Gruss,
