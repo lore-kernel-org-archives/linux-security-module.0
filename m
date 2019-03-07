@@ -2,207 +2,253 @@ Return-Path: <SRS0=bVIv=RK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88009C43381
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 09:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8571C4360F
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 11:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5318220675
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 09:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E5C62085A
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 11:20:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="o5ELAHzX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726150AbfCGJBQ (ORCPT
+        id S1726379AbfCGLUu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Mar 2019 04:01:16 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38241 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbfCGJBQ (ORCPT
+        Thu, 7 Mar 2019 06:20:50 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:20602 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726375AbfCGLUu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Mar 2019 04:01:16 -0500
-Received: by mail-ot1-f68.google.com with SMTP id m1so13438019otf.5
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2019 01:01:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O/94IVKlMPad+e5UwWHBeP+CHK+Rz/ElLhDY65en7LY=;
-        b=M+xp7bFFAX/MFAqlJYFSpgK5NFQi/091jCzyeximt65nIsHHrmX4V3sytcrgaAeSNW
-         7wxlD6X2l1EON/YtWkIrUpwtJ1dZhsq74pNXZHXs/gfQibPr1w71s53863+TxiqzScJ6
-         3Jio8WKtII4E4R30z+yZsXIx+c8YQynPCf5Mk38P2YSKvsn0DxR34LHkLYzxehAzNZin
-         OUvJe76crXvuaLnLE0ztGHmobTMvmvvRcVJ23NBfkiW+pY1bNgIAErzG4hKf2c3W3gvB
-         2vHEGMVTCymzs+HtMHyR8otsrdcreS+cpUNyS/NNx0BjUkUooXvht69Fn5zrmiyz/eWP
-         KTIQ==
-X-Gm-Message-State: APjAAAV8Q/pqJbhwlYecLbiY1X6XW8XGb89/0Xq9L0at81Nk+vSpDIKT
-        P+FP5wgJKVI9dz6yUhZDAEfcu267AbkXCaZq2QzRiA==
-X-Google-Smtp-Source: APXvYqy2MXlW02f1kKABz3aeMOJSoItuHnn4SC0kYe9zNARkR216OI3gnqi3pcg1D/daU9Ma24J8IFRRIh+uMKGd+us=
-X-Received: by 2002:a9d:6553:: with SMTP id q19mr6913398otl.21.1551949275533;
- Thu, 07 Mar 2019 01:01:15 -0800 (PST)
-MIME-Version: 1.0
-References: <20190222145718.5740-1-omosnace@redhat.com> <CAFqZXNs28QAxHA3=vECuG17TQ-be0ywS=r9S48q_KNBYpzgJLg@mail.gmail.com>
- <7f92ac61-c72b-ab31-c757-c2ac1bcf7b08@schaufler-ca.com>
-In-Reply-To: <7f92ac61-c72b-ab31-c757-c2ac1bcf7b08@schaufler-ca.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Thu, 7 Mar 2019 10:01:04 +0100
-Message-ID: <CAFqZXNtVhwsYa-6eBq8BJV5kZznK8do075kOZJ8TSz4BnnN6_A@mail.gmail.com>
-Subject: Re: [PATCH v7 0/7] Allow initializing the kernfs node's secctx based
- on its parent
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 7 Mar 2019 06:20:50 -0500
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190307112047epoutp04dba90a98a46238465bfc502888bf2b54~JqUIAO8Ch1493014930epoutp04G
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Mar 2019 11:20:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190307112047epoutp04dba90a98a46238465bfc502888bf2b54~JqUIAO8Ch1493014930epoutp04G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1551957647;
+        bh=KVhH1l9CGo/3tXGzL/9KY/4rmMejZB5ce/CWD+RBhOQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=o5ELAHzXrDbjnbifbWh8MIaGQVC3OpBi6nY3IXmD0/byML7hbRU8ILBylFg9B5U5H
+         YYJaQ/bqdVU1+0puZe2UOwrN04qRMEXzlNVP35KngJp0sVGO4ujY/SdreNm5tiU0K6
+         pSjFYX4SGoTV1gbYx1P0xXjixf9FG4Gd39xg5P/o=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.40.194]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20190307112044epcas5p391062bd1ae338323d3b084f1afe099d2~JqUFg-pqN0473304733epcas5p3Q;
+        Thu,  7 Mar 2019 11:20:44 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A0.B3.04136.C8EF08C5; Thu,  7 Mar 2019 20:20:44 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190307093333epcas5p25cc50478585532ea2f7c4a1275b04279~Jo2fzJ8Wq2554325543epcas5p27;
+        Thu,  7 Mar 2019 09:33:33 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190307093333epsmtrp21f9e6309b56f127149337362729705a9~Jo2fyILZx1332713327epsmtrp2R;
+        Thu,  7 Mar 2019 09:33:33 +0000 (GMT)
+X-AuditID: b6c32a4b-4afff70000001028-28-5c80fe8cac53
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        4B.83.03601.D65E08C5; Thu,  7 Mar 2019 18:33:33 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.108.92.210]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190307093332epsmtip2e98a6ac077f3acd72465acde167860f1~Jo2es1WgP2367923679epsmtip2p;
+        Thu,  7 Mar 2019 09:33:32 +0000 (GMT)
+From:   Vishal Goel <vishal.goel@samsung.com>
+To:     casey@schaufler-ca.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     pankaj.m@samsung.com, a.sahrawat@samsung.com,
+        Vishal Goel <vishal.goel@samsung.com>
+Subject: [PATCH 1/1] Smack :- In this patch, global rule list has been
+ removed. Now all smack rules will be read using "smack_known_list". This
+ list contains all the smack labels and internally each smack label structure
+ maintains the list of smack rules corresponding to that smack label. So
+ there is no need to maintain extra list.
+Date:   Thu,  7 Mar 2019 14:53:23 +0530
+Message-Id: <1551950603-15570-1-git-send-email-vishal.goel@samsung.com>
+X-Mailer: git-send-email 1.9.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIKsWRmVeSWpSXmKPExsWy7bCmlm7Pv4YYg2c/+C0u7k61uLftF5vF
+        5V1z2Cw+9Dxis7j3ZiuTxbrbpxkd2Dz6tqxi9Di6fxGbx+dNcgHMUTk2GamJKalFCql5yfkp
+        mXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4Bum6ZOUBrlRTKEnNKgUIBicXFSvp2NkX5
+        pSWpChn5xSW2SqkFKTkFhkYFesWJucWleel6yfm5VoYGBkamQJUJORk7vwUXPFep6H21mLWB
+        8Z1sFyMnh4SAicS+5gZGEFtIYDejxJxNHl2MXED2J0aJ688PMUE43xglfv26wA7Tsfv7ZnaI
+        xF5Gib/TjrJCOF8YJWbtWssCUsUmoC3RO+8uE4gtIpAo8eHJDrBuZoFIiV/bf7OB2MICV5kk
+        5nQKdDFycLAIqEp83JsAEuYVcJdoXPaeGWKZnMTJY5PB5ksIfGSVaDr0FirhIjH3yDRWCFtY
+        4tXxLVDXSUl8freXDaKhm1Hi6YczjBDOFEaJhc8nQHXbSzy4cZQdZDOzgKbE+l36EGFZiamn
+        1jFBHMon0fv7CRNEnFdixzwYW1Vi6qRuqGXSEodvnGGBsD0kJrz5zAYJyFiJA/tmME5glJ2F
+        sGEBI+MqRsnUguLc9NRi0wLjvNRy5IjaxAhOTlreOxg3nfM5xCjAwajEwxtxuj5GiDWxrLgy
+        9xCjBAezkgjvydcNMUK8KYmVValF+fFFpTmpxYcYTYEhOJFZSjQ5H5g480riDU2NzMwMLA1M
+        jS3MDJXEeefKzo0WEkhPLEnNTk0tSC2C6WPi4JRqYEwNufX8dnrhxOkHAs7nu8RxaFSauk60
+        DVFqmHBSuGDiKy+R5LkZeWrvFp8T3n5sC4Np5taDH8W5Dd5qsJamBancuhvWL6xw+8TX+j3W
+        v7ZNspnRvVHfJ+Cy9NHuG/ViWq28ghvr7/w2uhanFXTljXN0xDWhlWJ7FF+Kv2A3nBBzfoYC
+        L+OF2UosxRmJhlrMRcWJAEIQ3sVkAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNJMWRmVeSWpSXmKPExsWy7bCSvG7u04YYg4dzJS0u7k61uLftF5vF
+        5V1z2Cw+9Dxis7j3ZiuTxbrbpxkd2Dz6tqxi9Di6fxGbx+dNcgHMUVw2Kak5mWWpRfp2CVwZ
+        O78FFzxXqeh9tZi1gfGdbBcjJ4eEgInE7u+b2bsYuTiEBHYzSnw53cUGkZCWWNL5hh3CFpZY
+        +e85VNEnRom5rzpZQRJsAtoSvfPuMoHYIgLJErubpzOC2MwC0RLTnnWxgDQIC5xlkmhceIu5
+        i5GDg0VAVeLj3gSQGl4Bd4nGZe+ZIRbISZw8Npl1AiPPAkaGVYySqQXFuem5xYYFRnmp5XrF
+        ibnFpXnpesn5uZsYwUGipbWD8cSJ+EOMAhyMSjy8EafrY4RYE8uKK3MPMUpwMCuJ8DY+aogR
+        4k1JrKxKLcqPLyrNSS0+xCjNwaIkziuffyxSSCA9sSQ1OzW1ILUIJsvEwSnVwLjmSqo9u6TU
+        lpWy9exTJcSqan4/WPtEyD9iYZqrUImd83aLDeb9cSoz1t66eO5hHPvNrXFclwRM9z124t9z
+        L+PM69XF81zXnbhcwLhg4oek26lnhSu3K/XI/lyXreJjISLnvixM4jLH8YSCHGlO3dK9as8c
+        VuqseLWtynrHii8/7erVbyks+6DEUpyRaKjFXFScCAANWrbjDgIAAA==
+X-CMS-MailID: 20190307093333epcas5p25cc50478585532ea2f7c4a1275b04279
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190307093333epcas5p25cc50478585532ea2f7c4a1275b04279
+References: <CGME20190307093333epcas5p25cc50478585532ea2f7c4a1275b04279@epcas5p2.samsung.com>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 6, 2019 at 7:04 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 3/6/2019 7:54 AM, Ondrej Mosnacek wrote:
-> > On Fri, Feb 22, 2019 at 3:57 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >> TL;DR:
-> >> This series adds a new security hook that allows to initialize the security
-> >> context of kernfs properly, taking into account the parent context (and
-> >> possibly other attributes). Kernfs nodes require special handling here, since
-> >> they are not bound to specific inodes/superblocks, but instead represent the
-> >> backing tree structure that is used to build the VFS tree when the kernfs
-> >> tree is mounted.
-> >>
-> >> Changes in v7:
-> >> - simplify the new security hook's interface
-> >>    - rather than trying to extract kernfs data into common structures, just
-> >>      pass the kernfs nodes themselves and add helper functions to
-> >>      <linux/kernfs.h> for accessing their security xattrs
-> >>    - in case other LSMs need more kernfs node attributes than the file mode
-> >>      (uid/gid/...), they can simply add new helpers to <linux/kernfs.h> as
-> >>      needed
-> >> - refactor "kernfs: use simple_xattrs for security attributes" to keep using
-> >>    a single common simple_xattrs structure
-> >>    - turns out having two separate simple_xattrs wouldn't work right (see
-> >>      the definition of simple_xattr_list() in fs/xattr.c)
-> >> - drop unnecessary initializations from inode_doinit_use_xattr()
-> >> - move the IOP_XATTR check out of inode_doinit_use_xattr()
-> >> - add two kernfs cleanup patches
-> >>    - these could be applied independently, but the rest of the patches depend on
-> >>      them, so I'd rather they stay bundled with the rest to avoid cross-tree
-> >>      conflicts
-> >>
-> >> v6: https://lore.kernel.org/selinux/20190214095015.16032-1-omosnace@redhat.com/T/
-> >> Changes in v6:
-> >> - remove copy-pasted duplicate macro definition
-> >>
-> >> v5: https://lore.kernel.org/selinux/20190205110638.30782-1-omosnace@redhat.com/T/
-> >> Changes in v5:
-> >> - fix misplaced semicolon detected by 0day robot
-> >>
-> >> v4: https://lore.kernel.org/selinux/20190205085915.5183-1-omosnace@redhat.com/T/
-> >> Changes in v4:
-> >> - reorder and rename hook arguments
-> >> - avoid allocating kernfs_iattrs unless needed
-> >>
-> >> v3: https://lore.kernel.org/selinux/20190130114150.27807-1-omosnace@redhat.com/T/
-> >> Changes in v3:
-> >> - rename the hook to "kernfs_init_security"
-> >> - change the hook interface to simply pass pointers to struct iattr and
-> >>    struct simple_xattrs of both the new node and its parent
-> >> - add full security xattr support to kernfs (and fixup SELinux behavior
-> >>    to handle it properly)
-> >>
-> >> v2: https://lore.kernel.org/selinux/20190109162830.8309-1-omosnace@redhat.com/T/
-> >> Changes in v2:
-> >> - add docstring for the new hook in union security_list_options
-> >> - initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
-> >>    implemented
-> >>
-> >> v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnace@redhat.com/T/
-> >>
-> >> The kernfs nodes initially do not store any security context and rely on
-> >> the LSM to assign some default context to inodes created over them. Kernfs
-> >> inodes, however, allow setting an explicit context via the *setxattr(2)
-> >> syscalls, in which case the context is stored inside the kernfs node's
-> >> internal structure.
-> >>
-> >> SELinux (and possibly other LSMs) initialize the context of newly created
-> >> FS objects based on the parent object's context (usually the child inherits
-> >> the parent's context, unless the policy dictates otherwise). This is done
-> >> by hooking the creation of the new inode corresponding to the newly created
-> >> file/directory via security_inode_init_security() (most filesystems always
-> >> create a fresh inode when a new FS object is created). However, kernfs nodes
-> >> can be created "behind the scenes" while the filesystem is not mounted
-> >> anywhere and thus no inodes can exist for them yet.
-> >>
-> >> Therefore, to allow maintaining similar behavior for kernfs nodes, a new
-> >> LSM hook is needed, which will allow initializing the kernfs node's
-> >> security context based on its own attributes and those of the parent's
-> >> node.
-> >>
-> >> The main motivation for this change is that the userspace users of cgroupfs
-> >> (which is built on kernfs) expect the usual security context inheritance
-> >> to work under SELinux (see [1] and [2]). This functionality is required for
-> >> better confinement of containers under SELinux.
-> >>
-> >> Patch 1/7 simplifies the kernfs_iattrs structure and patch 2/7 optimizes
-> >> kernfs to not allocate kernfs_iattrs when getting the value of an xattr.
-> >>
-> >> Patch 3/7 changes SELinux to fetch security context from extended
-> >> attributes on kernfs filesystems, falling back to genfs-defined context
-> >> if that fails. Without this patch the 4/7 would be a regression for
-> >> SELinux (due to the removal of ...notifysecctx() call.
-> >>
-> >> Patch 4/7 implements full security xattr support in kernfs using
-> >> simple_xattrs; patch 5/7 adds the new LSM hook; patch 6/7 implements the
-> >> new hook in SELinux; and patch 7/7 modifies kernfs to call the new hook
-> >> on new node creation.
-> >>
-> >> Testing:
-> >> - passed the reproducer from the commit message of the last patch
-> >> - passed SELinux testsuite on Fedora Rawhide (x86_64) when applied on top
-> >>    of current Rawhide kernel (5.0.0-0.rc7.git2.1) [3]
-> >>    - including the new proposed selinux-testsuite subtest [4] (adapted
-> >>      from the reproducer)
-> >>
-> >> [1] https://github.com/SELinuxProject/selinux-kernel/issues/39
-> >> [2] https://bugzilla.redhat.com/show_bug.cgi?id=1553803
-> >> [3] https://koji.fedoraproject.org/koji/taskinfo?taskID=32963825
-> >> [4] https://github.com/SELinuxProject/selinux-testsuite/pull/48
-> >>
-> >> Ondrej Mosnacek (7):
-> >>    kernfs: clean up struct kernfs_iattrs
-> >>    kernfs: do not alloc iattrs in kernfs_xattr_get
-> >>    selinux: try security xattr after genfs for kernfs filesystems
-> >>    kernfs: use simple_xattrs for security attributes
-> >>    LSM: add new hook for kernfs node initialization
-> >>    selinux: implement the kernfs_init_security hook
-> >>    kernfs: initialize security of newly created nodes
-> >>
-> >>   fs/kernfs/dir.c                     |  28 ++--
-> >>   fs/kernfs/inode.c                   | 166 +++++++++------------
-> >>   fs/kernfs/kernfs-internal.h         |   8 +-
-> >>   fs/kernfs/symlink.c                 |   4 +-
-> >>   include/linux/kernfs.h              |  15 ++
-> >>   include/linux/lsm_hooks.h           |  13 ++
-> >>   include/linux/security.h            |   9 ++
-> >>   security/security.c                 |   6 +
-> >>   security/selinux/hooks.c            | 223 +++++++++++++++++++---------
-> >>   security/selinux/include/security.h |   1 +
-> >>   10 files changed, 290 insertions(+), 183 deletions(-)
-> >>
-> >> --
-> >> 2.20.1
-> > Ping about this series... Casey, are you OK with this new version?
->
-> I'm still not wildly enthusiastic about it, but I can't
-> offer a better solution right now. You can add my
->
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+1) Small Memory Optimization
+For eg. if there are 20000 rules, then it will save 625KB(20000*32),
+which is critical for small embedded systems.
+2) Reducing the time taken in writing rules on load/load2 interface
+3) Since global rule list is just used to read the rules, so there
+will be no performance impact on system
 
-Thanks!
+Signed-off-by: Vishal Goel <vishal.goel@samsung.com>
+Signed-off-by: Amit Sahrawat <a.sahrawat@samsung.com>
+---
+ security/smack/smackfs.c | 53 ++++++++++++++----------------------------------
+ 1 file changed, 15 insertions(+), 38 deletions(-)
 
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index f6482e5..2a8a1f5 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -67,7 +67,6 @@ enum smk_inos {
+ /*
+  * List locks
+  */
+-static DEFINE_MUTEX(smack_master_list_lock);
+ static DEFINE_MUTEX(smack_cipso_lock);
+ static DEFINE_MUTEX(smack_ambient_lock);
+ static DEFINE_MUTEX(smk_net4addr_lock);
+@@ -134,15 +133,7 @@ enum smk_inos {
+ 
+ /*
+  * Rule lists are maintained for each label.
+- * This master list is just for reading /smack/load and /smack/load2.
+  */
+-struct smack_master_list {
+-	struct list_head	list;
+-	struct smack_rule	*smk_rule;
+-};
+-
+-static LIST_HEAD(smack_rule_list);
+-
+ struct smack_parsed_rule {
+ 	struct smack_known	*smk_subject;
+ 	struct smack_known	*smk_object;
+@@ -211,7 +202,6 @@ static void smk_netlabel_audit_set(struct netlbl_audit *nap)
+  * @srp: the rule to add or replace
+  * @rule_list: the list of rules
+  * @rule_lock: the rule list lock
+- * @global: if non-zero, indicates a global rule
+  *
+  * Looks through the current subject/object/access list for
+  * the subject/object pair and replaces the access that was
+@@ -223,10 +213,9 @@ static void smk_netlabel_audit_set(struct netlbl_audit *nap)
+  */
+ static int smk_set_access(struct smack_parsed_rule *srp,
+ 				struct list_head *rule_list,
+-				struct mutex *rule_lock, int global)
++				struct mutex *rule_lock)
+ {
+ 	struct smack_rule *sp;
+-	struct smack_master_list *smlp;
+ 	int found = 0;
+ 	int rc = 0;
+ 
+@@ -258,22 +247,6 @@ static int smk_set_access(struct smack_parsed_rule *srp,
+ 		sp->smk_access = srp->smk_access1 & ~srp->smk_access2;
+ 
+ 		list_add_rcu(&sp->list, rule_list);
+-		/*
+-		 * If this is a global as opposed to self and a new rule
+-		 * it needs to get added for reporting.
+-		 */
+-		if (global) {
+-			mutex_unlock(rule_lock);
+-			smlp = kzalloc(sizeof(*smlp), GFP_KERNEL);
+-			if (smlp != NULL) {
+-				smlp->smk_rule = sp;
+-				mutex_lock(&smack_master_list_lock);
+-				list_add_rcu(&smlp->list, &smack_rule_list);
+-				mutex_unlock(&smack_master_list_lock);
+-			} else
+-				rc = -ENOMEM;
+-			return rc;
+-		}
+ 	}
+ 
+ out:
+@@ -540,9 +513,9 @@ static ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+ 
+ 		if (rule_list == NULL)
+ 			rc = smk_set_access(&rule, &rule.smk_subject->smk_rules,
+-				&rule.smk_subject->smk_rules_lock, 1);
++				&rule.smk_subject->smk_rules_lock);
+ 		else
+-			rc = smk_set_access(&rule, rule_list, rule_lock, 0);
++			rc = smk_set_access(&rule, rule_list, rule_lock);
+ 
+ 		if (rc)
+ 			goto out;
+@@ -636,21 +609,23 @@ static void smk_rule_show(struct seq_file *s, struct smack_rule *srp, int max)
+ 
+ static void *load2_seq_start(struct seq_file *s, loff_t *pos)
+ {
+-	return smk_seq_start(s, pos, &smack_rule_list);
++	return smk_seq_start(s, pos, &smack_known_list);
+ }
+ 
+ static void *load2_seq_next(struct seq_file *s, void *v, loff_t *pos)
+ {
+-	return smk_seq_next(s, v, pos, &smack_rule_list);
++	return smk_seq_next(s, v, pos, &smack_known_list);
+ }
+ 
+ static int load_seq_show(struct seq_file *s, void *v)
+ {
+ 	struct list_head *list = v;
+-	struct smack_master_list *smlp =
+-		list_entry_rcu(list, struct smack_master_list, list);
++	struct smack_rule *srp;
++	struct smack_known *skp =
++		list_entry_rcu(list, struct smack_known, list);
+ 
+-	smk_rule_show(s, smlp->smk_rule, SMK_LABELLEN);
++	list_for_each_entry_rcu(srp, &skp->smk_rules, list)
++		smk_rule_show(s, srp, SMK_LABELLEN);
+ 
+ 	return 0;
+ }
+@@ -2352,10 +2327,12 @@ static ssize_t smk_write_access(struct file *file, const char __user *buf,
+ static int load2_seq_show(struct seq_file *s, void *v)
+ {
+ 	struct list_head *list = v;
+-	struct smack_master_list *smlp =
+-		list_entry_rcu(list, struct smack_master_list, list);
++	struct smack_rule *srp;
++	struct smack_known *skp =
++		list_entry_rcu(list, struct smack_known, list);
+ 
+-	smk_rule_show(s, smlp->smk_rule, SMK_LONGLABEL);
++	list_for_each_entry_rcu(srp, &skp->smk_rules, list)
++		smk_rule_show(s, srp, SMK_LONGLABEL);
+ 
+ 	return 0;
+ }
 -- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Associate Software Engineer, Security Technologies
-Red Hat, Inc.
+1.9.1
+
