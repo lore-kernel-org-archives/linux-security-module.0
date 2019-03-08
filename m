@@ -2,87 +2,137 @@ Return-Path: <SRS0=RbId=RL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051D7C43381
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 20:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AA7C43381
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 22:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C394C20851
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 20:23:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qcu93xVt"
+	by mail.kernel.org (Postfix) with ESMTP id F0F2D2081B
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 22:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfCHUW7 (ORCPT
+        id S1726552AbfCHWom (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Mar 2019 15:22:59 -0500
-Received: from mail-io1-f43.google.com ([209.85.166.43]:37170 "EHLO
-        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbfCHUW7 (ORCPT
+        Fri, 8 Mar 2019 17:44:42 -0500
+Received: from namei.org ([65.99.196.166]:56176 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726286AbfCHWom (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Mar 2019 15:22:59 -0500
-Received: by mail-io1-f43.google.com with SMTP id v10so17787664iop.4
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Mar 2019 12:22:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7kPqabAbJ+GgmrQih894fm1IROGUPdO8kPS7MzSjgwQ=;
-        b=qcu93xVtH4Qvq7lNP0Sul72S/hamhxAyYWyZiv4TjgYHxSFOQ7frztz2L7VzrcWzk3
-         1q5aKqt23oRc/ALmksMJHMifcGUxltqXwLAzA2DK2zYE8YLfNCDEiH5mHi+c2wWjfSCu
-         CaGVOdMAR6Ja0c8p7beJk40+4LcoFc06VDiuhVuoCPcoyxars4ZeP6A5okHN21d92HIM
-         DrM4SaEKZ2dgx0lXECteYSBfW4RsWPQO50thMCvBEsYpv7HCYgohKnVpIO9VWh11iA0F
-         SX7vgPD17UTq/b0tpgYsqcNzQc+r79korDztQshdaiuYB8nTs+s/8pIov1/YcAsbqWiW
-         tR7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7kPqabAbJ+GgmrQih894fm1IROGUPdO8kPS7MzSjgwQ=;
-        b=c+zSUIGWphYCl+0nMDIMOZ77i27PGzZ15+srHgQesaF6wILLqLW2RhjOk79W/3G3py
-         8k5/poBqsFPUOK13PEGf+VnVjJWN/biTlcmbL5n0FvkFU9gIVtCWYJQvqrnNUW7ZMk0Q
-         1Rz5YeFymDA99t0fPs9kSjulPQVQHKGdrEvhXxsH7WMNLiGce077ulxleiQ7QI60Xtqd
-         XnsfEk7DpA4yyKPnAcpEk4WRY8stHupBTWDOLVofaiB/5LZzCHbaZ4hXQebymeRI67X3
-         UpK9sRdQwEIzAZ172I9WmHcy0JMnN5Zuj1Yx+WNJk+kJ8PncXcFSQ6/t8lx60NzbJztR
-         O/vA==
-X-Gm-Message-State: APjAAAWRQJyifuaX53Tl9k82I62p+zIM25CamuAfrz9cbU/ID6SHpFEL
-        aGccoOllks5Lq535YfPPL6pi7Gq/5dlDreCpfSCdbw==
-X-Google-Smtp-Source: APXvYqz9pczc+sHkX/9jpRNPOJZYKUYZUkbSSsyvI+gwVT8Xy1U7lyMFcyR5Karr3xZ2WlRfZIe9csfD2ldxlJ90lyE=
-X-Received: by 2002:a6b:ec19:: with SMTP id c25mr10621944ioh.169.1552076578180;
- Fri, 08 Mar 2019 12:22:58 -0800 (PST)
+        Fri, 8 Mar 2019 17:44:42 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x28MifXS012154;
+        Fri, 8 Mar 2019 22:44:41 GMT
+Date:   Sat, 9 Mar 2019 09:44:41 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] security: integrity subsystem updates for v5.1
+Message-ID: <alpine.LRH.2.21.1903090942560.12052@namei.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com>
- <1542657371-7019-4-git-send-email-zohar@linux.ibm.com> <CACdnJusqHZ1OLJD1baN=fXK9KE+bSqzB4OUbmLXH5-qZNrQXJg@mail.gmail.com>
- <CAFbkSA39RwB+E4SaG_ueu-_B=y7JytEYKw1+eXNQ_eCuMfnv=g@mail.gmail.com>
- <CACdnJuuHmK0qKjMxxonRYDUCatxqs930QGNQmREhRjimpNKzYw@mail.gmail.com>
- <1551998897.31706.461.camel@linux.ibm.com> <CACdnJusiLSCyqx7NX5bkpFr2N5YjBt_h3miOgkbey-Zndc3+Kg@mail.gmail.com>
- <1552052377.4134.23.camel@linux.ibm.com> <CACdnJut3Y7CogvgtNsEcrEtA1WOxSb9OWP_wZ=3xNgCft2oeDw@mail.gmail.com>
- <1552070598.4134.51.camel@linux.ibm.com>
-In-Reply-To: <1552070598.4134.51.camel@linux.ibm.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Fri, 8 Mar 2019 12:22:46 -0800
-Message-ID: <CACdnJuso1o=fib+fUuY_f2ibJKD5N=kr_BrAtgu_srHCcRLKig@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/ima: retry detecting secure boot mode
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Justin Forbes <jforbes@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="1665246916-297363024-1552085081=:12052"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 8, 2019 at 10:43 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> FYI, efi_printk() works before exit_boot(), but not afterwards.  The
-> system hangs.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-efi_printk() uses boot services to print, so that's not unexpected :)
-It would probably be sensible to return an error rather than crash,
-though=E2=80=A6
+--1665246916-297363024-1552085081=:12052
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+
+Please pull these changes from Mimi Zohar:
+
+   "Linux 5.0 introduced the platform keyring to allow verifying the IMA
+    kexec kernel image signature using the pre-boot keys.  This pull
+    request similarly makes keys on the platform keyring accessible for
+    verifying the PE kernel image signature.*
+    
+    Also included in this pull request is a new IMA hook that tags tmp
+    files, in policy, indicating the file hash needs to be calculated.
+    The remaining patches are cleanup."
+
+---
+
+The following changes since commit 8bd8ea195f6d135a8d85201116314eb5237ad7e7:
+
+  Merge tag 'v4.20-rc7' into next-general (2018-12-17 11:24:28 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-integrity
+
+for you to fetch changes up to c7f7e58fcbf33589f11bfde0506e076a00627e59:
+
+  integrity: Remove references to module keyring (2018-12-17 14:09:39 -0800)
+
+----------------------------------------------------------------
+Dave Howells (2):
+      efi: Add EFI signature data types
+      efi: Add an EFI signature blob parser
+
+Eric Richter (1):
+      x86/ima: define arch_get_ima_policy() for x86
+
+James Morris (1):
+      Merge branch 'next-integrity' of git://git.kernel.org/.../zohar/linux-integrity into next-integrity
+
+Josh Boyer (2):
+      efi: Import certificates from UEFI Secure Boot
+      efi: Allow the "db" UEFI variable to be suppressed
+
+Mimi Zohar (4):
+      integrity: support new struct public_key_signature encoding field
+      x86/ima: retry detecting secure boot mode
+      ima: don't measure/appraise files on efivarfs
+      selftests/ima: kexec_load syscall test
+
+Nayna Jain (7):
+      x86/ima: define arch_ima_get_secureboot
+      ima: prevent kexec_load syscall based on runtime secureboot flag
+      ima: refactor ima_init_policy()
+      ima: add support for arch specific policies
+      integrity: Define a trusted platform keyring
+      integrity: Load certs to the platform keyring
+      ima: Support platform keyring for kernel appraisal
+
+Nikolay Borisov (1):
+      ima: Use inode_is_open_for_write
+
+Stefan Berger (1):
+      docs: Extend trusted keys documentation for TPM 2.0
+
+Thiago Jung Bauermann (1):
+      integrity: Remove references to module keyring
+
+ Documentation/security/keys/trusted-encrypted.rst  |  31 +++-
+ arch/x86/kernel/Makefile                           |   4 +
+ arch/x86/kernel/ima_arch.c                         |  75 ++++++++
+ include/linux/efi.h                                |  34 ++++
+ include/linux/ima.h                                |  15 ++
+ security/integrity/Kconfig                         |  11 ++
+ security/integrity/Makefile                        |   5 +
+ security/integrity/digsig.c                        | 111 ++++++++----
+ security/integrity/ima/Kconfig                     |  10 +-
+ security/integrity/ima/ima_appraise.c              |  14 +-
+ security/integrity/ima/ima_main.c                  |  21 ++-
+ security/integrity/ima/ima_policy.c                | 171 +++++++++++++-----
+ security/integrity/integrity.h                     |  22 ++-
+ security/integrity/platform_certs/efi_parser.c     | 108 ++++++++++++
+ security/integrity/platform_certs/load_uefi.c      | 194 +++++++++++++++++++++
+ .../integrity/platform_certs/platform_keyring.c    |  58 ++++++
+ tools/testing/selftests/Makefile                   |   1 +
+ tools/testing/selftests/ima/Makefile               |  11 ++
+ tools/testing/selftests/ima/config                 |   4 +
+ tools/testing/selftests/ima/test_kexec_load.sh     |  54 ++++++
+ 20 files changed, 861 insertions(+), 93 deletions(-)
+ create mode 100644 arch/x86/kernel/ima_arch.c
+ create mode 100644 security/integrity/platform_certs/efi_parser.c
+ create mode 100644 security/integrity/platform_certs/load_uefi.c
+ create mode 100644 security/integrity/platform_certs/platform_keyring.c
+ create mode 100644 tools/testing/selftests/ima/Makefile
+ create mode 100644 tools/testing/selftests/ima/config
+ create mode 100755 tools/testing/selftests/ima/test_kexec_load.sh
+--1665246916-297363024-1552085081=:12052--
