@@ -1,87 +1,101 @@
-Return-Path: <SRS0=bVIv=RK=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=RbId=RL=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEECC4360F
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6292C43381
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 02:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E25720675
-	for <linux-security-module@archiver.kernel.org>; Thu,  7 Mar 2019 22:50:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eDdhp1UJ"
+	by mail.kernel.org (Postfix) with ESMTP id 7FCB020840
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 02:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbfCGWue (ORCPT
+        id S1726305AbfCHCo6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Mar 2019 17:50:34 -0500
-Received: from mail-it1-f174.google.com ([209.85.166.174]:50320 "EHLO
-        mail-it1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726250AbfCGWu3 (ORCPT
+        Thu, 7 Mar 2019 21:44:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53342 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbfCHCo6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Mar 2019 17:50:29 -0500
-Received: by mail-it1-f174.google.com with SMTP id m137so18070754ita.0
-        for <linux-security-module@vger.kernel.org>; Thu, 07 Mar 2019 14:50:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DW3OmDjGWwedSz9G2iefQb7Xjdr1IH5ANFqID9HoAao=;
-        b=eDdhp1UJUjTSPr1TI5E/ORgd/pTC9FzmBTrOjMfYX9PgXUWp20iVfQgw/KNqyFBG4I
-         qZXbwtk+Q/Fp13N9f8i+WRvSuF1ZfIWI2KSpysNNfGaj0cpAikT0xZRhd2wVynN/0mbp
-         WufKxmEIFIT8jO5CXTWlTvKLpAhuHWgR0uIzHntJ3tpHqCJQYvO9F+E4F729Q0czKfOP
-         YNfjCPD6E3QLQjsQMFCN6LHBg0FLLUNa2qVjNjpzD/9dOo3r5POEXCWSG81wBKB0Uqj9
-         P3pEnzNZhu6ZUXY+9FHdtgRWBB6DZJSYx/wSOD9IBGugFvzpbH+zj4VsLGd/UxDdV/v9
-         BQyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DW3OmDjGWwedSz9G2iefQb7Xjdr1IH5ANFqID9HoAao=;
-        b=ky7LUHW9AvLZz2UVB1SsisK2+zEETRYZQmiCWRvcHlmW/m3Not0pObLWc9ZrS20+ih
-         iVB5J6aXIHN5jrtJ/3DtB5sEjV4KctmWGcFQ/dcjOAmLClyVsJWUyAGdL8HRL2pqJbdu
-         CSi132GX8eougdQV9qDRA12SYOsXcQf3k41ddgDBoheI/0/yUqP53B4TiOmux7oSs9M3
-         iJkz05C/X/mf6O9eRh3tv48CFtRlzO5acTXpdjNQwve/ltV9Azgw5/s2zgMZr6XJYfBQ
-         D8N5gmGmA2rGWuOhiwgDrBnWBYQbecijWXuNf/uRouSlwbqsq9yggdg1uWitIVluvzdw
-         paJw==
-X-Gm-Message-State: APjAAAW7/UUtwRQfTcPP26egN8W92UBTHvfW3V17guSWf3Z3GdXjygTb
-        kvHomhBbWZCrQHxHHK2SULN1SxjgFJWncfzoZzJOYg==
-X-Google-Smtp-Source: APXvYqzFQzTE4yUT7KqWllJPm4aUg5u22m+RpyD9hJJphaWk9de0BVCd9fgOqn9tm0qEJEqGzigbIVkXeQ7F/h79vAk=
-X-Received: by 2002:a24:43d1:: with SMTP id s200mr6689500itb.118.1551999027976;
- Thu, 07 Mar 2019 14:50:27 -0800 (PST)
-MIME-Version: 1.0
-References: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com>
- <1542657371-7019-4-git-send-email-zohar@linux.ibm.com> <CACdnJusqHZ1OLJD1baN=fXK9KE+bSqzB4OUbmLXH5-qZNrQXJg@mail.gmail.com>
- <CAFbkSA39RwB+E4SaG_ueu-_B=y7JytEYKw1+eXNQ_eCuMfnv=g@mail.gmail.com>
- <CACdnJuuHmK0qKjMxxonRYDUCatxqs930QGNQmREhRjimpNKzYw@mail.gmail.com> <1551998897.31706.461.camel@linux.ibm.com>
-In-Reply-To: <1551998897.31706.461.camel@linux.ibm.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 7 Mar 2019 14:50:17 -0800
-Message-ID: <CACdnJusiLSCyqx7NX5bkpFr2N5YjBt_h3miOgkbey-Zndc3+Kg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] x86/ima: retry detecting secure boot mode
+        Thu, 7 Mar 2019 21:44:58 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DC1F730832CB;
+        Fri,  8 Mar 2019 02:44:57 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-140.pek2.redhat.com [10.72.12.140])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9559E19C66;
+        Fri,  8 Mar 2019 02:44:54 +0000 (UTC)
+Date:   Fri, 8 Mar 2019 10:44:50 +0800
+From:   Dave Young <dyoung@redhat.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Justin Forbes <jforbes@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
         David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Eric Biederman <ebiederm@xmission.com>
+Subject: Re: [PATCH 2/3] scripts/ima: define a set of common functions
+Message-ID: <20190308024450.GC7223@dhcp-128-65.nay.redhat.com>
+References: <1548960936-7800-1-git-send-email-zohar@linux.ibm.com>
+ <1548960936-7800-3-git-send-email-zohar@linux.ibm.com>
+ <20190228134146.GA7528@dhcp-128-65.nay.redhat.com>
+ <1551366343.10911.173.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1551366343.10911.173.camel@linux.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 08 Mar 2019 02:44:58 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 7, 2019 at 2:48 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> I added this last attempt because I'm seeing this on my laptop, with
-> some older, buggy firmware.
+On 02/28/19 at 10:05am, Mimi Zohar wrote:
+> Hi Dave,
+> 
+> On Thu, 2019-02-28 at 21:41 +0800, Dave Young wrote:
+> > Hi Mimi,
+> >  
+> > Sorry for jumping in late, just noticed this kexec selftests, I think we
+> > also need a kexec load test not only for ima, but for general kexec
+> 
+> The IMA kselftest tests are for the coordination between the different
+> methods of verifying file signatures.  In particular, for the kexec
+> kernel image and kernel module signatures.
+> 
+> The initial IMA kselftest just verifies that in an environment
+> requiring signed kexec kernel images, the kexec_load syscall fails. 
+> 
+> This week I posted additional IMA kselftests[1][2], including one for
+> the kexec_file_load syscall.  I would really appreciate these
+> kselftests being reviewed/acked.
+> 
+> Mimi
+> 
+> [1] Subject: [PATCH v2 0/5] selftests/ima: add kexec and kernel module tests
+> [2] Patches available from the "next-queued-testing" branch
+> https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/
+> 
 
-Is the issue that it gives incorrect results on the first read, or is
-the issue that it gives incorrect results before ExitBootServices() is
-called? If the former then we should read twice in the boot stub, if
-the latter then we should figure out a way to do this immediately
-after ExitBootServices() instead.
+Hi Mimi,
+
+Still did not get change to have a look at V2,  but seems you missed the
+last chunk of comments about the secure boot mode in previous reply?
+
+I just copy it hear:
+'''
+Do you want to get the Secureboot status here?
+I got some advice from Peter Jones previously, thus we have below
+in our kdump scripts:
+https://src.fedoraproject.org/cgit/rpms/kexec-tools.git/tree/kdump-lib.sh
+
+See the function is_secure_boot_enforced(), probably you can refer to
+that function and check setup mode as well.
+'''
+
+Thanks
+Dave
