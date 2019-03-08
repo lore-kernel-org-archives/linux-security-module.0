@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46ED9C43381
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 10:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DADC43381
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 11:57:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ADB120854
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 10:09:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8487220684
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Mar 2019 11:57:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="je0aJNi8"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q3NlVTb6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbfCHKJU (ORCPT
+        id S1726413AbfCHL5v (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Mar 2019 05:09:20 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:34655 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726407AbfCHKJU (ORCPT
+        Fri, 8 Mar 2019 06:57:51 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:40421 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfCHL5v (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Mar 2019 05:09:20 -0500
-Received: by mail-vs1-f65.google.com with SMTP id h7so6324576vsl.1
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Mar 2019 02:09:19 -0800 (PST)
+        Fri, 8 Mar 2019 06:57:51 -0500
+Received: by mail-vs1-f68.google.com with SMTP id z18so6487752vso.7
+        for <linux-security-module@vger.kernel.org>; Fri, 08 Mar 2019 03:57:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=t/tVaI8asrkS6e9NZu7j5HT/6EyT+IW0eK2Gk+x2c/U=;
-        b=je0aJNi8sjgo2XnNPUapISgSqZmb55r8SQD/R9SLCLhpTV7rRhnO9hn21u+xt31Zes
-         8idrFOdOQ1H6RMaVGsuuDqd1RWXkNH286lBUoi0yVkiEpA+07xhGYnxL7Uw7/tIkXg3o
-         w25aJyNQqWWBvmVYXPjHKm2I7vPlbe/UZixBt6MnxnFw7G3dM3BO3J09BgTzE0P0bmgM
-         IXKf+dHSvb3H465H2aRt9Y+phLREYHrrlVNJA39Yrg1GoV+WdWXhLZTkc7DKv6UVSMWh
-         4EePU9M0u6SFYMXhb5g+5+8eqoG0CucYago55mva1/MMu/Bi1ZJcXfH0LrC8PMVrXtEK
-         icNw==
+        bh=cORMdBuCa9yMfK3xhjKMWk3Xhx/ttCKnn37E/oPtYgg=;
+        b=q3NlVTb6KScPuEmBVLWCvbCql6wLBZ8ntNmIzZFDtfBZBdUYEXblvBoJGurv1xMRf8
+         jX+tBQ/pAsxsPZgwGf9DPekZDbF0a9c/fnlGgn+lGGzMgPgkfw8c10QD9IdK3Pg/eX9w
+         LaGvGr9foU86Ke0Ys3jKvdeNODLFUvVnWcSLmXX3+YbwSdMa8sEMfXkmT+VYF/jyn5aC
+         zflKrMw9kVX0oaeK17/hbscn0UijfqO8C44fkUh/qV5TNOomrQwDBYFeD85fjSTV9YNd
+         QvDLpEHe+bVsMfhIvvzcHHZsGTqAMhUGTmr89vyKnVawaiPjyjuu2hg0GreSyEh+6gAO
+         AoPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=t/tVaI8asrkS6e9NZu7j5HT/6EyT+IW0eK2Gk+x2c/U=;
-        b=miNNnEkUDvMjwdTz5RdHausz1oqqYEgw+HDLxFECq1FNRB6mw26kN95pMijgMVx27T
-         SneFkY55I2MEv3QW69P/9UwOU9CXQvV0VYbw8hXRz2RF/B0SAAEFBG62USQpNa4GQOnJ
-         HHbRfCUegK1iyt4puVCo/M1QfLz0HHiMmyKXUPsK7ghu5hP1EARNo0eKz5IqHVvF3QTm
-         6IGByxKdkIOBrcwz2Hj+jlzL1aK/PIGskvxDyxy3OgcfYXZyg79fJL/4ws3Xhi5osGdZ
-         Gqf5x7OAH/8tCaJIEHnBHT8HhClySWkgPomzlho+mTFDX8tcMKbKl+wdE8FGCDOjO0Im
-         N3GQ==
-X-Gm-Message-State: APjAAAURNItGN8h/jH+FOr7OBCBia3Cs9FWrCpiYhRVMRpo88TnOB5Qm
-        IX1LNj52P51zeDP+vAIw6aXb/DdBWLp6OJFodbZpzA==
-X-Google-Smtp-Source: APXvYqyw9TQtJ9V6314WsKR0Tk+N1xGKhLtIVv7+GDA3DpXZ0nj/+J+ali+ReXtz3qVzeoY9JSV9KVVjolL5Ni9n77c=
-X-Received: by 2002:a67:fbc6:: with SMTP id o6mr9498995vsr.39.1552039758404;
- Fri, 08 Mar 2019 02:09:18 -0800 (PST)
+        bh=cORMdBuCa9yMfK3xhjKMWk3Xhx/ttCKnn37E/oPtYgg=;
+        b=KCFYjT1tlY1y01UkjytZQ6t/qVvgB/yls/4aign3KUa6gKoWSprDr2AUyJhE2RrR21
+         /1Nwhnt8PzsrGr2/NtpbriEP5F5O3KwNHQxSWTY8H2sl6pyBg+zw5VgHsaZ2BoAiW8bK
+         scvMLUiK4nfiXkwNzrQQqfOl35OsiO4I1xaff93m85qLevZW8VZjfzdntNU5hT2YWtqL
+         G7Bi6OPbr4HBIu4Wpubw/OC/ApAwSc/HbRiPa3ZFIkz2vsyO8hUJMmIhRRL0IM9PFyKO
+         tYg0y7U6kbj3c9uhidLyl0mEEcy6JLNSRztiiqSbKwSnZpPztj7JnSiXE9Eu9jvUpuvE
+         OciQ==
+X-Gm-Message-State: APjAAAXIUlgJHWK3dP7hJhE9ciWZFz7IGN2EXqKstozJ/6KN/h5hYJ9X
+        UfM1uDmkmIk2n25VJEDzM74E8fguPDTMAKLJ+jchgg==
+X-Google-Smtp-Source: APXvYqwDyC0ugFjp4x+e/8cv445EwJYOKoCTd75XA0PvNOOnQkwF+f/NZw1iEp9mT3eejXfPheXeFapYkF8lt5WKvs8=
+X-Received: by 2002:a67:83c6:: with SMTP id f189mr9221224vsd.103.1552046269861;
+ Fri, 08 Mar 2019 03:57:49 -0800 (PST)
 MIME-Version: 1.0
 References: <20190307133514.44378-1-glider@google.com> <20190307133514.44378-2-glider@google.com>
  <CAGXu5jJM4RNOUUSu5YnT_csdHjra=qJv3kiC6qh1aZTLCKvxdw@mail.gmail.com>
 In-Reply-To: <CAGXu5jJM4RNOUUSu5YnT_csdHjra=qJv3kiC6qh1aZTLCKvxdw@mail.gmail.com>
 From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 8 Mar 2019 11:09:06 +0100
-Message-ID: <CAG_fn=WmEFOPjPBB86o+7PCwuBD6qOic75D7TvKo+MrGozFtKg@mail.gmail.com>
+Date:   Fri, 8 Mar 2019 12:57:38 +0100
+Message-ID: <CAG_fn=Ug7FypD_vLMi9s0zYebC8MfoucNeqkfasa0L=yZp3hEg@mail.gmail.com>
 Subject: Re: [PATCH 1/1] RFC: initmem: introduce CONFIG_INIT_ALL_MEMORY and CONFIG_INIT_ALL_STACK
 To:     Kees Cook <keescook@chromium.org>
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
@@ -105,9 +105,7 @@ ote:
 >
 > So I think it would make sense to wire up the boot defaults and
 > continue some of the benchmarking work to improve the performance hit.
-Should we care about the poison values being different for stack and
-heap initialization (probably no)?
-
+>
 > > CONFIG_INIT_ALL_STACK turns on stack initialization based on the
 > > -ftrivial-auto-var-init Clang flag.
 > >
@@ -128,12 +126,7 @@ is
 >
 > This should get wired up to CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL in
 > the GCC case.
-I'm not really familiar with CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL.
-Does it initialize a variable if it's not explicitly address-taken,
-but is used in a computation of another variable's value?
-Also, are we ok with Clang and GCC producing different poison values
-for the stack? (probably yes)
-
+>
 > > The proposed config builds the kernel with
 > > -ftrivial-auto-var-init=3Dpattern.
 > >
@@ -143,28 +136,7 @@ e
 > > (by using __attribute__((uninitialized))) basis.
 >
 > I would like a clean way to offer a paranoid "true init all memory"
-> config that will ignore the attribute.
-How paranoid should it be? E.g. current instrumentation in Clang (nor
-in GCC, I guess) doesn't prevent the following situation:
-
-char local[8];
-int init_later;
-copy_to_user(userp, local, 12);
-init_later =3D 1;
-
-Do we want to true init |init_later| despite there's a write to it later?
-
-Regarding the attribute, right now it only makes sense to use it in
-the cases the compilers fail to apply DSE to the unneeded
-initializers.
-For example, Clang fails to do so for |oldbit| in __test_and_set_bit()
-here: https://elixir.bootlin.com/linux/latest/source/arch/x86/include/asm/b=
-itops.h#L245
-(We could fix this with a heuristic to not initialize scalars used as
-assembly outputs, but that's walking on thin ice)
-Do you know how GCC handles this situation?
-
-> Also, BYREF_ALL needs to gain
+> config that will ignore the attribute. Also, BYREF_ALL needs to gain
 > the attribute knowledge.
 >
 > > Signed-off-by: Alexander Potapenko <glider@google.com>
@@ -307,6 +279,9 @@ OV_INSTRUMENT_ALL)), \
 > config INIT_ALL_STACK
 >         bool "Initialize all stack"
 >         depends on CC_HAS_AUTO_VAR_INIT || HAVE_GCC_PLUGINS
+Shouldn't we also check for PLUGIN_HOSTCC !=3D "" here?
+Otherwise not having gcc-*-plugin-dev installed results in an unmet depende=
+ncy.
 >         select GCC_PLUGINS if !CC_HAS_AUTO_VAR_INIT
 >         select GCC_PLUGIN_STRUCTLEAK if !CC_HAS_AUTO_VAR_INIT
 >         select GCC_PLUGIN_STRUCTLEAK_BYREF_ALL if !CC_HAS_AUTO_VAR_INIT
