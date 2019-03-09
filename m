@@ -1,67 +1,52 @@
 Return-Path: <SRS0=DKo1=RM=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,PRICE_CATALOG,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F056C43381
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Mar 2019 04:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D637C43381
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Mar 2019 12:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E199320866
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Mar 2019 04:45:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FFE82081B
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Mar 2019 12:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbfCIEpm (ORCPT
+        id S1726164AbfCIMee (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Mar 2019 23:45:42 -0500
-Received: from namei.org ([65.99.196.166]:56226 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726352AbfCIEpl (ORCPT
+        Sat, 9 Mar 2019 07:34:34 -0500
+Received: from [139.59.33.164] ([139.59.33.164]:36200 "EHLO mail.fast4twen.cf"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1726149AbfCIMee (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Mar 2019 23:45:41 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x294jaje024550;
-        Sat, 9 Mar 2019 04:45:36 GMT
-Date:   Sat, 9 Mar 2019 15:45:36 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Matthew Garrett <mjg59@google.com>
-cc:     LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 03/27] Enforce module signatures if the kernel is locked
- down
-In-Reply-To: <CACdnJuvhPd2dD7cWkxP78YMMFKU3FsigLHgkDntwhnbamNZr-w@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1903091544530.24498@namei.org>
-References: <20190306235913.6631-1-matthewgarrett@google.com> <20190306235913.6631-4-matthewgarrett@google.com> <alpine.LRH.2.21.1903090959210.12052@namei.org> <CACdnJuvhPd2dD7cWkxP78YMMFKU3FsigLHgkDntwhnbamNZr-w@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Sat, 9 Mar 2019 07:34:34 -0500
+X-Greylist: delayed 6107 seconds by postgrey-1.27 at vger.kernel.org; Sat, 09 Mar 2019 07:34:33 EST
+Received: by mail.fast4twen.cf (Postfix, from userid 48)
+        id 5028B51E669; Sat,  9 Mar 2019 09:50:46 +0000 (UTC)
+To:     linux-security-module@vger.kernel.org
+Subject: Inquiry March-2019
+X-PHP-Originating-Script: 0:dgageea.php
+From:   Daniel Murray <sinara-group@bk.ru>
+Reply-To: sinara-group@list.ru
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Message-Id: <20190309102710.5028B51E669@mail.fast4twen.cf>
+Date:   Sat,  9 Mar 2019 09:50:46 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 8 Mar 2019, Matthew Garrett wrote:
+Hi,friend,
+ 
+This is Daniel Murray and i am from Sinara Group Co.,LTD in Russia.
+We are glad to know about your company from the web and we are interested in your products.
+Could you kindly send us your Latest catalog and price list for our trial order.
+ 
+Thanks and Best Regards,
+ 
+Daniel Murray
+Purchasing Manager
+Sinara Group Co.,LTD
 
-> On Fri, Mar 8, 2019 at 3:00 PM James Morris <jmorris@namei.org> wrote:
-> >
-> > On Wed, 6 Mar 2019, Matthew Garrett wrote:
-> >
-> > > From: David Howells <dhowells@redhat.com>
-> > >
-> > > If the kernel is locked down, require that all modules have valid
-> > > signatures that we can verify.
-> >
-> > Perhaps note that this won't cover the case where folk are using DM-Verity
-> > with a signed root hash for verifying kernel modules.
-> 
-> Mm. I can't see a terribly good way of doing this generically -
-> loadpin gives no indication to the module loading code that it comes
-> from a trusted source. Would making the lockdown/module signature
-> enforcement a separate config option be reasonable?
-
-I was just suggest documenting this.
-
--- 
-James Morris
-<jmorris@namei.org>
 
