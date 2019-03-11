@@ -2,83 +2,79 @@ Return-Path: <SRS0=1JdI=RO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A01C43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Mar 2019 13:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85ECBC43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Mar 2019 13:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0BD920657
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Mar 2019 13:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 549B5206BA
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Mar 2019 13:26:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbfCKNTH (ORCPT
+        id S1727953AbfCKN0K (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Mar 2019 09:19:07 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:17744 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbfCKNTH (ORCPT
+        Mon, 11 Mar 2019 09:26:10 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:43781 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727670AbfCKN0C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Mar 2019 09:19:07 -0400
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2BDImNr013962;
-        Mon, 11 Mar 2019 22:18:48 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
- Mon, 11 Mar 2019 22:18:48 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2BDIh6F013947
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Mon, 11 Mar 2019 22:18:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] tomoyo: Add a kernel config option for fuzzing testing.
-To:     James Morris <jmorris@namei.org>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-security-module@vger.kernel.org
-References: <19e3dbac-d3ac-53b2-6e98-faf927bc72b3@i-love.sakura.ne.jp>
- <05b05166-d24a-3c50-6556-472f50a239b9@tycho.nsa.gov>
- <201903042359.x24NxJwx065719@www262.sakura.ne.jp>
- <alpine.LRH.2.21.1903051431540.20560@namei.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <72b3b8e1-fc34-f312-de12-cf42992bceb8@i-love.sakura.ne.jp>
-Date:   Mon, 11 Mar 2019 22:18:40 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.3
+        Mon, 11 Mar 2019 09:26:02 -0400
+Received: by mail-io1-f70.google.com with SMTP id n23so2872195ioj.10
+        for <linux-security-module@vger.kernel.org>; Mon, 11 Mar 2019 06:26:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=EGIr4lqcEZLUAsfOrgb/r4R/5KORODNRavbN/G81ud0=;
+        b=odsKQpM4lmg9I5WcGWKyYswyUzbSLqWhRjdnJ79zR7LCM0ghORkbxQV4jO6i1SWOU9
+         rDAnX4EIv0gn6nfJyYCZGyM3VB3L+e7SK3Ix/vobmY7CWPSBUSBJoUiuRTD5qthTQeh2
+         /BSi4zOtk8axzpB0J65UgTzXG4bCA0y7G7ZRR6lPhSpyYBLS8EL1+AF69vYo9DCracZ5
+         1G4wFCpejliYsYht+WVJk3g908f2PlieNZGuqotR6VfrUpG5AO7suhGHY7rYn8jkgt+6
+         j33+U7zOjEfbI6O3Yx11/Pxf+4Ai0d/UnnfMkNxkYRi/TofO/kigU4kznP9YNpUKLMko
+         rhHQ==
+X-Gm-Message-State: APjAAAVOOzTlQY+Ci3pufPBAu9XrfslNzfVJsWp+v/pa3cSDgo8SX8i1
+        ZlT5qJjKisFuu4x6nUb7zvykJJVnbO8lQTtg32rN1+qY/YMr
+X-Google-Smtp-Source: APXvYqyMLLnD257FKSm8f2pqEXgKrcruJ6lLf6qOLtxgF04q+irKSwldJ4vrXv5O2Djjaimry2xUTQyJnXLjJMXR34nmgnN7lLan
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1903051431540.20560@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a24:4d8e:: with SMTP id l136mr20861032itb.5.1552310761421;
+ Mon, 11 Mar 2019 06:26:01 -0700 (PDT)
+Date:   Mon, 11 Mar 2019 06:26:01 -0700
+In-Reply-To: <000000000000f7d1840582f4df63@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008407390583d18381@google.com>
+Subject: Re: kernel panic: MAC Initialization failed. (3)
+From:   syzbot <syzbot+2ee3f8974c2e7dc69feb@syzkaller.appspotmail.com>
+To:     casey@schaufler-ca.com, james.morris@microsoft.com,
+        jmorris@namei.org, john.johansen@canonical.com,
+        keescook@chromium.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/03/05 12:32, James Morris wrote:
-> On Tue, 5 Mar 2019, Tetsuo Handa wrote:
-> 
->> I guess that majority of TOMOYO users are now using the upstream version. But
->> pre-LSM version and/or AKARI will remain there until LKM-based LSMs becomes
->> officially supported
-> 
-> You mean dynamically loadable LSMs?
+syzbot has bisected this bug to:
 
-Yes. As long as upstream can't accept all LSM modules, and some people cannot afford
-utilizing upstream LSM modules, LKM-based LSMs will be needed by such people.
+commit 89a9684ea158dd7eef1728be9f0aed9a7d41cf19
+Author: Kees Cook <keescook@chromium.org>
+Date:   Tue Feb 12 18:23:18 2019 +0000
 
-> 
-> There are no plans to support this.
+     LSM: Ignore "security=" when "lsm=" is specified
 
-Currently you don't have a plan. But I have.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11572723200000
+start commit:   89a9684e LSM: Ignore "security=" when "lsm=" is specified
+git tree:       linux-next
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=13572723200000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15572723200000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c0f38652d28b522f
+dashboard link: https://syzkaller.appspot.com/bug?extid=2ee3f8974c2e7dc69feb
+userspace arch: amd64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14c68242c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17190c8ac00000
 
-It took 10+ years to be able to allow coexisting inode based access control
-and name based access control. And there are people who still cannot afford
-keeping upstream LSM modules enabled.
-
-Anyway, your question is irrelevant to whether to allow syzbot to test
-TOMOYO module. syzbot already bisected this problem to an innocent
-commit 89a9684ea158dd7e ("LSM: Ignore "security=" when "lsm=" is specified")
-at https://syzkaller.appspot.com/bug?id=32ab41bbdc0c28643c507dd0cf1eea1a9ce67837 .
-Will you send this patch to linux.git so that syzbot can test TOMOYO module?
-
+Reported-by: syzbot+2ee3f8974c2e7dc69feb@syzkaller.appspotmail.com
+Fixes: 89a9684e ("LSM: Ignore "security=" when "lsm=" is specified")
