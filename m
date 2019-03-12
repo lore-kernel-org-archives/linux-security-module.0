@@ -5,63 +5,68 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D31C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Mar 2019 21:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6460AC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Mar 2019 21:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D092147C
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Mar 2019 21:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DE262077B
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Mar 2019 21:56:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfCLVYG (ORCPT
+        id S1726485AbfCLV4N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Mar 2019 17:24:06 -0400
-Received: from namei.org ([65.99.196.166]:56710 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726378AbfCLVYF (ORCPT
+        Tue, 12 Mar 2019 17:56:13 -0400
+Received: from mail.emypeople.net ([216.220.167.73]:35859 "EHLO
+        mail.emypeople.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726427AbfCLV4N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Mar 2019 17:24:05 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x2CLO0fB002408;
-        Tue, 12 Mar 2019 21:24:00 GMT
-Date:   Wed, 13 Mar 2019 08:24:00 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc:     linux-security-module@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+29569ed06425fcf67a95@syzkaller.appspotmail.com>,
-        syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
-Subject: Re: [PATCH] tomoyo: Add a kernel config option for fuzzing
- testing.
-In-Reply-To: <5b69c819-eed4-1825-9e67-fff1206e9e3f@i-love.sakura.ne.jp>
-Message-ID: <alpine.LRH.2.21.1903130821250.2172@namei.org>
-References: <1551362770-8655-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp> <alpine.LRH.2.21.1903130519440.27366@namei.org> <5b69c819-eed4-1825-9e67-fff1206e9e3f@i-love.sakura.ne.jp>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Tue, 12 Mar 2019 17:56:13 -0400
+Received: from Shop7 ([166.182.241.52])
+        by mail.emypeople.net (12.1.1 build 4 DEB9 x64) with ASMTP id 201903121756114562;
+        Tue, 12 Mar 2019 17:56:11 -0400
+From:   "Edwin Zimmerman" <edwin@211mainstreet.net>
+To:     "'Tetsuo Handa'" <penguin-kernel@i-love.sakura.ne.jp>,
+        "'James Morris'" <jmorris@namei.org>
+Cc:     "'Stephen Smalley'" <sds@tycho.nsa.gov>,
+        <linux-security-module@vger.kernel.org>
+References: <19e3dbac-d3ac-53b2-6e98-faf927bc72b3@i-love.sakura.ne.jp> <05b05166-d24a-3c50-6556-472f50a239b9@tycho.nsa.gov> <201903042359.x24NxJwx065719@www262.sakura.ne.jp> <alpine.LRH.2.21.1903051431540.20560@namei.org> <72b3b8e1-fc34-f312-de12-cf42992bceb8@i-love.sakura.ne.jp> <alpine.LRH.2.21.1903130418580.24386@namei.org> <770d8413-bd57-c379-21a0-acbbdf82241e@i-love.sakura.ne.jp>
+In-Reply-To: <770d8413-bd57-c379-21a0-acbbdf82241e@i-love.sakura.ne.jp>
+Subject: RE: [PATCH] tomoyo: Add a kernel config option for fuzzing testing.
+Date:   Tue, 12 Mar 2019 17:56:11 -0400
+Message-ID: <000001d4d91e$68837940$398a6bc0$@211mainstreet.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQIPt+/UqAbtGNbIBgaXMEltXftg9ADxzK23AfRcjK8B5beAvgK2haGGArxoFxEB09qhqqUyN2vw
+Content-Language: en-us
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 13 Mar 2019, Tetsuo Handa wrote:
-
-> > I don't understand the logic here. If the cause of this is no policy 
-> > loaded combined with running out of memory, shouldn't the no-policy issue 
-> > be dealt with earlier?
-> > 
+On March 12, 2019 5:15, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote
+> On 2019/03/13 2:19, James Morris wrote:
+> > On Mon, 11 Mar 2019, Tetsuo Handa wrote:
+> >
+> >> On 2019/03/05 12:32, James Morris wrote:
+> >>> On Tue, 5 Mar 2019, Tetsuo Handa wrote:
+> >>>
+> >>>> I guess that majority of TOMOYO users are now using the upstream version. But
+> >>>> pre-LSM version and/or AKARI will remain there until LKM-based LSMs becomes
+> >>>> officially supported
+> >>>
+> >>> You mean dynamically loadable LSMs?
+> >>
+> >> Yes. As long as upstream can't accept all LSM modules, and some people cannot afford
+> >> utilizing upstream LSM modules, LKM-based LSMs will be needed by such people.
+> >
+> > What do you mean cannot afford ?
+> >
 > 
-> This patch is for automatically loading minimal policy at boot time
-> in order to address the no-policy issue. By applying this patch, syzbot
-> can test TOMOYO module without modifying userspace to load TOMOYO's policy
-> when /sbin/init starts.
+> Some people have to set SELINUX=disabled in /etc/selinux/config or pass security=none from
+> the kernel command line.
 
-If syzbot is trying to test Tomoyo and this requires policy to be loaded, 
-shouldn't it do that?
-
-And again, I think the no-policy situation needs to be detected before 
-you start trying to apply memory policies to running processes. Surely 
-there is some much earlier point during initialization that you will 
-detect that there is no policy?
-
--- 
-James Morris
-<jmorris@namei.org>
+If you specifically don't want in-kernel LSMs, and you specifically do want an out-of-tree LSM,
+there are other options. For example, you could just livepatch the security_* hooks you need, 
+since you already would using an LKM-based LSM.  That would give you your
+out-of-tree module and would also disable selinux on the hooks that got livepatched.
 
