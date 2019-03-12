@@ -2,71 +2,106 @@ Return-Path: <SRS0=08hy=RP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6460AC43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Mar 2019 21:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0CBC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Mar 2019 23:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DE262077B
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Mar 2019 21:56:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE4632087C
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Mar 2019 23:13:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="DbCsVLRI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbfCLV4N (ORCPT
+        id S1727351AbfCLXND (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Mar 2019 17:56:13 -0400
-Received: from mail.emypeople.net ([216.220.167.73]:35859 "EHLO
-        mail.emypeople.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfCLV4N (ORCPT
+        Tue, 12 Mar 2019 19:13:03 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43795 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbfCLXND (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Mar 2019 17:56:13 -0400
-Received: from Shop7 ([166.182.241.52])
-        by mail.emypeople.net (12.1.1 build 4 DEB9 x64) with ASMTP id 201903121756114562;
-        Tue, 12 Mar 2019 17:56:11 -0400
-From:   "Edwin Zimmerman" <edwin@211mainstreet.net>
-To:     "'Tetsuo Handa'" <penguin-kernel@i-love.sakura.ne.jp>,
-        "'James Morris'" <jmorris@namei.org>
-Cc:     "'Stephen Smalley'" <sds@tycho.nsa.gov>,
-        <linux-security-module@vger.kernel.org>
-References: <19e3dbac-d3ac-53b2-6e98-faf927bc72b3@i-love.sakura.ne.jp> <05b05166-d24a-3c50-6556-472f50a239b9@tycho.nsa.gov> <201903042359.x24NxJwx065719@www262.sakura.ne.jp> <alpine.LRH.2.21.1903051431540.20560@namei.org> <72b3b8e1-fc34-f312-de12-cf42992bceb8@i-love.sakura.ne.jp> <alpine.LRH.2.21.1903130418580.24386@namei.org> <770d8413-bd57-c379-21a0-acbbdf82241e@i-love.sakura.ne.jp>
-In-Reply-To: <770d8413-bd57-c379-21a0-acbbdf82241e@i-love.sakura.ne.jp>
-Subject: RE: [PATCH] tomoyo: Add a kernel config option for fuzzing testing.
-Date:   Tue, 12 Mar 2019 17:56:11 -0400
-Message-ID: <000001d4d91e$68837940$398a6bc0$@211mainstreet.net>
+        Tue, 12 Mar 2019 19:13:03 -0400
+Received: by mail-lf1-f68.google.com with SMTP id g7so27987lfh.10
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Mar 2019 16:13:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=kv+IpuE8uhKkAeCRq+EUgrdWk4JSgDpUpl0p5lmX99c=;
+        b=DbCsVLRI7Rzb1qFJBmylu0TkkOCC0GrWU42XnTvHdfNKGun6F/S5sJ7BSIr5gCFBg7
+         b0Np6SdkzlbqQrFpuDIKhyR9YaAw0abSVFjyITC0HswDuQuNOHtckwszyiAXGWsN2fqA
+         ZhMcQBzj0w9C4hmh7wZHgFe5mmLHPDjbNyjAgxGx3pfvNwPGXMlgWhFFpuJHwsjdsasE
+         sFbveHhYK/tfmTxgOU3k5ipnf3G0AeAxsG1Ns2Qf59qWQHuFBYqdXLTiEQrBg3Wq/8PM
+         1iAtYQHuPtJM6iyz4yQvQ41LojtAWQeU4WZm8qlpeSDQqEaH+y6v940Sw5YudnGTjJ5C
+         nfPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=kv+IpuE8uhKkAeCRq+EUgrdWk4JSgDpUpl0p5lmX99c=;
+        b=PVErUASpLbsOYDXWQ5Kd0G8Camzzeh4FFDQM8z4yCXCbOhzp+YT2IWoHspiNOcmt3f
+         VMttraHOp+J383Hv14NPOzdAWRfvQaxqJkn5Z/BYBfShBpdisr3iHRdxUv1yKNbDJqM0
+         eqFFgVlymlUvXlMsIsdrgyqoBLENSiPuD4zW+/zoF7uKRCdnb4RBA30huSfoo7KcWwOf
+         o9uiB6Dk9fawInNTJJ4gKpO/IvluCQbCXkvHfaawcw7pCTcLmpib4wzi+qUstdDBxnRR
+         NlUVanmoYYCbmutO57aQEtsG1mMNSrNaYB3tyV3PcdzvYbvf18VbnAbsTHJKoVkQcLu2
+         YaYg==
+X-Gm-Message-State: APjAAAXitn8Js3ude/mTiHL9jehFwfd6UlWN3Ordn9JW8YxCZAy22qBW
+        kFxgtlxlFLHc4jQqMxMSqYcuXpZjDDcuaEq5S3l4K4hu1A==
+X-Google-Smtp-Source: APXvYqzpQxT+BBNyzwnOKQ3hXZ2wyAi5055PXgoi8dlhpluTarvFUAV4NSC4tnwEFJ6OVlGudllaz3nRHtuEME3QcPs=
+X-Received: by 2002:ac2:42da:: with SMTP id n26mr15461113lfl.91.1552432380824;
+ Tue, 12 Mar 2019 16:13:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQIPt+/UqAbtGNbIBgaXMEltXftg9ADxzK23AfRcjK8B5beAvgK2haGGArxoFxEB09qhqqUyN2vw
-Content-Language: en-us
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 12 Mar 2019 19:12:50 -0400
+Message-ID: <CAHC9VhTNWou2axPZ5SeCD0pML_r6=r1Wok1U=ggONUR14O+mQw@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v5.1 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On March 12, 2019 5:15, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> wrote
-> On 2019/03/13 2:19, James Morris wrote:
-> > On Mon, 11 Mar 2019, Tetsuo Handa wrote:
-> >
-> >> On 2019/03/05 12:32, James Morris wrote:
-> >>> On Tue, 5 Mar 2019, Tetsuo Handa wrote:
-> >>>
-> >>>> I guess that majority of TOMOYO users are now using the upstream version. But
-> >>>> pre-LSM version and/or AKARI will remain there until LKM-based LSMs becomes
-> >>>> officially supported
-> >>>
-> >>> You mean dynamically loadable LSMs?
-> >>
-> >> Yes. As long as upstream can't accept all LSM modules, and some people cannot afford
-> >> utilizing upstream LSM modules, LKM-based LSMs will be needed by such people.
-> >
-> > What do you mean cannot afford ?
-> >
-> 
-> Some people have to set SELINUX=disabled in /etc/selinux/config or pass security=none from
-> the kernel command line.
+Hi Linus,
 
-If you specifically don't want in-kernel LSMs, and you specifically do want an out-of-tree LSM,
-there are other options. For example, you could just livepatch the security_* hooks you need, 
-since you already would using an LKM-based LSM.  That would give you your
-out-of-tree module and would also disable selinux on the hooks that got livepatched.
+Two small fixes for SELinux in v5.1: one adds a buffer length check to
+the SELinux SCTP code, the other ensures that the SELinux labeling for
+a NFS mount is not disabled if the filesystem is mounted twice.
+Please pull for v5.1-rc1.
 
+Thanks,
+-Paul
+
+--
+The following changes since commit 45189a1998e00f6375ebd49d1e18161acddd73de:
+
+ selinux: fix avc audit messages (2019-02-05 12:34:33 -0500)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20190312
+
+for you to fetch changes up to 3815a245b50124f0865415dcb606a034e97494d4:
+
+ security/selinux: fix SECURITY_LSM_NATIVE_LABELS on reused superblock
+   (2019-03-11 16:13:17 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.1 PR 20190312
+
+----------------------------------------------------------------
+J. Bruce Fields (1):
+     security/selinux: fix SECURITY_LSM_NATIVE_LABELS on reused superblock
+
+Xin Long (1):
+     selinux: add the missing walk_size + len check in
+              selinux_sctp_bind_connect
+
+security/selinux/hooks.c | 8 +++++++-
+1 file changed, 7 insertions(+), 1 deletion(-)
+
+-- 
+paul moore
+www.paul-moore.com
