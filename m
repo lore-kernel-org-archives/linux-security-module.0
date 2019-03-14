@@ -2,65 +2,115 @@ Return-Path: <SRS0=9WaM=RR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76700C43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Mar 2019 09:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9FCC10F06
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Mar 2019 16:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45BBE2085A
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Mar 2019 09:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 284B42184C
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Mar 2019 16:13:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbfCNJfS (ORCPT
+        id S1727887AbfCNQNb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Mar 2019 05:35:18 -0400
-Received: from mga12.intel.com ([192.55.52.136]:50380 "EHLO mga12.intel.com"
+        Thu, 14 Mar 2019 12:13:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58284 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726539AbfCNJfS (ORCPT
+        id S1727562AbfCNQNa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Mar 2019 05:35:18 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Mar 2019 02:35:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,478,1544515200"; 
-   d="scan'208";a="154930607"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.164])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Mar 2019 02:35:15 -0700
-Date:   Thu, 14 Mar 2019 11:35:15 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com
-Subject: Re: Add support for TCG2 log format on UEFI systems
-Message-ID: <20190314093515.GA11165@linux.intel.com>
-References: <20190227202658.197113-1-matthewgarrett@google.com>
+        Thu, 14 Mar 2019 12:13:30 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 800073132C30;
+        Thu, 14 Mar 2019 16:13:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-148.rdu2.redhat.com [10.10.121.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2C71760BE6;
+        Thu, 14 Mar 2019 16:13:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 34/38] vfs: Convert apparmorfs to fs_context
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     John Johansen <john.johansen@canonical.com>,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 14 Mar 2019 16:13:28 +0000
+Message-ID: <155258000843.13720.3891676167908086218.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155257972443.13720.11743171471060355965.stgit@warthog.procyon.org.uk>
+References: <155257972443.13720.11743171471060355965.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190227202658.197113-1-matthewgarrett@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 14 Mar 2019 16:13:30 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 27, 2019 at 12:26:54PM -0800, Matthew Garrett wrote:
-> Identical to V4, but based on tpmdd-next
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: John Johansen <john.johansen@canonical.com>
+cc: apparmor@lists.ubuntu.com
+cc: linux-security-module@vger.kernel.org
+---
 
-This is not found /sys/kernel/security/tpm0/ascii_bios_measurements
+ security/apparmor/apparmorfs.c |   20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-But still
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index fefee040bf79..75f7da0e5ec1 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -23,6 +23,7 @@
+ #include <linux/capability.h>
+ #include <linux/rcupdate.h>
+ #include <linux/fs.h>
++#include <linux/fs_context.h>
+ #include <linux/poll.h>
+ #include <uapi/linux/major.h>
+ #include <uapi/linux/magic.h>
+@@ -137,7 +138,7 @@ static const struct super_operations aafs_super_ops = {
+ 	.show_path = aafs_show_path,
+ };
+ 
+-static int fill_super(struct super_block *sb, void *data, int silent)
++static int apparmorfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	static struct tree_descr files[] = { {""} };
+ 	int error;
+@@ -150,16 +151,25 @@ static int fill_super(struct super_block *sb, void *data, int silent)
+ 	return 0;
+ }
+ 
+-static struct dentry *aafs_mount(struct file_system_type *fs_type,
+-				 int flags, const char *dev_name, void *data)
++static int apparmorfs_get_tree(struct fs_context *fc)
+ {
+-	return mount_single(fs_type, flags, data, fill_super);
++	return vfs_get_super(fc, vfs_get_single_super, apparmorfs_fill_super);
++}
++
++static const struct fs_context_operations apparmorfs_context_ops = {
++	.get_tree	= apparmorfs_get_tree,
++};
++
++static int apparmorfs_init_fs_context(struct fs_context *fc)
++{
++	fc->ops = &apparmorfs_context_ops;
++	return 0;
+ }
+ 
+ static struct file_system_type aafs_ops = {
+ 	.owner = THIS_MODULE,
+ 	.name = AAFS_NAME,
+-	.mount = aafs_mount,
++	.init_fs_context = apparmorfs_init_fs_context,
+ 	.kill_sb = kill_anon_super,
+ };
+ 
 
-[    0.000000] efi:  ACPI 2.0=0x69ca2000  ACPI=0x69ca2000  TPMFinalLog=0x69ce4000  SMBIOS=0x69f63000  SMBIOS 3.0=0x69f62000  ESRT=0x69f3e818  MEMATTR=0x63448018
-
-Tried this with too machines now.
-
-I wonder if anyone else has had success...
-
-/Jarkko
