@@ -2,69 +2,70 @@ Return-Path: <SRS0=wxE6=RT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0368BC43381
-	for <linux-security-module@archiver.kernel.org>; Sat, 16 Mar 2019 05:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 824EFC4360F
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Mar 2019 05:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C30BA218A1
-	for <linux-security-module@archiver.kernel.org>; Sat, 16 Mar 2019 05:25:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50F50218FE
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Mar 2019 05:39:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PHpq2Y6E"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Av4y7/zt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726020AbfCPFZI (ORCPT
+        id S1725879AbfCPFio (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 16 Mar 2019 01:25:08 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:42467 "EHLO
+        Sat, 16 Mar 2019 01:38:44 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39834 "EHLO
         mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfCPFZI (ORCPT
+        with ESMTP id S1725937AbfCPFio (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 16 Mar 2019 01:25:08 -0400
-Received: by mail-vs1-f68.google.com with SMTP id c189so6620505vsd.9
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2019 22:25:07 -0700 (PDT)
+        Sat, 16 Mar 2019 01:38:44 -0400
+Received: by mail-vs1-f68.google.com with SMTP id w14so6633061vso.6
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2019 22:38:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XUbM3rN6drZ5zRdiVKP0Jupxp7VX7qkDWLnxB94bLb4=;
-        b=PHpq2Y6EoC7crtH3QoJhAhEHi1h5Ttz1exB6gxDFa2jykFZZJ0CQOuRFbrE/tnU63Z
-         Utb5Aw7HOdRT7kwLllWlEERORUgRvPWjz4RkDoSoKKgZTIlIwWzRRcyCOwB7nUXyuE9D
-         tdJFI+fkmyEPF1/MhX4uKLgEV0RuKzE3hNXjM=
+        bh=McsnC6Ux6dcTlqrKjEcs95o7BHlPx6WeydGAsg43iK0=;
+        b=Av4y7/zt4pg+TILmbNyFU5Jw2Y/UzjdGpPmtSugNeBxkjMs5KvqNxvno1loQCn7vcj
+         zbZDzFBnoikRas6yMukwRngSrElNq3QbZh2UtlE+2lTLreo6eG1uUaa/nrJtUX7Zvc84
+         ig4h1sg0ZQh4fWYXpP2A2i+gTyJgOKFoS71HU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XUbM3rN6drZ5zRdiVKP0Jupxp7VX7qkDWLnxB94bLb4=;
-        b=Jp3l8GUlUfAWBVqh66WS711XY503JW63GpxE0ZLP1ee4yvs/y0xcPxxh+tnfqY4JRe
-         OHHjU/taYquO70o7uD0d4lmRhj5jGkKgzYGz5e8MM6WeOVbm31qxkikrBgCHUy+b4IqB
-         N0FS7wbSNfsEaLk07FwpKwT2X3L20nPIpDbuPfFpvEgousNM37J9XPw3u+MYDQT5+rKw
-         1TylJbNiqrboJSU+bQhICcVoYREbfJuR14SY626ZG/vbcZ8/qV7e0mHy7qqVoFMMpqRg
-         DHPi6Nm0tjJAnbt1ovA8U+F5EjyjROJBvA+0fWKdA0V6zQTRGVMeAePbXWIVn5SrKQvi
-         UG7g==
-X-Gm-Message-State: APjAAAVCET2PlG5FeRh1FN6UvFgOHQgo39bEZYE/zrUIy3CauzczQ5mW
-        DtnhM7VUcSMucMsPYeGfup/UZ4GmrGY=
-X-Google-Smtp-Source: APXvYqwiWBNdNrV7gJV2wZ1+V5kQ5xMjfzCgvy7R5fUuuH0okm57Ky0efaJvQ9yq5LUopVcVAwkSzA==
-X-Received: by 2002:a67:f90e:: with SMTP id t14mr3970725vsq.181.1552713906531;
-        Fri, 15 Mar 2019 22:25:06 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id b19sm991652vsd.6.2019.03.15.22.25.05
+        bh=McsnC6Ux6dcTlqrKjEcs95o7BHlPx6WeydGAsg43iK0=;
+        b=qa+2Ysf5Vjl8jTSHWZtMq5NjYSauKhJskYN7kG2m8+RIAy0XrlVHTTOvjhVCjyk4jz
+         aeR7FDCj1jyMCVK5AxghH3/DZcqrUkEWmNhwZ5NJIDxtgJlxWX/R25MU0nO9843YjGXs
+         vSvxTKETPid2BHk6lugBOEGYhshLlKTJufLcYNuS+CTJwPR4Sg5QR+CqMyNzmBXR0xyj
+         qaAqLoyVwOsnKdqK0RPSfjQDFdcJMNMp2cokWXvFFCnWPMPo1IR+GfoaQnt+P1ST3YGh
+         J/jb16R9+MeDYfqnDwReT7PJtB8Hql693SKDm0jiXK5PBcUwv86FHbEseZ0zMekuM0Q1
+         wlRg==
+X-Gm-Message-State: APjAAAVsYvMwJp8vC4HxeN1wra6Vqu86atV1OeEFtIpDvYUCBZNL1gjk
+        rCqhdRr5gwq1At9O+PsIV+Ijs1FBm5o=
+X-Google-Smtp-Source: APXvYqzsH2Y3ujLtP3wv1dL8FL/4GfTJIYhSDhshMr6wGAcA+IlYZRYQ9qTCsS28alpSEIvZS2R4AA==
+X-Received: by 2002:a67:c485:: with SMTP id d5mr3987362vsk.8.1552714721704;
+        Fri, 15 Mar 2019 22:38:41 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id n4sm806963vkk.41.2019.03.15.22.38.40
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Mar 2019 22:25:05 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id n14so6605911vsp.12
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2019 22:25:05 -0700 (PDT)
-X-Received: by 2002:a67:ed0c:: with SMTP id l12mr3959329vsp.66.1552713904745;
- Fri, 15 Mar 2019 22:25:04 -0700 (PDT)
+        Fri, 15 Mar 2019 22:38:40 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id c6so1325178uan.1
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Mar 2019 22:38:40 -0700 (PDT)
+X-Received: by 2002:ab0:768b:: with SMTP id v11mr1584271uaq.64.1552714719686;
+ Fri, 15 Mar 2019 22:38:39 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190315110555.0807d015@cakuba.netronome.com> <20190315120105.5541ad46@cakuba.netronome.com>
- <20190315165440.53b9db3c@cakuba.netronome.com>
-In-Reply-To: <20190315165440.53b9db3c@cakuba.netronome.com>
+ <20190315165440.53b9db3c@cakuba.netronome.com> <CAGXu5jKHRPuaALQcPXvpDeuVgZR+EeRqo9Qj4j3kYatb3HUSSA@mail.gmail.com>
+In-Reply-To: <CAGXu5jKHRPuaALQcPXvpDeuVgZR+EeRqo9Qj4j3kYatb3HUSSA@mail.gmail.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 15 Mar 2019 22:24:53 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKHRPuaALQcPXvpDeuVgZR+EeRqo9Qj4j3kYatb3HUSSA@mail.gmail.com>
-Message-ID: <CAGXu5jKHRPuaALQcPXvpDeuVgZR+EeRqo9Qj4j3kYatb3HUSSA@mail.gmail.com>
+Date:   Fri, 15 Mar 2019 22:38:28 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jL-e7bDEXfpUuT-HyFarR-8T0djXChR0cuzTwFQPQ0tOw@mail.gmail.com>
+Message-ID: <CAGXu5jL-e7bDEXfpUuT-HyFarR-8T0djXChR0cuzTwFQPQ0tOw@mail.gmail.com>
 Subject: Re: mount.nfs: Protocol error after upgrade to linux/master
 To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
         linux-security-module <linux-security-module@vger.kernel.org>
@@ -77,61 +78,120 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 15, 2019 at 4:54 PM Jakub Kicinski
-<jakub.kicinski@netronome.com> wrote:
+On Fri, Mar 15, 2019 at 10:24 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> On Fri, 15 Mar 2019 12:01:05 -0700, Jakub Kicinski wrote:
-> > On Fri, 15 Mar 2019 11:05:55 -0700, Jakub Kicinski wrote:
-> > > Hi,
-> > >
-> > > I just upgraded from:
-> > >
-> > > commit a3b1933d34d5bb26d7503752e3528315a9e28339 (net)
-> > > Merge: c6873d18cb4a 24319258660a
-> > > Author: David S. Miller <davem@davemloft.net>
-> > > Date:   Mon Mar 11 16:22:49 2019 -0700
-> > >
-> > > to
-> > >
-> > > commit 3b319ee220a8795406852a897299dbdfc1b09911
-> > > Merge: 9352ca585b2a b6e88119f1ed
-> > > Author: Linus Torvalds <torvalds@linux-foundation.org>
-> > > Date:   Thu Mar 14 10:48:14 2019 -0700
-> > >
-> > > and I'm seeing:
-> > >
-> > > # mount /home/
-> > > mount.nfs: Protocol error
-> > >
-> > > No errors in dmesg, please let me know if it's a known problem or what
-> > > other info could be of use.
+> On Fri, Mar 15, 2019 at 4:54 PM Jakub Kicinski
+> <jakub.kicinski@netronome.com> wrote:
 > >
-> > Hm.. I tried to bisect but reverting to that commit doesn't help.
+> > On Fri, 15 Mar 2019 12:01:05 -0700, Jakub Kicinski wrote:
+> > > On Fri, 15 Mar 2019 11:05:55 -0700, Jakub Kicinski wrote:
+> > > > Hi,
+> > > >
+> > > > I just upgraded from:
+> > > >
+> > > > commit a3b1933d34d5bb26d7503752e3528315a9e28339 (net)
+> > > > Merge: c6873d18cb4a 24319258660a
+> > > > Author: David S. Miller <davem@davemloft.net>
+> > > > Date:   Mon Mar 11 16:22:49 2019 -0700
+> > > >
+> > > > to
+> > > >
+> > > > commit 3b319ee220a8795406852a897299dbdfc1b09911
+> > > > Merge: 9352ca585b2a b6e88119f1ed
+> > > > Author: Linus Torvalds <torvalds@linux-foundation.org>
+> > > > Date:   Thu Mar 14 10:48:14 2019 -0700
+> > > >
+> > > > and I'm seeing:
+> > > >
+> > > > # mount /home/
+> > > > mount.nfs: Protocol error
+> > > >
+> > > > No errors in dmesg, please let me know if it's a known problem or what
+> > > > other info could be of use.
+> > >
+> > > Hm.. I tried to bisect but reverting to that commit doesn't help.
+> > >
+> > > Looks like the server responds with:
+> > >
+> > >   ICMP parameter problem - octet 22, length 80
+> > >
+> > > pointing at some IP options (type 134)...
 > >
-> > Looks like the server responds with:
+> > Okay, figured it out, it's the commit 13e735c0e953 ("LSM: Introduce
+> > CONFIG_LSM") and all the related changes in security/
 > >
-> >   ICMP parameter problem - octet 22, length 80
+> > I did olddefconfig and it changed my security module from apparmor to
+> > smack silently.  smack must be slapping those IP options on by default.
 > >
-> > pointing at some IP options (type 134)...
+> > Pretty awful user experience, and a non-zero chance that users who
+> > upgrade their kernels will miss this and end up with the wrong security
+> > module...
 >
-> Okay, figured it out, it's the commit 13e735c0e953 ("LSM: Introduce
-> CONFIG_LSM") and all the related changes in security/
+> I wonder if we can add some kind of logic to Kconfig to retain the old
+> CONFIG_DEFAULT_SECURITY and include it as the first legacy-major LSM
+> listed in CONFIG_LSM?
 >
-> I did olddefconfig and it changed my security module from apparmor to
-> smack silently.  smack must be slapping those IP options on by default.
->
-> Pretty awful user experience, and a non-zero chance that users who
-> upgrade their kernels will miss this and end up with the wrong security
-> module...
+> Like, but the old selector back in, but mark is as "soon to be
+> entirely replaced with CONFIG_LSM" and then make CONFIG_LSM's default
+> be "yama,loadpin,safesetid,integrity,$(CONFIG_DEFAULT_SECURITY),selinux,smack,tomoyo,apparmor"
+> ? Duplicates are ignored...
 
-I wonder if we can add some kind of logic to Kconfig to retain the old
-CONFIG_DEFAULT_SECURITY and include it as the first legacy-major LSM
-listed in CONFIG_LSM?
+This would initialize a default order from the earlier Kconfig items:
 
-Like, but the old selector back in, but mark is as "soon to be
-entirely replaced with CONFIG_LSM" and then make CONFIG_LSM's default
-be "yama,loadpin,safesetid,integrity,$(CONFIG_DEFAULT_SECURITY),selinux,smack,tomoyo,apparmor"
-? Duplicates are ignored...
+diff --git a/security/Kconfig b/security/Kconfig
+index 1d6463fb1450..e3813b5c6824 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -239,8 +239,40 @@ source "security/safesetid/Kconfig"
+
+ source "security/integrity/Kconfig"
+
++choice
++       prompt "First legacy-major LSM to be initialized"
++       default DEFAULT_SECURITY_SELINUX if SECURITY_SELINUX
++       default DEFAULT_SECURITY_SMACK if SECURITY_SMACK
++       default DEFAULT_SECURITY_TOMOYO if SECURITY_TOMOYO
++       default DEFAULT_SECURITY_APPARMOR if SECURITY_APPARMOR
++       default DEFAULT_SECURITY_DAC
++
++       help
++         Select the legacy-major security module that will be initialize
++         first. Overridden by non-default CONFIG_LSM.
++
++       config DEFAULT_SECURITY_SELINUX
++               bool "SELinux" if SECURITY_SELINUX=y
++
++       config DEFAULT_SECURITY_SMACK
++               bool "Simplified Mandatory Access Control" if SECURITY_SMACK=y
++
++       config DEFAULT_SECURITY_TOMOYO
++               bool "TOMOYO" if SECURITY_TOMOYO=y
++
++       config DEFAULT_SECURITY_APPARMOR
++               bool "AppArmor" if SECURITY_APPARMOR=y
++
++       config DEFAULT_SECURITY_DAC
++               bool "Unix Discretionary Access Controls"
++
++endchoice
++
+ config LSM
+        string "Ordered list of enabled LSMs"
++       default
+"yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if
+DEFAULT_SECURITY_SMACK
++       default
+"yama,loadpin,safesetid,integrity,tomoyo,selinux,smack,apparmor" if
+DEFAULT_SECURITY_TOMOYO
++       default
+"yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if
+DEFAULT_SECURITY_APPARMOR
+        default "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
+        help
+          A comma-separated list of LSMs, in initialization order.
+
+(I don't see a way to include an earlier config string in a new
+default.) Thoughts?
 
 -- 
 Kees Cook
