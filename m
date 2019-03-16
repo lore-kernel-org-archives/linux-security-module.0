@@ -2,92 +2,90 @@ Return-Path: <SRS0=wxE6=RT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B79C10F03
-	for <linux-security-module@archiver.kernel.org>; Sat, 16 Mar 2019 08:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58292C43381
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Mar 2019 12:10:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE2FB218E0
-	for <linux-security-module@archiver.kernel.org>; Sat, 16 Mar 2019 08:08:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2904A218D4
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Mar 2019 12:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbfCPIIR (ORCPT
+        id S1726376AbfCPMK6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 16 Mar 2019 04:08:17 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:13984 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbfCPIIR (ORCPT
+        Sat, 16 Mar 2019 08:10:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59274 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbfCPMK6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 16 Mar 2019 04:08:17 -0400
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2G885FB073439;
-        Sat, 16 Mar 2019 17:08:05 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Sat, 16 Mar 2019 17:08:05 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2G87xdd073418
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 16 Mar 2019 17:08:05 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: mount.nfs: Protocol error after upgrade to linux/master
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
+        Sat, 16 Mar 2019 08:10:58 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8FACFC049D67;
+        Sat, 16 Mar 2019 12:10:57 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-22.phx2.redhat.com [10.3.112.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8B8255D6B3;
+        Sat, 16 Mar 2019 12:10:50 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>
-References: <20190315110555.0807d015@cakuba.netronome.com>
- <20190315120105.5541ad46@cakuba.netronome.com>
- <20190315165440.53b9db3c@cakuba.netronome.com>
- <CAGXu5jKHRPuaALQcPXvpDeuVgZR+EeRqo9Qj4j3kYatb3HUSSA@mail.gmail.com>
- <CAGXu5jL-e7bDEXfpUuT-HyFarR-8T0djXChR0cuzTwFQPQ0tOw@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <f23d0fad-dc72-0e53-cac6-31abfd12a050@I-love.SAKURA.ne.jp>
-Date:   Sat, 16 Mar 2019 17:08:02 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.3
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jL-e7bDEXfpUuT-HyFarR-8T0djXChR0cuzTwFQPQ0tOw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
+        omosnace@redhat.com, eparis@parisplace.org, serge@hallyn.com,
+        zohar@linux.ibm.com, mjg59@google.com,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH ghak109 V1] audit: link integrity evm_write_xattrs record to syscall event
+Date:   Sat, 16 Mar 2019 08:10:08 -0400
+Message-Id: <81d0122d14c4fbb3a2ad33d25fdf2dd001c7dcc7.1552737854.git.rgb@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Sat, 16 Mar 2019 12:10:57 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/03/16 14:38, Kees Cook wrote:
->  config LSM
->         string "Ordered list of enabled LSMs"
-> +       default "yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if DEFAULT_SECURITY_SMACK
-> +       default "yama,loadpin,safesetid,integrity,tomoyo,selinux,smack,apparmor" if DEFAULT_SECURITY_TOMOYO
-> +       default "yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if DEFAULT_SECURITY_APPARMOR
->         default "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
->         help
->           A comma-separated list of LSMs, in initialization order.
-> 
-> (I don't see a way to include an earlier config string in a new
-> default.) Thoughts?
->
+In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
+verified xattrs"), the call to audit_log_start() is missing a context to
+link it to an audit event. Since this event is in user context, add
+the process' syscall context to the record.
 
-Hmm, DEFAULT_SECURITY_TOMOYO no longer works because TOMOYO will be
-always enabled as long as CONFIG_SECURITY_TOMOYO=y. Maybe
+In addition, the orphaned keyword "locked" appears in the record.
+Normalize this by changing it to "xattr=(locked)".
 
- config LSM
-        string "Ordered list of enabled LSMs"
--       default "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
-+       default "yama,loadpin,safesetid,integrity,selinux" if DEFAULT_SECURITY_SELINUX
-+       default "yama,loadpin,safesetid,integrity,smack" if DEFAULT_SECURITY_SMACK
-+       default "yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
-+       default "yama,loadpin,safesetid,integrity,apparmor" if DEFAULT_SECURITY_APPARMOR
-+       default "yama,loadpin,safesetid,integrity" if DEFAULT_SECURITY_DAC
-        help
-          A comma-separated list of LSMs, in initialization order.
+Please see the github issue
+https://github.com/linux-audit/audit-kernel/issues/109
 
-(i.e. include only up to one major LSM as default choice, and allow manually including
-multiple major LSMs at both kernel build time and kernel boot time) is better?
+Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+---
+ security/integrity/evm/evm_secfs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index 015aea8fdf1e..4171d174e9da 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -192,7 +192,8 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+ 	if (count > XATTR_NAME_MAX)
+ 		return -E2BIG;
+ 
+-	ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_INTEGRITY_EVM_XATTR);
++	ab = audit_log_start(audit_context(), GFP_KERNEL,
++			     AUDIT_INTEGRITY_EVM_XATTR);
+ 	if (!ab)
+ 		return -ENOMEM;
+ 
+@@ -222,7 +223,7 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
+ 		inode_lock(inode);
+ 		err = simple_setattr(evm_xattrs, &newattrs);
+ 		inode_unlock(inode);
+-		audit_log_format(ab, "locked");
++		audit_log_format(ab, "xattr=(locked)");
+ 		if (!err)
+ 			err = count;
+ 		goto out;
+-- 
+1.8.3.1
 
