@@ -2,109 +2,143 @@ Return-Path: <SRS0=+PDj=RW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04225C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 08:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24005C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 10:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A8A2075E
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 08:33:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1552984400;
-	bh=jjSqJUBachI3OkoOnRR731pkIsic5VXZ2MyMB0BSh8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bPEVGUdDZkn9Lgwm2GwNJTzAQQ9cqCQljWaAQXZwsspRkfjorIUp87Qt8gE8x6YwS
-	 +eQ7CwseN+qeF7UY9TJAxcO9odXZEU0NSVQJQJHmEswEyJkJeasU1NmxAO7e44hoA+
-	 p3C88xxjSCVjwOhtWcfK+7uJtlZ/4mZXmm3cpycs=
+	by mail.kernel.org (Postfix) with ESMTP id F0F6C20857
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 10:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfCSIdU (ORCPT
+        id S1726782AbfCSK4j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Mar 2019 04:33:20 -0400
-Received: from mx2.suse.de ([195.135.220.15]:32962 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725978AbfCSIdT (ORCPT
+        Tue, 19 Mar 2019 06:56:39 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:39525 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726712AbfCSK4j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Mar 2019 04:33:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 43236AFDF;
-        Tue, 19 Mar 2019 08:33:18 +0000 (UTC)
-Date:   Tue, 19 Mar 2019 09:33:16 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aristeu Rozanski <aris@redhat.com>,
-        "Serge E . Hallyn" <serge.hallyn@ubuntu.com>,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH] device_cgroup: fix RCU imbalance in error case
-Message-ID: <20190319083316.GQ8924@dhcp22.suse.cz>
-References: <20190319013659.86199-1-jannh@google.com>
+        Tue, 19 Mar 2019 06:56:39 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2JAuPJR072932;
+        Tue, 19 Mar 2019 19:56:25 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
+ Tue, 19 Mar 2019 19:56:25 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126065253096.bbtec.net [126.65.253.96])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2JAuIZn072901
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 19 Mar 2019 19:56:25 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: mount.nfs: Protocol error after upgrade to linux/master
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190315110555.0807d015@cakuba.netronome.com>
+ <20190315120105.5541ad46@cakuba.netronome.com>
+ <20190315165440.53b9db3c@cakuba.netronome.com>
+ <CAGXu5jKHRPuaALQcPXvpDeuVgZR+EeRqo9Qj4j3kYatb3HUSSA@mail.gmail.com>
+ <CAGXu5jL-e7bDEXfpUuT-HyFarR-8T0djXChR0cuzTwFQPQ0tOw@mail.gmail.com>
+ <f23d0fad-dc72-0e53-cac6-31abfd12a050@I-love.SAKURA.ne.jp>
+ <bee1a774-461a-2535-a640-bbe65291e909@schaufler-ca.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <2bf23acd-22c4-a260-7648-845887a409d5@i-love.sakura.ne.jp>
+Date:   Tue, 19 Mar 2019 19:56:15 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190319013659.86199-1-jannh@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <bee1a774-461a-2535-a640-bbe65291e909@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue 19-03-19 02:36:59, Jann Horn wrote:
-> When dev_exception_add() returns an error (due to a failed memory
-> allocation), make sure that we move the RCU preemption count back to where
-> it was before we were called. We dropped the RCU read lock inside the loop
-> body, so we can't just "break".
-> 
-> sparse complains about this, too:
-> 
-> $ make -s C=2 security/device_cgroup.o
-> ./include/linux/rcupdate.h:647:9: warning: context imbalance in
-> 'propagate_exception' - unexpected unlock
-> 
-> Fixes: d591fb56618f ("device_cgroup: simplify cgroup tree walk in propagate_exception()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jann Horn <jannh@google.com>
+Since Kees Cook seems to be busy now, here is my version...
 
-FWIW looks good to me.
-Acked-by: Michal Hocko <mhocko@suse.com>
+From 885553e4793d9af2d4e9e99c7d137b0ec7b5f8ad Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 19 Mar 2019 19:52:31 +0900
+Subject: [PATCH] LSM: Revive CONFIG_DEFAULT_SECURITY_* for "make oldconfig"
 
-Thanks
+Commit 70b62c25665f636c ("LoadPin: Initialize as ordered LSM") removed
+CONFIG_DEFAULT_SECURITY_{SELINUX,SMACK,TOMOYO,APPARMOR,DAC} from
+security/Kconfig and changed CONFIG_LSM to provide a fixed ordering as a
+default value. That commit expected that existing users (upgrading from
+Linux 5.0 and earlier) will edit CONFIG_LSM value in accordance with
+their CONFIG_DEFAULT_SECURITY_* choice in their old kernel configs. But
+since users might forget to edit CONFIG_LSM value, this patch revives
+the choice (only for providing the default value for CONFIG_LSM) in order
+to make sure that CONFIG_LSM reflects CONFIG_DEFAULT_SECURITY_* from their
+old kernel configs.
 
-> ---
-> Compile-tested only.
-> 
-> I'm not entirely sure who's supposed to be the maintainer for this thing.
-> The sign-offs on the commits to this file come from Tejun, but MAINTAINERS
-> claims it's part of security/, so I'm just sending this to both the
-> security folks and the cgroup folks, you can figure out whose tree you want
-> to take this through. :P
-> If the cgroup folks feel responsible for this file, maybe you could fix up
-> MAINTAINERS?
-> 
->  security/device_cgroup.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> index cd97929fac66..dc28914fa72e 100644
-> --- a/security/device_cgroup.c
-> +++ b/security/device_cgroup.c
-> @@ -560,7 +560,7 @@ static int propagate_exception(struct dev_cgroup *devcg_root,
->  		    devcg->behavior == DEVCG_DEFAULT_ALLOW) {
->  			rc = dev_exception_add(devcg, ex);
->  			if (rc)
-> -				break;
-> +				return rc;
->  		} else {
->  			/*
->  			 * in the other possible cases:
-> -- 
-> 2.21.0.225.g810b269d1ac-goog
+Reported-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ security/Kconfig | 36 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
+diff --git a/security/Kconfig b/security/Kconfig
+index 1d6463f..743e594 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -239,9 +239,43 @@ source "security/safesetid/Kconfig"
+ 
+ source "security/integrity/Kconfig"
+ 
++choice
++	prompt "Default security module [superseded by 'Ordered list of enabled LSMs' below]"
++	default DEFAULT_SECURITY_SELINUX if SECURITY_SELINUX
++	default DEFAULT_SECURITY_SMACK if SECURITY_SMACK
++	default DEFAULT_SECURITY_TOMOYO if SECURITY_TOMOYO
++	default DEFAULT_SECURITY_APPARMOR if SECURITY_APPARMOR
++	default DEFAULT_SECURITY_DAC
++
++	help
++	  This choice is there only for converting CONFIG_DEFAULT_SECURITY in old
++	  kernel config to CONFIG_LSM in new kernel config. Don't change this choice
++	  unless you are creating a fresh kernel config, for this choice will be
++	  ignored after CONFIG_LSM is once defined.
++
++	config DEFAULT_SECURITY_SELINUX
++		bool "SELinux" if SECURITY_SELINUX=y
++
++	config DEFAULT_SECURITY_SMACK
++		bool "Simplified Mandatory Access Control" if SECURITY_SMACK=y
++
++	config DEFAULT_SECURITY_TOMOYO
++		bool "TOMOYO" if SECURITY_TOMOYO=y
++
++	config DEFAULT_SECURITY_APPARMOR
++		bool "AppArmor" if SECURITY_APPARMOR=y
++	config DEFAULT_SECURITY_DAC
++		bool "Unix Discretionary Access Controls"
++
++endchoice
++
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
++	default "yama,loadpin,safesetid,integrity,selinux" if DEFAULT_SECURITY_SELINUX
++	default "yama,loadpin,safesetid,integrity,smack" if DEFAULT_SECURITY_SMACK
++	default "yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
++	default "yama,loadpin,safesetid,integrity,apparmor" if DEFAULT_SECURITY_APPARMOR
++	default "yama,loadpin,safesetid,integrity"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list will be ignored. This can be
 -- 
-Michal Hocko
-SUSE Labs
+1.8.3.1
+
+
