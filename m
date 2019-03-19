@@ -2,106 +2,310 @@ Return-Path: <SRS0=+PDj=RW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E83C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 17:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A088EC10F03
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 20:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8767020863
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 17:47:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553017656;
-	bh=glXpESmb8KvD8pi524J9aPEOAw15KniUMe1SWTzOc08=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=c3yKrGGor7KOMFwEfWBM/ZXEOeLX8zXbk8UKzKv4ZTNlhEj7enIftx2S6STMXJG0q
-	 UdRHe7rlQtiYKUT5k9X9dU5hN1eZTwVXZdlKrMdlZvsoq1hp6DVkn7S3EYqImmNKnF
-	 yuyh+6SJv3IjfTei4UZlcf1NYFLqZRw3A7/jrIPw=
+	by mail.kernel.org (Postfix) with ESMTP id 789532175B
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 20:09:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfCSRrb (ORCPT
+        id S1727148AbfCSUJO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Mar 2019 13:47:31 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:46726 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726944AbfCSRrb (ORCPT
+        Tue, 19 Mar 2019 16:09:14 -0400
+Received: from mga07.intel.com ([134.134.136.100]:25978 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726768AbfCSUJN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Mar 2019 13:47:31 -0400
-Received: by mail-yw1-f67.google.com with SMTP id v127so16309711ywe.13;
-        Tue, 19 Mar 2019 10:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3TV5JSMWzDFmGtM2a9PqyZpbM8Cae0apS79wiWWNBuA=;
-        b=Of9nZV6g8OozSHtv9gaoyJHGTNVH7aXpFqRf7RG2ulzzh7pwgQj53Ja9kX4SRoysBf
-         WTKUwYdhh2cfDrebplPomarUMEhL9wABj/zt2or1kA+U9nPmOmvu8bTqYnxuZcgNZUmU
-         tkP6/jg11wyPjsJxwqSNiWbSz57afpm12rthIEQM5jtGDCutSoQDnwIcSgNiW/mDuErG
-         CublhaTz5si8j5tJnDxiB8H4gboyWwZw9o34/V5gWFi4+u58GPYemOmMoJ9Iekhxniya
-         i5AQNeWP/Whmt+HztHFXJQdO2K12aJk/BkdI/7D0PdklhRP84DYlAqncJICe247p4L5Y
-         yU4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3TV5JSMWzDFmGtM2a9PqyZpbM8Cae0apS79wiWWNBuA=;
-        b=LpzB2GYUUg4vvVjEqGZxVxdzny8+ixFOlg0pYC3O5tGlFMC41o+40V0P2MP0l7J9oI
-         eSdNdgMi88W4VpmZCs1jIu4mIMoNQaveKSl+bUJ2efN2koS+hoCXdo/HxH6TQl3Ss5Px
-         hNnYNeiYVnJ7pfe+CW3cXf6s6gxDALKPan7jfAhEOS+VKyimLpDverfBS2zcvpEvA68+
-         o5c6eWWkIjFiWEenLqE7UDWOLH03YDJyUSfSX+TBSBS3p/Hb392Gcewl6wPRLXJFuABA
-         ZbiG+m0sALPRKgt0ydHukBXg4YNJx7FbooJ6thw87nCtWD5fnDYiAYlr6tORUfj2+8tL
-         obvQ==
-X-Gm-Message-State: APjAAAVZ/58O6FftuZHbAwUU06RBGvDLTDhcSPMlOpK1JINGHf8ekaMZ
-        nOVeXwnvr/WwB2mWsZfA46o=
-X-Google-Smtp-Source: APXvYqwHDJ7YG7jNKx+tHayfCaH93EKIvt1NPX/iUHmKCXdnAs6bD1EZDII0MdWTJsBN7A+pOzcaDQ==
-X-Received: by 2002:a25:c9c7:: with SMTP id z190mr2210886ybf.234.1553017649632;
-        Tue, 19 Mar 2019 10:47:29 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:5a18])
-        by smtp.gmail.com with ESMTPSA id o64sm8805ywb.25.2019.03.19.10.47.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 19 Mar 2019 10:47:28 -0700 (PDT)
-Date:   Tue, 19 Mar 2019 10:47:25 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Aristeu Rozanski <aris@redhat.com>,
-        "Serge E . Hallyn" <serge.hallyn@ubuntu.com>,
-        Michal Hocko <mhocko@suse.cz>, cgroups@vger.kernel.org
-Subject: Re: [PATCH] device_cgroup: fix RCU imbalance in error case
-Message-ID: <20190319174725.GA69236@devbig004.ftw2.facebook.com>
-References: <20190319013659.86199-1-jannh@google.com>
+        Tue, 19 Mar 2019 16:09:13 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Mar 2019 13:09:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,245,1549958400"; 
+   d="scan'208";a="215614612"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
+  by orsmga001.jf.intel.com with ESMTP; 19 Mar 2019 13:09:12 -0700
+Date:   Tue, 19 Mar 2019 13:09:12 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        akpm@linux-foundation.org, dave.hansen@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v19 17/27] x86/sgx: Add provisioning
+Message-ID: <20190319200912.GH25575@linux.intel.com>
+References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
+ <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190319013659.86199-1-jannh@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 19, 2019 at 02:36:59AM +0100, Jann Horn wrote:
-> When dev_exception_add() returns an error (due to a failed memory
-> allocation), make sure that we move the RCU preemption count back to where
-> it was before we were called. We dropped the RCU read lock inside the loop
-> body, so we can't just "break".
+On Sun, Mar 17, 2019 at 11:14:46PM +0200, Jarkko Sakkinen wrote:
+> In order to provide a mechanism for devilering provisoning rights:
 > 
-> sparse complains about this, too:
+> 1. Add a new file to the securityfs file called sgx/provision that works
+>    as a token for allowing an enclave to have the provisioning privileges.
+> 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
+>    following data structure:
 > 
-> $ make -s C=2 security/device_cgroup.o
-> ./include/linux/rcupdate.h:647:9: warning: context imbalance in
-> 'propagate_exception' - unexpected unlock
+>    struct sgx_enclave_set_attribute {
+>            __u64 addr;
+>            __u64 token_fd;
+>    };
 > 
-> Fixes: d591fb56618f ("device_cgroup: simplify cgroup tree walk in propagate_exception()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jann Horn <jannh@google.com>
+> A daemon could sit on top of sgx/provision and send a file descriptor of
+> this file to a process that needs to be able to provision enclaves.
+> 
+> The way this API is used is more or less straight-forward. Lets assume that
+> dev_fd is a handle to /dev/sgx and prov_fd is a handle to sgx/provision.
+> You would allow SGX_IOC_ENCLAVE_CREATE to initialize an enclave with the
+> PROVISIONKEY attribute by
+> 
+> params.addr = <enclave address>;
+> params.token_fd = prov_fd;
+> 
+> ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
+> 
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Cc: linux-security-module@vger.kernel.org
+> Suggested-by: Andy Lutomirski <luto@kernel.org>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/include/uapi/asm/sgx.h        | 13 +++++++
+>  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 43 +++++++++++++++++++++++
+>  arch/x86/kernel/cpu/sgx/driver/main.c  | 47 ++++++++++++++++++++++++++
+>  3 files changed, 103 insertions(+)
+> 
+> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+> index aadf9c76e360..150a784db395 100644
+> --- a/arch/x86/include/uapi/asm/sgx.h
+> +++ b/arch/x86/include/uapi/asm/sgx.h
+> @@ -16,6 +16,8 @@
+>  	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
+>  #define SGX_IOC_ENCLAVE_INIT \
+>  	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
+> +#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
+> +	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
+>  
+>  /* IOCTL return values */
+>  #define SGX_POWER_LOST_ENCLAVE		0x40000000
+> @@ -56,4 +58,15 @@ struct sgx_enclave_init {
+>  	__u64	sigstruct;
+>  };
+>  
+> +/**
+> + * struct sgx_enclave_set_attribute - parameter structure for the
+> + *				      %SGX_IOC_ENCLAVE_INIT ioctl
+> + * @addr:		address within the ELRANGE
+> + * @attribute_fd:	file handle of the attribute file in the securityfs
+> + */
+> +struct sgx_enclave_set_attribute {
+> +	__u64	addr;
+> +	__u64	attribute_fd;
+> +};
+> +
+>  #endif /* _UAPI_ASM_X86_SGX_H */
+> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> index 4b9a91b53b50..5d85bd3f7876 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+> @@ -759,6 +759,46 @@ static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+>  	return ret;
+>  }
+>  
+> +/**
+> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
+> + * @filep:	open file to /dev/sgx
+> + * @cmd:	the command value
+> + * @arg:	pointer to a struct sgx_enclave_set_attribute instance
+> + *
+> + * Sets an attribute matching the attribute file that is pointed by the
+> + * parameter structure field attribute_fd.
 
-Applied to cgroup/for-5.1-fixes.
+With the @data change (see below), this becomes something like:
 
-Thanks.
+ * Allow the enclave to request the attribute managed by the SGX security file
+ * pointed at by the parameter structure field attribute_fd.
 
--- 
-tejun
+> + *
+> + * Return: 0 on success, -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_set_attribute(struct file *filep, unsigned int cmd,
+> +					  unsigned long arg)
+> +{
+> +	struct sgx_enclave_set_attribute *params = (void *)arg;
+> +	struct file *attribute_file;
+> +	struct sgx_encl *encl;
+> +	int ret;
+> +
+> +	attribute_file = fget(params->attribute_fd);
+> +	if (!attribute_file->f_op)
+
+This should be:
+
+	if (!attribute_file)
+		return -EINVAL;
+
+> +		return -EINVAL;
+> +
+> +	if (attribute_file->f_op != &sgx_fs_provision_fops) {
+> +		ret = -EINVAL;
+> +		goto out;
+> +	}
+> +
+> +	ret = sgx_encl_get(params->addr, &encl);
+> +	if (ret)
+> +		goto out;
+> +
+> +	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
+
+A cleanr approach would be to pass SGX_ATTR_PROVISIONKEY via @data to
+securityfs_create_file().  Then you don't need to define dummy file_ops
+for each file, i.e. a generic sgx_sec_fs_ops would suffice for the above
+check.  And you don't have this weird hardcoding of the provision bit.
+
+E.g.:
+
+	if (attribute_file->f_op != &sgx_sec_fs_fops) {
+		ret = -EINVAL;
+		goto out;
+	}
+
+	ret = sgx_encl_get(params->addr, &encl);
+	if (ret)
+		goto out;
+
+	encl->allowed_attributes |= (u64)attribute_file->private_data;
+
+Since SGX doesn't support 32-bit builds we don't even need to worry about
+the (very distant) future where SGX defines bits in the 63:32 range.
+
+
+> +	kref_put(&encl->refcount, sgx_encl_release);
+> +
+> +out:
+> +	fput(attribute_file);
+> +	return ret;
+> +}
+> +
+>  typedef long (*sgx_ioc_t)(struct file *filep, unsigned int cmd,
+>  			  unsigned long arg);
+>  
+> @@ -778,6 +818,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>  	case SGX_IOC_ENCLAVE_INIT:
+>  		handler = sgx_ioc_enclave_init;
+>  		break;
+> +	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
+> +		handler = sgx_ioc_enclave_set_attribute;
+> +		break;
+>  	default:
+>  		return -ENOIOCTLCMD;
+>  	}
+> diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+> index 16f36cd0af04..9a5360dcad98 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver/main.c
+> +++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+> @@ -22,6 +22,11 @@ u64 sgx_attributes_reserved_mask;
+>  u64 sgx_xfrm_reserved_mask = ~0x3;
+>  u32 sgx_xsave_size_tbl[64];
+>  
+> +const struct file_operations sgx_fs_provision_fops;
+> +
+> +static struct dentry *sgx_fs;
+> +static struct dentry *sgx_fs_provision;
+> +
+>  #ifdef CONFIG_COMPAT
+>  static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+>  			      unsigned long arg)
+> @@ -147,6 +152,40 @@ static struct sgx_dev_ctx *sgxm_dev_ctx_alloc(struct device *parent)
+>  	return ctx;
+>  }
+>  
+> +static int sgx_fs_init(struct device *dev)
+> +{
+> +	int ret;
+> +
+> +	sgx_fs = securityfs_create_dir(dev_name(dev), NULL);
+> +	if (IS_ERR(sgx_fs)) {
+> +		ret = PTR_ERR(sgx_fs);
+> +		goto err_sgx_fs;
+> +	}
+> +
+> +	sgx_fs_provision = securityfs_create_file("provision", 0600, sgx_fs,
+> +						  NULL, &sgx_fs_provision_fops);
+
+Per above, pass SGX_ATTR_PROVISIONKEY instead of NULL.
+
+> +	if (IS_ERR(sgx_fs)) {
+> +		ret = PTR_ERR(sgx_fs_provision);
+> +		goto err_sgx_fs_provision;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_sgx_fs_provision:
+> +	securityfs_remove(sgx_fs);
+> +	sgx_fs_provision = NULL;
+> +
+> +err_sgx_fs:
+> +	sgx_fs = NULL;
+> +	return ret;
+> +}
+> +
+> +static void sgx_fs_remove(void)
+> +{
+> +	securityfs_remove(sgx_fs_provision);
+> +	securityfs_remove(sgx_fs);
+> +}
+> +
+>  static int sgx_dev_init(struct device *parent)
+>  {
+>  	struct sgx_dev_ctx *sgx_dev;
+> @@ -190,6 +229,10 @@ static int sgx_dev_init(struct device *parent)
+>  	if (!sgx_encl_wq)
+>  		return -ENOMEM;
+>  
+> +	ret = sgx_fs_init(&sgx_dev->ctrl_dev);
+> +	if (ret)
+> +		goto err_fs_init;
+> +
+>  	ret = cdev_device_add(&sgx_dev->ctrl_cdev, &sgx_dev->ctrl_dev);
+>  	if (ret)
+>  		goto err_device_add;
+> @@ -197,6 +240,9 @@ static int sgx_dev_init(struct device *parent)
+>  	return 0;
+>  
+>  err_device_add:
+> +	sgx_fs_remove();
+> +
+> +err_fs_init:
+>  	destroy_workqueue(sgx_encl_wq);
+>  	return ret;
+>  }
+> @@ -220,6 +266,7 @@ static int sgx_drv_remove(struct platform_device *pdev)
+>  {
+>  	struct sgx_dev_ctx *ctx = dev_get_drvdata(&pdev->dev);
+>  
+> +	sgx_fs_remove();
+>  	cdev_device_del(&ctx->ctrl_cdev, &ctx->ctrl_dev);
+>  	destroy_workqueue(sgx_encl_wq);
+>  
+> -- 
+> 2.19.1
+> 
