@@ -1,221 +1,115 @@
-Return-Path: <SRS0=mkGe=RV=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=+PDj=RW=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BDEC43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Mar 2019 22:35:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4EEC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 01:37:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC282133D
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Mar 2019 22:35:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38D3820685
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 01:37:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2oPEFBl"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ro5mFo/8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfCRWfV (ORCPT
+        id S1727330AbfCSBhP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Mar 2019 18:35:21 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39626 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727123AbfCRWfV (ORCPT
+        Mon, 18 Mar 2019 21:37:15 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:33431 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727207AbfCSBhP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Mar 2019 18:35:21 -0400
-Received: by mail-io1-f65.google.com with SMTP id e13so5789561ioq.6;
-        Mon, 18 Mar 2019 15:35:20 -0700 (PDT)
+        Mon, 18 Mar 2019 21:37:15 -0400
+Received: by mail-vk1-f202.google.com with SMTP id x200so8262209vkd.0
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Mar 2019 18:37:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kDHzoJ9qFnRaG/yRDfNhAq7S7FN7hFrHpZIYID38RB0=;
-        b=H2oPEFBlZPaMdVnP9yTldjctwpcWH8UOxF+0vQVhcvabv+5ky7BUd8JhM5ZPx8JiXM
-         HgDf831MVYzhTV8Psyksqf2AYEWCH1D/SE6pDlgQ4QC9a0RfqxNfoQfT/KoImgMKTKyj
-         KajsFCad+KgSpfCeGQj9d8hrD8DSLb4aDfi/qmkwK35Cxq5ADQ82J8Z1I7OCWc3J9Pp8
-         sqZkG+I1AcuHBwn1Gr6hZFYLHDPj6RPW8iC/01er4dxR70Zp08V3rqC+FQhXTDL1/O8W
-         FiC4zVz45H2U8/HB3x5dB/Cf7V2l6GsetXJOdx9Gjh7eRMpbljTAirHtSmo+eTDGf7wi
-         818g==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=oxLrVFgA5K2VrFmqjuGgoMdvHwMxEteTMdtMpCigLWw=;
+        b=Ro5mFo/8VKGStal+WvRPQf5iZfNNrqXCEgrQOYimjcc+oRRjOLj855EH4daY3u632C
+         TGstRQ29doBElkYZZOCcdGzGdm+yi4pwVvgYguH+iPcHoPKvGz6nsQN8HJp+4xn2hg0L
+         8fPVWt5dFia1r64RnLsrS/ChWMZpqPKpqFDtZKI9+ctavrnmGpvnAcFBjJ6MmBoFY6sM
+         dbWIsykhXp3ovl4NVfkDhvGc8iYmDHnrV1Fo16u1TdmveWhHl7umzaotEPdAM7PZLLgG
+         eOEsoc4kgZShng9Orx7gY5sxpfM0j6sws067v9fXD+XhQr+sEnTkMRGJ9dLfuwJ7NdjI
+         6qYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kDHzoJ9qFnRaG/yRDfNhAq7S7FN7hFrHpZIYID38RB0=;
-        b=rDHxjyXOCGI/bR+znWorPAXnRmXDMJ9cC9V6/9x2Ew2SM2Z4vwN9HWIsRS7upc9A/m
-         xWM4Az8avVwTJRCB/DDTe+b4mP6GSXEgjsDHN2qEAXzWS6TuvpazxJRQas7wzunDGATD
-         EHpyWChJVL00kpLZc886yYxMebTFVhN02IgD5DXR/WMwfsleceGhrYlbv+YOeri40wHg
-         MyUWcleQkyjk/80cnDN7/R1oxXfI0TNdA2rUi5PBd/ymutslHY0kXgqEpnbGz4bmIVZW
-         QhExQYDLbJMIrVCRrb34aY8rwccR7dqj01qzc6B6ncTTtinlhBIm02l27/1UiI6PMWh9
-         uy/A==
-X-Gm-Message-State: APjAAAWBaksbbsCjDbtR+IfbPtaqjZuSuNHOZNHC46MJ3NGwRTWSIac/
-        FluXg2aaKEIRo68mkS1r8YhzeNELVctA3k97nmM=
-X-Google-Smtp-Source: APXvYqxt8ymuUvxxSmefsZ4Am5G+XdbcWtjzD7kLEHxe6Gue0ly7GLO50pgbkGrtpkPx2HvRd7pOUcPaW8WwSGP8o9Y=
-X-Received: by 2002:a5e:c742:: with SMTP id g2mr13122392iop.56.1552948520209;
- Mon, 18 Mar 2019 15:35:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190206162452.7749-1-roberto.sassu@huawei.com> <20190206162452.7749-6-roberto.sassu@huawei.com>
-In-Reply-To: <20190206162452.7749-6-roberto.sassu@huawei.com>
-From:   Dan Williams <dan.j.williams@gmail.com>
-Date:   Mon, 18 Mar 2019 15:35:08 -0700
-Message-ID: <CAA9_cmf0j1EoyrGmbfPWCWPafgGfKWR6cyPpN8YEFZdemeg1kA@mail.gmail.com>
-Subject: Re: [PATCH v10, RESEND 5/6] KEYS: trusted: explicitly use tpm_chip
- structure from tpm_default_chip()
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        silviu.vlasceanu@huawei.com,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=oxLrVFgA5K2VrFmqjuGgoMdvHwMxEteTMdtMpCigLWw=;
+        b=nBp+RitB1nJF8Rd+jBPxeRHvcmbKCTWpKs/8HyEe4iDgny6VCO3pup2D8J+GjyrVlR
+         i2V96U0eFjWvONUfuF6ozZ+twiR85+JEzqL9qCAvc1PxLJjlXXFrAu9tz74NLVbDMf7S
+         aw85RhjuouQUudZzKGwyXEEA5jTTgzmuGgVrprRMPr9trUVYiq18Vl9AUx1FqqZ6fXRD
+         /PjDYMwEqT9WofKYCndNW3qeQALc1svbt2xOBROpQYR+upt3S5vvfRGRpjXioOUiyPgT
+         5Jlm8Hlww2d+JMFuPUuMNn9JTqRqKyH8NxUnST56bYQWyzU43P+Rh5Hz5sqan84QL7+9
+         0o4A==
+X-Gm-Message-State: APjAAAUmSX4j2lwKskyn0UzaveEIlTlESF+22Ls7pGltvH1vOAmLc3Ty
+        Qp/72JNlayGEwsAoOEvZTSZIKcghjw==
+X-Google-Smtp-Source: APXvYqx50kUxib9LDp48jiiTw4UdyvfcFD9dK1b1J4aTvpg/lM85tbYMMNMd3SSrICQOPpOj4qx1Y4dc6A==
+X-Received: by 2002:a1f:8d0b:: with SMTP id p11mr8920357vkd.0.1552959434311;
+ Mon, 18 Mar 2019 18:37:14 -0700 (PDT)
+Date:   Tue, 19 Mar 2019 02:36:59 +0100
+Message-Id: <20190319013659.86199-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.225.g810b269d1ac-goog
+Subject: [PATCH] device_cgroup: fix RCU imbalance in error case
+From:   Jann Horn <jannh@google.com>
+To:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, jannh@google.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Aristeu Rozanski <aris@redhat.com>,
+        "Serge E . Hallyn" <serge.hallyn@ubuntu.com>,
+        Michal Hocko <mhocko@suse.cz>, cgroups@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 6, 2019 at 10:30 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
->
-> When crypto agility support will be added to the TPM driver, users of the
-> driver have to retrieve the allocated banks from chip->allocated_banks and
-> use this information to prepare the array of tpm_digest structures to be
-> passed to tpm_pcr_extend().
->
-> This patch retrieves a tpm_chip pointer from tpm_default_chip() so that the
-> pointer can be used to prepare the array of tpm_digest structures.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  security/keys/trusted.c | 38 ++++++++++++++++++++++++--------------
->  1 file changed, 24 insertions(+), 14 deletions(-)
->
-> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-> index 4d98f4f87236..5b852263eae1 100644
-> --- a/security/keys/trusted.c
-> +++ b/security/keys/trusted.c
-> @@ -34,6 +34,7 @@
->
->  static const char hmac_alg[] = "hmac(sha1)";
->  static const char hash_alg[] = "sha1";
-> +static struct tpm_chip *chip;
->
->  struct sdesc {
->         struct shash_desc shash;
-> @@ -362,7 +363,7 @@ int trusted_tpm_send(unsigned char *cmd, size_t buflen)
->         int rc;
->
->         dump_tpm_buf(cmd);
-> -       rc = tpm_send(NULL, cmd, buflen);
-> +       rc = tpm_send(chip, cmd, buflen);
->         dump_tpm_buf(cmd);
->         if (rc > 0)
->                 /* Can't return positive return codes values to keyctl */
-> @@ -384,10 +385,10 @@ static int pcrlock(const int pcrnum)
->
->         if (!capable(CAP_SYS_ADMIN))
->                 return -EPERM;
-> -       ret = tpm_get_random(NULL, hash, SHA1_DIGEST_SIZE);
-> +       ret = tpm_get_random(chip, hash, SHA1_DIGEST_SIZE);
->         if (ret != SHA1_DIGEST_SIZE)
->                 return ret;
-> -       return tpm_pcr_extend(NULL, pcrnum, hash) ? -EINVAL : 0;
-> +       return tpm_pcr_extend(chip, pcrnum, hash) ? -EINVAL : 0;
->  }
->
->  /*
-> @@ -400,7 +401,7 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
->         unsigned char ononce[TPM_NONCE_SIZE];
->         int ret;
->
-> -       ret = tpm_get_random(NULL, ononce, TPM_NONCE_SIZE);
-> +       ret = tpm_get_random(chip, ononce, TPM_NONCE_SIZE);
->         if (ret != TPM_NONCE_SIZE)
->                 return ret;
->
-> @@ -496,7 +497,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
->         if (ret < 0)
->                 goto out;
->
-> -       ret = tpm_get_random(NULL, td->nonceodd, TPM_NONCE_SIZE);
-> +       ret = tpm_get_random(chip, td->nonceodd, TPM_NONCE_SIZE);
->         if (ret != TPM_NONCE_SIZE)
->                 goto out;
->         ordinal = htonl(TPM_ORD_SEAL);
-> @@ -606,7 +607,7 @@ static int tpm_unseal(struct tpm_buf *tb,
->
->         ordinal = htonl(TPM_ORD_UNSEAL);
->         keyhndl = htonl(SRKHANDLE);
-> -       ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
-> +       ret = tpm_get_random(chip, nonceodd, TPM_NONCE_SIZE);
->         if (ret != TPM_NONCE_SIZE) {
->                 pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
->                 return ret;
-> @@ -751,7 +752,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
->         int i;
->         int tpm2;
->
-> -       tpm2 = tpm_is_tpm2(NULL);
-> +       tpm2 = tpm_is_tpm2(chip);
->         if (tpm2 < 0)
->                 return tpm2;
->
-> @@ -920,7 +921,7 @@ static struct trusted_key_options *trusted_options_alloc(void)
->         struct trusted_key_options *options;
->         int tpm2;
->
-> -       tpm2 = tpm_is_tpm2(NULL);
-> +       tpm2 = tpm_is_tpm2(chip);
->         if (tpm2 < 0)
->                 return NULL;
->
-> @@ -970,7 +971,7 @@ static int trusted_instantiate(struct key *key,
->         size_t key_len;
->         int tpm2;
->
-> -       tpm2 = tpm_is_tpm2(NULL);
-> +       tpm2 = tpm_is_tpm2(chip);
->         if (tpm2 < 0)
->                 return tpm2;
->
-> @@ -1011,7 +1012,7 @@ static int trusted_instantiate(struct key *key,
->         switch (key_cmd) {
->         case Opt_load:
->                 if (tpm2)
-> -                       ret = tpm_unseal_trusted(NULL, payload, options);
-> +                       ret = tpm_unseal_trusted(chip, payload, options);
->                 else
->                         ret = key_unseal(payload, options);
->                 dump_payload(payload);
-> @@ -1021,13 +1022,13 @@ static int trusted_instantiate(struct key *key,
->                 break;
->         case Opt_new:
->                 key_len = payload->key_len;
-> -               ret = tpm_get_random(NULL, payload->key, key_len);
-> +               ret = tpm_get_random(chip, payload->key, key_len);
->                 if (ret != key_len) {
->                         pr_info("trusted_key: key_create failed (%d)\n", ret);
->                         goto out;
->                 }
->                 if (tpm2)
-> -                       ret = tpm_seal_trusted(NULL, payload, options);
-> +                       ret = tpm_seal_trusted(chip, payload, options);
->                 else
->                         ret = key_seal(payload, options);
->                 if (ret < 0)
-> @@ -1225,17 +1226,26 @@ static int __init init_trusted(void)
->  {
->         int ret;
->
-> +       chip = tpm_default_chip();
-> +       if (!chip)
-> +               return -ENOENT;
+When dev_exception_add() returns an error (due to a failed memory
+allocation), make sure that we move the RCU preemption count back to where
+it was before we were called. We dropped the RCU read lock inside the loop
+body, so we can't just "break".
 
-This change causes a regression loading the encrypted_keys module on
-systems that don't have a tpm.
+sparse complains about this, too:
 
-Module init functions should not have hardware dependencies.
+$ make -s C=2 security/device_cgroup.o
+./include/linux/rcupdate.h:647:9: warning: context imbalance in
+'propagate_exception' - unexpected unlock
 
-The effect is that the libnvdimm module, which is an encrypted_keys
-user, fails to load, but up until this change encrypted_keys did not
-have a hard dependency on TPM presence.
+Fixes: d591fb56618f ("device_cgroup: simplify cgroup tree walk in propagate_exception()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Compile-tested only.
+
+I'm not entirely sure who's supposed to be the maintainer for this thing.
+The sign-offs on the commits to this file come from Tejun, but MAINTAINERS
+claims it's part of security/, so I'm just sending this to both the
+security folks and the cgroup folks, you can figure out whose tree you want
+to take this through. :P
+If the cgroup folks feel responsible for this file, maybe you could fix up
+MAINTAINERS?
+
+ security/device_cgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+index cd97929fac66..dc28914fa72e 100644
+--- a/security/device_cgroup.c
++++ b/security/device_cgroup.c
+@@ -560,7 +560,7 @@ static int propagate_exception(struct dev_cgroup *devcg_root,
+ 		    devcg->behavior == DEVCG_DEFAULT_ALLOW) {
+ 			rc = dev_exception_add(devcg, ex);
+ 			if (rc)
+-				break;
++				return rc;
+ 		} else {
+ 			/*
+ 			 * in the other possible cases:
+-- 
+2.21.0.225.g810b269d1ac-goog
+
