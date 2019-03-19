@@ -2,310 +2,102 @@ Return-Path: <SRS0=+PDj=RW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A088EC10F03
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 20:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D13DC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 22:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 789532175B
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 20:09:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 061602175B
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Mar 2019 22:15:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbfCSUJO (ORCPT
+        id S1726686AbfCSWPG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Mar 2019 16:09:14 -0400
-Received: from mga07.intel.com ([134.134.136.100]:25978 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726768AbfCSUJN (ORCPT
+        Tue, 19 Mar 2019 18:15:06 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41392 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726908AbfCSWPG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Mar 2019 16:09:13 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Mar 2019 13:09:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,245,1549958400"; 
-   d="scan'208";a="215614612"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by orsmga001.jf.intel.com with ESMTP; 19 Mar 2019 13:09:12 -0700
-Date:   Tue, 19 Mar 2019 13:09:12 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        akpm@linux-foundation.org, dave.hansen@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v19 17/27] x86/sgx: Add provisioning
-Message-ID: <20190319200912.GH25575@linux.intel.com>
-References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
- <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
+        Tue, 19 Mar 2019 18:15:06 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7E49580328; Tue, 19 Mar 2019 23:14:54 +0100 (CET)
+Date:   Tue, 19 Mar 2019 23:15:01 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com
+Subject: Re: [PATCH 09/27] hibernate: Disable when the kernel is locked down
+Message-ID: <20190319221501.GA31551@amd>
+References: <CACdnJuvW47m3JvEcuEX1bsr+L2Ht9LDn_iCuPbHLOoaohOFW4Q@mail.gmail.com>
+ <20190228231203.212359-1-matthewgarrett@google.com>
+ <20190228231203.212359-9-matthewgarrett@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="k1lZvvs/B4yU6o8G"
 Content-Disposition: inline
-In-Reply-To: <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190228231203.212359-9-matthewgarrett@google.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Mar 17, 2019 at 11:14:46PM +0200, Jarkko Sakkinen wrote:
-> In order to provide a mechanism for devilering provisoning rights:
-> 
-> 1. Add a new file to the securityfs file called sgx/provision that works
->    as a token for allowing an enclave to have the provisioning privileges.
-> 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
->    following data structure:
-> 
->    struct sgx_enclave_set_attribute {
->            __u64 addr;
->            __u64 token_fd;
->    };
-> 
-> A daemon could sit on top of sgx/provision and send a file descriptor of
-> this file to a process that needs to be able to provision enclaves.
-> 
-> The way this API is used is more or less straight-forward. Lets assume that
-> dev_fd is a handle to /dev/sgx and prov_fd is a handle to sgx/provision.
-> You would allow SGX_IOC_ENCLAVE_CREATE to initialize an enclave with the
-> PROVISIONKEY attribute by
-> 
-> params.addr = <enclave address>;
-> params.token_fd = prov_fd;
-> 
-> ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
-> 
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Cc: linux-security-module@vger.kernel.org
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+--k1lZvvs/B4yU6o8G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu 2019-02-28 15:11:45, Matthew Garrett wrote:
+> From: Josh Boyer <jwboyer@fedoraproject.org>
+>=20
+> There is currently no way to verify the resume image when returning
+> from hibernate.  This might compromise the signed modules trust model,
+> so until we can work with signed hibernate images we disable it when the
+> kernel is locked down.
+>=20
+> Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: "Lee, Chun-Yi" <jlee@suse.com>
+> cc: linux-pm@vger.kernel.org
+
+It would be good to cc hibernation maintainers here.
+
 > ---
->  arch/x86/include/uapi/asm/sgx.h        | 13 +++++++
->  arch/x86/kernel/cpu/sgx/driver/ioctl.c | 43 +++++++++++++++++++++++
->  arch/x86/kernel/cpu/sgx/driver/main.c  | 47 ++++++++++++++++++++++++++
->  3 files changed, 103 insertions(+)
-> 
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> index aadf9c76e360..150a784db395 100644
-> --- a/arch/x86/include/uapi/asm/sgx.h
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -16,6 +16,8 @@
->  	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
->  #define SGX_IOC_ENCLAVE_INIT \
->  	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-> +#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
-> +	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
->  
->  /* IOCTL return values */
->  #define SGX_POWER_LOST_ENCLAVE		0x40000000
-> @@ -56,4 +58,15 @@ struct sgx_enclave_init {
->  	__u64	sigstruct;
->  };
->  
-> +/**
-> + * struct sgx_enclave_set_attribute - parameter structure for the
-> + *				      %SGX_IOC_ENCLAVE_INIT ioctl
-> + * @addr:		address within the ELRANGE
-> + * @attribute_fd:	file handle of the attribute file in the securityfs
-> + */
-> +struct sgx_enclave_set_attribute {
-> +	__u64	addr;
-> +	__u64	attribute_fd;
-> +};
-> +
->  #endif /* _UAPI_ASM_X86_SGX_H */
-> diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> index 4b9a91b53b50..5d85bd3f7876 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
-> @@ -759,6 +759,46 @@ static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
->  	return ret;
->  }
->  
-> +/**
-> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
-> + * @filep:	open file to /dev/sgx
-> + * @cmd:	the command value
-> + * @arg:	pointer to a struct sgx_enclave_set_attribute instance
-> + *
-> + * Sets an attribute matching the attribute file that is pointed by the
-> + * parameter structure field attribute_fd.
-
-With the @data change (see below), this becomes something like:
-
- * Allow the enclave to request the attribute managed by the SGX security file
- * pointed at by the parameter structure field attribute_fd.
-
-> + *
-> + * Return: 0 on success, -errno otherwise
-> + */
-> +static long sgx_ioc_enclave_set_attribute(struct file *filep, unsigned int cmd,
-> +					  unsigned long arg)
-> +{
-> +	struct sgx_enclave_set_attribute *params = (void *)arg;
-> +	struct file *attribute_file;
-> +	struct sgx_encl *encl;
-> +	int ret;
-> +
-> +	attribute_file = fget(params->attribute_fd);
-> +	if (!attribute_file->f_op)
-
-This should be:
-
-	if (!attribute_file)
-		return -EINVAL;
-
-> +		return -EINVAL;
-> +
-> +	if (attribute_file->f_op != &sgx_fs_provision_fops) {
-> +		ret = -EINVAL;
-> +		goto out;
-> +	}
-> +
-> +	ret = sgx_encl_get(params->addr, &encl);
-> +	if (ret)
-> +		goto out;
-> +
-> +	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
-
-A cleanr approach would be to pass SGX_ATTR_PROVISIONKEY via @data to
-securityfs_create_file().  Then you don't need to define dummy file_ops
-for each file, i.e. a generic sgx_sec_fs_ops would suffice for the above
-check.  And you don't have this weird hardcoding of the provision bit.
-
-E.g.:
-
-	if (attribute_file->f_op != &sgx_sec_fs_fops) {
-		ret = -EINVAL;
-		goto out;
-	}
-
-	ret = sgx_encl_get(params->addr, &encl);
-	if (ret)
-		goto out;
-
-	encl->allowed_attributes |= (u64)attribute_file->private_data;
-
-Since SGX doesn't support 32-bit builds we don't even need to worry about
-the (very distant) future where SGX defines bits in the 63:32 range.
-
-
-> +	kref_put(&encl->refcount, sgx_encl_release);
-> +
-> +out:
-> +	fput(attribute_file);
-> +	return ret;
-> +}
-> +
->  typedef long (*sgx_ioc_t)(struct file *filep, unsigned int cmd,
->  			  unsigned long arg);
->  
-> @@ -778,6 +818,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
->  	case SGX_IOC_ENCLAVE_INIT:
->  		handler = sgx_ioc_enclave_init;
->  		break;
-> +	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
-> +		handler = sgx_ioc_enclave_set_attribute;
-> +		break;
->  	default:
->  		return -ENOIOCTLCMD;
->  	}
-> diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
-> index 16f36cd0af04..9a5360dcad98 100644
-> --- a/arch/x86/kernel/cpu/sgx/driver/main.c
-> +++ b/arch/x86/kernel/cpu/sgx/driver/main.c
-> @@ -22,6 +22,11 @@ u64 sgx_attributes_reserved_mask;
->  u64 sgx_xfrm_reserved_mask = ~0x3;
->  u32 sgx_xsave_size_tbl[64];
->  
-> +const struct file_operations sgx_fs_provision_fops;
-> +
-> +static struct dentry *sgx_fs;
-> +static struct dentry *sgx_fs_provision;
-> +
->  #ifdef CONFIG_COMPAT
->  static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
->  			      unsigned long arg)
-> @@ -147,6 +152,40 @@ static struct sgx_dev_ctx *sgxm_dev_ctx_alloc(struct device *parent)
->  	return ctx;
->  }
->  
-> +static int sgx_fs_init(struct device *dev)
-> +{
-> +	int ret;
-> +
-> +	sgx_fs = securityfs_create_dir(dev_name(dev), NULL);
-> +	if (IS_ERR(sgx_fs)) {
-> +		ret = PTR_ERR(sgx_fs);
-> +		goto err_sgx_fs;
-> +	}
-> +
-> +	sgx_fs_provision = securityfs_create_file("provision", 0600, sgx_fs,
-> +						  NULL, &sgx_fs_provision_fops);
-
-Per above, pass SGX_ATTR_PROVISIONKEY instead of NULL.
-
-> +	if (IS_ERR(sgx_fs)) {
-> +		ret = PTR_ERR(sgx_fs_provision);
-> +		goto err_sgx_fs_provision;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_sgx_fs_provision:
-> +	securityfs_remove(sgx_fs);
-> +	sgx_fs_provision = NULL;
-> +
-> +err_sgx_fs:
-> +	sgx_fs = NULL;
-> +	return ret;
-> +}
-> +
-> +static void sgx_fs_remove(void)
-> +{
-> +	securityfs_remove(sgx_fs_provision);
-> +	securityfs_remove(sgx_fs);
-> +}
-> +
->  static int sgx_dev_init(struct device *parent)
+>  kernel/power/hibernate.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> index abef759de7c8..802795becb88 100644
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -70,7 +70,7 @@ static const struct platform_hibernation_ops *hibernati=
+on_ops;
+> =20
+>  bool hibernation_available(void)
 >  {
->  	struct sgx_dev_ctx *sgx_dev;
-> @@ -190,6 +229,10 @@ static int sgx_dev_init(struct device *parent)
->  	if (!sgx_encl_wq)
->  		return -ENOMEM;
->  
-> +	ret = sgx_fs_init(&sgx_dev->ctrl_dev);
-> +	if (ret)
-> +		goto err_fs_init;
-> +
->  	ret = cdev_device_add(&sgx_dev->ctrl_cdev, &sgx_dev->ctrl_dev);
->  	if (ret)
->  		goto err_device_add;
-> @@ -197,6 +240,9 @@ static int sgx_dev_init(struct device *parent)
->  	return 0;
->  
->  err_device_add:
-> +	sgx_fs_remove();
-> +
-> +err_fs_init:
->  	destroy_workqueue(sgx_encl_wq);
->  	return ret;
+> -	return (nohibernate =3D=3D 0);
+> +	return nohibernate =3D=3D 0 && !kernel_is_locked_down("Hibernation");
 >  }
-> @@ -220,6 +266,7 @@ static int sgx_drv_remove(struct platform_device *pdev)
->  {
->  	struct sgx_dev_ctx *ctx = dev_get_drvdata(&pdev->dev);
->  
-> +	sgx_fs_remove();
->  	cdev_device_del(&ctx->ctrl_cdev, &ctx->ctrl_dev);
->  	destroy_workqueue(sgx_encl_wq);
->  
-> -- 
-> 2.19.1
-> 
+> =20
+>  /**
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--k1lZvvs/B4yU6o8G
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlyRaeUACgkQMOfwapXb+vIrUgCePR4ZNP1PZ7BgmovegoMQ5dqX
+iY0An36y/i6DyGJVSq+OnY+TW+3rjpmC
+=0rTS
+-----END PGP SIGNATURE-----
+
+--k1lZvvs/B4yU6o8G--
