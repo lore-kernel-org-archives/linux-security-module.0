@@ -2,262 +2,271 @@ Return-Path: <SRS0=5vuv=RX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03ACCC43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Mar 2019 14:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A0FC10F05
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Mar 2019 16:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00D02184E
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Mar 2019 14:44:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iUtYv9NE"
+	by mail.kernel.org (Postfix) with ESMTP id 8E73B2186A
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Mar 2019 16:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbfCTOo2 (ORCPT
+        id S1727501AbfCTQYu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Mar 2019 10:44:28 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40162 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbfCTOo2 (ORCPT
+        Wed, 20 Mar 2019 12:24:50 -0400
+Received: from mga11.intel.com ([192.55.52.93]:53197 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726695AbfCTQYt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Mar 2019 10:44:28 -0400
-Received: by mail-vs1-f67.google.com with SMTP id z18so1625566vso.7
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Mar 2019 07:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DvySWBkIHY3NiSPRtx9jElEKGpct+6ynF1uYMVLsNx0=;
-        b=iUtYv9NETH2vdCo7Mq0N5/BRGC9gOZXLyTFAvPpUpLmuX4DwSDWhua1WkCA4KjO6Fe
-         DX6PV7zBLMzNzlE1xQ0UJ4E5PcsxCZ5Kt9wSEf6aQuC1UNyBBwReRQn5SJryFwnVHuTu
-         j1f44e7yejTIWMPO7N65BChxrJXOt1r23aNPlNHnYT3nhJ+OTXM9qxzmaV709+TC5wJP
-         sP9orMz1DqTb57j2eQI2cWdNCqH/X2Tin9khYPKpt9WuFWH+a6WqCRBSNZ2omKgqAa9d
-         YU/aZBVIlhug9lE9l1OYAI6pFw+UK1ENL0hWk4LKPoLpFFdSYPULLdu68o3Gl/9eMF9q
-         6oDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DvySWBkIHY3NiSPRtx9jElEKGpct+6ynF1uYMVLsNx0=;
-        b=FtI75BnxLpnPmqmHw/a//EKBd0edCimDO/9La0ZRebBznL5TtxeGuu7GVUL5J37Ywd
-         z1WS6Ugt/Y2qJiT6JVQiFcVlBJFSQQibhZpUUxrt09PLH8jt5LGsuOrDH8t0OsiFo75w
-         Us1j6vV2NwFq2LSI9CeyDgY0c/f7xhAP1wJWk0LcwAR6YgMSfGLt+zAY76+72Sp2V0Q3
-         d0ub6duo8HUpQ6iQMUKzkHe0qoYpIsGxdUe4DashkQPL2ac2NrBgsozxX6N+gzEgQTxA
-         yz9bH5+bb72Zn4tKb0bBM26fr1Ovn4qUNRRIZ+40NWKib6/qRXHTKGhkCkQyH0r2yXCB
-         vF6Q==
-X-Gm-Message-State: APjAAAUYyNZFBltiExuFcA5Csl9VUWd5PjVOXw51qcnMyg2r+/owG8A9
-        lA4VxGaFwlmyuDE2JGi3ieqtQdTvypkE33pNhcViEA==
-X-Google-Smtp-Source: APXvYqxL+JVGrgcLo6RzQ1wCHsknOHLgX5iLn2V+N/HCY1MKNg0iKEovimf8Vdw4bXo0hjQ81H+CTruz429e/x6rLVM=
-X-Received: by 2002:a67:2444:: with SMTP id k65mr5018392vsk.39.1553093066381;
- Wed, 20 Mar 2019 07:44:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190308132701.133598-1-glider@google.com> <20190308132701.133598-2-glider@google.com>
-In-Reply-To: <20190308132701.133598-2-glider@google.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Wed, 20 Mar 2019 15:44:14 +0100
-Message-ID: <CAG_fn=U6Rvg9S0AxLun0oHVx9i=JFc0Lzb+rvkiQn1sTHd-caA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] initmem: introduce CONFIG_INIT_ALL_MEMORY and CONFIG_INIT_ALL_STACK
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wed, 20 Mar 2019 12:24:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Mar 2019 09:24:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,249,1549958400"; 
+   d="scan'208";a="135715442"
+Received: from sorenthe-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.203])
+  by orsmga003.jf.intel.com with ESMTP; 20 Mar 2019 09:24:38 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sandeep Patil <sspatil@android.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v19,RESEND 17/27] x86/sgx: Add provisioning
+Date:   Wed, 20 Mar 2019 18:21:09 +0200
+Message-Id: <20190320162119.4469-18-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190320162119.4469-1-jarkko.sakkinen@linux.intel.com>
+References: <20190320162119.4469-1-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 8, 2019 at 2:27 PM Alexander Potapenko <glider@google.com> wrot=
-e:
->
-> CONFIG_INIT_ALL_MEMORY is going to be an umbrella config for options
-> that force heap and stack initialization.
-> The rationale behind doing so is to reduce the severity of bugs caused
-> by using uninitialized memory.
->
-> CONFIG_INIT_ALL_STACK turns on stack initialization based on
-> -ftrivial-auto-var-init in Clang builds and on
-> -fplugin-arg-structleak_plugin-byref-all in GCC builds.
->
-> -ftrivial-auto-var-init is a Clang flag that provides trivial
-> initializers for uninitialized local variables, variable fields and
-> padding.
->
-> It has three possible values:
->   pattern - uninitialized locals are filled with a fixed pattern
->     (mostly 0xAA on 64-bit platforms, see https://reviews.llvm.org/D54604
->     for more details) likely to cause crashes when uninitialized value is
->     used;
->   zero (it's still debated whether this flag makes it to the official
->     Clang release) - uninitialized locals are filled with zeroes;
->   uninitialized (default) - uninitialized locals are left intact.
->
-> The proposed config builds the kernel with
-> -ftrivial-auto-var-init=3Dpattern.
->
-> Developers have the possibility to opt-out of this feature on a
-> per-file (by using the INIT_ALL_MEMORY_ Makefile prefix) or per-variable
-> (by using __attribute__((uninitialized))) basis.
->
-> For GCC builds, CONFIG_INIT_ALL_STACK is simply wired up to
-> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL. No opt-out is possible at the
-> moment.
->
-> Signed-off-by: Alexander Potapenko <glider@google.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Nick Desaulniers <ndesaulniers@google.com>
-> Cc: Kostya Serebryany <kcc@google.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Sandeep Patil <sspatil@android.com>
-> Cc: linux-security-module@vger.kernel.org
-> Cc: linux-kbuild@vger.kernel.org
-> Cc: kernel-hardening@lists.openwall.com
-> ---
->  v2:
->   - addressed Kees Cook's comments: added GCC support
-A friendly ping.
-Please let me know if I should wait for any upcoming changes to
-CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL.
-> ---
->  Makefile                 |  3 ++-
->  scripts/Makefile.initmem | 10 ++++++++++
->  scripts/Makefile.lib     |  6 ++++++
->  security/Kconfig         |  1 +
->  security/Kconfig.initmem | 29 +++++++++++++++++++++++++++++
->  5 files changed, 48 insertions(+), 1 deletion(-)
->  create mode 100644 scripts/Makefile.initmem
->  create mode 100644 security/Kconfig.initmem
->
-> diff --git a/Makefile b/Makefile
-> index f070e0d65186..028ca37878fd 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -448,7 +448,7 @@ export HOSTCXX KBUILD_HOSTCXXFLAGS LDFLAGS_MODULE CHE=
-CK CHECKFLAGS
->
->  export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS KBUILD_L=
-DFLAGS
->  export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE
-> -export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE CFLAGS_UBSAN
-> +export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE CFLAGS_UBSAN CFLAGS_INITMEM
->  export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE
->  export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
->  export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
-> @@ -840,6 +840,7 @@ KBUILD_ARFLAGS :=3D $(call ar-option,D)
->  include scripts/Makefile.kasan
->  include scripts/Makefile.extrawarn
->  include scripts/Makefile.ubsan
-> +include scripts/Makefile.initmem
->
->  # Add any arch overrides and user supplied CPPFLAGS, AFLAGS and CFLAGS a=
-s the
->  # last assignments
-> diff --git a/scripts/Makefile.initmem b/scripts/Makefile.initmem
-> new file mode 100644
-> index 000000000000..a6253d78fe35
-> --- /dev/null
-> +++ b/scripts/Makefile.initmem
-> @@ -0,0 +1,10 @@
-> +ifdef CONFIG_INIT_ALL_STACK
-> +
-> +# Clang's -ftrivial-auto-var-init=3Dpattern flag initializes the
-> +# uninitialized parts of local variables (including fields and padding)
-> +# with a fixed pattern (0xAA in most cases).
-> +ifdef CONFIG_CC_HAS_AUTO_VAR_INIT
-> +  CFLAGS_INITMEM :=3D -ftrivial-auto-var-init=3Dpattern
-> +endif
-> +
-> +endif
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 12b88d09c3a4..53d18fd15c79 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -131,6 +131,12 @@ _c_flags +=3D $(if $(patsubst n%,, \
->                 $(CFLAGS_UBSAN))
->  endif
->
-> +ifeq ($(CONFIG_INIT_ALL_MEMORY),y)
-> +_c_flags +=3D $(if $(patsubst n%,, \
-> +               $(INIT_ALL_MEMORY_$(basetarget).o)$(INIT_ALL_MEMORY)y), \
-> +               $(CFLAGS_INITMEM))
-> +endif
-> +
->  ifeq ($(CONFIG_KCOV),y)
->  _c_flags +=3D $(if $(patsubst n%,, \
->         $(KCOV_INSTRUMENT_$(basetarget).o)$(KCOV_INSTRUMENT)$(CONFIG_KCOV=
-_INSTRUMENT_ALL)), \
-> diff --git a/security/Kconfig b/security/Kconfig
-> index e4fe2f3c2c65..cc12a39424dd 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -230,6 +230,7 @@ config STATIC_USERMODEHELPER_PATH
->           If you wish for all usermode helper programs to be disabled,
->           specify an empty string here (i.e. "").
->
-> +source "security/Kconfig.initmem"
->  source "security/selinux/Kconfig"
->  source "security/smack/Kconfig"
->  source "security/tomoyo/Kconfig"
-> diff --git a/security/Kconfig.initmem b/security/Kconfig.initmem
-> new file mode 100644
-> index 000000000000..27aec394365e
-> --- /dev/null
-> +++ b/security/Kconfig.initmem
-> @@ -0,0 +1,29 @@
-> +menu "Initialize all memory"
-> +
-> +config CC_HAS_AUTO_VAR_INIT
-> +       def_bool $(cc-option,-ftrivial-auto-var-init=3Dpattern)
-> +
-> +config INIT_ALL_MEMORY
-> +       bool "Initialize all memory"
-> +       default n
-> +       help
-> +         Enforce memory initialization to mitigate infoleaks and make
-> +         the control-flow bugs depending on uninitialized values more
-> +         deterministic.
-> +
-> +if INIT_ALL_MEMORY
-> +
-> +config INIT_ALL_STACK
-> +       bool "Initialize all stack"
-> +       depends on INIT_ALL_MEMORY
-> +       depends on CC_HAS_AUTO_VAR_INIT || HAVE_GCC_PLUGINS
-> +       select GCC_PLUGINS if !CC_HAS_AUTO_VAR_INIT
-> +       select GCC_PLUGIN_STRUCTLEAK if !CC_HAS_AUTO_VAR_INIT
-> +       select GCC_PLUGIN_STRUCTLEAK_BYREF_ALL if !CC_HAS_AUTO_VAR_INIT
-> +       default y
-> +       help
-> +         Initialize uninitialized stack data with a fixed pattern
-> +         (0x00 in GCC, 0xAA in Clang).
-> +
-> +endif # INIT_ALL_MEMORY
-> +endmenu
-> --
-> 2.21.0.360.g471c308f928-goog
->
+In order to provide a mechanism for devilering provisoning rights:
 
+1. Add a new file to the securityfs file called sgx/provision that works
+   as a token for allowing an enclave to have the provisioning privileges.
+2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
+   following data structure:
 
---=20
-Alexander Potapenko
-Software Engineer
+   struct sgx_enclave_set_attribute {
+           __u64 addr;
+           __u64 token_fd;
+   };
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+A daemon could sit on top of sgx/provision and send a file descriptor of
+this file to a process that needs to be able to provision enclaves.
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+The way this API is used is more or less straight-forward. Lets assume that
+dev_fd is a handle to /dev/sgx and prov_fd is a handle to sgx/provision.
+You would allow SGX_IOC_ENCLAVE_CREATE to initialize an enclave with the
+PROVISIONKEY attribute by
+
+params.addr = <enclave address>;
+params.token_fd = prov_fd;
+
+ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
+
+Cc: James Morris <jmorris@namei.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/uapi/asm/sgx.h        | 13 +++++++
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c | 43 +++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/driver/main.c  | 47 ++++++++++++++++++++++++++
+ 3 files changed, 103 insertions(+)
+
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index aadf9c76e360..150a784db395 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -16,6 +16,8 @@
+ 	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
++	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
+ 
+ /* IOCTL return values */
+ #define SGX_POWER_LOST_ENCLAVE		0x40000000
+@@ -56,4 +58,15 @@ struct sgx_enclave_init {
+ 	__u64	sigstruct;
+ };
+ 
++/**
++ * struct sgx_enclave_set_attribute - parameter structure for the
++ *				      %SGX_IOC_ENCLAVE_INIT ioctl
++ * @addr:		address within the ELRANGE
++ * @attribute_fd:	file handle of the attribute file in the securityfs
++ */
++struct sgx_enclave_set_attribute {
++	__u64	addr;
++	__u64	attribute_fd;
++};
++
+ #endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+index 4b9a91b53b50..5d85bd3f7876 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+@@ -759,6 +759,46 @@ static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+ 	return ret;
+ }
+ 
++/**
++ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
++ * @filep:	open file to /dev/sgx
++ * @cmd:	the command value
++ * @arg:	pointer to a struct sgx_enclave_set_attribute instance
++ *
++ * Sets an attribute matching the attribute file that is pointed by the
++ * parameter structure field attribute_fd.
++ *
++ * Return: 0 on success, -errno otherwise
++ */
++static long sgx_ioc_enclave_set_attribute(struct file *filep, unsigned int cmd,
++					  unsigned long arg)
++{
++	struct sgx_enclave_set_attribute *params = (void *)arg;
++	struct file *attribute_file;
++	struct sgx_encl *encl;
++	int ret;
++
++	attribute_file = fget(params->attribute_fd);
++	if (!attribute_file->f_op)
++		return -EINVAL;
++
++	if (attribute_file->f_op != &sgx_fs_provision_fops) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = sgx_encl_get(params->addr, &encl);
++	if (ret)
++		goto out;
++
++	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
++	kref_put(&encl->refcount, sgx_encl_release);
++
++out:
++	fput(attribute_file);
++	return ret;
++}
++
+ typedef long (*sgx_ioc_t)(struct file *filep, unsigned int cmd,
+ 			  unsigned long arg);
+ 
+@@ -778,6 +818,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		handler = sgx_ioc_enclave_init;
+ 		break;
++	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
++		handler = sgx_ioc_enclave_set_attribute;
++		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+ 	}
+diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+index 16f36cd0af04..9a5360dcad98 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/main.c
++++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+@@ -22,6 +22,11 @@ u64 sgx_attributes_reserved_mask;
+ u64 sgx_xfrm_reserved_mask = ~0x3;
+ u32 sgx_xsave_size_tbl[64];
+ 
++const struct file_operations sgx_fs_provision_fops;
++
++static struct dentry *sgx_fs;
++static struct dentry *sgx_fs_provision;
++
+ #ifdef CONFIG_COMPAT
+ static long sgx_compat_ioctl(struct file *filep, unsigned int cmd,
+ 			      unsigned long arg)
+@@ -147,6 +152,40 @@ static struct sgx_dev_ctx *sgxm_dev_ctx_alloc(struct device *parent)
+ 	return ctx;
+ }
+ 
++static int sgx_fs_init(struct device *dev)
++{
++	int ret;
++
++	sgx_fs = securityfs_create_dir(dev_name(dev), NULL);
++	if (IS_ERR(sgx_fs)) {
++		ret = PTR_ERR(sgx_fs);
++		goto err_sgx_fs;
++	}
++
++	sgx_fs_provision = securityfs_create_file("provision", 0600, sgx_fs,
++						  NULL, &sgx_fs_provision_fops);
++	if (IS_ERR(sgx_fs)) {
++		ret = PTR_ERR(sgx_fs_provision);
++		goto err_sgx_fs_provision;
++	}
++
++	return 0;
++
++err_sgx_fs_provision:
++	securityfs_remove(sgx_fs);
++	sgx_fs_provision = NULL;
++
++err_sgx_fs:
++	sgx_fs = NULL;
++	return ret;
++}
++
++static void sgx_fs_remove(void)
++{
++	securityfs_remove(sgx_fs_provision);
++	securityfs_remove(sgx_fs);
++}
++
+ static int sgx_dev_init(struct device *parent)
+ {
+ 	struct sgx_dev_ctx *sgx_dev;
+@@ -190,6 +229,10 @@ static int sgx_dev_init(struct device *parent)
+ 	if (!sgx_encl_wq)
+ 		return -ENOMEM;
+ 
++	ret = sgx_fs_init(&sgx_dev->ctrl_dev);
++	if (ret)
++		goto err_fs_init;
++
+ 	ret = cdev_device_add(&sgx_dev->ctrl_cdev, &sgx_dev->ctrl_dev);
+ 	if (ret)
+ 		goto err_device_add;
+@@ -197,6 +240,9 @@ static int sgx_dev_init(struct device *parent)
+ 	return 0;
+ 
+ err_device_add:
++	sgx_fs_remove();
++
++err_fs_init:
+ 	destroy_workqueue(sgx_encl_wq);
+ 	return ret;
+ }
+@@ -220,6 +266,7 @@ static int sgx_drv_remove(struct platform_device *pdev)
+ {
+ 	struct sgx_dev_ctx *ctx = dev_get_drvdata(&pdev->dev);
+ 
++	sgx_fs_remove();
+ 	cdev_device_del(&ctx->ctrl_cdev, &ctx->ctrl_dev);
+ 	destroy_workqueue(sgx_encl_wq);
+ 
+-- 
+2.19.1
+
