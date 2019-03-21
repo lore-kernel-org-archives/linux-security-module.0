@@ -2,205 +2,226 @@ Return-Path: <SRS0=tbeH=RY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B185DC43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Mar 2019 08:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98373C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Mar 2019 13:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DC4D2075E
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Mar 2019 08:56:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6681E218FF
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Mar 2019 13:16:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbfCUI4z (ORCPT
+        id S1728195AbfCUNQE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Mar 2019 04:56:55 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34684 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727841AbfCUI4y (ORCPT
+        Thu, 21 Mar 2019 09:16:04 -0400
+Received: from mga04.intel.com ([192.55.52.120]:37615 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728129AbfCUNQE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Mar 2019 04:56:54 -0400
-Received: by mail-oi1-f193.google.com with SMTP id u12so4079389oiv.1
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Mar 2019 01:56:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4KEblbMUfoQ3UkEQc9QeTsPs2iYbAcDdF3kQ8khk51U=;
-        b=adTXgcgwQL5EKbbN9rvYsjBmGC3DT66X1GTR02BtkjIR2Cei+yr1j/GEy8d+uTM2Yt
-         +OLk1Oh+Zo1WUTAScgnPiBjeAl241LTfjEuMu12ZUeCjQqyTLySrcq8XeKX7v2OPUllh
-         fLl9eVfQ3i/I9u5XCewqHu9AI12sAHCkIyuren63d6ghOYtjaLUhBcykhYoxPnEVqGH2
-         wnLGYg40DrFiSk5xEd3lCwHoyfpQr4ZpmidNykDdViqanJWSCSz7WOPjFXX4LXNtzeFk
-         E23PTNrk8obxDmzwH2hdC0qkKl3iNiqEitcFmmUZMICrXFKCO7mFPrOl6vMG6dWx2/74
-         QV9Q==
-X-Gm-Message-State: APjAAAVrKdqB/a1uE+pHiAn5HoQWkZATN478OWK8smjqhu9UphGg+BUO
-        89/xllmZ8ZudifQtza9dMGfSzTqvZhkF1Axm+kVBFQ==
-X-Google-Smtp-Source: APXvYqwkSntAL/iGcTz3zyHjYjaZyfYaDF8GHjpTLaFATEWVw4eMbORQ76fLN/W6cfLV1DLSymdSpEQiW94cYNCJ/UE=
-X-Received: by 2002:aca:b354:: with SMTP id c81mr1461719oif.26.1553158613654;
- Thu, 21 Mar 2019 01:56:53 -0700 (PDT)
+        Thu, 21 Mar 2019 09:16:04 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Mar 2019 06:16:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,252,1549958400"; 
+   d="scan'208";a="216203984"
+Received: from dilu-mobl2.ccr.corp.intel.com (HELO localhost) ([10.249.254.184])
+  by orsmga001.jf.intel.com with ESMTP; 21 Mar 2019 06:15:56 -0700
+Date:   Thu, 21 Mar 2019 15:15:54 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dan Williams <dan.j.williams@gmail.com>, roberto.sassu@huawei.com
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
+        david.safford@ge.com, monty.wiseman@ge.com,
+        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        silviu.vlasceanu@huawei.com,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH v10, RESEND 5/6] KEYS: trusted: explicitly use tpm_chip
+ structure from tpm_default_chip()
+Message-ID: <20190321131554.GB2267@linux.intel.com>
+References: <20190206162452.7749-1-roberto.sassu@huawei.com>
+ <20190206162452.7749-6-roberto.sassu@huawei.com>
+ <CAA9_cmf0j1EoyrGmbfPWCWPafgGfKWR6cyPpN8YEFZdemeg1kA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190222145718.5740-1-omosnace@redhat.com> <CAHC9VhT3pEAwYyHcv7KY4xAHJQKu4PN-NPxAkpcnuGCSwVHLtQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhT3pEAwYyHcv7KY4xAHJQKu4PN-NPxAkpcnuGCSwVHLtQ@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Thu, 21 Mar 2019 09:56:42 +0100
-Message-ID: <CAFqZXNtjbYUcfWODC0Ygbbxa87VhVoHaMbpvFtKaNdp3HV-JvA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/7] Allow initializing the kernfs node's secctx based
- on its parent
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     selinux@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA9_cmf0j1EoyrGmbfPWCWPafgGfKWR6cyPpN8YEFZdemeg1kA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 21, 2019 at 3:14 AM Paul Moore <paul@paul-moore.com> wrote:
-> On Fri, Feb 22, 2019 at 9:57 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > TL;DR:
-> > This series adds a new security hook that allows to initialize the security
-> > context of kernfs properly, taking into account the parent context (and
-> > possibly other attributes). Kernfs nodes require special handling here, since
-> > they are not bound to specific inodes/superblocks, but instead represent the
-> > backing tree structure that is used to build the VFS tree when the kernfs
-> > tree is mounted.
+On Mon, Mar 18, 2019 at 03:35:08PM -0700, Dan Williams wrote:
+> On Wed, Feb 6, 2019 at 10:30 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
 > >
-> > Changes in v7:
-> > - simplify the new security hook's interface
-> >   - rather than trying to extract kernfs data into common structures, just
-> >     pass the kernfs nodes themselves and add helper functions to
-> >     <linux/kernfs.h> for accessing their security xattrs
-> >   - in case other LSMs need more kernfs node attributes than the file mode
-> >     (uid/gid/...), they can simply add new helpers to <linux/kernfs.h> as
-> >     needed
-> > - refactor "kernfs: use simple_xattrs for security attributes" to keep using
-> >   a single common simple_xattrs structure
-> >   - turns out having two separate simple_xattrs wouldn't work right (see
-> >     the definition of simple_xattr_list() in fs/xattr.c)
-> > - drop unnecessary initializations from inode_doinit_use_xattr()
-> > - move the IOP_XATTR check out of inode_doinit_use_xattr()
-> > - add two kernfs cleanup patches
-> >   - these could be applied independently, but the rest of the patches depend on
-> >     them, so I'd rather they stay bundled with the rest to avoid cross-tree
-> >     conflicts
+> > When crypto agility support will be added to the TPM driver, users of the
+> > driver have to retrieve the allocated banks from chip->allocated_banks and
+> > use this information to prepare the array of tpm_digest structures to be
+> > passed to tpm_pcr_extend().
 > >
-> > v6: https://lore.kernel.org/selinux/20190214095015.16032-1-omosnace@redhat.com/T/
-> > Changes in v6:
-> > - remove copy-pasted duplicate macro definition
+> > This patch retrieves a tpm_chip pointer from tpm_default_chip() so that the
+> > pointer can be used to prepare the array of tpm_digest structures.
 > >
-> > v5: https://lore.kernel.org/selinux/20190205110638.30782-1-omosnace@redhat.com/T/
-> > Changes in v5:
-> > - fix misplaced semicolon detected by 0day robot
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  security/keys/trusted.c | 38 ++++++++++++++++++++++++--------------
+> >  1 file changed, 24 insertions(+), 14 deletions(-)
 > >
-> > v4: https://lore.kernel.org/selinux/20190205085915.5183-1-omosnace@redhat.com/T/
-> > Changes in v4:
-> > - reorder and rename hook arguments
-> > - avoid allocating kernfs_iattrs unless needed
+> > diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+> > index 4d98f4f87236..5b852263eae1 100644
+> > --- a/security/keys/trusted.c
+> > +++ b/security/keys/trusted.c
+> > @@ -34,6 +34,7 @@
 > >
-> > v3: https://lore.kernel.org/selinux/20190130114150.27807-1-omosnace@redhat.com/T/
-> > Changes in v3:
-> > - rename the hook to "kernfs_init_security"
-> > - change the hook interface to simply pass pointers to struct iattr and
-> >   struct simple_xattrs of both the new node and its parent
-> > - add full security xattr support to kernfs (and fixup SELinux behavior
-> >   to handle it properly)
+> >  static const char hmac_alg[] = "hmac(sha1)";
+> >  static const char hash_alg[] = "sha1";
+> > +static struct tpm_chip *chip;
 > >
-> > v2: https://lore.kernel.org/selinux/20190109162830.8309-1-omosnace@redhat.com/T/
-> > Changes in v2:
-> > - add docstring for the new hook in union security_list_options
-> > - initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
-> >   implemented
+> >  struct sdesc {
+> >         struct shash_desc shash;
+> > @@ -362,7 +363,7 @@ int trusted_tpm_send(unsigned char *cmd, size_t buflen)
+> >         int rc;
 > >
-> > v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnace@redhat.com/T/
+> >         dump_tpm_buf(cmd);
+> > -       rc = tpm_send(NULL, cmd, buflen);
+> > +       rc = tpm_send(chip, cmd, buflen);
+> >         dump_tpm_buf(cmd);
+> >         if (rc > 0)
+> >                 /* Can't return positive return codes values to keyctl */
+> > @@ -384,10 +385,10 @@ static int pcrlock(const int pcrnum)
 > >
-> > The kernfs nodes initially do not store any security context and rely on
-> > the LSM to assign some default context to inodes created over them. Kernfs
-> > inodes, however, allow setting an explicit context via the *setxattr(2)
-> > syscalls, in which case the context is stored inside the kernfs node's
-> > internal structure.
+> >         if (!capable(CAP_SYS_ADMIN))
+> >                 return -EPERM;
+> > -       ret = tpm_get_random(NULL, hash, SHA1_DIGEST_SIZE);
+> > +       ret = tpm_get_random(chip, hash, SHA1_DIGEST_SIZE);
+> >         if (ret != SHA1_DIGEST_SIZE)
+> >                 return ret;
+> > -       return tpm_pcr_extend(NULL, pcrnum, hash) ? -EINVAL : 0;
+> > +       return tpm_pcr_extend(chip, pcrnum, hash) ? -EINVAL : 0;
+> >  }
 > >
-> > SELinux (and possibly other LSMs) initialize the context of newly created
-> > FS objects based on the parent object's context (usually the child inherits
-> > the parent's context, unless the policy dictates otherwise). This is done
-> > by hooking the creation of the new inode corresponding to the newly created
-> > file/directory via security_inode_init_security() (most filesystems always
-> > create a fresh inode when a new FS object is created). However, kernfs nodes
-> > can be created "behind the scenes" while the filesystem is not mounted
-> > anywhere and thus no inodes can exist for them yet.
+> >  /*
+> > @@ -400,7 +401,7 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
+> >         unsigned char ononce[TPM_NONCE_SIZE];
+> >         int ret;
 > >
-> > Therefore, to allow maintaining similar behavior for kernfs nodes, a new
-> > LSM hook is needed, which will allow initializing the kernfs node's
-> > security context based on its own attributes and those of the parent's
-> > node.
+> > -       ret = tpm_get_random(NULL, ononce, TPM_NONCE_SIZE);
+> > +       ret = tpm_get_random(chip, ononce, TPM_NONCE_SIZE);
+> >         if (ret != TPM_NONCE_SIZE)
+> >                 return ret;
 > >
-> > The main motivation for this change is that the userspace users of cgroupfs
-> > (which is built on kernfs) expect the usual security context inheritance
-> > to work under SELinux (see [1] and [2]). This functionality is required for
-> > better confinement of containers under SELinux.
+> > @@ -496,7 +497,7 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
+> >         if (ret < 0)
+> >                 goto out;
 > >
-> > Patch 1/7 simplifies the kernfs_iattrs structure and patch 2/7 optimizes
-> > kernfs to not allocate kernfs_iattrs when getting the value of an xattr.
+> > -       ret = tpm_get_random(NULL, td->nonceodd, TPM_NONCE_SIZE);
+> > +       ret = tpm_get_random(chip, td->nonceodd, TPM_NONCE_SIZE);
+> >         if (ret != TPM_NONCE_SIZE)
+> >                 goto out;
+> >         ordinal = htonl(TPM_ORD_SEAL);
+> > @@ -606,7 +607,7 @@ static int tpm_unseal(struct tpm_buf *tb,
 > >
-> > Patch 3/7 changes SELinux to fetch security context from extended
-> > attributes on kernfs filesystems, falling back to genfs-defined context
-> > if that fails. Without this patch the 4/7 would be a regression for
-> > SELinux (due to the removal of ...notifysecctx() call.
+> >         ordinal = htonl(TPM_ORD_UNSEAL);
+> >         keyhndl = htonl(SRKHANDLE);
+> > -       ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
+> > +       ret = tpm_get_random(chip, nonceodd, TPM_NONCE_SIZE);
+> >         if (ret != TPM_NONCE_SIZE) {
+> >                 pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
+> >                 return ret;
+> > @@ -751,7 +752,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+> >         int i;
+> >         int tpm2;
 > >
-> > Patch 4/7 implements full security xattr support in kernfs using
-> > simple_xattrs; patch 5/7 adds the new LSM hook; patch 6/7 implements the
-> > new hook in SELinux; and patch 7/7 modifies kernfs to call the new hook
-> > on new node creation.
+> > -       tpm2 = tpm_is_tpm2(NULL);
+> > +       tpm2 = tpm_is_tpm2(chip);
+> >         if (tpm2 < 0)
+> >                 return tpm2;
 > >
-> > Testing:
-> > - passed the reproducer from the commit message of the last patch
-> > - passed SELinux testsuite on Fedora Rawhide (x86_64) when applied on top
-> >   of current Rawhide kernel (5.0.0-0.rc7.git2.1) [3]
-> >   - including the new proposed selinux-testsuite subtest [4] (adapted
-> >     from the reproducer)
+> > @@ -920,7 +921,7 @@ static struct trusted_key_options *trusted_options_alloc(void)
+> >         struct trusted_key_options *options;
+> >         int tpm2;
 > >
-> > [1] https://github.com/SELinuxProject/selinux-kernel/issues/39
-> > [2] https://bugzilla.redhat.com/show_bug.cgi?id=1553803
-> > [3] https://koji.fedoraproject.org/koji/taskinfo?taskID=32963825
-> > [4] https://github.com/SELinuxProject/selinux-testsuite/pull/48
+> > -       tpm2 = tpm_is_tpm2(NULL);
+> > +       tpm2 = tpm_is_tpm2(chip);
+> >         if (tpm2 < 0)
+> >                 return NULL;
 > >
-> > Ondrej Mosnacek (7):
-> >   kernfs: clean up struct kernfs_iattrs
-> >   kernfs: do not alloc iattrs in kernfs_xattr_get
-> >   selinux: try security xattr after genfs for kernfs filesystems
-> >   kernfs: use simple_xattrs for security attributes
-> >   LSM: add new hook for kernfs node initialization
-> >   selinux: implement the kernfs_init_security hook
-> >   kernfs: initialize security of newly created nodes
+> > @@ -970,7 +971,7 @@ static int trusted_instantiate(struct key *key,
+> >         size_t key_len;
+> >         int tpm2;
 > >
-> >  fs/kernfs/dir.c                     |  28 ++--
-> >  fs/kernfs/inode.c                   | 166 +++++++++------------
-> >  fs/kernfs/kernfs-internal.h         |   8 +-
-> >  fs/kernfs/symlink.c                 |   4 +-
-> >  include/linux/kernfs.h              |  15 ++
-> >  include/linux/lsm_hooks.h           |  13 ++
-> >  include/linux/security.h            |   9 ++
-> >  security/security.c                 |   6 +
-> >  security/selinux/hooks.c            | 223 +++++++++++++++++++---------
-> >  security/selinux/include/security.h |   1 +
-> >  10 files changed, 290 insertions(+), 183 deletions(-)
->
-> I just merged this patchset into selinux/next, thanks everyone.
->
-> Ondrej, every patch in the patchset except for one required some
-> amount of merge fixups, please take a look and make sure everything in
-> the selinux/next branch still looks right to you.
+> > -       tpm2 = tpm_is_tpm2(NULL);
+> > +       tpm2 = tpm_is_tpm2(chip);
+> >         if (tpm2 < 0)
+> >                 return tpm2;
+> >
+> > @@ -1011,7 +1012,7 @@ static int trusted_instantiate(struct key *key,
+> >         switch (key_cmd) {
+> >         case Opt_load:
+> >                 if (tpm2)
+> > -                       ret = tpm_unseal_trusted(NULL, payload, options);
+> > +                       ret = tpm_unseal_trusted(chip, payload, options);
+> >                 else
+> >                         ret = key_unseal(payload, options);
+> >                 dump_payload(payload);
+> > @@ -1021,13 +1022,13 @@ static int trusted_instantiate(struct key *key,
+> >                 break;
+> >         case Opt_new:
+> >                 key_len = payload->key_len;
+> > -               ret = tpm_get_random(NULL, payload->key, key_len);
+> > +               ret = tpm_get_random(chip, payload->key, key_len);
+> >                 if (ret != key_len) {
+> >                         pr_info("trusted_key: key_create failed (%d)\n", ret);
+> >                         goto out;
+> >                 }
+> >                 if (tpm2)
+> > -                       ret = tpm_seal_trusted(NULL, payload, options);
+> > +                       ret = tpm_seal_trusted(chip, payload, options);
+> >                 else
+> >                         ret = key_seal(payload, options);
+> >                 if (ret < 0)
+> > @@ -1225,17 +1226,26 @@ static int __init init_trusted(void)
+> >  {
+> >         int ret;
+> >
+> > +       chip = tpm_default_chip();
+> > +       if (!chip)
+> > +               return -ENOENT;
+> 
+> This change causes a regression loading the encrypted_keys module on
+> systems that don't have a tpm.
+> 
+> Module init functions should not have hardware dependencies.
+> 
+> The effect is that the libnvdimm module, which is an encrypted_keys
+> user, fails to load, but up until this change encrypted_keys did not
+> have a hard dependency on TPM presence.
 
-Looks good to me, thanks!  I checked by rebasing the original branch
-on v5.1-rc1 myself and then comparing my result with selinux/next.
-The only difference was one extra empty line on my side, but that
-doesn't bother me :)
+Sorry for the latency. I was in flu for couple of days.
 
--- 
-Ondrej Mosnacek <omosnace at redhat dot com>
-Software Engineer, Security Technologies
-Red Hat, Inc.
+I missed that addition in the review process albeit this patch set
+went numerous rounds. Apologies about ths. Also the return value is
+wrong. Should be -ENODEV but it doesn't matter because this needs to
+be removed anyway.
+
+Roberto, can you submit a fix ASAP that:
+
+1. Allows the module to initialize even if the chip is not found.
+2. In the beginning of each function (before tpm_is_tpm2()) you
+   should check if chip is NULL and return -ENODEV if it is.
+
+Add also these tags before your signed-off-by:
+
+Cc: stable@vger.kernel.org
+Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from tpm_default_chip()")
+Reported-by: Dan Williams <dan.j.williams@gmail.com>
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+/Jarkko
