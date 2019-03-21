@@ -2,85 +2,223 @@ Return-Path: <SRS0=tbeH=RY=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA37C43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Mar 2019 21:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196E3C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Mar 2019 21:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A78E221916
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Mar 2019 21:10:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C43B8218D4
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Mar 2019 21:22:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="VBVOmuKC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfCUVKf (ORCPT
+        id S1727183AbfCUVWI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Mar 2019 17:10:35 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:62652 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbfCUVKf (ORCPT
+        Thu, 21 Mar 2019 17:22:08 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37272 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbfCUVWH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Mar 2019 17:10:35 -0400
-Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2LLAJPi091816;
-        Fri, 22 Mar 2019 06:10:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
- Fri, 22 Mar 2019 06:10:19 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126094122116.bbtec.net [126.94.122.116])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2LLAEL3091793
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 22 Mar 2019 06:10:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: mount.nfs: Protocol error after upgrade to linux/master
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190315110555.0807d015@cakuba.netronome.com>
- <20190315120105.5541ad46@cakuba.netronome.com>
- <20190315165440.53b9db3c@cakuba.netronome.com>
- <CAGXu5jKHRPuaALQcPXvpDeuVgZR+EeRqo9Qj4j3kYatb3HUSSA@mail.gmail.com>
- <CAGXu5jL-e7bDEXfpUuT-HyFarR-8T0djXChR0cuzTwFQPQ0tOw@mail.gmail.com>
- <f23d0fad-dc72-0e53-cac6-31abfd12a050@I-love.SAKURA.ne.jp>
- <bee1a774-461a-2535-a640-bbe65291e909@schaufler-ca.com>
- <2bf23acd-22c4-a260-7648-845887a409d5@i-love.sakura.ne.jp>
- <CAGXu5jKj-Pq4krHmKd__4MoXBe1FK399cDZnSxdPigZo78tPfA@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <e20bf21e-77b0-6403-51b6-3f174d45529e@i-love.sakura.ne.jp>
-Date:   Fri, 22 Mar 2019 06:10:14 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.3
+        Thu, 21 Mar 2019 17:22:07 -0400
+Received: by mail-lf1-f66.google.com with SMTP id u2so5628430lfd.4
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Mar 2019 14:22:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VXTW7xiF7jfuHASO46bGPPt7slodyWdnPxodH/XzwiQ=;
+        b=VBVOmuKCAta9pG6sWt8Z7+Bbov0gtEQgRiR8tbB+d6PynFgYaH7/hq9JlDHq+E9Cln
+         w3UF2vGEEs49Nl8VL/MAc0M0XtGauBon+z3R6/qGOZrTjVbLAdtpwYbOr/p0XHQVsWCG
+         A/mZMPDeMp7ZQlrSfyJybWeidq7+iPMOivU5Ya/E1xfZbcXjedjatHC7PtbfOzaJ3oNm
+         lGzQ92PA+kqs+RPNy39dGc+Jq73ZgAe5/bKYL7bzU6Sv6AskhnEZJh0FgpNYazvRTv7C
+         IxCBCYI2hSVPGUweCNJBdRoBjUxOjwWM1wiGqO9NZwheexp/xUmgUsLwN6urKBq6Y3Ep
+         nJig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VXTW7xiF7jfuHASO46bGPPt7slodyWdnPxodH/XzwiQ=;
+        b=msKDDEC1Lcw3V6lVjDTaQOZhqHxDRDPnSjn4kys74KuJ5e3nT6xdt78/dsgCFu0hbv
+         ycaHWhSBCT6GZJ+NlEsI/yi58gsFbMCzhFnVeDf5SGBZnHS3Euv5a8ZboeBnz1d5vx6Y
+         GLdlixQW4zxkB2MG2qiRveWiHQ6tJkprVgrNmmG2Kr0JlEIskBpklRnU5f7SnEtXgUIa
+         MmQnzcbsbl5FF9ebnb8j7bUfrogKWY13uK0Zcn0LIsphf39eD7JWu0NP4gUVgf73xQop
+         Gc5bcp3HSuGrT520GDN++71FAjx/OsJ8kKqmgOKrWRLjpcM2qwQB0ZCf+08Ax0/R0q+E
+         14NQ==
+X-Gm-Message-State: APjAAAWuYwymUOLE1bhN6BPBut4xBHYtzkCrvqSuzRY6/xzJFjlbRp2T
+        cgdgFxSV76gHPl4LohebAhhNNmJEjMwB4MSPncFK
+X-Google-Smtp-Source: APXvYqwhFx1LnKlV0/tWtuSM+FBgEbvu20QYD1IEgHFjyCVUY/dMbin9A6RaRBL3mXgveg7nYgZmD/mqruaIk7rR/qI=
+X-Received: by 2002:a19:ee11:: with SMTP id g17mr3097730lfb.117.1553203320525;
+ Thu, 21 Mar 2019 14:22:00 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKj-Pq4krHmKd__4MoXBe1FK399cDZnSxdPigZo78tPfA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190222145718.5740-1-omosnace@redhat.com> <CAHC9VhT3pEAwYyHcv7KY4xAHJQKu4PN-NPxAkpcnuGCSwVHLtQ@mail.gmail.com>
+ <CAFqZXNtjbYUcfWODC0Ygbbxa87VhVoHaMbpvFtKaNdp3HV-JvA@mail.gmail.com>
+In-Reply-To: <CAFqZXNtjbYUcfWODC0Ygbbxa87VhVoHaMbpvFtKaNdp3HV-JvA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 21 Mar 2019 17:21:49 -0400
+Message-ID: <CAHC9VhSp9mU5KTpO-uCgm9PZ1HPd7EaVp9Njbn5h_dEi=O-5cw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] Allow initializing the kernfs node's secctx based
+ on its parent
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     selinux@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Morris <jmorris@namei.org>,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/03/22 1:38, Kees Cook wrote:
-> This is mostly good. I'd like to keep the other LSMs listed though
-> (similar to what I had originally) so that if a legacy-major doesn't
-> initialize, later ones will be. I want to remove the concept of
-> "major" LSMs. The only thing that should matter is init order...
+On Thu, Mar 21, 2019 at 4:56 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> On Thu, Mar 21, 2019 at 3:14 AM Paul Moore <paul@paul-moore.com> wrote:
+> > On Fri, Feb 22, 2019 at 9:57 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > > TL;DR:
+> > > This series adds a new security hook that allows to initialize the security
+> > > context of kernfs properly, taking into account the parent context (and
+> > > possibly other attributes). Kernfs nodes require special handling here, since
+> > > they are not bound to specific inodes/superblocks, but instead represent the
+> > > backing tree structure that is used to build the VFS tree when the kernfs
+> > > tree is mounted.
+> > >
+> > > Changes in v7:
+> > > - simplify the new security hook's interface
+> > >   - rather than trying to extract kernfs data into common structures, just
+> > >     pass the kernfs nodes themselves and add helper functions to
+> > >     <linux/kernfs.h> for accessing their security xattrs
+> > >   - in case other LSMs need more kernfs node attributes than the file mode
+> > >     (uid/gid/...), they can simply add new helpers to <linux/kernfs.h> as
+> > >     needed
+> > > - refactor "kernfs: use simple_xattrs for security attributes" to keep using
+> > >   a single common simple_xattrs structure
+> > >   - turns out having two separate simple_xattrs wouldn't work right (see
+> > >     the definition of simple_xattr_list() in fs/xattr.c)
+> > > - drop unnecessary initializations from inode_doinit_use_xattr()
+> > > - move the IOP_XATTR check out of inode_doinit_use_xattr()
+> > > - add two kernfs cleanup patches
+> > >   - these could be applied independently, but the rest of the patches depend on
+> > >     them, so I'd rather they stay bundled with the rest to avoid cross-tree
+> > >     conflicts
+> > >
+> > > v6: https://lore.kernel.org/selinux/20190214095015.16032-1-omosnace@redhat.com/T/
+> > > Changes in v6:
+> > > - remove copy-pasted duplicate macro definition
+> > >
+> > > v5: https://lore.kernel.org/selinux/20190205110638.30782-1-omosnace@redhat.com/T/
+> > > Changes in v5:
+> > > - fix misplaced semicolon detected by 0day robot
+> > >
+> > > v4: https://lore.kernel.org/selinux/20190205085915.5183-1-omosnace@redhat.com/T/
+> > > Changes in v4:
+> > > - reorder and rename hook arguments
+> > > - avoid allocating kernfs_iattrs unless needed
+> > >
+> > > v3: https://lore.kernel.org/selinux/20190130114150.27807-1-omosnace@redhat.com/T/
+> > > Changes in v3:
+> > > - rename the hook to "kernfs_init_security"
+> > > - change the hook interface to simply pass pointers to struct iattr and
+> > >   struct simple_xattrs of both the new node and its parent
+> > > - add full security xattr support to kernfs (and fixup SELinux behavior
+> > >   to handle it properly)
+> > >
+> > > v2: https://lore.kernel.org/selinux/20190109162830.8309-1-omosnace@redhat.com/T/
+> > > Changes in v2:
+> > > - add docstring for the new hook in union security_list_options
+> > > - initialize *ctx to NULL and *ctxlen to 0 in case the hook is not
+> > >   implemented
+> > >
+> > > v1: https://lore.kernel.org/selinux/20190109091028.24485-1-omosnace@redhat.com/T/
+> > >
+> > > The kernfs nodes initially do not store any security context and rely on
+> > > the LSM to assign some default context to inodes created over them. Kernfs
+> > > inodes, however, allow setting an explicit context via the *setxattr(2)
+> > > syscalls, in which case the context is stored inside the kernfs node's
+> > > internal structure.
+> > >
+> > > SELinux (and possibly other LSMs) initialize the context of newly created
+> > > FS objects based on the parent object's context (usually the child inherits
+> > > the parent's context, unless the policy dictates otherwise). This is done
+> > > by hooking the creation of the new inode corresponding to the newly created
+> > > file/directory via security_inode_init_security() (most filesystems always
+> > > create a fresh inode when a new FS object is created). However, kernfs nodes
+> > > can be created "behind the scenes" while the filesystem is not mounted
+> > > anywhere and thus no inodes can exist for them yet.
+> > >
+> > > Therefore, to allow maintaining similar behavior for kernfs nodes, a new
+> > > LSM hook is needed, which will allow initializing the kernfs node's
+> > > security context based on its own attributes and those of the parent's
+> > > node.
+> > >
+> > > The main motivation for this change is that the userspace users of cgroupfs
+> > > (which is built on kernfs) expect the usual security context inheritance
+> > > to work under SELinux (see [1] and [2]). This functionality is required for
+> > > better confinement of containers under SELinux.
+> > >
+> > > Patch 1/7 simplifies the kernfs_iattrs structure and patch 2/7 optimizes
+> > > kernfs to not allocate kernfs_iattrs when getting the value of an xattr.
+> > >
+> > > Patch 3/7 changes SELinux to fetch security context from extended
+> > > attributes on kernfs filesystems, falling back to genfs-defined context
+> > > if that fails. Without this patch the 4/7 would be a regression for
+> > > SELinux (due to the removal of ...notifysecctx() call.
+> > >
+> > > Patch 4/7 implements full security xattr support in kernfs using
+> > > simple_xattrs; patch 5/7 adds the new LSM hook; patch 6/7 implements the
+> > > new hook in SELinux; and patch 7/7 modifies kernfs to call the new hook
+> > > on new node creation.
+> > >
+> > > Testing:
+> > > - passed the reproducer from the commit message of the last patch
+> > > - passed SELinux testsuite on Fedora Rawhide (x86_64) when applied on top
+> > >   of current Rawhide kernel (5.0.0-0.rc7.git2.1) [3]
+> > >   - including the new proposed selinux-testsuite subtest [4] (adapted
+> > >     from the reproducer)
+> > >
+> > > [1] https://github.com/SELinuxProject/selinux-kernel/issues/39
+> > > [2] https://bugzilla.redhat.com/show_bug.cgi?id=1553803
+> > > [3] https://koji.fedoraproject.org/koji/taskinfo?taskID=32963825
+> > > [4] https://github.com/SELinuxProject/selinux-testsuite/pull/48
+> > >
+> > > Ondrej Mosnacek (7):
+> > >   kernfs: clean up struct kernfs_iattrs
+> > >   kernfs: do not alloc iattrs in kernfs_xattr_get
+> > >   selinux: try security xattr after genfs for kernfs filesystems
+> > >   kernfs: use simple_xattrs for security attributes
+> > >   LSM: add new hook for kernfs node initialization
+> > >   selinux: implement the kernfs_init_security hook
+> > >   kernfs: initialize security of newly created nodes
+> > >
+> > >  fs/kernfs/dir.c                     |  28 ++--
+> > >  fs/kernfs/inode.c                   | 166 +++++++++------------
+> > >  fs/kernfs/kernfs-internal.h         |   8 +-
+> > >  fs/kernfs/symlink.c                 |   4 +-
+> > >  include/linux/kernfs.h              |  15 ++
+> > >  include/linux/lsm_hooks.h           |  13 ++
+> > >  include/linux/security.h            |   9 ++
+> > >  security/security.c                 |   6 +
+> > >  security/selinux/hooks.c            | 223 +++++++++++++++++++---------
+> > >  security/selinux/include/security.h |   1 +
+> > >  10 files changed, 290 insertions(+), 183 deletions(-)
+> >
+> > I just merged this patchset into selinux/next, thanks everyone.
+> >
+> > Ondrej, every patch in the patchset except for one required some
+> > amount of merge fixups, please take a look and make sure everything in
+> > the selinux/next branch still looks right to you.
+>
+> Looks good to me, thanks!  I checked by rebasing the original branch
+> on v5.1-rc1 myself and then comparing my result with selinux/next.
+> The only difference was one extra empty line on my side, but that
+> doesn't bother me :)
 
-Excuse me? Are you saying that
+Thanks for double-checking.
 
-  if a legacy-major (which is defined as the "Default security module")
-  doesn't initialize, later ones (any of selinux,smack,tomoyo,apparmor
-  except the one which is defined as "Default security module") will be
-  initialized
-
-? That sounds strange to me. Any of selinux,smack,tomoyo,apparmor can be
-initialized when specified by lsm= kernel command line option (or security=
-kernel command line option if lsm= kernel command line option is not
-specified), won't it?
-
+-- 
+paul moore
+www.paul-moore.com
