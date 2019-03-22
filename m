@@ -2,126 +2,100 @@ Return-Path: <SRS0=snF/=RZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C83C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 18:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B448C10F03
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 18:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44AFA218FE
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 18:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553278847;
-	bh=1kWctT+kE5evAeNibbLsh26YhCyp/R9wPRN6xPGJ6RQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=CR8Dtr+CCncU99LuUjYKI4zsDIA/UbpnHd+E/yBGtAhvqxD0XGv+uCy/znzyjMQCp
-	 CYxMh0Dr7La5UUdulbbGDYAlPY5ePJzH84Soac59A1mpJsI6GtQ/P2Hzpye2j4sfVb
-	 tP9ewSdsP+5WRm7Datei2YZ5/Ja+yWcw/fUjehNM=
+	by mail.kernel.org (Postfix) with ESMTP id E4C4B218A2
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 18:49:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="N5//jGST"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbfCVSUq (ORCPT
+        id S1727000AbfCVStm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Mar 2019 14:20:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726056AbfCVSUq (ORCPT
+        Fri, 22 Mar 2019 14:49:42 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:33941 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727566AbfCVStj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Mar 2019 14:20:46 -0400
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0097A2192B
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2019 18:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553278845;
-        bh=1kWctT+kE5evAeNibbLsh26YhCyp/R9wPRN6xPGJ6RQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AjSSoydS+GOAFfF6W0dmD6LM/02k1qG8MK+VbVU2A5NW8RsJtuuV3wd8em1I6dBw1
-         G/FMOERsmw4+/T9uziIGbtsvX1jAeiibKK9Pad1P3jW78Ds9U0msFLC8fo52R26VYt
-         tJz3aTno/tkbslX/3oCvXFlut92QpGPIUXMH9WVE=
-Received: by mail-wm1-f42.google.com with SMTP id z11so3123627wmi.0
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2019 11:20:44 -0700 (PDT)
-X-Gm-Message-State: APjAAAXJx0435xUZRe4nUljtBaR1qXs+qLW3DwZb4e6DxcUHC166RR44
-        MBwZ//2w6yDX9h+NuJaPKLFHxqcS3+H2kBhMcKtUNQ==
-X-Google-Smtp-Source: APXvYqy2I1uslvP3FiFGfyDUKj1iCdva2ck5rAWUz5OQB/IcpxoXuOmb1NCFUiPP6ho3FC3uGpp9/Zjux5Wvmv22uow=
-X-Received: by 2002:a7b:c257:: with SMTP id b23mr3828467wmj.83.1553278841796;
- Fri, 22 Mar 2019 11:20:41 -0700 (PDT)
+        Fri, 22 Mar 2019 14:49:39 -0400
+Received: by mail-oi1-f194.google.com with SMTP id u12so2512261oiv.1
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2019 11:49:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bI3YQ2UGTKs+MAcoBFqJxdwZKPIFUOvygyRC2OsSzCA=;
+        b=N5//jGST86vYO340eYtI3EkCEzKT7yaEuHzY5+Kh5B7VJhGKQZ4aKXs1HDfK/9Ix5h
+         ItPRUvuvEz9BWfASgO0emxKL4zXSy8oxYLRmVa5XPCr3WDgrEwo4c4J1tBIxQzudJMjt
+         Degur5vzEwCS+T5z4mcKAcgf0BbI4d1JDWTB5LfIt8BFes3E7B4Z9pktgeJO6GE2vhx7
+         5ygVZpcDN5oSJS8dQFNnzQQ5bfLhI8aCTcf83/iahdkt1fCs5ligA2mRZCaUugpP/SjO
+         mGIo60JluCwEQxloMNcpZHIe2/8Dk4nDlxzJSPCKkkPdJgVzrOIcvW69mByO9FNLXpR2
+         09IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bI3YQ2UGTKs+MAcoBFqJxdwZKPIFUOvygyRC2OsSzCA=;
+        b=tYMhHTJd709zjrKYqiUALEngL6mWX3OLo+WX76lD1l9ZNEc5VCxfJCU+baLWVUzSVo
+         E7xS+rKOE7irik4JbS9uJp+jhfHPgqTiZbTrI6QlxcvMpuOXE9X/sDJSURL9VojPKhRl
+         tjLkgwMjWKM4eEfIP7hTCb3cbzkAIy5iNtt/GNnupdjOfOgW4ABWebaGAygk3GUcTZCb
+         QmanYGxyBEoxolDMOTyM1OZMU48vb9xEGV4k89izlkoMQ9JT1NQ4+s4lQzUl787bnJtq
+         S9WFJjo1mJgPEprO1bDUC/U6loNl5eh1Xco/O6Z5ARLZvohKoWqYjV0CjBvZisrq6Cr8
+         y/EQ==
+X-Gm-Message-State: APjAAAU14rJxNjlfDUQNiQzWIImRxqpg948mO3RUOSS4gOHr0gLhOT9a
+        +J639nqacdNoqFp7ZS+596Ban8amJZfpyp4qkrg6Pg==
+X-Google-Smtp-Source: APXvYqy4BJvYNZA7/ljIt/taH8vx1sPjx2JqEJOnCU54OBPk4JrQc65yT3qysc8ckBPzxLC48dIT/rgTYmGOgtvH+l8=
+X-Received: by 2002:aca:aa57:: with SMTP id t84mr2975823oie.149.1553280578611;
+ Fri, 22 Mar 2019 11:49:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
- <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com> <CALCETrXQ0x2TD5GnaHhmF6SExk0C8+L0AwfnH-Krqwttfvwz2A@mail.gmail.com>
- <20190322112938.GJ3122@linux.intel.com> <20190322114325.GA10165@linux.intel.com>
-In-Reply-To: <20190322114325.GA10165@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 22 Mar 2019 11:20:30 -0700
-X-Gmail-Original-Message-ID: <CALCETrW=Fr8EdVq+5FLbmdL__i82FC0ONHd=hBXjxpLcsv9M0Q@mail.gmail.com>
-Message-ID: <CALCETrW=Fr8EdVq+5FLbmdL__i82FC0ONHd=hBXjxpLcsv9M0Q@mail.gmail.com>
-Subject: Re: [PATCH v19 17/27] x86/sgx: Add provisioning
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>
+References: <20190322180139.18856-1-roberto.sassu@huawei.com>
+In-Reply-To: <20190322180139.18856-1-roberto.sassu@huawei.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 22 Mar 2019 11:49:27 -0700
+Message-ID: <CAPcyv4jU-TCyfJ5gxrEaZt1GDJ+b_FtYi9O8H=cqLbqOAaskuw@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: trusted: defer execution of TPM-specific code until
+ key instantiate
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, david.safford@ge.com,
+        James Bottomley <jejb@linux.ibm.com>,
+        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>,
+        stable <stable@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 22, 2019 at 4:43 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+On Fri, Mar 22, 2019 at 11:04 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
 >
-> On Fri, Mar 22, 2019 at 01:29:38PM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Mar 21, 2019 at 09:50:41AM -0700, Andy Lutomirski wrote:
-> > > On Sun, Mar 17, 2019 at 2:18 PM Jarkko Sakkinen
-> > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > >
-> > > > In order to provide a mechanism for devilering provisoning rights:
-> > > >
-> > > > 1. Add a new file to the securityfs file called sgx/provision that works
-> > > >    as a token for allowing an enclave to have the provisioning privileges.
-> > > > 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
-> > > >    following data structure:
-> > > >
-> > > >    struct sgx_enclave_set_attribute {
-> > > >            __u64 addr;
-> > > >            __u64 token_fd;
-> > > >    };
-> > >
-> > > Here's a potential issue:
-> > >
-> > > For container use, is it reasonable for a container manager to
-> > > bind-mount a file into securityfs?  Or would something in /dev make
-> > > this easier?
-> >
-> > I guess that is a valid point given that the securityfs contains the LSM
-> > (e.g. SELinux or AppArmor) policy. So yeah, I think your are right what
-> > you say.
-> >
-> > I propose that we create /dev/sgx/enclave to act as the enclave manager
-> > and /dev/sgx/provision for provisioning. Is this sustainable for you?
+> Commit 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from
+> tpm_default_chip()") changed the tpm_chip argument of every TPM function
+> from NULL to a pointer that is retrieved at module initialization time.
 >
-> Hmm.. on 2nd thought the LSM policy or even DAC policy  would restrict
-> that the container manager can only access specific files inside
-> securityfs. With this conclusion I still think it is probably the best
-> place for seurity policy like things even for SGX. It is meant for that
-> anyway.
+> Unlike before this patch, the trusted module cannot be loaded if no TPM is
+> available. Unfortunately, this causes a dependency problem because the
+> encrypted key type requires the 'key_type_trusted' symbol when
+> CONFIG_TRUSTED_KEYS is defined.
 >
+> This patch fixes the issue by deferring the execution of TPM-specific code
+> until a new trusted key is instantiated: init_tpm(), to obtain a tpm_chip
+> pointer; init_digests(), introduced by commit 0b6cf6b97b7e ("tpm: pass an
+> array of tpm_extend_digest structures to tpm_pcr_extend()"), to get random
+> bytes from the TPM to lock a PCR.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from tpm_default_chip()")
+> Reported-by: Dan Williams <dan.j.williams@intel.com>
 
-LSM or DAC policy can certainly *restrict* it, but I suspect that most
-container runtimes don't mount securityfs at all.  OTOH, the runtime
-definitely needs to have a way to pass /dev/sgx/enclave (or whatever
-it's called) through, so using another device node will definitely
-work.
+Tested-by: Dan Williams <dan.j.williams@intel.com>
+
+Thanks Robert!
