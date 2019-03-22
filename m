@@ -2,89 +2,89 @@ Return-Path: <SRS0=snF/=RZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12864C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 10:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F94CC43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 11:19:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED212190A
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 10:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072C82190A
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 11:19:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbfCVKvu (ORCPT
+        id S1728146AbfCVLTd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Mar 2019 06:51:50 -0400
-Received: from mga14.intel.com ([192.55.52.115]:24392 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbfCVKvt (ORCPT
+        Fri, 22 Mar 2019 07:19:33 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:34778 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbfCVLTc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Mar 2019 06:51:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Mar 2019 03:51:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,256,1549958400"; 
-   d="scan'208";a="157368552"
-Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.199])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Mar 2019 03:51:43 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, pauldzim@gmail.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: turn on TPM on suspend for TPM 1.x
-Date:   Fri, 22 Mar 2019 12:51:20 +0200
-Message-Id: <20190322105120.8441-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 22 Mar 2019 07:19:32 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 44Qh4x2KcPz1rgYh;
+        Fri, 22 Mar 2019 12:19:29 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 44Qh4x1Sn6z1qv23;
+        Fri, 22 Mar 2019 12:19:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id umVbA7Ms1F0S; Fri, 22 Mar 2019 12:19:26 +0100 (CET)
+X-Auth-Info: dbeBQ9WElD/YTcT/WgkLkyWYI40TW7Ey2hin/0gsumh36kGapbS+g6eMGSxOHgz1
+Received: from igel.home (ppp-46-244-167-18.dynamic.mnet-online.de [46.244.167.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Fri, 22 Mar 2019 12:19:26 +0100 (CET)
+Received: by igel.home (Postfix, from userid 1000)
+        id 4266E2C12D4; Fri, 22 Mar 2019 12:19:26 +0100 (CET)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        torvalds@linux-foundation.org, ebiederm@xmission.com,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 11/43] convert do_remount_sb() to fs_context
+References: <155059366914.12449.4669870128936536848.stgit@warthog.procyon.org.uk>
+        <155059379404.12449.7151387243186063769.stgit@warthog.procyon.org.uk>
+X-Yow:  Well, I'm a classic ANAL RETENTIVE!!  And I'm looking for a way to
+ VICARIOUSLY experience some reason to LIVE!!
+Date:   Fri, 22 Mar 2019 12:19:26 +0100
+In-Reply-To: <155059379404.12449.7151387243186063769.stgit@warthog.procyon.org.uk>
+        (David Howells's message of "Tue, 19 Feb 2019 16:29:54 +0000")
+Message-ID: <87a7hnyx4x.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-tpm_chip_start/stop() should be also called for TPM 1.x devices on
-suspend. Add that functionality back. Do not lock the chip because
-it is unnecessary as there are no multiple threads using it when
-doing the suspend.
+On Feb 19 2019, David Howells <dhowells@redhat.com> wrote:
 
-Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-Reported-by: Paul Zimmerman <pauldzim@gmail.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-interface.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+> Replace do_remount_sb() with a function, reconfigure_super(), that's
+> fs_context aware.  The fs_context is expected to be parameterised already
+> and have ->root pointing to the superblock to be reconfigured.
+>
+> A legacy wrapper is provided that is intended to be called from the
+> fs_context ops when those appear, but for now is called directly from
+> reconfigure_super().  This wrapper invokes the ->remount_fs() superblock op
+> for the moment.  It is intended that the remount_fs() op will be phased
+> out.
+>
+> The fs_context->purpose is set to FS_CONTEXT_FOR_RECONFIGURE to indicate
+> that the context is being used for reconfiguration.
+>
+> do_umount_root() is provided to consolidate remount-to-R/O for umount and
+> emergency remount by creating a context and invoking reconfiguration.
+>
+> do_remount(), do_umount() and do_emergency_remount_callback() are switched
+> to use the new process.
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 83ece5639f86..ae1030c9b086 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -402,15 +402,13 @@ int tpm_pm_suspend(struct device *dev)
- 	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
- 		return 0;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		mutex_lock(&chip->tpm_mutex);
--		if (!tpm_chip_start(chip)) {
-+	if (!tpm_chip_start(chip)) {
-+		if (chip->flags & TPM_CHIP_FLAG_TPM2)
- 			tpm2_shutdown(chip, TPM2_SU_STATE);
--			tpm_chip_stop(chip);
--		}
--		mutex_unlock(&chip->tpm_mutex);
--	} else {
--		rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
-+		else
-+			rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
-+
-+		tpm_chip_stop(chip);
- 	}
- 
- 	return rc;
+That breaks booting for me.  The problem appears to be that udev fails
+to create the block devices.
+
+Andreas.
+
 -- 
-2.19.1
-
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
