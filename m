@@ -2,138 +2,202 @@ Return-Path: <SRS0=snF/=RZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECA5C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 14:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A296C10F0E
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 18:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF638218D3
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 14:27:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NEdJMIK9"
+	by mail.kernel.org (Postfix) with ESMTP id 6135F213F2
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 18:04:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbfCVO16 (ORCPT
+        id S1727832AbfCVSEh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Mar 2019 10:27:58 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:55296 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728144AbfCVO16 (ORCPT
+        Fri, 22 Mar 2019 14:04:37 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32912 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727693AbfCVSEg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Mar 2019 10:27:58 -0400
-Received: by mail-it1-f193.google.com with SMTP id z126so3933974itd.5
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2019 07:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VCXkqtJXweMtT7tkjAU9aokE2Llx9dELHbkDZghxZuc=;
-        b=NEdJMIK9h2iWW4z/4DLDds0gdjLAJfcSG3gwWS4GiCWbhHKUQIw79yK8oSdAGIhDeK
-         1raJXetJfp6kF94+UUB0srpLPbwGjekNgmFDlB6KgIty68/w/6/NLVcBpr+16x7u7nsb
-         g0WCuYfXcivGP5WlTrH9iGAnxzRKZr7TIBgnkNp9ghvSryFQLeT87o12BVYrFeKK3Q6L
-         2ukOqNOquDy52Q7drG2QLI3NNZgwnnmn1hkF3wpMKz4A1kVNN0vHDLUS0TiHLOFcwBv/
-         PjQMrcqTgH6Q7iSOyRXS5y6Ki3qduxfM6RiTqkn08KwJ7p0sKykAxkGDVn/uqU4jrlZZ
-         n6JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VCXkqtJXweMtT7tkjAU9aokE2Llx9dELHbkDZghxZuc=;
-        b=WhX5DYetkx4iTra8MMzwphyJtMGxSmb+1lh2L522dJRLT0mcFfR+TO/cFT8+gcjQFz
-         L9NndsuBFjsk5c9vcRQVpeRTDgSH2RVSRheOSQ6WTV3d/yoJ0VkWkQ/TYnnO4dlwvTtN
-         wI8c2Imu9k9b+P6SbCr4u7Qak35hYC8A0nIlaumGtAwdch/n8ZJUInBQbC6aQLjq4h4q
-         vdynJs/I237vfMhylpevV2iC5djPTTkgq8oOwMOmrNW/krkZxVfHxOXKXKY4TA/TxhOR
-         dol+IW16720Lhb5Xc8cpIsnDbPztka76dOmUzvi+nLSAlYjQ4+IB31BK7sJfjnFY4CBj
-         80nw==
-X-Gm-Message-State: APjAAAWlTb4CVKe1Pnie7GyU4eflujzbOkigJQw9aUq04UN+bvqqUAG/
-        ylItm6w8Kjak6jmxkKawVlnJ8Uob5bW1bhanK6H0XQ==
-X-Google-Smtp-Source: APXvYqy7pT8oa0KnMZcYwqn/r+clsMGOQpxbdKlTodcdpwjkR1KBQZWCAyI9+0ugN+QbgK+EKvR92pQUHFYCanUGxGo=
-X-Received: by 2002:a02:ac14:: with SMTP id a20mr7591159jao.130.1553264877146;
- Fri, 22 Mar 2019 07:27:57 -0700 (PDT)
+        Fri, 22 Mar 2019 14:04:36 -0400
+Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id E0BA87EBD14F17CE7D47;
+        Fri, 22 Mar 2019 18:04:34 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.154)
+ by smtpsuk.huawei.com (10.201.108.49) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 22 Mar 2019 18:04:24 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <dhowells@redhat.com>,
+        <zohar@linux.ibm.com>, <dan.j.williams@intel.com>
+CC:     <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
+        <david.safford@ge.com>, <jejb@linux.ibm.com>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH] KEYS: trusted: defer execution of TPM-specific code until key instantiate
+Date:   Fri, 22 Mar 2019 19:01:39 +0100
+Message-ID: <20190322180139.18856-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20190322103350.27764-1-jlee@suse.com> <20190322103350.27764-2-jlee@suse.com>
-In-Reply-To: <20190322103350.27764-2-jlee@suse.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 22 Mar 2019 15:27:46 +0100
-Message-ID: <CAKv+Gu8Xg3SBTpAFDSe5zyT8yjU71+HUT9LO18D+HiT+Hhp+Zg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] efi: print appropriate status message when loading certificates
-To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Lee, Chun-Yi" <jlee@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.154]
+X-CFilter-Loop: Reflected
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 22 Mar 2019 at 11:34, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
->
-> When loading certificates list from UEFI variable, the original error
-> message direct shows the efi status code from UEFI firmware. It looks
-> ugly:
->
-> [    2.335031] Couldn't get size: 0x800000000000000e
-> [    2.335032] Couldn't get UEFI MokListRT
-> [    2.339985] Couldn't get size: 0x800000000000000e
-> [    2.339987] Couldn't get UEFI dbx list
->
+Commit 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from
+tpm_default_chip()") changed the tpm_chip argument of every TPM function
+from NULL to a pointer that is retrieved at module initialization time.
 
-Why is it an error in the first place if these EFI variables do not exist?
+Unlike before this patch, the trusted module cannot be loaded if no TPM is
+available. Unfortunately, this causes a dependency problem because the
+encrypted key type requires the 'key_type_trusted' symbol when
+CONFIG_TRUSTED_KEYS is defined.
 
+This patch fixes the issue by deferring the execution of TPM-specific code
+until a new trusted key is instantiated: init_tpm(), to obtain a tpm_chip
+pointer; init_digests(), introduced by commit 0b6cf6b97b7e ("tpm: pass an
+array of tpm_extend_digest structures to tpm_pcr_extend()"), to get random
+bytes from the TPM to lock a PCR.
 
-> So, this patch shows the status string instead of status code.
->
-> On the other hand, the error message of EFI_NOT_FOUND
-> (0x800000000000000e) doesn't need to be exposed because kernel
-> already prints "Couldn't get UEFI..." message. This patch also
-> filtered out it.
->
-> Link: https://forums.opensuse.org/showthread.php/535324-MODSIGN-Couldn-t-get-UEFI-db-list?p=2897516#post2897516
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Serge E. Hallyn" <serge@hallyn.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Nayna Jain <nayna@linux.ibm.com>
-> Cc: Josh Boyer <jwboyer@fedoraproject.org>
-> Cc: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-> ---
->  security/integrity/platform_certs/load_uefi.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
->
-> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-> index 81b19c52832b..fe261166621f 100644
-> --- a/security/integrity/platform_certs/load_uefi.c
-> +++ b/security/integrity/platform_certs/load_uefi.c
-> @@ -48,7 +48,9 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
->
->         status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
->         if (status != EFI_BUFFER_TOO_SMALL) {
-> -               pr_err("Couldn't get size: 0x%lx\n", status);
-> +               if (status != EFI_NOT_FOUND)
-> +                       pr_err("Couldn't get size: %s\n",
-> +                               efi_status_to_str(status));
->                 return NULL;
->         }
->
-> @@ -59,7 +61,8 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
->         status = efi.get_variable(name, guid, NULL, &lsize, db);
->         if (status != EFI_SUCCESS) {
->                 kfree(db);
-> -               pr_err("Error reading db var: 0x%lx\n", status);
-> +               pr_err("Error reading db var: %s\n",
-> +                       efi_status_to_str(status));
->                 return NULL;
->         }
->
-> --
-> 2.16.4
->
+Cc: stable@vger.kernel.org
+Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from tpm_default_chip()")
+Reported-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/keys/trusted.c | 89 +++++++++++++++++++++++------------------
+ 1 file changed, 50 insertions(+), 39 deletions(-)
+
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index ecec672d3a77..c5162ca9c944 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -946,6 +946,44 @@ static struct trusted_key_payload *trusted_payload_alloc(struct key *key)
+ 	return p;
+ }
+ 
++static int init_tpm(void)
++{
++	if (chip)
++		return 0;
++
++	chip = tpm_default_chip();
++	if (!chip)
++		return -ENODEV;
++
++	return 0;
++}
++
++static int init_digests(void)
++{
++	u8 digest[TPM_MAX_DIGEST_SIZE];
++	int ret;
++	int i;
++
++	if (digests)
++		return 0;
++
++	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
++	if (ret < 0)
++		return ret;
++	if (ret < TPM_MAX_DIGEST_SIZE)
++		return -EFAULT;
++
++	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
++			  GFP_KERNEL);
++	if (!digests)
++		return -ENOMEM;
++
++	for (i = 0; i < chip->nr_allocated_banks; i++)
++		memcpy(digests[i].digest, digest, TPM_MAX_DIGEST_SIZE);
++
++	return 0;
++}
++
+ /*
+  * trusted_instantiate - create a new trusted key
+  *
+@@ -967,6 +1005,14 @@ static int trusted_instantiate(struct key *key,
+ 	size_t key_len;
+ 	int tpm2;
+ 
++	ret = init_tpm();
++	if (ret < 0)
++		return ret;
++
++	ret = init_digests();
++	if (ret < 0)
++		return ret;
++
+ 	tpm2 = tpm_is_tpm2(chip);
+ 	if (tpm2 < 0)
+ 		return tpm2;
+@@ -1218,58 +1264,23 @@ static int __init trusted_shash_alloc(void)
+ 	return ret;
+ }
+ 
+-static int __init init_digests(void)
+-{
+-	u8 digest[TPM_MAX_DIGEST_SIZE];
+-	int ret;
+-	int i;
+-
+-	ret = tpm_get_random(chip, digest, TPM_MAX_DIGEST_SIZE);
+-	if (ret < 0)
+-		return ret;
+-	if (ret < TPM_MAX_DIGEST_SIZE)
+-		return -EFAULT;
+-
+-	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
+-			  GFP_KERNEL);
+-	if (!digests)
+-		return -ENOMEM;
+-
+-	for (i = 0; i < chip->nr_allocated_banks; i++)
+-		memcpy(digests[i].digest, digest, TPM_MAX_DIGEST_SIZE);
+-
+-	return 0;
+-}
+-
+ static int __init init_trusted(void)
+ {
+ 	int ret;
+ 
+-	chip = tpm_default_chip();
+-	if (!chip)
+-		return -ENOENT;
+-	ret = init_digests();
+-	if (ret < 0)
+-		goto err_put;
+ 	ret = trusted_shash_alloc();
+ 	if (ret < 0)
+-		goto err_free;
++		return ret;
+ 	ret = register_key_type(&key_type_trusted);
+ 	if (ret < 0)
+-		goto err_release;
+-	return 0;
+-err_release:
+-	trusted_shash_release();
+-err_free:
+-	kfree(digests);
+-err_put:
+-	put_device(&chip->dev);
++		trusted_shash_release();
+ 	return ret;
+ }
+ 
+ static void __exit cleanup_trusted(void)
+ {
+-	put_device(&chip->dev);
++	if (chip)
++		put_device(&chip->dev);
+ 	kfree(digests);
+ 	trusted_shash_release();
+ 	unregister_key_type(&key_type_trusted);
+-- 
+2.17.1
+
