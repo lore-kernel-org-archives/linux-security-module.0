@@ -2,100 +2,114 @@ Return-Path: <SRS0=snF/=RZ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B448C10F03
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 18:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A933CC10F03
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 22:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C4B218A2
-	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 18:49:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 744682075E
+	for <linux-security-module@archiver.kernel.org>; Fri, 22 Mar 2019 22:45:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="N5//jGST"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mDVknPG/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbfCVStm (ORCPT
+        id S1728219AbfCVWpT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Mar 2019 14:49:42 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33941 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727566AbfCVStj (ORCPT
+        Fri, 22 Mar 2019 18:45:19 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:46527 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728164AbfCVWpT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Mar 2019 14:49:39 -0400
-Received: by mail-oi1-f194.google.com with SMTP id u12so2512261oiv.1
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2019 11:49:39 -0700 (PDT)
+        Fri, 22 Mar 2019 18:45:19 -0400
+Received: by mail-ua1-f68.google.com with SMTP id j8so1261676uae.13
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2019 15:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bI3YQ2UGTKs+MAcoBFqJxdwZKPIFUOvygyRC2OsSzCA=;
-        b=N5//jGST86vYO340eYtI3EkCEzKT7yaEuHzY5+Kh5B7VJhGKQZ4aKXs1HDfK/9Ix5h
-         ItPRUvuvEz9BWfASgO0emxKL4zXSy8oxYLRmVa5XPCr3WDgrEwo4c4J1tBIxQzudJMjt
-         Degur5vzEwCS+T5z4mcKAcgf0BbI4d1JDWTB5LfIt8BFes3E7B4Z9pktgeJO6GE2vhx7
-         5ygVZpcDN5oSJS8dQFNnzQQ5bfLhI8aCTcf83/iahdkt1fCs5ligA2mRZCaUugpP/SjO
-         mGIo60JluCwEQxloMNcpZHIe2/8Dk4nDlxzJSPCKkkPdJgVzrOIcvW69mByO9FNLXpR2
-         09IA==
+        bh=XIWF5r+FeAyzFbB/tkDZ1Cwr2CHIZ4gIs+pbAdf62jk=;
+        b=mDVknPG/ZmQ9thZGsga0cOASQO6ss/HgUzvEnM228t8RAHZw3hWN8WerQSRw/M9Afm
+         roKYwxtmePMDQjQOFiG9eDPcbxc5qIXQ7j3PQuRoY0gRF/zV6uqJU5O6ZmaTOayzTu0v
+         AMvnzZz7mA8KuTsxqEOUEc743wS0ObEQ1FXDI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bI3YQ2UGTKs+MAcoBFqJxdwZKPIFUOvygyRC2OsSzCA=;
-        b=tYMhHTJd709zjrKYqiUALEngL6mWX3OLo+WX76lD1l9ZNEc5VCxfJCU+baLWVUzSVo
-         E7xS+rKOE7irik4JbS9uJp+jhfHPgqTiZbTrI6QlxcvMpuOXE9X/sDJSURL9VojPKhRl
-         tjLkgwMjWKM4eEfIP7hTCb3cbzkAIy5iNtt/GNnupdjOfOgW4ABWebaGAygk3GUcTZCb
-         QmanYGxyBEoxolDMOTyM1OZMU48vb9xEGV4k89izlkoMQ9JT1NQ4+s4lQzUl787bnJtq
-         S9WFJjo1mJgPEprO1bDUC/U6loNl5eh1Xco/O6Z5ARLZvohKoWqYjV0CjBvZisrq6Cr8
-         y/EQ==
-X-Gm-Message-State: APjAAAU14rJxNjlfDUQNiQzWIImRxqpg948mO3RUOSS4gOHr0gLhOT9a
-        +J639nqacdNoqFp7ZS+596Ban8amJZfpyp4qkrg6Pg==
-X-Google-Smtp-Source: APXvYqy4BJvYNZA7/ljIt/taH8vx1sPjx2JqEJOnCU54OBPk4JrQc65yT3qysc8ckBPzxLC48dIT/rgTYmGOgtvH+l8=
-X-Received: by 2002:aca:aa57:: with SMTP id t84mr2975823oie.149.1553280578611;
- Fri, 22 Mar 2019 11:49:38 -0700 (PDT)
+        bh=XIWF5r+FeAyzFbB/tkDZ1Cwr2CHIZ4gIs+pbAdf62jk=;
+        b=TkUy4zr/wMgEjqdgJZ5G+rvT5Bbppc1rQTVOS3bAaQYQDG7tXWmFFQXxq4L6cwWMn9
+         OfhL+jlKUn6VzRtvwGqj8HxYvLkC26x2X94PRUSjMbEorNFvNFd9PwRLs5PY3Xe8G88P
+         yFzjvVABniGGFtNub+gpEULavoOfS21Zt6dgIjKrVnnta/IrMeNKgywsPEWsWU9TDT/j
+         m7WoeLfu52gzISQZlXQTed/wcEeHPTHqK18gGF9Axkpk4AX5w4iUgzQuCWEAME0+IQi2
+         9SIKtr32OLrDKiz7ocP3Mz2NWiGbEcjCJDSwpeSHl9N+s5NrkaIrs9+9I74QCvKvWUHE
+         h5+Q==
+X-Gm-Message-State: APjAAAUpM/LEHTfR4pM3KqCGlfLngfFxmIaUiiJyPa1c4O8G5eSfqq9N
+        dhtwhquEPobLoSPKVSyN9Fj/w0+vk4I=
+X-Google-Smtp-Source: APXvYqzkk/GETcOjtnLEjVCNfQ55EMFnWUJw0Hw3du0NkrOXhAq3ITqdLTqK0q/We72sNiZcTlUHvw==
+X-Received: by 2002:ab0:164a:: with SMTP id l10mr7435944uae.116.1553294717914;
+        Fri, 22 Mar 2019 15:45:17 -0700 (PDT)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id d17sm2115967vke.53.2019.03.22.15.45.16
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 22 Mar 2019 15:45:16 -0700 (PDT)
+Received: by mail-vk1-f180.google.com with SMTP id e131so817615vkf.10
+        for <linux-security-module@vger.kernel.org>; Fri, 22 Mar 2019 15:45:16 -0700 (PDT)
+X-Received: by 2002:a1f:a4d:: with SMTP id 74mr3298849vkk.13.1553294715883;
+ Fri, 22 Mar 2019 15:45:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190322180139.18856-1-roberto.sassu@huawei.com>
-In-Reply-To: <20190322180139.18856-1-roberto.sassu@huawei.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 22 Mar 2019 11:49:27 -0700
-Message-ID: <CAPcyv4jU-TCyfJ5gxrEaZt1GDJ+b_FtYi9O8H=cqLbqOAaskuw@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: defer execution of TPM-specific code until
- key instantiate
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>, david.safford@ge.com,
-        James Bottomley <jejb@linux.ibm.com>,
-        Silviu Vlasceanu <silviu.vlasceanu@huawei.com>,
-        stable <stable@vger.kernel.org>
+References: <20190315110555.0807d015@cakuba.netronome.com> <20190315120105.5541ad46@cakuba.netronome.com>
+ <20190315165440.53b9db3c@cakuba.netronome.com> <CAGXu5jKHRPuaALQcPXvpDeuVgZR+EeRqo9Qj4j3kYatb3HUSSA@mail.gmail.com>
+ <CAGXu5jL-e7bDEXfpUuT-HyFarR-8T0djXChR0cuzTwFQPQ0tOw@mail.gmail.com>
+ <f23d0fad-dc72-0e53-cac6-31abfd12a050@I-love.SAKURA.ne.jp>
+ <bee1a774-461a-2535-a640-bbe65291e909@schaufler-ca.com> <2bf23acd-22c4-a260-7648-845887a409d5@i-love.sakura.ne.jp>
+ <CAGXu5jKj-Pq4krHmKd__4MoXBe1FK399cDZnSxdPigZo78tPfA@mail.gmail.com> <e20bf21e-77b0-6403-51b6-3f174d45529e@i-love.sakura.ne.jp>
+In-Reply-To: <e20bf21e-77b0-6403-51b6-3f174d45529e@i-love.sakura.ne.jp>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 22 Mar 2019 15:45:04 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKVQ=-mdMWsefuNDagwF3pQEiosb4niRx-gBKCmRK_h-g@mail.gmail.com>
+Message-ID: <CAGXu5jKVQ=-mdMWsefuNDagwF3pQEiosb4niRx-gBKCmRK_h-g@mail.gmail.com>
+Subject: Re: mount.nfs: Protocol error after upgrade to linux/master
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 22, 2019 at 11:04 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+On Thu, Mar 21, 2019 at 2:10 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
 >
-> Commit 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from
-> tpm_default_chip()") changed the tpm_chip argument of every TPM function
-> from NULL to a pointer that is retrieved at module initialization time.
+> On 2019/03/22 1:38, Kees Cook wrote:
+> > This is mostly good. I'd like to keep the other LSMs listed though
+> > (similar to what I had originally) so that if a legacy-major doesn't
+> > initialize, later ones will be. I want to remove the concept of
+> > "major" LSMs. The only thing that should matter is init order...
 >
-> Unlike before this patch, the trusted module cannot be loaded if no TPM is
-> available. Unfortunately, this causes a dependency problem because the
-> encrypted key type requires the 'key_type_trusted' symbol when
-> CONFIG_TRUSTED_KEYS is defined.
+> Excuse me? Are you saying that
 >
-> This patch fixes the issue by deferring the execution of TPM-specific code
-> until a new trusted key is instantiated: init_tpm(), to obtain a tpm_chip
-> pointer; init_digests(), introduced by commit 0b6cf6b97b7e ("tpm: pass an
-> array of tpm_extend_digest structures to tpm_pcr_extend()"), to get random
-> bytes from the TPM to lock a PCR.
+>   if a legacy-major (which is defined as the "Default security module")
+>   doesn't initialize, later ones (any of selinux,smack,tomoyo,apparmor
+>   except the one which is defined as "Default security module") will be
+>   initialized
 >
-> Cc: stable@vger.kernel.org
-> Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure from tpm_default_chip()")
-> Reported-by: Dan Williams <dan.j.williams@intel.com>
+> ? That sounds strange to me. Any of selinux,smack,tomoyo,apparmor can be
+> initialized when specified by lsm= kernel command line option (or security=
+> kernel command line option if lsm= kernel command line option is not
+> specified), won't it?
 
-Tested-by: Dan Williams <dan.j.williams@intel.com>
+It breaks the backward-compat for the "security=" line. If a system is
+booted with CONFIG_LSM="minors...,apparmor" and "security=selinux",
+neither apparmor nor selinux will be initialized. The logic on
+"security=..." depends on the other LSMs being present in the list.
 
-Thanks Robert!
+-Kees
+
+-- 
+Kees Cook
