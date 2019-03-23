@@ -2,92 +2,127 @@ Return-Path: <SRS0=jFhn=R2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDFAC43381
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Mar 2019 02:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2618DC43381
+	for <linux-security-module@archiver.kernel.org>; Sat, 23 Mar 2019 02:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 916B7218A2
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Mar 2019 02:44:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F026E218D3
+	for <linux-security-module@archiver.kernel.org>; Sat, 23 Mar 2019 02:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbfCWCoc (ORCPT
+        id S1728227AbfCWC5Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 22 Mar 2019 22:44:32 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:40234 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727900AbfCWCoc (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 22 Mar 2019 22:44:32 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2N2iFYO088513;
-        Sat, 23 Mar 2019 11:44:15 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Sat, 23 Mar 2019 11:44:15 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126094122116.bbtec.net [126.94.122.116])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2N2iBSh088461
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 23 Mar 2019 11:44:15 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: mount.nfs: Protocol error after upgrade to linux/master
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Fri, 22 Mar 2019 22:57:16 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:35134 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727363AbfCWC5Q (ORCPT
+        <rfc822;groupwise-linux-security-module@vger.kernel.org:0:0>);
+        Fri, 22 Mar 2019 22:57:16 -0400
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Sat, 23 Mar 2019 03:57:14 +0100
+Received: from localhost (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Sat, 23 Mar 2019 02:56:32 +0000
+Date:   Sat, 23 Mar 2019 10:56:13 +0800
+From:   jlee@suse.com
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190315110555.0807d015@cakuba.netronome.com>
- <20190315120105.5541ad46@cakuba.netronome.com>
- <20190315165440.53b9db3c@cakuba.netronome.com>
- <CAGXu5jKHRPuaALQcPXvpDeuVgZR+EeRqo9Qj4j3kYatb3HUSSA@mail.gmail.com>
- <CAGXu5jL-e7bDEXfpUuT-HyFarR-8T0djXChR0cuzTwFQPQ0tOw@mail.gmail.com>
- <f23d0fad-dc72-0e53-cac6-31abfd12a050@I-love.SAKURA.ne.jp>
- <bee1a774-461a-2535-a640-bbe65291e909@schaufler-ca.com>
- <2bf23acd-22c4-a260-7648-845887a409d5@i-love.sakura.ne.jp>
- <CAGXu5jKj-Pq4krHmKd__4MoXBe1FK399cDZnSxdPigZo78tPfA@mail.gmail.com>
- <e20bf21e-77b0-6403-51b6-3f174d45529e@i-love.sakura.ne.jp>
- <CAGXu5jKVQ=-mdMWsefuNDagwF3pQEiosb4niRx-gBKCmRK_h-g@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <47335573-08f1-0efc-e51a-e2b6a6b69a01@i-love.sakura.ne.jp>
-Date:   Sat, 23 Mar 2019 11:44:12 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.3
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] efi: print appropriate status message when loading
+ certificates
+Message-ID: <20190323025613.GA7196@localhost>
+References: <20190322103350.27764-1-jlee@suse.com>
+ <20190322103350.27764-2-jlee@suse.com>
+ <CAKv+Gu8Xg3SBTpAFDSe5zyT8yjU71+HUT9LO18D+HiT+Hhp+Zg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKVQ=-mdMWsefuNDagwF3pQEiosb4niRx-gBKCmRK_h-g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu8Xg3SBTpAFDSe5zyT8yjU71+HUT9LO18D+HiT+Hhp+Zg@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/03/23 7:45, Kees Cook wrote:
-> It breaks the backward-compat for the "security=" line. If a system is
-> booted with CONFIG_LSM="minors...,apparmor" and "security=selinux",
-> neither apparmor nor selinux will be initialized. The logic on
-> "security=..." depends on the other LSMs being present in the list.
+Hi Ard,
 
-Really? The logic on "security=..." does not depend on LSM_FLAG_LEGACY_MAJOR
-LSMs being present in the CONFIG_LSM= list, for ordered_lsm_parse() does
+On Fri, Mar 22, 2019 at 03:27:46PM +0100, Ard Biesheuvel wrote:
+> On Fri, 22 Mar 2019 at 11:34, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> >
+> > When loading certificates list from UEFI variable, the original error
+> > message direct shows the efi status code from UEFI firmware. It looks
+> > ugly:
+> >
+> > [    2.335031] Couldn't get size: 0x800000000000000e
+> > [    2.335032] Couldn't get UEFI MokListRT
+> > [    2.339985] Couldn't get size: 0x800000000000000e
+> > [    2.339987] Couldn't get UEFI dbx list
+> >
+> 
+> Why is it an error in the first place if these EFI variables do not exist?
+> 
 
-  (Step 1) Enable LSM_ORDER_FIRST module (i.e. capability).
+As you said, the error message should only be exposed when
+these EFI variables exist. I will change it in next version of
+my patch.
 
-  (Step 2) Disable LSM_FLAG_LEGACY_MAJOR modules which was not specified
-           by "security=" parameter when "security=" parameter was specified.
+Thanks a lot!
+Joey Lee
 
-  (Step 3) Enable modules specified by "lsm=" parameter (or CONFIG_LSM= settings
-           if "lsm=" parameter was not specified).
-
-  (Step 4) Enable up to one LSM_FLAG_LEGACY_MAJOR module which was specified
-           by "security=" parameter when "security=" parameter was specified.
-
-  (Step 5) Disable all unused modules.
-
-and (Step 4) will compensate for lack of that module in (Step 3).
+> 
+> > So, this patch shows the status string instead of status code.
+> >
+> > On the other hand, the error message of EFI_NOT_FOUND
+> > (0x800000000000000e) doesn't need to be exposed because kernel
+> > already prints "Couldn't get UEFI..." message. This patch also
+> > filtered out it.
+> >
+> > Link: https://forums.opensuse.org/showthread.php/535324-MODSIGN-Couldn-t-get-UEFI-db-list?p=2897516#post2897516
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Serge E. Hallyn" <serge@hallyn.com>
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: Nayna Jain <nayna@linux.ibm.com>
+> > Cc: Josh Boyer <jwboyer@fedoraproject.org>
+> > Cc: Mimi Zohar <zohar@linux.ibm.com>
+> > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> > ---
+> >  security/integrity/platform_certs/load_uefi.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> > index 81b19c52832b..fe261166621f 100644
+> > --- a/security/integrity/platform_certs/load_uefi.c
+> > +++ b/security/integrity/platform_certs/load_uefi.c
+> > @@ -48,7 +48,9 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> >
+> >         status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
+> >         if (status != EFI_BUFFER_TOO_SMALL) {
+> > -               pr_err("Couldn't get size: 0x%lx\n", status);
+> > +               if (status != EFI_NOT_FOUND)
+> > +                       pr_err("Couldn't get size: %s\n",
+> > +                               efi_status_to_str(status));
+> >                 return NULL;
+> >         }
+> >
+> > @@ -59,7 +61,8 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> >         status = efi.get_variable(name, guid, NULL, &lsize, db);
+> >         if (status != EFI_SUCCESS) {
+> >                 kfree(db);
+> > -               pr_err("Error reading db var: 0x%lx\n", status);
+> > +               pr_err("Error reading db var: %s\n",
+> > +                       efi_status_to_str(status));
+> >                 return NULL;
+> >         }
+> >
+> > --
+> > 2.16.4
+> >
