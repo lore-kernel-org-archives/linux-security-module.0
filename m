@@ -1,60 +1,60 @@
-Return-Path: <SRS0=jFhn=R2=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=C7Pi=R3=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2D5C43381
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Mar 2019 08:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8BEC43381
+	for <linux-security-module@archiver.kernel.org>; Sun, 24 Mar 2019 00:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9DF21900
-	for <linux-security-module@archiver.kernel.org>; Sat, 23 Mar 2019 08:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4B81217D8
+	for <linux-security-module@archiver.kernel.org>; Sun, 24 Mar 2019 00:26:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="giHPCxeZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Spyy5rGW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbfCWIh5 (ORCPT
+        id S1727526AbfCXA0o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 23 Mar 2019 04:37:57 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44946 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbfCWIh5 (ORCPT
+        Sat, 23 Mar 2019 20:26:44 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41393 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727319AbfCXA0o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 23 Mar 2019 04:37:57 -0400
-Received: by mail-pf1-f193.google.com with SMTP id a3so3063224pff.11;
-        Sat, 23 Mar 2019 01:37:56 -0700 (PDT)
+        Sat, 23 Mar 2019 20:26:44 -0400
+Received: by mail-pg1-f195.google.com with SMTP id k11so3948990pgb.8;
+        Sat, 23 Mar 2019 17:26:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
         bh=dZhxDdC/Qe4tqiAOQJ+sInBhscxUK5dRSwY91CjQlSQ=;
-        b=giHPCxeZobgKq8aImQf0H999zM+IUZ+e+sCYOMolaoEfZIvgRNEKb4dRq2QFcBa4Al
-         vOPmtZmbipjp4cpBkWh1pu5FVKAlaxr6KaCg0TJc9+8Sc9w1W7ZxSuOTJEYWHMyJrRo3
-         Lqkl4dhFM7KX2G0UvlWdyMZYjlxWC86qebDdSd7ZkheVsIR6QdzbRuPgCS47f7+Cw0f1
-         HbEhMACbyo6JKQ3RRl2Oza3NDgBTpdD/EqL7iiOYerdePrbyB0QRBXeC0fdUZHhB0Ek7
-         ElIFnvHmNlv4soQZM21lwguj+LbhbpyB5beGeE+PcyCF9x/Kq7YZmJ3xNgzZ6wbbCN9x
-         2d4A==
+        b=Spyy5rGW+mybuiFbAZSI3utxWF/QbLOVK0U/rl6IYo3mkRjCowmXiJYqJCUnab4Uns
+         8AKSCgHNnuiS0A01agvJmQYCKtX+QdlgjGCWkJVdsXd7xBS1P1hYqqv3abm7HzUyl8EZ
+         RDu3lYmVAbYBAwcuumFxOoQqnDZ+CB9wm+gp3LVubEggi85oMaDPd3hfA9Lu5E+7ar59
+         5sqCofMA2/V4+OztSXTkTpjBoP3ff1LDFYBjLkHesDLdabNveX03sOnMlVQPo22JcNCI
+         /lqVJvuID0K5KpKAN0S0ECW/qbi2O/QuQjoseBPVwm3UGOTsPHwz8tWLIDytBKGBfE8T
+         Fn3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
         bh=dZhxDdC/Qe4tqiAOQJ+sInBhscxUK5dRSwY91CjQlSQ=;
-        b=D7JphqqmMuehmvat6imE+DuMpZrAv7VttJAiAh0TywSnBD65EdVoWX2duc1DPG3azE
-         R+McJbCDho2ueWPSnWo6BXvxrOkNZ+BIffHAeJsTZGXegS3tEClfqcuhR+VqZ98PgT/Y
-         tzcvnWcXwZZ90UhmCa5qmMeeuNtU3aHioE7CcnwysU+iW9ko55Jaig8KAWwLOaT4148z
-         1jKsQJS4+13sa3rk0os2/HQS9bOEQbLGh6fFPiPRBYEW1/HxSLZjIAEpjGzGM/Yv1Be+
-         EISD/IHMiEUzZfctnpmsdbptYb3F5dYqaObDxtyCKTBMtrq3TLnRAANWu7wdJM2+Z0/z
-         /w9Q==
-X-Gm-Message-State: APjAAAW0RWYePPGjUBLLwI6Bn5o+JWXszA+r6gMIoMmFXoWLj1S4IRJo
-        3/cVc190jUYrnWlt288Qfhc=
-X-Google-Smtp-Source: APXvYqyAzBIficAWjTJuMxs8R+Flw5qqBplDztRcErwNuAvXLQacZ7Anjg1FWVFYVhH0vNIz1YYa4g==
-X-Received: by 2002:a63:f558:: with SMTP id e24mr12826488pgk.373.1553330276199;
-        Sat, 23 Mar 2019 01:37:56 -0700 (PDT)
+        b=OTleZJ32DDVGcU39itjsIgB8YRvo9Twhnt/G2U1kx1hBgcQBHGMnL8kJ3SuCUKqmxf
+         4uy2rWTlhB63Ji6O46UhE1wiArnrL6uFA/f/m6Nw7z1lUK7f/lJs86nsG2J1ZrYt6Nmj
+         IjuSRilMl8KkX1cmtEueP30Ew+16Vpxyjxi58BuFc7Xzo4qJHlZaRBMmHnL7Vn+avSo2
+         rHpIlatWwvQnd8F31+nCLRn7wPEkKfCVhyD1Ct6WuG60DZ+H1qGaThixJmGuTWZ6HGCL
+         Pe1p1NIlxtXn/BWzjkMN2X/vSNhs6+75nvrOgYp03iHpscCw1vLyX3uRwrf7OS/xcFpd
+         q3pA==
+X-Gm-Message-State: APjAAAUPdx2R0hyEcvC1mIl2/ubWxTHHF/FxCpomrfKcyEiPIPw3oXZG
+        njFlDeTkXQT9IY5nI07svBM=
+X-Google-Smtp-Source: APXvYqxyrNhoqmRR2GtyxXyh4QHs1sQA01swBbH3fdhsIXVAgug9si2QT0NvHqrJ27GM4ugiyutOzQ==
+X-Received: by 2002:a17:902:8ecc:: with SMTP id x12mr5278077plo.0.1553387202877;
+        Sat, 23 Mar 2019 17:26:42 -0700 (PDT)
 Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id i79sm21373563pfj.28.2019.03.23.01.37.52
+        by smtp.gmail.com with ESMTPSA id r66sm13737687pfr.131.2019.03.23.17.26.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 23 Mar 2019 01:37:55 -0700 (PDT)
+        Sat, 23 Mar 2019 17:26:41 -0700 (PDT)
 From:   "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
 X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
 To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
@@ -71,8 +71,8 @@ Cc:     linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
         Colin Cross <ccross@android.com>,
         Tony Luck <tony.luck@intel.com>
 Subject: [PATCH 1/2] efi: add a function for transferring status to string
-Date:   Sat, 23 Mar 2019 16:37:23 +0800
-Message-Id: <20190323083724.1367-1-jlee@suse.com>
+Date:   Sun, 24 Mar 2019 08:26:20 +0800
+Message-Id: <20190324002621.3551-1-jlee@suse.com>
 X-Mailer: git-send-email 2.12.3
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
