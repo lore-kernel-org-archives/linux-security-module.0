@@ -7,64 +7,63 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEF3C43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F3FC4360F
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EED1E20830
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:10:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2A5720857
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:10:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FrawaBB6"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ldxpNgax"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731109AbfCYWKu (ORCPT
+        id S1730545AbfCYWKz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 18:10:50 -0400
-Received: from mail-qk1-f202.google.com ([209.85.222.202]:57177 "EHLO
+        Mon, 25 Mar 2019 18:10:55 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:47881 "EHLO
         mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731098AbfCYWKq (ORCPT
+        with ESMTP id S1731148AbfCYWKy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 18:10:46 -0400
-Received: by mail-qk1-f202.google.com with SMTP id a15so7163137qkl.23
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:46 -0700 (PDT)
+        Mon, 25 Mar 2019 18:10:54 -0400
+Received: by mail-qk1-f202.google.com with SMTP id i124so9879663qkf.14
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=d2w/jghx/Rqm9mT1Z9xpzhe5/Zw0d2YU0UIlwgQoEuk=;
-        b=FrawaBB6eN8b4P/bVnjNhs6scGHBTE+TRJi3FQc+Wwj3NMeo6WCD3+HQbjxbbv7+WI
-         wDvx0vr8l5x8DzoI7Tj5mPDrvDE+B/5x/IkMJfAz/BDDG/Xw1MnUdDSmAETbxxPgdsmX
-         VYNfR2jows0dyDzxsN0D5o4jEVaObey0r1uqPlTIw9+c9pUY9s2qld90O2y0Nsj7j2dn
-         T+Bpo74qJ+oGzlbqnocrS8st4xl4QLtcoBL8M5dUotNMJLJ1Fia6RrOf17DILTsA8kZN
-         M6JQjp5NfHLIqjiyEugQs0B+MPF4ooHCAmn4/M9kSptz6VxUATW91wp/wM7IeI0PAiiR
-         5qig==
+        bh=PrJR0RaRgSbOBZwUzeo3I5hhwuXL6aA00K5kUeXQKiA=;
+        b=ldxpNgaxH/YHCoW1sAkKWCMk2rgkoIUCtZL9a3pHP1mgnuQGeHZOc2Hb8QqN9V/vhm
+         nwU9NE1Y9sBqrUedzaF+jEQRCmfrzLWhJhZpAhWJfkX7TRIC2hTXiF19DrpYCo2BovDm
+         iQRcbzBQsxO7oY7WniRiSxdW6DFqLI79Z3k0SkVIgYoLlVlbBPLclFAG4RtQ/oNUBp7t
+         CxNo8cyMyHiyiMM6FwJdS5EuDvNKTU6uEHB1PxHs+RFl/d5mu8kzoILCb//teVE+zVlz
+         ws+ZRmX5w82F56rt7M41HYV41JtsVSNrO0vBivx7Ax4wLryQaFJ5ZTpkh2Rqwh8Av9ZD
+         dMVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=d2w/jghx/Rqm9mT1Z9xpzhe5/Zw0d2YU0UIlwgQoEuk=;
-        b=C6Eb3Q4FRi6ZW7QXMW5obPOqIgk2rJicN6kXMf5PvKAy5qOlUZf6v9YID30aMxcurt
-         UZC8ELMZkzsnoNgqGDyQQ4fz9/4w3pKr0a+EFayZCTVEspQc85kxOIUZxBtd5r/ogHZW
-         LpHEhqAH13ltOSGKa1RxARy8a7Chlej63sAZrmpfyiLlQqlonD34sp2IENTO900uvV0S
-         0//EN1J4xibF4XlhJtqwgvsuT36C8qn6DPl7PKU8veFThM6EIjufD3Cj9iA8z+ozo21O
-         bLNnXpWh7mCPPDZh7bkP5K1KTiw7/GmjbC2dMswxbmht5nllpgIfKbDoltnssVV0kLE+
-         5jjw==
-X-Gm-Message-State: APjAAAVaCo1LIncvDELc06skuvf0K6UFCQrqSxwxm55af3Yc2WVwvHcL
-        +lhtLdIogKlv/UmVktsp4CYrHToLqzVsKq5JR4QI0Q==
-X-Google-Smtp-Source: APXvYqzVTVmfctzgnwCAHNdEt4TH8ZQrL1tFaVyjQTLK8D82gLE4ptXXx53VXcErlNp281g0KEM8LQ1kT4/LgoRtBMESyw==
-X-Received: by 2002:a0c:e58f:: with SMTP id t15mr22962206qvm.170.1553551845625;
- Mon, 25 Mar 2019 15:10:45 -0700 (PDT)
-Date:   Mon, 25 Mar 2019 15:09:45 -0700
+        bh=PrJR0RaRgSbOBZwUzeo3I5hhwuXL6aA00K5kUeXQKiA=;
+        b=R5/nYczmOsyQEv7TGwv9t+kzh+DDx4AKwMrIb6Vo99sPbriee90tnRm1rep4BK70Le
+         KS4kStRXqCq5W+PITNFWe6FnUEhYRXj3rSaaDvJIFd0QJmRV53bQFvKnzNZmE6A/Mpk1
+         j18ShOaGMD49ewa5AFnp8Ar5tcyG2gAZr8ljDE/48syvCmxl1sc9MLjD185F2TQ51EpM
+         T10Nbnn4zSjOfBgvX7HmXSpBsGbn/53TVYMWEMHuGNHO+4P29cymBhcyC9G1MOOVe0F3
+         jWuyIXgDEpKgzfwoVRxEZJwLnTYfqk5lrZelbfnEwdJ76usZ/1KCKvlC5akPCiqwxK9W
+         2hBA==
+X-Gm-Message-State: APjAAAWogHRr76cBJlrXUtewf5vdu6sbgncSfgQbhqB08LWom5lQMQRY
+        p3E6jdDDLiqqo/9CsdDbqk2LRbb5QDxPTycRxQEWdw==
+X-Google-Smtp-Source: APXvYqyhMiEOX1rNfbi57TmOLS1KVwin8O8ieaW59rgI7j+7wNTl/HVDzf7gLUtBzf7Ww6FBHOSzd/qAlS2//YdqFdSo5A==
+X-Received: by 2002:a37:b444:: with SMTP id d65mr20940708qkf.125.1553551853273;
+ Mon, 25 Mar 2019 15:10:53 -0700 (PDT)
+Date:   Mon, 25 Mar 2019 15:09:48 -0700
 In-Reply-To: <20190325220954.29054-1-matthewgarrett@google.com>
-Message-Id: <20190325220954.29054-19-matthewgarrett@google.com>
+Message-Id: <20190325220954.29054-22-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190325220954.29054-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH 18/27] Lock down TIOCSSERIAL
+Subject: [PATCH 21/27] Lock down /proc/kcore
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        James Morris <james.l.morris@oracle.com>,
         Matthew Garrett <matthewgarrett@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
@@ -73,37 +72,29 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-Lock down TIOCSSERIAL as that can be used to change the ioport and irq
-settings on a serial port.  This only appears to be an issue for the serial
-drivers that use the core serial code.  All other drivers seem to either
-ignore attempts to change port/irq or give an error.
+Disallow access to /proc/kcore when the kernel is locked down to prevent
+access to cryptographic data.
 
-Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-serial@vger.kernel.org
+Reviewed-by: James Morris <james.l.morris@oracle.com>
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- drivers/tty/serial/serial_core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/proc/kcore.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index d4cca5bdaf1c..04534877b575 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -842,6 +842,12 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
- 	new_flags = (__force upf_t)new_info->flags;
- 	old_custom_divisor = uport->custom_divisor;
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index bbcc185062bb..d50ebfbf3dbb 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -518,6 +518,8 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
  
-+	if ((change_port || change_irq) &&
-+	    kernel_is_locked_down("Using TIOCSSERIAL to change device addresses, irqs and dma channels")) {
-+		retval = -EPERM;
-+		goto exit;
-+	}
-+
- 	if (!capable(CAP_SYS_ADMIN)) {
- 		retval = -EPERM;
- 		if (change_irq || change_port ||
+ static int open_kcore(struct inode *inode, struct file *filp)
+ {
++	if (kernel_is_locked_down("/proc/kcore"))
++		return -EPERM;
+ 	if (!capable(CAP_SYS_RAWIO))
+ 		return -EPERM;
+ 
 -- 
 2.21.0.392.gf8f6787159e-goog
 
