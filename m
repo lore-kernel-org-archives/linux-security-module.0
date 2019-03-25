@@ -2,99 +2,74 @@ Return-Path: <SRS0=q+Rt=R4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1032BC43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 17:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43007C43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 19:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C819320823
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 17:47:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="PyRggYx2"
+	by mail.kernel.org (Postfix) with ESMTP id 1C5FF20685
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 19:08:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729749AbfCYRrK (ORCPT
+        id S1730015AbfCYTId (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 13:47:10 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39770 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729548AbfCYRrJ (ORCPT
+        Mon, 25 Mar 2019 15:08:33 -0400
+Received: from namei.org ([65.99.196.166]:58388 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729898AbfCYTId (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 13:47:09 -0400
-Received: by mail-lf1-f66.google.com with SMTP id m13so6651662lfb.6
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 10:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=S5UyRuHVuUXWaWvAftQ+RrqzdKeuAGFwRT50Ta/UFFE=;
-        b=PyRggYx2GW8cFTkwGf+23DBrjm8VfNC9im6QUs3L7YKc1g47iMrwGUqn/LCdy3SHXU
-         Tzf52VRbxta4oKJjbhCO//gQeGGY+Q9UbmxrrQ8LuZM3DHDhRhs/BCKugbOhwV/umQS5
-         IstwLZ2JSHjQgCYtOiTeUyv3/Fjvg7vyJQ9ho/Sj2A0kYeKknn3Zi0tHNmIhBmZY4DKE
-         H6ExWJI8ehIDb++0P/xmJ1eN0M8h7ClmEJolf6q4NoSPXcpb/eGj/SUxUiuVGzwBDZZ4
-         a2j9XRDe0+wtiLxBxjW81gkY2ZK9qi5pHtqoPxhYQJQue2bx4xs5zkJlh9K38QsIVeTW
-         c0nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=S5UyRuHVuUXWaWvAftQ+RrqzdKeuAGFwRT50Ta/UFFE=;
-        b=iMGzpJxvVUfVxVmo1O7kIw0fmN3rhcvr57BQV/2vsTpUdQYTWm3vqYILP9QmtviQEs
-         EfoPvp6l+U2wpYEp4NwaQLsVGiIakY6U5u4DhXFSyaUdJ2p5ga+v7bR8Xgk0PudhN2Qc
-         hh0dglpQHPh2BjcCUQf/gIhRiwsl8yEgbhA/fSZ4pbl6lqv3gd+wSzs8V4bLht8AVLSq
-         kq12DmC0RLktFmz/cs2r/+VWbBItXUPeZobdvicj9q6z5x+bmzpW8H7xVe2Xdb8Bgctk
-         eMMUjKWFBRfqpo3jK7ZofurRl15BBXjlx/T4iWbmKw1nXYAzlMCcsonJnKh4PC0lnaoo
-         gtpA==
-X-Gm-Message-State: APjAAAWzyS9diHgNG4+grby1JPyd4p3qrDyMqZB2qduPh9rZLinDgbVv
-        x577qC1ZXL4LRAzUTOm8ZnZ0j/agp3LDqQ==
-X-Google-Smtp-Source: APXvYqytSJnUFavFZw5eVVWaDeACX8dZsBE5EoTKe8L3dSu9GqqzRHfiBAgLpS6WDJ0fPicGEjzWTg==
-X-Received: by 2002:ac2:4304:: with SMTP id l4mr4978413lfh.168.1553536027619;
-        Mon, 25 Mar 2019 10:47:07 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([178.127.192.30])
-        by smtp.gmail.com with ESMTPSA id z73sm3468533lff.31.2019.03.25.10.47.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 25 Mar 2019 10:47:06 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id B0BA230123C; Mon, 25 Mar 2019 20:47:03 +0300 (+03)
-Date:   Mon, 25 Mar 2019 20:47:03 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     TongZhang <ztong@vt.edu>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        mhocko@suse.com, dan.j.williams@intel.com, rientjes@google.com,
-        aarcange@redhat.com, dave@stgolabs.net,
-        kirill.shutemov@linux.intel.com,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Shen Wenbo <shenwenbosmile@gmail.com>
-Subject: Re: Repost: Missing security_mmap_file() in remap_file_pages syscall
-Message-ID: <20190325174703.5cxfgif3z7gdfqhu@kshutemo-mobl1>
-References: <A6FCC3DA-C72C-4B59-A27E-E91F85949608@vt.edu>
+        Mon, 25 Mar 2019 15:08:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x2PJ8Abt014348;
+        Mon, 25 Mar 2019 19:08:10 GMT
+Date:   Tue, 26 Mar 2019 06:08:10 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: Re: Linux 5.1-rc2
+In-Reply-To: <2d4f3bfa-22c7-a18c-3902-fe1b6ac401f7@infradead.org>
+Message-ID: <alpine.LRH.2.21.1903260607500.13529@namei.org>
+References: <CAHk-=wgg_PRWs3a6u2gnFLQjhxOJcrFkqqWVnLw60eQAwD-DNw@mail.gmail.com> <2d4f3bfa-22c7-a18c-3902-fe1b6ac401f7@infradead.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <A6FCC3DA-C72C-4B59-A27E-E91F85949608@vt.edu>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 25, 2019 at 01:33:51PM -0400, TongZhang wrote:
-> Dear Kernel Developers,
-> 
-> We’d like to bring this up for a discussion again.
-> 
-> Several months ago we posted an email discussing a case where remap_file_pages() has no security_mmap_file() check.
-> At that time we were told that do_mmap_pgoff() will base the new VMA permission on the old one.
-> But somehow we still think the check is needed, for the reason that the advisory could first do a 
-> mmap() which can pass SELinux check then remap using a completely different file or region of file,
-> which could possibly pose a risk.
+On Sun, 24 Mar 2019, Randy Dunlap wrote:
 
-Could you elabarote on the risk you see? A bad scenario that could be
-prevented with SELinux check would be helpful.
+> On 3/24/19 2:26 PM, Linus Torvalds wrote:
+> > Well, we're a week away from the merge window close, and here's rc2.
+> > Things look fairly normal, but honestly, rc2 is usually too early to
+> > tell.  People haven't necessarily had time to notice problems yet.
+> > Which is just another way of saying "please test harder".
+> > 
+> > Nothing particularly stands out. Yes, we had some fixes for the new
+> > io_ring code for issues that were discussed when merging it. Other
+> > than that, worth noting is that the bulk of the patches are for
+> > tooling, not the core kernel. In fact, about two thirds of the patch
+> > is just for the tools/ subdirectory, most of it due to some late perf
+> > tool updates. The people involved promise they're done.
+> 
+> Hmph.  I'm still looking for the patch that restores the various
+> CONFIG_DEFAULT_<security> kconfig options to be merged.
+> 
+> https://lore.kernel.org/linux-security-module/2bf23acd-22c4-a260-7648-845887a409d5@i-love.sakura.ne.jp/
+> 
+> since commit 70b62c25665f636c9f6c700b26af7df296b0887e dropped them somehow.
+
+AFAICT we don't have a finalized version of the patch yet.
+
+Kees?
+
 
 -- 
- Kirill A. Shutemov
+James Morris
+<jmorris@namei.org>
+
