@@ -2,65 +2,87 @@ Return-Path: <SRS0=q+Rt=R4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E02C43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 21:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F012C43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 21:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB68E205C9
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 21:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 214A02082F
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 21:33:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="a+YHEmd6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbfCYVKJ (ORCPT
+        id S1730409AbfCYVdu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 17:10:09 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:27338 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729569AbfCYVKI (ORCPT
+        Mon, 25 Mar 2019 17:33:50 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45463 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729283AbfCYVdu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 17:10:08 -0400
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2PL9vVr012040;
-        Tue, 26 Mar 2019 06:09:57 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
- Tue, 26 Mar 2019 06:09:57 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126094122116.bbtec.net [126.94.122.116])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2PL9vse012035
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 26 Mar 2019 06:09:57 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: [PATCH] tomoyo: Add a kernel config option for fuzzing testing.
-To:     James Morris <jmorris@namei.org>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+29569ed06425fcf67a95@syzkaller.appspotmail.com>,
-        syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
-References: <1551362770-8655-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <alpine.LRH.2.21.1903130519440.27366@namei.org>
- <5b69c819-eed4-1825-9e67-fff1206e9e3f@i-love.sakura.ne.jp>
- <alpine.LRH.2.21.1903130821250.2172@namei.org>
- <8c586ed0-e9ee-a450-df06-3257cdf657ad@i-love.sakura.ne.jp>
- <CAHC9VhRMcdk5yAc0xoJ1nMfj7KAcktKmQ1GSYP2C4yRzqS9PFA@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <eaa4d0fa-19eb-f876-9c54-5ccb8d13e1b7@I-love.SAKURA.ne.jp>
-Date:   Tue, 26 Mar 2019 06:09:55 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.0
+        Mon, 25 Mar 2019 17:33:50 -0400
+Received: by mail-ot1-f65.google.com with SMTP id e5so9485118otk.12
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 14:33:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kI1cgbogsjrEoGMCL0RQUjw+UhPR/W1g5aVXTRUmpEM=;
+        b=a+YHEmd6q3x3r7xhfe5V6NBMKGgOubkzc1Gs+RX1Ls/aa4luvDZvUwlgoUsTgwbm3o
+         j0MnE2lTvC96noGsvcANxNnW0mjwsjQUHDS+ychSCn85FwLPdCYwUOmIHVN2ghgUetoN
+         TSXdzmVFE93EZIW4idpDHfbM9IdxF0VTg7H4vFgOabUsNjEkuIZIoFmTxbXR62Vlji7+
+         jMxZeKGI+Vy/8oLTyVlFSGLVOP6W92hGBiO7Yoqxc8x5w5daqtpydmsTDDvhXxgmHDFd
+         CQoOPVGXQEuFard+91BssIsbm7nc7s0CuLayrqyDh7TLBIfGGK3i10wsdQpWl0x+ExTY
+         z2NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kI1cgbogsjrEoGMCL0RQUjw+UhPR/W1g5aVXTRUmpEM=;
+        b=Oi/j3bezMi4SYqIXPL8DPhbFoRvmRxbsGNvBL1Vq9cND6Lw4E6bjCA5TnQcCR6yOzS
+         gwnhA0AQoDPI8T4ySk69lnOujYicrkHNFfRXi9ewTqMPBmJ1w+UgCW/YmRLBBCJzXusS
+         U7hrwYGOlKHUfxyByfNDyeb45fG+RDE39TK/oPDtiqr/qEBNiK44huSTpDAVMGe9Ab9l
+         aCvtUkFhn6qnvJ25agXuFwD7/i8nof5xcUKQn8PnKo0a8xgAHzIGDtzpDn7ilE5ciHsk
+         wgd09MLizwTg4Imim9mr5Jh8l1NW63u4z+CIoH6Q+7c2OzVYv5BFr9i+M7rSJfIqRgaf
+         XThA==
+X-Gm-Message-State: APjAAAVFL7I5SMWgxBeEyWVWZwgcXTHZa07wB3341dGOf1BL6pnJ2zkH
+        dzNhqqzH9iqQrH1Ha8vIjHArnwmhC6mlUYX5bURYaw==
+X-Google-Smtp-Source: APXvYqyPHqiNfzE9hZgC5qTZcOdyG7VxnXKECXCqkUFHSwHYzZniEM6XzuLj/8PbFOAbmnmWuZjd2RSZHiQDURb0HGQ=
+X-Received: by 2002:a9d:224a:: with SMTP id o68mr20457271ota.214.1553549629694;
+ Mon, 25 Mar 2019 14:33:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRMcdk5yAc0xoJ1nMfj7KAcktKmQ1GSYP2C4yRzqS9PFA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190325144735.30443-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190325144735.30443-1-jarkko.sakkinen@linux.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 25 Mar 2019 14:33:38 -0700
+Message-ID: <CAPcyv4gCvqkAUSb2sC1+hoHF=bu5X8AXvJuRoqcEt4OQGvWk5A@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: trusted: allow trusted.ko to initialize w/o a TPM
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        stable <stable@vger.kernel.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linuxibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-James,
+On Mon, Mar 25, 2019 at 7:48 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> Allow trusted.ko to initialize w/o a TPM. This commit adds checks to the
+> key type callbacks and exported functions to fail when a TPM is not
+> available.
+>
+> Cc: Dan Williams <dan.j.williams@intel.com>
 
-I think that nothing prevents this patch.
+Reported-and-tested-by: Dan Williams <dan.j.williams@intel.com>
 
+Thanks Jarkko!
