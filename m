@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BAEC43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 640CEC10F03
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F722075E
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 282852075E
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:13:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fH0qiocH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qtk3Uzax"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbfCYWKE (ORCPT
+        id S1730541AbfCYWKD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 18:10:04 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:53746 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730515AbfCYWKE (ORCPT
+        Mon, 25 Mar 2019 18:10:03 -0400
+Received: from mail-ua1-f73.google.com ([209.85.222.73]:50633 "EHLO
+        mail-ua1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730086AbfCYWKC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 18:10:04 -0400
-Received: by mail-pf1-f202.google.com with SMTP id o67so10568399pfa.20
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:03 -0700 (PDT)
+        Mon, 25 Mar 2019 18:10:02 -0400
+Received: by mail-ua1-f73.google.com with SMTP id i13so1333061ual.17
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=7kY2QswyjJGeL+pn4tYPdCA7RsaJvP9HYM3SbJBAroA=;
-        b=fH0qiocHX6D+ppy2Eb2sLQX8da74DNy4n+Yf3JdgbVVnZVss6gDkp1UF1+MGC2phbK
-         2NBWddi7f2z/Wu3m54i5eKH/R4ZFC0dfsbWbsi7wjjvdiXztgfcwoANfoRbKTWGV11Ox
-         O7ujjDZ+mouLArSBowSQ4PA+vt20BnzkqiisjM/P8QlkDazsrGEnu22inRsXUFU58SKo
-         npGx7kKT6YGhJ5/PFGUpQNyqmLnNdDrYsK6YhukC5jDlhucYthSguWENoUMr1AxXeOQL
-         7F5RzqoGTTPj6r5z8tby7xgqZCjecOc7zlaPi/sKuGLihdVXmTOAnj3cDW/s0XM89yz/
-         XjJw==
+        bh=uBzQBnzVBfq8JoUqfbgdJarhJoRvZiKFoNAG2KlTyk0=;
+        b=Qtk3UzaxR8cDFWuaaz8d/wTVyGAl498kaKXTG/KzqlRafDY9W5HLqO7xgmwItV/0Wa
+         lTEZqoaELaS2yxVnr73TwOvzVkh/Bcdohl7iZ/ErpQdScHMe7/a5TxmVg4CNSJL0Km8k
+         fCZEuWsq/x+uDp0bivU6h/KHG2rqVxIjEA8T/CVpuOF834I80pnfni6hEYLrsAziuFrf
+         l3Mzx8HeAbu4cBrccafTzMVWnQJUAPu/3G1/S2W4FIEa2M1lD3f726SqJCPDbGH3UDBt
+         Jj4P8UxszT/C+eA/BYRdXh33lIckTwYIdE8LSxIQIPMClinFpYcivKeipgi1f4eFpfEH
+         Pwiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=7kY2QswyjJGeL+pn4tYPdCA7RsaJvP9HYM3SbJBAroA=;
-        b=aR/TZmUm2GrhesaxPQiRqj8Tsnkee63xnollbsqJDlQXwBXuQzxEsHZOOjCmJPP7Ar
-         LAGS+iFLW6EguxBe9jtmvkrYs4/yG8MBZVksG4m85tanxdNnlgq7NCGidmEcyIMnDRgk
-         aXbWuuJrseWIabRVJkYFJDkj/EQkpfzDOFpXWD8Me0cEo/Fb+1MBbH2Kfm/ZGflShBug
-         vqQsIYDuoh2bbvKEgM1KLBZ774w7SbvrPMMwvTri0nAagcPqBLhKjEkoV1LJcdWyabQq
-         JpsjRMgdU0UdXOEgHjNVvUvTiU3HTDCpG8nZyZ0m8e3SkS0lMdESzuX1xGCAmsuWj6VI
-         LcDA==
-X-Gm-Message-State: APjAAAVanYwRz6OPcWgYvn1tx2sShE0le4SJSb+kKnA17N6bi0tQ40pO
-        gC02NEPtyHJhdyrczhLNbPfgHyZ2UXyswpR9JU5xug==
-X-Google-Smtp-Source: APXvYqwAjwGZ2XuHEZMf2N4nC+utrAZ0fFynLHMvG+jRgiNluH5cNZofkgpugK8PHpKGPY6luT5eHt7GND8ndB/OLW+FpQ==
-X-Received: by 2002:a65:4547:: with SMTP id x7mr24808022pgr.350.1553551803393;
- Mon, 25 Mar 2019 15:10:03 -0700 (PDT)
-Date:   Mon, 25 Mar 2019 15:09:29 -0700
+        bh=uBzQBnzVBfq8JoUqfbgdJarhJoRvZiKFoNAG2KlTyk0=;
+        b=GnHETTcUArkla4dnSBJSb4OGO3sZZ7fb6nQyWR9MNubhZN/e3Gf1+iFdaLic0qDxcn
+         ZrmtSBuxh5vyQRTx6z/Ya0rBWNSL3kLJJwyIb+5fsc9UZY5W1GgwidD9KCD5kQWu9HmW
+         Q+aaQ0U71via6320mDMSkLF+9QV5kVcrhnmjyMYQsVsn1dEMREyqT7xjilrzTv+fjQNU
+         NzohSSYwc22lBD+ShmEFt04wvKZ5daKJD8+zcWQJr8KLoxy9SOlkxO2rofYeYHPwUVbc
+         jBmclEPJjsDSouyESWTuHaVimsxbl+01pAqYaWnucTOxgpJmc7H6mxKKEVywfr6CIFXB
+         wGTA==
+X-Gm-Message-State: APjAAAXWLimhz5YF3nm87wxUVAnTSN+0jz5fjOFYLsGDHWdspq9xYklM
+        X3OHV2FTCuuY9bngTca+8Ee3HmawlGAhnsxJxDNzdw==
+X-Google-Smtp-Source: APXvYqx6skRlFA8s965pJMOHpGm/nj46vsMi4SOXagjWjUDlePz/v5MBkBMpywFs/eENyhXI5/cmNEwUuIPG9BQdFy1UnA==
+X-Received: by 2002:a1f:32c7:: with SMTP id y190mr11385971vky.15.1553551800948;
+ Mon, 25 Mar 2019 15:10:00 -0700 (PDT)
+Date:   Mon, 25 Mar 2019 15:09:28 -0700
 In-Reply-To: <20190325220954.29054-1-matthewgarrett@google.com>
-Message-Id: <20190325220954.29054-3-matthewgarrett@google.com>
+Message-Id: <20190325220954.29054-2-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190325220954.29054-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH 02/27] Enforce module signatures if the kernel is locked down
+Subject: [PATCH 01/27] Add the ability to lock down access to the running
+ kernel image
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        Jiri Bohac <jbohac@suse.cz>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Jessica Yu <jeyu@kernel.org>
+        James Morris <james.l.morris@oracle.com>,
+        Matthew Garrett <matthewgarrett@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -73,105 +73,173 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: David Howells <dhowells@redhat.com>
 
-If the kernel is locked down, require that all modules have valid
-signatures that we can verify.
-
-I have adjusted the errors generated:
-
- (1) If there's no signature (ENODATA) or we can't check it (ENOPKG,
-     ENOKEY), then:
-
-     (a) If signatures are enforced then EKEYREJECTED is returned.
-
-     (b) If there's no signature or we can't check it, but the kernel is
-	 locked down then EPERM is returned (this is then consistent with
-	 other lockdown cases).
-
- (2) If the signature is unparseable (EBADMSG, EINVAL), the signature fails
-     the check (EKEYREJECTED) or a system error occurs (eg. ENOMEM), we
-     return the error we got.
-
-Note that the X.509 code doesn't check for key expiry as the RTC might not
-be valid or might not have been transferred to the kernel's clock yet.
-
-This does not yet integrate with setups that pin module loading to
-dm-verity backed filesystems. If lockdown is enabled, loading unsigned
-modules from an integrity-assured filesystem will fail.
-
- [Modified by Matthew Garrett to remove the IMA integration. This will
-  be replaced with integration with the IMA architecture policy
-  patchset.]
+Provide a single call to allow kernel code to determine whether the system
+should be locked down, thereby disallowing various accesses that might
+allow the running kernel image to be changed including the loading of
+modules that aren't validly signed with a key we recognise, fiddling with
+MSR registers and disallowing hibernation.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jiri Bohac <jbohac@suse.cz>
+Acked-by: James Morris <james.l.morris@oracle.com>
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
-Cc: Jessica Yu <jeyu@kernel.org>
 ---
- kernel/module.c | 39 ++++++++++++++++++++++++++++++++-------
- 1 file changed, 32 insertions(+), 7 deletions(-)
+ include/linux/kernel.h   | 17 ++++++++++++
+ include/linux/security.h |  9 +++++-
+ security/Kconfig         | 15 ++++++++++
+ security/Makefile        |  3 ++
+ security/lock_down.c     | 60 ++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 103 insertions(+), 1 deletion(-)
+ create mode 100644 security/lock_down.c
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 2ad1b5239910..9a377c6ea200 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2767,8 +2767,9 @@ static inline void kmemleak_load_module(const struct module *mod,
- #ifdef CONFIG_MODULE_SIG
- static int module_sig_check(struct load_info *info, int flags)
- {
--	int err = -ENOKEY;
-+	int err = -ENODATA;
- 	const unsigned long markerlen = sizeof(MODULE_SIG_STRING) - 1;
-+	const char *reason;
- 	const void *mod = info->hdr;
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 8f0e68e250a7..833bf32ce4e6 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -340,6 +340,23 @@ static inline void refcount_error_report(struct pt_regs *regs, const char *err)
+ { }
+ #endif
  
- 	/*
-@@ -2783,16 +2784,40 @@ static int module_sig_check(struct load_info *info, int flags)
- 		err = mod_verify_sig(mod, info);
- 	}
- 
--	if (!err) {
-+	switch (err) {
-+	case 0:
- 		info->sig_ok = true;
- 		return 0;
--	}
- 
--	/* Not having a signature is only an error if we're strict. */
--	if (err == -ENOKEY && !is_module_sig_enforced())
--		err = 0;
-+		/* We don't permit modules to be loaded into trusted kernels
-+		 * without a valid signature on them, but if we're not
-+		 * enforcing, certain errors are non-fatal.
-+		 */
-+	case -ENODATA:
-+		reason = "Loading of unsigned module";
-+		goto decide;
-+	case -ENOPKG:
-+		reason = "Loading of module with unsupported crypto";
-+		goto decide;
-+	case -ENOKEY:
-+		reason = "Loading of module with unavailable key";
-+	decide:
-+		if (is_module_sig_enforced()) {
-+			pr_notice("%s is rejected\n", reason);
-+			return -EKEYREJECTED;
-+		}
- 
--	return err;
-+		if (kernel_is_locked_down(reason))
-+			return -EPERM;
-+		return 0;
++#ifdef CONFIG_LOCK_DOWN_KERNEL
++extern bool __kernel_is_locked_down(const char *what, bool first);
++#else
++static inline bool __kernel_is_locked_down(const char *what, bool first)
++{
++	return false;
++}
++#endif
 +
-+		/* All other errors are fatal, including nomem, unparseable
-+		 * signatures and signature check failures - even if signatures
-+		 * aren't required.
-+		 */
-+	default:
-+		return err;
++#define kernel_is_locked_down(what)					\
++	({								\
++		static bool message_given;				\
++		bool locked_down = __kernel_is_locked_down(what, !message_given); \
++		message_given = true;					\
++		locked_down;						\
++	})
++
+ /* Internal, do not use. */
+ int __must_check _kstrtoul(const char *s, unsigned int base, unsigned long *res);
+ int __must_check _kstrtol(const char *s, unsigned int base, long *res);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 13537a49ae97..b290946341a4 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1798,5 +1798,12 @@ static inline void security_bpf_prog_free(struct bpf_prog_aux *aux)
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_BPF_SYSCALL */
+ 
+-#endif /* ! __LINUX_SECURITY_H */
++#ifdef CONFIG_LOCK_DOWN_KERNEL
++extern void __init init_lockdown(void);
++#else
++static inline void __init init_lockdown(void)
++{
++}
++#endif
+ 
++#endif /* ! __LINUX_SECURITY_H */
+diff --git a/security/Kconfig b/security/Kconfig
+index 1d6463fb1450..47dc3403b5af 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -229,6 +229,21 @@ config STATIC_USERMODEHELPER_PATH
+ 	  If you wish for all usermode helper programs to be disabled,
+ 	  specify an empty string here (i.e. "").
+ 
++config LOCK_DOWN_KERNEL
++	bool "Allow the kernel to be 'locked down'"
++	help
++	  Allow the kernel to be locked down. If lockdown support is enabled
++	  and activated, the kernel will impose additional restrictions
++	  intended to prevent uid 0 from being able to modify the running
++	  kernel. This may break userland applications that rely on low-level
++	  access to hardware.
++
++config LOCK_DOWN_KERNEL_FORCE
++        bool "Enable kernel lockdown mode automatically"
++        depends on LOCK_DOWN_KERNEL
++        help
++          Enable the kernel lock down functionality automatically at boot.
++
+ source "security/selinux/Kconfig"
+ source "security/smack/Kconfig"
+ source "security/tomoyo/Kconfig"
+diff --git a/security/Makefile b/security/Makefile
+index c598b904938f..5ff090149c88 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -32,3 +32,6 @@ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
+ # Object integrity file lists
+ subdir-$(CONFIG_INTEGRITY)		+= integrity
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
++
++# Allow the kernel to be locked down
++obj-$(CONFIG_LOCK_DOWN_KERNEL)		+= lock_down.o
+diff --git a/security/lock_down.c b/security/lock_down.c
+new file mode 100644
+index 000000000000..18d8776a4d02
+--- /dev/null
++++ b/security/lock_down.c
+@@ -0,0 +1,60 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Lock down the kernel
++ *
++ * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/security.h>
++#include <linux/export.h>
++
++static __ro_after_init bool kernel_locked_down;
++
++/*
++ * Put the kernel into lock-down mode.
++ */
++static void __init lock_kernel_down(const char *where)
++{
++	if (!kernel_locked_down) {
++		kernel_locked_down = true;
++		pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
++			  where);
 +	}
- }
- #else /* !CONFIG_MODULE_SIG */
- static int module_sig_check(struct load_info *info, int flags)
++}
++
++static int __init lockdown_param(char *ignored)
++{
++	lock_kernel_down("command line");
++	return 0;
++}
++
++early_param("lockdown", lockdown_param);
++
++/*
++ * Lock the kernel down from very early in the arch setup.  This must happen
++ * prior to things like ACPI being initialised.
++ */
++void __init init_lockdown(void)
++{
++#ifdef CONFIG_LOCK_DOWN_FORCE
++	lock_kernel_down("Kernel configuration");
++#endif
++}
++
++/**
++ * kernel_is_locked_down - Find out if the kernel is locked down
++ * @what: Tag to use in notice generated if lockdown is in effect
++ */
++bool __kernel_is_locked_down(const char *what, bool first)
++{
++	if (what && first && kernel_locked_down)
++		pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
++			  what);
++	return kernel_locked_down;
++}
++EXPORT_SYMBOL(__kernel_is_locked_down);
 -- 
 2.21.0.392.gf8f6787159e-goog
 
