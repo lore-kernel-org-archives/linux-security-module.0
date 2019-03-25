@@ -2,92 +2,106 @@ Return-Path: <SRS0=q+Rt=R4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28154C43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 23:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C40C43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 23:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3CA020848
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 23:35:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AF04207DD
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 23:40:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbfCYXfy (ORCPT
+        id S1726276AbfCYXkk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 19:35:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48012 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbfCYXfy (ORCPT
+        Mon, 25 Mar 2019 19:40:40 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:47100 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726186AbfCYXkk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 19:35:54 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66FD0207DD;
-        Mon, 25 Mar 2019 23:35:52 +0000 (UTC)
-Date:   Mon, 25 Mar 2019 19:35:50 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
+        Mon, 25 Mar 2019 19:40:40 -0400
+Received: from p5492e2fc.dip0.t-ipconnect.de ([84.146.226.252] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1h8ZCk-0001Ad-Jc; Tue, 26 Mar 2019 00:40:34 +0100
+Date:   Tue, 26 Mar 2019 00:40:34 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [PATCH 20/27] x86/mmiotrace: Lock down the testmmiotrace module
-Message-ID: <20190325193550.00cbbff6@oasis.local.home>
-In-Reply-To: <20190325220954.29054-21-matthewgarrett@google.com>
-References: <20190325220954.29054-1-matthewgarrett@google.com>
-        <20190325220954.29054-21-matthewgarrett@google.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Kees Cook <keescook@chromium.org>, x86@kernel.org
+Subject: Re: [PATCH 12/27] x86/msr: Restrict MSR access when the kernel is
+ locked down
+In-Reply-To: <20190325220954.29054-13-matthewgarrett@google.com>
+Message-ID: <alpine.DEB.2.21.1903260003040.1789@nanos.tec.linutronix.de>
+References: <20190325220954.29054-1-matthewgarrett@google.com> <20190325220954.29054-13-matthewgarrett@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 25 Mar 2019 15:09:47 -0700
-Matthew Garrett <matthewgarrett@google.com> wrote:
+Matthew,
 
-> From: David Howells <dhowells@redhat.com>
+On Mon, 25 Mar 2019, Matthew Garrett wrote:
+
+> From: Matthew Garrett <mjg59@srcf.ucam.org>
 > 
-> The testmmiotrace module shouldn't be permitted when the kernel is locked
-> down as it can be used to arbitrarily read and write MMIO space.
+> Writing to MSRs should not be allowed if the kernel is locked down, since
+> it could lead to execution of arbitrary code in kernel mode.  Based on a
+> patch by Kees Cook.
 > 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: David Howells <dhowells@redhat.com
-> cc: Thomas Gleixner <tglx@linutronix.de>
-> cc: Steven Rostedt <rostedt@goodmis.org>
-> cc: Ingo Molnar <mingo@kernel.org>
-> cc: "H. Peter Anvin" <hpa@zytor.com>
-> cc: x86@kernel.org
-> Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
-> ---
->  arch/x86/mm/testmmiotrace.c | 3 +++
->  1 file changed, 3 insertions(+)
+> MSR accesses are logged for the purposes of building up a whitelist as per
+> Alan Cox's suggestion.
 > 
-> diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-> index f6ae6830b341..bbaad357f5d7 100644
-> --- a/arch/x86/mm/testmmiotrace.c
-> +++ b/arch/x86/mm/testmmiotrace.c
-> @@ -115,6 +115,9 @@ static int __init init(void)
->  {
->  	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
+> Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Acked-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+
+I'm pretty sure, that I reviewed a different version of this, but due to
+the lack of:
+
+ 1) A version indicator in the subject line, i.e. [PATCH v7 12/27]
+
+ 2) A simple change indicator after the --- separator, e.g.
+
+    v6 -> v7: Add MRS logging to dmesg .....
+
+It's tedious to figure out what actually changed here. I just know for sure
+that the printk wasn't there before.
+
+It's not a huge effort adding such information, but it's very helpful for
+those who are supposed to look at your patches. Those people are drowned in
+patches so making it as easy as it goes would be very appreciated.
+
+> +++ b/arch/x86/kernel/msr.c
+> @@ -84,6 +84,11 @@ static ssize_t msr_write(struct file *file, const char __user *buf,
+>  	int err = 0;
+>  	ssize_t bytes = 0;
 >  
-> +	if (kernel_is_locked_down("MMIO trace testing"))
-> +		return -EPERM;
+> +	if (kernel_is_locked_down("Direct MSR access")) {
+> +		pr_info("Direct access to MSR %x\n", reg);
 
-I wonder if we should take this one step further. As this module is
-really just for testing the mmiotracer (and really shouldn't be enabled
-by anyone that doesn't know what it's for), why not just add to the Kconfig file
+I'm really not fond of this at all. /dev/msr should simply die.
 
-CONFIG_MMIOTRACE_TEST depend on !CONFIG_LOCK_DOWN_KERNEL ?
+Maintaining a whitelist for this is a horrible idea as you will get a
+gazillion of excuses why access to a particular MSR is sane. And I'm
+neither interested in these discussions nor interested in adding the
+whitelist to this trainwreck,
 
--- Steve
+The right thing to do is to provide sane interfaces and that's where we are
+moving to. So simply blocking the access with locked down mode might be
+very helpful to accelerate that.
 
-> +
->  	if (mmio_address == 0) {
->  		pr_err("you have to use the module argument
-> mmio_address.\n"); pr_err("DO NOT LOAD THIS MODULE UNLESS YOU REALLY
-> KNOW WHAT YOU ARE DOING!\n");
+Thanks,
+
+	tglx
+
 
