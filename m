@@ -7,99 +7,99 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA4FC43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B88C10F03
 	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B2B1206C0
+	by mail.kernel.org (Postfix) with ESMTP id 58D34206C0
 	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WlInIGo7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VrMauZb+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731004AbfCYWKe (ORCPT
+        id S1730486AbfCYWMI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 18:10:34 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:48681 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731000AbfCYWKc (ORCPT
+        Mon, 25 Mar 2019 18:12:08 -0400
+Received: from mail-oi1-f201.google.com ([209.85.167.201]:36933 "EHLO
+        mail-oi1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731013AbfCYWKe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 18:10:32 -0400
-Received: by mail-pl1-f201.google.com with SMTP id y17so771573plr.15
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:32 -0700 (PDT)
+        Mon, 25 Mar 2019 18:10:34 -0400
+Received: by mail-oi1-f201.google.com with SMTP id v10so4459028oie.4
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=JjClfNcwudfjVo/9wlvsMTmCzUCPUTa4DRML2JJ7YVY=;
-        b=WlInIGo7E8Sg1V/FJrdy7246BJfv2IFZBnZYy6waTznK9n+caw2TjPOhGfPZ703SMU
-         HsdZZBq/cfCb9aUasck8HT2YGLHxCNOEM9Dn8gFGDuQRppgl9963pB2bWUbB3OdW0afz
-         R9HQ+dGBSgtqfa4Llibc6rDd6MCdkBpPk9PllURgbs7CB/aHBVoZoDL9rJ67wbDYeM2+
-         nkvuRWNqfMG3FM8h9H3EFUVkL8vF8uCHI4XGBEht/JE3ERIQt2oTW06JFFUZIo/C2MeG
-         Gup11dIXcq1FY5/CF5EJkioM9JR9kP5hnhmiHGiydSEU3zr+pQBPM+64rv1Ip3uSVYPi
-         STGA==
+        bh=Du3LfKxiyrtDY9MxBnvqQFXXPhu80u18vHOumdetHcI=;
+        b=VrMauZb+eQPOvofd+xivyKVFEkCCOvSF8qKqadOua3cMjf6D5TrZT1WMbTz8H7OVz0
+         DTdtIpcsVj9NOl3gcpVjzhO4mVKMyvI92hijoEdACD7E9B0Ji7wOX5LjuH7s6YD/i25P
+         Oseo8bd0Gl1AQ3njPd9plNxAfzUIRFQuLezCj97MS32mNFhMUCza34R5bNPVl8F8ku/k
+         41yAMHG6zWtWCIuprn6o8f+ymsKRLuicHupSUH3sSaBODUhbYI42er5M3Ti7yr9LLFVL
+         z43jrgjDfO9c9rGNDsQh765vnzu8REms7ZS1bs87OebwLENhNYfJV+1Eb8FDrFtWYkch
+         N5Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=JjClfNcwudfjVo/9wlvsMTmCzUCPUTa4DRML2JJ7YVY=;
-        b=maU96LpmV5YzEEsU72tZAdjn0bPh9wpuwlJ6PRwIesDxQBKadjlXGVzh7G/hqMdmL2
-         kc5a497hl84g06/IcaZbVY2OiL9DgShNsBJjQpDt2rnLNgdkAxwrwgNiWXOmLLiWXxoy
-         5nMSODFtSacK3vQVqSMGZyrQM/AEXNMUsZUVGy7kQ9XwAOHAdHLd3xr547kIyHiyNCYW
-         ljcuZL6fxWtF/A6sYapUa/dRwQbvkwbLTqXZZc0ujj3H1g6huKta2/BMciFrMFt0GMQx
-         faGIRxZTiHKSAkbOYfMc7RuxmV6OfvwHp5/fioCnlKsnOX138S09NZXTAoIIHwLr2yOK
-         KamQ==
-X-Gm-Message-State: APjAAAVrIDHE5pAQg6HKFhFPIyIsUygoDsX85DC7HPNKs+kbr1G0twhr
-        s472BBjP3L9i5DIRBRpLoWW9Q+rb87M/Bob3p2lReg==
-X-Google-Smtp-Source: APXvYqy+/HPWSggooyPKfCP9rCJAS540SEUMOaDvUBcRppcKI7iz6oLk3Dau8NiT2sBTzaxyaianjTm+/T/hLkd14AF0/g==
-X-Received: by 2002:a63:6a45:: with SMTP id f66mr6790296pgc.7.1553551831630;
- Mon, 25 Mar 2019 15:10:31 -0700 (PDT)
-Date:   Mon, 25 Mar 2019 15:09:40 -0700
+        bh=Du3LfKxiyrtDY9MxBnvqQFXXPhu80u18vHOumdetHcI=;
+        b=TqRS8UQENvIMMCZ+e9U92m/4x2VPblm+xrH4AlpbNS6T5ZG49opXejcBu9Hl9KUq2R
+         YeZFWVzuSqO4HmvJv6aJv0j2lAFLlsPAfEGnO0JBvA/1/LUmV+aRJUo1eSCAhp6DU/Pf
+         v0sUBzHjfbawFMnqhuwpArB+DzlQZAPhXNAM+z5gHYGClGg1S8iAE7Dth1lqHv70tT/a
+         I1iDhMQGK/V/GVJ195bjB3P9KTe2snOiGcD+bDQbQce90AI1dHhF2QvuR8BHy9YZOyaW
+         dO82DED6okn4DNe8vIpORyDuCNT+E0BJZCYfhTqwPsCgkHQrrVOdAI3x+ipHtpkDta56
+         MNsg==
+X-Gm-Message-State: APjAAAUC3ZWdAqze+eP5y7KrAZtt89yLa2Er3BHMjJ3AZMn3gUhigv24
+        SpJlK5/gnOcHhDJhSHwNaJoWOiDjGEduNSmKsozdIw==
+X-Google-Smtp-Source: APXvYqxDupMpWfLNMtoM3g47UnWhv4hMiRU+qH/WEMXcvRbfp6XpdqUzUlhxxmt1k3IP1YQclBpCIBQB4OZ6Pn0WW24s5A==
+X-Received: by 2002:aca:4103:: with SMTP id o3mr13576902oia.71.1553551834252;
+ Mon, 25 Mar 2019 15:10:34 -0700 (PDT)
+Date:   Mon, 25 Mar 2019 15:09:41 -0700
 In-Reply-To: <20190325220954.29054-1-matthewgarrett@google.com>
-Message-Id: <20190325220954.29054-14-matthewgarrett@google.com>
+Message-Id: <20190325220954.29054-15-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190325220954.29054-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH 13/27] ACPI: Limit access to custom_method when the kernel is
- locked down
+Subject: [PATCH 14/27] acpi: Ignore acpi_rsdp kernel param when the kernel has
+ been locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        linux-acpi@vger.kernel.org,
+        Josh Boyer <jwboyer@redhat.com>,
+        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org,
         Matthew Garrett <matthewgarrett@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+From: Josh Boyer <jwboyer@redhat.com>
 
-custom_method effectively allows arbitrary access to system memory, making
-it possible for an attacker to circumvent restrictions on module loading.
-Disable it if the kernel is locked down.
+This option allows userspace to pass the RSDP address to the kernel, which
+makes it possible for a user to modify the workings of hardware .  Reject
+the option when the kernel is locked down.
 
-Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
+Signed-off-by: Josh Boyer <jwboyer@redhat.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Dave Young <dyoung@redhat.com>
 cc: linux-acpi@vger.kernel.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- drivers/acpi/custom_method.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/osl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
-index 4451877f83b6..ac8a90dc7096 100644
---- a/drivers/acpi/custom_method.c
-+++ b/drivers/acpi/custom_method.c
-@@ -29,6 +29,9 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
- 	struct acpi_table_header table;
- 	acpi_status status;
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index f29e427d0d1d..3e44cef7a0cd 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -194,7 +194,7 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
+ 	acpi_physical_address pa;
  
-+	if (kernel_is_locked_down("ACPI custom methods"))
-+		return -EPERM;
-+
- 	if (!(*ppos)) {
- 		/* parse the table header to get the table length */
- 		if (count <= sizeof(struct acpi_table_header))
+ #ifdef CONFIG_KEXEC
+-	if (acpi_rsdp)
++	if (acpi_rsdp && !kernel_is_locked_down("ACPI RSDP specification"))
+ 		return acpi_rsdp;
+ #endif
+ 	pa = acpi_arch_get_root_pointer();
 -- 
 2.21.0.392.gf8f6787159e-goog
 
