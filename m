@@ -2,164 +2,173 @@ Return-Path: <SRS0=q+Rt=R4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA96C43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 19:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5880C43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 21:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D1A520848
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 19:52:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="cJqANCno"
+	by mail.kernel.org (Postfix) with ESMTP id ADE0920823
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 21:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbfCYTwx (ORCPT
+        id S1730015AbfCYVGW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 15:52:53 -0400
-Received: from uhil19pa09.eemsg.mail.mil ([214.24.21.82]:45955 "EHLO
-        uhil19pa09.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729283AbfCYTwx (ORCPT
+        Mon, 25 Mar 2019 17:06:22 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:41328 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729283AbfCYVGW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 15:52:53 -0400
-X-EEMSG-check-017: 2835561|UHIL19PA09_EEMSG_MP7.csd.disa.mil
-Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
-  by uhil19pa09.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 25 Mar 2019 19:52:51 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1553543571; x=1585079571;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=WfisdA6pgf4+ZRdgKRHsyph3IO/NxqlTZnmGTF4p764=;
-  b=cJqANCnosUTrvl0iZJRbtSTP9AWIPwc2bfIOZY0jp/LxFBbXaVyk8lka
-   D/8XkLiJyUryxHt6zc3sj0IwLb4alWiZKZLgIj+xAj6FXk3u3mcjqRYZm
-   JImq2py1PM12nIfm9bOvY5Dbq/vcuH2C222YmbiErqtGcytQnOuoq9iHl
-   RoFipSCJOT7gRjn36a+t1/M958HcXQM0PRLJPI0BWdyzNKFPzjxEDRaFC
-   oZLi9x79wJfO1M78+qO26TJZk6em9FrLMsLeaoELZhn1dSedLqU8CHJ0P
-   7mYlkE8EvWr/a1mGOuDXaHpKDZAJ9zoW2rBb/5trt2oJAMkDbwmEaTL0e
-   A==;
-X-IronPort-AV: E=Sophos;i="5.60,270,1549929600"; 
-   d="scan'208";a="21817426"
-IronPort-PHdr: =?us-ascii?q?9a23=3AhkGqcxKfOTdBKVwNhdmcpTZWNBhigK39O0sv0r?=
- =?us-ascii?q?FitYgXLvjzrarrMEGX3/hxlliBBdydt6sczbWG+Pm6BiQp2tWoiDg6aptCVh?=
- =?us-ascii?q?sI2409vjcLJ4q7M3D9N+PgdCcgHc5PBxdP9nC/NlVJSo6lPwWB6nK94iQPFR?=
- =?us-ascii?q?rhKAF7Ovr6GpLIj8Swyuu+54Dfbx9HiTagfb9+Nhe7oAbeusULn4dvKLs6xw?=
- =?us-ascii?q?fUrHdPZ+lY335jK0iJnxb76Mew/Zpj/DpVtvk86cNOUrj0crohQ7BAAzsoL2?=
- =?us-ascii?q?465MvwtRneVgSP/WcTUn8XkhVTHQfI6gzxU4rrvSv7sup93zSaPdHzQLspVz?=
- =?us-ascii?q?mu87tnRRn1gygJLT459HzchNJ2gqxVvRmtowVzzo7QbY2QMvd1Y6HTcs4ARW?=
- =?us-ascii?q?dZQ8hfSSJBDIO/YYUBAeUOMuRXoJXyqVYVsRuzBhOhCP/zxjJGhHL727Ax3e?=
- =?us-ascii?q?Q7EQHB2QwtB88AsGjKo9XtNKcdT+a1x7TVwzXGdfxW3TP955bIcxs8pvyMRq?=
- =?us-ascii?q?9/cdHKxEkzFwLKklWQqYv/MzOTzeQCqXKX7+VnVeKxkmMqrRx6rDu3xso0l4?=
- =?us-ascii?q?XEiY0YxkrE+Clk2oo5O9K1RFBhbdK5FpZbqjuUOJFsQsw4RmFloCM6yrobtp?=
- =?us-ascii?q?GlZCUK05EnxwLHa/yAboiI/grvVOaPLjd8g3JoYK6/iAyo8Uih1+38TdO40E?=
- =?us-ascii?q?pKryVZktnMsWoB1xrP5cicVvRx5EKh2TeL1wzL6+FEJ147lbbDJpI8zbM9mY?=
- =?us-ascii?q?AfvETeEiPshkn7g7Gael859uSw7uToeLTmppuSN49ujQH+N7wjmteiDuQjKQ?=
- =?us-ascii?q?UOQ2ia9vi81L3k50H5Rq5KgecsnqnWt5DaO9wXprSlDA9NzoYj9xG/Ai+n0d?=
- =?us-ascii?q?QEmnkHKl1FdQmZj4j1IV3BPu33DeqniVS2jDhr3+zGPqHmApjVKnjDkbHhfa?=
- =?us-ascii?q?ty6kJFywo808pf55RKBbEFO//zREDxu8LCDhMjMAy73fznCNNj2YMaQ26PBb?=
- =?us-ascii?q?WZMKzKu1+S+u0vO/WMZJMSuDvlL/gl5vjujWI2mFMEZqmmw4cYaG2iHvRnP0?=
- =?us-ascii?q?WYYWPggtIGEWgXowo+SPLlhUacUT5ceXmyRbgw5jIlB4K8C4fMWIStjKaG3C?=
- =?us-ascii?q?ehEZ1cfnpGBUyUEXf0a4WEXO8BZziRIs95lzwJTryhS44n1RGzuw720rRnLu?=
- =?us-ascii?q?3J+i0eqJ3szsR15+zUlRE07zB0CN6d026VRWFugmwIXyM23Lx4oUFlz1eD0a?=
- =?us-ascii?q?94jOBbFdxU/P5JSRo6NYXCwOBgF9/yXQfBdM+TSFm6WtWmHS0xTtUpztATeU?=
- =?us-ascii?q?l9Hc+ujhLZ0yukAr8Vk7iLBJ0u/aLZxHj8PMd9y3Da1KY/i1kqWNdANWqjhq?=
- =?us-ascii?q?Rn7QjcG5bJk1mFl6atbakcxi/N+3mFzWqSvkFXThVwXL7KXXAYYUvWotD56V?=
- =?us-ascii?q?3YQ7CyDrQnNxNLydSeJatSdt3pkVJGSe/5N9vEeWK+h32/BRCHxrySd4fqYX?=
- =?us-ascii?q?sS0zjdCEcejwAf52qJNQ87Bi25uWLRECRuFU7zY0Pr6eRxtWm0TlEqwAyRdE?=
- =?us-ascii?q?1hy7W1+hkRhfOGUPwTxagIuCE/pDVoBFy9xc7ZC8Kcpwp9e6VRedA94FZd1W?=
- =?us-ascii?q?LYswx9OoasL7tihl4DbwR4oUbu1xJpCohblcgqrXUqzBd9KK6C0VNBcS+Y0o?=
- =?us-ascii?q?70OrHNNmby+xWvYbbM2l7CyNaW5rsP6PMgplX4vAGmCEwi8nt53NlTyHSc4Y?=
- =?us-ascii?q?7KDA8TUZL1TEk67Bd6p7TAbSk844PYz2FjMa6xsmyK59V8OOwjxSSgdtFQeP?=
- =?us-ascii?q?eWCAj0HOUEG46jJPF83xCNTTcgdLRW9agpL4aleuGA1aqDIulthnSlgH5B7Y?=
- =?us-ascii?q?Q71ViDoW40Tu/OwoZA2PyTwxGGSya5iVCtr8T6sZ5LaCtUHWelzyXgQolLaf?=
- =?us-ascii?q?5cZ4EOXFyyLtW3y9M2vJvkX3pV5Rb3HF8d8NO4chqVKVrm1Etf0lpB8i/voj?=
- =?us-ascii?q?ex0zEhy2JhlaGYxiGbhrmzeQ=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BmAQAQMJlc/wHyM5BkDg0BAQEBAwEBAQcDAQEBgWWBZ?=
- =?us-ascii?q?yqBODOENZQKAQEBAQEBBoE1fohHiWGFKIFnOgGEQAKFEiI4EgEBAwEBAQgBA?=
- =?us-ascii?q?wIBbCiCOimCZwEBAQECASMPAQVBEAkCGAICJgICVwYBDAgBAYJfP4FpBQiSY?=
- =?us-ascii?q?ZtmgS+FRoRngQskizIXeIEHgREngjY1PoQMBQESAYMpgjUiA6Q2YAmLbYdGB?=
- =?us-ascii?q?hmTfi2Kb5U2IWVxKwgCGAghD4MokA9XIwOBNQEBjGGCPgEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 25 Mar 2019 19:52:50 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x2PJqlSr015899;
-        Mon, 25 Mar 2019 15:52:47 -0400
-Subject: Re: Repost: Missing security_mmap_file() in remap_file_pages syscall
-To:     TongZhang <ztong@vt.edu>, LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Cc:     akpm@linux-foundation.org, mhocko@suse.com,
-        dan.j.williams@intel.com, rientjes@google.com, aarcange@redhat.com,
-        dave@stgolabs.net, kirill.shutemov@linux.intel.com,
-        Shen Wenbo <shenwenbosmile@gmail.com>
-References: <A6FCC3DA-C72C-4B59-A27E-E91F85949608@vt.edu>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <3fa343e7-5c22-5a97-cf4f-a9156a0696a7@tycho.nsa.gov>
-Date:   Mon, 25 Mar 2019 15:53:34 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Mon, 25 Mar 2019 17:06:22 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2PL5wHn010870;
+        Tue, 26 Mar 2019 06:05:58 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
+ Tue, 26 Mar 2019 06:05:58 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126094122116.bbtec.net [126.94.122.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2PL5rJm010855
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 26 Mar 2019 06:05:58 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: Linux 5.1-rc2
+To:     James Morris <jmorris@namei.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+References: <CAHk-=wgg_PRWs3a6u2gnFLQjhxOJcrFkqqWVnLw60eQAwD-DNw@mail.gmail.com>
+ <2d4f3bfa-22c7-a18c-3902-fe1b6ac401f7@infradead.org>
+ <alpine.LRH.2.21.1903260607500.13529@namei.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <8811b2e4-28e1-2f01-024b-fb7d0196483f@i-love.sakura.ne.jp>
+Date:   Tue, 26 Mar 2019 06:05:51 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.0
 MIME-Version: 1.0
-In-Reply-To: <A6FCC3DA-C72C-4B59-A27E-E91F85949608@vt.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <alpine.LRH.2.21.1903260607500.13529@namei.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/25/19 1:33 PM, TongZhang wrote:
-> Dear Kernel Developers,
+On 2019/03/26 4:08, James Morris wrote:
+> On Sun, 24 Mar 2019, Randy Dunlap wrote:
 > 
-> We’d like to bring this up for a discussion again.
+>> On 3/24/19 2:26 PM, Linus Torvalds wrote:
+>>> Well, we're a week away from the merge window close, and here's rc2.
+>>> Things look fairly normal, but honestly, rc2 is usually too early to
+>>> tell.  People haven't necessarily had time to notice problems yet.
+>>> Which is just another way of saying "please test harder".
+>>>
+>>> Nothing particularly stands out. Yes, we had some fixes for the new
+>>> io_ring code for issues that were discussed when merging it. Other
+>>> than that, worth noting is that the bulk of the patches are for
+>>> tooling, not the core kernel. In fact, about two thirds of the patch
+>>> is just for the tools/ subdirectory, most of it due to some late perf
+>>> tool updates. The people involved promise they're done.
+>>
+>> Hmph.  I'm still looking for the patch that restores the various
+>> CONFIG_DEFAULT_<security> kconfig options to be merged.
+>>
+>> https://lore.kernel.org/linux-security-module/2bf23acd-22c4-a260-7648-845887a409d5@i-love.sakura.ne.jp/
+>>
+>> since commit 70b62c25665f636c9f6c700b26af7df296b0887e dropped them somehow.
 > 
-> Several months ago we posted an email discussing a case where remap_file_pages() has no security_mmap_file() check.
-> At that time we were told that do_mmap_pgoff() will base the new VMA permission on the old one.
-> But somehow we still think the check is needed, for the reason that the advisory could first do a
-> mmap() which can pass SELinux check then remap using a completely different file or region of file,
-> which could possibly pose a risk.
-
-I don't see an issue there. The incoming prot value from userspace is 
-required to be zero (otherwise remap_file_pages returns -EINVAL), so the 
-prot passed to do_mmap_pgoff() is entirely computed based on the 
-existing vma flags.  The file is likewise obtained from the existing 
-vma.  Any flags supplied by the caller other than MAP_NONBLOCK are 
-ignored.  MAP_SHARED is always set in the flags passed to 
-do_mmap_pgoff(), and the existing vma was required to have VM_SHARED set 
-or remap_file_pages() would have returned -EINVAL.  If it spans more 
-than one vma, their files and flags must match.  It appears that all of 
-the inputs relevant to selinux_mmap_file() are necessarily the same as 
-they would have been when creating the original vma.  The same appears 
-to also be true for other security modules IIUC.
-
+> AFAICT we don't have a finalized version of the patch yet.
 > 
-> Thanks,
-> - Tong
-> 
-> The original post is pasted below:
-> 
-> 8<—————————————————————————————
-> [1.] One line summary of the problem:
-> 
-> Possible missing security_mmap_file() in remap_file_pages
-> 
-> [2.] Full description of the problem/report:
-> 
-> We noticed remap_file_pages syscall uses do_mmap_pgoff without LSM check: security_mmap_file().
-> 
-> This system call passed user controllable parameters to do_mmap_pgoff().
-> 
-> We think that this LSM check should be added in order to be consistent with other cases,
-> for example:
-> in system call mmap_pgoff(), shmat(), they all have security_mmap_file() check before calling
-> do_mmap_pgoff().
-> 
-> [3.] Keywords: LSM check
-> [4.] Kernel information
-> [4.1] Kernel Version: 4.14.61
-> 
-> 8<—————————————————————————————
-> 
-> 
-> 
-> 
+> Kees?
 > 
 
+As far as I can tell, Kees's comment
+
+  It breaks the backward-compat for the "security=" line. If a system is
+  booted with CONFIG_LSM="minors...,apparmor" and "security=selinux",
+  neither apparmor nor selinux will be initialized. The logic on
+  "security=..." depends on the other LSMs being present in the list.
+
+was just a confusion, and I think that this version can become
+the finalized version.
+
+From 72f5f21b800c87f9ec3600f6e3acfb654690d8f0 Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 26 Mar 2019 05:56:30 +0900
+Subject: [PATCH] LSM: Revive CONFIG_DEFAULT_SECURITY_* for "make oldconfig"
+
+Commit 70b62c25665f636c ("LoadPin: Initialize as ordered LSM") removed
+CONFIG_DEFAULT_SECURITY_{SELINUX,SMACK,TOMOYO,APPARMOR,DAC} from
+security/Kconfig and changed CONFIG_LSM to provide a fixed ordering as a
+default value. That commit expected that existing users (upgrading from
+Linux 5.0 and earlier) will edit CONFIG_LSM value in accordance with
+their CONFIG_DEFAULT_SECURITY_* choice in their old kernel configs. But
+since users might forget to edit CONFIG_LSM value, this patch revives
+the choice (only for providing the default value for CONFIG_LSM) in order
+to make sure that CONFIG_LSM reflects CONFIG_DEFAULT_SECURITY_* from their
+old kernel configs.
+
+Reported-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ security/Kconfig | 37 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/security/Kconfig b/security/Kconfig
+index 1d6463f..2f29805 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -239,9 +239,44 @@ source "security/safesetid/Kconfig"
+ 
+ source "security/integrity/Kconfig"
+ 
++choice
++	prompt "Default security module [superseded by 'Ordered list of enabled LSMs' below]"
++	default DEFAULT_SECURITY_SELINUX if SECURITY_SELINUX
++	default DEFAULT_SECURITY_SMACK if SECURITY_SMACK
++	default DEFAULT_SECURITY_TOMOYO if SECURITY_TOMOYO
++	default DEFAULT_SECURITY_APPARMOR if SECURITY_APPARMOR
++	default DEFAULT_SECURITY_DAC
++
++	help
++	  This choice is there only for converting CONFIG_DEFAULT_SECURITY in old
++	  kernel config to CONFIG_LSM in new kernel config. Don't change this choice
++	  unless you are creating a fresh kernel config, for this choice will be
++	  ignored after CONFIG_LSM is once defined.
++
++	config DEFAULT_SECURITY_SELINUX
++		bool "SELinux" if SECURITY_SELINUX=y
++
++	config DEFAULT_SECURITY_SMACK
++		bool "Simplified Mandatory Access Control" if SECURITY_SMACK=y
++
++	config DEFAULT_SECURITY_TOMOYO
++		bool "TOMOYO" if SECURITY_TOMOYO=y
++
++	config DEFAULT_SECURITY_APPARMOR
++		bool "AppArmor" if SECURITY_APPARMOR=y
++
++	config DEFAULT_SECURITY_DAC
++		bool "Unix Discretionary Access Controls"
++
++endchoice
++
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
++	default "yama,loadpin,safesetid,integrity,selinux" if DEFAULT_SECURITY_SELINUX
++	default "yama,loadpin,safesetid,integrity,smack" if DEFAULT_SECURITY_SMACK
++	default "yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
++	default "yama,loadpin,safesetid,integrity,apparmor" if DEFAULT_SECURITY_APPARMOR
++	default "yama,loadpin,safesetid,integrity"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list will be ignored. This can be
+-- 
+1.8.3.1
