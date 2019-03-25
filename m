@@ -2,83 +2,87 @@ Return-Path: <SRS0=q+Rt=R4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F476C43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 02:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C836EC10F03
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 08:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4241620870
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 02:31:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qef6YXkq"
+	by mail.kernel.org (Postfix) with ESMTP id 99ACD2087E
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 08:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729286AbfCYCbZ (ORCPT
+        id S1729977AbfCYIF6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 24 Mar 2019 22:31:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35786 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729154AbfCYCbZ (ORCPT
+        Mon, 25 Mar 2019 04:05:58 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39496 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729871AbfCYIF5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 24 Mar 2019 22:31:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:Cc:From:References:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=J6jg6kBLgFKMOwQ0kaoV8+aDrdID5J7wq9Obg02yBzA=; b=qef6YXkqlZNV7gnLA3TcpqUEh
-        E9HKsdxMeeN+UlSMr9PWWQtp6dwl/BD6o8SymnG/vXlwkRC2mllH3ImqEFMTg3111yIJxzuCvuE5C
-        hnFR3FUByKtzVJ0SKzKIC/GTOVEQGZTSYQCdIDbMOQS/tgxWDq6DcSYFAvy21V1AekyhBPJGZ2Xi5
-        PAeE5XhuTYxQmEtQioZFRH26Cs8BzBFqtizy6AI24n6o5gywh2LiVTpKyGTJtXfaV5lGdZaR2+bVg
-        y3MPIWvOZBw7VurSPYhm7bZJgc2IRqkA0tyiQX/GEIW6rO7HS8VGN1FrX/bAGA4bRunB6V6g7mgWR
-        isWOYJYxw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1h8FOS-0007nN-F7; Mon, 25 Mar 2019 02:31:20 +0000
-Subject: Re: Linux 5.1-rc2
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <CAHk-=wgg_PRWs3a6u2gnFLQjhxOJcrFkqqWVnLw60eQAwD-DNw@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        James Morris <jmorris@namei.org>
-Message-ID: <2d4f3bfa-22c7-a18c-3902-fe1b6ac401f7@infradead.org>
-Date:   Sun, 24 Mar 2019 19:31:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Mon, 25 Mar 2019 04:05:57 -0400
+Received: by mail-wm1-f65.google.com with SMTP id t124so7893918wma.4
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 01:05:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=PcR1QBkNoiAmBRocGma/MllV/iXwsi82EaYy80ZwgYs=;
+        b=EzGKWztcyL9iRuWU5/iPCieMi/lfRb59pmNAbenFaCLvxQ6Wi5AtwuUVJUUtBVPM3m
+         njSp9hKvESPDwxjGH2pONYxcsDBCYUllvh6Z6BeHa8x7+xYUeKmmfhfQrWRg8a5D2dFg
+         iQq9FsrSEMrjw6CiZcnXD73Cy5s2oh51S+Oz6xbXzbJDFRwQ/VwS1Eb5ehcRa2Vj568i
+         gvMP9Ka2UxYufHt/AWuzBacSNwqxaZZpI3X1YUvVv/uCesj26DF6YIGU7HiZgX9nvVZq
+         3FUKj0fylEVNliYipc+SBPMaRak0qWHun/i1iT2iRmXvewATveA03iwzn3keHMFlYMKD
+         hHnQ==
+X-Gm-Message-State: APjAAAVN7ebL79nMBF52bgJjrc/ivsDnVYP7q2TmfB2t31ydP+cBJZoX
+        Rx3dQBjyZCQClhua2X7FOnuYwA==
+X-Google-Smtp-Source: APXvYqwSlVMt5qiHqwVXIYSdPb4Dr7j39pImsILBmzmomuHOr92UzaYAXgY4K4P6ExwvpQzTevKD7A==
+X-Received: by 2002:a1c:1d81:: with SMTP id d123mr4261572wmd.59.1553501156251;
+        Mon, 25 Mar 2019 01:05:56 -0700 (PDT)
+Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id s12sm14151530wmj.42.2019.03.25.01.05.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 25 Mar 2019 01:05:55 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module@vger.kernel.org, kbuild-all@01.org,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH] LSM: lsm_hooks.h - fix missing colon in docstring
+Date:   Mon, 25 Mar 2019 09:05:35 +0100
+Message-Id: <20190325080535.19475-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <201903211834.Qtb0LJ32%lkp@intel.com>
+References: <201903211834.Qtb0LJ32%lkp@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgg_PRWs3a6u2gnFLQjhxOJcrFkqqWVnLw60eQAwD-DNw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/24/19 2:26 PM, Linus Torvalds wrote:
-> Well, we're a week away from the merge window close, and here's rc2.
-> Things look fairly normal, but honestly, rc2 is usually too early to
-> tell.  People haven't necessarily had time to notice problems yet.
-> Which is just another way of saying "please test harder".
-> 
-> Nothing particularly stands out. Yes, we had some fixes for the new
-> io_ring code for issues that were discussed when merging it. Other
-> than that, worth noting is that the bulk of the patches are for
-> tooling, not the core kernel. In fact, about two thirds of the patch
-> is just for the tools/ subdirectory, most of it due to some late perf
-> tool updates. The people involved promise they're done.
+Apparently without it it is incorrect syntax and causes a warning about
+undocumented struct field.
 
-Hmph.  I'm still looking for the patch that restores the various
-CONFIG_DEFAULT_<security> kconfig options to be merged.
+Fixes: b230d5aba2d1 ("LSM: add new hook for kernfs node initialization")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+ include/linux/lsm_hooks.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://lore.kernel.org/linux-security-module/2bf23acd-22c4-a260-7648-845887a409d5@i-love.sakura.ne.jp/
-
-since commit 70b62c25665f636c9f6c700b26af7df296b0887e dropped them somehow.
-
-
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 0dd5bda719e6..b987dc282d63 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -447,7 +447,7 @@
+  *
+  * Security hooks for kernfs node operations
+  *
+- * @kernfs_init_security
++ * @kernfs_init_security:
+  *	Initialize the security context of a newly created kernfs node based
+  *	on its own and its parent's attributes.
+  *
 -- 
-~Randy
+2.20.1
+
