@@ -7,97 +7,109 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92442C10F03
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F9DC43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 627C7206C0
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90A0A206C0
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:11:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gt2Z+naa"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ue7pG1g3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731085AbfCYWKo (ORCPT
+        id S1731056AbfCYWKm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 18:10:44 -0400
-Received: from mail-ot1-f74.google.com ([209.85.210.74]:43740 "EHLO
-        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731078AbfCYWKn (ORCPT
+        Mon, 25 Mar 2019 18:10:42 -0400
+Received: from mail-ua1-f74.google.com ([209.85.222.74]:39391 "EHLO
+        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731055AbfCYWKl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 18:10:43 -0400
-Received: by mail-ot1-f74.google.com with SMTP id q23so1483258otk.10
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:43 -0700 (PDT)
+        Mon, 25 Mar 2019 18:10:41 -0400
+Received: by mail-ua1-f74.google.com with SMTP id l26so1335395uar.6
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=2ssyPCg3POhze4DuCq8LOChiCT8h5s76Ul4XqmSv8/4=;
-        b=Gt2Z+naaOI4jaIW6k6icatZYz0vOiPy2qQ9nWh4sgTRJW+JPWo1rJPvo30ZMFECFRY
-         dgHSFW+svQkWWl66DCDhDd0woNHp+XMrO2ZLUSjv9WtcKjHMozhhMD+MfGNh9FxgW+Dj
-         ZCqjb4BXBWTTp3+LHvpASWsulruWVnM/NdFY/ZqEcdDbdxfTlwwrzvjWZGaUv92IC28E
-         1YpiArWA+SDGmq/Zj9zxjuWzr4y7OAhA6CHeFzHsFlnNtOd6VOQidtM7KJ5lIKE8a3g1
-         iwjwSj6qJ5ZcgCMcI98N5Hc8JovlNS+bMh0Pm6YDdgK+JAMlKOupdWfL9u8Q/3d9U5Ss
-         7Wug==
+        bh=MX7HAsZv9v1mlAMwYMmTO69QilKEqMKiTqEWCeCZ+Co=;
+        b=Ue7pG1g3SnEJ+37/Ryx2zTFU/Dp2cL3S75Vu4QwG5wOhef2kL5bd9FMy/sL+mwIDw0
+         1Ux0Ivh5ASpU828UAZXsmqgTym9C7SIFi2OYWSDvs+AcNTiL356uen+xZn4erhWd1jwi
+         I340B5q0wq7+3jVgryCNL54Vz/zR+uUXVDNdl0AIYsYEdetZfkMgVr7uKxOJ/DQ3/XMG
+         r6h/JJ9aF8A5uQm/HGiutfZbUH/OBKEGFXshyG+SZbo6rI23+mc7qlfyISvkmO8LXH0N
+         tDA+gBMmuxDd98VTXSb6qicVFeFwlnBzVi0GAqYunCoRzdguUB2POrPEVDiN8TCRn1TS
+         Da8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=2ssyPCg3POhze4DuCq8LOChiCT8h5s76Ul4XqmSv8/4=;
-        b=GtKX+Equk3j6jao47Atg3QAiAFI1whkeVXWAjJdn2A3nUnWKotGi/7iAxQIkXGANi/
-         6NUDAcGDu/GYJ3EsvSczV5eqbfyOvVJOVr08i8273SR/BNT8AvXJedbMpXRwtv/56P4G
-         VFZN++NHmvq65DN26hN3YgVtyiKcSmugZOTJX5ET+35+V2chVBTFHeavrMsUbZY00zi/
-         uo3hkqMG3WvC+XNwo72ODMfvZRqpr+Q1WM1R12Cn3Kf8KEvpRBFO1XyAejY55lPHuAyA
-         eRRBx8Y+NO/arfM2H1lBk4/f5/kZY9cIR2qOsAgYa1+p3OZds182qY5MQxnn4K1WSQAf
-         tDcg==
-X-Gm-Message-State: APjAAAXqwQwiTpdP4vKxu2cls8r3qaIHyxsFABK///LpyJ/SFrBflFmy
-        irgDMQ8XsKqW9T3NuJlITPh6M+xENfParkGSTRv+2g==
-X-Google-Smtp-Source: APXvYqxi96o+qhxfCxMD7tnM4/PPRFA30e+tCetBW41PK8yY8O9kn57CJsnOy71MxaE6ZAIiNGzV/YN9QkpclEO2gJ3zUQ==
-X-Received: by 2002:aca:3b56:: with SMTP id i83mr13547187oia.162.1553551842820;
- Mon, 25 Mar 2019 15:10:42 -0700 (PDT)
-Date:   Mon, 25 Mar 2019 15:09:44 -0700
+        bh=MX7HAsZv9v1mlAMwYMmTO69QilKEqMKiTqEWCeCZ+Co=;
+        b=dvrKe8LPywAGK/yvSJyn1wGmn1su1mis6tA23Nri74DuAyWYUC5M8dkXNO3f0fghg7
+         y6M+dlWZ5l7uAbOGEEt/GEU0cUfPfkqC5owh8yLGk/Jo6B27PVURvQKllf5TAZkGzZQi
+         6GVcIxXFeYIC2ajUjKGSIxXgcJqvH4gimHkBLPDFGuZgEEIeWzSDlm5xdDHdrH1es7mD
+         5gRhaA1K3vRD3CBmne2//mgqjMcK9e3Wy5DIlYtuayP+QogDQV+SuG/tWZCPMYTPfQuj
+         7mrLPngziwPsPQLmi2R6NtLCvzzovYNUyMy/TQ2LMTByvhhhIYcCyf4YjkQ5IB/poWd2
+         2Daw==
+X-Gm-Message-State: APjAAAWjxeKPro9O1/zSoAsK8gx+Nw6lwMhxUWD/0FbeWkntmnX9dBWW
+        hJLGBKi+gTNNEKyaksEsbEnG+8+NPrRIbDPw+cFXWA==
+X-Google-Smtp-Source: APXvYqwIoZTGgFdO8Jf8mlA2MQNxtulFbG3DvCIo9GIeTiFXPfVK2S45XvPskEPu/e//UIjkQTwof+/+BZH2UOUJlvr0sQ==
+X-Received: by 2002:a67:dd8d:: with SMTP id i13mr16469935vsk.64.1553551840407;
+ Mon, 25 Mar 2019 15:10:40 -0700 (PDT)
+Date:   Mon, 25 Mar 2019 15:09:43 -0700
 In-Reply-To: <20190325220954.29054-1-matthewgarrett@google.com>
-Message-Id: <20190325220954.29054-18-matthewgarrett@google.com>
+Message-Id: <20190325220954.29054-17-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190325220954.29054-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH 17/27] Prohibit PCMCIA CIS storage when the kernel is locked down
+Subject: [PATCH 16/27] acpi: Disable APEI error injection if the kernel is
+ locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-pcmcia@lists.infradead.org,
+        Linn Crosetto <linn@hpe.com>, linux-acpi@vger.kernel.org,
         Matthew Garrett <matthewgarrett@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: David Howells <dhowells@redhat.com>
+From: Linn Crosetto <linn@hpe.com>
 
-Prohibit replacement of the PCMCIA Card Information Structure when the
-kernel is locked down.
+ACPI provides an error injection mechanism, EINJ, for debugging and testing
+the ACPI Platform Error Interface (APEI) and other RAS features.  If
+supported by the firmware, ACPI specification 5.0 and later provide for a
+way to specify a physical memory address to which to inject the error.
 
-Suggested-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Injecting errors through EINJ can produce errors which to the platform are
+indistinguishable from real hardware errors.  This can have undesirable
+side-effects, such as causing the platform to mark hardware as needing
+replacement.
+
+While it does not provide a method to load unauthenticated privileged code,
+the effect of these errors may persist across reboots and affect trust in
+the underlying hardware, so disable error injection through EINJ if
+the kernel is locked down.
+
+Signed-off-by: Linn Crosetto <linn@hpe.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-pcmcia@lists.infradead.org
+cc: linux-acpi@vger.kernel.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- drivers/pcmcia/cistpl.c | 3 +++
+ drivers/acpi/apei/einj.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pcmcia/cistpl.c b/drivers/pcmcia/cistpl.c
-index ac0672b8dfca..8adf092d0e18 100644
---- a/drivers/pcmcia/cistpl.c
-+++ b/drivers/pcmcia/cistpl.c
-@@ -1578,6 +1578,9 @@ static ssize_t pccard_store_cis(struct file *filp, struct kobject *kobj,
- 	struct pcmcia_socket *s;
- 	int error;
+diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
+index fcccbfdbdd1a..9fe6bbab2e7d 100644
+--- a/drivers/acpi/apei/einj.c
++++ b/drivers/acpi/apei/einj.c
+@@ -518,6 +518,9 @@ static int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
+ 	int rc;
+ 	u64 base_addr, size;
  
-+	if (kernel_is_locked_down("Direct PCMCIA CIS storage"))
++	if (kernel_is_locked_down("ACPI error injection"))
 +		return -EPERM;
 +
- 	s = to_socket(container_of(kobj, struct device, kobj));
- 
- 	if (off)
+ 	/* If user manually set "flags", make sure it is legal */
+ 	if (flags && (flags &
+ 		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
 -- 
 2.21.0.392.gf8f6787159e-goog
 
