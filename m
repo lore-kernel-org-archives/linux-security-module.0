@@ -2,107 +2,105 @@ Return-Path: <SRS0=q+Rt=R4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-15.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD8FC43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7784BC10F03
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FD202075E
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 484B62075E
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rFLwckKv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U9J1t3Nx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730063AbfCYWKW (ORCPT
+        id S1730823AbfCYWKW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Mon, 25 Mar 2019 18:10:22 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:39145 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730754AbfCYWKW (ORCPT
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:52285 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730790AbfCYWKT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 18:10:22 -0400
-Received: by mail-qk1-f201.google.com with SMTP id w134so9947248qka.6
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:21 -0700 (PDT)
+        Mon, 25 Mar 2019 18:10:19 -0400
+Received: by mail-vk1-f202.google.com with SMTP id 81so4334206vkn.19
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=xS16JMOxZwcG/rVliMetOoh+ZZR4mUKe0/mNdxJ1B6I=;
-        b=rFLwckKvnZaBZEGlLyTz4YcQ5TpfXquDDLFv8EpNBBi8bl0H0aSpKbKlPmFsmJzv88
-         3s6m1iSnNGuRtAX7+GNWd2g9ka8O638ik4FPSJBJV5pRYd6bDqXfhUVknENqAjwj4phg
-         ZBeThTpXCyvDIvKExlijnHhU7emouiyrTRHxYNNujKIPbNen6HUgDtriMiWILJkoVwSA
-         VVGV8s5Vdp2kHgLsYghn2sBzhcQ4djG3Mg4picl1KnN4fEcpD276WFgQ7ohf4Qa5elqa
-         AgffeNZduS1YSvn0RL82wvaNQg89a0p0VKGWQ4w6kG9QkJsl5oAYX7uvYcn10rHNeQC/
-         FZkA==
+        bh=uYemRAgVTJFGahU1zMfb1n2EMnLkr+SSlEuKQqgKmLY=;
+        b=U9J1t3NxYbQMopyhw2GE3bLit1uMhrE4YcCM5dJ1VZEcPOPoJohS9muHLwrm4vQlDT
+         8XvcG/28ok21BF69yNbSQqCw3e6yjQAJUDrd2iaM/KgcHCo2BszrbFw8/6jMPHvtp/yf
+         iWbLAQNCWBLdHGrn8i0OX9YYkOvt9fPMvh7laV3CW1NvPs5u0ovDE4DFMYQzJghhon6V
+         bj6B9ZBfpvxXzkfjlaJuCbNMNi2Thezr5krapkJ9JEX32womUHt1rfjs8e8QB5aKcnQL
+         DtOuGW6wgC0uGu7Lxs3FaIweVocdpEXRME7+Lfg6KE1hn5KohnaCb7igp2IE3uYR8ftF
+         zagQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=xS16JMOxZwcG/rVliMetOoh+ZZR4mUKe0/mNdxJ1B6I=;
-        b=j+LCP3jp7XyybYiKBOXJGBilDddwayedgkRyvJ6hFZKstT2gjJT82tCqhAtydEuaGM
-         BfW18g2o0cUEhv0ghj4IECw+MlBdevS9tEpShfwR2sgRblXj9XFumLSzJAyN63XcTsRm
-         9PBuBUy0wdi8dL3n1VT7BdKFrefOfVQZHw2HM78IOTMim9vsaLlnVwbCMvFhvD8QvYlo
-         I/NrDYHxyauBoDDTlFRiQaPfT7KrpI4VSCVKmhcl5IdxYJM0wxWMVxQUEdzV5IS+HoJX
-         +/oG/Re6LtXhbbfs6XANTZXDfQdK4mymGZZqy9xpsTf/B3PPa88BQu0W0OtFBz3Mg1eg
-         Y1MQ==
-X-Gm-Message-State: APjAAAWl3jAXrGfEHGPencm+J90g5AI6enAMITXLZYvlGZ6yJ74pA/Cv
-        lRYiMbFusXNnr+Jc7yye21IBt7+90Dj/c3aaMci93g==
-X-Google-Smtp-Source: APXvYqzfwaoEvZ9qoFwlYj2A15EF/8fYD/EBKL5NEF9CZBOvMhdvlUypidpDWMgq04f0j1uGmMifcELa/DdB3HnIghzi7g==
-X-Received: by 2002:a0c:8aad:: with SMTP id 42mr23012965qvv.247.1553551821400;
- Mon, 25 Mar 2019 15:10:21 -0700 (PDT)
-Date:   Mon, 25 Mar 2019 15:09:36 -0700
+        bh=uYemRAgVTJFGahU1zMfb1n2EMnLkr+SSlEuKQqgKmLY=;
+        b=aTz6MhkhIB1dHr6S27/1D6xKdBYWLk8FRbcuOKA5E/aZc4OrvUtabXppdA0BK7i5uX
+         9YKf8yu4HkTK3DljbtfwicO3OOjGyCQLMtA6EnNuKtBYPMas7T1tu0aGZABHLQMTYCWk
+         GzaTTlKVpTKyeqN2JVuXmgoXPhb4ZRVA0vhjrVEp0m15i6rEBsleVsLSNXRxf+e/N165
+         Q6LKmnCma++UVOQbN3mlPyKAlhaZVTB1GWiqiNPfur/Mp0w1Vkg9EFw9F66Vvjk2wTvw
+         DJWja7pyZNwqMZhwS5DEVIgf6I3KsESJi81MmT+TXvSBZYxdnG3N1YAirUfR1auFPBAD
+         WZFA==
+X-Gm-Message-State: APjAAAWo0ioOTKsobgwMjYtlaPvyFH7k98vi8ZwP8VBGWKHoaKM1QRGy
+        zRL3/PWCruC7a0FNvEEr8nHm7mK2man2jJ5JjAqbAg==
+X-Google-Smtp-Source: APXvYqy7ER6okO+DXR1Hn9BcNwumz/DBgYufWQnxxDJBMiaFaOCwvLdckGZ0KGbfYqsKbYK+Droz0kzG4KKcv0gh0DEQqA==
+X-Received: by 2002:ab0:65c7:: with SMTP id n7mr16136307uaq.3.1553551818764;
+ Mon, 25 Mar 2019 15:10:18 -0700 (PDT)
+Date:   Mon, 25 Mar 2019 15:09:35 -0700
 In-Reply-To: <20190325220954.29054-1-matthewgarrett@google.com>
-Message-Id: <20190325220954.29054-10-matthewgarrett@google.com>
+Message-Id: <20190325220954.29054-9-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190325220954.29054-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH 09/27] uswsusp: Disable when the kernel is locked down
+Subject: [PATCH 08/27] hibernate: Disable when the kernel is locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        James Morris <james.l.morris@oracle.com>,
-        linux-pm@vger.kernel.org, pavel@ucw.cz, rjw@rjwysocki.net,
+        Josh Boyer <jwboyer@fedoraproject.org>, rjw@rjwysocki.net,
+        pavel@ucw.cz, linux-pm@vger.kernel.org,
         Matthew Garrett <matthewgarrett@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Matthew Garrett <mjg59@srcf.ucam.org>
+From: Josh Boyer <jwboyer@fedoraproject.org>
 
-uswsusp allows a user process to dump and then restore kernel state, which
-makes it possible to modify the running kernel.  Disable this if the kernel
-is locked down.
+There is currently no way to verify the resume image when returning
+from hibernate.  This might compromise the signed modules trust model,
+so until we can work with signed hibernate images we disable it when the
+kernel is locked down.
 
-Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
+Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: James Morris <james.l.morris@oracle.com>
-cc: linux-pm@vger.kernel.org
-Cc: pavel@ucw.cz
 Cc: rjw@rjwysocki.net
+Cc: pavel@ucw.cz
+cc: linux-pm@vger.kernel.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- kernel/power/user.c | 3 +++
- 1 file changed, 3 insertions(+)
+ kernel/power/hibernate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/power/user.c b/kernel/power/user.c
-index 2d8b60a3c86b..0305d513c274 100644
---- a/kernel/power/user.c
-+++ b/kernel/power/user.c
-@@ -52,6 +52,9 @@ static int snapshot_open(struct inode *inode, struct file *filp)
- 	if (!hibernation_available())
- 		return -EPERM;
+diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+index abef759de7c8..802795becb88 100644
+--- a/kernel/power/hibernate.c
++++ b/kernel/power/hibernate.c
+@@ -70,7 +70,7 @@ static const struct platform_hibernation_ops *hibernation_ops;
  
-+	if (kernel_is_locked_down("/dev/snapshot"))
-+		return -EPERM;
-+
- 	lock_system_sleep();
+ bool hibernation_available(void)
+ {
+-	return (nohibernate == 0);
++	return nohibernate == 0 && !kernel_is_locked_down("Hibernation");
+ }
  
- 	if (!atomic_add_unless(&snapshot_device_available, -1, 0)) {
+ /**
 -- 
 2.21.0.392.gf8f6787159e-goog
 
