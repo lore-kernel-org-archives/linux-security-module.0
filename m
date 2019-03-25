@@ -7,106 +7,99 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A4FC43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA4FC43381
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6C90206C0
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B2B1206C0
+	for <linux-security-module@archiver.kernel.org>; Mon, 25 Mar 2019 22:12:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WJr9K5Ng"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WlInIGo7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731040AbfCYWKi (ORCPT
+        id S1731004AbfCYWKe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 18:10:38 -0400
-Received: from mail-pf1-f202.google.com ([209.85.210.202]:45819 "EHLO
-        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731037AbfCYWKh (ORCPT
+        Mon, 25 Mar 2019 18:10:34 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:48681 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731000AbfCYWKc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 18:10:37 -0400
-Received: by mail-pf1-f202.google.com with SMTP id u78so10584038pfa.12
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:36 -0700 (PDT)
+        Mon, 25 Mar 2019 18:10:32 -0400
+Received: by mail-pl1-f201.google.com with SMTP id y17so771573plr.15
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 15:10:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=hmYNaFdsLzMxO/YCEIEvJsYLVrtmlenBIeDGJtGu3OM=;
-        b=WJr9K5NgaEvPnAiYcVXgNCci/FaQmP1mLDAruGRbuoJYCIIIAIHCe8AoJ7Kr/r7XTQ
-         GQw08DDyEUVpKvHTAEIb+sEPYXaATnoEYcMU6RUM1j1Tho9BRATvED8dklQVfey1WoCS
-         5Zw2P9yQRsZ3CfcPkjLEJGSVsIfKaucUb4rie3Em8mgNadzfJUISMHz/jGWDE1Fa8RBq
-         AE2BTFqdLHnL2BpGCs/nUCP1iEIBaaePrRAiduat/JTEYNX3z9pzJ+ITXdHdNLZkF0N4
-         S8pT0CxX6x4PrXc7LM2QN3tHBFsDnMAzcAJRZmMLq007lOBsanWryVyF2DgZD6WVGgwW
-         Iyhg==
+        bh=JjClfNcwudfjVo/9wlvsMTmCzUCPUTa4DRML2JJ7YVY=;
+        b=WlInIGo7E8Sg1V/FJrdy7246BJfv2IFZBnZYy6waTznK9n+caw2TjPOhGfPZ703SMU
+         HsdZZBq/cfCb9aUasck8HT2YGLHxCNOEM9Dn8gFGDuQRppgl9963pB2bWUbB3OdW0afz
+         R9HQ+dGBSgtqfa4Llibc6rDd6MCdkBpPk9PllURgbs7CB/aHBVoZoDL9rJ67wbDYeM2+
+         nkvuRWNqfMG3FM8h9H3EFUVkL8vF8uCHI4XGBEht/JE3ERIQt2oTW06JFFUZIo/C2MeG
+         Gup11dIXcq1FY5/CF5EJkioM9JR9kP5hnhmiHGiydSEU3zr+pQBPM+64rv1Ip3uSVYPi
+         STGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=hmYNaFdsLzMxO/YCEIEvJsYLVrtmlenBIeDGJtGu3OM=;
-        b=n6T7SnZpam4b6p4LdwpQDnR4eeuAMoahahLowcWONWqcWaWj+fVI5eNQS2cbhbwnt0
-         9W0BdseJ7fen3dZG0n/MccTjbt3ronqqQ7QMk8SpQSvij/d+GsLywEmE3wlls6CFYEVi
-         WIWF6Bte8BLfl0XzjlErsbULv934wEUcqwXEvNXXC5XlQawMV3LZ5P+KFMjFlEtLLP9q
-         Yix7x3iJ+615i53DoYOUfftJFR3mMdfKB59+Jo2+aWgSQoo5dI+GguTj0eGzs4c+RC47
-         XyOxcZVEtvBjMBipCXwMFKL9/+uj2mYJcwwKSWLtCQurMUZi2Odac7P629k+9SL9S7ZB
-         XtKA==
-X-Gm-Message-State: APjAAAVwEDrvd08rM4XTf95YMT2/BMGCGjfKq8dAWAa2hg9ZRNxTSqn0
-        rpJ2GvN0w7AtScgBcgLy1RnSPnRcsZNjHnfZkTHGnA==
-X-Google-Smtp-Source: APXvYqzfY5QZCxd8HlRriXAgwGnuI2xGeE8bqzN/WGpaom6jdlIsf/syZMyYGJEMLS58QanuSd8SJG/TxwADifrWkLpwHg==
-X-Received: by 2002:a63:4e10:: with SMTP id c16mr26146963pgb.302.1553551836682;
- Mon, 25 Mar 2019 15:10:36 -0700 (PDT)
-Date:   Mon, 25 Mar 2019 15:09:42 -0700
+        bh=JjClfNcwudfjVo/9wlvsMTmCzUCPUTa4DRML2JJ7YVY=;
+        b=maU96LpmV5YzEEsU72tZAdjn0bPh9wpuwlJ6PRwIesDxQBKadjlXGVzh7G/hqMdmL2
+         kc5a497hl84g06/IcaZbVY2OiL9DgShNsBJjQpDt2rnLNgdkAxwrwgNiWXOmLLiWXxoy
+         5nMSODFtSacK3vQVqSMGZyrQM/AEXNMUsZUVGy7kQ9XwAOHAdHLd3xr547kIyHiyNCYW
+         ljcuZL6fxWtF/A6sYapUa/dRwQbvkwbLTqXZZc0ujj3H1g6huKta2/BMciFrMFt0GMQx
+         faGIRxZTiHKSAkbOYfMc7RuxmV6OfvwHp5/fioCnlKsnOX138S09NZXTAoIIHwLr2yOK
+         KamQ==
+X-Gm-Message-State: APjAAAVrIDHE5pAQg6HKFhFPIyIsUygoDsX85DC7HPNKs+kbr1G0twhr
+        s472BBjP3L9i5DIRBRpLoWW9Q+rb87M/Bob3p2lReg==
+X-Google-Smtp-Source: APXvYqy+/HPWSggooyPKfCP9rCJAS540SEUMOaDvUBcRppcKI7iz6oLk3Dau8NiT2sBTzaxyaianjTm+/T/hLkd14AF0/g==
+X-Received: by 2002:a63:6a45:: with SMTP id f66mr6790296pgc.7.1553551831630;
+ Mon, 25 Mar 2019 15:10:31 -0700 (PDT)
+Date:   Mon, 25 Mar 2019 15:09:40 -0700
 In-Reply-To: <20190325220954.29054-1-matthewgarrett@google.com>
-Message-Id: <20190325220954.29054-16-matthewgarrett@google.com>
+Message-Id: <20190325220954.29054-14-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190325220954.29054-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH 15/27] acpi: Disable ACPI table override if the kernel is
+Subject: [PATCH 13/27] ACPI: Limit access to custom_method when the kernel is
  locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        Linn Crosetto <linn@hpe.com>, linux-acpi@vger.kernel.org,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        linux-acpi@vger.kernel.org,
         Matthew Garrett <matthewgarrett@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Linn Crosetto <linn@hpe.com>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-From the kernel documentation (initrd_table_override.txt):
+custom_method effectively allows arbitrary access to system memory, making
+it possible for an attacker to circumvent restrictions on module loading.
+Disable it if the kernel is locked down.
 
-  If the ACPI_INITRD_TABLE_OVERRIDE compile option is true, it is possible
-  to override nearly any ACPI table provided by the BIOS with an
-  instrumented, modified one.
-
-When securelevel is set, the kernel should disallow any unauthenticated
-changes to kernel space.  ACPI tables contain code invoked by the kernel,
-so do not allow ACPI tables to be overridden if the kernel is locked down.
-
-Signed-off-by: Linn Crosetto <linn@hpe.com>
+Signed-off-by: Matthew Garrett <mjg59@srcf.ucam.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: linux-acpi@vger.kernel.org
 Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
 ---
- drivers/acpi/tables.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/acpi/custom_method.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-index 48eabb6c2d4f..f3b4117cd8f3 100644
---- a/drivers/acpi/tables.c
-+++ b/drivers/acpi/tables.c
-@@ -531,6 +531,11 @@ void __init acpi_table_upgrade(void)
- 	if (table_nr == 0)
- 		return;
+diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
+index 4451877f83b6..ac8a90dc7096 100644
+--- a/drivers/acpi/custom_method.c
++++ b/drivers/acpi/custom_method.c
+@@ -29,6 +29,9 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 	struct acpi_table_header table;
+ 	acpi_status status;
  
-+	if (kernel_is_locked_down("ACPI table override")) {
-+		pr_notice("kernel is locked down, ignoring table override\n");
-+		return;
-+	}
++	if (kernel_is_locked_down("ACPI custom methods"))
++		return -EPERM;
 +
- 	acpi_tables_addr =
- 		memblock_find_in_range(0, ACPI_TABLE_UPGRADE_MAX_PHYS,
- 				       all_tables_size, PAGE_SIZE);
+ 	if (!(*ppos)) {
+ 		/* parse the table header to get the table length */
+ 		if (count <= sizeof(struct acpi_table_header))
 -- 
 2.21.0.392.gf8f6787159e-goog
 
