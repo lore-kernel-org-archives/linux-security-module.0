@@ -2,91 +2,106 @@ Return-Path: <SRS0=+HMg=R5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD852C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 20:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCC6C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 20:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B0C20657
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 20:19:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OQ0tJ4hP"
+	by mail.kernel.org (Postfix) with ESMTP id 1C5D02075C
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 20:45:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732693AbfCZUTX (ORCPT
+        id S1732730AbfCZUpv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Mar 2019 16:19:23 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44395 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732119AbfCZUTX (ORCPT
+        Tue, 26 Mar 2019 16:45:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55022 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732716AbfCZUpv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Mar 2019 16:19:23 -0400
-Received: by mail-io1-f67.google.com with SMTP id u12so12022629iop.11
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 13:19:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hB29KTCJlsbqFhKCwkDQh+R5X5tiePaO6kD9ZEWJZbo=;
-        b=OQ0tJ4hPqATnNwystXYKaNCD6UwL4/fn6mB5FjSIT7nVHn9ZHVjLZh0CMgN/brQrXT
-         aYz6NoTlh8J65LM3tlc86k0Txf9ueKoV3gRloJbdspXVXYX3WkMeKgqh3qDeQu2+0HoG
-         B6no9aLMDIzH7YGkM2iTOkVbPUV9sOoBR5zkQNw++/AlKs12qosWNOOIF0O9XMm8epIg
-         LsVRWZqQ9vHJ52cyp1QlthYMFfGoqNfiA/0A/qNH1ZSPh8qCrf93jJwP2XUSJptAo2kC
-         xZiVKKYya8uktZ9LPP9n7+jki09yQRga4RnKJtsnmH0rxosZa9KcuAloNQaKsLiEVL9x
-         lQ5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hB29KTCJlsbqFhKCwkDQh+R5X5tiePaO6kD9ZEWJZbo=;
-        b=n6oFLlsihSQnSZ2F2BhzB/PZGfRrt+yyyKCr6HSAUxdBR9HdBsMoJ2HAm1g3+hyGuh
-         usw5/yLThCrJRG7SMEQwUJ/ULGyRnI7NQREQmh0MqCblhUjyI8/txDTEfv2kTj1uV9Yu
-         80Y6A6yHhDcNB1yfylBe0F1/b0XADIaSE8Ij6NTd8qswMdFEDvMJRc6VO+iCkAXkKq2+
-         t2BR3ZDDBLaUfp317xNX8NaQVDzMCd2zp9DyOB1kGCeuDxO2qnVPchHkNi4IhfAzrss0
-         D5HFMmAmoM0iCtaUiius4gONtKuUQLGgI4E7/IDk+pgzmYaJFN/ZCw9vR1bzw0DDH+Vc
-         1flA==
-X-Gm-Message-State: APjAAAVG5377YW8POqIOcqCfa/Zb6mWMGW5FISlNbruBAbH71f1T2m4l
-        kSdpmD1lFj8q6BJajJ64v9Ve2rK2D/jzOzrDzujMAg==
-X-Google-Smtp-Source: APXvYqwpSgfoWd0foYi7OK3mePaE1gVvnrZtRJ0wlPPomG3EqUY9wyTQY9JGiNPSzHPcdRLYbBCG6+jifqs5L2vaQLI=
-X-Received: by 2002:a6b:e509:: with SMTP id y9mr22448630ioc.169.1553631562467;
- Tue, 26 Mar 2019 13:19:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190325220954.29054-1-matthewgarrett@google.com>
- <20190325220954.29054-24-matthewgarrett@google.com> <20190325164221.5d8687bd@shemminger-XPS-13-9360>
- <CALCETrU=EqqRwyQGBT0=_N9-E_pBM53=z+WJrd9OzV7g6xJa0A@mail.gmail.com> <alpine.LRH.2.21.1903270523240.5235@namei.org>
-In-Reply-To: <alpine.LRH.2.21.1903270523240.5235@namei.org>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Tue, 26 Mar 2019 13:19:10 -0700
-Message-ID: <CACdnJuskoACijaifrNQhqRtr07uPN7LT8m=FNgcxgJRiwDLVkw@mail.gmail.com>
-Subject: Re: [PATCH 23/27] bpf: Restrict kernel image access functions when
- the kernel is locked down
-To:     James Morris <jmorris@namei.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kees Cook <keescook@chromium.org>,
-        Will Drewry <wad@chromium.org>
+        Tue, 26 Mar 2019 16:45:51 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2QKdGJ1130468
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 16:45:49 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2rftk1j0d2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 16:45:49 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 26 Mar 2019 20:40:47 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 26 Mar 2019 20:40:43 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2QKeg8P62718058
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 26 Mar 2019 20:40:42 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9CAAA4C044;
+        Tue, 26 Mar 2019 20:40:42 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3ED204C050;
+        Tue, 26 Mar 2019 20:40:41 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.94.28])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 26 Mar 2019 20:40:41 +0000 (GMT)
+Subject: Re: [PATCH ghak109 V2] audit: link integrity evm_write_xattrs
+ record to syscall event
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Richard Guy Briggs <rgb@redhat.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
+        omosnace@redhat.com, eparis@parisplace.org, serge@hallyn.com,
+        mjg59@google.com
+Date:   Tue, 26 Mar 2019 16:40:30 -0400
+In-Reply-To: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
+References: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19032620-0012-0000-0000-000003076F32
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19032620-0013-0000-0000-0000213E9955
+Message-Id: <1553632830.4233.3.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-26_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1903260141
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 26, 2019 at 11:57 AM James Morris <jmorris@namei.org> wrote:
-> - Assign an ID to each lockdown point
-> - Implement a policy mechanism where each ID is mapped to 0 or 1
-> - Allow this policy to be specified statically or dynamically
+Hi Richard, Paul,
 
-One of the problems with this approach is what the default behaviour
-should be when a new feature is added. If an admin fails to notice
-that there's now a new policy element, they run the risk of kernel
-integrity being compromised via the new feature even if the rest of
-the kernel is locked down.
+On Tue, 2019-03-26 at 14:49 -0400, Richard Guy Briggs wrote:
+> In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
+> verified xattrs"), the call to audit_log_start() is missing a context to
+> link it to an audit event. Since this event is in user context, add
+> the process' syscall context to the record.
+> 
+> In addition, the orphaned keyword "locked" appears in the record.
+> Normalize this by changing it to logging the locking string "." as any
+> other user input in the "xattr=" field.
+> 
+> Please see the github issue
+> https://github.com/linux-audit/audit-kernel/issues/109
+> 
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+
+Paul, were you planning on upstreaming this patch?
+
+Mimi
+
