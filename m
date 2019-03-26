@@ -2,100 +2,88 @@ Return-Path: <SRS0=+HMg=R5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A2FC43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5372DC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 958292084D
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:35:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553560555;
-	bh=L3xeVJYdIRTDqBMvYIMi/pypjlVgS/mBndEZYjyhDUs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Q650dAlSwOk0E6OYSBvodUqaplH1trZGuYaMNFeoovpFv9VLaXtIDK95LVXuTSyBH
-	 tYhyifAM5ZMh6gYdcI8rygrEY1rANUMVihBEiedTuUgQjMlbjPoIsosTf0c/de017Z
-	 Wx/TrYywNaIC7OOaJGh2sK14nwUaKnGt8ktSiwoo=
+	by mail.kernel.org (Postfix) with ESMTP id 1EB11206DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:38:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ggKewme8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730212AbfCZAfu (ORCPT
+        id S1727328AbfCZAiX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 20:35:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730125AbfCZAfu (ORCPT
+        Mon, 25 Mar 2019 20:38:23 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:53985 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727412AbfCZAiX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 20:35:50 -0400
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7E96206DF;
-        Tue, 26 Mar 2019 00:35:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553560549;
-        bh=L3xeVJYdIRTDqBMvYIMi/pypjlVgS/mBndEZYjyhDUs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hwmkqScAeT0lY5ymYZ1DleQZwen9mwDTZ04ZKgut6J4JVKIQIl5CYm2SuTxaruPod
-         /tep/+zpLQgM4Rg+i/ULYprS5Ud2cHOoxOT4RtWwiQ3FPpwXOmFvLHkhuAGFIbjZcF
-         owF8v8WW/U3uKxBs2J9ai9ELpcIphT+IISKjVvGs=
-Date:   Tue, 26 Mar 2019 09:31:37 +0900
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        Mon, 25 Mar 2019 20:38:23 -0400
+Received: by mail-it1-f195.google.com with SMTP id y204so2639191itf.3
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 17:38:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BPFcO/E0+04cgg8r2G+LaaIoJHN1RftgmR0rilCvvGI=;
+        b=ggKewme8pwCcQlqbJgVAc1WM0ojxcdndr8sFQjWW2PFGLLP6eLq4Nd+rOmOKU/zDgp
+         dHYfX6RWEsWqgYu8E1ZfRWybzTiEscgTZXDSXapFb6fLh5Nklc/NdVtf07wwdLT4HsdT
+         Aenwq1arAG/ubWo4gOVfOk5lxiojZfdJ7VZXJJZmxX25AZd5lQLIVspVstDxMHpRExzz
+         JBEaxYfApb4DydPsMnqQbmV/xdAsk/8V72CZh/kmiJz/0y6wJqghlQ70LEjeF1Aom/8e
+         oR5YAMiD4rqf24DVCoMWTPnSH0sgtwRNHOS+Evn78GT5kqXyVHOUT58SRplygsgm75JW
+         0+NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BPFcO/E0+04cgg8r2G+LaaIoJHN1RftgmR0rilCvvGI=;
+        b=i0f4yp6+g0KheuJKnKdH/2a0LqUqel7BjMVkDcGMVNfWWKQZAk1L08+GaTtm4QlGd6
+         jZWxU9dpo/6VuUYKGybSG3jLRdgDy2glKJV22P3A76wfS3/ULofJY/Q1NHOB1M7uAaEY
+         cz+TtVU9oKdoFybVYo/c0GnlqwYiek7D2S4O6is+PKMD7gmOoMbN6rB+3oHBXpySBvxP
+         xR9AWwLEeZQB0gT3LDXydLWtbJOsSKLOxR9OVfx9kmS9MwMD0cJKeyIv8g3EtfAHiEup
+         3T55fLH7BjixB3L0McHkD2RlhG/WOrS+FRHvApq4Iu6z69pRhJFjXCxhg4mjuFkf5DkF
+         yduw==
+X-Gm-Message-State: APjAAAUO6FW/SSVC/vvqJIwX0H9+EQ8mMQtHHxQtHDy9mKuKD9Eem5I/
+        xWQjaYSd3OxdGi8j84ZCo4F68GAsDy/FHloxrohZxw==
+X-Google-Smtp-Source: APXvYqz1N4SQGyCASuRxfppij0p3w3HM77ABuvHWNgG7+0hIGXaZAwAZ1bjUYRW7L8lbMUv6BZUEocp2CxPKFqwsR8E=
+X-Received: by 2002:a24:4e91:: with SMTP id r139mr6552606ita.118.1553560702121;
+ Mon, 25 Mar 2019 17:38:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190325220954.29054-1-matthewgarrett@google.com>
+ <20190325220954.29054-26-matthewgarrett@google.com> <20190326003137.GB5112@kroah.com>
+In-Reply-To: <20190326003137.GB5112@kroah.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Mon, 25 Mar 2019 17:38:09 -0700
+Message-ID: <CACdnJus6a_7VUR27K7dJE037b3TPwDNMh1AyAOptHepB18vjxw@mail.gmail.com>
+Subject: Re: [PATCH 25/27] debugfs: Restrict debugfs when the kernel is locked down
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
         acpi4asus-user@lists.sourceforge.net,
         platform-driver-x86@vger.kernel.org,
         Matthew Garrett <mjg59@srcf.ucam.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 25/27] debugfs: Restrict debugfs when the kernel is
- locked down
-Message-ID: <20190326003137.GB5112@kroah.com>
-References: <20190325220954.29054-1-matthewgarrett@google.com>
- <20190325220954.29054-26-matthewgarrett@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190325220954.29054-26-matthewgarrett@google.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 25, 2019 at 03:09:52PM -0700, Matthew Garrett wrote:
-> From: David Howells <dhowells@redhat.com>
-> 
-> Disallow opening of debugfs files that might be used to muck around when
-> the kernel is locked down as various drivers give raw access to hardware
-> through debugfs.  Given the effort of auditing all 2000 or so files and
-> manually fixing each one as necessary, I've chosen to apply a heuristic
-> instead.  The following changes are made:
-> 
->  (1) chmod and chown are disallowed on debugfs objects (though the root dir
->      can be modified by mount and remount, but I'm not worried about that).
-> 
->  (2) When the kernel is locked down, only files with the following criteria
->      are permitted to be opened:
-> 
-> 	- The file must have mode 00444
-> 	- The file must not have ioctl methods
-> 	- The file must not have mmap
-> 
->  (3) When the kernel is locked down, files may only be opened for reading.
-> 
-> Normal device interaction should be done through configfs, sysfs or a
-> miscdev, not debugfs.
+On Mon, Mar 25, 2019 at 5:35 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Mon, Mar 25, 2019 at 03:09:52PM -0700, Matthew Garrett wrote:
+> > Normal device interaction should be done through configfs, sysfs or a
+> > miscdev, not debugfs.
+>
+> Then why not just not allow debugfs at all if it is such a "big
+> problem"?
 
-Then why not just not allow debugfs at all if it is such a "big
-problem"?
-
-Actually, it is a big problem, and I am pushing for systems to not mount
-debugfs at all these days, but that's a different story...
-
-Just "disabling" it entirely for this crazy dream of a "locked down"
-kernel is fine for me.
-
-thanks,
-
-greg k-h
+Previous attempts to do so have resulted in strong pushback from
+various maintainers. If you're happy just having any complaints
+reassigned to you then I'm more than happy to turn it off entirely.
