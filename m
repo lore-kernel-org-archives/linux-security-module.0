@@ -2,149 +2,111 @@ Return-Path: <SRS0=+HMg=R5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DA3C4360F
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 12:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EF0C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 12:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B20A620856
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 12:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CD3620823
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 12:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553603404;
+	bh=sQM5jiXixK+TRDZp1EAAOo+9HgawHweRTNi+g/sfHoc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=z22+dn6JN4ESa6xGYYRDqK/G5Rd5PZJ+cE83J1xUCdLcQUFKAHAoAnYaqgrILTe/x
+	 HktXlCjdYuwjW/0AYSGDbsjvzbUao8YKElF2uet7pYyMGZuytyHGDQsMFx2HhsbW5k
+	 Ep7BduHHnTa0pBnzdN8n1syrUJSK/iynamsnctdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbfCZMMD (ORCPT
+        id S1726241AbfCZMaD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Mar 2019 08:12:03 -0400
-Received: from mga01.intel.com ([192.55.52.88]:14005 "EHLO mga01.intel.com"
+        Tue, 26 Mar 2019 08:30:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725948AbfCZMMD (ORCPT
+        id S1726140AbfCZMaD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Mar 2019 08:12:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Mar 2019 05:12:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,271,1549958400"; 
-   d="scan'208";a="128764842"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.182])
-  by orsmga008.jf.intel.com with ESMTP; 26 Mar 2019 05:11:59 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linuxibm.com>,
-        David Howells <dhowells@redhat.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] KEYS: trusted: allow trusted.ko to initialize w/o a TPM
-Date:   Tue, 26 Mar 2019 14:11:58 +0200
-Message-Id: <20190326121158.13499-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 26 Mar 2019 08:30:03 -0400
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 541F32075E;
+        Tue, 26 Mar 2019 12:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553603402;
+        bh=sQM5jiXixK+TRDZp1EAAOo+9HgawHweRTNi+g/sfHoc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=xhZC2++NWBiXNXmdSXrpYb1M0HosHFRHAsRrGl+eSqgsAOxJpxtO7GrXy7xTnJ8bv
+         UJWKjcHU5xyzizH4d/CifKUT7Jmvm7rzMXa1DYFNfqHBdo7e6IL/TvGyaoIpqIkxVO
+         btrP1dkjJOnp828VwDufoLIZ0enWzb8MeOdPLvFs=
+Date:   Tue, 26 Mar 2019 21:29:57 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        davem@davemloft.net, Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH 22/27] Lock down kprobes
+Message-Id: <20190326212957.f5b518990c14cf21262bfdcc@kernel.org>
+In-Reply-To: <20190325220954.29054-23-matthewgarrett@google.com>
+References: <20190325220954.29054-1-matthewgarrett@google.com>
+        <20190325220954.29054-23-matthewgarrett@google.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Allow trusted.ko to initialize w/o a TPM. This commit adds checks to the
-key type callbacks and exported functions to fail when a TPM is not
-available.
+On Mon, 25 Mar 2019 15:09:49 -0700
+Matthew Garrett <matthewgarrett@google.com> wrote:
 
-Cc: James Morris <jmorris@namei.org>
-Reported-by: Dan Williams <dan.j.williams@intel.com>
-Tested-by: Dan Williams <dan.j.williams@intel.com>
-Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-v3:
-- remove unnecessary check for chip in init_trusted()
-v2:
-- Remove checks from the key type callbacks because the key type will
-  not be registered.
-- Cc to James Morris because hopefully we can land this 5.1.0.
- security/keys/trusted.c | 28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+> From: David Howells <dhowells@redhat.com>
+> 
+> Disallow the creation of kprobes when the kernel is locked down by
+> preventing their registration.  This prevents kprobes from being used to
+> access kernel memory, either to make modifications or to steal crypto data.
 
-diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index ecec672d3a77..efdbf17f3915 100644
---- a/security/keys/trusted.c
-+++ b/security/keys/trusted.c
-@@ -135,6 +135,9 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
- 	int ret;
- 	va_list argp;
- 
-+	if (!chip)
-+		return -ENODEV;
-+
- 	sdesc = init_sdesc(hashalg);
- 	if (IS_ERR(sdesc)) {
- 		pr_info("trusted_key: can't alloc %s\n", hash_alg);
-@@ -196,6 +199,9 @@ int TSS_checkhmac1(unsigned char *buffer,
- 	va_list argp;
- 	int ret;
- 
-+	if (!chip)
-+		return -ENODEV;
-+
- 	bufsize = LOAD32(buffer, TPM_SIZE_OFFSET);
- 	tag = LOAD16(buffer, 0);
- 	ordinal = command;
-@@ -363,6 +369,9 @@ int trusted_tpm_send(unsigned char *cmd, size_t buflen)
- {
- 	int rc;
- 
-+	if (!chip)
-+		return -ENODEV;
-+
- 	dump_tpm_buf(cmd);
- 	rc = tpm_send(chip, cmd, buflen);
- 	dump_tpm_buf(cmd);
-@@ -429,6 +438,9 @@ int oiap(struct tpm_buf *tb, uint32_t *handle, unsigned char *nonce)
- {
- 	int ret;
- 
-+	if (!chip)
-+		return -ENODEV;
-+
- 	INIT_BUF(tb);
- 	store16(tb, TPM_TAG_RQU_COMMAND);
- 	store32(tb, TPM_OIAP_SIZE);
-@@ -1245,9 +1257,13 @@ static int __init init_trusted(void)
- {
- 	int ret;
- 
-+	/* encrypted_keys.ko depends on successful load of this module even if
-+	 * TPM is not used.
-+	 */
- 	chip = tpm_default_chip();
- 	if (!chip)
--		return -ENOENT;
-+		return 0;
-+
- 	ret = init_digests();
- 	if (ret < 0)
- 		goto err_put;
-@@ -1269,10 +1285,12 @@ static int __init init_trusted(void)
- 
- static void __exit cleanup_trusted(void)
- {
--	put_device(&chip->dev);
--	kfree(digests);
--	trusted_shash_release();
--	unregister_key_type(&key_type_trusted);
-+	if (chip) {
-+		put_device(&chip->dev);
-+		kfree(digests);
-+		trusted_shash_release();
-+		unregister_key_type(&key_type_trusted);
-+	}
- }
- 
- late_initcall(init_trusted);
+Hmm, if you enforce signature check of modules, those modules
+should be allowed to use kprobes?
+I think we should introduce some kind of trust inheritance from
+signed (trusted) modules.
+
+Thank you,
+
+> 
+> Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
+> Cc: Naveen N. Rao <naveen.n.rao@linux.ibm.com>
+> Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+> Cc: davem@davemloft.net
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> ---
+>  kernel/kprobes.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index f4ddfdd2d07e..6f66cca8e2c6 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -1552,6 +1552,9 @@ int register_kprobe(struct kprobe *p)
+>  	struct module *probed_mod;
+>  	kprobe_opcode_t *addr;
+>  
+> +	if (kernel_is_locked_down("Use of kprobes"))
+> +		return -EPERM;
+> +
+>  	/* Adjust probe address from symbol */
+>  	addr = kprobe_addr(p);
+>  	if (IS_ERR(addr))
+> -- 
+> 2.21.0.392.gf8f6787159e-goog
+> 
+
+
 -- 
-2.19.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
