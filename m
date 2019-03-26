@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6F7C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 12:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9DA3C4360F
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 12:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 538322075C
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 12:09:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B20A620856
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 12:12:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729440AbfCZMJa (ORCPT
+        id S1726270AbfCZMMD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Mar 2019 08:09:30 -0400
-Received: from mga01.intel.com ([192.55.52.88]:13863 "EHLO mga01.intel.com"
+        Tue, 26 Mar 2019 08:12:03 -0400
+Received: from mga01.intel.com ([192.55.52.88]:14005 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725776AbfCZMJa (ORCPT
+        id S1725948AbfCZMMD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Mar 2019 08:09:30 -0400
+        Tue, 26 Mar 2019 08:12:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Mar 2019 05:09:29 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Mar 2019 05:12:03 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.60,271,1549958400"; 
-   d="scan'208";a="125964248"
+   d="scan'208";a="128764842"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.182])
-  by orsmga007.jf.intel.com with ESMTP; 26 Mar 2019 05:09:25 -0700
+  by orsmga008.jf.intel.com with ESMTP; 26 Mar 2019 05:11:59 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -40,9 +40,9 @@ Cc:     linux-security-module@vger.kernel.org,
         "Serge E. Hallyn" <serge@hallyn.com>,
         keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] KEYS: trusted: allow trusted.ko to initialize w/o a TPM
-Date:   Tue, 26 Mar 2019 14:09:17 +0200
-Message-Id: <20190326120917.13056-1-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v3] KEYS: trusted: allow trusted.ko to initialize w/o a TPM
+Date:   Tue, 26 Mar 2019 14:11:58 +0200
+Message-Id: <20190326121158.13499-1-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -60,15 +60,17 @@ Tested-by: Dan Williams <dan.j.williams@intel.com>
 Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
+v3:
+- remove unnecessary check for chip in init_trusted()
 v2:
 - Remove checks from the key type callbacks because the key type will
   not be registered.
 - Cc to James Morris because hopefully we can land this 5.1.0.
- security/keys/trusted.c | 31 +++++++++++++++++++++++++------
- 1 file changed, 25 insertions(+), 6 deletions(-)
+ security/keys/trusted.c | 28 +++++++++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 5 deletions(-)
 
 diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index ecec672d3a77..67c0e19a2125 100644
+index ecec672d3a77..efdbf17f3915 100644
 --- a/security/keys/trusted.c
 +++ b/security/keys/trusted.c
 @@ -135,6 +135,9 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
@@ -126,15 +128,7 @@ index ecec672d3a77..67c0e19a2125 100644
  	ret = init_digests();
  	if (ret < 0)
  		goto err_put;
-@@ -1263,16 +1279,19 @@ static int __init init_trusted(void)
- err_free:
- 	kfree(digests);
- err_put:
--	put_device(&chip->dev);
-+	if (chip)
-+		put_device(&chip->dev);
- 	return ret;
- }
+@@ -1269,10 +1285,12 @@ static int __init init_trusted(void)
  
  static void __exit cleanup_trusted(void)
  {
