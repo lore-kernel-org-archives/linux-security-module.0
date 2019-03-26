@@ -2,106 +2,85 @@ Return-Path: <SRS0=+HMg=R5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCC6C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 20:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01286C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 20:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C5D02075C
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 20:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C505220700
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 20:55:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553633753;
+	bh=boyJ3Buo2pPC9t7P96nVK4DIZZBxcZsfGGAPdiYwOqQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Qu5gvEyEtO65szZZoRghgK1WneeyML/2uvl4xecvZjhLk6ixvDiqe7lrtVvIopglq
+	 Y2zeKn684XzOeogrsMyio/SMlVAsey/HM1jVgYbyBG8mcKQsJOQqp+YC36npzjp3gQ
+	 kt4rfFQbTHEhUxUf/8GBjaGuqG8Er17ZZDE0NqxE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732730AbfCZUpv (ORCPT
+        id S1732752AbfCZUzx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Mar 2019 16:45:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55022 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732716AbfCZUpv (ORCPT
+        Tue, 26 Mar 2019 16:55:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34826 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732748AbfCZUzw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Mar 2019 16:45:51 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2QKdGJ1130468
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 16:45:49 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2rftk1j0d2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 16:45:49 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 26 Mar 2019 20:40:47 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 26 Mar 2019 20:40:43 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2QKeg8P62718058
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Mar 2019 20:40:42 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CAAA4C044;
-        Tue, 26 Mar 2019 20:40:42 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3ED204C050;
-        Tue, 26 Mar 2019 20:40:41 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.94.28])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Mar 2019 20:40:41 +0000 (GMT)
-Subject: Re: [PATCH ghak109 V2] audit: link integrity evm_write_xattrs
- record to syscall event
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Richard Guy Briggs <rgb@redhat.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
-        omosnace@redhat.com, eparis@parisplace.org, serge@hallyn.com,
-        mjg59@google.com
-Date:   Tue, 26 Mar 2019 16:40:30 -0400
-In-Reply-To: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
-References: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
+        Tue, 26 Mar 2019 16:55:52 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDF5421738
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 20:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553633752;
+        bh=boyJ3Buo2pPC9t7P96nVK4DIZZBxcZsfGGAPdiYwOqQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hDVTJCYYK+ctAydkulvCscDWHwdq3eXq7tlPLUds/HghYBvTIs3KUDaUvqwgQ1ty5
+         dzf5BqtRWoXTxDe8XsEg889M6uL0lIZ+BoFEis26j9aX+uct6AxWbhJe4zWjGCd8yY
+         PRn9LyIHAHkS4sCxpOVE15svTfGYh7nsRV/xNSSI=
+Received: by mail-wm1-f47.google.com with SMTP id z11so14230434wmi.0
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 13:55:51 -0700 (PDT)
+X-Gm-Message-State: APjAAAVa0h15uosOsyMQVh2y8sPYA1zoizPMu3C0i9f64QbJmOwmN6W/
+        Kq+s8ttUU/Xmn5ysU5RyHrRQcSiMQKxdG2aKTBeC1w==
+X-Google-Smtp-Source: APXvYqwiosCi1l4wHJhYr/e48fuZj9iPqzVTecVH+cFvt04RmxBfsTMTGOZpZrqZEJKMSUwN0Jd6MUpVgVsSf4WKe2Y=
+X-Received: by 2002:a05:600c:211a:: with SMTP id u26mr11751037wml.74.1553633750383;
+ Tue, 26 Mar 2019 13:55:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190326182742.16950-1-matthewgarrett@google.com> <20190326182742.16950-11-matthewgarrett@google.com>
+In-Reply-To: <20190326182742.16950-11-matthewgarrett@google.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 26 Mar 2019 13:55:39 -0700
+X-Gmail-Original-Message-ID: <CALCETrW43Syz-deM-fGUCbWfA8tcsoCJJ5XqjFhpg+d0sNYDRA@mail.gmail.com>
+Message-ID: <CALCETrW43Syz-deM-fGUCbWfA8tcsoCJJ5XqjFhpg+d0sNYDRA@mail.gmail.com>
+Subject: Re: [PATCH V31 10/25] PCI: Lock down BAR access when the kernel is
+ locked down
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19032620-0012-0000-0000-000003076F32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032620-0013-0000-0000-0000213E9955
-Message-Id: <1553632830.4233.3.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-26_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903260141
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Richard, Paul,
+On Tue, Mar 26, 2019 at 11:28 AM Matthew Garrett
+<matthewgarrett@google.com> wrote:
+>
+> From: Matthew Garrett <mjg59@srcf.ucam.org>
+>
+> Any hardware that can potentially generate DMA has to be locked down in
+> order to avoid it being possible for an attacker to modify kernel code,
+> allowing them to circumvent disabled module loading or module signing.
+> Default to paranoid - in future we can potentially relax this for
+> sufficiently IOMMU-isolated devices.
 
-On Tue, 2019-03-26 at 14:49 -0400, Richard Guy Briggs wrote:
-> In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
-> verified xattrs"), the call to audit_log_start() is missing a context to
-> link it to an audit event. Since this event is in user context, add
-> the process' syscall context to the record.
-> 
-> In addition, the orphaned keyword "locked" appears in the record.
-> Normalize this by changing it to logging the locking string "." as any
-> other user input in the "xattr=" field.
-> 
-> Please see the github issue
-> https://github.com/linux-audit/audit-kernel/issues/109
-> 
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Does this break vfio?
 
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-
-Paul, were you planning on upstreaming this patch?
-
-Mimi
-
+--Andy
