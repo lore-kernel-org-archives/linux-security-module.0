@@ -2,90 +2,72 @@ Return-Path: <SRS0=+HMg=R5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B886C10F05
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 17:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F23C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 18:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F79A20866
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 17:56:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jcjFcCTa"
+	by mail.kernel.org (Postfix) with ESMTP id 24D0020823
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 18:16:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731571AbfCZR4K (ORCPT
+        id S1731940AbfCZSQ2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Mar 2019 13:56:10 -0400
-Received: from mail-it1-f177.google.com ([209.85.166.177]:50564 "EHLO
-        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbfCZR4K (ORCPT
+        Tue, 26 Mar 2019 14:16:28 -0400
+Received: from namei.org ([65.99.196.166]:58624 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731467AbfCZSQ2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Mar 2019 13:56:10 -0400
-Received: by mail-it1-f177.google.com with SMTP id m137so21071130ita.0
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 10:56:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EokdJk0jdZKei/GtsxXIf6RBVdRcX2HGb5Qo163dW3M=;
-        b=jcjFcCTaZET+wKT/MDTuz6ncFZ3fkmub6+/VZ/WG7LrK+6i7VTOmqfgNpHyAvFDhC7
-         tqbjHdQsj2z624p76D+mDzFThq1lA7GZK0HolHAhSejSS9+TTEypxqqL8TZSDEp3srNs
-         pbB1S88P3GRrVtmQyv3jqUWQm5ipA4Wy/8VN2lCozdFqqOQzJELYKILUrjwEFQjKmQ5s
-         L9L/di2sly2TvkyqWvOWszP/5zoKRf6NS0L9c/PmGqRcdX30jEZSNPxMU3288C/Iw+oX
-         lGyOts9KJa5OzGvDMQP1IxXsbMkKgGcLOhSebXmiPf0JO5zENwYdjxg3egx1uThO24BF
-         eSew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EokdJk0jdZKei/GtsxXIf6RBVdRcX2HGb5Qo163dW3M=;
-        b=V+5ysB5EiGc+xJuR6Kgj1dF5RLpKRrzLiDbqu0+rQh1eQ9iqegDQ+BTQeHbp6qhJac
-         hL9J4CB4137OqwYlWHT+lXRveW+BvoYxce40bH0fuVou/uLIZwjeZxsUZK5r1OcLbec5
-         KF1RYZKRxNhIBw1yWuboTDstMCbOb1sF5F9lXoZqUMHFhVWW9QHMsqI5efb+fVlAmirT
-         BezDE3CrxQk9iEwzgdTRi+WMzioOFU4piUiUUeI9V6QvAs9IHr6+gtQewuwBY9wCQ8ls
-         30YWvL83EvIg7qKh1xiU/gZsx1o7+w8yxXr7frU86fsoYvaYzZNYe0o63+MePPdONu4l
-         nCtg==
-X-Gm-Message-State: APjAAAXVFIY8Mul8N551As9DsrGoJDcBUKfrFqOlPsoxot3gsKQk0veg
-        IfgcyJQS9JqHiqzObt+AxSjIfbTCvmEgxY8m0N1ncs9hVxw=
-X-Google-Smtp-Source: APXvYqwJnIpGVvUVKCJ9LB7LUZJPMbQErQPRWQbI3XFxVfOtGDzS8cACAci4GAkd5fydOZvoCAUJ6i1mLEWFmgU1CJ8=
-X-Received: by 2002:a24:2c48:: with SMTP id i69mr104352iti.161.1553622968800;
- Tue, 26 Mar 2019 10:56:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <81d0122d14c4fbb3a2ad33d25fdf2dd001c7dcc7.1552737854.git.rgb@redhat.com>
- <CAHC9VhS61LTQMXiALRre+5_+wvwe6Wa9RN-WYNTjvz5LVsA5rw@mail.gmail.com>
- <20190321005008.wfz3bk7q262km5fz@madcap2.tricolour.ca> <2006016.NXIvICiRTL@x2>
- <1553614157.4115.17.camel@linux.ibm.com> <20190326161409.3wej7hcwnqalf4or@madcap2.tricolour.ca>
- <20190326174252.irqrldtcy5bwho6k@madcap2.tricolour.ca>
-In-Reply-To: <20190326174252.irqrldtcy5bwho6k@madcap2.tricolour.ca>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Tue, 26 Mar 2019 10:55:57 -0700
-Message-ID: <CACdnJusGS94GTVkGO1xsczdksBVEf39A7z-H36tWNDo5xwobqQ@mail.gmail.com>
-Subject: Re: [PATCH ghak109 V1] audit: link integrity evm_write_xattrs record
- to syscall event
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Steve Grubb <sgrubb@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, omosnace@redhat.com,
+        Tue, 26 Mar 2019 14:16:28 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x2QIG2V5005742;
+        Tue, 26 Mar 2019 18:16:02 GMT
+Date:   Wed, 27 Mar 2019 05:16:02 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+cc:     Denis Efremov <efremov@ispras.ru>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
+        John Johansen <john.johansen@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2 00/11] LSM documentation update
+In-Reply-To: <20190326085350.4de2c68d@lwn.net>
+Message-ID: <alpine.LRH.2.21.1903270515510.5235@namei.org>
+References: <cover.1551213058.git.efremov@ispras.ru>        <f89f1335-a76a-b364-d426-b0fe3423ad0a@ispras.ru> <20190326085350.4de2c68d@lwn.net>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 26, 2019 at 10:43 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+On Tue, 26 Mar 2019, Jonathan Corbet wrote:
 
-> Ok, what I typed above wasn't quite what I intended...  This is what I
-> meant:
->
->         audit_log_format(ab, "xattr=");
->         audit_log_untrustedstring(ab, ".");
->
-> But, I'll just move the normal case above the "." locking detection and
-> log all cases the same way.
+> On Tue, 26 Mar 2019 15:38:21 +0100
+> Denis Efremov <efremov@ispras.ru> wrote:
+> 
+> > Is there something more I could do so that these changes are accepted?
+> > At least this patchset fixes the documentation format for better html
+> > generation.
+> 
+> I had assumed that this would go through the security tree, but can
+> certainly pick it up if that works better.
 
-Sounds good to me.
+I'll take them for 5.2.
+
+> 
+> jon
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
+
