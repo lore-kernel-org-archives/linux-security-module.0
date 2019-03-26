@@ -2,83 +2,72 @@ Return-Path: <SRS0=+HMg=R5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5542C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D3FC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 05:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A707420857
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:44:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553561091;
-	bh=8SUfUE5nuZ1q7O+shWBJjUmIu7S7n/I9P2djfmaQFt0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=HBPZ0Ymhge589j+Uw3+SnX76KW6Z0vJ8+nM2zv2uf0N/fNvaWo/p9P+lsTLwqz1be
-	 R3munw0SWCianT91w2WEC6FFRKR1q1Y3fGodhMbrJnseLmX9ji/EoufJRwzy20kehS
-	 BF/Bokbq+urBDwYKnukQEL9jn09RR4nSPlU5qy8M=
+	by mail.kernel.org (Postfix) with ESMTP id 31FD820828
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 05:30:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IO969YHX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730589AbfCZAov (ORCPT
+        id S1726290AbfCZFaf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 20:44:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33354 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726553AbfCZAov (ORCPT
+        Tue, 26 Mar 2019 01:30:35 -0400
+Received: from mail-it1-f179.google.com ([209.85.166.179]:55417 "EHLO
+        mail-it1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbfCZFaf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 20:44:51 -0400
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3AF62080F;
-        Tue, 26 Mar 2019 00:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553561090;
-        bh=8SUfUE5nuZ1q7O+shWBJjUmIu7S7n/I9P2djfmaQFt0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UgwcYj/MtOYsZSRSAQZJZmAOXrcAJWxN8DvslHezaJxGGppnUH9hg0WRn3OC3rd+5
-         CIOEoiA2anJiXnkvhlqLHbwgOEBeE0v9dkEPNPK1g+exjlciJPASiI196sSYfbfeMa
-         j1gLzdLm1hOYZFHXDyJli5H+H3Cii/Zz4DKCVJOY=
-Date:   Tue, 26 Mar 2019 09:43:51 +0900
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        Tue, 26 Mar 2019 01:30:35 -0400
+Received: by mail-it1-f179.google.com with SMTP id z126so17649693itd.5
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 22:30:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xuH+jwjS5cxwDT/xNLxhJ5pir6EDS0bIdJPjuQU8hFI=;
+        b=IO969YHXXlIkOavbhgpdXJcHCP41hNoIUHZdqWrXfigEa3w9SeIADfnSYDnkaveLDJ
+         IB0dhMIW6JTzg4p8CCP/6VoK8ogV2AGbuxd+hadkXikQTpu/H5sizJnCS0A0az5r86Ko
+         FigaEBa0PR8MRcHCyW+LrJycRHk7MPrOQHAQsDMK3xr2TckppWyWWf7ylFWU63ySUl3a
+         Yaplgg8a9QNGaBC0rYnc8JGQcQbthw55ZIp7YHhZD72xKte43wULEv5cgLLu6WEMqT9d
+         364Lo1t6ybjmjH8GWDdek42zqhNnauVSfUTj6xnfKJ6sBOcxFW8FF4bKQVWqGG3Ajavr
+         3J6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xuH+jwjS5cxwDT/xNLxhJ5pir6EDS0bIdJPjuQU8hFI=;
+        b=FImOxXL7I8yiTcsUs6cQyU9rk7WK+AzB+G8acAeMnPiGXL/JZFl97pdEGnpl/ysIly
+         6Hfiyv9D7eHYKGnnL3kOYKIxnxrSgIAez06UnqlW8mf9XMFPypuREvNprTuxT0ZlvQTK
+         VFKUpOWGkaTdeUfFYRkeAP1zcQsbqFa8V/IjMv9zR9TeNc56Niy+SdBzncWNC7RZDr/o
+         Z4eGgenQ7L8lEqYvPR+X1Fyx4nlz8PEZ1fZLONkFpsqUDw1683VGx+YdA6NnGCs1AUdp
+         iyFcHB5jfrMxWxB5LtE8yd5U0riNzbkt/6rMI3C0q4iyFEzfpsf4E/jETLsZAR2SqL8j
+         WLww==
+X-Gm-Message-State: APjAAAWBh+9VQQoL3lTeO+nFCgyf+6KkQWnOy8t5NgGgllqIfnkJKTKN
+        /e4m2tuoYmvBvhJi10svTcPmnD6XazWl6GhI4cm3SZYPdRU=
+X-Google-Smtp-Source: APXvYqzRHuzogaTO46QNWh8MFo6g65BIaLQQAaa//RC/dJ24jO0pFcboABgTsjDuqphJ2xLzOiykl7GhczqxpRqHM3s=
+X-Received: by 2002:a02:b38f:: with SMTP id p15mr3491360jan.103.1553578233952;
+ Mon, 25 Mar 2019 22:30:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190325220954.29054-1-matthewgarrett@google.com> <20190325220954.29054-2-matthewgarrett@google.com>
+In-Reply-To: <20190325220954.29054-2-matthewgarrett@google.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Mon, 25 Mar 2019 22:30:22 -0700
+Message-ID: <CACdnJuuEUBRABkfX_DhBg67CWr6zKAu_ZvWYq3kN52GTemrdCQ@mail.gmail.com>
+Subject: Re: [PATCH 01/27] Add the ability to lock down access to the running
+ kernel image
+To:     James Morris <jmorris@namei.org>
+Cc:     LSM List <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         David Howells <dhowells@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 25/27] debugfs: Restrict debugfs when the kernel is
- locked down
-Message-ID: <20190326004351.GA26712@kroah.com>
-References: <20190325220954.29054-1-matthewgarrett@google.com>
- <20190325220954.29054-26-matthewgarrett@google.com>
- <20190326003137.GB5112@kroah.com>
- <CACdnJus6a_7VUR27K7dJE037b3TPwDNMh1AyAOptHepB18vjxw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACdnJus6a_7VUR27K7dJE037b3TPwDNMh1AyAOptHepB18vjxw@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        James Morris <james.l.morris@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 25, 2019 at 05:38:09PM -0700, Matthew Garrett wrote:
-> On Mon, Mar 25, 2019 at 5:35 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Mon, Mar 25, 2019 at 03:09:52PM -0700, Matthew Garrett wrote:
-> > > Normal device interaction should be done through configfs, sysfs or a
-> > > miscdev, not debugfs.
-> >
-> > Then why not just not allow debugfs at all if it is such a "big
-> > problem"?
-> 
-> Previous attempts to do so have resulted in strong pushback from
-> various maintainers. If you're happy just having any complaints
-> reassigned to you then I'm more than happy to turn it off entirely.
-
-Sure, send them my way :)
+Based on Andy's feedback, I'm going to rework this slightly and
+re-send tomorrow.
