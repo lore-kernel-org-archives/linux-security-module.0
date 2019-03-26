@@ -2,93 +2,127 @@ Return-Path: <SRS0=+HMg=R5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A8FC43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6603C10F03
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D22F20848
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:00:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DC3E2080F
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553559016;
+	bh=WMJRBKlNDw38qp/1xuZqDu2eoQ4xMd5LQSfiiy6YFr8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=rp63mCorAPZDBDd0aSD+2x2j10sp0XWJ8WfGIfpvk9sSALFirJr7ug89qBYDcL2VP
+	 ZL6wLVSuAh+0d4UTZSKm5jD7rle1Mm89Fi7jbhg/MKX++eguHwE1Q4/34Uh6zj5wX3
+	 viOZH0phQiruAxzGnn63ev0pyLMHBvpuO8AplizE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbfCZAAf (ORCPT
+        id S1727092AbfCZAKP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 20:00:35 -0400
-Received: from www62.your-server.de ([213.133.104.62]:38492 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730239AbfCZAAf (ORCPT
+        Mon, 25 Mar 2019 20:10:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57308 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726553AbfCZAKO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 20:00:35 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1h8ZW2-0003dX-5P; Tue, 26 Mar 2019 01:00:30 +0100
-Received: from [178.197.248.24] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1h8ZW1-000CGW-Uz; Tue, 26 Mar 2019 01:00:30 +0100
+        Mon, 25 Mar 2019 20:10:14 -0400
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1B2E2080F
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 00:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553559012;
+        bh=WMJRBKlNDw38qp/1xuZqDu2eoQ4xMd5LQSfiiy6YFr8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=t9imsqu7Ion8Bz9N6+9ZFAn5PQfuIB8Aq/zLQX0lplBv1067Hs6o72dDSIw+te7/g
+         3AZUqcdwyHxlAWKp41MVlRCz7GPM4LIhf6hBwJlKGAZxplSpC523SnXHUVwAZ0qIVX
+         hEu0pdefdFufRTByakCgF7iEFpBArwUpds4FDHZk=
+Received: by mail-wm1-f46.google.com with SMTP id 4so10765730wmf.1
+        for <linux-security-module@vger.kernel.org>; Mon, 25 Mar 2019 17:10:12 -0700 (PDT)
+X-Gm-Message-State: APjAAAVWKXD0XNRPOvV+xuvhfR/TKD5C49ue5A76w/1xBYzNthDP2zRB
+        QJ5SRWK2s0MjZn36gBmmdPatd+F/W6QGeDsFbUAAzw==
+X-Google-Smtp-Source: APXvYqwo6Frd6wZMrexD6Qd3HSV7HadjqnpeISg+KBAkuGAdk7BOjnEKUZk20j37g3jwwhuHtMIDerIQBIanJfohKrE=
+X-Received: by 2002:a1c:e188:: with SMTP id y130mr6750289wmg.83.1553559011275;
+ Mon, 25 Mar 2019 17:10:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190325220954.29054-1-matthewgarrett@google.com>
+ <20190325220954.29054-24-matthewgarrett@google.com> <20190325164221.5d8687bd@shemminger-XPS-13-9360>
+In-Reply-To: <20190325164221.5d8687bd@shemminger-XPS-13-9360>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 25 Mar 2019 17:10:00 -0700
+X-Gmail-Original-Message-ID: <CALCETrU=EqqRwyQGBT0=_N9-E_pBM53=z+WJrd9OzV7g6xJa0A@mail.gmail.com>
+Message-ID: <CALCETrU=EqqRwyQGBT0=_N9-E_pBM53=z+WJrd9OzV7g6xJa0A@mail.gmail.com>
 Subject: Re: [PATCH 23/27] bpf: Restrict kernel image access functions when
  the kernel is locked down
 To:     Stephen Hemminger <stephen@networkplumber.org>,
-        Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        Linux API <linux-api@vger.kernel.org>
+Cc:     Matthew Garrett <matthewgarrett@google.com>,
+        James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
         Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        netdev@vger.kernel.org, Chun-Yi Lee <jlee@suse.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
         Will Drewry <wad@chromium.org>
-References: <20190325220954.29054-1-matthewgarrett@google.com>
- <20190325220954.29054-24-matthewgarrett@google.com>
- <20190325164221.5d8687bd@shemminger-XPS-13-9360>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <1cfa7345-c807-db76-f50a-ea3ba70f07b2@iogearbox.net>
-Date:   Tue, 26 Mar 2019 01:00:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20190325164221.5d8687bd@shemminger-XPS-13-9360>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25399/Mon Mar 25 08:46:48 2019)
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 03/26/2019 12:42 AM, Stephen Hemminger wrote:
+On Mon, Mar 25, 2019 at 4:42 PM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
 > On Mon, 25 Mar 2019 15:09:50 -0700
 > Matthew Garrett <matthewgarrett@google.com> wrote:
-> 
->> From: David Howells <dhowells@redhat.com>
->>
->> There are some bpf functions can be used to read kernel memory:
->> bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
->> private keys in kernel memory (e.g. the hibernation image signing key) to
->> be read by an eBPF program and kernel memory to be altered without
->> restriction.
-
-I'm not sure where 'kernel memory to be altered without restriction' comes
-from, but it's definitely a wrong statement.
-
->> Completely prohibit the use of BPF when the kernel is locked down.
-
-In which scenarios will the lock-down mode be used? Mostly niche? I'm asking
-as this would otherwise break a lot of existing stuff ... I'd prefer you find
-a better solution to this than this straight -EPERM rejection.
-
->> Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
->> Signed-off-by: David Howells <dhowells@redhat.com>
->> cc: netdev@vger.kernel.org
->> cc: Chun-Yi Lee <jlee@suse.com>
->> cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
->> Cc: Daniel Borkmann <daniel@iogearbox.net>
->> Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
-> 
+>
+> > From: David Howells <dhowells@redhat.com>
+> >
+> > There are some bpf functions can be used to read kernel memory:
+> > bpf_probe_read, bpf_probe_write_user and bpf_trace_printk.  These allow
+> > private keys in kernel memory (e.g. the hibernation image signing key) to
+> > be read by an eBPF program and kernel memory to be altered without
+> > restriction.
+> >
+> > Completely prohibit the use of BPF when the kernel is locked down.
+> >
+> > Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: netdev@vger.kernel.org
+> > cc: Chun-Yi Lee <jlee@suse.com>
+> > cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+> > Cc: Daniel Borkmann <daniel@iogearbox.net>
+> > Signed-off-by: Matthew Garrett <matthewgarrett@google.com>
+>
 > Wouldn't this mean that Seccomp won't work in locked down mode?
-> 
 
+I wasn't cc'd on this series, nor was linux-api, so it's awkward to review.
+
+A while back, I suggested an approach to actually make this stuff
+mergeable: submit a patch series that adds lockdown mode, enables it
+by command line option (and maybe sysctl) *only* and has either no
+effect or only a token effect.  Then we can add actual features to
+lockdown mode one at a time and review them separately.
+
+And I'm going to complain loudly unless two things change about this
+whole thing:
+
+1. Lockdown mode becomes three states, not a boolean.  The states are:
+no lockdown, best-effort-to-protect-kernel-integrity, and
+best-effort-to-protect-kernel-secrecy-and-integrity.  And this BPF
+mess illustrates why: most users will really strongly object to
+turning off BPF when they actually just want to protect kernel
+integrity.  And as far as I know, things like Secure Boot policy will
+mostly care about integrity, not secrecy, and tracing and such should
+work on a normal locked-down kernel.  So I think we need this knob.
+
+2. All the proponents of this series, and the documentation, needs to
+document that it's best effort.  There will always be security bugs,
+and there will always be things we miss.
+
+
+--Andy
