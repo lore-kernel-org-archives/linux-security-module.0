@@ -2,153 +2,100 @@ Return-Path: <SRS0=+HMg=R5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A21C43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A2FC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:35:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 923B22080F
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:10:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="DLIRdcZs"
+	by mail.kernel.org (Postfix) with ESMTP id 958292084D
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 00:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553560555;
+	bh=L3xeVJYdIRTDqBMvYIMi/pypjlVgS/mBndEZYjyhDUs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Q650dAlSwOk0E6OYSBvodUqaplH1trZGuYaMNFeoovpFv9VLaXtIDK95LVXuTSyBH
+	 tYhyifAM5ZMh6gYdcI8rygrEY1rANUMVihBEiedTuUgQjMlbjPoIsosTf0c/de017Z
+	 Wx/TrYywNaIC7OOaJGh2sK14nwUaKnGt8ktSiwoo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729760AbfCZAKU (ORCPT
+        id S1730212AbfCZAfu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Mar 2019 20:10:20 -0400
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:57952 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727066AbfCZAKU (ORCPT
+        Mon, 25 Mar 2019 20:35:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730125AbfCZAfu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Mar 2019 20:10:20 -0400
-X-Greylist: delayed 3707 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Mar 2019 20:10:19 EDT
-Received: from pps.filterd (m0122330.ppops.net [127.0.0.1])
-        by mx0b-00190b01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2PN1txP014442;
-        Mon, 25 Mar 2019 23:08:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : subject :
- date : message-id : in-reply-to : references : mime-version :
- content-type; s=jan2016.eng;
- bh=0S5EZ2CZDM+bvFFmyhyPue+BljJixs0+paTHWPwXJQc=;
- b=DLIRdcZs6CER7q1OhpuCEAEcay+JtpAJNuj9Yl4pQhOu60gLZLvZ+k+z8rlnk2zVT0P5
- DSFWOzsCNxYgGH/aIGpgBLr6T0CTu+17TQd62ippp1atWSv2pwNqnQbcGLW5mjDEnh8H
- eDu/AZ4ZCo1MwKW7LavP/en1JjX/g4HAqxBJXK4x5QJTS89xLW+Z8cy/2TtkfcRQpGzg
- Qqt8ZN9Z+k0O5DmAsHWLXNjSloXn7HqflpfJCIE51knRwhKVgBTUP9Lhmh7Ps76nOa7X
- Tcmk/RAcO2ythjiBmNEmozOpZvlSJLXa4/mCx1UmQCdSRMaXGHAGpAtv84Z827FDeKVu Fw== 
-Received: from prod-mail-ppoint4 (a96-6-114-87.deploy.static.akamaitechnologies.com [96.6.114.87] (may be forged))
-        by mx0b-00190b01.pphosted.com with ESMTP id 2rf3r98s5s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 25 Mar 2019 23:08:23 +0000
-Received: from pps.filterd (prod-mail-ppoint4.akamai.com [127.0.0.1])
-        by prod-mail-ppoint4.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x2PN2Ow4005728;
-        Mon, 25 Mar 2019 19:08:22 -0400
-Received: from email.msg.corp.akamai.com ([172.27.123.57])
-        by prod-mail-ppoint4.akamai.com with ESMTP id 2rdg4v4b59-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 25 Mar 2019 19:08:22 -0400
-Received: from usma1ex-cas4.msg.corp.akamai.com (172.27.123.57) by
- usma1ex-dag1mb3.msg.corp.akamai.com (172.27.123.103) with Microsoft SMTP
- Server (TLS) id 15.0.1473.3; Mon, 25 Mar 2019 19:08:14 -0400
-Received: from igorcastle.kendall.corp.akamai.com (172.29.170.123) by
- usma1ex-cas4.msg.corp.akamai.com (172.27.123.57) with Microsoft SMTP Server
- id 15.0.1473.3 via Frontend Transport; Mon, 25 Mar 2019 16:08:15 -0700
-Received: by igorcastle.kendall.corp.akamai.com (Postfix, from userid 29659)
-        id 369C262BE9; Mon, 25 Mar 2019 19:08:14 -0400 (EDT)
-From:   Igor Lubashev <ilubashe@akamai.com>
-To:     Serge Hallyn <serge@hallyn.com>, James Morris <jmorris@namei.org>,
-        Igor Lubashev <ilubashe@akamai.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:CAPABILITIES" <linux-security-module@vger.kernel.org>
-Subject: [PATCH 1/1] RFC: security: add SECURE_KEEP_FSUID to preserve fsuid/fsgid across execve
-Date:   Mon, 25 Mar 2019 19:07:58 -0400
-Message-ID: <1553555278-19153-2-git-send-email-ilubashe@akamai.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1553555278-19153-1-git-send-email-ilubashe@akamai.com>
-References: <1553555278-19153-1-git-send-email-ilubashe@akamai.com>
+        Mon, 25 Mar 2019 20:35:50 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7E96206DF;
+        Tue, 26 Mar 2019 00:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553560549;
+        bh=L3xeVJYdIRTDqBMvYIMi/pypjlVgS/mBndEZYjyhDUs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hwmkqScAeT0lY5ymYZ1DleQZwen9mwDTZ04ZKgut6J4JVKIQIl5CYm2SuTxaruPod
+         /tep/+zpLQgM4Rg+i/ULYprS5Ud2cHOoxOT4RtWwiQ3FPpwXOmFvLHkhuAGFIbjZcF
+         owF8v8WW/U3uKxBs2J9ai9ELpcIphT+IISKjVvGs=
+Date:   Tue, 26 Mar 2019 09:31:37 +0900
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 25/27] debugfs: Restrict debugfs when the kernel is
+ locked down
+Message-ID: <20190326003137.GB5112@kroah.com>
+References: <20190325220954.29054-1-matthewgarrett@google.com>
+ <20190325220954.29054-26-matthewgarrett@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-25_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=885
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1903250161
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-25_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=919 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1903250161
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190325220954.29054-26-matthewgarrett@google.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Many kernel interfaces require real and/or effective root uid instead
-of relying solely of capabilities. An executable that uses such
-interfaces has to be set-uid-root or be executed by a thread with
-effective root uid. Presently, fsuid and saved uid will reset to the
-effective uid during execve. As a result, it is not possible to
-execute a binary such that it has effective root uid but retains
-fsuid/fsgid of the actual user. Retaining fsuid/fsgid of the actual
-user could be required if the executable needs to access the
-filesystem. It may also be desired from the security perspective of
-delegating the minimal set of privileges.
+On Mon, Mar 25, 2019 at 03:09:52PM -0700, Matthew Garrett wrote:
+> From: David Howells <dhowells@redhat.com>
+> 
+> Disallow opening of debugfs files that might be used to muck around when
+> the kernel is locked down as various drivers give raw access to hardware
+> through debugfs.  Given the effort of auditing all 2000 or so files and
+> manually fixing each one as necessary, I've chosen to apply a heuristic
+> instead.  The following changes are made:
+> 
+>  (1) chmod and chown are disallowed on debugfs objects (though the root dir
+>      can be modified by mount and remount, but I'm not worried about that).
+> 
+>  (2) When the kernel is locked down, only files with the following criteria
+>      are permitted to be opened:
+> 
+> 	- The file must have mode 00444
+> 	- The file must not have ioctl methods
+> 	- The file must not have mmap
+> 
+>  (3) When the kernel is locked down, files may only be opened for reading.
+> 
+> Normal device interaction should be done through configfs, sysfs or a
+> miscdev, not debugfs.
 
-Setting SECURE_KEEP_FSUID bit ensures that the current fsuid/fsgiud is
-retained by execve.
+Then why not just not allow debugfs at all if it is such a "big
+problem"?
 
-Signed-off-by: Igor Lubashev <ilubashe@akamai.com>
----
- include/uapi/linux/securebits.h | 10 +++++++++-
- security/commoncap.c            |  9 +++++++--
- 2 files changed, 16 insertions(+), 3 deletions(-)
+Actually, it is a big problem, and I am pushing for systems to not mount
+debugfs at all these days, but that's a different story...
 
-diff --git a/include/uapi/linux/securebits.h b/include/uapi/linux/securebits.h
-index d6d9887..6c20b22 100644
---- a/include/uapi/linux/securebits.h
-+++ b/include/uapi/linux/securebits.h
-@@ -52,10 +52,18 @@
- #define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
- 			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_LOCKED))
- 
-+/* When set, execve does not reset fsuid/fsgid to euid/egid */
-+#define SECURE_KEEP_FSUID		8
-+#define SECURE_KEEP_FSUID_LOCKED	9  /* make bit-8 immutable */
-+
-+#define SECBIT_KEEP_FSUID	 (issecure_mask(SECURE_KEEP_FSUID))
-+#define SECBIT_KEEP_FSUID_LOCKED (issecure_mask(SECURE_KEEP_FSUID_LOCKED))
-+
- #define SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
- 				 issecure_mask(SECURE_NO_SETUID_FIXUP) | \
- 				 issecure_mask(SECURE_KEEP_CAPS) | \
--				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
-+				 issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
-+				 issecure_mask(SECURE_KEEP_FSUID))
- #define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
- 
- #endif /* _UAPI_LINUX_SECUREBITS_H */
-diff --git a/security/commoncap.c b/security/commoncap.c
-index c477fb6..490a7b4 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -852,8 +852,13 @@ int cap_bprm_set_creds(struct linux_binprm *bprm)
- 						   old->cap_permitted);
- 	}
- 
--	new->suid = new->fsuid = new->euid;
--	new->sgid = new->fsgid = new->egid;
-+	new->suid = new->euid;
-+	new->sgid = new->egid;
-+
-+	if (!issecure(SECURE_KEEP_FSUID)) {
-+		new->fsuid = new->euid;
-+		new->fsgid = new->egid;
-+	}
- 
- 	/* File caps or setid cancels ambient. */
- 	if (has_fcap || is_setid)
--- 
-2.7.4
+Just "disabling" it entirely for this crazy dream of a "locked down"
+kernel is fine for me.
 
+thanks,
+
+greg k-h
