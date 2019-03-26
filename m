@@ -2,122 +2,94 @@ Return-Path: <SRS0=+HMg=R5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BCAC10F05
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 16:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B263C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 17:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 251F520863
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 16:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BBDA2070D
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Mar 2019 17:41:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g2OjfgZD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfCZQOU (ORCPT
+        id S1730441AbfCZRlg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Mar 2019 12:14:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55866 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbfCZQOU (ORCPT
+        Tue, 26 Mar 2019 13:41:36 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:33335 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbfCZRlg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Mar 2019 12:14:20 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AA74881F2F;
-        Tue, 26 Mar 2019 16:14:19 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-19.phx2.redhat.com [10.3.112.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C84535D73F;
-        Tue, 26 Mar 2019 16:14:12 +0000 (UTC)
-Date:   Tue, 26 Mar 2019 12:14:09 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Steve Grubb <sgrubb@redhat.com>, Paul Moore <paul@paul-moore.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, omosnace@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, mjg59@google.com
-Subject: Re: [PATCH ghak109 V1] audit: link integrity evm_write_xattrs record
- to syscall event
-Message-ID: <20190326161409.3wej7hcwnqalf4or@madcap2.tricolour.ca>
-References: <81d0122d14c4fbb3a2ad33d25fdf2dd001c7dcc7.1552737854.git.rgb@redhat.com>
- <CAHC9VhS61LTQMXiALRre+5_+wvwe6Wa9RN-WYNTjvz5LVsA5rw@mail.gmail.com>
- <20190321005008.wfz3bk7q262km5fz@madcap2.tricolour.ca>
- <2006016.NXIvICiRTL@x2>
- <1553614157.4115.17.camel@linux.ibm.com>
+        Tue, 26 Mar 2019 13:41:36 -0400
+Received: by mail-it1-f195.google.com with SMTP id v8so3396940itf.0
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 10:41:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fGhk19C79D/Fglm4iu0pJ8zGZlge81gvybMyxqkh4bM=;
+        b=g2OjfgZDxc7c9OVnGQTEjyOWL1PlA9/Hg/PkRqv7Qaitsf7bYV4uAtc77HW8Eoq8ZP
+         /sxX0SM2mO3AHkkjSxwFXW+iznPbS8tFddy8xKVFRFbbJ4kC3W2oKr8jPjKvzhWLqKPc
+         wUUybPbiQQPJnpar2Vktx4rO1mtvDJendl69p1LyZf5MOzvVMgsp75Mi3Q+GNfeGCizH
+         Eg/Cr0COb1s7Xd1kl9AsQgj9QVAZ1832m5OISeu57m+9IbayN5oehJfsyW0+yxl8C206
+         s1jEZQ3fS9SwdP1wdYRP03YB9BoJDER1hcBaAQxMj1r3tVsnnibMlBdXEBIz3a+4n3j1
+         wLRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fGhk19C79D/Fglm4iu0pJ8zGZlge81gvybMyxqkh4bM=;
+        b=jB+wWc4UERxTUa1WZPlJZFtIMqa3qmZuSSxPlQttPGCC8CUNdhidwinzFV4+TZDYyy
+         FeyEhALChdkyKkT4F51/kg+f0WP9u1D296sOVfXqo9KAYFr1IkUxQ0Su6mTYFtAkIXlf
+         hu6atbHubKsOdPouhKXk0yJZk87+rQsWa+5D88FzHd4SPWcTDV7ouYFrIC5CSCmkp5AK
+         orNv+pzx3SJlYE6JQvc1/EnASpYZXsw0QmeAfuqwIuC85mBeQSg3mIuoNJdBIsYgTPrm
+         CutqNrk+24IjF4hT2WgdE+oV6bx4063vRKFnjAi9YeFznC50IHzRwVxEoECIaqp17FzB
+         5jWw==
+X-Gm-Message-State: APjAAAXx0AXwmQS+rfa4xmpGe06fndvro3Dk8UUJAQ+XLGQzeynaOrhP
+        iHGtsTv+XeOEVAFSSnOSxZzaTszbIhnSbuhmWQmGQQ==
+X-Google-Smtp-Source: APXvYqxZ8nUtnrd6l8PDKYYlll4qu+TvOgd5haqcbV1rVfk+1sqtpM7quLDq87/FwgqhEd9mEt7NGBIxK3dWBRVYqso=
+X-Received: by 2002:a02:3d84:: with SMTP id n126mr17158071jan.102.1553622095064;
+ Tue, 26 Mar 2019 10:41:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1553614157.4115.17.camel@linux.ibm.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 26 Mar 2019 16:14:20 +0000 (UTC)
+References: <20190325220954.29054-1-matthewgarrett@google.com>
+ <20190325220954.29054-23-matthewgarrett@google.com> <20190326212957.f5b518990c14cf21262bfdcc@kernel.org>
+In-Reply-To: <20190326212957.f5b518990c14cf21262bfdcc@kernel.org>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Tue, 26 Mar 2019 10:41:23 -0700
+Message-ID: <CACdnJuss=NmcxS0UoTeopYzipt53ba5GTBwQ+YtJQXLj7_Q10w@mail.gmail.com>
+Subject: Re: [PATCH 22/27] Lock down kprobes
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        davem@davemloft.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019-03-26 11:29, Mimi Zohar wrote:
-> On Tue, 2019-03-26 at 11:22 -0400, Steve Grubb wrote:
-> 
-> > > > > --- a/security/integrity/evm/evm_secfs.c
-> > > > > +++ b/security/integrity/evm/evm_secfs.c
-> > > > > @@ -192,7 +192,8 @@ static ssize_t evm_write_xattrs(struct file *file,
-> > > > > const char __user *buf,> > 
-> > > > >         if (count > XATTR_NAME_MAX)
-> > > > >         
-> > > > >                 return -E2BIG;
-> > > > > 
-> > > > > -       ab = audit_log_start(NULL, GFP_KERNEL,
-> > > > > AUDIT_INTEGRITY_EVM_XATTR);
-> > > > > +       ab = audit_log_start(audit_context(), GFP_KERNEL,
-> > > > > +                            AUDIT_INTEGRITY_EVM_XATTR);
-> > > > 
-> > > > This part is fine.
-> > > > 
-> > > > >         if (!ab)
-> > > > >         
-> > > > >                 return -ENOMEM;
-> > > > > 
-> > > > > @@ -222,7 +223,7 @@ static ssize_t evm_write_xattrs(struct file *file,
-> > > > > const char __user *buf,> > 
-> > > > >                 inode_lock(inode);
-> > > > >                 err = simple_setattr(evm_xattrs, &newattrs);
-> > > > >                 inode_unlock(inode);
-> > > > > 
-> > > > > -               audit_log_format(ab, "locked");
-> > > > > +               audit_log_format(ab, "xattr=(locked)");
-> > > > 
-> > > > Two things come to mind:
-> > > > 
-> > > > * While we can clearly trust the string above, should we be logging
-> > > > the xattr field value as an untrusted string so it is consistent with
-> > > > how we record other xattr names?
-> > > 
-> > > That would be a question for Steve.
-> > 
-> > All fields with the same name must be represented the same way. If one 
-> > instance is untrusted, every instance of the same keyword must be untrusted.
-> 
-> Normal case:
->        audit_log_format(ab, "xattr=");
->        audit_log_untrustedstring(ab, xattr->name);
-> 
-> Ok, so the above audit_log_format() call should be replaced with
->  audit_log_untrustedstring().
+On Tue, Mar 26, 2019 at 5:30 AM Masami Hiramatsu <mhiramat@kernel.org> wrote:
+>
+> On Mon, 25 Mar 2019 15:09:49 -0700
+> Matthew Garrett <matthewgarrett@google.com> wrote:
+>
+> > From: David Howells <dhowells@redhat.com>
+> >
+> > Disallow the creation of kprobes when the kernel is locked down by
+> > preventing their registration.  This prevents kprobes from being used to
+> > access kernel memory, either to make modifications or to steal crypto data.
+>
+> Hmm, if you enforce signature check of modules, those modules
+> should be allowed to use kprobes?
+> I think we should introduce some kind of trust inheritance from
+> signed (trusted) modules.
 
-Ok, so I think we can agree on "audit_log_untrustedstring(ab,
-"xattr=.");" and simpler yet just print the contents regardless and not
-special case this print.  V2 coming...
-
-> Mimi
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Is there any way to install a kprobe /without/ it coming from a
+module? The presumption in lockdown mode is that module signing is
+enforced, so I'll admit to not being entirely clear on why this patch
+is needed in that case.
