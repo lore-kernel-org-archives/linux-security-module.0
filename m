@@ -2,187 +2,126 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE28C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 19:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC76BC43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 19:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F8CA206C0
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 19:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79A5F2075C
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 19:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553715252;
+	bh=A5Qd/qoQDq+puJoe7DKuMyx5lfK7yWeS+7/3jmBGLnY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=iKu86IBN+g6nSZrdjpXDcajogZjO2wYqWjg4zVhGePpqobv2SaOdUQ9A3G2uOlD+5
+	 28Jz2t3tlKvsgB3Xt2XXA0QVbG4EC8PPQ7VBs9trXWjngzU8vmlg760+uBeuIoTvfL
+	 BYR4bW+Eo8GATcKFQ+vP00A+VZU4WIk2UgHsDbAg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387898AbfC0TYH (ORCPT
+        id S1729531AbfC0SCO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Mar 2019 15:24:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43110 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732806AbfC0TYG (ORCPT
+        Wed, 27 Mar 2019 14:02:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728994AbfC0SCO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Mar 2019 15:24:06 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2RJK4bT112056
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 15:24:05 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rgf81r515-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 15:24:04 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 27 Mar 2019 19:24:02 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Mar 2019 19:23:58 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2RJNvaA29163564
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Mar 2019 19:23:57 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F23C11C05E;
-        Wed, 27 Mar 2019 19:23:57 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C782D11C04C;
-        Wed, 27 Mar 2019 19:23:55 +0000 (GMT)
-Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Mar 2019 19:23:55 +0000 (GMT)
-Subject: Re: [PATCH 2/2 v2] efi: print appropriate status message when
- loading certificates
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Lee, Chun-Yi" <jlee@suse.com>
-Date:   Wed, 27 Mar 2019 15:23:55 -0400
-In-Reply-To: <20190324002621.3551-2-jlee@suse.com>
-References: <20190324002621.3551-1-jlee@suse.com>
-         <20190324002621.3551-2-jlee@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Wed, 27 Mar 2019 14:02:14 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0201221741;
+        Wed, 27 Mar 2019 18:02:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553709732;
+        bh=A5Qd/qoQDq+puJoe7DKuMyx5lfK7yWeS+7/3jmBGLnY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FAQk6rQO5ApziWCLxxZKKNb7PoTFsDbT6tubegvA0fL+AaIhl5kKEoRLAF+oBvt8u
+         nfSrj8SGaEfUdRwEkCPXrYW+nASAjxpiJFfvukvg1xydKMWT4Jqyu37eGEaqlmdNuz
+         iV7aFGv/ZmjTHBkG5sFHrKnsJ99ooemsbjdKsSHI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     John Johansen <john.johansen@canonical.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.0 010/262] apparmor: fix double free when unpack of secmark rules fails
+Date:   Wed, 27 Mar 2019 13:57:45 -0400
+Message-Id: <20190327180158.10245-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190327180158.10245-1-sashal@kernel.org>
+References: <20190327180158.10245-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19032719-0028-0000-0000-00000359055A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032719-0029-0000-0000-00002417C2CE
-Message-Id: <1553714635.4608.34.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-27_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903270136
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 2019-03-24 at 08:26 +0800, Lee, Chun-Yi wrote:
-> When loading certificates list from UEFI variable, the original error
-> message direct shows the efi status code from UEFI firmware. It looks
-> ugly:
-> 
-> [    2.335031] Couldn't get size: 0x800000000000000e
-> [    2.335032] Couldn't get UEFI MokListRT
-> [    2.339985] Couldn't get size: 0x800000000000000e
-> [    2.339987] Couldn't get UEFI dbx list
-> 
-> So, this patch shows the status string instead of status code.
-> 
-> On the other hand, the "Couldn't get UEFI" message doesn't need
-> to be exposed when db/dbx/mok variable do not exist. So, this
-> patch set the message level to debug.
-> 
-> v2.
-> Setting the MODSIGN messagse level to debug.
-> 
-> Link: https://forums.opensuse.org/showthread.php/535324-MODSIGN-Couldn-t-get-UEFI-db-list?p=2897516#post2897516
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Serge E. Hallyn" <serge@hallyn.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Nayna Jain <nayna@linux.ibm.com>
-> Cc: Josh Boyer <jwboyer@fedoraproject.org>
-> Cc: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-> ---
->  security/integrity/platform_certs/load_uefi.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-> index 81b19c52832b..e65244b31f04 100644
-> --- a/security/integrity/platform_certs/load_uefi.c
-> +++ b/security/integrity/platform_certs/load_uefi.c
-> @@ -48,7 +48,9 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
->  
->  	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
->  	if (status != EFI_BUFFER_TOO_SMALL) {
-> -		pr_err("Couldn't get size: 0x%lx\n", status);
-> +		if (status != EFI_NOT_FOUND)
-> +			pr_err("Couldn't get size: %s\n",
-> +				efi_status_to_str(status));
->  		return NULL;
->  	}
->  
-> @@ -59,7 +61,8 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
->  	status = efi.get_variable(name, guid, NULL, &lsize, db);
->  	if (status != EFI_SUCCESS) {
->  		kfree(db);
-> -		pr_err("Error reading db var: 0x%lx\n", status);
-> +		pr_err("Error reading db var: %s\n",
-> +			efi_status_to_str(status));
->  		return NULL;
->  	}
->  
-> @@ -155,7 +158,7 @@ static int __init load_uefi_certs(void)
->  	if (!uefi_check_ignore_db()) {
->  		db = get_cert_list(L"db", &secure_var, &dbsize);
->  		if (!db) {
-> -			pr_err("MODSIGN: Couldn't get UEFI db list\n");
-> +			pr_debug("MODSIGN: Couldn't get UEFI db list\n");
+From: John Johansen <john.johansen@canonical.com>
 
-Sure, this is fine.
+[ Upstream commit d8dbb581d4f86a2ac669c056fc71a28ebeb367f4 ]
 
->  		} else {
->  			rc = parse_efi_signature_list("UEFI:db",
->  					db, dbsize, get_handler_for_db);
-> @@ -168,7 +171,7 @@ static int __init load_uefi_certs(void)
->  
->  	mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
->  	if (!mok) {
-> -		pr_info("Couldn't get UEFI MokListRT\n");
-> +		pr_debug("Couldn't get UEFI MokListRT\n");
+if secmark rules fail to unpack a double free happens resulting in
+the following oops
 
-This is fine too.
+[ 1295.584074] audit: type=1400 audit(1549970525.256:51): apparmor="STATUS" info="failed to unpack profile secmark rules" error=-71 profile="unconfined" name="/root/test" pid=29882 comm="apparmor_parser" name="/root/test" offset=120
+[ 1374.042334] ------------[ cut here ]------------
+[ 1374.042336] kernel BUG at mm/slub.c:294!
+[ 1374.042404] invalid opcode: 0000 [#1] SMP PTI
+[ 1374.042436] CPU: 0 PID: 29921 Comm: apparmor_parser Not tainted 4.20.7-042007-generic #201902061234
+[ 1374.042461] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[ 1374.042489] RIP: 0010:kfree+0x164/0x180
+[ 1374.042502] Code: 74 05 41 0f b6 72 51 4c 89 d7 e8 37 cd f8 ff eb 8b 41 b8 01 00 00 00 48 89 d9 48 89 da 4c 89 d6 e8 11 f6 ff ff e9 72 ff ff ff <0f> 0b 49 8b 42 08 a8 01 75 c2 0f 0b 48 8b 3d a9 f4 19 01 e9 c5 fe
+[ 1374.042552] RSP: 0018:ffffaf7b812d7b90 EFLAGS: 00010246
+[ 1374.042568] RAX: ffff91e437679200 RBX: ffff91e437679200 RCX: ffff91e437679200
+[ 1374.042589] RDX: 00000000000088b6 RSI: ffff91e43da27060 RDI: ffff91e43d401a80
+[ 1374.042609] RBP: ffffaf7b812d7ba8 R08: 0000000000027080 R09: ffffffffa6627a6d
+[ 1374.042629] R10: ffffd3af41dd9e40 R11: ffff91e43a1740dc R12: ffff91e3f52e8000
+[ 1374.042650] R13: ffffffffa6627a6d R14: ffffffffffffffb9 R15: 0000000000000001
+[ 1374.042675] FS:  00007f928df77740(0000) GS:ffff91e43da00000(0000) knlGS:0000000000000000
+[ 1374.042697] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1374.042714] CR2: 000055a0c3ab6b50 CR3: 0000000079ed8004 CR4: 0000000000360ef0
+[ 1374.042737] Call Trace:
+[ 1374.042750]  kzfree+0x2d/0x40
+[ 1374.042763]  aa_free_profile+0x12b/0x270
+[ 1374.042776]  unpack_profile+0xc1/0xf10
+[ 1374.042790]  aa_unpack+0x115/0x4e0
+[ 1374.042802]  aa_replace_profiles+0x8e/0xcc0
+[ 1374.042817]  ? kvmalloc_node+0x6d/0x80
+[ 1374.042831]  ? __check_object_size+0x166/0x192
+[ 1374.042845]  policy_update+0xcf/0x1b0
+[ 1374.042858]  profile_load+0x7d/0xa0
+[ 1374.042871]  __vfs_write+0x3a/0x190
+[ 1374.042883]  ? apparmor_file_permission+0x1a/0x20
+[ 1374.042899]  ? security_file_permission+0x31/0xc0
+[ 1374.042918]  ? _cond_resched+0x19/0x30
+[ 1374.042931]  vfs_write+0xab/0x1b0
+[ 1374.042963]  ksys_write+0x55/0xc0
+[ 1374.043004]  __x64_sys_write+0x1a/0x20
+[ 1374.043046]  do_syscall_64+0x5a/0x110
+[ 1374.043087]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
->  	} else {
->  		rc = parse_efi_signature_list("UEFI:MokListRT",
->  					      mok, moksize, get_handler_for_db);
-> @@ -179,7 +182,7 @@ static int __init load_uefi_certs(void)
->  
->  	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
->  	if (!dbx) {
-> -		pr_info("Couldn't get UEFI dbx list\n");
-> +		pr_debug("Couldn't get UEFI dbx list\n");
+Fixes: 9caafbe2b4cf ("apparmor: Parse secmark policy")
+Reported-by: Alex Murray <alex.murray@canonical.com>
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/apparmor/policy_unpack.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-If there isn't a db or moklist, then this is fine.  My concern is not
-having an indication that the dbx wasn't installed, when it should
-have been.
-
-Perhaps similar to the "Loading compiled-in X.509 certificates"
-informational message there should informational messages for db, mok,
-and dbx as well.
-
-Mimi
-
-
->  	} else {
->  		rc = parse_efi_signature_list("UEFI:dbx",
->  					      dbx, dbxsize,
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index 379682e2a8d5..f6c2bcb2ab14 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -579,6 +579,7 @@ static bool unpack_secmark(struct aa_ext *e, struct aa_profile *profile)
+ 			kfree(profile->secmark[i].label);
+ 		kfree(profile->secmark);
+ 		profile->secmark_count = 0;
++		profile->secmark = NULL;
+ 	}
+ 
+ 	e->pos = pos;
+-- 
+2.19.1
 
