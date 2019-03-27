@@ -2,92 +2,128 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D216C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 17:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D84C4360F
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 17:40:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DA84206C0
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 17:16:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZoRGZRmW"
+	by mail.kernel.org (Postfix) with ESMTP id E6ABA20651
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 17:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553708417;
+	bh=jxqEa+uwiuNr1eLweO/E+2QzBcyhsLcjSwfwnHSiZww=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ka2vHlfwK+PtRB6/YGNsRSwLm7f7IUFZ+HouD7KZx4dFAEpXqHXDbZITECoCaiXvt
+	 8o9zMgftgj+xc4CSRV04sUQ3LCtMWebxeNsTuIV5DBNj6zu/VP/r+3AF7RtUB25yV2
+	 Ie7D3HlT7kEhx/ZkVsmclGvb/w8j8fZgRKp6XO1U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728209AbfC0RQC (ORCPT
+        id S1727657AbfC0RkL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Mar 2019 13:16:02 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36187 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727569AbfC0RQC (ORCPT
+        Wed, 27 Mar 2019 13:40:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60800 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727731AbfC0RkH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Mar 2019 13:16:02 -0400
-Received: by mail-it1-f193.google.com with SMTP id h9so1409982itl.1;
-        Wed, 27 Mar 2019 10:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HENEyDmJZGOh65ItVsa8GK+oMLDtRRD6rVwzbFATzko=;
-        b=ZoRGZRmWyn0OMiisZgFMcK7u0lWc9fOj4z/8TTaiiz8SozvzBG2e8EueF0w5MmnP/y
-         mG58L6FnRi75hrECtPHTlDlO7SY2gbOh5mGJeb9PA2fkwTGqOZtXrUHOSCx9eL+Bg6AP
-         angbFGsXcP8RaifF09upcJ6cxPM6Y6cs/pLW1kI7c5J2NV5uYTSUz+tr/Baz/TYx7x2E
-         F6NCF3dIxfNN6IALvuprTV4P+OyTkeWD+uXxBK+POjOIukZiAxyI+tHuEeRhnLLJg7p1
-         e9VFYO+fTLXxN0+0EnUyUdM3UbX2IX2w3VKgFZsz+coaJWhoYq9QfV1Q9bi53Pmup2pS
-         C2FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HENEyDmJZGOh65ItVsa8GK+oMLDtRRD6rVwzbFATzko=;
-        b=CPmm0iMgcu94Z2PMU7ZAJIFe1UE5e4s51tHemWH/uygoyj478P4GBDSzmg13809ipf
-         VL3gRAu14eJa5SOh4gT55qQjtE+zSqDBm6fGrGgmOm38zqx0Wypmu2K39XAc0rK9evyd
-         EjEOENaWI4ftv3/HJEH7BSu4j3VX4RY/3omQFGIiWLtRwO3bFtOShGWQFRRAtTEwFDHU
-         jbMMEXM8p4ys18dzVt0V/rUPHOPfOW8xD0YUeg1ISXG1pgdOWiILobqsC9lMN2RdVuIM
-         grPZgDreXsot09J6gHedDRVLRIsrbUXRSNXusvmHk4nfXQ4Ia8dWg5JyuO2rI3W7e9ZH
-         bUJg==
-X-Gm-Message-State: APjAAAXMwl6PhT4K7jLeRAh7h5PnEsKg0ZOM1VO0ccgK+oRNqK+U210k
-        tuRPj0s3BKz9v6tc76bCRm6yLcXAjiuROnMmVmg=
-X-Google-Smtp-Source: APXvYqyakiXPGUqoHl2Gn45TNzKO7wPZBQTv0gaRsMmtEc3WTtFkpgS8Xgj0ftK396Bx6ksLfEFdWA/yU5I1QrkQ9P4=
-X-Received: by 2002:a02:6d12:: with SMTP id m18mr28569551jac.54.1553706961262;
- Wed, 27 Mar 2019 10:16:01 -0700 (PDT)
+        Wed, 27 Mar 2019 13:40:07 -0400
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 069F021741
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 17:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553708406;
+        bh=jxqEa+uwiuNr1eLweO/E+2QzBcyhsLcjSwfwnHSiZww=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=aCRstgT4IpUl3BZwNEnBJqzuH+iPi1XtD361b/M9ZbJ11FUvVCh5zD2T6vY3dtrk/
+         37Uap6XbbreTgs85NG6RJg4Knn+Fkq92xi33UpK1YcoCl9/Wr3seOUKxGYNO5wlTIN
+         h0MKg8RwqsxkRw5Bf4dqA9SOUZ0stEMHTwPDlpqg=
+Received: by mail-wr1-f48.google.com with SMTP id w10so19616685wrm.4
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 10:40:05 -0700 (PDT)
+X-Gm-Message-State: APjAAAUVFgmzTuZBivTy4TFp14c+9Ck4B9DBE6xYwzLZspitdIIbDrFF
+        FhJK48yy/ABjwOIeOd1CQcro8iYIws8TLPdH53CUiQ==
+X-Google-Smtp-Source: APXvYqyS+vtqEZt9mwHqVBGirVVb6B4nZsG3ESwiC+cnFEjtEANsAqLkNDffSXaqqPPYfkjmT02LQHrs+yEM87w3E9s=
+X-Received: by 2002:adf:f011:: with SMTP id j17mr22216637wro.330.1553708404521;
+ Wed, 27 Mar 2019 10:40:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190326121158.13499-1-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20190326121158.13499-1-jarkko.sakkinen@linux.intel.com>
-From:   Dan Williams <dan.j.williams@gmail.com>
-Date:   Wed, 27 Mar 2019 10:15:50 -0700
-Message-ID: <CAA9_cmfFpkBLz6TU0sLSV1JYE43sDtfi29Xw4R5Xt-RaWm8ZLA@mail.gmail.com>
-Subject: Re: [PATCH v3] KEYS: trusted: allow trusted.ko to initialize w/o a TPM
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+References: <20190326182742.16950-1-matthewgarrett@google.com>
+ <20190326182742.16950-26-matthewgarrett@google.com> <CALCETrXDF2c2-gnOyNTnEn-uPAZp0AaSB_PB8e2y8jf7zo=Cyg@mail.gmail.com>
+ <20190327003057.GA27311@kroah.com> <CALCETrVDDf4dj3Md1Nxc5P_NCToXGnAbEO3bGfwgKSfeVmU4Kw@mail.gmail.com>
+ <20190327050615.GA548@kroah.com> <16124107-70D3-4CA0-9766-36FC6DC10128@amacapital.net>
+ <20190327053342.GA17484@kroah.com>
+In-Reply-To: <20190327053342.GA17484@kroah.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 27 Mar 2019 10:39:53 -0700
+X-Gmail-Original-Message-ID: <CALCETrUW=r=xyr4pGiGnn9zUEevf=z6PP3111Ds6qguV5SjYUQ@mail.gmail.com>
+Message-ID: <CALCETrUW=r=xyr4pGiGnn9zUEevf=z6PP3111Ds6qguV5SjYUQ@mail.gmail.com>
+Subject: Re: [PATCH V31 25/25] debugfs: Disable open() when kernel is locked down
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
         James Morris <jmorris@namei.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linuxibm.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         David Howells <dhowells@redhat.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
+        Linux API <linux-api@vger.kernel.org>,
+        Matthew Garrett <mjg59@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 26, 2019 at 5:13 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+On Tue, Mar 26, 2019 at 10:33 PM Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> Allow trusted.ko to initialize w/o a TPM. This commit adds checks to the
-> key type callbacks and exported functions to fail when a TPM is not
-> available.
+> On Tue, Mar 26, 2019 at 10:29:41PM -0700, Andy Lutomirski wrote:
+> >
+> >
+> > > On Mar 26, 2019, at 10:06 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >
+> > >> On Tue, Mar 26, 2019 at 09:29:14PM -0700, Andy Lutomirski wrote:
+> > >>> On Tue, Mar 26, 2019 at 5:31 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >>>
+> > >>>> On Tue, Mar 26, 2019 at 12:20:24PM -0700, Andy Lutomirski wrote:
+> > >>>> On Tue, Mar 26, 2019 at 11:28 AM Matthew Garrett
+> > >>>> <matthewgarrett@google.com> wrote:
+> > >>>>>
+> > >>>>> From: Matthew Garrett <mjg59@google.com>
+> > >>>>>
+> > >>>>> debugfs has not been meaningfully audited in terms of ensuring that
+> > >>>>> userland cannot trample over the kernel. At Greg's request, disable
+> > >>>>> access to it entirely when the kernel is locked down. This is done at
+> > >>>>> open() time rather than init time as the kernel lockdown status may be
+> > >>>>> made stricter at runtime.
+> > >>>>
+> > >>>> Ugh.  Some of those files are very useful.  Could this perhaps still
+> > >>>> allow O_RDONLY if we're in INTEGRITY mode?
+> > >>>
+> > >>> Useful for what?  Debugging, sure, but for "normal operation", no kernel
+> > >>> functionality should ever require debugfs.  If it does, that's a bug and
+> > >>> should be fixed.
+> > >>>
+> > >>
+> > >> I semi-regularly read files in debugfs to diagnose things, and I think
+> > >> it would be good for this to work on distro kernels.
+> > >
+> > > Doing that for debugging is wonderful.  People who want this type of
+> > > "lock down" are trading potential security for diagnositic ability.
+> > >
+> >
+> > I think you may be missing the point of splitting lockdown to separate integrity and confidentiality.  Can you actually think of a case where *reading* a debugfs file can take over a kernel?
 >
-> Cc: James Morris <jmorris@namei.org>
-> Reported-by: Dan Williams <dan.j.williams@intel.com>
-> Tested-by: Dan Williams <dan.j.williams@intel.com>
-> Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> v3:
-> - remove unnecessary check for chip in init_trusted()
+> Reading a debugfs file can expose loads of things that can help take
+> over a kernel, or at least make it easier.  Pointer addresses, internal
+> system state, loads of other fun things.  And before 4.14 or so, it was
+> pretty trivial to use it to oops the kernel as well (not an issue here
+> anymore, but people are right to be nervous).
+>
+> Personally, I think these are all just "confidentiality" type things,
+> but who really knows given the wild-west nature of debugfs (which is as
+> designed).  And given that I think this patch series just crazy anyway,
+> I really don't care :)
+>
 
-v3 also tests ok here.
+As far as I'm concerned, preventing root from crashing the system
+should not be a design goal of lockdown at all.  And I think that the
+"integrity" mode should be as non-annoying as possible, so I think we
+should allow reading from debugfs.
