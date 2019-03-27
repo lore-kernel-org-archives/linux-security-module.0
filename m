@@ -2,92 +2,70 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850ABC43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 02:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC7FC43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 02:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 521DE206C0
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 02:06:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q2EUIIzT"
+	by mail.kernel.org (Postfix) with ESMTP id 943582082F
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 02:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732304AbfC0CGt (ORCPT
+        id S1731654AbfC0CWt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Mar 2019 22:06:49 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46371 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731579AbfC0CGt (ORCPT
+        Tue, 26 Mar 2019 22:22:49 -0400
+Received: from namei.org ([65.99.196.166]:58802 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731619AbfC0CWs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Mar 2019 22:06:49 -0400
-Received: by mail-io1-f68.google.com with SMTP id b9so12650782iot.13
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 19:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eytzmU3NjxhNAmdOvQPC50LlttNGV7pwuE1zw4whqVI=;
-        b=q2EUIIzTykBEMtSnWLridd0u3y82nmK06qLFYUPWPC0C+SMZbCzk4jviDLmBAScw+Y
-         bJHUU8r57DetwRYdly6OrA2+Xo3OTf6LMPpgzb5yhbsjcTH5fP8aBvrkMjADkLNkyISd
-         GygKY0ZKbdNfgQ0AOtQ8UexiWeU58vOLd/m8BF48lJ3v5sMtx9fi/vAYZUWB/o1iW05t
-         Fw9pZpnBiS2ROesTYykBjM/ALh3BmjVrVM2G4oLHmLIa81yg8bHjSLXU1tA68kcAsgA4
-         vN9q2ihFOjxXnS9ZAFPNunNPKA+Gug+Wawd2eWowSKHcmFVfboJRu1iSAvyuC/iMbKmc
-         F7Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eytzmU3NjxhNAmdOvQPC50LlttNGV7pwuE1zw4whqVI=;
-        b=KdJ1tD5QJR6gdWzD6V6+8VSiHxDl5nVeCoJwq2Dphe+UcXh5+OIRi4kB9OtFS6FCOK
-         rLq2AD5re6B0El0n2obNM9hEiugOIo30SKAhIfsxufCrVIBNR+wLr728kL4a2AWWm63h
-         fMr2DBNI3OGxiJVLmIgfD5Iz+wj4bvPwcxjH0yDrZRk6AjRyGQEtrz7gXvpEAWl+sLkV
-         fp2HmZrqKlbgzA/GiGKdKXjdKkg5FQJMWmsz+3OPs/xpt+3GL5kWXFlZm6AySMD0cXQa
-         YSmHEk6wkdWHhbnp6Td9ZcvTZW/+1SY9XvEng2JOywEo2XxkCztSKf4g3ULFjen6oA/6
-         b4Zw==
-X-Gm-Message-State: APjAAAW3SmXOLocpAoabWKDL9qi3E8qzmOAyEkCt12BaSDQsyUPL2jAA
-        RrGeRug6nHkmnpQPTsbLnWSTvIG2hyI0vXY+neYUIg==
-X-Google-Smtp-Source: APXvYqzSk/MoMyjFEj2oL3GW9b1r8guh+8rGuSgVfOXqrLf/LwHIxj2PDgYiasOmqU9zE3TjJem+1b/qBTBoJXtdELU=
-X-Received: by 2002:a5e:950f:: with SMTP id r15mr14117601ioj.88.1553652408531;
- Tue, 26 Mar 2019 19:06:48 -0700 (PDT)
+        Tue, 26 Mar 2019 22:22:48 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x2R2MNuU023364;
+        Wed, 27 Mar 2019 02:22:24 GMT
+Date:   Wed, 27 Mar 2019 13:22:23 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Denis Efremov <efremov@ispras.ru>
+cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Paris <eparis@parisplace.org>,
+        John Johansen <john.johansen@canonical.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/11] LSM documentation update
+In-Reply-To: <cover.1551213058.git.efremov@ispras.ru>
+Message-ID: <alpine.LRH.2.21.1903271322120.9951@namei.org>
+References: <cover.1551213058.git.efremov@ispras.ru>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190326182742.16950-1-matthewgarrett@google.com>
- <20190326182742.16950-26-matthewgarrett@google.com> <20190327003130.GB27311@kroah.com>
-In-Reply-To: <20190327003130.GB27311@kroah.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Tue, 26 Mar 2019 19:06:36 -0700
-Message-ID: <CACdnJuvBJmCRnzT=4qh9cmNkRNHi3Xfha5xqUqYu8cgCRrtsqQ@mail.gmail.com>
-Subject: Re: [PATCH V31 25/25] debugfs: Disable open() when kernel is locked down
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 26, 2019 at 5:31 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Tue, Mar 26, 2019 at 11:27:41AM -0700, Matthew Garrett wrote:
-> > From: Matthew Garrett <mjg59@google.com>
-> >
-> > debugfs has not been meaningfully audited in terms of ensuring that
-> > userland cannot trample over the kernel. At Greg's request, disable
-> > access to it entirely when the kernel is locked down. This is done at
-> > open() time rather than init time as the kernel lockdown status may be
-> > made stricter at runtime.
+On Tue, 26 Feb 2019, Denis Efremov wrote:
 
-(snip)
+> Recent "New LSM Hooks" discussion has led me to the
+> thought that it might be a good idea to slightly
+> update the current documentation. The patchset adds
+> nothing new to the documentation, only fixes the old
+> description of hooks to reflect their current state.
+> 
+> V2 adds the clarification on arguments for some hooks.
+> The format of the documentation is also slightly updated
+> for better html. However, there are still 10 hooks without
+> documentation at all. I think that this should be fixed
+> separatedly.
 
-> Why allow all this, why not just abort the registering of the filesystem
-> with the vfs core so it can't even be mounted?
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
 
-As mentioned in the commit message, because the lockdown state can be
-made stricter at runtime - blocking at mount time would be
-inconsistent if the machine is locked down afterwards. We could
-potentially assert that it's the admin's responsibility to ensure that
-debugfs isn't mounted at the point of policy being made stricter?
+Thanks!
+
+-- 
+James Morris
+<jmorris@namei.org>
+
