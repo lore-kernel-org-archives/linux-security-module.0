@@ -2,52 +2,46 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A88F8C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 22:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE92C43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 22:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA3D2082F
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 22:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16A4D2070B
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 22:55:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="igZAXwuK"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fpKcru/T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbfC0WXK (ORCPT
+        id S1726059AbfC0Wz1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Mar 2019 18:23:10 -0400
-Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:37728
-        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727979AbfC0WXK (ORCPT
+        Wed, 27 Mar 2019 18:55:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58142 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725601AbfC0Wz1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Mar 2019 18:23:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1553725387; bh=ueiVI00k5m8nsgXBS6wbvjI/In5zeVy+hAOsEd3t680=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=igZAXwuKk93n7Y8HieVo1lNpv/apZYp8Ob8N+3dYi6LnVSEYzJHzaAB7ZBEdoGSW7oKQ6uo7PDX8Cxm+OYNLH/N1zR2mhL6RdG61nTrFfDXiXa/p4CayKI56WVByQGTDRPSbNP70rJH4tHovZXGOkV2vD6d5inaw5rdl90FhCtpP85Iw4S2pT0VF2NWTs5n+qjj2ea3U+vpiqxilnqaysT7aixYixq4EV3524aOYdo9SjuAAgMfuQqozTA4HYEJwjYqko7e/JpFDI3qtbJIMy0I4iq0xdpRWdEQfhtuLLrVdnBmScqbtlmE5pT5P5RM+on3uTcfL4tdrtuBfaZG1tw==
-X-YMail-OSG: _Ob_3IMVM1mEBM3nVZsMw6giyYaLx3lIHsYiJDmJnptTy5EUtSUXPZciHF5Wbnx
- SkI4VImMlvKzwv.UiacYVRNnEfEExts_P.7muaa_M1fPvrMlDWuJrI0m8Hwfuz1qBWivEs1MUEmz
- Oc.QJKqmh2RNyliKW8wyCx2DfwAUi_ekcdlIH6WdLEbpGqa1pwu2bnjmwUGWgR8zgMUzcUcKtjhD
- fbcvrBy0oV0LJct04eed9HKUFRyFfIWVn4bEg9mCM4NlBGlsAcC303nkg7C8afBEA8_buHgxSPom
- LR2g79M9bCUx2BN.hEJTFvPHifJ3WCZssl_OZRTUKrZQt7sJ.wLc9pZO2ge4swZUj5PY_Kp92BsS
- WeZGR02Yn0t69PBVvS3rkmouZ5TdJvWGin935ifYc0FgoDfhPqT53GN6QkEUaaEQz9ScCyeJwHy8
- eTCwtEdau1Qja9WxiJJClQw9xO3rfbwUtzzxTV49UC2sPs4LowYq6S58J_HDnOPq8kVA8dbuWHic
- nW.a8Oys9Om8IOhrQ67poE77QqSJpjPyZaS_6xEoElCHYYy05CWnE6FytIvEIze6G0FufGFoPmok
- j0.MoBlPFaTy22V0hyazQsyt36dlasCzYZSH7Qyh98rogHQxUdGqXKyHYg00G16.jp9XhhkeGr.l
- zMCpLA_fvWdh7zoJrnDlByyvku3Ke_aGB1obiTEPWyVVccmLAQ1u.rqnSynMI9bSRVAJ3Pkp4o9W
- 9a54U1P9Jr2wCMi_ie4P0o09d7ZwUZ.5T7A6TyamcGTBaiF5hYL4Kb5eOpiZAYeckBCFfVwdQFBM
- DnVZvdEv95STu0Ipl61PxcOC4LQG2lgwG90ub3IbI2OHZtkgWqwKY0_qipf9Y_2cfV9MH7JRKJmd
- VHflAo4E.ZHdY4fAZp4E_XeFIZBEZb297BiuK7uvx2tT7gEx5YspSugPHANu4lhs3yywYjG.aZpW
- wfNSqYXRYuRseSqR1f_FFnWBtmPP71Pxq2ew1DP4f4OVftsKKJ9Thps6lZ1j.aggQbggnH0jZT.S
- DjTyiFCJy.y5oBfAocPvOrSJFT_hDR8L.PYRCYbhhfoTxT1a1gbE.JMPzzf7Ar5YSayBWwa1m_qp
- yWwpr9hb7KA8f7f7.wygjshY-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Wed, 27 Mar 2019 22:23:07 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp403.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b6479920000130207a67c9c69c115433;
-          Wed, 27 Mar 2019 22:23:07 +0000 (UTC)
+        Wed, 27 Mar 2019 18:55:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SnnOPuYGwfsBn4pr0Duph/PqYHKZWyJUupKIiMgpd8Y=; b=fpKcru/TWQCqVYR5w+Gi9IFHj
+        +te9k0gDg/mu+05upnLvAiThj4KHpY0upeH8yShRHE65piOYbGA4Nys7H1auxtgoNdBaTGecv3Nmj
+        ZlL1ehH5CWc/vg+aeKOEUQaNVshZmCOs0Vo+FCgXG9KEOba3229JNpPl7/d11Gcl3csvV3ozqom3a
+        cnD4fzUbpn3iOE0B3lNmfi6/Hrtoe7qSCrhWjv6RZrZUqVpZdoGCNrGMM8Z59j8EfMmB+8E/kGDQX
+        QqIDAt7HZDEw33IM1Phas8KGzEK3hbfZKK5X474TIUcgSMLYENQlpvGQ8T2aqwefDVQV3wsJE0KU0
+        bKK/OxWaQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1h9HS7-0002g0-OD; Wed, 27 Mar 2019 22:55:23 +0000
 Subject: Re: Linux 5.1-rc2
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Kees Cook <keescook@chromium.org>
 Cc:     James Morris <jmorris@namei.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
@@ -62,44 +56,56 @@ References: <CAHk-=wgg_PRWs3a6u2gnFLQjhxOJcrFkqqWVnLw60eQAwD-DNw@mail.gmail.com>
  <e1f6f5a6-9fce-2e95-4593-79f1e836bac5@i-love.sakura.ne.jp>
  <CAGXu5jL0YzgQR_p9otyOX4+00a0i7Tfv9aLqauZFZs4-Kfjakg@mail.gmail.com>
  <ea75aace-a493-b2fa-1fef-d6ae76085c39@i-love.sakura.ne.jp>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <d067619e-8c7f-94ec-a835-fc86d1b449e3@schaufler-ca.com>
-Date:   Wed, 27 Mar 2019 15:23:07 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ <d067619e-8c7f-94ec-a835-fc86d1b449e3@schaufler-ca.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <366dcec3-1599-9e56-4660-44791e1c7a45@infradead.org>
+Date:   Wed, 27 Mar 2019 15:55:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <ea75aace-a493-b2fa-1fef-d6ae76085c39@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <d067619e-8c7f-94ec-a835-fc86d1b449e3@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/27/2019 3:05 PM, Tetsuo Handa wrote:
-> On 2019/03/28 6:43, Kees Cook wrote:
->>>> I don't see problems for an exclusive LSM user (AA, SELinux, Smack)
->>>> also initializing TOMOYO, though. It should be a no-op. Is there some
->>>> situation where this is not true?
->>> There should be no problem except some TOMOYO messages are printed.
->> Okay, so I should send my latest version of the patch to James? Or do
->> you explicitly want TOMOYO removed from all the CONFIG_LSM default
->> lines except when selected by CONFIG_DEFAULT_SECURITY_TOMOYO? (I worry
->> the latter will lead to less testing of the stacking.)
+On 3/27/19 3:23 PM, Casey Schaufler wrote:
+> On 3/27/2019 3:05 PM, Tetsuo Handa wrote:
+>> On 2019/03/28 6:43, Kees Cook wrote:
+>>>>> I don't see problems for an exclusive LSM user (AA, SELinux, Smack)
+>>>>> also initializing TOMOYO, though. It should be a no-op. Is there some
+>>>>> situation where this is not true?
+>>>> There should be no problem except some TOMOYO messages are printed.
+>>> Okay, so I should send my latest version of the patch to James? Or do
+>>> you explicitly want TOMOYO removed from all the CONFIG_LSM default
+>>> lines except when selected by CONFIG_DEFAULT_SECURITY_TOMOYO? (I worry
+>>> the latter will lead to less testing of the stacking.)
+>>>
+>> My approach is "opt-in" while your approach is "opt-out". And the problem
+>> here is that people might fail to change CONFIG_LSM from the default value
+>> to what they need. (And Jakub did not change CONFIG_LSM to reflect
+>> CONFIG_DEFAULT_SECURITY_APPARMOR from the old config.) Thus, I suggest
+>> "opt-in" approach; which includes up to only one legacy major LSM and allows
+>> people to change the default value to include multiple legacy major LSMs.
 >>
-> My approach is "opt-in" while your approach is "opt-out". And the problem
-> here is that people might fail to change CONFIG_LSM from the default value
-> to what they need. (And Jakub did not change CONFIG_LSM to reflect
-> CONFIG_DEFAULT_SECURITY_APPARMOR from the old config.) Thus, I suggest
-> "opt-in" approach; which includes up to only one legacy major LSM and allows
-> people to change the default value to include multiple legacy major LSMs.
->
-> You can propose your latest version. If SELinux/Smack/AppArmor people
-> prefer "opt-out" approach, I'm fine with "opt-out" approach.
+>> You can propose your latest version. If SELinux/Smack/AppArmor people
+>> prefer "opt-out" approach, I'm fine with "opt-out" approach.
+> 
+> In the long haul we want people to use CONFIG_LSM to set their
+> list of modules. Providing a backward compatible CONFIG_DEFAULT_SECURITY_BLAH
+> makes some sense, but it's important that we encourage a mindset change.
+> Maybe with CONFIG_DEFAULT_SECURITY_LIST with a a full list, which uses the
+> value from CONFIG_LSM, and make it the default?
+> 
 
-In the long haul we want people to use CONFIG_LSM to set their
-list of modules. Providing a backward compatible CONFIG_DEFAULT_SECURITY_BLAH
-makes some sense, but it's important that we encourage a mindset change.
-Maybe with CONFIG_DEFAULT_SECURITY_LIST with a a full list, which uses the
-value from CONFIG_LSM, and make it the default?
+Hi,
 
+I'm still confused.  Does this mindset change include removing support of
+SECURITY_DAC?  If so, where was this discussed and decided?
+And if so (again), that feels like enforcing some kind of policy in the kernel.
+
+thanks.
+-- 
+~Randy
