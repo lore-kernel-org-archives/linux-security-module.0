@@ -2,88 +2,110 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0220DC43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 22:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2162C10F00
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 22:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B65982087C
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 22:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8012B21738
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 22:14:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="06Bh2pTw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725601AbfC0WFe (ORCPT
+        id S1727368AbfC0WOi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Mar 2019 18:05:34 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:28008 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727436AbfC0WFe (ORCPT
+        Wed, 27 Mar 2019 18:14:38 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41381 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726136AbfC0WOi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Mar 2019 18:05:34 -0400
-Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2RM5Ebb082597;
-        Thu, 28 Mar 2019 07:05:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
- Thu, 28 Mar 2019 07:05:14 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126072090247.bbtec.net [126.72.90.247])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2RM5EcB082594
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 28 Mar 2019 07:05:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: Linux 5.1-rc2
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-References: <CAHk-=wgg_PRWs3a6u2gnFLQjhxOJcrFkqqWVnLw60eQAwD-DNw@mail.gmail.com>
- <2d4f3bfa-22c7-a18c-3902-fe1b6ac401f7@infradead.org>
- <alpine.LRH.2.21.1903260607500.13529@namei.org>
- <8811b2e4-28e1-2f01-024b-fb7d0196483f@i-love.sakura.ne.jp>
- <CAGXu5jJZ1H1RFMFBxPsoBW+T17ya+50-d7-31Gr9ciRgpCOaDA@mail.gmail.com>
- <98289cd2-095a-f0cd-e405-887ecbba0030@i-love.sakura.ne.jp>
- <CAGXu5jKWECKxksJWPpCkBKG+wB26DhYK=nYBpuuoS+Pv9AsNwQ@mail.gmail.com>
- <e1f6f5a6-9fce-2e95-4593-79f1e836bac5@i-love.sakura.ne.jp>
- <CAGXu5jL0YzgQR_p9otyOX4+00a0i7Tfv9aLqauZFZs4-Kfjakg@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <ea75aace-a493-b2fa-1fef-d6ae76085c39@i-love.sakura.ne.jp>
-Date:   Thu, 28 Mar 2019 07:05:14 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.0
+        Wed, 27 Mar 2019 18:14:38 -0400
+Received: by mail-lj1-f195.google.com with SMTP id k8so15825121lja.8
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 15:14:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SsRGAQ7sJFAbYvV3GBI8Nbjp7rSZFjGzVO6KmG1CsfQ=;
+        b=06Bh2pTww9SeR3OZRDoe/rWJyAoIYX2qQEJKdTMSK6HaMSiWKQF6xqBbrBAc0VybQ1
+         ivdi3ZgiroM9TTLtAIf+2xZoyuWdjRfQHJOrZoYfCQdrsUx1o96FMlMNa0J/AAK+XspN
+         taIuOn/AqmSDvWl7b3R4VqwLRdCZMYcqqmmVLyJxYLg8/k0x715gxg/1UIBv8HDsI9ta
+         pYHESFAUTVvU2i5Yc0nIDqMDMpWmdYG/t6ZCOYfosrc5wu+pbVzYCWY098orvxXHGlrn
+         iaH60AO8CPKG2Y2AC7mt2x3yN7/yMDW1l/vSrxiqKQAJaRyZOG3wLQ1AajyNzHEqgeZW
+         /vtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SsRGAQ7sJFAbYvV3GBI8Nbjp7rSZFjGzVO6KmG1CsfQ=;
+        b=VCS4jub6iPbv9XkhMLrWETjdNKGuG13QItIZyAYxdlCk03Gf5Cp5cuALyBVJhO+li6
+         DAQKU9I0aVCuSht4jZ/Lxf1IMb55Xyix1SuZmj5LP0HCEhxpFzjsK2D4Xe19XwJPcm8z
+         CoeuHXTf0I42ntWP9koT1pZ5VduxWZ/cVARtyQJibMoki4750QURwy54Vzfe0ZlGci0m
+         DLFORZTIoDYX/iaZgjXTU4UCCec5Im4Qg57jswbCDG79yNoegXGdjgs9Xx4BTM9RBmBw
+         A4FCuJphJabSPgkHb1fpoX5Z6SGyKitSmrTgMa4KvflYDN/+an2zhj2hzXi1MbwgMvf8
+         +avw==
+X-Gm-Message-State: APjAAAUSPNFyjlTuqFXly3vz3UyqhtUS8KAUr8vvuSEaHu8naB1np8qX
+        aYa2d/pB5pIUCZVOudZRABl7FVegYca9mBIowusw
+X-Google-Smtp-Source: APXvYqyIUmp7WHxf9CvVSs+NqwpyWyAp1viAd7CvRJX3B2hlxcsIrzeABF7cqFbtimBWZ78hqH4Hkv8XGvzpUGSjGnw=
+X-Received: by 2002:a2e:500d:: with SMTP id e13mr21128699ljb.169.1553724876420;
+ Wed, 27 Mar 2019 15:14:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jL0YzgQR_p9otyOX4+00a0i7Tfv9aLqauZFZs4-Kfjakg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
+ <1553632830.4233.3.camel@linux.ibm.com> <CAHC9VhS1e0+1t=ZUsKoJcFvO+JdewL4uqwO4dqw=tOOZdJbLYA@mail.gmail.com>
+ <1553699048.4154.1.camel@linux.ibm.com>
+In-Reply-To: <1553699048.4154.1.camel@linux.ibm.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 27 Mar 2019 18:14:25 -0400
+Message-ID: <CAHC9VhRYHu8EcHEOc-6FSnbNRVE+9TmMziRidA7KtbzoZdv9Ow@mail.gmail.com>
+Subject: Re: [PATCH ghak109 V2] audit: link integrity evm_write_xattrs record
+ to syscall event
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, sgrubb@redhat.com,
+        omosnace@redhat.com, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, mjg59@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/03/28 6:43, Kees Cook wrote:
->>> I don't see problems for an exclusive LSM user (AA, SELinux, Smack)
->>> also initializing TOMOYO, though. It should be a no-op. Is there some
->>> situation where this is not true?
->>
->> There should be no problem except some TOMOYO messages are printed.
-> 
-> Okay, so I should send my latest version of the patch to James? Or do
-> you explicitly want TOMOYO removed from all the CONFIG_LSM default
-> lines except when selected by CONFIG_DEFAULT_SECURITY_TOMOYO? (I worry
-> the latter will lead to less testing of the stacking.)
-> 
+On Wed, Mar 27, 2019 at 11:05 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> On Tue, 2019-03-26 at 19:58 -0400, Paul Moore wrote:
+> > On Tue, Mar 26, 2019 at 4:40 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > >
+> > > Hi Richard, Paul,
+> > >
+> > > On Tue, 2019-03-26 at 14:49 -0400, Richard Guy Briggs wrote:
+> > > > In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
+> > > > verified xattrs"), the call to audit_log_start() is missing a context to
+> > > > link it to an audit event. Since this event is in user context, add
+> > > > the process' syscall context to the record.
+> > > >
+> > > > In addition, the orphaned keyword "locked" appears in the record.
+> > > > Normalize this by changing it to logging the locking string "." as any
+> > > > other user input in the "xattr=" field.
+> > > >
+> > > > Please see the github issue
+> > > > https://github.com/linux-audit/audit-kernel/issues/109
+> > > >
+> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > >
+> > > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> > >
+> > > Paul, were you planning on upstreaming this patch?
+> >
+> > Yep, unless you would rather do it?
+>
+> No, that's fine. Thanks!
 
-My approach is "opt-in" while your approach is "opt-out". And the problem
-here is that people might fail to change CONFIG_LSM from the default value
-to what they need. (And Jakub did not change CONFIG_LSM to reflect
-CONFIG_DEFAULT_SECURITY_APPARMOR from the old config.) Thus, I suggest
-"opt-in" approach; which includes up to only one legacy major LSM and allows
-people to change the default value to include multiple legacy major LSMs.
+Merged into audit/next, thanks all.
 
-You can propose your latest version. If SELinux/Smack/AppArmor people
-prefer "opt-out" approach, I'm fine with "opt-out" approach.
-
+-- 
+paul moore
+www.paul-moore.com
