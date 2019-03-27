@@ -2,85 +2,86 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAA5C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 17:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E50C43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 18:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F38E206B7
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 17:42:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DU07es9H"
+	by mail.kernel.org (Postfix) with ESMTP id 57ED1204FD
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 18:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553711449;
+	bh=FEebj0502C3pFhHspUOoBenpKH2Cm67GYCFW9wmbjw8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=umEKIGJ8gOPlih8aJJeRy3temmZpMzo9kO+FHjqLWIZZcnyuTmW5VnjK6GL8p/4Ae
+	 hH5uqqi1f2Oo/3AWtW3npASI0F2NN0bCGrtXWmZihXCQ+b2v5rKW/M/gRtPu1OdalR
+	 dJ+Nh3rNEtSnE5vL/4MvvTZ8Eyi98fE0Ns5cc7YU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbfC0Rmc (ORCPT
+        id S2391825AbfC0San (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Mar 2019 13:42:32 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35440 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbfC0Rmb (ORCPT
+        Wed, 27 Mar 2019 14:30:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51904 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391656AbfC0Sal (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Mar 2019 13:42:31 -0400
-Received: by mail-io1-f66.google.com with SMTP id p16so14822036iod.2
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 10:42:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZhukHlxTtepUFFhI/+26fbuf2j8cU5UZH4qojDumCm8=;
-        b=DU07es9HQmzjwQmyT6PpW6qRheFryy6e6kYKUbOlvFqL1ZnPDmPMVkJeRoR6B8bMgR
-         wcW90pKlyUCiJRtehGdXcfOeIDOzYu+4+UJj+HeomyQfhAQzAfMRVwKTuotfhm3SCUWJ
-         yr3yK8O0qEC5sXq/u0uYzd7t/lKIF0fQ7Lr0OBwc6aL6pJ8gQwLmZM/1lOudKWqr8glo
-         a5rGkA7lvGOcnf9YvecTZ83meM0IXyZRwtZZjAR4ahZ0UgCtVNA9I87b7J5qDBCm3aXM
-         SGzY4+JqgkngjOcU6SCupd5cJwpinUlOcPpVYjDUXz+apuFwM3g7QUKyzz7ZoS8PtERm
-         0eCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZhukHlxTtepUFFhI/+26fbuf2j8cU5UZH4qojDumCm8=;
-        b=ILhNV4BvT3vTJt4u7rtgt6fr4JoSKo8PyeHHr6TgK29nj2TwL0TXBvhJCX03cqP0y5
-         Kh4avw/RVT0SYp25ncSW7rDsNzvNZPkLJllC6LJgNFdOJoGmbKmEdX3VdswOEpV8zp2a
-         u1gKOIBDWWkWx9LAkj+Dcp0JSch2xp5/qoM6Bf92y6jUjtmRtFanv915wHY/uzD5wmN5
-         J5XkxEgtXa8FHvsUp8+kui/1EqhI8RFIXpcAIg9zKfH4eZppS7UiTAcMgfRx+xTqctmf
-         3H6MvogmUTwdJvNCjwSS3i2hLjL1zbDsnEO2wg0nfAGKzBOjmp9r7IU7OX9D+A1xD6Dg
-         j6TA==
-X-Gm-Message-State: APjAAAW6xzfqG7wm2f94chDo09mt2KIlGuGsSHuTt4VlQHcDOt2+uLVb
-        cBFr9p5qd65DvcGjdFSM16EhAs8SDwNkXwsCMKP7rQ==
-X-Google-Smtp-Source: APXvYqyOZhCHju1KvvCuJb9wIr4rdTVTzeA8XxQLVSHIsFMdL2U+qaK3Osw6to+Ja4YqzSGwkrCNDg5c/vl880NwpnI=
-X-Received: by 2002:a6b:e509:: with SMTP id y9mr26200848ioc.169.1553708550687;
- Wed, 27 Mar 2019 10:42:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190326182742.16950-1-matthewgarrett@google.com>
- <20190326182742.16950-26-matthewgarrett@google.com> <CALCETrXDF2c2-gnOyNTnEn-uPAZp0AaSB_PB8e2y8jf7zo=Cyg@mail.gmail.com>
- <20190327003057.GA27311@kroah.com> <CALCETrVDDf4dj3Md1Nxc5P_NCToXGnAbEO3bGfwgKSfeVmU4Kw@mail.gmail.com>
- <20190327050615.GA548@kroah.com> <16124107-70D3-4CA0-9766-36FC6DC10128@amacapital.net>
- <20190327053342.GA17484@kroah.com> <CALCETrUW=r=xyr4pGiGnn9zUEevf=z6PP3111Ds6qguV5SjYUQ@mail.gmail.com>
-In-Reply-To: <CALCETrUW=r=xyr4pGiGnn9zUEevf=z6PP3111Ds6qguV5SjYUQ@mail.gmail.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Wed, 27 Mar 2019 10:42:18 -0700
-Message-ID: <CACdnJus=zXgmNas+XVkWfe+ohAHEGMYLtfuYe0TH-eE=4p0oRw@mail.gmail.com>
-Subject: Re: [PATCH V31 25/25] debugfs: Disable open() when kernel is locked down
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Wed, 27 Mar 2019 14:30:41 -0400
+Received: from localhost (unknown [88.128.80.233])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E0A02147C;
+        Wed, 27 Mar 2019 18:30:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553711441;
+        bh=FEebj0502C3pFhHspUOoBenpKH2Cm67GYCFW9wmbjw8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1Qhbn+l7hFrMmzWdg7Yr9Y6H0SOHHOCJRbFUQH5kJJCmHIEcnAFTJx2W6uSnQgmMO
+         rIisQtBgpwc3estXTCtwc7+yOfAw8otbXa9OcZt7S35U4yxaH6xRtQQthYZylPVM8D
+         0mb0AqbGyqke+Kq+7PQkZmk1RtfS6fbA/teowemQ=
+Date:   Thu, 28 Mar 2019 03:29:47 +0900
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Matthew Garrett <mjg59@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
         James Morris <jmorris@namei.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         David Howells <dhowells@redhat.com>,
         Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH V31 25/25] debugfs: Disable open() when kernel is locked
+ down
+Message-ID: <20190327182947.GA9371@kroah.com>
+References: <20190326182742.16950-1-matthewgarrett@google.com>
+ <20190326182742.16950-26-matthewgarrett@google.com>
+ <CALCETrXDF2c2-gnOyNTnEn-uPAZp0AaSB_PB8e2y8jf7zo=Cyg@mail.gmail.com>
+ <20190327003057.GA27311@kroah.com>
+ <CALCETrVDDf4dj3Md1Nxc5P_NCToXGnAbEO3bGfwgKSfeVmU4Kw@mail.gmail.com>
+ <20190327050615.GA548@kroah.com>
+ <16124107-70D3-4CA0-9766-36FC6DC10128@amacapital.net>
+ <20190327053342.GA17484@kroah.com>
+ <CALCETrUW=r=xyr4pGiGnn9zUEevf=z6PP3111Ds6qguV5SjYUQ@mail.gmail.com>
+ <CACdnJus=zXgmNas+XVkWfe+ohAHEGMYLtfuYe0TH-eE=4p0oRw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACdnJus=zXgmNas+XVkWfe+ohAHEGMYLtfuYe0TH-eE=4p0oRw@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 27, 2019 at 10:40 AM Andy Lutomirski <luto@kernel.org> wrote:
-> As far as I'm concerned, preventing root from crashing the system
-> should not be a design goal of lockdown at all.  And I think that the
-> "integrity" mode should be as non-annoying as possible, so I think we
-> should allow reading from debugfs.
+On Wed, Mar 27, 2019 at 10:42:18AM -0700, Matthew Garrett wrote:
+> On Wed, Mar 27, 2019 at 10:40 AM Andy Lutomirski <luto@kernel.org> wrote:
+> > As far as I'm concerned, preventing root from crashing the system
+> > should not be a design goal of lockdown at all.  And I think that the
+> > "integrity" mode should be as non-annoying as possible, so I think we
+> > should allow reading from debugfs.
+> 
+> I have no horse in this game - I'm happy to bring back the previous
+> approach for integrity mode and block reads entirely in
+> confidentiality mode, but I'd rather not spend another release cycle
+> arguing about it.
 
-I have no horse in this game - I'm happy to bring back the previous
-approach for integrity mode and block reads entirely in
-confidentiality mode, but I'd rather not spend another release cycle
-arguing about it.
+I really do not care either way about any of this :)
+
+greg k-h
