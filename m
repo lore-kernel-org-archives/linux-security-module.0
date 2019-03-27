@@ -2,97 +2,61 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC18C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4ABC43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 16:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C073A2082F
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B50BD20811
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 16:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbfC0P5x (ORCPT
+        id S1727218AbfC0Qxl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Mar 2019 11:57:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57876 "EHLO mail.kernel.org"
+        Wed, 27 Mar 2019 12:53:41 -0400
+Received: from namei.org ([65.99.196.166]:58886 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbfC0P5w (ORCPT
+        id S1727151AbfC0Qxl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Mar 2019 11:57:52 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E480420700;
-        Wed, 27 Mar 2019 15:57:50 +0000 (UTC)
-Date:   Wed, 27 Mar 2019 11:57:49 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-api@vger.kernel.org, luto@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Matthew Garrett <mjg59@google.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [PATCH V31 19/25] x86/mmiotrace: Lock down the testmmiotrace
- module
-Message-ID: <20190327115749.5770a102@gandalf.local.home>
-In-Reply-To: <20190326182742.16950-20-matthewgarrett@google.com>
-References: <20190326182742.16950-1-matthewgarrett@google.com>
-        <20190326182742.16950-20-matthewgarrett@google.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 27 Mar 2019 12:53:41 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x2RGrWKc031174;
+        Wed, 27 Mar 2019 16:53:32 GMT
+Date:   Thu, 28 Mar 2019 03:53:32 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH V31 25/25] debugfs: Disable open() when kernel is locked
+ down
+In-Reply-To: <20190327053342.GA17484@kroah.com>
+Message-ID: <alpine.LRH.2.21.1903280353120.31119@namei.org>
+References: <20190326182742.16950-1-matthewgarrett@google.com> <20190326182742.16950-26-matthewgarrett@google.com> <CALCETrXDF2c2-gnOyNTnEn-uPAZp0AaSB_PB8e2y8jf7zo=Cyg@mail.gmail.com> <20190327003057.GA27311@kroah.com> <CALCETrVDDf4dj3Md1Nxc5P_NCToXGnAbEO3bGfwgKSfeVmU4Kw@mail.gmail.com>
+ <20190327050615.GA548@kroah.com> <16124107-70D3-4CA0-9766-36FC6DC10128@amacapital.net> <20190327053342.GA17484@kroah.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 26 Mar 2019 11:27:35 -0700
-Matthew Garrett <matthewgarrett@google.com> wrote:
+On Wed, 27 Mar 2019, Greg KH wrote:
 
-> From: David Howells <dhowells@redhat.com>
-> 
-> The testmmiotrace module shouldn't be permitted when the kernel is locked
-> down as it can be used to arbitrarily read and write MMIO space. This is
-> a runtime check rather than buildtime in order to allow configurations
-> where the same kernel may be run in both locked down or permissive modes
-> depending on local policy.
-> 
+> Personally, I think these are all just "confidentiality" type things,
+> but who really knows given the wild-west nature of debugfs (which is as
+> designed).  And given that I think this patch series just crazy anyway,
+> I really don't care :)
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Why do you think it's crazy?
 
-I'm curious. Should there be a mode to lockdown the tracefs directory
-too? As that can expose addresses.
-
--- Steve
-
-
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: David Howells <dhowells@redhat.com
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> cc: Thomas Gleixner <tglx@linutronix.de>
-> cc: Steven Rostedt <rostedt@goodmis.org>
-> cc: Ingo Molnar <mingo@kernel.org>
-> cc: "H. Peter Anvin" <hpa@zytor.com>
-> cc: x86@kernel.org
-> ---
->  arch/x86/mm/testmmiotrace.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-> index f6ae6830b341..9e8ad665f354 100644
-> --- a/arch/x86/mm/testmmiotrace.c
-> +++ b/arch/x86/mm/testmmiotrace.c
-> @@ -115,6 +115,9 @@ static int __init init(void)
->  {
->  	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
->  
-> +	if (kernel_is_locked_down("MMIO trace testing", LOCKDOWN_INTEGRITY))
-> +		return -EPERM;
-> +
->  	if (mmio_address == 0) {
->  		pr_err("you have to use the module argument mmio_address.\n");
->  		pr_err("DO NOT LOAD THIS MODULE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!\n");
+-- 
+James Morris
+<jmorris@namei.org>
 
