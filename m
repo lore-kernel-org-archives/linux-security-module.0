@@ -2,94 +2,92 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57573C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 00:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850ABC43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 02:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 252B02087E
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 00:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1553646696;
-	bh=dmCrpIIlOeX3Wo5ocEtZ02zBnrBjS5jwNBYJfgk6vFE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CM0JlX5XI/1e687NcLcw8sfrbJe6NiRZaiEclmvWY8m6yvZtLl4bfPV1hGRPKAnOG
-	 IOUXPwwEtlei8vUXw6xQso/jWHaHOX9HYx7FDsJIp5DuMl/6C0gbO+izmN7bqLE9BU
-	 fvmkHPNWaYEzF0XptYbQJUfGpXXaL/vNoAf21Q4E=
+	by mail.kernel.org (Postfix) with ESMTP id 521DE206C0
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 02:06:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q2EUIIzT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732232AbfC0Abf (ORCPT
+        id S1732304AbfC0CGt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Mar 2019 20:31:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732310AbfC0Abf (ORCPT
+        Tue, 26 Mar 2019 22:06:49 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46371 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731579AbfC0CGt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Mar 2019 20:31:35 -0400
-Received: from localhost (mobile-166-137-177-030.mycingular.net [166.137.177.30])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 155662075E;
-        Wed, 27 Mar 2019 00:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1553646694;
-        bh=dmCrpIIlOeX3Wo5ocEtZ02zBnrBjS5jwNBYJfgk6vFE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tbXaUmIHaE/c7egINaCmkVjniTyEcy2LpIjJIoaDknsQRm0BVCy+Gvhru02ENGBwv
-         xK1qDEr2HXryx1kmb3RZ0RlmRO6uGiPxNt1VxG57A/PApuU/F4/dARYz10Y9uhzkTR
-         0NtxPaQ8TYY0Asl/w6KCGkKgAJLnmd1XVof6CaA0=
-Date:   Wed, 27 Mar 2019 09:31:30 +0900
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-api@vger.kernel.org, luto@kernel.org,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V31 25/25] debugfs: Disable open() when kernel is locked
- down
-Message-ID: <20190327003130.GB27311@kroah.com>
-References: <20190326182742.16950-1-matthewgarrett@google.com>
- <20190326182742.16950-26-matthewgarrett@google.com>
+        Tue, 26 Mar 2019 22:06:49 -0400
+Received: by mail-io1-f68.google.com with SMTP id b9so12650782iot.13
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Mar 2019 19:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eytzmU3NjxhNAmdOvQPC50LlttNGV7pwuE1zw4whqVI=;
+        b=q2EUIIzTykBEMtSnWLridd0u3y82nmK06qLFYUPWPC0C+SMZbCzk4jviDLmBAScw+Y
+         bJHUU8r57DetwRYdly6OrA2+Xo3OTf6LMPpgzb5yhbsjcTH5fP8aBvrkMjADkLNkyISd
+         GygKY0ZKbdNfgQ0AOtQ8UexiWeU58vOLd/m8BF48lJ3v5sMtx9fi/vAYZUWB/o1iW05t
+         Fw9pZpnBiS2ROesTYykBjM/ALh3BmjVrVM2G4oLHmLIa81yg8bHjSLXU1tA68kcAsgA4
+         vN9q2ihFOjxXnS9ZAFPNunNPKA+Gug+Wawd2eWowSKHcmFVfboJRu1iSAvyuC/iMbKmc
+         F7Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eytzmU3NjxhNAmdOvQPC50LlttNGV7pwuE1zw4whqVI=;
+        b=KdJ1tD5QJR6gdWzD6V6+8VSiHxDl5nVeCoJwq2Dphe+UcXh5+OIRi4kB9OtFS6FCOK
+         rLq2AD5re6B0El0n2obNM9hEiugOIo30SKAhIfsxufCrVIBNR+wLr728kL4a2AWWm63h
+         fMr2DBNI3OGxiJVLmIgfD5Iz+wj4bvPwcxjH0yDrZRk6AjRyGQEtrz7gXvpEAWl+sLkV
+         fp2HmZrqKlbgzA/GiGKdKXjdKkg5FQJMWmsz+3OPs/xpt+3GL5kWXFlZm6AySMD0cXQa
+         YSmHEk6wkdWHhbnp6Td9ZcvTZW/+1SY9XvEng2JOywEo2XxkCztSKf4g3ULFjen6oA/6
+         b4Zw==
+X-Gm-Message-State: APjAAAW3SmXOLocpAoabWKDL9qi3E8qzmOAyEkCt12BaSDQsyUPL2jAA
+        RrGeRug6nHkmnpQPTsbLnWSTvIG2hyI0vXY+neYUIg==
+X-Google-Smtp-Source: APXvYqzSk/MoMyjFEj2oL3GW9b1r8guh+8rGuSgVfOXqrLf/LwHIxj2PDgYiasOmqU9zE3TjJem+1b/qBTBoJXtdELU=
+X-Received: by 2002:a5e:950f:: with SMTP id r15mr14117601ioj.88.1553652408531;
+ Tue, 26 Mar 2019 19:06:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190326182742.16950-26-matthewgarrett@google.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190326182742.16950-1-matthewgarrett@google.com>
+ <20190326182742.16950-26-matthewgarrett@google.com> <20190327003130.GB27311@kroah.com>
+In-Reply-To: <20190327003130.GB27311@kroah.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Tue, 26 Mar 2019 19:06:36 -0700
+Message-ID: <CACdnJuvBJmCRnzT=4qh9cmNkRNHi3Xfha5xqUqYu8cgCRrtsqQ@mail.gmail.com>
+Subject: Re: [PATCH V31 25/25] debugfs: Disable open() when kernel is locked down
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 26, 2019 at 11:27:41AM -0700, Matthew Garrett wrote:
-> From: Matthew Garrett <mjg59@google.com>
-> 
-> debugfs has not been meaningfully audited in terms of ensuring that
-> userland cannot trample over the kernel. At Greg's request, disable
-> access to it entirely when the kernel is locked down. This is done at
-> open() time rather than init time as the kernel lockdown status may be
-> made stricter at runtime.
-> 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Cc: gregkh@linuxfoundation.org
-> ---
->  fs/debugfs/file.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-> index 4fce1da7db23..9ae12ef29ba0 100644
-> --- a/fs/debugfs/file.c
-> +++ b/fs/debugfs/file.c
-> @@ -142,6 +142,9 @@ static int open_proxy_open(struct inode *inode, struct file *filp)
->  	const struct file_operations *real_fops = NULL;
->  	int r;
->  
-> +	if (kernel_is_locked_down("debugfs", LOCKDOWN_INTEGRITY))
-> +		return -EPERM;
+On Tue, Mar 26, 2019 at 5:31 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Tue, Mar 26, 2019 at 11:27:41AM -0700, Matthew Garrett wrote:
+> > From: Matthew Garrett <mjg59@google.com>
+> >
+> > debugfs has not been meaningfully audited in terms of ensuring that
+> > userland cannot trample over the kernel. At Greg's request, disable
+> > access to it entirely when the kernel is locked down. This is done at
+> > open() time rather than init time as the kernel lockdown status may be
+> > made stricter at runtime.
 
-Why allow all this, why not just abort the registering of the filesystem
-with the vfs core so it can't even be mounted?
+(snip)
 
-thanks,
+> Why allow all this, why not just abort the registering of the filesystem
+> with the vfs core so it can't even be mounted?
 
-greg k-h
+As mentioned in the commit message, because the lockdown state can be
+made stricter at runtime - blocking at mount time would be
+inconsistent if the machine is locked down afterwards. We could
+potentially assert that it's the admin's responsibility to ensure that
+debugfs isn't mounted at the point of policy being made stricter?
