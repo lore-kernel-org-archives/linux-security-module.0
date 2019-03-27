@@ -2,129 +2,87 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B87ABC10F06
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 00:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52A1C43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 00:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8462420811
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 00:14:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 811F82087C
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 00:31:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553646664;
+	bh=lvbpiVadMMGfp841TVRoGE3PHgwepkXr5pCRZmPS6ro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=o91ZNiqJ9NnQ9mTPueQOhvOJ34RMQ0AXVyjILDMcoEkXkQUPq5CwzLPjSdDQojdY6
+	 IrbEgXODfCi4Xcu7/qdhpHM+nvXtpVjdceJz+qhmVOP0EaYbjWQTQb1IDbOAbc+Snn
+	 u2sMTvpcrG1byI4p0rQk0a5U72nRgYn+EQeUiVd4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731816AbfC0AOG (ORCPT
+        id S1731840AbfC0AbD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Mar 2019 20:14:06 -0400
-Received: from mga18.intel.com ([134.134.136.126]:54021 "EHLO mga18.intel.com"
+        Tue, 26 Mar 2019 20:31:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726982AbfC0AOG (ORCPT
+        id S1726922AbfC0AbD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Mar 2019 20:14:06 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Mar 2019 17:14:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,274,1549958400"; 
-   d="scan'208";a="128938926"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.181])
-  by orsmga008.jf.intel.com with ESMTP; 26 Mar 2019 17:14:04 -0700
-Date:   Tue, 26 Mar 2019 17:14:04 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
+        Tue, 26 Mar 2019 20:31:03 -0400
+Received: from localhost (mobile-166-137-177-030.mycingular.net [166.137.177.30])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AB862075E;
+        Wed, 27 Mar 2019 00:31:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553646662;
+        bh=lvbpiVadMMGfp841TVRoGE3PHgwepkXr5pCRZmPS6ro=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Bu6t7+m+h5MEb7AX2zRKWB5DFDFG8S75IbkFD+cC6PJ8y1OTZphAI83I/nr3NXcUq
+         SIh8nwFEJEiVwiwrmgzz485/1tXwCJfmN0ng1qSHx9u3ZMBSUV52nYdT4omvD2MCX2
+         Hb9BvCm8BvWUvh8mHeYEk0Nvr8XNmGNAeJs9H3AM=
+Date:   Wed, 27 Mar 2019 09:30:57 +0900
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Matthew Garrett <matthewgarrett@google.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v19 17/27] x86/sgx: Add provisioning
-Message-ID: <20190327001404.GM3757@linux.intel.com>
-References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
- <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
- <CALCETrXQ0x2TD5GnaHhmF6SExk0C8+L0AwfnH-Krqwttfvwz2A@mail.gmail.com>
- <20190322112938.GJ3122@linux.intel.com>
- <20190322114325.GA10165@linux.intel.com>
- <CALCETrW=Fr8EdVq+5FLbmdL__i82FC0ONHd=hBXjxpLcsv9M0Q@mail.gmail.com>
- <20190325145503.GB29989@linux.intel.com>
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Matthew Garrett <mjg59@google.com>
+Subject: Re: [PATCH V31 25/25] debugfs: Disable open() when kernel is locked
+ down
+Message-ID: <20190327003057.GA27311@kroah.com>
+References: <20190326182742.16950-1-matthewgarrett@google.com>
+ <20190326182742.16950-26-matthewgarrett@google.com>
+ <CALCETrXDF2c2-gnOyNTnEn-uPAZp0AaSB_PB8e2y8jf7zo=Cyg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190325145503.GB29989@linux.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CALCETrXDF2c2-gnOyNTnEn-uPAZp0AaSB_PB8e2y8jf7zo=Cyg@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 25, 2019 at 04:55:03PM +0200, Jarkko Sakkinen wrote:
-> On Fri, Mar 22, 2019 at 11:20:30AM -0700, Andy Lutomirski wrote:
-> > On Fri, Mar 22, 2019 at 4:43 AM Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > >
-> > > On Fri, Mar 22, 2019 at 01:29:38PM +0200, Jarkko Sakkinen wrote:
-> > > > On Thu, Mar 21, 2019 at 09:50:41AM -0700, Andy Lutomirski wrote:
-> > > > > On Sun, Mar 17, 2019 at 2:18 PM Jarkko Sakkinen
-> > > > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > > > >
-> > > > > > In order to provide a mechanism for devilering provisoning rights:
-> > > > > >
-> > > > > > 1. Add a new file to the securityfs file called sgx/provision that works
-> > > > > >    as a token for allowing an enclave to have the provisioning privileges.
-> > > > > > 2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
-> > > > > >    following data structure:
-> > > > > >
-> > > > > >    struct sgx_enclave_set_attribute {
-> > > > > >            __u64 addr;
-> > > > > >            __u64 token_fd;
-> > > > > >    };
-> > > > >
-> > > > > Here's a potential issue:
-> > > > >
-> > > > > For container use, is it reasonable for a container manager to
-> > > > > bind-mount a file into securityfs?  Or would something in /dev make
-> > > > > this easier?
-> > > >
-> > > > I guess that is a valid point given that the securityfs contains the LSM
-> > > > (e.g. SELinux or AppArmor) policy. So yeah, I think your are right what
-> > > > you say.
-> > > >
-> > > > I propose that we create /dev/sgx/enclave to act as the enclave manager
-> > > > and /dev/sgx/provision for provisioning. Is this sustainable for you?
-> > >
-> > > Hmm.. on 2nd thought the LSM policy or even DAC policy  would restrict
-> > > that the container manager can only access specific files inside
-> > > securityfs. With this conclusion I still think it is probably the best
-> > > place for seurity policy like things even for SGX. It is meant for that
-> > > anyway.
-> > >
-> > 
-> > LSM or DAC policy can certainly *restrict* it, but I suspect that most
-> > container runtimes don't mount securityfs at all.  OTOH, the runtime
-> > definitely needs to have a way to pass /dev/sgx/enclave (or whatever
-> > it's called) through, so using another device node will definitely
-> > work.
+On Tue, Mar 26, 2019 at 12:20:24PM -0700, Andy Lutomirski wrote:
+> On Tue, Mar 26, 2019 at 11:28 AM Matthew Garrett
+> <matthewgarrett@google.com> wrote:
+> >
+> > From: Matthew Garrett <mjg59@google.com>
+> >
+> > debugfs has not been meaningfully audited in terms of ensuring that
+> > userland cannot trample over the kernel. At Greg's request, disable
+> > access to it entirely when the kernel is locked down. This is done at
+> > open() time rather than init time as the kernel lockdown status may be
+> > made stricter at runtime.
 > 
-> OK, I can cope with this argument. I go with the device names above for
-> v20.
+> Ugh.  Some of those files are very useful.  Could this perhaps still
+> allow O_RDONLY if we're in INTEGRITY mode?
 
-Regardless of where the file ends up living, I think it should be owned
-by the "core" SGX subsystem and not the driver.  At some point in the
-past Andy requested that KVM intercept EINIT as needed to prevent
-unauthorized access to the PROVISION_KEY (by running a KVM guest),
-I.e. userspace may want to access /dev/sgx/provision or whatever even
-if the driver is not loaded.  I don't see any reason to defer that change
-to the KVM series.
+Useful for what?  Debugging, sure, but for "normal operation", no kernel
+functionality should ever require debugfs.  If it does, that's a bug and
+should be fixed.
 
-If the ACPI-based autoprobing is removed, then sgx_init() can remove the
-file if probing the driver fails, i.e. the kernel won't end up with a
-file that userspace can't use for anything.
+thanks,
+
+greg k-h
