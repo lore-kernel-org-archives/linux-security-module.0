@@ -2,115 +2,185 @@ Return-Path: <SRS0=f9NI=R6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2FCC43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7232EC43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E3E2082F
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:05:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FD92206B8
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:39:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O8+PKhgO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbfC0PFK (ORCPT
+        id S1727657AbfC0Pjs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Mar 2019 11:05:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42132 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725997AbfC0PFK (ORCPT
+        Wed, 27 Mar 2019 11:39:48 -0400
+Received: from mail-yw1-f73.google.com ([209.85.161.73]:47601 "EHLO
+        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727647AbfC0Pjs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Mar 2019 11:05:10 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x2RF2KP0147150
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 11:05:09 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rgauxa7ad-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 11:05:07 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 27 Mar 2019 15:04:24 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 27 Mar 2019 15:04:21 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x2RF4KCv23789660
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Mar 2019 15:04:20 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 239A842049;
-        Wed, 27 Mar 2019 15:04:20 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C06A942041;
-        Wed, 27 Mar 2019 15:04:18 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.109.125])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 27 Mar 2019 15:04:18 +0000 (GMT)
-Subject: Re: [PATCH ghak109 V2] audit: link integrity evm_write_xattrs
- record to syscall event
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, sgrubb@redhat.com,
-        omosnace@redhat.com, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, mjg59@google.com
-Date:   Wed, 27 Mar 2019 11:04:08 -0400
-In-Reply-To: <CAHC9VhS1e0+1t=ZUsKoJcFvO+JdewL4uqwO4dqw=tOOZdJbLYA@mail.gmail.com>
-References: <087489b21e50bcda65c6af3e038394d5bfe09e00.1553626080.git.rgb@redhat.com>
-         <1553632830.4233.3.camel@linux.ibm.com>
-         <CAHC9VhS1e0+1t=ZUsKoJcFvO+JdewL4uqwO4dqw=tOOZdJbLYA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+        Wed, 27 Mar 2019 11:39:48 -0400
+Received: by mail-yw1-f73.google.com with SMTP id c188so24085184ywf.14
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 08:39:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=eR83P0sJs14fUDLDbA9zUQB2J/T1uwUazEW3OOsgSmE=;
+        b=O8+PKhgOxfZwWiidbkx+dop2jJQA52WIAMM+O4dhBMFOKrBign0ZlQnFGGZJNz+Soj
+         Jdd4iML4NYZqkV4haoQ23Bl4flBELnW8zw5nMjGvBzyfRSTGSxvP7hpGxfBP/WHiTwk2
+         1Jv2AkoNB0LBKsAPViow8W2kyJEcICBE10frxdGCLSxMXVPdCotUM7oTXNQ50ScoZ/L7
+         z1hDFJQEAGR7dBoLN+5OyV0VOKYqDJAYhDBkdeoiBuQTWgpLDYGgJ9Lupwq737ZXTFHx
+         SmfvvAspbOfs4HQ0LgUg31JDd1no4GEHGj3eFNfr8KGSOlRxK9XLYvf5EMxQwKlz6pE4
+         IkXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=eR83P0sJs14fUDLDbA9zUQB2J/T1uwUazEW3OOsgSmE=;
+        b=qfYxB0ohZYd6WZKErKdOxhOdGgK1kNtJYC17e0iSRFrNpNNXUG8bJy69yxNQUP77XU
+         pAyQkUFthPXMeMMrv0LAEgaY96D6dSYj4y6eRHz7K1wfTo4jFWjfa9ZI3j2M9SwH2+P9
+         68tEvtq077TKnd3KhUNxj5ScAfO5tWIBY+6lH8cGpyC6ffYClx5/afExiCGmFJ7RWb7j
+         UFzI325oaAXXPUjU0gRyVm/wVrcwSy/KYQ+Jg0+lCwbGMsbUM3X654ZGCEMjmzjK9nh8
+         5Qkqnpr+OEOAUNNkSw3cty/aeQ6wvyFCeaQiUzY17ZMCXIwp7q54SsrF6SzQp/u5OJCk
+         8kEw==
+X-Gm-Message-State: APjAAAU7P+dL/H9P2gaNvb8ojPtOq+JqDVepzb10duNhsT7StRbiZuYP
+        1ORL1+zIapbrJ0PomIgGE2t6LsGGyQ==
+X-Google-Smtp-Source: APXvYqw0bYV9liWjuXHJV0k7j0WuR96xgbYPTdG/AeruF4hk+dRr+7QTqvEy3vKrV6EJt20esMDFOw/JDQ==
+X-Received: by 2002:a25:d107:: with SMTP id i7mr787682ybg.26.1553701187174;
+ Wed, 27 Mar 2019 08:39:47 -0700 (PDT)
+Date:   Wed, 27 Mar 2019 16:39:38 +0100
+Message-Id: <20190327153938.82007-1-jannh@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19032715-0020-0000-0000-0000032837C4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19032715-0021-0000-0000-0000217A7A58
-Message-Id: <1553699048.4154.1.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-03-27_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1903270106
+X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
+Subject: [PATCH] security: don't use RCU accessors for cred->session_keyring
+From:   Jann Horn <jannh@google.com>
+To:     David Howells <dhowells@redhat.com>, jannh@google.com
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2019-03-26 at 19:58 -0400, Paul Moore wrote:
-> On Tue, Mar 26, 2019 at 4:40 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > Hi Richard, Paul,
-> >
-> > On Tue, 2019-03-26 at 14:49 -0400, Richard Guy Briggs wrote:
-> > > In commit fa516b66a1bf ("EVM: Allow runtime modification of the set of
-> > > verified xattrs"), the call to audit_log_start() is missing a context to
-> > > link it to an audit event. Since this event is in user context, add
-> > > the process' syscall context to the record.
-> > >
-> > > In addition, the orphaned keyword "locked" appears in the record.
-> > > Normalize this by changing it to logging the locking string "." as any
-> > > other user input in the "xattr=" field.
-> > >
-> > > Please see the github issue
-> > > https://github.com/linux-audit/audit-kernel/issues/109
-> > >
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> >
-> > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> >
-> > Paul, were you planning on upstreaming this patch?
-> 
-> Yep, unless you would rather do it?
+sparse complains that a bunch of places in kernel/cred.c access
+cred->session_keyring without the RCU helpers required by the __rcu
+annotation.
 
-No, that's fine. Thanks!
+cred->session_keyring is written in the following places:
 
-Mimi
+ - prepare_kernel_cred() [in a new cred struct]
+ - keyctl_session_to_parent() [in a new cred struct]
+ - prepare_creds [in a new cred struct, via memcpy]
+ - install_session_keyring_to_cred()
+  - from install_session_keyring() on new creds
+  - from join_session_keyring() on new creds [twice]
+  - from umh_keys_init()
+   - from call_usermodehelper_exec_async() on new creds
+
+All of these writes are before the creds are committed; therefore,
+cred->session_keyring doesn't need RCU protection.
+
+Remove the __rcu annotation and fix up all existing users that use __rcu.
+
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ include/linux/cred.h         |  2 +-
+ security/keys/process_keys.c | 12 ++++--------
+ security/keys/request_key.c  |  9 ++-------
+ 3 files changed, 7 insertions(+), 16 deletions(-)
+
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index ddd45bb74887..efb6edf32de7 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -138,7 +138,7 @@ struct cred {
+ #ifdef CONFIG_KEYS
+ 	unsigned char	jit_keyring;	/* default keyring to attach requested
+ 					 * keys to */
+-	struct key __rcu *session_keyring; /* keyring inherited over fork */
++	struct key	*session_keyring; /* keyring inherited over fork */
+ 	struct key	*process_keyring; /* keyring private to this process */
+ 	struct key	*thread_keyring; /* keyring private to this thread */
+ 	struct key	*request_key_auth; /* assumed request_key authority */
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index 9320424c4a46..bd7243cb4c85 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -227,6 +227,7 @@ static int install_process_keyring(void)
+  * Install the given keyring as the session keyring of the given credentials
+  * struct, replacing the existing one if any.  If the given keyring is NULL,
+  * then install a new anonymous session keyring.
++ * @cred can not be in use by any task yet.
+  *
+  * Return: 0 on success; -errno on failure.
+  */
+@@ -254,7 +255,7 @@ int install_session_keyring_to_cred(struct cred *cred, struct key *keyring)
+ 
+ 	/* install the keyring */
+ 	old = cred->session_keyring;
+-	rcu_assign_pointer(cred->session_keyring, keyring);
++	cred->session_keyring = keyring;
+ 
+ 	if (old)
+ 		key_put(old);
+@@ -392,11 +393,8 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
+ 
+ 	/* search the session keyring */
+ 	if (ctx->cred->session_keyring) {
+-		rcu_read_lock();
+ 		key_ref = keyring_search_aux(
+-			make_key_ref(rcu_dereference(ctx->cred->session_keyring), 1),
+-			ctx);
+-		rcu_read_unlock();
++			make_key_ref(ctx->cred->session_keyring, 1), ctx);
+ 
+ 		if (!IS_ERR(key_ref))
+ 			goto found;
+@@ -612,10 +610,8 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
+ 			goto reget_creds;
+ 		}
+ 
+-		rcu_read_lock();
+-		key = rcu_dereference(ctx.cred->session_keyring);
++		key = ctx.cred->session_keyring;
+ 		__key_get(key);
+-		rcu_read_unlock();
+ 		key_ref = make_key_ref(key, 1);
+ 		break;
+ 
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 2f17d84d46f1..db72dc4d7639 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -142,12 +142,10 @@ static int call_sbin_request_key(struct key *authkey, void *aux)
+ 		prkey = cred->process_keyring->serial;
+ 	sprintf(keyring_str[1], "%d", prkey);
+ 
+-	rcu_read_lock();
+-	session = rcu_dereference(cred->session_keyring);
++	session = cred->session_keyring;
+ 	if (!session)
+ 		session = cred->user->session_keyring;
+ 	sskey = session->serial;
+-	rcu_read_unlock();
+ 
+ 	sprintf(keyring_str[2], "%d", sskey);
+ 
+@@ -287,10 +285,7 @@ static int construct_get_dest_keyring(struct key **_dest_keyring)
+ 
+ 			/* fall through */
+ 		case KEY_REQKEY_DEFL_SESSION_KEYRING:
+-			rcu_read_lock();
+-			dest_keyring = key_get(
+-				rcu_dereference(cred->session_keyring));
+-			rcu_read_unlock();
++			dest_keyring = key_get(cred->session_keyring);
+ 
+ 			if (dest_keyring)
+ 				break;
+-- 
+2.21.0.392.gf8f6787159e-goog
 
