@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7232EC43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D92C43381
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD92206B8
-	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:39:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4C2A20700
+	for <linux-security-module@archiver.kernel.org>; Wed, 27 Mar 2019 15:55:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O8+PKhgO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Po2e0i7f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbfC0Pjs (ORCPT
+        id S1727225AbfC0PzU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Mar 2019 11:39:48 -0400
-Received: from mail-yw1-f73.google.com ([209.85.161.73]:47601 "EHLO
-        mail-yw1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727647AbfC0Pjs (ORCPT
+        Wed, 27 Mar 2019 11:55:20 -0400
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:50250 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726803AbfC0PzT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Mar 2019 11:39:48 -0400
-Received: by mail-yw1-f73.google.com with SMTP id c188so24085184ywf.14
-        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 08:39:47 -0700 (PDT)
+        Wed, 27 Mar 2019 11:55:19 -0400
+Received: by mail-qt1-f201.google.com with SMTP id g17so17242237qte.17
+        for <linux-security-module@vger.kernel.org>; Wed, 27 Mar 2019 08:55:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:message-id:mime-version:subject:from:to:cc;
-        bh=eR83P0sJs14fUDLDbA9zUQB2J/T1uwUazEW3OOsgSmE=;
-        b=O8+PKhgOxfZwWiidbkx+dop2jJQA52WIAMM+O4dhBMFOKrBign0ZlQnFGGZJNz+Soj
-         Jdd4iML4NYZqkV4haoQ23Bl4flBELnW8zw5nMjGvBzyfRSTGSxvP7hpGxfBP/WHiTwk2
-         1Jv2AkoNB0LBKsAPViow8W2kyJEcICBE10frxdGCLSxMXVPdCotUM7oTXNQ50ScoZ/L7
-         z1hDFJQEAGR7dBoLN+5OyV0VOKYqDJAYhDBkdeoiBuQTWgpLDYGgJ9Lupwq737ZXTFHx
-         SmfvvAspbOfs4HQ0LgUg31JDd1no4GEHGj3eFNfr8KGSOlRxK9XLYvf5EMxQwKlz6pE4
-         IkXg==
+        bh=6Y6uhzQufgKXK5PRxFclNBneIRaan2h7IX0MMaGZW/0=;
+        b=Po2e0i7fGUYGIl3dEhhB2FK6msqs3HSzP8a5jUSxTFipKknd6kBMsy7+8F9Gu9fHyz
+         PrpZytyVWi5VbB23hKrfScmZlsnskCzPLdKUqtcFn+rI1tRkjwPiJe4H9u9tETEsah5/
+         eZhkMjUHC3TrlMfv07JruGWv7qm5aamddI+rQJGLo1UzTjAPVEHD/daaVQbZrXSWleGB
+         JgGimdHhhv9KLg4w1X+geyq6U/FgIiSE95YlNKFiGBWTjFuofTY5JHQy0+iSuMRddNON
+         C9nMyN7ZTL73jfSuDXjIuFXgSO4LE6XCBsVTweQyANnsD2CIsCp5KCSBmSeJ8hAfcYIM
+         OQQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=eR83P0sJs14fUDLDbA9zUQB2J/T1uwUazEW3OOsgSmE=;
-        b=qfYxB0ohZYd6WZKErKdOxhOdGgK1kNtJYC17e0iSRFrNpNNXUG8bJy69yxNQUP77XU
-         pAyQkUFthPXMeMMrv0LAEgaY96D6dSYj4y6eRHz7K1wfTo4jFWjfa9ZI3j2M9SwH2+P9
-         68tEvtq077TKnd3KhUNxj5ScAfO5tWIBY+6lH8cGpyC6ffYClx5/afExiCGmFJ7RWb7j
-         UFzI325oaAXXPUjU0gRyVm/wVrcwSy/KYQ+Jg0+lCwbGMsbUM3X654ZGCEMjmzjK9nh8
-         5Qkqnpr+OEOAUNNkSw3cty/aeQ6wvyFCeaQiUzY17ZMCXIwp7q54SsrF6SzQp/u5OJCk
-         8kEw==
-X-Gm-Message-State: APjAAAU7P+dL/H9P2gaNvb8ojPtOq+JqDVepzb10duNhsT7StRbiZuYP
-        1ORL1+zIapbrJ0PomIgGE2t6LsGGyQ==
-X-Google-Smtp-Source: APXvYqw0bYV9liWjuXHJV0k7j0WuR96xgbYPTdG/AeruF4hk+dRr+7QTqvEy3vKrV6EJt20esMDFOw/JDQ==
-X-Received: by 2002:a25:d107:: with SMTP id i7mr787682ybg.26.1553701187174;
- Wed, 27 Mar 2019 08:39:47 -0700 (PDT)
-Date:   Wed, 27 Mar 2019 16:39:38 +0100
-Message-Id: <20190327153938.82007-1-jannh@google.com>
+        bh=6Y6uhzQufgKXK5PRxFclNBneIRaan2h7IX0MMaGZW/0=;
+        b=tg5TH+TFDfey9PEMZI7ZH8MjJ+nIKXjhyLjTr9tdsz02g//7WCVBQpeIQUq1wJwOm4
+         L4Mjcz3FB8vJrc0cz6M+rCRNah9al25Ha/Y3p7RZa0NvbCV+uQE965TbeL/+zuzhzZHS
+         V3AbqYU0yySD6qm4BIUgucRGYdBDcPoYCPWxM48WLBUjBTVgPH5sqBgqCceUmNnJPXIv
+         SkjeQUi2l86ftJOPiAXMYTek0dVQrQTY1yfxV7hrHnDpXimlnFcHaQ0B4S9snf5uxLw7
+         OA8CEtFy/iEJRLqAgD6jVDLfPFbvpHirSBFgs04fHtiXVexE6bUgpLHmXM+bkIdMkF2o
+         MURw==
+X-Gm-Message-State: APjAAAWRCUEoau4JtRdTAyJvRcjTY3hpbT/bGnIxeWd4rp1UxFngMf/Y
+        ByHM2IrbG7s4FFMWlEdZNjcm7iJTIg==
+X-Google-Smtp-Source: APXvYqwMbamezXu/qRp0r2ZhzMAiTRIxx29AVbJXY3yreV4vUGUHbmvON7V3eouXc3XhwpIv2DOksuvlNA==
+X-Received: by 2002:ac8:33cc:: with SMTP id d12mr1384237qtb.27.1553702118294;
+ Wed, 27 Mar 2019 08:55:18 -0700 (PDT)
+Date:   Wed, 27 Mar 2019 16:55:08 +0100
+Message-Id: <20190327155508.144730-1-jannh@google.com>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH] security: don't use RCU accessors for cred->session_keyring
+Subject: [PATCH] keys: safe concurrent user->{session,uid}_keyring access
 From:   Jann Horn <jannh@google.com>
 To:     David Howells <dhowells@redhat.com>, jannh@google.com
 Cc:     James Morris <jmorris@namei.org>,
@@ -65,122 +65,166 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-sparse complains that a bunch of places in kernel/cred.c access
-cred->session_keyring without the RCU helpers required by the __rcu
-annotation.
+The current code can perform concurrent updates and reads on
+user->session_keyring and user->uid_keyring. Add a comment to
+struct user_struct to document the nontrivial locking semantics, and use
+READ_ONCE() for unlocked readers and smp_store_release() for writers to
+prevent memory ordering issues.
 
-cred->session_keyring is written in the following places:
-
- - prepare_kernel_cred() [in a new cred struct]
- - keyctl_session_to_parent() [in a new cred struct]
- - prepare_creds [in a new cred struct, via memcpy]
- - install_session_keyring_to_cred()
-  - from install_session_keyring() on new creds
-  - from join_session_keyring() on new creds [twice]
-  - from umh_keys_init()
-   - from call_usermodehelper_exec_async() on new creds
-
-All of these writes are before the creds are committed; therefore,
-cred->session_keyring doesn't need RCU protection.
-
-Remove the __rcu annotation and fix up all existing users that use __rcu.
-
+Fixes: 69664cf16af4 ("keys: don't generate user and user session keyrings unless they're accessed")
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
- include/linux/cred.h         |  2 +-
- security/keys/process_keys.c | 12 ++++--------
- security/keys/request_key.c  |  9 ++-------
- 3 files changed, 7 insertions(+), 16 deletions(-)
+ include/linux/sched/user.h   |  7 +++++++
+ security/keys/process_keys.c | 31 +++++++++++++++++--------------
+ security/keys/request_key.c  |  5 +++--
+ 3 files changed, 27 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index ddd45bb74887..efb6edf32de7 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -138,7 +138,7 @@ struct cred {
+diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
+index c7b5f86b91a1..468d2565a9fe 100644
+--- a/include/linux/sched/user.h
++++ b/include/linux/sched/user.h
+@@ -31,6 +31,13 @@ struct user_struct {
+ 	atomic_long_t pipe_bufs;  /* how many pages are allocated in pipe buffers */
+ 
  #ifdef CONFIG_KEYS
- 	unsigned char	jit_keyring;	/* default keyring to attach requested
- 					 * keys to */
--	struct key __rcu *session_keyring; /* keyring inherited over fork */
-+	struct key	*session_keyring; /* keyring inherited over fork */
- 	struct key	*process_keyring; /* keyring private to this process */
- 	struct key	*thread_keyring; /* keyring private to this thread */
- 	struct key	*request_key_auth; /* assumed request_key authority */
++	/*
++	 * These pointers can only change from NULL to a non-NULL value once.
++	 * Writes are protected by key_user_keyring_mutex.
++	 * Unlocked readers should use READ_ONCE() unless they know that
++	 * install_user_keyrings() has been called successfully (which sets
++	 * these members to non-NULL values, preventing further modifications).
++	 */
+ 	struct key *uid_keyring;	/* UID specific keyring */
+ 	struct key *session_keyring;	/* UID's default session keyring */
+ #endif
 diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index 9320424c4a46..bd7243cb4c85 100644
+index bd7243cb4c85..f05f7125a7d5 100644
 --- a/security/keys/process_keys.c
 +++ b/security/keys/process_keys.c
-@@ -227,6 +227,7 @@ static int install_process_keyring(void)
-  * Install the given keyring as the session keyring of the given credentials
-  * struct, replacing the existing one if any.  If the given keyring is NULL,
-  * then install a new anonymous session keyring.
-+ * @cred can not be in use by any task yet.
-  *
-  * Return: 0 on success; -errno on failure.
-  */
-@@ -254,7 +255,7 @@ int install_session_keyring_to_cred(struct cred *cred, struct key *keyring)
+@@ -58,7 +58,7 @@ int install_user_keyrings(void)
  
- 	/* install the keyring */
- 	old = cred->session_keyring;
--	rcu_assign_pointer(cred->session_keyring, keyring);
-+	cred->session_keyring = keyring;
+ 	kenter("%p{%u}", user, uid);
  
- 	if (old)
- 		key_put(old);
-@@ -392,11 +393,8 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
+-	if (user->uid_keyring && user->session_keyring) {
++	if (READ_ONCE(user->uid_keyring) && READ_ONCE(user->session_keyring)) {
+ 		kleave(" = 0 [exist]");
+ 		return 0;
+ 	}
+@@ -111,8 +111,10 @@ int install_user_keyrings(void)
+ 		}
+ 
+ 		/* install the keyrings */
+-		user->uid_keyring = uid_keyring;
+-		user->session_keyring = session_keyring;
++		/* paired with READ_ONCE() */
++		smp_store_release(&user->uid_keyring, uid_keyring);
++		/* paired with READ_ONCE() */
++		smp_store_release(&user->session_keyring, session_keyring);
+ 	}
+ 
+ 	mutex_unlock(&key_user_keyring_mutex);
+@@ -340,6 +342,7 @@ void key_fsgid_changed(struct task_struct *tsk)
+ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
+ {
+ 	key_ref_t key_ref, ret, err;
++	const struct cred *cred = ctx->cred;
+ 
+ 	/* we want to return -EAGAIN or -ENOKEY if any of the keyrings were
+ 	 * searchable, but we failed to find a key or we found a negative key;
+@@ -353,9 +356,9 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
+ 	err = ERR_PTR(-EAGAIN);
+ 
+ 	/* search the thread keyring first */
+-	if (ctx->cred->thread_keyring) {
++	if (cred->thread_keyring) {
+ 		key_ref = keyring_search_aux(
+-			make_key_ref(ctx->cred->thread_keyring, 1), ctx);
++			make_key_ref(cred->thread_keyring, 1), ctx);
+ 		if (!IS_ERR(key_ref))
+ 			goto found;
+ 
+@@ -371,9 +374,9 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
+ 	}
+ 
+ 	/* search the process keyring second */
+-	if (ctx->cred->process_keyring) {
++	if (cred->process_keyring) {
+ 		key_ref = keyring_search_aux(
+-			make_key_ref(ctx->cred->process_keyring, 1), ctx);
++			make_key_ref(cred->process_keyring, 1), ctx);
+ 		if (!IS_ERR(key_ref))
+ 			goto found;
+ 
+@@ -392,9 +395,9 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
+ 	}
  
  	/* search the session keyring */
- 	if (ctx->cred->session_keyring) {
--		rcu_read_lock();
+-	if (ctx->cred->session_keyring) {
++	if (cred->session_keyring) {
  		key_ref = keyring_search_aux(
--			make_key_ref(rcu_dereference(ctx->cred->session_keyring), 1),
--			ctx);
--		rcu_read_unlock();
-+			make_key_ref(ctx->cred->session_keyring, 1), ctx);
+-			make_key_ref(ctx->cred->session_keyring, 1), ctx);
++			make_key_ref(cred->session_keyring, 1), ctx);
  
  		if (!IS_ERR(key_ref))
  			goto found;
-@@ -612,10 +610,8 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
- 			goto reget_creds;
+@@ -413,9 +416,9 @@ key_ref_t search_my_process_keyrings(struct keyring_search_context *ctx)
  		}
- 
--		rcu_read_lock();
--		key = rcu_dereference(ctx.cred->session_keyring);
-+		key = ctx.cred->session_keyring;
- 		__key_get(key);
--		rcu_read_unlock();
- 		key_ref = make_key_ref(key, 1);
+ 	}
+ 	/* or search the user-session keyring */
+-	else if (ctx->cred->user->session_keyring) {
++	else if (READ_ONCE(cred->user->session_keyring)) {
+ 		key_ref = keyring_search_aux(
+-			make_key_ref(ctx->cred->user->session_keyring, 1),
++			make_key_ref(READ_ONCE(cred->user->session_keyring), 1),
+ 			ctx);
+ 		if (!IS_ERR(key_ref))
+ 			goto found;
+@@ -602,7 +605,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
+ 				goto error;
+ 			goto reget_creds;
+ 		} else if (ctx.cred->session_keyring ==
+-			   ctx.cred->user->session_keyring &&
++			   READ_ONCE(ctx.cred->user->session_keyring) &&
+ 			   lflags & KEY_LOOKUP_CREATE) {
+ 			ret = join_session_keyring(NULL);
+ 			if (ret < 0)
+@@ -616,7 +619,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
  		break;
  
+ 	case KEY_SPEC_USER_KEYRING:
+-		if (!ctx.cred->user->uid_keyring) {
++		if (!READ_ONCE(ctx.cred->user->uid_keyring)) {
+ 			ret = install_user_keyrings();
+ 			if (ret < 0)
+ 				goto error;
+@@ -628,7 +631,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
+ 		break;
+ 
+ 	case KEY_SPEC_USER_SESSION_KEYRING:
+-		if (!ctx.cred->user->session_keyring) {
++		if (!READ_ONCE(ctx.cred->user->session_keyring)) {
+ 			ret = install_user_keyrings();
+ 			if (ret < 0)
+ 				goto error;
 diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 2f17d84d46f1..db72dc4d7639 100644
+index db72dc4d7639..75d87f9e0f49 100644
 --- a/security/keys/request_key.c
 +++ b/security/keys/request_key.c
-@@ -142,12 +142,10 @@ static int call_sbin_request_key(struct key *authkey, void *aux)
- 		prkey = cred->process_keyring->serial;
- 	sprintf(keyring_str[1], "%d", prkey);
- 
--	rcu_read_lock();
--	session = rcu_dereference(cred->session_keyring);
-+	session = cred->session_keyring;
- 	if (!session)
- 		session = cred->user->session_keyring;
- 	sskey = session->serial;
--	rcu_read_unlock();
- 
- 	sprintf(keyring_str[2], "%d", sskey);
- 
-@@ -287,10 +285,7 @@ static int construct_get_dest_keyring(struct key **_dest_keyring)
- 
+@@ -293,11 +293,12 @@ static int construct_get_dest_keyring(struct key **_dest_keyring)
  			/* fall through */
- 		case KEY_REQKEY_DEFL_SESSION_KEYRING:
--			rcu_read_lock();
--			dest_keyring = key_get(
--				rcu_dereference(cred->session_keyring));
--			rcu_read_unlock();
-+			dest_keyring = key_get(cred->session_keyring);
+ 		case KEY_REQKEY_DEFL_USER_SESSION_KEYRING:
+ 			dest_keyring =
+-				key_get(cred->user->session_keyring);
++				key_get(READ_ONCE(cred->user->session_keyring));
+ 			break;
  
- 			if (dest_keyring)
- 				break;
+ 		case KEY_REQKEY_DEFL_USER_KEYRING:
+-			dest_keyring = key_get(cred->user->uid_keyring);
++			dest_keyring =
++				key_get(READ_ONCE(cred->user->uid_keyring));
+ 			break;
+ 
+ 		case KEY_REQKEY_DEFL_GROUP_KEYRING:
 -- 
 2.21.0.392.gf8f6787159e-goog
 
