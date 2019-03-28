@@ -2,122 +2,101 @@ Return-Path: <SRS0=kszx=R7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 506D9C10F03
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 17:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F907C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 18:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 213F420811
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 17:19:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F4F020700
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 18:08:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CBLlj7QM"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NzaIE6ux"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726321AbfC1RTf (ORCPT
+        id S1726751AbfC1SIL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Mar 2019 13:19:35 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:38674 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbfC1RTf (ORCPT
+        Thu, 28 Mar 2019 14:08:11 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38488 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726916AbfC1SIL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Mar 2019 13:19:35 -0400
-Received: by mail-yw1-f68.google.com with SMTP id m207so6281838ywd.5;
-        Thu, 28 Mar 2019 10:19:34 -0700 (PDT)
+        Thu, 28 Mar 2019 14:08:11 -0400
+Received: by mail-it1-f196.google.com with SMTP id f22so7574807ita.3
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Mar 2019 11:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WQ87d/GuSsWiqz7wsRpRdGNX/3V6XiBVfMQ4WOhh/Pc=;
-        b=CBLlj7QM/GTMmzd2/M9Xrsd0iVZKEH8sG0mMixMpOwzxNmedbGCLvfbddUZJeF0nuA
-         gex/+A/Q9IgQt5yhjsDUNccjn5o0jTqKZqG6Hc+ItsL7yNoTRaZrx7Ceb8bGwV0/Fbp8
-         feoddE1j3YJnGCX4en5iRVIBPvxgkmzQGjkU9kSBVOln9Rlch/X37LCCC+hqZdcTMMDg
-         uXvBiLALzTkNBo6vTK7UxQGzKzMjVVTfD4Q41M6TkCFXLZVv19OPlrScM6L0e+m9w338
-         MU53htOkAv/fszYj6lgFtJ3u5LG+30sog6ahPYNuz8GGwJ8qLyZKqDaF7J60BEibPWxW
-         EgVQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mhh689jASFqwg5CvKSsCVL3z97Hnu8T15rPfSQcYnLE=;
+        b=NzaIE6uxYbEDkPgRduGRI2AmLoA943ZKQwON8MKRRwREEvb5qNVErkZCYnkweT35XG
+         e/O50ZrnBInnKAyC64xIr32xixDaFfMBKPnppk60M3Z7IhKhmnk67EraFP20e5+8nrrq
+         u7x2D0n6yzuz6kVMulwBnHknl0YxdSQseu0SDRAQ9jkC3E22SlWVHt/iiW47AXTfR5WZ
+         DW4uHzhy1IVQV4n3rBuDUBPFrYo1Tqkksa02PunTAKwn+pffrTVlejqP3HWdmf0fI5b4
+         K4a+K8+DLDH1prvJEI240MgQMecSe+I7Zit4ejZ5jACKbSpX9hc9ROI9L7OagEDqsYFe
+         6OuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WQ87d/GuSsWiqz7wsRpRdGNX/3V6XiBVfMQ4WOhh/Pc=;
-        b=jnR+jXt5veB+7NqmeR3QBXgaPKEwIv9c6cZyx9L9XSlwSe9nYC8v8o7JAEJ8bmVuzY
-         tuAVEMeAtiMYW3ymwtp8pOXUGNIDt0xLKurJQFuWkFBX7W18EUzlQ0Qblv3oVs0BS+/w
-         OMYuIGTwJspR69RqWNZfeVoAu7AR+ovGOjvRrdSmiu4km48swANddsHLLmwt9Qm+8G2l
-         H8BwftMFOvQkLSiwa5rFj3rKKp96fJWX1DQOC1XOoKro27/yUkspNV8RqpkKMcS+XkPH
-         jtr9ChwUnvtidGd03VygyQgannf9o0dvQEY2A3AnsrvQ2rqcKwS8nKrypftR9x1gRbWh
-         1gmg==
-X-Gm-Message-State: APjAAAXiNfxZFPp89U8nFtH7DEYPErK22wt6VdTxdGSGAvawZuiCH6He
-        OQavTheJoHXhSBDrT9XX7Tc=
-X-Google-Smtp-Source: APXvYqzrOweucTnr518KqxIPEqSjlGFWNSIfmXeMH9WanONcWQqZeFIjP17a2igimoHTrsvK6seLpA==
-X-Received: by 2002:a81:2183:: with SMTP id h125mr29049696ywh.455.1553793574328;
-        Thu, 28 Mar 2019 10:19:34 -0700 (PDT)
-Received: from dumbo ([83.137.6.243])
-        by smtp.gmail.com with ESMTPSA id l123sm9030422ywe.85.2019.03.28.10.19.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 28 Mar 2019 10:19:33 -0700 (PDT)
-Date:   Thu, 28 Mar 2019 18:19:26 +0100
-From:   Domenico Andreoli <domenico.andreoli@linux.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, pauldzim@gmail.com,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: turn on TPM on suspend for TPM 1.x
-Message-ID: <20190328171926.4luwqofh67uwgt5e@dumbo>
-References: <20190322105120.8441-1-jarkko.sakkinen@linux.intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mhh689jASFqwg5CvKSsCVL3z97Hnu8T15rPfSQcYnLE=;
+        b=F9hDwjgGzQCmWJbpE6ml+GkANWrzHGko214VgozM5Q9FGWCxTpKedtfccPGggDrpgV
+         Pndqsdk+RTzC7ONQJHaWA1y6rNeb1KqVHQsdDTdiWFbO1h/6J898olOqlgzIq/apuxmv
+         DDmBCAnyjCgkgMIUXjfPZlPKoAkIDyo3OE5zco8Dm4n2yl+bUKz96tCNzS9w9XtLjzKZ
+         kif0DIMpGduQpGnU1fQv2MG1jGanxpbXn0OULRmSUpHFI7ILyO+a35k7sjwAEfhw6WR1
+         Ysg1wPDKZ108ZnlnR6/y5f2SrnuSA1fEySv0UuEiFUa2hxC5WbNf+B8Ate/zG8j2ljHY
+         1xEg==
+X-Gm-Message-State: APjAAAX17WAgN/Boqe/em3FQ7b5DoXsI1Ga262wREWxJBwsjHVtAmlhE
+        waO3a9kjP51tX682kzDaTq55ac6okaAPe2e2VCQkCQ==
+X-Google-Smtp-Source: APXvYqw0Yrl3ZUNwrlKzql9TEGxfkebPkeGnm+q1biuWu2OO1H/hFDzrOmoZ0cn9r/fiozl40FPBUnC8VmVOXNlu6HI=
+X-Received: by 2002:a02:3d84:: with SMTP id n126mr26134078jan.102.1553796489486;
+ Thu, 28 Mar 2019 11:08:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190322105120.8441-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20190325220954.29054-1-matthewgarrett@google.com>
+ <20190325220954.29054-24-matthewgarrett@google.com> <20190325164221.5d8687bd@shemminger-XPS-13-9360>
+ <CALCETrU=EqqRwyQGBT0=_N9-E_pBM53=z+WJrd9OzV7g6xJa0A@mail.gmail.com>
+ <alpine.LRH.2.21.1903270523240.5235@namei.org> <CALCETrUZ+oP0xxNt4mwN=AZA+zvkkfPZiAsFmAuqUD48pOHbBg@mail.gmail.com>
+ <alpine.LRH.2.21.1903281403540.27561@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1903281403540.27561@namei.org>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Thu, 28 Mar 2019 11:07:58 -0700
+Message-ID: <CACdnJusbi1jB+G0wMcj43wNik9Fiv3QCc8v30ztrFWg5-P-0iQ@mail.gmail.com>
+Subject: Re: [PATCH 23/27] bpf: Restrict kernel image access functions when
+ the kernel is locked down
+To:     James Morris <jmorris@namei.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Chun-Yi Lee <jlee@suse.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Kees Cook <keescook@chromium.org>,
+        Will Drewry <wad@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 22, 2019 at 12:51:20PM +0200, Jarkko Sakkinen wrote:
-> tpm_chip_start/stop() should be also called for TPM 1.x devices on
-> suspend. Add that functionality back. Do not lock the chip because
-> it is unnecessary as there are no multiple threads using it when
-> doing the suspend.
-> 
-> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> Reported-by: Paul Zimmerman <pauldzim@gmail.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/char/tpm/tpm-interface.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 83ece5639f86..ae1030c9b086 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -402,15 +402,13 @@ int tpm_pm_suspend(struct device *dev)
->  	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
->  		return 0;
->  
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> -		mutex_lock(&chip->tpm_mutex);
-> -		if (!tpm_chip_start(chip)) {
-> +	if (!tpm_chip_start(chip)) {
-> +		if (chip->flags & TPM_CHIP_FLAG_TPM2)
->  			tpm2_shutdown(chip, TPM2_SU_STATE);
-> -			tpm_chip_stop(chip);
-> -		}
-> -		mutex_unlock(&chip->tpm_mutex);
-> -	} else {
-> -		rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
-> +		else
-> +			rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
-> +
-> +		tpm_chip_stop(chip);
->  	}
->  
->  	return rc;
+On Wed, Mar 27, 2019 at 8:15 PM James Morris <jmorris@namei.org> wrote:
+> OTOH, this seems like a combination of mechanism and policy. The 3 modes
+> are a help here, but I wonder if they may be too coarse grained still,
+> e.g. if someone wants to allow a specific mechanism according to their own
+> threat model and mitigations.
 
-Tested-by: Domenico Andreoli <domenico.andreoli@linux.com>
+In general the interfaces blocked by these patches could also be
+blocked with an LSM, and I'd guess that people with more fine-grained
+requirements would probably take that approach.
 
--- 
-3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
+> Secure boot gives you some assurance of the static state of the system at
+> boot time, and lockdown is certainly useful (with or without secure boot),
+> but it's not a complete solution to runtime kernel integrity protection by
+> any stretch of the imagination.  I'm concerned about it being perceived as
+> such.
+
+What do you think the functionality gaps are in terms of ensuring
+kernel integrity (other than kernel flaws that allow the restrictions
+to be bypassed)?
