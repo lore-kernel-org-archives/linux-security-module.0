@@ -3,60 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E427C10F03
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 10:08:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49246C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 12:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EADA42173C
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 10:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21CEE217D7
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 12:28:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbfC1KI6 (ORCPT
+        id S1726087AbfC1M2C (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Mar 2019 06:08:58 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37365 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbfC1KI6 (ORCPT
+        Thu, 28 Mar 2019 08:28:02 -0400
+Received: from mga17.intel.com ([192.55.52.151]:21411 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbfC1M2C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Mar 2019 06:08:58 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 120DA806E6; Thu, 28 Mar 2019 11:08:48 +0100 (CET)
-Date:   Thu, 28 Mar 2019 11:08:48 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.0 010/262] apparmor: fix double free when
- unpack of secmark rules fails
-Message-ID: <20190328100847.GC19456@atrey.karlin.mff.cuni.cz>
-References: <20190327180158.10245-1-sashal@kernel.org>
- <20190327180158.10245-10-sashal@kernel.org>
+        Thu, 28 Mar 2019 08:28:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Mar 2019 05:28:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,280,1549958400"; 
+   d="scan'208";a="126616710"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.182])
+  by orsmga007.jf.intel.com with ESMTP; 28 Mar 2019 05:27:57 -0700
+Date:   Thu, 28 Mar 2019 14:27:57 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dan Williams <dan.j.williams@gmail.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linuxibm.com>,
+        David Howells <dhowells@redhat.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] KEYS: trusted: allow trusted.ko to initialize w/o a
+ TPM
+Message-ID: <20190328122757.GB7094@linux.intel.com>
+References: <20190326121158.13499-1-jarkko.sakkinen@linux.intel.com>
+ <CAA9_cmfFpkBLz6TU0sLSV1JYE43sDtfi29Xw4R5Xt-RaWm8ZLA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190327180158.10245-10-sashal@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAA9_cmfFpkBLz6TU0sLSV1JYE43sDtfi29Xw4R5Xt-RaWm8ZLA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: John Johansen <john.johansen@canonical.com>
+On Wed, Mar 27, 2019 at 10:15:50AM -0700, Dan Williams wrote:
+> On Tue, Mar 26, 2019 at 5:13 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > Allow trusted.ko to initialize w/o a TPM. This commit adds checks to the
+> > key type callbacks and exported functions to fail when a TPM is not
+> > available.
+> >
+> > Cc: James Morris <jmorris@namei.org>
+> > Reported-by: Dan Williams <dan.j.williams@intel.com>
+> > Tested-by: Dan Williams <dan.j.williams@intel.com>
+> > Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> > v3:
+> > - remove unnecessary check for chip in init_trusted()
 > 
-> [ Upstream commit d8dbb581d4f86a2ac669c056fc71a28ebeb367f4 ]
-> 
-> if secmark rules fail to unpack a double free happens resulting in
-> the following oops
+> v3 also tests ok here.
 
-> 
-> Fixes: 9caafbe2b4cf ("apparmor: Parse secmark policy")
-> Reported-by: Alex Murray <alex.murray@canonical.com>
-> Signed-off-by: John Johansen <john.johansen@canonical.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Thank you.
 
-Acked-for-stable: Pavel Machek <pavel@ucw.cz>
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+/Jarkko
