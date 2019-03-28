@@ -2,93 +2,61 @@ Return-Path: <SRS0=kszx=R7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C410C43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 03:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E427C10F03
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 10:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16CC9206C0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 03:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADA42173C
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Mar 2019 10:08:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbfC1DQP (ORCPT
+        id S1726094AbfC1KI6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Mar 2019 23:16:15 -0400
-Received: from namei.org ([65.99.196.166]:59014 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbfC1DQP (ORCPT
+        Thu, 28 Mar 2019 06:08:58 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37365 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbfC1KI6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Mar 2019 23:16:15 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x2S3Fkde027824;
-        Thu, 28 Mar 2019 03:15:46 GMT
-Date:   Thu, 28 Mar 2019 14:15:46 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Andy Lutomirski <luto@kernel.org>
-cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Chun-Yi Lee <jlee@suse.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Kees Cook <keescook@chromium.org>,
-        Will Drewry <wad@chromium.org>
-Subject: Re: [PATCH 23/27] bpf: Restrict kernel image access functions when
- the kernel is locked down
-In-Reply-To: <CALCETrUZ+oP0xxNt4mwN=AZA+zvkkfPZiAsFmAuqUD48pOHbBg@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1903281403540.27561@namei.org>
-References: <20190325220954.29054-1-matthewgarrett@google.com> <20190325220954.29054-24-matthewgarrett@google.com> <20190325164221.5d8687bd@shemminger-XPS-13-9360> <CALCETrU=EqqRwyQGBT0=_N9-E_pBM53=z+WJrd9OzV7g6xJa0A@mail.gmail.com> <alpine.LRH.2.21.1903270523240.5235@namei.org>
- <CALCETrUZ+oP0xxNt4mwN=AZA+zvkkfPZiAsFmAuqUD48pOHbBg@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Thu, 28 Mar 2019 06:08:58 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 120DA806E6; Thu, 28 Mar 2019 11:08:48 +0100 (CET)
+Date:   Thu, 28 Mar 2019 11:08:48 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.0 010/262] apparmor: fix double free when
+ unpack of secmark rules fails
+Message-ID: <20190328100847.GC19456@atrey.karlin.mff.cuni.cz>
+References: <20190327180158.10245-1-sashal@kernel.org>
+ <20190327180158.10245-10-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190327180158.10245-10-sashal@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 26 Mar 2019, Andy Lutomirski wrote:
-
-> >
-> >         kernel_is_locked_down("ioperm")
-> >
-> > becomes
-> >
-> >         kernel_is_locked_down(LOCKDOWN_IOPERM)
-> >
-> > and this function checks e.g.
-> >
-> >         if (lockdown_polcy[id]) {
-> >                 fail or warn;
-> >         }
-> >
-> > Thoughts?
+> From: John Johansen <john.johansen@canonical.com>
 > 
-> I'm concerned that this gives too much useless flexibility to
-> administrators and user code in general.  If you can break kernel
-> integrity, you can break kernel integrity -- it shouldn't really
-> matter *how* you break it.
+> [ Upstream commit d8dbb581d4f86a2ac669c056fc71a28ebeb367f4 ]
+> 
+> if secmark rules fail to unpack a double free happens resulting in
+> the following oops
 
-OTOH, this seems like a combination of mechanism and policy. The 3 modes 
-are a help here, but I wonder if they may be too coarse grained still, 
-e.g. if someone wants to allow a specific mechanism according to their own 
-threat model and mitigations.
+> 
+> Fixes: 9caafbe2b4cf ("apparmor: Parse secmark policy")
+> Reported-by: Alex Murray <alex.murray@canonical.com>
+> Signed-off-by: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-Secure boot gives you some assurance of the static state of the system at 
-boot time, and lockdown is certainly useful (with or without secure boot), 
-but it's not a complete solution to runtime kernel integrity protection by 
-any stretch of the imagination.  I'm concerned about it being perceived as 
-such.
-
-I'm not sure how to think about it architecturally and how it fits as such 
-in the mainline kernel.
-
+Acked-for-stable: Pavel Machek <pavel@ucw.cz>
 
 -- 
-James Morris
-<jmorris@namei.org>
-
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
