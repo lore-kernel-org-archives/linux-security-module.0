@@ -2,63 +2,79 @@ Return-Path: <SRS0=lFQA=SA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 039D2C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 21:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B72D5C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 23:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF79E2075E
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 21:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89BC5218A2
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 23:51:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729857AbfC2VMJ (ORCPT
+        id S1730050AbfC2Xvf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Mar 2019 17:12:09 -0400
-Received: from namei.org ([65.99.196.166]:59266 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729766AbfC2VMJ (ORCPT
+        Fri, 29 Mar 2019 19:51:35 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:23305 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729992AbfC2Xvf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Mar 2019 17:12:09 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x2TLC7IW009773;
-        Fri, 29 Mar 2019 21:12:08 GMT
-Date:   Sat, 30 Mar 2019 08:12:07 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL][UPDATED] security: yama and LSM config fixes
-In-Reply-To: <alpine.LRH.2.21.1903300509370.689@namei.org>
-Message-ID: <alpine.LRH.2.21.1903300811170.5953@namei.org>
-References: <alpine.LRH.2.21.1903300509370.689@namei.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Fri, 29 Mar 2019 19:51:35 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2TNp9eC025583;
+        Sat, 30 Mar 2019 08:51:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Sat, 30 Mar 2019 08:51:09 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126072090247.bbtec.net [126.72.90.247])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2TNp51Q025461
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 30 Mar 2019 08:51:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] LSM: Revive CONFIG_DEFAULT_SECURITY_* for "make
+ oldconfig"
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20190329193604.GA30908@beast>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <be269870-2dbe-6b24-d74d-a349d44b38c9@i-love.sakura.ne.jp>
+Date:   Sat, 30 Mar 2019 08:51:05 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190329193604.GA30908@beast>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Please pull these fixes for v5.1.
+On 2019/03/30 4:36, Kees Cook wrote:
+> Note that since TOMOYO can be fully stacked against the other legacy
+> major LSMs, when it is selected, it explicitly disables the other LSMs
+> to avoid them also initializing since TOMOYO does not expect this
+> currently.
 
-The following changes since commit 8c7ae38d1ce12a0eaeba655df8562552b3596c7f:
+Excuse me, but isn't this exception confusing, for DEFAULT_SECURITY_TOMOYO
+and DEFAULT_SECURITY_DAC are "opt-in" whereas DEFAULT_SECURITY_SELINUX and
+DEFAULT_SECURITY_SMACK and DEFAULT_SECURITY_APPARMOR are "opt-out" ?
 
-  afs: Fix StoreData op marshalling (2019-03-28 08:54:20 -0700)
+If SELinux/Smack/AppArmor people think this mixture is fine, I'm fine though...
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.1-a
-
-for you to fetch changes up to 2623c4fbe2ad1341ff2d1e12410d0afdae2490ca:
-
-  LSM: Revive CONFIG_DEFAULT_SECURITY_* for "make oldconfig" (2019-03-29 14:08:49 -0700)
-
-----------------------------------------------------------------
-Jann Horn (1):
-      Yama: mark local symbols as static
-
-Kees Cook (1):
-      LSM: Revive CONFIG_DEFAULT_SECURITY_* for "make oldconfig"
-
- security/Kconfig         | 38 ++++++++++++++++++++++++++++++++++++++
- security/yama/yama_lsm.c |  8 ++++----
- 2 files changed, 42 insertions(+), 4 deletions(-)
+>  config LSM
+>  	string "Ordered list of enabled LSMs"
+> +	default "yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if DEFAULT_SECURITY_SMACK
+> +	default "yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if DEFAULT_SECURITY_APPARMOR
+> +	default "yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
+> +	default "yama,loadpin,safesetid,integrity" if DEFAULT_SECURITY_DAC
+>  	default "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
+>  	help
+>  	  A comma-separated list of LSMs, in initialization order.
+> 
