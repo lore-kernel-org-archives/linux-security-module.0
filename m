@@ -2,92 +2,96 @@ Return-Path: <SRS0=lFQA=SA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4561AC10F05
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 11:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F64C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 11:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B1832184C
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 11:51:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="LwPzZMrr"
+	by mail.kernel.org (Postfix) with ESMTP id 19E242075E
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 11:55:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729427AbfC2Lvw (ORCPT
+        id S1729458AbfC2Lzq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Mar 2019 07:51:52 -0400
-Received: from mail-40130.protonmail.ch ([185.70.40.130]:41067 "EHLO
-        mail-40130.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729419AbfC2Lvw (ORCPT
+        Fri, 29 Mar 2019 07:55:46 -0400
+Received: from mga11.intel.com ([192.55.52.93]:57366 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728800AbfC2Lzp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Mar 2019 07:51:52 -0400
-Date:   Fri, 29 Mar 2019 11:51:41 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=default; t=1553860309;
-        bh=4gf84StZPnKmYHqTKNEAE9Hg0XymADRTmxkhrK2R6yI=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=LwPzZMrroPQCXYF4xn8fMkPMvT9cq1U640iGgJtpQMRwpUd8yN8FDXkfvI4i5tVZs
-         4/31e/ImmycdS1Ctyp/qdEamle4W3V0IpffsmS1qusP4kM2jouK93HdstiLTi/G3Y5
-         6+SuhHDbIFDnooNMLTxy/NKyBG46bJcADovpLTWQ=
-To:     Mimi Zohar <zohar@linux.ibm.com>
-From:   Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     Igor Zhbanov <i.zhbanov@omprussia.ru>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>,
-        John Johansen <john.johansen@canonical.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
-Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
-Message-ID: <qVt5eJGvmcoQ8hfVSs5S4nXQ_3dFyZne8vIO0fNgJevhW19XHIaJxnlBMlDfUOanUoTjTk5bLes-9ipnzoLSg1xciMA4zivRRFkaTHp5YWQ=@protonmail.ch>
-In-Reply-To: <1553857187.9420.49.camel@linux.ibm.com>
-References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
- <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
- <1553167318.4899.382.camel@linux.ibm.com>
- <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
- <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
- <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
- <1553793463.8711.26.camel@linux.ibm.com>
- <92718382-8669-748f-10d8-02fa21225210@omprussia.ru>
- <1553857187.9420.49.camel@linux.ibm.com>
-Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
+        Fri, 29 Mar 2019 07:55:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Mar 2019 04:55:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,284,1549958400"; 
+   d="scan'208";a="159556097"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.156])
+  by fmsmga001.fm.intel.com with ESMTP; 29 Mar 2019 04:55:43 -0700
+Date:   Fri, 29 Mar 2019 13:55:44 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     jmorris@namei.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: [GIT PULL] tpmdd fixes for Linux v5.1
+Message-ID: <20190329115544.GA27351@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Friday, March 29, 2019 10:59 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+Hi James,
 
-> [Cc'ing the LSM mailing list and others]
->
-> On Fri, 2019-03-29 at 13:00 +0300, Igor Zhbanov wrote:
->
-> > Hi Mimi,On 28.03.2019 20:17, Mimi Zohar wrote:
->
-> > > I just came across the grsecurity article on mprotect.[1]
-> > > Has anyone looked at it? Would it make sense to make it a minor LSM?
-> > > [1]https://pax.grsecurity.net/docs/mprotect.txt
-> >
-> > Interesting article. It is almost exactly of what I wanted to be implem=
-ented.
-> > If this minor LSM would be stackable to allow combining with e.g. SELin=
-ux
-> > then why not.
->
-> Stacking shouldn't be a problem. =C2=A0Other LSMs are already on the
-> mprotect hook. =C2=A0Let's hear what others think.
->
-> Mimi
+These are critical fixes for v5.1. Contains also couple of new selftests for
+v5.1 features (partial reads in /dev/tpm0). I hope these could still reach
+the release. Thanks.
 
-There is already minor LSM in progress: https://sara.smeso.it/en/latest/
+/Jarkko
 
-Jordan
+The following changes since commit 8d93e952fba216cd0811247f6360d97e0465d5fc:
+
+  LSM: lsm_hooks.h: fix documentation format (2019-03-26 16:46:22 -0700)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20190329
+
+for you to fetch changes up to ada14f61ed5e111523ace5553d152ca89883c0a4:
+
+  tpm: turn on TPM on suspend for TPM 1.x (2019-03-29 13:48:40 +0200)
+
+----------------------------------------------------------------
+tpmdd fixes for Linux v5.1
+
+----------------------------------------------------------------
+Jarkko Sakkinen (2):
+      KEYS: trusted: allow trusted.ko to initialize w/o a TPM
+      tpm: turn on TPM on suspend for TPM 1.x
+
+Tadeusz Struk (3):
+      selftests/tpm2: Open tpm dev in unbuffered mode
+      selftests/tpm2: Extend tests to cover partial reads
+      tpm: fix an invalid condition in tpm_common_poll
+
+Yue Haibing (1):
+      tpm: Fix the type of the return value in calc_tpm2_event_size()
+
+ndesaulniers@google.com (1):
+      KEYS: trusted: fix -Wvarags warning
+
+ drivers/char/tpm/eventlog/tpm2.c           |  4 +-
+ drivers/char/tpm/tpm-dev-common.c          |  9 ++++-
+ drivers/char/tpm/tpm-interface.c           | 14 +++----
+ include/keys/trusted.h                     |  2 +-
+ security/keys/trusted.c                    | 32 +++++++++++----
+ tools/testing/selftests/tpm2/tpm2.py       |  5 ++-
+ tools/testing/selftests/tpm2/tpm2_tests.py | 63 ++++++++++++++++++++++++++++++
+ 7 files changed, 108 insertions(+), 21 deletions(-)
