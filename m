@@ -2,90 +2,155 @@ Return-Path: <SRS0=lFQA=SA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3810FC43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 17:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6F8C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 17:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0724920811
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 17:27:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eTclWHyg"
+	by mail.kernel.org (Postfix) with ESMTP id C7AD5218A3
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 17:40:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729762AbfC2R1K (ORCPT
+        id S1729909AbfC2Rkw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Mar 2019 13:27:10 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46792 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729702AbfC2R1K (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Mar 2019 13:27:10 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h21so2631589ljk.13
-        for <linux-security-module@vger.kernel.org>; Fri, 29 Mar 2019 10:27:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=GiJXZ5xrqrslOyXUFa2D6Tq59VC2N7PSWBCjmjHxjOc=;
-        b=eTclWHygd1RpE2VOl3s9gF07E6mPTt/WKSL2hNO3/cYhAlG1uq2/z6YJ821a34DCfe
-         F4oBzsdBxYlB0nozfla2tEPghwpQCxulo3EMS7CnlnmG+fOi/crSCsCH/UzqhfiCK4Rz
-         l2B55n77TK3oR1+UG9ypfbb0KLoIZjZRabCSzyP5MwcSJ+/ixeBc2b2EA1Fu1c+V7zic
-         zHtf+9rnHjGed4naBthpsRY0fQD1B+CFoiRHm6uG+FMhJWwDiEfrFmz4nf+5YTapMFN1
-         +Ri0RJLys6zYcPJ0DuNbheagYJhl7GmE+U/89C10ypTspOIReCRl4EMWtDVl/z+xTG/O
-         0zQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=GiJXZ5xrqrslOyXUFa2D6Tq59VC2N7PSWBCjmjHxjOc=;
-        b=bpqVct5roC5WPJuboKPQozApxY6Ks7MuwlHxnVFEYIko5ksuZV19pZCbsVmmEMd/bb
-         PPbWny7FuqSfD0LjkYwSRZpkPMtnvTsKZylfakj17RuGDVjCvW1IAFw/vB3It9+cmBFl
-         nMl7nhPnCUwIukWIxxmGpcegBKdY5oKbXukXlkh82T57MybFhMKCFtCYjRpmjNpiulsS
-         jT63qEu4g7wcCNx/pDMBoaSN6VneOinzrPVltrHwXHKrqlyzRNX1c57cX3dm+p5SWk4M
-         vtd7tzxIInP0uGWwsJ2sPIKdzyDW+EV8VZiTfIODsM1ocMgGt13cdX00+Y4bo0k1jEL6
-         50CA==
-X-Gm-Message-State: APjAAAUjAykGf5MJxldFy4mL2CvqvoHzDWorv8uLRoOcu4b6N0b2xs0P
-        750MpQhuvRdoAHFemcXM31XfkE82eev+pA8BN++Tg9tN
-X-Google-Smtp-Source: APXvYqwKwCuUHnr85ZZoC2nwxid3ib0cGyjkUNmcEhVc8zWEJtSS2cixC8lmoe06LnUquOm3HrZrFGkWCApHyUmb8oo=
-X-Received: by 2002:a2e:99d2:: with SMTP id l18mr18991944ljj.27.1553880427729;
- Fri, 29 Mar 2019 10:27:07 -0700 (PDT)
+        Fri, 29 Mar 2019 13:40:52 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:39879 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729842AbfC2Rkw (ORCPT
+        <rfc822;groupwise-linux-security-module@vger.kernel.org:0:0>);
+        Fri, 29 Mar 2019 13:40:52 -0400
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 29 Mar 2019 18:40:50 +0100
+Received: from localhost (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Fri, 29 Mar 2019 17:40:35 +0000
+Date:   Sat, 30 Mar 2019 01:40:26 +0800
+From:   jlee@suse.com
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Nayna Jain <nayna@linux.ibm.com>, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2 v2] efi: print appropriate status message when
+ loading certificates
+Message-ID: <20190329174026.GB3701@localhost>
+References: <20190324002621.3551-1-jlee@suse.com>
+ <20190324002621.3551-2-jlee@suse.com>
+ <1553714635.4608.34.camel@linux.ibm.com>
 MIME-Version: 1.0
-From:   Martin Townsend <mtownsend1973@gmail.com>
-Date:   Fri, 29 Mar 2019 17:26:57 +0000
-Message-ID: <CABatt_wR2t_jLYx3=-uivpDHnGpozdhBzZOBcz3KJ=Mi-PikBw@mail.gmail.com>
-Subject: LoadPin old-api-denied
-To:     LSM <linux-security-module@vger.kernel.org>, keescook@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1553714635.4608.34.camel@linux.ibm.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+On Wed, Mar 27, 2019 at 03:23:55PM -0400, Mimi Zohar wrote:
+> On Sun, 2019-03-24 at 08:26 +0800, Lee, Chun-Yi wrote:
+> > When loading certificates list from UEFI variable, the original error
+> > message direct shows the efi status code from UEFI firmware. It looks
+> > ugly:
+> > 
+> > [    2.335031] Couldn't get size: 0x800000000000000e
+> > [    2.335032] Couldn't get UEFI MokListRT
+> > [    2.339985] Couldn't get size: 0x800000000000000e
+> > [    2.339987] Couldn't get UEFI dbx list
+> > 
+> > So, this patch shows the status string instead of status code.
+> > 
+> > On the other hand, the "Couldn't get UEFI" message doesn't need
+> > to be exposed when db/dbx/mok variable do not exist. So, this
+> > patch set the message level to debug.
+> > 
+> > v2.
+> > Setting the MODSIGN messagse level to debug.
+> > 
+> > Link: https://forums.opensuse.org/showthread.php/535324-MODSIGN-Couldn-t-get-UEFI-db-list?p=2897516#post2897516
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Serge E. Hallyn" <serge@hallyn.com>
+> > Cc: David Howells <dhowells@redhat.com>
+> > Cc: Nayna Jain <nayna@linux.ibm.com>
+> > Cc: Josh Boyer <jwboyer@fedoraproject.org>
+> > Cc: Mimi Zohar <zohar@linux.ibm.com>
+> > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> > ---
+> >  security/integrity/platform_certs/load_uefi.c | 13 ++++++++-----
+> >  1 file changed, 8 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> > index 81b19c52832b..e65244b31f04 100644
+> > --- a/security/integrity/platform_certs/load_uefi.c
+> > +++ b/security/integrity/platform_certs/load_uefi.c
+> > @@ -48,7 +48,9 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> >  
+> >  	status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
+> >  	if (status != EFI_BUFFER_TOO_SMALL) {
+> > -		pr_err("Couldn't get size: 0x%lx\n", status);
+> > +		if (status != EFI_NOT_FOUND)
+> > +			pr_err("Couldn't get size: %s\n",
+> > +				efi_status_to_str(status));
+> >  		return NULL;
+> >  	}
+> >  
+> > @@ -59,7 +61,8 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+> >  	status = efi.get_variable(name, guid, NULL, &lsize, db);
+> >  	if (status != EFI_SUCCESS) {
+> >  		kfree(db);
+> > -		pr_err("Error reading db var: 0x%lx\n", status);
+> > +		pr_err("Error reading db var: %s\n",
+> > +			efi_status_to_str(status));
+> >  		return NULL;
+> >  	}
+> >  
+> > @@ -155,7 +158,7 @@ static int __init load_uefi_certs(void)
+> >  	if (!uefi_check_ignore_db()) {
+> >  		db = get_cert_list(L"db", &secure_var, &dbsize);
+> >  		if (!db) {
+> > -			pr_err("MODSIGN: Couldn't get UEFI db list\n");
+> > +			pr_debug("MODSIGN: Couldn't get UEFI db list\n");
+> 
+> Sure, this is fine.
+> 
+> >  		} else {
+> >  			rc = parse_efi_signature_list("UEFI:db",
+> >  					db, dbsize, get_handler_for_db);
+> > @@ -168,7 +171,7 @@ static int __init load_uefi_certs(void)
+> >  
+> >  	mok = get_cert_list(L"MokListRT", &mok_var, &moksize);
+> >  	if (!mok) {
+> > -		pr_info("Couldn't get UEFI MokListRT\n");
+> > +		pr_debug("Couldn't get UEFI MokListRT\n");
+> 
+> This is fine too.
+> 
+> >  	} else {
+> >  		rc = parse_efi_signature_list("UEFI:MokListRT",
+> >  					      mok, moksize, get_handler_for_db);
+> > @@ -179,7 +182,7 @@ static int __init load_uefi_certs(void)
+> >  
+> >  	dbx = get_cert_list(L"dbx", &secure_var, &dbxsize);
+> >  	if (!dbx) {
+> > -		pr_info("Couldn't get UEFI dbx list\n");
+> > +		pr_debug("Couldn't get UEFI dbx list\n");
+> 
+> If there isn't a db or moklist, then this is fine.  My concern is not
+> having an indication that the dbx wasn't installed, when it should
+> have been.
+> 
+> Perhaps similar to the "Loading compiled-in X.509 certificates"
+> informational message there should informational messages for db, mok,
+> and dbx as well.
+>
 
-I'm seeing the following message when trying to load some backported
-kernel modules:
-Mar 29 16:24:09 mach-cw-rnet-ppm-1840 kernel: LoadPin: kernel-module
-old-api-denied obj=<unknown> pid=340 cmdline="modprobe compat"
+OK. I will add message when kernel found db, dbx and mok. It will
+just like the informaton message for ACPI S0,S3,S4 support.
 
-I have other kernel modules that were built out of tree and these load
-fine, the only difference I can see is that they are loaded via
-/etc/modules-load.d
-
-I've read through the loadpin docs and it states that it will only
-allow modules that are from the main root filesystem and that
-filesystem is read-only.  I've checked and both of these are true for
-the failing module.  I've read through the source code and there's a
-comment above the code path that loadpin is taking where the file
-pointer is NULL.
-/* This handles the older init_module API that has a NULL file. */
-if (!file) {
-
-I'm not 100% sure what this means, but could it be that
-modprobe/insmod are using this older init_module API? if so how can I
-get around this, I need to manually insert these modules at an
-appropriate time during boot?
-
-Any help greatly appreciated,
-
-Martin.
+Thanks
+Joey Lee
