@@ -2,36 +2,41 @@ Return-Path: <SRS0=lFQA=SA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D954C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 18:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AC9C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 18:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEDFD2184D
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 18:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 101372184D
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 18:08:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729826AbfC2SHa (ORCPT
+        id S1729809AbfC2SIF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Mar 2019 14:07:30 -0400
-Received: from namei.org ([65.99.196.166]:59202 "EHLO namei.org"
+        Fri, 29 Mar 2019 14:08:05 -0400
+Received: from namei.org ([65.99.196.166]:59218 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729809AbfC2SHa (ORCPT
+        id S1729662AbfC2SIF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Mar 2019 14:07:30 -0400
+        Fri, 29 Mar 2019 14:08:05 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x2TI6blo000770;
-        Fri, 29 Mar 2019 18:06:37 GMT
-Date:   Sat, 30 Mar 2019 05:06:37 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x2TI7n4S000840;
+        Fri, 29 Mar 2019 18:07:49 GMT
+Date:   Sat, 30 Mar 2019 05:07:49 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     Micah Morton <mortonm@chromium.org>
-cc:     serge@hallyn.com, keescook@chromium.org, casey@schaufler-ca.com,
-        sds@tycho.nsa.gov, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] LSM: SafeSetID: gate setgid transitions
-In-Reply-To: <20190305154922.61040-1-mortonm@chromium.org>
-Message-ID: <alpine.LRH.2.21.1903300505540.689@namei.org>
-References: <20190305154922.61040-1-mortonm@chromium.org>
+To:     Kees Cook <keescook@chromium.org>
+cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: Re: Linux 5.1-rc2
+In-Reply-To: <CAGXu5jL0YzgQR_p9otyOX4+00a0i7Tfv9aLqauZFZs4-Kfjakg@mail.gmail.com>
+Message-ID: <alpine.LRH.2.21.1903300507270.689@namei.org>
+References: <CAHk-=wgg_PRWs3a6u2gnFLQjhxOJcrFkqqWVnLw60eQAwD-DNw@mail.gmail.com> <2d4f3bfa-22c7-a18c-3902-fe1b6ac401f7@infradead.org> <alpine.LRH.2.21.1903260607500.13529@namei.org> <8811b2e4-28e1-2f01-024b-fb7d0196483f@i-love.sakura.ne.jp>
+ <CAGXu5jJZ1H1RFMFBxPsoBW+T17ya+50-d7-31Gr9ciRgpCOaDA@mail.gmail.com> <98289cd2-095a-f0cd-e405-887ecbba0030@i-love.sakura.ne.jp> <CAGXu5jKWECKxksJWPpCkBKG+wB26DhYK=nYBpuuoS+Pv9AsNwQ@mail.gmail.com> <e1f6f5a6-9fce-2e95-4593-79f1e836bac5@i-love.sakura.ne.jp>
+ <CAGXu5jL0YzgQR_p9otyOX4+00a0i7Tfv9aLqauZFZs4-Kfjakg@mail.gmail.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -39,24 +44,17 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 5 Mar 2019, mortonm@chromium.org wrote:
+On Wed, 27 Mar 2019, Kees Cook wrote:
 
-> From: Micah Morton <mortonm@chromium.org>
+> > There should be no problem except some TOMOYO messages are printed.
 > 
-> This patch generalizes the 'task_fix_setuid' LSM hook to enable hooking
-> setgid transitions as well as setuid transitions. The hook is renamed to
-> 'task_fix_setid'. The patch introduces calls to this hook from the
-> setgid functions in kernel/sys.c. This will allow the SafeSetID LSM to
-> govern setgid transitions in addition to setuid transitions. This patch
-> also makes sure the setgid functions in kernel/sys.c call
-> security_capable_setid rather than the ordinary security_capable
-> function, so that the security_capable hook in the SafeSetID LSM knows
-> it is being invoked from a setid function.
-> 
-> Signed-off-by: Micah Morton <mortonm@chromium.org>
+> Okay, so I should send my latest version of the patch to James? Or do
+> you explicitly want TOMOYO removed from all the CONFIG_LSM default
+> lines except when selected by CONFIG_DEFAULT_SECURITY_TOMOYO? (I worry
+> the latter will lead to less testing of the stacking.)
 
-Wondering if there are any further comments or reviews for this before it 
-is merged?
+Kees, send me your final patch as soon as it's ready.
+
 
 -- 
 James Morris
