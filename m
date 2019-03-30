@@ -1,80 +1,123 @@
-Return-Path: <SRS0=lFQA=SA=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=RKPW=SB=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B72D5C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 23:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F16C43381
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Mar 2019 05:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89BC5218A2
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Mar 2019 23:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B9DD2184C
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Mar 2019 05:38:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730050AbfC2Xvf (ORCPT
+        id S1726705AbfC3Fib (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Mar 2019 19:51:35 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:23305 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729992AbfC2Xvf (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Mar 2019 19:51:35 -0400
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x2TNp9eC025583;
-        Sat, 30 Mar 2019 08:51:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Sat, 30 Mar 2019 08:51:09 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126072090247.bbtec.net [126.72.90.247])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x2TNp51Q025461
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 30 Mar 2019 08:51:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] LSM: Revive CONFIG_DEFAULT_SECURITY_* for "make
- oldconfig"
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        Sat, 30 Mar 2019 01:38:31 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:45610 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726597AbfC3Fib (ORCPT
+        <rfc822;groupwise-linux-security-module@vger.kernel.org:0:0>);
+        Sat, 30 Mar 2019 01:38:31 -0400
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Sat, 30 Mar 2019 06:38:29 +0100
+Received: from linux-l9pv.suse (nwb-a10-snat.microfocus.com [10.120.13.201])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Sat, 30 Mar 2019 05:37:53 +0000
+Date:   Sat, 30 Mar 2019 13:37:41 +0800
+From:   joeyli <jlee@suse.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        David Howells <dhowells@redhat.com>,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20190329193604.GA30908@beast>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <be269870-2dbe-6b24-d74d-a349d44b38c9@i-love.sakura.ne.jp>
-Date:   Sat, 30 Mar 2019 08:51:05 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.0
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH 1/2] efi: add a function for transferring status to string
+Message-ID: <20190330053741.GW26049@linux-l9pv.suse>
+References: <20190324002621.3551-1-jlee@suse.com>
+ <CAKv+Gu9B6h3zGVTctepd1GE5LaaMaT5x14Le1v05AOhbH36bpQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190329193604.GA30908@beast>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu9B6h3zGVTctepd1GE5LaaMaT5x14Le1v05AOhbH36bpQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2019/03/30 4:36, Kees Cook wrote:
-> Note that since TOMOYO can be fully stacked against the other legacy
-> major LSMs, when it is selected, it explicitly disables the other LSMs
-> to avoid them also initializing since TOMOYO does not expect this
-> currently.
+Hi Ard,
 
-Excuse me, but isn't this exception confusing, for DEFAULT_SECURITY_TOMOYO
-and DEFAULT_SECURITY_DAC are "opt-in" whereas DEFAULT_SECURITY_SELINUX and
-DEFAULT_SECURITY_SMACK and DEFAULT_SECURITY_APPARMOR are "opt-out" ?
-
-If SELinux/Smack/AppArmor people think this mixture is fine, I'm fine though...
-
->  config LSM
->  	string "Ordered list of enabled LSMs"
-> +	default "yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if DEFAULT_SECURITY_SMACK
-> +	default "yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if DEFAULT_SECURITY_APPARMOR
-> +	default "yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
-> +	default "yama,loadpin,safesetid,integrity" if DEFAULT_SECURITY_DAC
->  	default "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
->  	help
->  	  A comma-separated list of LSMs, in initialization order.
+On Wed, Mar 27, 2019 at 07:58:03PM +0100, Ard Biesheuvel wrote:
+> On Sun, 24 Mar 2019 at 01:26, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> >
+> > This function can be used to transfer EFI status code to string
+> > for printing out debug message. Using this function can improve
+> > the readability of log.
+> >
+> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Anton Vorontsov <anton@enomsg.org>
+> > Cc: Colin Cross <ccross@android.com>
+> > Cc: Tony Luck <tony.luck@intel.com>
+> > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> > ---
+> >  include/linux/efi.h | 28 ++++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> >
+> > diff --git a/include/linux/efi.h b/include/linux/efi.h
+> > index 54357a258b35..a43cb0dc37af 100644
+> > --- a/include/linux/efi.h
+> > +++ b/include/linux/efi.h
+> > @@ -1768,4 +1768,32 @@ struct linux_efi_memreserve {
+> >  #define EFI_MEMRESERVE_COUNT(size) (((size) - sizeof(struct linux_efi_memreserve)) \
+> >         / sizeof(((struct linux_efi_memreserve *)0)->entry[0]))
+> >
+> > +#define EFI_STATUS_STR(_status) \
+> > +case EFI_##_status: \
+> > +       return "EFI_" __stringify(_status);
+> > +
+> > +static inline char *
+> > +efi_status_to_str(efi_status_t status)
+> > +{
+> > +       switch (status) {
+> > +       EFI_STATUS_STR(SUCCESS)
+> > +       EFI_STATUS_STR(LOAD_ERROR)
+> > +       EFI_STATUS_STR(INVALID_PARAMETER)
+> > +       EFI_STATUS_STR(UNSUPPORTED)
+> > +       EFI_STATUS_STR(BAD_BUFFER_SIZE)
+> > +       EFI_STATUS_STR(BUFFER_TOO_SMALL)
+> > +       EFI_STATUS_STR(NOT_READY)
+> > +       EFI_STATUS_STR(DEVICE_ERROR)
+> > +       EFI_STATUS_STR(WRITE_PROTECTED)
+> > +       EFI_STATUS_STR(OUT_OF_RESOURCES)
+> > +       EFI_STATUS_STR(NOT_FOUND)
+> > +       EFI_STATUS_STR(ABORTED)
+> > +       EFI_STATUS_STR(SECURITY_VIOLATION)
+> > +       default:
+> > +               pr_warn("Unknown efi status: 0x%lx", status);
+> > +       }
+> > +
+> > +       return "Unknown efi status";
+> > +}
+> > +
+> >  #endif /* _LINUX_EFI_H */
+> > --
+> > 2.16.4
+> >
 > 
+> Please turn this into a proper function so that not every calling
+> object has to duplicate all these strings.
+
+OK! I will move them to function.
+
+Thanks for your review!
+Joey Lee
