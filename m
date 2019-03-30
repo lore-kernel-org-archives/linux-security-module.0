@@ -2,138 +2,68 @@ Return-Path: <SRS0=RKPW=SB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7CDC43381
-	for <linux-security-module@archiver.kernel.org>; Sat, 30 Mar 2019 05:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 602BAC43381
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Mar 2019 17:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2684E2184C
-	for <linux-security-module@archiver.kernel.org>; Sat, 30 Mar 2019 05:42:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B8A0218FC
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Mar 2019 17:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1553967012;
+	bh=EyKqNWXveJrVL5RVtA3bwZ6dKrtjdVnYU+NV7wFZf1s=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=KgihExvbB1XT8bCvIhEgTqwbz8yh178P6vUvOHzAlEJdrW/oXjqCnO7hk1lHPO4Xs
+	 z5xgsv3tiriPF+oZsjKCflNhNFXDfdcMs0O1cRSKJ1J5DxawFl/Cw90LQVDRmIje/S
+	 37L14c7DGOYdi8AHqVzJDVSXdSQNYVq1xajMNDWw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbfC3FmB (ORCPT
+        id S1730652AbfC3RaL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 30 Mar 2019 01:42:01 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:49652 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726434AbfC3FmB (ORCPT
-        <rfc822;groupwise-linux-security-module@vger.kernel.org:0:0>);
-        Sat, 30 Mar 2019 01:42:01 -0400
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Sat, 30 Mar 2019 06:41:59 +0100
-Received: from linux-l9pv.suse (nwb-a10-snat.microfocus.com [10.120.13.201])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Sat, 30 Mar 2019 05:41:28 +0000
-Date:   Sat, 30 Mar 2019 13:41:23 +0800
-From:   joeyli <jlee@suse.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        Josh Boyer <jwboyer@fedoraproject.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH 1/2] efi: add a function for transferring status to string
-Message-ID: <20190330054123.GX26049@linux-l9pv.suse>
-References: <20190324002621.3551-1-jlee@suse.com>
- <CAKv+Gu9B6h3zGVTctepd1GE5LaaMaT5x14Le1v05AOhbH36bpQ@mail.gmail.com>
- <1553713442.4608.20.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1553713442.4608.20.camel@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Sat, 30 Mar 2019 13:30:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730582AbfC3RaL (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Sat, 30 Mar 2019 13:30:11 -0400
+Subject: Re: [GIT PULL] security: yama fix for v5.1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1553967010;
+        bh=EyKqNWXveJrVL5RVtA3bwZ6dKrtjdVnYU+NV7wFZf1s=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=0x9aS1dUuH+0wx6dCg1zAnpzfEbpEibJejJUZXpJYb6XHCoG4QA2cOgkn1qTv5MX1
+         zvHkrPkU+1O8Eo5Ql0HJg25yVV5uWR1fy28VZJmEqNehHW6B9+kkOyMHKRGc/sORx/
+         QP5pkFK90x4zl2Gni6w9tUrCxQ5CgyTugrpgRSM0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <alpine.LRH.2.21.1903300509370.689@namei.org>
+References: <alpine.LRH.2.21.1903300509370.689@namei.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <alpine.LRH.2.21.1903300509370.689@namei.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+ fixes-v5.1
+X-PR-Tracked-Commit-Id: 1aa176ef5a451adc0546d5aaa3fb107975c786b7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2623c4fbe2ad1341ff2d1e12410d0afdae2490ca
+Message-Id: <155396701060.21865.9531580107142815993.pr-tracker-bot@kernel.org>
+Date:   Sat, 30 Mar 2019 17:30:10 +0000
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Mimi,
+The pull request you sent on Sat, 30 Mar 2019 05:10:48 +1100 (AEDT):
 
-On Wed, Mar 27, 2019 at 03:04:02PM -0400, Mimi Zohar wrote:
-> On Wed, 2019-03-27 at 19:58 +0100, Ard Biesheuvel wrote:
-> > On Sun, 24 Mar 2019 at 01:26, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
-> > >
-> > > This function can be used to transfer EFI status code to string
-> > > for printing out debug message. Using this function can improve
-> > > the readability of log.
-> 
-> Maybe instead of "for transferring status" use "to convert the status
-> value to a" in the Subject line and here in the patch description.
->
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.1
 
-Thanks for your suggestion. I will change subject and description.
- 
-> > >
-> > > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Anton Vorontsov <anton@enomsg.org>
-> > > Cc: Colin Cross <ccross@android.com>
-> > > Cc: Tony Luck <tony.luck@intel.com>
-> > > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-> > > ---
-> > >  include/linux/efi.h | 28 ++++++++++++++++++++++++++++
-> > >  1 file changed, 28 insertions(+)
-> > >
-> > > diff --git a/include/linux/efi.h b/include/linux/efi.h
-> > > index 54357a258b35..a43cb0dc37af 100644
-> > > --- a/include/linux/efi.h
-> > > +++ b/include/linux/efi.h
-> > > @@ -1768,4 +1768,32 @@ struct linux_efi_memreserve {
-> > >  #define EFI_MEMRESERVE_COUNT(size) (((size) - sizeof(struct linux_efi_memreserve)) \
-> > >         / sizeof(((struct linux_efi_memreserve *)0)->entry[0]))
-> > >
-> > > +#define EFI_STATUS_STR(_status) \
-> > > +case EFI_##_status: \
-> > > +       return "EFI_" __stringify(_status);
-> > > +
-> > > +static inline char *
-> > > +efi_status_to_str(efi_status_t status)
-> > > +{
-> > > +       switch (status) {
-> > > +       EFI_STATUS_STR(SUCCESS)
-> > > +       EFI_STATUS_STR(LOAD_ERROR)
-> > > +       EFI_STATUS_STR(INVALID_PARAMETER)
-> > > +       EFI_STATUS_STR(UNSUPPORTED)
-> > > +       EFI_STATUS_STR(BAD_BUFFER_SIZE)
-> > > +       EFI_STATUS_STR(BUFFER_TOO_SMALL)
-> > > +       EFI_STATUS_STR(NOT_READY)
-> > > +       EFI_STATUS_STR(DEVICE_ERROR)
-> > > +       EFI_STATUS_STR(WRITE_PROTECTED)
-> > > +       EFI_STATUS_STR(OUT_OF_RESOURCES)
-> > > +       EFI_STATUS_STR(NOT_FOUND)
-> > > +       EFI_STATUS_STR(ABORTED)
-> > > +       EFI_STATUS_STR(SECURITY_VIOLATION)
-> > > +       default:
-> > > +               pr_warn("Unknown efi status: 0x%lx", status);
-> > > +       }
-> > > +
-> > > +       return "Unknown efi status";
-> > > +}
-> > > +
-> > >  #endif /* _LINUX_EFI_H */
-> > > --
-> > > 2.16.4
-> > >
-> > 
-> > Please turn this into a proper function so that not every calling
-> > object has to duplicate all these strings.
-> 
-> Hi Ard,
-> 
-> Keeping the status values and strings in sync is difficult.  I was
-> going to suggest moving the macro immediately after the status value
-> definitions.
->
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2623c4fbe2ad1341ff2d1e12410d0afdae2490ca
 
-I will move the code to after the status value definitions.
+Thank you!
 
-Thanks
-Joey Lee 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
