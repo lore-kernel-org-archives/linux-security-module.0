@@ -2,101 +2,96 @@ Return-Path: <SRS0=NWfs=SE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67969C4360F
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Apr 2019 21:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B11C10F0B
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Apr 2019 22:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35CD220857
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Apr 2019 21:56:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3EAD20857
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Apr 2019 22:31:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="irdhOPyj"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WptWuTid"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfDBV4I (ORCPT
+        id S1726074AbfDBWb3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Apr 2019 17:56:08 -0400
-Received: from mail-pg1-f201.google.com ([209.85.215.201]:46573 "EHLO
-        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbfDBV4G (ORCPT
+        Tue, 2 Apr 2019 18:31:29 -0400
+Received: from mail-io1-f43.google.com ([209.85.166.43]:41190 "EHLO
+        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfDBWb3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Apr 2019 17:56:06 -0400
-Received: by mail-pg1-f201.google.com with SMTP id r13so10758144pga.13
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Apr 2019 14:56:06 -0700 (PDT)
+        Tue, 2 Apr 2019 18:31:29 -0400
+Received: by mail-io1-f43.google.com with SMTP id v10so12374028iom.8
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Apr 2019 15:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2arIsG/tUSBODeVZx7IuFZx2ONfMcieJcM9WtFlfh5Y=;
-        b=irdhOPyj25p21xUXEp9WqiYzCS+PN+hSOPVjqRf/1pMl2yr+Srt+K7/1wUPnJoGYm0
-         poW3I8ln2Q54tERGmk/Gaeo0mM71hWfqCx0tzpbnwQ59fBDlEMxigRqlQucX31Ybs0jo
-         0JgMgAiRNNLxUfqaX35Y/KFntKmR/yBwecK5W7VLhffmD/TZRyfC+XOYhLf/594xGDaw
-         MEMwPwsok0sMsLOFuWvrEPl/Kn0NzTWNEC64KgFaoK6z5NmCVZ0GaWaKoQSpRKtjgu3k
-         jtX0IGiLHE//Isvb8+5wBdrWS+W+pAFyC3bXafIEseARTrtGQyeGuyKXfpuVG7jrSUHg
-         c3uQ==
+        bh=3DmDhALOp4W4hwgMy0RgzNEv3ZYxzD6tzqj/wRI+ePI=;
+        b=WptWuTidQoehNyUyEWUTooygxBInCY50i7Wkl2i6+zubfv64+beXTmeRDqKSja1LAS
+         fHu1hv0haNYyJJxc7EUh21efnO/fDE92p/+II0KDP4+R4Q3ugK0jxm5n5OxRqTYkITZg
+         tcyksHLKVkfCccnvKw6yj2wyuNNduiu3SkhsohrQP+WXZxAQ56OiLgIobUt6WBdWItK2
+         2JbKNY+gi7Xacu2rk4FlNyfKWDxQry+hLo6ojT86Kk5KpgcCB22s9WP3F9TdDVSXuYbS
+         sG1iqw8qiqJFsQgORlTchFPGLzVDyTCGECNZGOviGxWaj7cdp/a/1/6YzLzdiq/7w/J0
+         bN9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=2arIsG/tUSBODeVZx7IuFZx2ONfMcieJcM9WtFlfh5Y=;
-        b=fucouBoZkhchnvxlRWQvT1SqDDiOPsDjNi4hOxE6GBeXuZFhRjWUagXE0q4Q88FBTy
-         x82N9IOiDL2QThDmNr1G7RFc8t3EL2jY+IvNBABClsuiIYJ8tp1RZfoA+ER8Jrf8hZ+I
-         hXYgsCyQHFEdu0RQLjPDRB89dQQ4eAReukO81ztFOjzomYh3PosLH05bOcjac8EECoCH
-         wuVKosEpF58mB6ACQEV6/K5TlzvJtM42lUzdkmpj43ILvpd0pMTQ6iPLMAbJm35JfDld
-         BWuH5gol9+6O3Fzal0O9fBq0di4z8yQ5tklGlJoG07I2GXKDbMstFkG+y6eALPMKP7uu
-         ZwnA==
-X-Gm-Message-State: APjAAAVnfgRl1WMhjSadvqPC4RvuHlKQly2RcrNolbp4a9+VMsTUo0EL
-        Cwg/ll4wqKoFCdyJrGjT5Z+Vana5oVeBDvM6UupLqg==
-X-Google-Smtp-Source: APXvYqyDf5uijU2bb1TFP10+0uBx4zXwelGC8AzwFvArYzNvm6TDP60F9adar3mAL+ydsK93+s7oHZ13Yk2FE3z5G7Jrtg==
-X-Received: by 2002:a63:7c01:: with SMTP id x1mr1196450pgc.146.1554242165653;
- Tue, 02 Apr 2019 14:56:05 -0700 (PDT)
-Date:   Tue,  2 Apr 2019 14:55:55 -0700
-In-Reply-To: <20190402215556.257406-1-matthewgarrett@google.com>
-Message-Id: <20190402215556.257406-2-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190402215556.257406-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH 1/2] efi: Fix cast to pointer from integer of different size
- in TPM log code
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3DmDhALOp4W4hwgMy0RgzNEv3ZYxzD6tzqj/wRI+ePI=;
+        b=dME9g8/u1KETh+Z53ridpn3RguA5TcjFAchpSBPyH1w2X30+BrKMluchvonBqcZjRZ
+         eC36SVmu/fgtmu240xutAmTz9jYk8bLahLd8NlnpynKzj/Twbo4cj/PRZJw+3fGulPlO
+         1aKoGGzI2KG0GyzsrtyJV2j6wTYN5VbLDtbtXLbOJtUaGnB8NPeItQMCwlZElROtZDGy
+         qRKzvZInnSdK9e+5YRUwWu7xpHUuNsHpqDi4GJ4m1ciNIuB/NIrOsh7SjJj/rHU+d23d
+         hEoi4b8+aYLkBKUbR1p+wvSjpwCIk53H3AG7n9x+oayAsnBe/zvi2h3IQLiPEZiZ84KF
+         fCqA==
+X-Gm-Message-State: APjAAAWs9x7sWjs7TKFThRwTmNKUvhhEC3PZJM01piiMsRA6il7y1DBs
+        IlCxDw8SnuVfm8EP3ZGRBN2lg5YRzdcZ09BwT3YXiw==
+X-Google-Smtp-Source: APXvYqxwQLhI9x050g8UFS0xNTi5uv3jGERYobgO2O6EG+UkWQ90h8DwGJJR0Lhn6w66UVy+R8wRgUwM8O+8+lWCQcU=
+X-Received: by 2002:a6b:3106:: with SMTP id j6mr5876000ioa.147.1554244288310;
+ Tue, 02 Apr 2019 15:31:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
+ <1552945715.8658.299.camel@linux.ibm.com> <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
+ <1552994559.4899.26.camel@linux.ibm.com> <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
+ <1553015134.4899.82.camel@linux.ibm.com> <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
+ <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
+ <1553167318.4899.382.camel@linux.ibm.com> <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
+ <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
+ <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru> <1553793463.8711.26.camel@linux.ibm.com>
+ <92718382-8669-748f-10d8-02fa21225210@omprussia.ru> <1553857187.9420.49.camel@linux.ibm.com>
+ <b5a89692-4c93-80b3-37e5-41265765cdc3@tycho.nsa.gov> <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
+In-Reply-To: <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Tue, 2 Apr 2019 15:31:16 -0700
+Message-ID: <CACdnJusPpis1JJgfNOrQoqPcVk0q2OGbosrXOVtZmG0cSqkotw@mail.gmail.com>
+Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
+To:     Igor Zhbanov <i.zhbanov@omprussia.ru>
+Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-8bfcff4a6a1d9d7226bb63a7da758b82d9ab4373 introduced a cast from
-efi_physical_address_t to (void *), which are different sizes on 32-bit.
-Fix that. Caught by the 0-day test bot.
+On Fri, Mar 29, 2019 at 5:50 AM Igor Zhbanov <i.zhbanov@omprussia.ru> wrote:
+> I want to be sure that no unsigned code page could be executed. So exploits
+> could only be of ROP kind and not being able to download any extra code
+> from their servers. That's why I found that disabling of anonymous executable
+> pages could be useful for that (as well as disabling of making executable
+> pages writable to modify already mapped code). In conjunction with IMA it
+> should guarantee that no untrusted code could be executed.
 
-Signed-off-by: Matthew Garrett <mjg59@google.com>
----
- drivers/firmware/efi/libstub/tpm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index b6e93e14fcf1..6b3b507a54eb 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -114,8 +114,8 @@ void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table_arg)
- 			 */
- 			last_entry_size =
- 				__calc_tpm2_event_size((void *)last_entry_addr,
--						       (void *)log_location,
--						       false);
-+						    (void *)(long)log_location,
-+						    false);
- 		} else {
- 			last_entry_size = sizeof(struct tcpa_event) +
- 			   ((struct tcpa_event *) last_entry_addr)->event_size;
--- 
-2.21.0.392.gf8f6787159e-goog
-
+Remember that many interpreted languages allow execution of code
+provided to them on the command line (eg, python -c) and also grant
+access to arbitrary syscalls, so there's still no guarantee that
+you're only executing trusted code.
