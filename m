@@ -1,78 +1,94 @@
-Return-Path: <SRS0=Zs33=SD=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=NWfs=SE=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 968AFC43381
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Apr 2019 23:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B646EC43381
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Apr 2019 03:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA7320828
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Apr 2019 23:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81CD9207E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Apr 2019 03:32:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FK03rLKm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbfDAXwx (ORCPT
+        id S1728900AbfDBDci (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Apr 2019 19:52:53 -0400
-Received: from mga11.intel.com ([192.55.52.93]:16849 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbfDAXwx (ORCPT
+        Mon, 1 Apr 2019 23:32:38 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36308 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728824AbfDBDci (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Apr 2019 19:52:53 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Apr 2019 16:52:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,298,1549958400"; 
-   d="scan'208";a="145740064"
-Received: from unknown (HELO localhost) ([10.249.254.142])
-  by FMSMGA003.fm.intel.com with ESMTP; 01 Apr 2019 16:52:47 -0700
-Date:   Tue, 2 Apr 2019 02:52:45 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <matthewgarrett@google.com>,
-        tomas.winkler@intel.com
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com
-Subject: Re: Add support for TCG2 log format on UEFI systems
-Message-ID: <20190401235245.GA29282@linux.intel.com>
-References: <20190227202658.197113-1-matthewgarrett@google.com>
+        Mon, 1 Apr 2019 23:32:38 -0400
+Received: by mail-io1-f66.google.com with SMTP id f6so9711385iop.3
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Apr 2019 20:32:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HKtA2OgqesJBgzJYv1b+Ap0iRtQayk+lqCYbZ43xI8w=;
+        b=FK03rLKmh+06R2ISmVFdO7t/8HBcyHS2UDZoQoNlv9KGwRE+69v+4KB4ebmrk2/J71
+         0DeUU2S8KwGTfOSfxly4wSnuwxE6ewXSxBLMstzrDwfu/4Qx+1hPDmjBBIFj4yhIvEIA
+         Bpzv5Rci63I0JFxRytOShr4IFrPuCGvBtpoTWNY6fs4ENlG/LB3Wqsdm3jFeKSuKXY+s
+         99k9Y7eyKX8e/aGaI5E7jx2G9iOq+NYuWLfwX/mopoJiTmbm23d+Zsim3b/YwNb0nsuh
+         WEZUY7IFvGoag9ePUe2PMs9DXUvVU6iyp5yk06iroetquCDju7bjtWGovkql1pXOyLvE
+         sdKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HKtA2OgqesJBgzJYv1b+Ap0iRtQayk+lqCYbZ43xI8w=;
+        b=LD14P89oxZ0be1Jiq1U5I+T+KK9HmEs9sQnGN+0IGXxWo3JljbOJh62FCTw8qqwXxd
+         MnBkdEN2yI/MhcDxC4nRqzARESKytZggQ3wOC0/EpIOQbV06Bbogr4RBJhC3b1l2n+ZG
+         5Q1bFuaMawYYcr79/IW+Rxlh9SuJQ8td9FBCpjWsm8L6gcc6gy3nPnC7AuPpxqd10eiI
+         whr0jgb0SKrlq2uTdkLXIlLT8J+LH54zfbXn9AIt2BhOP133ybU732Cb1/5w3qV12ywt
+         PvbC8a+lycWfdt++ejBMIgB0p89YK/kf6v2jI/nH7qxat/j/8K8AeDH2RY82xN9qCMJ0
+         hRew==
+X-Gm-Message-State: APjAAAXp6Ex14L7NwCFLfNFY3oS0rLEDTWzk887XNs5kFDbVbB24UTd0
+        J+pQ4dYMNyJemaUUCVlC5jTn0Bb5CCl3VfPbRRtCkA==
+X-Google-Smtp-Source: APXvYqyZsfl/tvgNCDWz0p3ouDKb+EqMbRCuHOu/5wT+soY7NpSaj22jNyr0K+QB2W87ITBd0Ec0w4XjUQ+pDdk4A7E=
+X-Received: by 2002:a6b:3106:: with SMTP id j6mr2342777ioa.147.1554175957400;
+ Mon, 01 Apr 2019 20:32:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190227202658.197113-1-matthewgarrett@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190227202658.197113-1-matthewgarrett@google.com> <20190401235245.GA29282@linux.intel.com>
+In-Reply-To: <20190401235245.GA29282@linux.intel.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Mon, 1 Apr 2019 20:32:26 -0700
+Message-ID: <CACdnJutCC7n++Nz5qy1YzmsSchEApDUvMH9-qpxYXckh-Dzf-Q@mail.gmail.com>
+Subject: Re: Add support for TCG2 log format on UEFI systems
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     tomas.winkler@intel.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 27, 2019 at 12:26:54PM -0800, Matthew Garrett wrote:
-> Identical to V4, but based on tpmdd-next
+On Mon, Apr 1, 2019 at 4:52 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Wed, Feb 27, 2019 at 12:26:54PM -0800, Matthew Garrett wrote:
+> > Identical to V4, but based on tpmdd-next
+>
+> OK, so on my GLK NUC I get valid final log and invalid event log
+> after adding some extra klogs.
+>
+> I.e.
+>
+> -       if (efi.tpm_log == EFI_INVALID_TABLE_ADDR)
+> +       if (efi.tpm_log == EFI_INVALID_TABLE_ADDR) {
 
-OK, so on my GLK NUC I get valid final log and invalid event log
-after adding some extra klogs.
-
-I.e.
-
--       if (efi.tpm_log == EFI_INVALID_TABLE_ADDR)
-+       if (efi.tpm_log == EFI_INVALID_TABLE_ADDR) {
-+               pr_err("No event log\n");
-                return -ENODEV;
-+       }
-
-will result
-
-[    2.654392] No event log 
-
-but still
-
-[    0.000000] efi:  ACPI 2.0=0x69ca2000  ACPI=0x69ca2000  TPMFinalLog=0x69ce4000  SMBIOS=0x69f63000  SMBIOS 3.0=0x69f62000  ESRT=0x69f3e818  MEMATTR=0x63475118
-
-Tomas, I wonder if you are able to get the log out with some machine?
-
-/Jarkko
+Just to make sure - are you booting via the EFI boot stub? We need to
+obtain the boot log before ExitBootServices() is called, so if you're
+booting directly into the 32-bit entry point (eg, by using the "linux"
+command in grub) then you won't get a log.
