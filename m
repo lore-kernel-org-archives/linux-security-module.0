@@ -2,110 +2,80 @@ Return-Path: <SRS0=p2Kc=SF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE62C4360F
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 19:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9C8C4360F
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 22:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BEC120882
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 19:26:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 345DE206DF
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 22:01:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NNR0y0rQ"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KE6YlQeL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfDCT0L (ORCPT
+        id S1726167AbfDCWB3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Apr 2019 15:26:11 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35905 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbfDCT0L (ORCPT
+        Wed, 3 Apr 2019 18:01:29 -0400
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:35700
+        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726099AbfDCWB3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Apr 2019 15:26:11 -0400
-Received: by mail-it1-f196.google.com with SMTP id y10so13174116itc.1
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 12:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dBGvNSBA2r4Qab5orgcoZDjbchj36csjHok/2EjqUMo=;
-        b=NNR0y0rQpl5Kqqzwg/YZQOkwZ04CSnq8TMrzZwLfXN3EZ5LaSdLCmCiPGBzPGjfjDf
-         EIGeD+ZuLYEJCmRLtSikpk/QvOlVgSvWG8qQqxTAYLM6NUIA3fmjqiEnY1DaxfAJLTj1
-         ApLYG4TpTgpMiqUxsSSl54gK/3jfym37+vtr7n15PPvjvBMdbYSJ7n+QnHkXBoD3EbzY
-         U7RYvGWqfMR5YdunMo7vxrGA5dzLaO4UQW/HxDxR2RywTEkKlFT3HjwS0ql01Zt27ZG6
-         zs9v5dvcTbKGRP/HTUpibIsE5QC8RszxsVUxUd1fzkEMXk7iHuLxc+SHzyA4xQt7oU6c
-         XGqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dBGvNSBA2r4Qab5orgcoZDjbchj36csjHok/2EjqUMo=;
-        b=h48FpNnPZicR9d8wG9yI8w0vYyWBTzhGwAZa19EBad+I2RkPfpkjLfI2MOvlmuUD7L
-         Mj34E+5yUnFMjOLsSmu3yEznQDlwaWi4EgwhflA9HoXmPtXYBSxnEi4aCEAvj5/WVmvP
-         6dEaD+q930paLvau0ZpkrFYFS828D/FgYU5dHkN9ba83XgcodNDxaWusSKvPjJLfu61N
-         LD99QKd+Fyokd8DtrINLd/mVB+fsWv8ZaiRSuXkrD/xJDuHkWiAt6wF1jw4xT077uUfR
-         hw8s3ucnIqi4Nl/EQDXjrlI6vjDJaDCWQs6JCMTHQw0HBPiOHrcoPaJhsNKbU3tIyZ1Y
-         1jKw==
-X-Gm-Message-State: APjAAAWELmB8EAqOCGgRjBnNTeE7FfpZGqAQ2bIREwsDEMmX1XIfolDl
-        hQmk1oT22/uYvv+tUtoXpCrHQdw9WDWencKOViShOA==
-X-Google-Smtp-Source: APXvYqyfgzFwjS7F1f6Qb2i7d8JjSXXlLZiZ+9oG/NGkt07HYWsOAjB9Os78xkovFJyJdlwDX+glRSuCgbaWJanQNGM=
-X-Received: by 2002:a24:cf41:: with SMTP id y62mr1630633itf.106.1554319570213;
- Wed, 03 Apr 2019 12:26:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
- <1553015134.4899.82.camel@linux.ibm.com> <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
- <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
- <1553167318.4899.382.camel@linux.ibm.com> <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
- <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
- <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru> <1553793463.8711.26.camel@linux.ibm.com>
- <92718382-8669-748f-10d8-02fa21225210@omprussia.ru> <1553857187.9420.49.camel@linux.ibm.com>
- <b5a89692-4c93-80b3-37e5-41265765cdc3@tycho.nsa.gov> <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
- <CACdnJusPpis1JJgfNOrQoqPcVk0q2OGbosrXOVtZmG0cSqkotw@mail.gmail.com>
- <11fcd3b2-afb9-74d2-100d-449df61433d1@omprussia.ru> <CACdnJusgwpcSxzwNEieqsa54_3cTYMEfuXpAeP0cW81TQ29E+w@mail.gmail.com>
- <bca4eb5b-2d76-5df8-6e63-573b3a057985@omprussia.ru> <CACdnJutv4O9bPwvddrasz2up06P6OtBbHjsr6JGSOwAtryMTpg@mail.gmail.com>
- <3ebff410-f1bd-654e-7cd0-486ea4768ebe@omprussia.ru>
-In-Reply-To: <3ebff410-f1bd-654e-7cd0-486ea4768ebe@omprussia.ru>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Wed, 3 Apr 2019 12:25:58 -0700
-Message-ID: <CACdnJutN3415jtt+kaz-zxyAw0V9-0x0_YGWpxBXWYseD5Z7uA@mail.gmail.com>
-Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
-To:     Igor Zhbanov <i.zhbanov@omprussia.ru>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        John Johansen <john.johansen@canonical.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 3 Apr 2019 18:01:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554328888; bh=iDPL1qacOQ7ZYSjPKc5YNZMfvODfglArvAONb336GFo=; h=From:To:Subject:Date:From:Subject; b=KE6YlQeLjP0iioVeq2THdNCmG3gzXefCVNrpzCP4nBCXJaj8tP2YA2HL0ED6uqB/jK8dGih3G6Q/XHbNJRzeeYGv/OcIMk6GlYDG1OG6Lq0UaVZHKMNWHhyzQajjNQNjIjAGEiVow9xON0DC9Y/zVPNFxWoAanSS1JevWmFJwi7+ORPCnUyEwAACAO8Dim2uA0AYzAVSXVuzVB6WR0CS1h+Dpqp2W1Fq/Qi+IXDTtPPx7KEti3wybrsgLidK36YGIXDKSosir9tW9A8HPCqw4iuDKXvYtg4vl5Quj4+Pwent5RL7APioBkBUmDvdudvP1Zbg9QPdRDArhqqCVTlYaw==
+X-YMail-OSG: 0kZx084VM1mVfkSuEzOgfGtHb49zBsr6V2Lfa5K1KpRdEH3QwC8JOnS2AFYMlnI
+ K4TiiXyQRo0T9J516sy9gG0YZ5yFvRcxUQs1GuNXVWhvJQbKYHSJbNtylXVx5MjttlJjWVx6_qoS
+ 1dSoHAEezHzyeYb9AfiIWLjU2r6tCRDQZ_qK5.BaNSs2DDQZyg6YdE92jZ5sfRpKmVbEMNcloHF5
+ pUkxPvclWgKphmB9PfFpkhws_LbW1xSuMz_7LIhagEBgGtJIVAMt9mMmroofN_Lxoy7aR.h7X3ci
+ jvMWGqNms7oC49h2OqWrYigxIi_YNr2iTd3B_vWoVOEHcwO9VCDtDE3jtyxv2Vb6F_IFclGFmZSM
+ H3aPbNtFT1BZ0.o7ly61Lxwkal5Tnj5j8Dbm60GpUeQsyHmubCZIfNjro_.4trl2STbzPnbR20Ot
+ gsqay4u2ZcDDNUX25klsK9AklwDqhLSxxEKrl8sqPqt3Uk4dpev6BRbfdh.wNSkLuL6Ik0Tj04AY
+ AEreV37_RyN6dQX09eHjlyp0ZytU9rs1WkB0q3iMz4Gb5_LC6RYD06g6DSTRNoUnDoAizQoYRX6S
+ 0ROHsnqPvIIJ0yVbip6YmAgNBfhjOlWfJ5Xy9Dvvu7T6DXFiu79qsC1jKGLqArOK8.Vd45rrNxVa
+ YN6C5OIxISpJjMqcwLB5Po6atj4KtND6sf9XEFmRMKQHxDgUaOZ2UWXq.gPlhO2XqU7QcrR2hUfT
+ uKG8r4BxGBCET5_NBT5l.WHL0QvEiLB2LdwDch8O4_TbmcJzifrT9Yz_0LYmb5r_ugjWjEYMuBxX
+ LjViWWSsCwIM.AJJJleVODRxDOS8dpbU7O91zW6NrWgUJuCrm13lB5.VqKcxNZAPqIO7Ej.Olrvb
+ hcZDK3JRGkaSeGMfWx0A7IVVXlj0t8ppzPFMsiyRb.ejjesuUFRwzKMBjsDRMklKre0SOCow08Ad
+ IPu3qYm2VX.vGfELMei9g4h_KgXCU70YP25kIyaBK5eAePGc3iHDQP8pPJlIEnHCqLoxhg94uwr1
+ nXK.3Ez4MWztirl1BCAENsCz0nDFUCMJtWLR1DCMxwCdMlQ6H3tfiR.LC_SqGvCOnCUep9QP5Wbq
+ 5b.cbGTHiN1GbS4NohQ61InSGhT0NjOBZ
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Wed, 3 Apr 2019 22:01:28 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
+          by smtp408.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID f4d8e8d57a4f574ab187a28b601d90b6;
+          Wed, 03 Apr 2019 22:01:27 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey@schaufler-ca.com, linux-security-module@vger.kernel.org,
+        SMACK-discuss@lists.01.org
+Subject: [PATCH] Smack: Fix IPv6 handling of 0 secmark
+Date:   Wed,  3 Apr 2019 15:01:21 -0700
+Message-Id: <20190403220121.1868-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.17.0
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 3, 2019 at 11:47 AM Igor Zhbanov <i.zhbanov@omprussia.ru> wrote:
-> On 03.04.2019 21:19, Matthew Garrett wrote:
-> > There's two possible cases here:
-> >
-> > 1) The application is legitimate but can be convinced to open and
-> > execute malicious code. There should be no such applications that
-> > download code from the internet and execute it directly, so this can
-> > be prevented by requiring that files be signed (which has to be done
-> > to protect against attackers just using an interpreted language
-> > instead)
-> > 2) The application is actively malicious. In this case this approach
-> > is insufficient - an actively malicious application can interpret code
-> > rather than executing it directly. This can only be prevented by not
-> > signing malicious applications.
-> >
-> > When you talk about "staying below the radar" it implies that you're
-> > talking about case 2, but the proposed solution is only a speed bump
-> > rather than a blocker.
->
-> But what about buffer/stack overflow? The application doesn't need to be
-> malicious. It could be just a web-browser or e-mail client processing
-> some evil file.
+Handle the case where the skb for an IPv6 packet contains
+a 0 in the secmark for a packet generated locally. This
+can only happen for system packets, so allow the access.
 
-Executable pages shouldn't be writable?
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ security/smack/smack_lsm.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index bd45c9139d34..b9abcdb36a73 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3907,6 +3907,8 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
+ #ifdef SMACK_IPV6_SECMARK_LABELING
+ 		if (skb && skb->secmark != 0)
+ 			skp = smack_from_secid(skb->secmark);
++		else if (smk_ipv6_localhost(&sadd))
++			break;
+ 		else
+ 			skp = smack_ipv6host_label(&sadd);
+ 		if (skp == NULL)
+-- 
+2.19.1
+
