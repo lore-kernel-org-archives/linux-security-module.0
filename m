@@ -4,103 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C84FC10F0B
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 13:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC53EC10F0B
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 13:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51CA52147C
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 13:16:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C4CD21734
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 13:23:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="br3O5vKO"
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="EATfNl9y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726105AbfDCNQe (ORCPT
+        id S1726167AbfDCNXw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Apr 2019 09:16:34 -0400
-Received: from usfb19pa12.eemsg.mail.mil ([214.24.26.83]:31870 "EHLO
-        USFB19PA12.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726064AbfDCNQe (ORCPT
+        Wed, 3 Apr 2019 09:23:52 -0400
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:57224 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfDCNXw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Apr 2019 09:16:34 -0400
-X-EEMSG-check-017: 268861643|USFB19PA12_EEMSG_MP8.csd.disa.mil
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by USFB19PA12.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 03 Apr 2019 13:16:30 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1554297391; x=1585833391;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=rba3VkU5pEO0rwXWn7+aLnzAw5rmdFbE3bMrtGC4ITc=;
-  b=br3O5vKO7E4WMagmC0z/cFL9qgfGTL0XiXqbDXHQ/hZOSDpYv23iss+W
-   AI6ELJgTpYXDHVYeHpGp4HMQIrTJm1XaN7lRMFozzkahV/GVcdFifFPEs
-   aKE8xnaUW21eILXgCk3B5nOXRkzw0v5IzDCm9OPya83zWbjAb3qxLeKSW
-   LVslkTOSoqR2WtUw+8aansdpYIdc8UdDCpoEFPVeuVv3j7lObLhkAGE+1
-   T18OSkpUg8i6/pVqfT1WpGzGNVl+yNfoTX2ylHYGm5/qWfBQkONpzF+8i
-   RPLKNnCsZwxpK5b1uaykzD+gRTGfezLI1j6W8f2HTKirhsxegvC4NhoLu
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.60,304,1549929600"; 
-   d="scan'208";a="25814778"
-IronPort-PHdr: =?us-ascii?q?9a23=3A5UYVZB8Kp1mlX/9uRHKM819IXTAuvvDOBiVQ1K?=
- =?us-ascii?q?B+1e0VIJqq85mqBkHD//Il1AaPAdyCraofwLGK++C4ACpcuM7H6ChDOLV3FD?=
- =?us-ascii?q?Y9wf0MmAIhBMPXQWbaF9XNKxIAIcJZSVV+9Gu6O0UGUOz3ZlnVv2HgpWVKQk?=
- =?us-ascii?q?a3OgV6PPn6FZDPhMqrye+y54fTYwJVjzahfL9+Nhq7oRjMusUMnYdvJKk9xx?=
- =?us-ascii?q?XGr3BVf+ha2X5kKUickhrh+su85oJv/zhVt/k868NOTKL2crgiQ7dFFjomKW?=
- =?us-ascii?q?c15MPqtRnHUwSC42YXX3sVnBRVHQXL9Qn2UZjtvCT0sOp9wzSaMtbtTb8oQz?=
- =?us-ascii?q?Si7rxkRwHuhSwaKjM26mDXish3jKJGvBKsogF0zoDIbI2JMvd1Y7jQds0GS2?=
- =?us-ascii?q?VfQslRVjRBAoKiYIsJE+oBJvtTo43kq1cTsReyGQygCeXhxT9Sgn/9wLM03e?=
- =?us-ascii?q?IvHwrb2AAsBtwDvXDRoNjzKawcU/26zLPQwDvecf1W1zfz5ovGfB8vrv6DX6?=
- =?us-ascii?q?5/f8XKxEkzFA7IlEmcpZDrMj6X0OkGrmiV7/BnVeKqk2Mpth1xrSa3xscslI?=
- =?us-ascii?q?bJgJ8exE3B9SpjxIY1IcO3SU5matOjC5tfqjqaOpBqQsIiX25ouCE6xqcAuZ?=
- =?us-ascii?q?6gZicG0psnxxnBa/GedYWD/xztVOGUIThihXJlfqqyhxmo8Ui71OLzStS00E?=
- =?us-ascii?q?xLripZktjArHYN2ALP6sWBV/Bz/V+h1C6S2w3c5exIO0A5mbfBJ5I/zbM8iI?=
- =?us-ascii?q?AfvVnFEyTrgkv5lrWWeV8h+uWw7uTnZajpqYGEOo9vjwH+LrwumsuiAeQkKg?=
- =?us-ascii?q?QOX3aU+eC71LD74U32Wq9KjvwrkqnCqpzaOcQaqbK5Aw9SyIoj7QqwDyy639?=
- =?us-ascii?q?gCmHkHLVZFdAqGj4jvJV7OPOj1Aeqwjlmjijtmx+3KMqf/DpjCMHTPiqrtca?=
- =?us-ascii?q?5460FGyQozyd5f54hTCrEEOP/zQVL+tMfDAx8lMw273+bnCNJn2oMYQmKAGL?=
- =?us-ascii?q?WVMKzVsV+W/u4vOfWDZJcJuDbhLPgo///vjXg5mVAHZ6mkxp8XaHG+HvR7LE?=
- =?us-ascii?q?SVe3vsjcwEEWsQogU+S+nqgkWYUTFPf3ayQ7485jYjBYKnF4vCR4Ctj6eb0y?=
- =?us-ascii?q?e9GZ1WeHtLCleJEXfwbYWERuwMaDmTIsB7iDAET6WhQZc71R6yrA/616ZnLu?=
- =?us-ascii?q?3M9y0dt5Lj29h46unImBE98jx0CMud02WTQG1ugmwIQDo21rhloUNh0leDzb?=
- =?us-ascii?q?R4g/tAGNxQ+fxGTBw6OoLbz+x9CND/QR7OfteTSFahR9WmACwxTtcrz98JeU?=
- =?us-ascii?q?Z9FM2ojgrf0CqyH78Vi7uLCYQo/a3GxHj+OcZ8xm3d1KY9j1kpWNZPNWOihq?=
- =?us-ascii?q?Fh7QjfHpLGnF+Dm6m2cqQc2TbH9H2fwmqWoEFYTAlwXL3dXX8Fe0vWqc/05l?=
- =?us-ascii?q?vYQL+zDbQrKw5BycmFKqtQdNLll0lJRPDmON7GeWK+h3+wBQqUxrOLdIfqeW?=
- =?us-ascii?q?Id3CXbCEQekQAT+naGOhI4Bie6vW3eCidjGk71bEPq9ul+rnK7QVMuwAGOdU?=
- =?us-ascii?q?Fuy721+hsNj/yGV/wTxq4EuDsmqzhsGFa93tTWC8ePpgZ4faVcZ88970lI1W?=
- =?us-ascii?q?LDtgx9IpyhIrt8hl4RbQt3pVni1xZpBYVal8glsncqwBB1KaKC31NLbymY0o?=
- =?us-ascii?q?zoOr3LNmny+wiia6zM1VHY1taW+rwC6Ps/q1XkswGpElQt/2973NlS1nuW/o?=
- =?us-ascii?q?/KAxYKUZLtTkY38AB3p7XbYik7+oPV2mRgMbKqvTDextIpHuolygqgfttGNa?=
- =?us-ascii?q?OEExL9E9AeB8ewM+EqhVepYQwePOxI9647Idmmd/2Y166vJupgmyimjWsUqL?=
- =?us-ascii?q?x6h2eN8is0eOnI1oxNl+Of3gKdfzP9ikqx9MH9nMZPYjREWiKexi/+TLxRbK?=
- =?us-ascii?q?R0ephDXWboMc29z9N5mbbqXmZC6UW4BlpAwtL/PVK3ZkDh3QBPnWseu2aqhT?=
- =?us-ascii?q?fwmzl2nGx4hqWY2yPKzqLpcx9RfiZoSWR5xXzrJov829MXUVOjaA8qvBCl/0?=
- =?us-ascii?q?H/xrVe4qNlID+XCWxBZCXnZ1ppUqKtuL6PeYYb45ozvDR/S++8aE2UTrPn5h?=
- =?us-ascii?q?ATlSjkGj0ajAgyajXin5L+hREy3HqUMXJbtHPEfYR1whDF6ZrXQvsHmnIkQy?=
- =?us-ascii?q?l+wRvQBlG6JNSvtYGWkJfF9OK5V2unTZBVWSLiy4SGtSCy4SthBhjpzN6pnd?=
- =?us-ascii?q?iyKhQ3yS/20ZFRUCzMqBvtKt3w27+SLfNsfk4uAkT1rcV9BNctwcMLmJgM1C?=
- =?us-ascii?q?1C1d2u9n0dnDK2aI4K1A=3D=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BGAADBsaRc/wHyM5BlGwEBAQEDAQEBBwMBAQGBUwQBA?=
- =?us-ascii?q?QELAYFmKmiBAyeEDpM1TAEBAQEBAQaBNYlGjnmBezMIAYRAAoVEIjYHDQEBA?=
- =?us-ascii?q?wEBAQgBAwIBbBwMgjopAYJnAQUjBAsBBTYLEAsYAgImAgJXBgEMCAEBgl8/A?=
- =?us-ascii?q?YFoDQ+rbhqBJnwzhAUBP0FAhF8FgQskAYhogkoXeIEHgTiCaz6HToJXA6VjC?=
- =?us-ascii?q?Yd+i3QGGoIFiWyGU4ICLYsehhqPSgUsgVYrCAIYCCEPO4JsilGFQwFSIwMwA?=
- =?us-ascii?q?Qt5AQGPOAEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 03 Apr 2019 13:16:28 +0000
-Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x33DGPsA003577;
-        Wed, 3 Apr 2019 09:16:25 -0400
+        Wed, 3 Apr 2019 09:23:52 -0400
+X-Greylist: delayed 353 seconds by postgrey-1.27 at vger.kernel.org; Wed, 03 Apr 2019 09:23:51 EDT
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 5E10BD00072;
+        Wed,  3 Apr 2019 15:18:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1554297484;
+        bh=YKKGEguUCXnMvqAL7/fwk57lvfoTzNlmuHMXcNpqyqw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=EATfNl9ynZgsVo+UDf1KS+DqPBGL2FAu2UwK5mxfMqIDRjkq+Qso8HJtArhyoouFa
+         NlNJLmW/Zs5YGnT5kozzjAv5vn7ZeIi4RmPP96QqZ5OIKMbmV4e0rz3N3kBzAXtwGj
+         VMFsEHUt4guEX9EkqXmrGNdBca/jnSKTE6JpOMCb6hx42gMDSf7BGi0hDEi9OLFWhP
+         tzrVQlaxO1DxK4q1nOIeMnGRP7K5hNXIs+OKCyNQTSlASETm9Zvu2pcVZ9uq/D4KOq
+         rqOJgypyVfCTe6wOaH/ojiL4N6RIIuIK7ytQZHQeUwtoJMNT4wCET7eNBWkSH4rvlT
+         gfKBKed2owaaQ==
 Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
 To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Igor Zhbanov <i.zhbanov@omprussia.ru>,
         Matthew Garrett <mjg59@google.com>,
+        Igor Zhbanov <i.zhbanov@omprussia.ru>
+CC:     Stephen Smalley <sds@tycho.nsa.gov>,
         Kees Cook <keescook@chromium.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Paul Moore <paul@paul-moore.com>,
-        John Johansen <john.johansen@canonical.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
         Jann Horn <jannh@google.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Yves-Alexis Perez <corsac@corsac.net>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
 References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
  <1552945715.8658.299.camel@linux.ibm.com>
  <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
@@ -118,71 +68,113 @@ References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
  <1553857187.9420.49.camel@linux.ibm.com>
  <b5a89692-4c93-80b3-37e5-41265765cdc3@tycho.nsa.gov>
  <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
- <1554292678.7309.47.camel@linux.ibm.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <648f1a64-e95d-d929-62dc-06decaf5a14b@tycho.nsa.gov>
-Date:   Wed, 3 Apr 2019 09:10:57 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.0
+ <CACdnJusPpis1JJgfNOrQoqPcVk0q2OGbosrXOVtZmG0cSqkotw@mail.gmail.com>
+ <1554293478.7309.54.camel@linux.ibm.com>
+From:   Perez Yves-Alexis <yves-alexis.perez@ssi.gouv.fr>
+Openpgp: preference=signencrypt
+Autocrypt: addr=yves-alexis.perez@ssi.gouv.fr; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1d8264fb-495b-3b68-0192-0338247e6b54@ssi.gouv.fr>
+Date:   Wed, 3 Apr 2019 15:18:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-In-Reply-To: <1554292678.7309.47.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1554293478.7309.54.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: fr-FR
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/3/19 7:57 AM, Mimi Zohar wrote:
-> On Fri, 2019-03-29 at 15:50 +0300, Igor Zhbanov wrote:
->> On 29.03.2019 15:28, Stephen Smalley wrote:
->>> On 3/29/19 6:59 AM, Mimi Zohar wrote:
->>>> [Cc'ing the LSM mailing list and others]
->>>>
->>>> On Fri, 2019-03-29 at 13:00 +0300, Igor Zhbanov wrote:
->>>>> Hi Mimi,On 28.03.2019 20:17, Mimi Zohar wrote:
->>>>
->>>>>> I just came across the grsecurity article on mprotect.[1]
->>>>>>    Has anyone looked at it? Would it make sense to make it a minor LSM?
->>>>>>
->>>>>> [1]https://pax.grsecurity.net/docs/mprotect.txt
->>>>>
->>>>> Interesting article. It is almost exactly of what I wanted to be
->>>>> implemented.
->>>>>
->>>>> If this minor LSM would be stackable to allow combining with e.g. SELinux
->>>>> then why not.
->>>>
->>>> Stacking shouldn't be a problem.  Other LSMs are already on the
->>>> mprotect hook.  Let's hear what others think.
->>>
->>> SELinux already provides a set of controls over executable mappings;
->>> see selinux_mmap_file and selinux_file_mprotect. Other major security
->>> modules may do likewise but I can't speak to that. Is there some gap
->>> you are trying to address that isn't already covered, or are you just
->>> trying to provide such restrictions without requiring one of the
->>> major modules?
+Le 03/04/2019 =C3=A0 14:11, Mimi Zohar a =C3=A9crit :
+> On Tue, 2019-04-02 at 15:31 -0700, Matthew Garrett wrote:
+>> On Fri, Mar 29, 2019 at 5:50 AM Igor Zhbanov <i.zhbanov@omprussia.ru> wr=
+ote:
+>>> I want to be sure that no unsigned code page could be executed. So expl=
+oits
+>>> could only be of ROP kind and not being able to download any extra code
+>>> from their servers. That's why I found that disabling of anonymous exec=
+utable
+>>> pages could be useful for that (as well as disabling of making executab=
+le
+>>> pages writable to modify already mapped code). In conjunction with IMA =
+it
+>>> should guarantee that no untrusted code could be executed.
 >>
->> I want to be sure that no unsigned code page could be executed. So exploits
->> could only be of ROP kind and not being able to download any extra code
->> from their servers. That's why I found that disabling of anonymous executable
->> pages could be useful for that (as well as disabling of making executable
->> pages writable to modify already mapped code). In conjunction with IMA it
->> should guarantee that no untrusted code could be executed.
-> 
-> Let's separate the different types of attacks.  From an IMA
-> perspective, memory attacks are out of scope.  That leaves mmap'ed
-> files, possibly just mmap'ed shared files.  Currently IMA can be
-> configured to verify a file's integrity, based on signatures, being
-> mmap'ed execute.  Assuming that not all files opened require a file
-> signature, a file could be mmap'ed read/write and later changed to
-> execute to circumvent the mmap'ed execute signature requirement.  If
-> the existing LSMs are able to prevent this sort of attack, we could
-> just document this requirement.
+>> Remember that many interpreted languages allow execution of code
+>> provided to them on the command line (eg, python -c) and also grant
+>> access to arbitrary syscalls, so there's still no guarantee that
+>> you're only executing trusted code.
+>
+> Interpreters are a known concern, as Yves-Alexis Perez pointed out in
+> his LSS-2018 Europe talk[1].
+>
+> Mimi
+>
+> [1]=C2=A0https://events.linuxfoundation.org/wp-content/uploads/2017/12/Li=
+nu
+> x-Kernel-Security-Contributions-by-ANSSI-Yves-Alexis-Perez-ANSSI.pdf
+>
+And Micka=C3=ABl Sala=C3=BCn posted the O_MAYEXEC patch RFC back in Decembe=
+r
+(https://lore.kernel.org/lkml/20181212081712.32347-1-mic@digikod.net/)
 
-I guess I don't understand why IMA isn't already being called from 
-security_file_mprotect(). security_file_mprotect() could just call 
-ima_file_mmap(vma->vm_file, prot) if all of the security hooks pass.
-
-SELinux can be used to prevent unauthorized mprotect PROT_EXEC but it 
-won't perform a measurement of the file if it is allowed by policy.
+Regards,
+--
+Yves-Alexis Perez
+ANSSI/SDE/ST/LAM
+Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
+es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
+=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
+nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
+=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
+tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
+acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
+eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
+t de d=C3=A9truire le message. The personal data collected and processed du=
+ring this exchange aims solely at completing a business relationship and is=
+ limited to the necessary duration of that relationship. If you wish to use=
+ your rights of consultation, rectification and deletion of your data, plea=
+se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
+n error, we thank you for informing the sender and destroying the message.
