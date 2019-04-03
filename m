@@ -2,95 +2,128 @@ Return-Path: <SRS0=p2Kc=SF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF80C10F06
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 13:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E31C10F0B
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 14:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF062075E
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 13:41:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2864C2084C
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Apr 2019 14:33:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbfDCNld (ORCPT
+        id S1726151AbfDCOdd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Apr 2019 09:41:33 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:36637 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726167AbfDCNlc (ORCPT
+        Wed, 3 Apr 2019 10:33:33 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33992 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726199AbfDCOdd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Apr 2019 09:41:32 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-228-Th9rimmcPRC2NwhNCrp6LA-1; Wed, 03 Apr 2019 14:41:30 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed,
- 3 Apr 2019 14:42:36 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 3 Apr 2019 14:42:36 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Matthew Garrett' <matthewgarrett@google.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tweek@google.com" <tweek@google.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: RE: [PATCH 1/2] efi: Fix cast to pointer from integer of different
- size in TPM log code
-Thread-Topic: [PATCH 1/2] efi: Fix cast to pointer from integer of different
- size in TPM log code
-Thread-Index: AQHU6Z8JdZ+UHAYfaUqRGxcPZ+xJEaYqcfag
-Date:   Wed, 3 Apr 2019 13:42:36 +0000
-Message-ID: <89e1cf4093d7405987c55f682519f9fc@AcuMS.aculab.com>
-References: <20190402215556.257406-1-matthewgarrett@google.com>
- <20190402215556.257406-2-matthewgarrett@google.com>
-In-Reply-To: <20190402215556.257406-2-matthewgarrett@google.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-X-MC-Unique: Th9rimmcPRC2NwhNCrp6LA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+        Wed, 3 Apr 2019 10:33:33 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x33EUcVB049802
+        for <linux-security-module@vger.kernel.org>; Wed, 3 Apr 2019 10:33:32 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rmwf54fy8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 10:33:31 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 3 Apr 2019 15:33:29 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 3 Apr 2019 15:33:24 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x33EXN3d52035682
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 3 Apr 2019 14:33:23 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0532C4C040;
+        Wed,  3 Apr 2019 14:33:23 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8258B4C04A;
+        Wed,  3 Apr 2019 14:33:21 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.94.125])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  3 Apr 2019 14:33:21 +0000 (GMT)
+Subject: Re: Should mprotect(..., PROT_EXEC) be checked by IMA?
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>,
+        Igor Zhbanov <i.zhbanov@omprussia.ru>,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Date:   Wed, 03 Apr 2019 10:33:10 -0400
+In-Reply-To: <648f1a64-e95d-d929-62dc-06decaf5a14b@tycho.nsa.gov>
+References: <cce2c4c7-5333-41c3-aeef-34d43e63acb0@omprussia.ru>
+         <1552945715.8658.299.camel@linux.ibm.com>
+         <452752df-98f9-c361-878a-5df84ab36847@omprussia.ru>
+         <1552994559.4899.26.camel@linux.ibm.com>
+         <84145490-6f70-214f-8241-42d556590240@omprussia.ru>
+         <1553015134.4899.82.camel@linux.ibm.com>
+         <a9830bde-8157-6078-b544-fcffb20d2501@omprussia.ru>
+         <CACdnJut6YfLnq-nCC1hHTrKYXabHoSEXN1wMuCyVybU+o_iwCg@mail.gmail.com>
+         <1553167318.4899.382.camel@linux.ibm.com>
+         <dab923ca-ef53-4af2-034a-bea4151a4e25@omprussia.ru>
+         <CACdnJuvVqibDdd+MLKOHqEfdngTk=GSkfybj1jS3MpmC7rjyHg@mail.gmail.com>
+         <07347317-ee71-83c1-384a-0c3439980af7@omprussia.ru>
+         <1553793463.8711.26.camel@linux.ibm.com>
+         <92718382-8669-748f-10d8-02fa21225210@omprussia.ru>
+         <1553857187.9420.49.camel@linux.ibm.com>
+         <b5a89692-4c93-80b3-37e5-41265765cdc3@tycho.nsa.gov>
+         <cb46d5ba-30de-664f-67d4-646da4592a6f@omprussia.ru>
+         <1554292678.7309.47.camel@linux.ibm.com>
+         <648f1a64-e95d-d929-62dc-06decaf5a14b@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19040314-0028-0000-0000-0000035CDAEB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19040314-0029-0000-0000-0000241BE4AF
+Message-Id: <1554301990.7309.71.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-03_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=18 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904030098
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-RnJvbTogTWF0dGhldyBHYXJyZXR0DQo+IFNlbnQ6IDAyIEFwcmlsIDIwMTkgMjI6NTYNCj4gDQo+
-IDhiZmNmZjRhNmExZDlkNzIyNmJiNjNhN2RhNzU4YjgyZDlhYjQzNzMgaW50cm9kdWNlZCBhIGNh
-c3QgZnJvbQ0KPiBlZmlfcGh5c2ljYWxfYWRkcmVzc190IHRvICh2b2lkICopLCB3aGljaCBhcmUg
-ZGlmZmVyZW50IHNpemVzIG9uIDMyLWJpdC4NCj4gRml4IHRoYXQuIENhdWdodCBieSB0aGUgMC1k
-YXkgdGVzdCBib3QuDQoNCkNhc3RpbmcgYSBwaHlzaWNhbCBhZGRyZXNzIHRvICd2b2lkIConIHNl
-ZW1zIGNvbXBsZXRlbHkgd3JvbmcuDQpBbHNvIHlvdSdkIG5lZWQgYSBndWFyYW50ZWUgdGhhdCB0
-aGUgYWRkcmVzcyB3YXMgYmVsb3cgNEcgb3IgdGhlIHJlc3VsdA0KaXMgbWVhbmluZ2xlc3MuDQpM
-b29rcyB0byBtZSBsaWtlIHNvbWV0aGluZyBpcyB1c2luZyB0aGUgd3JvbmcgdHlwZXMgc29tZXdo
-ZXJlLg0KDQoJRGF2aWQNCg0KPiBTaWduZWQtb2ZmLWJ5OiBNYXR0aGV3IEdhcnJldHQgPG1qZzU5
-QGdvb2dsZS5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi90cG0u
-YyB8IDQgKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlv
-bnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3Rw
-bS5jIGIvZHJpdmVycy9maXJtd2FyZS9lZmkvbGlic3R1Yi90cG0uYw0KPiBpbmRleCBiNmU5M2Ux
-NGZjZjEuLjZiM2I1MDdhNTRlYiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9maXJtd2FyZS9lZmkv
-bGlic3R1Yi90cG0uYw0KPiArKysgYi9kcml2ZXJzL2Zpcm13YXJlL2VmaS9saWJzdHViL3RwbS5j
-DQo+IEBAIC0xMTQsOCArMTE0LDggQEAgdm9pZCBlZmlfcmV0cmlldmVfdHBtMl9ldmVudGxvZyhl
-Zmlfc3lzdGVtX3RhYmxlX3QgKnN5c190YWJsZV9hcmcpDQo+ICAJCQkgKi8NCj4gIAkJCWxhc3Rf
-ZW50cnlfc2l6ZSA9DQo+ICAJCQkJX19jYWxjX3RwbTJfZXZlbnRfc2l6ZSgodm9pZCAqKWxhc3Rf
-ZW50cnlfYWRkciwNCj4gLQkJCQkJCSAgICAgICAodm9pZCAqKWxvZ19sb2NhdGlvbiwNCj4gLQkJ
-CQkJCSAgICAgICBmYWxzZSk7DQo+ICsJCQkJCQkgICAgKHZvaWQgKikobG9uZylsb2dfbG9jYXRp
-b24sDQo+ICsJCQkJCQkgICAgZmFsc2UpOw0KPiAgCQl9IGVsc2Ugew0KPiAgCQkJbGFzdF9lbnRy
-eV9zaXplID0gc2l6ZW9mKHN0cnVjdCB0Y3BhX2V2ZW50KSArDQo+ICAJCQkgICAoKHN0cnVjdCB0
-Y3BhX2V2ZW50ICopIGxhc3RfZW50cnlfYWRkciktPmV2ZW50X3NpemU7DQo+IC0tDQo+IDIuMjEu
-MC4zOTIuZ2Y4ZjY3ODcxNTllLWdvb2cNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
-LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
-ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On Wed, 2019-04-03 at 09:10 -0400, Stephen Smalley wrote:
+> On 4/3/19 7:57 AM, Mimi Zohar wrote:
+
+> > Let's separate the different types of attacks.  From an IMA
+> > perspective, memory attacks are out of scope.  That leaves mmap'ed
+> > files, possibly just mmap'ed shared files.  Currently IMA can be
+> > configured to verify a file's integrity, based on signatures, being
+> > mmap'ed execute.  Assuming that not all files opened require a file
+> > signature, a file could be mmap'ed read/write and later changed to
+> > execute to circumvent the mmap'ed execute signature requirement.  If
+> > the existing LSMs are able to prevent this sort of attack, we could
+> > just document this requirement.
+> 
+> I guess I don't understand why IMA isn't already being called from 
+> security_file_mprotect(). security_file_mprotect() could just call 
+> ima_file_mmap(vma->vm_file, prot) if all of the security hooks pass.
+> 
+> SELinux can be used to prevent unauthorized mprotect PROT_EXEC but it 
+> won't perform a measurement of the file if it is allowed by policy.
+
+From a measurement perspective, this will at least measure the file,
+but the call to ima_file_mmap() will verify the file signature against
+the file, not what is currently in memory, right?
+
+Mimi
 
