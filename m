@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 585C9C4360F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD752C10F06
 	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2620720820
+	by mail.kernel.org (Postfix) with ESMTP id AB19620820
 	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:35:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g1Y/PUQz"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QRSZ0exP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfDDAfD (ORCPT
+        id S1726789AbfDDAdY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Apr 2019 20:35:03 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:51304 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbfDDAd0 (ORCPT
+        Wed, 3 Apr 2019 20:33:24 -0400
+Received: from mail-ua1-f74.google.com ([209.85.222.74]:37855 "EHLO
+        mail-ua1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbfDDAdX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Apr 2019 20:33:26 -0400
-Received: by mail-pg1-f202.google.com with SMTP id 132so346568pgc.18
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 17:33:25 -0700 (PDT)
+        Wed, 3 Apr 2019 20:33:23 -0400
+Received: by mail-ua1-f74.google.com with SMTP id w19so147240uar.4
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 17:33:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=XYPTV88x6bsM2+0bDxThxX+PqaKMYNT/2nzbQ6HoL14=;
-        b=g1Y/PUQzlr8w4VbBSoNg3vi8qaTpIpeLwblcFxEbA8qgL2rreczYP6Bcjr7XsnesyH
-         JqyppDVnmHCPzfeUQZjpdFAH3WIzAnSKJUHQCaN2Vphxplco+8Zi9eUJxtm7PO+crggJ
-         g4Z6IBr5ZZV+k2CogsXEWfCz6cHrWFVfx6dbJRpB4n0S6gihi2EaMdTKcxudSZhrSb1j
-         MFW/0KS184jEDPQeKjVqRFI8ypNBAEmtUINRkS1b8X8lQu9V9onqA0UBC7sijlTciyrz
-         Jr0PefO1jwwaoQTJIFrBlWNJ0AwlLY6GVcM6v4bXpCtj/ALGGohGwP4YOH1manzxcME0
-         qurA==
+        bh=QnWxYoXtlXDh+QYWjqIOEuesK8IQe5p8ynytMTjRSCY=;
+        b=QRSZ0exPdykYG3cj/sT33FZBrVPjgVKfkWxlUaPoJlH+1DajR1vVTmcbDfFyR6avby
+         Wxe4IX3n1oC3chdRudvb0e+ylQ28+iwE2YhKNTqQlSkzpMHCx9hqehJekQmQTDokmLzD
+         mUkkVXl4ZFfV+2k1VnSAdGJSBoZXckgW5Np1Wb2y03jTR/jTtQomaIxjwojXJpKhc54d
+         RbmFl9S2XnDxKq1OmSjsZastyUtz1ogS5H3eMyo7zoETL3YfYxiJLoRJeAiH5J3BOuFd
+         S1pbxEnJEOyBQJoBiT363sBxTIMeCic0LZm2gV8woq1tCeca4SEbm2+knVkM1qWyvagC
+         3IUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=XYPTV88x6bsM2+0bDxThxX+PqaKMYNT/2nzbQ6HoL14=;
-        b=FXGGXlEkhzKOuOF4712kPFUHzY77xAR+QYthGGv4GVipmZhwjpyExAN3fTlwsT+1eu
-         TvWbFwYV6hKt/o1iRbvXWohZPtDIZSMziRQ8F0W7Dz24GGVXDlJFSCIaotRG/KbJJU9z
-         DJx+jaaWhhuFO3yW0u9mqGx7EpiFRysfo2N3i7LCd+8LQc/qJF7qNfhsib5aHjnOSg2l
-         PfHLB68PfzwpN3QK6aV43eNebWMZtmHh8w1yR3/AjlhrkyQ5j0shmqXkBGfKA03Eu0hK
-         gCedi40NSQHTogXPDlTs5NsWGnCRvIllGD/QoUo/H6ihTPQvrGehptNzdHLOVz/ojdXS
-         d3oA==
-X-Gm-Message-State: APjAAAWurw65ga17rHJTcu4QH0xEnhFGKxfyrfhBCK9Hr0tiAtbhu3Fp
-        tEQoxU58adlmHs0Q6UVexWrxoxn3ZTMFvvzQIY7MSg==
-X-Google-Smtp-Source: APXvYqxf6ja6WDBpp/nIeSrs09Nn3VWuH4kTMGiDNVKtdM11YDUCyXx5y4Tt7mmUZ4ZNFw5Tna+rlzOcwcwYuiHPw8Mpaw==
-X-Received: by 2002:a62:e103:: with SMTP id q3mr83578pfh.1.1554338005084; Wed,
- 03 Apr 2019 17:33:25 -0700 (PDT)
-Date:   Wed,  3 Apr 2019 17:32:34 -0700
+        bh=QnWxYoXtlXDh+QYWjqIOEuesK8IQe5p8ynytMTjRSCY=;
+        b=JkwSBkpacTTDGawyLwEJ1urADmm9zoLpOH3RhQpUVPEQEtYfHOkCtEWdFrv1yrAYm7
+         WKtnIYXVevs/kuPnaRG6PAMrZqhltbRuVclfq52Az47pxqafDHX3PloY0MPalOuxJ9O7
+         FgxQV/eKWGsZKdv5R6C4rBFeloPmN+0Xvbs2GJTFmkT6GHnf83uMBSk7ywBtRrkhJkUH
+         xCjS1BhgU0uBMjw3c+jCTGfyKzOIbxXz3PdKrnzLcTN9ub9YDBU/QlhNqH1Ft24qoegR
+         AIMqRI/LgmoQp15zmI63rlbIHnebW30E99Dv06K+b/J9t2DA2x+DeM7hY2VUzXJjixwk
+         PH9Q==
+X-Gm-Message-State: APjAAAVZLNi8c6iO8pLb5vrAXKBtlT50bMh2iTKxOz6hLpXtvsXBwFtR
+        64lLMzOX/fy/bN/JYTjUIsWjUvSiA850HNt7VtskQw==
+X-Google-Smtp-Source: APXvYqyOil3nuWTZ6/0rdgwNmW40JoGvRbCcJ0rRgKX73/Ad46aVWMGAxdMPUwnYWI5bZZbMNYaINRVrrUkWxTpUmAg1uQ==
+X-Received: by 2002:a1f:746:: with SMTP id 67mr371895vkh.24.1554338002654;
+ Wed, 03 Apr 2019 17:33:22 -0700 (PDT)
+Date:   Wed,  3 Apr 2019 17:32:33 -0700
 In-Reply-To: <20190404003249.14356-1-matthewgarrett@google.com>
-Message-Id: <20190404003249.14356-13-matthewgarrett@google.com>
+Message-Id: <20190404003249.14356-12-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190404003249.14356-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH V32 12/27] x86/msr: Restrict MSR access when the kernel is
+Subject: [PATCH V32 11/27] x86: Lock down IO port access when the kernel is
  locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
@@ -66,9 +66,7 @@ Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
         linux-api@vger.kernel.org, luto@kernel.org,
         Matthew Garrett <mjg59@srcf.ucam.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
+        Matthew Garrett <mjg59@google.com>, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -76,45 +74,45 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-Writing to MSRs should not be allowed if the kernel is locked down, since
-it could lead to execution of arbitrary code in kernel mode.  Based on a
-patch by Kees Cook.
+IO port access would permit users to gain access to PCI configuration
+registers, which in turn (on a lot of hardware) give access to MMIO
+register space. This would potentially permit root to trigger arbitrary
+DMA, so lock it down by default.
+
+This also implicitly locks down the KDADDIO, KDDELIO, KDENABIO and
+KDDISABIO console ioctls.
 
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 cc: x86@kernel.org
 ---
- arch/x86/kernel/msr.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/kernel/ioport.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
-index 4588414e2561..731be1be52b6 100644
---- a/arch/x86/kernel/msr.c
-+++ b/arch/x86/kernel/msr.c
-@@ -84,6 +84,9 @@ static ssize_t msr_write(struct file *file, const char __user *buf,
- 	int err = 0;
- 	ssize_t bytes = 0;
+diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
+index 0fe1c8782208..febbd7eb847c 100644
+--- a/arch/x86/kernel/ioport.c
++++ b/arch/x86/kernel/ioport.c
+@@ -31,7 +31,8 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
  
-+	if (kernel_is_locked_down("Direct MSR access", LOCKDOWN_INTEGRITY))
-+		return -EPERM;
-+
- 	if (count % 8)
- 		return -EINVAL;	/* Invalid chunk size */
+ 	if ((from + num <= from) || (from + num > IO_BITMAP_BITS))
+ 		return -EINVAL;
+-	if (turn_on && !capable(CAP_SYS_RAWIO))
++	if (turn_on && (!capable(CAP_SYS_RAWIO) ||
++			kernel_is_locked_down("ioperm", LOCKDOWN_INTEGRITY)))
+ 		return -EPERM;
  
-@@ -135,6 +138,11 @@ static long msr_ioctl(struct file *file, unsigned int ioc, unsigned long arg)
- 			err = -EFAULT;
- 			break;
- 		}
-+		if (kernel_is_locked_down("Direct MSR access",
-+					  LOCKDOWN_INTEGRITY)) {
-+			err = -EPERM;
-+			break;
-+		}
- 		err = wrmsr_safe_regs_on_cpu(cpu, regs);
- 		if (err)
- 			break;
+ 	/*
+@@ -126,7 +127,8 @@ SYSCALL_DEFINE1(iopl, unsigned int, level)
+ 		return -EINVAL;
+ 	/* Trying to gain more privileges? */
+ 	if (level > old) {
+-		if (!capable(CAP_SYS_RAWIO))
++		if (!capable(CAP_SYS_RAWIO) ||
++		    kernel_is_locked_down("iopl", LOCKDOWN_INTEGRITY))
+ 			return -EPERM;
+ 	}
+ 	regs->flags = (regs->flags & ~X86_EFLAGS_IOPL) |
 -- 
 2.21.0.392.gf8f6787159e-goog
 
