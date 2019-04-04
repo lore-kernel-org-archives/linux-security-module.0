@@ -7,101 +7,114 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14DBC4360F
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 585C9C4360F
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A66A20820
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2620720820
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:35:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S1y6ny4+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g1Y/PUQz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfDDAez (ORCPT
+        id S1726856AbfDDAfD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Apr 2019 20:34:55 -0400
-Received: from mail-vk1-f201.google.com ([209.85.221.201]:37164 "EHLO
-        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727015AbfDDAdb (ORCPT
+        Wed, 3 Apr 2019 20:35:03 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:51304 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726919AbfDDAd0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Apr 2019 20:33:31 -0400
-Received: by mail-vk1-f201.google.com with SMTP id y19so443311vky.4
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 17:33:30 -0700 (PDT)
+        Wed, 3 Apr 2019 20:33:26 -0400
+Received: by mail-pg1-f202.google.com with SMTP id 132so346568pgc.18
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 17:33:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=B6VKNJoBZyOp9UQCoOkYqDvTMA68uU6nV4VivW8ayKY=;
-        b=S1y6ny4+jWv/gWeoO1G3tzhnZv+bXGsPYsaXFnXd9BW0WIzzQVHNEe7Mp+1DhTvAHK
-         t04RZjK7SgpfIcQ1TcyiglrSXM7BLVu/37v1Z/a8Sc4pLE+s5Db8MMk7UKxtmzWktqE/
-         X8SdZ0h/jX8QLITQGrFaqZ6fF58W542kSDEK3m9lj2nwIuuh06se57HA/kz+meVOIelG
-         LTqKKtWdgYWx9QaE0QaXcQKZhD4t7pX6zz9lWi/Oxf4hYzQMFOLZsdUhhRRuR7npfP/J
-         wSz86q5bCjocH/M3nlOoj8+mOAvkNzpYe8YcGPLNxa3nDue6VGNiU/igoU0QMLovvU6E
-         lwMA==
+        bh=XYPTV88x6bsM2+0bDxThxX+PqaKMYNT/2nzbQ6HoL14=;
+        b=g1Y/PUQzlr8w4VbBSoNg3vi8qaTpIpeLwblcFxEbA8qgL2rreczYP6Bcjr7XsnesyH
+         JqyppDVnmHCPzfeUQZjpdFAH3WIzAnSKJUHQCaN2Vphxplco+8Zi9eUJxtm7PO+crggJ
+         g4Z6IBr5ZZV+k2CogsXEWfCz6cHrWFVfx6dbJRpB4n0S6gihi2EaMdTKcxudSZhrSb1j
+         MFW/0KS184jEDPQeKjVqRFI8ypNBAEmtUINRkS1b8X8lQu9V9onqA0UBC7sijlTciyrz
+         Jr0PefO1jwwaoQTJIFrBlWNJ0AwlLY6GVcM6v4bXpCtj/ALGGohGwP4YOH1manzxcME0
+         qurA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=B6VKNJoBZyOp9UQCoOkYqDvTMA68uU6nV4VivW8ayKY=;
-        b=Hy/UgeivrH/+MgXEulPs3DyhYldxnBkY5JON0fDAbr8N3ms9gKMlqXPfOhqwxGf2i8
-         HkDmooPlXALGrDIDpM62ezm56D/om2hSqdj+xZVStKiH2OPkSGuexKwskLqzOLnTVNEb
-         Y1oxGfC6ojlyNyb2R2Lkd6AIVG1sR33uTuo5xCYati3D1Psh8V1XHV9UdxFlsM2vPSFM
-         2sVtDpvbleoHIo01ucFn9vKfg7V2Rpbi2r+frXtP12SLOEkhuS+C/VkD9+6i3cFqwRNx
-         XdcanMlzf332YHNbk8eDjpOWOh3WpY76YKTY6/V+pmfao+EI0W0zY0900l3BOo4p3USV
-         lQ9g==
-X-Gm-Message-State: APjAAAUyxzDcctDnl+HC3jsStfb4TU6KgAO6Yd8YKZquv7MHnU8pUiWf
-        F5kymg3dV0XGuT9z3+5KcsZ05iZac+KWdkNBM85QBw==
-X-Google-Smtp-Source: APXvYqwKkPizHiC4OnZjT0pH7YvylRNZ+BSxAOhO5bw2H08BAHNzQZo5RvC3LnRmNcoFcH18MAP9iudbn4wRZZXcLgMy+w==
-X-Received: by 2002:a1f:5842:: with SMTP id m63mr366264vkb.15.1554338010216;
- Wed, 03 Apr 2019 17:33:30 -0700 (PDT)
-Date:   Wed,  3 Apr 2019 17:32:36 -0700
+        bh=XYPTV88x6bsM2+0bDxThxX+PqaKMYNT/2nzbQ6HoL14=;
+        b=FXGGXlEkhzKOuOF4712kPFUHzY77xAR+QYthGGv4GVipmZhwjpyExAN3fTlwsT+1eu
+         TvWbFwYV6hKt/o1iRbvXWohZPtDIZSMziRQ8F0W7Dz24GGVXDlJFSCIaotRG/KbJJU9z
+         DJx+jaaWhhuFO3yW0u9mqGx7EpiFRysfo2N3i7LCd+8LQc/qJF7qNfhsib5aHjnOSg2l
+         PfHLB68PfzwpN3QK6aV43eNebWMZtmHh8w1yR3/AjlhrkyQ5j0shmqXkBGfKA03Eu0hK
+         gCedi40NSQHTogXPDlTs5NsWGnCRvIllGD/QoUo/H6ihTPQvrGehptNzdHLOVz/ojdXS
+         d3oA==
+X-Gm-Message-State: APjAAAWurw65ga17rHJTcu4QH0xEnhFGKxfyrfhBCK9Hr0tiAtbhu3Fp
+        tEQoxU58adlmHs0Q6UVexWrxoxn3ZTMFvvzQIY7MSg==
+X-Google-Smtp-Source: APXvYqxf6ja6WDBpp/nIeSrs09Nn3VWuH4kTMGiDNVKtdM11YDUCyXx5y4Tt7mmUZ4ZNFw5Tna+rlzOcwcwYuiHPw8Mpaw==
+X-Received: by 2002:a62:e103:: with SMTP id q3mr83578pfh.1.1554338005084; Wed,
+ 03 Apr 2019 17:33:25 -0700 (PDT)
+Date:   Wed,  3 Apr 2019 17:32:34 -0700
 In-Reply-To: <20190404003249.14356-1-matthewgarrett@google.com>
-Message-Id: <20190404003249.14356-15-matthewgarrett@google.com>
+Message-Id: <20190404003249.14356-13-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190404003249.14356-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH V32 14/27] acpi: Ignore acpi_rsdp kernel param when the kernel
- has been locked down
+Subject: [PATCH V32 12/27] x86/msr: Restrict MSR access when the kernel is
+ locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
         linux-api@vger.kernel.org, luto@kernel.org,
-        Josh Boyer <jwboyer@redhat.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
         Matthew Garrett <mjg59@google.com>,
-        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Josh Boyer <jwboyer@redhat.com>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-This option allows userspace to pass the RSDP address to the kernel, which
-makes it possible for a user to modify the workings of hardware .  Reject
-the option when the kernel is locked down.
+Writing to MSRs should not be allowed if the kernel is locked down, since
+it could lead to execution of arbitrary code in kernel mode.  Based on a
+patch by Kees Cook.
 
-Signed-off-by: Josh Boyer <jwboyer@redhat.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-cc: Dave Young <dyoung@redhat.com>
-cc: linux-acpi@vger.kernel.org
+Signed-off-by: David Howells <dhowells@redhat.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+cc: x86@kernel.org
 ---
- drivers/acpi/osl.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kernel/msr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index f29e427d0d1d..cd5bba7b8eb3 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -194,7 +194,8 @@ acpi_physical_address __init acpi_os_get_root_pointer(void)
- 	acpi_physical_address pa;
+diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
+index 4588414e2561..731be1be52b6 100644
+--- a/arch/x86/kernel/msr.c
++++ b/arch/x86/kernel/msr.c
+@@ -84,6 +84,9 @@ static ssize_t msr_write(struct file *file, const char __user *buf,
+ 	int err = 0;
+ 	ssize_t bytes = 0;
  
- #ifdef CONFIG_KEXEC
--	if (acpi_rsdp)
-+	if (acpi_rsdp && !kernel_is_locked_down("ACPI RSDP specification",
-+						LOCKDOWN_INTEGRITY))
- 		return acpi_rsdp;
- #endif
- 	pa = acpi_arch_get_root_pointer();
++	if (kernel_is_locked_down("Direct MSR access", LOCKDOWN_INTEGRITY))
++		return -EPERM;
++
+ 	if (count % 8)
+ 		return -EINVAL;	/* Invalid chunk size */
+ 
+@@ -135,6 +138,11 @@ static long msr_ioctl(struct file *file, unsigned int ioc, unsigned long arg)
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if (kernel_is_locked_down("Direct MSR access",
++					  LOCKDOWN_INTEGRITY)) {
++			err = -EPERM;
++			break;
++		}
+ 		err = wrmsr_safe_regs_on_cpu(cpu, regs);
+ 		if (err)
+ 			break;
 -- 
 2.21.0.392.gf8f6787159e-goog
 
