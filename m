@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F6EC4360F
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 046BDC4360F
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC5D20820
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C825220820
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:33:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A2EFYZwE"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HrnnfxtE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfDDAdT (ORCPT
+        id S1726978AbfDDAda (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Apr 2019 20:33:19 -0400
-Received: from mail-ot1-f74.google.com ([209.85.210.74]:38307 "EHLO
-        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbfDDAdS (ORCPT
+        Wed, 3 Apr 2019 20:33:30 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:47892 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfDDAd2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Apr 2019 20:33:18 -0400
-Received: by mail-ot1-f74.google.com with SMTP id u18so304160otq.5
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 17:33:18 -0700 (PDT)
+        Wed, 3 Apr 2019 20:33:28 -0400
+Received: by mail-vk1-f202.google.com with SMTP id l11so433781vkl.14
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 17:33:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=UWUYbOZniscPzPib57I8cPwH1j1zNPSziYufzU02lOY=;
-        b=A2EFYZwEC5y58dctC8LWHsqA6qoE5h0LFuFYwP6Uwqnal/NFUhQVsKZ/0Ysr8bH//x
-         FT17CqgqigWaJaw5c+416HEm1SOJ5orG1jO9WJ4kVGBoTxfe2sFF3NgIGiHr1ETJUCoC
-         AGe5N/8cJDz2uObdp0e8WjGFpC8mGvo4d5ebbKSY9TuIQ8SyXWnil8fW2KzUZCt/aofk
-         8biDkpWIJeJyZnldpFA5lFAbH8dXFWs7Ho0n0l1twAexbAB/330nKb/6uAkKYGyTrW0N
-         OJepi47SLo9FwbAlZUvw24949yhqGJ+zGZV7oTsTvqOH+6+6k01sIrImWHkw9JwsgDIu
-         28oA==
+        bh=aQw0KGeWmvPzPQJC9aCiMXHo5RCdIiAFpbvhdBtqfOA=;
+        b=HrnnfxtEOmZgJzYuk+1NGAEVH3FcUFjd6/CBWrK13gcpvb388nqYaCopTOLyHeiL1d
+         BKx8619edH1V2dmHSMJXG+k3mIUlblQzV2u/zO0e4fFTXaPhYH3qkk2oBZtOPkDf/pMH
+         c54kprWqcu9bnxwX2huhYfWI0NK19dx+cOTVdTShh6O9RpDn5d1CRWLTj74UYSVkLfjk
+         m9UNjHC3gaOX9OtPbO5zNNbbdyPtrCAFi3EKo2W41SCPOU88rp2S8NL6uCUmQdKvJubH
+         3qMyUCCEogMiavG6CtQUFSXB3/s/iNE8LHMbqsYvZCIifSgPCsE7EMCoYzlvMPlip49W
+         ZGow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=UWUYbOZniscPzPib57I8cPwH1j1zNPSziYufzU02lOY=;
-        b=VP89GDkVzO8Dn4zJOl7wOoSfXX67hBNxcOgXcSGyRwF+6GHhUzaTFDTvUMmXZGGckx
-         /MEOwPN49/QT4TFyXWDI9Kiwd2iMeBWj0tP4tZC7neWd21OdXVUa4QWw3ZEFDTZVf537
-         qSWiNpau9z+qKh2PRJVp7RJ0xI+cQ7xXe15GSsA9TcxqWZAu0seQ2j4Cxqzl0lTZhFUA
-         4ruFH6Px49nnShWYv1NISUAi/NU+DWnxBFVl0zhSl0Y1odApU7WkKUsWr+G/Q7cNEGqm
-         vnR4FCdt5OoWG/C5rwgYpId5TuSB5ttSIcmekL3jdbDSqTZTCj9KV2pG/o9MQfPNPGJR
-         ZkPw==
-X-Gm-Message-State: APjAAAXbiV/JQ0A5gxLPpCzPfUBFyuyO6L5V5tgOcj3KOHfPnAenZ7nm
-        6IjcIWWVv31UMINK5cB6VeGBSWJtm+T5oIYCTidOvw==
-X-Google-Smtp-Source: APXvYqzL3jPDtiMeU77dXPt0+VSnZ8pBp/Uh79/K3V3E8HHlCSQfc9Fzun4Dp6GY5hR8FwEKn511hYcZ8i+fnLxtrC+4KQ==
-X-Received: by 2002:a9d:6343:: with SMTP id y3mr301853otk.38.1554337997827;
- Wed, 03 Apr 2019 17:33:17 -0700 (PDT)
-Date:   Wed,  3 Apr 2019 17:32:31 -0700
+        bh=aQw0KGeWmvPzPQJC9aCiMXHo5RCdIiAFpbvhdBtqfOA=;
+        b=jkR4zNdgN8DKGb1KvtqSMWb1GSFVWZSBYTvAd3JiWrJJ0aDSYHTegVErtbfJU1VCKU
+         BF2B/k7VuQo3bUq5z3Pk9Ta6t8CsHR5VB+fo6/TIP/8J8v7Pk44A/9+WBd8UiQHmGdIe
+         tLPXhH6mK0Z0hhvQcR2JA5r6qcxBbEF5pKXVmcwzVhviCtUSMZxYJayPUPVP1C2nJ42y
+         7mCWSfmM47kg7fLiJE6lBArRuKnqZwV+RHOrRCNwUIoaPym95Kn21bzegRxn22Glu07D
+         oHc9j6DMkH5iR/ywagbsyJHZZHgzVw/Hn7j76KUCNdirmjMmVRXEJXxAKpeDmAntkJLY
+         p6PQ==
+X-Gm-Message-State: APjAAAWevtz9SHDLpIsUxJavPeNda3EXYq2/hdTWxLSoVxUCF51LQfKx
+        qIlyfFU24GfRU3i/FRfmwJZGDbBsBqRldSfAheBVFQ==
+X-Google-Smtp-Source: APXvYqwn9uDV4QCW3Ysw0OeGe8fuj1O+mbnQ+p5+YyWGjXPdgos0oC1yx4GJVCZSHMnrpHBueWMml8CLMI4YTuAGQGSUpA==
+X-Received: by 2002:a1f:9010:: with SMTP id s16mr372950vkd.12.1554338007705;
+ Wed, 03 Apr 2019 17:33:27 -0700 (PDT)
+Date:   Wed,  3 Apr 2019 17:32:35 -0700
 In-Reply-To: <20190404003249.14356-1-matthewgarrett@google.com>
-Message-Id: <20190404003249.14356-10-matthewgarrett@google.com>
+Message-Id: <20190404003249.14356-14-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190404003249.14356-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH V32 09/27] uswsusp: Disable when the kernel is locked down
+Subject: [PATCH V32 13/27] ACPI: Limit access to custom_method when the kernel
+ is locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
         linux-api@vger.kernel.org, luto@kernel.org,
         Matthew Garrett <mjg59@srcf.ucam.org>,
-        Matthew Garrett <mjg59@google.com>, linux-pm@vger.kernel.org,
-        pavel@ucw.cz, rjw@rjwysocki.net
+        Matthew Garrett <mjg59@google.com>, linux-acpi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
@@ -74,33 +74,31 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-uswsusp allows a user process to dump and then restore kernel state, which
-makes it possible to modify the running kernel.  Disable this if the kernel
-is locked down.
+custom_method effectively allows arbitrary access to system memory, making
+it possible for an attacker to circumvent restrictions on module loading.
+Disable it if the kernel is locked down.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-cc: linux-pm@vger.kernel.org
-Cc: pavel@ucw.cz
-Cc: rjw@rjwysocki.net
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-acpi@vger.kernel.org
 ---
- kernel/power/user.c | 3 +++
+ drivers/acpi/custom_method.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/kernel/power/user.c b/kernel/power/user.c
-index 2d8b60a3c86b..99e13fd13237 100644
---- a/kernel/power/user.c
-+++ b/kernel/power/user.c
-@@ -52,6 +52,9 @@ static int snapshot_open(struct inode *inode, struct file *filp)
- 	if (!hibernation_available())
- 		return -EPERM;
+diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
+index 4451877f83b6..37de3cd84493 100644
+--- a/drivers/acpi/custom_method.c
++++ b/drivers/acpi/custom_method.c
+@@ -29,6 +29,9 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
+ 	struct acpi_table_header table;
+ 	acpi_status status;
  
-+	if (kernel_is_locked_down("/dev/snapshot", LOCKDOWN_INTEGRITY))
++	if (kernel_is_locked_down("ACPI custom methods", LOCKDOWN_INTEGRITY))
 +		return -EPERM;
 +
- 	lock_system_sleep();
- 
- 	if (!atomic_add_unless(&snapshot_device_available, -1, 0)) {
+ 	if (!(*ppos)) {
+ 		/* parse the table header to get the table length */
+ 		if (count <= sizeof(struct acpi_table_header))
 -- 
 2.21.0.392.gf8f6787159e-goog
 
