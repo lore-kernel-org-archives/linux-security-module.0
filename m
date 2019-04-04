@@ -5,101 +5,109 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD12BC10F06
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E27C4360F
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AAFE2147C
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:34:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D88982147C
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 00:34:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OMHv1x1H"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f4X9nbNH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbfDDAeW (ORCPT
+        id S1726316AbfDDAeb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Apr 2019 20:34:22 -0400
-Received: from mail-ot1-f73.google.com ([209.85.210.73]:50589 "EHLO
-        mail-ot1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728589AbfDDAd7 (ORCPT
+        Wed, 3 Apr 2019 20:34:31 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:39902 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728523AbfDDAdt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Apr 2019 20:33:59 -0400
-Received: by mail-ot1-f73.google.com with SMTP id r23so291829ota.17
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 17:33:58 -0700 (PDT)
+        Wed, 3 Apr 2019 20:33:49 -0400
+Received: by mail-pg1-f202.google.com with SMTP id o4so363558pgl.6
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Apr 2019 17:33:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=al58t6ANDPLU85eDCqgZCBVARE5LKCf1VFpj6vFxHNY=;
-        b=OMHv1x1HxndU3NYmoUDmr9gQTnccB79SBkQfVDDbXGerRUffhKe6CcKdOi1Ir6U/wV
-         63pZmusqM4wrJB3yOIwud+H8z+rdBHLPiu2Nd2+CvehvZTx/coIYOejQtGpr5JFfvqMP
-         MNj8GYj1yT0GExuZlz77AKMQyhlLsSMVTk5K7AYVMbxIX35vv6uMnYQvXU+tEVr0nFnJ
-         y0NtltQc0YcLV2t1wBZGv+p05r+BoNoBrXxeT+rhmRkJs42rPYcHU7PUIFLfi6y18jM3
-         b2GRyv7mdMlx6fdRqiGL8NEZ942MHhJgDUsEAUs0AOwl3ctDo8EtN/OVpbri/oz+lrTG
-         QiRA==
+        bh=J18ALo3LueGVhn7lBcFJjxgV6Duc6Nrvg9c6IUw3gFk=;
+        b=f4X9nbNHfY4KPoiY2rsTDeZzZS0xVYDSJh48T/INc5xcxO6l06XtPToGB5Yf4apcsF
+         QO9MOn/GG22R7EaKsFZ5VoOMO2fyeDZ2nLv5NFyTUIcChYQg+eLUp5gALnVlBXrYfTQp
+         RPpFDlg7gyi/RfbU/aUNdvCAMzBbq4Ux9qoL8qcq3qckUGaWWU5ehr//0EPmpZuM51fH
+         rEXxgeXSu9SkJgqz7FnM2j66Vm7PfIenJp7rjiBnINO41wb0GMcbfQdm+vCGGxCVXqra
+         UAy733GzeE5eTRjvF98IFUyGNKiT5Sa5nKXo2vH8rdjB/GkvJoZbfYLJS/M4g3VQ751b
+         SkEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=al58t6ANDPLU85eDCqgZCBVARE5LKCf1VFpj6vFxHNY=;
-        b=nNRzl/15bj5UMj6iRgqnntGkpDc/sNgNML+cAPPeZSZhmYJKDCVBlLJK+jYHrp2Sgk
-         6QhBmsMI9dxlnFkwnOZQ/sZ2xtnQfKHjI10GAR0MMGduMEENJ+RbfKlJdlDKc8DmwDyZ
-         wPl6Xoruvp1k1Rm9C3U7VQzOxg3qqx1+ub09gnWucuJ2s4ZqPDq4jBzv/6x8R7C/yONo
-         s207htMecX4efhmLYalUEklZDdMoz2Oiyejs58iX6w6uj/96t9tRva6lbk0PdA0MTrSI
-         9X2OS/4q4G4GZZTTfe0F2E7kxeJhbh57VGMSuG0SuWHYmdLaQ0/W6jhOnC88I736Rl3P
-         W3vQ==
-X-Gm-Message-State: APjAAAXzU6lVYu6kQfa4jPNx3REBkPJW5GPli5oRWWMl/f84P22cWVXz
-        qtpXfA9nfICPKq2PshRG2VsCnM6V3M2U3Iex9WRsdg==
-X-Google-Smtp-Source: APXvYqyTQMf0hBtIoJQxs48Z7EtRxQ4n5Sm6ALb5kg6yqoQOcbkRO5xTMllm9jjfwmqy/eZaXTvcifddpqNOzWmpA4lWVA==
-X-Received: by 2002:a9d:61d9:: with SMTP id h25mr264758otk.27.1554338038536;
- Wed, 03 Apr 2019 17:33:58 -0700 (PDT)
-Date:   Wed,  3 Apr 2019 17:32:47 -0700
+        bh=J18ALo3LueGVhn7lBcFJjxgV6Duc6Nrvg9c6IUw3gFk=;
+        b=bIkbR14gcxFDSqoCrVqfXN8PzP37nQyEDNdX+qJnpbavDl8NGwY34ly0N/J1Te1/MS
+         xGn0b9NaqR3vz2aej6ODFgB1q5BJCM20nt62X5d+q+Q3pE4Ukv9QWy95B5qtwZFN6LS5
+         Aw+TLg50U7LvQ330s1rx11gPt4E8UctbzS4bD7NLOTXBZ6GNDflFh7CCNcRvBcyQhJgG
+         MejzjY7WifWTh9V3uBJ36kw/mP/ZV7CrGlwSHZ1/jl7qXNfvw0+ymTE08U0QDfKs9VZ4
+         vE0fIwfy774Y/c/6KHRF5vZVc1AHjNy7m3iJ8gJwh38SlwE3v1QyBJx/FGpUj5VKOoAm
+         6Vxw==
+X-Gm-Message-State: APjAAAWz8357AIARxialBX2coLrXyPbP8c7qoKQyltLlU0Bm8i6wUbwr
+        +99ODc4iwRhi3Pyu3znOgpCHOwBD6z2KqWSalsuMTw==
+X-Google-Smtp-Source: APXvYqz4j3QeuhcSeCpssrYno1HhWQWSUHEQbxzBBQkzAYaBEuGhtUI12IUFX6VGtthFChJDwz6dBYHGr0vkhfKiuAft8A==
+X-Received: by 2002:a65:6483:: with SMTP id e3mr60177pgv.12.1554338028850;
+ Wed, 03 Apr 2019 17:33:48 -0700 (PDT)
+Date:   Wed,  3 Apr 2019 17:32:43 -0700
 In-Reply-To: <20190404003249.14356-1-matthewgarrett@google.com>
-Message-Id: <20190404003249.14356-26-matthewgarrett@google.com>
+Message-Id: <20190404003249.14356-22-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190404003249.14356-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH V32 25/27] lockdown: Print current->comm in restriction messages
+Subject: [PATCH V32 21/27] Lock down tracing and perf kprobes when in
+ confidentiality mode
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
         linux-api@vger.kernel.org, luto@kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Matthew Garrett <mjg59@google.com>
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Matthew Garrett <mjg59@google.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        davem@davemloft.net, Masami Hiramatsu <mhiramat@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Print the content of current->comm in messages generated by lockdown to
-indicate a restriction that was hit.  This makes it a bit easier to find
-out what caused the message.
+From: David Howells <dhowells@redhat.com>
 
-The message now patterned something like:
+Disallow the creation of perf and ftrace kprobes when the kernel is
+locked down in confidentiality mode by preventing their registration.
+This prevents kprobes from being used to access kernel memory to steal
+crypto data, but continues to allow the use of kprobes from signed
+modules.
 
-        Lockdown: <comm>: <what> is restricted; see man kernel_lockdown.7
-
+Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.ibm.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: davem@davemloft.net
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- security/lock_down.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/trace_kprobe.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/security/lock_down.c b/security/lock_down.c
-index 9913fff09ad0..2659722784cc 100644
---- a/security/lock_down.c
-+++ b/security/lock_down.c
-@@ -70,8 +70,8 @@ bool __kernel_is_locked_down(const char *what, enum lockdown_level level,
- 			     bool first)
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index d5fb09ebba8b..5c70acd80344 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -420,6 +420,9 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
  {
- 	if ((kernel_locked_down >= level) && what && first)
--		pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
--			  what);
-+		pr_notice("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
-+			  current->comm, what);
- 	return (kernel_locked_down >= level);
- }
- EXPORT_SYMBOL(__kernel_is_locked_down);
+ 	int i, ret;
+ 
++	if (kernel_is_locked_down("Use of kprobes", LOCKDOWN_CONFIDENTIALITY))
++		return -EPERM;
++
+ 	if (trace_probe_is_registered(&tk->tp))
+ 		return -EINVAL;
+ 
 -- 
 2.21.0.392.gf8f6787159e-goog
 
