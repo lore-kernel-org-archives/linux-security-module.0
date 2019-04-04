@@ -4,82 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C1BC4360F
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 17:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6C8C4360F
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 20:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43D852075E
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 17:24:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1472C21738
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 20:09:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dyR91XKl"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J4Vn3oYy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbfDDRYe (ORCPT
+        id S1730565AbfDDUJd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Apr 2019 13:24:34 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41464 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728643AbfDDRYd (ORCPT
+        Thu, 4 Apr 2019 16:09:33 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35761 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfDDUJd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Apr 2019 13:24:33 -0400
-Received: by mail-io1-f67.google.com with SMTP id v10so2655376iom.8
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Apr 2019 10:24:33 -0700 (PDT)
+        Thu, 4 Apr 2019 16:09:33 -0400
+Received: by mail-it1-f195.google.com with SMTP id w15so5866210itc.0
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Apr 2019 13:09:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=LkdUEkcxFkzk6/8LedbuZeBMeRGDZcjzLzb6vhWuFOE=;
-        b=dyR91XKloyyp+E859Ey8oSsuOa0peX78frffGQaDEBpqPLgjGPCUZkwof2Inry+5fk
-         6EIa0s7GuXpgNwp1ORheRePXR0WrAp2zkiOk80sAplV3ToyNV/5Tob8UI6qtFylPR62u
-         bb6L6D8/ifc29N9T3XPlVtogOzBmbOlzoCwtnu0/WdwbkJSygax5RACm+L7n1hudLz6B
-         3/9avlC+aZS5c09xexGUuXb4c3pjN4n1LEda6KKhM4DrW7MftH+u44Hd2t4hUJeCUfnL
-         OpOChi3xSgbU9BDXe9PCDNYrrZc7LH/gEecV5w9QNZ83VC0pwa8YZkrx1v1W1D5o5TND
-         DWkA==
+        bh=6bLb+zP/1U7/cc68U8qH08JsWFZ56TbRic+4sQbf7I8=;
+        b=J4Vn3oYy4osi41ATBHxrzZM/Ga2bFaA5KOI/tQ6vjxhRYLv3psN6tMIpzBKzt9wIz7
+         K9OwbnPi0lJddzpaiMSGsE7jBzcYH3SYme17g8OrTsoVk4g0NW6k7qZ4Fx4Jvx8jHAtV
+         AZySu2/7/sA5U5bKPxvYG/DjK/tdQFug0WjRojUhOAa0tn/QazCX5hBNr19y/PfQkbOJ
+         4BRb5nTeLzljObMAC/OfavCYMJn71sT4HzqOEpQ8S9au/2Epmj7ar8o5CWfgeyUguE/j
+         HRkeForAXQE+C+za6VBv8zbzbEYn29y4ep042Waa/+tz4fd9eYCQ8J2wosjx294iqzmF
+         gfhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LkdUEkcxFkzk6/8LedbuZeBMeRGDZcjzLzb6vhWuFOE=;
-        b=pWLSqmgEA1TDoJz9Z1XpurLchIQ3keTL0pZ0r8stQhZ3Fd03SaitGH7n2FzU2csrTF
-         E/9IGeJnViqvAd/Eo+Pg/sn4J+wFORIzKsSJoSVEHdtgv17dTOtp4pmlZDIyF+Al0WaE
-         f5Y4rKa2MNOYJSFoVhznrKnOXzWoIt/11jy45DnwyeD+dZ9DX5tQk+58adw8f3ZAEd88
-         p97ZLK/BYV3VP0yDJiiUf/tKi+H4sXTdf4l0lsrwGinugQhwcbDylIdDgoEctfyTxXpA
-         L/1GAvXdCSvL/b5PO7WJQk3AWvzenaZGSgUNESD7MQDgsiOWmRiNIOuy4VlgIUvlJC9L
-         M/lQ==
-X-Gm-Message-State: APjAAAXwVI+bP/tzZ3H+rut5LOnudYLVgmrj5HCxvE9qDrKXWrWkKSG9
-        /ywEB5vz8ho/kY7OspnatCG1s3m6JpyfkKkPke7S6w==
-X-Google-Smtp-Source: APXvYqztxdGonMa4pstJ/7vRubkc7YZsFytjtWtE0y/NyV5nZ2xpD80rsAtV3lZX5D4GvPVD7zAGkqrNa7i8yFftSj8=
-X-Received: by 2002:a6b:691a:: with SMTP id e26mr4984716ioc.124.1554398672881;
- Thu, 04 Apr 2019 10:24:32 -0700 (PDT)
+        bh=6bLb+zP/1U7/cc68U8qH08JsWFZ56TbRic+4sQbf7I8=;
+        b=qc4VtqFu97+A6bvqd6JgdTz/GuQgy9UYgmaHExeS+VcHZ7hcq9TsWdKhx2DTK5jcjD
+         ZgtImlWeErwde0mOvXYyu5l2t6whlM7Hobz7ct07WpP8c1rc4Gbz5Q46kgQXuESQxGfu
+         xArkT5ec1lRa1iszXV54RRdo5mr9DBOoH5CKrwQFeHFeT9D/rbinuNjfULJFziWngvL/
+         pYkfkSo1+j0yib83dBvFKG7zxw4GqnyzPwKlFcscwOi6RZqFwKW32rJvHLN0FprC0oTh
+         bXzbWUwVFHuCXNnTiEFVjhMYxSghLPgnun+T5d+8zBH4pgbAeauusqgEw/GvgwsPOnr3
+         14lQ==
+X-Gm-Message-State: APjAAAXht3x9KUxEAq8eWb1/95JAEpcBMGoLY5tdpSWLQpaJAqDQoT+b
+        Wp7USH74vU1pfNa0VthknRHi4LAxcc/FBskiDRj3vg==
+X-Google-Smtp-Source: APXvYqyvaH6ScrDsGUFJtBJPfZoqCJ3a/BVA7kZPhoCuDXZFJaoKsLvOsgwu6nC/JvXmd3kVzz5Ps6fQjBa1mdCovqQ=
+X-Received: by 2002:a24:3905:: with SMTP id l5mr5966372ita.43.1554408572264;
+ Thu, 04 Apr 2019 13:09:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190402215556.257406-1-matthewgarrett@google.com> <20190404124057.GC14738@linux.intel.com>
-In-Reply-To: <20190404124057.GC14738@linux.intel.com>
+References: <20190404003249.14356-1-matthewgarrett@google.com>
+ <20190404003249.14356-28-matthewgarrett@google.com> <20190404093907.153f52a8@gandalf.local.home>
+In-Reply-To: <20190404093907.153f52a8@gandalf.local.home>
 From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 4 Apr 2019 10:24:21 -0700
-Message-ID: <CACdnJusEua0nyF2xhSVbFKnUxNVPT01e65yJs8cROMMO-nT6QQ@mail.gmail.com>
-Subject: Re: [PATCH] TCG2 log support build fixes for non-x86_64
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
+Date:   Thu, 4 Apr 2019 13:09:20 -0700
+Message-ID: <CACdnJuurDF91MyJsngup=Xn+qShqxEqf_w1mEd7RFH5RLTWCgA@mail.gmail.com>
+Subject: Re: [PATCH V32 27/27] tracefs: Restrict tracefs when the kernel is
+ locked down
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     James Morris <jmorris@namei.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+        David Howells <dhowells@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 4, 2019 at 5:41 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+On Thu, Apr 4, 2019 at 6:39 AM Steven Rostedt <rostedt@goodmis.org> wrote:
 >
-> On Tue, Apr 02, 2019 at 02:55:54PM -0700, Matthew Garrett wrote:
-> > Couple of patches to fix ktest reported issues with the crypto-agile log
-> > format support.
+> On Wed,  3 Apr 2019 17:32:49 -0700
+> Matthew Garrett <matthewgarrett@google.com> wrote:
 >
-> I guess I squash these to your earlier commits?
+>
+> > +static void tracefs_destroy_inode(struct inode *inode)
+> > +{
+> > +     if S_ISREG(inode->i_mode)
+>
+> Can we please put parenthesis around the condition. I know that the
+> macro has them, but no other place in the kernel plays such a trick.
 
-Works for me.
+Ha, I've been spending too much time in Go lately. Fixed.
