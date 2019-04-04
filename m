@@ -2,55 +2,55 @@ Return-Path: <SRS0=ir4w=SG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE64DC4360F
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 01:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9715BC4360F
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 07:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 907162147C
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 01:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EA5320882
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Apr 2019 07:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbfDDBdY (ORCPT
+        id S1726530AbfDDHsB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Apr 2019 21:33:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34454 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726167AbfDDBdX (ORCPT
+        Thu, 4 Apr 2019 03:48:01 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:43753 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbfDDHsA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Apr 2019 21:33:23 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBBA72133D;
-        Thu,  4 Apr 2019 01:33:21 +0000 (UTC)
-Date:   Wed, 3 Apr 2019 21:33:20 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
+        Thu, 4 Apr 2019 03:48:00 -0400
+Received: from p5492e2fc.dip0.t-ipconnect.de ([84.146.226.252] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hBx6G-0000NA-UG; Thu, 04 Apr 2019 09:47:53 +0200
+Date:   Thu, 4 Apr 2019 09:47:52 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dhowells@redhat.com,
         linux-api@vger.kernel.org, luto@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
         Matthew Garrett <mjg59@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Ingo Molnar <mingo@kernel.org>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
 Subject: Re: [PATCH V32 19/27] x86/mmiotrace: Lock down the testmmiotrace
  module
-Message-ID: <20190403213320.403a0ea3@oasis.local.home>
 In-Reply-To: <20190404003249.14356-20-matthewgarrett@google.com>
-References: <20190404003249.14356-1-matthewgarrett@google.com>
-        <20190404003249.14356-20-matthewgarrett@google.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Message-ID: <alpine.DEB.2.21.1904040947410.1833@nanos.tec.linutronix.de>
+References: <20190404003249.14356-1-matthewgarrett@google.com> <20190404003249.14356-20-matthewgarrett@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed,  3 Apr 2019 17:32:41 -0700
-Matthew Garrett <matthewgarrett@google.com> wrote:
+On Wed, 3 Apr 2019, Matthew Garrett wrote:
 
 > From: David Howells <dhowells@redhat.com>
 > 
@@ -63,32 +63,5 @@ Matthew Garrett <matthewgarrett@google.com> wrote:
 > Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 > Signed-off-by: David Howells <dhowells@redhat.com
 > Signed-off-by: Matthew Garrett <mjg59@google.com>
-> cc: Thomas Gleixner <tglx@linutronix.de>
-> cc: Steven Rostedt <rostedt@goodmis.org>
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-> cc: Ingo Molnar <mingo@kernel.org>
-> cc: "H. Peter Anvin" <hpa@zytor.com>
-> cc: x86@kernel.org
-> ---
->  arch/x86/mm/testmmiotrace.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
-> index f6ae6830b341..9e8ad665f354 100644
-> --- a/arch/x86/mm/testmmiotrace.c
-> +++ b/arch/x86/mm/testmmiotrace.c
-> @@ -115,6 +115,9 @@ static int __init init(void)
->  {
->  	unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
->  
-> +	if (kernel_is_locked_down("MMIO trace testing", LOCKDOWN_INTEGRITY))
-> +		return -EPERM;
-> +
->  	if (mmio_address == 0) {
->  		pr_err("you have to use the module argument mmio_address.\n");
->  		pr_err("DO NOT LOAD THIS MODULE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!\n");
-
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
