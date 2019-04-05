@@ -2,119 +2,144 @@ Return-Path: <SRS0=2koH=SH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E8AC4360F
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Apr 2019 13:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C129FC4360F
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Apr 2019 14:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0934C2184B
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Apr 2019 13:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554472454;
-	bh=rOVanrb9Muwv6AuI+K5tqQY+dLtvA2hY7Xel2iIEh1U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=2WLsZPSH2xsk0GsTVi65FQW4wlePyPoEAO9noazBxdE+eODvqMPK1bDNw4Wzv3/9n
-	 0rkXD3qq8G1vqYlJlB4tqJeHwJYQ1PumvmIBu4RVQ3b8n06sX97UASFqZFfkLzsZEl
-	 FYo9r3Bff73F5ZvboPSkeXnQE9nWYaogtxAwM2IY=
+	by mail.kernel.org (Postfix) with ESMTP id 8654121852
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Apr 2019 14:00:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PqoXuF/G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730283AbfDENyN (ORCPT
+        id S1731379AbfDEOAR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Apr 2019 09:54:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726027AbfDENyN (ORCPT
+        Fri, 5 Apr 2019 10:00:17 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:39317 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731378AbfDEOAR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Apr 2019 09:54:13 -0400
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D72502186A
-        for <linux-security-module@vger.kernel.org>; Fri,  5 Apr 2019 13:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1554472452;
-        bh=rOVanrb9Muwv6AuI+K5tqQY+dLtvA2hY7Xel2iIEh1U=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=e9I24nN5oUIsVrtlym6aLUZp85x3Ffon0SS+EAJn+vHdHuX+fanbim5a3gw3amk13
-         ZiyOS2nzc+WZ/w6U1Z2R9HN0HdX4QGQ9OGoZHkLv6fycjwaGqmGSrDE+idYrN1jZT6
-         J13Fv0nE9CO9DIlVdpnugEEV5XkMMuR1XKFl/psU=
-Received: by mail-wr1-f43.google.com with SMTP id s15so8077083wra.12
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Apr 2019 06:54:11 -0700 (PDT)
-X-Gm-Message-State: APjAAAXz8y4z30IRXmHn1oq08ynKLs4UHmAyEroNy2l+qEsiY0fnTp8T
-        PGp6Ga17NgvoF967ph+GtKortFkrb3zbs4VuTxiS2g==
-X-Google-Smtp-Source: APXvYqyuQcwyUs8wVj8FyzfSITaHiBv7ubwx4o6Of/MfYUKemGRkVmjyAkzM0OphvXJ/ovBLvUvvmNdIBUeo42E4klQ=
-X-Received: by 2002:adf:eb84:: with SMTP id t4mr2116241wrn.43.1554472448707;
- Fri, 05 Apr 2019 06:54:08 -0700 (PDT)
+        Fri, 5 Apr 2019 10:00:17 -0400
+Received: by mail-vs1-f67.google.com with SMTP id g127so3538233vsd.6
+        for <linux-security-module@vger.kernel.org>; Fri, 05 Apr 2019 07:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XWbFfbwXDUh9HzwsjjSuBYocWfNAzfzS0o/h2xYGUCk=;
+        b=PqoXuF/GMB6StDcMhaIbQnOQ4u/pDmnJ0aBbH4QUkW691QPc7mBilCg/9vSXNRSqGI
+         TCmrvAttG7EYKisDfwYk2UHHBjHbnz2vvkgY5dmNh+JJfpoP8IkXZXULl3LF9pEsDPad
+         vvgTv41L7GMIdmCvxzHxEfUbH6976gGPZMSwNAg7fRXA2B2Ez6AiVUwiPpAukkJ+NqRs
+         jddCDqEc+KBpZMyuvAbNZE8ugeCfmWN3R8KUA5lO2OV5XJ5rn336uDi9QtaMa6MjLdKt
+         bLbEGrZOB9H6UaoDb4qCnmScA1oVs8pWTdrKH5W4aiPxmoHCawIKGEHreDfvUAu41No+
+         fezg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XWbFfbwXDUh9HzwsjjSuBYocWfNAzfzS0o/h2xYGUCk=;
+        b=c1WoOjSGGSSewQXqjfrijSme/hAZMG9rv+lZxcg2kI4SGrZkgfg4iN4n2IX00lsVfw
+         CcIsHPI9YAsRmFwxfZ/SDITuTjD1elFYodfDqo6gQmM4lZRa8fbG3PRCEX1SXbXnEShR
+         q5ND+lIDVPFDaGeT+bcW2K4A2i7A1bEM84BVhXjcHLu/ksfducl0B1cH606Vtbf5kue4
+         A93HxqQftadmPZY/inKcwZh340tL10KcO94NtTBYx6m9J73Blz53DJtn9/0Eg6cvd5P5
+         01FU/idYDERnAgBscg6j3C7MwmPeIgoNRh94WaJcuFi9mrqE1axiPGYgfDgX7WKDeZoj
+         iMJA==
+X-Gm-Message-State: APjAAAVEvjNousVGIN1gGHIqhMc/sfR/HnwuToMdIa43oHfp+wZ8mrT9
+        n6gNW5l1msqNk1/0tkF7er86s6j3CxUiTvoyYFy5UQ==
+X-Google-Smtp-Source: APXvYqwyYIVaHjgIS2rBYvxm/IzCTBxbRSYQqrHVnVODInNKOwu47jTQyDICFuZsrzVzKK/qqqIFFE2upobo9QRe84U=
+X-Received: by 2002:a67:7d8e:: with SMTP id y136mr8311062vsc.147.1554472816025;
+ Fri, 05 Apr 2019 07:00:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190317211456.13927-1-jarkko.sakkinen@linux.intel.com>
- <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com> <CALCETrXQ0x2TD5GnaHhmF6SExk0C8+L0AwfnH-Krqwttfvwz2A@mail.gmail.com>
- <20190322112938.GJ3122@linux.intel.com> <20190322114325.GA10165@linux.intel.com>
- <CALCETrW=Fr8EdVq+5FLbmdL__i82FC0ONHd=hBXjxpLcsv9M0Q@mail.gmail.com>
- <20190325145503.GB29989@linux.intel.com> <20190405101817.GA9816@linux.intel.com>
-In-Reply-To: <20190405101817.GA9816@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 5 Apr 2019 06:53:57 -0700
-X-Gmail-Original-Message-ID: <CALCETrWEhcx+Uak+Rmh5F4DvY6=G3nYcMhsN3o1XvdxrGNtsqA@mail.gmail.com>
-Message-ID: <CALCETrWEhcx+Uak+Rmh5F4DvY6=G3nYcMhsN3o1XvdxrGNtsqA@mail.gmail.com>
-Subject: Re: [PATCH v19 17/27] x86/sgx: Add provisioning
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        linux-sgx@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>
+References: <20190308132701.133598-1-glider@google.com> <20190308132701.133598-3-glider@google.com>
+ <CAK7LNARV+_RNE4E5H37e9wH6iPyrzqsLtcWd0wLSt+vsEvncRA@mail.gmail.com>
+In-Reply-To: <CAK7LNARV+_RNE4E5H37e9wH6iPyrzqsLtcWd0wLSt+vsEvncRA@mail.gmail.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Fri, 5 Apr 2019 16:00:05 +0200
+Message-ID: <CAG_fn=X1CJ6+1rHeHLUjJmXYPLbOL8_2sSrFBv+oxpMvw87ACg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] initmem: introduce CONFIG_INIT_ALL_HEAP
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Sandeep Patil <sspatil@android.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 5, 2019 at 3:18 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
+On Fri, Apr 5, 2019 at 1:36 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> On Mon, Mar 25, 2019 at 04:55:03PM +0200, Jarkko Sakkinen wrote:
-> > > > Hmm.. on 2nd thought the LSM policy or even DAC policy  would restrict
-> > > > that the container manager can only access specific files inside
-> > > > securityfs. With this conclusion I still think it is probably the best
-> > > > place for seurity policy like things even for SGX. It is meant for that
-> > > > anyway.
-> > > >
-> > >
-> > > LSM or DAC policy can certainly *restrict* it, but I suspect that most
-> > > container runtimes don't mount securityfs at all.  OTOH, the runtime
-> > > definitely needs to have a way to pass /dev/sgx/enclave (or whatever
-> > > it's called) through, so using another device node will definitely
-> > > work.
+> On Fri, Mar 8, 2019 at 10:27 PM Alexander Potapenko <glider@google.com> w=
+rote:
 > >
-> > OK, I can cope with this argument. I go with the device names above for
-> > v20.
+> > diff --git a/security/Kconfig.initmem b/security/Kconfig.initmem
+> > index 27aec394365e..5ce49663777a 100644
+> > --- a/security/Kconfig.initmem
+> > +++ b/security/Kconfig.initmem
+> > @@ -13,6 +13,17 @@ config INIT_ALL_MEMORY
+> >
+> >  if INIT_ALL_MEMORY
+> >
+> > +config INIT_ALL_HEAP
+> > +       bool "Initialize all heap"
+> > +       depends on INIT_ALL_MEMORY
+> > +       select CONFIG_PAGE_POISONING
+> > +       select CONFIG_PAGE_POISONING_NO_SANITY
+> > +       select CONFIG_PAGE_POISONING_ZERO
+> > +       select CONFIG_SLUB_DEBUG
 >
-> In v20 the refactoring would be with corresponding modes:
+> This should like follows (no CONFIG_ prefix):
 >
-> /dev/sgx 0755
-> /dev/sgx/enclave 0666
-> /dev/sgx/provision 0600
+>          select PAGE_POISONING
+>          select PAGE_POISONING_NO_SANITY
+>          select PAGE_POISONING_ZERO
+>          select SLUB_DEBUG
+Thanks!
+> But, again, this causes unmet dependency if SLUB=3Dn
+          select SLUB_DEBUG if SLUB
+seems to help. Guess it's better than making CONFIG_INIT_ALL_HEAP
+depend on SLUB.
 >
-> The problem that I'm facing is that with devnode callback of struct
-> device_type I can easily give the defaut mode for any of the files but
-> not for the /dev/sgx directory itself. How do I get the appropriate
-> mode for it?
 >
+>
+>
+> > +       default y
+> > +       help
+> > +         Enable page poisoning and slub poisoning by default.
+> > +
+> >  config INIT_ALL_STACK
+> >         bool "Initialize all stack"
+> >         depends on INIT_ALL_MEMORY
+> > --
+> > 2.21.0.360.g471c308f928-goog
+> >
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
-Hi Greg-
 
-Do you know this one?
+
+--=20
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
