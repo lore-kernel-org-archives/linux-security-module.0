@@ -2,114 +2,173 @@ Return-Path: <SRS0=2koH=SH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC33C4360F
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Apr 2019 11:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E48C4360F
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Apr 2019 13:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E29E2186A
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Apr 2019 11:36:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="q1RYlE5n"
+	by mail.kernel.org (Postfix) with ESMTP id CFF3B2184B
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Apr 2019 13:35:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730918AbfDELgG (ORCPT
+        id S1726594AbfDENfI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Apr 2019 07:36:06 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:62612 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730642AbfDELgG (ORCPT
+        Fri, 5 Apr 2019 09:35:08 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:48245 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfDENfH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Apr 2019 07:36:06 -0400
-X-Greylist: delayed 1013 seconds by postgrey-1.27 at vger.kernel.org; Fri, 05 Apr 2019 07:36:05 EDT
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x35Ba2TZ010688;
-        Fri, 5 Apr 2019 20:36:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x35Ba2TZ010688
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1554464163;
-        bh=CUJlDP1tnHE8qrG/10NNQI9jQMbX8JoUEaTCQMeYC/0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=q1RYlE5nsmmeHuYKMfAup2A6ROFCP8U8NVb5q7G/uwonew4kAeQER48LJWaGpv957
-         Bcyca7+t/c1zRdqeedNZp79WhRWNcI+U2fheXlwly97FCMH8ARpFF9nUVRrzHMef7n
-         niorBYJTPrp0iEQx25j656ExEuCLPWUvjU/FW7WdPOn7J4LF4XO8sZqU1T5Wt1MiO/
-         uIddVcLBxWyumOoVQCnjosTM2gjTIT+DdIOBDnxBqT85J6Hw1Ai98OSCn9AxIgeeQ8
-         pwj70Gbp07nplFBBrTGCXJwjOPBlj9lGBPGdgDBUTR2vFBBTgdjVvs9zAh1pfUo7n/
-         D/SFgV0GXRhxQ==
-X-Nifty-SrcIP: [209.85.217.44]
-Received: by mail-vs1-f44.google.com with SMTP id d8so3285642vsp.2;
-        Fri, 05 Apr 2019 04:36:02 -0700 (PDT)
-X-Gm-Message-State: APjAAAUZHscabt26DZeuDIc+Yv8euNTUoxA1OdhyyqnaVeqa3o7mjctM
-        ypzkczsZQU6O4MSQAitLHEgMfHa79RGTt2AkgFg=
-X-Google-Smtp-Source: APXvYqyYU3FDLG3yBwWpt9lx2Z6xOfEnoJl/eYKZGDivR7wohkmYpnGMCV0c3Qu5K6jTn9czkkDhxR9YRlwTaPybYHU=
-X-Received: by 2002:a67:fbcc:: with SMTP id o12mr8008193vsr.60.1554464161996;
- Fri, 05 Apr 2019 04:36:01 -0700 (PDT)
+        Fri, 5 Apr 2019 09:35:07 -0400
+Received: from localhost ([127.0.0.1] helo=flow.W.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hCOzk-0002tV-75; Fri, 05 Apr 2019 15:35:00 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-security-module@vger.kernel.org
+Cc:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, tglx@linutronix.de,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 2/2] apparmor: Switch to GFP_KERNEL where possible
+Date:   Fri,  5 Apr 2019 15:34:58 +0200
+Message-Id: <20190405133458.4809-2-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190405133458.4809-1-bigeasy@linutronix.de>
+References: <20190405133458.4809-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-References: <20190308132701.133598-1-glider@google.com> <20190308132701.133598-3-glider@google.com>
-In-Reply-To: <20190308132701.133598-3-glider@google.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 5 Apr 2019 20:35:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARV+_RNE4E5H37e9wH6iPyrzqsLtcWd0wLSt+vsEvncRA@mail.gmail.com>
-Message-ID: <CAK7LNARV+_RNE4E5H37e9wH6iPyrzqsLtcWd0wLSt+vsEvncRA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] initmem: introduce CONFIG_INIT_ALL_HEAP
-To:     Alexander Potapenko <glider@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>, kcc@google.com,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>, sspatil@android.com,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 8, 2019 at 10:27 PM Alexander Potapenko <glider@google.com> wrote:
->
-> diff --git a/security/Kconfig.initmem b/security/Kconfig.initmem
-> index 27aec394365e..5ce49663777a 100644
-> --- a/security/Kconfig.initmem
-> +++ b/security/Kconfig.initmem
-> @@ -13,6 +13,17 @@ config INIT_ALL_MEMORY
->
->  if INIT_ALL_MEMORY
->
-> +config INIT_ALL_HEAP
-> +       bool "Initialize all heap"
-> +       depends on INIT_ALL_MEMORY
-> +       select CONFIG_PAGE_POISONING
-> +       select CONFIG_PAGE_POISONING_NO_SANITY
-> +       select CONFIG_PAGE_POISONING_ZERO
-> +       select CONFIG_SLUB_DEBUG
+After removing preempt_disable() from get_buffers() it is possible to
+replace a few GFP_ATOMIC allocations with GFP_KERNEL.
 
-This should like follows (no CONFIG_ prefix):
+Replace GFP_ATOMIC allocations with GFP_KERNEL where the context looks
+to bee preepmtible.
 
-         select PAGE_POISONING
-         select PAGE_POISONING_NO_SANITY
-         select PAGE_POISONING_ZERO
-         select SLUB_DEBUG
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ security/apparmor/domain.c | 20 ++++++++++----------
+ security/apparmor/file.c   |  2 +-
+ security/apparmor/mount.c  |  2 +-
+ 3 files changed, 12 insertions(+), 12 deletions(-)
 
-But, again, this causes unmet dependency if SLUB=n
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 1f4a6e420b6d3..b8114d9988bac 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -524,7 +524,7 @@ struct aa_label *x_table_lookup(struct aa_profile *profile, u32 xindex,
+ 				label = &new_profile->label;
+ 			continue;
+ 		}
+-		label = aa_label_parse(&profile->label, *name, GFP_ATOMIC,
++		label = aa_label_parse(&profile->label, *name, GFP_KERNEL,
+ 				       true, false);
+ 		if (IS_ERR(label))
+ 			label = NULL;
+@@ -604,7 +604,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
+ 		/* base the stack on post domain transition */
+ 		struct aa_label *base = new;
+ 
+-		new = aa_label_parse(base, stack, GFP_ATOMIC, true, false);
++		new = aa_label_parse(base, stack, GFP_KERNEL, true, false);
+ 		if (IS_ERR(new))
+ 			new = NULL;
+ 		aa_put_label(base);
+@@ -712,7 +712,7 @@ static struct aa_label *profile_transition(struct aa_profile *profile,
+ 		if (DEBUG_ON) {
+ 			dbg_printk("apparmor: scrubbing environment variables"
+ 				   " for %s profile=", name);
+-			aa_label_printk(new, GFP_ATOMIC);
++			aa_label_printk(new, GFP_KERNEL);
+ 			dbg_printk("\n");
+ 		}
+ 		*secure_exec = true;
+@@ -788,7 +788,7 @@ static int profile_onexec(struct aa_profile *profile, struct aa_label *onexec,
+ 		if (DEBUG_ON) {
+ 			dbg_printk("apparmor: scrubbing environment "
+ 				   "variables for %s label=", xname);
+-			aa_label_printk(onexec, GFP_ATOMIC);
++			aa_label_printk(onexec, GFP_KERNEL);
+ 			dbg_printk("\n");
+ 		}
+ 		*secure_exec = true;
+@@ -822,7 +822,7 @@ static struct aa_label *handle_onexec(struct aa_label *label,
+ 					       bprm, buffer, cond, unsafe));
+ 		if (error)
+ 			return ERR_PTR(error);
+-		new = fn_label_build_in_ns(label, profile, GFP_ATOMIC,
++		new = fn_label_build_in_ns(label, profile, GFP_KERNEL,
+ 				aa_get_newest_label(onexec),
+ 				profile_transition(profile, bprm, buffer,
+ 						   cond, unsafe));
+@@ -834,9 +834,9 @@ static struct aa_label *handle_onexec(struct aa_label *label,
+ 					       buffer, cond, unsafe));
+ 		if (error)
+ 			return ERR_PTR(error);
+-		new = fn_label_build_in_ns(label, profile, GFP_ATOMIC,
++		new = fn_label_build_in_ns(label, profile, GFP_KERNEL,
+ 				aa_label_merge(&profile->label, onexec,
+-					       GFP_ATOMIC),
++					       GFP_KERNEL),
+ 				profile_transition(profile, bprm, buffer,
+ 						   cond, unsafe));
+ 	}
+@@ -902,7 +902,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+ 		new = handle_onexec(label, ctx->onexec, ctx->token,
+ 				    bprm, buffer, &cond, &unsafe);
+ 	else
+-		new = fn_label_build(label, profile, GFP_ATOMIC,
++		new = fn_label_build(label, profile, GFP_KERNEL,
+ 				profile_transition(profile, bprm, buffer,
+ 						   &cond, &unsafe));
+ 
+@@ -946,7 +946,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+ 		if (DEBUG_ON) {
+ 			dbg_printk("scrubbing environment variables for %s "
+ 				   "label=", bprm->filename);
+-			aa_label_printk(new, GFP_ATOMIC);
++			aa_label_printk(new, GFP_KERNEL);
+ 			dbg_printk("\n");
+ 		}
+ 		bprm->secureexec = 1;
+@@ -957,7 +957,7 @@ int apparmor_bprm_set_creds(struct linux_binprm *bprm)
+ 		if (DEBUG_ON) {
+ 			dbg_printk("apparmor: clearing unsafe personality "
+ 				   "bits. %s label=", bprm->filename);
+-			aa_label_printk(new, GFP_ATOMIC);
++			aa_label_printk(new, GFP_KERNEL);
+ 			dbg_printk("\n");
+ 		}
+ 		bprm->per_clear |= PER_CLEAR_ON_SETID;
+diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+index e422a3f59e80c..3eb2c5369711c 100644
+--- a/security/apparmor/file.c
++++ b/security/apparmor/file.c
+@@ -80,7 +80,7 @@ static void file_audit_cb(struct audit_buffer *ab, void *va)
+ 	if (aad(sa)->peer) {
+ 		audit_log_format(ab, " target=");
+ 		aa_label_xaudit(ab, labels_ns(aad(sa)->label), aad(sa)->peer,
+-				FLAG_VIEW_SUBNS, GFP_ATOMIC);
++				FLAG_VIEW_SUBNS, GFP_KERNEL);
+ 	} else if (aad(sa)->fs.target) {
+ 		audit_log_format(ab, " target=");
+ 		audit_log_untrustedstring(ab, aad(sa)->fs.target);
+diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+index 8a6cf1c14e82a..d73bc3ceaf9f5 100644
+--- a/security/apparmor/mount.c
++++ b/security/apparmor/mount.c
+@@ -679,7 +679,7 @@ int aa_pivotroot(struct aa_label *label, const struct path *old_path,
+ 
+ 	old_buffer = aa_get_buffer();
+ 	new_buffer = aa_get_buffer();
+-	target = fn_label_build(label, profile, GFP_ATOMIC,
++	target = fn_label_build(label, profile, GFP_KERNEL,
+ 			build_pivotroot(profile, new_path, new_buffer,
+ 					old_path, old_buffer));
+ 	if (!target) {
+-- 
+2.20.1
 
-
-
-
-
-> +       default y
-> +       help
-> +         Enable page poisoning and slub poisoning by default.
-> +
->  config INIT_ALL_STACK
->         bool "Initialize all stack"
->         depends on INIT_ALL_MEMORY
-> --
-> 2.21.0.360.g471c308f928-goog
->
-
-
---
-Best Regards
-Masahiro Yamada
