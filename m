@@ -2,72 +2,107 @@ Return-Path: <SRS0=KU/V=SK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 636DFC10F14
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 22:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95416C10F13
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 22:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D30521473
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 22:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D71821473
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 22:16:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SOYAjZQz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfDHWOr (ORCPT
+        id S1726437AbfDHWQA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Apr 2019 18:14:47 -0400
-Received: from namei.org ([65.99.196.166]:60896 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbfDHWOr (ORCPT
+        Mon, 8 Apr 2019 18:16:00 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34870 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbfDHWQA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Apr 2019 18:14:47 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x38MDfcA019064;
-        Mon, 8 Apr 2019 22:13:41 GMT
-Date:   Tue, 9 Apr 2019 08:13:41 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [GIT PULL] tpmdd fixes for Linux v5.1
-In-Reply-To: <CAA9_cmdyERPGwz-S3XuyJXnYrHM5V1fb_BCf_NS_kgQdN-YS=A@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.1904090813230.18801@namei.org>
-References: <20190329115544.GA27351@linux.intel.com> <alpine.LRH.2.21.1903300540530.2240@namei.org> <CAA9_cmdyERPGwz-S3XuyJXnYrHM5V1fb_BCf_NS_kgQdN-YS=A@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Mon, 8 Apr 2019 18:16:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=UPjKN9jGEkZAbLp7R7MMobTpErLdQSydL4CFy9La1lY=; b=SOYAjZQzskXBUghIfRNtdGhPuA
+        WlWMNZytkLbdGVWk/hSsvVzikhGVVWZPtS16O6Lff2C3KM9WduytoSZuLMhvhE3MHaMH0/OH4nf1R
+        sSgezZVg+lPULbetu7TQSBAUgs5TT37bnOvUrnTloOkDoQjD+mpZGfeEt+jLKmL14byPg3RPhcMT6
+        3/CMG2TAuth03EWhPbZBHueYJrYv4QomhlTDsAtU8FqbUbrRUCJTYV24ia0AfkUFxk0w14Adx+iN2
+        HfdlyXXWlxM/uoo+CElEiBkJOLVxRAE0k6xLeuquvRC1kl2SlEVbsiDgXmooMUh9Oa6DHMjWjsm2W
+        Zdnqi83g==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hDcYJ-0001xM-C1; Mon, 08 Apr 2019 22:15:43 +0000
+Subject: Re: [PATCH v3 1/2] initmem: introduce CONFIG_INIT_ALL_MEMORY and
+ CONFIG_INIT_ALL_STACK
+To:     Alexander Potapenko <glider@google.com>,
+        yamada.masahiro@socionext.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, ndesaulniers@google.com,
+        kcc@google.com, dvyukov@google.com, keescook@chromium.org,
+        sspatil@android.com, kernel-hardening@lists.openwall.com
+References: <20190408170418.148554-1-glider@google.com>
+ <20190408170418.148554-2-glider@google.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <adb23353-2e02-ecd2-7506-50f4db814b25@infradead.org>
+Date:   Mon, 8 Apr 2019 15:15:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190408170418.148554-2-glider@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 8 Apr 2019, Dan Williams wrote:
+On 4/8/19 10:04 AM, Alexander Potapenko wrote:
+> diff --git a/security/Kconfig.initmem b/security/Kconfig.initmem
+> new file mode 100644
+> index 000000000000..5e49a55382ad
+> --- /dev/null
+> +++ b/security/Kconfig.initmem
+> @@ -0,0 +1,29 @@
+> +menu "Initialize all memory"
+> +
+> +config CC_HAS_AUTO_VAR_INIT
+> +	def_bool $(cc-option,-ftrivial-auto-var-init=pattern)
+> +
+> +config INIT_ALL_MEMORY
+> +	bool "Initialize all memory"
+> +	default n
+> +	help
+> +	  Enforce memory initialization to mitigate infoleaks and make
+> +	  the control-flow bugs depending on uninitialized values more
+> +	  deterministic.
+> +
+> +if INIT_ALL_MEMORY
+> +
+> +config INIT_ALL_STACK
+> +	bool "Initialize all stack"
+> +	depends on INIT_ALL_MEMORY
 
-> On Fri, Mar 29, 2019 at 11:42 AM James Morris <jmorris@namei.org> wrote:
-> >
-> > On Fri, 29 Mar 2019, Jarkko Sakkinen wrote:
-> >
-> > > Hi James,
-> > >
-> > > These are critical fixes for v5.1. Contains also couple of new selftests for
-> > > v5.1 features (partial reads in /dev/tpm0). I hope these could still reach
-> > > the release. Thanks.
-> >
-> > Applied to
-> > git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
-> 
-> Hi James,
-> 
-> Friendly ping on when might this go to Linus?
-> 
-> I was hoping that 3d0b1a381f6e ("KEYS: trusted: allow trusted.ko to
-> initialize w/o a TPM") would have hit -rc4. The NVDIMM subsystem has
-> been broken since -rc1.
+This "depends on" is redundant with the "if INIT_ALL_MEMORY" above it.
 
-Oops, I queued these for the wrong tree, will send to Linus today.
+Similar comment for patch 2/2 and INIT_ALL_HEAP.
+
+> +	depends on CC_HAS_AUTO_VAR_INIT || (HAVE_GCC_PLUGINS && PLUGIN_HOSTCC != "")
+> +	select GCC_PLUGINS if !CC_HAS_AUTO_VAR_INIT
+> +	select GCC_PLUGIN_STRUCTLEAK if !CC_HAS_AUTO_VAR_INIT
+> +	select GCC_PLUGIN_STRUCTLEAK_BYREF_ALL if !CC_HAS_AUTO_VAR_INIT
+> +	default y
+> +	help
+> +	  Initialize uninitialized stack data with a fixed pattern
+> +	  (0x00 in GCC, 0xAA in Clang).
+> +
+> +endif # INIT_ALL_MEMORY
+> +endmenu
+
 
 -- 
-James Morris
-<jmorris@namei.org>
-
+~Randy
