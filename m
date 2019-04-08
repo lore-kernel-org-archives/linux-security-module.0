@@ -2,125 +2,137 @@ Return-Path: <SRS0=KU/V=SK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FC4C10F13
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A799C10F13
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E088A20879
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:39:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pXbEmyxv"
+	by mail.kernel.org (Postfix) with ESMTP id 72E372084F
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbfDHRjp (ORCPT
+        id S1726908AbfDHRr4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Apr 2019 13:39:45 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33726 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727415AbfDHRjp (ORCPT
+        Mon, 8 Apr 2019 13:47:56 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34473 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726373AbfDHRrz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Apr 2019 13:39:45 -0400
-Received: by mail-oi1-f195.google.com with SMTP id e5so11208468oii.0
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2019 10:39:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WozGhqKUqua5KrlkGY6Ygf16R0x9CKfFPoN4BtTrUUU=;
-        b=pXbEmyxvYbfbKrwa+vil7482EPIheE/6h3oee7vG63LS2HoB21998E0fgxMsct01AU
-         MPM+NA/q1W7m3WFe//GjWGO9Ox8YhpOzxTAwuMrv19GsfwWFF6cZGO3DCWpFA9g1Flg/
-         X2qX1HuDXhGbZUphQASRApJQOBXolO+VufAEE40znwKLHoXvj29To0GaKOmMo3exU3K/
-         CLIipbQFY4gc6s/UyyNObXhMNmEYSiUlBjXAzJcfCrxI50RGEBZw92WmytrOeYSB6gWN
-         L00Ns9PnHH8yIMzGXHWcULgT6nJlL7L8WGlpumW4YpWeR9r9io9RIobVW+2NK8njGiYB
-         mJuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WozGhqKUqua5KrlkGY6Ygf16R0x9CKfFPoN4BtTrUUU=;
-        b=G3I/OnvpVQpXtFjfgQwRu4fbVBm3LHYMzfgM8iblpNW8Dr2dbqlDMNTdksS+mfssRP
-         Ad+TeRl3RN5MxZIkNcRoYAq/O+TQFuumg2PbHAcR4bdUysyYR/YB/XxKVCkVtHfDNoN1
-         DG/8pZpyUsZSWfSY9q0oI9i1eMKOpVqfguDw67NNwr3mDORspkYpCZjG/0MKFnxAI1m5
-         f3wSDzS41jqIr1XeMhV8M7K7Jm9sU5IQfYSp5oLnXiRFLsBn2G4DHf9AUZuDqS8Q9fmQ
-         HfIA5LhcYemZGOStVhemHORu1cVaWKQAOUbcYdo5LoaPa0/pPHKMVfm2W49r4Z03YeC/
-         swPA==
-X-Gm-Message-State: APjAAAXukdu52eVYjxEAjaULKg4647Xqul634mtPBGNQCRJUxYTI2hdg
-        fDJJnlFY/YWvZMjOkonRT9juMypw8IM//nx4y6m1vw==
-X-Google-Smtp-Source: APXvYqwV+lSXrHXLACqkdNoCd6Fy8hwCUxpMNof1FefgUPQXdFHbeaz1QN4+8PC7MktYbfCLJY8Rho96o8TgZGSZvmM=
-X-Received: by 2002:aca:bf83:: with SMTP id p125mr7619124oif.47.1554745184212;
- Mon, 08 Apr 2019 10:39:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190408170418.148554-1-glider@google.com> <20190408170418.148554-3-glider@google.com>
-In-Reply-To: <20190408170418.148554-3-glider@google.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 8 Apr 2019 19:39:18 +0200
-Message-ID: <CAG48ez0BJNhfaCJde0UWrNLztsuAKR3QCm+d-j_Qa3R_KDSKHA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] initmem: introduce CONFIG_INIT_ALL_HEAP
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
+        Mon, 8 Apr 2019 13:47:55 -0400
+Received: from static-50-53-47-167.bvtn.or.frontiernet.net ([50.53.47.167] helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1hDYN6-0004nr-Jd; Mon, 08 Apr 2019 17:47:52 +0000
+Subject: Re: [PATCH] apparmor: Restore Y/N in /sys for apparmor's "enabled"
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        David Rheinsberg <david.rheinsberg@gmail.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kbuild@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>, sspatil@android.com,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Laura Abbott <labbott@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190408160706.GA18786@beast>
+ <73c80352-ded1-626b-0eb0-a9481165f25d@canonical.com>
+ <CAGXu5j+k86VtegoRxV1s++YZdMxXEhQhqx1Yh7eu+YKHn0wNZA@mail.gmail.com>
+From:   John Johansen <john.johansen@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
+ BQlceWg1yp/NwbR8ad+eSEO/uma/K+PqWvBptKC9SWD97FG4uB4/caomLEU97sLQMtnvGWdx
+ rxVRGM4anzWYMgzz5TZmIiVTZ43Ou5VpaS1Vz1ZSxP3h/xKNZr/TcW5WQai8u3PWVnbkjhSZ
+ PHv1BghN69qxEPomrJBm1gmtx3ZiVmFXluwTmTgJOkpFol7nbJ0ilnYHrA7SX3CtR1upeUpM
+ a/WIanVO96WdTjHHIa43fbhmQube4txS3FcQLOJVqQsx6lE9B7qAppm9hQ10qPWwdfPy/+0W
+ 6AWtNu5ASiGVCInWzl2HBqYd/Zll93zUq+NIoCn8sDAM9iH+wtaGDcJywIGIn+edKNtK72AM
+ gChTg/j1ZoWH6ZeWPjuUfubVzZto1FMoGJ/SF4MmdQG1iQNtf4sFZbEgXuy9cGi2bomF0zvy
+ BJSANpxlKNBDYKzN6Kz09HUAkjlFMNgomL/cjqgABtAx59L+dVIZfaF281pIcUZzwvh5+JoG
+ eOW5uBSMbE7L38nszooykIJ5XrAchkJxNfz7k+FnQeKEkNzEd2LWc3QF4BQZYRT6PHHga3Rg
+ ykW5+1wTMqJILdmtaPbXrF3FvnV0LRPcv4xKx7B3fGm7ygdoowARAQABzR1Kb2huIEpvaGFu
+ c2VuIDxqb2huQGpqbXgubmV0PsLBegQTAQoAJAIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIX
+ gAUCTo0YVwIZAQAKCRAFLzZwGNXD2LxJD/9TJZCpwlncTgYeraEMeDfkWv8c1IsM1j0AmE4V
+ tL+fE780ZVP9gkjgkdYSxt7ecETPTKMaZSisrl1RwqU0oogXdXQSpxrGH01icu/2n0jcYSqY
+ KggPxy78BGs2LZq4XPfJTZmHZGnXGq/eDr/mSnj0aavBJmMZ6jbiPz6yHtBYPZ9fdo8btczw
+ P41YeWoIu26/8II6f0Xm3VC5oAa8v7Rd+RWZa8TMwlhzHExxel3jtI7IzzOsnmE9/8Dm0ARD
+ 5iTLCXwR1cwI/J9BF/S1Xv8PN1huT3ItCNdatgp8zqoJkgPVjmvyL64Q3fEkYbfHOWsaba9/
+ kAVtBNz9RTFh7IHDfECVaToujBd7BtPqr+qIjWFadJD3I5eLCVJvVrrolrCATlFtN3YkQs6J
+ n1AiIVIU3bHR8Gjevgz5Ll6SCGHgRrkyRpnSYaU/uLgn37N6AYxi/QAL+by3CyEFLjzWAEvy
+ Q8bq3Iucn7JEbhS/J//dUqLoeUf8tsGi00zmrITZYeFYARhQMtsfizIrVDtz1iPf/ZMp5gRB
+ niyjpXn131cm3M3gv6HrQsAGnn8AJru8GDi5XJYIco/1+x/qEiN2nClaAOpbhzN2eUvPDY5W
+ 0q3bA/Zp2mfG52vbRI+tQ0Br1Hd/vsntUHO903mMZep2NzN3BZ5qEvPvG4rW5Zq2DpybWc7B
+ TQROZqz6ARAAoqw6kkBhWyM1fvgamAVjeZ6nKEfnRWbkC94L1EsJLup3Wb2X0ABNOHSkbSD4
+ pAuC2tKF/EGBt5CP7QdVKRGcQzAd6b2c1Idy9RLw6w4gi+nn/d1Pm1kkYhkSi5zWaIg0m5RQ
+ Uk+El8zkf5tcE/1N0Z5OK2JhjwFu5bX0a0l4cFGWVQEciVMDKRtxMjEtk3SxFalm6ZdQ2pp2
+ 822clnq4zZ9mWu1d2waxiz+b5Ia4weDYa7n41URcBEUbJAgnicJkJtCTwyIxIW2KnVyOrjvk
+ QzIBvaP0FdP2vvZoPMdlCIzOlIkPLgxE0IWueTXeBJhNs01pb8bLqmTIMlu4LvBELA/veiaj
+ j5s8y542H/aHsfBf4MQUhHxO/BZV7h06KSUfIaY7OgAgKuGNB3UiaIUS5+a9gnEOQLDxKRy/
+ a7Q1v9S+Nvx+7j8iH3jkQJhxT6ZBhZGRx0gkH3T+F0nNDm5NaJUsaswgJrqFZkUGd2Mrm1qn
+ KwXiAt8SIcENdq33R0KKKRC80Xgwj8Jn30vXLSG+NO1GH0UMcAxMwy/pvk6LU5JGjZR73J5U
+ LVhH4MLbDggD3mPaiG8+fotTrJUPqqhg9hyUEPpYG7sqt74Xn79+CEZcjLHzyl6vAFE2W0kx
+ lLtQtUZUHO36afFv8qGpO3ZqPvjBUuatXF6tvUQCwf3H6XMAEQEAAcLBXwQYAQoACQUCTmas
+ +gIbDAAKCRAFLzZwGNXD2D/XD/0ddM/4ai1b+Tl1jznKajX3kG+MeEYeI4f40vco3rOLrnRG
+ FOcbyyfVF69MKepie4OwoI1jcTU0ADecnbWnDNHpr0SczxBMro3bnrLhsmvjunTYIvssBZtB
+ 4aVJjuLILPUlnhFqa7fbVq0ZQjbiV/rt2jBENdm9pbJZ6GjnpYIcAbPCCa/ffL4/SQRSYHXo
+ hGiiS4y5jBTmK5ltfewLOw02fkexH+IJFrrGBXDSg6n2Sgxnn++NF34fXcm9piaw3mKsICm+
+ 0hdNh4afGZ6IWV8PG2teooVDp4dYih++xX/XS8zBCc1O9w4nzlP2gKzlqSWbhiWpifRJBFa4
+ WtAeJTdXYd37j/BI4RWWhnyw7aAPNGj33ytGHNUf6Ro2/jtj4tF1y/QFXqjJG/wGjpdtRfbt
+ UjqLHIsvfPNNJq/958p74ndACidlWSHzj+Op26KpbFnmwNO0psiUsnhvHFwPO/vAbl3RsR5+
+ 0Ro+hvs2cEmQuv9r/bDlCfpzp2t3cK+rhxUqisOx8DZfz1BnkaoCRFbvvvk+7L/fomPntGPk
+ qJciYE8TGHkZw1hOku+4OoM2GB5nEDlj+2TF/jLQ+EipX9PkPJYvxfRlC6dK8PKKfX9KdfmA
+ IcgHfnV1jSn+8yH2djBPtKiqW0J69aIsyx7iV/03paPCjJh7Xq9vAzydN5U/UA==
+Organization: Canonical
+Message-ID: <a7216d87-df56-8112-fd71-e9a4ff827804@canonical.com>
+Date:   Mon, 8 Apr 2019 10:47:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5j+k86VtegoRxV1s++YZdMxXEhQhqx1Yh7eu+YKHn0wNZA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 8, 2019 at 7:20 PM Alexander Potapenko <glider@google.com> wrote:
-> This config option enables CONFIG_SLUB_DEBUG and CONFIG_PAGE_POISONING
-> without the need to pass any boot parameters.
->
-> No performance optimizations are done at the moment to reduce double
-> initialization of memory regions.
-[...]
-> diff --git a/mm/page_poison.c b/mm/page_poison.c
-> index 21d4f97cb49b..a1985f33f635 100644
-> --- a/mm/page_poison.c
-> +++ b/mm/page_poison.c
-> @@ -12,9 +12,14 @@ static bool want_page_poisoning __read_mostly;
->
->  static int __init early_page_poison_param(char *buf)
->  {
-> +#ifdef CONFIG_INIT_ALL_HEAP
-> +       want_page_poisoning = true;
-> +       return 0;
-> +#else
->         if (!buf)
->                 return -EINVAL;
->         return strtobool(buf, &want_page_poisoning);
-> +#endif
->  }
->  early_param("page_poison", early_page_poison_param);
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 1b08fbcb7e61..00e0197d3f35 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -1287,6 +1287,8 @@ static int __init setup_slub_debug(char *str)
->         if (*str == ',')
->                 slub_debug_slabs = str + 1;
->  out:
-> +       if (IS_ENABLED(CONFIG_INIT_ALL_HEAP))
-> +               slub_debug |= SLAB_POISON;
->         return 1;
->  }
+On 4/8/19 10:25 AM, Kees Cook wrote:
+> On Mon, Apr 8, 2019 at 9:58 AM John Johansen
+> <john.johansen@canonical.com> wrote:
+>>> +/* Can only be set before AppArmor is initialized (i.e. on boot cmdline). */
+>>> +static int param_set_aaintbool(const char *val, const struct kernel_param *kp)
+>>> +{
+>>> +     struct kernel_param kp_local;
+>>> +     bool value;
+>>> +     int error;
+>>> +
+>>> +     if (apparmor_initialized)
+>>> +             return -EPERM;
+>>> +
+>> This isn't sufficient/correct. apparmor_initialized is only set after
+>> apparmor has gone through and completed initialization. However if
+>> apparmor is not selected as one of the LSMs to enable, then this check
+>> won't stop apparmor_enabled from being set post boot.
+>>
+>> However with the apparmor_enabled param being 0444 and the
+>> apparmor_enabled_setup() fn handling boot cmdline do with even need
+>> the set parameter fn?
+> 
+> Yup, that's true. I've gone and tested this, and yes, the 0444 is
+> sufficient to protect the logic here (even if root chmods the inode).
+> So the test here is redundant. However, very early in the threads
+> about LSM boot cmdline enabling it was made clear that
+> "apparmor.enabled=..." needed to stay working, which means the "set"
+> op is still needed. (But I'm happy to do whatever you want here -- I
+> was just trying to keep the functionality as it was.)
+> 
 
-I don't understand how this is supposed to work. As far as I can tell,
-the "slub_debug |= SLAB_POISON;" only happens if you actually pass in
-a "slub_debug" boot parameter? Same thing for "want_page_poisoning =
-true;".
+Right, though the legacy case that most document reference is apparmor=0/1
+which is handled by __apparmor_enabled_setup()
 
-Also, didn't Laura suggest in
-https://www.openwall.com/lists/kernel-hardening/2019/04/08/4 that a
-different approach might be more sensible to reduce the performance
-hit?
+still best not to break apparmor.enabled
+
+> Should I send a v2 without the "initialized" check or is this okay to
+> leave as-is with the redundant check?
+> 
+
+redundant is fine, it will help protect against shooting ourselves in
+the foot if some one ever tries changing the 0444
+
+you can have my Acked-by: John Johansen <john.johansen@canonical.com>
