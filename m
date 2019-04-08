@@ -2,197 +2,110 @@ Return-Path: <SRS0=KU/V=SK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CAB0C10F14
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 981BFC10F13
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C546D20880
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 16:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 682AF20880
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:04:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YqzP19dH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbfDHQ63 (ORCPT
+        id S1728523AbfDHREX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Apr 2019 12:58:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33333 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbfDHQ62 (ORCPT
+        Mon, 8 Apr 2019 13:04:23 -0400
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:34743 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbfDHREX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Apr 2019 12:58:28 -0400
-Received: from static-50-53-47-167.bvtn.or.frontiernet.net ([50.53.47.167] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1hDXbE-0007Yp-7T; Mon, 08 Apr 2019 16:58:24 +0000
-Subject: Re: [PATCH] apparmor: Restore Y/N in /sys for apparmor's "enabled"
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     David Rheinsberg <david.rheinsberg@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190408160706.GA18786@beast>
-From:   John Johansen <john.johansen@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <73c80352-ded1-626b-0eb0-a9481165f25d@canonical.com>
-Date:   Mon, 8 Apr 2019 09:58:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190408160706.GA18786@beast>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+        Mon, 8 Apr 2019 13:04:23 -0400
+Received: by mail-qk1-f201.google.com with SMTP id s70so12193122qka.1
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2019 10:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=gJ3i63zTqGOr5CNiCKsCMRuhMkPExPtND8GkfCcQS2Q=;
+        b=YqzP19dHuQebbAYxe2mou1n0zxSnH06cAOlwbvW8kTSCKCgsN1WWn+EvRRQvYZRLdq
+         UCuoIQKHN/4S6Cb0Oy4me/hV7eTDR5eOfalQDYOtJbQ8dpyN2jFDN9o9hz9RC5FuIfiH
+         LuMOYAaB+Z/2GcxW/Oqut/dHgYYGYIdsHufYHOshnik8A7w0xKEuG99r0fqXZQ5o1fta
+         DKsSmsFI0ALEgLi6gsBrLCoFHSdjJhdeJBE1NbPROnAIhj8W5lzXelM7c2tLk9vYXdpe
+         p3EY01Sxnil0YZu1Ra90f4m91LbkKy4H1XxacVXl+ZC65ooINSZb4YF9Zuam14D+TCaE
+         sGGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=gJ3i63zTqGOr5CNiCKsCMRuhMkPExPtND8GkfCcQS2Q=;
+        b=cbnPZphsTLtoeWqg3PkxK5gkq19I0z5n00tX8F2bcqhjWIXWAA5eXasdDxGPaYJnvL
+         SQt/lviNodMJMbfi1/8ecg5dkZhj3zTuREH/7jzDTusMNsCtyZaODlsxMH517d/2QOsp
+         Eryc3bO5N37ydkedWpc7ePxpHINzW58aW7zbHXp3TEfDStkvcdT6Nd3qhc43NqRI1C5S
+         e/ge6ac9FwyoL6DOVu5gsA9GLFBz0+sstgNEwyX/kcgwxJYTje2bwnUUNL8ZqotobAaS
+         EeB8+crB6Eq/KsEDS0H+/V2Pph1quCsxsna9mL9JWQxieFWoDDhstzROAoc/p2ozTgpo
+         IXLA==
+X-Gm-Message-State: APjAAAVc7lLA+FnjtTBhNE2VxR2tcvkVzUCAm47DKW5AFKF6fqQqz2JN
+        /HKqWajfRwDrMnp2YOWu3qQAcMxz4Yo=
+X-Google-Smtp-Source: APXvYqx4BCl069ZIbi878+ZaIUqcQL1mhPGU0o5zACT1AzSsYBxz94b80Lelh1NbqvxY+K6hRYA4amz28DU=
+X-Received: by 2002:a37:945:: with SMTP id 66mr3615697qkj.60.1554743062602;
+ Mon, 08 Apr 2019 10:04:22 -0700 (PDT)
+Date:   Mon,  8 Apr 2019 19:04:16 +0200
+Message-Id: <20190408170418.148554-1-glider@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
+Subject: [PATCH v3 0/2] RFC: introduce CONFIG_INIT_ALL_MEMORY
+From:   Alexander Potapenko <glider@google.com>
+To:     yamada.masahiro@socionext.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, ndesaulniers@google.com,
+        kcc@google.com, dvyukov@google.com, keescook@chromium.org,
+        sspatil@android.com, kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/8/19 9:07 AM, Kees Cook wrote:
-> Before commit c5459b829b71 ("LSM: Plumb visibility into optional "enabled"
-> state"), /sys/module/apparmor/parameters/enabled would show "Y" or "N"
-> since it was using the "bool" handler. After being changed to "int",
-> this switched to "1" or "0", breaking the userspace AppArmor detection
-> of dbus-broker. This restores the Y/N output while keeping the LSM
-> infrastructure happy.
-> 
-> Before:
-> 	$ cat /sys/module/apparmor/parameters/enabled
-> 	1
-> 
-> After:
-> 	$ cat /sys/module/apparmor/parameters/enabled
-> 	Y
-> 
-> Reported-by: David Rheinsberg <david.rheinsberg@gmail.com>
-> Link: https://lkml.kernel.org/r/CADyDSO6k8vYb1eryT4g6+EHrLCvb68GAbHVWuULkYjcZcYNhhw@mail.gmail.com
-> Fixes: c5459b829b71 ("LSM: Plumb visibility into optional "enabled" state")
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
-> This fix, if John is okay with it, is needed in v5.1 to correct the
-> userspace regression reported by David.
-> ---
->  security/apparmor/lsm.c | 49 ++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 48 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index 49d664ddff44..87500bde5a92 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1336,9 +1336,16 @@ module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
->  bool aa_g_paranoid_load = true;
->  module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
->  
-> +static int param_get_aaintbool(char *buffer, const struct kernel_param *kp);
-> +static int param_set_aaintbool(const char *val, const struct kernel_param *kp);
-> +#define param_check_aaintbool param_check_int
-> +static const struct kernel_param_ops param_ops_aaintbool = {
-> +	.set = param_set_aaintbool,
-> +	.get = param_get_aaintbool
-> +};
->  /* Boot time disable flag */
->  static int apparmor_enabled __lsm_ro_after_init = 1;
-> -module_param_named(enabled, apparmor_enabled, int, 0444);
-> +module_param_named(enabled, apparmor_enabled, aaintbool, 0444);
->  
->  static int __init apparmor_enabled_setup(char *str)
->  {
-> @@ -1413,6 +1420,46 @@ static int param_get_aauint(char *buffer, const struct kernel_param *kp)
->  	return param_get_uint(buffer, kp);
->  }
->  
-> +/* Can only be set before AppArmor is initialized (i.e. on boot cmdline). */
-> +static int param_set_aaintbool(const char *val, const struct kernel_param *kp)
-> +{
-> +	struct kernel_param kp_local;
-> +	bool value;
-> +	int error;
-> +
-> +	if (apparmor_initialized)
-> +		return -EPERM;
-> +
-This isn't sufficient/correct. apparmor_initialized is only set after
-apparmor has gone through and completed initialization. However if
-apparmor is not selected as one of the LSMs to enable, then this check
-won't stop apparmor_enabled from being set post boot.
+This patch is a part of a bigger initiative to allow initializing
+heap/stack memory in the Linux kernels by default.
+The rationale behind doing so is to reduce the severity of bugs caused
+by using uninitialized memory.
 
-However with the apparmor_enabled param being 0444 and the
-apparmor_enabled_setup() fn handling boot cmdline do with even need
-the set parameter fn?
+Over the last two years KMSAN (https://github.com/google/kmsan/) has
+found more than a hundred bugs running in a really moderate setup (orders
+of magnitude less CPU/months than KASAN). Some of those bugs led to
+information leaks if uninitialized memory was copied to the userspace,
+other could cause DoS because of subverted control flow.
+A lot more bugs remain uncovered, so we want to provide the distros and OS
+vendors with a last resort measure to mitigate such bugs.
 
-> +	/* Create local copy, with arg pointing to bool type. */
-> +	value = !!*((int *)kp->arg);
-> +	memcpy(&kp_local, kp, sizeof(kp_local));
-> +	kp_local.arg = &value;
-> +
-> +	error = param_set_bool(val, &kp_local);
-> +	if (!error)
-> +		*((int *)kp->arg) = *((bool *)kp_local.arg);
-> +	return error;
-> +}
-> +
-> +/*
-> + * To avoid changing /sys/module/apparmor/parameters/enabled from Y/N to
-> + * 1/0, this converts the "int that is actually bool" back to bool for
-> + * display in the /sys filesystem, while keeping it "int" for the LSM
-> + * infrastructure.
-> + */
-> +static int param_get_aaintbool(char *buffer, const struct kernel_param *kp)
-> +{
-> +	struct kernel_param kp_local;
-> +	bool value;
-> +
-> +	/* Create local copy, with arg pointing to bool type. */
-> +	value = !!*((int *)kp->arg);
-> +	memcpy(&kp_local, kp, sizeof(kp_local));
-> +	kp_local.arg = &value;
-> +
-> +	return param_get_bool(buffer, &kp_local);
-> +}
-> +
->  static int param_get_audit(char *buffer, const struct kernel_param *kp)
->  {
->  	if (!apparmor_enabled)
-> 
+Our plan is to introduce configuration flags to force initialization of
+stack and heap variables with a fixed pattern.
+This is going to render information leaks inefficient (as we'll only leak
+pattern data) and make uses of uninitialized values in conditions more
+deterministic and discoverable.
+
+The stack instrumentation part is based on Clang's -ftrivial-auto-var-init
+(see https://reviews.llvm.org/D54604 ; there's also a GCC feature request
+for a similar flag: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87210)
+or GCC's -fplugin-arg-structleak_plugin-byref-all
+The heap initialization part is compiler-agnostic and is based on the
+existing CONFIG_SLUB_DEBUG and CONFIG_PAGE_POISONING.
+
+Alexander Potapenko (2):
+  initmem: introduce CONFIG_INIT_ALL_MEMORY and CONFIG_INIT_ALL_STACK
+  initmem: introduce CONFIG_INIT_ALL_HEAP
+
+ Makefile                 |  3 ++-
+ mm/page_poison.c         |  5 +++++
+ mm/slub.c                |  2 ++
+ scripts/Makefile.initmem | 10 ++++++++++
+ security/Kconfig         |  1 +
+ security/Kconfig.initmem | 40 ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 60 insertions(+), 1 deletion(-)
+ create mode 100644 scripts/Makefile.initmem
+ create mode 100644 security/Kconfig.initmem
+
+-- 
+2.21.0.392.gf8f6787159e-goog
 
