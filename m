@@ -2,170 +2,90 @@ Return-Path: <SRS0=KU/V=SK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B33C10F13
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 16:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 400CCC10F13
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 16:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED86120857
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 16:07:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED24721473
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 16:21:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cKVLwp5s"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="iyGBERBH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfDHQHJ (ORCPT
+        id S1727400AbfDHQVW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Apr 2019 12:07:09 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41782 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbfDHQHJ (ORCPT
+        Mon, 8 Apr 2019 12:21:22 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:32867 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726228AbfDHQVW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Apr 2019 12:07:09 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f6so7581921pgs.8
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2019 09:07:08 -0700 (PDT)
+        Mon, 8 Apr 2019 12:21:22 -0400
+Received: by mail-it1-f194.google.com with SMTP id v8so384767itf.0;
+        Mon, 08 Apr 2019 09:21:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=TCLGovzegw701/u4c+RSrYN+SJq+Buy7ekNIjiUF7iE=;
-        b=cKVLwp5sjVO3yDLjmDytFvAVPNES9IV5smEidd9Dv+mM0QcVpWWHI3nF+xKCvEY57I
-         VC9dYpNiZklSKd8VMOX+831rRJQcmNdsRBfyu6nAwckQJZF0rNnpexRxYQx+xy/oCinC
-         wcY/Gh+Zp+acbo10+hQwTFuBGmw4gafJrBDZ4=
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3+ALvzkw2MlVDdVtF7B/3XBzAdAmSRxZaOAezn8/f0A=;
+        b=iyGBERBHOT/R298RzohGko7w7fQKNP00f1hDBFJM/gS4CU1XcZ27v4JFzg5dy1lA5k
+         BNWfUhEpGervaxx8mQDHDHBEFMU0lJs9js0xYWKF+OiRPvffY9MfqGDPen3InCTBR/hr
+         On1ocwD3rig6XLmPrnDuTbCk0X+whbqI1pGC1bkkLjTELqvKUdKvnYmWVHZ4F4tF9Qmb
+         2OvubAZPN8Toosx6oLfBbdXE6fwot7kalbu08dlXNia4i7AEiHiEopPaUo4H854r5IFD
+         oCA+XGQ9qhcbA7Xj70ry2boRdMkQGTZ2fvoPzjUGZNqE4mix/oXL3TJ/sSQNW7n6GOWZ
+         QFDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=TCLGovzegw701/u4c+RSrYN+SJq+Buy7ekNIjiUF7iE=;
-        b=pNwAuONV9KFx+Yjf62j24Jlka8csShf8ZB1iCnebF+1iK1wPrqW6tcjwDzCdkS5tNQ
-         +0bdOEiV9OWNfPRcn3P2zaSxpaqh0rPKo64GoayRtKwmSbcep5U3DLeQLB4ba8ZkIQHA
-         puiWEEf4Lij6dwDuWV5qcT4mfsZZabcsSefvRrn18g4xi1I+x8Tn7rVpSt0dmJsyJO0N
-         SJugB+l3vG5Gui92bT/cUywyUiE4DWP2q1JIgK5cAPUsIkqQuBgAWezNwXe4HKWmRric
-         djT8ovxn/oGs5J1zKQZs3g2EUt4sN5jD8lSe42dwuHQK23GjwSbtTNjGSLrMDAN6SMXn
-         LRXg==
-X-Gm-Message-State: APjAAAWNrErs3ClLmpfNGdwzQJJiXHdnw1FGoF/Tzci9285glepQMazL
-        EIJDavFO8hPnjKxyPdves+FgCw==
-X-Google-Smtp-Source: APXvYqxb6q7VwwjBHoiQ4mPiJKKDVAgFOwj3jEDSgduZAHBnpeX5be1MSsDDDANk7YBLsq/8b4hjrQ==
-X-Received: by 2002:a63:7444:: with SMTP id e4mr29603061pgn.261.1554739628321;
-        Mon, 08 Apr 2019 09:07:08 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id u5sm3105935pfa.169.2019.04.08.09.07.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 08 Apr 2019 09:07:07 -0700 (PDT)
-Date:   Mon, 8 Apr 2019 09:07:06 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>
-Cc:     David Rheinsberg <david.rheinsberg@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: Restore Y/N in /sys for apparmor's "enabled"
-Message-ID: <20190408160706.GA18786@beast>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3+ALvzkw2MlVDdVtF7B/3XBzAdAmSRxZaOAezn8/f0A=;
+        b=YZ1mdfN32Mlug7jbry/A++RbmPWqlrzrt/paZTSI1ZfiU/G06mDl58x0hbn7um82/R
+         bm0ZciT6T/tajYojd7onh4AB5Fy9hAkMXqx+3cwQcTyDuAgfVUwFacyrm1+/l/HRTWo7
+         m/2yCRadJgQp7fbLk/Jj0Y8zF/svkNt/EMhDnYLnoGFqRxWeiCx/fO18Yep2cpCIkAAq
+         zpcix0/mtrxX3gf/Ahgb4M3e9n1QbIUTA1g4oycnQgrFegV8YSCLru8kwvhMxm+dIW9S
+         KmR2KXLl2QTxdK7NCQsVfWHRWaB+GDC5rBImv6O0TPKwZIMDRChZHErHenM77GkuI0sk
+         ql8w==
+X-Gm-Message-State: APjAAAVsV8w/GybzsHneaf2Rc9g/He9zJ4qLE0RcToChAB649Mos0bdn
+        V3C6/3KxjVkD/C+2d1nQJVmh8SHK+HjrDjDURgo=
+X-Google-Smtp-Source: APXvYqzY2eS5L9/JEabSQilfuMukwFPgFXioQ6ZsmH+hQf0tKiWhm8tWwpxT4FFy+0bLn1wM8w9gjiWiNSgJ4ixsCEA=
+X-Received: by 2002:a24:56c7:: with SMTP id o190mr21890168itb.120.1554740481013;
+ Mon, 08 Apr 2019 09:21:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20190329115544.GA27351@linux.intel.com> <alpine.LRH.2.21.1903300540530.2240@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1903300540530.2240@namei.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 8 Apr 2019 09:21:09 -0700
+Message-ID: <CAA9_cmdyERPGwz-S3XuyJXnYrHM5V1fb_BCf_NS_kgQdN-YS=A@mail.gmail.com>
+Subject: Re: [GIT PULL] tpmdd fixes for Linux v5.1
+To:     James Morris <jmorris@namei.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Before commit c5459b829b71 ("LSM: Plumb visibility into optional "enabled"
-state"), /sys/module/apparmor/parameters/enabled would show "Y" or "N"
-since it was using the "bool" handler. After being changed to "int",
-this switched to "1" or "0", breaking the userspace AppArmor detection
-of dbus-broker. This restores the Y/N output while keeping the LSM
-infrastructure happy.
+On Fri, Mar 29, 2019 at 11:42 AM James Morris <jmorris@namei.org> wrote:
+>
+> On Fri, 29 Mar 2019, Jarkko Sakkinen wrote:
+>
+> > Hi James,
+> >
+> > These are critical fixes for v5.1. Contains also couple of new selftests for
+> > v5.1 features (partial reads in /dev/tpm0). I hope these could still reach
+> > the release. Thanks.
+>
+> Applied to
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-tpm
 
-Before:
-	$ cat /sys/module/apparmor/parameters/enabled
-	1
+Hi James,
 
-After:
-	$ cat /sys/module/apparmor/parameters/enabled
-	Y
+Friendly ping on when might this go to Linus?
 
-Reported-by: David Rheinsberg <david.rheinsberg@gmail.com>
-Link: https://lkml.kernel.org/r/CADyDSO6k8vYb1eryT4g6+EHrLCvb68GAbHVWuULkYjcZcYNhhw@mail.gmail.com
-Fixes: c5459b829b71 ("LSM: Plumb visibility into optional "enabled" state")
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-This fix, if John is okay with it, is needed in v5.1 to correct the
-userspace regression reported by David.
----
- security/apparmor/lsm.c | 49 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 48 insertions(+), 1 deletion(-)
-
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 49d664ddff44..87500bde5a92 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1336,9 +1336,16 @@ module_param_named(path_max, aa_g_path_max, aauint, S_IRUSR);
- bool aa_g_paranoid_load = true;
- module_param_named(paranoid_load, aa_g_paranoid_load, aabool, S_IRUGO);
- 
-+static int param_get_aaintbool(char *buffer, const struct kernel_param *kp);
-+static int param_set_aaintbool(const char *val, const struct kernel_param *kp);
-+#define param_check_aaintbool param_check_int
-+static const struct kernel_param_ops param_ops_aaintbool = {
-+	.set = param_set_aaintbool,
-+	.get = param_get_aaintbool
-+};
- /* Boot time disable flag */
- static int apparmor_enabled __lsm_ro_after_init = 1;
--module_param_named(enabled, apparmor_enabled, int, 0444);
-+module_param_named(enabled, apparmor_enabled, aaintbool, 0444);
- 
- static int __init apparmor_enabled_setup(char *str)
- {
-@@ -1413,6 +1420,46 @@ static int param_get_aauint(char *buffer, const struct kernel_param *kp)
- 	return param_get_uint(buffer, kp);
- }
- 
-+/* Can only be set before AppArmor is initialized (i.e. on boot cmdline). */
-+static int param_set_aaintbool(const char *val, const struct kernel_param *kp)
-+{
-+	struct kernel_param kp_local;
-+	bool value;
-+	int error;
-+
-+	if (apparmor_initialized)
-+		return -EPERM;
-+
-+	/* Create local copy, with arg pointing to bool type. */
-+	value = !!*((int *)kp->arg);
-+	memcpy(&kp_local, kp, sizeof(kp_local));
-+	kp_local.arg = &value;
-+
-+	error = param_set_bool(val, &kp_local);
-+	if (!error)
-+		*((int *)kp->arg) = *((bool *)kp_local.arg);
-+	return error;
-+}
-+
-+/*
-+ * To avoid changing /sys/module/apparmor/parameters/enabled from Y/N to
-+ * 1/0, this converts the "int that is actually bool" back to bool for
-+ * display in the /sys filesystem, while keeping it "int" for the LSM
-+ * infrastructure.
-+ */
-+static int param_get_aaintbool(char *buffer, const struct kernel_param *kp)
-+{
-+	struct kernel_param kp_local;
-+	bool value;
-+
-+	/* Create local copy, with arg pointing to bool type. */
-+	value = !!*((int *)kp->arg);
-+	memcpy(&kp_local, kp, sizeof(kp_local));
-+	kp_local.arg = &value;
-+
-+	return param_get_bool(buffer, &kp_local);
-+}
-+
- static int param_get_audit(char *buffer, const struct kernel_param *kp)
- {
- 	if (!apparmor_enabled)
--- 
-2.17.1
-
-
--- 
-Kees Cook
+I was hoping that 3d0b1a381f6e ("KEYS: trusted: allow trusted.ko to
+initialize w/o a TPM") would have hit -rc4. The NVDIMM subsystem has
+been broken since -rc1.
