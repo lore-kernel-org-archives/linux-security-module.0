@@ -1,143 +1,89 @@
-Return-Path: <SRS0=csG9=SI=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=KU/V=SK=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D0BC10F06
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Apr 2019 17:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A027C282CE
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 07:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E5921019
-	for <linux-security-module@archiver.kernel.org>; Sat,  6 Apr 2019 17:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCB3120857
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 07:21:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDabefpg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rJYjmgh3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726493AbfDFRDB (ORCPT
+        id S1725854AbfDHHV1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 6 Apr 2019 13:03:01 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45539 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbfDFRDB (ORCPT
+        Mon, 8 Apr 2019 03:21:27 -0400
+Received: from mail-io1-f45.google.com ([209.85.166.45]:45733 "EHLO
+        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbfDHHV1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 6 Apr 2019 13:03:01 -0400
-Received: by mail-pl1-f195.google.com with SMTP id bf11so4747346plb.12;
-        Sat, 06 Apr 2019 10:03:01 -0700 (PDT)
+        Mon, 8 Apr 2019 03:21:27 -0400
+Received: by mail-io1-f45.google.com with SMTP id s7so10116450iom.12;
+        Mon, 08 Apr 2019 00:21:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8FS7C/boCC+sadJH0/RxFhpWBd+j8euggZZ+WvhES7o=;
-        b=GDabefpgaiMUBXf3Q+bf8XS8hn5pbsGGYRaPVg0Uv403JcfPkrLgqlp7YPK3ajcOju
-         5cQ2matgbII9OvT4nOOOz0oNQnpb8G7ZOXBFzvV0i1gANpyQFRW8QJu1Xnn/IZjM+S6Y
-         HQD+bdoPoFjkmSpVChuKlleUfrWYhtCCWMEVTpQeHHxR5ERcJUbjbLOXB9qhupHF8nyy
-         pT++FE1hbtXvH58LpHNs5k9QG73AND/nE2FdPkRCovgeIdV43/7iRIqb7pogXXlaTdrz
-         gHmBt0pPu2sCp2iPgddIg6gJixaC7/35H34BLgjYkJjRNC3l9yYYqARn7pWxRtTfxpMS
-         eKOA==
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=hyhNPMHVMQMWjlYRq6ApiDESt59FD7YPy2Dj6OkTqHw=;
+        b=rJYjmgh35aIjpllE9sM9jac6hnTst+bvKDKFeuWmz6DqKbke2bnKI1FoIpWkIb7gfJ
+         4MciNnFUKG2B7lw9asx78pz48I2dAuKoRLixifCZTaW9+REfD9ryqb943qwTkslZkRvo
+         CFDXkx1+XP1M3CeWcsqXDhA4sgW2hmZaiQUb0M428FTwLhwrnO+uozTPnmR0jsV9KsIJ
+         TqWgdsltE2f2j1EWtyQUUJsszCH2iS0FQwfWhQQbzDMccK7bvUUPguvAovoA8MKJj7dV
+         XNftFFKEkA62IXu9bvucOWFC11Rt7Go8WQA3S2sE8JNv7buLXdZENz25CkIVrW24Uif/
+         I8Dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8FS7C/boCC+sadJH0/RxFhpWBd+j8euggZZ+WvhES7o=;
-        b=GUsr+OhPGkDVijYPW6zcNvVJ/WuUnFn0k/CZIzVDM8wZlgu5QQgUZKFyCSOtrgx3ek
-         Y6Y7fcsEJbekkDZNXuE6TdMhQlyjYhgd+KhH2ZdfWeukvYuaXIix2XYgYEUOZ2VpTpBT
-         MOxHO65t9rNGoihEZhljTEtbNwoRQjTG39J8+ccMd2tf2ary0LPDt8f7Hn//at28tFRu
-         L2Opz66BU9E39np+HHHfDd/DtA5jW8JUq+vSnJegQBWkWHIsV2rLBdf2jnHgF1M5v/RQ
-         tefPPHVqo/J71DDnjQC1sQippwkGDShUT9hUNlpeniR0Emrm8mMBo/0J+WN2zr/Llcmr
-         nqVw==
-X-Gm-Message-State: APjAAAUAnyz7C/VNLOLinZ+URb8w8kKZjXDj3FyxmPOaJT8ozmVgU7Za
-        y8Ayl4Aof1bTCdxRyaLAl7Y=
-X-Google-Smtp-Source: APXvYqzqc0J3cRGSdYzVMJDr+92sW4VDMDY3jREqwujQX+KQK4ItPNPWbkkM1MnhlDRL1ilyZ2OEtQ==
-X-Received: by 2002:a17:902:7b96:: with SMTP id w22mr20213636pll.28.1554570180454;
-        Sat, 06 Apr 2019 10:03:00 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::1950])
-        by smtp.gmail.com with ESMTPSA id j22sm33148756pfn.129.2019.04.06.10.02.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 06 Apr 2019 10:02:59 -0700 (PDT)
-Date:   Sat, 6 Apr 2019 10:02:58 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrey Ignatov <rdna@fb.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Roman Gushchin <guro@fb.com>, kernel-team <kernel-team@fb.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v3 bpf-next 00/21] bpf: Sysctl hook
-Message-ID: <20190406170257.qlptcrfth2rb3rxo@ast-mbp.dhcp.thefacebook.com>
-References: <cover.1554485409.git.rdna@fb.com>
- <CAGXu5jJGC1kB-0e3DimBSprcgEBnWRB=i287g-9T5a-RidFqBg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=hyhNPMHVMQMWjlYRq6ApiDESt59FD7YPy2Dj6OkTqHw=;
+        b=DlbVbJhbpeKVjgwCsby7XbNlllyelbxm6JS8meoHSBy7fd469QA4dXaWNKEeZm0xl0
+         LbIU9cToJcfxP1VuYMRwM4atsRUpgHi17nG26drYadQ9Il3DcQY32D7snWIHN9p5HkkE
+         cgKXIagscsy/O5bm8qsV7u2GrEWOmHgtn5JMYgtpkKAx0ZsKlG9fg4KLyoWqmSOCjxyo
+         iFJjWDPrUUPn/KEMk4vZp9kVYNCFf2CnhGrKMtSU/61r7VqrENPpJmWOBQOpcLKsoD2r
+         Jx5OQt4Zhf6iafxqoGgqJWur3xd8lEeCSsd4fIVrzkbCuGiwo7zs9G74LF49QPQWXacg
+         3rmw==
+X-Gm-Message-State: APjAAAVrYLMHNEqDm71hXzPXs0G1aSK77jCWzy9d3P5JK6WgHy7kamKT
+        53bfNJ2q72kdH7Jw79bCNDOSsDzfGDADGw0DruRKqVKT+DI=
+X-Google-Smtp-Source: APXvYqxYm4u699D6MfjTeITziSplyKn8sEt7CI+fms+8TeorDqWI0J0hJo0VdysuCLO8SV1nCLDMEz0dT8DwxZa1/Vs=
+X-Received: by 2002:a6b:cd89:: with SMTP id d131mr18607268iog.213.1554708086032;
+ Mon, 08 Apr 2019 00:21:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jJGC1kB-0e3DimBSprcgEBnWRB=i287g-9T5a-RidFqBg@mail.gmail.com>
-User-Agent: NeoMutt/20180223
+From:   David Rheinsberg <david.rheinsberg@gmail.com>
+Date:   Mon, 8 Apr 2019 09:21:13 +0200
+Message-ID: <CADyDSO6k8vYb1eryT4g6+EHrLCvb68GAbHVWuULkYjcZcYNhhw@mail.gmail.com>
+Subject: [REGRESSION] AppArmor module parameter layout changed with c5459b829b716
+To:     linux-kernel@vger.kernel.org
+Cc:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Apr 06, 2019 at 09:43:50AM -0700, Kees Cook wrote:
-> On Fri, Apr 5, 2019 at 12:36 PM Andrey Ignatov <rdna@fb.com> wrote:
-> >
-> > v2->v3:
-> > - simplify C based selftests by relying on variable offset stack access.
-> >
-> > v1->v2:
-> > - add fs/proc/proc_sysctl.c mainteners to Cc:.
-> >
-> > The patch set introduces new BPF hook for sysctl.
-> >
-> > It adds new program type BPF_PROG_TYPE_CGROUP_SYSCTL and attach type
-> > BPF_CGROUP_SYSCTL.
-> >
-> > BPF_CGROUP_SYSCTL hook is placed before calling to sysctl's proc_handler so
-> > that accesses (read/write) to sysctl can be controlled for specific cgroup
-> > and either allowed or denied, or traced.
-> >
-> > The hook has access to sysctl name, current sysctl value and (on write
-> > only) to new sysctl value via corresponding helpers. New sysctl value can
-> > be overridden by program. Both name and values (current/new) are
-> > represented as strings same way they're visible in /proc/sys/. It is up to
-> > program to parse these strings.
-> >
-> > To help with parsing the most common kind of sysctl value, vector of
-> > integers, two new helpers are provided: bpf_strtol and bpf_strtoul with
-> > semantic similar to user space strtol(3) and strtoul(3).
-> >
-> > The hook also provides bpf_sysctl context with two fields:
-> > * @write indicates whether sysctl is being read (= 0) or written (= 1);
-> > * @file_pos is sysctl file position to read from or write to, can be
-> >   overridden.
-> >
-> > The hook allows to make better isolation for containerized applications
-> > that are run as root so that one container can't change a sysctl and affect
-> > all other containers on a host, make changes to allowed sysctl in a safer
-> > way and simplify sysctl tracing for cgroups.
-> 
-> This sounds more like an LSM than BPF. 
+Hi
 
-not at all. the key difference is being cgroup scoped.
-essentially for different containers.
+A recent commit changed how `/sys/module/apparmor/parameters/enabled`
+looks. It was "Y"/"N" before, now it is an integer. I *think* the
+commit that changed this was:
 
-> So sysctls can get blocked when
-> new BPF is added to a cgroup? 
+commit c5459b829b716dafd226ad270f25c9a3050f7586
+Author: Kees Cook <keescook@chromium.org>
+Date:   Thu Sep 13 22:28:48 2018 -0700
 
-bpf prog is attached to this hook in a particular cgroup
-and executed for sysctls for tasks that belong to that cgroup.
+    LSM: Plumb visibility into optional "enabled" state
 
-> Can the BPF be removed (or rather,
-> what's the lifetime of such BPF?)
+I haven't recompiled with a revert, but changing the module-parameter
+type looks like the obvious culprit. I don't see how this change can
+be safe?
 
-same as all other cgroup-bpf hooks.
-Do you have a specific concern or just asking how life time of programs
-is managed?
-High level description of lifetime is here:
-https://facebookmicrosites.github.io/bpf/blog/2018/08/31/object-lifetime.html
+This breaks the AppArmor detection of `dbus-broker`. Can the commit be reverted?
 
+Thanks
+David
