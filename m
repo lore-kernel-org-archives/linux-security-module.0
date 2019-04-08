@@ -4,97 +4,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E102DC10F13
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CAFC10F13
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B06BA20883
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8B90213F2
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Apr 2019 17:25:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m1qMCOsB"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MNNGH9ib"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbfDHRPD (ORCPT
+        id S1727276AbfDHRZo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Apr 2019 13:15:03 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:35305 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728664AbfDHRPD (ORCPT
+        Mon, 8 Apr 2019 13:25:44 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:46084 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726860AbfDHRZn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Apr 2019 13:15:03 -0400
-Received: by mail-vk1-f193.google.com with SMTP id g24so3211361vki.2
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2019 10:15:02 -0700 (PDT)
+        Mon, 8 Apr 2019 13:25:43 -0400
+Received: by mail-ua1-f67.google.com with SMTP id v7so4553667uak.13
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2019 10:25:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QNWxSEIPMq1gVan1P/8rBi8me5fnDngA88A2J0wyez0=;
-        b=m1qMCOsBlIXzuJ74McEigabTnfzq67MTjoovacD7MOq/P0+rxbTH4vODORI4YzPR5j
-         NtVORIrqXgx/HssokPsVYjSdzPVPx7BNl4fGDIgkMqW0+P+1QdcND5mNUDMOVQumgn0r
-         LyNd5ragFy+2K5g5Samd3XvtJo44OWd91QKbU=
+        bh=SFkD/PegX130Roia1EM+1l7LEFA+D+0PxdCR3h8muNQ=;
+        b=MNNGH9ibp+2NhoUqD1a6aPTrnfV9XljQZVKcdkhdCskUhDQy8NT07CRxmLxChbh+dI
+         VB/naX4kQUKYcmcWN54EYcJbEn8eaJ9GDza1+H1HjbOwn3L4tJ+muyuVWi3j5Wmf89nK
+         GhO5MwQfO9WhlRSQNNdGKU/OoJ2EBo//a+o+o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=QNWxSEIPMq1gVan1P/8rBi8me5fnDngA88A2J0wyez0=;
-        b=WJVk84tUEdNuDS0AUbUoWUOdLoH0U3JReyWIoKaNvJmho4Vxb952SY5kAOrTv8gbTN
-         TijWUn6bKVVbozoTMk3GCbEeIDdmqa8zTnac3PykzFGB93EanxZyR6S0R74kzjk6gpfo
-         XbN32eZywwzGMDtr6sPKQc94v4SD0MySiqjrBEIkl2a1g7WGeqTFgMSvzNj8rbriBxCk
-         F3C1tqz1AnjXIGlqkMQsFzlbB9WZ7Ht+WJllYCHfe1WVKxGwSvmn4AVEUu7GD8mcaR5T
-         mf4YH9LbHoMmHa/GtvZOG+dX5pGR1lvSxAe//tjTxpPf3ANPvqlehT31zELQZ4EQsomE
-         blVA==
-X-Gm-Message-State: APjAAAUtiiNciOavgdev8zmW0K3DoDtx43B9y1bbDq2qwqOMPWYw6Cy7
-        k8dToAU1FnxECz5WHwcmDeJYkSjSrOA=
-X-Google-Smtp-Source: APXvYqz3ZiQLnzkF9CJi0AapWR/0QSbE9FBrcxLPbIAiI5AAfVDc9cqZJfDOMinWEghTFFsWOcx6Qg==
-X-Received: by 2002:a1f:a4d:: with SMTP id 74mr17197182vkk.13.1554743701603;
-        Mon, 08 Apr 2019 10:15:01 -0700 (PDT)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id u6sm23820733vke.54.2019.04.08.10.14.58
+        bh=SFkD/PegX130Roia1EM+1l7LEFA+D+0PxdCR3h8muNQ=;
+        b=S+HCfN2I5ReHN4Gnd1CfWAJONNDn6YhxHox87VoMf+m5W0o574fyIo1UoWnrRRjL4a
+         EI/myGsGgBBMcEUnBL6mwdGKYtEiBbmCkUq/OWbuoPvu3KQtpjiz85o0chaDdYtPZS7s
+         DeSiM9/S7Nva3Pr7ZIw7DURp2s9uris4qJQLUI77RvP4d9qGUv8tWZzncNXtJ7lDxfmQ
+         c6659awDW9md7R3PLi3a1p8svR7Z/G3JqmMZFghPPSuiT0ajE9IKRXq2R/5op1QpdKnx
+         MlpuDE9vWiPmEwQqwtQfLnwjWKaZkOV83JErFEC89adPks8v6iluts8V2UljEU7BloV6
+         eBuA==
+X-Gm-Message-State: APjAAAVS8kgko4v67D6uVDZDYeRbJWGlfElu+mba2OW7TjkeuVD55dd+
+        Px+o22vyvS6xK5Dp0okVmUTBdDOhk38=
+X-Google-Smtp-Source: APXvYqwLiDOYjd/KMgsONOsuhtWM9U1cAU4rAg6+ocsR19sRhEmm85W2p7zr6st+JzPHHsTxE9q9zw==
+X-Received: by 2002:ab0:60cd:: with SMTP id g13mr15941212uam.85.1554744342175;
+        Mon, 08 Apr 2019 10:25:42 -0700 (PDT)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id e81sm15104944vkd.56.2019.04.08.10.25.41
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 08 Apr 2019 10:14:59 -0700 (PDT)
-Received: by mail-vs1-f54.google.com with SMTP id o10so5473605vsp.12
-        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2019 10:14:58 -0700 (PDT)
-X-Received: by 2002:a67:7e12:: with SMTP id z18mr18237223vsc.82.1554743697591;
- Mon, 08 Apr 2019 10:14:57 -0700 (PDT)
+        Mon, 08 Apr 2019 10:25:41 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id t78so8104681vsc.1
+        for <linux-security-module@vger.kernel.org>; Mon, 08 Apr 2019 10:25:41 -0700 (PDT)
+X-Received: by 2002:a67:76c7:: with SMTP id r190mr18005932vsc.196.1554744340551;
+ Mon, 08 Apr 2019 10:25:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190308132701.133598-1-glider@google.com> <20190308132701.133598-3-glider@google.com>
- <497b1201-b2ae-5e0c-d191-ff1830d92fc1@redhat.com>
-In-Reply-To: <497b1201-b2ae-5e0c-d191-ff1830d92fc1@redhat.com>
+References: <20190408160706.GA18786@beast> <73c80352-ded1-626b-0eb0-a9481165f25d@canonical.com>
+In-Reply-To: <73c80352-ded1-626b-0eb0-a9481165f25d@canonical.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 8 Apr 2019 10:14:45 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJUWKiyW-_ygHpg9rJc7wQ2XTzjH71CtJfdefLu2zZHEg@mail.gmail.com>
-Message-ID: <CAGXu5jJUWKiyW-_ygHpg9rJc7wQ2XTzjH71CtJfdefLu2zZHEg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] initmem: introduce CONFIG_INIT_ALL_HEAP
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Alexander Potapenko <glider@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
+Date:   Mon, 8 Apr 2019 10:25:28 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+k86VtegoRxV1s++YZdMxXEhQhqx1Yh7eu+YKHn0wNZA@mail.gmail.com>
+Message-ID: <CAGXu5j+k86VtegoRxV1s++YZdMxXEhQhqx1Yh7eu+YKHn0wNZA@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: Restore Y/N in /sys for apparmor's "enabled"
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     James Morris <jmorris@namei.org>,
+        David Rheinsberg <david.rheinsberg@gmail.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 8, 2019 at 9:43 AM Laura Abbott <labbott@redhat.com> wrote:
-> I've looked at doing something similar in the past (failing to find
-> the thread this morning...) and while this will work, it has pretty
-> serious performance issues. It's not actually the poisoning which
-> is expensive but that turning on debugging removes the cpu slab
-> which has significant performance penalties.
+On Mon, Apr 8, 2019 at 9:58 AM John Johansen
+<john.johansen@canonical.com> wrote:
+> > +/* Can only be set before AppArmor is initialized (i.e. on boot cmdline). */
+> > +static int param_set_aaintbool(const char *val, const struct kernel_param *kp)
+> > +{
+> > +     struct kernel_param kp_local;
+> > +     bool value;
+> > +     int error;
+> > +
+> > +     if (apparmor_initialized)
+> > +             return -EPERM;
+> > +
+> This isn't sufficient/correct. apparmor_initialized is only set after
+> apparmor has gone through and completed initialization. However if
+> apparmor is not selected as one of the LSMs to enable, then this check
+> won't stop apparmor_enabled from being set post boot.
 >
-> I'd rather go back to the proposal of just poisoning the slab
-> at alloc/free without using SLAB_POISON.
+> However with the apparmor_enabled param being 0444 and the
+> apparmor_enabled_setup() fn handling boot cmdline do with even need
+> the set parameter fn?
 
-I still agree this would make the most sense. Fundamentally it's not a
-debugging feature.
+Yup, that's true. I've gone and tested this, and yes, the 0444 is
+sufficient to protect the logic here (even if root chmods the inode).
+So the test here is redundant. However, very early in the threads
+about LSM boot cmdline enabling it was made clear that
+"apparmor.enabled=..." needed to stay working, which means the "set"
+op is still needed. (But I'm happy to do whatever you want here -- I
+was just trying to keep the functionality as it was.)
+
+Should I send a v2 without the "initialized" check or is this okay to
+leave as-is with the redundant check?
 
 -- 
 Kees Cook
