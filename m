@@ -2,126 +2,124 @@ Return-Path: <SRS0=Re8g=SL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D10C10F0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 15:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24121C10F0E
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 16:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925F82084F
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 15:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6FF02084C
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 16:51:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XT4TipiS"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g55M3HTb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbfDIPQv (ORCPT
+        id S1726035AbfDIQvG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Apr 2019 11:16:51 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:44526 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726431AbfDIPQu (ORCPT
+        Tue, 9 Apr 2019 12:51:06 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:33086 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726412AbfDIQvG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 11:16:50 -0400
-Received: by mail-vs1-f66.google.com with SMTP id j184so10003387vsd.11
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 08:16:50 -0700 (PDT)
+        Tue, 9 Apr 2019 12:51:06 -0400
+Received: by mail-vk1-f193.google.com with SMTP id x194so3625402vke.0
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 09:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=es5FMlhoG3Dzj0CCqBc3VbIdj5L3WT9j6lpixo2Q050=;
-        b=XT4TipiSkvX3yxUIAohXEKu2mIRwF9mXKeBW2ZSWRCIijWuhy5YEy8NQ3TGAQDSulW
-         IqSYyCSwnALXTfvxqQGmwQwYmnJixyunytWiIt4gvjdZqiSxNYmHOf+8QzbmN15z9qtv
-         sOELSSSMepN26NxQWqy0nP92XODunALGR2zQI=
+        bh=NxnZbHwHubpNIgpah9U2ewhbtY55fWGlzvBw7C3ceyQ=;
+        b=g55M3HTbJl2nGEzdInj5BhFDcFCYRLfErTmcVhRIKpELhgbSj1X0w+TOoFf1DFOgqR
+         nIGQIBLYgfVZ+MMYY4lH3twSib14DZF0k8XARdzkZRAIBTpeHR/3dGqo20XTMY71f9aN
+         xChEflprCQ3jjqkj+kT06bR8oVnOtXhtNLeEE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=es5FMlhoG3Dzj0CCqBc3VbIdj5L3WT9j6lpixo2Q050=;
-        b=Vx1V38hpDPpdB2ukU6gVq6mhWZCdvU/z2hStOeRC5+g0gm8lsEtJZTGaIw198+Ysdf
-         ye6+K6uHrsqJhkkHQhyq/sYg1CLhmbKHPbY+6kwRrUjQWvt8zIE1mvf5363qCkU+DPfH
-         cSX4GiAgSjVSNtKLOykwF0eVRtrKLn7M0m+6dw+MwENDdpEg8K3DOAH/K8P7l6K71sy5
-         FJJpqEmB0RMXEjrX8fB8fufvUFfUmsu3nBRQ0xLa0HcnoNv19zBkKzPVCf4PgXY7iqE7
-         D4+hf8RXyhaHUFF0Wj8N6fIcDCVGeheQCFhLiV91B0WBLaMdO9720WHGm60XcEdV1reY
-         FAgA==
-X-Gm-Message-State: APjAAAUpMpODTzAD7ZR0cqKx/5xNtO7s4Az7G+/w/9wiCfWWgVK63j3y
-        wrUfn/SDZ2SA2QdGAJFKEP3XSFWY6qc=
-X-Google-Smtp-Source: APXvYqzaZSb69UpfzPbdh/Dn/MEJwLkJpqgolpP/W/suzNh5DklZUfLZcx2zEF3p3Qg85+e133JPQA==
-X-Received: by 2002:a67:f416:: with SMTP id p22mr21027637vsn.175.1554823009590;
-        Tue, 09 Apr 2019 08:16:49 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id m23sm48338568vsl.24.2019.04.09.08.16.47
+        bh=NxnZbHwHubpNIgpah9U2ewhbtY55fWGlzvBw7C3ceyQ=;
+        b=U5dhQ9Bez/J6PbPSoA2KirNV53AaiJEEza79b/gBLXXrAggvg+5e+THI0iopKO2HcQ
+         UHhTSAERX/IaRZlZenxdAVQ7FdmV22V1m+8onu5NRRLUxG5+MjWWS+UvYUnY0nzs5gU6
+         dgZPaXolFox3A1SEb4OA6vc4gFGLkRvunUikB8IAXJDRjIWrkFkYs5KcJKZkPjORcdWF
+         dxLmsnv1J8WszMz1CijkHjoIeiStksHAXRDezujL4QvqbfKrQzooufP3zk6gUabC5dlb
+         VyF9piQS4nJHNyE6rBONvufgIPqFKIXx0lJDM7upaaymCm46cUlJby61NqAy4fqWYPFJ
+         yCuQ==
+X-Gm-Message-State: APjAAAU/CjJrKvIm97T2GWJ1F6i5qQ4Y+CUqW9OVA6yPCdgC0FHjEiNA
+        dcJMLxQNh5feuPc5SUDN9vHaMw7K8z4=
+X-Google-Smtp-Source: APXvYqytolaFtVLX/++K5YzhSKfs4OSN6DOtcEXT3RphIMsqDay7TZn1IOBChXFFH5dbYleKqWb1WQ==
+X-Received: by 2002:a1f:1284:: with SMTP id 126mr20490716vks.72.1554828664808;
+        Tue, 09 Apr 2019 09:51:04 -0700 (PDT)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id w184sm16058940vkd.0.2019.04.09.09.51.03
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Apr 2019 08:16:48 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id o10so7430510vsp.12
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 08:16:47 -0700 (PDT)
-X-Received: by 2002:a67:7816:: with SMTP id t22mr19790120vsc.115.1554823007449;
- Tue, 09 Apr 2019 08:16:47 -0700 (PDT)
+        Tue, 09 Apr 2019 09:51:03 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id o10so7631964vsp.12
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 09:51:03 -0700 (PDT)
+X-Received: by 2002:a67:f04e:: with SMTP id q14mr21174654vsm.133.1554828663194;
+ Tue, 09 Apr 2019 09:51:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190408160706.GA18786@beast> <CADyDSO4NkEY-SPT-abnyRXT9kGWhF8LbU3XQGNp-5k_15debDg@mail.gmail.com>
-In-Reply-To: <CADyDSO4NkEY-SPT-abnyRXT9kGWhF8LbU3XQGNp-5k_15debDg@mail.gmail.com>
+References: <cover.1554485409.git.rdna@fb.com> <CAGXu5jJGC1kB-0e3DimBSprcgEBnWRB=i287g-9T5a-RidFqBg@mail.gmail.com>
+ <20190406170257.qlptcrfth2rb3rxo@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20190406170257.qlptcrfth2rb3rxo@ast-mbp.dhcp.thefacebook.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 9 Apr 2019 08:16:35 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+g8tPrDAYVKv26ci6zvGuvC1TMXto7weVP2QBymMRjhw@mail.gmail.com>
-Message-ID: <CAGXu5j+g8tPrDAYVKv26ci6zvGuvC1TMXto7weVP2QBymMRjhw@mail.gmail.com>
-Subject: Re: [PATCH] apparmor: Restore Y/N in /sys for apparmor's "enabled"
-To:     David Rheinsberg <david.rheinsberg@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+Date:   Tue, 9 Apr 2019 09:50:50 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJTCjE6FiqPgnSZbp1rzNs35RV-bXXg=+Nu5bO7v1Ac0g@mail.gmail.com>
+Message-ID: <CAGXu5jJTCjE6FiqPgnSZbp1rzNs35RV-bXXg=+Nu5bO7v1Ac0g@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 00/21] bpf: Sysctl hook
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Andrey Ignatov <rdna@fb.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Roman Gushchin <guro@fb.com>, kernel-team <kernel-team@fb.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Jann Horn <jannh@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 8, 2019 at 11:21 PM David Rheinsberg
-<david.rheinsberg@gmail.com> wrote:
+On Sat, Apr 6, 2019 at 10:03 AM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> Hi
->
-> On Mon, Apr 8, 2019 at 6:07 PM Kees Cook <keescook@chromium.org> wrote:
+> On Sat, Apr 06, 2019 at 09:43:50AM -0700, Kees Cook wrote:
+> > On Fri, Apr 5, 2019 at 12:36 PM Andrey Ignatov <rdna@fb.com> wrote:
+> > > BPF_CGROUP_SYSCTL hook is placed before calling to sysctl's proc_handler so
+> > > that accesses (read/write) to sysctl can be controlled for specific cgroup
+> > > and either allowed or denied, or traced.
 > >
-> > Before commit c5459b829b71 ("LSM: Plumb visibility into optional "enabled"
-> > state"), /sys/module/apparmor/parameters/enabled would show "Y" or "N"
-> > since it was using the "bool" handler. After being changed to "int",
-> > this switched to "1" or "0", breaking the userspace AppArmor detection
-> > of dbus-broker. This restores the Y/N output while keeping the LSM
-> > infrastructure happy.
-> >
-> > Before:
-> >         $ cat /sys/module/apparmor/parameters/enabled
-> >         1
-> >
-> > After:
-> >         $ cat /sys/module/apparmor/parameters/enabled
-> >         Y
-> >
-> > Reported-by: David Rheinsberg <david.rheinsberg@gmail.com>
-> > Link: https://lkml.kernel.org/r/CADyDSO6k8vYb1eryT4g6+EHrLCvb68GAbHVWuULkYjcZcYNhhw@mail.gmail.com
-> > Fixes: c5459b829b71 ("LSM: Plumb visibility into optional "enabled" state")
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > ---
-> > This fix, if John is okay with it, is needed in v5.1 to correct the
-> > userspace regression reported by David.
-> > ---
-> >  security/apparmor/lsm.c | 49 ++++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 48 insertions(+), 1 deletion(-)
+> > This sounds more like an LSM than BPF.
 >
-> This looks good to me. Thanks a lot! If this makes v5.1, I will leave
-> the apparmor-detection in dbus-broker as it is, unless someone asks me
-> to parse 0/1 as well?
->
-> I cannot judge whether the apparmor_initialized check is correct, but
-> for the parameter parsing:
->
-> Reviewed-by: David Rheinsberg <david.rheinsberg@gmail.com>
+> not at all. the key difference is being cgroup scoped.
+> essentially for different containers.
 
-Thanks!
+Okay, works for me. I was looking at it from the perspective of
+something providing resource access control policy, which usually
+falls into the LSM world.
 
-James, are you able to take this for v5.1 fixes?
+> bpf prog is attached to this hook in a particular cgroup
+> and executed for sysctls for tasks that belong to that cgroup.
+
+So it's root limiting root-in-a-container? Nice to have some
+boundaries there, for sure.
+
+> > Can the BPF be removed (or rather,
+> > what's the lifetime of such BPF?)
+>
+> same as all other cgroup-bpf hooks.
+> Do you have a specific concern or just asking how life time of programs
+> is managed?
+> High level description of lifetime is here:
+> https://facebookmicrosites.github.io/bpf/blog/2018/08/31/object-lifetime.html
+
+I'm mostly curious about the access control stacking. i.e. can
+in-container root add new eBPF to its own cgroup, and if so, can it
+undo the restrictions already present? (I assume it can't, but figured
+I'd ask...)
 
 -- 
 Kees Cook
