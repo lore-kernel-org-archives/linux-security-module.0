@@ -2,178 +2,216 @@ Return-Path: <SRS0=Re8g=SL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C6FC10F0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 23:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4E5C10F0E
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 23:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22FA82133D
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 23:22:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F41AD20850
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 23:29:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X7kZsVyk"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FANu+XNs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbfDIXW2 (ORCPT
+        id S1726573AbfDIX3t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Apr 2019 19:22:28 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37800 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbfDIXW2 (ORCPT
+        Tue, 9 Apr 2019 19:29:49 -0400
+Received: from sonic314-22.consmr.mail.bf2.yahoo.com ([74.6.132.196]:43082
+        "EHLO sonic314-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726723AbfDIX3t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 19:22:28 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c16so235422otn.4
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 16:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HSlPGOq/zauzPo8ZTMW6WYMjsDECkRil2hWA3pH0xf8=;
-        b=X7kZsVykxx6f+fxzE7DoZ43NbBlos7YO/7prMVYaq0YAUqnLgemyQpBvv4n+SmDDCv
-         eafUNTd4icKrYBK4bRXjb+YfbpQl6MKgHOg3733EafDwqyo6Pesse2fQEgqjuhm0TNqW
-         jZgnVk+Sv4Fzf1HEBs1MAA9OwjnRjOAvmtPZeH90qsL/t+whP2wcE/FvenRU0988Nk/k
-         9zVoGj5Xowrix2wQ00Ollo6R2CPE8LhhxSwTVrk9DeSbHRLAH3nz5R/ePakLbKsMqYBU
-         yBLZcENcrBKkirVRRm4g/wYIdFTNgfXB1odVrC2RMKi7YQy2idSXqRUW5X5xqg7ynl4y
-         MNKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HSlPGOq/zauzPo8ZTMW6WYMjsDECkRil2hWA3pH0xf8=;
-        b=nZX316beGwhcZdGrrYhMepnxXwrEfbvuWaeHCt5U5e3+lfuPd3XhqLRzUJWoLZlQGh
-         8SNDJiiYetu+gdTvNeT/itGm3Nu4aXQ+buLgRZJ16aKkyFdN0e+ODz2sDwcxqlTDq80X
-         K4Ca/Sge9uGjafsMICkR/gkHVyJh7+H3seedX5egaSVCBxM84TRXbUct4YVErUBD9zrY
-         xFogbyYW4w+WKrs69eKigC7aSRxf0WOnO9e/EKpgGndmr6jllQZXk/uujuUYJFiplSGR
-         iyB/xNYfMHZCzhlhmLa5zpf4gUocejrqC0AbuO/gmiBzu26kMbFLpIYkdzSZBYEOVI/T
-         OeGg==
-X-Gm-Message-State: APjAAAU/E1RjheZ5njaGfhOwr9IzINFQEak7Ig5Dn8QcuLzjhUNR+k/H
-        kZd48mDGzczRkzlSo1BAdPEY2Tw50hmo0mzf5catGg==
-X-Google-Smtp-Source: APXvYqy3aN0N0AWKfBCGu0f2OMz3VOE3bfWsStoCaT2vfJ1GD6h50uejcT9mBe6XVsfgCQ16RmlTOrPLeAxFb/Pa9MY=
-X-Received: by 2002:a9d:5e82:: with SMTP id f2mr26200787otl.217.1554852147059;
- Tue, 09 Apr 2019 16:22:27 -0700 (PDT)
+        Tue, 9 Apr 2019 19:29:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554852587; bh=z2c0Wcy4Z8qDvvCxfPe9OubtZvmKSn0akaPPd4lfNWM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=FANu+XNsuuoP9/beMXPRMGAs5isHh51W2wVrRCLoMAieIm/xH78+UTGsabn/h671UDPDZn6cPrFmMCsdV7oZnZCmxeoAiaQqXEyWUZr3+D8L8MmdzBdXBgk+Ed6mpe+L+1OTT+GsrzMttcOt/IO9fStqCOJJWNauvGb5MOuqak+qKMR2BsSJUPdMJ8S5vHInZaAmk9VKBmOZitMDSDadVPLhwXVrHZNqIHI3XXuzrFak3RTLwWnKxnwQ41aJTUqXXCwm3t/NKuaOeJyNs4HpllQTap3AayoMBtc2XjnnjM7BvEaGolkuVeIEsnPLmdibj/qCi7WUMhWY7hC8Y9T3qg==
+X-YMail-OSG: v1d2.VYVM1ng2BGnqKGQUrYoWv6KRz.cXJswes5ezIDDvrVYBkqvzymU1hp7nIp
+ 7XY.LfMGgu1aueaJkl_UUfmSDUu7WOIsAd0PNnUdwe9rtMnDssaFEnRKilR_sTezM0DpY_6Tz1_s
+ lnQVtAWEA7nWeW3V0G4gTUw3S1oaCMcj3xmxaTRAS5norUEGhrRsKzmpOZdiK3.on9TKI5TQPKW0
+ BjixwZvTVBLYp.jh4x1V22LDZ5CNuMMmCwVPKQAq4O6NagkwGKZOvfoQ4c9i3aCUHqmULD5Pb0Jq
+ STil43ZLxDhaWqxiSgs6eiIE_CkD.QAWfiTPpSka7YyPyNA3v286xfl5SduQbrpYza4J_OK0lYrd
+ dCdwwwrVc6DyDZfX9RO4VnbHkuA7IN.3gWSQ_sk7FDTcntmI_QjXyToz.zZf_zJROIwAo.isSB6k
+ O1_cF5B7EvpJVdxE4u5l8E2GppXEqdEhCvxHic8cWTPw9UOgJ51pJYOuCS.LtP3_c83E7fOGkiuY
+ 6aQjeyS6zqJ8PBZNw.ACCN86Xn4m9N9TzKkwmayeIT64DFfD5TM1fhU95Z.WHqS72Ui6sYg_ed5R
+ ElK5khgn90r1.nI50rkoPIodMiWGSRiKyTATn0eF2q3azoSo4hWnzpyANPTRNK8UQjVAdh.Pixnq
+ cbW59WbDAALu3.6aZaIaFjXxQfVsB8BsFG2bnKcJ80MvaLgvS7HDdIn900KFbZM1XAnzpmOfCyGr
+ jPGf6hMfT.nF6ZSMW7i6brHaCbJE2bWL91C7A5hPTCRCUBNjr52vfF6pni4RiRIhhNeft3SdWQL2
+ zVeXkazD.dn2rQinYerezjQqW7UQ3uTJkB_0rwUxs25SFlTMbQrHu6yMbK2nFPbMVpAKb8ma1ir9
+ smv_sVMvMZnSQLLincQMUOqiUqFCjofH5ojG1ljlwZYTbaQ4PKCznIf8dof7YTUCdIkIs9JRBcXw
+ tSvavOeCKWpWFaGA7WgPitz11b.D1gJ2BH4gjfRBLxFBcWIbKwHrf3ZYYy8y5jc.SEmYfRRGyPGo
+ D8TsN_SJp0iy.nQAVmnS40K2N3h_I2Jo9ppqkq6wb1buoGGCBFdTSSe35v_oMa3LcJ_tLvod0NN_
+ lmCtXKcpNP.r98v_xrmX047fcWcPk8NNrkr.P0oRFPTtWG4oWPRp3eHX59zvw9CzyLK3JtIZkkxY
+ Arw--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.bf2.yahoo.com with HTTP; Tue, 9 Apr 2019 23:29:47 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
+          by smtp402.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ad12ab9332fd83af7668f17de3152fe2;
+          Tue, 09 Apr 2019 23:29:46 +0000 (UTC)
+Subject: Re: [PATCH 1/1] Smack :- In this patch, global rule list has been
+ removed. Now all smack rules will be read using "smack_known_list". This list
+ contains all the smack labels and internally each smack label structure
+ maintains the list of smack rules corresponding to that smack label. So there
+ is no need to maintain extra list.
+To:     Vishal Goel <vishal.goel@samsung.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     pankaj.m@samsung.com, a.sahrawat@samsung.com
+References: <CGME20190307093333epcas5p25cc50478585532ea2f7c4a1275b04279@epcas5p2.samsung.com>
+ <1551950603-15570-1-git-send-email-vishal.goel@samsung.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <5371c205-1e5f-25d5-237a-493d75bc9da9@schaufler-ca.com>
+Date:   Tue, 9 Apr 2019 16:29:45 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <cover.1554485409.git.rdna@fb.com> <CAG48ez2D=fUX6_MDf5WD39av65FSQ1OF7v7gG5pqZLqgU9RAUw@mail.gmail.com>
- <20190409230432.GA59615@rdna-mbp>
-In-Reply-To: <20190409230432.GA59615@rdna-mbp>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 10 Apr 2019 01:22:00 +0200
-Message-ID: <CAG48ez0-B_m6ruMiMp+hVgxmw1dZVtiKGqPWtaFP5esOQTjr9A@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 00/21] bpf: Sysctl hook
-To:     Andrey Ignatov <rdna@fb.com>
-Cc:     Network Development <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Roman Gushchin <guro@fb.com>, Kernel Team <Kernel-team@fb.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1551950603-15570-1-git-send-email-vishal.goel@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 10, 2019 at 1:04 AM Andrey Ignatov <rdna@fb.com> wrote:
-> Jann Horn <jannh@google.com> [Tue, 2019-04-09 13:42 -0700]:
-> > On Tue, Apr 9, 2019 at 10:26 PM Andrey Ignatov <rdna@fb.com> wrote:
-> > > The patch set introduces new BPF hook for sysctl.
-> > >
-> > > It adds new program type BPF_PROG_TYPE_CGROUP_SYSCTL and attach type
-> > > BPF_CGROUP_SYSCTL.
-> > >
-> > > BPF_CGROUP_SYSCTL hook is placed before calling to sysctl's proc_handler so
-> > > that accesses (read/write) to sysctl can be controlled for specific cgroup
-> > > and either allowed or denied, or traced.
-> >
-> > Don't look at the credentials of "current" in a read or write handler.
-> > Consider what happens if, for example, someone inside a cgroup opens a
-> > sysctl file and passes the file descriptor to another process outside
-> > the cgroup over a unix domain socket, and that other process then
-> > writes to it. Either do your access check on open, or use the
-> > credentials that were saved during open() in the read/write handler.
+On 3/7/2019 1:23 AM, Vishal Goel wrote:
+> 1) Small Memory Optimization
+> For eg. if there are 20000 rules, then it will save 625KB(20000*32),
+> which is critical for small embedded systems.
+> 2) Reducing the time taken in writing rules on load/load2 interface
+> 3) Since global rule list is just used to read the rules, so there
+> will be no performance impact on system
 >
-> This way this someone inside cgroup should already have control over
-> something running as root [1] outside of this cgroup, i.e. the game is
-> already lost, even without this hook.
+> Signed-off-by: Vishal Goel <vishal.goel@samsung.com>
+> Signed-off-by: Amit Sahrawat <a.sahrawat@samsung.com>
+
+I have taken this patch in for
+	https://github.com/cschaufler/next-smack.git#smack-for-5.2
+
+> ---
+>   security/smack/smackfs.c | 53 ++++++++++++++----------------------------------
+>   1 file changed, 15 insertions(+), 38 deletions(-)
 >
-> [1] Since proc_sys_read() / proc_sys_write() check sysctl_perm() before
->     execution reaches the hook.
-
-You don't need to have _control_ over something running as root. You
-only need to be able to communicate with something that expects to be
-passed in file descriptors for some purpose.
-
-> This patch set doesn't look at credentials at all and relies on what
-> checks were already done at sys_open time or in proc_sys_call_handler()
-> before execution reaches the hook.
-
-You're looking at the cgroup though.
-
-> > > The hook has access to sysctl name, current sysctl value and (on write
-> > > only) to new sysctl value via corresponding helpers. New sysctl value can
-> > > be overridden by program. Both name and values (current/new) are
-> > > represented as strings same way they're visible in /proc/sys/. It is up to
-> > > program to parse these strings.
-> >
-> > But even if a filter is installed that prevents all access to a
-> > sysctl, you can still read it by installing your own filter that, when
-> > a read is attempted the next time, dumps the value into a map or
-> > something like that, right?
->
-> No. This can be controlled by cgroup hierarchy and appropriate attach
-> flags, same way as with any other cgroup-bpf hook.
->
-> E.g. imagine there is a cgroup hierarchy:
->   root/slice/container/
->
-> and container application runs in root/slice/container/ in a cgroup
-> namespace (CLONE_NEWCGROUP) that makes visible only "container/" part of
-> the hierarchy, i.e. from inside container application can't even see
-> "root/slice/".
->
-> Administrator can then attach sysctl hook to "root/slice/" with attach
-> flag NONE (bpf_attr.attach_flags = 0) what means nobody down the
-> hierarchy can override the program attached by administrator.
-
-Ah, okay.
-
-> > > To help with parsing the most common kind of sysctl value, vector of
-> > > integers, two new helpers are provided: bpf_strtol and bpf_strtoul with
-> > > semantic similar to user space strtol(3) and strtoul(3).
-> > >
-> > > The hook also provides bpf_sysctl context with two fields:
-> > > * @write indicates whether sysctl is being read (= 0) or written (= 1);
-> > > * @file_pos is sysctl file position to read from or write to, can be
-> > >   overridden.
-> > >
-> > > The hook allows to make better isolation for containerized applications
-> > > that are run as root so that one container can't change a sysctl and affect
-> > > all other containers on a host, make changes to allowed sysctl in a safer
-> > > way and simplify sysctl tracing for cgroups.
-> >
-> > Why can't you use a user namespace and isolate things properly that
-> > way? That would be much cleaner, wouldn't it?
->
-> I'm not sure I understand how user namespace helps here. From my
-> understanding it can only completely deny access to sysctl and can't do
-> fine-grained control for specific sysctl knobs. It also can't make
-> allow/deny decision based on sysctl value being written.
->
-> Basically user namespace is all or nothing. This sysctl hook provides a
-> way to implement fine-grained access control for sysctl knobs based on
-> sysctl name or value being written or whatever else policy administrator
-> can come up with.
-
-But there's a reason why user namespaces are all-or-nothing on these
-things. If the kernel does not explicitly make a sysctl available to a
-container, the sysctl has global effects, and therefore probably
-shouldn't be exposed to anything other than someone with
-administrative privileges across the whole system. If the kernel does
-make it available to a container, the sysctl's effects are limited to
-the container (or otherwise it's a kernel bug).
-
-Can you give examples of sysctls that you want to permit using from
-containers, that wouldn't be accessible in a user namespace?
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index f6482e5..2a8a1f5 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -67,7 +67,6 @@ enum smk_inos {
+>   /*
+>    * List locks
+>    */
+> -static DEFINE_MUTEX(smack_master_list_lock);
+>   static DEFINE_MUTEX(smack_cipso_lock);
+>   static DEFINE_MUTEX(smack_ambient_lock);
+>   static DEFINE_MUTEX(smk_net4addr_lock);
+> @@ -134,15 +133,7 @@ enum smk_inos {
+>   
+>   /*
+>    * Rule lists are maintained for each label.
+> - * This master list is just for reading /smack/load and /smack/load2.
+>    */
+> -struct smack_master_list {
+> -	struct list_head	list;
+> -	struct smack_rule	*smk_rule;
+> -};
+> -
+> -static LIST_HEAD(smack_rule_list);
+> -
+>   struct smack_parsed_rule {
+>   	struct smack_known	*smk_subject;
+>   	struct smack_known	*smk_object;
+> @@ -211,7 +202,6 @@ static void smk_netlabel_audit_set(struct netlbl_audit *nap)
+>    * @srp: the rule to add or replace
+>    * @rule_list: the list of rules
+>    * @rule_lock: the rule list lock
+> - * @global: if non-zero, indicates a global rule
+>    *
+>    * Looks through the current subject/object/access list for
+>    * the subject/object pair and replaces the access that was
+> @@ -223,10 +213,9 @@ static void smk_netlabel_audit_set(struct netlbl_audit *nap)
+>    */
+>   static int smk_set_access(struct smack_parsed_rule *srp,
+>   				struct list_head *rule_list,
+> -				struct mutex *rule_lock, int global)
+> +				struct mutex *rule_lock)
+>   {
+>   	struct smack_rule *sp;
+> -	struct smack_master_list *smlp;
+>   	int found = 0;
+>   	int rc = 0;
+>   
+> @@ -258,22 +247,6 @@ static int smk_set_access(struct smack_parsed_rule *srp,
+>   		sp->smk_access = srp->smk_access1 & ~srp->smk_access2;
+>   
+>   		list_add_rcu(&sp->list, rule_list);
+> -		/*
+> -		 * If this is a global as opposed to self and a new rule
+> -		 * it needs to get added for reporting.
+> -		 */
+> -		if (global) {
+> -			mutex_unlock(rule_lock);
+> -			smlp = kzalloc(sizeof(*smlp), GFP_KERNEL);
+> -			if (smlp != NULL) {
+> -				smlp->smk_rule = sp;
+> -				mutex_lock(&smack_master_list_lock);
+> -				list_add_rcu(&smlp->list, &smack_rule_list);
+> -				mutex_unlock(&smack_master_list_lock);
+> -			} else
+> -				rc = -ENOMEM;
+> -			return rc;
+> -		}
+>   	}
+>   
+>   out:
+> @@ -540,9 +513,9 @@ static ssize_t smk_write_rules_list(struct file *file, const char __user *buf,
+>   
+>   		if (rule_list == NULL)
+>   			rc = smk_set_access(&rule, &rule.smk_subject->smk_rules,
+> -				&rule.smk_subject->smk_rules_lock, 1);
+> +				&rule.smk_subject->smk_rules_lock);
+>   		else
+> -			rc = smk_set_access(&rule, rule_list, rule_lock, 0);
+> +			rc = smk_set_access(&rule, rule_list, rule_lock);
+>   
+>   		if (rc)
+>   			goto out;
+> @@ -636,21 +609,23 @@ static void smk_rule_show(struct seq_file *s, struct smack_rule *srp, int max)
+>   
+>   static void *load2_seq_start(struct seq_file *s, loff_t *pos)
+>   {
+> -	return smk_seq_start(s, pos, &smack_rule_list);
+> +	return smk_seq_start(s, pos, &smack_known_list);
+>   }
+>   
+>   static void *load2_seq_next(struct seq_file *s, void *v, loff_t *pos)
+>   {
+> -	return smk_seq_next(s, v, pos, &smack_rule_list);
+> +	return smk_seq_next(s, v, pos, &smack_known_list);
+>   }
+>   
+>   static int load_seq_show(struct seq_file *s, void *v)
+>   {
+>   	struct list_head *list = v;
+> -	struct smack_master_list *smlp =
+> -		list_entry_rcu(list, struct smack_master_list, list);
+> +	struct smack_rule *srp;
+> +	struct smack_known *skp =
+> +		list_entry_rcu(list, struct smack_known, list);
+>   
+> -	smk_rule_show(s, smlp->smk_rule, SMK_LABELLEN);
+> +	list_for_each_entry_rcu(srp, &skp->smk_rules, list)
+> +		smk_rule_show(s, srp, SMK_LABELLEN);
+>   
+>   	return 0;
+>   }
+> @@ -2352,10 +2327,12 @@ static ssize_t smk_write_access(struct file *file, const char __user *buf,
+>   static int load2_seq_show(struct seq_file *s, void *v)
+>   {
+>   	struct list_head *list = v;
+> -	struct smack_master_list *smlp =
+> -		list_entry_rcu(list, struct smack_master_list, list);
+> +	struct smack_rule *srp;
+> +	struct smack_known *skp =
+> +		list_entry_rcu(list, struct smack_known, list);
+>   
+> -	smk_rule_show(s, smlp->smk_rule, SMK_LONGLABEL);
+> +	list_for_each_entry_rcu(srp, &skp->smk_rules, list)
+> +		smk_rule_show(s, srp, SMK_LONGLABEL);
+>   
+>   	return 0;
+>   }
