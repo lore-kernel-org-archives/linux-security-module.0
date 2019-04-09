@@ -2,55 +2,55 @@ Return-Path: <SRS0=Re8g=SL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874F7C282CE
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB31C10F0E
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 550252133D
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BE4D2082A
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:41:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LF+BYpqo"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Ypio5f4Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbfDIVkr (ORCPT
+        id S1726944AbfDIVlF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Apr 2019 17:40:47 -0400
-Received: from sonic317-39.consmr.mail.ne1.yahoo.com ([66.163.184.50]:44490
-        "EHLO sonic317-39.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726732AbfDIVkr (ORCPT
+        Tue, 9 Apr 2019 17:41:05 -0400
+Received: from sonic301-38.consmr.mail.ne1.yahoo.com ([66.163.184.207]:40709
+        "EHLO sonic301-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726757AbfDIVlF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 17:40:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554846045; bh=cOt9caKD/749IXNAg082OZdZ8wyzsShJ6Dne6L26IXA=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=LF+BYpqoKJrMqE19IIdBfLGQmwaV5qxDfFGBKSluqeKf2jQtPJKP3JkU3KFYFPHQRYWM0r/MwEJpUyl2frlfH5tzqbcbGEnKZ060NZpHH0vqGsPue48T0EJtmp0Xw1lxkTSlNc08J7GLZGwoTeYjhpEagHiFoHjDZugo/cSkOxF3EMVXYxPloZw+U02AvL4PUjd3GyFpmvn8KI43AxF1OKjqoUuVrTEbsBGCy8jb1SD+xk+nm8oq4L2jvyCLRpxh6IZ0BI0Uf1/gSLTY3YMtX+atM2w7147Q6P7HKIcbvoVcRPB8uhF424ZEm3w+YZljlyaDV9iLuqh93By0E/VLdA==
-X-YMail-OSG: TY_BuJ0VM1k2_9KaJoa9yxP_t3enDIJBjDjdiGANZqEf3XOIXPmso82VdA7C3I7
- WgVGLxJuKqypJ5.JRki9ACB5m8qJMDRneHr7tnUloNPLTcuKLeLLnVbSS5TKBuq5pLv9b6VDtSwm
- 5mGFroe_5uku4XFSnw9Id2ygShLr465dwYOwJiKN6vUzerXHrNl86CcgXRrGpBCOqgtYcZgdraKy
- Xs2oeq7UDx56._tI6B15lUh69mBYzX3o4gsQJBIXa.aiGiGqRJJKX2F8rzrnyHR_UFlRe.7a3tom
- xV3t.BEN6howQ0WGnOApvAIsC6LsUGbd5_c9oQlCZvbm0o0wqOoHNRLDiO992mPDPmbZYq5vFWAs
- MXV.N7CVeNagaBP917LBdO3p0m9TtitYBTfh9ypNB0KaD7RcVoMB70iRjGDhMdPfMwikPje.ZGm2
- mU3EKGL5HOWxo_Br_2w3jDAHiPZpxFqK32tMKMk2GqJzWfshvtDvOAAigejO4vGr55f4.Kc1T84x
- 55IyQ9nPYm48ZoQDZa6Zx0P_sCPJdBsUhXYi0ChQ5BkvarVaqmUehL.SItq3Xe3p0XT19MP8g_YJ
- cqridA2ONGQWVyz7GLv1jZDuQLP117tSPsD6vc8fYR.dCVVptUwv8qYrcX9YerMBf6Bxdgz_rpf0
- AWphTuLbCV1aydKHlvjeQfGnOcrHHe5ShCQ6IjQFqsrg1PWxa5_ByipmTEJD_pp21bSPqdRLsb.T
- 368K4KB3DToP_P4Twz68mopUoevJUfLnXqKocAKk5f4V4tvwh9GCSHSfORwmL8DaPpKiD5JJ2Ior
- 5LvBeEvapEMcgszBJecAX9IHIIhQ7XZUvw.lYZ14sq.j.m.mshLaKuewqgpTzE8bN6rWB0q8G8bG
- YVGLIPm1AOUszl1pQSFoLa70BeCazR9Z.5lLfXL4a1A72FVNGwSd1FK6JVKkrKAZdkfhu4gVZqDC
- v1lYOawpm.KH.DEPl3Q4HXJ2KhvbUCmDrUjtyrUHq_kNEwyQDqZU5K.yjScLHI4C3HPpLd.gwOSA
- Z1lB0ONbMRQh8hYFMiFNWXhtYMBsnoE4BVDqSPDh77avCRQssqI5p5fEKDEcdvaJOaWwcJy_.ctQ
- cinTFK39CQ9Tce4zZk5JB1bnG.jrZnTt_s2o7R3HR2VaBrsIbEUCVn4Me4be5cQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Tue, 9 Apr 2019 21:40:45 +0000
+        Tue, 9 Apr 2019 17:41:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554846063; bh=fnJcv2J/MrzRf8h1makEn2/UWDvYNR2yTG2TfGic4Xg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=Ypio5f4YH48Oq+GLJiivwqPJo4/Yf6THJmZ/XIV8VS8NpoGZdeI3foe0jla4dOq3crx2I9nzZnEk/NeEhqE9tp+9qQULlMDkWknmLfN2Lxz0L8BRRSq9BdGnnASTc5dTFz/HbqRupXoLhiGau1AJQu50FGjKDHdhgn/gCY/q+n2QPqjoEhiA/giPritniGaL6T3wWDKeHFUpmIrPInJPkrLpsScJMU4tR0zVOlqWvLDxczAcMvjfDX5j0quGT8HJ8mTFsEknBsATU9KEIgGoFSMmDSV9I6C4jOSmXrfp2S4+WGvpItbyURPnjsn95OT1ChX4bZAphpYc3ytnWP6McA==
+X-YMail-OSG: g5WvnMQVM1m3RHUQczxuuHTERk8A2jN1rpR4IlE_THH0U1emOIzaKatldN47RUx
+ e3ZGFdCLUnYF9fuvo3Gfo9H6YDVluTyFIols2c_RleVJomeSFTFgXIPKsdJ6na8_wXR3hCW66SG0
+ snvnenOfde_T_hocjYDam0mQNwMmfqi.BCUdZfbouDpYvaFfW3ayQ6Obk.8ibd_.xVz3lG3dtdfs
+ vfu2jQXVRfNFv7tcVVgh9QexE9Oxrz3UesNrFBJig14hDUpqK2aLJ8qLh7qm.0vS.J2qq.3sfzK.
+ KFnpYS6w997H94TZUaETW_k3qWgiJ5hSfM2kWw9yt0tZtraIDqYV0QSrStclf48GYV20dT1I3wJM
+ OM5TpeC9ZmF1Pr1p6fdlzTOqZaYtq6M9MZ5r.wzcjfnp7RyEEIaUKMwS6ouZP0dFdnWWYWYE2ERz
+ BpH_yv1t50W6gr9cu7dS3kbX9.qjN9CaHuqLhoYSOgEd.qyeVt33PVk_yzbLYEkygtl1qNOIZsHE
+ qIoOAS68d_WC13JCFuUX8s_tuzYldlKy5Wsg_qCctT1CXiCuWpu3QqMHIUthClKE4DtNvQ9K_cP2
+ k2_ESTXXCrizU_63qIlh.XHatUJAhcb0SzBAtK8Nrl82UmruehcjeskGvFg6im.TW8zl9QUIeXGQ
+ tPbXINGQA.ZWHuAIvAvLhJz_2yJnAGvQks28NpyENK8ChXEtmqQOg0Zm9TO22tBepKbtQyObOX4z
+ RaiB5lf1u4xNhFaKZJgBwXE8.PGYFYK8m8FT2SC6VVOXYlWFXftGcD8YczfravDlkS.kRwvmS381
+ jN5KDh0NojAYe8y7DgwLwP.XCEsOqDOZ.NB9LA7_bMUO7NX3ik.9W0U3s12zPOjiLIdL5WPj2zmo
+ JR9sLu7TIj0aYcc12GwAQqCv4q9J0tTIZ8psj9Hgo7C9I_Ox6JkcMDJs7aNRr8MovOuGauShoJ2G
+ W7KcOMjcUDfafcP7HBgx1qCQk6hmW2tzSBGEnV23hFS4cHd43CD9xqdKRh3MTxlEQRPWW6bU_yEc
+ 50sWWz5ch32PynAzLOxyLDZVbYLNLpq7NQkVUlwYd2RPg06tS.Fy.4Tl.HWU4BLtLlQoaIhUSc9v
+ CfQdafQeQD62hBEcRU7dV8MeoGr_mCgPR20eFfN3DHJMSjbxgkwJpixeQ068-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Tue, 9 Apr 2019 21:41:03 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp422.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 4c017142cf03fa35170466cff726262b;
-          Tue, 09 Apr 2019 21:40:45 +0000 (UTC)
+          by smtp413.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3d2ea789de6b345569f1c9b3872b02c3;
+          Tue, 09 Apr 2019 21:40:11 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com
-Subject: [PATCH 33/59] IMA: FIXUP prototype using lsm_export
-Date:   Tue,  9 Apr 2019 14:39:20 -0700
-Message-Id: <20190409213946.1667-34-casey@schaufler-ca.com>
+Subject: [PATCH 11/59] LSM: Fix logical operation in lsm_export checks
+Date:   Tue,  9 Apr 2019 14:38:58 -0700
+Message-Id: <20190409213946.1667-12-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190409213946.1667-1-casey@schaufler-ca.com>
 References: <20190409213946.1667-1-casey@schaufler-ca.com>
@@ -58,28 +58,41 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fix the prototype on a function stub
+Fix the logic in Smack and SELinux when checking to
+see if the secid is included.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/integrity/ima/ima.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ security/selinux/include/objsec.h | 2 +-
+ security/smack/smack_lsm.c        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 8b109ad0de2e..7ae41218eb07 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -309,8 +309,8 @@ static inline int security_filter_rule_init(u32 field, u32 op, char *rulestr,
- 	return -EINVAL;
- }
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index d7efc5f23c1e..59a3b1cd5ba9 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -61,7 +61,7 @@ static inline void selinux_export_secid(struct lsm_export *l, u32 secid)
  
--static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
--					     void *lsmrule)
-+static inline int security_filter_rule_match(struct lsm_export *l, u32 field,
-+					     u32 op, void *lsmrule)
+ static inline void selinux_import_secid(struct lsm_export *l, u32 *secid)
  {
- 	return -EINVAL;
- }
+-	if (l->flags | LSM_EXPORT_SELINUX)
++	if (l->flags & LSM_EXPORT_SELINUX)
+ 		*secid = l->selinux;
+ 	else
+ 		*secid = SECSID_NULL;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 0e048c1456ed..a3776501965d 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -477,7 +477,7 @@ static inline void smack_export_secid(struct lsm_export *l, u32 secid)
+ 
+ static inline void smack_import_secid(struct lsm_export *l, u32 *secid)
+ {
+-	if (l->flags | LSM_EXPORT_SMACK)
++	if (l->flags & LSM_EXPORT_SMACK)
+ 		*secid = l->smack;
+ 	else
+ 		*secid = 0;
 -- 
 2.19.1
 
