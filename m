@@ -2,163 +2,101 @@ Return-Path: <SRS0=Re8g=SL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB36C10F0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 23:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2149C10F0E
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 23:35:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB9D20850
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 23:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9197720850
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 23:35:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="cyXI0zXf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqVcx5wo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfDIXaz (ORCPT
+        id S1727017AbfDIXfJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Apr 2019 19:30:55 -0400
-Received: from sonic317-33.consmr.mail.bf2.yahoo.com ([74.6.129.88]:41927 "EHLO
-        sonic317-33.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726813AbfDIXaz (ORCPT
+        Tue, 9 Apr 2019 19:35:09 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43368 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727011AbfDIXfJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 19:30:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554852653; bh=r6OM4e+8zTaJGMV5oIvNgHYtpSkgbss9dPmlcPviyGA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=cyXI0zXfSLuJjijBFsEZkvC6UPyUt/xfXsnT6FBIhMyy+ekY/Af4LBUSp343Iv8nKP9gmZuEFRakmbKqsIW0Ro4CeVM8kFevgGGcHTwUC09gcbBImOmVI3IkIgxpM6N+zvTHXBhyri173IVBVo/V7nxCJKiZ6ezSDonlmIF+apvH/ypjPhxXWU2sIAUjjgVFbJwxbkFGTY+zSPIJdzQ/2MpVbaxOtVF3YnhHFi6Nol9ejAQ113Mj+R/bIdcIfpnlqqVoOs7ObAWSN2RRMCZZ/Dlob3LAhstj7xh8KOder+54DuWnZyPMe2JbYpt+fsQjNY83svn5D5PKRgOod+XWLA==
-X-YMail-OSG: OUTNC4oVM1nYJNWQKA5QcJ3mFpUZ52uicGXZ6QCUhQlfaBiwNzoGBgR7jKnQ23E
- lExDGfnngdtPbyLjuGaiVTRTQnnifFmxwgi3_APuM9RHdhVkGMTN6ilLJhE2LXjKzil_vLuCeQjj
- Ud3eSdnglwfv99wMcAfjgvu7m3d5pEo5IOzHVz3Jtvkp4GHuEsXplugaOtlOaHcNscKwkUkoP5gK
- LfmeZh8LLTzZsHfB..W7aghshQddTvG3loPDp6T1xynV2J927f6K7xnrs5_aCl2MZMhIHTIXVPjC
- qRMMUr1exl2.6PLFRevWKevJDcS8bygi1mpEJWvXxCACuJsVpgCKFExDJblWBcPc_HzaXeMqA3Rm
- 8tSsfupVveS8G69kAdPhf8ESZETyULHD.eGOnT8HNB9s6g4fnDn.YR_vzFZ3W2NCoxBVPuNb9fnI
- tqs40tZiJcmDcj5IQlYuai_J548CwVU17mSpzk9mukxq7Rc82S.uyfjxULyPgcxmlPB516b5UfA.
- sLdWtyB7kDjSuFWixsIgVu2vZMFbr.Gm9m1Rm5dDBQl9VU9tZEY40i1QcYP8F5GIYMnK14f2qWz9
- K2KpyBEnvFC8V7LNiNUIsgtda._.4kdgO6PS8IcMTHpmHN0lkdvT6noGh.NiH6avOyPHYMVJzVNu
- OQVmCC7aYKr5EgHaTqyq_9rUSwvaSgSk18cp2QA3cZ6qyAuRuyqW_f.813PiNREtrDYRtnoJdU8n
- GUQlbW.0yKN6.wxp7cWAPj7CbsZFEF8NUWwFPZ1d27p0M03HKC0egdC3z4zwwK.wr8W5i1LKrdcz
- cXivnRamaeXArgTEEzVA0YythTT_pATScQpnzoFyIeDqygkcAIBbaA_Sj._T32gq6kYFVD4rXT8R
- Tp3eR4Egr5fDn_jJQaO_Q1fz0il0i9TlJuRnC7YUo9TM9aZmXIlEE6HFt9KiMfFAne_Nm_ZnY7bA
- 1L2hLIUqscZkG5oO7eN_I2Hvhe9A4wJN1TdssK8xr3vvHHOm1HJLWcslA.tFoRbNSrOy9snWhHCx
- QVpXP2vDK5hG80NgPtJbsF5AxlGaMTueQWKHPLNqhI2GgTb3crlV.Jzzdt4a5aNENQIi1i8av9w2
- wcwELNgqNiqBYRVFxYS8zRsPEdepJbcZIeC0FgMRM3q2DYmeuGK4fst5eCrEzTJpQpQInLw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.bf2.yahoo.com with HTTP; Tue, 9 Apr 2019 23:30:53 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp425.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID dfd426c89d12d282fb8b590a8b6da0c0;
-          Tue, 09 Apr 2019 23:30:49 +0000 (UTC)
-Subject: Re: [PATCH 1/1] Smack: Create smack_rule cache to optimize memory
- usage
-To:     Vishal Goel <vishal.goel@samsung.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     pankaj.m@samsung.com, a.sahrawat@samsung.com
-References: <CGME20190314091717epcas5p34ec02dc48347e76c2ba7a9d9c6fa9abe@epcas5p3.samsung.com>
- <1552554393-11691-1-git-send-email-vishal.goel@samsung.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <fdd65731-493b-21e2-3325-073ba906cfb4@schaufler-ca.com>
-Date:   Tue, 9 Apr 2019 16:30:48 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 9 Apr 2019 19:35:09 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f18so310362lja.10;
+        Tue, 09 Apr 2019 16:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gWeYLM3rxJzPGlnKtrpsD9DliBwRs8NRe3bcbb4uxqg=;
+        b=XqVcx5wo8OBRGYaAwrpVdO+dFWVY+W61RR4oVH1KTrT5lDqDjLoSsEK/4YVexk8rBG
+         fSE2DTB170CS2tjtlSHv/eu+qvLtVWYqhIPjoiXXsJ6SljtoiTDr55us1T6cn8TMaxx1
+         6jGSiMeaRy7UKMixzWcgmthKN0BE2739sEVu6dOa3Vp0WYMHbocD3MS34ywc18f/irHH
+         M0kDFhEI23uPhbzzqlMh08sXNeEdqdzCL3m9wNoJCfg9941ke6sgGic5WVhwE5gr6+VW
+         f9mVFJR77+2r1hqcTGvk8MMPK1WdilWgCAZF0Jo5C5mDqtVMWffe+1Ry+rT4F7Vspfpa
+         idWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gWeYLM3rxJzPGlnKtrpsD9DliBwRs8NRe3bcbb4uxqg=;
+        b=l0x0mj3Jt37N9CqBfSxRZaPHoYZFWMVE9lOXH036ADPhL5JEzt7K1EqDr9DmryN0f7
+         hhU8MTKlL9AHLsa5jNfeotjQdAEKaEDz0lwc4YOe+He+jOlixV7CgZvVazOafZK04h/T
+         J3mZzgO6KTYBVkp/Muineci58QAjMByxmnyuR3IdA/rysy0aUU/dgWWTcJj7ZX7QJ3Cs
+         clhLYH02iiEXK0UAysGilqunAuiYOMKjUiWwk52pWiPHClTwqIW07WDhSl3fGGQG2bgA
+         0scztHKclm3MZ8k7njxo87O40qh1pvf/3GkPWKktOH8uFRV8pWnqEpVGCqeiEvrrzf/a
+         /LYQ==
+X-Gm-Message-State: APjAAAWnEH8sXm5G0l4d82BL+ba0h5Xz+4NB/8np4nKDQpJnRjyrToPo
+        dfXov5XAfgk4lbc4CEOqBgYB1D+3n9dOpUHa88k=
+X-Google-Smtp-Source: APXvYqzvcSMLYwm0uwjInbDfn6BUM8tYLD6JGxGrVa02YHX+Kg3nConQkk1IYV2wjpcJX6jTd+aIYVY3GsbyXHUFJxo=
+X-Received: by 2002:a2e:808e:: with SMTP id i14mr22176366ljg.103.1554852906651;
+ Tue, 09 Apr 2019 16:35:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1552554393-11691-1-git-send-email-vishal.goel@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <cover.1554485409.git.rdna@fb.com> <CAG48ez2D=fUX6_MDf5WD39av65FSQ1OF7v7gG5pqZLqgU9RAUw@mail.gmail.com>
+ <20190409230432.GA59615@rdna-mbp> <CAG48ez0-B_m6ruMiMp+hVgxmw1dZVtiKGqPWtaFP5esOQTjr9A@mail.gmail.com>
+In-Reply-To: <CAG48ez0-B_m6ruMiMp+hVgxmw1dZVtiKGqPWtaFP5esOQTjr9A@mail.gmail.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Tue, 9 Apr 2019 16:34:55 -0700
+Message-ID: <CAADnVQ+88HOEM+aJycPd_dWu=rizeNMfQucC+f5refHOTepBGQ@mail.gmail.com>
+Subject: Re: [PATCH v3 bpf-next 00/21] bpf: Sysctl hook
+To:     Jann Horn <jannh@google.com>
+Cc:     Andrey Ignatov <rdna@fb.com>,
+        Network Development <netdev@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Roman Gushchin <guro@fb.com>, Kernel Team <Kernel-team@fb.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/14/2019 2:06 AM, Vishal Goel wrote:
-> This patch allows for small memory optimization by creating the
-> kmem cache for "struct smack_rule" instead of using kzalloc.
-> For adding new smack rule, kzalloc is used to allocate the memory
-> for "struct smack_rule". kzalloc will always allocate 32 or 64 bytes
-> for 1 structure depending upon the kzalloc cache sizes available in
-> system. Although the size of structure is 20 bytes only, resulting
-> in memory wastage per object in the default pool.
+On Tue, Apr 9, 2019 at 4:22 PM Jann Horn <jannh@google.com> wrote:
 >
-> For e.g., if there are 20000 rules, then it will save 240KB(20000*12)
-> which is crucial for small memory targets.
+> But there's a reason why user namespaces are all-or-nothing on these
+> things. If the kernel does not explicitly make a sysctl available to a
+> container, the sysctl has global effects, and therefore probably
+> shouldn't be exposed to anything other than someone with
+> administrative privileges across the whole system. If the kernel does
+> make it available to a container, the sysctl's effects are limited to
+> the container (or otherwise it's a kernel bug).
 >
-> Signed-off-by: Vishal Goel <vishal.goel@samsung.com>
-> Signed-off-by: Amit Sahrawat <a.sahrawat@samsung.com>
+> Can you give examples of sysctls that you want to permit using from
+> containers, that wouldn't be accessible in a user namespace?
 
-I have taken this patch in for
-	https://github.com/cschaufler/next-smack.git#smack-for-5.2
-
-> ---
->   security/smack/smack.h     |  1 +
->   security/smack/smack_lsm.c | 12 ++++++++++--
->   security/smack/smackfs.c   |  2 +-
->   3 files changed, 12 insertions(+), 3 deletions(-)
->
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index 6a71fc7..a5d7461 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -354,6 +354,7 @@ int smk_tskacc(struct task_smack *, struct smack_known *,
->   
->   #define SMACK_HASH_SLOTS 16
->   extern struct hlist_head smack_known_hash[SMACK_HASH_SLOTS];
-> +extern struct kmem_cache *smack_rule_cache;
->   
->   /*
->    * Is the directory transmuting?
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 319add3..16b6cf5 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -56,6 +56,7 @@
->   static LIST_HEAD(smk_ipv6_port_list);
->   #endif
->   static struct kmem_cache *smack_inode_cache;
-> +struct kmem_cache *smack_rule_cache;
->   int smack_enabled;
->   
->   static const match_table_t smk_mount_tokens = {
-> @@ -349,7 +350,7 @@ static int smk_copy_rules(struct list_head *nhead, struct list_head *ohead,
->   	int rc = 0;
->   
->   	list_for_each_entry_rcu(orp, ohead, list) {
-> -		nrp = kzalloc(sizeof(struct smack_rule), gfp);
-> +		nrp = kmem_cache_zalloc(smack_rule_cache, gfp);
->   		if (nrp == NULL) {
->   			rc = -ENOMEM;
->   			break;
-> @@ -1995,7 +1996,7 @@ static void smack_cred_free(struct cred *cred)
->   	list_for_each_safe(l, n, &tsp->smk_rules) {
->   		rp = list_entry(l, struct smack_rule, list);
->   		list_del(&rp->list);
-> -		kfree(rp);
-> +		kmem_cache_free(smack_rule_cache, rp);
->   	}
->   	kfree(tsp);
->   }
-> @@ -4788,10 +4789,17 @@ static __init int smack_init(void)
->   	if (!smack_inode_cache)
->   		return -ENOMEM;
->   
-> +	smack_rule_cache = KMEM_CACHE(smack_rule, 0);
-> +	if (!smack_rule_cache) {
-> +		kmem_cache_destroy(smack_inode_cache);
-> +		return -ENOMEM;
-> +	}
-> +
->   	tsp = new_task_smack(&smack_known_floor, &smack_known_floor,
->   				GFP_KERNEL);
->   	if (tsp == NULL) {
->   		kmem_cache_destroy(smack_inode_cache);
-> +		kmem_cache_destroy(smack_rule_cache);
->   		return -ENOMEM;
->   	}
->   
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index 2a8a1f5..d8a0e25 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -236,7 +236,7 @@ static int smk_set_access(struct smack_parsed_rule *srp,
->   	}
->   
->   	if (found == 0) {
-> -		sp = kzalloc(sizeof(*sp), GFP_KERNEL);
-> +		sp = kmem_cache_zalloc(smack_rule_cache, GFP_KERNEL);
->   		if (sp == NULL) {
->   			rc = -ENOMEM;
->   			goto out;
+I think this discussion has started with incorrect
+assumptions about the goal of the patch set.
+There is no _security_ part here.
+The sysctl hook is to prevent silly things to be done by chef
+and apps. Most interesting sysctls need root anyway.
+The root can detach all progs and do its thing.
+Consider tcp_mem sysctl. We've seen it's been misconfigured
+and caused performance issues. bpf prog can track what is
+being written, alarm, etc.
+User namespaces are not applicable here.
