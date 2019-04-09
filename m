@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C99C282CE
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 19:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B76CC282DA
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 19:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B39142084F
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 19:19:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EF4B2084B
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 19:19:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="QZIetdkp"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Mo3zW4UD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfDITTC (ORCPT
+        id S1726691AbfDITTC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Tue, 9 Apr 2019 15:19:02 -0400
-Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:32957
+Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:39506
         "EHLO sonic313-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726559AbfDITTB (ORCPT
+        by vger.kernel.org with ESMTP id S1726554AbfDITTB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 9 Apr 2019 15:19:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554837539; bh=FXPJ6Gfz/Kw1RJDXF2OhaTmACwfJr6C43ZPwo4T1SLA=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=QZIetdkpv5AMXQ6dcyblbbtC9iIeyb8eiEqV5pezknjjosDcQtmGP8HheP4tZXkSXHemMuF3z+Z28tPx2Oq2fHjNTQzpmnm9aeAasBs2rfFcPYZXAWCIuHx8AzolrgG8BavV9EBhpRJpka+pkZXMQh5QMyhTUVKgmEtFUxyXeKX1arwX4omIN1+FX0nGktZFBWY8Kcj9Zql49evoXOFNMUzvJWS+l1LbSjUbYyuSO/zVLsIjREqdCFEEdeowkyMclPoXJFZQm7U71vobHNC8/8gIPKObCZBC0LBGdEjzEkd6LLuzTVKpdY7ef72vsrrd8AZFWwnR0+OIUN51DzTgKQ==
-X-YMail-OSG: 5UuEYYkVM1mtAiN6YJ_H02kOnX9jZTQ7K_NwT2oGAGJUn6Do5foIt5QjNGk3oMk
- wHhKtMM8YGc2C1TXNjXdGE6gsK1GwjjidTD9tWGVdbU1w6.IwiiWs6HTvG41L_0A6hiN8Malq.x0
- fuHZQVZJnByX7V2Z6DtkKP_x.rB0Xaz.rAIDx7ymxP7p9mMM9YPkLSS.tdaHqSYK6UmYDCFTzGD0
- G0vqehYHkg5Ka36qVCdjlQqCt48k.qvMDrbJR2jnaNomqJLEXU456TUuDFDmvbSNNbF7_zO1CVsu
- hf1Sm9owNROsiftFR8dI0bD4EKxUPf4FwCzuEo_S1NBVnbDQEvle3YmwnbEOM_eh0i4n.OU.WZlQ
- 7wwkevw6quPVzg8XtxSmi5aixqiBxz2JBt4qDdoooK5hhLd2knbZ0lZP2bhujso80.mqtTuyd7ZW
- AbMfx4m_kWBRs8cVZ1QQrseS5bnQeVBW8p.afs5AsQjCPJuoqFP1qaZq8OXO7sV09_ukHN_l5Wa9
- Egb2CnE9G95bQ.VGCTwjWR_TvZFcBa5EfOZehASEFyKRs_lbVuvfobZ9uNIaNiappmEWlWY.HoSF
- xm9wWSnlAHsuw8hhxis5k16ni8kLn4rm.zy8LLweqshqkdAKearTx7hCGBB5EItyU0YhFwT51aUR
- Kd02pynvB4OGe8LNRUXkEcvuby.y.rsu0q_KpC8r6Az7XM9NZ52jtko4TIVioQlwCm1aQ09WVgyE
- k6cSzvQNqcj2_4hZ1h1SHqwGe6T7BBnqcfQkjtMIcN9EpTUMg2soTQ0FNJhBTmtAFQ19NH4oNXZs
- uUyMLm.78NXn62K2G8FhYUguw_2hYFTN4O_zFwRY4vQ57LGy4qcPtv.9nU.A2Pu4oyZNju9_6WCr
- F8Ias.HWraQWZ2v1A0W9WIYc0uBTm1eoctr6N7ZdAGxa88YPLSsJG2MSgu9Ez73yorBtqNybXOmp
- V5u_9BXvN6C8NAQjQ6.v1d3G8vua36cLOfe7x2ixNWexn4gypI5yWDtbVasclAc7ZnQ1UappEahp
- v5eJFVdGzV1Tf5kN3Pe.5fAbAqCZQcmA3P4WDunNsng3q8phFH9J4wejHiPuqUIx3KmKpiHMAqLJ
- RZjrebMYypLcM6UbOt.dXHBqoDQoSku3cmIZjLJncgmWN85.lC0dXrw--
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554837539; bh=MmtCEsyght4Z5zl828NTA0CWqne8Yk1YCMTRtKNxpho=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=Mo3zW4UDYatjjECg/SDazRJeXvJdlPtXMfKnIQs+45XHAlfSPEH52SJ7t/AjsJcsBxAAvJCqnGdZSvQfqGyQ30Y5jpyIdlDwkNyh5GSxMQgK7ctN6V0LrFGyc1J70QZbSEsig2qnRCwMY5Cq/SwG2/iig/Dkx0d/E90o8rR2tB9urxvKCK4p4mzyJr3L4PUdhu/H2NFQ+nRBv4VIiT9G2fxQtxho/ULS1dbWTsz9CnkBAg4ZWifoKLUIMLSfFAnXrT0EbVkmhc8/8htA+0cVmTY8qgXVbS8GIYs2vdaTcrwixIQPxEkxMg8ZGH+YLsKFPjIYJucdf9w0FJoGlazHQA==
+X-YMail-OSG: dPRxZPUVM1mCN3pmHbOpf1ssx0hkX.PgHEjRF1BrSTNEi6r1ekRo5GS50m4gjzv
+ Hu_DfVfQHF6yr.sAsgBHaqmzaBa5GIcr.InG4NV07JyUnTZy5GgrtTHKWriXaKlW0Q.Kvjan26ES
+ px5zjhCvax6duD0MxQLYrHNajW8wDEHFIepUays07SVSJShnc2kk9cKkFSYllHqDJbmgL5UAJajD
+ fuMeMBp5yDbG0LbHEqrIt.pyZUqM2b14abeUXCG4dk2MZpVg91kSlKj1OndVRiJ3PcefiTaN43g8
+ kaT2qsBvtEhVvFyYo9X7oICiPaGeeM7wylGn2cm_PFn6o6CY0E0OyuyGPYSx0U0IpMtiSHATIBHt
+ UVZ8kpmm8G9r2r5tbHSjmsi5ln3pPaB2CbmTgXPAZo0tOqe4YO_5xewrG9348NaSNY5hdRZENw_a
+ Nc0Qv8.f5iPmI.UxJIgnPqziQkivz3mbFqIcAw4or.WDMSRuqz51Ku1hgieukymc4AbvANXLZ5Pj
+ x7Qt_PQS0nogXpfmM5yziJC.9XSgw3qcdu69VHxxivf9KhtXp3gk3Vzxwa2llMV00zG2fXcTc95a
+ Gj4S68xcVIx_uZz_9IofLe5V.k45iH3M4a1z6yYI8BAv2uwsOzIYHaILzFd1dxeoLoahstEsO1wX
+ 48pfirrxXZpXPhV_EhonJ3ZGvJitc6l1XXwd5TjoK.AhK15nv_wyYVn8ol.Ra0GLfsWgMjYDQTmM
+ 9U3UJ.ML9svGX6wstxQsuPO3a8wJOAYzV5VTCkYRcZtEfaAVxA3F0PMnCH5XIE3v64VgFZ6VM8uA
+ SYAj5zet06lS.uV4IL1I13u07AQgkUWPvU9yANpLljsGUkOoNeGn9nZpGu8EHYkujFsNyPvSOwf5
+ 3YgEQnMhFInv5n7cysOlBY7TgzeYCQZc5kxF7.mKCRS9yrxCpwyBhyZHLmEofpo4cBg6jkcNtB7f
+ u3G15TW6fsR1XVFFpQglGbSgi_Eq5YUkdHEG.0FarIVnqJ0c1iNmon4JIqWRCRcMWab4uZbp0XBS
+ R6DWQgVHqHYPe2cIRYVEofT6xlzrLaWrYbMfOZr47GVQn9iRPkdPopvulF1v9yWzt8iO0_evA5nf
+ YAISrPUjUlayEhl4KkUPG5AST7iq1XNL3LjRbm.oRJABxK3aBW8zt7g--
 Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Tue, 9 Apr 2019 19:18:59 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp417.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b77b874e22efcf04356cc7acbadd009c;
-          Tue, 09 Apr 2019 19:18:59 +0000 (UTC)
+          Tue, 09 Apr 2019 19:18:58 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org, casey.schaufler@intel.com
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
         sds@tycho.nsa.gov
-Subject: [PATCH 09/59] LSM: Use lsm_export in the getpeersec_dgram hooks
-Date:   Tue,  9 Apr 2019 12:17:58 -0700
-Message-Id: <20190409191848.1380-10-casey@schaufler-ca.com>
+Subject: [PATCH 07/59] LSM: Use lsm_export in the ipc_getsecid and task_getsecid hooks
+Date:   Tue,  9 Apr 2019 12:17:56 -0700
+Message-Id: <20190409191848.1380-8-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190409191848.1380-1-casey@schaufler-ca.com>
 References: <20190409191848.1380-1-casey@schaufler-ca.com>
@@ -59,132 +60,187 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Convert the getpeersec_dgram hooks to use the lsm_export
-structure instead of a u32 secid. There is some scaffolding
-involved that will be removed when security_getpeersec_dgram()
-is updated.
+Convert the cred_getsecid and task_getsecid hooks to use the
+lsm_export structure instead of a u32 secid. There is some
+scaffolding involved that will be removed when
+security_ipc_getsecid() and security_task_getsecid() are
+updated.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hooks.h  |  7 ++++---
- security/apparmor/lsm.c    |  3 ++-
- security/security.c        | 13 ++++++++++---
- security/selinux/hooks.c   |  6 ++++--
- security/smack/smack_lsm.c |  5 +++--
- 5 files changed, 23 insertions(+), 11 deletions(-)
+ include/linux/lsm_hooks.h  |  8 ++++----
+ security/apparmor/lsm.c    | 12 ++++++++++--
+ security/security.c        | 12 ++++++++----
+ security/selinux/hooks.c   | 10 ++++++----
+ security/smack/smack_lsm.c |  8 ++++----
+ 5 files changed, 32 insertions(+), 18 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 85b8217ce2f2..59f38c18426a 100644
+index 2fe54dff3efa..544671f44dfa 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -881,9 +881,9 @@
-  *	the IP_PASSSEC option via getsockopt.  It can then retrieve the
-  *	security state returned by this hook for a packet via the SCM_SECURITY
-  *	ancillary message type.
-+ *	@sock is the socket
-  *	@skb is the skbuff for the packet being queried
-- *	@secdata is a pointer to a buffer in which to copy the security data
-- *	@seclen is the maximum length for @secdata
-+ *	@l is a pointer to a buffer in which to copy the security data
-  *	Return 0 on success, error on failure.
-  * @sk_alloc_security:
-  *	Allocate and attach a security structure to the sk->sk_security field,
-@@ -1710,7 +1710,8 @@ union security_list_options {
- 					char __user *optval,
- 					int __user *optlen, unsigned len);
- 	int (*socket_getpeersec_dgram)(struct socket *sock,
--					struct sk_buff *skb, u32 *secid);
-+					struct sk_buff *skb,
-+					struct lsm_export *l);
- 	int (*sk_alloc_security)(struct sock *sk, int family, gfp_t priority);
- 	void (*sk_free_security)(struct sock *sk);
- 	void (*sk_clone_security)(const struct sock *sk, struct sock *newsk);
+@@ -638,7 +638,7 @@
+  *	Return 0 if permission is granted.
+  * @task_getsecid:
+  *	Retrieve the security identifier of the process @p.
+- *	@p contains the task_struct for the process and place is into @secid.
++ *	@p contains the task_struct for the process and place is into @l.
+  *	In case of failure, @secid will be set to zero.
+  *
+  * @task_setnice:
+@@ -1096,7 +1096,7 @@
+  * @ipc_getsecid:
+  *	Get the secid associated with the ipc object.
+  *	@ipcp contains the kernel IPC permission structure.
+- *	@secid contains a pointer to the location where result will be saved.
++ *	@l contains a pointer to the location where result will be saved.
+  *	In case of failure, @secid will be set to zero.
+  *
+  * Security hooks for individual messages held in System V IPC message queues
+@@ -1618,7 +1618,7 @@ union security_list_options {
+ 	int (*task_setpgid)(struct task_struct *p, pid_t pgid);
+ 	int (*task_getpgid)(struct task_struct *p);
+ 	int (*task_getsid)(struct task_struct *p);
+-	void (*task_getsecid)(struct task_struct *p, u32 *secid);
++	void (*task_getsecid)(struct task_struct *p, struct lsm_export *l);
+ 	int (*task_setnice)(struct task_struct *p, int nice);
+ 	int (*task_setioprio)(struct task_struct *p, int ioprio);
+ 	int (*task_getioprio)(struct task_struct *p);
+@@ -1636,7 +1636,7 @@ union security_list_options {
+ 	void (*task_to_inode)(struct task_struct *p, struct inode *inode);
+ 
+ 	int (*ipc_permission)(struct kern_ipc_perm *ipcp, short flag);
+-	void (*ipc_getsecid)(struct kern_ipc_perm *ipcp, u32 *secid);
++	void (*ipc_getsecid)(struct kern_ipc_perm *ipcp, struct lsm_export *l);
+ 
+ 	int (*msg_msg_alloc_security)(struct msg_msg *msg);
+ 	void (*msg_msg_free_security)(struct msg_msg *msg);
 diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 706e5ae09170..24b638bd4305 100644
+index 2716e7731279..706e5ae09170 100644
 --- a/security/apparmor/lsm.c
 +++ b/security/apparmor/lsm.c
-@@ -1096,7 +1096,8 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
-  * Sets the netlabel socket state on sk from parent
-  */
- static int apparmor_socket_getpeersec_dgram(struct socket *sock,
--					    struct sk_buff *skb, u32 *secid)
-+					    struct sk_buff *skb,
-+					    struct lsm_export *l)
+@@ -49,6 +49,14 @@ int apparmor_initialized;
  
+ DEFINE_PER_CPU(struct aa_buffers, aa_buffers);
+ 
++/*
++ * Set the AppArmor secid in an lsm_export structure
++ */
++static inline void apparmor_export_secid(struct lsm_export *l, u32 secid)
++{
++	l->apparmor = secid;
++	l->flags |= LSM_EXPORT_APPARMOR;
++}
+ 
+ /*
+  * LSM hook functions
+@@ -710,10 +718,10 @@ static void apparmor_bprm_committed_creds(struct linux_binprm *bprm)
+ 	return;
+ }
+ 
+-static void apparmor_task_getsecid(struct task_struct *p, u32 *secid)
++static void apparmor_task_getsecid(struct task_struct *p, struct lsm_export *l)
  {
- 	/* TODO: requires secid support */
+ 	struct aa_label *label = aa_get_task_label(p);
+-	*secid = label->secid;
++	apparmor_export_secid(l, label->secid);
+ 	aa_put_label(label);
+ }
+ 
 diff --git a/security/security.c b/security/security.c
-index 3a766755b722..2f1355d10e0d 100644
+index ca485a777ca1..802557ff6f60 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -2145,10 +2145,17 @@ int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
- 				optval, optlen, len);
- }
+@@ -1722,8 +1722,10 @@ int security_task_getsid(struct task_struct *p)
  
--int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid)
-+int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb,
-+				     u32 *secid)
+ void security_task_getsecid(struct task_struct *p, u32 *secid)
  {
--	return call_int_hook(socket_getpeersec_dgram, -ENOPROTOOPT, sock,
--			     skb, secid);
-+	int rc;
+-	*secid = 0;
+-	call_void_hook(task_getsecid, p, secid);
 +	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
 +
-+	rc = call_int_hook(socket_getpeersec_dgram, -ENOPROTOOPT, sock, skb,
-+			   &data);
-+
++	call_void_hook(task_getsecid, p, &data);
 +	lsm_export_secid(&data, secid);
-+	return rc;
  }
- EXPORT_SYMBOL(security_socket_getpeersec_dgram);
+ EXPORT_SYMBOL(security_task_getsecid);
  
+@@ -1805,8 +1807,10 @@ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
+ 
+ void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
+ {
+-	*secid = 0;
+-	call_void_hook(ipc_getsecid, ipcp, secid);
++	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
++
++	call_void_hook(ipc_getsecid, ipcp, &data);
++	lsm_export_secid(&data, secid);
+ }
+ 
+ int security_msg_msg_alloc(struct msg_msg *msg)
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 8d4334f68a65..03dfa0cd6739 100644
+index f97dd414ac8d..c82108793fb5 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -4949,7 +4949,9 @@ static int selinux_socket_getpeersec_stream(struct socket *sock,
- 	return err;
+@@ -3911,9 +3911,9 @@ static int selinux_task_getsid(struct task_struct *p)
+ 			    PROCESS__GETSESSION, NULL);
  }
  
--static int selinux_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid)
-+static int selinux_socket_getpeersec_dgram(struct socket *sock,
-+					   struct sk_buff *skb,
-+					   struct lsm_export *l)
+-static void selinux_task_getsecid(struct task_struct *p, u32 *secid)
++static void selinux_task_getsecid(struct task_struct *p, struct lsm_export *l)
  {
- 	u32 peer_secid = SECSID_NULL;
- 	u16 family;
-@@ -4971,7 +4973,7 @@ static int selinux_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *
- 		selinux_skb_peerlbl_sid(skb, family, &peer_secid);
+-	*secid = task_sid(p);
++	selinux_export_secid(l, task_sid(p));
+ }
  
- out:
--	*secid = peer_secid;
-+	selinux_export_secid(l, peer_secid);
- 	if (peer_secid == SECSID_NULL)
- 		return -EINVAL;
- 	return 0;
+ static int selinux_task_setnice(struct task_struct *p, int nice)
+@@ -6094,10 +6094,12 @@ static int selinux_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
+ 	return ipc_has_perm(ipcp, av);
+ }
+ 
+-static void selinux_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
++static void selinux_ipc_getsecid(struct kern_ipc_perm *ipcp,
++				 struct lsm_export *l)
+ {
+ 	struct ipc_security_struct *isec = selinux_ipc(ipcp);
+-	*secid = isec->sid;
++
++	selinux_export_secid(l, isec->sid);
+ }
+ 
+ static void selinux_d_instantiate(struct dentry *dentry, struct inode *inode)
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index da85d607d40a..5318b9e6820a 100644
+index 15579bdd7244..13ac3045a388 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -3973,7 +3973,8 @@ static int smack_socket_getpeersec_stream(struct socket *sock,
-  * Sets the netlabel socket state on sk from parent
+@@ -2087,11 +2087,11 @@ static int smack_task_getsid(struct task_struct *p)
+  *
+  * Sets the secid to contain a u32 version of the smack label.
   */
- static int smack_socket_getpeersec_dgram(struct socket *sock,
--					 struct sk_buff *skb, u32 *secid)
-+					 struct sk_buff *skb,
-+					 struct lsm_export *l)
- 
+-static void smack_task_getsecid(struct task_struct *p, u32 *secid)
++static void smack_task_getsecid(struct task_struct *p, struct lsm_export *l)
  {
- 	struct netlbl_lsm_secattr secattr;
-@@ -4024,7 +4025,7 @@ static int smack_socket_getpeersec_dgram(struct socket *sock,
- #endif
- 		break;
- 	}
--	*secid = s;
-+	smack_export_secid(l, s);
- 	if (s == 0)
- 		return -EINVAL;
- 	return 0;
+ 	struct smack_known *skp = smk_of_task_struct(p);
+ 
+-	*secid = skp->smk_secid;
++	smack_export_secid(l, skp->smk_secid);
+ }
+ 
+ /**
+@@ -3231,12 +3231,12 @@ static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
+  * @ipp: the object permissions
+  * @secid: where result will be saved
+  */
+-static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, u32 *secid)
++static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, struct lsm_export *l)
+ {
+ 	struct smack_known **blob = smack_ipc(ipp);
+ 	struct smack_known *iskp = *blob;
+ 
+-	*secid = iskp->smk_secid;
++	smack_export_secid(l, iskp->smk_secid);
+ }
+ 
+ /**
 -- 
 2.19.1
 
