@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BC6C282E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C23FDC282DA
 	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 19:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48A972084B
+	by mail.kernel.org (Postfix) with ESMTP id 94F0B2084B
 	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 19:19:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="tyMD3GTb"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="f+MN8or1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbfDITTO (ORCPT
+        id S1726771AbfDITTO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Tue, 9 Apr 2019 15:19:14 -0400
-Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:34974
-        "EHLO sonic313-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726783AbfDITTK (ORCPT
+Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:38742
+        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726761AbfDITTJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 15:19:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554837549; bh=0JVMKDcgnflVCRGzj1eTsOgE9xKpgnePntpCQbXL9EQ=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=tyMD3GTbyw/vdCcTM2ieqkO8uwXlmONh83yPKDMNBFGCtTUF3h17j9pgSfHkeG+pLnIOA0MuQu6RIdmmVeippFG0sG97DR9MmthFiZE+Ga2/QepaA+58xzUcTFblNZeOl1hfsJzJrZvvRVzZPvXQOnci0YPkBOxVpMON7mWFtX9rXBt/tI8UeS+/ts8u7f1EETj4Ow0J1FyufHF1Bzie3CE+ZOLy2f84rME/DsPeBhjL5z1OUuadMO4FTNioAEXAaaZflFX6ZskS0BmYwG9izdf8rfS1/0E4TRfd3AqGwBEv9eSOBz65rSOLa/NWuQUfz67wede3y4knhgz+mcJHcA==
-X-YMail-OSG: KO0u5AYVM1m5IzRm61hJT081_F82jN2Rl7AqWyjGNDKV6aVxVtA53JiFZpDUadY
- MsLZ0C3UXSV6Ktz8WYKnR4wM20R55hkPLJcQCzQGcVOhcnZ7Kbl1hyJ418RqNuF.aIsXDKVe7fpp
- IqVJ7RdR5ZxEGUr9iyqkmD0BPRteBVeuZL2WzIki2E004wzYllrUePZ8w3KEc4I9D1pZRBW_4eCt
- .9Azwk134piaE5mLHTDwQ3bmrtfOGO1DUpn0b8YaUYGpxDPg1ZQc5KTQV.ru2.tjbKyGhWtfLNUR
- OVO5BczJCYJ8VKCkijUlIXhlRgvLKqq.04iM2Ter5xGKti70Cec5BrctRENo5ExDWpURqVz78alu
- .c0A1v7b1Nq5C7qG1hLJ5_UP5Q7G91c4MI_pNkEffnSQOIrf36No12wj2hU9DutzR205d8suo3Kr
- PZ.wJYODCAuq.kgZ_MkeT_TCXMLbzud1.ntfaxV1dJmZ2YJrHTdmTkH.1FBmn3nUMVpr_bSaLdEt
- G1jmuBtvpmGD08exa0EGWhQktrFWm4crQD2mbO3XK7gHZmqjLvNAdVGkKMU7nVUl2xf4CG2z7Wdi
- E_y0rritRmoiUurcm4AteRdtU8ZGPk45QJ0CCWob4MQa44pTPblyafUfMBHbZqxhRdX_Fsw8LbOv
- 4pGGzqhvzw9mbPASKbDUwhduqtvQkJLhmU13_qCG15L8C.azvz.HYhNr9BQOCDwehBimolCzzSkU
- uii9l8xzSoKxyVQ9YZNZDnaj23Lrw18Y0q8E8qT2eTg53WIpPUsQNClOW5QH7dCQ9wLB6h78KEbN
- ZLPWRgbyyWNFNV.C.dtX.fYbG_OvQexWbCs.ZxxpgaEpmgLDz.GeRyqSuj..mIG26JeZBsFxZ0cq
- OOM0aiY57dWKArwzs.FV76ImSpb.pLDQxazwtcjxHurh5mTsSkBRBxJ0gcaCcPc.O.DCSrrqZRjI
- KGxEsRdLm8sa1mzBACf_SLipTA2vzFz6ItdWjBiulvvFrMVYVUpMNAqGj5VJ4O8w.qZPZDrxrWyj
- rjyJimlqkFW4D_gdwI68I7s.zwQqGLtOpA9BZR_aSQt9hwPWYoM9sV4P4p6uLtnGl74UlZpj8OUk
- UrZD_UWdfVA6KFUR5l6i4Y3EInSjnCnGV2kCgwbN0PFKRzPKRXW9psrk-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Tue, 9 Apr 2019 19:19:09 +0000
+        Tue, 9 Apr 2019 15:19:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554837548; bh=wTEQTvklkThW7Dll4nUn/vb0sTDbloo0pZigu96CHzg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=f+MN8or10vtja8aLtO+3akHKBdGTXJvKkfeSPld9enTfoWIYR2gDkExbDAEIsV++aXiGHZetoOz8Xt+AWUEBrgXPNlvZ9MyyWRIHfloTNXeKiGy9QHZMcg6OtkCetvCYCHU/SyTDOIWeKRCyWrAxeI37LD3uSgrMu2/OeUZgf4dv9uN6A2Tf1TfXILz2Lc35IwiXye+bcSFzU1382LbaNnwrQ46FdG8GYz45JboYUSHEuXojj3fDQvkcmfgmNS3bvR5S3c5dxqGvIxh3B0zB0ToH5iPpjCR7bY95/UqPC/K8uLRycY4TIwRNSzXfxiUFhiQqKuVVtv3I/mG0KGSwog==
+X-YMail-OSG: dPcxbsMVM1nTr3Be34CgZSByw46wneN6HN84NPJGDli3ETowQYHldIZT3UlDYzA
+ 3DglXktsvDhSKh1vFYIXe1GBNy_hhSimEk8Oh600bPJwQU3w3yQUABYoxWCgX97V4ICaIWH03gUH
+ rd.7AiCgIsJLJnWn_NTt7aKtiL.Pw1R3SUGJVJMpy1p94SUNK.0eTrzWHgYSDsHvKp2rPnXb15Tb
+ 8dpHUm.Z9bKLeOSybMJFavn7oDsVciB.HiJjyRF2k7D6tIQitqdjvvZ1OYZcIE66GkUvbigqGwLk
+ RzxDnXCl19IgGOV.R.dYdryBiumWGkO6E3UbFfb42ShoCYnIM5_KlUHBVe_SGWBvU_vdOLcBIdcJ
+ 8h3g94ri4Rlr2NVulmLBkiMLfme3ROYGe10L0OpsiVlDdq7v3UowdeRSgkn2SIeDCBC1Rb5Jczyq
+ .CTxfTN.r1ArVl7XPqMpMGA8CoN.xIvXyRUyhW8EL6DXV4Qe4rfU0AJoXDrQbgt7x0ab1n2aXgFv
+ oQtCSOHweJI9r26byr8v13m_jj9Ip88rrVvGXa17ZaeAZbL0btu6TAyGXyEtW6nHd13ZpG0pFYYz
+ UvTG7x8hla_hU23PNVGuoC4_A3OyjdTEQKzrCO2.A6y9B77hzapBGRSdHPkcWFhJlWxIJV_.uhIJ
+ Xd6MdvSsHqvq2zUQlG5jZ0IRpNTRaGmhDegsl51lC4G66ILwU7zSpEqe2sVhugkxXxnPi673kj8a
+ DMe.iYlY1dvGmrRdrir0kCgZ573GX.gNgZLaV3IdvWnzpFNBI.tkH0y58gxqFKdepDzZDAjndeVP
+ 45V_.QypsMSTxLcJ6cpo69GgIvjSuKZcdQBCVb5JD_APYg2L8FJCLlgC.27rDRnAp1NL0qjtwQEK
+ P70BT9eyuwPe_xf0PNeohFTmKNIDbZ9uFtn4bAnTa.fJYfp8qSsWWJvcV8ptoCTzKQUHyzqVlG7L
+ 5efeNnLeBkzqk0gFCmoNV.CJdJtzXxFs5JMYH6LkiOIv07VMe8PpHi0YnYofHlXymaZzE7483atT
+ R1RugR.FUOTjEvjv1kA36GiLTM8oY_sTjARsCXnbX_rU.sXUa3GXqW6Bj2uNzU8aXtd.._mo1BDC
+ GcT5gfXzkNX87zkuXXcNkvicDtbwWY4mHELqIjPeMcIfrUe9JmWB97Q--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Tue, 9 Apr 2019 19:19:08 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp401.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 70e478474b1bad4641d6b335096eeb36;
-          Tue, 09 Apr 2019 19:19:09 +0000 (UTC)
+          by smtp401.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 54e8f28a4675c25365c7725d1b772c7b;
+          Tue, 09 Apr 2019 19:19:05 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org, casey.schaufler@intel.com
 Cc:     keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
         sds@tycho.nsa.gov
-Subject: [PATCH 22/59] LSM: Use lsm_export in security_cred_getsecid
-Date:   Tue,  9 Apr 2019 12:18:11 -0700
-Message-Id: <20190409191848.1380-23-casey@schaufler-ca.com>
+Subject: [PATCH 16/59] LSM: Use lsm_export in security_socket_getpeersec_dgram
+Date:   Tue,  9 Apr 2019 12:18:05 -0700
+Message-Id: <20190409191848.1380-17-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190409191848.1380-1-casey@schaufler-ca.com>
 References: <20190409191848.1380-1-casey@schaufler-ca.com>
@@ -60,63 +60,113 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Convert security_cred_getsecid to use the lsm_export structure
+Convert security_socket_getpeersec_dgram to use the lsm_export structure
 instead of a u32 secid. There is some scaffolding involved
 that will be removed when the related data is updated.
+In particular, the le entry in scm_cookie includes the secid
+data. The secid will go away.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/security.h          | 2 +-
- security/integrity/ima/ima_main.c | 3 ++-
- security/security.c               | 8 +++-----
- 3 files changed, 6 insertions(+), 7 deletions(-)
+ include/linux/security.h |  7 +++++--
+ include/net/scm.h        |  4 +++-
+ net/ipv4/ip_sockglue.c   |  4 +++-
+ security/security.c      | 13 ++++---------
+ 4 files changed, 15 insertions(+), 13 deletions(-)
 
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 2d04687c3fa9..40aa7b9f3c83 100644
+index 7369cdc3a681..e3f5c61b9b2c 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -381,7 +381,7 @@ int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
- void security_cred_free(struct cred *cred);
- int security_prepare_creds(struct cred *new, const struct cred *old, gfp_t gfp);
- void security_transfer_creds(struct cred *new, const struct cred *old);
--void security_cred_getsecid(const struct cred *c, u32 *secid);
-+void security_cred_getsecid(const struct cred *c, struct lsm_export *l);
- int security_kernel_act_as(struct cred *new, struct lsm_export *l);
- int security_kernel_create_files_as(struct cred *new, struct inode *inode);
- int security_kernel_module_request(char *kmod_name);
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 1e3cfaf0ee5c..f5efa9ef270d 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -374,7 +374,8 @@ int ima_bprm_check(struct linux_binprm *bprm)
- 	if (ret)
- 		return ret;
- 
--	security_cred_getsecid(bprm->cred, &secid);
-+	security_cred_getsecid(bprm->cred, &le);
-+	lsm_export_secid(&le, &secid);
- 	return process_measurement(bprm->file, bprm->cred, secid, NULL, 0,
- 				   MAY_EXEC, CREDS_CHECK);
+@@ -1270,7 +1270,8 @@ int security_socket_shutdown(struct socket *sock, int how);
+ int security_sock_rcv_skb(struct sock *sk, struct sk_buff *skb);
+ int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
+ 				      int __user *optlen, unsigned len);
+-int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid);
++int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb,
++				     struct lsm_export *l);
+ int security_sk_alloc(struct sock *sk, int family, gfp_t priority);
+ void security_sk_free(struct sock *sk);
+ void security_sk_clone(const struct sock *sk, struct sock *newsk);
+@@ -1408,7 +1409,9 @@ static inline int security_socket_getpeersec_stream(struct socket *sock, char __
+ 	return -ENOPROTOOPT;
  }
+ 
+-static inline int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb, u32 *secid)
++static inline int security_socket_getpeersec_dgram(struct socket *sock,
++						   struct sk_buff *skb,
++						   struct lsm_export *l)
+ {
+ 	return -ENOPROTOOPT;
+ }
+diff --git a/include/net/scm.h b/include/net/scm.h
+index 1ce365f4c256..13b8a369fd89 100644
+--- a/include/net/scm.h
++++ b/include/net/scm.h
+@@ -34,6 +34,7 @@ struct scm_cookie {
+ 	struct scm_creds	creds;		/* Skb credentials	*/
+ #ifdef CONFIG_SECURITY_NETWORK
+ 	u32			secid;		/* Passed security ID 	*/
++	struct lsm_export	le;		/* Passed LSM data */
+ #endif
+ };
+ 
+@@ -46,7 +47,8 @@ struct scm_fp_list *scm_fp_dup(struct scm_fp_list *fpl);
+ #ifdef CONFIG_SECURITY_NETWORK
+ static __inline__ void unix_get_peersec_dgram(struct socket *sock, struct scm_cookie *scm)
+ {
+-	security_socket_getpeersec_dgram(sock, NULL, &scm->secid);
++	security_socket_getpeersec_dgram(sock, NULL, &scm->le);
++	lsm_export_secid(&scm->le, &scm->secid);
+ }
+ #else
+ static __inline__ void unix_get_peersec_dgram(struct socket *sock, struct scm_cookie *scm)
+diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
+index 82f341e84fae..b8ef7677a7e5 100644
+--- a/net/ipv4/ip_sockglue.c
++++ b/net/ipv4/ip_sockglue.c
+@@ -130,14 +130,16 @@ static void ip_cmsg_recv_checksum(struct msghdr *msg, struct sk_buff *skb,
+ 
+ static void ip_cmsg_recv_security(struct msghdr *msg, struct sk_buff *skb)
+ {
++	struct lsm_export le;
+ 	char *secdata;
+ 	u32 seclen, secid;
+ 	int err;
+ 
+-	err = security_socket_getpeersec_dgram(NULL, skb, &secid);
++	err = security_socket_getpeersec_dgram(NULL, skb, &le);
+ 	if (err)
+ 		return;
+ 
++	lsm_export_secid(&le, &secid);
+ 	err = security_secid_to_secctx(secid, &secdata, &seclen);
+ 	if (err)
+ 		return;
 diff --git a/security/security.c b/security/security.c
-index e12ce930dfd9..69983ad68233 100644
+index edaaaef54239..d8300a6400c3 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1604,12 +1604,10 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
- 	call_void_hook(cred_transfer, new, old);
+@@ -2110,16 +2110,11 @@ int security_socket_getpeersec_stream(struct socket *sock, char __user *optval,
  }
  
--void security_cred_getsecid(const struct cred *c, u32 *secid)
-+void security_cred_getsecid(const struct cred *c, struct lsm_export *l)
+ int security_socket_getpeersec_dgram(struct socket *sock, struct sk_buff *skb,
+-				     u32 *secid)
++				     struct lsm_export *l)
  {
+-	int rc;
 -	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
 -
--	call_void_hook(cred_getsecid, c, &data);
+-	rc = call_int_hook(socket_getpeersec_dgram, -ENOPROTOOPT, sock, skb,
+-			   &data);
+-
 -	lsm_export_secid(&data, secid);
+-	return rc;
 +	lsm_export_init(l);
-+	call_void_hook(cred_getsecid, c, l);
++	return call_int_hook(socket_getpeersec_dgram, -ENOPROTOOPT, sock, skb,
++			     l);
  }
- EXPORT_SYMBOL(security_cred_getsecid);
+ EXPORT_SYMBOL(security_socket_getpeersec_dgram);
  
 -- 
 2.19.1
