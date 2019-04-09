@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F21B0C282DA
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0334FC282DA
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3CD72133D
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C43162082A
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="iVSnesLv"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gB06Fa0Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbfDIVkF (ORCPT
+        id S1726671AbfDIVkK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Apr 2019 17:40:05 -0400
-Received: from sonic317-39.consmr.mail.ne1.yahoo.com ([66.163.184.50]:39943
+        Tue, 9 Apr 2019 17:40:10 -0400
+Received: from sonic317-39.consmr.mail.ne1.yahoo.com ([66.163.184.50]:36071
         "EHLO sonic317-39.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726654AbfDIVkE (ORCPT
+        by vger.kernel.org with ESMTP id S1726666AbfDIVkJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 17:40:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554846003; bh=+cOk5EbWObSrJ4n/q5EXan1kjg10sH4/KzvjAQgXLT4=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=iVSnesLvuWtaGSHlX77nm3XEHEDIgsXjVWup+NZxhREUwFCwjqsXEO2g8R6RNzdEasofcK5zO5n7jFNJf5x3q8nQ/I6Ericb/sDULGgEpzb8aYvrpE7wI7x/NNpIzZo7EyBW3ivmT9dNrlrsAvbXlY35Ocg1oW/1NYV+xjHQv5U4sAHR1UyBkEsFLZjl6EBEbNZ7b2e/n2WdVaWCu75+RNtThIHaMhoDPc1hnguBqekX4ZOTRPWVVHR57jWWNDm6hB383VGs3sdbYLu3P7nYT17R10eLp2GPrpvXLNXq+R82Q14b79LGbULoSwq0V8jc/StE8epRl/LDS9r6byAvew==
-X-YMail-OSG: s9q9MmgVM1li3i8R13VahEeBWs2zE6FEmcw8xGG_Kmr6qnIHeaKKfYsCmY.o_6A
- P7L6G6FTLUyGjAP26cx7_E5yEHRAmHP661ZpWN9.7ORAnINzsig5.kyj0sE1yLisPzMjZpvPrnRB
- _ACZfCl8VAVGlAvBf8_LLmoxFB.X0Dd.clUd9l6KBlaPHw3bxPnnR9N6Wk1G5pU3TPzLRs4r5EF0
- 91bkb0divxqt_TgGbpEt_LQRZY8hWX4UZ_c3foBmguEPTSY9_X.AZJfxUOwrbUGMAinx6Uu_Uk3r
- j9IcOKRNZq7I.a23hG0mqVEh28BTUksTpnd4xEJwv5DmKroPCPcXh7NLZwB1Vc5UiommlWHrERRO
- nTL2utNzVndnNf90yM4GWNziONuHzNqwXPrI3HSlTmrASjTwh4aGmchYvdnkQ9JLvhqeS0siHyYo
- 22uuBeH0P2796XOoIE_6UQgz5Man9TkzknSlueukaQnqIMUUEDBFsd_46WI5WITGW5jURoPVgaVw
- TKo0c1YNnIXEtnFvufWM1WuKoCe6q7yfYOxyrbkQrp5qtgJ1kVXA8Z0lVNSUayWhOTOn7uIceflr
- G06mcb90yAt6wqPq0Bp4dptCGF_b0h_dWEUJhf7rgHS3P_m3eYDjjQYebYZlh5GV5sK.ciDenoLt
- duoqM1M8Ju4eozmoTZEdUnt3tMdysT6P2szU6UF7VAgD8dODyvhxNnhCsZfW7DFqbs8f2FhbK8eb
- UgA4HXTWwhvrb4rmrby5K_KYlkt.abv2w5Ki9Ek0cHlMpWV9P6l6..mbMfd122MA.lPdje90WRso
- y3owWMxhCPgyV1sKVSkT_tkx1986vb4c_D0Td5QhoOUzclyDfz.XIIVaR7RX7dU2rMRkOF8yghud
- aycTg1Y4lEcrEuKCy.OUlgXOTpNegHdPYT68EyisrCqFrIY75peW5HHiTY1od0CfnZUDGpr0S4P0
- SZoN2mF4zpMMqZAgsokbZCh_8UWENHJCZFYbKdFumjcaaEeNf89eunSSEJZrpbmu8SCqmUBH7Nc4
- cAJwR7hlVZthhxevz.wZMkOsxnmEHR8867JJI97w.4Y.bvG4SL3_.63xfWZkaTdUOEFiMW.ZiZl4
- WNcqdLPJlBIBT4Bbv4hVF0mEJaKytE2LVl3O0eUrAa5JDNffmTLalxrAe
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Tue, 9 Apr 2019 21:40:03 +0000
+        Tue, 9 Apr 2019 17:40:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554846008; bh=bnhiZa2kx1PJdglKUm2qCM3rIeOnoh8kwEckh5gvzqc=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=gB06Fa0QMAcsuml4RI8uu5WCrA1zfrteG020hPMsMSWrB+tBbk5ZQFR4cWRUAHNtIBa13NqMWnufoXa7GSDEPcOEI3Jr5FLndLwzvBiaxLaCh+djA4gqgCkLb26RSFADIUDEyM90gMw0B2nnbXfaDBrR0naIsqOYaIiH6Ew4jnpaHGd+kwLEmlSDXzR93CtSUEe1+Mgb5cpz4Dzk7WJ3ceDjQalv3KVRn8CO/UXkFHST2NNrQCeGbx2RZcncOHN1taoW0O4+uMB1ejO7xS4pUIyyg7AXedq4+GSPTZAvRY4G3FDMRTAnqntB1ivbJ7a32YPr0uHLW2KMCpcths0agg==
+X-YMail-OSG: YKw6R84VM1k0FCWcTp72.ycJ1EwOudTV2uQxVPEGILym8CbcNRfd8ZlNRmm4enT
+ eWF2xEgiOthU6XdkcgxVNHOQ.wOpUpyrgdPLRoAQ7B18hWAs.JiuSla5FeEFSmwlNLHiSmEI6npu
+ OaE25SXfbsXoqhrp1TIuRA4R4xsjpGUtkN_ZW9CqKP9vkdX2IUCDFVWh94jHheMFkQrZ2IgYOUPo
+ 5W2Evi5RYGyiBQBWJU1RCSYTeS.bj2fOBUtG.av1GHCKcOCyIZc9H0zC2uK5SEKzYAeMQ.pzr_gq
+ wHz5ecuXaGYMQ0G_LSfMKMktr8yAKvACQGiqdkwad0s3NegAAQ07wiW4.oc4yMw850gUEFd8qo_V
+ cDMAyPg6.PwZxSgw2dgSFEGlqym4cXq8UXKVYswEB3HDST6cBlnNtvzA165viHajty5p2JUWMErU
+ A_XimzVHkHvBJZBHILniOt2JnO50tZukdi5U7gbwdm2F1YSSGh9PHmFPypzmar3TNLdC6hqPd33v
+ kY7desXQS2ve7wQBVgDkANip1qUX8SzmfjnFX1HruZ_VCsHEgtbM.jilRKfzBDp2pn.kAaeiVV8Q
+ oJSehycIa5jf26UUJ00BaKt.uwyzCwM6jmEOc_yAKD.gRnlNmCNTbIZd_JpF8WBQNmlvHRyjWJRU
+ .DSPQPg2985nN036jm6ijXcT5B.8PJTFLuJ_yEdA0o.gzkHj0EcgP13mLNzXEAKD7XD7ThwoH1TP
+ 0iF50ZT7ukGgxCGr8xwbpH6Dtsrxwo_MkLRI_zAaD1I.OHZiw8ovtv8fATFqXXIXYau67CeGzvsc
+ govJbvA9eTKr3BZLwgyOq32ODjX8nGhEOW0Js5.ZcLWl9ajRyY1rU3NNVwCnMFki3NjsiFVNGOu7
+ olQ5ai14DelcRWxjmmKgwf41KSjAe7v7vSf59EjviDa6fDOk.rW.F42OXjAK8IxB2bzKUDFMmjUX
+ kGSMYDtKxBN72I4y0CdIPFHiAQBR8LJW.0mWJ47zPplb9qWKAcoBmijBYFLLtbdgdVHJ.LRhnq.f
+ vqxlQP.Af0Cavd_DFZJPqyJ3y7QvwLvereh.5cWjzmcdJbVTSfL_Ik6YtEjmzHEUId6koUwoCVdP
+ QyudFxMNoAD3pv3XNG1p1wQ7hQXH36k1ie1mShBuXQyEYjTsBxLkO9y60
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Tue, 9 Apr 2019 21:40:08 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
           by smtp427.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 41cfc07a55038469dc17a23ac993d21e;
-          Tue, 09 Apr 2019 21:40:02 +0000 (UTC)
+          Tue, 09 Apr 2019 21:40:03 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com
-Subject: [PATCH 06/59] LSM: Use lsm_export in the cred_getsecid hooks
-Date:   Tue,  9 Apr 2019 14:38:53 -0700
-Message-Id: <20190409213946.1667-7-casey@schaufler-ca.com>
+Subject: [PATCH 08/59] LSM: Use lsm_export in the kernel_ask_as hooks
+Date:   Tue,  9 Apr 2019 14:38:55 -0700
+Message-Id: <20190409213946.1667-9-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190409213946.1667-1-casey@schaufler-ca.com>
 References: <20190409213946.1667-1-casey@schaufler-ca.com>
@@ -58,95 +58,152 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Convert the cred_getsecid hooks to use the lsm_export
+Convert the kernel_ask_as hooks to use the lsm_export
 structure instead of a u32 secid. There is some scaffolding
-involved that will be removed when security_cred_getsecid()
+involved that will be removed when security_kernel_ask_as()
 is updated.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hooks.h  | 5 +++--
- security/security.c        | 6 ++++--
- security/selinux/hooks.c   | 4 ++--
- security/smack/smack_lsm.c | 4 ++--
- 4 files changed, 11 insertions(+), 8 deletions(-)
+ include/linux/lsm_hooks.h  |  4 ++--
+ security/security.c        | 15 ++++++++++++++-
+ security/selinux/hooks.c   | 17 ++++++++++++++---
+ security/smack/smack_lsm.c | 12 +++++++++++-
+ 4 files changed, 41 insertions(+), 7 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index baeb83ef487d..2fe54dff3efa 100644
+index 544671f44dfa..85b8217ce2f2 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -572,7 +572,8 @@
-  *	Transfer data from original creds to new creds
-  * @cred_getsecid:
-  *	Retrieve the security identifier of the cred structure @c
-- *	@c contains the credentials, secid will be placed into @secid.
-+ *	@c contains the credentials
-+ *	@l contains a pointer to the location where result will be saved.
-  *	In case of failure, @secid will be set to zero.
+@@ -578,7 +578,7 @@
   * @kernel_act_as:
   *	Set the credentials for a kernel service to act as (subjective context).
-@@ -1604,7 +1605,7 @@ union security_list_options {
- 	int (*cred_prepare)(struct cred *new, const struct cred *old,
+  *	@new points to the credentials to be modified.
+- *	@secid specifies the security ID to be set
++ *	@l specifies the security data to be set
+  *	The current task must be the one that nominated @secid.
+  *	Return 0 if successful.
+  * @kernel_create_files_as:
+@@ -1606,7 +1606,7 @@ union security_list_options {
  				gfp_t gfp);
  	void (*cred_transfer)(struct cred *new, const struct cred *old);
--	void (*cred_getsecid)(const struct cred *c, u32 *secid);
-+	void (*cred_getsecid)(const struct cred *c, struct lsm_export *l);
- 	int (*kernel_act_as)(struct cred *new, u32 secid);
+ 	void (*cred_getsecid)(const struct cred *c, struct lsm_export *l);
+-	int (*kernel_act_as)(struct cred *new, u32 secid);
++	int (*kernel_act_as)(struct cred *new, struct lsm_export *l);
  	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
  	int (*kernel_module_request)(char *kmod_name);
+ 	int (*kernel_load_data)(enum kernel_load_data_id id);
 diff --git a/security/security.c b/security/security.c
-index a1f28a5e582b..ca485a777ca1 100644
+index 802557ff6f60..3a766755b722 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1638,8 +1638,10 @@ void security_transfer_creds(struct cred *new, const struct cred *old)
+@@ -742,6 +742,15 @@ static inline void lsm_export_secid(struct lsm_export *data, u32 *secid)
+ 	}
+ }
  
- void security_cred_getsecid(const struct cred *c, u32 *secid)
++static inline void lsm_export_to_all(struct lsm_export *data, u32 secid)
++{
++	data->selinux = secid;
++	data->smack = secid;
++	data->apparmor = secid;
++	data->flags = LSM_EXPORT_SELINUX | LSM_EXPORT_SMACK |
++		      LSM_EXPORT_APPARMOR;
++}
++
+ /* Security operations */
+ 
+ int security_binder_set_context_mgr(struct task_struct *mgr)
+@@ -1647,7 +1656,11 @@ EXPORT_SYMBOL(security_cred_getsecid);
+ 
+ int security_kernel_act_as(struct cred *new, u32 secid)
  {
--	*secid = 0;
--	call_void_hook(cred_getsecid, c, secid);
+-	return call_int_hook(kernel_act_as, 0, new, secid);
 +	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
 +
-+	call_void_hook(cred_getsecid, c, &data);
-+	lsm_export_secid(&data, secid);
++	lsm_export_to_all(&data, secid);
++
++	return call_int_hook(kernel_act_as, 0, new, &data);
  }
- EXPORT_SYMBOL(security_cred_getsecid);
  
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode)
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 0e31be22d9bb..f97dd414ac8d 100644
+index c82108793fb5..8d4334f68a65 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -3764,9 +3764,9 @@ static void selinux_cred_transfer(struct cred *new, const struct cred *old)
- 	*tsec = *old_tsec;
+@@ -222,6 +222,14 @@ static inline void selinux_export_secid(struct lsm_export *l, u32 secid)
+ 	l->flags |= LSM_EXPORT_SELINUX;
  }
  
--static void selinux_cred_getsecid(const struct cred *c, u32 *secid)
-+static void selinux_cred_getsecid(const struct cred *c, struct lsm_export *l)
- {
--	*secid = cred_sid(c);
-+	selinux_export_secid(l, cred_sid(c));
- }
- 
++static inline void selinux_import_secid(struct lsm_export *l, u32 *secid)
++{
++	if (l->flags | LSM_EXPORT_SELINUX)
++		*secid = l->selinux;
++	else
++		*secid = SECSID_NULL;
++}
++
  /*
+  * get the security ID of a set of credentials
+  */
+@@ -3773,19 +3781,22 @@ static void selinux_cred_getsecid(const struct cred *c, struct lsm_export *l)
+  * set the security data for a kernel service
+  * - all the creation contexts are set to unlabelled
+  */
+-static int selinux_kernel_act_as(struct cred *new, u32 secid)
++static int selinux_kernel_act_as(struct cred *new, struct lsm_export *l)
+ {
+ 	struct task_security_struct *tsec = selinux_cred(new);
++	u32 nsid;
+ 	u32 sid = current_sid();
+ 	int ret;
+ 
++	selinux_import_secid(l, &nsid);
++
+ 	ret = avc_has_perm(&selinux_state,
+-			   sid, secid,
++			   sid, nsid,
+ 			   SECCLASS_KERNEL_SERVICE,
+ 			   KERNEL_SERVICE__USE_AS_OVERRIDE,
+ 			   NULL);
+ 	if (ret == 0) {
+-		tsec->sid = secid;
++		tsec->sid = nsid;
+ 		tsec->create_sid = 0;
+ 		tsec->keycreate_sid = 0;
+ 		tsec->sockcreate_sid = 0;
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 5e345122ccb1..15579bdd7244 100644
+index 13ac3045a388..da85d607d40a 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -1980,13 +1980,13 @@ static void smack_cred_transfer(struct cred *new, const struct cred *old)
-  *
-  * Sets the secid to contain a u32 version of the smack label.
-  */
--static void smack_cred_getsecid(const struct cred *cred, u32 *secid)
-+static void smack_cred_getsecid(const struct cred *cred, struct lsm_export *l)
- {
- 	struct smack_known *skp;
- 
- 	rcu_read_lock();
- 	skp = smk_of_task(smack_cred(cred));
--	*secid = skp->smk_secid;
-+	smack_export_secid(l, skp->smk_secid);
- 	rcu_read_unlock();
+@@ -475,6 +475,14 @@ static inline void smack_export_secid(struct lsm_export *l, u32 secid)
+ 	l->flags |= LSM_EXPORT_SMACK;
  }
  
++static inline void smack_import_secid(struct lsm_export *l, u32 *secid)
++{
++	if (l->flags | LSM_EXPORT_SMACK)
++		*secid = l->smack;
++	else
++		*secid = 0;
++}
++
+ /*
+  * LSM hooks.
+  * We he, that is fun!
+@@ -1997,10 +2005,12 @@ static void smack_cred_getsecid(const struct cred *cred, struct lsm_export *l)
+  *
+  * Set the security data for a kernel service.
+  */
+-static int smack_kernel_act_as(struct cred *new, u32 secid)
++static int smack_kernel_act_as(struct cred *new, struct lsm_export *l)
+ {
++	u32 secid;
+ 	struct task_smack *new_tsp = smack_cred(new);
+ 
++	smack_import_secid(l, &secid);
+ 	new_tsp->smk_task = smack_from_secid(secid);
+ 	return 0;
+ }
 -- 
 2.19.1
 
