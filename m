@@ -2,141 +2,245 @@ Return-Path: <SRS0=Re8g=SL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BE3C10F0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 08:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC70C10F0E
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 08:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD40220883
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 08:29:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E96AF20883
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 08:38:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eOCDO7A1"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="0vh+RB7P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726001AbfDII3o (ORCPT
+        id S1726415AbfDIIiF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Apr 2019 04:29:44 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:43049 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726517AbfDII3n (ORCPT
+        Tue, 9 Apr 2019 04:38:05 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:45271 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfDIIiF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 04:29:43 -0400
-Received: by mail-vs1-f68.google.com with SMTP id i207so9280552vsd.10
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 01:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ugCi4wSufzvPQhakuyN4WYm2qyJjDpyHxEL0pNGqAyM=;
-        b=eOCDO7A1ruxoEkPL+a+a7rTpJ2/XMwj+HN+g/xM2Nb8FRH+PIthV+DgY6sj3tHbgRG
-         lFeBQZpy8P90eMSLPYZg9wOC0H/o1YAAif9aNTEqwOuv8h9IPp/sUznr9RObP2UvEQAk
-         d7F5fOtDDSF+fqLCnTuO+MLVyJP8BO13KYB8tRtY+cnoiEEYUBO1+/00r70QRnmAUcDu
-         vOmp3cvtg0Btn3H171SmNC3qt/YtBdn23/C1e+vCwFaB3XzLW1u0gV+kz/6EhsdvDVKR
-         xZrM6Zu18Xtt2t+lkONQoQU67DHWb39gtEKm2+1/gpVTfiELqPtfKhteaFniiiGVeySA
-         mRxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ugCi4wSufzvPQhakuyN4WYm2qyJjDpyHxEL0pNGqAyM=;
-        b=fNOPyr9fz7oHQ6ockK6508je3OnYKRzz9c6jsHOVw+2xMe0DglNByx9+py5I8in0I5
-         v/e2j1C6JoXxoEpXn+mhDtJZkxFFmH3NfZIcG/PFkIN4hR+BSBYowrp5Dd5JdxYq5oFL
-         EEFcUDNnyiYIfmSM1mBnrOakq2/qPBk06l0hELHOFF8NATF/jOCRtKbXq5Hh0Dyy0Kzn
-         BB0uL3b/fVBa3hRv93+uEviD9sqhKDIUxl5E5Z2aZukyrMC8bk43JqG2QCTWsnz1CRjB
-         3cOQAf0tQpeL1PQR60P1HMrCNDVdV838thl+bpyzMVqB2SqGnXJBdV0YyX9RpWL2tGfs
-         vISw==
-X-Gm-Message-State: APjAAAVUWBjYPUF2b19HV6U1EPEuM3g7c/LHKtzONIqY6DSKUalYB0c2
-        ponCFv1k/8wvFcDMaHt/nzyrewJhB8rk3UKitIfU6A==
-X-Google-Smtp-Source: APXvYqxA++yH0nKtTIIW5Uboh0XsMDP3uUOXlUZsnfnNGFTyuDffuCnml94Xvd/RqXzlg6tYdCDPuIGL6GQJVKlNImo=
-X-Received: by 2002:a67:ba03:: with SMTP id l3mr1257238vsn.96.1554798582136;
- Tue, 09 Apr 2019 01:29:42 -0700 (PDT)
+        Tue, 9 Apr 2019 04:38:05 -0400
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x398bmAn006923;
+        Tue, 9 Apr 2019 17:37:49 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x398bmAn006923
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1554799070;
+        bh=VUyI4ES9NZKBpAx333DGaTxA4S8CQkeGuFLjcY9dpsI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0vh+RB7Pk0dDQUJh9ti8pOedwOexbOhG1J4HtA+0hKXKZLbjY594cMzm1BacmO1gQ
+         J/r7MVDQ694TjxzhQdqmBZ44DgUkarsSvslKv+/J8P23MBb5JUAEfBLHObBQFNynnt
+         cjIUtBczIRkXZvu/QNxdDyX8e9ru2haAKh/TsJkLtYZlUScL+9GmAZSi6ielYcIGzN
+         nhsTTzqLu/1p1rfPA8G3wh8crvYXLTXHd1OFP8vGyQxXKOj1eiwLwMxQCa0GpkkIxA
+         /C4bgHR5vuRo7PHvH3D4WYFu1cUwUB+HzjnxiEbzl7KHa5RHC/OBl9odolitmsbxju
+         8Z5yeoZ39LGzw==
+X-Nifty-SrcIP: [209.85.217.41]
+Received: by mail-vs1-f41.google.com with SMTP id a190so2334630vsd.0;
+        Tue, 09 Apr 2019 01:37:49 -0700 (PDT)
+X-Gm-Message-State: APjAAAUOJdcN5OV7iS7SvLPYqtF0OKXiIeJ/0Yg8KSVs2Zx1wSNLNUH0
+        km8MRcDrcJnlsUAJsgQEy8E7OQi55NAwmGwzaE4=
+X-Google-Smtp-Source: APXvYqznu4k63IT8Hiv20k7atyEQeu/jXMooYcR+gfFEF/Hyogt/3Jk0vj+7AWwuAKbbI3/KvydlpYmHWgbdhn1GUPI=
+X-Received: by 2002:a67:c29e:: with SMTP id k30mr18557458vsj.203.1554799068448;
+ Tue, 09 Apr 2019 01:37:48 -0700 (PDT)
 MIME-Version: 1.0
 References: <20190408170418.148554-1-glider@google.com> <20190408170418.148554-2-glider@google.com>
- <adb23353-2e02-ecd2-7506-50f4db814b25@infradead.org>
-In-Reply-To: <adb23353-2e02-ecd2-7506-50f4db814b25@infradead.org>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Tue, 9 Apr 2019 10:29:30 +0200
-Message-ID: <CAG_fn=V2aMoWnKfqC7eomEgFtjedcfmF0O2FF-ZPxC9x0aMDcg@mail.gmail.com>
+In-Reply-To: <20190408170418.148554-2-glider@google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 9 Apr 2019 17:37:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS3+FKpgBvvxKDukD1xcHUZ1o3TsE1BjjVq5P13MrO7Fw@mail.gmail.com>
+Message-ID: <CAK7LNAS3+FKpgBvvxKDukD1xcHUZ1o3TsE1BjjVq5P13MrO7Fw@mail.gmail.com>
 Subject: Re: [PATCH v3 1/2] initmem: introduce CONFIG_INIT_ALL_MEMORY and CONFIG_INIT_ALL_STACK
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
+To:     Alexander Potapenko <glider@google.com>
+Cc:     James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
         Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Kostya Serebryany <kcc@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sandeep Patil <sspatil@android.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kees Cook <keescook@chromium.org>, sspatil@android.com,
         Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 9, 2019 at 12:15 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+On Tue, Apr 9, 2019 at 2:04 AM Alexander Potapenko <glider@google.com> wrote:
 >
-> On 4/8/19 10:04 AM, Alexander Potapenko wrote:
-> > diff --git a/security/Kconfig.initmem b/security/Kconfig.initmem
-> > new file mode 100644
-> > index 000000000000..5e49a55382ad
-> > --- /dev/null
-> > +++ b/security/Kconfig.initmem
-> > @@ -0,0 +1,29 @@
-> > +menu "Initialize all memory"
-> > +
-> > +config CC_HAS_AUTO_VAR_INIT
-> > +     def_bool $(cc-option,-ftrivial-auto-var-init=3Dpattern)
-> > +
-> > +config INIT_ALL_MEMORY
-> > +     bool "Initialize all memory"
-> > +     default n
-> > +     help
-> > +       Enforce memory initialization to mitigate infoleaks and make
-> > +       the control-flow bugs depending on uninitialized values more
-> > +       deterministic.
-> > +
-> > +if INIT_ALL_MEMORY
-> > +
-> > +config INIT_ALL_STACK
-> > +     bool "Initialize all stack"
-> > +     depends on INIT_ALL_MEMORY
+> CONFIG_INIT_ALL_MEMORY is going to be an umbrella config for options
+> that force heap and stack initialization.
+> The rationale behind doing so is to reduce the severity of bugs caused
+> by using uninitialized memory.
 >
-> This "depends on" is redundant with the "if INIT_ALL_MEMORY" above it.
-Ack, thank you!
-> Similar comment for patch 2/2 and INIT_ALL_HEAP.
+> CONFIG_INIT_ALL_STACK turns on stack initialization based on
+> -ftrivial-auto-var-init in Clang builds and on
+> -fplugin-arg-structleak_plugin-byref-all in GCC builds.
 >
-> > +     depends on CC_HAS_AUTO_VAR_INIT || (HAVE_GCC_PLUGINS && PLUGIN_HO=
-STCC !=3D "")
-> > +     select GCC_PLUGINS if !CC_HAS_AUTO_VAR_INIT
-> > +     select GCC_PLUGIN_STRUCTLEAK if !CC_HAS_AUTO_VAR_INIT
-> > +     select GCC_PLUGIN_STRUCTLEAK_BYREF_ALL if !CC_HAS_AUTO_VAR_INIT
-> > +     default y
-> > +     help
-> > +       Initialize uninitialized stack data with a fixed pattern
-> > +       (0x00 in GCC, 0xAA in Clang).
-> > +
-> > +endif # INIT_ALL_MEMORY
-> > +endmenu
+> -ftrivial-auto-var-init is a Clang flag that provides trivial
+> initializers for uninitialized local variables, variable fields and
+> padding.
 >
+> It has three possible values:
+>   pattern - uninitialized locals are filled with a fixed pattern
+>     (mostly 0xAA on 64-bit platforms, see https://reviews.llvm.org/D54604
+>     for more details) likely to cause crashes when uninitialized value is
+>     used;
+>   zero (it's still debated whether this flag makes it to the official
+>     Clang release) - uninitialized locals are filled with zeroes;
+>   uninitialized (default) - uninitialized locals are left intact.
 >
+> The proposed config builds the kernel with
+> -ftrivial-auto-var-init=pattern.
+>
+> Developers have the possibility to opt-out of this feature on a
+> per-variable basis by using __attribute__((uninitialized)).
+>
+> For GCC builds, CONFIG_INIT_ALL_STACK is simply wired up to
+> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL. No opt-out is possible at the
+> moment.
+>
+> Signed-off-by: Alexander Potapenko <glider@google.com>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Kostya Serebryany <kcc@google.com>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Sandeep Patil <sspatil@android.com>
+> Cc: linux-security-module@vger.kernel.org
+> Cc: linux-kbuild@vger.kernel.org
+> Cc: kernel-hardening@lists.openwall.com
+> ---
+>  v2:
+>   - addressed Kees Cook's comments: added GCC support
+>  v3: addressed Masahiro Yamada's comments:
+>   - dropped per-file opt-out mechanism
+>   - fixed GCC_PLUGINS dependencies
+> ---
+>  Makefile                 |  3 ++-
+>  scripts/Makefile.initmem | 10 ++++++++++
+>  security/Kconfig         |  1 +
+>  security/Kconfig.initmem | 29 +++++++++++++++++++++++++++++
+>  4 files changed, 42 insertions(+), 1 deletion(-)
+>  create mode 100644 scripts/Makefile.initmem
+>  create mode 100644 security/Kconfig.initmem
+>
+> diff --git a/Makefile b/Makefile
+> index f070e0d65186..028ca37878fd 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -448,7 +448,7 @@ export HOSTCXX KBUILD_HOSTCXXFLAGS LDFLAGS_MODULE CHECK CHECKFLAGS
+>
+>  export KBUILD_CPPFLAGS NOSTDINC_FLAGS LINUXINCLUDE OBJCOPYFLAGS KBUILD_LDFLAGS
+>  export KBUILD_CFLAGS CFLAGS_KERNEL CFLAGS_MODULE
+> -export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE CFLAGS_UBSAN
+> +export CFLAGS_KASAN CFLAGS_KASAN_NOSANITIZE CFLAGS_UBSAN CFLAGS_INITMEM
+>  export KBUILD_AFLAGS AFLAGS_KERNEL AFLAGS_MODULE
+>  export KBUILD_AFLAGS_MODULE KBUILD_CFLAGS_MODULE KBUILD_LDFLAGS_MODULE
+>  export KBUILD_AFLAGS_KERNEL KBUILD_CFLAGS_KERNEL
+> @@ -840,6 +840,7 @@ KBUILD_ARFLAGS := $(call ar-option,D)
+>  include scripts/Makefile.kasan
+>  include scripts/Makefile.extrawarn
+>  include scripts/Makefile.ubsan
+> +include scripts/Makefile.initmem
+>
+>  # Add any arch overrides and user supplied CPPFLAGS, AFLAGS and CFLAGS as the
+>  # last assignments
+> diff --git a/scripts/Makefile.initmem b/scripts/Makefile.initmem
+> new file mode 100644
+> index 000000000000..a6253d78fe35
+> --- /dev/null
+> +++ b/scripts/Makefile.initmem
+> @@ -0,0 +1,10 @@
+> +ifdef CONFIG_INIT_ALL_STACK
+> +
+> +# Clang's -ftrivial-auto-var-init=pattern flag initializes the
+> +# uninitialized parts of local variables (including fields and padding)
+> +# with a fixed pattern (0xAA in most cases).
+> +ifdef CONFIG_CC_HAS_AUTO_VAR_INIT
+> +  CFLAGS_INITMEM := -ftrivial-auto-var-init=pattern
+> +endif
+> +
+> +endif
+
+Now that you dropped per-file control,
+why is this necessary?
+Also, CFLAGS_INITMEM is not wired up to anything,
+so this patch has no effect.
+
+
+I think you can add the following to top Makefile, and that's it.
+
+ifdef CONFIG_AUTO_VAR_INIT
+KBUILD_CFLAGS += -ftrivial-auto-var-init=pattern
+endif
+
+
+
+
+> diff --git a/security/Kconfig b/security/Kconfig
+> index e4fe2f3c2c65..cc12a39424dd 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -230,6 +230,7 @@ config STATIC_USERMODEHELPER_PATH
+>           If you wish for all usermode helper programs to be disabled,
+>           specify an empty string here (i.e. "").
+>
+> +source "security/Kconfig.initmem"
+>  source "security/selinux/Kconfig"
+>  source "security/smack/Kconfig"
+>  source "security/tomoyo/Kconfig"
+> diff --git a/security/Kconfig.initmem b/security/Kconfig.initmem
+> new file mode 100644
+> index 000000000000..5e49a55382ad
+> --- /dev/null
+> +++ b/security/Kconfig.initmem
+> @@ -0,0 +1,29 @@
+> +menu "Initialize all memory"
+> +
+> +config CC_HAS_AUTO_VAR_INIT
+> +       def_bool $(cc-option,-ftrivial-auto-var-init=pattern)
+> +
+> +config INIT_ALL_MEMORY
+> +       bool "Initialize all memory"
+> +       default n
+> +       help
+> +         Enforce memory initialization to mitigate infoleaks and make
+> +         the control-flow bugs depending on uninitialized values more
+> +         deterministic.
+> +
+> +if INIT_ALL_MEMORY
+> +
+> +config INIT_ALL_STACK
+> +       bool "Initialize all stack"
+> +       depends on INIT_ALL_MEMORY
+> +       depends on CC_HAS_AUTO_VAR_INIT || (HAVE_GCC_PLUGINS && PLUGIN_HOSTCC != "")
+> +       select GCC_PLUGINS if !CC_HAS_AUTO_VAR_INIT
+> +       select GCC_PLUGIN_STRUCTLEAK if !CC_HAS_AUTO_VAR_INIT
+> +       select GCC_PLUGIN_STRUCTLEAK_BYREF_ALL if !CC_HAS_AUTO_VAR_INIT
+> +       default y
+> +       help
+> +         Initialize uninitialized stack data with a fixed pattern
+> +         (0x00 in GCC, 0xAA in Clang).
+> +
+
+
+I am not sure about the benefit of these umbrella CONFIGs
+since these make 'depends on' and 'select' complicated.
+I will leave it to Kees, though.
+
+
+
+> +endif # INIT_ALL_MEMORY
+> +endmenu
 > --
-> ~Randy
+> 2.21.0.392.gf8f6787159e-goog
+>
 
 
-
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+-- 
+Best Regards
+Masahiro Yamada
