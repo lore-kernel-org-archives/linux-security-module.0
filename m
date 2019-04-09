@@ -2,118 +2,85 @@ Return-Path: <SRS0=Re8g=SL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D84B9C10F0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 20:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D681C10F0E
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 20:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E382084B
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 20:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0573D2084F
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 20:55:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PxS5I0Ub"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ci3YXYPx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726565AbfDIUmM (ORCPT
+        id S1726527AbfDIUzu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Apr 2019 16:42:12 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46406 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbfDIUmL (ORCPT
+        Tue, 9 Apr 2019 16:55:50 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39630 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726337AbfDIUzu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 16:42:11 -0400
-Received: by mail-ot1-f68.google.com with SMTP id s24so11696556otk.13
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 13:42:11 -0700 (PDT)
+        Tue, 9 Apr 2019 16:55:50 -0400
+Received: by mail-vs1-f68.google.com with SMTP id g127so52473vsd.6
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 13:55:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wYqVsWqQSWnGTgrw/VKRGKm9uoHuQiVWv/uRiw5UCoQ=;
-        b=PxS5I0UbCAbzgi8wJQRxqK+nG0JjhboHitwK8nsW7DyyRGsMpjNn04uOtMbH4FajOB
-         3q23Yu5PdnKSRZo2d2LpoB/xMl+IX1MqD6QuPRYo1JT2sar++WO3ZlbjUTH1LtICeF2N
-         Kg6jJiDm1b+BtlYD/3VGuMXsSLSER1E+7tUIXcqByWionKyiKmKDBifsr7YUMMTixP7Z
-         sSlxD7dK7cEusMmFgN6EiVYOBEC57kuVfnB0woPARe95FMciwa86CyCH2BGk4Ukw4p72
-         bl4yYICbdKil0aSruDHtVBlpk4Rde0lx2fQee3TDW/je/hVjTuX1sg0uPu4PrzG9Idh8
-         v62g==
+        bh=nZSrBQKpQd+adpCbhGYkyPOgmdo9uCPs8DR7ZiCGabo=;
+        b=ci3YXYPxT6IWOfTme6bKOV/WcqJ1xHLV+6vYN329Lht7HzSfZ7oeN40siOZdIAuLfo
+         T0EkSo4YAdsaw1Vw29vU46gHvr3HJITv/qkxqUkowaHgM/iRoK2vvvctzbqGLJ8sT8fi
+         kwYf8rX43hUhe+vq8BCA0zSCSj33jxxMAyYEw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wYqVsWqQSWnGTgrw/VKRGKm9uoHuQiVWv/uRiw5UCoQ=;
-        b=RIK8rQ9mZjmphUWfB8v/7mZ//NjMU89MgXifRt+iaJPc6tkhj6BKeUtfSCnnZ+qJFP
-         LrPjn/RnficPaAl7R+Fh0/5WE9broSDSox7Awzf1kKYAYomduZCAQy/0Ue++3Knf47BV
-         VHMTK9lxjEDVShv3jhLS3S/ldUigytXpLl1lyu9nYBbEBNVS8hin6WcaXSkc1Nu1o/2W
-         csZlC5EwIfeb4P+6f/uo1Audi42eNe66vvhy6J8wOk3WwxEXqyxj1/7CbIzyczLqOBw4
-         wKjoyR0fSmf+fQcqdqjmcniVkMxGgStvP/Ne+j7HslfgQ33u/ommiYXNZ3Yq1TU5SRQF
-         bnlg==
-X-Gm-Message-State: APjAAAVLnh1lknKP1VCn9UXvoT3mZAL9wPCAHtWw4hmIUKwlikIhmr8f
-        NPqfDJ4MEUb0Ka6CC8sWYC6NbYsCCwYkxRMr54zyJg==
-X-Google-Smtp-Source: APXvYqzB0EI0eAZK4Np0Ct7gHO8FBH+oa5UJr3ScmA+T9La0PQzPNF9S04XKu5pkashErRi58xCwCuvBkKB1r9XJGfA=
-X-Received: by 2002:a9d:3b25:: with SMTP id z34mr25365368otb.298.1554842530941;
- Tue, 09 Apr 2019 13:42:10 -0700 (PDT)
+        bh=nZSrBQKpQd+adpCbhGYkyPOgmdo9uCPs8DR7ZiCGabo=;
+        b=jfyw3TkpTyyWNChL2hZ8t0Hmkx5cC6LbDRHJ2sFq0MBV8MSgPEXFJ1uxPAOpQV8+YV
+         Vi7K2kyEjvRI/paaG1R95Ra9wSRaLJmcr56KWkiOfbtO4fFLmHMIz8vxfSe6oedl5sjL
+         xJlVK58eaOatj8SRjHB8rlFqyvgnkTU0ob4/hHx99EHY60IPnABvlyssTeZBnvLBA65G
+         cRs0lJMcWS9P6tLHO2u7Iq5g3qrhHu1ufjQWmD1tstKSeof5JKwzO4Q2HzIzGyim1ej7
+         F1uQWOKo33s20MbUM+5jM1IiPjNnTjxo/DnnuBAsSF0Zhb4iG0QdyV1+H3uKdiKOQ0kH
+         e/wA==
+X-Gm-Message-State: APjAAAUJloRbLeIaI+fa4XfXe+7h0HINJT9QeZW9wZBBAM/ek8BdZuVh
+        qGMBbcO/PJb/2OTkdvEa+BNRQWeNRvA=
+X-Google-Smtp-Source: APXvYqxS90mU21IhNV/U6wS7CGD3qcQS5A5Ik91UHe4xBsbrR0uDN1gLrDEdZw3JvNpPU+Z7Xzwzfw==
+X-Received: by 2002:a67:fa52:: with SMTP id j18mr20877380vsq.118.1554843349173;
+        Tue, 09 Apr 2019 13:55:49 -0700 (PDT)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id n202sm9378474vke.5.2019.04.09.13.55.48
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Apr 2019 13:55:48 -0700 (PDT)
+Received: by mail-vk1-f171.google.com with SMTP id d15so61412vka.8
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 13:55:48 -0700 (PDT)
+X-Received: by 2002:a1f:2443:: with SMTP id k64mr14154520vkk.47.1554843343804;
+ Tue, 09 Apr 2019 13:55:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1554485409.git.rdna@fb.com>
-In-Reply-To: <cover.1554485409.git.rdna@fb.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 9 Apr 2019 22:41:44 +0200
-Message-ID: <CAG48ez2D=fUX6_MDf5WD39av65FSQ1OF7v7gG5pqZLqgU9RAUw@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 00/21] bpf: Sysctl hook
-To:     Andrey Ignatov <rdna@fb.com>
-Cc:     Network Development <netdev@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, guro@fb.com,
-        kernel-team@fb.com, Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+References: <20190408160706.GA18786@beast> <CADyDSO4NkEY-SPT-abnyRXT9kGWhF8LbU3XQGNp-5k_15debDg@mail.gmail.com>
+ <CAGXu5j+g8tPrDAYVKv26ci6zvGuvC1TMXto7weVP2QBymMRjhw@mail.gmail.com> <alpine.LRH.2.21.1904100611310.7633@namei.org>
+In-Reply-To: <alpine.LRH.2.21.1904100611310.7633@namei.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 9 Apr 2019 13:55:31 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJjaW3yayq+R9xk30h5s+u8vGptKi73o5fGK5nA4W=soA@mail.gmail.com>
+Message-ID: <CAGXu5jJjaW3yayq+R9xk30h5s+u8vGptKi73o5fGK5nA4W=soA@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: Restore Y/N in /sys for apparmor's "enabled"
+To:     James Morris <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>
+Cc:     David Rheinsberg <david.rheinsberg@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 9, 2019 at 10:26 PM Andrey Ignatov <rdna@fb.com> wrote:
-> The patch set introduces new BPF hook for sysctl.
->
-> It adds new program type BPF_PROG_TYPE_CGROUP_SYSCTL and attach type
-> BPF_CGROUP_SYSCTL.
->
-> BPF_CGROUP_SYSCTL hook is placed before calling to sysctl's proc_handler so
-> that accesses (read/write) to sysctl can be controlled for specific cgroup
-> and either allowed or denied, or traced.
+On Tue, Apr 9, 2019 at 1:12 PM James Morris <jmorris@namei.org> wrote:
+> Actually, JJ usually submits directly to Linus.
 
-Don't look at the credentials of "current" in a read or write handler.
-Consider what happens if, for example, someone inside a cgroup opens a
-sysctl file and passes the file descriptor to another process outside
-the cgroup over a unix domain socket, and that other process then
-writes to it. Either do your access check on open, or use the
-credentials that were saved during open() in the read/write handler.
+Ah! Right; I forgot. John, can you take and send this?
 
-> The hook has access to sysctl name, current sysctl value and (on write
-> only) to new sysctl value via corresponding helpers. New sysctl value can
-> be overridden by program. Both name and values (current/new) are
-> represented as strings same way they're visible in /proc/sys/. It is up to
-> program to parse these strings.
-
-But even if a filter is installed that prevents all access to a
-sysctl, you can still read it by installing your own filter that, when
-a read is attempted the next time, dumps the value into a map or
-something like that, right?
-
-> To help with parsing the most common kind of sysctl value, vector of
-> integers, two new helpers are provided: bpf_strtol and bpf_strtoul with
-> semantic similar to user space strtol(3) and strtoul(3).
->
-> The hook also provides bpf_sysctl context with two fields:
-> * @write indicates whether sysctl is being read (= 0) or written (= 1);
-> * @file_pos is sysctl file position to read from or write to, can be
->   overridden.
->
-> The hook allows to make better isolation for containerized applications
-> that are run as root so that one container can't change a sysctl and affect
-> all other containers on a host, make changes to allowed sysctl in a safer
-> way and simplify sysctl tracing for cgroups.
-
-Why can't you use a user namespace and isolate things properly that
-way? That would be much cleaner, wouldn't it?
+-- 
+Kees Cook
