@@ -2,55 +2,55 @@ Return-Path: <SRS0=Re8g=SL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF228C10F0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDE8C282CE
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACF142082A
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B26CB2147C
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:40:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="V4W9Oi8k"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="HlwY0lNh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbfDIVkf (ORCPT
+        id S1726702AbfDIVkh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Apr 2019 17:40:35 -0400
-Received: from sonic317-39.consmr.mail.ne1.yahoo.com ([66.163.184.50]:34408
+        Tue, 9 Apr 2019 17:40:37 -0400
+Received: from sonic317-39.consmr.mail.ne1.yahoo.com ([66.163.184.50]:35967
         "EHLO sonic317-39.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726702AbfDIVkf (ORCPT
+        by vger.kernel.org with ESMTP id S1726688AbfDIVkh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 17:40:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554846034; bh=j+cuqymh91xxGIirxxPJDUSMb0L9mw21aX8dKstwmqI=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=V4W9Oi8kUs5hD1VBcUYyqFig9ESXqmhTZ1SjiL2jicUYlzN+0go8THjkYZU2oIvWxiqSP35ci6cA2NiUtbCEoEBcszwD0WS11TsyNL8agIuM6oGBANF2qut7XqnnIiAUcPesxMunglCf6wXKIAvmNJ3h21CRrJncqzfCE0Gkil55JloWITyjoIbglIZSjAS75kcTgovtlrwVjERc1IaGhMIIKor4fZchN7YOYU9a1FRGWOz4OvKwaYfyT3vJDvk/miIrAFFKRQ4g0lTzFn+x7dZSWqUOGuwzuww3KAsDUCV4EtAvuUYUtSh8vprb0CKu6iYhIRlDp1GM8lMneGFYeQ==
-X-YMail-OSG: 1E5fiScVM1mxULQMACrePCWHugLs_0sWpb1PqEYRoZfA8qipgpwFtXpGYuxJzoo
- VcMcr7SC_5d.bUbbRdlfsOB7rGX8vL.eoY06YM3CpPLwoNLP5ToEWVuKl_I0udNK00xWqXKJFukG
- GAeeOBZctto5jrorP3FUHXFThGvt5AvEbS7_neclC6Lef0w37yoNR5fnB2tP0NhOj241ZtJ5TFGy
- HJmgpdlngXLbQEt3l8LHt6CjgGZXcI11f9GNJ8ggvT0hVZFAcuTjJ03CUnem2eldP0FJ5j4WKFSj
- MaIxZx_dhKKT.yyDeICgx6OCcnO_WIsGOWqk10jJ7LrgLxkCmm9wDT7KoAjRakTf46upobE2CWnq
- Uqw85Eped31ciNaYoavhIuyfYkSdIqPw503j4VlF6btp3VAUI__kgh5kEs_Rsr.Z0kJgop3IL6nT
- 5AjGdpkodb4b6BmGvGpKnZqcrO_qMECq9GDLy6QGNXFV4cQAkKsKB3.tPfor3p1WImbg829QbGOE
- Kgmmf2y59RkRPzJJvhbA0ZgtbRKGTqMMaNgLA943DvCM3tGpg19hBjSskxf9tVUqff3HW4A6uDUX
- 482jXn.WH9BRH3FoqzjOHa8r2Sg92qT2Ce3ItFUeNUZpi7VpHtNUZ_rx8zqODGUtrWY0f8PcYb9F
- eL4mO_G1EMhoZZU_bcsF50FSn1vwH0TDGeG7xQmp3RZjuLzCqYWPvaU6lDWCbov_tBMXv70atl5.
- V0x8LEC2IUDo2pdRCpOlGVB8ckcX30orjxskUF_D72182KfdsLRcb73i46SuB.mU8d1CZwFcWr37
- S0VVDQ0v3rOOeG.yA13leZbuhGBTyJRcWKUqmbnJJj5qP8eDshwQ29W93v6SZsgthYM9o7lQvTzD
- uL.hdSDiPHJuR2nvR6xG5vER6xlW7E8ms1JJnZHjp1maM0oDRJY92Z.Lojp23WLg79hj0R8dBFVs
- CAB8KzJNaJ05rLq7rBCYqMwULQbjFXJxQwFVaOGxdiAA8RCSOjzphXTe70_wueESNGy0_8bnC_76
- 6D9r_7oz3S9VPzAcP4TrGSk8O2e9IlTFMDiizFBb8aEi8N9SEbQTXNkL_kFd5zsDWfOve9FcIe0u
- N7gHMWI9zWWRGM8CbIGNOz9own7g3wcmQ4VqHU5bpFb2wJozpVY2qkrRoYLN3lQ--
+        Tue, 9 Apr 2019 17:40:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554846034; bh=JqmHPCKmgnqzoENFdhELAFCXcZpoQtrMW7bW3NRYmPs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=HlwY0lNhX1FhcFnPElrBurIZ15Zrm4ArjEJP0wdlT6vdAQf8Hnd1Io7idDx8UoqPwckWRmZQCySiwt81+awjQ2YXU6mv1L5HHGDFskYg/402ThG9cLimJj8k9rdE9QCqukBjeljhUjClIjj9OCcFsw8/YQrldRiQhGlgwv4h3hNsZ6rkCbCY44f1qKRMUsMerzs5isiPT46mnKF3nKNaSAD96TqIzQZIfnVQFZVEcM3t6wWsC007LE2nkZzm8BRWfL1DD1uN73m3MFq/5LB0vHgMEocxlfR7Oogjk9SJd1WDbg/4EzUiFsjrV6vsDNfZv04lW8yriPwHdxjWV2sn+Q==
+X-YMail-OSG: Gg4XAOUVM1nPPTxCYwxtHpzBZGwRUFRJNoFXnhRROCwsMFhZLEQ7mQf_7Asj5kH
+ EhmwWCNCOiKmn2HucVGPOKbXk_RrDZ3i6AZIM2vnrgHP83r9DFrB5pSWuLe5IcdqD_ZgKaUZQfaS
+ BCODeL5ix3HO1mXV5TxaLcSD4Iu1ZvwZaGZhJy6hanKu6HWOO5jlOEVSSZkm5lRxmtPZplhm91Lg
+ t0OfwQOiwEKwjoCoSxa6ODRPvdghGrXwgdgKmslIHDD3.0t_gx4.myXykA7rP8QpqaSb94Qhys3K
+ fhe3t5V97ax6WgBSwD47xaDEZeIPBOUzsXZw7.dtsxqRDUVBWi11WgCv0VuyZTCDHtk4ARtpug04
+ xIJXQPxEhY7xemPh1L.wue7ipYTUh6xt.VEIe2hkhDvmJiimGROiWyPa74lumhjYWeHTiJ7TMQUe
+ UivwnWHY53viSjmKlIa1m9fNeWnomqk5uUe9zABh29KMJsea3RRvp.L4hZsyjAvARNo2swkPWvKY
+ rSbye_5H2k.ZechIMqz.aLRrvVoKoihsAdGyZxokipDdWf1xU3V2HgUcwuiXMHPdRDDooUP7Cd20
+ 8ROq9T7qf74sEAWDXjMAHHR6ZAZOROWW4XIBBEESXK1jamJYSl.z_idGeARB2bllT6pmv6d6SK3m
+ 4yjYgkM2H1dhsnl17BKv9_VlyHrF.9hbXFM1rMC0dNLElMmXL9ILEHrDXOkNHFHw_ZZRyL40aPjO
+ kAk2wj9bysr8n66K6G8kk3c6Os8V_pEZLgMGCGHkgDihylAslAh8.WS_wv_T.p3B9uZnqkTNcQHD
+ iyEsWc286uunRoT2_ptbaCD07xQR0UPa3HL9sC3W7sYElCVlq0y1O283gwQf5eLMPd5aGc3CbXwo
+ mkeIv42DqY5vJtcabt6vAKc69lqfj9EO8O3xXWvL1VSeji_9z0p9QOlyAgq7FTdnynsJ_Ehq18rc
+ oTXoMNO0zthrqFz5CAmLea6wqngFkgd1XKMEmiMxVt5d2qQksy__3Bh3jgygeLZFWxHvd3vTFWg6
+ tQUaXwX72uC2dloehYNR.NzQ2FTpo06QjCBrN5uMt31wwt6as2XlLHNtmGkJY3qp4tq5u4q0ZaB6
+ .H7ODeR4wUfxeOiCTRD.hFaJxIIzhdl2PZMKhTAcMBmuG8lvNjpVnQztSyY4-
 Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Tue, 9 Apr 2019 21:40:34 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp422.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 9d24739551c480912ea4720c6639d78e;
-          Tue, 09 Apr 2019 21:40:28 +0000 (UTC)
+          by smtp413.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3d2ea789de6b345569f1c9b3872b02c3;
+          Tue, 09 Apr 2019 21:40:10 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com
-Subject: [PATCH 23/59] Audit: Change audit_sig_sid to audit_sig_lsm
-Date:   Tue,  9 Apr 2019 14:39:10 -0700
-Message-Id: <20190409213946.1667-24-casey@schaufler-ca.com>
+Subject: [PATCH 10/59] LSM: Use lsm_export in the audit_rule_match hooks
+Date:   Tue,  9 Apr 2019 14:38:57 -0700
+Message-Id: <20190409213946.1667-11-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190409213946.1667-1-casey@schaufler-ca.com>
 References: <20190409213946.1667-1-casey@schaufler-ca.com>
@@ -58,109 +58,298 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Remove lsm_export scaffolding around audit_sig_sid by
-changing the u32 secid into an lsm_export structure named
-audit_sig_lsm.
+Convert the audit_rule_match hooks to use the lsm_export
+structure instead of a u32 secid. There is quite a bit of scaffolding
+involved that will be removed when security_audit_rule_match()
+is updated.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/security.h |  7 +++++++
- kernel/audit.c           | 18 ++++++++----------
- kernel/audit.h           |  2 +-
- kernel/auditsc.c         |  3 +--
- 4 files changed, 17 insertions(+), 13 deletions(-)
+ include/linux/lsm_hooks.h         |  5 +++--
+ security/apparmor/audit.c         |  4 ++--
+ security/apparmor/include/audit.h |  2 +-
+ security/apparmor/include/secid.h |  2 +-
+ security/apparmor/secid.c         | 17 +++++++++++++++--
+ security/security.c               |  7 ++++++-
+ security/selinux/hooks.c          | 17 -----------------
+ security/selinux/include/audit.h  |  5 +++--
+ security/selinux/include/objsec.h | 17 +++++++++++++++++
+ security/selinux/ss/services.c    |  6 +++++-
+ security/smack/smack_lsm.c        |  7 +++++--
+ 11 files changed, 58 insertions(+), 31 deletions(-)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 40aa7b9f3c83..e76d7a9dbe50 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -93,6 +93,13 @@ static inline void lsm_export_init(struct lsm_export *l)
- 	memset(l, 0, sizeof(*l));
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 59f38c18426a..690ab020508e 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1357,7 +1357,7 @@
+  * @audit_rule_match:
+  *	Determine if given @secid matches a rule previously approved
+  *	by @audit_rule_known.
+- *	@secid contains the security id in question.
++ *	@l points to the security data in question.
+  *	@field contains the field which relates to current LSM.
+  *	@op contains the operator that will be used for matching.
+  *	@rule points to the audit rule that will be checked against.
+@@ -1786,7 +1786,8 @@ union security_list_options {
+ 	int (*audit_rule_init)(u32 field, u32 op, char *rulestr,
+ 				void **lsmrule);
+ 	int (*audit_rule_known)(struct audit_krule *krule);
+-	int (*audit_rule_match)(u32 secid, u32 field, u32 op, void *lsmrule);
++	int (*audit_rule_match)(struct lsm_export *l, u32 field, u32 op,
++				void *lsmrule);
+ 	void (*audit_rule_free)(void *lsmrule);
+ #endif /* CONFIG_AUDIT */
+ 
+diff --git a/security/apparmor/audit.c b/security/apparmor/audit.c
+index 5a8b9cded4f2..bea59bfad332 100644
+--- a/security/apparmor/audit.c
++++ b/security/apparmor/audit.c
+@@ -225,13 +225,13 @@ int aa_audit_rule_known(struct audit_krule *rule)
+ 	return 0;
  }
  
-+static inline bool lsm_export_any(struct lsm_export *l)
+-int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule)
++int aa_audit_rule_match(struct lsm_export *l, u32 field, u32 op, void *vrule)
+ {
+ 	struct aa_audit_rule *rule = vrule;
+ 	struct aa_label *label;
+ 	int found = 0;
+ 
+-	label = aa_secid_to_label(sid);
++	label = aa_secid_to_label(l);
+ 
+ 	if (!label)
+ 		return -ENOENT;
+diff --git a/security/apparmor/include/audit.h b/security/apparmor/include/audit.h
+index ee559bc2acb8..372ba4fada9c 100644
+--- a/security/apparmor/include/audit.h
++++ b/security/apparmor/include/audit.h
+@@ -192,6 +192,6 @@ static inline int complain_error(int error)
+ void aa_audit_rule_free(void *vrule);
+ int aa_audit_rule_init(u32 field, u32 op, char *rulestr, void **vrule);
+ int aa_audit_rule_known(struct audit_krule *rule);
+-int aa_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule);
++int aa_audit_rule_match(struct lsm_export *l, u32 field, u32 op, void *vrule);
+ 
+ #endif /* __AA_AUDIT_H */
+diff --git a/security/apparmor/include/secid.h b/security/apparmor/include/secid.h
+index fa2062711b63..c283c620efe3 100644
+--- a/security/apparmor/include/secid.h
++++ b/security/apparmor/include/secid.h
+@@ -25,7 +25,7 @@ struct aa_label;
+ /* secid value that matches any other secid */
+ #define AA_SECID_WILDCARD 1
+ 
+-struct aa_label *aa_secid_to_label(u32 secid);
++struct aa_label *aa_secid_to_label(struct lsm_export *l);
+ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid);
+ void apparmor_release_secctx(char *secdata, u32 seclen);
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index 05373d9a3d6a..1546c45a2a18 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -61,9 +61,12 @@ void aa_secid_update(u32 secid, struct aa_label *label)
+  *
+  * see label for inverse aa_label_to_secid
+  */
+-struct aa_label *aa_secid_to_label(u32 secid)
++struct aa_label *aa_secid_to_label(struct lsm_export *l)
+ {
+ 	struct aa_label *label;
++	u32 secid;
++
++	secid = (l->flags & LSM_EXPORT_APPARMOR) ? l->apparmor : 0;
+ 
+ 	rcu_read_lock();
+ 	label = idr_find(&aa_secids, secid);
+@@ -72,12 +75,22 @@ struct aa_label *aa_secid_to_label(u32 secid)
+ 	return label;
+ }
+ 
++static inline void aa_import_secid(struct lsm_export *l, u32 secid)
 +{
-+	return (((l->flags & LSM_EXPORT_SELINUX) && l->selinux) ||
-+		((l->flags & LSM_EXPORT_SMACK) && l->smack) ||
-+		((l->flags & LSM_EXPORT_APPARMOR) && l->apparmor));
++	l->flags = LSM_EXPORT_APPARMOR;
++	l->apparmor = secid;
 +}
 +
- /**
-  * lsm_export_secid - pull the useful secid out of a lsm_export
-  * @data: the containing data structure
-diff --git a/kernel/audit.c b/kernel/audit.c
-index fa4c5544eb37..5226e2af9498 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -135,9 +135,9 @@ static u32	audit_backlog_limit = 64;
- static u32	audit_backlog_wait_time = AUDIT_BACKLOG_WAIT_TIME;
+ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+ {
+ 	/* TODO: cache secctx and ref count so we don't have to recreate */
+-	struct aa_label *label = aa_secid_to_label(secid);
++	struct lsm_export data;
++	struct aa_label *label;
+ 	int len;
  
- /* The identity of the user shutting down the audit system. */
--kuid_t		audit_sig_uid = INVALID_UID;
--pid_t		audit_sig_pid = -1;
--u32		audit_sig_sid = 0;
-+kuid_t			audit_sig_uid = INVALID_UID;
-+pid_t			audit_sig_pid = -1;
-+struct lsm_export	audit_sig_lsm;
++	aa_import_secid(&data, secid);
++	label = aa_secid_to_label(&data);
++
+ 	AA_BUG(!seclen);
  
- /* Records can be lost in several ways:
-    0) [suppressed in audit_alloc]
-@@ -1429,23 +1429,21 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
- 	}
- 	case AUDIT_SIGNAL_INFO:
- 		len = 0;
--		if (audit_sig_sid) {
--			struct lsm_export le;
+ 	if (!label)
+diff --git a/security/security.c b/security/security.c
+index 2f1355d10e0d..60dd064c0531 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2477,7 +2477,12 @@ void security_audit_rule_free(void *lsmrule)
+ 
+ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+ {
+-	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
++	int rc;
++	struct lsm_export data = { .flags = LSM_EXPORT_NONE };
++
++	rc = call_int_hook(audit_rule_match, 0, &data, field, op, lsmrule);
++	lsm_export_secid(&data, &secid);
++	return rc;
+ }
+ #endif /* CONFIG_AUDIT */
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 03dfa0cd6739..bfd0f1f5979f 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -213,23 +213,6 @@ static void cred_init_security(void)
+ 	tsec->osid = tsec->sid = SECINITSID_KERNEL;
+ }
+ 
+-/*
+- * Set the SELinux secid in an lsm_export structure
+- */
+-static inline void selinux_export_secid(struct lsm_export *l, u32 secid)
+-{
+-	l->selinux = secid;
+-	l->flags |= LSM_EXPORT_SELINUX;
+-}
 -
--			lsm_export_to_all(&le, audit_sig_sid);
--			err = security_secid_to_secctx(&le, &ctx, &len);
-+		if (lsm_export_any(&audit_sig_lsm)) {
-+			err = security_secid_to_secctx(&audit_sig_lsm, &ctx,
-+						       &len);
- 			if (err)
- 				return err;
- 		}
- 		sig_data = kmalloc(sizeof(*sig_data) + len, GFP_KERNEL);
- 		if (!sig_data) {
--			if (audit_sig_sid)
-+			if (lsm_export_any(&audit_sig_lsm))
- 				security_release_secctx(ctx, len);
- 			return -ENOMEM;
- 		}
- 		sig_data->uid = from_kuid(&init_user_ns, audit_sig_uid);
- 		sig_data->pid = audit_sig_pid;
--		if (audit_sig_sid) {
-+		if (lsm_export_any(&audit_sig_lsm)) {
- 			memcpy(sig_data->ctx, ctx, len);
- 			security_release_secctx(ctx, len);
- 		}
-diff --git a/kernel/audit.h b/kernel/audit.h
-index 958d5b8fc1b3..64498850c52b 100644
---- a/kernel/audit.h
-+++ b/kernel/audit.h
-@@ -338,7 +338,7 @@ extern char *audit_unpack_string(void **bufp, size_t *remain, size_t len);
+-static inline void selinux_import_secid(struct lsm_export *l, u32 *secid)
+-{
+-	if (l->flags | LSM_EXPORT_SELINUX)
+-		*secid = l->selinux;
+-	else
+-		*secid = SECSID_NULL;
+-}
+-
+ /*
+  * get the security ID of a set of credentials
+  */
+diff --git a/security/selinux/include/audit.h b/security/selinux/include/audit.h
+index 682e2b5de2a4..92dd5ab15fb2 100644
+--- a/security/selinux/include/audit.h
++++ b/security/selinux/include/audit.h
+@@ -39,7 +39,7 @@ void selinux_audit_rule_free(void *rule);
  
- extern pid_t audit_sig_pid;
- extern kuid_t audit_sig_uid;
--extern u32 audit_sig_sid;
-+extern struct lsm_export audit_sig_lsm;
+ /**
+  *	selinux_audit_rule_match - determine if a context ID matches a rule.
+- *	@sid: the context ID to check
++ *	@l: points to the context ID to check
+  *	@field: the field this rule refers to
+  *	@op: the operater the rule uses
+  *	@rule: pointer to the audit rule to check against
+@@ -47,7 +47,8 @@ void selinux_audit_rule_free(void *rule);
+  *	Returns 1 if the context id matches the rule, 0 if it does not, and
+  *	-errno on failure.
+  */
+-int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *rule);
++int selinux_audit_rule_match(struct lsm_export *l, u32 field, u32 op,
++			     void *rule);
  
- extern int audit_filter(int msgtype, unsigned int listtype);
+ /**
+  *	selinux_audit_rule_known - check to see if rule contains selinux fields.
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index 3b78aa4ee98f..d7efc5f23c1e 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -50,6 +50,23 @@ static inline u32 current_sid(void)
+ 	return tsec->sid;
+ }
  
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 71daead619e5..41f540037a93 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2398,8 +2398,7 @@ int audit_signal_info(int sig, struct task_struct *t)
- 			audit_sig_uid = auid;
- 		else
- 			audit_sig_uid = uid;
--		security_task_getsecid(current, &le);
--		lsm_export_secid(&le, &audit_sig_sid);
-+		security_task_getsecid(current, &audit_sig_lsm);
++/*
++ * Set the SELinux secid in an lsm_export structure
++ */
++static inline void selinux_export_secid(struct lsm_export *l, u32 secid)
++{
++	l->selinux = secid;
++	l->flags |= LSM_EXPORT_SELINUX;
++}
++
++static inline void selinux_import_secid(struct lsm_export *l, u32 *secid)
++{
++	if (l->flags | LSM_EXPORT_SELINUX)
++		*secid = l->selinux;
++	else
++		*secid = SECSID_NULL;
++}
++
+ enum label_initialized {
+ 	LABEL_INVALID,		/* invalid or not initialized */
+ 	LABEL_INITIALIZED,	/* initialized */
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index e3f5d6aece66..626b877363fb 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -3395,13 +3395,15 @@ int selinux_audit_rule_known(struct audit_krule *rule)
+ 	return 0;
+ }
+ 
+-int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule)
++int selinux_audit_rule_match(struct lsm_export *l, u32 field, u32 op,
++			     void *vrule)
+ {
+ 	struct selinux_state *state = &selinux_state;
+ 	struct context *ctxt;
+ 	struct mls_level *level;
+ 	struct selinux_audit_rule *rule = vrule;
+ 	int match = 0;
++	u32 sid;
+ 
+ 	if (unlikely(!rule)) {
+ 		WARN_ONCE(1, "selinux_audit_rule_match: missing rule\n");
+@@ -3415,6 +3417,8 @@ int selinux_audit_rule_match(u32 sid, u32 field, u32 op, void *vrule)
+ 		goto out;
  	}
  
- 	if (!audit_signals || audit_dummy_context())
++	selinux_import_secid(l, &sid);
++
+ 	ctxt = sidtab_search(state->ss->sidtab, sid);
+ 	if (unlikely(!ctxt)) {
+ 		WARN_ONCE(1, "selinux_audit_rule_match: unrecognized SID %d\n",
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 5318b9e6820a..0e048c1456ed 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4369,7 +4369,7 @@ static int smack_audit_rule_known(struct audit_krule *krule)
+ 
+ /**
+  * smack_audit_rule_match - Audit given object ?
+- * @secid: security id for identifying the object to test
++ * @l: security id for identifying the object to test
+  * @field: audit rule flags given from user-space
+  * @op: required testing operator
+  * @vrule: smack internal rule presentation
+@@ -4377,10 +4377,12 @@ static int smack_audit_rule_known(struct audit_krule *krule)
+  * The core Audit hook. It's used to take the decision of
+  * whether to audit or not to audit a given object.
+  */
+-static int smack_audit_rule_match(u32 secid, u32 field, u32 op, void *vrule)
++static int smack_audit_rule_match(struct lsm_export *l, u32 field, u32 op,
++				  void *vrule)
+ {
+ 	struct smack_known *skp;
+ 	char *rule = vrule;
++	u32 secid;
+ 
+ 	if (unlikely(!rule)) {
+ 		WARN_ONCE(1, "Smack: missing rule\n");
+@@ -4390,6 +4392,7 @@ static int smack_audit_rule_match(u32 secid, u32 field, u32 op, void *vrule)
+ 	if (field != AUDIT_SUBJ_USER && field != AUDIT_OBJ_USER)
+ 		return 0;
+ 
++	smack_import_secid(l, &secid);
+ 	skp = smack_from_secid(secid);
+ 
+ 	/*
 -- 
 2.19.1
 
