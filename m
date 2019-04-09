@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB31C10F0E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE06DC282DA
 	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BE4D2082A
+	by mail.kernel.org (Postfix) with ESMTP id 8A84B2133D
 	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 21:41:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Ypio5f4Y"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CE4wAe4d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfDIVlF (ORCPT
+        id S1726950AbfDIVlF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Tue, 9 Apr 2019 17:41:05 -0400
-Received: from sonic301-38.consmr.mail.ne1.yahoo.com ([66.163.184.207]:40709
+Received: from sonic301-38.consmr.mail.ne1.yahoo.com ([66.163.184.207]:34698
         "EHLO sonic301-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726757AbfDIVlF (ORCPT
+        by vger.kernel.org with ESMTP id S1726921AbfDIVlF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Tue, 9 Apr 2019 17:41:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554846063; bh=fnJcv2J/MrzRf8h1makEn2/UWDvYNR2yTG2TfGic4Xg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=Ypio5f4YH48Oq+GLJiivwqPJo4/Yf6THJmZ/XIV8VS8NpoGZdeI3foe0jla4dOq3crx2I9nzZnEk/NeEhqE9tp+9qQULlMDkWknmLfN2Lxz0L8BRRSq9BdGnnASTc5dTFz/HbqRupXoLhiGau1AJQu50FGjKDHdhgn/gCY/q+n2QPqjoEhiA/giPritniGaL6T3wWDKeHFUpmIrPInJPkrLpsScJMU4tR0zVOlqWvLDxczAcMvjfDX5j0quGT8HJ8mTFsEknBsATU9KEIgGoFSMmDSV9I6C4jOSmXrfp2S4+WGvpItbyURPnjsn95OT1ChX4bZAphpYc3ytnWP6McA==
-X-YMail-OSG: g5WvnMQVM1m3RHUQczxuuHTERk8A2jN1rpR4IlE_THH0U1emOIzaKatldN47RUx
- e3ZGFdCLUnYF9fuvo3Gfo9H6YDVluTyFIols2c_RleVJomeSFTFgXIPKsdJ6na8_wXR3hCW66SG0
- snvnenOfde_T_hocjYDam0mQNwMmfqi.BCUdZfbouDpYvaFfW3ayQ6Obk.8ibd_.xVz3lG3dtdfs
- vfu2jQXVRfNFv7tcVVgh9QexE9Oxrz3UesNrFBJig14hDUpqK2aLJ8qLh7qm.0vS.J2qq.3sfzK.
- KFnpYS6w997H94TZUaETW_k3qWgiJ5hSfM2kWw9yt0tZtraIDqYV0QSrStclf48GYV20dT1I3wJM
- OM5TpeC9ZmF1Pr1p6fdlzTOqZaYtq6M9MZ5r.wzcjfnp7RyEEIaUKMwS6ouZP0dFdnWWYWYE2ERz
- BpH_yv1t50W6gr9cu7dS3kbX9.qjN9CaHuqLhoYSOgEd.qyeVt33PVk_yzbLYEkygtl1qNOIZsHE
- qIoOAS68d_WC13JCFuUX8s_tuzYldlKy5Wsg_qCctT1CXiCuWpu3QqMHIUthClKE4DtNvQ9K_cP2
- k2_ESTXXCrizU_63qIlh.XHatUJAhcb0SzBAtK8Nrl82UmruehcjeskGvFg6im.TW8zl9QUIeXGQ
- tPbXINGQA.ZWHuAIvAvLhJz_2yJnAGvQks28NpyENK8ChXEtmqQOg0Zm9TO22tBepKbtQyObOX4z
- RaiB5lf1u4xNhFaKZJgBwXE8.PGYFYK8m8FT2SC6VVOXYlWFXftGcD8YczfravDlkS.kRwvmS381
- jN5KDh0NojAYe8y7DgwLwP.XCEsOqDOZ.NB9LA7_bMUO7NX3ik.9W0U3s12zPOjiLIdL5WPj2zmo
- JR9sLu7TIj0aYcc12GwAQqCv4q9J0tTIZ8psj9Hgo7C9I_Ox6JkcMDJs7aNRr8MovOuGauShoJ2G
- W7KcOMjcUDfafcP7HBgx1qCQk6hmW2tzSBGEnV23hFS4cHd43CD9xqdKRh3MTxlEQRPWW6bU_yEc
- 50sWWz5ch32PynAzLOxyLDZVbYLNLpq7NQkVUlwYd2RPg06tS.Fy.4Tl.HWU4BLtLlQoaIhUSc9v
- CfQdafQeQD62hBEcRU7dV8MeoGr_mCgPR20eFfN3DHJMSjbxgkwJpixeQ068-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1554846063; bh=is2u5Y0DRwzBY1W00Se6/XMCwBAVUpvFG8LStFYaqTs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=CE4wAe4du0Ththjc6C38kGggCV774T2tkuQoiQYOlUNxlIsngXVJxZ3TbPMjYNUK6SG71mnH867k8kOnY+ytTiZbhwC8BdfDNCRgW98ZD8DdF0FhHlFveHivLPwAIGiCqJkj9UV3jSoB6wSBmvPZ4lgCQ3hjUt5QGQ2r9ASISiJ0nx1wAKar0E5BhOTQ1stFARGpWdXLzFIFXzXRYc+tOR20P/tapt7ZdAH8ASWQuSGZ7juACUTtqkol1EC9ax6Rt5R34TcAJ0/UrZyCMqp1K3lC8G7fENRs8plBMav6/6GVypViCib12/BTR13PcIDgndEYFVqkLDQPCDbTLTdUbA==
+X-YMail-OSG: ufOrQ8UVM1kku_9wSsdaAxTssXUA5YN3hBly9MNLkc8G.AqInxIMKtZzvO45810
+ cHbPHlSYbqWDN0NHYapeGEaevGO7xBt89vg_yvZdtcSyOH15DR3GBMam7dA491eY7V73..PO_cRg
+ ZsUI.M0utdJA65m.Xkcyf4Qf8mOVzV3W5fIXDHc_ED.ikYn4SW7QNPmai47V4_oMkCtMAUN5jPoh
+ pkkPPIZk0Z9UVTgipiYTYXTC36WwYTuUu3DiLi8RGnYK4dY6imXDEVtH6jjt4WfXi2SP9KaI_gBt
+ BSLI5I3n0PoYV3eFhk49x0fJJwVHcduyV9wvjzB5_Zl8CqhHOnyclcVjuLExjL19ZxVARRX3yOnH
+ bXfXv0gkbD2HxRz_fGbaTPCb9C8JbMpsBrUcmBazYFtALqP9FSdI4xtdEWc1PBDq0KL9TdHwEC3z
+ q2gmLhaIo4FaXUwoTZb59uOhp1tQRInEj.D11Ezud1_BE_z8rprLiNGibonMhSFJCDWwdFkvGx8J
+ _MNv2CCVw6jSifdOmCqKNFUx8JS1YT47FVL_7_lPcjSu.QBgOdaRzew_KkYvyGBMXBtUpBeeBrU0
+ 5mrHqaqS9WCTUOYk5IX0bYZuY7r87rvHB_PxHhP.78Lmuq2Q3ZkTu6NQ3OEqRUMOwu0shV76Ijji
+ p8n9VLDZyT4.2f395gZCO3Q5VSJBMRGp0p4HriljoLLT6TzNG4U_Wi7pMSG3TtN3K9Sivyw6PnNZ
+ Em5fi1QTZ1OujnQh4l4QkMaS7iMb0oa8DilERtU.U6fdMDFgCaffuQXQpktTQuZ5rhXxtVqxJZNi
+ HMQBJ5nB2WgrUEInhuP57k6tObqP9Bpxl5_HKubQZ6hI_nXEl80RbmyZTsDNm_sLivutS06Q3WyR
+ DMYJo3t1YpXk7.SiDsQqM.9hqM1r77K5xbTXvIihfpkZ2KePS1I6sq9q8aMeibS5FvBjsEJzLQcU
+ FxHS5FL3U1_ko6O8chDJPtkfC0vB0SWTTcCFaao4ymBsy2ZJ9lesNLaEihg_S_ZBH7lXgrSt_G3C
+ gynWm9oo3qilb7HGCLKbDjyRyRm8NF29MKHQXHj0Ud1dqh1BeoRHFuQJdZy72F93JEY50z3Q.H2A
+ kYB4ecRIF0j4foV.zDwKYeLL50I4k149DlvG4qakghL137qLOq8_u1AsI
 Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Tue, 9 Apr 2019 21:41:03 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO localhost.localdomain) ([67.169.65.224])
-          by smtp413.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 3d2ea789de6b345569f1c9b3872b02c3;
-          Tue, 09 Apr 2019 21:40:11 +0000 (UTC)
+          by smtp423.mail.ne1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 9c4e55bd3d312d6c1e8f7ed93770d720;
+          Tue, 09 Apr 2019 21:39:56 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Cc:     casey@schaufler-ca.com
-Subject: [PATCH 11/59] LSM: Fix logical operation in lsm_export checks
-Date:   Tue,  9 Apr 2019 14:38:58 -0700
-Message-Id: <20190409213946.1667-12-casey@schaufler-ca.com>
+Subject: [PATCH 04/59] LSM: Create an lsm_export data structure.
+Date:   Tue,  9 Apr 2019 14:38:51 -0700
+Message-Id: <20190409213946.1667-5-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190409213946.1667-1-casey@schaufler-ca.com>
 References: <20190409213946.1667-1-casey@schaufler-ca.com>
@@ -58,41 +58,39 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fix the logic in Smack and SELinux when checking to
-see if the secid is included.
+When more than one security module is exporting data to
+audit and networking sub-systems a single 32 bit integer
+is no longer sufficient to represent the data. Add a
+structure to be used instead.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- security/selinux/include/objsec.h | 2 +-
- security/smack/smack_lsm.c        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ include/linux/security.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index d7efc5f23c1e..59a3b1cd5ba9 100644
---- a/security/selinux/include/objsec.h
-+++ b/security/selinux/include/objsec.h
-@@ -61,7 +61,7 @@ static inline void selinux_export_secid(struct lsm_export *l, u32 secid)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 49f2685324b0..81f9f79f9a1e 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -76,6 +76,18 @@ enum lsm_event {
+ 	LSM_POLICY_CHANGE,
+ };
  
- static inline void selinux_import_secid(struct lsm_export *l, u32 *secid)
- {
--	if (l->flags | LSM_EXPORT_SELINUX)
-+	if (l->flags & LSM_EXPORT_SELINUX)
- 		*secid = l->selinux;
- 	else
- 		*secid = SECSID_NULL;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 0e048c1456ed..a3776501965d 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -477,7 +477,7 @@ static inline void smack_export_secid(struct lsm_export *l, u32 secid)
- 
- static inline void smack_import_secid(struct lsm_export *l, u32 *secid)
- {
--	if (l->flags | LSM_EXPORT_SMACK)
-+	if (l->flags & LSM_EXPORT_SMACK)
- 		*secid = l->smack;
- 	else
- 		*secid = 0;
++/* Data exported by the security modules */
++struct lsm_export {
++	u32	selinux;
++	u32	smack;
++	u32	apparmor;
++	u32	flags;
++};
++#define LSM_EXPORT_NONE		0x00
++#define LSM_EXPORT_SELINUX	0x01
++#define LSM_EXPORT_SMACK	0x02
++#define LSM_EXPORT_APPARMOR	0x04
++
+ /* These functions are in security/commoncap.c */
+ extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
+ 		       int cap, unsigned int opts);
 -- 
 2.19.1
 
