@@ -2,166 +2,124 @@ Return-Path: <SRS0=Re8g=SL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6785C10F0E
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 09:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6FCC282CE
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 13:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A765B20830
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 09:53:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SLqwxxFt"
+	by mail.kernel.org (Postfix) with ESMTP id C678520883
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Apr 2019 13:37:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbfDIJx5 (ORCPT
+        id S1726509AbfDINhw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Apr 2019 05:53:57 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:35030 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbfDIJx5 (ORCPT
+        Tue, 9 Apr 2019 09:37:52 -0400
+Received: from mga18.intel.com ([134.134.136.126]:48874 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726486AbfDINhw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Apr 2019 05:53:57 -0400
-Received: by mail-vs1-f66.google.com with SMTP id d8so9417867vsp.2
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Apr 2019 02:53:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6XLZg7gttNTZ4EYU3buMds6paKoVzxzJh3bbXHN1+kQ=;
-        b=SLqwxxFtFOJgcGhrCgNXMbT1oS+GsO0LFz1gkmlpMFpinP1vZoJth3y+vWN5CLOW4W
-         OXjIL68C51A7p2ByALw0RXp3c67G+lggGyglSEFb+c5HQcO00zqU4hDyDsl4QGFEayHI
-         I37xvbKOjaJIRIzSWFBCQu4fNaYAZ/LzQEw0Mf0XHzDw/EXnoGIcRgP9ilspIkwcNTsl
-         xLRVDKt0Peeqv2+7jQ3xf85mdeToR5TTziXw+2eilgb9wl+nCWeNKX9j40zT+RbA082I
-         kHgkPWRLhhVl43iNkN5KrREFjKYxvuiG5FJOCXUyS1TrXFjt4qe3hTb1+lAoaXAUXJsi
-         683Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6XLZg7gttNTZ4EYU3buMds6paKoVzxzJh3bbXHN1+kQ=;
-        b=nFAoHMEyVLbJaNQ5J3w2uEo7mgIBMlzsAvYXNboP95hyUyYLabVnAJ8FGP/ZIfrR2+
-         R3SJtBHtpEuWuaZu0xeBy2dQyzxWIALaDGayo96svnpEG9s5vdl9WZUm0Edi3l2CJHIw
-         Bv/SIE7iCcV8ZDpqFxOCavPkA/6hzXJo/D3yjpVDImdWAn5FutD65B3WgCbShd4xMemq
-         zjJu5a45QTyIUrZ11dJko1ZnouvX70zmoeGkJUFgEBddb6NXTOrGRfVsC8eUm9DNP3DB
-         EaqYYksq8Qmp1tZ31YcEmKEzZQZVj6GWutpf2vqYSnwKdK2qvH4aj43zZ/5oYwC7i9Wv
-         NTPw==
-X-Gm-Message-State: APjAAAXiVHpZUL/26QM2WcqLUKelVn4hKCeoM4dCO4dzYhm9D6hZ7pqC
-        dV5bman9xOt9rsdf90X/IB67jTnyiyE0OLaoDfaJSw==
-X-Google-Smtp-Source: APXvYqxwNgSXuxUF9nlGYaO/FN+Xq8zMWTHhqv4PSC3+oqg1Z+GL8k/ZrbgKUMVcawQguKcyxDWWOdPgQVmsvZT57fE=
-X-Received: by 2002:a67:83c5:: with SMTP id f188mr18723495vsd.163.1554803635511;
- Tue, 09 Apr 2019 02:53:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190408170418.148554-1-glider@google.com> <20190408170418.148554-3-glider@google.com>
- <20190409093234.GB21979@lakrids.cambridge.arm.com>
-In-Reply-To: <20190409093234.GB21979@lakrids.cambridge.arm.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Tue, 9 Apr 2019 11:53:44 +0200
-Message-ID: <CAG_fn=V3Kvr_0fnzyFuhOMEnUgW+aM792sJ0rHr7Y-Tz0Yqn-A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] initmem: introduce CONFIG_INIT_ALL_HEAP
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tue, 9 Apr 2019 09:37:52 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Apr 2019 06:37:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,329,1549958400"; 
+   d="scan'208";a="138789642"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.55.112])
+  by fmsmga008.fm.intel.com with ESMTP; 09 Apr 2019 06:37:46 -0700
+Date:   Tue, 9 Apr 2019 16:37:45 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        linux-sgx@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "Katz-zamir, Shay" <shay.katz-zamir@intel.com>,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        David Rientjes <rientjes@google.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sandeep Patil <sspatil@android.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v19 17/27] x86/sgx: Add provisioning
+Message-ID: <20190409133745.GA9759@linux.intel.com>
+References: <20190317211456.13927-18-jarkko.sakkinen@linux.intel.com>
+ <CALCETrXQ0x2TD5GnaHhmF6SExk0C8+L0AwfnH-Krqwttfvwz2A@mail.gmail.com>
+ <20190322112938.GJ3122@linux.intel.com>
+ <20190322114325.GA10165@linux.intel.com>
+ <CALCETrW=Fr8EdVq+5FLbmdL__i82FC0ONHd=hBXjxpLcsv9M0Q@mail.gmail.com>
+ <20190325145503.GB29989@linux.intel.com>
+ <20190405101817.GA9816@linux.intel.com>
+ <CALCETrWEhcx+Uak+Rmh5F4DvY6=G3nYcMhsN3o1XvdxrGNtsqA@mail.gmail.com>
+ <20190405142006.GA11612@linux.intel.com>
+ <20190405143446.GA14573@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190405143446.GA14573@kroah.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 9, 2019 at 11:32 AM Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Mon, Apr 08, 2019 at 07:04:18PM +0200, Alexander Potapenko wrote:
-> > This config option enables CONFIG_SLUB_DEBUG and CONFIG_PAGE_POISONING
-> > without the need to pass any boot parameters.
-> >
-> > No performance optimizations are done at the moment to reduce double
-> > initialization of memory regions.
-> >
-> > Signed-off-by: Alexander Potapenko <glider@google.com>
-> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > Cc: Nick Desaulniers <ndesaulniers@google.com>
-> > Cc: Kostya Serebryany <kcc@google.com>
-> > Cc: Dmitry Vyukov <dvyukov@google.com>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Sandeep Patil <sspatil@android.com>
-> > Cc: linux-security-module@vger.kernel.org
-> > Cc: linux-kbuild@vger.kernel.org
-> > Cc: kernel-hardening@lists.openwall.com
-> > ---
-> >  v3:
-> >   - addressed comments by Masahiro Yamada (Kconfig fixes)
-> > ---
-> >  mm/page_poison.c         |  5 +++++
-> >  mm/slub.c                |  2 ++
-> >  security/Kconfig.initmem | 11 +++++++++++
-> >  3 files changed, 18 insertions(+)
-> >
-> > diff --git a/mm/page_poison.c b/mm/page_poison.c
-> > index 21d4f97cb49b..a1985f33f635 100644
-> > --- a/mm/page_poison.c
-> > +++ b/mm/page_poison.c
-> > @@ -12,9 +12,14 @@ static bool want_page_poisoning __read_mostly;
-> >
-> >  static int __init early_page_poison_param(char *buf)
-> >  {
-> > +#ifdef CONFIG_INIT_ALL_HEAP
-> > +     want_page_poisoning =3D true;
-> > +     return 0;
-> > +#else
-> >       if (!buf)
-> >               return -EINVAL;
-> >       return strtobool(buf, &want_page_poisoning);
-> > +#endif
-> >  }
-> >  early_param("page_poison", early_page_poison_param);
->
-> IIUC this is only called if page_poison is passed on the command line,
-> so want_page_poisoning won't be set automatically unless that's passed.
->
-> Presumably you want to initialize it at definition with:
->
-> static bool want_page_poisoning __read_mostly =3D IS_ENABLED(CONFIG_INIT_=
-ALL_HEAP);
-Yes, I've misunderstood how boot parameters work.
-Thanks for the suggestions!
-We'd better look into wiping allocations without POISON_SLAB though.
-> with:
->
-> #ifndef CONFIG_INIT_ALL_HEAP
-> static int __init early_page_poison_param(char *buf)
-> {
->         ...
-> }
-> early_param("page_poison", early_page_poison_param);
-> #endif
->
-> ... so that it can't be disabled?
->
-> Thanks,
-> Mark.
+On Fri, Apr 05, 2019 at 04:34:46PM +0200, Greg KH wrote:
+> On Fri, Apr 05, 2019 at 05:20:06PM +0300, Jarkko Sakkinen wrote:
+> > On Fri, Apr 05, 2019 at 06:53:57AM -0700, Andy Lutomirski wrote:
+> > > On Fri, Apr 5, 2019 at 3:18 AM Jarkko Sakkinen
+> > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > >
+> > > > On Mon, Mar 25, 2019 at 04:55:03PM +0200, Jarkko Sakkinen wrote:
+> > > > > > > Hmm.. on 2nd thought the LSM policy or even DAC policy  would restrict
+> > > > > > > that the container manager can only access specific files inside
+> > > > > > > securityfs. With this conclusion I still think it is probably the best
+> > > > > > > place for seurity policy like things even for SGX. It is meant for that
+> > > > > > > anyway.
+> > > > > > >
+> > > > > >
+> > > > > > LSM or DAC policy can certainly *restrict* it, but I suspect that most
+> > > > > > container runtimes don't mount securityfs at all.  OTOH, the runtime
+> > > > > > definitely needs to have a way to pass /dev/sgx/enclave (or whatever
+> > > > > > it's called) through, so using another device node will definitely
+> > > > > > work.
+> > > > >
+> > > > > OK, I can cope with this argument. I go with the device names above for
+> > > > > v20.
+> > > >
+> > > > In v20 the refactoring would be with corresponding modes:
+> > > >
+> > > > /dev/sgx 0755
+> > > > /dev/sgx/enclave 0666
+> > > > /dev/sgx/provision 0600
+> > > >
+> > > > The problem that I'm facing is that with devnode callback of struct
+> > > > device_type I can easily give the defaut mode for any of the files but
+> > > > not for the /dev/sgx directory itself. How do I get the appropriate
+> > > > mode for it?
+> > > >
+> > > 
+> > > Hi Greg-
+> > > 
+> > > Do you know this one?
+> > 
+> > I guess one option is to not do anything with the mode but instead
+> > contribute rules to udev? I'm not too familiar with this but maybe
+> > that is even recommended way?
+> 
+> Why do you care about the directory permissions?  They should not
+> matter, only the permissions on the device nodes themselves, right?
 
+OK, based on your response to Andy I don't :-)
 
+Thanks.
 
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+/Jarkko
