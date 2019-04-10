@@ -2,54 +2,54 @@ Return-Path: <SRS0=my8L=SM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37901C10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2375EC10F11
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4B4E20830
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E559B20854
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:16:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XLsREfCw"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NWR8Bv0s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387719AbfDJQQc (ORCPT
+        id S2387704AbfDJQQU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 12:16:32 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38496 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387723AbfDJQQW (ORCPT
+        Wed, 10 Apr 2019 12:16:20 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36516 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729048AbfDJQQT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 12:16:22 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f36so1727628plb.5
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 09:16:21 -0700 (PDT)
+        Wed, 10 Apr 2019 12:16:19 -0400
+Received: by mail-pf1-f195.google.com with SMTP id z5so1778270pfn.3
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 09:16:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4Wn4tYZKtyQIbqgdelcndTQ7HKhw2rd1tFQ7AR2NLSY=;
-        b=XLsREfCwxZo6YbXBti+6yI1YNNTD5ljjsLcsyNo/Y7t3unozeSVUQw1UBBrgBvftpk
-         b5SxINtyvYKXwhcWCPXNESzyhk2C/F6sYiSseOZf7O2z60mAZMDfqIEnqlX2B5WHZ9xi
-         pGk+EbfYaPiilcHxNgTFhT2yOyCCqV7UCrJbQ=
+        bh=z5/BRccG2xIeExTffcw+2ZZ9hqODeg+MvU2FToT9bXg=;
+        b=NWR8Bv0sEAJHOsYEz5oKUtI7noZf1zrJx1C9plqx3cR27ZWjzzC/G0rfrdR71TvkAG
+         ujl6amadTY+EM2txDYrvySTJh9QfZU2xto/LBjlJq9mVlRD8Vd+iicRMuHLV8N0VXATL
+         FtPn2OAfOSHDQy0KaRao8eQIvBbA4f9NO0FcA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4Wn4tYZKtyQIbqgdelcndTQ7HKhw2rd1tFQ7AR2NLSY=;
-        b=k1AD4MESYxiY7YyaOqr03JU1257Q/cVCvL6cxHDZz09ekx3KkVAHVBFEtpMzSaqc33
-         3I+t63vv/pZ1nM4U4InPU0Rp3I2dSte6LwhD92Q2FcNKcTfy1pFHXPVJL42z+79CVy6R
-         jNPs32jmQNlv+HF1q05SNu179D3kh6N1pdbncA67e2yn4ZITI+G2DvlT6yZNqCiW6O2q
-         jsIHxwCSksj5NowYDfdE6k1Ch2v0ymgNHUn0zXckoPL25+FABtwU5ko5roWiZqtJb705
-         UBQB3fzR4iJSRrsP0VSKzHdqa43SrmmvlvhhRNy2myKWJGLSzs+ZRoGTzwwT0MYfeq5H
-         5/9w==
-X-Gm-Message-State: APjAAAXCblJkRJpKc2XCOjyr8cJztXYwmpQBj+2MzbWbPI1rVFIZQjpM
-        MeoQo62bN+wulv+/kINGuo/EJA==
-X-Google-Smtp-Source: APXvYqxK+h5jiN9iKivMZH6Qpj7WRrDDWue1wq5Qvc4y2pUUe1u7rjZAoe9SvEw052fJmBYZQ8cDDw==
-X-Received: by 2002:a17:902:b191:: with SMTP id s17mr43294465plr.70.1554912981415;
-        Wed, 10 Apr 2019 09:16:21 -0700 (PDT)
+        bh=z5/BRccG2xIeExTffcw+2ZZ9hqODeg+MvU2FToT9bXg=;
+        b=OGx+h10vcwtS8vwsaVvOFeV9pfF++2GbXa54LFIZRLFw8WzAD+ppxsluM45QNt8BdL
+         qQ8BPZmRPW05XUtBiErTOWuXmvivG8OnwbIRXR8gh6SMA+cVCtsN9rJAAWWah88JSs66
+         J72wiL2DKXnDlHPgrbcaqNZO+k5T9jK13DRPFJBZqr/mCnmlJNTSPYunf/fYYG7NiuxN
+         V2+vk2KPPLwJg+XuWK7me43cgaA4ytd6JT1hryna1lVb5gwDG/I3uvQEReQn8wR/IRhM
+         9rBFsoo3KVibDyiR/S7NG+iREJfUduPc+p7OQxE6w/THvRX5YpeJSWFkCQbOVILhpstl
+         k67Q==
+X-Gm-Message-State: APjAAAVRgHP4ipXy90DYjFGs84cptATZqw3Ir27/frv0evX25acQ/O6O
+        a1tX4bnLKw8/qeOTT5cYNGnnXw==
+X-Google-Smtp-Source: APXvYqx5zqxoeu4mdw28o3dkknw+u/VucYykSlyoimQkBNMs/HQpr7yfMobG9eETx7FuUMVwNFD78g==
+X-Received: by 2002:a65:6150:: with SMTP id o16mr41651327pgv.285.1554912979109;
+        Wed, 10 Apr 2019 09:16:19 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id d15sm51895998pfo.34.2019.04.10.09.16.17
+        by smtp.gmail.com with ESMTPSA id w189sm60769546pfw.147.2019.04.10.09.16.17
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Wed, 10 Apr 2019 09:16:18 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -70,9 +70,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         kernel-hardening@lists.openwall.com
-Subject: [PATCH 1/3] Kconfig: Create "kernel hardening" config area
-Date:   Wed, 10 Apr 2019 09:16:10 -0700
-Message-Id: <20190410161612.18545-2-keescook@chromium.org>
+Subject: [PATCH 3/3] kbuild: Implement Clang's stack initialization
+Date:   Wed, 10 Apr 2019 09:16:12 -0700
+Message-Id: <20190410161612.18545-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190410161612.18545-1-keescook@chromium.org>
 References: <20190410161612.18545-1-keescook@chromium.org>
@@ -80,220 +80,88 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Right now kernel hardening options are scattered around various Kconfig
-files. This can be a central place to collect these kinds of options
-going forward.
+CONFIG_INIT_STACK_ALL turns on stack initialization based on
+-ftrivial-auto-var-init in Clang builds and on
+-fplugin-arg-structleak_plugin-byref-all in GCC builds.
 
+-ftrivial-auto-var-init is a Clang flag that provides trivial
+initializers for uninitialized local variables, variable fields and
+padding.
+
+It has three possible values:
+  pattern - uninitialized locals are filled with a fixed pattern
+    (mostly 0xAA on 64-bit platforms, see https://reviews.llvm.org/D54604
+    for more details) likely to cause crashes when uninitialized value is
+    used;
+  zero (it's still debated whether this flag makes it to the official
+    Clang release) - uninitialized locals are filled with zeroes;
+  uninitialized (default) - uninitialized locals are left intact.
+
+The proposed config builds the kernel with
+-ftrivial-auto-var-init=pattern when selected.
+
+Developers have the possibility to opt-out of this feature on a
+per-variable basis by using __attribute__((uninitialized)).
+
+Co-developed-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Alexander Potapenko <glider@google.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- scripts/gcc-plugins/Kconfig | 70 ++-------------------------
- security/Kconfig            |  2 +
- security/Kconfig.hardening  | 94 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 99 insertions(+), 67 deletions(-)
- create mode 100644 security/Kconfig.hardening
+ Makefile                   |  5 +++++
+ security/Kconfig.hardening | 14 ++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-index 74271dba4f94..01874ef0f883 100644
---- a/scripts/gcc-plugins/Kconfig
-+++ b/scripts/gcc-plugins/Kconfig
-@@ -13,10 +13,11 @@ config HAVE_GCC_PLUGINS
- 	  An arch should select this symbol if it supports building with
- 	  GCC plugins.
+diff --git a/Makefile b/Makefile
+index c0a34064c574..a7d9c6cd0267 100644
+--- a/Makefile
++++ b/Makefile
+@@ -745,6 +745,11 @@ KBUILD_CFLAGS	+= -fomit-frame-pointer
+ endif
+ endif
  
--menuconfig GCC_PLUGINS
--	bool "GCC plugins"
-+config GCC_PLUGINS
-+	bool
- 	depends on HAVE_GCC_PLUGINS
- 	depends on PLUGIN_HOSTCC != ""
-+	default y
- 	help
- 	  GCC plugins are loadable modules that provide extra features to the
- 	  compiler. They are useful for runtime instrumentation and static analysis.
-@@ -66,71 +67,6 @@ config GCC_PLUGIN_LATENT_ENTROPY
- 	   * https://grsecurity.net/
- 	   * https://pax.grsecurity.net/
- 
--config GCC_PLUGIN_STRUCTLEAK
--	bool "Zero initialize stack variables"
--	help
--	  While the kernel is built with warnings enabled for any missed
--	  stack variable initializations, this warning is silenced for
--	  anything passed by reference to another function, under the
--	  occasionally misguided assumption that the function will do
--	  the initialization. As this regularly leads to exploitable
--	  flaws, this plugin is available to identify and zero-initialize
--	  such variables, depending on the chosen level of coverage.
--
--	  This plugin was originally ported from grsecurity/PaX. More
--	  information at:
--	   * https://grsecurity.net/
--	   * https://pax.grsecurity.net/
--
--choice
--	prompt "Coverage"
--	depends on GCC_PLUGIN_STRUCTLEAK
--	default GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
--	help
--	  This chooses the level of coverage over classes of potentially
--	  uninitialized variables. The selected class will be
--	  zero-initialized before use.
--
--	config GCC_PLUGIN_STRUCTLEAK_USER
--		bool "structs marked for userspace"
--		help
--		  Zero-initialize any structures on the stack containing
--		  a __user attribute. This can prevent some classes of
--		  uninitialized stack variable exploits and information
--		  exposures, like CVE-2013-2141:
--		  https://git.kernel.org/linus/b9e146d8eb3b9eca
--
--	config GCC_PLUGIN_STRUCTLEAK_BYREF
--		bool "structs passed by reference"
--		help
--		  Zero-initialize any structures on the stack that may
--		  be passed by reference and had not already been
--		  explicitly initialized. This can prevent most classes
--		  of uninitialized stack variable exploits and information
--		  exposures, like CVE-2017-1000410:
--		  https://git.kernel.org/linus/06e7e776ca4d3654
--
--	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
--		bool "anything passed by reference"
--		help
--		  Zero-initialize any stack variables that may be passed
--		  by reference and had not already been explicitly
--		  initialized. This is intended to eliminate all classes
--		  of uninitialized stack variable exploits and information
--		  exposures.
--
--endchoice
--
--config GCC_PLUGIN_STRUCTLEAK_VERBOSE
--	bool "Report forcefully initialized variables"
--	depends on GCC_PLUGIN_STRUCTLEAK
--	depends on !COMPILE_TEST	# too noisy
--	help
--	  This option will cause a warning to be printed each time the
--	  structleak plugin finds a variable it thinks needs to be
--	  initialized. Since not all existing initializers are detected
--	  by the plugin, this can produce false positive warnings.
--
- config GCC_PLUGIN_RANDSTRUCT
- 	bool "Randomize layout of sensitive kernel structures"
- 	select MODVERSIONS if MODULES
-diff --git a/security/Kconfig b/security/Kconfig
-index 1d6463fb1450..7aec8d094ce2 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -249,5 +249,7 @@ config LSM
- 
- 	  If unsure, leave this as the default.
- 
-+source "security/Kconfig.hardening"
++# Initialize all stack variables with a pattern, if desired.
++ifdef CONFIG_INIT_STACK_ALL
++KBUILD_CFLAGS	+= -ftrivial-auto-var-init=pattern
++endif
 +
- endmenu
+ DEBUG_CFLAGS	:= $(call cc-option, -fno-var-tracking-assignments)
  
+ ifdef CONFIG_DEBUG_INFO
 diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-new file mode 100644
-index 000000000000..8223a8ab1a12
---- /dev/null
+index 9942d9869864..d744e20140b4 100644
+--- a/security/Kconfig.hardening
 +++ b/security/Kconfig.hardening
-@@ -0,0 +1,94 @@
-+menu "Kernel hardening options"
+@@ -19,9 +19,13 @@ config GCC_PLUGIN_STRUCTLEAK
+ 
+ menu "Memory initialization"
+ 
++config CC_HAS_AUTO_VAR_INIT
++	def_bool $(cc-option,-ftrivial-auto-var-init=pattern)
 +
-+config GCC_PLUGIN_STRUCTLEAK
-+	bool
-+	depends on GCC_PLUGIN_STRUCTLEAK_USER || GCC_PLUGIN_STRUCTLEAK_BYREF || GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
-+	help
-+	  While the kernel is built with warnings enabled for any missed
-+	  stack variable initializations, this warning is silenced for
-+	  anything passed by reference to another function, under the
-+	  occasionally misguided assumption that the function will do
-+	  the initialization. As this regularly leads to exploitable
-+	  flaws, this plugin is available to identify and zero-initialize
-+	  such variables, depending on the chosen level of coverage.
-+
-+	  This plugin was originally ported from grsecurity/PaX. More
-+	  information at:
-+	   * https://grsecurity.net/
-+	   * https://pax.grsecurity.net/
-+
-+menu "Memory initialization"
-+
-+choice
-+	prompt "Initialize kernel stack variables at function entry"
-+	depends on CC_HAS_AUTO_VAR_INIT || GCC_PLUGINS
-+	default INIT_STACK_NONE
-+	help
-+	  This option enables initialization of stack variables at
-+	  function entry time. This has the possibility to have the
-+	  greatest coverage (since all functions can have their
-+	  variables initialized), but the performance impact depends
-+	  on the function calling complexity of a given workload's
-+	  syscalls.
-+
-+	  This chooses the level of coverage over classes of potentially
-+	  uninitialized variables. The selected class will be
-+	  initialized before use in a function.
-+
-+	config INIT_STACK_NONE
-+		bool "no automatic initialization (weakest)"
+ choice
+ 	prompt "Initialize kernel stack variables at function entry"
+ 	depends on CC_HAS_AUTO_VAR_INIT || GCC_PLUGINS
++	default INIT_STACK_ALL if CC_HAS_AUTO_VAR_INIT
+ 	default INIT_STACK_NONE
+ 	help
+ 	  This option enables initialization of stack variables at
+@@ -77,6 +81,16 @@ choice
+ 		  of uninitialized stack variable exploits and information
+ 		  exposures.
+ 
++	config INIT_STACK_ALL
++		bool "0xAA-init everything on the stack (strongest)"
++		depends on CC_HAS_AUTO_VAR_INIT
 +		help
-+		  Disable automatic stack variable initialization.
-+		  This leaves the kernel vulnerable to the standard
-+		  classes of uninitialized stack variable exploits
-+		  and information exposures.
-+
-+	config GCC_PLUGIN_STRUCTLEAK_USER
-+		bool "zero-init structs marked for userspace (weak)"
-+		depends on GCC_PLUGINS
-+		select GCC_PLUGIN_STRUCTLEAK
-+		help
-+		  Zero-initialize any structures on the stack containing
-+		  a __user attribute. This can prevent some classes of
-+		  uninitialized stack variable exploits and information
-+		  exposures, like CVE-2013-2141:
-+		  https://git.kernel.org/linus/b9e146d8eb3b9eca
-+
-+	config GCC_PLUGIN_STRUCTLEAK_BYREF
-+		bool "zero-init structs passed by reference (strong)"
-+		depends on GCC_PLUGINS
-+		select GCC_PLUGIN_STRUCTLEAK
-+		help
-+		  Zero-initialize any structures on the stack that may
-+		  be passed by reference and had not already been
-+		  explicitly initialized. This can prevent most classes
++		  Initializes everything on the stack with a 0xAA
++		  pattern. This is intended to eliminate all classes
 +		  of uninitialized stack variable exploits and information
-+		  exposures, like CVE-2017-1000410:
-+		  https://git.kernel.org/linus/06e7e776ca4d3654
++		  exposures, even variables that were warned to have been
++		  left uninitialized.
 +
-+	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
-+		bool "zero-init anything passed by reference (very strong)"
-+		depends on GCC_PLUGINS
-+		select GCC_PLUGIN_STRUCTLEAK
-+		help
-+		  Zero-initialize any stack variables that may be passed
-+		  by reference and had not already been explicitly
-+		  initialized. This is intended to eliminate all classes
-+		  of uninitialized stack variable exploits and information
-+		  exposures.
-+
-+endchoice
-+
-+config GCC_PLUGIN_STRUCTLEAK_VERBOSE
-+	bool "Report forcefully initialized variables"
-+	depends on GCC_PLUGIN_STRUCTLEAK
-+	depends on !COMPILE_TEST	# too noisy
-+	help
-+	  This option will cause a warning to be printed each time the
-+	  structleak plugin finds a variable it thinks needs to be
-+	  initialized. Since not all existing initializers are detected
-+	  by the plugin, this can produce false positive warnings.
-+
-+endmenu
-+
-+endmenu
+ endchoice
+ 
+ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
 -- 
 2.17.1
 
