@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77B2C10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A89C10F11
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB8902083E
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B73320830
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:55:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TByvivjO"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OaLXS+Pz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733267AbfDJQz0 (ORCPT
+        id S2388139AbfDJQzh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 12:55:26 -0400
-Received: from mail-pf1-f169.google.com ([209.85.210.169]:44269 "EHLO
-        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729737AbfDJQzZ (ORCPT
+        Wed, 10 Apr 2019 12:55:37 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36555 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733280AbfDJQzh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 12:55:25 -0400
-Received: by mail-pf1-f169.google.com with SMTP id y13so1819014pfm.11
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 09:55:25 -0700 (PDT)
+        Wed, 10 Apr 2019 12:55:37 -0400
+Received: by mail-pg1-f194.google.com with SMTP id 85so1914301pgc.3
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 09:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=sl4t4ul/+E9f2TaRFFo8H7oESH1GeQUI1PK2lPsmZY4=;
-        b=TByvivjOsDIDE4sfrwCowXVKlQWA2ORE/pfs7KhmhHpXig0JZ2mB2MS/B4HfYLL2p+
-         kOEjWIVSos+agKpnSnl//ouFAdBs9M3FHTqaDR0KK1Hi/e3nxizHKYUSp/1gRgeB7Ec8
-         qIH35vum1OFwaCX6NckCE8XXRDhZty96PV+jM=
+        bh=WNZ9A2E9lNF9DtU6n0CDvqQTdXDB3ObGpdEuZNzmKOY=;
+        b=OaLXS+PziqiVaNQkSudkaluUerpK/Ox64n0BZJGKc/enS4668KPO6G6BeAMU0eyvHw
+         pBKuOzbEpG7NDkD2Y47aPhmMYrvDCTOYKYckwEaVFVsgiJO3x+03VG2aPjwSmr2ZOSKV
+         aSFrohUbDUpCH3zP0o+Wp/ytwNa1jmYkC0+Xs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=sl4t4ul/+E9f2TaRFFo8H7oESH1GeQUI1PK2lPsmZY4=;
-        b=fMxv38rE/S7NOV0e3w/jAozROa3ABN6uJyEhRdNiXS6COybOEDElhRM3kMHt8N0ALs
-         HsdnLaWSYH0yaGzt+FXbQwsQWbFDhxbBwqC6Ea587KYYCl6KzlpG9QWw5E9Bd5T/MUkS
-         zEiwJdpOYfEJQhBxcBsFV84A/1j6uVSkXTqcdOl0HR/fPavk5nJv+jSyVuY+JxrRa+S8
-         V8Vstz11O7t1xZRUrMzlmCrQ0edDO1KIstluqgq/Au0qHL9DfnWVMkc9wc9gLLVJNTlf
-         i6fQe8Wzve8ky7c+RKNA21TwU4JwzWD+58gAgVJKsf4vDzWxLfDBtu3Hcm1TrpKMH13c
-         oTjw==
-X-Gm-Message-State: APjAAAW+1hNst6bR7nagzEg/wi3pj09x+TRj2yVpHbTU/x6DFW2sPNM7
-        TGkQoqqWrlHJpoLERcrn0ILiuA==
-X-Google-Smtp-Source: APXvYqyRUfRrvHzgty+TgY4IXe3293QPN/w4ogQtyTBq/owSTUU9VPI5VFK5cMoz6nEGp0VMWfTNFw==
-X-Received: by 2002:a63:1654:: with SMTP id 20mr42539711pgw.166.1554915324837;
-        Wed, 10 Apr 2019 09:55:24 -0700 (PDT)
+        bh=WNZ9A2E9lNF9DtU6n0CDvqQTdXDB3ObGpdEuZNzmKOY=;
+        b=BZuAVc0/dTnuUu6S6kiFgUvAqDZI/DWbko4muwegFms6vhs0nnLPEXIJo11tNC5YqI
+         mDGErFZ7oBhZhFA1bSSK5CbTvO+o4nWj7k2fnL8KSGystoO8CggpDBMvQdI9qbAIDWYu
+         OFvcxi14Lcr/cLZPjq4ZGmFx+p9Z0hlilNWi0pZDqXI3jo/XB70ZrhoJIT7zBUTuLe9x
+         p+uXkr61vl9+BtD3tUe5iV2VUXOXHhh2quC0aCGuZAXmGGkSpKuglDi/GcCAvoC8nBzj
+         WZei+65GSFXCxfJX3Mvi7jhl3rIyQqdb6uPcCX9o0nfJmiGmmX5J55BZoNziURL38xDa
+         Wf+w==
+X-Gm-Message-State: APjAAAXhGi0e0GmgZbs2FB76A6xPiMiGvGaU9ql6rMPoe9zUPxBF9BJ4
+        iqB3mZhZFAC35QzuypXBJ5z6rQ==
+X-Google-Smtp-Source: APXvYqwJW1qMpK+QBO0HX/syVxyfQcV2A0pqHWKwBsSeyp2Ry4vXQT7b5vABi6QT6eg1uamkXGUfaQ==
+X-Received: by 2002:a63:330e:: with SMTP id z14mr41045000pgz.4.1554915336804;
+        Wed, 10 Apr 2019 09:55:36 -0700 (PDT)
 Received: from localhost ([2620:15c:202:201:9e10:971c:f11c:a814])
-        by smtp.gmail.com with ESMTPSA id u26sm49264827pfn.5.2019.04.10.09.55.23
+        by smtp.gmail.com with ESMTPSA id k65sm77525737pfb.68.2019.04.10.09.55.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Apr 2019 09:55:24 -0700 (PDT)
+        Wed, 10 Apr 2019 09:55:36 -0700 (PDT)
 From:   Micah Morton <mortonm@chromium.org>
 X-Google-Original-From: Micah Morton
 To:     jmorris@namei.org, keescook@chromium.org, casey@schaufler-ca.com,
         linux-security-module@vger.kernel.org
 Cc:     Jann Horn <jannh@google.com>, Micah Morton <mortonm@chromium.org>
-Subject: [PATCH 02/10] LSM: SafeSetID: fix check for setresuid(new1, new2, new3)
-Date:   Wed, 10 Apr 2019 09:55:19 -0700
-Message-Id: <20190410165519.209565-1-mortonm@chromium.org>
+Subject: [PATCH 03/10] LSM: SafeSetID: refactor policy hash table
+Date:   Wed, 10 Apr 2019 09:55:34 -0700
+Message-Id: <20190410165534.210333-1-mortonm@chromium.org>
 X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -70,174 +70,189 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Jann Horn <jannh@google.com>
 
-With the old code, when a process with the (real,effective,saved) UID set
-(1,1,1) calls setresuid(2,3,4), safesetid_task_fix_setuid() only checks
-whether the transition 1->2 is permitted; the transitions 1->3 and 1->4 are
-not checked. Fix this.
+parent_kuid and child_kuid are kuids, there is no reason to make them
+uint64_t. (And anyway, in the kernel, the normal name for that would be
+u64, not uint64_t.)
 
-This is also a good opportunity to refactor safesetid_task_fix_setuid() to
-be less verbose - having one branch per set*uid() syscall is unnecessary.
+check_setuid_policy_hashtable_key() and
+check_setuid_policy_hashtable_key_value() are basically the same thing,
+merge them.
 
-Note that this slightly changes semantics: The UID transition check for
-UIDs that were not in the old cred struct is now always performed against
-the policy of the RUID. I think that's more consistent anyway, since the
-RUID is also the one that decides whether any policy is enforced at all.
+Also fix the comment that claimed that (1<<8)==128.
 
 Signed-off-by: Jann Horn <jannh@google.com>
 Signed-off-by: Micah Morton <mortonm@chromium.org>
 ---
- security/safesetid/lsm.c | 125 +++++++++++----------------------------
- 1 file changed, 35 insertions(+), 90 deletions(-)
+ security/safesetid/lsm.c | 62 ++++++++++++----------------------------
+ security/safesetid/lsm.h | 19 ++++++++++++
+ 2 files changed, 37 insertions(+), 44 deletions(-)
 
 diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-index 2daecab3a4c0..5310fcf3052a 100644
+index 5310fcf3052a..15cd13b5a211 100644
 --- a/security/safesetid/lsm.c
 +++ b/security/safesetid/lsm.c
-@@ -99,20 +99,30 @@ static int safesetid_security_capable(const struct cred *cred,
- 	return 0;
+@@ -14,67 +14,40 @@
+ 
+ #define pr_fmt(fmt) "SafeSetID: " fmt
+ 
+-#include <linux/hashtable.h>
+ #include <linux/lsm_hooks.h>
+ #include <linux/module.h>
+ #include <linux/ptrace.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/security.h>
++#include "lsm.h"
+ 
+ /* Flag indicating whether initialization completed */
+ int safesetid_initialized;
+ 
+-#define NUM_BITS 8 /* 128 buckets in hash table */
++#define NUM_BITS 8 /* 256 buckets in hash table */
+ 
+ static DEFINE_HASHTABLE(safesetid_whitelist_hashtable, NUM_BITS);
+ 
+-/*
+- * Hash table entry to store safesetid policy signifying that 'parent' user
+- * can setid to 'child' user.
+- */
+-struct entry {
+-	struct hlist_node next;
+-	struct hlist_node dlist; /* for deletion cleanup */
+-	uint64_t parent_kuid;
+-	uint64_t child_kuid;
+-};
+-
+ static DEFINE_SPINLOCK(safesetid_whitelist_hashtable_spinlock);
+ 
+-static bool check_setuid_policy_hashtable_key(kuid_t parent)
++static enum sid_policy_type setuid_policy_lookup(kuid_t src, kuid_t dst)
+ {
+ 	struct entry *entry;
++	enum sid_policy_type result = SIDPOL_DEFAULT;
+ 
+ 	rcu_read_lock();
+ 	hash_for_each_possible_rcu(safesetid_whitelist_hashtable,
+-				   entry, next, __kuid_val(parent)) {
+-		if (entry->parent_kuid == __kuid_val(parent)) {
++				   entry, next, __kuid_val(src)) {
++		if (!uid_eq(entry->src_uid, src))
++			continue;
++		if (uid_eq(entry->dst_uid, dst)) {
+ 			rcu_read_unlock();
+-			return true;
++			return SIDPOL_ALLOWED;
+ 		}
++		result = SIDPOL_CONSTRAINED;
+ 	}
+ 	rcu_read_unlock();
+-
+-	return false;
+-}
+-
+-static bool check_setuid_policy_hashtable_key_value(kuid_t parent,
+-						    kuid_t child)
+-{
+-	struct entry *entry;
+-
+-	rcu_read_lock();
+-	hash_for_each_possible_rcu(safesetid_whitelist_hashtable,
+-				   entry, next, __kuid_val(parent)) {
+-		if (entry->parent_kuid == __kuid_val(parent) &&
+-		    entry->child_kuid == __kuid_val(child)) {
+-			rcu_read_unlock();
+-			return true;
+-		}
+-	}
+-	rcu_read_unlock();
+-
+-	return false;
++	return result;
  }
  
--static int check_uid_transition(kuid_t parent, kuid_t child)
-+/*
-+ * Check whether a caller with old credentials @old is allowed to switch to
-+ * credentials that contain @new_uid.
-+ */
-+static bool uid_permitted_for_cred(const struct cred *old, kuid_t new_uid)
+ static int safesetid_security_capable(const struct cred *cred,
+@@ -83,7 +56,7 @@ static int safesetid_security_capable(const struct cred *cred,
+ 				      unsigned int opts)
  {
--	if (check_setuid_policy_hashtable_key_value(parent, child))
--		return 0;
--	pr_warn("UID transition (%d -> %d) blocked\n",
--		__kuid_val(parent),
--		__kuid_val(child));
-+	bool permitted;
-+
-+	/* If our old creds already had this UID in it, it's fine. */
-+	if (uid_eq(new_uid, old->uid) || uid_eq(new_uid, old->euid) ||
-+	    uid_eq(new_uid, old->suid))
-+		return true;
-+
- 	/*
--	 * Kill this process to avoid potential security vulnerabilities
--	 * that could arise from a missing whitelist entry preventing a
--	 * privileged process from dropping to a lesser-privileged one.
-+	 * Transitions to new UIDs require a check against the policy of the old
-+	 * RUID.
+ 	if (cap == CAP_SETUID &&
+-	    check_setuid_policy_hashtable_key(cred->uid)) {
++	    setuid_policy_lookup(cred->uid, INVALID_UID) != SIDPOL_DEFAULT) {
+ 		if (!(opts & CAP_OPT_INSETID)) {
+ 			/*
+ 			 * Deny if we're not in a set*uid() syscall to avoid
+@@ -116,7 +89,8 @@ static bool uid_permitted_for_cred(const struct cred *old, kuid_t new_uid)
+ 	 * Transitions to new UIDs require a check against the policy of the old
+ 	 * RUID.
  	 */
--	force_sig(SIGKILL, current);
--	return -EACCES;
-+	permitted = check_setuid_policy_hashtable_key_value(old->uid, new_uid);
-+	if (!permitted) {
-+		pr_warn("UID transition ((%d,%d,%d) -> %d) blocked\n",
-+			__kuid_val(old->uid), __kuid_val(old->euid),
-+			__kuid_val(old->suid), __kuid_val(new_uid));
-+	}
-+	return permitted;
- }
- 
- /*
-@@ -125,88 +135,23 @@ static int safesetid_task_fix_setuid(struct cred *new,
- 				     int flags)
+-	permitted = check_setuid_policy_hashtable_key_value(old->uid, new_uid);
++	permitted =
++	    setuid_policy_lookup(old->uid, new_uid) != SIDPOL_CONSTRAINED;
+ 	if (!permitted) {
+ 		pr_warn("UID transition ((%d,%d,%d) -> %d) blocked\n",
+ 			__kuid_val(old->uid), __kuid_val(old->euid),
+@@ -136,7 +110,7 @@ static int safesetid_task_fix_setuid(struct cred *new,
  {
  
--	/* Do nothing if there are no setuid restrictions for this UID. */
-+	/* Do nothing if there are no setuid restrictions for our old RUID. */
- 	if (!check_setuid_policy_hashtable_key(old->uid))
+ 	/* Do nothing if there are no setuid restrictions for our old RUID. */
+-	if (!check_setuid_policy_hashtable_key(old->uid))
++	if (setuid_policy_lookup(old->uid, INVALID_UID) == SIDPOL_DEFAULT)
  		return 0;
  
--	switch (flags) {
--	case LSM_SETID_RE:
--		/*
--		 * Users for which setuid restrictions exist can only set the
--		 * real UID to the real UID or the effective UID, unless an
--		 * explicit whitelist policy allows the transition.
--		 */
--		if (!uid_eq(old->uid, new->uid) &&
--			!uid_eq(old->euid, new->uid)) {
--			return check_uid_transition(old->uid, new->uid);
--		}
--		/*
--		 * Users for which setuid restrictions exist can only set the
--		 * effective UID to the real UID, the effective UID, or the
--		 * saved set-UID, unless an explicit whitelist policy allows
--		 * the transition.
--		 */
--		if (!uid_eq(old->uid, new->euid) &&
--			!uid_eq(old->euid, new->euid) &&
--			!uid_eq(old->suid, new->euid)) {
--			return check_uid_transition(old->euid, new->euid);
--		}
--		break;
--	case LSM_SETID_ID:
--		/*
--		 * Users for which setuid restrictions exist cannot change the
--		 * real UID or saved set-UID unless an explicit whitelist
--		 * policy allows the transition.
--		 */
--		if (!uid_eq(old->uid, new->uid))
--			return check_uid_transition(old->uid, new->uid);
--		if (!uid_eq(old->suid, new->suid))
--			return check_uid_transition(old->suid, new->suid);
--		break;
--	case LSM_SETID_RES:
--		/*
--		 * Users for which setuid restrictions exist cannot change the
--		 * real UID, effective UID, or saved set-UID to anything but
--		 * one of: the current real UID, the current effective UID or
--		 * the current saved set-user-ID unless an explicit whitelist
--		 * policy allows the transition.
--		 */
--		if (!uid_eq(new->uid, old->uid) &&
--			!uid_eq(new->uid, old->euid) &&
--			!uid_eq(new->uid, old->suid)) {
--			return check_uid_transition(old->uid, new->uid);
--		}
--		if (!uid_eq(new->euid, old->uid) &&
--			!uid_eq(new->euid, old->euid) &&
--			!uid_eq(new->euid, old->suid)) {
--			return check_uid_transition(old->euid, new->euid);
--		}
--		if (!uid_eq(new->suid, old->uid) &&
--			!uid_eq(new->suid, old->euid) &&
--			!uid_eq(new->suid, old->suid)) {
--			return check_uid_transition(old->suid, new->suid);
--		}
--		break;
--	case LSM_SETID_FS:
--		/*
--		 * Users for which setuid restrictions exist cannot change the
--		 * filesystem UID to anything but one of: the current real UID,
--		 * the current effective UID or the current saved set-UID
--		 * unless an explicit whitelist policy allows the transition.
--		 */
--		if (!uid_eq(new->fsuid, old->uid)  &&
--			!uid_eq(new->fsuid, old->euid)  &&
--			!uid_eq(new->fsuid, old->suid) &&
--			!uid_eq(new->fsuid, old->fsuid)) {
--			return check_uid_transition(old->fsuid, new->fsuid);
--		}
--		break;
--	default:
--		pr_warn("Unknown setid state %d\n", flags);
--		force_sig(SIGKILL, current);
--		return -EINVAL;
--	}
--	return 0;
-+	if (uid_permitted_for_cred(old, new->uid) &&
-+	    uid_permitted_for_cred(old, new->euid) &&
-+	    uid_permitted_for_cred(old, new->suid) &&
-+	    uid_permitted_for_cred(old, new->fsuid))
-+		return 0;
-+
-+	/*
-+	 * Kill this process to avoid potential security vulnerabilities
-+	 * that could arise from a missing whitelist entry preventing a
-+	 * privileged process from dropping to a lesser-privileged one.
-+	 */
-+	force_sig(SIGKILL, current);
-+	return -EACCES;
- }
+ 	if (uid_permitted_for_cred(old, new->uid) &&
+@@ -159,14 +133,14 @@ int add_safesetid_whitelist_entry(kuid_t parent, kuid_t child)
+ 	struct entry *new;
  
- int add_safesetid_whitelist_entry(kuid_t parent, kuid_t child)
+ 	/* Return if entry already exists */
+-	if (check_setuid_policy_hashtable_key_value(parent, child))
++	if (setuid_policy_lookup(parent, child) == SIDPOL_ALLOWED)
+ 		return 0;
+ 
+ 	new = kzalloc(sizeof(struct entry), GFP_KERNEL);
+ 	if (!new)
+ 		return -ENOMEM;
+-	new->parent_kuid = __kuid_val(parent);
+-	new->child_kuid = __kuid_val(child);
++	new->src_uid = parent;
++	new->dst_uid = child;
+ 	spin_lock(&safesetid_whitelist_hashtable_spinlock);
+ 	hash_add_rcu(safesetid_whitelist_hashtable,
+ 		     &new->next,
+diff --git a/security/safesetid/lsm.h b/security/safesetid/lsm.h
+index c1ea3c265fcf..6806f902794c 100644
+--- a/security/safesetid/lsm.h
++++ b/security/safesetid/lsm.h
+@@ -15,6 +15,8 @@
+ #define _SAFESETID_H
+ 
+ #include <linux/types.h>
++#include <linux/uidgid.h>
++#include <linux/hashtable.h>
+ 
+ /* Flag indicating whether initialization completed */
+ extern int safesetid_initialized;
+@@ -25,6 +27,23 @@ enum safesetid_whitelist_file_write_type {
+ 	SAFESETID_WHITELIST_FLUSH, /* Flush whitelist policies. */
+ };
+ 
++enum sid_policy_type {
++	SIDPOL_DEFAULT, /* source ID is unaffected by policy */
++	SIDPOL_CONSTRAINED, /* source ID is affected by policy */
++	SIDPOL_ALLOWED /* target ID explicitly allowed */
++};
++
++/*
++ * Hash table entry to store safesetid policy signifying that 'src_uid'
++ * can setid to 'dst_uid'.
++ */
++struct entry {
++	struct hlist_node next;
++	struct hlist_node dlist; /* for deletion cleanup */
++	kuid_t src_uid;
++	kuid_t dst_uid;
++};
++
+ /* Add entry to safesetid whitelist to allow 'parent' to setid to 'child'. */
+ int add_safesetid_whitelist_entry(kuid_t parent, kuid_t child);
+ 
 -- 
 2.21.0.392.gf8f6787159e-goog
 
