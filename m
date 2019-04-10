@@ -2,115 +2,74 @@ Return-Path: <SRS0=my8L=SM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBC0C10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBF9C10F14
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDEAF20830
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:29:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iJtjPCgO"
+	by mail.kernel.org (Postfix) with ESMTP id 09F4720830
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:29:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729233AbfDJR3O (ORCPT
+        id S1729237AbfDJR3Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 13:29:14 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46621 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729226AbfDJR3O (ORCPT
+        Wed, 10 Apr 2019 13:29:16 -0400
+Received: from namei.org ([65.99.196.166]:33462 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729226AbfDJR3Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 13:29:14 -0400
-Received: by mail-vs1-f65.google.com with SMTP id e2so1817908vsc.13
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:29:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NFgDQfxUWS/AYla6kUelfMTH3QZqU8NQiZEznFW/p78=;
-        b=iJtjPCgOOla5ReTubIVYItpQPop808cgX2nIeNlLm+pNnvnH+gLAKOhbsn4jAu3Fv6
-         Ee6KhmLVpIgxSHUMBuafD+ZJAsWcM9mNCcPDRJ+xHxRJ4NtT4vTpVS/0DUlxpQbMRorc
-         Qbs+TWk/ebc1Uf8ZcgdEmUcpdRkAgkUn37YRI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NFgDQfxUWS/AYla6kUelfMTH3QZqU8NQiZEznFW/p78=;
-        b=T8AYlz5R9qO0bsWEIJ7lx98fvn6SyXqpT7SicGfYcosdR4Ke1kVJ1r/PvLFJHo5ftL
-         4fHfmhRivDVoU5ckHgzs9EfubJwFSCte60imi7QR5UcIyhMOnsrl7JzmZTc9JE+PoRZL
-         si3jELeCZOvQOqtyRE1fNHlws0jBSwozLJ8Y/LuK0Uj72LpGqm5ATkrUy+N5sLRQjW7c
-         XYANA3/lHodCstrw9frpDjdpY1hpHbZWU4fApThdjG6RhIlBdV06yZDX7tpBQHjLhqqn
-         bC0WBv8wdrGHm2z+UGOjBN3HsRLGa71qfBqPsTwcyJ8q2j00v1sY74BG1sZQlxGlYyId
-         WPJA==
-X-Gm-Message-State: APjAAAWM2cxochZYsnl8/uCBobWWxjatL3pmjcjOYkdtsYU+72ol1mt5
-        9xm+XzMdbekQLQc+cHxnk1hNCSUop4Q=
-X-Google-Smtp-Source: APXvYqyNnE4nKaMIuNcVPgYAgW5C3vUHLfhkpRnJWM4tgKl4TUB0D4ELFJ7iyDUavIdIVCNUGyN4qg==
-X-Received: by 2002:a67:de0c:: with SMTP id q12mr25127389vsk.156.1554917352594;
-        Wed, 10 Apr 2019 10:29:12 -0700 (PDT)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id y64sm8471382vkd.26.2019.04.10.10.29.11
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Apr 2019 10:29:11 -0700 (PDT)
-Received: by mail-vs1-f41.google.com with SMTP id j184so1824829vsd.11
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:29:11 -0700 (PDT)
-X-Received: by 2002:a67:76c7:: with SMTP id r190mr25828962vsc.196.1554917351266;
- Wed, 10 Apr 2019 10:29:11 -0700 (PDT)
+        Wed, 10 Apr 2019 13:29:16 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x3AHT7nZ026352;
+        Wed, 10 Apr 2019 17:29:07 GMT
+Date:   Thu, 11 Apr 2019 03:29:07 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Jann Horn <jannh@google.com>
+cc:     David Howells <dhowells@redhat.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] security: don't use RCU accessors for
+ cred->session_keyring
+In-Reply-To: <20190327153938.82007-1-jannh@google.com>
+Message-ID: <alpine.LRH.2.21.1904110328490.25754@namei.org>
+References: <20190327153938.82007-1-jannh@google.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190410165627.212572-1-mortonm@chromium.org>
-In-Reply-To: <20190410165627.212572-1-mortonm@chromium.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 10 Apr 2019 10:28:59 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jLETb47pDRbmt4gRJN9+n1WPQAL9n9nhjDg8mhz9Vw8tA@mail.gmail.com>
-Message-ID: <CAGXu5jLETb47pDRbmt4gRJN9+n1WPQAL9n9nhjDg8mhz9Vw8tA@mail.gmail.com>
-Subject: Re: [PATCH 10/10] LSM: SafeSetID: fix use of literal -1 in capable hook
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 10, 2019 at 9:56 AM Micah Morton <mortonm@chromium.org> wrote:
->
-> From: Jann Horn <jannh@google.com>
->
-> The capable() hook returns an error number. -EPERM is actually the same as
-> -1, so this doesn't make a difference in behavior.
->
+On Wed, 27 Mar 2019, Jann Horn wrote:
+
+> sparse complains that a bunch of places in kernel/cred.c access
+> cred->session_keyring without the RCU helpers required by the __rcu
+> annotation.
+> 
+> cred->session_keyring is written in the following places:
+> 
+>  - prepare_kernel_cred() [in a new cred struct]
+>  - keyctl_session_to_parent() [in a new cred struct]
+>  - prepare_creds [in a new cred struct, via memcpy]
+>  - install_session_keyring_to_cred()
+>   - from install_session_keyring() on new creds
+>   - from join_session_keyring() on new creds [twice]
+>   - from umh_keys_init()
+>    - from call_usermodehelper_exec_async() on new creds
+> 
+> All of these writes are before the creds are committed; therefore,
+> cred->session_keyring doesn't need RCU protection.
+> 
+> Remove the __rcu annotation and fix up all existing users that use __rcu.
+> 
 > Signed-off-by: Jann Horn <jannh@google.com>
-> Signed-off-by: Micah Morton <mortonm@chromium.org>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
-> ---
->  security/safesetid/lsm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-> index 4ab4d7cdba31..61b84e20f2dd 100644
-> --- a/security/safesetid/lsm.c
-> +++ b/security/safesetid/lsm.c
-> @@ -90,7 +90,7 @@ static int safesetid_security_capable(const struct cred *cred,
->          */
->         pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
->                 __kuid_val(cred->uid));
-> -       return -1;
-> +       return -EPERM;
->  }
->
->  /*
-> --
-> 2.21.0.392.gf8f6787159e-goog
->
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
 
 
 -- 
-Kees Cook
+James Morris
+<jmorris@namei.org>
+
