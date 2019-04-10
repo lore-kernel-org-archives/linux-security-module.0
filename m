@@ -2,67 +2,101 @@ Return-Path: <SRS0=my8L=SM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D21CC10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 22:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F07F8C10F11
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 23:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3F322082A
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 22:00:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A535B20820
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 23:12:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1554937929;
+	bh=q6C6asliB+R3GiA6MRBIkiZPDalhAROlS4ZO33DglG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=g6/17BsFOiJ/NaV1YAtz640hHdDXLqi6DcrYqG7ALig03um90bIG7D0w8txhy4W7N
+	 F+jhnXx9RlBHTDbU7dWuBXpT21wQOqn2LKltkp5nmURF2068YascKTHzgHjGnh92Qh
+	 1NEQOBiKzgGwOZG6gABTM7hk0hSNw2+tMQlhNrJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726023AbfDJWAy (ORCPT
+        id S1726256AbfDJXMA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 18:00:54 -0400
-Received: from namei.org ([65.99.196.166]:33568 "EHLO namei.org"
+        Wed, 10 Apr 2019 19:12:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725982AbfDJWAy (ORCPT
+        id S1726026AbfDJXMA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 18:00:54 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x3AM0hDW005829;
-        Wed, 10 Apr 2019 22:00:43 GMT
-Date:   Thu, 11 Apr 2019 08:00:43 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-cc:     Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] security: inode: fix a missing check for
- securityfs_create_file
-In-Reply-To: <20190410180156.GZ2217@ZenIV.linux.org.uk>
-Message-ID: <alpine.LRH.2.21.1904110800260.5714@namei.org>
-References: <alpine.LRH.2.21.1903160608080.2905@namei.org> <20190315210025.17832-1-kjlu@umn.edu> <alpine.LRH.2.21.1904110334380.25754@namei.org> <20190410180156.GZ2217@ZenIV.linux.org.uk>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Wed, 10 Apr 2019 19:12:00 -0400
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CE1D20850;
+        Wed, 10 Apr 2019 23:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1554937919;
+        bh=q6C6asliB+R3GiA6MRBIkiZPDalhAROlS4ZO33DglG0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f81Qq4iocQpcOMtiR/t0Rc4UGVCF32ESP7I2KWwf81yZwHCWE9mGd9sRVmo1c0Xlv
+         /y9pJUesNDA1OihDE32NMDVFKUK+ByAhVfv/WJT/nXo25R1ENmGuBxDC5/h8G4E99R
+         e406h9JxbuxcxrU7vgv31/fKl9m+ewipryJAmJtQ=
+Date:   Wed, 10 Apr 2019 16:11:58 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: crypto: Kernel memory overwrite attempt detected to spans
+ multiple pages
+Message-ID: <20190410231156.GB120258@gmail.com>
+References: <CAMuHMdWhx0-kspDyLOgTp+9udiBpkMHULSGyMg9uPPV16=FWQg@mail.gmail.com>
+ <20190319170911.GB202956@gmail.com>
+ <20190320185719.GB180195@gmail.com>
+ <CAGXu5jL-5C1ZGZ1JgaNFqK-z1Pp1N1X8gD3_ysKTCa=omD+_VQ@mail.gmail.com>
+ <20190321175122.GA1587@sol.localdomain>
+ <20190410031734.GB7140@sol.localdomain>
+ <CAGXu5j+SZ2+Zkc=Vp5CXQUHhiR9f_OOnca684JTRW3T0yXdaNQ@mail.gmail.com>
+ <20190410190729.GA120258@gmail.com>
+ <CAGXu5j+Gfvj9G6s_UQTw6hE11gJb1edt3BXzpbDQdc_dpcHgag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+Gfvj9G6s_UQTw6hE11gJb1edt3BXzpbDQdc_dpcHgag@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 10 Apr 2019, Al Viro wrote:
-
-> Rather bad way to do it - generally, register_filesystem() should be
-> the last thing done by initialization.  Any modular code that
-> does unregister_filesystem() on failure exit is flat-out broken;
-> here it's not instantly FUBAR, but it's a bloody bad example.
+On Wed, Apr 10, 2019 at 02:57:46PM -0700, Kees Cook wrote:
+> On Wed, Apr 10, 2019 at 12:07 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> > That didn't answer my question.  My question is what is the purpose of this?  If
+> > there was actual buffer overflow when __GFP_COMP isn't specified that would make
+> > perfect sense, but AFAICS there isn't.  So why does hardened usercopy consider
+> > it broken when __GFP_COMP isn't specified?
 > 
-> What's more, why not let simple_fill_super() do it?  Just
-> static int fill_super(struct super_block *sb, void *data, int silent)
-> {
->         static const struct tree_descr files[] = {
-> #ifdef CONFIG_SECURITY
-> 		{"lsm", &lsm_ops, 0444},
-> #endif
-> 		{""}
-> 	};
+> The goal of CONFIG_HARDENED_USERCOPY_PAGESPAN was to detect copies
+> across page boundaries in memory allocated by the page allocator.
+> There appear to be enough cases of allocations that span pages but do
+> not mark them with __GFP_COMP, so this logic hasn't proven useful in
+> the real world (which is why no one should use the ..._PAGESPAN config
+> in production). I'd like to get the kernel to the point where hardened
+> usercopy can correctly do these checks (right now it's mainly only
+> useful at checking for overflows in slub and slab), but it'll take
+> time/focus for a while. No one has had time yet to track all of these
+> down and fix them. (I defer to Laura and Rik on the design of the
+> pagespan checks; they did the bulk of the work there.)
 > 
-> and to hell with that call of securityfs_create_file() and all its
-> failure handling...
+> Does that help explain it, or am I still missing your question?
+> 
+> -- 
+> Kees Cook
 
-Thanks for the review.  Reverted.
+You've explained *what* it does again, but not *why*.  *Why* do you want
+hardened usercopy to detect copies across page boundaries, when there is no
+actual buffer overflow?
 
--- 
-James Morris
-<jmorris@namei.org>
-
+- Eric
