@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2029C10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBC0C10F11
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ACE220830
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:28:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDEAF20830
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:29:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MmqiIsrH"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iJtjPCgO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729232AbfDJR2z (ORCPT
+        id S1729233AbfDJR3O (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 13:28:55 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:35236 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729226AbfDJR2y (ORCPT
+        Wed, 10 Apr 2019 13:29:14 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46621 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729226AbfDJR3O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 13:28:54 -0400
-Received: by mail-ua1-f65.google.com with SMTP id a46so1064396uae.2
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:28:54 -0700 (PDT)
+        Wed, 10 Apr 2019 13:29:14 -0400
+Received: by mail-vs1-f65.google.com with SMTP id e2so1817908vsc.13
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:29:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=M/mxPsW8jzYklJCVLh1m37teFkbHUKpVe+c8Ci49SVU=;
-        b=MmqiIsrHdPaOMYqmujfDaQyLEnYtLgkLFwBvsZK3BahHtgACKfc04vJI395jIswSyk
-         VgAKdb2vA79Naid3M1fyhjMB0C17xr6zAKVmoYkxJZiXqbZL+wlLDkN7LRPIej7hTQV8
-         oVpUaRV9M19LkrOqnr8Q4JjlMNEQLkRF0g//M=
+        bh=NFgDQfxUWS/AYla6kUelfMTH3QZqU8NQiZEznFW/p78=;
+        b=iJtjPCgOOla5ReTubIVYItpQPop808cgX2nIeNlLm+pNnvnH+gLAKOhbsn4jAu3Fv6
+         Ee6KhmLVpIgxSHUMBuafD+ZJAsWcM9mNCcPDRJ+xHxRJ4NtT4vTpVS/0DUlxpQbMRorc
+         Qbs+TWk/ebc1Uf8ZcgdEmUcpdRkAgkUn37YRI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=M/mxPsW8jzYklJCVLh1m37teFkbHUKpVe+c8Ci49SVU=;
-        b=tNOjJYrIOYdeOVH5XvdtiJEU6C9krjNwCGjRKjSFEpBmamcV6Av4E3ODjpcRF4paY3
-         Q77oJM+G/zHFTeBf57pnYdwhgFuUvh/t2gGafdqYwm/RfVvP6pvkDXfF7e8ZHgvhZHFt
-         d3GE8H+GIJvP9NG0UhUr6XWnM4MOpZCEi17Ub0zTZHqY2k9TcSuzHkk7Ektd25wnILgE
-         2ul5djlO0DLFyZa7SsSwGYcbKSmkTvVgxGNfgSpx/alZC+uJYTDHEQdpi2FN3A9Lxv/m
-         4djpvIDuHlMkr2vB3awiq/DzorDzTwV/+aYaCE1Uf9LR0qesvV8ZqSUGyTDl4ojW8GDa
-         YQzw==
-X-Gm-Message-State: APjAAAXAfB8swD90mKrGnOABE1j+S/9RlA1Uerf68oZ2bco0asiRi7aT
-        ZkTuaUF1OXb1L0RDmgbU5pAxe/LX5Og=
-X-Google-Smtp-Source: APXvYqxgXssmRiZUMXdaHvNIj1pG/8ezHQBuliMOy0Jjhwopfdx+f5U6l3+CQ8x5UMesaWJJmXhU5Q==
-X-Received: by 2002:ab0:714a:: with SMTP id k10mr3069213uao.82.1554917332893;
-        Wed, 10 Apr 2019 10:28:52 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id o191sm10934653vko.4.2019.04.10.10.28.52
+        bh=NFgDQfxUWS/AYla6kUelfMTH3QZqU8NQiZEznFW/p78=;
+        b=T8AYlz5R9qO0bsWEIJ7lx98fvn6SyXqpT7SicGfYcosdR4Ke1kVJ1r/PvLFJHo5ftL
+         4fHfmhRivDVoU5ckHgzs9EfubJwFSCte60imi7QR5UcIyhMOnsrl7JzmZTc9JE+PoRZL
+         si3jELeCZOvQOqtyRE1fNHlws0jBSwozLJ8Y/LuK0Uj72LpGqm5ATkrUy+N5sLRQjW7c
+         XYANA3/lHodCstrw9frpDjdpY1hpHbZWU4fApThdjG6RhIlBdV06yZDX7tpBQHjLhqqn
+         bC0WBv8wdrGHm2z+UGOjBN3HsRLGa71qfBqPsTwcyJ8q2j00v1sY74BG1sZQlxGlYyId
+         WPJA==
+X-Gm-Message-State: APjAAAWM2cxochZYsnl8/uCBobWWxjatL3pmjcjOYkdtsYU+72ol1mt5
+        9xm+XzMdbekQLQc+cHxnk1hNCSUop4Q=
+X-Google-Smtp-Source: APXvYqyNnE4nKaMIuNcVPgYAgW5C3vUHLfhkpRnJWM4tgKl4TUB0D4ELFJ7iyDUavIdIVCNUGyN4qg==
+X-Received: by 2002:a67:de0c:: with SMTP id q12mr25127389vsk.156.1554917352594;
+        Wed, 10 Apr 2019 10:29:12 -0700 (PDT)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id y64sm8471382vkd.26.2019.04.10.10.29.11
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Apr 2019 10:28:52 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id n16so1048728uae.10
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:28:52 -0700 (PDT)
-X-Received: by 2002:ab0:2f8:: with SMTP id 111mr23725267uah.123.1554917331390;
- Wed, 10 Apr 2019 10:28:51 -0700 (PDT)
+        Wed, 10 Apr 2019 10:29:11 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id j184so1824829vsd.11
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:29:11 -0700 (PDT)
+X-Received: by 2002:a67:76c7:: with SMTP id r190mr25828962vsc.196.1554917351266;
+ Wed, 10 Apr 2019 10:29:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190410165619.212464-1-mortonm@chromium.org>
-In-Reply-To: <20190410165619.212464-1-mortonm@chromium.org>
+References: <20190410165627.212572-1-mortonm@chromium.org>
+In-Reply-To: <20190410165627.212572-1-mortonm@chromium.org>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 10 Apr 2019 10:28:39 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+HTSPDR0Sp17=Jr3gRUSOX39dohy0bgxwyL+Wbh9swkQ@mail.gmail.com>
-Message-ID: <CAGXu5j+HTSPDR0Sp17=Jr3gRUSOX39dohy0bgxwyL+Wbh9swkQ@mail.gmail.com>
-Subject: Re: [PATCH 09/10] LSM: SafeSetID: verify transitive constrainedness
+Date:   Wed, 10 Apr 2019 10:28:59 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLETb47pDRbmt4gRJN9+n1WPQAL9n9nhjDg8mhz9Vw8tA@mail.gmail.com>
+Message-ID: <CAGXu5jLETb47pDRbmt4gRJN9+n1WPQAL9n9nhjDg8mhz9Vw8tA@mail.gmail.com>
+Subject: Re: [PATCH 10/10] LSM: SafeSetID: fix use of literal -1 in capable hook
 To:     Micah Morton <mortonm@chromium.org>
 Cc:     James Morris <jmorris@namei.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
@@ -80,96 +80,33 @@ On Wed, Apr 10, 2019 at 9:56 AM Micah Morton <mortonm@chromium.org> wrote:
 >
 > From: Jann Horn <jannh@google.com>
 >
-> Someone might write a ruleset like the following, expecting that it
-> securely constrains UID 1 to UIDs 1, 2 and 3:
->
->     1:2
->     1:3
->
-> However, because no constraints are applied to UIDs 2 and 3, an attacker
-> with UID 1 can simply first switch to UID 2, then switch to any UID from
-> there. The secure way to write this ruleset would be:
->
->     1:2
->     1:3
->     2:2
->     3:3
->
-> , which uses "transition to self" as a way to inhibit the default-allow
-> policy without allowing anything specific.
->
-> This is somewhat unintuitive. To make sure that policy authors don't
-> accidentally write insecure policies because of this, let the kernel verify
-> that a new ruleset does not contain any entries that are constrained, but
-> transitively unconstrained.
+> The capable() hook returns an error number. -EPERM is actually the same as
+> -1, so this doesn't make a difference in behavior.
 >
 > Signed-off-by: Jann Horn <jannh@google.com>
 > Signed-off-by: Micah Morton <mortonm@chromium.org>
-> ---
->  security/safesetid/securityfs.c               | 21 +++++++++++++++++++
->  .../selftests/safesetid/safesetid-test.c      |  4 +++-
->  2 files changed, 24 insertions(+), 1 deletion(-)
->
-> diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-> index 7a08fff2bc14..3ec64487f0e9 100644
-> --- a/security/safesetid/securityfs.c
-> +++ b/security/safesetid/securityfs.c
-> @@ -77,6 +77,23 @@ static void release_ruleset(struct setuid_ruleset *pol)
->                 call_rcu(&pol->rcu, __release_ruleset);
->  }
->
-> +static int verify_ruleset(struct setuid_ruleset *pol)
-> +{
-> +       int bucket;
-> +       struct setuid_rule *rule;
-> +
-> +       hash_for_each(pol->rules, bucket, rule, next) {
-> +               if (_setuid_policy_lookup(pol, rule->dst_uid, INVALID_UID) ==
-> +                   SIDPOL_DEFAULT) {
-> +                       pr_warn("insecure policy rejected: uid %d is constrained but transitively unconstrained through uid %d\n",
-> +                               __kuid_val(rule->src_uid),
-> +                               __kuid_val(rule->dst_uid));
-> +                       return -EINVAL;
-> +               }
-> +       }
-> +       return 0;
-> +}
 
-Why fail open? How about having the policy automatically add the
-constraints (since the entire policy is known at verification time)?
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -Kees
 
-> +
->  static ssize_t handle_policy_update(struct file *file,
->                                     const char __user *ubuf, size_t len)
->  {
-> @@ -139,6 +156,10 @@ static ssize_t handle_policy_update(struct file *file,
->                 goto out_free_buf;
->         }
+> ---
+>  security/safesetid/lsm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> +       err = verify_ruleset(pol);
-> +       if (err)
-> +               goto out_free_buf;
-> +
->         /*
->          * Everything looks good, apply the policy and release the old one.
->          * What we really want here is an xchg() wrapper for RCU, but since that
-> diff --git a/tools/testing/selftests/safesetid/safesetid-test.c b/tools/testing/selftests/safesetid/safesetid-test.c
-> index 4f03813d1911..8f40c6ecdad1 100644
-> --- a/tools/testing/selftests/safesetid/safesetid-test.c
-> +++ b/tools/testing/selftests/safesetid/safesetid-test.c
-> @@ -144,7 +144,9 @@ static void write_policies(void)
->  {
->         static char *policy_str =
->                 "1:2\n"
-> -               "1:3\n";
-> +               "1:3\n"
-> +               "2:2\n"
-> +               "3:3\n";
->         ssize_t written;
->         int fd;
+> diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+> index 4ab4d7cdba31..61b84e20f2dd 100644
+> --- a/security/safesetid/lsm.c
+> +++ b/security/safesetid/lsm.c
+> @@ -90,7 +90,7 @@ static int safesetid_security_capable(const struct cred *cred,
+>          */
+>         pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
+>                 __kuid_val(cred->uid));
+> -       return -1;
+> +       return -EPERM;
+>  }
 >
+>  /*
 > --
 > 2.21.0.392.gf8f6787159e-goog
 >
