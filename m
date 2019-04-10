@@ -2,98 +2,223 @@ Return-Path: <SRS0=my8L=SM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABFBC10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD5DC10F14
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22F88206B6
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:09:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 848FD20830
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 16:16:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PO2nmPYv"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HAfcWkyY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730663AbfDJQJt (ORCPT
+        id S1730969AbfDJQQW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 12:09:49 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:32837 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730598AbfDJQJt (ORCPT
+        Wed, 10 Apr 2019 12:16:22 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46446 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387712AbfDJQQV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 12:09:49 -0400
-Received: by mail-vs1-f67.google.com with SMTP id a190so1710854vsd.0
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 09:09:48 -0700 (PDT)
+        Wed, 10 Apr 2019 12:16:21 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y6so1690293pll.13
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 09:16:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nndJGk2SQklOU2DpxIQYC6PE/jXN4O9poL6LmAQyF0s=;
-        b=PO2nmPYvKFNAToYBvn7hITb4mz+MShgxeBxWhdg8yQBG2YZH8ACWTAut1kKPNHDphT
-         9o0TOne1PLJ2SIGTguSz/cvj5/PlIpi8FtlumI58R30BrXhAWd0R4g240t4kK1Wkc0Kn
-         o9MrMZ/IsQgieI4+t86GTUefB4bHTiwL9QUuA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=jOAlchro4PEoZdHvDj8sDe2jZk8Rf4hGGmuG3/k8DZI=;
+        b=HAfcWkyYnc857BWbNNM4BRW0N+qz3JI7ozhNlOdbNjd4G7S4dwz0UdeBP8T37u5h15
+         gcTXjFAyGLZBl5LBFVhdMuSCGTKvGUgFp23zAALiOZhmZ5Q0FaPxxaEIPNdH0e8AV8tH
+         i36LqZeW0ec2+NTkk2DDkw63a1ANIP6JLqaqU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nndJGk2SQklOU2DpxIQYC6PE/jXN4O9poL6LmAQyF0s=;
-        b=XWV70O02qdV/POAHTmNa38En4OwspuLCwHN6RdZJGOKTEPOrDTGJtMlja4Zl7EiH4R
-         U0Uu8K8ysHZc51VoefA2cP8bfMz29qzcfGw+gxhJos20JJt5bSVb/wOjf5CVoe+TE/tS
-         LATwZpLpBhdrImwVO2sSKpBBk8tY1jb0pk46JhYmRoIAQ4JrhNERDRgNlpW7wTFus+zy
-         Z2aOU8Lc0VB3PhJZiyd8zhB8YEZazXQbius1Oxmtu20ZGWLYUZo6q6ADLt7+lD4QtDtC
-         nkgmAdrwHWo7Hjo//6869hvjsYrjANKfgUCaq+4c92LNTg1InyFkWHVjZmwnVp7dZ472
-         +mBQ==
-X-Gm-Message-State: APjAAAXyqDz4NvlvCuvfMlXT6iczWEgTQdZaSQlcvV2w/3pqXPllhY9c
-        HDjQdS2JmFY994udsV/k3eqpXljdEkA=
-X-Google-Smtp-Source: APXvYqza5uaF2ZjR8SHWagRff50CaVC1/fdH2SGosXeRRPbqHrc8lZ9IBQi/FAF9panF/Xr9FZdJoA==
-X-Received: by 2002:a67:fa95:: with SMTP id f21mr24209487vsq.180.1554912588130;
-        Wed, 10 Apr 2019 09:09:48 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id g184sm4659495vkd.31.2019.04.10.09.09.46
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Apr 2019 09:09:46 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id o10so1667544vsp.12
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 09:09:46 -0700 (PDT)
-X-Received: by 2002:a67:7816:: with SMTP id t22mr23608239vsc.115.1554912586202;
- Wed, 10 Apr 2019 09:09:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190410131726.250295-1-glider@google.com> <20190410131726.250295-3-glider@google.com>
-In-Reply-To: <20190410131726.250295-3-glider@google.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=jOAlchro4PEoZdHvDj8sDe2jZk8Rf4hGGmuG3/k8DZI=;
+        b=o1XjkBtQEdHzYciMd3t7b45KQRR1stKRb1VS0Ph1+QCeHmaf3PC1A6Pcgd3J2IoyKX
+         UBvLjrep4q2GGisNrZ4cXT6gFoBT8muQ227u6CuQYqJ9h7lUKDs3du89iG7oGks6VI8s
+         G4jVOeYq2dLUEK2iyC0oqsaIT1E4Wg7hOajPQXsrJZ1D6PtYF/1XYHQmoG2OJLp64Xep
+         GyYPW4wWVvbN24ErH1u8U8rWENBhXtfKB5NvMpn+5hZmKJfqHVJQOo+JnKhSHQHQswQY
+         yvJn7YszOm6Hd9/8iOrZhypEkAyJx9pBFoG+0NFQpTWz4q4mLgu8gaBoK5LPEKzDWkgr
+         MaoA==
+X-Gm-Message-State: APjAAAVuBxNBxq/uFNuXGxQ6YnShSmcTcvtvRXH/lEmLS4Jw0/MNQ/D+
+        z3mnXmtG+zvJFCE6WtRDJj/+sg==
+X-Google-Smtp-Source: APXvYqzbZIWrtM83HY1hK84i8J68//7D3HvDn0on6ILWordOt/oR+/1TsM9Q03wKk/bxFMwxYyoR0g==
+X-Received: by 2002:a17:902:31a4:: with SMTP id x33mr45065265plb.24.1554912980506;
+        Wed, 10 Apr 2019 09:16:20 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id r76sm38658632pfa.39.2019.04.10.09.16.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Apr 2019 09:16:18 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 10 Apr 2019 09:09:35 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJt3uNWVXDD=GR6oVwn=g7O=Jcz9sxai5q10X9yyR56XA@mail.gmail.com>
-Message-ID: <CAGXu5jJt3uNWVXDD=GR6oVwn=g7O=Jcz9sxai5q10X9yyR56XA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] initmem: introduce CONFIG_INIT_ALL_HEAP
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Alexander Potapenko <glider@google.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Kostya Serebryany <kcc@google.com>,
         Dmitry Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
         Sandeep Patil <sspatil@android.com>,
         Laura Abbott <labbott@redhat.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+        Randy Dunlap <rdunlap@infradead.org>,
+        Alexander Popov <alpopov@ptsecurity.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Emese Revfy <re.emese@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: [PATCH 2/3] kbuild: Move stackleak config to Kconfig.hardening
+Date:   Wed, 10 Apr 2019 09:16:11 -0700
+Message-Id: <20190410161612.18545-3-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190410161612.18545-1-keescook@chromium.org>
+References: <20190410161612.18545-1-keescook@chromium.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 10, 2019 at 6:18 AM Alexander Potapenko <glider@google.com> wrote:
->
-> This config option adds the possibility to initialize newly allocated
-> pages and heap objects with a 0xAA pattern.
-> There's already a number of places where allocations are initialized
-> based on the presence of __GFP_ZERO flag. We just change this code so
-> that under CONFIG_INIT_ALL_HEAP these allocations are always initialized
-> with either 0x00 or 0xAA depending on the __GFP_ZERO.
+This moves the stackleak plugin options to Kconfig.hardening's memory
+initialization menu.
 
-Why not just make __GFP_ZERO unconditional instead? This looks like
-it'd be simpler and not need arch-specific implementation?
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ scripts/gcc-plugins/Kconfig | 51 ---------------------------------
+ security/Kconfig.hardening  | 57 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+), 51 deletions(-)
 
+diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+index 01874ef0f883..50cfcf1ed979 100644
+--- a/scripts/gcc-plugins/Kconfig
++++ b/scripts/gcc-plugins/Kconfig
+@@ -107,57 +107,6 @@ config GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
+ 	  in structures.  This reduces the performance hit of RANDSTRUCT
+ 	  at the cost of weakened randomization.
+ 
+-config GCC_PLUGIN_STACKLEAK
+-	bool "Erase the kernel stack before returning from syscalls"
+-	depends on GCC_PLUGINS
+-	depends on HAVE_ARCH_STACKLEAK
+-	help
+-	  This option makes the kernel erase the kernel stack before
+-	  returning from system calls. That reduces the information which
+-	  kernel stack leak bugs can reveal and blocks some uninitialized
+-	  stack variable attacks.
+-
+-	  The tradeoff is the performance impact: on a single CPU system kernel
+-	  compilation sees a 1% slowdown, other systems and workloads may vary
+-	  and you are advised to test this feature on your expected workload
+-	  before deploying it.
+-
+-	  This plugin was ported from grsecurity/PaX. More information at:
+-	   * https://grsecurity.net/
+-	   * https://pax.grsecurity.net/
+-
+-config STACKLEAK_TRACK_MIN_SIZE
+-	int "Minimum stack frame size of functions tracked by STACKLEAK"
+-	default 100
+-	range 0 4096
+-	depends on GCC_PLUGIN_STACKLEAK
+-	help
+-	  The STACKLEAK gcc plugin instruments the kernel code for tracking
+-	  the lowest border of the kernel stack (and for some other purposes).
+-	  It inserts the stackleak_track_stack() call for the functions with
+-	  a stack frame size greater than or equal to this parameter.
+-	  If unsure, leave the default value 100.
+-
+-config STACKLEAK_METRICS
+-	bool "Show STACKLEAK metrics in the /proc file system"
+-	depends on GCC_PLUGIN_STACKLEAK
+-	depends on PROC_FS
+-	help
+-	  If this is set, STACKLEAK metrics for every task are available in
+-	  the /proc file system. In particular, /proc/<pid>/stack_depth
+-	  shows the maximum kernel stack consumption for the current and
+-	  previous syscalls. Although this information is not precise, it
+-	  can be useful for estimating the STACKLEAK performance impact for
+-	  your workloads.
+-
+-config STACKLEAK_RUNTIME_DISABLE
+-	bool "Allow runtime disabling of kernel stack erasing"
+-	depends on GCC_PLUGIN_STACKLEAK
+-	help
+-	  This option provides 'stack_erasing' sysctl, which can be used in
+-	  runtime to control kernel stack erasing for kernels built with
+-	  CONFIG_GCC_PLUGIN_STACKLEAK.
+-
+ config GCC_PLUGIN_ARM_SSP_PER_TASK
+ 	bool
+ 	depends on GCC_PLUGINS && ARM
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 8223a8ab1a12..9942d9869864 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -89,6 +89,63 @@ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+ 	  initialized. Since not all existing initializers are detected
+ 	  by the plugin, this can produce false positive warnings.
+ 
++config GCC_PLUGIN_STACKLEAK
++	bool "Poison kernel stack before returning from syscalls"
++	depends on GCC_PLUGINS
++	depends on HAVE_ARCH_STACKLEAK
++	help
++	  This option makes the kernel erase the kernel stack before
++	  returning from system calls. This has the effect of leaving
++	  the stack initialized to the poison value, which both reduces
++	  the lifetime of any sensitive stack contents and reduces
++	  potential for uninitialized stack variable exploits or information
++	  exposures (it does not cover functions reaching the same stack
++	  depth as prior functions during the same syscall). This blocks
++	  most uninitialized stack variable attacks, with the performance
++	  impact being driven by the depth of the stack usage, rather than
++	  the function calling complexity.
++
++	  The performance impact on a single CPU system kernel compilation
++	  sees a 1% slowdown, other systems and workloads may vary and you
++	  are advised to test this feature on your expected workload before
++	  deploying it.
++
++	  This plugin was ported from grsecurity/PaX. More information at:
++	   * https://grsecurity.net/
++	   * https://pax.grsecurity.net/
++
++config STACKLEAK_TRACK_MIN_SIZE
++	int "Minimum stack frame size of functions tracked by STACKLEAK"
++	default 100
++	range 0 4096
++	depends on GCC_PLUGIN_STACKLEAK
++	help
++	  The STACKLEAK gcc plugin instruments the kernel code for tracking
++	  the lowest border of the kernel stack (and for some other purposes).
++	  It inserts the stackleak_track_stack() call for the functions with
++	  a stack frame size greater than or equal to this parameter.
++	  If unsure, leave the default value 100.
++
++config STACKLEAK_METRICS
++	bool "Show STACKLEAK metrics in the /proc file system"
++	depends on GCC_PLUGIN_STACKLEAK
++	depends on PROC_FS
++	help
++	  If this is set, STACKLEAK metrics for every task are available in
++	  the /proc file system. In particular, /proc/<pid>/stack_depth
++	  shows the maximum kernel stack consumption for the current and
++	  previous syscalls. Although this information is not precise, it
++	  can be useful for estimating the STACKLEAK performance impact for
++	  your workloads.
++
++config STACKLEAK_RUNTIME_DISABLE
++	bool "Allow runtime disabling of kernel stack erasing"
++	depends on GCC_PLUGIN_STACKLEAK
++	help
++	  This option provides 'stack_erasing' sysctl, which can be used in
++	  runtime to control kernel stack erasing for kernels built with
++	  CONFIG_GCC_PLUGIN_STACKLEAK.
++
+ endmenu
+ 
+ endmenu
 -- 
-Kees Cook
+2.17.1
+
