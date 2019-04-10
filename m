@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D78D5C10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 979DAC10F11
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8ED02082E
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F7292082E
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:11:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DJBOD5c1"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gbFlBORV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728748AbfDJRJs (ORCPT
+        id S1728986AbfDJRL6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 13:09:48 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40302 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbfDJRJr (ORCPT
+        Wed, 10 Apr 2019 13:11:58 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:34485 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728983AbfDJRL5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 13:09:47 -0400
-Received: by mail-vs1-f67.google.com with SMTP id f22so1796948vso.7
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:09:47 -0700 (PDT)
+        Wed, 10 Apr 2019 13:11:57 -0400
+Received: by mail-vk1-f194.google.com with SMTP id x84so741494vkd.1
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tNQVfrVuhTyjxHi15oDnjEfjux7E73KgI0KREivdICc=;
-        b=DJBOD5c1u3JylxT8EWxXeMpj9PjuFWxXq9Hk1O/1OM6dAO2/E/7rnWIeoojUQZdLYA
-         413nQH+EpQyTf5DtTCvVCSlp/1QoXbnkoWCVTeDJYcnsJRRa7sI21qYsEshBzFfDgDsD
-         1AKFm2IQSIyJAruHrfbSnf9xdsVDHLcjbdWAw=
+        bh=WF9BMs013bf4d2j3dKeOekDbQCoVsFmPTI+2GvpHqdo=;
+        b=gbFlBORV0zN1T7ThYmkpq4LJeVhBETIBCyUZUF5xs80KruvpnkaB82fU+hV7NE7gxG
+         xiQLReKTmfWqUJM/qiEoGKh+emxVEH9d51v52ORWlVBNm2eenx51+SPaEi1Qoc+wrj1u
+         q55GsQWB3GrQWVjdcIFT9ilfGHeVCBptZyvE0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tNQVfrVuhTyjxHi15oDnjEfjux7E73KgI0KREivdICc=;
-        b=oKtUH7p103CqdZHC72OEYqR/TEXMpKlfco/BDh9AovUQkyjy1+PrpUiOMv3h95Iuzn
-         TvIgzLXiifLRHBEDPFPyHKFl2wsJwhk8h5Er9wriZVv4cvqMXus1G3ZJSH87+TEIxszb
-         QXQdRjc/Phot3R+gml/CdSSxIOBRNAjgSoje0NhM8F4K1XrYcumAvRCNhQbuDnHiq6db
-         8LFq3CdfGu00wFTONhri3Vk55GR8+5pRlOT2eLlL85ufY0IrFE1HDOUyy5NgwS48biuy
-         JtEBHMnkrpHR7fbC40VZzdcOj96BkVyt+xHC4ICXUGTP5KJpyIOhSPC6MP/Q/aaqgBo+
-         +YoQ==
-X-Gm-Message-State: APjAAAXFTB9c7oCW977k1ZPDvvJnvz2XeV2X8Fv+obcllyqC6izcpHlC
-        gTfdRFbCUgQZNkJnf/kFE4jZpFy863g=
-X-Google-Smtp-Source: APXvYqwIbBxnE/zdo592vHcmFIAVLbBIB2GshAcWMJsRCiguWiAxcn58W97SmKLsatxzeYVBSLMWSw==
-X-Received: by 2002:a67:ea53:: with SMTP id r19mr26421358vso.12.1554916186540;
-        Wed, 10 Apr 2019 10:09:46 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id r3sm1320308vkr.18.2019.04.10.10.09.45
+        bh=WF9BMs013bf4d2j3dKeOekDbQCoVsFmPTI+2GvpHqdo=;
+        b=qxhvSwa++24uotxPBdiJsUF3lc/g3tQ+M5d7QRTiCs+LpLfo39H28N9A1CDdGu6+lB
+         koNG2xmhulqXoJmzHGkyu3UYUiXXSO6HsAn1FsM2UJW764wafETj1P0fYXH8FSnlc7VZ
+         rR+TvDUqkcOPUY/P+ErkpNCvQRVpwPRUPSto67Ii3u92fikOdKV0RRwNhR/3l8GuMspw
+         Iqx173ByPV5XUenn1ySERaoGB0VYFursrch61L3hOr31B6Rlmw6X0UkczUHSFHNLHp+1
+         wh3XKt0cBxOY0V4/zCtN4UxVZJz2/QIhOf+1Jbq6SzMmQ6THW60ih2le1VJAtv4P73bt
+         Ctcw==
+X-Gm-Message-State: APjAAAW9ya3o0h8j2dACiwqkQpaVDDSUZniCEORzECPlqjgNFCr1UVtE
+        3BBygI1zAlTT+74uyaJmuirOXd0jvcc=
+X-Google-Smtp-Source: APXvYqxav/cTSpCmXbWsRT6bNpwtHdGa0tzuDGS6XnsOZ6SBN2uButmjY2SHWiNBWTJFIzHEoffVTg==
+X-Received: by 2002:a1f:2fc7:: with SMTP id v190mr24083008vkv.84.1554916315956;
+        Wed, 10 Apr 2019 10:11:55 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id j71sm28506323vsd.0.2019.04.10.10.11.54
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Apr 2019 10:09:45 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id x194so742476vke.0
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:09:45 -0700 (PDT)
-X-Received: by 2002:a1f:ab8d:: with SMTP id u135mr21669317vke.80.1554916185066;
- Wed, 10 Apr 2019 10:09:45 -0700 (PDT)
+        Wed, 10 Apr 2019 10:11:55 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id o10so1790096vsp.12
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 10:11:54 -0700 (PDT)
+X-Received: by 2002:a67:1345:: with SMTP id 66mr23945247vst.30.1554916314421;
+ Wed, 10 Apr 2019 10:11:54 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190410165434.206579-1-mortonm@chromium.org>
-In-Reply-To: <20190410165434.206579-1-mortonm@chromium.org>
+References: <20190410165519.209565-1-mortonm@chromium.org>
+In-Reply-To: <20190410165519.209565-1-mortonm@chromium.org>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 10 Apr 2019 10:09:32 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jKid6ggjD7G=qLoAGdpprxQiXziKu5g=rcGw+d0sUPr9g@mail.gmail.com>
-Message-ID: <CAGXu5jKid6ggjD7G=qLoAGdpprxQiXziKu5g=rcGw+d0sUPr9g@mail.gmail.com>
-Subject: Re: [PATCH 01/10] LSM: SafeSetID: fix pr_warn() to include newline
+Date:   Wed, 10 Apr 2019 10:11:42 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jL-jAc-jsDeRXnAXbETT+EUf8R0gFiqNvm60F42=tdhAQ@mail.gmail.com>
+Message-ID: <CAGXu5jL-jAc-jsDeRXnAXbETT+EUf8R0gFiqNvm60F42=tdhAQ@mail.gmail.com>
+Subject: Re: [PATCH 02/10] LSM: SafeSetID: fix check for setresuid(new1, new2, new3)
 To:     Micah Morton <mortonm@chromium.org>
 Cc:     James Morris <jmorris@namei.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
@@ -76,14 +76,22 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 10, 2019 at 9:54 AM Micah Morton <mortonm@chromium.org> wrote:
+On Wed, Apr 10, 2019 at 9:55 AM Micah Morton <mortonm@chromium.org> wrote:
 >
 > From: Jann Horn <jannh@google.com>
 >
-> Fix the pr_warn() calls in the SafeSetID LSM to have newlines at the end.
-> Without this, denial messages will be buffered as incomplete lines in
-> log_output(), and will then only show up once something else prints into
-> dmesg.
+> With the old code, when a process with the (real,effective,saved) UID set
+> (1,1,1) calls setresuid(2,3,4), safesetid_task_fix_setuid() only checks
+> whether the transition 1->2 is permitted; the transitions 1->3 and 1->4 are
+> not checked. Fix this.
+>
+> This is also a good opportunity to refactor safesetid_task_fix_setuid() to
+> be less verbose - having one branch per set*uid() syscall is unnecessary.
+>
+> Note that this slightly changes semantics: The UID transition check for
+> UIDs that were not in the old cred struct is now always performed against
+> the policy of the RUID. I think that's more consistent anyway, since the
+> RUID is also the one that decides whether any policy is enforced at all.
 >
 > Signed-off-by: Jann Horn <jannh@google.com>
 > Signed-off-by: Micah Morton <mortonm@chromium.org>
@@ -93,31 +101,158 @@ Reviewed-by: Kees Cook <keescook@chromium.org>
 -Kees
 
 > ---
->  security/safesetid/lsm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  security/safesetid/lsm.c | 125 +++++++++++----------------------------
+>  1 file changed, 35 insertions(+), 90 deletions(-)
 >
 > diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-> index cecd38e2ac80..2daecab3a4c0 100644
+> index 2daecab3a4c0..5310fcf3052a 100644
 > --- a/security/safesetid/lsm.c
 > +++ b/security/safesetid/lsm.c
-> @@ -91,7 +91,7 @@ static int safesetid_security_capable(const struct cred *cred,
->                          * to functionality other than calling set*uid() (e.g.
->                          * allowing user to set up userns uid mappings).
->                          */
-> -                       pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions",
-> +                       pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
->                                 __kuid_val(cred->uid));
->                         return -1;
->                 }
-> @@ -103,7 +103,7 @@ static int check_uid_transition(kuid_t parent, kuid_t child)
+> @@ -99,20 +99,30 @@ static int safesetid_security_capable(const struct cred *cred,
+>         return 0;
+>  }
+>
+> -static int check_uid_transition(kuid_t parent, kuid_t child)
+> +/*
+> + * Check whether a caller with old credentials @old is allowed to switch to
+> + * credentials that contain @new_uid.
+> + */
+> +static bool uid_permitted_for_cred(const struct cred *old, kuid_t new_uid)
 >  {
->         if (check_setuid_policy_hashtable_key_value(parent, child))
->                 return 0;
-> -       pr_warn("UID transition (%d -> %d) blocked",
-> +       pr_warn("UID transition (%d -> %d) blocked\n",
->                 __kuid_val(parent),
->                 __kuid_val(child));
+> -       if (check_setuid_policy_hashtable_key_value(parent, child))
+> -               return 0;
+> -       pr_warn("UID transition (%d -> %d) blocked\n",
+> -               __kuid_val(parent),
+> -               __kuid_val(child));
+> +       bool permitted;
+> +
+> +       /* If our old creds already had this UID in it, it's fine. */
+> +       if (uid_eq(new_uid, old->uid) || uid_eq(new_uid, old->euid) ||
+> +           uid_eq(new_uid, old->suid))
+> +               return true;
+> +
 >         /*
+> -        * Kill this process to avoid potential security vulnerabilities
+> -        * that could arise from a missing whitelist entry preventing a
+> -        * privileged process from dropping to a lesser-privileged one.
+> +        * Transitions to new UIDs require a check against the policy of the old
+> +        * RUID.
+>          */
+> -       force_sig(SIGKILL, current);
+> -       return -EACCES;
+> +       permitted = check_setuid_policy_hashtable_key_value(old->uid, new_uid);
+> +       if (!permitted) {
+> +               pr_warn("UID transition ((%d,%d,%d) -> %d) blocked\n",
+> +                       __kuid_val(old->uid), __kuid_val(old->euid),
+> +                       __kuid_val(old->suid), __kuid_val(new_uid));
+> +       }
+> +       return permitted;
+>  }
+>
+>  /*
+> @@ -125,88 +135,23 @@ static int safesetid_task_fix_setuid(struct cred *new,
+>                                      int flags)
+>  {
+>
+> -       /* Do nothing if there are no setuid restrictions for this UID. */
+> +       /* Do nothing if there are no setuid restrictions for our old RUID. */
+>         if (!check_setuid_policy_hashtable_key(old->uid))
+>                 return 0;
+>
+> -       switch (flags) {
+> -       case LSM_SETID_RE:
+> -               /*
+> -                * Users for which setuid restrictions exist can only set the
+> -                * real UID to the real UID or the effective UID, unless an
+> -                * explicit whitelist policy allows the transition.
+> -                */
+> -               if (!uid_eq(old->uid, new->uid) &&
+> -                       !uid_eq(old->euid, new->uid)) {
+> -                       return check_uid_transition(old->uid, new->uid);
+> -               }
+> -               /*
+> -                * Users for which setuid restrictions exist can only set the
+> -                * effective UID to the real UID, the effective UID, or the
+> -                * saved set-UID, unless an explicit whitelist policy allows
+> -                * the transition.
+> -                */
+> -               if (!uid_eq(old->uid, new->euid) &&
+> -                       !uid_eq(old->euid, new->euid) &&
+> -                       !uid_eq(old->suid, new->euid)) {
+> -                       return check_uid_transition(old->euid, new->euid);
+> -               }
+> -               break;
+> -       case LSM_SETID_ID:
+> -               /*
+> -                * Users for which setuid restrictions exist cannot change the
+> -                * real UID or saved set-UID unless an explicit whitelist
+> -                * policy allows the transition.
+> -                */
+> -               if (!uid_eq(old->uid, new->uid))
+> -                       return check_uid_transition(old->uid, new->uid);
+> -               if (!uid_eq(old->suid, new->suid))
+> -                       return check_uid_transition(old->suid, new->suid);
+> -               break;
+> -       case LSM_SETID_RES:
+> -               /*
+> -                * Users for which setuid restrictions exist cannot change the
+> -                * real UID, effective UID, or saved set-UID to anything but
+> -                * one of: the current real UID, the current effective UID or
+> -                * the current saved set-user-ID unless an explicit whitelist
+> -                * policy allows the transition.
+> -                */
+> -               if (!uid_eq(new->uid, old->uid) &&
+> -                       !uid_eq(new->uid, old->euid) &&
+> -                       !uid_eq(new->uid, old->suid)) {
+> -                       return check_uid_transition(old->uid, new->uid);
+> -               }
+> -               if (!uid_eq(new->euid, old->uid) &&
+> -                       !uid_eq(new->euid, old->euid) &&
+> -                       !uid_eq(new->euid, old->suid)) {
+> -                       return check_uid_transition(old->euid, new->euid);
+> -               }
+> -               if (!uid_eq(new->suid, old->uid) &&
+> -                       !uid_eq(new->suid, old->euid) &&
+> -                       !uid_eq(new->suid, old->suid)) {
+> -                       return check_uid_transition(old->suid, new->suid);
+> -               }
+> -               break;
+> -       case LSM_SETID_FS:
+> -               /*
+> -                * Users for which setuid restrictions exist cannot change the
+> -                * filesystem UID to anything but one of: the current real UID,
+> -                * the current effective UID or the current saved set-UID
+> -                * unless an explicit whitelist policy allows the transition.
+> -                */
+> -               if (!uid_eq(new->fsuid, old->uid)  &&
+> -                       !uid_eq(new->fsuid, old->euid)  &&
+> -                       !uid_eq(new->fsuid, old->suid) &&
+> -                       !uid_eq(new->fsuid, old->fsuid)) {
+> -                       return check_uid_transition(old->fsuid, new->fsuid);
+> -               }
+> -               break;
+> -       default:
+> -               pr_warn("Unknown setid state %d\n", flags);
+> -               force_sig(SIGKILL, current);
+> -               return -EINVAL;
+> -       }
+> -       return 0;
+> +       if (uid_permitted_for_cred(old, new->uid) &&
+> +           uid_permitted_for_cred(old, new->euid) &&
+> +           uid_permitted_for_cred(old, new->suid) &&
+> +           uid_permitted_for_cred(old, new->fsuid))
+> +               return 0;
+> +
+> +       /*
+> +        * Kill this process to avoid potential security vulnerabilities
+> +        * that could arise from a missing whitelist entry preventing a
+> +        * privileged process from dropping to a lesser-privileged one.
+> +        */
+> +       force_sig(SIGKILL, current);
+> +       return -EACCES;
+>  }
+>
+>  int add_safesetid_whitelist_entry(kuid_t parent, kuid_t child)
 > --
 > 2.21.0.392.gf8f6787159e-goog
 >
