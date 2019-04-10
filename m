@@ -2,38 +2,38 @@ Return-Path: <SRS0=my8L=SM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C8FC10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23466C10F11
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA12B20830
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFE302077C
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 17:34:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbfDJRbF (ORCPT
+        id S1727320AbfDJRes (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 13:31:05 -0400
-Received: from namei.org ([65.99.196.166]:33476 "EHLO namei.org"
+        Wed, 10 Apr 2019 13:34:48 -0400
+Received: from namei.org ([65.99.196.166]:33488 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728692AbfDJRbF (ORCPT
+        id S1727226AbfDJRes (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 13:31:05 -0400
+        Wed, 10 Apr 2019 13:34:48 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id x3AHV1Qh026449;
-        Wed, 10 Apr 2019 17:31:01 GMT
-Date:   Thu, 11 Apr 2019 03:31:01 +1000 (AEST)
+        by namei.org (8.14.4/8.14.4) with ESMTP id x3AHYh3C026648;
+        Wed, 10 Apr 2019 17:34:43 GMT
+Date:   Thu, 11 Apr 2019 03:34:43 +1000 (AEST)
 From:   James Morris <jmorris@namei.org>
-To:     Jann Horn <jannh@google.com>
-cc:     David Howells <dhowells@redhat.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] keys: safe concurrent user->{session,uid}_keyring
- access
-In-Reply-To: <20190327155508.144730-1-jannh@google.com>
-Message-ID: <alpine.LRH.2.21.1904110330420.25754@namei.org>
-References: <20190327155508.144730-1-jannh@google.com>
+To:     Kangjie Lu <kjlu@umn.edu>
+cc:     pakki001@umn.edu, "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security: inode: fix a missing check for
+ securityfs_create_file
+In-Reply-To: <20190315210025.17832-1-kjlu@umn.edu>
+Message-ID: <alpine.LRH.2.21.1904110334380.25754@namei.org>
+References: <alpine.LRH.2.21.1903160608080.2905@namei.org> <20190315210025.17832-1-kjlu@umn.edu>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -41,20 +41,40 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 27 Mar 2019, Jann Horn wrote:
+On Fri, 15 Mar 2019, Kangjie Lu wrote:
 
-> The current code can perform concurrent updates and reads on
-> user->session_keyring and user->uid_keyring. Add a comment to
-> struct user_struct to document the nontrivial locking semantics, and use
-> READ_ONCE() for unlocked readers and smp_store_release() for writers to
-> prevent memory ordering issues.
+> securityfs_create_file  may fail. The fix checks its status and
+> returns the error code upstream if it fails.
 > 
-> Fixes: 69664cf16af4 ("keys: don't generate user and user session keyrings unless they're accessed")
-> Signed-off-by: Jann Horn <jannh@google.com>
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> 
 
 Applied to
 git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-general
 
+> ---
+> Return the exact error code upstream.
+> ---
+>  security/inode.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/security/inode.c b/security/inode.c
+> index b7772a9b315e..667f8b15027d 100644
+> --- a/security/inode.c
+> +++ b/security/inode.c
+> @@ -339,6 +339,11 @@ static int __init securityfs_init(void)
+>  #ifdef CONFIG_SECURITY
+>  	lsm_dentry = securityfs_create_file("lsm", 0444, NULL, NULL,
+>  						&lsm_ops);
+> +	if (IS_ERR(lsm_dentry)) {
+> +		unregister_filesystem(&fs_type);
+> +		sysfs_remove_mount_point(kernel_kobj, "security");
+> +		return PTR_ERR(lsm_dentry);
+> +	}
+>  #endif
+>  	return 0;
+>  }
+> 
 
 -- 
 James Morris
