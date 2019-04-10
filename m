@@ -4,99 +4,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45997C10F11
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 19:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C738CC10F11
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 21:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 143FD20820
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 19:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1554925502;
-	bh=0cLhpq+yQ10qB9ukleJOXpSFwirvMql+mTikt2IIvCM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=wePWpdZ0xAfq/IHQ4Twi6K3p3IDjZGrKk4L91Tu6oQooTv2kb2Ic42E59eOoYYVOt
-	 4+HhGKJFMHuhnPg/nPZVZpvk/c/EZT0/x6TC/MmarqiWMIjBhIBz9dzh6qhO0HViCw
-	 Ov/YKp5E9t2g8QZk+TYoPUt2zw3DSA4aXNqPnifY=
+	by mail.kernel.org (Postfix) with ESMTP id 8DBA02082A
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Apr 2019 21:58:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gv1MQ9tG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbfDJTpB (ORCPT
+        id S1726093AbfDJV6C (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 15:45:01 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41506 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbfDJTpB (ORCPT
+        Wed, 10 Apr 2019 17:58:02 -0400
+Received: from mail-vs1-f52.google.com ([209.85.217.52]:34241 "EHLO
+        mail-vs1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbfDJV6C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 15:45:01 -0400
-Received: by mail-lf1-f65.google.com with SMTP id t30so2736177lfd.8
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 12:45:00 -0700 (PDT)
+        Wed, 10 Apr 2019 17:58:02 -0400
+Received: by mail-vs1-f52.google.com with SMTP id t78so2310507vsc.1
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 14:58:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rsBa5M7cr66bNr57pCqY9xnSx/YPJHTWLIyNqQt1HX0=;
-        b=Obu0iH5zZYljx26kyd08C8+DLbYm44jLQE7W5yMnS8jj8F8d118hGNeonhA2WrNRyk
-         6FYPs+HiiL2UnpuK6OuEY8sb7YHQn6hrzVOg/OinGsYpE9qBNhzVqAeFbZOEbGs45kec
-         kR3KgV93LJvr94gdAxbsQcYz29BIGyUmb8Mdk=
+        bh=zQ6wwUQrK1NqHrZtbqa5TkZR4Gt0ENtEbKzfcyHpppE=;
+        b=gv1MQ9tGqukjy1cxAUfCcBksLGw3OlCHJEx6K+6Mj+1qUsoKucc/YgqMNaG86eMB1D
+         WTZemX8QDCe1WFlW0Juf+fhQeN08D7xVWNfo88NerKEYK9jpXnm7gPmG9WLWOA3Q0qGA
+         0Zf/bWUhqXgosvN7oHj639aOLqJscqb1wUEVI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rsBa5M7cr66bNr57pCqY9xnSx/YPJHTWLIyNqQt1HX0=;
-        b=mDybS6G7FHbRQzV/KLRcMcnAdMoNBPec0jHC5EWb6K2vPmcCpCTybtGsdBbcEVr+cl
-         F3zIiTa4FjOI4yrz6IQDCr/Wj+4Eh128s2bly0p+STEeBoNRh3XC7QVPn0+fuZRZuLyE
-         LflNEaJX48JNj+jvMVcvugEWujSPWU1d/6d1xo95F4Pt5t4zYdK64f/k6NAF/07gmlk1
-         NJxYpzvKt3/zDA+DoSTc0WAkYl9ngwVyKOyGJkn5NHbajCIbsmdE0mjywXBvgvl/Rsrg
-         HEW0VV0ITqNDCZZvzotWafniikLWE9Ok6uVNqZdcvTHE9s89Pxhx65d6wXfvpmZo5lHJ
-         n7Cg==
-X-Gm-Message-State: APjAAAUh0S4+ujNNwtdLm3qkVne6BDoyA6pqyoYAb+lSmGPh7ebJYkc6
-        LnFL91Gx9u2pYDPfcXIM3rEm8rI0lKU=
-X-Google-Smtp-Source: APXvYqxqc5Y0+f1gwhzqHpbRFldwIrUmU31CvERzvxv9Df2+1sdjg4GjWKA8GQ+iF++jk2KTfSPRWA==
-X-Received: by 2002:a19:5506:: with SMTP id n6mr23125319lfe.119.1554925498910;
-        Wed, 10 Apr 2019 12:44:58 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id 77sm7425469ljc.69.2019.04.10.12.44.57
+        bh=zQ6wwUQrK1NqHrZtbqa5TkZR4Gt0ENtEbKzfcyHpppE=;
+        b=tfcOpZj4gJQTc/cA2Jk+s3UEVT9d0Jn+cBTxi9sQriWJ//lXPCJ5V6V9fHoHHZta7Y
+         qRDyhOi1g3bljVvbS9aagl0Wx/5cDEaMC7CtvSUeZwF0sP2CopXU1B8O4mcgprOXhRjZ
+         G4cmK/f9QuNq5t969yFnAXxDw8in/r1C+4c/4zbhnTJw+7vHp4qM8HaIj8QjXnhE1goR
+         kG6KWajvXTLFD/SJZEUZf2IV+ZIdxEADcFvMm3ac5GxpPGLZ6jp5EddCY+58blQS7syH
+         w41tZ7K5H/gBRVEe9C6XT4L/qbPLOQtrtj98xoOE2lz+ZzrhxNPZ+a+ndWGP52NLVPz4
+         BhSg==
+X-Gm-Message-State: APjAAAXL7RqcCIPZjc0qiXx3Lm4+rFkjo6QIdGfcZ53OsYEBTWHtvrgG
+        D5BQwd+/9bKpsY0IhbcdWS99Do6w7+8=
+X-Google-Smtp-Source: APXvYqwO0my1VEVCiODLK6+q66FgKk/qLY/x2qbDN4fgcBdhtUVqI6A55ziq0pwRPKeL3j/KaxEUYQ==
+X-Received: by 2002:a67:69d7:: with SMTP id e206mr24248585vsc.79.1554933481016;
+        Wed, 10 Apr 2019 14:58:01 -0700 (PDT)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id 2sm15744598vke.27.2019.04.10.14.57.59
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 10 Apr 2019 12:44:57 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id j89so3266711ljb.1
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 12:44:57 -0700 (PDT)
-X-Received: by 2002:a2e:9597:: with SMTP id w23mr18295781ljh.111.1554925497426;
- Wed, 10 Apr 2019 12:44:57 -0700 (PDT)
+        Wed, 10 Apr 2019 14:57:59 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id n4so2302366vsm.3
+        for <linux-security-module@vger.kernel.org>; Wed, 10 Apr 2019 14:57:59 -0700 (PDT)
+X-Received: by 2002:a67:1345:: with SMTP id 66mr24870637vst.30.1554933478741;
+ Wed, 10 Apr 2019 14:57:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <0000000000006946d2057bbd0eef@google.com> <CAHk-=wiijJMTw=nTj_ED+YWMCrvHzh3ezfVYRxvzcW6+trgyPA@mail.gmail.com>
- <20190325045744.GK2217@ZenIV.linux.org.uk> <CAHk-=wg4iJsMHBzK52WzP+5_92HbwvX_vh_s4mMUuN0FJGdM5A@mail.gmail.com>
- <CAHk-=whJ4M5FegOLvnjUtJ0+pHv4L8UNFt+9jJDhox3Ada8kwA@mail.gmail.com>
- <20190325211405.GP2217@ZenIV.linux.org.uk> <CAHk-=wj+-e=X9cvvNwc5+QuvBOyYT7OtZTBzy-Wg8zGrUwxSbw@mail.gmail.com>
- <20190325233731.GS2217@ZenIV.linux.org.uk> <20190326014552.GY2217@ZenIV.linux.org.uk>
- <20190410181135.GA32071@ZenIV.linux.org.uk>
-In-Reply-To: <20190410181135.GA32071@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 10 Apr 2019 09:44:41 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wg1hfdCE97hCCgRqW4=vbcAj8SaGhGffajg7B-aVenzNw@mail.gmail.com>
-Message-ID: <CAHk-=wg1hfdCE97hCCgRqW4=vbcAj8SaGhGffajg7B-aVenzNw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in path_lookupat
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     syzbot <syzbot+7a8ba368b47fdefca61e@syzkaller.appspotmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org
+References: <CAMuHMdWhx0-kspDyLOgTp+9udiBpkMHULSGyMg9uPPV16=FWQg@mail.gmail.com>
+ <20190319170911.GB202956@gmail.com> <20190320185719.GB180195@gmail.com>
+ <CAGXu5jL-5C1ZGZ1JgaNFqK-z1Pp1N1X8gD3_ysKTCa=omD+_VQ@mail.gmail.com>
+ <20190321175122.GA1587@sol.localdomain> <20190410031734.GB7140@sol.localdomain>
+ <CAGXu5j+SZ2+Zkc=Vp5CXQUHhiR9f_OOnca684JTRW3T0yXdaNQ@mail.gmail.com> <20190410190729.GA120258@gmail.com>
+In-Reply-To: <20190410190729.GA120258@gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 10 Apr 2019 14:57:46 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+Gfvj9G6s_UQTw6hE11gJb1edt3BXzpbDQdc_dpcHgag@mail.gmail.com>
+Message-ID: <CAGXu5j+Gfvj9G6s_UQTw6hE11gJb1edt3BXzpbDQdc_dpcHgag@mail.gmail.com>
+Subject: Re: crypto: Kernel memory overwrite attempt detected to spans
+ multiple pages
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Rik van Riel <riel@surriel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 10, 2019 at 8:11 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Both are in vfs.git#fixes.  Which way should that go - directly or
-> via linux-security.git?
+On Wed, Apr 10, 2019 at 12:07 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> That didn't answer my question.  My question is what is the purpose of this?  If
+> there was actual buffer overflow when __GFP_COMP isn't specified that would make
+> perfect sense, but AFAICS there isn't.  So why does hardened usercopy consider
+> it broken when __GFP_COMP isn't specified?
 
-Just do it directly. I doubt you can trigger them for securityfs and
-apparmourfs, since normal users have no way to remove any files from
-them, so the race with final unlink sounds fairly irrelevant in
-practice, no?
+The goal of CONFIG_HARDENED_USERCOPY_PAGESPAN was to detect copies
+across page boundaries in memory allocated by the page allocator.
+There appear to be enough cases of allocations that span pages but do
+not mark them with __GFP_COMP, so this logic hasn't proven useful in
+the real world (which is why no one should use the ..._PAGESPAN config
+in production). I'd like to get the kernel to the point where hardened
+usercopy can correctly do these checks (right now it's mainly only
+useful at checking for overflows in slub and slab), but it'll take
+time/focus for a while. No one has had time yet to track all of these
+down and fix them. (I defer to Laura and Rik on the design of the
+pagespan checks; they did the bulk of the work there.)
 
-               Linus
+Does that help explain it, or am I still missing your question?
+
+-- 
+Kees Cook
