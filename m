@@ -2,71 +2,70 @@ Return-Path: <SRS0=MFhz=SN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E066DC10F13
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF21C10F13
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF98F20818
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:07:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A5C420818
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:07:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oZ9wgp47"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X+MWK/nB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfDKRHO (ORCPT
+        id S1726860AbfDKRHb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Apr 2019 13:07:14 -0400
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:40062 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfDKRHN (ORCPT
+        Thu, 11 Apr 2019 13:07:31 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:39258 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbfDKRHb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Apr 2019 13:07:13 -0400
-Received: by mail-vk1-f194.google.com with SMTP id l17so1537510vke.7
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 10:07:12 -0700 (PDT)
+        Thu, 11 Apr 2019 13:07:31 -0400
+Received: by mail-vs1-f65.google.com with SMTP id g127so3913735vsd.6
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 10:07:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AbcJ3mmCOAVKf4I0SG7Bw7/SmKO1DKpNw86RlNMfNJg=;
-        b=oZ9wgp47WacWgWVPILd180QXmBlpI7VT2L9ZsJepWnhslekvHyUFmNBqvIw3Ji1idU
-         VRxCUXxa2Qj7pYMOHc6hi+hkbiJY0NtSfhiTCzlCkvj3RqgK9eVBa/WEPqRsDbhs5r2a
-         taivyVnQmAdHCPbqehX3usNhFGmP0CgqnAfng=
+        bh=xbVhfxmGF0URsGvyR2UkMeD56y0+dvwTkthYL3Uleek=;
+        b=X+MWK/nBnYRuHCbAkw7FFJUhs/b+TfhegS9ar0HHGiRvNTE24iJdfV77fs7sYwIhTZ
+         7AHrBpobPL1qYM+8x2quOZno9dt9UpqI2l8hmRsmDhe1fOBt6/7WS57SQLr7A8czn+6I
+         DKvlexZH15Z1OSRBWpQ565uNRY1P8uBJ+lh2w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AbcJ3mmCOAVKf4I0SG7Bw7/SmKO1DKpNw86RlNMfNJg=;
-        b=ZOHtTt670a2vpGR3XxE74neehDqeHIeu9TL4E6y9/2C/gco5/Audd95AtUqJSDIi6+
-         IbNxpIcMkU36slLXOBpMVcIAJAZLGvpXvadVnEXj/1xAha9rPliRJ1YzP+yeiBJJgjcE
-         F2rbMLaoj4DKKd9P8itLAagyZl6QO8KUz725Cy3hI1SSgtZgmWWlUOxld44P54YySxnZ
-         2cyxOfg+9dMMoKgc8m1jHtJcdXYIkd2ptSzbHK3TFbam3nP5StHp/NxTi+XqPtfpGfk/
-         OyRDfwmTq3ZgMkC5LZ2Atiwsl7+DMkz6IW5YYXdVkxjqchBb/TflCUTWevWL0o+jXG7H
-         Q6gg==
-X-Gm-Message-State: APjAAAUtghqJ4YqnEB1prpnT23oVHKxum+/AAgp8ctgwf7czHiDmHNLf
-        J6PIZkc+Tv6qFwWs5vEDRC5o3v3paOs=
-X-Google-Smtp-Source: APXvYqzHsK0lyrGqGqD21GDlRthQO9uqvncHW+9rnBgzoCQxGvpzha4JFlDmGVQ1aIztLSKOKLCjaw==
-X-Received: by 2002:a1f:cd2:: with SMTP id 201mr28090868vkm.11.1555002432055;
-        Thu, 11 Apr 2019 10:07:12 -0700 (PDT)
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
-        by smtp.gmail.com with ESMTPSA id p135sm11100437vkd.8.2019.04.11.10.07.11
+        bh=xbVhfxmGF0URsGvyR2UkMeD56y0+dvwTkthYL3Uleek=;
+        b=Ilodio8dbMbGWvKnequcu7q144AJ9fn9ngtpCoE3bQFuPgckC/OINdHsMrElqL4Ml+
+         7CujQ/nM5ENHu9AMvO1OoRtrsnHrAavV0U8sjyh/sqntBSevr5MDIkDrBiYnc7r+zgJR
+         KvKtb/7zaNkDKbOU4Y7L2M8aD0SifQyk1nlapBiwvdXmwbQhgVm8xOiecg10MSycDeuJ
+         3goPfQSLF1pBcbViMkkAo181QC8NXek3+uI3M3MqqgMskL17ULNs3NEh8DzM0iIHjdX2
+         qsX2Ir8CCcvIngvpCkx29xSG4OxvAsPGDaeJ5/LsbX0gE5QlP+oQPAWg7+I7wRpTNFeW
+         5gVg==
+X-Gm-Message-State: APjAAAWVEMA4Hg8Kycizm6lUJM+QXG35jphCBk0tlSiIbE1RD0IDZX6P
+        VkH8yBsE+9L6onxa/5j665obVqzZCbM=
+X-Google-Smtp-Source: APXvYqzFdVNcAG6EDDZM9U0Fq6Mqa7ZFjgRQNXbdc2Xr4FXNh2ElbT+roVrZvSHTUh0UBL4NoM7ueQ==
+X-Received: by 2002:a67:efdb:: with SMTP id s27mr13136464vsp.132.1555002449701;
+        Thu, 11 Apr 2019 10:07:29 -0700 (PDT)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id r63sm9918697vsc.15.2019.04.11.10.07.26
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Apr 2019 10:07:11 -0700 (PDT)
-Received: by mail-vs1-f50.google.com with SMTP id n4so3926714vsm.3
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 10:07:11 -0700 (PDT)
-X-Received: by 2002:a67:7816:: with SMTP id t22mr27463532vsc.115.1555001955557;
- Thu, 11 Apr 2019 09:59:15 -0700 (PDT)
+        Thu, 11 Apr 2019 10:07:26 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id x84so1538429vkd.1
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 10:07:26 -0700 (PDT)
+X-Received: by 2002:a1f:ab8d:: with SMTP id u135mr25497993vke.80.1555002445937;
+ Thu, 11 Apr 2019 10:07:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190410161612.18545-1-keescook@chromium.org> <20190410161612.18545-2-keescook@chromium.org>
- <CAK7LNASLdZKNNM-Gft5bfVxKOG=4Ak-LBMnjb2E-QR4q_5GmEQ@mail.gmail.com>
-In-Reply-To: <CAK7LNASLdZKNNM-Gft5bfVxKOG=4Ak-LBMnjb2E-QR4q_5GmEQ@mail.gmail.com>
+References: <20190410161612.18545-1-keescook@chromium.org> <20190410161612.18545-4-keescook@chromium.org>
+ <CAK7LNAQpm5Tz_Fo0rSq00emB7BLnfYB-+mwXd9GiMKAqKCfkrA@mail.gmail.com>
+In-Reply-To: <CAK7LNAQpm5Tz_Fo0rSq00emB7BLnfYB-+mwXd9GiMKAqKCfkrA@mail.gmail.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 11 Apr 2019 09:59:04 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+S1He+2sR+cvjV=2xAcCHQoRv942+OAEDprMmB=TF4Bw@mail.gmail.com>
-Message-ID: <CAGXu5j+S1He+2sR+cvjV=2xAcCHQoRv942+OAEDprMmB=TF4Bw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Kconfig: Create "kernel hardening" config area
+Date:   Thu, 11 Apr 2019 10:07:14 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJYPO7buixedop=8e_e+Pf-4nmkz-iS3EV5CXC0obKpdA@mail.gmail.com>
+Message-ID: <CAGXu5jJYPO7buixedop=8e_e+Pf-4nmkz-iS3EV5CXC0obKpdA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] kbuild: Implement Clang's stack initialization
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Alexander Potapenko <glider@google.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
@@ -89,74 +88,43 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 11, 2019 at 1:51 AM Masahiro Yamada
+On Thu, Apr 11, 2019 at 1:06 AM Masahiro Yamada
 <yamada.masahiro@socionext.com> wrote:
 >
 > On Thu, Apr 11, 2019 at 1:16 AM Kees Cook <keescook@chromium.org> wrote:
-> > diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-> > index 74271dba4f94..01874ef0f883 100644
-> > --- a/scripts/gcc-plugins/Kconfig
-> > +++ b/scripts/gcc-plugins/Kconfig
-> > @@ -13,10 +13,11 @@ config HAVE_GCC_PLUGINS
-> >           An arch should select this symbol if it supports building with
-> >           GCC plugins.
 > >
-> > -menuconfig GCC_PLUGINS
-> > -       bool "GCC plugins"
-> > +config GCC_PLUGINS
-> > +       bool
+> > CONFIG_INIT_STACK_ALL turns on stack initialization based on
+> > -ftrivial-auto-var-init in Clang builds and on
+> > -fplugin-arg-structleak_plugin-byref-all in GCC builds.
 >
+> Is CONFIG_INIT_STACK_ALL wired up to GCC plugin in any way?
+> I could not understand it from the code.
+
+No, it's only available under Clang. Clang is all-or-nothing, and the
+GCC plugin has a degrees up to "all passed by reference" which isn't
+truly "all" (i.e. Clang will initialize variables that aren't passed
+by reference and trigger a compiler warning about being
+uninitialized.)
+
+> >  choice
+> >         prompt "Initialize kernel stack variables at function entry"
+> >         depends on CC_HAS_AUTO_VAR_INIT || GCC_PLUGINS
+> > +       default INIT_STACK_ALL if CC_HAS_AUTO_VAR_INIT
 >
-> This will flatten the plugin config options.
->
-> If you want to keep the current menu structure, you can do:
->
-> menu "GCC plugins"
-> ...
-> endmenu
+> Why should this be enabled by default?
+> Ins't it a performance regression
+> since it inserts instructions in function prologue?
 
-Ah, excellent point. I'll fix this.
+There are very few users of Clang right now (mainly Android), so I
+figured it'd be nice to start Clang builds from a "protected by
+default" here, especially given Linus's thoughts on making this always
+happen[1]. I don't want to do it for GCC yet, since that would likely
+come as a huge surprise to everyone else. :) But I'm happy to change
+this, of course.
 
-> Another side-effect is Kbuild will descend into scripts/gcc-plugins/
-> even when no plugin is selected.
-> It is not a big build speed regression, though.
+-Kees
 
-I suspect the plugins Kconfig may disppear eventually with the options
-spread around other Kconfigs (since now the plugin capability is known
-at config time).
+[1] https://lkml.kernel.org/r/CA+55aFykZL+cSBJjBBts7ebEFfyGPdMzTmLSxKnT_29=j942dA@mail.gmail.com
 
-> > diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-> > new file mode 100644
-> > index 000000000000..8223a8ab1a12
-> > --- /dev/null
-> > +++ b/security/Kconfig.hardening
-> > @@ -0,0 +1,94 @@
-> > +menu "Kernel hardening options"
-> > +
-> > +config GCC_PLUGIN_STRUCTLEAK
-> > +       bool
-> > +       depends on GCC_PLUGIN_STRUCTLEAK_USER || GCC_PLUGIN_STRUCTLEAK_BYREF || GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
->
->
-> I think this 'depends on' is unnecessary.
-
-Okay, I'll drop it.
-
->
->
-> > +menu "Memory initialization"
-> > +
-> > +choice
-> > +       prompt "Initialize kernel stack variables at function entry"
-> > +       depends on CC_HAS_AUTO_VAR_INIT || GCC_PLUGINS
->
-> Nit:
-> CC_HAS_AUTO_VAR_INIT does not exist at this point.
-> I will be added by 3/3.
-
-Oops, yes, I split this chunk in the wrong place. I will fix it.
-
-Thanks!
-
--- 
+--
 Kees Cook
