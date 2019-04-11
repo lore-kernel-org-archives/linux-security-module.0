@@ -2,130 +2,106 @@ Return-Path: <SRS0=MFhz=SN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EBCC282CE
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 20:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F440C10F13
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 20:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 813E22073F
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 20:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 231F72075B
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 20:37:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VVGyhNv9"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Td0bi4W8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfDKUcx (ORCPT
+        id S1726812AbfDKUgz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Apr 2019 16:32:53 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:38429 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726876AbfDKUcs (ORCPT
+        Thu, 11 Apr 2019 16:36:55 -0400
+Received: from mail-vs1-f49.google.com ([209.85.217.49]:37714 "EHLO
+        mail-vs1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfDKUgx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Apr 2019 16:32:48 -0400
-Received: by mail-vk1-f193.google.com with SMTP id h71so1677588vkf.5
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 13:32:47 -0700 (PDT)
+        Thu, 11 Apr 2019 16:36:53 -0400
+Received: by mail-vs1-f49.google.com with SMTP id w13so4289988vsc.4
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 13:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Y9ffPpZWZSFDmzqrYJMKaghLmxEb8zkLpb7Gwn9WbSQ=;
-        b=VVGyhNv9UWJe+P4Vs1rphtpfW9mk7prj5YNPHiZvXGxx5PehFCsl/5HRpis6fQ3ad7
-         wBH/H6QveUhnARroIKDQPnwoI4PHL4gI508PXcMUxZmzJW7SBAe3JRP3RNosAiA94TOf
-         nO7RC7PJeGT8GKT0dn4jH1uXwysyOiO+nFvB0=
+        bh=LHThbCjbRRpzc8ii2OMzeBZem6XJJjKKjhIHY/St8eE=;
+        b=Td0bi4W8T8i8LXYBoXjDvAZ16eEig1BUUpw2DskS8xfM6eLIhUg8UuHqaJIrZOj0Z5
+         Z9X23/3OWlGennv2Ucci7a5DC88uXNwtiU3TQuf+6FQoc8KIa7IaSt8l1uicTO6X5G9S
+         L9BvpPxwMN6/OkVNChPSZIrA3XTQ+hRZ/9aRA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Y9ffPpZWZSFDmzqrYJMKaghLmxEb8zkLpb7Gwn9WbSQ=;
-        b=Hog9hzg+/S9aLBMeNKWiV7DyzR3qBv1s+UfYJrtsEgFGbQ5bRmaOAnfWA21Puk7AvZ
-         Ua3oTX0TNI0qPeognlEdg5xh/CX5s4fmjg0QxavjAKOZZPMebN+/gg9ig4/gGqHC2Ygs
-         ftaPxJbQjDwJr+sTYZo+63WtMAu8baq0eIp5FervImzJQmnCzLsEjPzztILY5DNKWd00
-         Q22ub8ytrrshkpGX976iLD0EJtR/a2WbSVYT02W07rWzjzYe4tUpJzMS9F29KCsRly0s
-         Da+Q+iUK5FE4lh6PolFC86TlscaPo3ldYIilawCsTwwamiR13cB96sG5cPvY4CWhqunq
-         7NZg==
-X-Gm-Message-State: APjAAAUEc/OSze6wIFi+P5ErTfy9qXSKjuyotWthX7k2/dVQmfkjPM+V
-        JkaKqAPEZ3g8/As2TPgZPuQfMZE1d/M=
-X-Google-Smtp-Source: APXvYqxSHVO97mTW5HwpiOMn92OymkDb3i8v2LireYbAUi4jmul/6nAxRTAptBMlUIWmtFTPyrteVg==
-X-Received: by 2002:a1f:2e07:: with SMTP id u7mr28278369vku.44.1555014766200;
-        Thu, 11 Apr 2019 13:32:46 -0700 (PDT)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id p135sm11355066vkd.8.2019.04.11.13.32.44
+        bh=LHThbCjbRRpzc8ii2OMzeBZem6XJJjKKjhIHY/St8eE=;
+        b=FxtTNXPoZxvR5X4r0KuGIZJlHjJsmcd4jEE14Qnige3ulCZAZsMnv6CabSZ2Zg85jv
+         eseBXDDUaOA4OQ/67DEFumL03PV2djhVobFvQO43wX0hN9c9Fi5ZXCXMuIlgQhov22dY
+         /7i8Uo5woTLpZaDFRS1CE/M3KW0domkNJzI72yTlKtEUxyFPktAH065GLMgOzMv3D7U8
+         GOdKBcUAP1yiKvLbf0JHG8J0C4IfKNKAS8T3MRBXUVazdT9y6Qy1FrNfHVfpd+UiuCHt
+         9MEQYXLXFDvrbGoyxkSoywBVfD/W0cQWsbv/YkprngPdvQSHEHFR3M9g8qv6wXYhR4c3
+         7bKQ==
+X-Gm-Message-State: APjAAAUZmr5QOIzuLXMJbPrAai0FUzFte6FmjnFkskN6PbvVvJK6boWn
+        hMQSxmJ9lG1G/8FUgNIQID8fIkZk0lU=
+X-Google-Smtp-Source: APXvYqwmaxzrMCRHIkFlWb8JeOJzbq2lb2zCj4jCDT+smerWUsdIiPtFXIFVmuNBxAJApYmTqFFaMQ==
+X-Received: by 2002:a05:6102:212:: with SMTP id z18mr30056241vsp.218.1555015011204;
+        Thu, 11 Apr 2019 13:36:51 -0700 (PDT)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id 110sm29029030uaq.7.2019.04.11.13.36.49
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Apr 2019 13:32:45 -0700 (PDT)
-Received: by mail-ua1-f44.google.com with SMTP id t15so2492928uao.5
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 13:32:44 -0700 (PDT)
-X-Received: by 2002:ab0:60cd:: with SMTP id g13mr27523621uam.85.1555014764346;
- Thu, 11 Apr 2019 13:32:44 -0700 (PDT)
+        Thu, 11 Apr 2019 13:36:50 -0700 (PDT)
+Received: by mail-vk1-f171.google.com with SMTP id x84so1681598vkd.1
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 13:36:49 -0700 (PDT)
+X-Received: by 2002:a1f:7d4e:: with SMTP id y75mr28798331vkc.53.1555015009326;
+ Thu, 11 Apr 2019 13:36:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190411192607.GD225654@gmail.com> <20190411192827.72551-1-ebiggers@kernel.org>
-In-Reply-To: <20190411192827.72551-1-ebiggers@kernel.org>
+References: <CAGXu5jL-5C1ZGZ1JgaNFqK-z1Pp1N1X8gD3_ysKTCa=omD+_VQ@mail.gmail.com>
+ <20190321175122.GA1587@sol.localdomain> <20190410031734.GB7140@sol.localdomain>
+ <CAGXu5j+SZ2+Zkc=Vp5CXQUHhiR9f_OOnca684JTRW3T0yXdaNQ@mail.gmail.com>
+ <20190410190729.GA120258@gmail.com> <CAGXu5j+Gfvj9G6s_UQTw6hE11gJb1edt3BXzpbDQdc_dpcHgag@mail.gmail.com>
+ <20190410231156.GB120258@gmail.com> <CAGXu5jKg+oN7yUY=N69U93afOVHBPgwz6Osf=eMDPfiwbzEqmw@mail.gmail.com>
+ <20190411175823.GC225654@gmail.com> <CAGXu5j+u3f3qUVkQO+zYLN7BDh3r7w-W3k3aa+qdAP11k7A1dw@mail.gmail.com>
+ <20190411192607.GD225654@gmail.com>
+In-Reply-To: <20190411192607.GD225654@gmail.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 11 Apr 2019 13:32:32 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJ8k7fP5Vb=ygmQ0B45GfrK2PeaV04bPWmcZ6Vb+swgyA@mail.gmail.com>
-Message-ID: <CAGXu5jJ8k7fP5Vb=ygmQ0B45GfrK2PeaV04bPWmcZ6Vb+swgyA@mail.gmail.com>
-Subject: Re: [PATCH] crypto: testmgr - allocate buffers with __GFP_COMP
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-crypto <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Kees Cook <keescook@chromium.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
+Date:   Thu, 11 Apr 2019 13:36:37 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jJo0jXhB5Xy0fryrYPy7zN2RhSsMb0r0DPQ91dNR0zPCA@mail.gmail.com>
+Message-ID: <CAGXu5jJo0jXhB5Xy0fryrYPy7zN2RhSsMb0r0DPQ91dNR0zPCA@mail.gmail.com>
+Subject: Re: crypto: Kernel memory overwrite attempt detected to spans
+ multiple pages
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>
+        Laura Abbott <labbott@redhat.com>,
+        Rik van Riel <riel@surriel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 11, 2019 at 12:31 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> This is needed so that CONFIG_HARDENED_USERCOPY_PAGESPAN=y doesn't
-> incorrectly report a buffer overflow when the destination of
-> copy_from_iter() spans the page boundary in the 2-page buffer.
->
-> Fixes: 3f47a03df6e8 ("crypto: testmgr - add testvec_config struct and helper functions")
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+On Thu, Apr 11, 2019 at 12:26 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> Well, I guess I'll just add __GFP_COMP so I at least don't get spammed with
+> useless bug reports.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Thanks, I appreciate it.
 
-> ---
->  crypto/testmgr.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-> index 0f6bfb6ce6a46..3522c0bed2492 100644
-> --- a/crypto/testmgr.c
-> +++ b/crypto/testmgr.c
-> @@ -156,7 +156,8 @@ static int __testmgr_alloc_buf(char *buf[XBUFSIZE], int order)
->         int i;
->
->         for (i = 0; i < XBUFSIZE; i++) {
-> -               buf[i] = (char *)__get_free_pages(GFP_KERNEL, order);
-> +               buf[i] = (char *)__get_free_pages(GFP_KERNEL | __GFP_COMP,
-> +                                                 order);
+> But I don't think it's in any way acceptable to change the semantics of the
+> kernel's page allocator but only under some obscure config option, don't
+> document it anywhere, ignore the known problems for years, say that the option
+> is broken anyway so it shouldn't be used, and have to exchange 15 emails to get
+> anything resembling an explanation.
 
-Is there a reason __GFP_COMP isn't automatically included in all page
-allocations? (Or rather, it seems like the exception is when things
-should NOT be considered part of the same allocation, so something
-like __GFP_SINGLE should exist?.)
-
--Kees
-
->                 if (!buf[i])
->                         goto err_free_buf;
->         }
-> --
-> 2.21.0.392.gf8f6787159e-goog
->
-
+I understand what you mean, yeah. I'm sorry I wasn't clear about it
+earlier. What do you think might help the situation as far as
+documentation?
 
 -- 
 Kees Cook
