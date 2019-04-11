@@ -2,101 +2,125 @@ Return-Path: <SRS0=MFhz=SN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D054C10F14
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 01:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B02C10F13
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 08:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C5222075B
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 01:37:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6366C2133D
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 08:00:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YFR+/Rl7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726628AbfDKBh5 (ORCPT
+        id S1726638AbfDKIAA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Apr 2019 21:37:57 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:56308 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfDKBh5 (ORCPT
+        Thu, 11 Apr 2019 04:00:00 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:36520 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbfDKIAA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Apr 2019 21:37:57 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1hEOes-0004xg-7E; Wed, 10 Apr 2019 21:37:42 -0400
-Message-ID: <e3efd9c01626aa3bed02f10f845533711864bb17.camel@surriel.com>
-Subject: Re: crypto: Kernel memory overwrite attempt detected to spans
- multiple pages
-From:   Rik van Riel <riel@surriel.com>
-To:     Eric Biggers <ebiggers@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Thu, 11 Apr 2019 04:00:00 -0400
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x3B7xn5O000531;
+        Thu, 11 Apr 2019 16:59:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x3B7xn5O000531
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1554969590;
+        bh=wT+gYNZ9zdUCbWMUcFqQyRo0k4Y6JKHnufjUb8FjAEk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YFR+/Rl7t0rJOjsYoT/3wRbz6Jp+iAtYM0CWEiJsJL4UQIfdyhMad47BaVL1P3HZ7
+         uv7GJxsNEafjIN7tZbb7JI3iplJhkXZ/gAMahFhUWdjUjeM+wKrk6Z+grf+zWP5WYy
+         AsBQnVMqSomTftNxRS/ZOkhYAFSjsL9wWhYTVEo6M05slHxv5VNA/Ayot61Q5UF4UQ
+         6TW3tlHAu83NuKhJHbg60WP3XkIV/4ztoBIQbMnIgpqDshIjhFZJ9uvLH5T0TIlQdV
+         Wr1ZiN3znpX/c/9j710/n0EALr0v2Z04Yx99Yn65AM7Zq6z0LHB4obxvWIw3888vOZ
+         duyfDci2nra4w==
+X-Nifty-SrcIP: [209.85.221.176]
+Received: by mail-vk1-f176.google.com with SMTP id w140so1174053vkd.3;
+        Thu, 11 Apr 2019 00:59:50 -0700 (PDT)
+X-Gm-Message-State: APjAAAULusWgtpHY/+BRBverIvypGrFPgIIDH0uIxpM20edqRaA/tsNF
+        rmqTwWbZcoIPJMbkAbCCFXfh+1WwCatXd6BrSRQ=
+X-Google-Smtp-Source: APXvYqyq8f1ZWs11co7m1C6NOvFDLzUxkTvlQYzeGy6ZIuN9obfe8+41v+8hsHgSTjvx0ObBJIMDI0zhowk0JHpCA8s=
+X-Received: by 2002:a1f:39c:: with SMTP id f28mr26765138vki.19.1554969588983;
+ Thu, 11 Apr 2019 00:59:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190410161612.18545-1-keescook@chromium.org>
+In-Reply-To: <20190410161612.18545-1-keescook@chromium.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 11 Apr 2019 16:59:13 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATj3_=4pW6R7ie_EXh_X3U+JNK_6Y6NLT8XjftmezAbFA@mail.gmail.com>
+Message-ID: <CAK7LNATj3_=4pW6R7ie_EXh_X3U+JNK_6Y6NLT8XjftmezAbFA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Kconfig: Refactor memory initialization hardening
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Alexander Potapenko <glider@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Alexander Popov <alpopov@ptsecurity.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Emese Revfy <re.emese@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>
-Date:   Wed, 10 Apr 2019 21:37:41 -0400
-In-Reply-To: <20190410231156.GB120258@gmail.com>
-References: <CAMuHMdWhx0-kspDyLOgTp+9udiBpkMHULSGyMg9uPPV16=FWQg@mail.gmail.com>
-         <20190319170911.GB202956@gmail.com> <20190320185719.GB180195@gmail.com>
-         <CAGXu5jL-5C1ZGZ1JgaNFqK-z1Pp1N1X8gD3_ysKTCa=omD+_VQ@mail.gmail.com>
-         <20190321175122.GA1587@sol.localdomain>
-         <20190410031734.GB7140@sol.localdomain>
-         <CAGXu5j+SZ2+Zkc=Vp5CXQUHhiR9f_OOnca684JTRW3T0yXdaNQ@mail.gmail.com>
-         <20190410190729.GA120258@gmail.com>
-         <CAGXu5j+Gfvj9G6s_UQTw6hE11gJb1edt3BXzpbDQdc_dpcHgag@mail.gmail.com>
-         <20190410231156.GB120258@gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-I0iYs52hNxEw6RSke2FZ"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
+        linux-security-module@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Apr 11, 2019 at 1:16 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> This is a proposed alternative for the memory initialization series,
+> which refactoring the existing gcc plugins into a separate Kconfig
+> file and collects all the related options together with some more
+> language to describe their differences. The last patch adds the
+> Clang auto init option, as done by Alexander Potapenko.
+>
+> Since there isn't really a good way to "select" with dependencies,
+> I've left out CONFIG_INIT_ALL_MEMORY for the moment...
+>
+> -Kees
+>
+> Kees Cook (3):
+>   Kconfig: Create "kernel hardening" config area
 
---=-I0iYs52hNxEw6RSke2FZ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I want to see "kconfig:" prefix in the subject line
+only for changed in scripts/kconfig/.
 
-On Wed, 2019-04-10 at 16:11 -0700, Eric Biggers wrote:
 
-> You've explained *what* it does again, but not *why*.  *Why* do you
-> want
-> hardened usercopy to detect copies across page boundaries, when there
-> is no
-> actual buffer overflow?
+>   kbuild: Move stackleak config to Kconfig.hardening
 
-When some subsystem in the kernel allocates multiple
-pages without _GFP_COMP, there is no way afterwards
-to detect exactly how many pages it allocated.
+This is not a change in the build system.
 
-In other words, there is no way to see how large the
-buffer is, nor whether the copy operation in question
-would overflow it.
+>   kbuild: Implement Clang's stack initialization
 
---=20
-All Rights Reversed.
 
---=-I0iYs52hNxEw6RSke2FZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+I think "gcc-plugin:", "security:' or something is better for the
+patch subjects, and this patch series is out of
+my maintenance area.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlyummUACgkQznnekoTE
-3oN5Ogf+JB1+Q62gA3I1CjbG9J1N9Yo0SopCRnifEmRD5OOuHcTnKtJk9cDddftF
-JckxLVhf0YXgLZa78GQhNW74dTw/XBgB1tE59q7eYI3srERNjFc8G9cjLMEu0aKS
-wpv4wOL0AB7k1eFPvXkDbQ7mnzxb7s8+wGoH4F6Shs4ls9At//2kofAvES14Cfn8
-c8lCTakBYcQ4lEhr7dxQ3v//NoD6/ZC6tacDN5A6mgcwM/VkdNgNskDVX25sTn1P
-Kvnes/43AAefodugVLVuXCtXhnBM1aJ1zn+J7VgyC5ZJAktdPSNixT6J7xlC16rZ
-U5Uf2fWdPx6UWgcs8agsp1NCrvu31w==
-=ewwZ
------END PGP SIGNATURE-----
 
---=-I0iYs52hNxEw6RSke2FZ--
 
+
+>  Makefile                    |   5 ++
+>  scripts/gcc-plugins/Kconfig | 121 +-------------------------
+>  security/Kconfig            |   2 +
+>  security/Kconfig.hardening  | 165 ++++++++++++++++++++++++++++++++++++
+>  4 files changed, 175 insertions(+), 118 deletions(-)
+>  create mode 100644 security/Kconfig.hardening
+>
+> --
+> 2.17.1
+>
+
+
+--
+Best Regards
+Masahiro Yamada
