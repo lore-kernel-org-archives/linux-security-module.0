@@ -2,314 +2,168 @@ Return-Path: <SRS0=MFhz=SN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F53EC10F13
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA9E0C10F13
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D2B2173C
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70A302173C
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:33:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DUxRl5u9"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dys1RAc3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbfDKSBm (ORCPT
+        id S1726661AbfDKSdV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Apr 2019 14:01:42 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33325 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726757AbfDKSB3 (ORCPT
+        Thu, 11 Apr 2019 14:33:21 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42786 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbfDKSdU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Apr 2019 14:01:29 -0400
-Received: by mail-pf1-f195.google.com with SMTP id h5so3837705pfo.0
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 11:01:28 -0700 (PDT)
+        Thu, 11 Apr 2019 14:33:20 -0400
+Received: by mail-vs1-f66.google.com with SMTP id f15so4067838vsk.9
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 11:33:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sgh5nTWzjTHRgFzbdPHxAju6sMEf7AAdMUWwjzGDW68=;
-        b=DUxRl5u9n71ywc3/DbRZE2AKdg5b61iCssBLWuqDywmnvnVZaNTMSm0rwtIRFjXWA7
-         IpYFxZJtKe5Gf2UvwtrHOn6hgPCuvT2ZLOpr00rOk2nZuDFjHaSK6XEjwYd/5niA8KZx
-         lvcUEzg5lI+4dl/1gS8ZdCm+uYVdN/pOmE1Oo=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ETxANaq/Qz0wt53H7RU5QOss/NV8wuC5HeoYqujoieY=;
+        b=Dys1RAc35JFj8zWrj0l62FRQghB7NP9SOfxts6YK8syiZCLqNpDAUG/vOkkS904C5R
+         U4IEA/OVQXpfpZo/c9a3ITJDCl/OCA7Q4ICIdj4Qaen233iTKgQdGdWHKStS/v6R9NGK
+         nRCiZpTKqHiHEBQ+hwOEXRcU5+Ad/a9bsS3Ho=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=sgh5nTWzjTHRgFzbdPHxAju6sMEf7AAdMUWwjzGDW68=;
-        b=ROWvPwMP61d9wHEDzIGBbkU0rQJjresXk23hnxwTq3yQMNZOXEedt0u6PycQ0apTRj
-         AWKMwv3SMuklSDH2aM6d5e3ARMZaRK9kg6GolNZTzU+C1bc0P+XT65n7JggXl/QSLDeI
-         ZBmCebC1ybMNmZvPq5zSLW9X8ILxrHtsLYJD3Gfgm7ogfyXGTPpNG/ePXVVwbhVa12+b
-         yUzpmh7924HkQERKLrzhR11e1eFXyQuQVcw7b7u+VuZMpFkDlqCW/C4LgE6UBzZcdMXS
-         jw3gztXX9K45AwMspnpeu0TnOmNjmvlTQLNi4zTiLBf8dd0tomaj+CNMQqROXQkHAN43
-         gmKA==
-X-Gm-Message-State: APjAAAUxOw6tuJGQrlm/mZkTpYSy1ttsh7tZHOY12ZwjCMm96rrg29hz
-        2Kz3mLPiW99Gul4J9Q9ZScGgGA==
-X-Google-Smtp-Source: APXvYqyYb6skeDLrB8fCrVcgL4OHjA00ZOvbgTUty0hnTQdhG88vGQlp2F84v4cgvaWbc00AkWY86Q==
-X-Received: by 2002:a62:5ec2:: with SMTP id s185mr50811342pfb.16.1555005687538;
-        Thu, 11 Apr 2019 11:01:27 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id e8sm85868958pfc.47.2019.04.11.11.01.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 11 Apr 2019 11:01:25 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ETxANaq/Qz0wt53H7RU5QOss/NV8wuC5HeoYqujoieY=;
+        b=tusJFgh+jiI90uk2dCXqBIOBOVePvJPDRi83RMT4KX5wfJ9knkukTFr4jAxwQJVYVR
+         EWGF6gdHAAOvMgRqphKww8kRLhXv46bY7JP+2YsxYqfmklNScG1ZWQuESIs9opnbkew0
+         zPeBCbgFFUPe0e3LlIYBobZLqqHe6n6CmP+H2oigwGtVoFDw+xqoyNUSEbARsyP8PvxW
+         VY0XdopV7Og0fw7FFn4gB8KpNc3Qfzc7zIP+KdasVfhy4CagfHcTeK/1YaWdzeXF8nX/
+         XlqxRsJIPpOP3hbJF95Qb8jchN1VSacHUFnt39MJlvVCxSN7G/ttXQBJF0wanzPJ18eV
+         RcHg==
+X-Gm-Message-State: APjAAAVbpX+Tv/jWWqMI7RvyM6BCJsuKVwNOsPjpEUBFcqacueQwckmA
+        F26ZEm2P6iz5PB0CYXIHmsO27kd6k88=
+X-Google-Smtp-Source: APXvYqyMOLli8k2F93byWY1Q2piRj1Hy6aUWmtzpJ2XCeGNuEhM7v6COoZ6ftU6zHza3cIR6wUH1kw==
+X-Received: by 2002:a67:bc0f:: with SMTP id t15mr2921199vsn.108.1555007598170;
+        Thu, 11 Apr 2019 11:33:18 -0700 (PDT)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id 2sm19987754vke.27.2019.04.11.11.33.16
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 11 Apr 2019 11:33:17 -0700 (PDT)
+Received: by mail-ua1-f51.google.com with SMTP id v7so2354341uak.13
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 11:33:16 -0700 (PDT)
+X-Received: by 2002:ab0:4eaa:: with SMTP id l42mr22631556uah.80.1555007596300;
+ Thu, 11 Apr 2019 11:33:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190319170911.GB202956@gmail.com> <20190320185719.GB180195@gmail.com>
+ <CAGXu5jL-5C1ZGZ1JgaNFqK-z1Pp1N1X8gD3_ysKTCa=omD+_VQ@mail.gmail.com>
+ <20190321175122.GA1587@sol.localdomain> <20190410031734.GB7140@sol.localdomain>
+ <CAGXu5j+SZ2+Zkc=Vp5CXQUHhiR9f_OOnca684JTRW3T0yXdaNQ@mail.gmail.com>
+ <20190410190729.GA120258@gmail.com> <CAGXu5j+Gfvj9G6s_UQTw6hE11gJb1edt3BXzpbDQdc_dpcHgag@mail.gmail.com>
+ <20190410231156.GB120258@gmail.com> <CAGXu5jKg+oN7yUY=N69U93afOVHBPgwz6Osf=eMDPfiwbzEqmw@mail.gmail.com>
+ <20190411175823.GC225654@gmail.com>
+In-Reply-To: <20190411175823.GC225654@gmail.com>
 From:   Kees Cook <keescook@chromium.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        Alexander Popov <alex.popov@linux.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
+Date:   Thu, 11 Apr 2019 11:33:04 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+u3f3qUVkQO+zYLN7BDh3r7w-W3k3aa+qdAP11k7A1dw@mail.gmail.com>
+Message-ID: <CAGXu5j+u3f3qUVkQO+zYLN7BDh3r7w-W3k3aa+qdAP11k7A1dw@mail.gmail.com>
+Subject: Re: crypto: Kernel memory overwrite attempt detected to spans
+ multiple pages
+To:     Eric Biggers <ebiggers@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Emese Revfy <re.emese@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        kernel-hardening@lists.openwall.com,
-        linux-security-module@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] security: Create "kernel hardening" config area
-Date:   Thu, 11 Apr 2019 11:01:15 -0700
-Message-Id: <20190411180117.27704-2-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190411180117.27704-1-keescook@chromium.org>
-References: <20190411180117.27704-1-keescook@chromium.org>
+        Rik van Riel <riel@surriel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Right now kernel hardening options are scattered around various Kconfig
-files. This can be a central place to collect these kinds of options
-going forward. This is initially populated with the memory initialization
-options from the gcc-plugins.
+On Thu, Apr 11, 2019 at 10:58 AM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Wed, Apr 10, 2019 at 04:27:28PM -0700, Kees Cook wrote:
+> > On Wed, Apr 10, 2019 at 4:12 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> > > You've explained *what* it does again, but not *why*.  *Why* do you want
+> > > hardened usercopy to detect copies across page boundaries, when there is no
+> > > actual buffer overflow?
+> >
+> > But that *is* how it determines it was a buffer overflow: "if you
+> > cross page boundaries (of a non-compound allocation), it *is* a buffer
+> > overflow". This assertion, however, is flawed because many contiguous
+> > allocations are not marked as being grouped together when it reality
+> > they were. It was an attempt to get allocation size information out of
+> > the page allocator, similar to how slab can be queries about
+> > allocation size. I'm open to improvements here, since it's obviously
+> > broken in its current state. :)
+> >
+> > --
+> > Kees Cook
+>
+> Well, I'm still at a loss as to whether I'm actually supposed to "fix" this by
+> adding __GFP_COMP, or whether you're saying the option is broken anyway so I
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- scripts/gcc-plugins/Kconfig | 74 +++--------------------------
- security/Kconfig            |  2 +
- security/Kconfig.hardening  | 93 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 102 insertions(+), 67 deletions(-)
- create mode 100644 security/Kconfig.hardening
+I would love it if you could fix it, yes.
 
-diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-index 74271dba4f94..84d471dea2b7 100644
---- a/scripts/gcc-plugins/Kconfig
-+++ b/scripts/gcc-plugins/Kconfig
-@@ -13,10 +13,11 @@ config HAVE_GCC_PLUGINS
- 	  An arch should select this symbol if it supports building with
- 	  GCC plugins.
- 
--menuconfig GCC_PLUGINS
--	bool "GCC plugins"
-+config GCC_PLUGINS
-+	bool
- 	depends on HAVE_GCC_PLUGINS
- 	depends on PLUGIN_HOSTCC != ""
-+	default y
- 	help
- 	  GCC plugins are loadable modules that provide extra features to the
- 	  compiler. They are useful for runtime instrumentation and static analysis.
-@@ -25,6 +26,8 @@ menuconfig GCC_PLUGINS
- 
- if GCC_PLUGINS
- 
-+menu "GCC plugins"
-+
- config GCC_PLUGIN_CYC_COMPLEXITY
- 	bool "Compute the cyclomatic complexity of a function" if EXPERT
- 	depends on !COMPILE_TEST	# too noisy
-@@ -66,71 +69,6 @@ config GCC_PLUGIN_LATENT_ENTROPY
- 	   * https://grsecurity.net/
- 	   * https://pax.grsecurity.net/
- 
--config GCC_PLUGIN_STRUCTLEAK
--	bool "Zero initialize stack variables"
--	help
--	  While the kernel is built with warnings enabled for any missed
--	  stack variable initializations, this warning is silenced for
--	  anything passed by reference to another function, under the
--	  occasionally misguided assumption that the function will do
--	  the initialization. As this regularly leads to exploitable
--	  flaws, this plugin is available to identify and zero-initialize
--	  such variables, depending on the chosen level of coverage.
--
--	  This plugin was originally ported from grsecurity/PaX. More
--	  information at:
--	   * https://grsecurity.net/
--	   * https://pax.grsecurity.net/
--
--choice
--	prompt "Coverage"
--	depends on GCC_PLUGIN_STRUCTLEAK
--	default GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
--	help
--	  This chooses the level of coverage over classes of potentially
--	  uninitialized variables. The selected class will be
--	  zero-initialized before use.
--
--	config GCC_PLUGIN_STRUCTLEAK_USER
--		bool "structs marked for userspace"
--		help
--		  Zero-initialize any structures on the stack containing
--		  a __user attribute. This can prevent some classes of
--		  uninitialized stack variable exploits and information
--		  exposures, like CVE-2013-2141:
--		  https://git.kernel.org/linus/b9e146d8eb3b9eca
--
--	config GCC_PLUGIN_STRUCTLEAK_BYREF
--		bool "structs passed by reference"
--		help
--		  Zero-initialize any structures on the stack that may
--		  be passed by reference and had not already been
--		  explicitly initialized. This can prevent most classes
--		  of uninitialized stack variable exploits and information
--		  exposures, like CVE-2017-1000410:
--		  https://git.kernel.org/linus/06e7e776ca4d3654
--
--	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
--		bool "anything passed by reference"
--		help
--		  Zero-initialize any stack variables that may be passed
--		  by reference and had not already been explicitly
--		  initialized. This is intended to eliminate all classes
--		  of uninitialized stack variable exploits and information
--		  exposures.
--
--endchoice
--
--config GCC_PLUGIN_STRUCTLEAK_VERBOSE
--	bool "Report forcefully initialized variables"
--	depends on GCC_PLUGIN_STRUCTLEAK
--	depends on !COMPILE_TEST	# too noisy
--	help
--	  This option will cause a warning to be printed each time the
--	  structleak plugin finds a variable it thinks needs to be
--	  initialized. Since not all existing initializers are detected
--	  by the plugin, this can produce false positive warnings.
--
- config GCC_PLUGIN_RANDSTRUCT
- 	bool "Randomize layout of sensitive kernel structures"
- 	select MODVERSIONS if MODULES
-@@ -226,4 +164,6 @@ config GCC_PLUGIN_ARM_SSP_PER_TASK
- 	bool
- 	depends on GCC_PLUGINS && ARM
- 
-+endmenu
-+
- endif
-diff --git a/security/Kconfig b/security/Kconfig
-index 1d6463fb1450..7aec8d094ce2 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -249,5 +249,7 @@ config LSM
- 
- 	  If unsure, leave this as the default.
- 
-+source "security/Kconfig.hardening"
-+
- endmenu
- 
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-new file mode 100644
-index 000000000000..01a119437dfc
---- /dev/null
-+++ b/security/Kconfig.hardening
-@@ -0,0 +1,93 @@
-+menu "Kernel hardening options"
-+
-+config GCC_PLUGIN_STRUCTLEAK
-+	bool
-+	help
-+	  While the kernel is built with warnings enabled for any missed
-+	  stack variable initializations, this warning is silenced for
-+	  anything passed by reference to another function, under the
-+	  occasionally misguided assumption that the function will do
-+	  the initialization. As this regularly leads to exploitable
-+	  flaws, this plugin is available to identify and zero-initialize
-+	  such variables, depending on the chosen level of coverage.
-+
-+	  This plugin was originally ported from grsecurity/PaX. More
-+	  information at:
-+	   * https://grsecurity.net/
-+	   * https://pax.grsecurity.net/
-+
-+menu "Memory initialization"
-+
-+choice
-+	prompt "Initialize kernel stack variables at function entry"
-+	depends on GCC_PLUGINS
-+	default INIT_STACK_NONE
-+	help
-+	  This option enables initialization of stack variables at
-+	  function entry time. This has the possibility to have the
-+	  greatest coverage (since all functions can have their
-+	  variables initialized), but the performance impact depends
-+	  on the function calling complexity of a given workload's
-+	  syscalls.
-+
-+	  This chooses the level of coverage over classes of potentially
-+	  uninitialized variables. The selected class will be
-+	  initialized before use in a function.
-+
-+	config INIT_STACK_NONE
-+		bool "no automatic initialization (weakest)"
-+		help
-+		  Disable automatic stack variable initialization.
-+		  This leaves the kernel vulnerable to the standard
-+		  classes of uninitialized stack variable exploits
-+		  and information exposures.
-+
-+	config GCC_PLUGIN_STRUCTLEAK_USER
-+		bool "zero-init structs marked for userspace (weak)"
-+		depends on GCC_PLUGINS
-+		select GCC_PLUGIN_STRUCTLEAK
-+		help
-+		  Zero-initialize any structures on the stack containing
-+		  a __user attribute. This can prevent some classes of
-+		  uninitialized stack variable exploits and information
-+		  exposures, like CVE-2013-2141:
-+		  https://git.kernel.org/linus/b9e146d8eb3b9eca
-+
-+	config GCC_PLUGIN_STRUCTLEAK_BYREF
-+		bool "zero-init structs passed by reference (strong)"
-+		depends on GCC_PLUGINS
-+		select GCC_PLUGIN_STRUCTLEAK
-+		help
-+		  Zero-initialize any structures on the stack that may
-+		  be passed by reference and had not already been
-+		  explicitly initialized. This can prevent most classes
-+		  of uninitialized stack variable exploits and information
-+		  exposures, like CVE-2017-1000410:
-+		  https://git.kernel.org/linus/06e7e776ca4d3654
-+
-+	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
-+		bool "zero-init anything passed by reference (very strong)"
-+		depends on GCC_PLUGINS
-+		select GCC_PLUGIN_STRUCTLEAK
-+		help
-+		  Zero-initialize any stack variables that may be passed
-+		  by reference and had not already been explicitly
-+		  initialized. This is intended to eliminate all classes
-+		  of uninitialized stack variable exploits and information
-+		  exposures.
-+
-+endchoice
-+
-+config GCC_PLUGIN_STRUCTLEAK_VERBOSE
-+	bool "Report forcefully initialized variables"
-+	depends on GCC_PLUGIN_STRUCTLEAK
-+	depends on !COMPILE_TEST	# too noisy
-+	help
-+	  This option will cause a warning to be printed each time the
-+	  structleak plugin finds a variable it thinks needs to be
-+	  initialized. Since not all existing initializers are detected
-+	  by the plugin, this can produce false positive warnings.
-+
-+endmenu
-+
-+endmenu
+> shouldn't bother doing anything.  IIUC, even the kernel stack is still not
+> marked __GFP_COMP, so copies to/from the stack can trigger this too, despite
+> this being reported over 2 years ago
+> (http://lkml.iu.edu/hypermail/linux/kernel/1701.2/01450.html)?
+> CONFIG_HARDENED_USERCOPY_PAGESPAN is even disabled in syzbot because you already
+> said the option is broken and should not be used.
+
+stacks are checked before PAGESPAN, so that particular problem should
+no longer be present since commit 7bff3c069973 ("mm/usercopy.c: no
+check page span for stack objects").
+
+> I worry that people will enable all the hardened usercopy options "because
+> security", then when the pagespan check breaks something they will disable all
+> hardened usercopy options, because they don't understand the individual options.
+> Providing broken options is actively harmful, IMO.
+
+It's behind EXPERT, default-n, and says:
+
+          When a multi-page allocation is done without __GFP_COMP,
+          hardened usercopy will reject attempts to copy it. There are,
+          however, several cases of this in the kernel that have not all
+          been removed. This config is intended to be used only while
+          trying to find such users.
+
+I'd rather leave it since it's still useful.
+
+Perhaps it could be switched to WARN by default and we reenable it in
+syzbot to improve its utility there?
+
+diff --git a/mm/usercopy.c b/mm/usercopy.c
+index 14faadcedd06..6e7e28fe062b 100644
+--- a/mm/usercopy.c
++++ b/mm/usercopy.c
+@@ -208,8 +208,13 @@ static inline void check_page_span(const void
+*ptr, unsigned long n,
+         */
+        is_reserved = PageReserved(page);
+        is_cma = is_migrate_cma_page(page);
+-       if (!is_reserved && !is_cma)
+-               usercopy_abort("spans multiple pages", NULL, to_user, 0, n);
++       if (!is_reserved && !is_cma) {
++               usercopy_warn("spans multiple pages without __GFP_COMP",
++                               NULL, to_user,
++                               (unsigned long)ptr & (unsigned long)PAGE_MASK,
++                               n);
++               return;
++       }
+
+        for (ptr += PAGE_SIZE; ptr <= end; ptr += PAGE_SIZE) {
+                page = virt_to_head_page(ptr);
+
+
 -- 
-2.17.1
-
+Kees Cook
