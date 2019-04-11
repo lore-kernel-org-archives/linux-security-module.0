@@ -2,54 +2,54 @@ Return-Path: <SRS0=MFhz=SN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E9BC10F13
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F53EC10F13
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF84F2173C
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21D2B2173C
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KTMfuuhG"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DUxRl5u9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfDKSBf (ORCPT
+        id S1726667AbfDKSBm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Apr 2019 14:01:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40092 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbfDKSB3 (ORCPT
+        Thu, 11 Apr 2019 14:01:42 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33325 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfDKSB3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Thu, 11 Apr 2019 14:01:29 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d31so3874473pgl.7
+Received: by mail-pf1-f195.google.com with SMTP id h5so3837705pfo.0
         for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 11:01:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5UVcalT/69dnaWJbEUHGU/qZgqR3xSJfEBAdMd0KbXI=;
-        b=KTMfuuhGOAqwrTLGNljYi6CKR+25P7Qtg0HJTwZl7qsUCJ7pVzOJAMuZilvmtF9cYV
-         PRZf1Nh2XYnUoC1vE1eByRDwxWPvOH4MOC1bBwuKqkUsdrM9zqXpwAhR0iplvRAFngZO
-         97eydYlVTVEXHobFBzWWFIR0rBhW4vy3vY9H8=
+        bh=sgh5nTWzjTHRgFzbdPHxAju6sMEf7AAdMUWwjzGDW68=;
+        b=DUxRl5u9n71ywc3/DbRZE2AKdg5b61iCssBLWuqDywmnvnVZaNTMSm0rwtIRFjXWA7
+         IpYFxZJtKe5Gf2UvwtrHOn6hgPCuvT2ZLOpr00rOk2nZuDFjHaSK6XEjwYd/5niA8KZx
+         lvcUEzg5lI+4dl/1gS8ZdCm+uYVdN/pOmE1Oo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5UVcalT/69dnaWJbEUHGU/qZgqR3xSJfEBAdMd0KbXI=;
-        b=eq+gHdObealtNBYW7d+srKh50gVyioCt4dvyA16OTFmnOxmBBdSTg2qYsqd0D3tDsB
-         ijh4iByiuuIYcKYFy5JCV9kc62kQyFxwh/n/riTRlTV1y4YmOyNyPQom6NMGRvM/XZ4m
-         rkMRaH//JXZln7RaAyGSX2CkKwrrI3AI/lGh9M2Y+mgwhMxqlUquIGv0+rufx07SJjx5
-         7fBUMsWkq8Xr71lw6dQMKZYUIPLvvFav8xooyB4KoHzOsTmzueeOxLuV//Cuon0zWgl/
-         YOHI9se1I64ywj1uM0tcCauyl0kmejSkoKiEpq3Rbtu9rbVM9GFEj25v6PWFT2Vn5I7B
-         LTkg==
-X-Gm-Message-State: APjAAAX8F6shMI1u76FiAnM9hHXU0crxTj/Og0XS5D1/kAt63Rd//TCr
-        hsOYnGSivrBO4VKB3tbqM41gKw==
-X-Google-Smtp-Source: APXvYqzZVkmGbK/kgGkS3PLIBPjakP/68xlKHi3tGLgH2Y/iUp33a3mnIFCATqNKZ2EmHv7KCzngQg==
-X-Received: by 2002:a63:2b4c:: with SMTP id r73mr49317982pgr.181.1555005688308;
-        Thu, 11 Apr 2019 11:01:28 -0700 (PDT)
+        bh=sgh5nTWzjTHRgFzbdPHxAju6sMEf7AAdMUWwjzGDW68=;
+        b=ROWvPwMP61d9wHEDzIGBbkU0rQJjresXk23hnxwTq3yQMNZOXEedt0u6PycQ0apTRj
+         AWKMwv3SMuklSDH2aM6d5e3ARMZaRK9kg6GolNZTzU+C1bc0P+XT65n7JggXl/QSLDeI
+         ZBmCebC1ybMNmZvPq5zSLW9X8ILxrHtsLYJD3Gfgm7ogfyXGTPpNG/ePXVVwbhVa12+b
+         yUzpmh7924HkQERKLrzhR11e1eFXyQuQVcw7b7u+VuZMpFkDlqCW/C4LgE6UBzZcdMXS
+         jw3gztXX9K45AwMspnpeu0TnOmNjmvlTQLNi4zTiLBf8dd0tomaj+CNMQqROXQkHAN43
+         gmKA==
+X-Gm-Message-State: APjAAAUxOw6tuJGQrlm/mZkTpYSy1ttsh7tZHOY12ZwjCMm96rrg29hz
+        2Kz3mLPiW99Gul4J9Q9ZScGgGA==
+X-Google-Smtp-Source: APXvYqyYb6skeDLrB8fCrVcgL4OHjA00ZOvbgTUty0hnTQdhG88vGQlp2F84v4cgvaWbc00AkWY86Q==
+X-Received: by 2002:a62:5ec2:: with SMTP id s185mr50811342pfb.16.1555005687538;
+        Thu, 11 Apr 2019 11:01:27 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id p189sm58691148pfg.184.2019.04.11.11.01.25
+        by smtp.gmail.com with ESMTPSA id e8sm85868958pfc.47.2019.04.11.11.01.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 11 Apr 2019 11:01:25 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -70,9 +70,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         kernel-hardening@lists.openwall.com,
         linux-security-module@vger.kernel.org,
         linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] security: Move stackleak config to Kconfig.hardening
-Date:   Thu, 11 Apr 2019 11:01:16 -0700
-Message-Id: <20190411180117.27704-3-keescook@chromium.org>
+Subject: [PATCH v2 1/3] security: Create "kernel hardening" config area
+Date:   Thu, 11 Apr 2019 11:01:15 -0700
+Message-Id: <20190411180117.27704-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190411180117.27704-1-keescook@chromium.org>
 References: <20190411180117.27704-1-keescook@chromium.org>
@@ -80,145 +80,236 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This moves the stackleak plugin options to Kconfig.hardening's memory
-initialization menu.
+Right now kernel hardening options are scattered around various Kconfig
+files. This can be a central place to collect these kinds of options
+going forward. This is initially populated with the memory initialization
+options from the gcc-plugins.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- scripts/gcc-plugins/Kconfig | 51 ---------------------------------
- security/Kconfig.hardening  | 57 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+), 51 deletions(-)
+ scripts/gcc-plugins/Kconfig | 74 +++--------------------------
+ security/Kconfig            |  2 +
+ security/Kconfig.hardening  | 93 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 102 insertions(+), 67 deletions(-)
+ create mode 100644 security/Kconfig.hardening
 
 diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-index 84d471dea2b7..e4cb58d5a73f 100644
+index 74271dba4f94..84d471dea2b7 100644
 --- a/scripts/gcc-plugins/Kconfig
 +++ b/scripts/gcc-plugins/Kconfig
-@@ -109,57 +109,6 @@ config GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
- 	  in structures.  This reduces the performance hit of RANDSTRUCT
- 	  at the cost of weakened randomization.
+@@ -13,10 +13,11 @@ config HAVE_GCC_PLUGINS
+ 	  An arch should select this symbol if it supports building with
+ 	  GCC plugins.
  
--config GCC_PLUGIN_STACKLEAK
--	bool "Erase the kernel stack before returning from syscalls"
--	depends on GCC_PLUGINS
--	depends on HAVE_ARCH_STACKLEAK
+-menuconfig GCC_PLUGINS
+-	bool "GCC plugins"
++config GCC_PLUGINS
++	bool
+ 	depends on HAVE_GCC_PLUGINS
+ 	depends on PLUGIN_HOSTCC != ""
++	default y
+ 	help
+ 	  GCC plugins are loadable modules that provide extra features to the
+ 	  compiler. They are useful for runtime instrumentation and static analysis.
+@@ -25,6 +26,8 @@ menuconfig GCC_PLUGINS
+ 
+ if GCC_PLUGINS
+ 
++menu "GCC plugins"
++
+ config GCC_PLUGIN_CYC_COMPLEXITY
+ 	bool "Compute the cyclomatic complexity of a function" if EXPERT
+ 	depends on !COMPILE_TEST	# too noisy
+@@ -66,71 +69,6 @@ config GCC_PLUGIN_LATENT_ENTROPY
+ 	   * https://grsecurity.net/
+ 	   * https://pax.grsecurity.net/
+ 
+-config GCC_PLUGIN_STRUCTLEAK
+-	bool "Zero initialize stack variables"
 -	help
--	  This option makes the kernel erase the kernel stack before
--	  returning from system calls. That reduces the information which
--	  kernel stack leak bugs can reveal and blocks some uninitialized
--	  stack variable attacks.
+-	  While the kernel is built with warnings enabled for any missed
+-	  stack variable initializations, this warning is silenced for
+-	  anything passed by reference to another function, under the
+-	  occasionally misguided assumption that the function will do
+-	  the initialization. As this regularly leads to exploitable
+-	  flaws, this plugin is available to identify and zero-initialize
+-	  such variables, depending on the chosen level of coverage.
 -
--	  The tradeoff is the performance impact: on a single CPU system kernel
--	  compilation sees a 1% slowdown, other systems and workloads may vary
--	  and you are advised to test this feature on your expected workload
--	  before deploying it.
--
--	  This plugin was ported from grsecurity/PaX. More information at:
+-	  This plugin was originally ported from grsecurity/PaX. More
+-	  information at:
 -	   * https://grsecurity.net/
 -	   * https://pax.grsecurity.net/
 -
--config STACKLEAK_TRACK_MIN_SIZE
--	int "Minimum stack frame size of functions tracked by STACKLEAK"
--	default 100
--	range 0 4096
--	depends on GCC_PLUGIN_STACKLEAK
+-choice
+-	prompt "Coverage"
+-	depends on GCC_PLUGIN_STRUCTLEAK
+-	default GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
 -	help
--	  The STACKLEAK gcc plugin instruments the kernel code for tracking
--	  the lowest border of the kernel stack (and for some other purposes).
--	  It inserts the stackleak_track_stack() call for the functions with
--	  a stack frame size greater than or equal to this parameter.
--	  If unsure, leave the default value 100.
+-	  This chooses the level of coverage over classes of potentially
+-	  uninitialized variables. The selected class will be
+-	  zero-initialized before use.
 -
--config STACKLEAK_METRICS
--	bool "Show STACKLEAK metrics in the /proc file system"
--	depends on GCC_PLUGIN_STACKLEAK
--	depends on PROC_FS
+-	config GCC_PLUGIN_STRUCTLEAK_USER
+-		bool "structs marked for userspace"
+-		help
+-		  Zero-initialize any structures on the stack containing
+-		  a __user attribute. This can prevent some classes of
+-		  uninitialized stack variable exploits and information
+-		  exposures, like CVE-2013-2141:
+-		  https://git.kernel.org/linus/b9e146d8eb3b9eca
+-
+-	config GCC_PLUGIN_STRUCTLEAK_BYREF
+-		bool "structs passed by reference"
+-		help
+-		  Zero-initialize any structures on the stack that may
+-		  be passed by reference and had not already been
+-		  explicitly initialized. This can prevent most classes
+-		  of uninitialized stack variable exploits and information
+-		  exposures, like CVE-2017-1000410:
+-		  https://git.kernel.org/linus/06e7e776ca4d3654
+-
+-	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+-		bool "anything passed by reference"
+-		help
+-		  Zero-initialize any stack variables that may be passed
+-		  by reference and had not already been explicitly
+-		  initialized. This is intended to eliminate all classes
+-		  of uninitialized stack variable exploits and information
+-		  exposures.
+-
+-endchoice
+-
+-config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+-	bool "Report forcefully initialized variables"
+-	depends on GCC_PLUGIN_STRUCTLEAK
+-	depends on !COMPILE_TEST	# too noisy
 -	help
--	  If this is set, STACKLEAK metrics for every task are available in
--	  the /proc file system. In particular, /proc/<pid>/stack_depth
--	  shows the maximum kernel stack consumption for the current and
--	  previous syscalls. Although this information is not precise, it
--	  can be useful for estimating the STACKLEAK performance impact for
--	  your workloads.
+-	  This option will cause a warning to be printed each time the
+-	  structleak plugin finds a variable it thinks needs to be
+-	  initialized. Since not all existing initializers are detected
+-	  by the plugin, this can produce false positive warnings.
 -
--config STACKLEAK_RUNTIME_DISABLE
--	bool "Allow runtime disabling of kernel stack erasing"
--	depends on GCC_PLUGIN_STACKLEAK
--	help
--	  This option provides 'stack_erasing' sysctl, which can be used in
--	  runtime to control kernel stack erasing for kernels built with
--	  CONFIG_GCC_PLUGIN_STACKLEAK.
--
- config GCC_PLUGIN_ARM_SSP_PER_TASK
+ config GCC_PLUGIN_RANDSTRUCT
+ 	bool "Randomize layout of sensitive kernel structures"
+ 	select MODVERSIONS if MODULES
+@@ -226,4 +164,6 @@ config GCC_PLUGIN_ARM_SSP_PER_TASK
  	bool
  	depends on GCC_PLUGINS && ARM
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index 01a119437dfc..3dd7a28c3822 100644
---- a/security/Kconfig.hardening
-+++ b/security/Kconfig.hardening
-@@ -88,6 +88,63 @@ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
- 	  initialized. Since not all existing initializers are detected
- 	  by the plugin, this can produce false positive warnings.
  
-+config GCC_PLUGIN_STACKLEAK
-+	bool "Poison kernel stack before returning from syscalls"
-+	depends on GCC_PLUGINS
-+	depends on HAVE_ARCH_STACKLEAK
++endmenu
++
+ endif
+diff --git a/security/Kconfig b/security/Kconfig
+index 1d6463fb1450..7aec8d094ce2 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -249,5 +249,7 @@ config LSM
+ 
+ 	  If unsure, leave this as the default.
+ 
++source "security/Kconfig.hardening"
++
+ endmenu
+ 
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+new file mode 100644
+index 000000000000..01a119437dfc
+--- /dev/null
++++ b/security/Kconfig.hardening
+@@ -0,0 +1,93 @@
++menu "Kernel hardening options"
++
++config GCC_PLUGIN_STRUCTLEAK
++	bool
 +	help
-+	  This option makes the kernel erase the kernel stack before
-+	  returning from system calls. This has the effect of leaving
-+	  the stack initialized to the poison value, which both reduces
-+	  the lifetime of any sensitive stack contents and reduces
-+	  potential for uninitialized stack variable exploits or information
-+	  exposures (it does not cover functions reaching the same stack
-+	  depth as prior functions during the same syscall). This blocks
-+	  most uninitialized stack variable attacks, with the performance
-+	  impact being driven by the depth of the stack usage, rather than
-+	  the function calling complexity.
++	  While the kernel is built with warnings enabled for any missed
++	  stack variable initializations, this warning is silenced for
++	  anything passed by reference to another function, under the
++	  occasionally misguided assumption that the function will do
++	  the initialization. As this regularly leads to exploitable
++	  flaws, this plugin is available to identify and zero-initialize
++	  such variables, depending on the chosen level of coverage.
 +
-+	  The performance impact on a single CPU system kernel compilation
-+	  sees a 1% slowdown, other systems and workloads may vary and you
-+	  are advised to test this feature on your expected workload before
-+	  deploying it.
-+
-+	  This plugin was ported from grsecurity/PaX. More information at:
++	  This plugin was originally ported from grsecurity/PaX. More
++	  information at:
 +	   * https://grsecurity.net/
 +	   * https://pax.grsecurity.net/
 +
-+config STACKLEAK_TRACK_MIN_SIZE
-+	int "Minimum stack frame size of functions tracked by STACKLEAK"
-+	default 100
-+	range 0 4096
-+	depends on GCC_PLUGIN_STACKLEAK
-+	help
-+	  The STACKLEAK gcc plugin instruments the kernel code for tracking
-+	  the lowest border of the kernel stack (and for some other purposes).
-+	  It inserts the stackleak_track_stack() call for the functions with
-+	  a stack frame size greater than or equal to this parameter.
-+	  If unsure, leave the default value 100.
++menu "Memory initialization"
 +
-+config STACKLEAK_METRICS
-+	bool "Show STACKLEAK metrics in the /proc file system"
-+	depends on GCC_PLUGIN_STACKLEAK
-+	depends on PROC_FS
++choice
++	prompt "Initialize kernel stack variables at function entry"
++	depends on GCC_PLUGINS
++	default INIT_STACK_NONE
 +	help
-+	  If this is set, STACKLEAK metrics for every task are available in
-+	  the /proc file system. In particular, /proc/<pid>/stack_depth
-+	  shows the maximum kernel stack consumption for the current and
-+	  previous syscalls. Although this information is not precise, it
-+	  can be useful for estimating the STACKLEAK performance impact for
-+	  your workloads.
++	  This option enables initialization of stack variables at
++	  function entry time. This has the possibility to have the
++	  greatest coverage (since all functions can have their
++	  variables initialized), but the performance impact depends
++	  on the function calling complexity of a given workload's
++	  syscalls.
 +
-+config STACKLEAK_RUNTIME_DISABLE
-+	bool "Allow runtime disabling of kernel stack erasing"
-+	depends on GCC_PLUGIN_STACKLEAK
++	  This chooses the level of coverage over classes of potentially
++	  uninitialized variables. The selected class will be
++	  initialized before use in a function.
++
++	config INIT_STACK_NONE
++		bool "no automatic initialization (weakest)"
++		help
++		  Disable automatic stack variable initialization.
++		  This leaves the kernel vulnerable to the standard
++		  classes of uninitialized stack variable exploits
++		  and information exposures.
++
++	config GCC_PLUGIN_STRUCTLEAK_USER
++		bool "zero-init structs marked for userspace (weak)"
++		depends on GCC_PLUGINS
++		select GCC_PLUGIN_STRUCTLEAK
++		help
++		  Zero-initialize any structures on the stack containing
++		  a __user attribute. This can prevent some classes of
++		  uninitialized stack variable exploits and information
++		  exposures, like CVE-2013-2141:
++		  https://git.kernel.org/linus/b9e146d8eb3b9eca
++
++	config GCC_PLUGIN_STRUCTLEAK_BYREF
++		bool "zero-init structs passed by reference (strong)"
++		depends on GCC_PLUGINS
++		select GCC_PLUGIN_STRUCTLEAK
++		help
++		  Zero-initialize any structures on the stack that may
++		  be passed by reference and had not already been
++		  explicitly initialized. This can prevent most classes
++		  of uninitialized stack variable exploits and information
++		  exposures, like CVE-2017-1000410:
++		  https://git.kernel.org/linus/06e7e776ca4d3654
++
++	config GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
++		bool "zero-init anything passed by reference (very strong)"
++		depends on GCC_PLUGINS
++		select GCC_PLUGIN_STRUCTLEAK
++		help
++		  Zero-initialize any stack variables that may be passed
++		  by reference and had not already been explicitly
++		  initialized. This is intended to eliminate all classes
++		  of uninitialized stack variable exploits and information
++		  exposures.
++
++endchoice
++
++config GCC_PLUGIN_STRUCTLEAK_VERBOSE
++	bool "Report forcefully initialized variables"
++	depends on GCC_PLUGIN_STRUCTLEAK
++	depends on !COMPILE_TEST	# too noisy
 +	help
-+	  This option provides 'stack_erasing' sysctl, which can be used in
-+	  runtime to control kernel stack erasing for kernels built with
-+	  CONFIG_GCC_PLUGIN_STACKLEAK.
++	  This option will cause a warning to be printed each time the
++	  structleak plugin finds a variable it thinks needs to be
++	  initialized. Since not all existing initializers are detected
++	  by the plugin, this can produce false positive warnings.
 +
- endmenu
- 
- endmenu
++endmenu
++
++endmenu
 -- 
 2.17.1
 
