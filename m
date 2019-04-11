@@ -4,127 +4,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF21C10F13
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69C29C10F14
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:30:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A5C420818
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:07:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CAFC2084D
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:30:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X+MWK/nB"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bpp+zLDM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfDKRHb (ORCPT
+        id S1726630AbfDKR37 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Apr 2019 13:07:31 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:39258 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbfDKRHb (ORCPT
+        Thu, 11 Apr 2019 13:29:59 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:40235 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbfDKR37 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Apr 2019 13:07:31 -0400
-Received: by mail-vs1-f65.google.com with SMTP id g127so3913735vsd.6
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 10:07:30 -0700 (PDT)
+        Thu, 11 Apr 2019 13:29:59 -0400
+Received: by mail-ua1-f68.google.com with SMTP id b8so2297009uaq.7
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 10:29:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xbVhfxmGF0URsGvyR2UkMeD56y0+dvwTkthYL3Uleek=;
-        b=X+MWK/nBnYRuHCbAkw7FFJUhs/b+TfhegS9ar0HHGiRvNTE24iJdfV77fs7sYwIhTZ
-         7AHrBpobPL1qYM+8x2quOZno9dt9UpqI2l8hmRsmDhe1fOBt6/7WS57SQLr7A8czn+6I
-         DKvlexZH15Z1OSRBWpQ565uNRY1P8uBJ+lh2w=
+        bh=bU95QZrmnFmUeLQob16tlouK5Bd9LJa/CSBxkao+cvU=;
+        b=bpp+zLDM4zmlKvaOodNvnWi03BrsCbOglVq4PIviVJvoUQYGOMnmsRLm/GOjbh9Yjp
+         R4Tu35VOzb5Tg8nWNvMfb52tpZ1TSnvqx5jgafWwsNd6aibu/T5LjztxvtboMBiMe8Lc
+         hGY2O/UPOkXRVknjTaJ6A1xh+ZcqsdLtIi1To=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xbVhfxmGF0URsGvyR2UkMeD56y0+dvwTkthYL3Uleek=;
-        b=Ilodio8dbMbGWvKnequcu7q144AJ9fn9ngtpCoE3bQFuPgckC/OINdHsMrElqL4Ml+
-         7CujQ/nM5ENHu9AMvO1OoRtrsnHrAavV0U8sjyh/sqntBSevr5MDIkDrBiYnc7r+zgJR
-         KvKtb/7zaNkDKbOU4Y7L2M8aD0SifQyk1nlapBiwvdXmwbQhgVm8xOiecg10MSycDeuJ
-         3goPfQSLF1pBcbViMkkAo181QC8NXek3+uI3M3MqqgMskL17ULNs3NEh8DzM0iIHjdX2
-         qsX2Ir8CCcvIngvpCkx29xSG4OxvAsPGDaeJ5/LsbX0gE5QlP+oQPAWg7+I7wRpTNFeW
-         5gVg==
-X-Gm-Message-State: APjAAAWVEMA4Hg8Kycizm6lUJM+QXG35jphCBk0tlSiIbE1RD0IDZX6P
-        VkH8yBsE+9L6onxa/5j665obVqzZCbM=
-X-Google-Smtp-Source: APXvYqzFdVNcAG6EDDZM9U0Fq6Mqa7ZFjgRQNXbdc2Xr4FXNh2ElbT+roVrZvSHTUh0UBL4NoM7ueQ==
-X-Received: by 2002:a67:efdb:: with SMTP id s27mr13136464vsp.132.1555002449701;
-        Thu, 11 Apr 2019 10:07:29 -0700 (PDT)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
-        by smtp.gmail.com with ESMTPSA id r63sm9918697vsc.15.2019.04.11.10.07.26
+        bh=bU95QZrmnFmUeLQob16tlouK5Bd9LJa/CSBxkao+cvU=;
+        b=bNtvLDbK5cu+5fQ7aor6xDcsHOVxsXEdME0aJloHh5TZJGojfv2WoxdYiS6UDexBbT
+         VR1nXg4orVfS7qI73UAkqJVbBIYYWHG6RY25fR1ZSevl5K/h+lAne2DRaA7TNOqt3bUs
+         rx+WZ5KVAroR1Ov7Oy6LXLsx0OEihh5tFz6USUPSEBGNPEH6EDoQR5smgSC1XqSJns/s
+         yX5k9WnwY6n+H9pKShiIs4I57eY2/EYQfnV6/mSQ8BMPisoZKDxiD7Er3rwnZF3ouMS3
+         oMs6Vt5rqa/Tn4RIVH71oDaJwhEfMZku0RYSoYtafrSuwBsZ7lI6YwUtEbXmeMYlhbTv
+         oVmw==
+X-Gm-Message-State: APjAAAWJpb3A5acfB7zUg6f+tvDwyJJsTKRu5CONTqMNGa/QGtI0Fe/g
+        yF3nCgabL9O6uPCOds/F2s5KJIzKOSI=
+X-Google-Smtp-Source: APXvYqwg+NgGUvPjELOKx7FLi7YLl89A6y0Ci3g8lR0CUDCuZHLArvRxEHtQxzU9ueuOhWE3ljglag==
+X-Received: by 2002:ab0:208d:: with SMTP id r13mr24885621uak.128.1555003797308;
+        Thu, 11 Apr 2019 10:29:57 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id w69sm7280175vsc.8.2019.04.11.10.29.55
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Apr 2019 10:07:26 -0700 (PDT)
-Received: by mail-vk1-f179.google.com with SMTP id x84so1538429vkd.1
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 10:07:26 -0700 (PDT)
-X-Received: by 2002:a1f:ab8d:: with SMTP id u135mr25497993vke.80.1555002445937;
- Thu, 11 Apr 2019 10:07:25 -0700 (PDT)
+        Thu, 11 Apr 2019 10:29:56 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id p13so2287466uaa.11
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 10:29:55 -0700 (PDT)
+X-Received: by 2002:ab0:2f8:: with SMTP id 111mr27717490uah.123.1555003795252;
+ Thu, 11 Apr 2019 10:29:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190410161612.18545-1-keescook@chromium.org> <20190410161612.18545-4-keescook@chromium.org>
- <CAK7LNAQpm5Tz_Fo0rSq00emB7BLnfYB-+mwXd9GiMKAqKCfkrA@mail.gmail.com>
-In-Reply-To: <CAK7LNAQpm5Tz_Fo0rSq00emB7BLnfYB-+mwXd9GiMKAqKCfkrA@mail.gmail.com>
+References: <20190410131726.250295-1-glider@google.com> <20190410131726.250295-3-glider@google.com>
+ <CAGXu5jJt3uNWVXDD=GR6oVwn=g7O=Jcz9sxai5q10X9yyR56XA@mail.gmail.com> <CAG_fn=Vkod40bxxP8PU-+zXs2u4arqAB_bYxqei1bb_tgsg8GA@mail.gmail.com>
+In-Reply-To: <CAG_fn=Vkod40bxxP8PU-+zXs2u4arqAB_bYxqei1bb_tgsg8GA@mail.gmail.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 11 Apr 2019 10:07:14 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJYPO7buixedop=8e_e+Pf-4nmkz-iS3EV5CXC0obKpdA@mail.gmail.com>
-Message-ID: <CAGXu5jJYPO7buixedop=8e_e+Pf-4nmkz-iS3EV5CXC0obKpdA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] kbuild: Implement Clang's stack initialization
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Alexander Potapenko <glider@google.com>,
+Date:   Thu, 11 Apr 2019 10:29:43 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jLEGmMVTJEJHFM3z0EVBAryK3x8Uz4K+mMaOJhfuL9Acg@mail.gmail.com>
+Message-ID: <CAGXu5jLEGmMVTJEJHFM3z0EVBAryK3x8Uz4K+mMaOJhfuL9Acg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] initmem: introduce CONFIG_INIT_ALL_HEAP
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Kostya Serebryany <kcc@google.com>,
         Dmitry Vyukov <dvyukov@google.com>,
         Sandeep Patil <sspatil@android.com>,
         Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Alexander Popov <alpopov@ptsecurity.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Emese Revfy <re.emese@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
         Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 11, 2019 at 1:06 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Thu, Apr 11, 2019 at 1:39 AM Alexander Potapenko <glider@google.com> wrote:
 >
-> On Thu, Apr 11, 2019 at 1:16 AM Kees Cook <keescook@chromium.org> wrote:
+> On Wed, Apr 10, 2019 at 6:09 PM Kees Cook <keescook@chromium.org> wrote:
 > >
-> > CONFIG_INIT_STACK_ALL turns on stack initialization based on
-> > -ftrivial-auto-var-init in Clang builds and on
-> > -fplugin-arg-structleak_plugin-byref-all in GCC builds.
+> > On Wed, Apr 10, 2019 at 6:18 AM Alexander Potapenko <glider@google.com> wrote:
+> > >
+> > > This config option adds the possibility to initialize newly allocated
+> > > pages and heap objects with a 0xAA pattern.
+> > > There's already a number of places where allocations are initialized
+> > > based on the presence of __GFP_ZERO flag. We just change this code so
+> > > that under CONFIG_INIT_ALL_HEAP these allocations are always initialized
+> > > with either 0x00 or 0xAA depending on the __GFP_ZERO.
+> >
+> > Why not just make __GFP_ZERO unconditional instead? This looks like
+> > it'd be simpler and not need arch-specific implementation?
 >
-> Is CONFIG_INIT_STACK_ALL wired up to GCC plugin in any way?
-> I could not understand it from the code.
+> Right, but it would mean we can only initialize with 0x00 pattern.
+> I believe that for testing purposes a nonzero pattern is better,
 
-No, it's only available under Clang. Clang is all-or-nothing, and the
-GCC plugin has a degrees up to "all passed by reference" which isn't
-truly "all" (i.e. Clang will initialize variables that aren't passed
-by reference and trigger a compiler warning about being
-uninitialized.)
+Can it be implemented in a way that isn't arch-specific? I'd really
+like to have a general solution that works immediately for all
+architectures. (Can't everything just use a memset?)
 
-> >  choice
-> >         prompt "Initialize kernel stack variables at function entry"
-> >         depends on CC_HAS_AUTO_VAR_INIT || GCC_PLUGINS
-> > +       default INIT_STACK_ALL if CC_HAS_AUTO_VAR_INIT
->
-> Why should this be enabled by default?
-> Ins't it a performance regression
-> since it inserts instructions in function prologue?
+> because it'll not only assure the execution is deterministic, but will
+> also uncover logic bugs earlier (see the discussion at
+> https://reviews.llvm.org/D54604?id=174471)
+> For hardening purposes the pattern shouldn't matter much.
 
-There are very few users of Clang right now (mainly Android), so I
-figured it'd be nice to start Clang builds from a "protected by
-default" here, especially given Linus's thoughts on making this always
-happen[1]. I don't want to do it for GCC yet, since that would likely
-come as a huge surprise to everyone else. :) But I'm happy to change
-this, of course.
+So, for hardening, it actually does matter but only in certain cases.
+On 64-bit, a 0xAA... pointer will have the high bit set, so it'll land
+in the non-canonical memory range, which is good. For 32-bit, 0xAA...
+will be in userspace (TASK_SIZE is 0xC0000000). In the above URL I see
+now that 32-bit pointer init gets 0x000000AA, which is good, but for
+heap init, types aren't known. So perhaps use 0x000000AA for 32-bit
+and 0xAA... for 64-bit heap init? (0xAA... has stronger properties
+since there have been NULL page mapping bypass flaws in the (recent!)
+past, so I could see keeping that for 64-bit instead of just using
+0-init everywhere.)
+
+> If you think arch-specific code is too much of a trouble, we could
+> implement clear_page_pattern() using memset() on every architecture,
+> but allow the user to choose between slow (0xAA) and production (0x00)
+> modes.
+
+How about 32-bit use 0x00, 64-bit use 0xAA (and provide per-arch
+speed-ups with a generic "slow" version for all the other
+architectures?)
 
 -Kees
 
-[1] https://lkml.kernel.org/r/CA+55aFykZL+cSBJjBBts7ebEFfyGPdMzTmLSxKnT_29=j942dA@mail.gmail.com
-
---
+-- 
 Kees Cook
