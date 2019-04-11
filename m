@@ -2,121 +2,137 @@ Return-Path: <SRS0=MFhz=SN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A0AC10F13
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 08:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A445C282CE
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 08:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A08521841
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 08:39:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C3642184B
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 08:51:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DKE/Eny0"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="d/RYmzN6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbfDKIje (ORCPT
+        id S1726256AbfDKIvG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Apr 2019 04:39:34 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:38795 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbfDKIjd (ORCPT
+        Thu, 11 Apr 2019 04:51:06 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:58321 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727022AbfDKIvE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Apr 2019 04:39:33 -0400
-Received: by mail-vk1-f196.google.com with SMTP id h71so1193513vkf.5
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 01:39:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=H+mNETsQSuKlK2zprS5n1cDbQ8ByYlEoMREK54RdrAs=;
-        b=DKE/Eny0btxPrxJaCsUr/VohgFIUe0du5ACOIrCQRCir0UB1qQyeq41qbUOWybpqUu
-         HSs0fiXUg1fJ1uUQWHb5zMvSH/WpU/tt7FsVBsOhjTPfU5mrVamCNtTy07OkFOAFdtSJ
-         RKnLVBacHRBoDFIs6Klc1a++b8sq90t64kDcqmflBEu4fDgKytDyxZR8OKjLKuZusOJQ
-         1+P+NynxFuIW60XrucSPrWD6FicxdKlyKqQmmx52nShZZnJCiP8rLkvI2q5CCandeuy4
-         2pMfI2nSzin0bjMzz+nWmkxlDI+UPatmUhQnhlSpKoGa0xXu6HKjeQ+dfUt5rOwwigQS
-         d35Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=H+mNETsQSuKlK2zprS5n1cDbQ8ByYlEoMREK54RdrAs=;
-        b=Ow4zfDBJA5n/SlFGGtQYO1kyRZZgGac9mFXrG4QVSPOQjPSLrjOKbN++NUpMu1j3DM
-         6V2/wq9aERoPMFln7KecORr3WmiIfO/W6ERAMN87WesU5ZNuvWIk6Fb9/rVtNTY3dfZz
-         sb7vXXBGlFuB2tEkVEBXyi+P8Ja5071MnxaBfgCBYTBzeq6gv1x39JdCYLWTrUvGwsGG
-         5vbP5tr+3P3RmLosbc5QWtf46pup2kT6auS3qMlUdIimzE5AGV3IrjBJibtONr+kGW5m
-         RSXPZ60LIO0do4XQopnWYNnvmiSheBiuNeyKKXVSAW+0IvgM+ednJyTGbhFy4wx9/phc
-         7uZQ==
-X-Gm-Message-State: APjAAAXqmL0efP/iT9Pc06u9MBe/HRUoOfqZkhNbWXaYTZdMbIg2c8o3
-        uWLlCoWc50XfXxHm8W27jRE9xmiYXNEHjP+x9kbhgQ==
-X-Google-Smtp-Source: APXvYqwQKGHe3SMF+GEc1x3iRT589EsVL8/HAqOSA+xK5goTbev7jYb0uXyhu8May2Ay3PafECaM8PolyXJnYLbd4UY=
-X-Received: by 2002:ac5:c2cb:: with SMTP id i11mr26261054vkk.51.1554971972532;
- Thu, 11 Apr 2019 01:39:32 -0700 (PDT)
+        Thu, 11 Apr 2019 04:51:04 -0400
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x3B8okCr023453;
+        Thu, 11 Apr 2019 17:50:47 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x3B8okCr023453
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1554972647;
+        bh=F5UI1sOsF59TtjXlusyUA329j5S/sWWuTeBpDyNH8dk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=d/RYmzN6ST5N/YsSzVgPcQzH3cyMqb8TuE5NCl98a5Pywu8I2QhoF1yIJsnDNWvN3
+         s1eZAkZj6g1zGj6dTA8hu8KD0QUKzqDE5Bo0smp5Ir6SOhAIDz560UGV/0LNSUDdAv
+         kigIIlBa0f3Bk4Dr/DZo/RLNdOJOouhRLFm+lHWi9BPPhCTLO8UKyycuc2DYAQvCHN
+         L9gu0/jcZ/P6gzqEOLh/KG9vmLuMIztEqyiqaDmTJ9823wo6P+Q4RMTlNLrPNf84D3
+         BiPs80CJ79s/xtTfvLBtKnAvhvPJn3QHCT5WTPDa9Yrr9HrE3YcB8NhVqzTnSGnWM1
+         zEYA7NEhb0V4Q==
+X-Nifty-SrcIP: [209.85.221.177]
+Received: by mail-vk1-f177.google.com with SMTP id s80so1197332vke.6;
+        Thu, 11 Apr 2019 01:50:47 -0700 (PDT)
+X-Gm-Message-State: APjAAAUZTjqQ14TMhFukVZB2QSpWcw0Ygt7KjvpqHW8LxqAWVYg+Rnn0
+        ilh8ofUSzwQUIiYr3AegKvKvqQQrAYBiUBKwpic=
+X-Google-Smtp-Source: APXvYqzwcW+9zJIIvdmhRqXhqVxtLBKGueKPNN9kaKRMJ559bumruRRn0ZJt5oR6zgA2KIvhg+Gtre24QbvHZQdMfc8=
+X-Received: by 2002:a1f:793:: with SMTP id 141mr14474270vkh.31.1554972646242;
+ Thu, 11 Apr 2019 01:50:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190410131726.250295-1-glider@google.com> <20190410131726.250295-3-glider@google.com>
- <CAGXu5jJt3uNWVXDD=GR6oVwn=g7O=Jcz9sxai5q10X9yyR56XA@mail.gmail.com>
-In-Reply-To: <CAGXu5jJt3uNWVXDD=GR6oVwn=g7O=Jcz9sxai5q10X9yyR56XA@mail.gmail.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Thu, 11 Apr 2019 10:39:20 +0200
-Message-ID: <CAG_fn=Vkod40bxxP8PU-+zXs2u4arqAB_bYxqei1bb_tgsg8GA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] initmem: introduce CONFIG_INIT_ALL_HEAP
+References: <20190410161612.18545-1-keescook@chromium.org> <20190410161612.18545-2-keescook@chromium.org>
+In-Reply-To: <20190410161612.18545-2-keescook@chromium.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 11 Apr 2019 17:50:10 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASLdZKNNM-Gft5bfVxKOG=4Ak-LBMnjb2E-QR4q_5GmEQ@mail.gmail.com>
+Message-ID: <CAK7LNASLdZKNNM-Gft5bfVxKOG=4Ak-LBMnjb2E-QR4q_5GmEQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] Kconfig: Create "kernel hardening" config area
 To:     Kees Cook <keescook@chromium.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
+Cc:     Alexander Potapenko <glider@google.com>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Kostya Serebryany <kcc@google.com>,
         Dmitry Vyukov <dvyukov@google.com>,
         Sandeep Patil <sspatil@android.com>,
         Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Alexander Popov <alpopov@ptsecurity.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Emese Revfy <re.emese@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
         Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 10, 2019 at 6:09 PM Kees Cook <keescook@chromium.org> wrote:
+On Thu, Apr 11, 2019 at 1:16 AM Kees Cook <keescook@chromium.org> wrote:
+> diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+> index 74271dba4f94..01874ef0f883 100644
+> --- a/scripts/gcc-plugins/Kconfig
+> +++ b/scripts/gcc-plugins/Kconfig
+> @@ -13,10 +13,11 @@ config HAVE_GCC_PLUGINS
+>           An arch should select this symbol if it supports building with
+>           GCC plugins.
 >
-> On Wed, Apr 10, 2019 at 6:18 AM Alexander Potapenko <glider@google.com> w=
-rote:
-> >
-> > This config option adds the possibility to initialize newly allocated
-> > pages and heap objects with a 0xAA pattern.
-> > There's already a number of places where allocations are initialized
-> > based on the presence of __GFP_ZERO flag. We just change this code so
-> > that under CONFIG_INIT_ALL_HEAP these allocations are always initialize=
-d
-> > with either 0x00 or 0xAA depending on the __GFP_ZERO.
->
-> Why not just make __GFP_ZERO unconditional instead? This looks like
-> it'd be simpler and not need arch-specific implementation?
-Right, but it would mean we can only initialize with 0x00 pattern.
-I believe that for testing purposes a nonzero pattern is better,
-because it'll not only assure the execution is deterministic, but will
-also uncover logic bugs earlier (see the discussion at
-https://reviews.llvm.org/D54604?id=3D174471)
-For hardening purposes the pattern shouldn't matter much.
+> -menuconfig GCC_PLUGINS
+> -       bool "GCC plugins"
+> +config GCC_PLUGINS
+> +       bool
 
-If you think arch-specific code is too much of a trouble, we could
-implement clear_page_pattern() using memset() on every architecture,
-but allow the user to choose between slow (0xAA) and production (0x00)
-modes.
-> --
-> Kees Cook
+
+This will flatten the plugin config options.
+
+If you want to keep the current menu structure, you can do:
+
+menu "GCC plugins"
+...
+endmenu
 
 
 
---=20
-Alexander Potapenko
-Software Engineer
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+Another side-effect is Kbuild will descend into scripts/gcc-plugins/
+even when no plugin is selected.
+It is not a big build speed regression, though.
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+
+
+> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+> new file mode 100644
+> index 000000000000..8223a8ab1a12
+> --- /dev/null
+> +++ b/security/Kconfig.hardening
+> @@ -0,0 +1,94 @@
+> +menu "Kernel hardening options"
+> +
+> +config GCC_PLUGIN_STRUCTLEAK
+> +       bool
+> +       depends on GCC_PLUGIN_STRUCTLEAK_USER || GCC_PLUGIN_STRUCTLEAK_BYREF || GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+
+
+I think this 'depends on' is unnecessary.
+
+
+> +menu "Memory initialization"
+> +
+> +choice
+> +       prompt "Initialize kernel stack variables at function entry"
+> +       depends on CC_HAS_AUTO_VAR_INIT || GCC_PLUGINS
+
+Nit:
+CC_HAS_AUTO_VAR_INIT does not exist at this point.
+I will be added by 3/3.
+
+
+-- 
+Best Regards
+Masahiro Yamada
