@@ -2,52 +2,54 @@ Return-Path: <SRS0=MFhz=SN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E44D1C10F13
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F8BC10F13
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B708320850
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7746F2146F
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DEWG5Ord"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FJxJDmdU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfDKSB1 (ORCPT
+        id S1726699AbfDKSB1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Thu, 11 Apr 2019 14:01:27 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44911 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726577AbfDKSB0 (ORCPT
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:32835 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbfDKSB1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Apr 2019 14:01:26 -0400
-Received: by mail-pf1-f193.google.com with SMTP id y13so3810999pfm.11
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 11:01:26 -0700 (PDT)
+        Thu, 11 Apr 2019 14:01:27 -0400
+Received: by mail-pg1-f195.google.com with SMTP id k19so3892598pgh.0
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 11:01:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=LnXY2JQ+AvT2TeKIyUF3DHjJXBSRjqaNrPZu85aDqX4=;
-        b=DEWG5OrdS7RnpwpCQdS8YfVJrZd6LZ/hLP5o2cAEJFMNg77rhhRSIF99CALXU0t4Nw
-         b61UA/0mK5HXbDxjxt7jndpUYbmVs1gGAk/DbGgrivMNtpbgX6uuvLvpnp4m/5ro2mol
-         lW4mnnZ2qu9RJ5/EAW4wqLEAhFw4CNdzaeq8s=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=3B85ofSIlvxDsMd0QSuvExy6zf6XDf2ci7ySZr6BosA=;
+        b=FJxJDmdUpMx20MRWcPf82L+CMoP0+IfWGeSShTYRZwimBL6DOa2bzUzhOyN5iEpEtS
+         eSnQtl/o+Go4aEZMdTcjevr2Nmu2tJ/8HRqkSin2ytgPLG8H4v0C86nFIoDN8cz+i87h
+         XeXSbBS7IEYhvq1nFhKV5ZJdGKJM+Tt5ix2lc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=LnXY2JQ+AvT2TeKIyUF3DHjJXBSRjqaNrPZu85aDqX4=;
-        b=F1ki3JSkGSTImjFC1Nzytp2kgQ2qzON718OooIRqM6xXZvXdBwBXC6oE0DnUdDItso
-         oF4622fSx1JDd2HgGb5xgyISrOj5DXwnX29T3kwPAOIcQ/BpDXQ6XpQcKRnnH3GAiMgw
-         /1gh3tfjD7WrJhgG8KcNFO+EECjck9FcNJR8Amcjkc+iqR4GlYCKY9tKWjnX0buzgBOE
-         TUpEqtue6cUBGR8yzQinhO+IVVxG2qWaKL3ZqXpR4V5c0XwDQO33zp0ATQIwzcobxVdE
-         yf1EUQVbsSd94MMl4c0FVDID4Rl2jSQmqt/QIVjanicFmg2DlhzdMPcUVECxtJ7x2Bbe
-         nhKg==
-X-Gm-Message-State: APjAAAWJXsA1sinasNwE6wcXOm+hpMru+AEV092dbZoK2jFgjdhmuGe7
-        57vnvhqCaGQUJY1Gx736dIlugA==
-X-Google-Smtp-Source: APXvYqzlUv4V4sPs10niFMNU7nfZb2ZRwYswecBl5RhG/CFnIB5027ab+KFPG1dObeIJ7ZNBKSFhmQ==
-X-Received: by 2002:a63:1d26:: with SMTP id d38mr44965807pgd.357.1555005686261;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=3B85ofSIlvxDsMd0QSuvExy6zf6XDf2ci7ySZr6BosA=;
+        b=fTQlbwpeJtYE+qeLe/h7Qt/Nvi1KzEf0bKjeBz1DPTXDH7k/p8ta4sLZPZSGRUhuba
+         UP0HjgHaVsacknfpgSmoZx+lOIorHgpfQoP1XqO2j9ni2xk1D4MgkVUmR1jBswQEiC35
+         x47FxWck/J8nDcezbkbbzzDUoTIn9dfP8WYkUrDoa51lPI6IsU3kOGrGkcYMUiZJNFrm
+         UZzg9sfxLVsL/3YW6n4DFcIMRPsWs7GSLmgyZfr8rQsEB5S32yEpTmfBbO+83n7jb7GW
+         97DY0QSpmKenIdyFEMonDSP9Pj2URN02hBDGD9MuXtf4NIBz0Kt8GKc5/Iu8kDi2PuQ5
+         ZeCw==
+X-Gm-Message-State: APjAAAVhHlXJR2RFME0A6Z0ZgntivRpN/eRta3AimGZthBLi9F5T2FtJ
+        19BBRolfYrW7wE7ZahvSk4vfJw==
+X-Google-Smtp-Source: APXvYqzrgSW9n/rdk1KPTN6pGC6tzHDVoxfPJiuwlJuazwnH8VkZvPgrN08LGboEC+mzZV3GQdJpBA==
+X-Received: by 2002:a63:4e5b:: with SMTP id o27mr48786170pgl.204.1555005686906;
         Thu, 11 Apr 2019 11:01:26 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id v12sm52331660pfe.148.2019.04.11.11.01.25
+        by smtp.gmail.com with ESMTPSA id r145sm92291798pgr.84.2019.04.11.11.01.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Thu, 11 Apr 2019 11:01:25 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -68,50 +70,98 @@ Cc:     Kees Cook <keescook@chromium.org>,
         kernel-hardening@lists.openwall.com,
         linux-security-module@vger.kernel.org,
         linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] Refactor memory initialization hardening
-Date:   Thu, 11 Apr 2019 11:01:14 -0700
-Message-Id: <20190411180117.27704-1-keescook@chromium.org>
+Subject: [PATCH v2 3/3] security: Implement Clang's stack initialization
+Date:   Thu, 11 Apr 2019 11:01:17 -0700
+Message-Id: <20190411180117.27704-4-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190411180117.27704-1-keescook@chromium.org>
+References: <20190411180117.27704-1-keescook@chromium.org>
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This is a proposed alternative for the memory initialization series,
-which refactoring the existing gcc plugins into a separate Kconfig
-file and collects all the related options together with some more
-language to describe their differences. The last patch adds the
-Clang auto init option, as done by Alexander Potapenko.
+CONFIG_INIT_STACK_ALL turns on stack initialization based on
+-ftrivial-auto-var-init in Clang builds, which has greater coverage
+than CONFIG_GCC_PLUGINS_STRUCTLEAK_BYREF_ALL.
 
-Since there isn't really a good way to "select" with dependencies,
-I've left out CONFIG_INIT_ALL_MEMORY for the moment...
+-ftrivial-auto-var-init Clang option provides trivial initializers for
+uninitialized local variables, variable fields and padding.
 
-I intend to carry this in the gcc-plugins tree, but I'd really like
-to get Acks from Masahiro (Kconfig changes, Makefile change), and
-from James (adding the new Kconfig.hardening to security/Kconfig).
+It has three possible values:
+  pattern - uninitialized locals are filled with a fixed pattern
+    (mostly 0xAA on 64-bit platforms, see https://reviews.llvm.org/D54604
+    for more details, but 0x000000AA for 32-bit pointers) likely to cause
+    crashes when uninitialized value is used;
+  zero (it's still debated whether this flag makes it to the official
+    Clang release) - uninitialized locals are filled with zeroes;
+  uninitialized (default) - uninitialized locals are left intact.
 
-Thanks!
+This patch uses only the "pattern" mode when CONFIG_INIT_STACK_ALL is
+enabled.
 
--Kees
+Developers have the possibility to opt-out of this feature on a
+per-variable basis by using __attribute__((uninitialized)), but such
+use should be well justified in comments.
 
-v2:
-- add plugin menu (masahiro)
-- adjust patch subject prefixes (masahiro)
-- drop redundent "depends" (masahiro)
-- fixed early use of CC_HAS_AUTO_VAR_INIT (masahiro)
-- dropped default-enabled for STACK_INIT_ALL (masahiro)
+Co-developed-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ Makefile                   |  5 +++++
+ security/Kconfig.hardening | 15 ++++++++++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-Kees Cook (3):
-  security: Create "kernel hardening" config area
-  security: Move stackleak config to Kconfig.hardening
-  security: Implement Clang's stack initialization
-
- Makefile                    |   5 ++
- scripts/gcc-plugins/Kconfig | 125 ++-------------------------
- security/Kconfig            |   2 +
- security/Kconfig.hardening  | 163 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 177 insertions(+), 118 deletions(-)
- create mode 100644 security/Kconfig.hardening
-
+diff --git a/Makefile b/Makefile
+index c0a34064c574..a7d9c6cd0267 100644
+--- a/Makefile
++++ b/Makefile
+@@ -745,6 +745,11 @@ KBUILD_CFLAGS	+= -fomit-frame-pointer
+ endif
+ endif
+ 
++# Initialize all stack variables with a pattern, if desired.
++ifdef CONFIG_INIT_STACK_ALL
++KBUILD_CFLAGS	+= -ftrivial-auto-var-init=pattern
++endif
++
+ DEBUG_CFLAGS	:= $(call cc-option, -fno-var-tracking-assignments)
+ 
+ ifdef CONFIG_DEBUG_INFO
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 3dd7a28c3822..5dd61770d3f0 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -18,9 +18,12 @@ config GCC_PLUGIN_STRUCTLEAK
+ 
+ menu "Memory initialization"
+ 
++config CC_HAS_AUTO_VAR_INIT
++	def_bool $(cc-option,-ftrivial-auto-var-init=pattern)
++
+ choice
+ 	prompt "Initialize kernel stack variables at function entry"
+-	depends on GCC_PLUGINS
++	depends on CC_HAS_AUTO_VAR_INIT || GCC_PLUGINS
+ 	default INIT_STACK_NONE
+ 	help
+ 	  This option enables initialization of stack variables at
+@@ -76,6 +79,16 @@ choice
+ 		  of uninitialized stack variable exploits and information
+ 		  exposures.
+ 
++	config INIT_STACK_ALL
++		bool "0xAA-init everything on the stack (strongest)"
++		depends on CC_HAS_AUTO_VAR_INIT
++		help
++		  Initializes everything on the stack with a 0xAA
++		  pattern. This is intended to eliminate all classes
++		  of uninitialized stack variable exploits and information
++		  exposures, even variables that were warned to have been
++		  left uninitialized.
++
+ endchoice
+ 
+ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
 -- 
 2.17.1
 
