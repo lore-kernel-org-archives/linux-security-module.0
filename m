@@ -2,106 +2,116 @@ Return-Path: <SRS0=MFhz=SN=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D33C10F13
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E44D1C10F13
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E27C2146F
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 17:58:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555005508;
-	bh=pDhoCNdjeWrX/vbXMoWNxoXMBQ5uWIGVajVGVcqJMWQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=adKtj8nKGKPxFeLbI3unC70qKEIiGbsfOa24bQfEytPIJGEE6VjhCpve1M/ZigHvi
-	 iXSeCSIiBxdjp7uFKDIqyoeVvTH7pne7bbPmjhu/NB1sHlUI245UhnprqWhZEed3e8
-	 lf9ehVGZhdpyrSCu2CiV/cUOeAf9XJER13Lm/mAA=
+	by mail.kernel.org (Postfix) with ESMTP id B708320850
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Apr 2019 18:01:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DEWG5Ord"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726615AbfDKR61 (ORCPT
+        id S1726706AbfDKSB1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Apr 2019 13:58:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60214 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726577AbfDKR61 (ORCPT
+        Thu, 11 Apr 2019 14:01:27 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44911 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726577AbfDKSB0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Apr 2019 13:58:27 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A37F2070D;
-        Thu, 11 Apr 2019 17:58:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1555005506;
-        bh=pDhoCNdjeWrX/vbXMoWNxoXMBQ5uWIGVajVGVcqJMWQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TqRT/D2bY+vD2/ipEBuIR7EhPIJZ1dyOdUd1PhF/ZbNz1X2+KRuqX4zrziUuz9cOB
-         uTT0Xr1mikQiwpDMnAwdPiA3W4KqXFwtWOzwrjpiHfke0Dw2OoA9d4XEs2qFwSrj+W
-         15+Z2cp/nX6yoafj5Xgw7D4l9bqFSqf4r4T8hvIk=
-Date:   Thu, 11 Apr 2019 10:58:24 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thu, 11 Apr 2019 14:01:26 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y13so3810999pfm.11
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 11:01:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=LnXY2JQ+AvT2TeKIyUF3DHjJXBSRjqaNrPZu85aDqX4=;
+        b=DEWG5OrdS7RnpwpCQdS8YfVJrZd6LZ/hLP5o2cAEJFMNg77rhhRSIF99CALXU0t4Nw
+         b61UA/0mK5HXbDxjxt7jndpUYbmVs1gGAk/DbGgrivMNtpbgX6uuvLvpnp4m/5ro2mol
+         lW4mnnZ2qu9RJ5/EAW4wqLEAhFw4CNdzaeq8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LnXY2JQ+AvT2TeKIyUF3DHjJXBSRjqaNrPZu85aDqX4=;
+        b=F1ki3JSkGSTImjFC1Nzytp2kgQ2qzON718OooIRqM6xXZvXdBwBXC6oE0DnUdDItso
+         oF4622fSx1JDd2HgGb5xgyISrOj5DXwnX29T3kwPAOIcQ/BpDXQ6XpQcKRnnH3GAiMgw
+         /1gh3tfjD7WrJhgG8KcNFO+EECjck9FcNJR8Amcjkc+iqR4GlYCKY9tKWjnX0buzgBOE
+         TUpEqtue6cUBGR8yzQinhO+IVVxG2qWaKL3ZqXpR4V5c0XwDQO33zp0ATQIwzcobxVdE
+         yf1EUQVbsSd94MMl4c0FVDID4Rl2jSQmqt/QIVjanicFmg2DlhzdMPcUVECxtJ7x2Bbe
+         nhKg==
+X-Gm-Message-State: APjAAAWJXsA1sinasNwE6wcXOm+hpMru+AEV092dbZoK2jFgjdhmuGe7
+        57vnvhqCaGQUJY1Gx736dIlugA==
+X-Google-Smtp-Source: APXvYqzlUv4V4sPs10niFMNU7nfZb2ZRwYswecBl5RhG/CFnIB5027ab+KFPG1dObeIJ7ZNBKSFhmQ==
+X-Received: by 2002:a63:1d26:: with SMTP id d38mr44965807pgd.357.1555005686261;
+        Thu, 11 Apr 2019 11:01:26 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id v12sm52331660pfe.148.2019.04.11.11.01.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 11 Apr 2019 11:01:25 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexander Potapenko <glider@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        James Morris <jmorris@namei.org>,
+        Alexander Popov <alex.popov@linux.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sandeep Patil <sspatil@android.com>,
         Laura Abbott <labbott@redhat.com>,
-        Rik van Riel <riel@surriel.com>
-Subject: Re: crypto: Kernel memory overwrite attempt detected to spans
- multiple pages
-Message-ID: <20190411175823.GC225654@gmail.com>
-References: <20190319170911.GB202956@gmail.com>
- <20190320185719.GB180195@gmail.com>
- <CAGXu5jL-5C1ZGZ1JgaNFqK-z1Pp1N1X8gD3_ysKTCa=omD+_VQ@mail.gmail.com>
- <20190321175122.GA1587@sol.localdomain>
- <20190410031734.GB7140@sol.localdomain>
- <CAGXu5j+SZ2+Zkc=Vp5CXQUHhiR9f_OOnca684JTRW3T0yXdaNQ@mail.gmail.com>
- <20190410190729.GA120258@gmail.com>
- <CAGXu5j+Gfvj9G6s_UQTw6hE11gJb1edt3BXzpbDQdc_dpcHgag@mail.gmail.com>
- <20190410231156.GB120258@gmail.com>
- <CAGXu5jKg+oN7yUY=N69U93afOVHBPgwz6Osf=eMDPfiwbzEqmw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jKg+oN7yUY=N69U93afOVHBPgwz6Osf=eMDPfiwbzEqmw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Randy Dunlap <rdunlap@infradead.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Emese Revfy <re.emese@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        kernel-hardening@lists.openwall.com,
+        linux-security-module@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Refactor memory initialization hardening
+Date:   Thu, 11 Apr 2019 11:01:14 -0700
+Message-Id: <20190411180117.27704-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 10, 2019 at 04:27:28PM -0700, Kees Cook wrote:
-> On Wed, Apr 10, 2019 at 4:12 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > You've explained *what* it does again, but not *why*.  *Why* do you want
-> > hardened usercopy to detect copies across page boundaries, when there is no
-> > actual buffer overflow?
-> 
-> But that *is* how it determines it was a buffer overflow: "if you
-> cross page boundaries (of a non-compound allocation), it *is* a buffer
-> overflow". This assertion, however, is flawed because many contiguous
-> allocations are not marked as being grouped together when it reality
-> they were. It was an attempt to get allocation size information out of
-> the page allocator, similar to how slab can be queries about
-> allocation size. I'm open to improvements here, since it's obviously
-> broken in its current state. :)
-> 
-> -- 
-> Kees Cook
+This is a proposed alternative for the memory initialization series,
+which refactoring the existing gcc plugins into a separate Kconfig
+file and collects all the related options together with some more
+language to describe their differences. The last patch adds the
+Clang auto init option, as done by Alexander Potapenko.
 
-Well, I'm still at a loss as to whether I'm actually supposed to "fix" this by
-adding __GFP_COMP, or whether you're saying the option is broken anyway so I
-shouldn't bother doing anything.  IIUC, even the kernel stack is still not
-marked __GFP_COMP, so copies to/from the stack can trigger this too, despite
-this being reported over 2 years ago
-(http://lkml.iu.edu/hypermail/linux/kernel/1701.2/01450.html)?
-CONFIG_HARDENED_USERCOPY_PAGESPAN is even disabled in syzbot because you already
-said the option is broken and should not be used.
+Since there isn't really a good way to "select" with dependencies,
+I've left out CONFIG_INIT_ALL_MEMORY for the moment...
 
-I worry that people will enable all the hardened usercopy options "because
-security", then when the pagespan check breaks something they will disable all
-hardened usercopy options, because they don't understand the individual options.
-Providing broken options is actively harmful, IMO.
+I intend to carry this in the gcc-plugins tree, but I'd really like
+to get Acks from Masahiro (Kconfig changes, Makefile change), and
+from James (adding the new Kconfig.hardening to security/Kconfig).
 
-- Eric
+Thanks!
+
+-Kees
+
+v2:
+- add plugin menu (masahiro)
+- adjust patch subject prefixes (masahiro)
+- drop redundent "depends" (masahiro)
+- fixed early use of CC_HAS_AUTO_VAR_INIT (masahiro)
+- dropped default-enabled for STACK_INIT_ALL (masahiro)
+
+Kees Cook (3):
+  security: Create "kernel hardening" config area
+  security: Move stackleak config to Kconfig.hardening
+  security: Implement Clang's stack initialization
+
+ Makefile                    |   5 ++
+ scripts/gcc-plugins/Kconfig | 125 ++-------------------------
+ security/Kconfig            |   2 +
+ security/Kconfig.hardening  | 163 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 177 insertions(+), 118 deletions(-)
+ create mode 100644 security/Kconfig.hardening
+
+-- 
+2.17.1
+
