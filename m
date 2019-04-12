@@ -1,114 +1,116 @@
 Return-Path: <SRS0=JiNK=SO=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03118C10F13
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 00:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA68EC10F13
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 01:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1AD320818
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 00:24:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAD9F20869
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 01:21:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbfDLAYW (ORCPT
+        id S1726667AbfDLBVq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Apr 2019 20:24:22 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:57595 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfDLAYW (ORCPT
+        Thu, 11 Apr 2019 21:21:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41348 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726646AbfDLBVp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Apr 2019 20:24:22 -0400
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3C0OAnL024639;
-        Fri, 12 Apr 2019 09:24:10 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Fri, 12 Apr 2019 09:24:10 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3C0OAA7024635;
-        Fri, 12 Apr 2019 09:24:10 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x3C0OAAL024634;
-        Fri, 12 Apr 2019 09:24:10 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201904120024.x3C0OAAL024634@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [PATCH] net: socket: Always initialize family field at
- =?ISO-2022-JP?B?bW92ZV9hZGRyX3RvX2tlcm5lbCgpLg==?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        syzbot+0049bebbf3042dbd2e8f@syzkaller.appspotmail.com,
-        syzbot+915c9f99f3dbc4bd6cd1@syzkaller.appspotmail.com
-MIME-Version: 1.0
-Date:   Fri, 12 Apr 2019 09:24:10 +0900
-References: <4d077355-03de-0b8a-b6fc-51757eafe7eb@i-love.sakura.ne.jp> <CAHC9VhQy=UheDzhpwn7S2SUq51UmZ0MrNM+JtNdkoAi5Juscpw@mail.gmail.com>
-In-Reply-To: <CAHC9VhQy=UheDzhpwn7S2SUq51UmZ0MrNM+JtNdkoAi5Juscpw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+        Thu, 11 Apr 2019 21:21:45 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3C1E7tx049665
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 21:21:44 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2rtexakvnk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 21:21:44 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-security-module@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 12 Apr 2019 02:21:43 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 12 Apr 2019 02:21:41 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3C1LelU51839186
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 12 Apr 2019 01:21:40 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 82A0B42042;
+        Fri, 12 Apr 2019 01:21:40 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E2C674203F;
+        Fri, 12 Apr 2019 01:21:39 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.109.70])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 12 Apr 2019 01:21:39 +0000 (GMT)
+Subject: [GIT PULL] linux-integrity patches for Linux 5.2
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Date:   Thu, 11 Apr 2019 21:21:29 -0400
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19041201-0020-0000-0000-0000032EEF8A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19041201-0021-0000-0000-0000218122A7
+Message-Id: <1555032089.4914.4.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-12_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1904120007
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Paul Moore wrote:
-> > +       /*
-> > +        * Nothing more to do if valid length is too short to check
-> > +        * address->sa_family.
-> > +        */
-> > +       if (addrlen < offsetofend(struct sockaddr, sa_family))
-> > +               goto out;
-> 
-> SELinux already checks the address length further down in
-> selinux_socket_bind() for the address families it care about, although
-> it does read sa_family before the address length check so no
-> unfortunately it's of no help.
+Hi James,
 
-Exactly.
+This pull request contains just three patches, the remainder are
+either included in other pull requests (eg. audit, lockdown) or will
+be upstreamed via other subsystems (eg. kselftests, Power).  Included
+in this pull request is one bug fix, one documentation update, and
+extending the x86 IMA arch policy rules to coordinate the different
+kernel module signature verification methods.
 
-Since we will anyway have to check valid length after sa_family is checked,
-reading a stale sa_family is harmless except KMSAN complains uninit-value.
-Therefore,
+Thanks,
 
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -181,6 +181,7 @@ static ssize_t sock_splice_read(struct file *file, loff_t *ppos,
- 
- int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr_storage *kaddr)
- {
-+	kaddr->ss_family = 0;
- 	if (ulen < 0 || ulen > sizeof(struct sockaddr_storage))
- 		return -EINVAL;
- 	if (ulen == 0)
+Mimi
 
-or
 
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -181,6 +181,7 @@ static ssize_t sock_splice_read(struct file *file, loff_t *ppos,
- 
- int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr_storage *kaddr)
- {
-+	memset(kaddr, 0, sizeof(struct sockaddr_storage));
- 	if (ulen < 0 || ulen > sizeof(struct sockaddr_storage))
- 		return -EINVAL;
- 	if (ulen == 0)
+The following changes since commit 8d93e952fba216cd0811247f6360d97e0465d5fc:
 
-will avoid adding this "addrlen < offsetofend(struct sockaddr, sa_family)" check to every
-LSM module. It is a bit pity that while it is guaranteed that sizeof(struct sockaddr_storage)
-bytes are accessible, it is not guaranteed that reading "struct sockaddr_storage"->family is
-safe. (Thus, I wanted to hear comments from LSM people.)
+  LSM: lsm_hooks.h: fix documentation format (2019-03-26 16:46:22 -0700)
 
-> 
-> I imagine you could move this new length check inside the
-> PF_INET/PF_INET6 if-then code block to minimize the impact to other
-> address families, but I suppose there is some value in keeping it
-> where it is too.
+are available in the git repository at:
 
-I guess that since PF_INET/PF_INET6/PF_UNIX will be most frequently used protocols,
-the impact to non-PF_INET/PF_INET6 protocols is negligible.
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity-for-james
+
+for you to fetch changes up to 41475a3ebaceb270e47a77356ddc30960354cb00:
+
+  doc/kernel-parameters.txt: Deprecate ima_appraise_tcb (2019-04-10 16:41:01 -0400)
+
+----------------------------------------------------------------
+Mimi Zohar (2):
+      x86/ima: require signed kernel modules
+      x86/ima: add missing include
+
+Petr Vorel (1):
+      doc/kernel-parameters.txt: Deprecate ima_appraise_tcb
+
+ Documentation/admin-guide/kernel-parameters.txt |  5 ++---
+ arch/x86/kernel/ima_arch.c                      | 10 +++++++++-
+ include/linux/module.h                          |  5 +++++
+ kernel/module.c                                 |  5 +++++
+ 4 files changed, 21 insertions(+), 4 deletions(-)
+
