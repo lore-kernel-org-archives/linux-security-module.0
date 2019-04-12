@@ -2,95 +2,124 @@ Return-Path: <SRS0=JiNK=SO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52423C282CE
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 14:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 659F3C10F0E
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 15:23:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2067E20850
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 14:16:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32E902171F
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 15:23:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="eumZZKoB"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DHgWugbd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfDLOQ2 (ORCPT
+        id S1726796AbfDLPX2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Apr 2019 10:16:28 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:32944 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfDLOQ2 (ORCPT
+        Fri, 12 Apr 2019 11:23:28 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:44136 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbfDLPX2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Apr 2019 10:16:28 -0400
-Received: by mail-qt1-f196.google.com with SMTP id k14so11422860qtb.0
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2019 07:16:27 -0700 (PDT)
+        Fri, 12 Apr 2019 11:23:28 -0400
+Received: by mail-ua1-f68.google.com with SMTP id p13so3343158uaa.11
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2019 08:23:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BNfbrBu7Kf9YbRjnRfGu2WkpXEstm8Do5o3zkCQBOsE=;
-        b=eumZZKoBJ/J7a6yZvp+R0ymoOPiMq5XT5S4PwM65P3vrvD20o2zsyrfkkdun5UN7CV
-         LPt1ENh3ifW1ZRYnNxRAzmjz4jVP5AAVB79gk9pf74nUEnDKWfg6Bw6Z5qy3xnyHiePU
-         LSy7GQXYQttk7Otx7n2V3j9wz1zxN8wQm2Vpr8G6Y1+stOD9mKxvFpRHrV/u8nZbGn9z
-         eKPp2H8AxXU8HOUJLLETcz7XjkSZ7dZ47ODe58Mbi1EQMYm5VIfW09Az8ND7F6BsqmGu
-         GgMagBo5MQnUhJQcy3g6TBDlKVl6x+aoFhHeWzvhVdcpqKgNqcesBqRG8AQm7vzdTKnv
-         kieQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jdh+W4Qf+xTtMx1pbPDAwIHjsRVYZ/Q+sKKFxSr1S5U=;
+        b=DHgWugbdN7k8WF/sQearF4OyKrHJdb5hf50SuyoxB3kU/CiRboqwFfj2wYdrBEhOTa
+         bI3ytacddW8ZGOLF+aM2ibYnS3aqftIz5fpa41wBBQY/lBeVoi9bxZArS87hTj5B+oQa
+         e6YoadgctME8FYDxlYQOjT5AsWvouGFv25+11SSQIoT5I4KjHOOT2+HT5+JIY8EBVFhG
+         iupA/WSB5wrUMAA7M1H2+wYKxJinGjv7qT8bnQNElyD0B4SM4ImVe4ISU0C/uqyR/CZr
+         q0UG48A2lGzFcQvi61xWlCTu+FscZU1RDZGJaqdlGcZSvo2FkJdbV3WgMe+55P4SdjDW
+         yB7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BNfbrBu7Kf9YbRjnRfGu2WkpXEstm8Do5o3zkCQBOsE=;
-        b=DDYB/aeB3/auLcX0TppXn9eZAwMkvtY/SKC2LpLsz8WSaNw4RCYN8gLAkFlP+t97HI
-         /KWHvMnQKK0/1bGYs5MxjYoxu68yDdNA4eqSttuRsHqn4vD7WD3CPz1Vl0was12R77IY
-         AFIGZyPWbuuh1PM+P7VjxtBYJ6bA6LE3Ktg46C7IU8Nx9uAr06W/bYgW84VV+xtEvqo7
-         /1FDnzMJyaR8D3LUJyZkuiIB6xX32DFI14sCUDYGBvYgvmwCAaSarvR9fSNwhcXCojSp
-         uBlJFj60bUV7v/u9pmXoJR2kVQADHxZbsd7P88ho2oOBBRPkQNtzK1BZ/3r6xKJ4GbkV
-         8PXA==
-X-Gm-Message-State: APjAAAWFvKcpxSFMQnLwy5k1uFTZMpRq7OQoI1f/E6lcEBRKA3bO6PHw
-        1BvBl9z0mmv4ZdbZHzANIdNMig==
-X-Google-Smtp-Source: APXvYqyXKlNJWDYZCf5oo200N8SzRVdIL+ocZ9fNq4nkloba4fzT/Zza6kqRyNv2tAtHBLnzjFOUJQ==
-X-Received: by 2002:a0c:c165:: with SMTP id i34mr47138291qvh.6.1555078586767;
-        Fri, 12 Apr 2019 07:16:26 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id s2sm10321417qkg.67.2019.04.12.07.16.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 12 Apr 2019 07:16:26 -0700 (PDT)
-Message-ID: <1555078584.26196.50.camel@lca.pw>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jdh+W4Qf+xTtMx1pbPDAwIHjsRVYZ/Q+sKKFxSr1S5U=;
+        b=a8EdtWNhU4gPzlzEHn3Q0Reo/snhi9ISS53Tf42ZL8aq8XNQ2331eM5cg/DQipgDsQ
+         j17WhYoSMCuOg1E5k3NhFGXLqGh36wVnfUD7DPjm+uK31MzQs00dTcg8AdQbXqRCa/ya
+         T07wHXlG8g0jS1+MEJNPDvDE6Q4+1ZJxCg7PyQD6uP7m7jBPd1aBhybzM/OUv3rlZGEm
+         qsGQGzvFk3jJUhmuGcRBhC4PBc+FpwYhJEmEDOcgcwJ2HHhePyZUnIIlKISAIZXnPWyn
+         wNmPrsvQzBDQbvfVBz1Ge3WGE3j3MI7qth5Req/Ok7P5v64vcomPRPAaAg3UXEV5ysL1
+         X7wA==
+X-Gm-Message-State: APjAAAWpDEuYzskpFirPkYFUNSE651oopHVNnB4Tb3cRLkmSoDic+TOM
+        FdZUczMIdzGdb+5Rmmm0KG6d4PpFIpir59gNshfMmw==
+X-Google-Smtp-Source: APXvYqzbnOslz7WeYrsEitO9Tc3kH0tdnMuzW6L6fk3geG8DMcoHJIJERFGCopoR0I6stuauCLJ+mpIFXamNirb6J8k=
+X-Received: by 2002:ab0:2399:: with SMTP id b25mr29928095uan.129.1555082607026;
+ Fri, 12 Apr 2019 08:23:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190412124501.132678-1-glider@google.com> <1555078584.26196.50.camel@lca.pw>
+In-Reply-To: <1555078584.26196.50.camel@lca.pw>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Fri, 12 Apr 2019 17:23:15 +0200
+Message-ID: <CAG_fn=UrF6+yvXrok0Ca3dP2WZK7EOqE0NB24sR9WgMb=UuR-Q@mail.gmail.com>
 Subject: Re: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
-From:   Qian Cai <cai@lca.pw>
-To:     Alexander Potapenko <glider@google.com>, akpm@linux-foundation.org
-Cc:     linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        ndesaulniers@google.com, kcc@google.com, dvyukov@google.com,
-        keescook@chromium.org, sspatil@android.com, labbott@redhat.com,
-        kernel-hardening@lists.openwall.com
-Date:   Fri, 12 Apr 2019 10:16:24 -0400
-In-Reply-To: <20190412124501.132678-1-glider@google.com>
-References: <20190412124501.132678-1-glider@google.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2019-04-12 at 14:45 +0200, Alexander Potapenko wrote:
-> This config option adds the possibility to initialize newly allocated
-> pages and heap objects with zeroes. This is needed to prevent possible
-> information leaks and make the control-flow bugs that depend on
-> uninitialized values more deterministic.
-> 
-> Initialization is done at allocation time at the places where checks for
-> __GFP_ZERO are performed. We don't initialize slab caches with
-> constructors or SLAB_TYPESAFE_BY_RCU to preserve their semantics.
-> 
-> For kernel testing purposes filling allocations with a nonzero pattern
-> would be more suitable, but may require platform-specific code. To have
-> a simple baseline we've decided to start with zero-initialization.
-> 
-> No performance optimizations are done at the moment to reduce double
-> initialization of memory regions.
+On Fri, Apr 12, 2019 at 4:16 PM Qian Cai <cai@lca.pw> wrote:
+>
+> On Fri, 2019-04-12 at 14:45 +0200, Alexander Potapenko wrote:
+> > This config option adds the possibility to initialize newly allocated
+> > pages and heap objects with zeroes. This is needed to prevent possible
+> > information leaks and make the control-flow bugs that depend on
+> > uninitialized values more deterministic.
+> >
+> > Initialization is done at allocation time at the places where checks fo=
+r
+> > __GFP_ZERO are performed. We don't initialize slab caches with
+> > constructors or SLAB_TYPESAFE_BY_RCU to preserve their semantics.
+> >
+> > For kernel testing purposes filling allocations with a nonzero pattern
+> > would be more suitable, but may require platform-specific code. To have
+> > a simple baseline we've decided to start with zero-initialization.
+> >
+> > No performance optimizations are done at the moment to reduce double
+> > initialization of memory regions.
+>
+> Sounds like this has already existed in some degree, i.e.,
+>
+> CONFIG_PAGE_POISONING_ZERO
+Note that CONFIG_PAGE_POISONING[_ZERO] initializes freed pages,
+whereas the proposed patch initializes newly allocated pages.
+It's debatable whether initializing pages on kmalloc()/alloc_pages()
+is better or worse than doing so in kfree()/free_pages() from the
+security perspective.
+But the approach proposed in the patch makes it possible to use a
+special GFP flag to request uninitialized memory from the underlying
+allocator, so that we don't wipe it twice.
+This will be harder to do in the functions that free memory, because
+they don't accept GFP flags.
 
-Sounds like this has already existed in some degree, i.e.,
 
-CONFIG_PAGE_POISONING_ZERO
+
+
+--
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
