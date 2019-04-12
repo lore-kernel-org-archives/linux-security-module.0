@@ -2,133 +2,89 @@ Return-Path: <SRS0=JiNK=SO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AB7C10F0E
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 05:38:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B36A4C10F14
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 11:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95B02077C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 05:38:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LHFiCjiF"
+	by mail.kernel.org (Postfix) with ESMTP id 8E96D2083E
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 11:00:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726194AbfDLFip (ORCPT
+        id S1726757AbfDLLAS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Apr 2019 01:38:45 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52750 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfDLFip (ORCPT
+        Fri, 12 Apr 2019 07:00:18 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59843 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbfDLLAR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Apr 2019 01:38:45 -0400
-Received: by mail-it1-f196.google.com with SMTP id x132so13763902itf.2
-        for <linux-security-module@vger.kernel.org>; Thu, 11 Apr 2019 22:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xHEBZHc0l3bFwYTk5fYReti+5FO3ym176CcS7WgDG0U=;
-        b=LHFiCjiFfNyVsrihH6WNLeRGo+81LhYX8qh+9xuxZEdr8ykj1kYG4C/o0XWeNKfsgv
-         DRGEzr6lPVkVkg5zWDc0aXsK2jpqGe6PpWKNOYKMpZM2CrseqPL247swdESteWd2hSHo
-         cNJsfIF5nwptLD2oX6E/kCtH25o9rBVPyeBkb3aqFV4FOVA7ufSpLWO82GSDEV/EfTK4
-         PDPF+FdGNQFh/AKt0iTNuLk8v1wrx0L/yfjRp+8d4W/TTGcS2Hg+Mu1w+lahE8WaLseQ
-         zJPPEfG6JyEDjjLV9qONfzpDxJp6GHicJ28d2qi3fseOaxEO8bVwUMUzeKBRBup/iW/u
-         1+SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xHEBZHc0l3bFwYTk5fYReti+5FO3ym176CcS7WgDG0U=;
-        b=ugDlT7HtQhyX6pUilrIWs5J9TwZhC4a6BagQcAMDf9kBi5jLdeNeB8ZalbP4WzhQq2
-         n7hyofCEvIBNDTnleBYtPZNqUc1kLB27g8+b0dHnuc2lhW4uLK6lPVsk5+vRUzblNLCE
-         Akl5roahGvT+olIlLs6Am9ULs5Ib5/6mZZyjvg5SlKz2J2KX/VXg3bRnYjCEqkRqHGKW
-         P2R44nc6CbHRkFIIfeWI6mJPmHvs5TZOM6Yyr3RzXkMe18bN8RlbCXLAcZNTXQVX9XYx
-         RX/iG2zDOOdGOfBd9flstoGIEFuQcE06tCzK8igO+NGcru4BzgpD0BpuQ43BuSH5DMKX
-         LGBg==
-X-Gm-Message-State: APjAAAXmpiYpiaPi0m7ZXyhtPCWwUaTlRxu7HS8irCi2lAx7U6Zrric3
-        SBKEitES4aSbYovtlGEapYH8XkRoQ4cKqN90LOrWUw==
-X-Google-Smtp-Source: APXvYqwUZtVFQvFpYQpaGAL7Cy3lPOR1C4iDSXGEIVhBDyVA7Oeg/wpcgg8wzmLRQRRJ8kLdwiEsTeEeTev3uTew3DY=
-X-Received: by 2002:a02:6553:: with SMTP id u80mr38602190jab.51.1555047523884;
- Thu, 11 Apr 2019 22:38:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190411192607.GD225654@gmail.com> <20190411192827.72551-1-ebiggers@kernel.org>
- <CAGXu5jJ8k7fP5Vb=ygmQ0B45GfrK2PeaV04bPWmcZ6Vb+swgyA@mail.gmail.com>
-In-Reply-To: <CAGXu5jJ8k7fP5Vb=ygmQ0B45GfrK2PeaV04bPWmcZ6Vb+swgyA@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 12 Apr 2019 07:38:32 +0200
-Message-ID: <CACT4Y+a2rVobq+40tH+TgvmVfMOZvFT1y0ZJSRtsZu00EmeVzg@mail.gmail.com>
-Subject: Re: [PATCH] crypto: testmgr - allocate buffers with __GFP_COMP
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 12 Apr 2019 07:00:17 -0400
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3CB009E021124;
+        Fri, 12 Apr 2019 20:00:00 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
+ Fri, 12 Apr 2019 20:00:00 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank060157095162.bbtec.net [60.157.95.162])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3CAxsBO021068
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 12 Apr 2019 20:00:00 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     linux-security-module@vger.kernel.org
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH 1/3] selinux: Check address length before reading address family
+Date:   Fri, 12 Apr 2019 19:59:34 +0900
+Message-Id: <1555066776-9758-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 11, 2019 at 10:32 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Thu, Apr 11, 2019 at 12:31 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > From: Eric Biggers <ebiggers@google.com>
-> >
-> > This is needed so that CONFIG_HARDENED_USERCOPY_PAGESPAN=y doesn't
-> > incorrectly report a buffer overflow when the destination of
-> > copy_from_iter() spans the page boundary in the 2-page buffer.
-> >
-> > Fixes: 3f47a03df6e8 ("crypto: testmgr - add testvec_config struct and helper functions")
-> > Signed-off-by: Eric Biggers <ebiggers@google.com>
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
->
-> > ---
-> >  crypto/testmgr.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-> > index 0f6bfb6ce6a46..3522c0bed2492 100644
-> > --- a/crypto/testmgr.c
-> > +++ b/crypto/testmgr.c
-> > @@ -156,7 +156,8 @@ static int __testmgr_alloc_buf(char *buf[XBUFSIZE], int order)
-> >         int i;
-> >
-> >         for (i = 0; i < XBUFSIZE; i++) {
-> > -               buf[i] = (char *)__get_free_pages(GFP_KERNEL, order);
-> > +               buf[i] = (char *)__get_free_pages(GFP_KERNEL | __GFP_COMP,
-> > +                                                 order);
->
-> Is there a reason __GFP_COMP isn't automatically included in all page
-> allocations? (Or rather, it seems like the exception is when things
-> should NOT be considered part of the same allocation, so something
-> like __GFP_SINGLE should exist?.)
+KMSAN will complain if valid address length passed to bind()/connect() is
+shorter than sizeof("struct sockaddr"->sa_family) bytes.
 
-It would be reasonable if __get_free_pages would automatically mark
-consecutive pages as consecutive.
-When these should not be considered part of the same allocation? Is it
-possible to free them separately? Will that BUG with __GFP_COMP mark?
-I understand that there can be a weak "these are actually the same
-allocation, but I would like to think about them as separate". But
-potentially we can ignore such cases.
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ security/selinux/hooks.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> -Kees
->
-> >                 if (!buf[i])
-> >                         goto err_free_buf;
-> >         }
-> > --
-> > 2.21.0.392.gf8f6787159e-goog
-> >
->
->
-> --
-> Kees Cook
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index d5fdcb0d26fe..c61787b15f27 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4512,7 +4512,7 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+ 		struct lsm_network_audit net = {0,};
+ 		struct sockaddr_in *addr4 = NULL;
+ 		struct sockaddr_in6 *addr6 = NULL;
+-		u16 family_sa = address->sa_family;
++		u16 family_sa;
+ 		unsigned short snum;
+ 		u32 sid, node_perm;
+ 
+@@ -4522,6 +4522,9 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+ 		 * need to check address->sa_family as it is possible to have
+ 		 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
+ 		 */
++		if (addrlen < offsetofend(struct sockaddr, sa_family))
++			return -EINVAL;
++		family_sa = address->sa_family;
+ 		switch (family_sa) {
+ 		case AF_UNSPEC:
+ 		case AF_INET:
+@@ -4654,6 +4657,8 @@ static int selinux_socket_connect_helper(struct socket *sock,
+ 		 * need to check address->sa_family as it is possible to have
+ 		 * sk->sk_family = PF_INET6 with addr->sa_family = AF_INET.
+ 		 */
++		if (addrlen < offsetofend(struct sockaddr, sa_family))
++			return -EINVAL;
+ 		switch (address->sa_family) {
+ 		case AF_INET:
+ 			addr4 = (struct sockaddr_in *)address;
+-- 
+2.16.5
+
