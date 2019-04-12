@@ -2,312 +2,95 @@ Return-Path: <SRS0=JiNK=SO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E30DC10F0E
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 12:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52423C282CE
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 14:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 053262084D
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 12:45:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2067E20850
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 14:16:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sgPD7ga0"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="eumZZKoB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbfDLMpI (ORCPT
+        id S1726876AbfDLOQ2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Apr 2019 08:45:08 -0400
-Received: from mail-vk1-f202.google.com ([209.85.221.202]:56285 "EHLO
-        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726755AbfDLMpI (ORCPT
+        Fri, 12 Apr 2019 10:16:28 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:32944 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbfDLOQ2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Apr 2019 08:45:08 -0400
-Received: by mail-vk1-f202.google.com with SMTP id z6so3895900vkf.22
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2019 05:45:07 -0700 (PDT)
+        Fri, 12 Apr 2019 10:16:28 -0400
+Received: by mail-qt1-f196.google.com with SMTP id k14so11422860qtb.0
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2019 07:16:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=83wHpmEoWmTPnFwY0l59Y0OXpUaa/f0svyU4uSEFOdQ=;
-        b=sgPD7ga0/28KiS/8Rq6wWxAEcHkcRJ+G0I7U0LiWpYOjovshcYh4pPEh9LALIVANns
-         jjDkAGka9UDbyxtNlW7U5BawFs/G+hP9eB00oHAzfDKTDPN+7vMLf94WN4L4OYC3jN06
-         Mpi5yAlNu3Gb8kvMilZBgL+P4632zyJqMDSv+XdSOpnFMwWlKaHQx/4/sdanybS+E5l0
-         oibiJgdX/NLQCM8wmXshVlLiWNu3QGfvqddUC2owrn8eZ5tcKXyEqDecml+nlHlc7Dlj
-         l13faHoaFXUVHen3AGiCFhTAV3MjMY3FEn7BCu2KlQIodUHJfA53Fr27ZG+dscjJI3SG
-         JmQA==
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=BNfbrBu7Kf9YbRjnRfGu2WkpXEstm8Do5o3zkCQBOsE=;
+        b=eumZZKoBJ/J7a6yZvp+R0ymoOPiMq5XT5S4PwM65P3vrvD20o2zsyrfkkdun5UN7CV
+         LPt1ENh3ifW1ZRYnNxRAzmjz4jVP5AAVB79gk9pf74nUEnDKWfg6Bw6Z5qy3xnyHiePU
+         LSy7GQXYQttk7Otx7n2V3j9wz1zxN8wQm2Vpr8G6Y1+stOD9mKxvFpRHrV/u8nZbGn9z
+         eKPp2H8AxXU8HOUJLLETcz7XjkSZ7dZ47ODe58Mbi1EQMYm5VIfW09Az8ND7F6BsqmGu
+         GgMagBo5MQnUhJQcy3g6TBDlKVl6x+aoFhHeWzvhVdcpqKgNqcesBqRG8AQm7vzdTKnv
+         kieQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=83wHpmEoWmTPnFwY0l59Y0OXpUaa/f0svyU4uSEFOdQ=;
-        b=BIFAkN8zNnMPuIOerZzpwvqPAYHqM+6aoiSDa1QlRqbEs1Mkcegv51cFXxTNjBaRLT
-         qPVAnWhUU+74Zb3Qe1sPGgAn0C4Nk0zqUMThQVNTHmwzW38MivcORORscq5ep+IBnlKQ
-         nMpqvvEfFROscdE/W6XxF8h93AhM1TyJ4NZFw74X/CAjlZxkxDiWkxkBb5ICPzVRzZLM
-         ee+4OSNXAPvw+M+0Okv01IadyZay/3k6GnPu20KlfkG+Ci498ZtbXAvtOuCZP40ymebY
-         VWGDqbDiX79S6WT5mbpu2Sk+DeIlNXo1rZPRw2riQ3V6/DIj7qmfk9q/5uw6tLszE9Z+
-         GvsQ==
-X-Gm-Message-State: APjAAAXQ/HQfzAu9mgkvwA1T1822fzs6r/Bku3gdmslMXtpXaZ6xbGfm
-        BmcbtlaMiKB80mh/fj1AfUFfuuZEUok=
-X-Google-Smtp-Source: APXvYqwd8NXWmS7nTqXo/l4ZCq9qsGa703/O8iSSu0SZwOGOevq4EFMZR9NzupdZfMeKeu5JNDAXXVuS0yk=
-X-Received: by 2002:a67:e295:: with SMTP id g21mr6550492vsf.24.1555073106933;
- Fri, 12 Apr 2019 05:45:06 -0700 (PDT)
-Date:   Fri, 12 Apr 2019 14:45:01 +0200
-Message-Id: <20190412124501.132678-1-glider@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
-Subject: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
-From:   Alexander Potapenko <glider@google.com>
-To:     akpm@linux-foundation.org
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=BNfbrBu7Kf9YbRjnRfGu2WkpXEstm8Do5o3zkCQBOsE=;
+        b=DDYB/aeB3/auLcX0TppXn9eZAwMkvtY/SKC2LpLsz8WSaNw4RCYN8gLAkFlP+t97HI
+         /KWHvMnQKK0/1bGYs5MxjYoxu68yDdNA4eqSttuRsHqn4vD7WD3CPz1Vl0was12R77IY
+         AFIGZyPWbuuh1PM+P7VjxtBYJ6bA6LE3Ktg46C7IU8Nx9uAr06W/bYgW84VV+xtEvqo7
+         /1FDnzMJyaR8D3LUJyZkuiIB6xX32DFI14sCUDYGBvYgvmwCAaSarvR9fSNwhcXCojSp
+         uBlJFj60bUV7v/u9pmXoJR2kVQADHxZbsd7P88ho2oOBBRPkQNtzK1BZ/3r6xKJ4GbkV
+         8PXA==
+X-Gm-Message-State: APjAAAWFvKcpxSFMQnLwy5k1uFTZMpRq7OQoI1f/E6lcEBRKA3bO6PHw
+        1BvBl9z0mmv4ZdbZHzANIdNMig==
+X-Google-Smtp-Source: APXvYqyXKlNJWDYZCf5oo200N8SzRVdIL+ocZ9fNq4nkloba4fzT/Zza6kqRyNv2tAtHBLnzjFOUJQ==
+X-Received: by 2002:a0c:c165:: with SMTP id i34mr47138291qvh.6.1555078586767;
+        Fri, 12 Apr 2019 07:16:26 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id s2sm10321417qkg.67.2019.04.12.07.16.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 12 Apr 2019 07:16:26 -0700 (PDT)
+Message-ID: <1555078584.26196.50.camel@lca.pw>
+Subject: Re: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
+From:   Qian Cai <cai@lca.pw>
+To:     Alexander Potapenko <glider@google.com>, akpm@linux-foundation.org
 Cc:     linux-security-module@vger.kernel.org, linux-mm@kvack.org,
         ndesaulniers@google.com, kcc@google.com, dvyukov@google.com,
         keescook@chromium.org, sspatil@android.com, labbott@redhat.com,
         kernel-hardening@lists.openwall.com
+Date:   Fri, 12 Apr 2019 10:16:24 -0400
+In-Reply-To: <20190412124501.132678-1-glider@google.com>
+References: <20190412124501.132678-1-glider@google.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This config option adds the possibility to initialize newly allocated
-pages and heap objects with zeroes. This is needed to prevent possible
-information leaks and make the control-flow bugs that depend on
-uninitialized values more deterministic.
+On Fri, 2019-04-12 at 14:45 +0200, Alexander Potapenko wrote:
+> This config option adds the possibility to initialize newly allocated
+> pages and heap objects with zeroes. This is needed to prevent possible
+> information leaks and make the control-flow bugs that depend on
+> uninitialized values more deterministic.
+> 
+> Initialization is done at allocation time at the places where checks for
+> __GFP_ZERO are performed. We don't initialize slab caches with
+> constructors or SLAB_TYPESAFE_BY_RCU to preserve their semantics.
+> 
+> For kernel testing purposes filling allocations with a nonzero pattern
+> would be more suitable, but may require platform-specific code. To have
+> a simple baseline we've decided to start with zero-initialization.
+> 
+> No performance optimizations are done at the moment to reduce double
+> initialization of memory regions.
 
-Initialization is done at allocation time at the places where checks for
-__GFP_ZERO are performed. We don't initialize slab caches with
-constructors or SLAB_TYPESAFE_BY_RCU to preserve their semantics.
+Sounds like this has already existed in some degree, i.e.,
 
-For kernel testing purposes filling allocations with a nonzero pattern
-would be more suitable, but may require platform-specific code. To have
-a simple baseline we've decided to start with zero-initialization.
-
-No performance optimizations are done at the moment to reduce double
-initialization of memory regions.
-
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Sandeep Patil <sspatil@android.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-mm@kvack.org
-Cc: linux-security-module@vger.kernel.org
-Cc: kernel-hardening@lists.openwall.com
----
-This patch applies on top of the "Refactor memory initialization
-hardening" patch series by Kees Cook: https://lkml.org/lkml/2019/4/10/748
----
- drivers/infiniband/core/uverbs_ioctl.c |  2 +-
- include/linux/gfp.h                    |  8 ++++++++
- kernel/kexec_core.c                    |  2 +-
- mm/dmapool.c                           |  2 +-
- mm/page_alloc.c                        |  2 +-
- mm/slab.c                              |  6 +++---
- mm/slab.h                              | 10 ++++++++++
- mm/slob.c                              |  2 +-
- mm/slub.c                              |  4 ++--
- net/core/sock.c                        |  2 +-
- security/Kconfig.hardening             | 10 ++++++++++
- 11 files changed, 39 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/infiniband/core/uverbs_ioctl.c b/drivers/infiniband/core/uverbs_ioctl.c
-index e1379949e663..34937cecac62 100644
---- a/drivers/infiniband/core/uverbs_ioctl.c
-+++ b/drivers/infiniband/core/uverbs_ioctl.c
-@@ -127,7 +127,7 @@ __malloc void *_uverbs_alloc(struct uverbs_attr_bundle *bundle, size_t size,
- 	res = (void *)pbundle->internal_buffer + pbundle->internal_used;
- 	pbundle->internal_used =
- 		ALIGN(new_used, sizeof(*pbundle->internal_buffer));
--	if (flags & __GFP_ZERO)
-+	if (GFP_WANT_INIT(flags))
- 		memset(res, 0, size);
- 	return res;
- }
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index fdab7de7490d..4f49a6a13f6f 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -213,6 +213,14 @@ struct vm_area_struct;
- #define __GFP_COMP	((__force gfp_t)___GFP_COMP)
- #define __GFP_ZERO	((__force gfp_t)___GFP_ZERO)
- 
-+#ifdef CONFIG_INIT_HEAP_ALL
-+#define GFP_WANT_INIT(flags) (1)
-+#define GFP_INIT_ALWAYS_ON (1)
-+#else
-+#define GFP_WANT_INIT(flags) (unlikely((flags) & __GFP_ZERO))
-+#define GFP_INIT_ALWAYS_ON (0)
-+#endif
-+
- /* Disable lockdep for GFP context tracking */
- #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
- 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index d7140447be75..1ad0097695a1 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -315,7 +315,7 @@ static struct page *kimage_alloc_pages(gfp_t gfp_mask, unsigned int order)
- 		arch_kexec_post_alloc_pages(page_address(pages), count,
- 					    gfp_mask);
- 
--		if (gfp_mask & __GFP_ZERO)
-+		if (GFP_WANT_INIT(gfp_mask))
- 			for (i = 0; i < count; i++)
- 				clear_highpage(pages + i);
- 	}
-diff --git a/mm/dmapool.c b/mm/dmapool.c
-index 76a160083506..d40d62145ca3 100644
---- a/mm/dmapool.c
-+++ b/mm/dmapool.c
-@@ -381,7 +381,7 @@ void *dma_pool_alloc(struct dma_pool *pool, gfp_t mem_flags,
- #endif
- 	spin_unlock_irqrestore(&pool->lock, flags);
- 
--	if (mem_flags & __GFP_ZERO)
-+	if (GFP_WANT_INIT(mem_flags))
- 		memset(retval, 0, pool->size);
- 
- 	return retval;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d96ca5bc555b..ceddc4eeaff4 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2014,7 +2014,7 @@ static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags
- 
- 	post_alloc_hook(page, order, gfp_flags);
- 
--	if (!free_pages_prezeroed() && (gfp_flags & __GFP_ZERO))
-+	if (!free_pages_prezeroed() && GFP_WANT_INIT(gfp_flags))
- 		for (i = 0; i < (1 << order); i++)
- 			clear_highpage(page + i);
- 
-diff --git a/mm/slab.c b/mm/slab.c
-index 47a380a486ee..848e47658667 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -3331,7 +3331,7 @@ slab_alloc_node(struct kmem_cache *cachep, gfp_t flags, int nodeid,
- 	local_irq_restore(save_flags);
- 	ptr = cache_alloc_debugcheck_after(cachep, flags, ptr, caller);
- 
--	if (unlikely(flags & __GFP_ZERO) && ptr)
-+	if (SLAB_WANT_INIT(cachep, flags) && ptr)
- 		memset(ptr, 0, cachep->object_size);
- 
- 	slab_post_alloc_hook(cachep, flags, 1, &ptr);
-@@ -3388,7 +3388,7 @@ slab_alloc(struct kmem_cache *cachep, gfp_t flags, unsigned long caller)
- 	objp = cache_alloc_debugcheck_after(cachep, flags, objp, caller);
- 	prefetchw(objp);
- 
--	if (unlikely(flags & __GFP_ZERO) && objp)
-+	if (SLAB_WANT_INIT(cachep, flags) && objp)
- 		memset(objp, 0, cachep->object_size);
- 
- 	slab_post_alloc_hook(cachep, flags, 1, &objp);
-@@ -3596,7 +3596,7 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
- 	cache_alloc_debugcheck_after_bulk(s, flags, size, p, _RET_IP_);
- 
- 	/* Clear memory outside IRQ disabled section */
--	if (unlikely(flags & __GFP_ZERO))
-+	if (SLAB_WANT_INIT(s, flags))
- 		for (i = 0; i < size; i++)
- 			memset(p[i], 0, s->object_size);
- 
-diff --git a/mm/slab.h b/mm/slab.h
-index 43ac818b8592..4bb10af0031b 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -167,6 +167,16 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
- 			      SLAB_TEMPORARY | \
- 			      SLAB_ACCOUNT)
- 
-+/*
-+ * Do we need to initialize this allocation?
-+ * Always true for __GFP_ZERO, CONFIG_INIT_HEAP_ALL enforces initialization
-+ * of caches without constructors and RCU.
-+ */
-+#define SLAB_WANT_INIT(cache, gfp_flags) \
-+	((GFP_INIT_ALWAYS_ON && !(cache)->ctor && \
-+	  !((cache)->flags & SLAB_TYPESAFE_BY_RCU)) || \
-+	 (gfp_flags & __GFP_ZERO))
-+
- bool __kmem_cache_empty(struct kmem_cache *);
- int __kmem_cache_shutdown(struct kmem_cache *);
- void __kmem_cache_release(struct kmem_cache *);
-diff --git a/mm/slob.c b/mm/slob.c
-index 307c2c9feb44..0c402e819cf7 100644
---- a/mm/slob.c
-+++ b/mm/slob.c
-@@ -330,7 +330,7 @@ static void *slob_alloc(size_t size, gfp_t gfp, int align, int node)
- 		BUG_ON(!b);
- 		spin_unlock_irqrestore(&slob_lock, flags);
- 	}
--	if (unlikely(gfp & __GFP_ZERO))
-+	if (GFP_WANT_INIT(gfp))
- 		memset(b, 0, size);
- 	return b;
- }
-diff --git a/mm/slub.c b/mm/slub.c
-index d30ede89f4a6..686ab9d49ced 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2750,7 +2750,7 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
- 		stat(s, ALLOC_FASTPATH);
- 	}
- 
--	if (unlikely(gfpflags & __GFP_ZERO) && object)
-+	if (SLAB_WANT_INIT(s, gfpflags) && object)
- 		memset(object, 0, s->object_size);
- 
- 	slab_post_alloc_hook(s, gfpflags, 1, &object);
-@@ -3172,7 +3172,7 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
- 	local_irq_enable();
- 
- 	/* Clear memory outside IRQ disabled fastpath loop */
--	if (unlikely(flags & __GFP_ZERO)) {
-+	if (SLAB_WANT_INIT(s, flags)) {
- 		int j;
- 
- 		for (j = 0; j < i; j++)
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 782343bb925b..51b13d7fd82f 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -1601,7 +1601,7 @@ static struct sock *sk_prot_alloc(struct proto *prot, gfp_t priority,
- 		sk = kmem_cache_alloc(slab, priority & ~__GFP_ZERO);
- 		if (!sk)
- 			return sk;
--		if (priority & __GFP_ZERO)
-+		if (GFP_WANT_INIT(priority))
- 			sk_prot_clear_nulls(sk, prot->obj_size);
- 	} else
- 		sk = kmalloc(prot->obj_size, priority);
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index d744e20140b4..cb7d7dfb506f 100644
---- a/security/Kconfig.hardening
-+++ b/security/Kconfig.hardening
-@@ -93,6 +93,16 @@ choice
- 
- endchoice
- 
-+config INIT_HEAP_ALL
-+	bool "Initialize kernel heap allocations"
-+	default n
-+	help
-+	  Enforce initialization of pages allocated from page allocator
-+	  and objects returned by kmalloc and friends.
-+	  Allocated memory is initialized with zeroes, preventing possible
-+	  information leaks and making the control-flow bugs that depend
-+	  on uninitialized values more deterministic.
-+
- config GCC_PLUGIN_STRUCTLEAK_VERBOSE
- 	bool "Report forcefully initialized variables"
- 	depends on GCC_PLUGIN_STRUCTLEAK
--- 
-2.21.0.392.gf8f6787159e-goog
-
+CONFIG_PAGE_POISONING_ZERO
