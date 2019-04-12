@@ -2,124 +2,282 @@ Return-Path: <SRS0=JiNK=SO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 659F3C10F0E
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 15:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD05C10F14
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 15:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32E902171F
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 15:23:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74C6E2171F
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 15:28:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DHgWugbd"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DptaDko3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfDLPX2 (ORCPT
+        id S1726796AbfDLP2M (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Apr 2019 11:23:28 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:44136 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbfDLPX2 (ORCPT
+        Fri, 12 Apr 2019 11:28:12 -0400
+Received: from sonic309-26.consmr.mail.gq1.yahoo.com ([98.137.65.152]:43596
+        "EHLO sonic309-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726702AbfDLP2L (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Apr 2019 11:23:28 -0400
-Received: by mail-ua1-f68.google.com with SMTP id p13so3343158uaa.11
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2019 08:23:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jdh+W4Qf+xTtMx1pbPDAwIHjsRVYZ/Q+sKKFxSr1S5U=;
-        b=DHgWugbdN7k8WF/sQearF4OyKrHJdb5hf50SuyoxB3kU/CiRboqwFfj2wYdrBEhOTa
-         bI3ytacddW8ZGOLF+aM2ibYnS3aqftIz5fpa41wBBQY/lBeVoi9bxZArS87hTj5B+oQa
-         e6YoadgctME8FYDxlYQOjT5AsWvouGFv25+11SSQIoT5I4KjHOOT2+HT5+JIY8EBVFhG
-         iupA/WSB5wrUMAA7M1H2+wYKxJinGjv7qT8bnQNElyD0B4SM4ImVe4ISU0C/uqyR/CZr
-         q0UG48A2lGzFcQvi61xWlCTu+FscZU1RDZGJaqdlGcZSvo2FkJdbV3WgMe+55P4SdjDW
-         yB7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jdh+W4Qf+xTtMx1pbPDAwIHjsRVYZ/Q+sKKFxSr1S5U=;
-        b=a8EdtWNhU4gPzlzEHn3Q0Reo/snhi9ISS53Tf42ZL8aq8XNQ2331eM5cg/DQipgDsQ
-         j17WhYoSMCuOg1E5k3NhFGXLqGh36wVnfUD7DPjm+uK31MzQs00dTcg8AdQbXqRCa/ya
-         T07wHXlG8g0jS1+MEJNPDvDE6Q4+1ZJxCg7PyQD6uP7m7jBPd1aBhybzM/OUv3rlZGEm
-         qsGQGzvFk3jJUhmuGcRBhC4PBc+FpwYhJEmEDOcgcwJ2HHhePyZUnIIlKISAIZXnPWyn
-         wNmPrsvQzBDQbvfVBz1Ge3WGE3j3MI7qth5Req/Ok7P5v64vcomPRPAaAg3UXEV5ysL1
-         X7wA==
-X-Gm-Message-State: APjAAAWpDEuYzskpFirPkYFUNSE651oopHVNnB4Tb3cRLkmSoDic+TOM
-        FdZUczMIdzGdb+5Rmmm0KG6d4PpFIpir59gNshfMmw==
-X-Google-Smtp-Source: APXvYqzbnOslz7WeYrsEitO9Tc3kH0tdnMuzW6L6fk3geG8DMcoHJIJERFGCopoR0I6stuauCLJ+mpIFXamNirb6J8k=
-X-Received: by 2002:ab0:2399:: with SMTP id b25mr29928095uan.129.1555082607026;
- Fri, 12 Apr 2019 08:23:27 -0700 (PDT)
+        Fri, 12 Apr 2019 11:28:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1555082889; bh=GJzHdbAlXUs90bxoqrWvN8JHQshxwrijeuBDTNwv+Cg=; h=Subject:To:References:From:Date:In-Reply-To:From:Subject; b=DptaDko307lO/pXR14Wp7Q1z3/Lx6XogRSx4NGtQlj/gvxNFK7cAUasiaUcP9/J5MrBR2NUOhv3ZlkrRgVKiy5iZTJ/dK39uDNbVQlPKIB/RKOviyr99+pYw6YA5ny1lAXaQjr2baPLqSUquEC8BRsRJZ9Y2BEz7QHCoHawObc6QB3d6JTQZHK1SFtWR2zIIr0HzCJ53OH/wkZe3xes3vKhtBuo6zFRAu3MYhb9vxftM3cUgESD0u/Fkxf+fMYF8+06Ay7a/X230I4ErcjtkwwaWEl6//Cx0qelYjCnssFQO2FGozaFeRKQ2YnkPH4wXIYaT5SHCuSlRfC5tfeYzNQ==
+X-YMail-OSG: JddhgL8VM1m5aQmNAp_meNef5do2Q4AkcR_5MM2gbFA9Qu.r4KN2oEKYniJgMjX
+ h8GSWpsDmTjZKb_UEOxYvut7nk8iCMm4CTAzn7Iqc9MSWqWmESTBqFky_gzutg9naeB53XsQxjav
+ 8EZIqi7n7x7nVbfUGlnV3QQ3S7u2Kon0TgZvFyuKjFzHYxDYdeCrpFuECEJMQn9WeX34Ip06BLNG
+ IhnRcqLJAmM3HHWwh8oOZSYEEvOOPV797lj.gdCumf96NSSMDpiuNSDiNL6_gQ6mz6Dpuv_htHO.
+ r93tZpphNAQIpzAITl0KQJ5v8WaOcxv7_H6lEl66z98y7G2Y_UAKAv46sbMuvODE7LK_QgzzfuSI
+ rs46CgPt0Tb83_lPucZjtmXqTT4Oy6HmOeE_jDKT4FNxY76tesKeKNZmtqrWLiNWUoCMMYxu.dnx
+ p_i.xnYgQxAdC5O15l0x73ny06gRc8x1mGARsoWB2.iS3id7GudAsPnxNZW881kVYS.ay251wcZh
+ TOANjKf8embrqX9Ll6bpAxwXXka.06nLBoVeZGnOD0km2aLJL8c9EbWLIqYmPKKuBrOJxe2Atvq1
+ 0VFKkugTKsZfghF.7H48JF5Iiv6gUXapxdJOJcVQJEqud9itu3sZnuPXd7TLyPVu_cv1Z3kT_MZo
+ zKywFPLF5lbLwqlq5tdr_gIgl1.JQMvxOQqy8RgOx_gyYWmyzB.lC3O3R3Qy21WoNtI3CXAKVZSv
+ kJ2_LvG.lz_ZJ8ycBzZRRko6VIwMdbZboYg7GboQ..FNwZAJUm3CyNBIwWXN3tUy4J7VvJGu_K6a
+ YjulsMLfc1ED7fBIBgX2cU2HLDuiR8yiB5bV_v35dkemqX6qbmMnnj6UIc1yCy8EQ3EGF5E.GLt4
+ xQ8uQbwW50fy5j_xCycVdTdJcL69QmWP2bqDnSNeEnairve_p_oGRbF4FlnxKXm9tF3fvGy5F2of
+ 4LcS.BO0e_8dsT3Xdb2CPYd0DaswJvgewmCXG3o5hdLAuVPlK5nnpJJrEtMeY2NLClxEuzwESWHh
+ FgKrYIjHejL.RIIqZKWU23.0pfSt0e9cH7NW0T5afp105EkMA83wHzMHawftFvnUHJoZSDab0bZ3
+ tZTI1UltYLuZZulG2.A5oqnbse0R2na6IksNM6L_1keTO2e8Qmei6GWOlLwjmITP9IWg-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Fri, 12 Apr 2019 15:28:09 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
+          by smtp416.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 5ae31c28ed2ef02c45d3194fdaa9433d;
+          Fri, 12 Apr 2019 15:28:08 +0000 (UTC)
+Subject: Re: kernel BUG at kernel/cred.c:434!
+To:     "chengjian (D)" <cj.chengjian@huawei.com>, neilb@suse.com,
+        Anna.Schumaker@Netapp.com, keescook@chromium.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        oleg@redhat.com, viro@zeniv.linux.org.uk,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>, yanaijie@huawei.com,
+        peterz@infradead.org, mingo@redhat.com,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, selinux@vger.kernel.org
+References: <6e4428ca-3da1-a033-08f7-a51e57503989@huawei.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
+Date:   Fri, 12 Apr 2019 08:28:07 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190412124501.132678-1-glider@google.com> <1555078584.26196.50.camel@lca.pw>
-In-Reply-To: <1555078584.26196.50.camel@lca.pw>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 12 Apr 2019 17:23:15 +0200
-Message-ID: <CAG_fn=UrF6+yvXrok0Ca3dP2WZK7EOqE0NB24sR9WgMb=UuR-Q@mail.gmail.com>
-Subject: Re: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
-To:     Qian Cai <cai@lca.pw>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <6e4428ca-3da1-a033-08f7-a51e57503989@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 12, 2019 at 4:16 PM Qian Cai <cai@lca.pw> wrote:
+On 4/11/2019 11:21 PM, chengjian (D) wrote:
+
+Added LSM and SELinux lists.
+
+
+> Hi.
 >
-> On Fri, 2019-04-12 at 14:45 +0200, Alexander Potapenko wrote:
-> > This config option adds the possibility to initialize newly allocated
-> > pages and heap objects with zeroes. This is needed to prevent possible
-> > information leaks and make the control-flow bugs that depend on
-> > uninitialized values more deterministic.
-> >
-> > Initialization is done at allocation time at the places where checks fo=
-r
-> > __GFP_ZERO are performed. We don't initialize slab caches with
-> > constructors or SLAB_TYPESAFE_BY_RCU to preserve their semantics.
-> >
-> > For kernel testing purposes filling allocations with a nonzero pattern
-> > would be more suitable, but may require platform-specific code. To have
-> > a simple baseline we've decided to start with zero-initialization.
-> >
-> > No performance optimizations are done at the moment to reduce double
-> > initialization of memory regions.
 >
-> Sounds like this has already existed in some degree, i.e.,
+> syzkaller reported the following BUG:
 >
-> CONFIG_PAGE_POISONING_ZERO
-Note that CONFIG_PAGE_POISONING[_ZERO] initializes freed pages,
-whereas the proposed patch initializes newly allocated pages.
-It's debatable whether initializing pages on kmalloc()/alloc_pages()
-is better or worse than doing so in kfree()/free_pages() from the
-security perspective.
-But the approach proposed in the patch makes it possible to use a
-special GFP flag to request uninitialized memory from the underlying
-allocator, so that we don't wipe it twice.
-This will be harder to do in the functions that free memory, because
-they don't accept GFP flags.
-
-
-
-
---
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+> [   73.146973] kernel BUG at kernel/cred.c:434!
+> [   73.150231] invalid opcode: 0000 [#1] SMP KASAN PTI
+> [   73.151928] CPU: 2 PID: 4058 Comm: syz-executor.6 Not tainted 
+> 5.1.0-rc4-00062-g2d06b235815e-dirty #2
+> [   73.155174] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), 
+> BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
+> [   73.159798] RIP: 0010:commit_creds+0xadb/0xe50
+> [   73.161426] Code: 8b 5b 20 48 c1 ea 03 0f b6 04 02 84 c0 74 08 3c 
+> 03 0f 8e 06 03 00 00 39 5d 20 0f 85 ff fa ff ff e9 0c fb ff ff e8 05 
+> a2 25 00 <0f> 0b 48 c7 c7 80 56 c0 83 e8 95 22 b1 00 e8 f2 a1 25 00 0f 
+> 0b 48
+> [   73.167852] RSP: 0000:ffff88836e65f5d0 EFLAGS: 00010293
+> [   73.169636] RAX: ffff8883767b0000 RBX: ffff88837f111300 RCX: 
+> ffffffff8124b5db
+> [   73.171962] RDX: 0000000000000000 RSI: ffffffff83c9b140 RDI: 
+> ffff88837f111300
+> [   73.174310] RBP: ffff888376610400 R08: 0000000000000000 R09: 
+> 0000000000000004
+> [   73.176646] R10: 0000000000000001 R11: ffffed107c655acf R12: 
+> ffff8883767b0000
+> [   73.178527] Process accounting resumed
+> [   73.179021] R13: ffff88837f111900 R14: ffff88837f111300 R15: 
+> ffff8883767b0ac0
+> [   73.179029] FS:  00007f2d207f9700(0000) GS:ffff8883e3280000(0000) 
+> knlGS:0000000000000000
+> [   73.179034] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   73.179039] CR2: 00007f1500bd36c0 CR3: 00000003df304003 CR4: 
+> 00000000000206e0
+> [   73.179047] Call Trace:
+> [   73.190461]  selinux_setprocattr+0x2ea/0x8f0
+> [   73.191925]  ? ptrace_parent_sid+0x530/0x530
+> [   73.193436]  ? proc_pid_attr_write+0x185/0x5a0
+> [   73.194967]  security_setprocattr+0xa1/0x100
+> [   73.196408]  proc_pid_attr_write+0x307/0x5a0
+> [   73.197869]  ? mem_read+0x40/0x40
+> [   73.199013]  __vfs_write+0x81/0x100
+> [   73.200222]  __kernel_write+0xf8/0x330
+> [   73.201562]  do_acct_process+0xca5/0x1340
+> [   73.202969]  ? __ia32_sys_acct+0x1e0/0x1e0
+> [   73.204498]  ? find_held_lock+0x2f/0x1e0
+> [   73.205857]  ? rcu_irq_exit+0xec/0x2c0
+> [   73.207160]  ? lock_downgrade+0x630/0x630
+> [   73.208541]  acct_pin_kill+0x63/0x150
+> [   73.209816]  pin_kill+0x16d/0x7c0
+> [   73.210934]  ? lockdep_hardirqs_on+0x5e0/0x5e0
+> [   73.212452]  ? xas_start+0x155/0x510
+> [   73.213705]  ? pin_insert+0x50/0x50
+> [   73.214903]  ? finish_wait+0x270/0x270
+> [   73.216213]  ? cpumask_next+0x57/0x90
+> [   73.217442]  ? mnt_pin_kill+0x68/0x1d0
+> [   73.218851]  mnt_pin_kill+0x68/0x1d0
+> [   73.220398]  cleanup_mnt+0x11b/0x150
+> [   73.221970]  task_work_run+0x136/0x1b0
+> [   73.223427]  do_exit+0x830/0x2ca0
+> [   73.224586]  ? trace_hardirqs_off+0x3b/0x180
+> [   73.226088]  ? mm_update_next_owner+0x6a0/0x6a0
+> [   73.227622]  ? find_held_lock+0x2f/0x1e0
+> [   73.228954]  ? get_signal+0x2cf/0x1c00
+> [   73.230236]  ? lock_downgrade+0x630/0x630
+> [   73.231628]  ? rwlock_bug.part.0+0x90/0x90
+> [   73.233020]  do_group_exit+0x106/0x2f0
+> [   73.234330]  get_signal+0x325/0x1c00
+> [   73.235571]  do_signal+0x97/0x1670
+> [   73.236739]  ? do_send_specific+0x12d/0x220
+> [   73.238213]  ? lock_downgrade+0x630/0x630
+> [   73.239566]  ? setup_sigcontext+0x820/0x820
+> [   73.240982]  ? check_kill_permission+0x4a/0x510
+> [   73.242509]  ? do_send_specific+0x156/0x220
+> [   73.243905]  ? do_tkill+0x1c4/0x260
+> [   73.245081]  ? do_send_specific+0x220/0x220
+> [   73.246514]  ? trace_hardirqs_on_thunk+0x1a/0x1c
+> [   73.248061]  ? exit_to_usermode_loop+0x97/0x1d0
+> [   73.249619]  exit_to_usermode_loop+0x108/0x1d0
+> [   73.251129]  do_syscall_64+0x461/0x580
+> [   73.252454]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [   73.254219] RIP: 0033:0x462eb9
+> [   73.255327] Code: Bad RIP value.
+> [   73.256539] RSP: 002b:00007f2d207f8c58 EFLAGS: 00000246 ORIG_RAX: 
+> 00000000000000c8
+> [   73.259454] RAX: 0000000000000000 RBX: 000000000073bf00 RCX: 
+> 0000000000462eb9
+> [   73.262309] RDX: 0000000000000000 RSI: 000000000000001e RDI: 
+> 0000000000000005
+> [   73.265064] RBP: 0000000000000002 R08: 0000000000000000 R09: 
+> 0000000000000000
+> [   73.267774] R10: 0000000000000000 R11: 0000000000000246 R12: 
+> 00007f2d207f96bc
+> [   73.270546] R13: 00000000004c5509 R14: 00000000007042f0 R15: 
+> 00000000ffffffff
+> [   73.273542] Modules linked in:
+> [   73.274670] Dumping ftrace buffer:
+> [   73.275852]    (ftrace buffer empty)
+> [   73.277187] ---[ end trace dde36a95f458175d ]---
+> [   73.278834] RIP: 0010:commit_creds+0xadb/0xe50
+> [   73.280549] Code: 8b 5b 20 48 c1 ea 03 0f b6 04 02 84 c0 74 08 3c 
+> 03 0f 8e 06 03 00 00 39 5d 20 0f 85 ff fa ff ff e9 0c fb ff ff e8 05 
+> a2 25 00 <0f> 0b 48 c7 c7 80 56 c0 83 e8 95 22 b1 00 e8 f2 a1 25 00 0f 
+> 0b 48
+> [   73.287090] RSP: 0000:ffff88836e65f5d0 EFLAGS: 00010293
+> [   73.288917] RAX: ffff8883767b0000 RBX: ffff88837f111300 RCX: 
+> ffffffff8124b5db
+> [   73.291390] RDX: 0000000000000000 RSI: ffffffff83c9b140 RDI: 
+> ffff88837f111300
+> [   73.293864] RBP: ffff888376610400 R08: 0000000000000000 R09: 
+> 0000000000000004
+> [   73.296370] R10: 0000000000000001 R11: ffffed107c655acf R12: 
+> ffff8883767b0000
+> [   73.299275] R13: ffff88837f111900 R14: ffff88837f111300 R15: 
+> ffff8883767b0ac0
+> [   73.301351] Process accounting resumed
+> [   73.301822] FS:  00007f2d207f9700(0000) GS:ffff8883e3280000(0000) 
+> knlGS:0000000000000000
+> [   73.301827] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   73.301832] CR2: 0000000000462e8f CR3: 0000000003a18002 CR4: 
+> 00000000000206e0
+> [   73.301850] Kernel panic - not syncing: Fatal exception
+> [   73.310719] Process accounting resumed
+> [   73.311515] Process accounting resumed
+> [   73.318916] Dumping ftrace buffer:
+> [   73.318921]    (ftrace buffer empty)
+> [   73.318945] Kernel Offset: disabled
+> [   73.328061] Rebooting in 10 seconds..
+>
+>
+> 425 int commit_creds(struct cred *new)
+> 426 {
+> 427         struct task_struct *task = current;
+> 428         const struct cred *old = task->real_cred;
+> 429
+> 430         kdebug("commit_creds(%p{%d,%d})", new,
+> 431                atomic_read(&new->usage),
+> 432                read_cred_subscribers(new));
+> 433
+> 434         BUG_ON(task->cred != old);  // BUG here
+>
+>
+> I find that the call chain which triggered the BUG is :
+>
+> do_exit
+>     |-=> acct_process
+>     |    -=> do_acct_process
+>     |        -=> orig_cred = override_creds(file->f_cred); // cred = 
+> ffff8883c1878900/real_cred = ffff8883c1878900
+>     |        -=>  if (file_start_write_trylock(file)) 
+> {__kernel_write(file, &ac, sizeof(acct_t), &pos);}
+>     |               -=> __kernel_write+0xf8/0x330
+>     |                    -=> __vfs_write+0x81/0x100
+>     |                           -=> proc_pid_attr_write+0x307/0x5a0
+>     |                                -=> security_setprocattr+0xa1/0x100
+>     | -=>selinux_setprocattr+0x2ea/0x8f0
+>     | -=>commit_creds+0xd97/0x1080  // cred = 
+> ffff888379a79c00/real_cred = ffff888379a79c00
+>     |       -=> revert_creds(orig_cred);   // cred = 
+> ffff8883c1878900/real_cred = ffff888379a79c00
+>     |-=> task_work_run
+>            -=> cleanup_mnt+0x11b/0x150
+>                 -=> mnt_pin_kill+0x68/0x1d0
+>                     -=> pin_kill+0x16d/0x7c0
+>                     -=> acct_pin_kill+0x2e/0x100
+>                     -=> do_acct_process+0x1a0/0x1340
+>                           -=> override_creds+0x18a/0x1c0   // cred = 
+> ffff8883c1878900/real_cred = ffff888379a79c00
+>                           -=>  if (file_start_write_trylock(file)) 
+> {__kernel_write(file, &ac, sizeof(acct_t), &pos);}
+>                                     -=>   ...... 
+> -=>commit_creds+0xd97/0x1080   // new = ffff888379a6bb00, cred = 
+> ffff8883c1878900, real_ceed = ffff888379a79c00 BUG here
+>                           -=> revert_creds(orig_cred);
+>
+>
+> Syzkaller Report Testcase:
+>
+> cat crash.log
+>
+> 04:05:28 executing program 3:
+> clone(0x24100, 0x0, 0x0, 0x0, 0x0)
+> r0 = gettid()
+> perf_event_open(&(0x7f00000000c0)={0x2, 0x70, 0x4, 0x2, 0x0, 0x0, 0x0, 
+> 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 
+> 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 
+> 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, @perf_bp={0x0}}, 0x0, 
+> 0xffffffffffffffff, 0xffffffffffffffff, 0x0)
+> acct(&(0x7f0000000000)='./file0\x00')
+> r1 = openat$smack_thread_current(0xffffffffffffff9c, 
+> &(0x7f0000000000)='/proc/thread-self/attr/current\x00', 0x2, 0x0)
+> fcntl$setown(r1, 0x8, r0)
+> rt_tgsigqueueinfo(r0, r0, 0x1e, &(0x7f00000002c0))
+> tkill(r0, 0x1e)
+>
+>
+> Reproduce this BUG:
+> ./syz-execprog -executor=./syz-executor -repeat=0 -procs=16 -cover=0 
+> ./crash.log
+>
+>
+> Can anyone help me ?
+>
+>
+> Thanks,
+>
+>         Cheng Jian.
+>
+>
