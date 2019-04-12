@@ -2,129 +2,102 @@ Return-Path: <SRS0=JiNK=SO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EAFC10F0E
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 11:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 319A6C10F0E
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 11:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E3CD2083E
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 11:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0789C2083E
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 11:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbfDLLFd (ORCPT
+        id S1726794AbfDLLJ3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Apr 2019 07:05:33 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61350 "EHLO
+        Fri, 12 Apr 2019 07:09:29 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:62577 "EHLO
         www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726697AbfDLLFc (ORCPT
+        with ESMTP id S1726814AbfDLLJ2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Apr 2019 07:05:32 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3CB578j025542;
-        Fri, 12 Apr 2019 20:05:07 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+        Fri, 12 Apr 2019 07:09:28 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x3CB9NhL028109;
+        Fri, 12 Apr 2019 20:09:23 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
 Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Fri, 12 Apr 2019 20:05:07 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank060157095162.bbtec.net [60.157.95.162])
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Fri, 12 Apr 2019 20:09:23 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157095162.bbtec.net [60.157.95.162])
         (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3CB54W7025473
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 12 Apr 2019 20:05:07 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-security-module@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+29569ed06425fcf67a95@syzkaller.appspotmail.com>,
-        syzbot <syzbot+2ee3f8974c2e7dc69feb@syzkaller.appspotmail.com>,
-        syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
-Subject: [PATCH (resend)] tomoyo: Add a kernel config option for fuzzing testing.
-Date:   Fri, 12 Apr 2019 20:04:54 +0900
-Message-Id: <1555067094-9861-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x3CB9MeD028105
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 12 Apr 2019 20:09:23 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] tomoyo: Change pathname calculation for read-only
+ filesystems.
+To:     viro@zeniv.linux.org.uk
+Cc:     James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org
+References: <1551277164-8715-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <alpine.LRH.2.21.1902280724410.7990@namei.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <52027db5-a4e3-fc5e-4149-529d95d251b2@i-love.sakura.ne.jp>
+Date:   Fri, 12 Apr 2019 20:09:23 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <alpine.LRH.2.21.1902280724410.7990@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot is reporting kernel panic triggered by memory allocation fault
-injection before loading TOMOYO's policy [1]. To make the fuzzing tests
-useful, we need to assign a profile other than "disabled" (no-op) mode.
-Therefore, let's allow syzbot to load TOMOYO's built-in policy for
-"learning" mode using a kernel config option. This option must not be
-enabled for kernels built for production system, for this option also
-disables domain/program checks when modifying policy configuration via
-/sys/kernel/security/tomoyo/ interface.
+Al, do you have any concerns with this patch?
 
-[1] https://syzkaller.appspot.com/bug?extid=29569ed06425fcf67a95
-
-Reported-by: syzbot <syzbot+e1b8084e532b6ee7afab@syzkaller.appspotmail.com>
-Reported-by: syzbot <syzbot+29569ed06425fcf67a95@syzkaller.appspotmail.com>
-Reported-by: syzbot <syzbot+2ee3f8974c2e7dc69feb@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- security/tomoyo/Kconfig  | 10 ++++++++++
- security/tomoyo/common.c | 13 ++++++++++++-
- 2 files changed, 22 insertions(+), 1 deletion(-)
-
-diff --git a/security/tomoyo/Kconfig b/security/tomoyo/Kconfig
-index 404dce6..a00ab7e 100644
---- a/security/tomoyo/Kconfig
-+++ b/security/tomoyo/Kconfig
-@@ -74,3 +74,13 @@ config SECURITY_TOMOYO_ACTIVATION_TRIGGER
- 	  You can override this setting via TOMOYO_trigger= kernel command line
- 	  option. For example, if you pass init=/bin/systemd option, you may
- 	  want to also pass TOMOYO_trigger=/bin/systemd option.
-+
-+config SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
-+	bool "Use insecure built-in settings for fuzzing tests."
-+	default n
-+	depends on SECURITY_TOMOYO
-+	select SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
-+	help
-+	  Enabling this option forces minimal built-in policy and disables
-+	  domain/program checks for run-time policy modifications. Please enable
-+	  this option only if this kernel is built for doing fuzzing tests.
-diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index 57988d9..dd3d594 100644
---- a/security/tomoyo/common.c
-+++ b/security/tomoyo/common.c
-@@ -940,7 +940,7 @@ static bool tomoyo_manager(void)
- 	const char *exe;
- 	const struct task_struct *task = current;
- 	const struct tomoyo_path_info *domainname = tomoyo_domain()->domainname;
--	bool found = false;
-+	bool found = IS_ENABLED(CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING);
- 
- 	if (!tomoyo_policy_loaded)
- 		return true;
-@@ -2810,6 +2810,16 @@ void tomoyo_check_profile(void)
-  */
- void __init tomoyo_load_builtin_policy(void)
- {
-+#ifdef CONFIG_SECURITY_TOMOYO_INSECURE_BUILTIN_SETTING
-+	static char tomoyo_builtin_profile[] __initdata =
-+		"PROFILE_VERSION=20150505\n"
-+		"0-CONFIG={ mode=learning grant_log=no reject_log=yes }\n";
-+	static char tomoyo_builtin_exception_policy[] __initdata =
-+		"aggregator proc:/self/exe /proc/self/exe\n";
-+	static char tomoyo_builtin_domain_policy[] __initdata = "";
-+	static char tomoyo_builtin_manager[] __initdata = "";
-+	static char tomoyo_builtin_stat[] __initdata = "";
-+#else
- 	/*
- 	 * This include file is manually created and contains built-in policy
- 	 * named "tomoyo_builtin_profile", "tomoyo_builtin_exception_policy",
-@@ -2817,6 +2827,7 @@ void __init tomoyo_load_builtin_policy(void)
- 	 * "tomoyo_builtin_stat" in the form of "static char [] __initdata".
- 	 */
- #include "builtin-policy.h"
-+#endif
- 	u8 i;
- 	const int idx = tomoyo_read_lock();
- 
--- 
-1.8.3.1
+On 2019/02/28 5:25, James Morris wrote:
+> On Wed, 27 Feb 2019, Tetsuo Handa wrote:
+> 
+>> Commit 5625f2e3266319fd ("TOMOYO: Change pathname for non-rename()able
+>> filesystems.") intended to be applied to filesystems where the content is
+>> not controllable from the userspace (e.g. proc, sysfs, securityfs), based
+>> on an assumption that such filesystems do not support rename() operation.
+>>
+>> But it turned out that read-only filesystems also do not support rename()
+>> operation despite the content is controllable from the userspace, and that
+>> commit is annoying TOMOYO users who want to use e.g. squashfs as the root
+>> filesystem due to use of local name which does not start with '/'.
+>>
+>> Therefore, based on an assumption that filesystems which require the
+>> device argument upon mount() request is an indication that the content
+>> is controllable from the userspace, do not use local name if a filesystem
+>> does not support rename() operation but requires the device argument upon
+>> mount() request.
+> 
+> I'd definitely like Al's input on this.
+> 
+>>
+>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+>> ---
+>>  security/tomoyo/realpath.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/security/tomoyo/realpath.c b/security/tomoyo/realpath.c
+>> index 85e6e31..e7832448 100644
+>> --- a/security/tomoyo/realpath.c
+>> +++ b/security/tomoyo/realpath.c
+>> @@ -295,7 +295,8 @@ char *tomoyo_realpath_from_path(const struct path *path)
+>>  		 * or dentry without vfsmount.
+>>  		 */
+>>  		if (!path->mnt ||
+>> -		    (!inode->i_op->rename))
+>> +		    (!inode->i_op->rename &&
+>> +		     !(sb->s_type->fs_flags & FS_REQUIRES_DEV)))
+>>  			pos = tomoyo_get_local_path(path->dentry, buf,
+>>  						    buf_len - 1);
+>>  		/* Get absolute name for the rest. */
+>>
+> 
 
