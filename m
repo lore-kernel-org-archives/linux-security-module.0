@@ -2,186 +2,312 @@ Return-Path: <SRS0=JiNK=SO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBF0C282CE
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 11:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E30DC10F0E
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 12:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F31E206BA
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 11:36:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 053262084D
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Apr 2019 12:45:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W5V6TDvW"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sgPD7ga0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfDLLgZ (ORCPT
+        id S1726773AbfDLMpI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Apr 2019 07:36:25 -0400
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:37716 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbfDLLgZ (ORCPT
+        Fri, 12 Apr 2019 08:45:08 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:56285 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbfDLMpI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Apr 2019 07:36:25 -0400
-Received: by mail-vk1-f195.google.com with SMTP id o187so2080588vkg.4
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2019 04:36:24 -0700 (PDT)
+        Fri, 12 Apr 2019 08:45:08 -0400
+Received: by mail-vk1-f202.google.com with SMTP id z6so3895900vkf.22
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Apr 2019 05:45:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=cGZZ4BuYydyibp4+F7cQcUxUprpuCPDg3YV5UtmfK3Q=;
-        b=W5V6TDvWfTA98iTJDUS9B+Lye3NfD+qqaZ7C+4KDq/wUxNXjzVUOAxN3q5lOVm5FEI
-         kSgCEyIv62qpAx99tKqBIWv1WZzeejMvB/rWWXSl0VeevNUFS0boXuF2o4CNsxKsMH8F
-         Xvy4rpV3h2hVYpfYQEmj6kq4KvLBvBRnN3J2W70rnuyDGWObr59cURT4OOyhsmEgaY9g
-         hR0e/q1JrGDTUMon/5KLePl6qbkxEEoWi1q26P4KcIk8KJyIz3vGpOzAdNKtu9rLkkIS
-         WSqq7Oe1ch0WzUD2EZrXH6srAiOT7xmC010z181+nfKWlHNC/hEGIo3iwnLpy5ObOWnx
-         Oz5w==
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=83wHpmEoWmTPnFwY0l59Y0OXpUaa/f0svyU4uSEFOdQ=;
+        b=sgPD7ga0/28KiS/8Rq6wWxAEcHkcRJ+G0I7U0LiWpYOjovshcYh4pPEh9LALIVANns
+         jjDkAGka9UDbyxtNlW7U5BawFs/G+hP9eB00oHAzfDKTDPN+7vMLf94WN4L4OYC3jN06
+         Mpi5yAlNu3Gb8kvMilZBgL+P4632zyJqMDSv+XdSOpnFMwWlKaHQx/4/sdanybS+E5l0
+         oibiJgdX/NLQCM8wmXshVlLiWNu3QGfvqddUC2owrn8eZ5tcKXyEqDecml+nlHlc7Dlj
+         l13faHoaFXUVHen3AGiCFhTAV3MjMY3FEn7BCu2KlQIodUHJfA53Fr27ZG+dscjJI3SG
+         JmQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cGZZ4BuYydyibp4+F7cQcUxUprpuCPDg3YV5UtmfK3Q=;
-        b=qUz6Ftofc1ituSm8rKDmrecZljiLSr3psQ3et08Eog9IspEYaX4TT66Z2ReySXbkSy
-         mVk9KZy6j3eWAKhSAnPl91RJ/yYVL4HVbNtowxR2djJesBT9bOj7KgPJxoaatbEUr3LF
-         uGStiFV4R445i6JgfJPRv6tEtX+cyPvNkbJnT/tQIR+oekrMtmrtw56z379uJ1WAtvEb
-         mfNSVU+ZJ64NPjZcR0Nuo8wed+GFqPjQu5HcjxU+ZQQ4Op/Bk2Ljt0ls7Rui6Czi5JGS
-         tyy7VBhrAJygns/NgqenWQIcqWi21ShvgzINU8P1FbkKHwuj5RJP1wPnJud5FoF+935B
-         OH+Q==
-X-Gm-Message-State: APjAAAVBbXqvZAZCZvQWbGX0VgwYULeMyb8O0nBwqLmSaFa3sk2S0OlW
-        NGJyvxua3wrnSUhN9kFgtUmIR2oF62eoRYptem2zDQ==
-X-Google-Smtp-Source: APXvYqxVuFm8+GuVTJZhqK5OB/d/md10shGu3xv6XGzvzIhzVGjme+OIXyOVUI3sdzYA/Td6zlFTF2sZmKzTWCCIIHY=
-X-Received: by 2002:a1f:bf4b:: with SMTP id p72mr30997977vkf.77.1555068983154;
- Fri, 12 Apr 2019 04:36:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190411180117.27704-1-keescook@chromium.org> <20190411180117.27704-4-keescook@chromium.org>
-In-Reply-To: <20190411180117.27704-4-keescook@chromium.org>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=83wHpmEoWmTPnFwY0l59Y0OXpUaa/f0svyU4uSEFOdQ=;
+        b=BIFAkN8zNnMPuIOerZzpwvqPAYHqM+6aoiSDa1QlRqbEs1Mkcegv51cFXxTNjBaRLT
+         qPVAnWhUU+74Zb3Qe1sPGgAn0C4Nk0zqUMThQVNTHmwzW38MivcORORscq5ep+IBnlKQ
+         nMpqvvEfFROscdE/W6XxF8h93AhM1TyJ4NZFw74X/CAjlZxkxDiWkxkBb5ICPzVRzZLM
+         ee+4OSNXAPvw+M+0Okv01IadyZay/3k6GnPu20KlfkG+Ci498ZtbXAvtOuCZP40ymebY
+         VWGDqbDiX79S6WT5mbpu2Sk+DeIlNXo1rZPRw2riQ3V6/DIj7qmfk9q/5uw6tLszE9Z+
+         GvsQ==
+X-Gm-Message-State: APjAAAXQ/HQfzAu9mgkvwA1T1822fzs6r/Bku3gdmslMXtpXaZ6xbGfm
+        BmcbtlaMiKB80mh/fj1AfUFfuuZEUok=
+X-Google-Smtp-Source: APXvYqwd8NXWmS7nTqXo/l4ZCq9qsGa703/O8iSSu0SZwOGOevq4EFMZR9NzupdZfMeKeu5JNDAXXVuS0yk=
+X-Received: by 2002:a67:e295:: with SMTP id g21mr6550492vsf.24.1555073106933;
+ Fri, 12 Apr 2019 05:45:06 -0700 (PDT)
+Date:   Fri, 12 Apr 2019 14:45:01 +0200
+Message-Id: <20190412124501.132678-1-glider@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
+Subject: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
 From:   Alexander Potapenko <glider@google.com>
-Date:   Fri, 12 Apr 2019 13:36:12 +0200
-Message-ID: <CAG_fn=VqXUTF+rLPcGNR8=kmNFdSAqmMKb9r9=SkoDcg7RrKnQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] security: Implement Clang's stack initialization
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        Alexander Popov <alex.popov@linux.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Emese Revfy <re.emese@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+To:     akpm@linux-foundation.org
+Cc:     linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        ndesaulniers@google.com, kcc@google.com, dvyukov@google.com,
+        keescook@chromium.org, sspatil@android.com, labbott@redhat.com,
+        kernel-hardening@lists.openwall.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 11, 2019 at 8:01 PM Kees Cook <keescook@chromium.org> wrote:
->
-> CONFIG_INIT_STACK_ALL turns on stack initialization based on
-> -ftrivial-auto-var-init in Clang builds, which has greater coverage
-> than CONFIG_GCC_PLUGINS_STRUCTLEAK_BYREF_ALL.
->
-> -ftrivial-auto-var-init Clang option provides trivial initializers for
-> uninitialized local variables, variable fields and padding.
->
-> It has three possible values:
->   pattern - uninitialized locals are filled with a fixed pattern
->     (mostly 0xAA on 64-bit platforms, see https://reviews.llvm.org/D54604
->     for more details, but 0x000000AA for 32-bit pointers) likely to cause
->     crashes when uninitialized value is used;
->   zero (it's still debated whether this flag makes it to the official
->     Clang release) - uninitialized locals are filled with zeroes;
->   uninitialized (default) - uninitialized locals are left intact.
->
-> This patch uses only the "pattern" mode when CONFIG_INIT_STACK_ALL is
-> enabled.
->
-> Developers have the possibility to opt-out of this feature on a
-> per-variable basis by using __attribute__((uninitialized)), but such
-> use should be well justified in comments.
->
-> Co-developed-by: Alexander Potapenko <glider@google.com>
-> Signed-off-by: Alexander Potapenko <glider@google.com>
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-Tested-by: Alexander Potapenko <glider@google.com>
-> ---
->  Makefile                   |  5 +++++
->  security/Kconfig.hardening | 15 ++++++++++++++-
->  2 files changed, 19 insertions(+), 1 deletion(-)
->
-> diff --git a/Makefile b/Makefile
-> index c0a34064c574..a7d9c6cd0267 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -745,6 +745,11 @@ KBUILD_CFLAGS      +=3D -fomit-frame-pointer
->  endif
->  endif
->
-> +# Initialize all stack variables with a pattern, if desired.
-> +ifdef CONFIG_INIT_STACK_ALL
-> +KBUILD_CFLAGS  +=3D -ftrivial-auto-var-init=3Dpattern
-> +endif
-> +
->  DEBUG_CFLAGS   :=3D $(call cc-option, -fno-var-tracking-assignments)
->
->  ifdef CONFIG_DEBUG_INFO
-> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-> index 3dd7a28c3822..5dd61770d3f0 100644
-> --- a/security/Kconfig.hardening
-> +++ b/security/Kconfig.hardening
-> @@ -18,9 +18,12 @@ config GCC_PLUGIN_STRUCTLEAK
->
->  menu "Memory initialization"
->
-> +config CC_HAS_AUTO_VAR_INIT
-> +       def_bool $(cc-option,-ftrivial-auto-var-init=3Dpattern)
-> +
->  choice
->         prompt "Initialize kernel stack variables at function entry"
-> -       depends on GCC_PLUGINS
-> +       depends on CC_HAS_AUTO_VAR_INIT || GCC_PLUGINS
->         default INIT_STACK_NONE
->         help
->           This option enables initialization of stack variables at
-> @@ -76,6 +79,16 @@ choice
->                   of uninitialized stack variable exploits and informatio=
-n
->                   exposures.
->
-> +       config INIT_STACK_ALL
-> +               bool "0xAA-init everything on the stack (strongest)"
-> +               depends on CC_HAS_AUTO_VAR_INIT
-> +               help
-> +                 Initializes everything on the stack with a 0xAA
-> +                 pattern. This is intended to eliminate all classes
-> +                 of uninitialized stack variable exploits and informatio=
-n
-> +                 exposures, even variables that were warned to have been
-> +                 left uninitialized.
-> +
->  endchoice
->
->  config GCC_PLUGIN_STRUCTLEAK_VERBOSE
-> --
-> 2.17.1
->
+This config option adds the possibility to initialize newly allocated
+pages and heap objects with zeroes. This is needed to prevent possible
+information leaks and make the control-flow bugs that depend on
+uninitialized values more deterministic.
 
+Initialization is done at allocation time at the places where checks for
+__GFP_ZERO are performed. We don't initialize slab caches with
+constructors or SLAB_TYPESAFE_BY_RCU to preserve their semantics.
 
---=20
-Alexander Potapenko
-Software Engineer
+For kernel testing purposes filling allocations with a nonzero pattern
+would be more suitable, but may require platform-specific code. To have
+a simple baseline we've decided to start with zero-initialization.
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+No performance optimizations are done at the moment to reduce double
+initialization of memory regions.
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Kostya Serebryany <kcc@google.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Sandeep Patil <sspatil@android.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Jann Horn <jannh@google.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-mm@kvack.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-hardening@lists.openwall.com
+---
+This patch applies on top of the "Refactor memory initialization
+hardening" patch series by Kees Cook: https://lkml.org/lkml/2019/4/10/748
+---
+ drivers/infiniband/core/uverbs_ioctl.c |  2 +-
+ include/linux/gfp.h                    |  8 ++++++++
+ kernel/kexec_core.c                    |  2 +-
+ mm/dmapool.c                           |  2 +-
+ mm/page_alloc.c                        |  2 +-
+ mm/slab.c                              |  6 +++---
+ mm/slab.h                              | 10 ++++++++++
+ mm/slob.c                              |  2 +-
+ mm/slub.c                              |  4 ++--
+ net/core/sock.c                        |  2 +-
+ security/Kconfig.hardening             | 10 ++++++++++
+ 11 files changed, 39 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/infiniband/core/uverbs_ioctl.c b/drivers/infiniband/core/uverbs_ioctl.c
+index e1379949e663..34937cecac62 100644
+--- a/drivers/infiniband/core/uverbs_ioctl.c
++++ b/drivers/infiniband/core/uverbs_ioctl.c
+@@ -127,7 +127,7 @@ __malloc void *_uverbs_alloc(struct uverbs_attr_bundle *bundle, size_t size,
+ 	res = (void *)pbundle->internal_buffer + pbundle->internal_used;
+ 	pbundle->internal_used =
+ 		ALIGN(new_used, sizeof(*pbundle->internal_buffer));
+-	if (flags & __GFP_ZERO)
++	if (GFP_WANT_INIT(flags))
+ 		memset(res, 0, size);
+ 	return res;
+ }
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index fdab7de7490d..4f49a6a13f6f 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -213,6 +213,14 @@ struct vm_area_struct;
+ #define __GFP_COMP	((__force gfp_t)___GFP_COMP)
+ #define __GFP_ZERO	((__force gfp_t)___GFP_ZERO)
+ 
++#ifdef CONFIG_INIT_HEAP_ALL
++#define GFP_WANT_INIT(flags) (1)
++#define GFP_INIT_ALWAYS_ON (1)
++#else
++#define GFP_WANT_INIT(flags) (unlikely((flags) & __GFP_ZERO))
++#define GFP_INIT_ALWAYS_ON (0)
++#endif
++
+ /* Disable lockdep for GFP context tracking */
+ #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
+ 
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index d7140447be75..1ad0097695a1 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -315,7 +315,7 @@ static struct page *kimage_alloc_pages(gfp_t gfp_mask, unsigned int order)
+ 		arch_kexec_post_alloc_pages(page_address(pages), count,
+ 					    gfp_mask);
+ 
+-		if (gfp_mask & __GFP_ZERO)
++		if (GFP_WANT_INIT(gfp_mask))
+ 			for (i = 0; i < count; i++)
+ 				clear_highpage(pages + i);
+ 	}
+diff --git a/mm/dmapool.c b/mm/dmapool.c
+index 76a160083506..d40d62145ca3 100644
+--- a/mm/dmapool.c
++++ b/mm/dmapool.c
+@@ -381,7 +381,7 @@ void *dma_pool_alloc(struct dma_pool *pool, gfp_t mem_flags,
+ #endif
+ 	spin_unlock_irqrestore(&pool->lock, flags);
+ 
+-	if (mem_flags & __GFP_ZERO)
++	if (GFP_WANT_INIT(mem_flags))
+ 		memset(retval, 0, pool->size);
+ 
+ 	return retval;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d96ca5bc555b..ceddc4eeaff4 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2014,7 +2014,7 @@ static void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags
+ 
+ 	post_alloc_hook(page, order, gfp_flags);
+ 
+-	if (!free_pages_prezeroed() && (gfp_flags & __GFP_ZERO))
++	if (!free_pages_prezeroed() && GFP_WANT_INIT(gfp_flags))
+ 		for (i = 0; i < (1 << order); i++)
+ 			clear_highpage(page + i);
+ 
+diff --git a/mm/slab.c b/mm/slab.c
+index 47a380a486ee..848e47658667 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -3331,7 +3331,7 @@ slab_alloc_node(struct kmem_cache *cachep, gfp_t flags, int nodeid,
+ 	local_irq_restore(save_flags);
+ 	ptr = cache_alloc_debugcheck_after(cachep, flags, ptr, caller);
+ 
+-	if (unlikely(flags & __GFP_ZERO) && ptr)
++	if (SLAB_WANT_INIT(cachep, flags) && ptr)
+ 		memset(ptr, 0, cachep->object_size);
+ 
+ 	slab_post_alloc_hook(cachep, flags, 1, &ptr);
+@@ -3388,7 +3388,7 @@ slab_alloc(struct kmem_cache *cachep, gfp_t flags, unsigned long caller)
+ 	objp = cache_alloc_debugcheck_after(cachep, flags, objp, caller);
+ 	prefetchw(objp);
+ 
+-	if (unlikely(flags & __GFP_ZERO) && objp)
++	if (SLAB_WANT_INIT(cachep, flags) && objp)
+ 		memset(objp, 0, cachep->object_size);
+ 
+ 	slab_post_alloc_hook(cachep, flags, 1, &objp);
+@@ -3596,7 +3596,7 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
+ 	cache_alloc_debugcheck_after_bulk(s, flags, size, p, _RET_IP_);
+ 
+ 	/* Clear memory outside IRQ disabled section */
+-	if (unlikely(flags & __GFP_ZERO))
++	if (SLAB_WANT_INIT(s, flags))
+ 		for (i = 0; i < size; i++)
+ 			memset(p[i], 0, s->object_size);
+ 
+diff --git a/mm/slab.h b/mm/slab.h
+index 43ac818b8592..4bb10af0031b 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -167,6 +167,16 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
+ 			      SLAB_TEMPORARY | \
+ 			      SLAB_ACCOUNT)
+ 
++/*
++ * Do we need to initialize this allocation?
++ * Always true for __GFP_ZERO, CONFIG_INIT_HEAP_ALL enforces initialization
++ * of caches without constructors and RCU.
++ */
++#define SLAB_WANT_INIT(cache, gfp_flags) \
++	((GFP_INIT_ALWAYS_ON && !(cache)->ctor && \
++	  !((cache)->flags & SLAB_TYPESAFE_BY_RCU)) || \
++	 (gfp_flags & __GFP_ZERO))
++
+ bool __kmem_cache_empty(struct kmem_cache *);
+ int __kmem_cache_shutdown(struct kmem_cache *);
+ void __kmem_cache_release(struct kmem_cache *);
+diff --git a/mm/slob.c b/mm/slob.c
+index 307c2c9feb44..0c402e819cf7 100644
+--- a/mm/slob.c
++++ b/mm/slob.c
+@@ -330,7 +330,7 @@ static void *slob_alloc(size_t size, gfp_t gfp, int align, int node)
+ 		BUG_ON(!b);
+ 		spin_unlock_irqrestore(&slob_lock, flags);
+ 	}
+-	if (unlikely(gfp & __GFP_ZERO))
++	if (GFP_WANT_INIT(gfp))
+ 		memset(b, 0, size);
+ 	return b;
+ }
+diff --git a/mm/slub.c b/mm/slub.c
+index d30ede89f4a6..686ab9d49ced 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2750,7 +2750,7 @@ static __always_inline void *slab_alloc_node(struct kmem_cache *s,
+ 		stat(s, ALLOC_FASTPATH);
+ 	}
+ 
+-	if (unlikely(gfpflags & __GFP_ZERO) && object)
++	if (SLAB_WANT_INIT(s, gfpflags) && object)
+ 		memset(object, 0, s->object_size);
+ 
+ 	slab_post_alloc_hook(s, gfpflags, 1, &object);
+@@ -3172,7 +3172,7 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
+ 	local_irq_enable();
+ 
+ 	/* Clear memory outside IRQ disabled fastpath loop */
+-	if (unlikely(flags & __GFP_ZERO)) {
++	if (SLAB_WANT_INIT(s, flags)) {
+ 		int j;
+ 
+ 		for (j = 0; j < i; j++)
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 782343bb925b..51b13d7fd82f 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1601,7 +1601,7 @@ static struct sock *sk_prot_alloc(struct proto *prot, gfp_t priority,
+ 		sk = kmem_cache_alloc(slab, priority & ~__GFP_ZERO);
+ 		if (!sk)
+ 			return sk;
+-		if (priority & __GFP_ZERO)
++		if (GFP_WANT_INIT(priority))
+ 			sk_prot_clear_nulls(sk, prot->obj_size);
+ 	} else
+ 		sk = kmalloc(prot->obj_size, priority);
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index d744e20140b4..cb7d7dfb506f 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -93,6 +93,16 @@ choice
+ 
+ endchoice
+ 
++config INIT_HEAP_ALL
++	bool "Initialize kernel heap allocations"
++	default n
++	help
++	  Enforce initialization of pages allocated from page allocator
++	  and objects returned by kmalloc and friends.
++	  Allocated memory is initialized with zeroes, preventing possible
++	  information leaks and making the control-flow bugs that depend
++	  on uninitialized values more deterministic.
++
+ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+ 	bool "Report forcefully initialized variables"
+ 	depends on GCC_PLUGIN_STRUCTLEAK
+-- 
+2.21.0.392.gf8f6787159e-goog
+
