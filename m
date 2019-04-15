@@ -2,58 +2,66 @@ Return-Path: <SRS0=ZVpt=SR=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0475AC10F0E
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Apr 2019 08:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0F7C10F0E
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Apr 2019 10:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D044120693
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Apr 2019 08:47:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA528206B6
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Apr 2019 10:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbfDOIr3 (ORCPT
+        id S1725816AbfDOKuK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Apr 2019 04:47:29 -0400
-Received: from mga01.intel.com ([192.55.52.88]:8557 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725779AbfDOIr3 (ORCPT
+        Mon, 15 Apr 2019 06:50:10 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:45356 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbfDOKuK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Apr 2019 04:47:29 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Apr 2019 01:47:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.60,353,1549958400"; 
-   d="scan'208";a="337561688"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
-  by fmsmga006.fm.intel.com with ESMTP; 15 Apr 2019 01:47:25 -0700
-Date:   Mon, 15 Apr 2019 11:47:23 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com
-Subject: Re: [PATCH] TCG2 log support build fixes for non-x86_64
-Message-ID: <20190415084723.GA20831@linux.intel.com>
-References: <20190402215556.257406-1-matthewgarrett@google.com>
+        Mon, 15 Apr 2019 06:50:10 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1hFzBd-0005YG-Mk; Mon, 15 Apr 2019 12:50:05 +0200
+Date:   Mon, 15 Apr 2019 12:50:05 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-security-module@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     tglx@linutronix.de
+Subject: Re: [PATCH 1/2] apparmor: Use a memory pool instead per-CPU caches
+Message-ID: <20190415105005.t6omvm5irdjhzbfs@linutronix.de>
+References: <20190405133458.4809-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190402215556.257406-1-matthewgarrett@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190405133458.4809-1-bigeasy@linutronix.de>
+User-Agent: NeoMutt/20180716
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 02, 2019 at 02:55:54PM -0700, Matthew Garrett wrote:
-> Couple of patches to fix ktest reported issues with the crypto-agile log
-> format support.
+On 2019-04-05 15:34:57 [+0200], To linux-security-module@vger.kernel.org wrote:
+> The get_buffers() macro may provide one or two buffers to the caller.
+> Those buffers are preallocated on init for each CPU. By default it
+> allocates
+> 	2* 2 * MAX_PATH * POSSIBLE_CPU
+> 
+> which equals 64KiB on a system with 4 CPUs or 1MiB with 64 CPUs and so
+> on.
+> 
+> Replace the per-CPU buffers with a common memory pool which is shared
+> across all CPUs. The pool grows on demand and never shrinks.
+> By using this pool it is possible to request a buffer and keeping
+> preemption enabled which avoids the hack in profile_transition().
+> 
+> During light testing I didn't get more than two buffers in total with
+> this patch. So it seems to make sense to allocate the buffers on demand
+> and keep them for further use for a quick access.
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Applied and squashed. Should be soon in linux-next.
+a gentle ping.
 
-/Jarkko
+Sebastian
