@@ -2,94 +2,115 @@ Return-Path: <SRS0=WmJh=SS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9709C10F13
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE49C10F13
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F4F20880
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:34:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E934C20868
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:45:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbfDPPeX (ORCPT
+        id S1726713AbfDPPpR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Apr 2019 11:34:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51466 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726713AbfDPPeW (ORCPT
+        Tue, 16 Apr 2019 11:45:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53452 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726548AbfDPPpR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Apr 2019 11:34:22 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C6B678665D;
-        Tue, 16 Apr 2019 15:34:15 +0000 (UTC)
-Received: from x2.localnet (ovpn-120-96.rdu2.redhat.com [10.10.120.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2000919C7D;
-        Tue, 16 Apr 2019 15:34:09 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Florian Weimer <fweimer@redhat.com>
+        Tue, 16 Apr 2019 11:45:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E7184AEEE;
+        Tue, 16 Apr 2019 15:45:14 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 2EDC31E15B4; Tue, 16 Apr 2019 17:45:13 +0200 (CEST)
+Date:   Tue, 16 Apr 2019 17:45:13 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
 Cc:     Jan Kara <jack@suse.cz>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
-Date:   Tue, 16 Apr 2019 11:34:07 -0400
-Message-ID: <2361288.r9sZr2NHLB@x2>
-Organization: Red Hat
-In-Reply-To: <87wojuxj8s.fsf@oldenburg2.str.redhat.com>
-References: <20181212081712.32347-1-mic@digikod.net> <3452959.b6JmBh7Lnt@x2> <87wojuxj8s.fsf@oldenburg2.str.redhat.com>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        John Johansen <john.johansen@canonical.com>
+Subject: Re: fanotify and LSM path hooks
+Message-ID: <20190416154513.GB13422@quack2.suse.cz>
+References: <CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 16 Apr 2019 15:34:22 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tuesday, April 16, 2019 7:49:39 AM EDT Florian Weimer wrote:
-> * Steve Grubb:
-> > This flag that is being proposed means that you would have to patch all
-> > interpreters to use it. If you are sure that upstreams will accept that,
-> > why not just change the policy to interpreters shouldn't execute
-> > anything unless the execute bit is set? That is simpler and doesn't need
-> > a kernel change. And setting the execute bit is an auditable event.
+Hi Amir!
+
+On Sun 14-04-19 19:04:14, Amir Goldstein wrote:
+> I started to look at directory pre-modification "permission" hooks
+> that were discussed on last year's LSFMM:
+> https://lwn.net/Articles/755277/
 > 
-> I think we need something like O_MAYEXEC so that security policies can
-> be enforced and noexec mounts can be detected.
+> The two existing fanotify_perm() hooks are called
+> from security_file_permission() and security_file_open()
+> and depend on build time CONFIG_SECURITY.
+> If you look at how the fsnotify_perm() hooks are planted inside the
+> generic security hooks, one might wonder, why are fanotify permission
+> hooks getting a special treatment and are not registering as LSM hooks?
+> 
+> One benefit from an fanotify LSM, besides more generic code, would be
+> that fanotify permission hooks could be disabled with boot parameters.
+> 
+> I only bring this up because security hooks seems like the most natural
+> place to add pre-modify fanotify events for the purpose of maintaining
+> a filesystem change journal. It would be ugly to spray more fsnotify hooks
+> inside security hooks instead of registering an fanotify LSM, but maybe
+> there are downsides of registering fanotify as LSM that I am not aware of?
 
-Application whitelisting can already today stop unknown software without 
-needing O_MAYEXEC.
+I kind of like the idea of generating fanotify permission events from
+special LSM hooks.
 
-> I don't think it's a good idea to do this in userspace, especially the
-> latter.
+I'm not so sure about directory pre-modification hooks. Given the amount of
+problems we face with applications using fanotify permission events and
+deadlocking the system, I'm not very fond of expanding that API... AFAIU
+you want to use such hooks for recording (and persisting) that some change
+is going to happen and provide crash-consistency guarantees for such
+journal?
 
-The problem is that passing O_MAYEXEC is opt-in. You can use ptrace/seccomp/
-bpf/LD_PRELOAD/LD_AUDIT to remove that bit from an otherwise normal program. 
-This does not require privs to do so.
+> Another observation relates to the security_path_ hooks.
+> Let's take rename as an example.
+> LSM could implement security_path_rename() and/or security_inode_rename()
+> hooks and rename syscalls will end up calling both hooks.
+> The security_path_ hooks are more attractive for fanotify, because the path
+> information could be used to setup pre-modification permission mask on
+> mount marks and not only on filesystem/inode marks.
+> 
+> One problem with security_path_ hooks is that they require an extra
+> build time CONFIG_SECURITY_PATH.
+> Another problem is that they seem to be bypassed by several subsystems.
+> cachefiles, ecryptfs, overlayfs and nfsd all call the vfs_rename() helper, but
+> only cachefiles bothers to call the security_path_rename() hook.
+> This is of course true for all other security_path_ hooks.
+> I think that is something that requires fixing regardless of the fanotify pre
+> modification hooks. I wonder if tomoyo and apparmor developers
+> (LSM that implement security_path_ hooks) are aware of those missing
+> hooks?
+> 
+> Would love to get feedback about whether or not fanotify LSM sounds
+> like a good or bad idea and about the security_path_ hooks questions.
 
-But let's consider that this comes to pass and every interpreter is updated 
-and IMA can see the O_MAYEXEC flag. Attackers now simply pivot to running 
-programs via stdin. It never touches disk and therefore nothing enforces 
-security policy. This already is among the most common ways that malware runs 
-today to evade detection.
+I don't have strong opinion on using security_path_ hooks. I guess if
+they're not used everywhere then it's just easier to avoid them.
 
--Steve
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
