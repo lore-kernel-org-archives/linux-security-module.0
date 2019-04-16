@@ -2,154 +2,127 @@ Return-Path: <SRS0=WmJh=SS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A446BC10F14
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 04:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D973C282DA
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 08:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74AD62075B
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 04:03:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ebdoGELB"
+	by mail.kernel.org (Postfix) with ESMTP id 2B0CB20868
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 08:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbfDPEDK (ORCPT
+        id S1728887AbfDPIdn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Apr 2019 00:03:10 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:33742 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725648AbfDPEDI (ORCPT
+        Tue, 16 Apr 2019 04:33:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57730 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728882AbfDPIdn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Apr 2019 00:03:08 -0400
-Received: by mail-vs1-f67.google.com with SMTP id s11so71628vsn.0
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Apr 2019 21:03:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K4Hi2EDpByuuaTOj5JqRIJr5mBTbxyLqBywD/dBt8gQ=;
-        b=ebdoGELBjqvkVlsWe7n7m/Mu2PyOKUXB+BAg5QBJOCtxizroZxIsIT1iJW3T1T6tuJ
-         pMSBIRxKS5jb0R8r4BvL2FEBW+7hjlFIImBtLKB6OusOlHm37YbAnJOjI/mVRstmoMTV
-         13w2MfqekU8ZrSVRTidvGqSBHsqioV05ciC5k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K4Hi2EDpByuuaTOj5JqRIJr5mBTbxyLqBywD/dBt8gQ=;
-        b=jPRyBzSnTZc4MimU03Dsyxkx0oHNQbajdMwyz3Ri2gKIZnPkteRrXy1Z3ShoBbdcFG
-         oWCa5UMrem0RSc/Tj85BYi8pw/nbz4iWYx8I9GXgT1/SeLtqXYyXOx+bAHT3fJyQPSK/
-         kC7CK6rWeY0NE+kLyqFfnEP/SYwKvz+X04jdvDIHJxNROa9iSeG6alhOyT77zsEvAX2U
-         IQHTY8t+H7KMiZZylm8MgLrX9wcXvGuVBxd9RAQLnq5zRZ6Ls1GQEAqIJWijAgYIEcb3
-         wu1eOOMtav1/vkdYh82epZ95r9fGkiOBL5bV1Ay0WYzZkEhT8awQ3M3H3zi3qrS22Y7D
-         s9UA==
-X-Gm-Message-State: APjAAAUR2LWiU3Qhq1Eb+yQEKPhj3U63UNHCyq/MaGicKBM24lFHDu+D
-        igXhhMUQbNfxCnjj+UvWId/D48eDmPs=
-X-Google-Smtp-Source: APXvYqzb0rIgSujJC8oQ6TuiGCMUmO72o4lkcps3Afp5PdJiXALYWQe9KrD9YYRBgpjHYAhbCZ8bJg==
-X-Received: by 2002:a67:f30d:: with SMTP id p13mr41518885vsf.73.1555387386769;
-        Mon, 15 Apr 2019 21:03:06 -0700 (PDT)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id h78sm7642339vka.48.2019.04.15.21.03.05
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Apr 2019 21:03:05 -0700 (PDT)
-Received: by mail-vk1-f175.google.com with SMTP id o187so4138240vkg.4
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Apr 2019 21:03:05 -0700 (PDT)
-X-Received: by 2002:a1f:264b:: with SMTP id m72mr31777915vkm.43.1555387384831;
- Mon, 15 Apr 2019 21:03:04 -0700 (PDT)
+        Tue, 16 Apr 2019 04:33:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F04BBAF2F;
+        Tue, 16 Apr 2019 08:33:40 +0000 (UTC)
+Subject: Re: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
+To:     Alexander Potapenko <glider@google.com>, akpm@linux-foundation.org
+Cc:     linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        ndesaulniers@google.com, kcc@google.com, dvyukov@google.com,
+        keescook@chromium.org, sspatil@android.com, labbott@redhat.com,
+        kernel-hardening@lists.openwall.com
+References: <20190412124501.132678-1-glider@google.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <35935775-1c0d-6016-5bb3-0abee65a7492@suse.cz>
+Date:   Tue, 16 Apr 2019 10:30:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190411180117.27704-1-keescook@chromium.org> <20190411180117.27704-2-keescook@chromium.org>
- <947dbe9a-3444-6fe4-9f79-f8f210da8960@linux.com>
-In-Reply-To: <947dbe9a-3444-6fe4-9f79-f8f210da8960@linux.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 15 Apr 2019 23:02:53 -0500
-X-Gmail-Original-Message-ID: <CAGXu5jJTM=pdAjsC63Z6T=HaztTqSqUQQ8=GN=tqv2n6CKc3nw@mail.gmail.com>
-Message-ID: <CAGXu5jJTM=pdAjsC63Z6T=HaztTqSqUQQ8=GN=tqv2n6CKc3nw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] security: Create "kernel hardening" config area
-To:     Alexander Popov <alex.popov@linux.com>
-Cc:     Alexander Potapenko <glider@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Emese Revfy <re.emese@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190412124501.132678-1-glider@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 15, 2019 at 11:44 AM Alexander Popov <alex.popov@linux.com> wrote:
->
-> On 11.04.2019 21:01, Kees Cook wrote:
-> > Right now kernel hardening options are scattered around various Kconfig
-> > files. This can be a central place to collect these kinds of options
-> > going forward. This is initially populated with the memory initialization
-> > options from the gcc-plugins.
-> >
-> > Signed-off-by: Kees Cook <keescook@chromium.org>
->
-> Hello Kees, hello everyone!
->
-> After applying this series the kernel config looks like that:
->
-> ...
-> ...
-> CONFIG_LSM="yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
->
-> #
-> # Kernel hardening options
-> #
->
-> #
-> # Memory initialization
-> #
-> CONFIG_INIT_STACK_NONE=y
-> # CONFIG_GCC_PLUGIN_STRUCTLEAK_USER is not set
-> # CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF is not set
-> # CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL is not set
-> # CONFIG_GCC_PLUGIN_STACKLEAK is not set
-> CONFIG_CRYPTO=y
->
-> #
-> # Crypto core or helper
-> #
-> CONFIG_CRYPTO_ALGAPI=y
-> ...
-> ...
->
-> What do you think about some separator between memory initialization options and
-> CONFIG_CRYPTO?
+On 4/12/19 2:45 PM, Alexander Potapenko wrote:
+> +config INIT_HEAP_ALL
+> +	bool "Initialize kernel heap allocations"
 
-This was true before too:
+Calling slab and page allocations together as "heap" is rather uncommon
+in the kernel I think. But I don't have a better word right now.
 
-...
-# CONFIG_DEFAULT_SECURITY_DAC is not set
-CONFIG_LSM="yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
-CONFIG_XOR_BLOCKS=y
-CONFIG_ASYNC_CORE=y
-CONFIG_ASYNC_MEMCPY=y
-CONFIG_ASYNC_XOR=y
-CONFIG_ASYNC_PQ=y
-CONFIG_ASYNC_RAID6_RECOV=y
-CONFIG_CRYPTO=y
-...
+> +	default n
+> +	help
+> +	  Enforce initialization of pages allocated from page allocator
+> +	  and objects returned by kmalloc and friends.
+> +	  Allocated memory is initialized with zeroes, preventing possible
+> +	  information leaks and making the control-flow bugs that depend
+> +	  on uninitialized values more deterministic.
+> +
+>  config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+>  	bool "Report forcefully initialized variables"
+>  	depends on GCC_PLUGIN_STRUCTLEAK
+> 
 
-Perhaps crypto/Kconfig's comment line could move to the top of the file?
-
-comment "Crypto core or helper"
-
-is what generates the separator...
-
--- 
-Kees Cook
