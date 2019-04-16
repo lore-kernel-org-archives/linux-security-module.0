@@ -2,109 +2,239 @@ Return-Path: <SRS0=WmJh=SS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFAB9C10F0E
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 02:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A84A2C10F0E
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 03:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC7ED204EC
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 02:18:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="egV7tTkp"
+	by mail.kernel.org (Postfix) with ESMTP id 625E62075B
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 03:00:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1555383607;
+	bh=9SpBKYxbDnnwjfgQatV7DRxNupYyZTmVh6qLIQEkbj4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=UAoVZxELte7HD8jsgcNWM5PGFXveNdSPxlNxeD+/2PK+xs64KAUQWQcBX0/hJGxPb
+	 Erf2kdM+xVFM2BRWsev/3gkqeY3gRh78xAINcw9mcJzP+auvJI3HYn/rTF04bqmhCG
+	 katq/rt5OrI8RlfarOVmi+DUUdqDMHT/XYN3LuP4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725793AbfDPCS5 (ORCPT
+        id S1726147AbfDPC7q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Apr 2019 22:18:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40842 "EHLO
+        Mon, 15 Apr 2019 22:59:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44314 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbfDPCS5 (ORCPT
+        with ESMTP id S1726818AbfDPC4d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Apr 2019 22:18:57 -0400
+        Mon, 15 Apr 2019 22:56:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UCqn4xJsfn6LSF38geTP0GiT3GQOfaOQ+QhzCgzo1co=; b=egV7tTkpiN9UWTV3PXo4mGfLW
-        tbeL71ZPBs4HFrlSAHPfvTx5o1bsD58ovucaD2v+AGmrP7XvuU7izDvOhAY3sqSPXU42U8Gb3pycu
-        wXJ3K6Vbk/xXJ/HQYyn/Gwpw5kM8HAqi3pC7vlMBhzuPKGe5T9e9FP5ZkfxJ25pivvxM5iwZqz9jd
-        ZHZ6gy1YHEIcLju7XgZkwVQMjQCOOBqM9z3F+MXW/gnUI1bRcGIBJr83/OlHMDhbi4wTOaFHLYIRc
-        meSEFn5Bbi+peV/JaPozGSUudMpsq8SkY17MhfLYr+A6jeSyE/r2AzgFz9MxL4aYdkeFilGuP/jN3
-        YBRDv9a/A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hGDgS-0004Ef-Gw; Tue, 16 Apr 2019 02:18:52 +0000
-Date:   Mon, 15 Apr 2019 19:18:52 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>, linux-mm@kvack.org
-Subject: Re: [PATCH] crypto: testmgr - allocate buffers with __GFP_COMP
-Message-ID: <20190416021852.GA18616@bombadil.infradead.org>
-References: <20190411192607.GD225654@gmail.com>
- <20190411192827.72551-1-ebiggers@kernel.org>
- <CAGXu5jJ8k7fP5Vb=ygmQ0B45GfrK2PeaV04bPWmcZ6Vb+swgyA@mail.gmail.com>
- <20190415022412.GA29714@bombadil.infradead.org>
- <20190415024615.f765e7oagw26ezam@gondor.apana.org.au>
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=SzV2S6/tr7UVf/FR5zSWGATUlf/T6mevh0ryPixjKPM=; b=okKprzzYHAeLc4wwrrpJcIjCpp
+        D4ATRBYe6czdTytiWQPPSpCokNtOEKK/2oIqIftuQr2FO09IXBpFcXYhLlmhirPY8j0Q9dQ6pyx7i
+        1JIsbwGJwdBjAIXI97xshpg8NyD0el4O47G/idzyCu2y9KkcA+KpQ2Kk+VKRvHpF90Z7rIPFvCXNn
+        days6RRObyJV+Wx+BBl4ARlvbzUG26TflVTpfBqY62cpCd33sdmBDs+Z0zYcSZwM2mN1fSdA5gBqC
+        EEm2LHp4+xKGK0H4o6lGr8tdu08zOiDpF0qrq35UhHgbYt/XRp/HYRqu/ivfH+f2+a7hpq58GeAwT
+        RiBQRgMw==;
+Received: from 177.205.118.176.dynamic.adsl.gvt.net.br ([177.205.118.176] helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1hGEGu-0007ae-LD; Tue, 16 Apr 2019 02:56:32 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hGEGn-0001nQ-GX; Mon, 15 Apr 2019 23:56:25 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Paul Moore <paul@paul-moore.com>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 23/57] docs: netlabel: convert it to ReST
+Date:   Mon, 15 Apr 2019 23:55:48 -0300
+Message-Id: <104211eb0db14790ad328fff7ad7f712d8d647f9.1555382110.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <cover.1555382110.git.mchehab+samsung@kernel.org>
+References: <cover.1555382110.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190415024615.f765e7oagw26ezam@gondor.apana.org.au>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 15, 2019 at 10:46:15AM +0800, Herbert Xu wrote:
-> On Sun, Apr 14, 2019 at 07:24:12PM -0700, Matthew Wilcox wrote:
-> > On Thu, Apr 11, 2019 at 01:32:32PM -0700, Kees Cook wrote:
-> > > > @@ -156,7 +156,8 @@ static int __testmgr_alloc_buf(char *buf[XBUFSIZE], int order)
-> > > >         int i;
-> > > >
-> > > >         for (i = 0; i < XBUFSIZE; i++) {
-> > > > -               buf[i] = (char *)__get_free_pages(GFP_KERNEL, order);
-> > > > +               buf[i] = (char *)__get_free_pages(GFP_KERNEL | __GFP_COMP,
-> > > > +                                                 order);
-> > > 
-> > > Is there a reason __GFP_COMP isn't automatically included in all page
-> > > allocations? (Or rather, it seems like the exception is when things
-> > > should NOT be considered part of the same allocation, so something
-> > > like __GFP_SINGLE should exist?.)
-> > 
-> > The question is not whether or not things should be considered part of the
-> > same allocation.  The question is whether the allocation is of a compound
-> > page or of N consecutive pages.  Now you're asking what the difference is,
-> > and it's whether you need to be able to be able to call compound_head(),
-> > compound_order(), PageTail() or use a compound_dtor.  If you don't, then
-> > you can save some time at allocation & free by not specifying __GFP_COMP.
-> 
-> Thanks for clarifying Matthew.
-> 
-> Eric, this means that we should not use __GFP_COMP here just to
-> silent what is clearly a broken warning.
+Convert netlabel documentation to ReST.
 
-I agree; if the crypto code is never going to try to go from the address of
-a byte in the allocation back to the head page, then there's no need to
-specify GFP_COMP.
+This was trivial: just add proper title markups.
 
-But that leaves us in the awkward situation where
-HARDENED_USERCOPY_PAGESPAN does need to be able to figure out whether
-'ptr + n - 1' lies within the same allocation as ptr.  Without using
-a compound page, there's no indication in the VM structures that these
-two pages were allocated as part of the same allocation.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ Documentation/netlabel/cipso_ipv4.txt    | 19 +++++++++++++------
+ Documentation/netlabel/introduction.txt  | 16 +++++++++++-----
+ Documentation/netlabel/lsm_interface.txt | 16 +++++++++++-----
+ 3 files changed, 35 insertions(+), 16 deletions(-)
 
-We could force all multi-page allocations to be compound pages if
-HARDENED_USERCOPY_PAGESPAN is enabled, but I worry that could break
-something.  We could make it catch fewer problems by succeeding if the
-page is not compound.  I don't know, these all seem like bad choices
-to me.
+diff --git a/Documentation/netlabel/cipso_ipv4.txt b/Documentation/netlabel/cipso_ipv4.txt
+index a6075481fd60..cbd3f3231221 100644
+--- a/Documentation/netlabel/cipso_ipv4.txt
++++ b/Documentation/netlabel/cipso_ipv4.txt
+@@ -1,10 +1,13 @@
++===================================
+ NetLabel CIPSO/IPv4 Protocol Engine
+-==============================================================================
++===================================
++
+ Paul Moore, paul.moore@hp.com
+ 
+ May 17, 2006
+ 
+- * Overview
++Overview
++========
+ 
+ The NetLabel CIPSO/IPv4 protocol engine is based on the IETF Commercial
+ IP Security Option (CIPSO) draft from July 16, 1992.  A copy of this
+@@ -13,7 +16,8 @@ draft can be found in this directory
+ it to an RFC standard it has become a de-facto standard for labeled
+ networking and is used in many trusted operating systems.
+ 
+- * Outbound Packet Processing
++Outbound Packet Processing
++==========================
+ 
+ The CIPSO/IPv4 protocol engine applies the CIPSO IP option to packets by
+ adding the CIPSO label to the socket.  This causes all packets leaving the
+@@ -24,7 +28,8 @@ label by using the NetLabel security module API; if the NetLabel "domain" is
+ configured to use CIPSO for packet labeling then a CIPSO IP option will be
+ generated and attached to the socket.
+ 
+- * Inbound Packet Processing
++Inbound Packet Processing
++=========================
+ 
+ The CIPSO/IPv4 protocol engine validates every CIPSO IP option it finds at the
+ IP layer without any special handling required by the LSM.  However, in order
+@@ -33,7 +38,8 @@ NetLabel security module API to extract the security attributes of the packet.
+ This is typically done at the socket layer using the 'socket_sock_rcv_skb()'
+ LSM hook.
+ 
+- * Label Translation
++Label Translation
++=================
+ 
+ The CIPSO/IPv4 protocol engine contains a mechanism to translate CIPSO security
+ attributes such as sensitivity level and category to values which are
+@@ -42,7 +48,8 @@ Domain Of Interpretation (DOI) definition and are configured through the
+ NetLabel user space communication layer.  Each DOI definition can have a
+ different security attribute mapping table.
+ 
+- * Label Translation Cache
++Label Translation Cache
++=======================
+ 
+ The NetLabel system provides a framework for caching security attribute
+ mappings from the network labels to the corresponding LSM identifiers.  The
+diff --git a/Documentation/netlabel/introduction.txt b/Documentation/netlabel/introduction.txt
+index 3caf77bcff0f..9333bbb0adc1 100644
+--- a/Documentation/netlabel/introduction.txt
++++ b/Documentation/netlabel/introduction.txt
+@@ -1,10 +1,13 @@
++=====================
+ NetLabel Introduction
+-==============================================================================
++=====================
++
+ Paul Moore, paul.moore@hp.com
+ 
+ August 2, 2006
+ 
+- * Overview
++Overview
++========
+ 
+ NetLabel is a mechanism which can be used by kernel security modules to attach
+ security attributes to outgoing network packets generated from user space
+@@ -12,7 +15,8 @@ applications and read security attributes from incoming network packets.  It
+ is composed of three main components, the protocol engines, the communication
+ layer, and the kernel security module API.
+ 
+- * Protocol Engines
++Protocol Engines
++================
+ 
+ The protocol engines are responsible for both applying and retrieving the
+ network packet's security attributes.  If any translation between the network
+@@ -24,7 +28,8 @@ the NetLabel kernel security module API described below.
+ Detailed information about each NetLabel protocol engine can be found in this
+ directory.
+ 
+- * Communication Layer
++Communication Layer
++===================
+ 
+ The communication layer exists to allow NetLabel configuration and monitoring
+ from user space.  The NetLabel communication layer uses a message based
+@@ -33,7 +38,8 @@ formatting of these NetLabel messages as well as the Generic NETLINK family
+ names can be found in the 'net/netlabel/' directory as comments in the
+ header files as well as in 'include/net/netlabel.h'.
+ 
+- * Security Module API
++Security Module API
++===================
+ 
+ The purpose of the NetLabel security module API is to provide a protocol
+ independent interface to the underlying NetLabel protocol engines.  In addition
+diff --git a/Documentation/netlabel/lsm_interface.txt b/Documentation/netlabel/lsm_interface.txt
+index 638c74f7de7f..026fc267f798 100644
+--- a/Documentation/netlabel/lsm_interface.txt
++++ b/Documentation/netlabel/lsm_interface.txt
+@@ -1,10 +1,13 @@
++========================================
+ NetLabel Linux Security Module Interface
+-==============================================================================
++========================================
++
+ Paul Moore, paul.moore@hp.com
+ 
+ May 17, 2006
+ 
+- * Overview
++Overview
++========
+ 
+ NetLabel is a mechanism which can set and retrieve security attributes from
+ network packets.  It is intended to be used by LSM developers who want to make
+@@ -12,7 +15,8 @@ use of a common code base for several different packet labeling protocols.
+ The NetLabel security module API is defined in 'include/net/netlabel.h' but a
+ brief overview is given below.
+ 
+- * NetLabel Security Attributes
++NetLabel Security Attributes
++============================
+ 
+ Since NetLabel supports multiple different packet labeling protocols and LSMs
+ it uses the concept of security attributes to refer to the packet's security
+@@ -24,7 +28,8 @@ configuration.  It is up to the LSM developer to translate the NetLabel
+ security attributes into whatever security identifiers are in use for their
+ particular LSM.
+ 
+- * NetLabel LSM Protocol Operations
++NetLabel LSM Protocol Operations
++================================
+ 
+ These are the functions which allow the LSM developer to manipulate the labels
+ on outgoing packets as well as read the labels on incoming packets.  Functions
+@@ -32,7 +37,8 @@ exist to operate both on sockets as well as the sk_buffs directly.  These high
+ level functions are translated into low level protocol operations based on how
+ the administrator has configured the NetLabel subsystem.
+ 
+- * NetLabel Label Mapping Cache Operations
++NetLabel Label Mapping Cache Operations
++=======================================
+ 
+ Depending on the exact configuration, translation between the network packet
+ label and the internal LSM security identifier can be time consuming.  The
+-- 
+2.20.1
+
