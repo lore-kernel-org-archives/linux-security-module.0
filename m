@@ -2,161 +2,185 @@ Return-Path: <SRS0=WmJh=SS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCC3C10F13
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 12:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C08C10F14
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 13:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5E3206BA
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 12:22:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JBRSf+Ji"
+	by mail.kernel.org (Postfix) with ESMTP id 865D821B26
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 13:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbfDPMWL (ORCPT
+        id S1729481AbfDPNzn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Apr 2019 08:22:11 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:40104 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbfDPMWL (ORCPT
+        Tue, 16 Apr 2019 09:55:43 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33646 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729440AbfDPNzn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Apr 2019 08:22:11 -0400
-Received: by mail-ua1-f66.google.com with SMTP id b8so6632629uaq.7
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2019 05:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=bdEs7uYsw1GOSiu24cA7C0KHfg2lyObuKuQzd3OIlyk=;
-        b=JBRSf+Ji0s54jJi+6Lpqy370y89sX7kIKPg+sfBOKk/mLimssDnGKH9zXMjCE89lG8
-         IR9sjMMTs0rwQvkaDLSe+ZlHEyt04Ur3x6it1Aap2kZbQTwEF/NGXRkpdGM8Ee5TyTSC
-         V8JPndQF+f3TsfWTcvRmz4nrDY21rpmgij5TXJC4858ZL+uPIbOHFERn9EFJhHg7INSK
-         +Jj0taGaG4Xcjde402fKSp89nZ1FQT2lWuZsGMBDQid4apwhl8SZZ/7UNsmS2CwSufrn
-         umDsHypZ4yKWxONLl1Bie35QqbmJhGecQXHhxKRAviEKuDaJOyJhNZSMb70zy3F1evwS
-         w/YA==
+        Tue, 16 Apr 2019 09:55:43 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j11so16116936lfm.0;
+        Tue, 16 Apr 2019 06:55:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bdEs7uYsw1GOSiu24cA7C0KHfg2lyObuKuQzd3OIlyk=;
-        b=DKUjFZLRs8ZHz2EQ0sXt6MjWZGPNYQaDmSx1USGnLyQphI2SbZq2DJyP7Ty/AE80QZ
-         t4t0LfLTos/Gwm6BaX9qENr0la6fir5y0RroJhcgMR4qpttH8jfhLzSBbgrpnPj85pSG
-         sZTtdz4WaFu0w0nMspCzUVSHpen8LpnZpEvZBO7JrEVvSWn3FUm9yA1nN91+V4mML8L/
-         DVlrqa8mUsDjTuwbmEMhtH8AXe0QzqH01Uzf2H75SuAUKP3Z07Rf4v0DlhMk31QouguK
-         wwulRjwq6vmSvabhrRE9bFFuj0VO3VyVKbfhxXtgLbAhWWiqCEcsst0kTgIQWq6zmsg/
-         1jNw==
-X-Gm-Message-State: APjAAAUUTxFvgGEa/csui95Q7Zf73gMijPGRNE3LmZDVm/3yu4srKjIU
-        /Yyjp7tnYamJBbkUFAdydeWWxCr1KLG/p/7HLwB2rQ==
-X-Google-Smtp-Source: APXvYqyVe76DswO88r/webO5iCtniBizYS3WbdFa5kvuIF7qLTsDqkoZD1+jZ+BupMeU3+8JZRVAi/HGBcaW150CI1U=
-X-Received: by 2002:ab0:2495:: with SMTP id i21mr41234515uan.49.1555417330235;
- Tue, 16 Apr 2019 05:22:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190412124501.132678-1-glider@google.com> <20190415190213.5831bbc17e5073690713b001@linux-foundation.org>
-In-Reply-To: <20190415190213.5831bbc17e5073690713b001@linux-foundation.org>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Tue, 16 Apr 2019 14:21:59 +0200
-Message-ID: <CAG_fn=W1rELLO4mx1RoM01shFVkyQjT3eU5wyqMRjprzVD5oMQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=a+foByQheEFyRW5sPVIaOTDzCeRLtLwNabQgVk9kqDc=;
+        b=R/w/SuNCobELJmYeZVJMuAF0g8BsrS4ztorWVDx8CyRA/e9vKHmNyy55PaIOkNnv9J
+         fIaO4aRfUHWnxbH96qxw33/VWP1GtMw0Fqu/Ymkuu96EZzvVy4/AFxsP7HViTQlC2x6r
+         auORk9+uxwHthEbwG1y+RR5nSDgKWPcvBA4bMKT3NwpSvQlOat0+3swppp08GAxeKMHs
+         9n6+RqTz+FkHTXgnM47obCWlMd9UNDuReKdMVmvYIBNf+UMEgdHHkRt7g0raic3T0HJm
+         tZBjyxKz3MhJ56YHI+wmBq4ZH/0lfgpMKfNRMSUalb3oeWT92/f+SNf62RAdMpQ8wJRJ
+         rWXw==
+X-Gm-Message-State: APjAAAWYUMFw2JJeE977U2gYE31Sh59D+XQuIdMj+lawYXv3vpjpqLxo
+        73B5crtChgYZB8hyr+7tLkOGyRpB
+X-Google-Smtp-Source: APXvYqw6Z+Kz6RTS2ydiktdJaNEjzcpxpUIEguEE5qkZ+UNFY8YlErTYkCzKqD5bRAMK6eTSrBmcfg==
+X-Received: by 2002:ac2:5495:: with SMTP id t21mr7239538lfk.3.1555422939979;
+        Tue, 16 Apr 2019 06:55:39 -0700 (PDT)
+Received: from [192.168.42.207] ([213.87.157.138])
+        by smtp.gmail.com with ESMTPSA id g8sm3016956lfg.4.2019.04.16.06.55.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 16 Apr 2019 06:55:38 -0700 (PDT)
+Reply-To: alex.popov@linux.com
+Subject: Re: [PATCH v2 1/3] security: Create "kernel hardening" config area
+To:     Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Alexander Potapenko <glider@google.com>,
+        James Morris <jmorris@namei.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Kostya Serebryany <kcc@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
         Sandeep Patil <sspatil@android.com>,
         Laura Abbott <labbott@redhat.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Randy Dunlap <rdunlap@infradead.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Emese Revfy <re.emese@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190411180117.27704-1-keescook@chromium.org>
+ <20190411180117.27704-2-keescook@chromium.org>
+ <947dbe9a-3444-6fe4-9f79-f8f210da8960@linux.com>
+ <CAGXu5jJTM=pdAjsC63Z6T=HaztTqSqUQQ8=GN=tqv2n6CKc3nw@mail.gmail.com>
+From:   Alexander Popov <alex.popov@linux.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
+ mQINBFX15q4BEADZartsIW3sQ9R+9TOuCFRIW+RDCoBWNHhqDLu+Tzf2mZevVSF0D5AMJW4f
+ UB1QigxOuGIeSngfmgLspdYe2Kl8+P8qyfrnBcS4hLFyLGjaP7UVGtpUl7CUxz2Hct3yhsPz
+ ID/rnCSd0Q+3thrJTq44b2kIKqM1swt/F2Er5Bl0B4o5WKx4J9k6Dz7bAMjKD8pHZJnScoP4
+ dzKPhrytN/iWM01eRZRc1TcIdVsRZC3hcVE6OtFoamaYmePDwWTRhmDtWYngbRDVGe3Tl8bT
+ 7BYN7gv7Ikt7Nq2T2TOfXEQqr9CtidxBNsqFEaajbFvpLDpUPw692+4lUbQ7FL0B1WYLvWkG
+ cVysClEyX3VBSMzIG5eTF0Dng9RqItUxpbD317ihKqYL95jk6eK6XyI8wVOCEa1V3MhtvzUo
+ WGZVkwm9eMVZ05GbhzmT7KHBEBbCkihS+TpVxOgzvuV+heCEaaxIDWY/k8u4tgbrVVk+tIVG
+ 99v1//kNLqd5KuwY1Y2/h2MhRrfxqGz+l/f/qghKh+1iptm6McN//1nNaIbzXQ2Ej34jeWDa
+ xAN1C1OANOyV7mYuYPNDl5c9QrbcNGg3D6gOeGeGiMn11NjbjHae3ipH8MkX7/k8pH5q4Lhh
+ Ra0vtJspeg77CS4b7+WC5jlK3UAKoUja3kGgkCrnfNkvKjrkEwARAQABtCZBbGV4YW5kZXIg
+ UG9wb3YgPGFsZXgucG9wb3ZAbGludXguY29tPokCQAQTAQoAKgIbIwIeAQIXgAULCQgHAwUV
+ CgkICwUWAgMBAAUJB8+UXAUCWgsUegIZAQAKCRCODp3rvH6PqqpOEACX+tXHOgMJ6fGxaNJZ
+ HkKRFR/9AGP1bxp5QS528Sd6w17bMMQ87V5NSFUsTMPMcbIoO73DganKQ3nN6tW0ZvDTKpRt
+ pBUCUP8KPqNvoSs3kkskaQgNQ3FXv46YqPZ7DoYj9HevY9NUyGLwCTEWD2ER5zKuNbI2ek82
+ j4rwdqXn9kqqBf1ExAoEsszeNHzTKRl2d+bXuGDcOdpnOi7avoQfwi/O0oapR+goxz49Oeov
+ YFf1EVaogHjDBREaqiqJ0MSKexfVBt8RD9ev9SGSIMcwfhgUHhMTX2JY/+6BXnUbzVcHD6HR
+ EgqVGn/0RXfJIYmFsjH0Z6cHy34Vn+aqcGa8faztPnmkA/vNfhw8k5fEE7VlBqdEY8YeOiza
+ hHdpaUi4GofNy/GoHIqpz16UulMjGB5SBzgsYKgCO+faNBrCcBrscWTl1aJfSNJvImuS1JhB
+ EQnl/MIegxyBBRsH68x5BCffERo4FjaG0NDCmZLjXPOgMvl3vRywHLdDZThjAea3pwdGUq+W
+ C77i7tnnUqgK7P9i+nEKwNWZfLpfjYgH5JE/jOgMf4tpHvO6fu4AnOffdz3kOxDyi+zFLVcz
+ rTP5b46aVjI7D0dIDTIaCKUT+PfsLnJmP18x7dU/gR/XDcUaSEbWU3D9u61AvxP47g7tN5+a
+ 5pFIJhJ44JLk6I5H/bkCDQRV9eauARAArcUVf6RdT14hkm0zT5TPc/3BJc6PyAghV/iCoPm8
+ kbzjKBIK80NvGodDeUV0MnQbX40jjFdSI0m96HNt86FtifQ3nwuW/BtS8dk8+lakRVwuTgMb
+ hJWmXqKMFdVRCbjdyLbZWpdPip0WGND6p5i801xgPRmI8P6e5e4jBO4Cx1ToIFyJOzD/jvtb
+ UhH9t5/naKUGa5BD9gSkguooXVOFvPdvKQKca19S7bb9hzjySh63H4qlbhUrG/7JGhX+Lr3g
+ DwuAGrrFIV0FaVyIPGZ8U2fjLKpcBC7/lZJv0jRFpZ9CjHefILxt7NGxPB9hk2iDt2tE6jSl
+ GNeloDYJUVItFmG+/giza2KrXmDEFKl+/mwfjRI/+PHR8PscWiB7S1zhsVus3DxhbM2mAK4x
+ mmH4k0wNfgClh0Srw9zCU2CKJ6YcuRLi/RAAiyoxBb9wnSuQS5KkxoT32LRNwfyMdwlEtQGp
+ WtC/vBI13XJVabx0Oalx7NtvRCcX1FX9rnKVjSFHX5YJ48heAd0dwRVmzOGL/EGywb1b9Q3O
+ IWe9EFF8tmWV/JHs2thMz492qTHA5pm5JUsHQuZGBhBU+GqdOkdkFvujcNu4w7WyuEITBFAh
+ 5qDiGkvY9FU1OH0fWQqVU/5LHNizzIYN2KjU6529b0VTVGb4e/M0HglwtlWpkpfQzHMAEQEA
+ AYkCJQQYAQIADwUCVfXmrgIbDAUJCWYBgAAKCRCODp3rvH6PqrZtEACKsd/UUtpKmy4mrZwl
+ 053nWp7+WCE+S9ke7CFytmXoMWf1CIrcQTk5cmdBmB4E0l3sr/DgKlJ8UrHTdRLcZZnbVqur
+ +fnmVeQy9lqGkaIZvx/iXVYUqhT3+DNj9Zkjrynbe5pLsrGyxYWfsPRVL6J4mQatChadjuLw
+ 7/WC6PBmWkRA2SxUVpxFEZlirpbboYWLSXk9I3JmS5/iJ+P5kHYiB0YqYkd1twFXXxixv1GB
+ Zi/idvWTK7x6/bUh0AAGTKc5zFhyR4DJRGROGlFTAYM3WDoa9XbrHXsggJDLNoPZJTj9DMww
+ u28SzHLvR3t2pY1dT61jzKNDLoE3pjvzgLKF/Olif0t7+m0IPKY+8umZvUEhJ9CAUcoFPCfG
+ tEbL6t1xrcsT7dsUhZpkIX0Qc77op8GHlfNd/N6wZUt19Vn9G8B6xrH+dinc0ylUc4+4yxt6
+ 6BsiEzma6Ah5jexChYIwaB5Oi21yjc6bBb4l6z01WWJQ052OGaOBzi+tS5iGmc5DWH4/pFqX
+ OIkgJVVgjPv2y41qV66QJJEi2wT4WUKLY1zA9s6KXbt8dVSzJsNFvsrAoFdtzc8v6uqCo0/W
+ f0Id8MBKoqN5FniTHWNxYX6b2dFwq8i5Rh6Oxc6q75Kg8279+co3/tLCkU6pGga28K7tUP2z
+ h9AUWENlnWJX/YhP8IkCJQQYAQoADwIbDAUCWgsSOgUJB9eShwAKCRCODp3rvH6PqtoND/41
+ ozCKAS4WWBBCU6AYLm2SoJ0EGhg1kIf9VMiqy5PKlSrAnW5yl4WJQcv5wER/7EzvZ49Gj8aG
+ uRWfz3lyQU8dH2KG6KLilDFCZF0mViEo2C7O4QUx5xmbpMUq41fWjY947Xvd3QDisc1T1/7G
+ uNBAALEZdqzwnKsT9G27e9Cd3AW3KsLAD4MhsALFARg6OuuwDCbLl6k5fu++26PEqORGtpJQ
+ rRBWan9ZWb/Y57P126IVIylWiH6vt6iEPlaEHBU8H9+Z0WF6wJ5rNz9gR6GhZhmo1qsyNedD
+ 1HzOsXQhvCinsErpZs99VdZSF3d54dac8ypH4hvbjSmXZjY3Sblhyc6RLYlru5UXJFh7Hy+E
+ TMuCg3hIVbdyFSDkvxVlvhHgUSf8+Uk3Ya4MO4a5l9ElUqxpSqYH7CvuwkG+mH5mN8tK3CCd
+ +aKPCxUFfil62DfTa7YgLovr7sHQB+VMQkNDPXleC+amNqJb423L8M2sfCi9gw/lA1ha6q80
+ ydgbcFEkNjqz4OtbrSwEHMy/ADsUWksYuzVbw7/pQTc6OAskESBr5igP7B/rIACUgiIjdOVB
+ ktD1IQcezrDcuzVCIpuq8zC6LwLm7V1Tr6zfU9FWwnqzoQeQZH4QlP7MBuOeswCpxIl07mz9
+ jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
+Message-ID: <450e21b0-606a-f19a-a4fe-f7508d6a215c@linux.com>
+Date:   Tue, 16 Apr 2019 16:55:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CAGXu5jJTM=pdAjsC63Z6T=HaztTqSqUQQ8=GN=tqv2n6CKc3nw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 16, 2019 at 4:02 AM Andrew Morton <akpm@linux-foundation.org> w=
-rote:
->
-> On Fri, 12 Apr 2019 14:45:01 +0200 Alexander Potapenko <glider@google.com=
-> wrote:
->
-> > This config option adds the possibility to initialize newly allocated
-> > pages and heap objects with zeroes.
->
-> At what cost?  Some performance test results would help this along.
-I'll make more measurements for the new implementation, but the
-preliminary results are:
-~0.17% sys time slowdown (~0% wall time slowdown) on hackbench (1 CPU);
-1.3% sys time slowdown (0.2% wall time slowdown) when building Linux with -=
-j12;
-4% sys time slowdown (2.6% wall time slowdown) on af_inet_loopback benchmar=
-k;
-up to 100% slowdown on netperf (caused by sk buffers being initialized
-multiple times; also netperf is too fast to perform any precise
-measurements)
+On 16.04.2019 7:02, Kees Cook wrote:
+> On Mon, Apr 15, 2019 at 11:44 AM Alexander Popov <alex.popov@linux.com> wrote:
+>>
+>> What do you think about some separator between memory initialization options and
+>> CONFIG_CRYPTO?
+> 
+> This was true before too
 
-Are there any benchmarks you can recommend?
-> > This is needed to prevent possible
-> > information leaks and make the control-flow bugs that depend on
-> > uninitialized values more deterministic.
-> >
-> > Initialization is done at allocation time at the places where checks fo=
-r
-> > __GFP_ZERO are performed. We don't initialize slab caches with
-> > constructors or SLAB_TYPESAFE_BY_RCU to preserve their semantics.
-> >
-> > For kernel testing purposes filling allocations with a nonzero pattern
-> > would be more suitable, but may require platform-specific code. To have
-> > a simple baseline we've decided to start with zero-initialization.
-> >
-> > No performance optimizations are done at the moment to reduce double
-> > initialization of memory regions.
->
-> Requiring a kernel rebuild is rather user-hostile.
-This is intended to be used together with other hardening measures,
-like CONFIG_INIT_STACK_ALL (see a patchset by Kees).
-All of those require a kernel rebuild, but we assume users don't push
-and pull that lever back and forth often.
+Hm, yes, it's a generic behavior - there is no any separator at 'endmenu' and
+config options stick together.
 
-> A boot option
-> (early_param()) would be much more useful and I expect that the loss in
-> coverage would be small and acceptable?  Could possibly use the
-> static_branch infrastructure.
-I'll try that out and see if there's a notable performance difference.
-
-> > --- a/mm/slab.h
-> > +++ b/mm/slab.h
-> > @@ -167,6 +167,16 @@ static inline slab_flags_t kmem_cache_flags(unsign=
-ed int object_size,
-> >                             SLAB_TEMPORARY | \
-> >                             SLAB_ACCOUNT)
-> >
-> > +/*
-> > + * Do we need to initialize this allocation?
-> > + * Always true for __GFP_ZERO, CONFIG_INIT_HEAP_ALL enforces initializ=
-ation
-> > + * of caches without constructors and RCU.
-> > + */
-> > +#define SLAB_WANT_INIT(cache, gfp_flags) \
-> > +     ((GFP_INIT_ALWAYS_ON && !(cache)->ctor && \
-> > +       !((cache)->flags & SLAB_TYPESAFE_BY_RCU)) || \
-> > +      (gfp_flags & __GFP_ZERO))
->
-> Is there any reason why this *must* be implemented as a macro?  If not,
-> it should be written in C please.
-Agreed. Even in the case we want GFP_INIT_ALWAYS_ON to be known at
-compile time there's no reason for this to be a macro.
->
+I've created a patch to fix that. What do you think about it?
+I can send it to LKML separately.
 
 
---=20
-Alexander Potapenko
-Software Engineer
+From 50bf59d30fafcdebb3393fb742e1bd51e7d2f2da Mon Sep 17 00:00:00 2001
+From: Alexander Popov <alex.popov@linux.com>
+Date: Tue, 16 Apr 2019 16:09:40 +0300
+Subject: [PATCH 1/1] kconfig: Terminate menu blocks with a newline in the
+ generated config
 
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
+Currently menu blocks start with a pretty header but end with nothing in
+the generated config. So next config options stick together with the
+options from the menu block.
 
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+Let's terminate menu blocks with a newline in the generated config.
+
+Signed-off-by: Alexander Popov <alex.popov@linux.com>
+---
+ scripts/kconfig/confdata.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+index 08ba146..1459153 100644
+--- a/scripts/kconfig/confdata.c
++++ b/scripts/kconfig/confdata.c
+@@ -888,6 +888,8 @@ int conf_write(const char *name)
+ 		if (menu->next)
+ 			menu = menu->next;
+ 		else while ((menu = menu->parent)) {
++			if (!menu->sym && menu_is_visible(menu))
++				fprintf(out, "\n");
+ 			if (menu->next) {
+ 				menu = menu->next;
+ 				break;
+-- 
+2.7.4
+
+
+
