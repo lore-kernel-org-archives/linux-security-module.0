@@ -2,115 +2,146 @@ Return-Path: <SRS0=WmJh=SS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE49C10F13
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9641EC10F13
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 16:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E934C20868
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DC92206B6
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 16:02:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p9bIzPtX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfDPPpR (ORCPT
+        id S1729983AbfDPQBx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Apr 2019 11:45:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53452 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726548AbfDPPpR (ORCPT
+        Tue, 16 Apr 2019 12:01:53 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:37080 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729971AbfDPQBw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Apr 2019 11:45:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E7184AEEE;
-        Tue, 16 Apr 2019 15:45:14 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 2EDC31E15B4; Tue, 16 Apr 2019 17:45:13 +0200 (CEST)
-Date:   Tue, 16 Apr 2019 17:45:13 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        John Johansen <john.johansen@canonical.com>
-Subject: Re: fanotify and LSM path hooks
-Message-ID: <20190416154513.GB13422@quack2.suse.cz>
-References: <CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com>
+        Tue, 16 Apr 2019 12:01:52 -0400
+Received: by mail-vs1-f67.google.com with SMTP id w13so11856541vsc.4
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2019 09:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hDWSZCo4hVwn0SqOh/8+4ITIl6IlceobuY8Gd3+R1MM=;
+        b=p9bIzPtXET3z3NKbYtfuYI/FpJ0dQe2rd3zFiSfIhvO8wFtb/pzduy0icSsdsDeim3
+         XZiUih1isGFN/ytxANL7PCBufLt2s8MaFfrsOfMDULwb52QuP6jPLc3TtAuz5TYTKd7h
+         vFbGjVudiJEYDtMCZcon7GBoHeRTryNZ1CTCvSEyAM/2xdm+ZjD1kc5tB3Ed45RkxeT7
+         usXU4xhbqR0c9h43yBeD1bP4/jUv1e5r/BTu38LoulNEylk5TkzylLeMAGgo+BYv8q0W
+         Y82yavUJH1gkP1LAB5r3qxwf9NB54Vz5M03aM3Vh/7T804FTvFSaQUD+BD3NMRSQNFqt
+         sg+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hDWSZCo4hVwn0SqOh/8+4ITIl6IlceobuY8Gd3+R1MM=;
+        b=CO+r2oBUywZozll3U67vD1v1xED2Oqg+18wIwA5BUuwiehbQDPFmRc8u0xglcJzBBK
+         3FMNskug7ij/bOapzfl36s6C6WYdlSRGKln/Mm9EIAXeljbad/Ng+MzW4CLpM2jzl3af
+         hWE0woa76JerQwehgqt8QUD5rSStiP/oL8kZ2R0vxT2jLf8JEv5ay9jYuWvZhmPA/Kzs
+         gAD7/tm47Uiu+vckPNuiIULWpTwf1JaPU0aS8lmvvn+DYGI9/fYc3VSFdVuIp17pIZe8
+         /g/xgHdjEn97S+vyy2Wgv9jPdqvKIqjsBiaC7wBs6n9qI2r1ZmFPOGzdNLkwvRxPN0ln
+         jmeA==
+X-Gm-Message-State: APjAAAWk/dJmf0ZNeCb4P7UkjxvkYewGkDdltJ6drgwUmJ+422+QvTlR
+        FzH0TgwZCRIFrlomuHtdGHmITzCPonsHnJcFraMa/Q==
+X-Google-Smtp-Source: APXvYqxtPZ9GG8J2wfnElBD5nZyQxKYstxWVNCMBJDV4JIhuFNQQyhgaxJwl5fIqzjHj2WlsYdNxT25/g2x5M7SWwwU=
+X-Received: by 2002:a67:ba03:: with SMTP id l3mr26668886vsn.96.1555430509891;
+ Tue, 16 Apr 2019 09:01:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190412124501.132678-1-glider@google.com> <0100016a26c711be-b99971ca-49f5-482c-9028-962ee471f733-000000@email.amazonses.com>
+In-Reply-To: <0100016a26c711be-b99971ca-49f5-482c-9028-962ee471f733-000000@email.amazonses.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Tue, 16 Apr 2019 18:01:38 +0200
+Message-ID: <CAG_fn=U6aWfBXdkcWs0_1pqggAC16Yg8Q6rxLiVeiO83q1hOCw@mail.gmail.com>
+Subject: Re: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Dmitriy Vyukov <dvyukov@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Sandeep Patil <sspatil@android.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Amir!
+On Tue, Apr 16, 2019 at 5:32 PM Christopher Lameter <cl@linux.com> wrote:
+>
+> On Fri, 12 Apr 2019, Alexander Potapenko wrote:
+>
+> > diff --git a/mm/slab.h b/mm/slab.h
+> > index 43ac818b8592..4bb10af0031b 100644
+> > --- a/mm/slab.h
+> > +++ b/mm/slab.h
+> > @@ -167,6 +167,16 @@ static inline slab_flags_t kmem_cache_flags(unsign=
+ed int object_size,
+> >                             SLAB_TEMPORARY | \
+> >                             SLAB_ACCOUNT)
+> >
+> > +/*
+> > + * Do we need to initialize this allocation?
+> > + * Always true for __GFP_ZERO, CONFIG_INIT_HEAP_ALL enforces initializ=
+ation
+> > + * of caches without constructors and RCU.
+> > + */
+> > +#define SLAB_WANT_INIT(cache, gfp_flags) \
+> > +     ((GFP_INIT_ALWAYS_ON && !(cache)->ctor && \
+> > +       !((cache)->flags & SLAB_TYPESAFE_BY_RCU)) || \
+> > +      (gfp_flags & __GFP_ZERO))
+>
+> This is another complex thing to maintain when adding flags to the slab
+> allocator.
+>
+> > +config INIT_HEAP_ALL
+> > +     bool "Initialize kernel heap allocations"
+>
+> "Zero pages and objects allocated in the kernel"
+>
+> > +     default n
+> > +     help
+> > +       Enforce initialization of pages allocated from page allocator
+> > +       and objects returned by kmalloc and friends.
+> > +       Allocated memory is initialized with zeroes, preventing possibl=
+e
+> > +       information leaks and making the control-flow bugs that depend
+> > +       on uninitialized values more deterministic.
+>
+> Hmmm... But we already have debugging options that poison objects and
+> pages?
+Laura Abbott mentioned in one of the previous threads
+(https://marc.info/?l=3Dkernel-hardening&m=3D155474181528491&w=3D2) that:
 
-On Sun 14-04-19 19:04:14, Amir Goldstein wrote:
-> I started to look at directory pre-modification "permission" hooks
-> that were discussed on last year's LSFMM:
-> https://lwn.net/Articles/755277/
-> 
-> The two existing fanotify_perm() hooks are called
-> from security_file_permission() and security_file_open()
-> and depend on build time CONFIG_SECURITY.
-> If you look at how the fsnotify_perm() hooks are planted inside the
-> generic security hooks, one might wonder, why are fanotify permission
-> hooks getting a special treatment and are not registering as LSM hooks?
-> 
-> One benefit from an fanotify LSM, besides more generic code, would be
-> that fanotify permission hooks could be disabled with boot parameters.
-> 
-> I only bring this up because security hooks seems like the most natural
-> place to add pre-modify fanotify events for the purpose of maintaining
-> a filesystem change journal. It would be ugly to spray more fsnotify hooks
-> inside security hooks instead of registering an fanotify LSM, but maybe
-> there are downsides of registering fanotify as LSM that I am not aware of?
+"""
+I've looked at doing something similar in the past (failing to find
+the thread this morning...) and while this will work, it has pretty
+serious performance issues. It's not actually the poisoning which
+is expensive but that turning on debugging removes the cpu slab
+which has significant performance penalties.
 
-I kind of like the idea of generating fanotify permission events from
-special LSM hooks.
+I'd rather go back to the proposal of just poisoning the slab
+at alloc/free without using SLAB_POISON.
+"""
+, so slab poisoning is probably off the table.
 
-I'm not so sure about directory pre-modification hooks. Given the amount of
-problems we face with applications using fanotify permission events and
-deadlocking the system, I'm not very fond of expanding that API... AFAIU
-you want to use such hooks for recording (and persisting) that some change
-is going to happen and provide crash-consistency guarantees for such
-journal?
+--=20
+Alexander Potapenko
+Software Engineer
 
-> Another observation relates to the security_path_ hooks.
-> Let's take rename as an example.
-> LSM could implement security_path_rename() and/or security_inode_rename()
-> hooks and rename syscalls will end up calling both hooks.
-> The security_path_ hooks are more attractive for fanotify, because the path
-> information could be used to setup pre-modification permission mask on
-> mount marks and not only on filesystem/inode marks.
-> 
-> One problem with security_path_ hooks is that they require an extra
-> build time CONFIG_SECURITY_PATH.
-> Another problem is that they seem to be bypassed by several subsystems.
-> cachefiles, ecryptfs, overlayfs and nfsd all call the vfs_rename() helper, but
-> only cachefiles bothers to call the security_path_rename() hook.
-> This is of course true for all other security_path_ hooks.
-> I think that is something that requires fixing regardless of the fanotify pre
-> modification hooks. I wonder if tomoyo and apparmor developers
-> (LSM that implement security_path_ hooks) are aware of those missing
-> hooks?
-> 
-> Would love to get feedback about whether or not fanotify LSM sounds
-> like a good or bad idea and about the security_path_ hooks questions.
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
 
-I don't have strong opinion on using security_path_ hooks. I guess if
-they're not used everywhere then it's just easier to avoid them.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
