@@ -2,130 +2,81 @@ Return-Path: <SRS0=WmJh=SS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A79DCC10F13
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 08:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B6AC10F13
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 11:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 803CB20675
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 08:40:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 449A520821
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 11:49:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726208AbfDPIkW (ORCPT
+        id S1729461AbfDPLts (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Apr 2019 04:40:22 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33718 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726917AbfDPIkV (ORCPT
+        Tue, 16 Apr 2019 07:49:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:32856 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbfDPLts (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Apr 2019 04:40:21 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x3G8T8gk120066
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2019 04:40:19 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2rwb3xa0sf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Apr 2019 04:40:19 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-security-module@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
-        Tue, 16 Apr 2019 09:40:16 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 16 Apr 2019 09:40:11 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x3G8eAvD53674088
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Apr 2019 08:40:10 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6BE7552057;
-        Tue, 16 Apr 2019 08:40:10 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 26EA552050;
-        Tue, 16 Apr 2019 08:40:10 +0000 (GMT)
-Received: from [10.61.2.125] (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
+        Tue, 16 Apr 2019 07:49:48 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id DD492A0147;
-        Tue, 16 Apr 2019 18:40:08 +1000 (AEST)
-Subject: Re: [PATCH V32 01/27] Add the ability to lock down access to the
- running kernel image
-To:     Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-api@vger.kernel.org, luto@kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Daniel Axtens <dja@axtens.net>, cmr <cmr@informatik.wtf>
-References: <20190404003249.14356-1-matthewgarrett@google.com>
- <20190404003249.14356-2-matthewgarrett@google.com>
-From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date:   Tue, 16 Apr 2019 18:40:08 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 1832459460;
+        Tue, 16 Apr 2019 11:49:47 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (unknown [10.36.118.39])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1FFA45D71A;
+        Tue, 16 Apr 2019 11:49:40 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
+References: <20181212081712.32347-1-mic@digikod.net>
+        <20181212081712.32347-2-mic@digikod.net>
+        <20181212144306.GA19945@quack2.suse.cz> <3452959.b6JmBh7Lnt@x2>
+Date:   Tue, 16 Apr 2019 13:49:39 +0200
+In-Reply-To: <3452959.b6JmBh7Lnt@x2> (Steve Grubb's message of "Mon, 15 Apr
+        2019 14:47:49 -0400")
+Message-ID: <87wojuxj8s.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20190404003249.14356-2-matthewgarrett@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-AU
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19041608-0012-0000-0000-0000030F4C95
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19041608-0013-0000-0000-000021478484
-Message-Id: <059c523e-926c-24ee-0935-198031712145@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-04-16_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1904160060
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 16 Apr 2019 11:49:47 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/4/19 11:32 am, Matthew Garrett wrote:
-> diff --git a/Documentation/ABI/testing/lockdown b/Documentation/ABI/testing/lockdown
-> new file mode 100644
-> index 000000000000..5bd51e20917a
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/lockdown
-> @@ -0,0 +1,19 @@
-> +What:		security/lockdown
-> +Date:		March 2019
-> +Contact:	Matthew Garrett <mjg59@google.com>
-> +Description:
-> +		If CONFIG_LOCK_DOWN_KERNEL is enabled, the kernel can be
-> +		moved to a more locked down state at runtime by writing to
-> +		this attribute. Valid values are:
-> +
-> +		integrity:
-> +			The kernel will disable functionality that allows
-> +			userland to modify the running kernel image, other
-> +			than through the loading or execution of appropriately
-> +			signed objects.
-> +
-> +		confidentiality:
-> +			The kernel will disable all functionality disabled by
-> +			the integrity mode, but additionally will disable
-> +			features that potentially permit userland to obtain
-> +			confidential information stored within the kernel.
+* Steve Grubb:
 
-[+ linuxppc, mpe, dja, cmr]
+> This flag that is being proposed means that you would have to patch all 
+> interpreters to use it. If you are sure that upstreams will accept that, why 
+> not just change the policy to interpreters shouldn't execute anything unless 
+> the execute bit is set? That is simpler and doesn't need a kernel change. And 
+> setting the execute bit is an auditable event.
 
-I'm thinking about whether we should lock down the powerpc xmon debug 
-monitor - intuitively, I think the answer is yes if for no other reason 
-than Least Astonishment, when lockdown is enabled you probably don't 
-expect xmon to keep letting you access kernel memory.
+I think we need something like O_MAYEXEC so that security policies can
+be enforced and noexec mounts can be detected.  I don't think it's a
+good idea to do this in userspace, especially the latter.
 
-Semantically though, xmon is not a userspace process - it's in kernel 
-and reads debug commands/outputs debug data directly from/to the 
-console. Is that a threat vector that this series cares about?
-
-
--- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
-
+Thanks,
+Florian
