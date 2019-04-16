@@ -2,90 +2,94 @@ Return-Path: <SRS0=WmJh=SS=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB68C10F13
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9709C10F13
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A482720872
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:32:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="X5278fNa"
+	by mail.kernel.org (Postfix) with ESMTP id 93F4F20880
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 15:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbfDPPcW (ORCPT
+        id S1729219AbfDPPeX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Apr 2019 11:32:22 -0400
-Received: from a9-112.smtp-out.amazonses.com ([54.240.9.112]:38578 "EHLO
-        a9-112.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725852AbfDPPcW (ORCPT
+        Tue, 16 Apr 2019 11:34:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51466 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726713AbfDPPeW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Apr 2019 11:32:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1555428741;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=/ZH+qQc+d3T9Uz+fe5gzibpOM/H0qPfROftUoVT10Kc=;
-        b=X5278fNazPX14D+0RglGkXaLk/g3fLT6eAzYLZi9e90hc9jiTiSW+k+2BnL4rePK
-        ol+DvSy7dHo7KUTaLL2v1Ovpxx9eOiLnuKqraWmO7vHFssb4k4zVGGOWYYCqzVSuiv/
-        QCFin1yOMUal5z5Wg33FXWOF+U7DW3get5Q0Ax1A=
-Date:   Tue, 16 Apr 2019 15:32:21 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Alexander Potapenko <glider@google.com>
-cc:     akpm@linux-foundation.org, linux-security-module@vger.kernel.org,
-        linux-mm@kvack.org, ndesaulniers@google.com, kcc@google.com,
-        dvyukov@google.com, Kees Cook <keescook@chromium.org>,
-        sspatil@android.com, labbott@redhat.com,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
-In-Reply-To: <20190412124501.132678-1-glider@google.com>
-Message-ID: <0100016a26c711be-b99971ca-49f5-482c-9028-962ee471f733-000000@email.amazonses.com>
-References: <20190412124501.132678-1-glider@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 16 Apr 2019 11:34:22 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C6B678665D;
+        Tue, 16 Apr 2019 15:34:15 +0000 (UTC)
+Received: from x2.localnet (ovpn-120-96.rdu2.redhat.com [10.10.120.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2000919C7D;
+        Tue, 16 Apr 2019 15:34:09 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
+Date:   Tue, 16 Apr 2019 11:34:07 -0400
+Message-ID: <2361288.r9sZr2NHLB@x2>
+Organization: Red Hat
+In-Reply-To: <87wojuxj8s.fsf@oldenburg2.str.redhat.com>
+References: <20181212081712.32347-1-mic@digikod.net> <3452959.b6JmBh7Lnt@x2> <87wojuxj8s.fsf@oldenburg2.str.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.04.16-54.240.9.112
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 16 Apr 2019 15:34:22 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 12 Apr 2019, Alexander Potapenko wrote:
+On Tuesday, April 16, 2019 7:49:39 AM EDT Florian Weimer wrote:
+> * Steve Grubb:
+> > This flag that is being proposed means that you would have to patch all
+> > interpreters to use it. If you are sure that upstreams will accept that,
+> > why not just change the policy to interpreters shouldn't execute
+> > anything unless the execute bit is set? That is simpler and doesn't need
+> > a kernel change. And setting the execute bit is an auditable event.
+> 
+> I think we need something like O_MAYEXEC so that security policies can
+> be enforced and noexec mounts can be detected.
 
-> diff --git a/mm/slab.h b/mm/slab.h
-> index 43ac818b8592..4bb10af0031b 100644
-> --- a/mm/slab.h
-> +++ b/mm/slab.h
-> @@ -167,6 +167,16 @@ static inline slab_flags_t kmem_cache_flags(unsigned int object_size,
->  			      SLAB_TEMPORARY | \
->  			      SLAB_ACCOUNT)
->
-> +/*
-> + * Do we need to initialize this allocation?
-> + * Always true for __GFP_ZERO, CONFIG_INIT_HEAP_ALL enforces initialization
-> + * of caches without constructors and RCU.
-> + */
-> +#define SLAB_WANT_INIT(cache, gfp_flags) \
-> +	((GFP_INIT_ALWAYS_ON && !(cache)->ctor && \
-> +	  !((cache)->flags & SLAB_TYPESAFE_BY_RCU)) || \
-> +	 (gfp_flags & __GFP_ZERO))
+Application whitelisting can already today stop unknown software without 
+needing O_MAYEXEC.
 
-This is another complex thing to maintain when adding flags to the slab
-allocator.
+> I don't think it's a good idea to do this in userspace, especially the
+> latter.
 
-> +config INIT_HEAP_ALL
-> +	bool "Initialize kernel heap allocations"
+The problem is that passing O_MAYEXEC is opt-in. You can use ptrace/seccomp/
+bpf/LD_PRELOAD/LD_AUDIT to remove that bit from an otherwise normal program. 
+This does not require privs to do so.
 
-"Zero pages and objects allocated in the kernel"
+But let's consider that this comes to pass and every interpreter is updated 
+and IMA can see the O_MAYEXEC flag. Attackers now simply pivot to running 
+programs via stdin. It never touches disk and therefore nothing enforces 
+security policy. This already is among the most common ways that malware runs 
+today to evade detection.
 
-> +	default n
-> +	help
-> +	  Enforce initialization of pages allocated from page allocator
-> +	  and objects returned by kmalloc and friends.
-> +	  Allocated memory is initialized with zeroes, preventing possible
-> +	  information leaks and making the control-flow bugs that depend
-> +	  on uninitialized values more deterministic.
+-Steve
 
-Hmmm... But we already have debugging options that poison objects and
-pages?
+
