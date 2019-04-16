@@ -3,34 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D973C282DA
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 08:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D189CC10F13
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 08:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0CB20868
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 08:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA5E420868
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 08:36:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbfDPIdn (ORCPT
+        id S1726918AbfDPIgy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Apr 2019 04:33:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57730 "EHLO mx1.suse.de"
+        Tue, 16 Apr 2019 04:36:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58512 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728882AbfDPIdn (ORCPT
+        id S1726576AbfDPIgy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Apr 2019 04:33:43 -0400
+        Tue, 16 Apr 2019 04:36:54 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F04BBAF2F;
-        Tue, 16 Apr 2019 08:33:40 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 0A042ADAA;
+        Tue, 16 Apr 2019 08:36:52 +0000 (UTC)
 Subject: Re: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
-To:     Alexander Potapenko <glider@google.com>, akpm@linux-foundation.org
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Potapenko <glider@google.com>
 Cc:     linux-security-module@vger.kernel.org, linux-mm@kvack.org,
         ndesaulniers@google.com, kcc@google.com, dvyukov@google.com,
         keescook@chromium.org, sspatil@android.com, labbott@redhat.com,
         kernel-hardening@lists.openwall.com
 References: <20190412124501.132678-1-glider@google.com>
+ <20190415190213.5831bbc17e5073690713b001@linux-foundation.org>
 From:   Vlastimil Babka <vbabka@suse.cz>
 Openpgp: preference=signencrypt
 Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
@@ -93,12 +94,12 @@ Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
  5ZFJyfGsOiNUcMoO/17FO4EBxSDP3FDLllpuzlFD7SXkfJaMWYmXIlO0jLzdfwfcnDzBbPwO
  hBM8hvtsyq8lq8vJOxv6XD6xcTtj5Az8t2JjdUX6SF9hxJpwhBU0wrCoGDkWp4Bbv6jnF7zP
  Nzftr4l8RuJoywDIiJpdaNpSlXKpj/K6KrnyAI/joYc7
-Message-ID: <35935775-1c0d-6016-5bb3-0abee65a7492@suse.cz>
-Date:   Tue, 16 Apr 2019 10:30:20 +0200
+Message-ID: <f4071ce4-3744-35c9-df22-cb0a9d8db8ba@suse.cz>
+Date:   Tue, 16 Apr 2019 10:33:32 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190412124501.132678-1-glider@google.com>
+In-Reply-To: <20190415190213.5831bbc17e5073690713b001@linux-foundation.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -106,23 +107,13 @@ Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/12/19 2:45 PM, Alexander Potapenko wrote:
-> +config INIT_HEAP_ALL
-> +	bool "Initialize kernel heap allocations"
+On 4/16/19 4:02 AM, Andrew Morton wrote:
+> Requiring a kernel rebuild is rather user-hostile.  A boot option
+> (early_param()) would be much more useful and I expect that the loss in
+> coverage would be small and acceptable?  Could possibly use the
+> static_branch infrastructure.
 
-Calling slab and page allocations together as "heap" is rather uncommon
-in the kernel I think. But I don't have a better word right now.
-
-> +	default n
-> +	help
-> +	  Enforce initialization of pages allocated from page allocator
-> +	  and objects returned by kmalloc and friends.
-> +	  Allocated memory is initialized with zeroes, preventing possible
-> +	  information leaks and making the control-flow bugs that depend
-> +	  on uninitialized values more deterministic.
-> +
->  config GCC_PLUGIN_STRUCTLEAK_VERBOSE
->  	bool "Report forcefully initialized variables"
->  	depends on GCC_PLUGIN_STRUCTLEAK
-> 
-
+Agreed. There could be a config option to make it default on if no param
+given. Then a config option to (not) compile this in at all would be
+probably superfluous, although small systems/architectures without
+effective static keys might care.
