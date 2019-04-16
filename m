@@ -4,112 +4,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1735C10F0E
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 03:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2270EC10F0E
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 03:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81E6320868
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 03:15:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8F8D2064B
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Apr 2019 03:41:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y8xqOZaS"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LohpepcY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbfDPDPI (ORCPT
+        id S1726215AbfDPDlL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Apr 2019 23:15:08 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41517 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbfDPDPH (ORCPT
+        Mon, 15 Apr 2019 23:41:11 -0400
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:38777 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726836AbfDPDlJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Apr 2019 23:15:07 -0400
-Received: by mail-vs1-f66.google.com with SMTP id g187so10701863vsc.8
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Apr 2019 20:15:07 -0700 (PDT)
+        Mon, 15 Apr 2019 23:41:09 -0400
+Received: by mail-vk1-f195.google.com with SMTP id h71so4124966vkf.5
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Apr 2019 20:41:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Mk6BIBLLGO0U80tLWMVE0489EqA725xprr9VtegXBQw=;
-        b=Y8xqOZaS7jkwKovka8QtC0wCgsNCE4WBE8pK3EDq4eKI6sO+T80f/S1bmRcL3mxz/l
-         Cvk05b4RCyjWoI0j+pNA99L3vDReq81bLIvF4e378eH+fFvsHhaQpkt9P2QwQ9zEhlaW
-         p792GG7NkrUjaFmz8u13GMr+5hDAtUDZo0rY4=
+        bh=knJ4ZxxYb6J3GKaV7EwaY4sfVnSPjwGvsgjyVKDi2yY=;
+        b=LohpepcYBAREZDvlv6AnI67BSEa7If74Bl7iwNw4t+8mv+LJGn/2f9zGdljkXp6wEE
+         VFUBltaB9DOThRYuNwGgdKMWPh8P35D9yUle6LTv1Lpx1odF/gQU6g0iCAr0zw3OgK16
+         h9O2GQkjc+xEACfn0XkQFCeOpLY+IpyNw0a6k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Mk6BIBLLGO0U80tLWMVE0489EqA725xprr9VtegXBQw=;
-        b=j5TrZsW6KIkrLMBF+jNov714J1IK9MbP5ZaJu6DDwQhmnsADfumOHM72Ll/EEAdDc/
-         /BwBocUTdY4YrXdIocrwxGADp/x7liDu3B0341tvkDtJ6kZ5XmFgc6vRWu0scfGn6Q5r
-         Du5z2ENa+OxbbcgfSJlYhUAmSl3j+HLuAMcbxrpw4ZBl/vOSbT88BgR5rd0Dsdyc+04e
-         nQNZ0U+S8iczXy9pCqWOR1V9QcpgBF1Egno1DkcYNG0CP9tVmG9HkgJu94m4Rzfp46m7
-         +izGOQK6l9ucRH4FWSQVxSk+VMRL/OQdvrJkNEKxgaQCLx8QAAyUn8YG1APcGvSrot9O
-         AtNg==
-X-Gm-Message-State: APjAAAWfIeKFwanhgt1nOlKWAUBl/QhFqsdrdIlPCZQpl9HcLrnkgkAY
-        K5tJ3VgN0HHbUDp7oASp3TyG2MRB/fU=
-X-Google-Smtp-Source: APXvYqy+CL4snRebOfEJX+UYYzFgbbC+jl07IcsqC3QyLPdXtwB1soIwqDDuaX9MsE2+w5p8EJv1IA==
-X-Received: by 2002:a67:f256:: with SMTP id y22mr27178226vsm.19.1555384506265;
-        Mon, 15 Apr 2019 20:15:06 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id t198sm10931279vst.11.2019.04.15.20.15.04
+        bh=knJ4ZxxYb6J3GKaV7EwaY4sfVnSPjwGvsgjyVKDi2yY=;
+        b=tlUwDXNMj6xwed7Gq9J2lq5ACoX5kD3v+e1rIz8IJd+du6ad4A06IWXYsaMFdmlvSR
+         kJL67bEj/qsiIECUxAcorOcfS4b8dUyrQxThDJi5WV1cVxAz7yHwulvfrf2ikpe7lUWY
+         YyBKdG5uPFmYMUN3wgQJ/l1oF2fxOxZKwphJss6AQDLGTkM+Mb9trymRk8GzjgES75hg
+         I+OwljWr72t6YLDvTarysg4x90j0IyUAMP8OuW88HJ49ebGwB+0Z1MFgJDkKhZ/9e8Vv
+         GEzPAh+9CtRJndsQfHP4Cq24hNBj7h/xI5au2smJJopRGhH2FfbRivhO7RPov5u5C7u4
+         6U6A==
+X-Gm-Message-State: APjAAAUrKgaLDrccJt9gy29p9wcIgHA8lyQMy7xlf45P2COM9gd7LGPt
+        ZfRljvQU+ZMljsZXCg1xaYme7FXt6fg=
+X-Google-Smtp-Source: APXvYqy0wJzQmbi+4fEDkiA6ZwZbepB6A3wSWyCRrt5bn7l3oM2dSrwbi8Z3W3uWnO11URVDo24jQQ==
+X-Received: by 2002:a1f:32c7:: with SMTP id y190mr43770658vky.15.1555386068659;
+        Mon, 15 Apr 2019 20:41:08 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id s78sm11135731vke.17.2019.04.15.20.41.05
         for <linux-security-module@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 15 Apr 2019 20:15:04 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id o10so10697824vsp.12
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Apr 2019 20:15:04 -0700 (PDT)
-X-Received: by 2002:a67:f04e:: with SMTP id q14mr43541834vsm.133.1555384503717;
- Mon, 15 Apr 2019 20:15:03 -0700 (PDT)
+        Mon, 15 Apr 2019 20:41:05 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id s11so51816vsn.0
+        for <linux-security-module@vger.kernel.org>; Mon, 15 Apr 2019 20:41:05 -0700 (PDT)
+X-Received: by 2002:a67:f04e:: with SMTP id q14mr43589866vsm.133.1555386064658;
+ Mon, 15 Apr 2019 20:41:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190411192607.GD225654@gmail.com> <20190411192827.72551-1-ebiggers@kernel.org>
- <CAGXu5jJ8k7fP5Vb=ygmQ0B45GfrK2PeaV04bPWmcZ6Vb+swgyA@mail.gmail.com>
- <20190415022412.GA29714@bombadil.infradead.org> <20190415024615.f765e7oagw26ezam@gondor.apana.org.au>
- <20190416021852.GA18616@bombadil.infradead.org>
-In-Reply-To: <20190416021852.GA18616@bombadil.infradead.org>
+References: <6e4428ca-3da1-a033-08f7-a51e57503989@huawei.com>
+ <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com> <20190415134331.GC22204@redhat.com>
+ <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
+ <20190415150520.GA13257@redhat.com> <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+In-Reply-To: <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 15 Apr 2019 22:14:51 -0500
-X-Gmail-Original-Message-ID: <CAGXu5jKaVB=bTJCBWhsxAny7-OkzXQ+8KCd5O+_-7hKcJFiqKw@mail.gmail.com>
-Message-ID: <CAGXu5jKaVB=bTJCBWhsxAny7-OkzXQ+8KCd5O+_-7hKcJFiqKw@mail.gmail.com>
-Subject: Re: [PATCH] crypto: testmgr - allocate buffers with __GFP_COMP
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+Date:   Mon, 15 Apr 2019 22:40:52 -0500
+X-Gmail-Original-Message-ID: <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+Message-ID: <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+Subject: Re: kernel BUG at kernel/cred.c:434!
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "chengjian (D)" <cj.chengjian@huawei.com>,
+        NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
         Kees Cook <keescook@chromium.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Linux-MM <linux-mm@kvack.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 15, 2019 at 9:18 PM Matthew Wilcox <willy@infradead.org> wrote:
-> I agree; if the crypto code is never going to try to go from the address of
-> a byte in the allocation back to the head page, then there's no need to
-> specify GFP_COMP.
+On Mon, Apr 15, 2019 at 11:20 AM Paul Moore <paul@paul-moore.com> wrote:
 >
-> But that leaves us in the awkward situation where
-> HARDENED_USERCOPY_PAGESPAN does need to be able to figure out whether
-> 'ptr + n - 1' lies within the same allocation as ptr.  Without using
-> a compound page, there's no indication in the VM structures that these
-> two pages were allocated as part of the same allocation.
+> On Mon, Apr 15, 2019 at 11:05 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> > On 04/15, Paul Moore wrote:
+> > >
+> > > On Mon, Apr 15, 2019 at 9:43 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> > > > Well, acct("/proc/self/attr/current") doesn't look like a good idea, but I do
+> > > > not know where should we put the additional check... And probably
+> > > > "echo /proc/self/attr/current > /proc/sys/kernel/core_pattern" can hit the
+> > > > same problem, do_coredump() does override_creds() too.
+> > > >
+> > > > May be just add
+> > > >
+> > > >         if (current->cred != current->real_cred)
+> > > >                 return -EACCES;
+> > > >
+> > > > into proc_pid_attr_write(), I dunno.
+> > >
+> > > Is the problem that do_acct_process() is calling override_creds() and
+> > > the returned/old credentials are being freed before do_acct_process()
+> > > can reinstall the creds via revert_creds()?  Presumably because the
+> > > process accounting is causing the credentials to be replaced?
+> >
+> > Afaics, the problem is that do_acct_process() does override_creds() and
+> > then __kernel_write(). Which calls proc_pid_attr_write(), which in turn calls
+> > selinux_setprocattr(), which does another prepare_creds() + commit_creds();
+> > and commit_creds() hits
+> >
+> >         BUG_ON(task->cred != old);
 >
-> We could force all multi-page allocations to be compound pages if
-> HARDENED_USERCOPY_PAGESPAN is enabled, but I worry that could break
-> something.  We could make it catch fewer problems by succeeding if the
-> page is not compound.  I don't know, these all seem like bad choices
-> to me.
+> Gotcha.  In the process of looking at the backtrace I forgot about the
+> BUG_ON() at the top of the oops message.
+>
+> I wonder what terrible things would happen if we changed the BUG_ON()
+> in commit_creds to simple returning an error an error code to the
+> caller.  There is a warning/requirement in commit_creds() function
+> header comment that it should always return 0.
 
-If GFP_COMP is _not_ the correct signal about adjacent pages being
-part of the same allocation, then I agree: we need to drop this check
-entirely from PAGESPAN. Is there anything else that indicates this
-property? (Or where might we be able to store that info?)
+Would callers be expected to call abort_creds() on failure? There are
+a number of places where it'd need fixing up. And would likely be best
+with a __must_check marking.
 
-There are other pagespan checks, though, so those could stay. But I'd
-really love to gain page allocator allocation size checking ...
+It seems like avoiding the pathological case might be simpler?
 
 -- 
 Kees Cook
