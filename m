@@ -2,259 +2,85 @@ Return-Path: <SRS0=FWzS=ST=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BC7C282DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 174F3C282DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3AE206BA
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:36:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="cvm843qX"
+	by mail.kernel.org (Postfix) with ESMTP id C7A87217F4
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729453AbfDQOgd (ORCPT
+        id S1732222AbfDQO5Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 10:36:33 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42813 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732088AbfDQOgb (ORCPT
+        Wed, 17 Apr 2019 10:57:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40172 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730463AbfDQO5Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 10:36:31 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v22so22655574lje.9
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 07:36:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aYpvTFf0qZElPLw/muGHvS8dE/2mug1cDst2X31iqmw=;
-        b=cvm843qXLqUQ0ltX6klK7YVQl9QU/F4aGuAvL7ZAzJSlveFKDSdJ/lNsrZY0hxF94f
-         qP1hPE3n1Ot8gaYMp8wC/hvN2Z7/SQnGr59BCvOm0yP6kJaUN52w4VBhRgv7IUZR5T3m
-         VeQzZwHgtMGQyLOkgjkmjORqQEi/+geEFtMWV7pgSP8zGZjHkNi37mNKrzZhEYah/QS+
-         dXsqOCRU/pl2Nyu4WzlULuW+MuIcWsYm+4+riUl89XEnuwCf7X6XKFVMAHBGAhpHQV+2
-         Oe4wLKr+lnkNMEtxvzkcs7zbP72J1xsSeFtJGKyoXZb3b4j47HZy6rHsjFC7u9zUh1lg
-         FG3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aYpvTFf0qZElPLw/muGHvS8dE/2mug1cDst2X31iqmw=;
-        b=PFGBO7avzk9reiPuWrQw4uKxZk3YH00MZdKGqW2udc8rHftYRIppXkMbobb3E7ppvT
-         x5YCodePxtgY0o3vOT/gU0hOSiVjKxa0SNNKVZ2dgl6BbN1ylIEeD/wxHK6L3qBXBqz9
-         ldhTZO/kvuCnFYY5lJKOT4ORLDftUwHKWc2sBpL/Xp147fIAQNxe0kBBwyteUEP46fKS
-         MFV50Eszru5wL2ZfBSRNjBfihcDl0nnMZzGWkFmzc2Q98WpVKoBsARIhVyA9UT4sFWcI
-         I+aV4rgeKS5s0zsZ3Z2/24o+rkHny74weBaHJLKRRAMJ4yy5QCPp+6VtinHuZ3hw5lQC
-         eSZw==
-X-Gm-Message-State: APjAAAWiLl1+RjUNa/08qZuYIVdYKOuDdJ/3ORmXKAiqSZC4XhM1BRBQ
-        NqOHvK9w2XPE0G4NWwkkHgZOU6zQQRw8hc2cBz0a
-X-Google-Smtp-Source: APXvYqzIRq1TtmAHQvMfI9/2v3ZwCpClKzw6wpPHGPILEdVRcVNVPodTxE9XbtFfz2uqj5/VBWvEfh8wJJLmfxPNes8=
-X-Received: by 2002:a2e:8108:: with SMTP id d8mr21571767ljg.57.1555511787821;
- Wed, 17 Apr 2019 07:36:27 -0700 (PDT)
+        Wed, 17 Apr 2019 10:57:16 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8001EC066455;
+        Wed, 17 Apr 2019 14:57:15 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.38])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 863F560156;
+        Wed, 17 Apr 2019 14:57:12 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 17 Apr 2019 16:57:15 +0200 (CEST)
+Date:   Wed, 17 Apr 2019 16:57:11 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     "chengjian (D)" <cj.chengjian@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>,
+        Yang Yingliang <yangyingliang@huawei.com>
+Subject: Re: kernel BUG at kernel/cred.c:434!
+Message-ID: <20190417145711.GI32622@redhat.com>
+References: <6e4428ca-3da1-a033-08f7-a51e57503989@huawei.com>
+ <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
+ <20190415134331.GC22204@redhat.com>
+ <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
+ <20190415150520.GA13257@redhat.com>
+ <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+ <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+ <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
+ <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
 MIME-Version: 1.0
-References: <cover.1555382110.git.mchehab+samsung@kernel.org> <104211eb0db14790ad328fff7ad7f712d8d647f9.1555382110.git.mchehab+samsung@kernel.org>
-In-Reply-To: <104211eb0db14790ad328fff7ad7f712d8d647f9.1555382110.git.mchehab+samsung@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 17 Apr 2019 10:36:16 -0400
-Message-ID: <CAHC9VhTcTifp1v9JfGLNw+4HPvqMjYsX0gM2tXZDOhmxUHt+oA@mail.gmail.com>
-Subject: Re: [PATCH 23/57] docs: netlabel: convert it to ReST
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 17 Apr 2019 14:57:15 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 15, 2019 at 10:56 PM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
+On 04/17, Paul Moore wrote:
 >
-> Convert netlabel documentation to ReST.
->
-> This was trivial: just add proper title markups.
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  Documentation/netlabel/cipso_ipv4.txt    | 19 +++++++++++++------
->  Documentation/netlabel/introduction.txt  | 16 +++++++++++-----
->  Documentation/netlabel/lsm_interface.txt | 16 +++++++++++-----
->  3 files changed, 35 insertions(+), 16 deletions(-)
+> I'm tempted to simply return an error in selinux_setprocattr() if
+> the task's credentials are not the same as its real_cred;
 
-Thanks for doing this.  I should probably revisit these docs to make
-sure they are still valid/correct; if nothing else that email address
-is from two employers ago (my apologies to the current email address
-holder).
+What about other modules? I have no idea what smack_setprocattr() is,
+but it too does prepare_creds/commit creds.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+it seems that the simplest workaround should simply add the additional
+cred == real_cred into proc_pid_attr_write().
 
-> diff --git a/Documentation/netlabel/cipso_ipv4.txt b/Documentation/netlabel/cipso_ipv4.txt
-> index a6075481fd60..cbd3f3231221 100644
-> --- a/Documentation/netlabel/cipso_ipv4.txt
-> +++ b/Documentation/netlabel/cipso_ipv4.txt
-> @@ -1,10 +1,13 @@
-> +===================================
->  NetLabel CIPSO/IPv4 Protocol Engine
-> -==============================================================================
-> +===================================
-> +
->  Paul Moore, paul.moore@hp.com
->
->  May 17, 2006
->
-> - * Overview
-> +Overview
-> +========
->
->  The NetLabel CIPSO/IPv4 protocol engine is based on the IETF Commercial
->  IP Security Option (CIPSO) draft from July 16, 1992.  A copy of this
-> @@ -13,7 +16,8 @@ draft can be found in this directory
->  it to an RFC standard it has become a de-facto standard for labeled
->  networking and is used in many trusted operating systems.
->
-> - * Outbound Packet Processing
-> +Outbound Packet Processing
-> +==========================
->
->  The CIPSO/IPv4 protocol engine applies the CIPSO IP option to packets by
->  adding the CIPSO label to the socket.  This causes all packets leaving the
-> @@ -24,7 +28,8 @@ label by using the NetLabel security module API; if the NetLabel "domain" is
->  configured to use CIPSO for packet labeling then a CIPSO IP option will be
->  generated and attached to the socket.
->
-> - * Inbound Packet Processing
-> +Inbound Packet Processing
-> +=========================
->
->  The CIPSO/IPv4 protocol engine validates every CIPSO IP option it finds at the
->  IP layer without any special handling required by the LSM.  However, in order
-> @@ -33,7 +38,8 @@ NetLabel security module API to extract the security attributes of the packet.
->  This is typically done at the socket layer using the 'socket_sock_rcv_skb()'
->  LSM hook.
->
-> - * Label Translation
-> +Label Translation
-> +=================
->
->  The CIPSO/IPv4 protocol engine contains a mechanism to translate CIPSO security
->  attributes such as sensitivity level and category to values which are
-> @@ -42,7 +48,8 @@ Domain Of Interpretation (DOI) definition and are configured through the
->  NetLabel user space communication layer.  Each DOI definition can have a
->  different security attribute mapping table.
->
-> - * Label Translation Cache
-> +Label Translation Cache
-> +=======================
->
->  The NetLabel system provides a framework for caching security attribute
->  mappings from the network labels to the corresponding LSM identifiers.  The
-> diff --git a/Documentation/netlabel/introduction.txt b/Documentation/netlabel/introduction.txt
-> index 3caf77bcff0f..9333bbb0adc1 100644
-> --- a/Documentation/netlabel/introduction.txt
-> +++ b/Documentation/netlabel/introduction.txt
-> @@ -1,10 +1,13 @@
-> +=====================
->  NetLabel Introduction
-> -==============================================================================
-> +=====================
-> +
->  Paul Moore, paul.moore@hp.com
->
->  August 2, 2006
->
-> - * Overview
-> +Overview
-> +========
->
->  NetLabel is a mechanism which can be used by kernel security modules to attach
->  security attributes to outgoing network packets generated from user space
-> @@ -12,7 +15,8 @@ applications and read security attributes from incoming network packets.  It
->  is composed of three main components, the protocol engines, the communication
->  layer, and the kernel security module API.
->
-> - * Protocol Engines
-> +Protocol Engines
-> +================
->
->  The protocol engines are responsible for both applying and retrieving the
->  network packet's security attributes.  If any translation between the network
-> @@ -24,7 +28,8 @@ the NetLabel kernel security module API described below.
->  Detailed information about each NetLabel protocol engine can be found in this
->  directory.
->
-> - * Communication Layer
-> +Communication Layer
-> +===================
->
->  The communication layer exists to allow NetLabel configuration and monitoring
->  from user space.  The NetLabel communication layer uses a message based
-> @@ -33,7 +38,8 @@ formatting of these NetLabel messages as well as the Generic NETLINK family
->  names can be found in the 'net/netlabel/' directory as comments in the
->  header files as well as in 'include/net/netlabel.h'.
->
-> - * Security Module API
-> +Security Module API
-> +===================
->
->  The purpose of the NetLabel security module API is to provide a protocol
->  independent interface to the underlying NetLabel protocol engines.  In addition
-> diff --git a/Documentation/netlabel/lsm_interface.txt b/Documentation/netlabel/lsm_interface.txt
-> index 638c74f7de7f..026fc267f798 100644
-> --- a/Documentation/netlabel/lsm_interface.txt
-> +++ b/Documentation/netlabel/lsm_interface.txt
-> @@ -1,10 +1,13 @@
-> +========================================
->  NetLabel Linux Security Module Interface
-> -==============================================================================
-> +========================================
-> +
->  Paul Moore, paul.moore@hp.com
->
->  May 17, 2006
->
-> - * Overview
-> +Overview
-> +========
->
->  NetLabel is a mechanism which can set and retrieve security attributes from
->  network packets.  It is intended to be used by LSM developers who want to make
-> @@ -12,7 +15,8 @@ use of a common code base for several different packet labeling protocols.
->  The NetLabel security module API is defined in 'include/net/netlabel.h' but a
->  brief overview is given below.
->
-> - * NetLabel Security Attributes
-> +NetLabel Security Attributes
-> +============================
->
->  Since NetLabel supports multiple different packet labeling protocols and LSMs
->  it uses the concept of security attributes to refer to the packet's security
-> @@ -24,7 +28,8 @@ configuration.  It is up to the LSM developer to translate the NetLabel
->  security attributes into whatever security identifiers are in use for their
->  particular LSM.
->
-> - * NetLabel LSM Protocol Operations
-> +NetLabel LSM Protocol Operations
-> +================================
->
->  These are the functions which allow the LSM developer to manipulate the labels
->  on outgoing packets as well as read the labels on incoming packets.  Functions
-> @@ -32,7 +37,8 @@ exist to operate both on sockets as well as the sk_buffs directly.  These high
->  level functions are translated into low level protocol operations based on how
->  the administrator has configured the NetLabel subsystem.
->
-> - * NetLabel Label Mapping Cache Operations
-> +NetLabel Label Mapping Cache Operations
-> +=======================================
->
->  Depending on the exact configuration, translation between the network packet
->  label and the internal LSM security identifier can be time consuming.  The
-> --
-> 2.20.1
->
+Oleg.
 
-
--- 
-paul moore
-www.paul-moore.com
