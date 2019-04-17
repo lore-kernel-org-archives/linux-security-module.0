@@ -2,110 +2,245 @@ Return-Path: <SRS0=FWzS=ST=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F14AEC282DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 10:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF263C10F12
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 10:41:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9B5B20835
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 10:01:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABA972173C
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 10:41:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731683AbfDQKBL (ORCPT
+        id S1731945AbfDQKls (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 06:01:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57332 "EHLO mx1.redhat.com"
+        Wed, 17 Apr 2019 06:41:48 -0400
+Received: from mga17.intel.com ([192.55.52.151]:9722 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726237AbfDQKBK (ORCPT
+        id S1729522AbfDQKls (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 06:01:10 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BF07530ADBCD;
-        Wed, 17 Apr 2019 10:01:09 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (dhcp-192-219.str.redhat.com [10.33.192.219])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3FE8D5D6A6;
-        Wed, 17 Apr 2019 10:01:04 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Wed, 17 Apr 2019 06:41:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Apr 2019 03:41:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.60,361,1549958400"; 
+   d="scan'208";a="132120105"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
+  by orsmga007.jf.intel.com with ESMTP; 17 Apr 2019 03:41:40 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
+        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
-References: <20181212081712.32347-1-mic@digikod.net> <3452959.b6JmBh7Lnt@x2>
-        <87wojuxj8s.fsf@oldenburg2.str.redhat.com> <2361288.r9sZr2NHLB@x2>
-Date:   Wed, 17 Apr 2019 12:01:03 +0200
-In-Reply-To: <2361288.r9sZr2NHLB@x2> (Steve Grubb's message of "Tue, 16 Apr
-        2019 11:34:07 -0400")
-Message-ID: <875zrd7xy8.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v20 16/28] x86/sgx: Add provisioning
+Date:   Wed, 17 Apr 2019 13:39:26 +0300
+Message-Id: <20190417103938.7762-17-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
+References: <20190417103938.7762-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 17 Apr 2019 10:01:10 +0000 (UTC)
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Steve Grubb:
+In order to provide a mechanism for devilering provisoning rights:
 
-> On Tuesday, April 16, 2019 7:49:39 AM EDT Florian Weimer wrote:
->> * Steve Grubb:
->> > This flag that is being proposed means that you would have to patch all
->> > interpreters to use it. If you are sure that upstreams will accept that,
->> > why not just change the policy to interpreters shouldn't execute
->> > anything unless the execute bit is set? That is simpler and doesn't need
->> > a kernel change. And setting the execute bit is an auditable event.
->> 
->> I think we need something like O_MAYEXEC so that security policies can
->> be enforced and noexec mounts can be detected.
->
-> Application whitelisting can already today stop unknown software without 
-> needing O_MAYEXEC.
+1. Add a new device file /dev/sgx/provision that works as a token for
+   allowing an enclave to have the provisioning privileges.
+2. Add a new ioctl called SGX_IOC_ENCLAVE_SET_ATTRIBUTE that accepts the
+   following data structure:
 
-I'm somewhat interested in using this to add a proper check for
-executability to explicit dynamic loader invocations.  In other words,
-this
+   struct sgx_enclave_set_attribute {
+           __u64 addr;
+           __u64 attribute_fd;
+   };
 
-  /lib64/ld-linux-x86-64.so.2 /path/to/noexec/fs/program
+A daemon could sit on top of /dev/sgx/provision and send a file
+descriptor of this file to a process that needs to be able to provision
+enclaves.
 
-should refuse to run the program if the program is located on a file
-system mounted with the noexec attribute.
+The way this API is used is straight-forward. Lets assume that dev_fd is
+a handle to /dev/sgx/enclave and prov_fd is a handle to
+/dev/sgx/provision.  You would allow SGX_IOC_ENCLAVE_CREATE to
+initialize an enclave with the PROVISIONKEY attribute by
 
-> The problem is that passing O_MAYEXEC is opt-in. You can use ptrace/seccomp/
-> bpf/LD_PRELOAD/LD_AUDIT to remove that bit from an otherwise normal program. 
-> This does not require privs to do so.
+params.addr = <enclave address>;
+params.token_fd = prov_fd;
 
-That doesn't really help with the above.
+ioctl(dev_fd, SGX_IOC_ENCLAVE_SET_ATTRIBUTE, &params);
 
-> But let's consider that this comes to pass and every interpreter is
-> updated and IMA can see the O_MAYEXEC flag. Attackers now simply pivot
-> to running programs via stdin. It never touches disk and therefore
-> nothing enforces security policy. This already is among the most
-> common ways that malware runs today to evade detection.
+Cc: James Morris <jmorris@namei.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ arch/x86/include/uapi/asm/sgx.h         | 11 ++++++
+ arch/x86/kernel/cpu/sgx/driver/driver.h |  2 +-
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c  | 51 +++++++++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/driver/main.c   | 11 +++++-
+ 4 files changed, 73 insertions(+), 2 deletions(-)
 
-Are you referring to Windows malware using Powershell?
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 7bf627ac4958..3b80acde8671 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -16,6 +16,8 @@
+ 	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++#define SGX_IOC_ENCLAVE_SET_ATTRIBUTE \
++	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_set_attribute)
+ 
+ /* IOCTL return values */
+ #define SGX_POWER_LOST_ENCLAVE		0x40000000
+@@ -54,4 +56,13 @@ struct sgx_enclave_init {
+ 	__u64	sigstruct;
+ };
+ 
++/**
++ * struct sgx_enclave_set_attribute - parameter structure for the
++ *				      %SGX_IOC_ENCLAVE_SET_ATTRIBUTE ioctl
++ * @attribute_fd:	file handle of the attribute file in the securityfs
++ */
++struct sgx_enclave_set_attribute {
++	__u64	attribute_fd;
++};
++
+ #endif /* _UAPI_ASM_X86_SGX_H */
+diff --git a/arch/x86/kernel/cpu/sgx/driver/driver.h b/arch/x86/kernel/cpu/sgx/driver/driver.h
+index 507712eb0a68..153b4a48aa6f 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/driver.h
++++ b/arch/x86/kernel/cpu/sgx/driver/driver.h
+@@ -31,7 +31,7 @@ extern u64 sgx_attributes_reserved_mask;
+ extern u64 sgx_xfrm_reserved_mask;
+ extern u32 sgx_xsave_size_tbl[64];
+ 
+-extern const struct file_operations sgx_fs_provision_fops;
++extern const struct file_operations sgx_provision_fops;
+ 
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ 
+diff --git a/arch/x86/kernel/cpu/sgx/driver/ioctl.c b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+index f88226518b21..65c9fb7b2a95 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/driver/ioctl.c
+@@ -714,6 +714,54 @@ static long sgx_ioc_enclave_init(struct file *filep, unsigned int cmd,
+ 	return ret;
+ }
+ 
++/**
++ * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_SET_ATTRIBUTE
++ * @filep:	open file to /dev/sgx
++ * @cmd:	the command value
++ * @arg:	pointer to a struct sgx_enclave_set_attribute instance
++ *
++ * Mark the enclave as being allowed to access a restricted attribute bit.
++ * The requested attribute is specified via the attribute_fd field in the
++ * provided struct sgx_enclave_set_attribute.  The attribute_fd must be a
++ * handle to an SGX attribute file, e.g. “/dev/sgx/provision".
++ *
++ * Failure to explicitly request access to a restricted attribute will cause
++ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
++ * is access to the PROVISION_KEY.
++ *
++ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
++ *
++ * Return: 0 on success, -errno otherwise
++ */
++static long sgx_ioc_enclave_set_attribute(struct file *filep, unsigned int cmd,
++					  unsigned long arg)
++{
++	struct sgx_enclave_set_attribute *params = (void *)arg;
++	struct file *attribute_file;
++	struct sgx_encl *encl;
++	int ret;
++
++	attribute_file = fget(params->attribute_fd);
++	if (!attribute_file->f_op)
++		return -EINVAL;
++
++	if (attribute_file->f_op != &sgx_provision_fops) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = sgx_encl_get(params->addr, &encl);
++	if (ret)
++		goto out;
++
++	encl->allowed_attributes |= SGX_ATTR_PROVISIONKEY;
++	kref_put(&encl->refcount, sgx_encl_release);
++
++out:
++	fput(attribute_file);
++	return ret;
++}
++
+ typedef long (*sgx_ioc_t)(struct file *filep, unsigned int cmd,
+ 			  unsigned long arg);
+ 
+@@ -733,6 +781,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		handler = sgx_ioc_enclave_init;
+ 		break;
++	case SGX_IOC_ENCLAVE_SET_ATTRIBUTE:
++		handler = sgx_ioc_enclave_set_attribute;
++		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+ 	}
+diff --git a/arch/x86/kernel/cpu/sgx/driver/main.c b/arch/x86/kernel/cpu/sgx/driver/main.c
+index d371add399cd..8b79c4a60037 100644
+--- a/arch/x86/kernel/cpu/sgx/driver/main.c
++++ b/arch/x86/kernel/cpu/sgx/driver/main.c
+@@ -103,7 +103,7 @@ static const struct file_operations sgx_encl_fops = {
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
+ 
+-static const struct file_operations sgx_provision_fops = {
++const struct file_operations sgx_provision_fops = {
+ 	.owner			= THIS_MODULE,
+ };
+ 
+@@ -261,8 +261,16 @@ static int sgx_dev_init(struct device *parent)
+ 	if (ret)
+ 		goto err_encl_dev_add;
+ 
++	ret = cdev_device_add(&sgx_dev->provision_cdev,
++			      &sgx_dev->provision_dev);
++	if (ret)
++		goto err_provision_dev_add;
++
+ 	return 0;
+ 
++err_provision_dev_add:
++	cdev_device_del(&sgx_dev->encl_cdev, &sgx_dev->encl_dev);
++
+ err_encl_dev_add:
+ 	destroy_workqueue(sgx_encl_wq);
+ 
+@@ -289,6 +297,7 @@ static int sgx_drv_remove(struct platform_device *pdev)
+ 	struct sgx_dev_ctx *ctx = dev_get_drvdata(&pdev->dev);
+ 
+ 	cdev_device_del(&ctx->encl_cdev, &ctx->encl_dev);
++	cdev_device_del(&ctx->provision_cdev, &ctx->provision_dev);
+ 	destroy_workqueue(sgx_encl_wq);
+ 
+ 	return 0;
+-- 
+2.19.1
 
-I'm not sure this is applicable to Linux.  We do not have much
-behavioral monitoring anyway.
-
-Thanks,
-Florian
