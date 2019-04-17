@@ -2,133 +2,207 @@ Return-Path: <SRS0=FWzS=ST=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A80C282DC
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D7EC282DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B42D920872
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D6F0206BA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:30:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Ez4i+71s"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="XqD4anXL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732474AbfDQOOp (ORCPT
+        id S1732413AbfDQOaX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 10:14:45 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35801 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732344AbfDQOOo (ORCPT
+        Wed, 17 Apr 2019 10:30:23 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37432 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731472AbfDQOaW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 10:14:44 -0400
-Received: by mail-it1-f193.google.com with SMTP id w15so4565583itc.0
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 07:14:44 -0700 (PDT)
+        Wed, 17 Apr 2019 10:30:22 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v13so22673100ljk.4
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 07:30:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zVHgwUYB7Owzu77x+l9sz/yWkcb/YNK0x9i5/Zt2H9s=;
-        b=Ez4i+71sPiwDGSFgZyWlRtbPSsTi21FdzghrDGt/UCzUncd6cp+5vuN/HcBvwPIhG9
-         jt7Jt4M95/67nzmM7cyaDmhu5b3+AlXoESvEry8BxLgXzYNv0UYizeIyeVy4UHOcjjyQ
-         3F5pEoKD2+tsJZNojH2FP4BgNxvFAhwxtHPGY=
+        bh=RuyB+W2pZ+QYBWd1eUaaacF+UuRg4xdSTEXA3oHZsgI=;
+        b=XqD4anXLFYevMs1lRTyx2zcvCQubqkTY0PZtzr3CqPikpdNRZHVYUdC2GGYDSv5VPg
+         WP7AOjjquBqxlihIVYE8Ypqmhww8GkwTIOFvHBaV1gZbcaUvBqkQgs6CUKIThv7mT9nM
+         O9SiJhcvum1RY7z4u/fPT2Rx+OnWtc6EiEgWzmqnHEHvA+fJ/vJ4UtkcdUfdH01sFnx2
+         2h5S1k5yplv9wpvVPXuwYWGr/lv6AE6PUhWlmvDk/RYEdzwF7uJ34XrUdoIuJKSoM2IP
+         uKqyh/uuIjalzz3U+m+JazO2dcqKqch99mbK9AEfN143+E4lJE/yu5lmPpEbVWaFuQyw
+         x3/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zVHgwUYB7Owzu77x+l9sz/yWkcb/YNK0x9i5/Zt2H9s=;
-        b=dnNAJtBqplY53YiSY3izIAoAjo6QtWafJrI0tfulnZvDgnjsQeL3aBoG8bKZTwYGlt
-         oAT/wbl73umCamOVEEeyrDricKC5ZXRfKWU7zFCvbwQt3A3DzewDJCw9BOQOoIaXbKcW
-         RWmclQwOiMTsmPOky/alyy/0DS1p87mDXN7nyPcoyJcxlj1WPFv4l7zTuyby170GvzbY
-         V5gOMod+HeAVSpqyaJ/wFIEc/2glzH1skCul9meuIVp8LrMUfZ38S2R2llurECxsgQBo
-         6G6+hfSAdVo6Ea60MfB6cZiIQUIhjQ+rnm9sgBzBmqCfy6/deHT6JfN+hYUqT/UP98zI
-         fg8g==
-X-Gm-Message-State: APjAAAV7FKbr/i3qVRCQHbp3BuNZl8xEoOiuO9L/ucq2CC1VhyOmp55j
-        PoihuKTf8ZF/WpeKKrzu5dUkwnUOCU9lWHG/08ZWHw==
-X-Google-Smtp-Source: APXvYqwLxKGSmvh3f4KxvRaPgmLWPcF2WSpiPi7PryLDxtWJ8hNR0F3eJ64BSX2fbErVpsGSNGfLfeiyW1sSxjAhqZg=
-X-Received: by 2002:a02:a50a:: with SMTP id e10mr60419474jam.104.1555510483817;
- Wed, 17 Apr 2019 07:14:43 -0700 (PDT)
+        bh=RuyB+W2pZ+QYBWd1eUaaacF+UuRg4xdSTEXA3oHZsgI=;
+        b=oY5Hv8oTUZhMZXz6EnQpkHezzwa7Gsuy0WIVDFxTHNHxw8Ly6WJn+L0gzVobxlIUDH
+         pheKifS0aYeBpqlFU5ZQfUkgwnn/6RSH5wpMllnFnmjom/G2Aci5NglAsQcvEa6CTYeK
+         P6D3IUJ0GHmrJVcKDsY362ohpWr8xZ8jwZ7v1+PgcUztQiK21jEGJnIDgPpAEF671YHZ
+         UFgGpMSEUDqkyUxG8Z1Lu5/qWIInQnmfSpcb8xFB/W6VjHUU8Vq0zPmAn8Dve0ooqkbP
+         GK6HZC8BijBoaZnWMyF5ucYcTNZ0yVcxNTSIgCDdv4mEC7E/3e27vqdoyUhd5O31/8/c
+         P3aA==
+X-Gm-Message-State: APjAAAXJuNZQleoM8clRaf5O5p/aIIvVqh5IgJJyEvJXXy3RylaFso4Q
+        BBzMu+6NRn3s0QaVoFyZ20Ocsio+tGDBGVsrjQ6K
+X-Google-Smtp-Source: APXvYqxRX2PGOIrx7dxH9uSGpkYFbI6pJPfeVsyp3u9ILZZQnkg2xJwcGRdaU/hpbceypTXYTq6mSPH0Nbc8CBFjxXQ=
+X-Received: by 2002:a2e:42cf:: with SMTP id h76mr46177693ljf.95.1555511420086;
+ Wed, 17 Apr 2019 07:30:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com>
- <20190416154513.GB13422@quack2.suse.cz> <CAOQ4uxh66kAozqseiEokqM3wDJws7=cnY-aFXH_0515nvsi2-A@mail.gmail.com>
- <20190417113012.GC26435@quack2.suse.cz> <CAJfpegsyzYTkUw7rgpQfB0BKqK-LBZh6fBMUO5iq2JHv1youzw@mail.gmail.com>
- <20190417140558.GB15563@quack2.suse.cz>
-In-Reply-To: <20190417140558.GB15563@quack2.suse.cz>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 17 Apr 2019 16:14:32 +0200
-Message-ID: <CAJfpegvYnnjv7uoQjL1avx5tO-0H0ZecmVK9Sgk-F1NoW0HAuw@mail.gmail.com>
-Subject: Re: fanotify and LSM path hooks
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+References: <6e4428ca-3da1-a033-08f7-a51e57503989@huawei.com>
+ <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com> <20190415134331.GC22204@redhat.com>
+ <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
+ <20190415150520.GA13257@redhat.com> <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+ <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com> <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
+In-Reply-To: <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 17 Apr 2019 10:30:08 -0400
+Message-ID: <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
+Subject: Re: kernel BUG at kernel/cred.c:434!
+To:     "chengjian (D)" <cj.chengjian@huawei.com>
+Cc:     Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>,
+        Yang Yingliang <yangyingliang@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 17, 2019 at 4:06 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 17-04-19 14:14:58, Miklos Szeredi wrote:
-> > On Wed, Apr 17, 2019 at 1:30 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Tue 16-04-19 21:24:44, Amir Goldstein wrote:
-> > > > > I'm not so sure about directory pre-modification hooks. Given the amount of
-> > > > > problems we face with applications using fanotify permission events and
-> > > > > deadlocking the system, I'm not very fond of expanding that API... AFAIU
-> > > > > you want to use such hooks for recording (and persisting) that some change
-> > > > > is going to happen and provide crash-consistency guarantees for such
-> > > > > journal?
-> > > > >
-> > > >
-> > > > That's the general idea.
-> > > > I have two use cases for pre-modification hooks:
-> > > > 1. VFS level snapshots
-> > > > 2. persistent change tracking
-> > > >
-> > > > TBH, I did not consider implementing any of the above in userspace,
-> > > > so I do not have a specific interest in extending the fanotify API.
-> > > > I am actually interested in pre-modify fsnotify hooks (not fanotify),
-> > > > that a snapshot or change tracking subsystem can register with.
-> > > > An in-kernel fsnotify event handler can set a flag in current task
-> > > > struct to circumvent system deadlocks on nested filesystem access.
-> > >
-> > > OK, I'm not opposed to fsnotify pre-modify hooks as such. As long as
-> > > handlers stay within the kernel, I'm fine with that. After all this is what
-> > > LSMs are already doing. Just exposing this to userspace for arbitration is
-> > > what I have a problem with.
+On Tue, Apr 16, 2019 at 10:46 AM chengjian (D) <cj.chengjian@huawei.com> wrote:
+> On 2019/4/16 11:40, Kees Cook wrote:
+> > On Mon, Apr 15, 2019 at 11:20 AM Paul Moore <paul@paul-moore.com> wrote:
+> >> On Mon, Apr 15, 2019 at 11:05 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >>> On 04/15, Paul Moore wrote:
+> >>>> On Mon, Apr 15, 2019 at 9:43 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >>>>> Well, acct("/proc/self/attr/current") doesn't look like a good idea, but I do
+> >>>>> not know where should we put the additional check... And probably
+> >>>>> "echo /proc/self/attr/current > /proc/sys/kernel/core_pattern" can hit the
+> >>>>> same problem, do_coredump() does override_creds() too.
+> >>>>>
+> >>>>> May be just add
+> >>>>>
+> >>>>>          if (current->cred != current->real_cred)
+> >>>>>                  return -EACCES;
+> >>>>>
+> >>>>> into proc_pid_attr_write(), I dunno.
+> >>>> Is the problem that do_acct_process() is calling override_creds() and
+> >>>> the returned/old credentials are being freed before do_acct_process()
+> >>>> can reinstall the creds via revert_creds()?  Presumably because the
+> >>>> process accounting is causing the credentials to be replaced?
+> >>> Afaics, the problem is that do_acct_process() does override_creds() and
+> >>> then __kernel_write(). Which calls proc_pid_attr_write(), which in turn calls
+> >>> selinux_setprocattr(), which does another prepare_creds() + commit_creds();
+> >>> and commit_creds() hits
+> >>>
+> >>>          BUG_ON(task->cred != old);
+> >> Gotcha.  In the process of looking at the backtrace I forgot about the
+> >> BUG_ON() at the top of the oops message.
+> >>
+> >> I wonder what terrible things would happen if we changed the BUG_ON()
+> >> in commit_creds to simple returning an error an error code to the
+> >> caller.  There is a warning/requirement in commit_creds() function
+> >> header comment that it should always return 0.
+> > Would callers be expected to call abort_creds() on failure? There are
+> > a number of places where it'd need fixing up. And would likely be best
+> > with a __must_check marking.
 > >
-> > There's one more usecase that I'd like to explore: providing coherent
-> > view of host filesystem in virtualized environments.  This requires
-> > that guest is synchronously notified when the host filesystem changes.
-> >   I do agree, however, that adding sync hooks to userspace is
-> > problematic.
-> >
-> > One idea would be to use shared memory instead of a procedural
-> > notification.  I.e. application (hypervisor) registers a pointer to a
-> > version number that the kernel associates with the given inode.  When
-> > the inode is changed, then the version number is incremented.  The
-> > guest kernel can then look at the version number when verifying cache
-> > validity.   That way perfect coherency is guaranteed between host and
-> > guest filesystems without allowing a broken guest or even a broken
-> > hypervisor to DoS the host.
+> > It seems like avoiding the pathological case might be simpler?
 >
-> Well, statx() and looking at i_version can do this for you. So I guess
-> that's too slow for your purposes?
+> Yeah, Avoiding this pathological case is a better solution.
 
-Okay, missing piece of information: we want to make use of the dcache
-and icache in the guest kernel, otherwise lookup/stat will be
-painfully slow.  That would preclude doing statx() or anything else
-that requires a synchronous round trip to the host for the likely case
-of a valid cache.
+No arguments that this is particularly messed up scenario, I'm just
+trying to arrive at a solution that isn't too ugly.
 
-> Also how many inodes do you want to
-> monitor like this?
+> From: Yang Yingliang <yangyingliang@huawei.com>
+> Date: Sat, 13 Apr 2019 21:56:01 +0800
+> Subject: [PATCH] fix cred bug_on
+>
+> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> ---
+>   kernel/acct.c            | 3 ++-
+>   kernel/cred.c            | 6 ++++++
+>   security/selinux/hooks.c | 2 ++
+>   3 files changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/acct.c b/kernel/acct.c
+> index addf7732fb56..f2065f899eee 100644
+> --- a/kernel/acct.c
+> +++ b/kernel/acct.c
+> @@ -522,7 +522,8 @@ static void do_acct_process(struct bsd_acct_struct
+> *acct)
+>       }
+>   out:
+>       current->signal->rlim[RLIMIT_FSIZE].rlim_cur = flim;
+> -    revert_creds(orig_cred);
+> +    if (orig_cred == current->real_cred)    // [2]
+> +        revert_creds(orig_cred);
+>   }
+>
+>   /**
+> diff --git a/kernel/cred.c b/kernel/cred.c
+> index ecf03657e71c..c4d5ba92fb9b 100644
+> --- a/kernel/cred.c
+> +++ b/kernel/cred.c
+> @@ -522,6 +522,9 @@ const struct cred *override_creds(const struct cred
+> *new)
+>   {
+>       const struct cred *old = current->cred;
+>
+> +    if (old == new)    //  [3]
+> +        return old;
+> +
+>       kdebug("override_creds(%p{%d,%d})", new,
+>              atomic_read(&new->usage),
+>              read_cred_subscribers(new));
+> @@ -551,6 +554,9 @@ void revert_creds(const struct cred *old)
+>   {
+>       const struct cred *override = current->cred;
+>
+> +    if (override == old)    // [3]
+> +        return;
+> +
+>       kdebug("revert_creds(%p{%d,%d})", old,
+>              atomic_read(&old->usage),
+>              read_cred_subscribers(old));
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index b5017beb4ef7..bc8108e4e90f 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -6590,6 +6590,8 @@ static int selinux_setprocattr(const char *name,
+> void *value, size_t size)
+>           goto abort_change;
+>       }
+>
+> +    if (current->cred != current->real_cred)    // [1]
+> +        revert_creds(current->real_cred);
+>       commit_creds(new);
+>       return size;
 
-Everything that's in the guest caches.  Which means: a lot.
+Doing the revert only to then commit the creds seems really ugly to
+me.  I'm tempted to simply return an error in selinux_setprocattr() if
+the task's credentials are not the same as its real_cred; if we do
+that I believe we should resolve this problem.  The accounting write
+to the SELinux file in /proc would fail of course, but I think we can
+all consider that as a positive side-effect.
 
-Thanks,
-Miklos
+While I don't think this should have a negative impact on anything
+else, I haven't convinced myself of that just yet.
+
+-- 
+paul moore
+www.paul-moore.com
