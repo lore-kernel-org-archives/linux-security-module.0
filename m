@@ -2,164 +2,100 @@ Return-Path: <SRS0=FWzS=ST=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F4BC282DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 15:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBA6C282DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 15:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAAD0205F4
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 15:04:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B016420674
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 15:40:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="jV8MxviG"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="RDsfW8Os"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731996AbfDQPEh (ORCPT
+        id S1732659AbfDQPj7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 11:04:37 -0400
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:58753 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729940AbfDQPEh (ORCPT
+        Wed, 17 Apr 2019 11:39:59 -0400
+Received: from sonic310-22.consmr.mail.bf2.yahoo.com ([74.6.135.196]:35264
+        "EHLO sonic310-22.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732635AbfDQPj7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 11:04:37 -0400
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id D8105D00072;
-        Wed, 17 Apr 2019 17:04:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1555513482;
-        bh=bWo7dnLioagPdYzeH6OkizN9W/LfrOvfG5WnkrxndVw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=jV8MxviGAxdH+OunhCErssEvmPHeF5oMM0dJwXZGbLsBnQBYC9fjrZVbkqxoix+z6
-         fGco0gKIhKr6uZOsQmD2Xcq3eyBCTtHKeqV1Ey4oawf62voYRXB//2fmMoLsIADZpw
-         N/jraYDvIUwiBLDvPGGo5hODncdzH7hqmo95k1uyU9n7wM8tmB+fSS0QvkNlZTQXDk
-         h3DGsO7tJZmcbppX2R+l3sOwg5x7hLdctG5mQspxmvgJYTHIsJrot07zmb8uvloTGu
-         /wrosttuAMbxalRCK/WP9Pc+GJcvt1uYnmxJiODolngESMD85YdxsJjGe4wTyloqAV
-         yIVgV30KDqvzw==
-Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on
- sys_open()
-To:     Florian Weimer <fweimer@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>
-CC:     Jan Kara <jack@suse.cz>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        Wed, 17 Apr 2019 11:39:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1555515598; bh=vh29Dvm9k8Fnp50MU8pjyDd3XXiZKmfUyaX5RhXSI0A=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=RDsfW8OsWsSAfDHbYKTv/5cKZK84d0f0D50KYdNLomUweMGbThB2L/L3gbk9RmwcjW+o4qV8ufD7Sbjd8sJrYa51cg0mi1ZkqbTPmEOPgeDFvFLuiVbwYsytR3TvnwX9Rae6RYGtWY4i3HZsbkjnWUUdwOUia4GM0PxPyoUfoWGn7zHOtp7zPCc+fegiMZgoCkTaz0ZWQDCdmDX9+fjwjWXm8JI4qx0iZ8Lj25Rtnm20dRDy9lzQ6qY+/D1oaMktR3PczuzzpwjOOeHMchA9Tm3tfpYmlp80keUP5qvKE+yeTBB2nExRyHhqpkODjS5XA7R8yPird4MyKnvicF8PwQ==
+X-YMail-OSG: jAfxFuIVM1kIRSHX7L0CCr2YMlASvfc1dIQaMdP4SFX3i_1zUQc0JTTek5WB.Hj
+ sFFhm3wNin40BQ0IpJqZZGSn62ETW7yac71rFKAGaZ1ElruIha5078IiB5qIhdD5d0pJOp3GkROT
+ 0aJFbjNW_qKSjtnRS9ik0EtCE7B_5IS3IM.MB2A0BcD3Z0P4R7ZTHQL2SvUMBm2rJoRWed0WLB1K
+ v7rFGoQ3drX4gESBZawOVjPbDH7RJg8X1dMOUhh3MZUWaW55G3s96ss55VOOKIxoOdi.FYXNPzUA
+ 4ZM499rYbNlpT1IINJR9ILqhNcRpUx.BVR_lDb3vWMP8B_dg02TfvYb0A8EYHJFKIsB2rdz8bKUe
+ SAa1T9SUkAA4n_LtBcO1YU10oYzzfLaCM_HIOR7IeCuTj9lzWUIWo0Kb2ECl50SHmzuNpk5MfWYy
+ bGhz6y9Lq5EnTVW1wotvcMzi3jAgWivutyNhV1K3AlENZYH_nQEdQGjaJ2s9Hwff5GdY2qUoYB37
+ L9iqx6rjXb4RLeqDJX5RVl39j24Ga82zqQGsrM6IQwT6N8kH4COFPLeqR1mATD2PzGBIr0MtovJr
+ kzM76QVLsKvFQ395BGHJo2gzo6TEzQKqk6bvUex2Xr.cstk9vfI.9DZbiDISxhK3HeRtElVlpKk2
+ Eeae.5WSDx0HLQEgVUt8PxOS487oVs9I511eixGo9fu96aS59szwNdQorVS2pe12t44h84hgoV0P
+ Cg9oqJHs3RejygEE0EGJFpF_ezcOvyY.I0vX0iCDQMJipBrb8AjYkjXKrv6vzjavtdMGpZ3iqb_X
+ 7PwqYF_b5eAYKn0SDciZVpMTWt7btyBhXKTmvlKcBkvX3N_a.4dUsCZ2fasnaJKzH8fahuhVm8mD
+ kT691wcvTKol0XrApcoshM_FcNrmaaWyobg1fMUDTzoHRqFDyhEGtRQj4f3Zb1WmiM0.qGDQ4NDm
+ c5uKc8N3vOJOzkXU9alqeDJEN_DdBsT908LIzRaa4Vr_tJtaCQ8wtOpKWPVly62TmQW9tSGGMW4u
+ X2f9bSX.LrTKBFw08nKF2Rqw4.nz4usRE74kOS..bubD.Uh5Qj.z7R54.wDnUOcjiMpOS0HFG1H4
+ qXiPud_ihwVQ3Hrygeu4v4TCor.P8dQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Wed, 17 Apr 2019 15:39:58 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
+          by smtp427.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 0c7ccd10146cdc242db139b22803b88d;
+          Wed, 17 Apr 2019 15:39:57 +0000 (UTC)
+Subject: Re: kernel BUG at kernel/cred.c:434!
+To:     Oleg Nesterov <oleg@redhat.com>, Paul Moore <paul@paul-moore.com>
+Cc:     "chengjian (D)" <cj.chengjian@huawei.com>,
+        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>
-References: <20181212081712.32347-1-mic@digikod.net> <3452959.b6JmBh7Lnt@x2>
- <87wojuxj8s.fsf@oldenburg2.str.redhat.com> <2361288.r9sZr2NHLB@x2>
- <875zrd7xy8.fsf@oldenburg2.str.redhat.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <7da3a491-232a-5a02-63a2-65aa9df413ea@ssi.gouv.fr>
-Date:   Wed, 17 Apr 2019 17:04:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        SELinux <selinux@vger.kernel.org>,
+        Yang Yingliang <yangyingliang@huawei.com>
+References: <6e4428ca-3da1-a033-08f7-a51e57503989@huawei.com>
+ <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
+ <20190415134331.GC22204@redhat.com>
+ <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
+ <20190415150520.GA13257@redhat.com>
+ <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+ <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+ <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
+ <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
+ <20190417145711.GI32622@redhat.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <18298e7e-373a-faa7-fe18-4992ad440b17@schaufler-ca.com>
+Date:   Wed, 17 Apr 2019 08:39:55 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <875zrd7xy8.fsf@oldenburg2.str.redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190417145711.GI32622@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 4/17/2019 7:57 AM, Oleg Nesterov wrote:
+> On 04/17, Paul Moore wrote:
+>> I'm tempted to simply return an error in selinux_setprocattr() if
+>> the task's credentials are not the same as its real_cred;
+> What about other modules? I have no idea what smack_setprocattr() is,
+> but it too does prepare_creds/commit creds.
 
-On 17/04/2019 12:01, Florian Weimer wrote:
-> * Steve Grubb:
->
->> On Tuesday, April 16, 2019 7:49:39 AM EDT Florian Weimer wrote:
->>> * Steve Grubb:
->>>> This flag that is being proposed means that you would have to patch al=
-l
->>>> interpreters to use it. If you are sure that upstreams will accept tha=
-t,
->>>> why not just change the policy to interpreters shouldn't execute
->>>> anything unless the execute bit is set? That is simpler and doesn't ne=
-ed
->>>> a kernel change. And setting the execute bit is an auditable event.
->>>
->>> I think we need something like O_MAYEXEC so that security policies can
->>> be enforced and noexec mounts can be detected.
->>
->> Application whitelisting can already today stop unknown software without
->> needing O_MAYEXEC.
-
-Whitelisting may be a lot of thing (path/TPE, signed binaries=E2=80=A6), bu=
-t
-being able to handle this with a global system configuration (instead of
-app-specific hardcoded configuration) is a good idea. ;)
+For what it's worth, my test for Smack does not reproduce
+the problem.
 
 >
-> I'm somewhat interested in using this to add a proper check for
-> executability to explicit dynamic loader invocations.  In other words,
-> this
+> it seems that the simplest workaround should simply add the additional
+> cred == real_cred into proc_pid_attr_write().
 >
->   /lib64/ld-linux-x86-64.so.2 /path/to/noexec/fs/program
+> Oleg.
 >
-> should refuse to run the program if the program is located on a file
-> system mounted with the noexec attribute.
-
-What if a sysadmin need to do this on an executable mount point? Being
-able to enforce a security policy according to a configuration may fit
-to much more use cases.
-
->
->> The problem is that passing O_MAYEXEC is opt-in. You can use ptrace/secc=
-omp/
->> bpf/LD_PRELOAD/LD_AUDIT to remove that bit from an otherwise normal prog=
-ram.
->> This does not require privs to do so.
->
-> That doesn't really help with the above.
-
-Right, ptrace/LD_PRELOAD and so on must be addressed by something else
-than only O_MAYEXEC.
-
->
->> But let's consider that this comes to pass and every interpreter is
->> updated and IMA can see the O_MAYEXEC flag. Attackers now simply pivot
->> to running programs via stdin. It never touches disk and therefore
->> nothing enforces security policy. This already is among the most
->> common ways that malware runs today to evade detection.
-
-As my previous reply, use cases like stdin may be restricted as well.
-
->
-> Are you referring to Windows malware using Powershell?
->
-> I'm not sure this is applicable to Linux.  We do not have much
-> behavioral monitoring anyway.
->
-> Thanks,
-> Florian
->
-
---
-Micka=C3=ABl Sala=C3=BCn
-ANSSI/SDE/ST/LAM
-
-Les donn=C3=A9es =C3=A0 caract=C3=A8re personnel recueillies et trait=C3=A9=
-es dans le cadre de cet =C3=A9change, le sont =C3=A0 seule fin d=E2=80=99ex=
-=C3=A9cution d=E2=80=99une relation professionnelle et s=E2=80=99op=C3=A8re=
-nt dans cette seule finalit=C3=A9 et pour la dur=C3=A9e n=C3=A9cessaire =C3=
-=A0 cette relation. Si vous souhaitez faire usage de vos droits de consulta=
-tion, de rectification et de suppression de vos donn=C3=A9es, veuillez cont=
-acter contact.rgpd@sgdsn.gouv.fr. Si vous avez re=C3=A7u ce message par err=
-eur, nous vous remercions d=E2=80=99en informer l=E2=80=99exp=C3=A9diteur e=
-t de d=C3=A9truire le message. The personal data collected and processed du=
-ring this exchange aims solely at completing a business relationship and is=
- limited to the necessary duration of that relationship. If you wish to use=
- your rights of consultation, rectification and deletion of your data, plea=
-se contact: contact.rgpd@sgdsn.gouv.fr. If you have received this message i=
-n error, we thank you for informing the sender and destroying the message.
