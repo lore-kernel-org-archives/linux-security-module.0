@@ -2,68 +2,69 @@ Return-Path: <SRS0=FWzS=ST=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C23C282DC
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 17:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931FAC282DF
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 17:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7639120821
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 17:20:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lz4JnTW0"
+	by mail.kernel.org (Postfix) with ESMTP id 53F1520821
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 17:26:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1555522000;
+	bh=9j8CyYJ2zQuXKkSeFJZdiII8gPPzipgvkSiKz46XFRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=E7A6tOZHRnFHXJqoSDIYVUmKWTh2/sJ2ob8bambhbzzz2L5lrwrWe0sM435f3x/mp
+	 0QfxYA7uR2I1TSls2Y4q+FYr0M9NcVinUyP9l+YM86KQlK45kLIrkvk6AVb9PX/L+w
+	 GPTWnQhl0xItetNxGT9aLg3AWko4AmyWsJVOGRYU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732920AbfDQRUA (ORCPT
+        id S1733022AbfDQR0j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 13:20:00 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37488 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732905AbfDQRT7 (ORCPT
+        Wed, 17 Apr 2019 13:26:39 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36600 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729641AbfDQR0j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 13:19:59 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 8so12411409pfr.4;
-        Wed, 17 Apr 2019 10:19:59 -0700 (PDT)
+        Wed, 17 Apr 2019 13:26:39 -0400
+Received: by mail-wm1-f66.google.com with SMTP id h18so4581669wml.1;
+        Wed, 17 Apr 2019 10:26:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=V1yIYIvLzz+BOCdxdX2gjSKybWz8E9N/6tRrpN2enDY=;
-        b=lz4JnTW0SxRkuzYb5nVwScOlj31C+NR7Pbf9V6itmwyvo+tcPA9xux9vHCBHlmzlf8
-         l+V8GGCFjPLmvBpRzgeACiPtj6mSkfCDd56w0bYBQkYTi/I/GVwyrRB3giEJR/zpWrC4
-         Ly8vw18KA3Ytm2WNNnQcY8KjOlhY9n59X1m03ngRjQ/6YOOtXsB0oAtRdnVrdBL5lghC
-         QBkS95ipjK32Jj5COWARIon/mFRjh9umt56N+abO+6I5bCPJQveIPH6XghPnvqF21iIb
-         6KuFUeO5O8Syhf418LaQuuqrU8N7SpRNvehZAKN9N0qsgeiSnMw38h0ltYF4duUQ5Hob
-         SBzw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ns0QxnuhAfvDI+e0rO3qV1NnmRx4qtLcXwX4SEWj8w8=;
+        b=NcvYWJCyNfLatXmVyDRxLTR3Qx/x7JgxS8jcPHCtBtiN6MPmtGAh7sebTFiQVJAXNk
+         Sbm/GqYfFaqfvaPEXTOrurvDwkKnd5zlx2TBIC3kz2Q4om3TP0Y1KaPxiIdippBjXGPT
+         mt//zbGrEi8KAnTquF8hj0kCkKK4+MgiTjgN9U5T632osXgyVF0kyOkokSJYhpqPWU7q
+         HvdQgIN00S7lvWehKYIDllQwTC97+wEK/qsM7xgShblV1PsGd2t5GKDax19T5iQvivwv
+         QGi7KKBjclQM6KMFluz3llgRlzIQ2Zeot4lykjGh7vko0CNZ/xTAD3H/14XuvK6bERiB
+         TxyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=V1yIYIvLzz+BOCdxdX2gjSKybWz8E9N/6tRrpN2enDY=;
-        b=AB+/5bNqzE8pPKMWg9FiN//MJYp3G1BhgJSc/dK3fyktQOWyPLdJyLHxV9tntozdnb
-         cf0TBXLrcllVT12pP2ij/P3plJTU362VNXTcaFgrE3z6smBoYcF6Lv07DaewFtujuKfi
-         NP6rq7N5tJ26iGeQTj2VWruA8HBQKmXLw35XXy4uNP9RE8D5FJmbaFywgdAN1nTC0kKv
-         zmgM6m3ZVGsFeua8grL5fCrQqvlyZ/lK7qzYMhTWd+X7M1zBk3j14PWDeYfUWMEd02Ma
-         gWWq7eQRuBhglXizoJOsZB7UHsEfOWAzHZR0NKUaL6GlWws7DNW98aeaZAbGAU+XNgSH
-         z/gw==
-X-Gm-Message-State: APjAAAVZar6fhiCvhSUN1mDOVEOSESRq+jGCoH0PjzVR8CtIg2UsJn0P
-        mGI4pMZrX9G5sUA3obemFGk=
-X-Google-Smtp-Source: APXvYqw8tbbQTyJUpI8x5or/uOxF5UZyuqm6K8VfzwsOuau8hPR4i1Hby9IWvX82aT/ndMHLmdxiHA==
-X-Received: by 2002:aa7:814e:: with SMTP id d14mr90827247pfn.101.1555521598738;
-        Wed, 17 Apr 2019 10:19:58 -0700 (PDT)
-Received: from [10.33.115.113] ([66.170.99.2])
-        by smtp.gmail.com with ESMTPSA id b7sm149466641pfj.67.2019.04.17.10.19.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Apr 2019 10:19:57 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
- Ownership (XPFO)
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20190417170918.GA68678@gmail.com>
-Date:   Wed, 17 Apr 2019 10:19:54 -0700
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=ns0QxnuhAfvDI+e0rO3qV1NnmRx4qtLcXwX4SEWj8w8=;
+        b=pYuZG149qnmzTop1skvx8kkGcL9haKa4bv6o7HF/DSiRsm9OVe4hcKyyA0Tq4bAZUv
+         ME2TwQ30KiBW8fXKFkOUVa6aJVw39KNMAsRuW08oPE14TnT1IydQHUEyMRb0DFQpIeDM
+         Eyjv6dVDSBRRzzOuSR1i1/HyoaMedrRyAnRX2JKX8Wf9Z+i6L0UjgvUKpuZ1o1qkq6n5
+         ZHLfFiDaKEg6Qd4pGaTXJnsBW/gsvVisYsNqHF0M8KbEZmKqFABhIl0ouuo8Q09FfCWq
+         HlvcrqprLxF6/gHDgJtDXUXsKHwFflV0sLnPWpEiRXRl3bZf6dNrFLYjaD/9dmSMDIlj
+         l+Hw==
+X-Gm-Message-State: APjAAAX39Pp7VpAwFeRHo05nkJV1FpI7CqQrv7ReX+Y4EOCoaI9N0LSt
+        a/OIvuQPFGkKx/MuYH1/NLs=
+X-Google-Smtp-Source: APXvYqx0bXa7GoJQLXDLgeOn35F7WmZUbi0CsPk0aTEStD8EU08aO6txiY/M5Pu51pv7jSUwysUxyA==
+X-Received: by 2002:a1c:495:: with SMTP id 143mr575729wme.78.1555521996663;
+        Wed, 17 Apr 2019 10:26:36 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id x5sm65470238wrt.72.2019.04.17.10.26.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Apr 2019 10:26:35 -0700 (PDT)
+Date:   Wed, 17 Apr 2019 19:26:32 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Nadav Amit <nadav.amit@gmail.com>
 Cc:     Khalid Aziz <khalid.aziz@oracle.com>, juergh@gmail.com,
         Tycho Andersen <tycho@tycho.ws>, jsteckli@amazon.de,
         keescook@google.com,
@@ -89,68 +90,98 @@ Cc:     Khalid Aziz <khalid.aziz@oracle.com>, juergh@gmail.com,
         "H. Peter Anvin" <hpa@zytor.com>,
         Arjan van de Ven <arjan@infradead.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
+Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
+ Ownership (XPFO)
+Message-ID: <20190417172632.GA95485@gmail.com>
 References: <cover.1554248001.git.khalid.aziz@oracle.com>
  <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
  <20190417161042.GA43453@gmail.com>
  <e16c1d73-d361-d9c7-5b8e-c495318c2509@oracle.com>
  <20190417170918.GA68678@gmail.com>
-To:     Ingo Molnar <mingo@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+ <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> On Apr 17, 2019, at 10:09 AM, Ingo Molnar <mingo@kernel.org> wrote:
->=20
->=20
-> * Khalid Aziz <khalid.aziz@oracle.com> wrote:
->=20
->>> I.e. the original motivation of the XPFO patches was to prevent =
-execution=20
->>> of direct kernel mappings. Is this motivation still present if those=20=
 
->>> mappings are non-executable?
->>>=20
->>> (Sorry if this has been asked and answered in previous discussions.)
->>=20
->> Hi Ingo,
->>=20
->> That is a good question. Because of the cost of XPFO, we have to be =
-very
->> sure we need this protection. The paper from Vasileios, Michalis and
->> Angelos - <http://www.cs.columbia.edu/~vpk/papers/ret2dir.sec14.pdf>,
->> does go into how ret2dir attacks can bypass SMAP/SMEP in sections 6.1
->> and 6.2.
->=20
-> So it would be nice if you could generally summarize external =
-arguments=20
-> when defending a patchset, instead of me having to dig through a PDF=20=
+* Nadav Amit <nadav.amit@gmail.com> wrote:
 
-> which not only causes me to spend time that you probably already spent=20=
+> > On Apr 17, 2019, at 10:09 AM, Ingo Molnar <mingo@kernel.org> wrote:
+> > 
+> > 
+> > * Khalid Aziz <khalid.aziz@oracle.com> wrote:
+> > 
+> >>> I.e. the original motivation of the XPFO patches was to prevent execution 
+> >>> of direct kernel mappings. Is this motivation still present if those 
+> >>> mappings are non-executable?
+> >>> 
+> >>> (Sorry if this has been asked and answered in previous discussions.)
+> >> 
+> >> Hi Ingo,
+> >> 
+> >> That is a good question. Because of the cost of XPFO, we have to be very
+> >> sure we need this protection. The paper from Vasileios, Michalis and
+> >> Angelos - <http://www.cs.columbia.edu/~vpk/papers/ret2dir.sec14.pdf>,
+> >> does go into how ret2dir attacks can bypass SMAP/SMEP in sections 6.1
+> >> and 6.2.
+> > 
+> > So it would be nice if you could generally summarize external arguments 
+> > when defending a patchset, instead of me having to dig through a PDF 
+> > which not only causes me to spend time that you probably already spent 
+> > reading that PDF, but I might also interpret it incorrectly. ;-)
+> > 
+> > The PDF you cited says this:
+> > 
+> >  "Unfortunately, as shown in Table 1, the W^X prop-erty is not enforced 
+> >   in many platforms, including x86-64.  In our example, the content of 
+> >   user address 0xBEEF000 is also accessible through kernel address 
+> >   0xFFFF87FF9F080000 as plain, executable code."
+> > 
+> > Is this actually true of modern x86-64 kernels? We've locked down W^X 
+> > protections in general.
+> 
+> As I was curious, I looked at the paper. Here is a quote from it:
+> 
+> "In x86-64, however, the permissions of physmap are not in sane state.
+> Kernels up to v3.8.13 violate the W^X property by mapping the entire region
+> as “readable, writeable, and executable” (RWX)—only very recent kernels
+> (≥v3.9) use the more conservative RW mapping.”
 
-> reading that PDF, but I might also interpret it incorrectly. ;-)
->=20
-> The PDF you cited says this:
->=20
->  "Unfortunately, as shown in Table 1, the W^X prop-erty is not =
-enforced=20
->   in many platforms, including x86-64.  In our example, the content of=20=
+But v3.8.13 is a 5+ years old kernel, it doesn't count as a "modern" 
+kernel in any sense of the word. For any proposed patchset with 
+significant complexity and non-trivial costs the benchmark version 
+threshold is the "current upstream kernel".
 
->   user address 0xBEEF000 is also accessible through kernel address=20
->   0xFFFF87FF9F080000 as plain, executable code."
->=20
-> Is this actually true of modern x86-64 kernels? We've locked down W^X=20=
+So does that quote address my followup questions:
 
+> Is this actually true of modern x86-64 kernels? We've locked down W^X
 > protections in general.
+>
+> I.e. this conclusion:
+>
+>   "Therefore, by simply overwriting kfptr with 0xFFFF87FF9F080000 and
+>    triggering the kernel to dereference it, an attacker can directly
+>    execute shell code with kernel privileges."
+>
+> ... appears to be predicated on imperfect W^X protections on the x86-64
+> kernel.
+>
+> Do such holes exist on the latest x86-64 kernel? If yes, is there a
+> reason to believe that these W^X holes cannot be fixed, or that any fix
+> would be more expensive than XPFO?
 
-As I was curious, I looked at the paper. Here is a quote from it:
+?
 
-"In x86-64, however, the permissions of physmap are not in sane state.
-Kernels up to v3.8.13 violate the W^X property by mapping the entire =
-region
-as =E2=80=9Creadable, writeable, and executable=E2=80=9D (RWX)=E2=80=94onl=
-y very recent kernels
-(=E2=89=A5v3.9) use the more conservative RW mapping.=E2=80=9D
+What you are proposing here is a XPFO patch-set against recent kernels 
+with significant runtime overhead, so my questions about the W^X holes 
+are warranted.
 
+Thanks,
+
+	Ingo
