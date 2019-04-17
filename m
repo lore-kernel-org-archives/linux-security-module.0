@@ -4,204 +4,256 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D7EC282DA
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BC7C282DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D6F0206BA
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:30:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C3AE206BA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 14:36:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="XqD4anXL"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="cvm843qX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732413AbfDQOaX (ORCPT
+        id S1729453AbfDQOgd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 10:30:23 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37432 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731472AbfDQOaW (ORCPT
+        Wed, 17 Apr 2019 10:36:33 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42813 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732088AbfDQOgb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 10:30:22 -0400
-Received: by mail-lj1-f195.google.com with SMTP id v13so22673100ljk.4
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 07:30:21 -0700 (PDT)
+        Wed, 17 Apr 2019 10:36:31 -0400
+Received: by mail-lj1-f196.google.com with SMTP id v22so22655574lje.9
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 07:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=RuyB+W2pZ+QYBWd1eUaaacF+UuRg4xdSTEXA3oHZsgI=;
-        b=XqD4anXLFYevMs1lRTyx2zcvCQubqkTY0PZtzr3CqPikpdNRZHVYUdC2GGYDSv5VPg
-         WP7AOjjquBqxlihIVYE8Ypqmhww8GkwTIOFvHBaV1gZbcaUvBqkQgs6CUKIThv7mT9nM
-         O9SiJhcvum1RY7z4u/fPT2Rx+OnWtc6EiEgWzmqnHEHvA+fJ/vJ4UtkcdUfdH01sFnx2
-         2h5S1k5yplv9wpvVPXuwYWGr/lv6AE6PUhWlmvDk/RYEdzwF7uJ34XrUdoIuJKSoM2IP
-         uKqyh/uuIjalzz3U+m+JazO2dcqKqch99mbK9AEfN143+E4lJE/yu5lmPpEbVWaFuQyw
-         x3/Q==
+        bh=aYpvTFf0qZElPLw/muGHvS8dE/2mug1cDst2X31iqmw=;
+        b=cvm843qXLqUQ0ltX6klK7YVQl9QU/F4aGuAvL7ZAzJSlveFKDSdJ/lNsrZY0hxF94f
+         qP1hPE3n1Ot8gaYMp8wC/hvN2Z7/SQnGr59BCvOm0yP6kJaUN52w4VBhRgv7IUZR5T3m
+         VeQzZwHgtMGQyLOkgjkmjORqQEi/+geEFtMWV7pgSP8zGZjHkNi37mNKrzZhEYah/QS+
+         dXsqOCRU/pl2Nyu4WzlULuW+MuIcWsYm+4+riUl89XEnuwCf7X6XKFVMAHBGAhpHQV+2
+         Oe4wLKr+lnkNMEtxvzkcs7zbP72J1xsSeFtJGKyoXZb3b4j47HZy6rHsjFC7u9zUh1lg
+         FG3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RuyB+W2pZ+QYBWd1eUaaacF+UuRg4xdSTEXA3oHZsgI=;
-        b=oY5Hv8oTUZhMZXz6EnQpkHezzwa7Gsuy0WIVDFxTHNHxw8Ly6WJn+L0gzVobxlIUDH
-         pheKifS0aYeBpqlFU5ZQfUkgwnn/6RSH5wpMllnFnmjom/G2Aci5NglAsQcvEa6CTYeK
-         P6D3IUJ0GHmrJVcKDsY362ohpWr8xZ8jwZ7v1+PgcUztQiK21jEGJnIDgPpAEF671YHZ
-         UFgGpMSEUDqkyUxG8Z1Lu5/qWIInQnmfSpcb8xFB/W6VjHUU8Vq0zPmAn8Dve0ooqkbP
-         GK6HZC8BijBoaZnWMyF5ucYcTNZ0yVcxNTSIgCDdv4mEC7E/3e27vqdoyUhd5O31/8/c
-         P3aA==
-X-Gm-Message-State: APjAAAXJuNZQleoM8clRaf5O5p/aIIvVqh5IgJJyEvJXXy3RylaFso4Q
-        BBzMu+6NRn3s0QaVoFyZ20Ocsio+tGDBGVsrjQ6K
-X-Google-Smtp-Source: APXvYqxRX2PGOIrx7dxH9uSGpkYFbI6pJPfeVsyp3u9ILZZQnkg2xJwcGRdaU/hpbceypTXYTq6mSPH0Nbc8CBFjxXQ=
-X-Received: by 2002:a2e:42cf:: with SMTP id h76mr46177693ljf.95.1555511420086;
- Wed, 17 Apr 2019 07:30:20 -0700 (PDT)
+        bh=aYpvTFf0qZElPLw/muGHvS8dE/2mug1cDst2X31iqmw=;
+        b=PFGBO7avzk9reiPuWrQw4uKxZk3YH00MZdKGqW2udc8rHftYRIppXkMbobb3E7ppvT
+         x5YCodePxtgY0o3vOT/gU0hOSiVjKxa0SNNKVZ2dgl6BbN1ylIEeD/wxHK6L3qBXBqz9
+         ldhTZO/kvuCnFYY5lJKOT4ORLDftUwHKWc2sBpL/Xp147fIAQNxe0kBBwyteUEP46fKS
+         MFV50Eszru5wL2ZfBSRNjBfihcDl0nnMZzGWkFmzc2Q98WpVKoBsARIhVyA9UT4sFWcI
+         I+aV4rgeKS5s0zsZ3Z2/24o+rkHny74weBaHJLKRRAMJ4yy5QCPp+6VtinHuZ3hw5lQC
+         eSZw==
+X-Gm-Message-State: APjAAAWiLl1+RjUNa/08qZuYIVdYKOuDdJ/3ORmXKAiqSZC4XhM1BRBQ
+        NqOHvK9w2XPE0G4NWwkkHgZOU6zQQRw8hc2cBz0a
+X-Google-Smtp-Source: APXvYqzIRq1TtmAHQvMfI9/2v3ZwCpClKzw6wpPHGPILEdVRcVNVPodTxE9XbtFfz2uqj5/VBWvEfh8wJJLmfxPNes8=
+X-Received: by 2002:a2e:8108:: with SMTP id d8mr21571767ljg.57.1555511787821;
+ Wed, 17 Apr 2019 07:36:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <6e4428ca-3da1-a033-08f7-a51e57503989@huawei.com>
- <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com> <20190415134331.GC22204@redhat.com>
- <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
- <20190415150520.GA13257@redhat.com> <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
- <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com> <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
-In-Reply-To: <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
+References: <cover.1555382110.git.mchehab+samsung@kernel.org> <104211eb0db14790ad328fff7ad7f712d8d647f9.1555382110.git.mchehab+samsung@kernel.org>
+In-Reply-To: <104211eb0db14790ad328fff7ad7f712d8d647f9.1555382110.git.mchehab+samsung@kernel.org>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 17 Apr 2019 10:30:08 -0400
-Message-ID: <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
-Subject: Re: kernel BUG at kernel/cred.c:434!
-To:     "chengjian (D)" <cj.chengjian@huawei.com>
-Cc:     Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        NeilBrown <neilb@suse.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
-        Li Bin <huawei.libin@huawei.com>,
-        Jason Yan <yanaijie@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SELinux <selinux@vger.kernel.org>,
-        Yang Yingliang <yangyingliang@huawei.com>
+Date:   Wed, 17 Apr 2019 10:36:16 -0400
+Message-ID: <CAHC9VhTcTifp1v9JfGLNw+4HPvqMjYsX0gM2tXZDOhmxUHt+oA@mail.gmail.com>
+Subject: Re: [PATCH 23/57] docs: netlabel: convert it to ReST
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 16, 2019 at 10:46 AM chengjian (D) <cj.chengjian@huawei.com> wrote:
-> On 2019/4/16 11:40, Kees Cook wrote:
-> > On Mon, Apr 15, 2019 at 11:20 AM Paul Moore <paul@paul-moore.com> wrote:
-> >> On Mon, Apr 15, 2019 at 11:05 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >>> On 04/15, Paul Moore wrote:
-> >>>> On Mon, Apr 15, 2019 at 9:43 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >>>>> Well, acct("/proc/self/attr/current") doesn't look like a good idea, but I do
-> >>>>> not know where should we put the additional check... And probably
-> >>>>> "echo /proc/self/attr/current > /proc/sys/kernel/core_pattern" can hit the
-> >>>>> same problem, do_coredump() does override_creds() too.
-> >>>>>
-> >>>>> May be just add
-> >>>>>
-> >>>>>          if (current->cred != current->real_cred)
-> >>>>>                  return -EACCES;
-> >>>>>
-> >>>>> into proc_pid_attr_write(), I dunno.
-> >>>> Is the problem that do_acct_process() is calling override_creds() and
-> >>>> the returned/old credentials are being freed before do_acct_process()
-> >>>> can reinstall the creds via revert_creds()?  Presumably because the
-> >>>> process accounting is causing the credentials to be replaced?
-> >>> Afaics, the problem is that do_acct_process() does override_creds() and
-> >>> then __kernel_write(). Which calls proc_pid_attr_write(), which in turn calls
-> >>> selinux_setprocattr(), which does another prepare_creds() + commit_creds();
-> >>> and commit_creds() hits
-> >>>
-> >>>          BUG_ON(task->cred != old);
-> >> Gotcha.  In the process of looking at the backtrace I forgot about the
-> >> BUG_ON() at the top of the oops message.
-> >>
-> >> I wonder what terrible things would happen if we changed the BUG_ON()
-> >> in commit_creds to simple returning an error an error code to the
-> >> caller.  There is a warning/requirement in commit_creds() function
-> >> header comment that it should always return 0.
-> > Would callers be expected to call abort_creds() on failure? There are
-> > a number of places where it'd need fixing up. And would likely be best
-> > with a __must_check marking.
-> >
-> > It seems like avoiding the pathological case might be simpler?
+On Mon, Apr 15, 2019 at 10:56 PM Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
 >
-> Yeah, Avoiding this pathological case is a better solution.
-
-No arguments that this is particularly messed up scenario, I'm just
-trying to arrive at a solution that isn't too ugly.
-
-> From: Yang Yingliang <yangyingliang@huawei.com>
-> Date: Sat, 13 Apr 2019 21:56:01 +0800
-> Subject: [PATCH] fix cred bug_on
+> Convert netlabel documentation to ReST.
 >
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+> This was trivial: just add proper title markups.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 > ---
->   kernel/acct.c            | 3 ++-
->   kernel/cred.c            | 6 ++++++
->   security/selinux/hooks.c | 2 ++
->   3 files changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/acct.c b/kernel/acct.c
-> index addf7732fb56..f2065f899eee 100644
-> --- a/kernel/acct.c
-> +++ b/kernel/acct.c
-> @@ -522,7 +522,8 @@ static void do_acct_process(struct bsd_acct_struct
-> *acct)
->       }
->   out:
->       current->signal->rlim[RLIMIT_FSIZE].rlim_cur = flim;
-> -    revert_creds(orig_cred);
-> +    if (orig_cred == current->real_cred)    // [2]
-> +        revert_creds(orig_cred);
->   }
->
->   /**
-> diff --git a/kernel/cred.c b/kernel/cred.c
-> index ecf03657e71c..c4d5ba92fb9b 100644
-> --- a/kernel/cred.c
-> +++ b/kernel/cred.c
-> @@ -522,6 +522,9 @@ const struct cred *override_creds(const struct cred
-> *new)
->   {
->       const struct cred *old = current->cred;
->
-> +    if (old == new)    //  [3]
-> +        return old;
-> +
->       kdebug("override_creds(%p{%d,%d})", new,
->              atomic_read(&new->usage),
->              read_cred_subscribers(new));
-> @@ -551,6 +554,9 @@ void revert_creds(const struct cred *old)
->   {
->       const struct cred *override = current->cred;
->
-> +    if (override == old)    // [3]
-> +        return;
-> +
->       kdebug("revert_creds(%p{%d,%d})", old,
->              atomic_read(&old->usage),
->              read_cred_subscribers(old));
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index b5017beb4ef7..bc8108e4e90f 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -6590,6 +6590,8 @@ static int selinux_setprocattr(const char *name,
-> void *value, size_t size)
->           goto abort_change;
->       }
->
-> +    if (current->cred != current->real_cred)    // [1]
-> +        revert_creds(current->real_cred);
->       commit_creds(new);
->       return size;
+>  Documentation/netlabel/cipso_ipv4.txt    | 19 +++++++++++++------
+>  Documentation/netlabel/introduction.txt  | 16 +++++++++++-----
+>  Documentation/netlabel/lsm_interface.txt | 16 +++++++++++-----
+>  3 files changed, 35 insertions(+), 16 deletions(-)
 
-Doing the revert only to then commit the creds seems really ugly to
-me.  I'm tempted to simply return an error in selinux_setprocattr() if
-the task's credentials are not the same as its real_cred; if we do
-that I believe we should resolve this problem.  The accounting write
-to the SELinux file in /proc would fail of course, but I think we can
-all consider that as a positive side-effect.
+Thanks for doing this.  I should probably revisit these docs to make
+sure they are still valid/correct; if nothing else that email address
+is from two employers ago (my apologies to the current email address
+holder).
 
-While I don't think this should have a negative impact on anything
-else, I haven't convinced myself of that just yet.
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/Documentation/netlabel/cipso_ipv4.txt b/Documentation/netlabel/cipso_ipv4.txt
+> index a6075481fd60..cbd3f3231221 100644
+> --- a/Documentation/netlabel/cipso_ipv4.txt
+> +++ b/Documentation/netlabel/cipso_ipv4.txt
+> @@ -1,10 +1,13 @@
+> +===================================
+>  NetLabel CIPSO/IPv4 Protocol Engine
+> -==============================================================================
+> +===================================
+> +
+>  Paul Moore, paul.moore@hp.com
+>
+>  May 17, 2006
+>
+> - * Overview
+> +Overview
+> +========
+>
+>  The NetLabel CIPSO/IPv4 protocol engine is based on the IETF Commercial
+>  IP Security Option (CIPSO) draft from July 16, 1992.  A copy of this
+> @@ -13,7 +16,8 @@ draft can be found in this directory
+>  it to an RFC standard it has become a de-facto standard for labeled
+>  networking and is used in many trusted operating systems.
+>
+> - * Outbound Packet Processing
+> +Outbound Packet Processing
+> +==========================
+>
+>  The CIPSO/IPv4 protocol engine applies the CIPSO IP option to packets by
+>  adding the CIPSO label to the socket.  This causes all packets leaving the
+> @@ -24,7 +28,8 @@ label by using the NetLabel security module API; if the NetLabel "domain" is
+>  configured to use CIPSO for packet labeling then a CIPSO IP option will be
+>  generated and attached to the socket.
+>
+> - * Inbound Packet Processing
+> +Inbound Packet Processing
+> +=========================
+>
+>  The CIPSO/IPv4 protocol engine validates every CIPSO IP option it finds at the
+>  IP layer without any special handling required by the LSM.  However, in order
+> @@ -33,7 +38,8 @@ NetLabel security module API to extract the security attributes of the packet.
+>  This is typically done at the socket layer using the 'socket_sock_rcv_skb()'
+>  LSM hook.
+>
+> - * Label Translation
+> +Label Translation
+> +=================
+>
+>  The CIPSO/IPv4 protocol engine contains a mechanism to translate CIPSO security
+>  attributes such as sensitivity level and category to values which are
+> @@ -42,7 +48,8 @@ Domain Of Interpretation (DOI) definition and are configured through the
+>  NetLabel user space communication layer.  Each DOI definition can have a
+>  different security attribute mapping table.
+>
+> - * Label Translation Cache
+> +Label Translation Cache
+> +=======================
+>
+>  The NetLabel system provides a framework for caching security attribute
+>  mappings from the network labels to the corresponding LSM identifiers.  The
+> diff --git a/Documentation/netlabel/introduction.txt b/Documentation/netlabel/introduction.txt
+> index 3caf77bcff0f..9333bbb0adc1 100644
+> --- a/Documentation/netlabel/introduction.txt
+> +++ b/Documentation/netlabel/introduction.txt
+> @@ -1,10 +1,13 @@
+> +=====================
+>  NetLabel Introduction
+> -==============================================================================
+> +=====================
+> +
+>  Paul Moore, paul.moore@hp.com
+>
+>  August 2, 2006
+>
+> - * Overview
+> +Overview
+> +========
+>
+>  NetLabel is a mechanism which can be used by kernel security modules to attach
+>  security attributes to outgoing network packets generated from user space
+> @@ -12,7 +15,8 @@ applications and read security attributes from incoming network packets.  It
+>  is composed of three main components, the protocol engines, the communication
+>  layer, and the kernel security module API.
+>
+> - * Protocol Engines
+> +Protocol Engines
+> +================
+>
+>  The protocol engines are responsible for both applying and retrieving the
+>  network packet's security attributes.  If any translation between the network
+> @@ -24,7 +28,8 @@ the NetLabel kernel security module API described below.
+>  Detailed information about each NetLabel protocol engine can be found in this
+>  directory.
+>
+> - * Communication Layer
+> +Communication Layer
+> +===================
+>
+>  The communication layer exists to allow NetLabel configuration and monitoring
+>  from user space.  The NetLabel communication layer uses a message based
+> @@ -33,7 +38,8 @@ formatting of these NetLabel messages as well as the Generic NETLINK family
+>  names can be found in the 'net/netlabel/' directory as comments in the
+>  header files as well as in 'include/net/netlabel.h'.
+>
+> - * Security Module API
+> +Security Module API
+> +===================
+>
+>  The purpose of the NetLabel security module API is to provide a protocol
+>  independent interface to the underlying NetLabel protocol engines.  In addition
+> diff --git a/Documentation/netlabel/lsm_interface.txt b/Documentation/netlabel/lsm_interface.txt
+> index 638c74f7de7f..026fc267f798 100644
+> --- a/Documentation/netlabel/lsm_interface.txt
+> +++ b/Documentation/netlabel/lsm_interface.txt
+> @@ -1,10 +1,13 @@
+> +========================================
+>  NetLabel Linux Security Module Interface
+> -==============================================================================
+> +========================================
+> +
+>  Paul Moore, paul.moore@hp.com
+>
+>  May 17, 2006
+>
+> - * Overview
+> +Overview
+> +========
+>
+>  NetLabel is a mechanism which can set and retrieve security attributes from
+>  network packets.  It is intended to be used by LSM developers who want to make
+> @@ -12,7 +15,8 @@ use of a common code base for several different packet labeling protocols.
+>  The NetLabel security module API is defined in 'include/net/netlabel.h' but a
+>  brief overview is given below.
+>
+> - * NetLabel Security Attributes
+> +NetLabel Security Attributes
+> +============================
+>
+>  Since NetLabel supports multiple different packet labeling protocols and LSMs
+>  it uses the concept of security attributes to refer to the packet's security
+> @@ -24,7 +28,8 @@ configuration.  It is up to the LSM developer to translate the NetLabel
+>  security attributes into whatever security identifiers are in use for their
+>  particular LSM.
+>
+> - * NetLabel LSM Protocol Operations
+> +NetLabel LSM Protocol Operations
+> +================================
+>
+>  These are the functions which allow the LSM developer to manipulate the labels
+>  on outgoing packets as well as read the labels on incoming packets.  Functions
+> @@ -32,7 +37,8 @@ exist to operate both on sockets as well as the sk_buffs directly.  These high
+>  level functions are translated into low level protocol operations based on how
+>  the administrator has configured the NetLabel subsystem.
+>
+> - * NetLabel Label Mapping Cache Operations
+> +NetLabel Label Mapping Cache Operations
+> +=======================================
+>
+>  Depending on the exact configuration, translation between the network packet
+>  label and the internal LSM security identifier can be time consuming.  The
+> --
+> 2.20.1
+>
+
 
 -- 
 paul moore
