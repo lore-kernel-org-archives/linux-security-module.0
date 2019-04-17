@@ -2,132 +2,105 @@ Return-Path: <SRS0=FWzS=ST=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E705FC282DD
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 16:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0CCC282DC
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 16:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B41FD20674
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 16:15:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555517729;
-	bh=rOQwJJPGGkMVzU6K62glKu4UuVWXcNyseEcIx5c1xG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UHXEkFFUsBcOYTB0V6wqSo3vtczgLVNTzaqd3wWZHHYKWtzTi3+GyOWPVBvMmqv+1
-	 T1svCR/S6N0IH9lhiV/pwfwcks+/hssgwDqj8wY3a2z6kvFA++9Q2KVWtYIeQR6leB
-	 2dNzL6tmgTmZweO0WV7f0yEDvGRtqa5TkPqQb0W8=
+	by mail.kernel.org (Postfix) with ESMTP id 27CD52173C
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 16:27:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729940AbfDQQP3 (ORCPT
+        id S1732007AbfDQQ12 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 12:15:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45772 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729395AbfDQQP2 (ORCPT
+        Wed, 17 Apr 2019 12:27:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59024 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729395AbfDQQ12 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 12:15:28 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s15so32682052wra.12;
-        Wed, 17 Apr 2019 09:15:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2E2gGWXwlEXHD0EdhjliuzLa0L4LUy3dnmNjJuBPY1M=;
-        b=nyS/WViclzZJjR30HVMMB/ma7fcLYSTWP9QxF2Fshf4EJq6uRarq3jSaxiVNfV92fh
-         zEZfmA69o8F7gNO5JT6uv0zE0OJeE7BWbIRv09fAQTN2l+N2dnFwJ9Lfuiiy6+74FoDp
-         uGRo9f5/Goa9H9R9Ca2oLvyjv31O0I5e5WLdLO3tmvoyjg1wNvw+8b2zxVEfd9gJSTwJ
-         +SSg2n/omewPli8xLPnvSElOhwgHU9I/P33Tw7RfhZ2LRLr+x5PTn04fXGfMHG1ZHR4/
-         XB7f4UjQbIdtenugCUJSD8W8ywk7H6JVByBN8MjE8ZURVuqLb51s1gVwQaBsfh/AY/u/
-         6ICw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2E2gGWXwlEXHD0EdhjliuzLa0L4LUy3dnmNjJuBPY1M=;
-        b=nBR+wtjJDdfshmdLRlUr6HJ3s3sJNaMlD/cPBjdwVglBPYCKFrAaDyohXcLTHW69r7
-         eASUxXylTxAMhwwqGmu6MfufZ6eZu9tYd9qUtKU/evVu/zRlWKILIgPaC8ojkOj3/Nxh
-         AxFSZxj9WF4tnwKeBMS1ADslhqQnkOHF3BEIXOZtkJwkdLat8F6D6Zvw8T6DVAoRAyDz
-         sjis53MhqFOeh8euiUM14P6zJUJhsOILf8Xl4qsuF+ufNUzBdq0plMPjdLGAdSB5YiwC
-         PTehD+rKnCZ1S/DJUlhJtUbiabVAXOltmdCkLXQFT9pUEjBfIRztmeE6HWoaaUjWbmSL
-         A0sg==
-X-Gm-Message-State: APjAAAXqpgtV+XHu5MDOih9bYLs8MRsw7gNiQSYn6qEBMMgwHqT2fGUr
-        fnp1dzY8CNaMdF3T/yaLEqM=
-X-Google-Smtp-Source: APXvYqy35ID2kalnRZopmGnEWCBLThqKczYiLY/rC35gAIxUEa+THgEb4y2voVmHavCnFbNEpnRFQQ==
-X-Received: by 2002:adf:dbce:: with SMTP id e14mr59140093wrj.249.1555517726742;
-        Wed, 17 Apr 2019 09:15:26 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id y1sm154976060wrd.34.2019.04.17.09.15.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Apr 2019 09:15:25 -0700 (PDT)
-Date:   Wed, 17 Apr 2019 18:15:22 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
-        keescook@google.com, konrad.wilk@oracle.com,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, iommu@lists.linux-foundation.org,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        Khalid Aziz <khalid@gonehiking.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Dave Hansen <dave@sr71.net>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
- Ownership (XPFO)
-Message-ID: <20190417161042.GA43453@gmail.com>
-References: <cover.1554248001.git.khalid.aziz@oracle.com>
- <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
+        Wed, 17 Apr 2019 12:27:28 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1FA8A2D7F8;
+        Wed, 17 Apr 2019 16:27:28 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.38])
+        by smtp.corp.redhat.com (Postfix) with SMTP id C8504608C1;
+        Wed, 17 Apr 2019 16:27:24 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 17 Apr 2019 18:27:27 +0200 (CEST)
+Date:   Wed, 17 Apr 2019 18:27:24 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     "chengjian (D)" <cj.chengjian@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        NeilBrown <neilb@suse.com>,
+        Anna Schumaker <Anna.Schumaker@netapp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
+        Li Bin <huawei.libin@huawei.com>,
+        Jason Yan <yanaijie@huawei.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SELinux <selinux@vger.kernel.org>,
+        Yang Yingliang <yangyingliang@huawei.com>
+Subject: Re: kernel BUG at kernel/cred.c:434!
+Message-ID: <20190417162723.GK32622@redhat.com>
+References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
+ <20190415134331.GC22204@redhat.com>
+ <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
+ <20190415150520.GA13257@redhat.com>
+ <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
+ <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
+ <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
+ <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
+ <20190417145711.GI32622@redhat.com>
+ <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 17 Apr 2019 16:27:28 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 04/17, Paul Moore wrote:
+>
+> On Wed, Apr 17, 2019 at 10:57 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> > On 04/17, Paul Moore wrote:
+> > >
+> > > I'm tempted to simply return an error in selinux_setprocattr() if
+> > > the task's credentials are not the same as its real_cred;
+> >
+> > What about other modules? I have no idea what smack_setprocattr() is,
+> > but it too does prepare_creds/commit creds.
+> >
+> > it seems that the simplest workaround should simply add the additional
+> > cred == real_cred into proc_pid_attr_write().
+>
+> Yes, that is simple, but I worry about what other LSMs might want to
+> do.  While I believe failing if the effective creds are not the same
+> as the real_creds is okay for SELinux (possibly Smack too), I worry
+> about what other LSMs may want to do.  After all,
+> proc_pid_attr_write() doesn't change the the creds itself, that is
+> something the specific LSMs do.
 
-[ Sorry, had to trim the Cc: list from hell. Tried to keep all the 
-  mailing lists and all x86 developers. ]
+Yes, but if proc_pid_attr_write() is called with cred != real_cred then
+something is already wrong?
 
-* Khalid Aziz <khalid.aziz@oracle.com> wrote:
+In fact, I think that something is already wrong if it is not called by
+user-space directly. Too late to ask, but why is this /proc/self/attr/
+magic not implemented via syscall(s) ?
 
-> From: Juerg Haefliger <juerg.haefliger@canonical.com>
-> 
-> This patch adds basic support infrastructure for XPFO which protects 
-> against 'ret2dir' kernel attacks. The basic idea is to enforce 
-> exclusive ownership of page frames by either the kernel or userspace, 
-> unless explicitly requested by the kernel. Whenever a page destined for 
-> userspace is allocated, it is unmapped from physmap (the kernel's page 
-> table). When such a page is reclaimed from userspace, it is mapped back 
-> to physmap. Individual architectures can enable full XPFO support using 
-> this infrastructure by supplying architecture specific pieces.
+But, Paul, this is up to you. I don't understand this all even remotely.
 
-I have a higher level, meta question:
+Oleg.
 
-Is there any updated analysis outlining why this XPFO overhead would be 
-required on x86-64 kernels running on SMAP/SMEP CPUs which should be all 
-recent Intel and AMD CPUs, and with kernel that mark all direct kernel 
-mappings as non-executable - which should be all reasonably modern 
-kernels later than v4.0 or so?
-
-I.e. the original motivation of the XPFO patches was to prevent execution 
-of direct kernel mappings. Is this motivation still present if those 
-mappings are non-executable?
-
-(Sorry if this has been asked and answered in previous discussions.)
-
-Thanks,
-
-	Ingo
