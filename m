@@ -3,106 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7370DC10F12
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 09:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F14AEC282DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 10:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46F472173C
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 09:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B5B20835
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 10:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfDQJyn (ORCPT
+        id S1731683AbfDQKBL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 05:54:43 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42070 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727013AbfDQJyn (ORCPT
+        Wed, 17 Apr 2019 06:01:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57332 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726237AbfDQKBK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 05:54:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5637374;
-        Wed, 17 Apr 2019 02:54:42 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A992B3F68F;
-        Wed, 17 Apr 2019 02:54:40 -0700 (PDT)
-Subject: Re: [PATCH] crypto: testmgr - allocate buffers with __GFP_COMP
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Kees Cook <keescook@chromium.org>, Rik van Riel <riel@surriel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-References: <20190411192607.GD225654@gmail.com>
- <20190411192827.72551-1-ebiggers@kernel.org>
- <CAGXu5jJ8k7fP5Vb=ygmQ0B45GfrK2PeaV04bPWmcZ6Vb+swgyA@mail.gmail.com>
- <20190415022412.GA29714@bombadil.infradead.org>
- <20190415024615.f765e7oagw26ezam@gondor.apana.org.au>
- <20190416021852.GA18616@bombadil.infradead.org>
- <CAGXu5jKaVB=bTJCBWhsxAny7-OkzXQ+8KCd5O+_-7hKcJFiqKw@mail.gmail.com>
- <20190417040822.GB7751@bombadil.infradead.org>
- <20190417080919.54wywpzrt3psn4vj@shell.armlinux.org.uk>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <0ea51c23-d285-25c3-80d6-f3c0045ee325@arm.com>
-Date:   Wed, 17 Apr 2019 10:54:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 17 Apr 2019 06:01:10 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BF07530ADBCD;
+        Wed, 17 Apr 2019 10:01:09 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (dhcp-192-219.str.redhat.com [10.33.192.219])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3FE8D5D6A6;
+        Wed, 17 Apr 2019 10:01:04 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
+References: <20181212081712.32347-1-mic@digikod.net> <3452959.b6JmBh7Lnt@x2>
+        <87wojuxj8s.fsf@oldenburg2.str.redhat.com> <2361288.r9sZr2NHLB@x2>
+Date:   Wed, 17 Apr 2019 12:01:03 +0200
+In-Reply-To: <2361288.r9sZr2NHLB@x2> (Steve Grubb's message of "Tue, 16 Apr
+        2019 11:34:07 -0400")
+Message-ID: <875zrd7xy8.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20190417080919.54wywpzrt3psn4vj@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 17 Apr 2019 10:01:10 +0000 (UTC)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 17/04/2019 09:09, Russell King - ARM Linux admin wrote:
-> On Tue, Apr 16, 2019 at 09:08:22PM -0700, Matthew Wilcox wrote:
->> On Mon, Apr 15, 2019 at 10:14:51PM -0500, Kees Cook wrote:
->>> On Mon, Apr 15, 2019 at 9:18 PM Matthew Wilcox <willy@infradead.org> wrote:
->>>> I agree; if the crypto code is never going to try to go from the address of
->>>> a byte in the allocation back to the head page, then there's no need to
->>>> specify GFP_COMP.
->>>>
->>>> But that leaves us in the awkward situation where
->>>> HARDENED_USERCOPY_PAGESPAN does need to be able to figure out whether
->>>> 'ptr + n - 1' lies within the same allocation as ptr.  Without using
->>>> a compound page, there's no indication in the VM structures that these
->>>> two pages were allocated as part of the same allocation.
->>>>
->>>> We could force all multi-page allocations to be compound pages if
->>>> HARDENED_USERCOPY_PAGESPAN is enabled, but I worry that could break
->>>> something.  We could make it catch fewer problems by succeeding if the
->>>> page is not compound.  I don't know, these all seem like bad choices
->>>> to me.
->>>
->>> If GFP_COMP is _not_ the correct signal about adjacent pages being
->>> part of the same allocation, then I agree: we need to drop this check
->>> entirely from PAGESPAN. Is there anything else that indicates this
->>> property? (Or where might we be able to store that info?)
->>
->> As far as I know, the page allocator does not store size information
->> anywhere, unless you use GFP_COMP.  That's why you have to pass
->> the 'order' to free_pages() and __free_pages().  It's also why
->> alloc_pages_exact() works (follow all the way into split_page()).
->>
->>> There are other pagespan checks, though, so those could stay. But I'd
->>> really love to gain page allocator allocation size checking ...
->>
->> I think that's a great idea, but I'm not sure how you'll be able to
->> do that.
-> 
-> However, we have had code (maybe historically now) that has allocated
-> a higher order page and then handed back pages that it doesn't need -
-> for example, when the code requires multiple contiguous pages but does
-> not require a power-of-2 size of contiguous pages.
+* Steve Grubb:
 
-'git grep alloc_pages_exact' suggests it's not historical yet...
+> On Tuesday, April 16, 2019 7:49:39 AM EDT Florian Weimer wrote:
+>> * Steve Grubb:
+>> > This flag that is being proposed means that you would have to patch all
+>> > interpreters to use it. If you are sure that upstreams will accept that,
+>> > why not just change the policy to interpreters shouldn't execute
+>> > anything unless the execute bit is set? That is simpler and doesn't need
+>> > a kernel change. And setting the execute bit is an auditable event.
+>> 
+>> I think we need something like O_MAYEXEC so that security policies can
+>> be enforced and noexec mounts can be detected.
+>
+> Application whitelisting can already today stop unknown software without 
+> needing O_MAYEXEC.
 
-Robin.
+I'm somewhat interested in using this to add a proper check for
+executability to explicit dynamic loader invocations.  In other words,
+this
+
+  /lib64/ld-linux-x86-64.so.2 /path/to/noexec/fs/program
+
+should refuse to run the program if the program is located on a file
+system mounted with the noexec attribute.
+
+> The problem is that passing O_MAYEXEC is opt-in. You can use ptrace/seccomp/
+> bpf/LD_PRELOAD/LD_AUDIT to remove that bit from an otherwise normal program. 
+> This does not require privs to do so.
+
+That doesn't really help with the above.
+
+> But let's consider that this comes to pass and every interpreter is
+> updated and IMA can see the O_MAYEXEC flag. Attackers now simply pivot
+> to running programs via stdin. It never touches disk and therefore
+> nothing enforces security policy. This already is among the most
+> common ways that malware runs today to evade detection.
+
+Are you referring to Windows malware using Powershell?
+
+I'm not sure this is applicable to Linux.  We do not have much
+behavioral monitoring anyway.
+
+Thanks,
+Florian
