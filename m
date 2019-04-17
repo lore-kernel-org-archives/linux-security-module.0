@@ -2,116 +2,157 @@ Return-Path: <SRS0=FWzS=ST=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4A8C282DC
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 16:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5CEC282DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 16:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A3F520835
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 16:42:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ADDA20835
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 16:51:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="dhwxYMe/"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QSc54vhj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730463AbfDQQmQ (ORCPT
+        id S1732833AbfDQQvF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 12:42:16 -0400
-Received: from sonic313-21.consmr.mail.bf2.yahoo.com ([74.6.133.195]:39736
-        "EHLO sonic313-21.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729641AbfDQQmQ (ORCPT
+        Wed, 17 Apr 2019 12:51:05 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:37418 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729641AbfDQQvE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 12:42:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1555519334; bh=3MM2CWsG+1KZRItt9dOySsdZCX9P8oSLNsyZBeCppkY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=dhwxYMe/fWjUCSTCdw2AIWWaJWlbA6Flo+q1btTqFPC+OcthqRw+dGgYRtdAtxX9I9xDdpcaArGzhAacD9s1cOXDRbE0xREUUCZHdebSkbbDeiq3GOUULngJJ60n6307gtVEy67W9VEZhdFBKEi1QXPBXd1AU76sFyl+VStdTH9i0oyKM+ers/ayZOG1Ju8/7jhTqZwUDljGOs7HTWfH6aO+4d+ffYuclowIx+j4RTCZJQwb2A2kRCbricB83RHH65EG6+1IUWlH/yewJgEJXsGXJ4VkqfclQ9v+pdWTTzJytWJNk7z3rPPgBNO/5PJrsoqb4uW5X8yXDZ94EEMp0Q==
-X-YMail-OSG: K.6GFc0VM1neswhz_haptv_iiR9K5VoKZAPX0yN8uXKjWPnOLTONSKvQ0Mn_YsP
- HoA3Zg8hzAXK18DPM_zyPUMZOj7S6Pzn75nABZeQM6N7f.bjZfn.2sjWQD_ES83bwW7XQoK9Lnk5
- 36jOXpiYteMVbMQJgvTYo2CLYuTUXf1Jv_4zTmatAOkE_dfolIR1yhXBaLl0jD1d3f5KECE0iC3n
- beYuxI3n.q474NSfnLrAR8UNSOalHtfnAYTNZ9haWRMzi4s_2hCcUU3msHiTBRgouPUvQ8_NHvvd
- W1Ejv.9UMZYb2PXlOb6FCmExvCzsmEiBAQmpafsTsrEPY8LyP3N0JyCCGuqMf06TV.D8aWEGA.wH
- O8GFI1c5BoL_CzAOT0qplVVC.hALu3a3Uw4kdfKdpOKnMug1I3hQ5IUNgjGgjz_w9ZwfY.prBBZV
- P4e34u0hm7Q6A6efeTiolGh3k2yQCOyCekS0b0dPVvRqNqtxueAAQQfEDzCrI3c_5bheZBT8c4hz
- 1T07NCuhf3PXhqDdG4td8bI.NmhNM9rLVpY.q.JUB5hoTuOrXf2E_n4C4XBvJZu9rZFsJJSg8GTZ
- ZzcT75hiVElgWHZFgXq9aHXk29gf.QTvBfvuXMUbHWxJifuZjW2jvPBBFDfmDqNm.w2o5Fozqgk2
- PmMGzIQuOkvjVBzI82zQP3SAqpFVpU0gHw_2G.vKe99t.xnw0ljRNp70ixlCbY2MOa4L8bAUJYYF
- ujTasSnMHJ9wJMiaKT3Mk0kZnT01.5IaYdJ9udw4L8rjYpZgqtczI7Gf_sAVJMz0dGFB_Y6cIWog
- a7BdFz6EPTJxe3_r7oPhV_9KWeJdLtXPna3bDrdQK2LcuIL7Ly_ixoYdZAiSZ45U7ecoAdYFDf2Q
- 520zsc3tOBEi3wD.cNEYsLDVZRgAjUxZZQ0cgJY2_sWCqmRADpZT8N8VvAW4PmB9Gb3HFX1uLirG
- XS.Kay4SeDHb46ykVWLrPDEkkwDeFsGFGC6zGAP0jbOHWng5ST1egesDhUK4OA2WcrfZYh_jEg6V
- _PErPOO_QR8bLw5mYUYyTuL1AEvUGO4DqSZQTr3ag_TCYvBZ0maPg5CWaHijgNJjy6j.vfgqM0_k
- 2h93U16lBlR7XaqxGpfBxQmNu4A--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Wed, 17 Apr 2019 16:42:14 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp412.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 1f1ffef23e024c3542d30848c732eedf;
-          Wed, 17 Apr 2019 16:42:13 +0000 (UTC)
-Subject: Re: kernel BUG at kernel/cred.c:434!
-To:     Oleg Nesterov <oleg@redhat.com>, Paul Moore <paul@paul-moore.com>
-Cc:     "chengjian (D)" <cj.chengjian@huawei.com>,
-        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
-        Li Bin <huawei.libin@huawei.com>,
-        Jason Yan <yanaijie@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SELinux <selinux@vger.kernel.org>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        casey@schaufler-ca.com
-References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
- <20190415134331.GC22204@redhat.com>
- <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
- <20190415150520.GA13257@redhat.com>
- <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
- <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
- <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
- <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
- <20190417145711.GI32622@redhat.com>
- <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
- <20190417162723.GK32622@redhat.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <939a45a6-fc1b-0ac3-759b-0e7c3ce3d670@schaufler-ca.com>
-Date:   Wed, 17 Apr 2019 09:42:11 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 17 Apr 2019 12:51:04 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3HGnG3X054958;
+        Wed, 17 Apr 2019 16:49:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Pt0iK48BFNYGn2PcXPZIgKCS+ChPFURYRr28gHDNt5M=;
+ b=QSc54vhjKse2Gq1rcTB1KDv+n5ZNYuiktD723uSnPsQg7/lU0erFzUS/U+FBFZ5v5LN9
+ 4iDgkm0iqKmiYtxwHEIhhS/dZpybhW0dtoiBsKHfsRiNS/33zdpDmnSeEYaMYsWJC471
+ dCGjeqzxijoOujPRbY2v3RHQK3LQ0lDNqJDLxAdspRBmSrV8REgdAzENjYqfKctb9EN3
+ ONxMYYcd+On4oXsuj8M0FhxjRbw/Mu/K0czjCGbHDVfpbP3Gtg6t7AiiaqxMW+yFQXEF
+ 2d2DLE521La9q/IPFvG820wM8B3HmquyOp/lJk9noCrcYUs7OpW7XPbO3bgHsYkbl4gL UQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2rvwk3v9bb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Apr 2019 16:49:35 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3HGmQda049331;
+        Wed, 17 Apr 2019 16:49:34 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2rv2tvg02m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Apr 2019 16:49:34 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x3HGnUSU030371;
+        Wed, 17 Apr 2019 16:49:30 GMT
+Received: from [10.65.150.207] (/10.65.150.207)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Apr 2019 09:49:29 -0700
+Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
+ Ownership (XPFO)
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
+        keescook@google.com, konrad.wilk@oracle.com,
+        Juerg Haefliger <juerg.haefliger@canonical.com>,
+        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
+        tyhicks@canonical.com, dwmw@amazon.co.uk,
+        andrew.cooper3@citrix.com, jcm@redhat.com,
+        boris.ostrovsky@oracle.com, iommu@lists.linux-foundation.org,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        Khalid Aziz <khalid@gonehiking.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Dave Hansen <dave@sr71.net>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <cover.1554248001.git.khalid.aziz@oracle.com>
+ <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
+ <20190417161042.GA43453@gmail.com>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <e16c1d73-d361-d9c7-5b8e-c495318c2509@oracle.com>
+Date:   Wed, 17 Apr 2019 10:49:26 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <20190417162723.GK32622@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190417161042.GA43453@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9230 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1904170113
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9230 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1904170113
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/17/2019 9:27 AM, Oleg Nesterov wrote:
-> On 04/17, Paul Moore wrote:
->> On Wed, Apr 17, 2019 at 10:57 AM Oleg Nesterov <oleg@redhat.com> wrote:
->>> On 04/17, Paul Moore wrote:
->>>> I'm tempted to simply return an error in selinux_setprocattr() if
->>>> the task's credentials are not the same as its real_cred;
->>> What about other modules? I have no idea what smack_setprocattr() is,
->>> but it too does prepare_creds/commit creds.
->>>
->>> it seems that the simplest workaround should simply add the additional
->>> cred == real_cred into proc_pid_attr_write().
->> Yes, that is simple, but I worry about what other LSMs might want to
->> do.  While I believe failing if the effective creds are not the same
->> as the real_creds is okay for SELinux (possibly Smack too), I worry
->> about what other LSMs may want to do.  After all,
->> proc_pid_attr_write() doesn't change the the creds itself, that is
->> something the specific LSMs do.
-> Yes, but if proc_pid_attr_write() is called with cred != real_cred then
-> something is already wrong?
->
-> In fact, I think that something is already wrong if it is not called by
-> user-space directly. Too late to ask, but why is this /proc/self/attr/
-> magic not implemented via syscall(s) ?
+On 4/17/19 10:15 AM, Ingo Molnar wrote:
+>=20
+> [ Sorry, had to trim the Cc: list from hell. Tried to keep all the=20
+>   mailing lists and all x86 developers. ]
+>=20
+> * Khalid Aziz <khalid.aziz@oracle.com> wrote:
+>=20
+>> From: Juerg Haefliger <juerg.haefliger@canonical.com>
+>>
+>> This patch adds basic support infrastructure for XPFO which protects=20
+>> against 'ret2dir' kernel attacks. The basic idea is to enforce=20
+>> exclusive ownership of page frames by either the kernel or userspace, =
 
-Shell scripts, for one thing. It's a straightforward and appropriate
-use of the /proc interface. System calls would require additional change
-to existing programs, whereas using the /proc interface allows a good
-deal to be done in the containing scripts.
-  
+>> unless explicitly requested by the kernel. Whenever a page destined fo=
+r=20
+>> userspace is allocated, it is unmapped from physmap (the kernel's page=
+=20
+>> table). When such a page is reclaimed from userspace, it is mapped bac=
+k=20
+>> to physmap. Individual architectures can enable full XPFO support usin=
+g=20
+>> this infrastructure by supplying architecture specific pieces.
+>=20
+> I have a higher level, meta question:
+>=20
+> Is there any updated analysis outlining why this XPFO overhead would be=
+=20
+> required on x86-64 kernels running on SMAP/SMEP CPUs which should be al=
+l=20
+> recent Intel and AMD CPUs, and with kernel that mark all direct kernel =
+
+> mappings as non-executable - which should be all reasonably modern=20
+> kernels later than v4.0 or so?
+>=20
+> I.e. the original motivation of the XPFO patches was to prevent executi=
+on=20
+> of direct kernel mappings. Is this motivation still present if those=20
+> mappings are non-executable?
+>=20
+> (Sorry if this has been asked and answered in previous discussions.)
+
+Hi Ingo,
+
+That is a good question. Because of the cost of XPFO, we have to be very
+sure we need this protection. The paper from Vasileios, Michalis and
+Angelos - <http://www.cs.columbia.edu/~vpk/papers/ret2dir.sec14.pdf>,
+does go into how ret2dir attacks can bypass SMAP/SMEP in sections 6.1
+and 6.2.
+
+Thanks,
+Khalid
+
 
