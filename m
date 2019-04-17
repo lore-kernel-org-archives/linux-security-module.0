@@ -2,84 +2,68 @@ Return-Path: <SRS0=FWzS=ST=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931FAC282DF
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 17:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58CE8C282DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 17:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53F1520821
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 17:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1555522000;
-	bh=9j8CyYJ2zQuXKkSeFJZdiII8gPPzipgvkSiKz46XFRc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=E7A6tOZHRnFHXJqoSDIYVUmKWTh2/sJ2ob8bambhbzzz2L5lrwrWe0sM435f3x/mp
-	 0QfxYA7uR2I1TSls2Y4q+FYr0M9NcVinUyP9l+YM86KQlK45kLIrkvk6AVb9PX/L+w
-	 GPTWnQhl0xItetNxGT9aLg3AWko4AmyWsJVOGRYU=
+	by mail.kernel.org (Postfix) with ESMTP id 1FEB220821
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 17:34:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hHbyQcR+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733022AbfDQR0j (ORCPT
+        id S1733077AbfDQReH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 13:26:39 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36600 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729641AbfDQR0j (ORCPT
+        Wed, 17 Apr 2019 13:34:07 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57212 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732321AbfDQReG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 13:26:39 -0400
-Received: by mail-wm1-f66.google.com with SMTP id h18so4581669wml.1;
-        Wed, 17 Apr 2019 10:26:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ns0QxnuhAfvDI+e0rO3qV1NnmRx4qtLcXwX4SEWj8w8=;
-        b=NcvYWJCyNfLatXmVyDRxLTR3Qx/x7JgxS8jcPHCtBtiN6MPmtGAh7sebTFiQVJAXNk
-         Sbm/GqYfFaqfvaPEXTOrurvDwkKnd5zlx2TBIC3kz2Q4om3TP0Y1KaPxiIdippBjXGPT
-         mt//zbGrEi8KAnTquF8hj0kCkKK4+MgiTjgN9U5T632osXgyVF0kyOkokSJYhpqPWU7q
-         HvdQgIN00S7lvWehKYIDllQwTC97+wEK/qsM7xgShblV1PsGd2t5GKDax19T5iQvivwv
-         QGi7KKBjclQM6KMFluz3llgRlzIQ2Zeot4lykjGh7vko0CNZ/xTAD3H/14XuvK6bERiB
-         TxyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=ns0QxnuhAfvDI+e0rO3qV1NnmRx4qtLcXwX4SEWj8w8=;
-        b=pYuZG149qnmzTop1skvx8kkGcL9haKa4bv6o7HF/DSiRsm9OVe4hcKyyA0Tq4bAZUv
-         ME2TwQ30KiBW8fXKFkOUVa6aJVw39KNMAsRuW08oPE14TnT1IydQHUEyMRb0DFQpIeDM
-         Eyjv6dVDSBRRzzOuSR1i1/HyoaMedrRyAnRX2JKX8Wf9Z+i6L0UjgvUKpuZ1o1qkq6n5
-         ZHLfFiDaKEg6Qd4pGaTXJnsBW/gsvVisYsNqHF0M8KbEZmKqFABhIl0ouuo8Q09FfCWq
-         HlvcrqprLxF6/gHDgJtDXUXsKHwFflV0sLnPWpEiRXRl3bZf6dNrFLYjaD/9dmSMDIlj
-         l+Hw==
-X-Gm-Message-State: APjAAAX39Pp7VpAwFeRHo05nkJV1FpI7CqQrv7ReX+Y4EOCoaI9N0LSt
-        a/OIvuQPFGkKx/MuYH1/NLs=
-X-Google-Smtp-Source: APXvYqx0bXa7GoJQLXDLgeOn35F7WmZUbi0CsPk0aTEStD8EU08aO6txiY/M5Pu51pv7jSUwysUxyA==
-X-Received: by 2002:a1c:495:: with SMTP id 143mr575729wme.78.1555521996663;
-        Wed, 17 Apr 2019 10:26:36 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x5sm65470238wrt.72.2019.04.17.10.26.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 17 Apr 2019 10:26:35 -0700 (PDT)
-Date:   Wed, 17 Apr 2019 19:26:32 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Khalid Aziz <khalid.aziz@oracle.com>, juergh@gmail.com,
-        Tycho Andersen <tycho@tycho.ws>, jsteckli@amazon.de,
-        keescook@google.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Wed, 17 Apr 2019 13:34:06 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3HHO5lG087083;
+        Wed, 17 Apr 2019 17:33:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=n6AW0KFZfBWQXIF3BLuGRaqvWHMs7VP7kbUpQyzZLCQ=;
+ b=hHbyQcR+kqdRDbS1HXGo+9Imp9OxI6FtwGiqAsx93fBWBDk7CX4jIet+aGdG1y6ekO8C
+ Ti2Do+GqJOBrEB5x67xr+rylVhRtLSeWIi9OyRLpnSoEJ7MlPeL6aVzmxNJeu5NT+0V1
+ BY9E+QKXPaHaEI9l3DsywXK8Nwo+WtmwCh/ApxHEC5zeBkDVLjReK64fxhjMPnODAvgB
+ BwCVpKk3nhXq1aNu8Vhevz8BvIfHlKJN4MJ+qs43AbfU/nYZ0/Hdd7eOfR2rrofEznbE
+ AbhTNE7XqQeWKp1Di9iYW9dQmATPYclZx6QHSHuLjZEw77+iY0XumcJRb03aj+gUI3WP Wg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2rvwk3vhf0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Apr 2019 17:33:10 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3HHWBSB165901;
+        Wed, 17 Apr 2019 17:33:09 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2rv2tvgqhh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 17 Apr 2019 17:33:09 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3HHX7ls006927;
+        Wed, 17 Apr 2019 17:33:07 GMT
+Received: from [192.168.1.16] (/24.9.64.241)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 17 Apr 2019 10:33:07 -0700
+Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
+ Ownership (XPFO)
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
+        keescook@google.com, konrad.wilk@oracle.com,
         Juerg Haefliger <juerg.haefliger@canonical.com>,
         deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, David Woodhouse <dwmw@amazon.co.uk>,
-        Andrew Cooper <andrew.cooper3@citrix.com>, jcm@redhat.com,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        iommu <iommu@lists.linux-foundation.org>,
-        X86 ML <x86@kernel.org>, linux-arm-kernel@lists.infradead.org,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        tyhicks@canonical.com, dwmw@amazon.co.uk,
+        andrew.cooper3@citrix.com, jcm@redhat.com,
+        boris.ostrovsky@oracle.com, iommu@lists.linux-foundation.org,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
         Khalid Aziz <khalid@gonehiking.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -90,98 +74,107 @@ Cc:     Khalid Aziz <khalid.aziz@oracle.com>, juergh@gmail.com,
         "H. Peter Anvin" <hpa@zytor.com>,
         Arjan van de Ven <arjan@infradead.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
- Ownership (XPFO)
-Message-ID: <20190417172632.GA95485@gmail.com>
 References: <cover.1554248001.git.khalid.aziz@oracle.com>
  <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
  <20190417161042.GA43453@gmail.com>
  <e16c1d73-d361-d9c7-5b8e-c495318c2509@oracle.com>
  <20190417170918.GA68678@gmail.com>
- <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <8d314750-251c-7e6a-7002-5df2462ada6b@oracle.com>
+Date:   Wed, 17 Apr 2019 11:33:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
+In-Reply-To: <20190417170918.GA68678@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9230 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1904170117
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9230 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1904170117
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 4/17/19 11:09 AM, Ingo Molnar wrote:
+>=20
+> * Khalid Aziz <khalid.aziz@oracle.com> wrote:
+>=20
+>>> I.e. the original motivation of the XPFO patches was to prevent execu=
+tion=20
+>>> of direct kernel mappings. Is this motivation still present if those =
 
-* Nadav Amit <nadav.amit@gmail.com> wrote:
+>>> mappings are non-executable?
+>>>
+>>> (Sorry if this has been asked and answered in previous discussions.)
+>>
+>> Hi Ingo,
+>>
+>> That is a good question. Because of the cost of XPFO, we have to be ve=
+ry
+>> sure we need this protection. The paper from Vasileios, Michalis and
+>> Angelos - <http://www.cs.columbia.edu/~vpk/papers/ret2dir.sec14.pdf>,
+>> does go into how ret2dir attacks can bypass SMAP/SMEP in sections 6.1
+>> and 6.2.
+>=20
+> So it would be nice if you could generally summarize external arguments=
+=20
+> when defending a patchset, instead of me having to dig through a PDF=20
+> which not only causes me to spend time that you probably already spent =
 
-> > On Apr 17, 2019, at 10:09 AM, Ingo Molnar <mingo@kernel.org> wrote:
-> > 
-> > 
-> > * Khalid Aziz <khalid.aziz@oracle.com> wrote:
-> > 
-> >>> I.e. the original motivation of the XPFO patches was to prevent execution 
-> >>> of direct kernel mappings. Is this motivation still present if those 
-> >>> mappings are non-executable?
-> >>> 
-> >>> (Sorry if this has been asked and answered in previous discussions.)
-> >> 
-> >> Hi Ingo,
-> >> 
-> >> That is a good question. Because of the cost of XPFO, we have to be very
-> >> sure we need this protection. The paper from Vasileios, Michalis and
-> >> Angelos - <http://www.cs.columbia.edu/~vpk/papers/ret2dir.sec14.pdf>,
-> >> does go into how ret2dir attacks can bypass SMAP/SMEP in sections 6.1
-> >> and 6.2.
-> > 
-> > So it would be nice if you could generally summarize external arguments 
-> > when defending a patchset, instead of me having to dig through a PDF 
-> > which not only causes me to spend time that you probably already spent 
-> > reading that PDF, but I might also interpret it incorrectly. ;-)
-> > 
-> > The PDF you cited says this:
-> > 
-> >  "Unfortunately, as shown in Table 1, the W^X prop-erty is not enforced 
-> >   in many platforms, including x86-64.  In our example, the content of 
-> >   user address 0xBEEF000 is also accessible through kernel address 
-> >   0xFFFF87FF9F080000 as plain, executable code."
-> > 
-> > Is this actually true of modern x86-64 kernels? We've locked down W^X 
-> > protections in general.
-> 
-> As I was curious, I looked at the paper. Here is a quote from it:
-> 
-> "In x86-64, however, the permissions of physmap are not in sane state.
-> Kernels up to v3.8.13 violate the W^X property by mapping the entire region
-> as “readable, writeable, and executable” (RWX)—only very recent kernels
-> (≥v3.9) use the more conservative RW mapping.”
+> reading that PDF, but I might also interpret it incorrectly. ;-)
 
-But v3.8.13 is a 5+ years old kernel, it doesn't count as a "modern" 
-kernel in any sense of the word. For any proposed patchset with 
-significant complexity and non-trivial costs the benchmark version 
-threshold is the "current upstream kernel".
+Sorry, you are right. Even though that paper explains it well, a summary
+is always useful.
 
-So does that quote address my followup questions:
-
-> Is this actually true of modern x86-64 kernels? We've locked down W^X
+>=20
+> The PDF you cited says this:
+>=20
+>   "Unfortunately, as shown in Table 1, the W^X prop-erty is not enforce=
+d=20
+>    in many platforms, including x86-64.  In our example, the content of=
+=20
+>    user address 0xBEEF000 is also accessible through kernel address=20
+>    0xFFFF87FF9F080000 as plain, executable code."
+>=20
+> Is this actually true of modern x86-64 kernels? We've locked down W^X=20
 > protections in general.
->
+>=20
 > I.e. this conclusion:
->
->   "Therefore, by simply overwriting kfptr with 0xFFFF87FF9F080000 and
->    triggering the kernel to dereference it, an attacker can directly
+>=20
+>   "Therefore, by simply overwriting kfptr with 0xFFFF87FF9F080000 and=20
+>    triggering the kernel to dereference it, an attacker can directly=20
 >    execute shell code with kernel privileges."
->
-> ... appears to be predicated on imperfect W^X protections on the x86-64
+>=20
+> ... appears to be predicated on imperfect W^X protections on the x86-64=
+=20
 > kernel.
->
-> Do such holes exist on the latest x86-64 kernel? If yes, is there a
-> reason to believe that these W^X holes cannot be fixed, or that any fix
+>=20
+> Do such holes exist on the latest x86-64 kernel? If yes, is there a=20
+> reason to believe that these W^X holes cannot be fixed, or that any fix=
+=20
 > would be more expensive than XPFO?
 
-?
-
-What you are proposing here is a XPFO patch-set against recent kernels 
-with significant runtime overhead, so my questions about the W^X holes 
-are warranted.
+Even if physmap is not executable, return-oriented programming (ROP) can
+still be used to launch an attack. Instead of placing executable code at
+user address 0xBEEF000, attacker can place an ROP payload there. kfptr
+is then overwritten to point to a stack-pivoting gadget. Using the
+physmap address aliasing, the ROP payload becomes kernel-mode stack. The
+execution can then be hijacked upon execution of ret instruction. This
+is a gist of the subsection titled "Non-executable physmap" under
+section 6.2 and it looked convincing enough to me. If you have a
+different take on this, I am very interested in your point of view.
 
 Thanks,
+Khalid
 
-	Ingo
+
