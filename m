@@ -2,127 +2,107 @@ Return-Path: <SRS0=FWzS=ST=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D54EC10F12
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 11:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B03FC282DA
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 11:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C97620643
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 11:04:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EHg4bkzT"
+	by mail.kernel.org (Postfix) with ESMTP id 452A22073F
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Apr 2019 11:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731870AbfDQLEC (ORCPT
+        id S1731830AbfDQLaS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Apr 2019 07:04:02 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:43925 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731472AbfDQLEB (ORCPT
+        Wed, 17 Apr 2019 07:30:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39816 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725792AbfDQLaS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Apr 2019 07:04:01 -0400
-Received: by mail-ua1-f66.google.com with SMTP id n16so7750119uae.10
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 04:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XeDE+yliHZIB6baClgy0wFy6iqkcSebRIAatOB4mZZs=;
-        b=EHg4bkzT9P1/JvcPmxKZjCTm2qTW27sUH6jAZrudgbPjINDmUdAu0PJJBES0yqqfbM
-         4bmaJy/iA7sVnk7/hM31UEvD0tlNU1sME5r8/KCDj17pumJmRdaMjj8FTutuxwha04UV
-         Hb+I+Ty/L8y/Rj5LpF5Lx46sV/3HYHDSq33xcjulilS+R7hzk17b0DKooLFNyUvBO5Ri
-         8nGRYmNdRdao+0mBTWnx7M8FwWsao5CXd5HpuWqEYApjHnK8IqOocHZjf/Qv62L9rLYe
-         NPcDQ64TzAYN0jvMeQ5ny18GH1eeo+vMRR0GO9rlz+/AhE23AOkFjEQek7sR1P3hZzQ7
-         nMlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XeDE+yliHZIB6baClgy0wFy6iqkcSebRIAatOB4mZZs=;
-        b=Gh9kwagHwfM/PPuUAD+qaoR3ZosU55szwXl0cRxrl35/VjPyiKUli4dgdLWkUaKVnZ
-         dL5I1noGjV9HzeFY+cUz2MejSqOHW+YLUfQMhfG3fChITNS+ugImXW1cR8K+g/BcjO7d
-         /huViO0jW7kdKEE/Orr2srOSW/HanbLcHUp/Je5d5yeS1Eg/kFvefckkT5kwFPOcE3Lq
-         48Raiq540sMF48Dfj+LtPJfVDig/OYSeKfFY2GLlGA1mTadTynBb5IgoM59S+gfPRJHM
-         A/1wSQeh140r1hbOM4xFI2CQ9AeYTTQrWHfrFV4DJGJRQ5nkjt8xyqTGizdH7ZNCLSqv
-         CGXw==
-X-Gm-Message-State: APjAAAWWjaCB6rXNQvliln5ZUyZV7al/qXp4yfFFZYa8JnlzBNjMWyBf
-        cSo8d0aiRZ2wcUvdQqvrnv/DmNJGRMM1MP9V0aj4Cw==
-X-Google-Smtp-Source: APXvYqy0E3lOpUwtTrpEaKPRLMulbyV0QY+JC8lDgLgnW7DMw5btc81OU9z96BdM4Fsp2n1Yb0l562FqvRLMrcRc0Ww=
-X-Received: by 2002:ab0:2b98:: with SMTP id q24mr9040711uar.122.1555499039971;
- Wed, 17 Apr 2019 04:03:59 -0700 (PDT)
+        Wed, 17 Apr 2019 07:30:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D265DAF8D;
+        Wed, 17 Apr 2019 11:30:16 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 99F8B1E15AE; Wed, 17 Apr 2019 13:30:12 +0200 (CEST)
+Date:   Wed, 17 Apr 2019 13:30:12 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>
+Subject: Re: fanotify and LSM path hooks
+Message-ID: <20190417113012.GC26435@quack2.suse.cz>
+References: <CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com>
+ <20190416154513.GB13422@quack2.suse.cz>
+ <CAOQ4uxh66kAozqseiEokqM3wDJws7=cnY-aFXH_0515nvsi2-A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190412124501.132678-1-glider@google.com> <0100016a26c711be-b99971ca-49f5-482c-9028-962ee471f733-000000@email.amazonses.com>
- <CAG_fn=U6aWfBXdkcWs0_1pqggAC16Yg8Q6rxLiVeiO83q1hOCw@mail.gmail.com> <0100016a26fc7605-a9c76ac4-387c-47a3-8c53-a8d208eb0925-000000@email.amazonses.com>
-In-Reply-To: <0100016a26fc7605-a9c76ac4-387c-47a3-8c53-a8d208eb0925-000000@email.amazonses.com>
-From:   Alexander Potapenko <glider@google.com>
-Date:   Wed, 17 Apr 2019 13:03:47 +0200
-Message-ID: <CAG_fn=XW=-=SiAjToBNGDBdr1iZFA-9Ri_a4tF40448yPTbU4w@mail.gmail.com>
-Subject: Re: [PATCH] mm: security: introduce CONFIG_INIT_HEAP_ALL
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sandeep Patil <sspatil@android.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxh66kAozqseiEokqM3wDJws7=cnY-aFXH_0515nvsi2-A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 16, 2019 at 6:30 PM Christopher Lameter <cl@linux.com> wrote:
->
-> On Tue, 16 Apr 2019, Alexander Potapenko wrote:
->
-> > > Hmmm... But we already have debugging options that poison objects and
-> > > pages?
-> > Laura Abbott mentioned in one of the previous threads
-> > (https://marc.info/?l=3Dkernel-hardening&m=3D155474181528491&w=3D2) tha=
-t:
+On Tue 16-04-19 21:24:44, Amir Goldstein wrote:
+> > I'm not so sure about directory pre-modification hooks. Given the amount of
+> > problems we face with applications using fanotify permission events and
+> > deadlocking the system, I'm not very fond of expanding that API... AFAIU
+> > you want to use such hooks for recording (and persisting) that some change
+> > is going to happen and provide crash-consistency guarantees for such
+> > journal?
 > >
-> > """
-> > I've looked at doing something similar in the past (failing to find
-> > the thread this morning...) and while this will work, it has pretty
-> > serious performance issues. It's not actually the poisoning which
-> > is expensive but that turning on debugging removes the cpu slab
-> > which has significant performance penalties.
->
-> Ok you could rework that logic to be able to keep the per cpu slabs?
-I'll look into that. There's a lot going on with checking those
-poisoned bytes, although we don't need that for hardening.
+> 
+> That's the general idea.
+> I have two use cases for pre-modification hooks:
+> 1. VFS level snapshots
+> 2. persistent change tracking
+> 
+> TBH, I did not consider implementing any of the above in userspace,
+> so I do not have a specific interest in extending the fanotify API.
+> I am actually interested in pre-modify fsnotify hooks (not fanotify),
+> that a snapshot or change tracking subsystem can register with.
+> An in-kernel fsnotify event handler can set a flag in current task
+> struct to circumvent system deadlocks on nested filesystem access.
 
-What do you think about the proposed approach to page initialization?
-We could separate that part from slab poisoning.
+OK, I'm not opposed to fsnotify pre-modify hooks as such. As long as
+handlers stay within the kernel, I'm fine with that. After all this is what
+LSMs are already doing. Just exposing this to userspace for arbitration is
+what I have a problem with.
 
-> Also if you do the zeroing then you need to do it in the hotpath. And thi=
-s
-> patch introduces new instructions to that hotpath for checking and
-> executing the zeroing.
-Right now the patch doesn't slow down the default case when
-CONFIG_INIT_HEAP_ALL=3Dn, as GFP_INIT_ALWAYS_ON is 0.
-In the case heap initialization is enabled we could probably omit the
-gfp_flags check, as it'll be always zero in the case there's a
-constructor or RCU flag is set.
-So we'll have two branches instead of one in the case CONFIG_INIT_HEAP_ALL=
-=3Dy.
+> My current implementation of overlayfs snapshots [1] uses a stackable
+> filesystem (a.k.a. snapshot fs) as a means for pre-modify hooks.
+> This approach has some advantages and some disadvantages
+> compared to fsnotify pre-modify hooks.
+> 
+> With fsnotify pre-modify hooks it would be possible to protect
+> the underlying filesystem from un-monitored changes even when
+> filesystem is accessed from another mount point or another namespace.
+> 
+> As a matter of fact, the protection to underlying filesystem changes
+> needed for overlayfs snapshots is also useful for standard overlayfs -
+> Modification to underlying overlayfs layers are strongly discouraged,
+> but there is nothing preventing the user from making such modifications.
+> If overlayfs were to register for fsnotify pre-modify hooks on underlying
+> filesystem, it could prevent users from modifying underlying layers.
+> 
+> And not only that - because security_inode_rename() hook is called
+> with s_vfs_rename_mutex held, it is safe to use d_ancestor() to
+> prevent renames in and out of overlay layer subtrees.
+> With that protection in place, it is safe (?) to use is_subdir() in other
+> hooks to check if an object is under an overlayfs layer subtree,
+> because the entire ancestry below the layers roots is stable.
 
+Uf, OK, should be. But it looks subtle. Not sure what Al will say about it
+;).
 
-
---=20
-Alexander Potapenko
-Software Engineer
-
-Google Germany GmbH
-Erika-Mann-Stra=C3=9Fe, 33
-80636 M=C3=BCnchen
-
-Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
-Registergericht und -nummer: Hamburg, HRB 86891
-Sitz der Gesellschaft: Hamburg
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
