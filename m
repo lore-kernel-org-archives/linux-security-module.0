@@ -2,120 +2,128 @@ Return-Path: <SRS0=QYhf=SU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C021CC10F0E
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 06:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC5EC10F0B
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 06:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98283214DA
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 06:15:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82E2621850
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 06:39:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="qPeJj8KN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725876AbfDRGPG (ORCPT
+        id S2388043AbfDRGjB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Apr 2019 02:15:06 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:60359 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbfDRGPF (ORCPT
+        Thu, 18 Apr 2019 02:39:01 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42221 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387971AbfDRGjA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Apr 2019 02:15:05 -0400
-Received: from pd9ef12d2.dip0.t-ipconnect.de ([217.239.18.210] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hH0Jt-0006T4-RM; Thu, 18 Apr 2019 08:14:50 +0200
-Date:   Thu, 18 Apr 2019 08:14:48 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Nadav Amit <nadav.amit@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>, juergh@gmail.com,
-        Tycho Andersen <tycho@tycho.ws>, jsteckli@amazon.de,
-        Kees Cook <keescook@google.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        Tyler Hicks <tyhicks@canonical.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Jon Masters <jcm@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        iommu <iommu@lists.linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Khalid Aziz <khalid@gonehiking.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Dave Hansen <dave@sr71.net>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
- Ownership (XPFO)
-In-Reply-To: <CAHk-=whUwOjFW6RjHVM8kNOv1QVLJuHj2Dda0=mpLPdJ1UyatQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1904180811570.3174@nanos.tec.linutronix.de>
-References: <cover.1554248001.git.khalid.aziz@oracle.com> <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com> <20190417161042.GA43453@gmail.com> <e16c1d73-d361-d9c7-5b8e-c495318c2509@oracle.com> <20190417170918.GA68678@gmail.com>
- <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com> <20190417172632.GA95485@gmail.com> <063753CC-5D83-4789-B594-019048DE22D9@gmail.com> <alpine.DEB.2.21.1904172317460.3174@nanos.tec.linutronix.de> <CAHk-=wgBMg9P-nYQR2pS0XwVdikPCBqLsMFqR9nk=wSmAd4_5g@mail.gmail.com>
- <alpine.DEB.2.21.1904180129000.3174@nanos.tec.linutronix.de> <CAHk-=whUwOjFW6RjHVM8kNOv1QVLJuHj2Dda0=mpLPdJ1UyatQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 18 Apr 2019 02:39:00 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p6so710332pgh.9
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Apr 2019 23:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=nY+EP2R9METKYDuku3g6nVrECtlVH8EVx2p8MKZ118k=;
+        b=qPeJj8KNRZcPDLVMnDM575b8I8uxbwGFOuzY1O3nklzeCIIQBISrbzJ1N2wdOOVj+/
+         I2IJoL0wlUjVDUzGjZyXUMsftii3pT3o2enK8JGO4UOPTEQsNXyaxFXIXnFoUE+/hCXC
+         czjEDUc/+Pf6wCKACtzH7LS3kSMb4SIBPrxSc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=nY+EP2R9METKYDuku3g6nVrECtlVH8EVx2p8MKZ118k=;
+        b=rZl+EMd7FqoAyNJUDBMy+CiH+Cr30Zix25hpliu3psTCFu+RQsavxUONkCT1RpdiM9
+         wXauVXciJ6nIDCMrLEYo0kjsEh0ISRSCC+kzJqnY3RUZ4Xc3lUJuWfJtnxvjLjFyOyZc
+         zAOKfzMHLDLxu2p1Hwu1zrJylwlJggHlnLpQsVcLozPT3rlV6bEp7cBErQb6Kh0xWdvC
+         n0dCBPVgOwqR/j3ZOKBMS0xhev4+g94DyY3SFSITVWv5YkIfFG44c2vWrxp4pABVz9kt
+         kGGyfuIUMDmQ3zH7r1E0pjVw20q0VmHGe438pZ/2DNoqiAZGRryNcw6H0EnwxwrJI9ES
+         JQgA==
+X-Gm-Message-State: APjAAAW3eyoMi9eptCGF/kVJik7/sna+ZTKIUw8T6CE9KxoclNvHOr4o
+        PHx1eRR/VuN/2vtuWPmLb6n5ow==
+X-Google-Smtp-Source: APXvYqxZQNAupenw4ViEZhxPwMbqUfoM1c99inLaaEY0blftbhWIrmuvbI2M9nVCeRWQyuAGrPHrpw==
+X-Received: by 2002:a63:3857:: with SMTP id h23mr85072995pgn.305.1555569540173;
+        Wed, 17 Apr 2019 23:39:00 -0700 (PDT)
+Received: from localhost (124-171-99-108.dyn.iinet.net.au. [124.171.99.108])
+        by smtp.gmail.com with ESMTPSA id o81sm1603642pfa.156.2019.04.17.23.38.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 17 Apr 2019 23:38:59 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Matthew Garrett <matthewgarrett@google.com>, jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        linux-api@vger.kernel.org, luto@kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, cmr <cmr@informatik.wtf>
+Subject: Re: [PATCH V32 01/27] Add the ability to lock down access to the running kernel image
+In-Reply-To: <059c523e-926c-24ee-0935-198031712145@au1.ibm.com>
+References: <20190404003249.14356-1-matthewgarrett@google.com> <20190404003249.14356-2-matthewgarrett@google.com> <059c523e-926c-24ee-0935-198031712145@au1.ibm.com>
+Date:   Thu, 18 Apr 2019 16:38:54 +1000
+Message-ID: <87zhonyg01.fsf@dja-thinkpad.axtens.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 17 Apr 2019, Linus Torvalds wrote:
-> On Wed, Apr 17, 2019 at 4:42 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Wed, 17 Apr 2019, Linus Torvalds wrote:
-> > > With SMEP, user space pages are always NX.
-> >
-> > We talk past each other. The user space page in the ring3 valid virtual
-> > address space (non negative) is of course protected by SMEP.
-> >
-> > The attack utilizes the kernel linear mapping of the physical
-> > memory. I.e. user space address 0x43210 has a kernel equivalent at
-> > 0xfxxxxxxxxxx. So if the attack manages to trick the kernel to that valid
-> > kernel address and that is mapped X --> game over. SMEP does not help
-> > there.
-> 
-> Oh, agreed.
-> 
-> But that would simply be a kernel bug. We should only map kernel pages
-> executable when we have kernel code in them, and we should certainly
-> not allow those pages to be mapped writably in user space.
-> 
-> That kind of "executable in kernel, writable in user" would be a
-> horrendous and major bug.
-> 
-> So i think it's a non-issue.
+Hi Andrew,
 
-Pretty much.
-
-> > From the top of my head I'd say this is a non issue as those kernel address
-> > space mappings _should_ be NX, but we got bitten by _should_ in the past:)
-> 
-> I do agree that bugs can happen, obviously, and we might have missed something.
+>> +		If CONFIG_LOCK_DOWN_KERNEL is enabled, the kernel can be
+>> +		moved to a more locked down state at runtime by writing to
+>> +		this attribute. Valid values are:
+>> +
+>> +		integrity:
+>> +			The kernel will disable functionality that allows
+>> +			userland to modify the running kernel image, other
+>> +			than through the loading or execution of appropriately
+>> +			signed objects.
+>> +
+>> +		confidentiality:
+>> +			The kernel will disable all functionality disabled by
+>> +			the integrity mode, but additionally will disable
+>> +			features that potentially permit userland to obtain
+>> +			confidential information stored within the kernel.
 >
-> But in the context of XPFO, I would argue (*very* strongly) that the
-> likelihood of the above kind of bug is absolutely *miniscule* compared
-> to the likelihood that we'd have something wrong in the software
-> implementation of XPFO.
-> 
-> So if the argument is "we might have bugs in software", then I think
-> that's an argument _against_ XPFO rather than for it.
+> [+ linuxppc, mpe, dja, cmr]
+>
+> I'm thinking about whether we should lock down the powerpc xmon debug 
+> monitor - intuitively, I think the answer is yes if for no other reason 
+> than Least Astonishment, when lockdown is enabled you probably don't 
+> expect xmon to keep letting you access kernel memory.
+>
+> Semantically though, xmon is not a userspace process - it's in kernel 
+> and reads debug commands/outputs debug data directly from/to the 
+> console. Is that a threat vector that this series cares about?
 
-No argument from my side. We better spend time to make sure that a bogus
-kernel side X mapping is caught, like we catch other things.
+I guess there are 2 ways you could think about lockdown:
 
-Thanks,
+ - It adds a security boundary between the kernel and UID 0, so that
+   userland cannot compromise the integrity/confidentiality of the
+   locked down kernel.
 
-	tglx
+ - It is a bundle of related security boundaries so that the
+   integrity/confidentiality of a running, locked down kernel cannot be
+   compromised, even by a privileged, physically present user.
 
+You're right that techincally xmon is in the kernel and on the console
+rather than in userland, so it doesn't fall within the first concept of
+lockdown. But I think usecases for lockdown tend to expect something
+more like the second concept.
+
+IOW, lockdown is a trapdoor - once you've locked down a kernel, you
+can't get out of lockdown (except by rebooting). xmon would allow you to
+get out of the trapdoor, so I think it should be restricted by lockdown.
+
+Regards,
+Daniel
+
+>
+>
+> -- 
+> Andrew Donnellan              OzLabs, ADL Canberra
+> andrew.donnellan@au1.ibm.com  IBM Australia Limited
