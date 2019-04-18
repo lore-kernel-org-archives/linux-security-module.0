@@ -2,158 +2,117 @@ Return-Path: <SRS0=QYhf=SU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57819C10F14
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 14:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09476C10F0E
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 15:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F4B421479
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 14:36:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA36A2083D
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 15:42:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ylFkenx2"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AR5AIo/F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388073AbfDROgE (ORCPT
+        id S2388070AbfDRPm1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Apr 2019 10:36:04 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53168 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731317AbfDROgE (ORCPT
+        Thu, 18 Apr 2019 11:42:27 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:39305 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387519AbfDRPm0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Apr 2019 10:36:04 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3IEJJ4K081960;
-        Thu, 18 Apr 2019 14:34:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=AL/6XEs1B3BsG/bXzvFYIzuqptan4i6pMcE1H0+0SkI=;
- b=ylFkenx2gLgBHYyGmWupVhKcQN67lFFgacw3sDWrvc2UyMrlPdQyvRWc1MWjFkNik5jm
- 71B1aOguPFfyKZwocNP/SMGZxoxt7Fxi3QtN/SgpOhysgr/4HrVfbPeGtFHnwA3yIxlG
- Hy1hSEdxdOjsGvN/N6787w1ybzWXCK8WaBatHX4fFVDIF903zPvWinjxuorByNB7ibEF
- PNJoPTEBbn4WH+etQKqD4MGBh97w5FikjrdsLQhlVIen2uh7aIMHYexHO8Nf1B3EvtnK
- Lyg6v4V14wXFCheokSGz5j4y4rdfNOYyvGEP+ZwCp4EZo65ljg2Txcaea91uWAoku77x ag== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2rvwk41a9g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Apr 2019 14:34:46 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3IEYHYK012588;
-        Thu, 18 Apr 2019 14:34:45 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 2rwe7b0mb3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Apr 2019 14:34:45 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3IEYZET027844;
-        Thu, 18 Apr 2019 14:34:35 GMT
-Received: from [192.168.1.16] (/24.9.64.241)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 18 Apr 2019 07:34:35 -0700
-Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
- Ownership (XPFO)
-To:     Kees Cook <keescook@google.com>, Andy Lutomirski <luto@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juerg Haefliger <juergh@gmail.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Julian Stecklina <jsteckli@amazon.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris hyser <chris.hyser@oracle.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Jon Masters <jcm@redhat.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        iommu <iommu@lists.linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Khalid Aziz <khalid@gonehiking.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Dave Hansen <dave@sr71.net>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <cover.1554248001.git.khalid.aziz@oracle.com>
- <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
- <20190417161042.GA43453@gmail.com>
- <e16c1d73-d361-d9c7-5b8e-c495318c2509@oracle.com>
- <20190417170918.GA68678@gmail.com>
- <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
- <20190417172632.GA95485@gmail.com>
- <063753CC-5D83-4789-B594-019048DE22D9@gmail.com>
- <alpine.DEB.2.21.1904172317460.3174@nanos.tec.linutronix.de>
- <CAHk-=wgBMg9P-nYQR2pS0XwVdikPCBqLsMFqR9nk=wSmAd4_5g@mail.gmail.com>
- <alpine.DEB.2.21.1904180129000.3174@nanos.tec.linutronix.de>
- <CAHk-=whUwOjFW6RjHVM8kNOv1QVLJuHj2Dda0=mpLPdJ1UyatQ@mail.gmail.com>
- <CALCETrXm9PuUTEEmzA8bQJmg=PHC_2XSywECittVhXbMJS1rSA@mail.gmail.com>
- <CAGXu5jL-qJtW7eH8S2yhqciE+J+FWz8HHzTrGJTgVUbd55n6dQ@mail.gmail.com>
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <8f9d059d-e720-cd24-faa6-45493fc012e0@oracle.com>
-Date:   Thu, 18 Apr 2019 08:34:32 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jL-qJtW7eH8S2yhqciE+J+FWz8HHzTrGJTgVUbd55n6dQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9231 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1904180098
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9231 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1904180098
+        Thu, 18 Apr 2019 11:42:26 -0400
+Received: by mail-pg1-f202.google.com with SMTP id m35so1580908pgl.6
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Apr 2019 08:42:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=c6cte1GA0N3UXNBho2QutaVeM3bmO26Ex5C2Za+9lAo=;
+        b=AR5AIo/FYzzbLDe/+9fNlgTRd1JlWeeO5nMeBPeV46W1GkksSc+qaMrdyXrh5Do9QE
+         JrAtIvsVVJYnQicJlXhQWt6iN8wTEm+Zqyxz68lkMJv3246rOgmqdPmxWUZ3jloUjdIm
+         1+UN9Hq82jsq3ts0wfHArPjrYSr916UnXKE1cST6NOrZaHvJUxwdwq9X4Pw9HAeX+fbT
+         s2IWr2t82RK50Pd/YxBLEWUZI18RibVNAJ98YbilJoXUdXr/aLXfT+cZ3in1fV5ZC3fE
+         POKFx+4dSkY2PAvonxY4ahEyxLlH7ueLjdZnRhhaZbB3BNqsWAYxHqkgeEMvFGkVGFnC
+         t8cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=c6cte1GA0N3UXNBho2QutaVeM3bmO26Ex5C2Za+9lAo=;
+        b=fHT/vCaVP907Zfntqw2sFTbQ+dDZPXhSxfXI8Fndd6T30L8fzJLQ0UOxUEc34xMrBK
+         Khbw/P/BTqD/iqQuhHuDIXIWTm3TbYqqQRMVcggdff2BvRGVWRtKIM8bkzBK8BGFW2ut
+         gdwoKGxyVGrOBT3XO1+SzX4hg0AGlOjyn5+AMDCasqfakcksv7ckUq9p5R1VyBxGseB6
+         3vIB2K1N17MmkqaMGjvG/euB+Kb2aseNTGwBjzelwGhcrpNxwj7GI4pAMmHOTLHxXHIf
+         8jrdMJBwgxkjkpQK2eAuCSROC9ugdIucxoly3Izo5Zvy6x7zYEPZaFBPHVFinDmWckU+
+         dtLQ==
+X-Gm-Message-State: APjAAAUB0AHFU+bnzmyYUbvsk+j9Av4/J9Sa94eVyUatdt7H6T0knVvt
+        wg+VCZ5P0jYIsdAme+ZfQx8+m9VOk6o=
+X-Google-Smtp-Source: APXvYqzlWFUlYk1TyzNFNdkmxacEV9kEkpY+WAHWzfS82vhaZYY6jgkKpDzAz2ONekaghvjOar/WrEYb+3w=
+X-Received: by 2002:a63:170d:: with SMTP id x13mr90021965pgl.169.1555602145919;
+ Thu, 18 Apr 2019 08:42:25 -0700 (PDT)
+Date:   Thu, 18 Apr 2019 17:42:05 +0200
+Message-Id: <20190418154208.131118-1-glider@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.392.gf8f6787159e-goog
+Subject: [PATCH 0/3] RFC: add init_allocations=1 boot option
+From:   Alexander Potapenko <glider@google.com>
+To:     akpm@linux-foundation.org, cl@linux.com, dvyukov@google.com,
+        keescook@chromium.org, labbott@redhat.com
+Cc:     linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/17/19 11:41 PM, Kees Cook wrote:
-> On Wed, Apr 17, 2019 at 11:41 PM Andy Lutomirski <luto@kernel.org> wrot=
-e:
->> I don't think this type of NX goof was ever the argument for XPFO.
->> The main argument I've heard is that a malicious user program writes a=
+Following the recent discussions here's another take at initializing
+pages and heap objects with zeroes. This is needed to prevent possible
+information leaks and make the control-flow bugs that depend on
+uninitialized values more deterministic.
 
->> ROP payload into user memory (regular anonymous user memory) and then
->> gets the kernel to erroneously set RSP (*not* RIP) to point there.
->=20
-> Well, more than just ROP. Any of the various attack primitives. The NX
-> stuff is about moving RIP: SMEP-bypassing. But there is still basic
-> SMAP-bypassing for putting a malicious structure in userspace and
-> having the kernel access it via the linear mapping, etc.
->=20
->> I find this argument fairly weak for a couple reasons.  First, if
->> we're worried about this, let's do in-kernel CFI, not XPFO, to
->=20
-> CFI is getting much closer. Getting the kernel happy under Clang, LTO,
-> and CFI is under active development. (It's functional for arm64
-> already, and pieces have been getting upstreamed.)
->=20
+The patchset introduces a new boot option, init_allocations, which
+makes page allocator and SL[AOU]B initialize newly allocated memory.
+init_allocations=0 doesn't (hopefully) add any overhead to the
+allocation fast path (no noticeable slowdown on hackbench).
 
-CFI theoretically offers protection with fairly low overhead. I have not
-played much with CFI in clang. I agree with Linus that probability of
-bugs in XPFO implementation itself is a cause of concern. If CFI in
-Clang can provide us the same level of protection as XPFO does, I
-wouldn't want to push for an expensive change like XPFO.
+With only the the first of the proposed patches the slowdown numbers are:
+ - 1.1% (stdev 0.2%) sys time slowdown building Linux kernel
+ - 3.1% (stdev 0.3%) sys time slowdown on af_inet_loopback benchmark
+ - 9.4% (stdev 0.5%) sys time slowdown on hackbench
 
-If Clang/CFI can't get us there for extended period of time, does it
-make sense to continue to poke at XPFO?
+The second patch introduces a GFP flag that allows to disable
+initialization for certain allocations. The third page is an example of
+applying it to af_unix.c, which helps hackbench greatly.
 
-Thanks,
-Khalid
+Slowdown numbers for the whole patchset are:
+ - 1.8% (stdev 0.8%) on kernel build
+ - 6.5% (stdev 0.2%) on af_inet_loopback
+ - 0.12% (stdev 0.6%) on hackbench
+
+
+Alexander Potapenko (3):
+  mm: security: introduce the init_allocations=1 boot option
+  gfp: mm: introduce __GFP_NOINIT
+  net: apply __GFP_NOINIT to AF_UNIX sk_buff allocations
+
+ drivers/infiniband/core/uverbs_ioctl.c |  2 +-
+ include/linux/gfp.h                    |  6 ++++-
+ include/linux/mm.h                     |  8 +++++++
+ include/linux/slab_def.h               |  1 +
+ include/linux/slub_def.h               |  1 +
+ include/net/sock.h                     |  5 +++++
+ kernel/kexec_core.c                    |  4 ++--
+ mm/dmapool.c                           |  2 +-
+ mm/page_alloc.c                        | 18 ++++++++++++++-
+ mm/slab.c                              | 14 ++++++------
+ mm/slab.h                              |  1 +
+ mm/slab_common.c                       | 15 +++++++++++++
+ mm/slob.c                              |  3 ++-
+ mm/slub.c                              |  9 ++++----
+ net/core/sock.c                        | 31 +++++++++++++++++++++-----
+ net/unix/af_unix.c                     | 13 ++++++-----
+ 16 files changed, 104 insertions(+), 29 deletions(-)
+
+-- 
+2.21.0.392.gf8f6787159e-goog
 
