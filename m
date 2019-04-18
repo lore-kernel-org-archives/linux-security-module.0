@@ -6,181 +6,154 @@ X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCC9C10F0E
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 13:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57819C10F14
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 14:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C6152083D
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 13:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F4B421479
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Apr 2019 14:36:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="ewo0IAN7"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ylFkenx2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388834AbfDRNjr (ORCPT
+        id S2388073AbfDROgE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Apr 2019 09:39:47 -0400
-Received: from uhil19pa09.eemsg.mail.mil ([214.24.21.82]:10302 "EHLO
-        uhil19pa09.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389029AbfDRNjr (ORCPT
+        Thu, 18 Apr 2019 10:36:04 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53168 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731317AbfDROgE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Apr 2019 09:39:47 -0400
-X-EEMSG-check-017: 8999952|UHIL19PA09_EEMSG_MP7.csd.disa.mil
-Received: from emsm-gh1-uea11.ncsc.mil ([214.29.60.3])
-  by uhil19pa09.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 18 Apr 2019 13:39:42 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
-  s=tycho.nsa.gov; t=1555594782; x=1587130782;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=jbsVzhdGN2qxQBaPleRMdtIYmErmkoL9LrkNXSB5a6U=;
-  b=ewo0IAN737hr5NrexZKuhPL0DoCR0ybh+J9UOWUFG0LYjzxXufPRu4C8
-   qKyTzAAkeoLxKhXy9jN0mJwzVpZiarFdcUjZN6rMRsQrViN9Y24f+zmi3
-   v96CsuklpWgG4r75pidDhD97Mz3dnRgoG2XDsr9HTM12Sf60fy5unMGlu
-   lWk5I116FzbqZv/4N9oBlx0qZGP3m6mpinkXHo7whWYJoxq4DMui9hoiB
-   GWIwqVzfHNDGYtxMMS4Ov4BDzjoDz4UWaOH7Pl/UagPN/sVD57QYkBwv8
-   MfnACqRRUnLZDQv4wY+8fl7MU4eDifhuuFAjFWcdG3I/jfZ7WVM93xnWz
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.60,366,1549929600"; 
-   d="scan'208";a="26474121"
-IronPort-PHdr: =?us-ascii?q?9a23=3AK2MDxBwzWfGlbt7XCy+O+j09IxM/srCxBDY+r6?=
- =?us-ascii?q?Qd0uIQL/ad9pjvdHbS+e9qxAeQG9mCsrQf1qGN7uigATVGvc/Z9ihaMdRlbF?=
- =?us-ascii?q?wssY0uhQsuAcqIWwXQDcXBSGgEJvlET0Jv5HqhMEJYS47UblzWpWCuv3ZJQk?=
- =?us-ascii?q?2sfQV6Kf7oFYHMks+5y/69+4HJYwVPmTGxfa5+IA+5oAnMq8Uam4VvJ6Y+xh?=
- =?us-ascii?q?bHonZDZuBayX91KV6JkBvw+9u88IR//yhMvv4q6tJNX7j9c6kkV7JTES4oM3?=
- =?us-ascii?q?oy5M3ltBnDSRWA634BWWgIkRRGHhbI4gjiUpj+riX1uOx92DKHPcLtVrA7RS?=
- =?us-ascii?q?6i76ZwRxD2jioMKiM0/3vWisx0i6JbvQ6hqhliyIPafI2ZKPxzdb7GcNgEWW?=
- =?us-ascii?q?ROQNpeVy1ZAoO9cYQPCfYBPf1FpIX5vlcCsAeyCRWpCO7pxDBInHv21rAk3e?=
- =?us-ascii?q?onHw/NwQgsE8sAvXnQqdn4MroZX+Kow6nS1TjNcu1Y2Tn95obLfB4ur/6DUr?=
- =?us-ascii?q?BsfsTe0kQvCwDIg0+MpYD5MT6Y1OIAuHWb4ep6UuKvjnYqpRxtojex3scsip?=
- =?us-ascii?q?fGhoQIwV7Z8CV22oI1JdmmR097fNWpF4BQuDyBN4ZtXsMjQ31nuCY9yrEcv5?=
- =?us-ascii?q?67ZzIFxI4oxx7YdfyKao6F6Q/gWuaJOTp0mX1odb2lixuy7ESs0PPwW8aq3F?=
- =?us-ascii?q?pQsyZIlMTHuGoX2BzJ8MeHT+Nw/kKm2TmSyQ/e8vpEIUUolarDLJ4h36Iwmo?=
- =?us-ascii?q?ITsUvdGi/2n137jLOMeUU+++io9v/nbq/6pp6cK4B0igb+Pr4omsOjGuQ3Lh?=
- =?us-ascii?q?ICX22a+eS4zLHj/Ev5T6tWjvAuj6XUv5/XKd4bq6KkGQNZzIku5wilAzu7yN?=
- =?us-ascii?q?gYmGMILFNBeBKJlYjpPFTOLejjDfiimFShiytrxvDaMb3hBZXBNH7DkKz7cr?=
- =?us-ascii?q?pn5E5czxQzwchF551IErEBPO7zWkjpudPEFBA5KBK7wub8BdVmyoweWXiAAr?=
- =?us-ascii?q?KXMKPWr1CI/PsjLPWWa4MPpDn9LP0l7eb0jXAlgV8dYbWp3ZwPZXC/GvRpPU?=
- =?us-ascii?q?qZbGH2gtgfDGgKvhAxTPDwhFKeVj5TYm64X7gg6TEjFIKmEYDDS5i1gLObwS?=
- =?us-ascii?q?e7GoZbZnhcBVCRFXfkboCEW/ALaCKIPMBtiCALVb+kS4U5zxGhqBf6y6Z7Lu?=
- =?us-ascii?q?rT4iAXqZDj2MJp6O3Tix4y8zN0D8ac026XSWF5hWMIRyIs06Fxv0N9y02P3r?=
- =?us-ascii?q?R/g/xdDdZT/e9GUh8mNZ7AyOx3E9PyVRzfcdeSVFmmRdKmATIqQ90tw98OeU?=
- =?us-ascii?q?F9G9CjjhDe2iqmGbgVl6aEBJYs6KLTw2DxJ9phy3bBzKQhiUcpQspLNWK9na?=
- =?us-ascii?q?N/7BXTB5XXnEmDi6mqcqEc1jbX9Gif1WqOoF1YUAloXKjZW3AfYFHZoc7k6E?=
- =?us-ascii?q?zeT7+uFLEnPRFCycGcMKtHcdvpgktaRPj5INTee3i9lHu3BRaN3rmMdpble3?=
- =?us-ascii?q?0B3CXBD0gJiwQT/XeANQgjCSatumHeAyJ0FVLpfUzs9fJzqG20TkAq1QGGdU?=
- =?us-ascii?q?5h2KSv+h4Tm/OcT+kf3rUeuCcusz90Bkqy38rKC9qcoApsZLtcYdIn4FdAzm?=
- =?us-ascii?q?/YthJyPpqhL6B8nFIedwV3v0Xz1xR4EIlAltIqrHwwwApvKqKSyElBeC+A3Z?=
- =?us-ascii?q?DsJr3XLXH//R+ua6HI1VDe0cuW+r4O6Pkjq1XjoRumF0Q8/HVmydVaz3yc5p?=
- =?us-ascii?q?DSBgoITZ3xSlo39wR9p7zCYik9+pnb1HNyPqm1qDPC39MpC/AkyhamZNpfML?=
- =?us-ascii?q?6EGxX8EsIEBsiiMvAlm1+sbhgcJuBd6LY0P9+6d/uBwKOqPPxvnDS8gmRG4o?=
- =?us-ascii?q?B901yD+jF8Su7VxZkEze+X3gqdWzjgi1eht9j9mZpYajEKAmq/1S/kCZZJZq?=
- =?us-ascii?q?JsYYYEF32uIsysy9V/gZ7tVWRY+0S+CFwYwsCmZACeb1vn3Q1fzU4Xu2ComT?=
- =?us-ascii?q?OkzzxolDEktq+f3C3Iw+TtcxoKIXRLS3d/glfsO4e0k8oWU1SvbwgsjBGl/1?=
- =?us-ascii?q?r1x7BHpKRjKGneWUNIfynwL2F/Xaq8r6GCbNBT55M1qyVXUfi8YFCDRr74pB?=
- =?us-ascii?q?sVzj7jH29Ayz0gaTGqtYv2nwZghGKeMnlztnzZdt90xRvF49zcX/FR1CIcRC?=
- =?us-ascii?q?ZkkTnXGkS8P96x8NWPiZjDtuG+V2S8VpxcaiTr04yAuzWh5WFwAh2wgeqzmt?=
- =?us-ascii?q?v5Hgg+yyP70MNqVSrQphbmfobrz7i6Mf5gfkRwBF7z8cx6Go5+k4sxgpEQ1n?=
- =?us-ascii?q?wahpSP8noBnmf+KtVb2b/kY3sDWzELwsTZ7xTi2E1mfTq1wNfSX26Q04NabN?=
- =?us-ascii?q?mzf20S1zh1u8tDE6qFxKdPnSJorF61t0faaL52mTJLjbMJ7HMVy8cEoxYg1C?=
- =?us-ascii?q?KDSuQVGURXFTbhmxSB85a1q6ABIC6XeKW0nG95msqsROWaqxxYcG7wZ5NnGC?=
- =?us-ascii?q?h39Mg5O1XJhi7d8IbhLeLMYMoTuxvcqBLJi+xYOdpljfYRrTZ2MmL6+3s+wq?=
- =?us-ascii?q?g0igI4jsLyh5SON2g4pPHxORVfLDCgIppIqzw=3D?=
-X-IPAS-Result: =?us-ascii?q?A2BoBQAsfbhc/wHyM5BlHQEBBQEHBQGBZYFnKoE5ATIoh?=
- =?us-ascii?q?A6Ie4otTAEBAQEBAQaBECWJSI8WgWc8AYRAAoYZIzgTAQMBAQEEAQEBAQIBb?=
- =?us-ascii?q?CiCOikBgmcBBSMPAQVBEAsYAgImAgJXBgEMBgIBAYJfP4F1FKkJgS+FR4Rmg?=
- =?us-ascii?q?Qsni0oXeIEHgTgMgl8+hC2DIYJXBIx+mUoJggiFPYxhBhuVB4t4ljohgVYrC?=
- =?us-ascii?q?AIYCCEPgyeQbCMDMIEGAQGPagEB?=
-Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
-  by emsm-gh1-uea11.NCSC.MIL with ESMTP; 18 Apr 2019 13:39:41 +0000
-Received: from localhost.localdomain (moss-pluto [192.168.25.131])
-        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id x3IDddRh029733;
-        Thu, 18 Apr 2019 09:39:40 -0400
-Subject: Re: kernel BUG at kernel/cred.c:434!
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     "chengjian (D)" <cj.chengjian@huawei.com>,
-        Kees Cook <keescook@chromium.org>, NeilBrown <neilb@suse.com>,
-        Anna Schumaker <Anna.Schumaker@netapp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Xiexiuqi (Xie XiuQi)" <xiexiuqi@huawei.com>,
-        Li Bin <huawei.libin@huawei.com>,
-        Jason Yan <yanaijie@huawei.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SELinux <selinux@vger.kernel.org>,
-        Yang Yingliang <yangyingliang@huawei.com>
-References: <b1575d02-fd88-65e6-2f16-70a96985087e@schaufler-ca.com>
- <20190415134331.GC22204@redhat.com>
- <CAHC9VhQ7ihqU0K57ctwzoHq0t0QVJPKiQQZn5TXB1FUqsvOSEQ@mail.gmail.com>
- <20190415150520.GA13257@redhat.com>
- <CAHC9VhSk1_fWooexHK0+5cKum55qTvj3uv5sRE=aJ4mv2GHJZg@mail.gmail.com>
- <CAGXu5jKYmoaR6bxW82ogN4iOeKi8AtEwkvVvCXd_gn3CCwFU2Q@mail.gmail.com>
- <fa325d38-db66-0ae7-0a6c-75934a9b0653@huawei.com>
- <CAHC9VhSpnSpYLLOcFUFLM=UU8tUTLAzJYb2NgdbN-nLPrh=55g@mail.gmail.com>
- <20190417145711.GI32622@redhat.com>
- <CAHC9VhSzo4DsMRknOA-4KKYJEir0wW74+quLheTjRw94OmhscA@mail.gmail.com>
- <20190417162723.GK32622@redhat.com>
- <939a45a6-fc1b-0ac3-759b-0e7c3ce3d670@schaufler-ca.com>
-From:   Stephen Smalley <sds@tycho.nsa.gov>
-Message-ID: <4493cc24-4023-028c-1007-0f61f63a5bda@tycho.nsa.gov>
-Date:   Thu, 18 Apr 2019 09:39:40 -0400
+        Thu, 18 Apr 2019 10:36:04 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3IEJJ4K081960;
+        Thu, 18 Apr 2019 14:34:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=AL/6XEs1B3BsG/bXzvFYIzuqptan4i6pMcE1H0+0SkI=;
+ b=ylFkenx2gLgBHYyGmWupVhKcQN67lFFgacw3sDWrvc2UyMrlPdQyvRWc1MWjFkNik5jm
+ 71B1aOguPFfyKZwocNP/SMGZxoxt7Fxi3QtN/SgpOhysgr/4HrVfbPeGtFHnwA3yIxlG
+ Hy1hSEdxdOjsGvN/N6787w1ybzWXCK8WaBatHX4fFVDIF903zPvWinjxuorByNB7ibEF
+ PNJoPTEBbn4WH+etQKqD4MGBh97w5FikjrdsLQhlVIen2uh7aIMHYexHO8Nf1B3EvtnK
+ Lyg6v4V14wXFCheokSGz5j4y4rdfNOYyvGEP+ZwCp4EZo65ljg2Txcaea91uWAoku77x ag== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2rvwk41a9g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Apr 2019 14:34:46 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x3IEYHYK012588;
+        Thu, 18 Apr 2019 14:34:45 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2rwe7b0mb3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Apr 2019 14:34:45 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x3IEYZET027844;
+        Thu, 18 Apr 2019 14:34:35 GMT
+Received: from [192.168.1.16] (/24.9.64.241)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 18 Apr 2019 07:34:35 -0700
+Subject: Re: [RFC PATCH v9 03/13] mm: Add support for eXclusive Page Frame
+ Ownership (XPFO)
+To:     Kees Cook <keescook@google.com>, Andy Lutomirski <luto@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Juerg Haefliger <juergh@gmail.com>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Julian Stecklina <jsteckli@amazon.de>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Juerg Haefliger <juerg.haefliger@canonical.com>,
+        deepa.srinivasan@oracle.com, chris hyser <chris.hyser@oracle.com>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Jon Masters <jcm@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        iommu <iommu@lists.linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Khalid Aziz <khalid@gonehiking.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Dave Hansen <dave@sr71.net>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Arjan van de Ven <arjan@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <cover.1554248001.git.khalid.aziz@oracle.com>
+ <f1ac3700970365fb979533294774af0b0dd84b3b.1554248002.git.khalid.aziz@oracle.com>
+ <20190417161042.GA43453@gmail.com>
+ <e16c1d73-d361-d9c7-5b8e-c495318c2509@oracle.com>
+ <20190417170918.GA68678@gmail.com>
+ <56A175F6-E5DA-4BBD-B244-53B786F27B7F@gmail.com>
+ <20190417172632.GA95485@gmail.com>
+ <063753CC-5D83-4789-B594-019048DE22D9@gmail.com>
+ <alpine.DEB.2.21.1904172317460.3174@nanos.tec.linutronix.de>
+ <CAHk-=wgBMg9P-nYQR2pS0XwVdikPCBqLsMFqR9nk=wSmAd4_5g@mail.gmail.com>
+ <alpine.DEB.2.21.1904180129000.3174@nanos.tec.linutronix.de>
+ <CAHk-=whUwOjFW6RjHVM8kNOv1QVLJuHj2Dda0=mpLPdJ1UyatQ@mail.gmail.com>
+ <CALCETrXm9PuUTEEmzA8bQJmg=PHC_2XSywECittVhXbMJS1rSA@mail.gmail.com>
+ <CAGXu5jL-qJtW7eH8S2yhqciE+J+FWz8HHzTrGJTgVUbd55n6dQ@mail.gmail.com>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <8f9d059d-e720-cd24-faa6-45493fc012e0@oracle.com>
+Date:   Thu, 18 Apr 2019 08:34:32 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-In-Reply-To: <939a45a6-fc1b-0ac3-759b-0e7c3ce3d670@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CAGXu5jL-qJtW7eH8S2yhqciE+J+FWz8HHzTrGJTgVUbd55n6dQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9231 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1904180098
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9231 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1904180098
 Sender: owner-linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 4/17/19 12:42 PM, Casey Schaufler wrote:
-> On 4/17/2019 9:27 AM, Oleg Nesterov wrote:
->> On 04/17, Paul Moore wrote:
->>> On Wed, Apr 17, 2019 at 10:57 AM Oleg Nesterov <oleg@redhat.com> wrote:
->>>> On 04/17, Paul Moore wrote:
->>>>> I'm tempted to simply return an error in selinux_setprocattr() if
->>>>> the task's credentials are not the same as its real_cred;
->>>> What about other modules? I have no idea what smack_setprocattr() is,
->>>> but it too does prepare_creds/commit creds.
->>>>
->>>> it seems that the simplest workaround should simply add the additional
->>>> cred == real_cred into proc_pid_attr_write().
->>> Yes, that is simple, but I worry about what other LSMs might want to
->>> do.  While I believe failing if the effective creds are not the same
->>> as the real_creds is okay for SELinux (possibly Smack too), I worry
->>> about what other LSMs may want to do.  After all,
->>> proc_pid_attr_write() doesn't change the the creds itself, that is
->>> something the specific LSMs do.
->> Yes, but if proc_pid_attr_write() is called with cred != real_cred then
->> something is already wrong?
->>
->> In fact, I think that something is already wrong if it is not called by
->> user-space directly. Too late to ask, but why is this /proc/self/attr/
->> magic not implemented via syscall(s) ?
-> 
-> Shell scripts, for one thing. It's a straightforward and appropriate
-> use of the /proc interface. System calls would require additional change
-> to existing programs, whereas using the /proc interface allows a good
-> deal to be done in the containing scripts.
+On 4/17/19 11:41 PM, Kees Cook wrote:
+> On Wed, Apr 17, 2019 at 11:41 PM Andy Lutomirski <luto@kernel.org> wrot=
+e:
+>> I don't think this type of NX goof was ever the argument for XPFO.
+>> The main argument I've heard is that a malicious user program writes a=
 
-It is fairly awkward/fragile to use these interfaces from shell scripts 
-due to limitations of the interface (e.g. no partial writes, thereby 
-breaking if the shell splits up the data into multiple write() calls) 
-and due to the fact that most of the attributes (except for current) are 
-typically reset/cleared upon exec to prevent undue caller/callee 
-influence.  It works well enough for echo -n "somelabel" > 
-/proc/self/attr/current but not much else, and even that doesn't work 
-without the -n due to multiple write() calls.
+>> ROP payload into user memory (regular anonymous user memory) and then
+>> gets the kernel to erroneously set RSP (*not* RIP) to point there.
+>=20
+> Well, more than just ROP. Any of the various attack primitives. The NX
+> stuff is about moving RIP: SMEP-bypassing. But there is still basic
+> SMAP-bypassing for putting a malicious structure in userspace and
+> having the kernel access it via the linear mapping, etc.
+>=20
+>> I find this argument fairly weak for a couple reasons.  First, if
+>> we're worried about this, let's do in-kernel CFI, not XPFO, to
+>=20
+> CFI is getting much closer. Getting the kernel happy under Clang, LTO,
+> and CFI is under active development. (It's functional for arm64
+> already, and pieces have been getting upstreamed.)
+>=20
 
-Just for the record, this functionality was originally implemented via 
-separate system calls at least for SELinux (in its original kernel 
-patch), then multiplexed through the single LSM security system call 
-upon porting to LSM (before merging to mainline), but viro and others 
-strongly favored using /proc as the interface for getting/setting any 
-new process attributes.  Understandable, but it does impose some 
-limitations, including a dependency on having a writable proc mount in 
-the namespace of any process that needs to set any of these attributes,
+CFI theoretically offers protection with fairly low overhead. I have not
+played much with CFI in clang. I agree with Linus that probability of
+bugs in XPFO implementation itself is a cause of concern. If CFI in
+Clang can provide us the same level of protection as XPFO does, I
+wouldn't want to push for an expensive change like XPFO.
+
+If Clang/CFI can't get us there for extended period of time, does it
+make sense to continue to poke at XPFO?
+
+Thanks,
+Khalid
+
